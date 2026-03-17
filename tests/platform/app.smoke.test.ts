@@ -1,6 +1,7 @@
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { createApp } from "../../src/app";
+import { getJson } from "../harness/http";
 
 describe("platform app smoke", () => {
   it("responds to GET /v1/health", async () => {
