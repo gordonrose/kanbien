@@ -1,13 +1,15 @@
 import request, { Test } from "supertest";
 import type { Express } from "express";
 
+type JsonBody = string | object | undefined;
+
 export function getJson(app: Express, path: string): Test {
   return request(app)
     .get(path)
     .set("Accept", "application/json");
 }
 
-export function postJson(app: Express, path: string, body: unknown): Test {
+export function postJson(app: Express, path: string, body: JsonBody): Test {
   return request(app)
     .post(path)
     .set("Accept", "application/json")
@@ -15,7 +17,7 @@ export function postJson(app: Express, path: string, body: unknown): Test {
     .send(body);
 }
 
-export function putJson(app: Express, path: string, body: unknown): Test {
+export function putJson(app: Express, path: string, body: JsonBody): Test {
   return request(app)
     .put(path)
     .set("Accept", "application/json")
