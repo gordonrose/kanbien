@@ -1,8 +1,18 @@
-import { createApp } from "./app";
 import { env } from "./config/env";
+import { verifyDatabaseConnection } from "./lib/db";
+import { createApp } from "./app";
 
-const app = createApp();
+async function start(): Promise<void> {
+  await verifyDatabaseConnection();
 
-app.listen(env.PORT, () => {
-  console.log(`Server listening on port ${env.PORT}`);
+  const app = createApp();
+
+  app.listen(env.port, () => {
+    console.log(`Server listening on port ${env.port}`);
+  });
+}
+
+start().catch((error: unknown) => {
+  console.error("Failed to start server", error);
+  process.exit(1);
 });

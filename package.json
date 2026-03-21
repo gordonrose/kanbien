@@ -5,18 +5,23 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "dev": "tsx src/server.ts",
-    "start": "node dist/server.js",
+    "db:migrate": "tsx src/scripts/migrate.ts",
+    "dev": "npm run db:migrate && tsx src/server.ts",
+    "start": "node dist/scripts/migrate.js && node dist/server.js",
     "test": "vitest run"
   },
   "dependencies": {
-    "express": "4.21.2"
+    "dotenv": "^17.3.1",
+    "express": "4.21.2",
+    "pg": "^8.20.0",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@types/express": "5.0.1",
     "@types/node": "24.0.10",
-    "supertest": "7.1.1",
+    "@types/pg": "^8.20.0",
     "@types/supertest": "6.0.3",
+    "supertest": "7.1.1",
     "tsx": "4.19.4",
     "typescript": "5.8.3",
     "vitest": "3.2.4"
