@@ -9,6 +9,6 @@ const v1_1 = require("./routes/v1");
 function createApp() {
     const app = (0, express_1.default)();
     app.use(express_1.default.json());
-    app.use("/v1", (0, v1_1.createV1Router)());
+    app.use("/v1", v1_1.v1Router);
     return app;
 }

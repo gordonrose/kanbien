@@ -1,13 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createV1Router = createV1Router;
+exports.v1Router = void 0;
 const express_1 = require("express");
-const features_1 = require("./features");
-function createV1Router() {
-    const router = (0, express_1.Router)();
-    router.get("/health", (_req, res) => {
-        res.status(200).json({ status: "ok" });
-    });
-    (0, features_1.registerV1Features)(router);
-    return router;
-}
+exports.v1Router = (0, express_1.Router)();
+exports.v1Router.get("/health", (_request, response) => {
+    response.status(200).json({ ok: true });
+});

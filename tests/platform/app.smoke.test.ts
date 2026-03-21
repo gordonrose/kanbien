@@ -1,15 +1,14 @@
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { createApp } from "../../src/app";
-import { getJson } from "../harness/http";
 
-describe("platform app smoke", () => {
+describe("platform app smoke test", () => {
   it("responds to GET /v1/health", async () => {
     const app = createApp();
 
     const response = await request(app).get("/v1/health");
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ status: "ok" });
+    expect(response.body).toEqual({ ok: true });
   });
 });

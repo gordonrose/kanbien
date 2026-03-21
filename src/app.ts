@@ -1,11 +1,11 @@
-import express, { Express } from "express";
-import { createV1Router } from "./routes/v1";
+import express from "express";
+import { v1Router } from "./routes/v1";
 
-export function createApp(): Express {
+export function createApp() {
   const app = express();
 
   app.use(express.json());
-  app.use("/v1", createV1Router());
+  app.use("/v1", v1Router);
 
   return app;
 }

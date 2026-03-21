@@ -1,14 +1,7 @@
 import { Router } from "express";
-import { registerV1Features } from "./features";
 
-export function createV1Router(): Router {
-  const router = Router();
+export const v1Router = Router();
 
-  router.get("/health", (_req, res) => {
-    res.status(200).json({ status: "ok" });
-  });
-
-  registerV1Features(router);
-
-  return router;
-}
+v1Router.get("/health", (_request, response) => {
+  response.status(200).json({ ok: true });
+});

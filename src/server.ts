@@ -1,9 +1,8 @@
 import { createApp } from "./app";
-import { getEnv } from "./config/env";
+import { env } from "./config/env";
 
-const { port } = getEnv();
 const app = createApp();
 
-app.listen(port, () => {
-  console.log(`Server listening on http://0.0.0.0:${port}`);
+app.listen(env.PORT, () => {
+  console.log(`Server listening on port ${env.PORT}`);
 });
