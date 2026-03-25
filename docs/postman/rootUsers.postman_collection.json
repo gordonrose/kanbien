@@ -49,7 +49,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"{{email}}\",\n  \"firstName\": \"Root\",\n  \"lastName\": \"User\",\n  \"status\": \"active\"\n}"
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"firstName\": \"Root\",\n  \"lastName\": \"User\"\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/v1/root-users",
@@ -87,14 +87,13 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{baseUrl}}/v1/root-users/by-email?email={{email}}",
+          "raw": "{{baseUrl}}/v1/root-users?email={{email}}",
           "host": [
             "{{baseUrl}}"
           ],
           "path": [
             "v1",
-            "root-users",
-            "by-email"
+            "root-users"
           ],
           "query": [
             {

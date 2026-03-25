@@ -3,8 +3,8 @@ info:
   title: Kanbien Platform API
   version: 0.1.0
   description: >
-    OpenAPI specification for the platform API. This currently documents the
-    platform health route and the rootUsers feature mounted at /v1/root-users.
+    OpenAPI specification for the platform API. This documents the platform
+    health route and the rootUsers feature mounted at /v1/root-users.
 
 servers:
   - url: http://localhost:3000
@@ -47,7 +47,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RootUserEnvelope"
+                $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
         "409":
@@ -58,14 +58,18 @@ paths:
     get:
       tags:
         - Root Users
-      summary: List root users
-      description: Lists root users with pagination, sorting, and filters.
-      operationId: listRootUsers
+      summary: List root users or look up by exact email
+      description: >
+        Without the `email` query parameter, this returns a paginated list of
+        root users. When `email` is supplied, it returns a single visible root
+        user by exact email match.
+      operationId: queryRootUsers
       parameters:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
         - $ref: "#/components/parameters/RootUsersOrderBy"
         - $ref: "#/components/parameters/OrderDirection"
+        - $ref: "#/components/parameters/Email"
         - $ref: "#/components/parameters/EmailPrefix"
         - $ref: "#/components/parameters/FirstNamePrefix"
         - $ref: "#/components/parameters/LastNamePrefix"
@@ -78,36 +82,13 @@ paths:
         - $ref: "#/components/parameters/Status"
       responses:
         "200":
-          description: Paginated root users
+          description: Exact-match root user or paginated list result
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaginatedRootUsersEnvelope"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /v1/root-users/by-email:
-    get:
-      tags:
-        - Root Users
-      summary: Get a visible root user by exact email
-      operationId: getRootUserByEmail
-      parameters:
-        - name: email
-          in: query
-          required: true
-          schema:
-            type: string
-            format: email
-      responses:
-        "200":
-          description: Matching root user
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/RootUserEnvelope"
+                oneOf:
+                  - $ref: "#/components/schemas/RootUser"
+                  - $ref: "#/components/schemas/PaginatedRootUsers"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -139,7 +120,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaginatedRootUsersEnvelope"
+                $ref: "#/components/schemas/PaginatedRootUsers"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -165,19 +146,14 @@ paths:
         - $ref: "#/components/parameters/UpdatedAtTo"
         - $ref: "#/components/parameters/DeletedAtFrom"
         - $ref: "#/components/parameters/DeletedAtTo"
-        - name: excludeAnonymized
-          in: query
-          required: false
-          schema:
-            type: boolean
-            default: false
+        - $ref: "#/components/parameters/ExcludeAnonymized"
       responses:
         "200":
           description: Paginated deleted root users
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PaginatedRootUsersEnvelope"
+                $ref: "#/components/schemas/PaginatedRootUsers"
         "400":
           $ref: "#/components/responses/BadRequest"
         "500":
@@ -197,7 +173,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RootUserEnvelope"
+                $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -224,7 +200,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RootUserEnvelope"
+                $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -247,7 +223,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RootUserEnvelope"
+                $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -271,7 +247,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RootUserEnvelope"
+                $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -293,7 +269,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RootUserEnvelope"
+                $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -358,6 +334,14 @@ components:
         type: string
         enum: [email, firstName, lastName, createdAt, updatedAt]
         default: updatedAt
+
+    Email:
+      name: email
+      in: query
+      required: false
+      schema:
+        type: string
+        format: email
 
     EmailPrefix:
       name: emailPrefix
@@ -438,6 +422,14 @@ components:
       schema:
         $ref: "#/components/schemas/RootUserStatus"
 
+    ExcludeAnonymized:
+      name: excludeAnonymized
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+
   responses:
     BadRequest:
       description: Invalid request
@@ -481,6 +473,12 @@ components:
       type: string
       enum: [active, inactive]
 
+    CountValue:
+      oneOf:
+        - type: integer
+        - type: string
+          enum: ["10000+"]
+
     RootUser:
       type: object
       additionalProperties: false
@@ -492,9 +490,9 @@ components:
           type: string
           format: email
         firstName:
-          type: [string, "null"]
+          type: string
         lastName:
-          type: [string, "null"]
+          type: string
         anonymized:
           type: boolean
         status:
@@ -511,21 +509,11 @@ components:
       required:
         - rootUserId
         - email
-        - firstName
-        - lastName
         - anonymized
         - status
         - createdAt
         - updatedAt
         - deletedAt
-
-    RootUserEnvelope:
-      type: object
-      additionalProperties: false
-      properties:
-        body:
-          $ref: "#/components/schemas/RootUser"
-      required: [body]
 
     PaginatedRootUsers:
       type: object
@@ -539,19 +527,19 @@ components:
           type: integer
         pageSize:
           type: integer
-        totalItems:
-          type: integer
         totalPages:
           type: integer
-      required: [items, page, pageSize, totalItems, totalPages]
-
-    PaginatedRootUsersEnvelope:
-      type: object
-      additionalProperties: false
-      properties:
-        body:
-          $ref: "#/components/schemas/PaginatedRootUsers"
-      required: [body]
+        totalSearchableRecords:
+          $ref: "#/components/schemas/CountValue"
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalSearchableRecords
+        - totalMatchingRecords
 
     CreateRootUserBody:
       type: object
@@ -561,15 +549,11 @@ components:
           type: string
           format: email
         firstName:
-          type: [string, "null"]
+          type: string
           minLength: 1
-          maxLength: 255
         lastName:
-          type: [string, "null"]
+          type: string
           minLength: 1
-          maxLength: 255
-        status:
-          $ref: "#/components/schemas/RootUserStatus"
       required: [email]
 
     UpdateRootUserBody:
@@ -581,17 +565,15 @@ components:
           type: string
           format: email
         firstName:
-          type: [string, "null"]
+          type: string
           minLength: 1
-          maxLength: 255
         lastName:
-          type: [string, "null"]
+          type: string
           minLength: 1
-          maxLength: 255
         status:
           $ref: "#/components/schemas/RootUserStatus"
 
-    ErrorIssue:
+    ErrorDetails:
       type: object
       additionalProperties: false
       properties:
@@ -599,20 +581,6 @@ components:
           type: string
         reason:
           type: string
-      required: [field, reason]
-
-    ErrorDetails:
-      oneOf:
-        - type: object
-          additionalProperties: true
-        - type: object
-          additionalProperties: false
-          properties:
-            issues:
-              type: array
-              items:
-                $ref: "#/components/schemas/ErrorIssue"
-          required: [issues]
 
     ErrorResponse:
       type: object

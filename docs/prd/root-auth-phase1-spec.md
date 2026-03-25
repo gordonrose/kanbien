@@ -1,0 +1,596 @@
+# Root Auth Phase 1 Specification
+
+## Purpose
+
+Implement a **root-user-only authentication feature** that allows existing `rootUsers` to sign in using:
+
+1. **email**
+2. **password**
+3. **SSH private key proof** against a stored **SSH public key**
+
+This feature is intentionally narrow.
+
+It is the first authentication slice for the platform and is designed to be secure, deterministic, and easy to extend later.
+
+---
+
+## Scope
+
+This phase includes:
+
+- root-user authentication only
+- login email stored against an auth principal
+- password-hash based verification
+- SSH public key challenge-response as a required second gate
+- authenticated session creation after successful password + SSH verification
+- root user logout
+- root user password change
+- add SSH public key
+- revoke SSH public key
+- bootstrap migration for existing `rootUsers`
+
+This phase does **not** include:
+
+- tenant admin authentication
+- portal user authentication
+- email sending
+- email verification
+- password reset by email
+- MFA / TOTP / authenticator apps
+- recovery codes
+- Google login
+- SSO
+- tenant admin password reset flows
+
+---
+
+## Core Concepts
+
+### Authentication
+Authentication proves the caller is who they claim to be.
+
+### Root user sign-in rule
+A `rootUser` may sign in only when all of the following are true:
+
+- email identifies a valid auth principal
+- submitted password matches the stored password hash
+- linked `rootUser` is active
+- linked `rootUser` is not soft-deleted
+- linked `rootUser` is not anonymized
+- caller successfully proves possession of a registered SSH private key by signing a one-time challenge
+
+### Session creation rule
+A session must be created **only after** both:
+
+- password verification succeeds
+- SSH challenge verification succeeds
+
+Password success alone must never create an authenticated session.
+
+---
+
+## Feature Name
+
+Recommended feature folder:
+
+`src/features/rootAuth/`
+
+This feature is separate from `src/features/rootUsers/`.
+
+`rootUsers` remains the business/domain feature.
+
+`rootAuth` owns authentication concerns for `rootUsers`.
+
+---
+
+## Capability Matrix
+
+| Capability | Purpose | Request | Response | Rules | Persistence | Errors | Tests |
+|---|---|---|---|---|---|---|---|
+| `createRootUserAuthPrincipal` | Create auth identity linked to a `rootUser` | login email, password, rootUserId | created principal summary | normalized email must be unique for root auth scope; password must meet policy; link must reference existing root user | insert auth principal, insert root-user link, write audit event | duplicate email, invalid password, missing root user | valid create, duplicate email, missing root user, password policy failure |
+| `bootstrapExistingRootUserAuth` | Backfill auth for existing `rootUsers` during rollout | migration input derived from existing `rootUsers` plus configured bootstrap password and SSH public key | migration result summary | must be idempotent; must skip already-bootstrapped users safely; must hash password before storing; must store only SSH public key, never private key | create principal if absent, create link if absent, add SSH public key if absent, write audit/migration event | invalid bootstrap key, duplicate conflicting principal, missing root user | first run success, rerun idempotency, partial-existing state, invalid bootstrap key |
+| `loginRootUserWithPassword` | First gate of login using email and password | email, password | `SSH_CHALLENGE_REQUIRED` plus challenge payload | must normalize email; must use generic auth failure response; must verify password hash; must check linked root user lifecycle state; must not create session yet | read principal by normalized email, read link, verify password hash, create one-time challenge, write audit event | invalid credentials, sign-in blocked, locked/throttled | wrong password, unknown email, deleted root user, anonymized root user, inactive root user, success creates challenge only |
+| `completeRootUserSshChallenge` | Complete login by proving possession of SSH private key | challengeId, signature, publicKeyFingerprint | authenticated session summary | challenge must exist; challenge must be unexpired; challenge must be single-use; signature must verify against active stored public key; revoked keys must fail; session created only after success | read challenge, read active SSH keys, verify signature, mark challenge used, create session, write audit event | invalid challenge, expired challenge, already-used challenge, invalid signature, revoked key | valid signature, expired challenge, reused challenge, revoked key, wrong key, success creates session |
+| `changeRootUserPassword` | Allow authenticated root user to change own password | currentPassword, newPassword | success summary | must require authenticated session; must verify current password; new password must meet policy; should revoke other sessions after change | read principal, verify current hash, update password hash, revoke other sessions, write audit event | invalid current password, invalid new password, unauthorized | wrong current password, weak new password, success revokes other sessions |
+| `addRootUserSshPublicKey` | Register an SSH public key for future login proof | label, OpenSSH public key text | stored key summary | must accept only allowed algorithms; must fingerprint key; must avoid duplicate active keys; must store public key only | parse key, fingerprint key, insert key, write audit event | invalid key format, unsupported algorithm, duplicate key | add valid key, reject malformed key, reject duplicate key |
+| `revokeRootUserSshPublicKey` | Disable an SSH public key | keyId | success summary | revoked key must no longer authenticate; operation should be idempotent | mark key revoked, write audit event | key not found, unauthorized | revoke active key, revoke already-revoked key, confirm login blocked with revoked key |
+| `logoutRootUserSession` | End current authenticated session | current session context | success summary | current session must be revoked server-side | revoke session, write audit event | unauthorized, session not found | logout active session, repeat logout behaviour |
+| `revokeRootUserSession` | Revoke a specific root user session | sessionId | success summary | only allowed according to future admin rules or own-session management policy; phase 1 may support self only | mark session revoked, write audit event | unauthorized, session not found | revoke current session, revoke another allowed session if supported |
+| `listRootUserSshPublicKeys` | View registered SSH public keys for the authenticated root user | authenticated session context | list of key summaries | must not expose private material; should show label, fingerprint, algorithm, status, timestamps | query keys by principal, map summaries | unauthorized | list active keys, list revoked keys |
+| `listRootUserSessions` | View active sessions for the authenticated root user | authenticated session context | list of session summaries | should show minimal safe metadata only; phase 1 may be optional but recommended | query sessions by principal | unauthorized | list sessions, empty list |
+
+---
+
+## API Endpoints
+
+### `POST /v1/root-auth/login/password`
+
+Purpose: first-stage login.
+
+#### Request
+```json
+{
+  "email": "root@example.com",
+  "password": "user-typed-password"
+}
+```
+
+#### Success Response
+```json
+{
+  "status": "SSH_CHALLENGE_REQUIRED",
+  "challengeId": "chal_123",
+  "challengeText": "challengeId=chal_123|authPrincipalId=ap_123|purpose=root-login|nonce=...|expiresAt=...|aud=your-service"
+}
+```
+
+#### Behaviour
+- normalize email
+- look up auth principal
+- verify password hash
+- verify linked `rootUser` is allowed to sign in
+- create one-time SSH challenge
+- do **not** create session yet
+
+---
+
+### `POST /v1/root-auth/login/ssh`
+
+Purpose: complete login using SSH private key proof.
+
+#### Request
+```json
+{
+  "challengeId": "chal_123",
+  "signature": "base64-signature",
+  "publicKeyFingerprint": "SHA256:abc123..."
+}
+```
+
+#### Success Response
+```json
+{
+  "status": "AUTHENTICATED",
+  "sessionId": "sess_123",
+  "rootUserId": "ru_123"
+}
+```
+
+#### Behaviour
+- verify challenge exists
+- verify challenge is unexpired
+- verify challenge is unused
+- verify signature against active stored public key
+- mark challenge used
+- create authenticated session
+
+---
+
+### `POST /v1/root-auth/password/change`
+
+Purpose: authenticated root user changes own password.
+
+#### Request
+```json
+{
+  "currentPassword": "old-password",
+  "newPassword": "new-password"
+}
+```
+
+#### Behaviour
+- require authenticated session
+- verify current password
+- enforce password policy
+- replace stored password hash
+- revoke other sessions
+
+---
+
+### `POST /v1/root-auth/ssh-keys`
+
+Purpose: add SSH public key.
+
+#### Request
+```json
+{
+  "label": "personal-laptop",
+  "publicKey": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI..."
+}
+```
+
+---
+
+### `DELETE /v1/root-auth/ssh-keys/:keyId`
+
+Purpose: revoke SSH public key.
+
+---
+
+### `POST /v1/root-auth/logout`
+
+Purpose: revoke current session.
+
+---
+
+## Data Model
+
+### `auth_principals`
+
+Stores durable login identity.
+
+Fields:
+
+- `auth_principal_id`
+- `login_email`
+- `login_email_normalized`
+- `password_hash`
+- `password_changed_at`
+- `auth_status`
+- `created_at`
+- `updated_at`
+
+Notes:
+
+- `login_email_normalized` is used for exact lookup
+- passwords must always be stored as hashes
+- plaintext passwords must never be stored
+
+---
+
+### `auth_principal_root_user_links`
+
+Links auth identity to business/domain user.
+
+Fields:
+
+- `link_id`
+- `auth_principal_id`
+- `root_user_id`
+- `created_at`
+
+---
+
+### `auth_ssh_public_keys`
+
+Stores SSH public keys for proof-of-possession.
+
+Fields:
+
+- `auth_ssh_public_key_id`
+- `auth_principal_id`
+- `label`
+- `algorithm`
+- `public_key_openssh`
+- `fingerprint`
+- `status`
+- `created_at`
+- `revoked_at`
+
+Notes:
+
+- store **public keys only**
+- never store SSH private keys
+- revoked keys must never be accepted for login
+
+---
+
+### `auth_login_challenges`
+
+Stores one-time SSH challenges.
+
+Fields:
+
+- `challenge_id`
+- `auth_principal_id`
+- `purpose`
+- `challenge_text`
+- `expires_at`
+- `used_at`
+- `created_at`
+
+Notes:
+
+- challenges must be single-use
+- challenges must expire quickly
+- challenges must be tied to principal and purpose
+
+---
+
+### `auth_sessions`
+
+Stores authenticated root-user sessions.
+
+Fields:
+
+- `session_id`
+- `auth_principal_id`
+- `root_user_id`
+- `authenticated_at`
+- `expires_at`
+- `revoked_at`
+- `created_at`
+
+---
+
+### `auth_audit_events`
+
+Stores security-relevant audit events.
+
+Fields:
+
+- `event_id`
+- `auth_principal_id`
+- `root_user_id`
+- `event_type`
+- `event_outcome`
+- `ip_address`
+- `user_agent`
+- `occurred_at`
+
+---
+
+## Login Flow
+
+### Step 1: Password stage
+1. user submits email + password
+2. system normalizes email
+3. system finds auth principal
+4. system verifies password hash
+5. system verifies linked `rootUser` lifecycle state
+6. system creates one-time SSH challenge
+7. system returns `SSH_CHALLENGE_REQUIRED`
+
+### Step 2: SSH stage
+1. user signs challenge text with SSH private key
+2. system verifies challenge validity
+3. system verifies signature against active stored public key
+4. system marks challenge used
+5. system creates authenticated session
+6. system writes audit event
+7. system returns authenticated session summary
+
+---
+
+## SSH Challenge Design
+
+### Challenge payload
+The server should generate a canonical challenge string like:
+
+```text
+challengeId=chal_123|authPrincipalId=ap_123|purpose=root-login|nonce=...|expiresAt=...|aud=your-service
+```
+
+### Rules
+- challenge must contain a unique nonce
+- challenge must be short-lived
+- challenge must be single-use
+- challenge must be bound to principal and purpose
+- challenge verification must require an active non-revoked public key
+
+### Key rules
+- prefer `ssh-ed25519`
+- if RSA is allowed later, use modern RSA-SHA2 verification only
+- unsupported algorithms must be rejected
+
+---
+
+## Password Rules
+
+Phase 1 must enforce a password policy.
+
+Minimum policy should include:
+
+- minimum length
+- reject empty/obviously weak passwords
+- hash before storage
+- never log plaintext passwords
+
+Password changes must:
+- verify current password
+- update the password hash
+- revoke other sessions
+
+---
+
+## Root User Lifecycle Checks
+
+A linked `rootUser` must be blocked from sign-in when:
+
+- inactive
+- soft-deleted
+- anonymized
+
+This check must happen during login before challenge issuance and before final session creation if needed.
+
+---
+
+## Migration / Bootstrap Rules
+
+This phase must support existing `rootUsers` so they can authenticate immediately after rollout.
+
+### Bootstrap requirement
+For existing `rootUsers`, migration/backfill must create:
+
+- auth principal
+- root-user link
+- password hash derived from the configured bootstrap password
+- configured SSH public key
+
+### Supplied bootstrap SSH public key
+```text
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEZeNv6aKKHqLJQQoqsHUhYyFMFFbE8WWvgDSFH0WJiq gordon@<machine-name>
+```
+
+### Supplied bootstrap password
+```text
+@Nima2or1!
+```
+
+### Bootstrap rules
+- migration must be idempotent
+- migration must not duplicate principals or keys on rerun
+- migration must hash the password before storage
+- migration must store the SSH **public** key only
+- migration must report row outcomes such as migrated / skipped / failed
+
+### Security note
+The bootstrap password is sensitive and must not be logged.
+The markdown file containing it should be treated as sensitive project material.
+
+---
+
+## Errors
+
+The feature should define explicit domain/contract errors, including:
+
+- `InvalidCredentialsError`
+- `RootUserSignInBlockedError`
+- `SshChallengeExpiredError`
+- `SshChallengeAlreadyUsedError`
+- `InvalidSshSignatureError`
+- `UnsupportedSshKeyAlgorithmError`
+- `DuplicateSshPublicKeyError`
+- `InvalidCurrentPasswordError`
+- `InvalidNewPasswordError`
+- `SessionNotFoundError`
+
+### Error handling rules
+- login failures should use generic external responses where appropriate
+- internal audit detail should still record exact failure reason
+- security-sensitive errors should avoid leaking account existence unnecessarily
+
+---
+
+## Audit Events
+
+Phase 1 should emit audit events for:
+
+- auth principal created
+- bootstrap migration applied
+- login password stage success/failure
+- SSH challenge success/failure
+- session created
+- session revoked
+- password changed
+- SSH key added
+- SSH key revoked
+
+Audit events should be durable and structured.
+
+---
+
+## Non-Goals
+
+The following are explicitly out of scope for this phase:
+
+- email delivery
+- email verification
+- password reset by email
+- tenant admin manual password reset
+- MFA / TOTP
+- recovery codes
+- WebAuthn / passkeys
+- Google login
+- SSO
+- tenant-scoped auth for non-root users
+- full authorisation policy engine
+
+---
+
+## Acceptance Criteria
+
+Phase 1 is complete when all of the following are true:
+
+1. existing `rootUsers` can be bootstrapped into root auth
+2. password hashes are stored instead of plaintext passwords
+3. root login requires both:
+   - valid password
+   - valid SSH private key proof
+4. inactive / soft-deleted / anonymized linked `rootUsers` cannot sign in
+5. SSH challenges are:
+   - unique
+   - short-lived
+   - single-use
+6. revoked SSH keys cannot authenticate
+7. sessions are created only after successful SSH completion
+8. root user can change own password
+9. root user can add and revoke SSH public keys
+10. logout revokes the current session server-side
+11. audit events are written for all critical auth actions
+12. migration/backfill is idempotent
+
+---
+
+## Suggested Folder Structure
+
+```text
+src/
+  features/
+    rootAuth/
+      contract/
+        types.ts
+        schemas.ts
+        errors.ts
+      domain/
+        types.ts
+        service.ts
+        loginRootUserWithPassword.ts
+        completeRootUserSshChallenge.ts
+        changeRootUserPassword.ts
+        addRootUserSshPublicKey.ts
+        revokeRootUserSshPublicKey.ts
+        logoutRootUserSession.ts
+        bootstrapExistingRootUserAuth.ts
+      persistence/
+        types.ts
+        postgres/
+          rootAuthRepository.ts
+          mappers.ts
+      transport/
+        http/
+          handlers/
+            loginRootUserWithPasswordHandler.ts
+            completeRootUserSshChallengeHandler.ts
+            changeRootUserPasswordHandler.ts
+            addRootUserSshPublicKeyHandler.ts
+            revokeRootUserSshPublicKeyHandler.ts
+            logoutRootUserSessionHandler.ts
+          routes.ts
+      lib/
+        password/
+          hashPassword.ts
+          verifyPassword.ts
+          passwordPolicy.ts
+        ssh/
+          canonicalizeChallenge.ts
+          verifySshSignature.ts
+          parsePublicKey.ts
+          fingerprintPublicKey.ts
+        sessions/
+          createSession.ts
+          revokeSession.ts
+        audit/
+          buildAuditEvent.ts
+      __tests__/
+        contract/
+        domain/
+        transport/
+        persistence/
+```
+
+---
+
+## Implementation Notes for Codex
+
+When implementing this feature:
+
+- follow the repository’s existing feature architecture
+- keep auth concerns out of `rootUsers`
+- do not store plaintext passwords
+- do not store SSH private keys
+- do not create authenticated sessions after password stage alone
+- do not let revoked keys authenticate
+- keep migration idempotent
+- keep route handlers thin
+- keep cryptographic and verification helpers out of transport handlers
