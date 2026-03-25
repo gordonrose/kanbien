@@ -1,1 +1,1 @@
-export { createRootUsersFeature } from "./integration";
+export { createRootUserFeature } from "./integration";

@@ -1,49 +1,38 @@
-# Root Users feature bundle
+# Root Users Feature Bundle
 
-## Files included
-- contract/
-- domain/
-- persistence/
-- transport/
-- integration.ts
-- index.ts
+## Files Included
 
-## Assumptions already present in your platform
-- shared `dbPool`
-- migration runner that can execute `src/features/rootUsers/persistence/migrations/*.sql`
-- Express v1 router in `src/routes/v1/index.ts`
-
-## Mounting
-```ts
-import { createRootUsersFeature } from "../../features/rootUsers";
-
-v1Router.use(
-  "/root-users",
-  createRootUsersFeature({ dbPool }),
-);
-```
-
-## Migration execution
-Add this folder to your existing migration discovery:
-```text
-src/features/rootUsers/persistence/migrations
-```
-
-## Capability routes
-- `POST /v1/root-users`
-- `GET /v1/root-users/:rootUserId`
-- `GET /v1/root-users/by-email?email=person@example.com`
-- `GET /v1/root-users`
-- `GET /v1/root-users/active`
-- `PATCH /v1/root-users/:rootUserId`
-- `DELETE /v1/root-users/:rootUserId`
-- `POST /v1/root-users/:rootUserId/remove`
-- `GET /v1/root-users/deleted`
-- `POST /v1/root-users/:rootUserId/reactivate`
-
-## Important drift callout
-Your platform spec says `entrypointExport: createRootUserFeature`, but the feature architecture naturally wants the pluralised export `createRootUsersFeature`. Pick one name and keep it consistent in:
+- `contract/`
+- `domain/`
+- `persistence/`
+- `transport/`
 - `integration.ts`
 - `index.ts`
-- platform router registration
-- platform spec
+
+## Platform Assumptions
+
+- shared `pg` `Pool`
+- feature routes mounted from `src/routes/v1/index.ts`
+- migration runner that scans `src/features/**/migrations/*.sql`
+- app-level JSON error middleware for unhandled failures
+
+## Feature Entry Point
+
+```ts
+import { createRootUserFeature } from "../../features/rootUsers";
+
+v1Router.use("/root-users", createRootUserFeature(dbPool));
+```
+
+## Important Integration Notes
+
+- The feature export is `createRootUserFeature`.
+- The router factory accepts `dbPool` directly, not `{ dbPool }`.
+- The migration runner will automatically discover `persistence/migrations/*.sql`.
+- The router handles known `RootUserError` failures locally and forwards unknown errors to the platform middleware.
+
+## API Notes
+
+- `GET /v1/root-users?email=person@example.com` performs exact email lookup.
+- `GET /v1/root-users` without `email` returns the paginated list endpoint.
+- Responses are returned directly and are not wrapped in a `{ body: ... }` envelope.

@@ -1,211 +1,67 @@
-import { Router, type Request, type Response, type NextFunction } from "express";
+import { Router, type NextFunction, type Request, type Response } from "express";
+import type { Pool } from "pg";
 import { ZodError } from "zod";
 import {
   createRootUserBodySchema,
+  deleteRootUserParamsSchema,
   getRootUserByEmailQuerySchema,
   getRootUserParamsSchema,
   listActiveRootUsersQuerySchema,
   listDeletedRootUsersQuerySchema,
   listRootUsersQuerySchema,
+  reActivateRootUserParamsSchema,
+  removeRootUserParamsSchema,
   updateRootUserBodySchema,
+  updateRootUserParamsSchema,
 } from "../contract/schemas";
-import { RootUsersError, InvalidRequestError } from "../contract/errors";
-import { createRootUsersService } from "../domain/service";
+import { InvalidRequestError, RootUserError } from "../contract/errors";
 import { createPostgresRootUsersRepository } from "../persistence/postgresRepository";
+import { createRootUsersService } from "../domain/service";
 
-type QueryValue = string | undefined;
-
-const parseDateRange = (from?: QueryValue, to?: QueryValue) =>
-  from || to ? { from, to } : undefined;
-
-const sendError = (error: unknown, response: Response) => {
-  if (error instanceof RootUsersError) {
-    return response.status(error.status).json({
-      code: error.code,
-      message: error.message,
-      ...(error.details ? { details: error.details } : {}),
-    });
+function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknown): T {
+  try { return schema.parse(input); } catch (error) {
+    if (error instanceof ZodError) {
+      const issue = error.issues[0];
+      throw new InvalidRequestError(undefined, issue ? { field: String(issue.path[0] ?? "unknown"), reason: issue.message } : undefined);
+    }
+    throw error;
   }
-
-  if (error instanceof ZodError) {
-    return response.status(400).json({
-      code: "INVALID_REQUEST",
-      message:
-        "Your request could not be accepted because one or more fields are missing or invalid.",
-      details: {
-        issues: error.issues.map((issue) => ({
-          field: issue.path.join("."),
-          reason: issue.message,
-        })),
-      },
-    });
-  }
-
-  return response.status(500).json({
-    code: "INTERNAL_ERROR",
-    message: "Something went wrong while processing the request.",
-  });
-};
-
-export interface RootUsersRouterDependencies {
-  dbPool: {
-    query: (...args: any[]) => Promise<any>;
-  };
 }
 
-export const createRootUsersRouter = (
-  dependencies: RootUsersRouterDependencies,
-): Router => {
+export function createRootUsersRouter(dbPool: Pool): Router {
   const router = Router();
-  const repository = createPostgresRootUsersRepository(dependencies.dbPool as any);
+  const repository = createPostgresRootUsersRepository(dbPool);
   const service = createRootUsersService(repository);
 
-  const wrap =
-    (
-      handler: (request: Request, response: Response, next: NextFunction) => Promise<void>,
-    ) =>
-    (request: Request, response: Response, next: NextFunction) =>
-      handler(request, response, next).catch((error) => sendError(error, response));
+  router.post("/", async (req, res, next) => { try { res.status(201).json(await service.createRootUser(parseOrThrow(createRootUserBodySchema, req.body))); } catch (e) { next(e); } });
+  router.get("/active", async (req, res, next) => { try {
+    const query = parseOrThrow(listActiveRootUsersQuerySchema, req.query);
+    res.status(200).json(await service.listActiveRootUsers({ page: query.page, pageSize: query.pageSize, orderBy: query.orderBy, orderDirection: query.orderDirection, filters: { emailPrefix: query.emailPrefix, firstNamePrefix: query.firstNamePrefix, lastNamePrefix: query.lastNamePrefix, createdAtFrom: query.createdAtFrom, createdAtTo: query.createdAtTo, updatedAtFrom: query.updatedAtFrom, updatedAtTo: query.updatedAtTo } }));
+  } catch (e) { next(e); } });
+  router.get("/deleted", async (req, res, next) => { try {
+    const query = parseOrThrow(listDeletedRootUsersQuerySchema, req.query);
+    res.status(200).json(await service.listDeletedRootUsers({ page: query.page, pageSize: query.pageSize, orderBy: query.orderBy, orderDirection: query.orderDirection, filters: { emailPrefix: query.emailPrefix, firstNamePrefix: query.firstNamePrefix, lastNamePrefix: query.lastNamePrefix, createdAtFrom: query.createdAtFrom, createdAtTo: query.createdAtTo, updatedAtFrom: query.updatedAtFrom, updatedAtTo: query.updatedAtTo, deletedAtFrom: query.deletedAtFrom, deletedAtTo: query.deletedAtTo, excludeAnonymized: query.excludeAnonymized } }));
+  } catch (e) { next(e); } });
+  router.get("/", async (req, res, next) => { try {
+    if (typeof req.query.email === "string") {
+      res.status(200).json(await service.getRootUserByEmail(parseOrThrow(getRootUserByEmailQuerySchema, req.query)));
+      return;
+    }
+    const query = parseOrThrow(listRootUsersQuerySchema, req.query);
+    res.status(200).json(await service.listRootUsers({ page: query.page, pageSize: query.pageSize, orderBy: query.orderBy, orderDirection: query.orderDirection, filters: { emailPrefix: query.emailPrefix, firstNamePrefix: query.firstNamePrefix, lastNamePrefix: query.lastNamePrefix, createdAtFrom: query.createdAtFrom, createdAtTo: query.createdAtTo, updatedAtFrom: query.updatedAtFrom, updatedAtTo: query.updatedAtTo, deletedAtFrom: query.deletedAtFrom, deletedAtTo: query.deletedAtTo, status: query.status } }));
+  } catch (e) { next(e); } });
+  router.get("/:rootUserId", async (req, res, next) => { try { res.status(200).json(await service.getRootUser(parseOrThrow(getRootUserParamsSchema, req.params))); } catch (e) { next(e); } });
+  router.patch("/:rootUserId", async (req, res, next) => { try { const params = parseOrThrow(updateRootUserParamsSchema, req.params); const body = parseOrThrow(updateRootUserBodySchema, req.body); res.status(200).json(await service.updateRootUser({ ...params, ...body })); } catch (e) { next(e); } });
+  router.delete("/:rootUserId", async (req, res, next) => { try { res.status(200).json(await service.deleteRootUser(parseOrThrow(deleteRootUserParamsSchema, req.params))); } catch (e) { next(e); } });
+  router.post("/:rootUserId/remove", async (req, res, next) => { try { res.status(200).json(await service.removeRootUser(parseOrThrow(removeRootUserParamsSchema, req.params))); } catch (e) { next(e); } });
+  router.post("/:rootUserId/reactivate", async (req, res, next) => { try { res.status(200).json(await service.reActivateRootUser(parseOrThrow(reActivateRootUserParamsSchema, req.params))); } catch (e) { next(e); } });
 
-  router.post(
-    "/",
-    wrap(async (request, response) => {
-      const body = createRootUserBodySchema.parse(request.body);
-      const created = await service.createRootUser(body);
-      response.status(201).json({ body: created });
-    }),
-  );
-
-  router.get(
-    "/by-email",
-    wrap(async (request, response) => {
-      const query = getRootUserByEmailQuerySchema.parse(request.query);
-      const item = await service.getRootUserByEmail({ email: query.email });
-      response.status(200).json({ body: item });
-    }),
-  );
-
-  router.get(
-    "/active",
-    wrap(async (request, response) => {
-      const query = listActiveRootUsersQuerySchema.parse(request.query);
-      const result = await service.listActiveRootUsers({
-        page: query.page,
-        pageSize: query.pageSize,
-        orderBy: query.orderBy,
-        orderDirection: query.orderDirection,
-        filters: {
-          emailPrefix: query.emailPrefix,
-          firstNamePrefix: query.firstNamePrefix,
-          lastNamePrefix: query.lastNamePrefix,
-          createdAt: parseDateRange(query.createdAtFrom, query.createdAtTo),
-          updatedAt: parseDateRange(query.updatedAtFrom, query.updatedAtTo),
-        },
-      });
-      response.status(200).json({ body: result });
-    }),
-  );
-
-  router.get(
-    "/deleted",
-    wrap(async (request, response) => {
-      const query = listDeletedRootUsersQuerySchema.parse(request.query);
-      const result = await service.listDeletedRootUsers({
-        page: query.page,
-        pageSize: query.pageSize,
-        orderBy: query.orderBy,
-        orderDirection: query.orderDirection,
-        filters: {
-          emailPrefix: query.emailPrefix,
-          firstNamePrefix: query.firstNamePrefix,
-          lastNamePrefix: query.lastNamePrefix,
-          createdAt: parseDateRange(query.createdAtFrom, query.createdAtTo),
-          updatedAt: parseDateRange(query.updatedAtFrom, query.updatedAtTo),
-          deletedAt: parseDateRange(query.deletedAtFrom, query.deletedAtTo),
-          excludeAnonymized: query.excludeAnonymized,
-        },
-      });
-      response.status(200).json({ body: result });
-    }),
-  );
-
-  router.get(
-    "/:rootUserId",
-    wrap(async (request, response) => {
-      const params = getRootUserParamsSchema.parse(request.params);
-      const item = await service.getRootUser(params);
-      response.status(200).json({ body: item });
-    }),
-  );
-
-  router.get(
-    "/",
-    wrap(async (request, response) => {
-      if ("email" in request.query) {
-        throw new InvalidRequestError(
-          "Use GET /v1/root-users/by-email for exact email lookup.",
-        );
-      }
-
-      const query = listRootUsersQuerySchema.parse(request.query);
-      const result = await service.listRootUsers({
-        page: query.page,
-        pageSize: query.pageSize,
-        orderBy: query.orderBy,
-        orderDirection: query.orderDirection,
-        filters: {
-          emailPrefix: query.emailPrefix,
-          firstNamePrefix: query.firstNamePrefix,
-          lastNamePrefix: query.lastNamePrefix,
-          createdAt: parseDateRange(query.createdAtFrom, query.createdAtTo),
-          updatedAt: parseDateRange(query.updatedAtFrom, query.updatedAtTo),
-          deletedAt: parseDateRange(query.deletedAtFrom, query.deletedAtTo),
-          status: query.status,
-        },
-      });
-      response.status(200).json({ body: result });
-    }),
-  );
-
-  router.patch(
-    "/:rootUserId",
-    wrap(async (request, response) => {
-      const params = getRootUserParamsSchema.parse(request.params);
-      const body = updateRootUserBodySchema.parse(request.body);
-      const item = await service.updateRootUser({
-        rootUserId: params.rootUserId,
-        ...body,
-      });
-      response.status(200).json({ body: item });
-    }),
-  );
-
-  router.delete(
-    "/:rootUserId",
-    wrap(async (request, response) => {
-      const params = getRootUserParamsSchema.parse(request.params);
-      const item = await service.deleteRootUser(params);
-      response.status(200).json({ body: item });
-    }),
-  );
-
-  router.post(
-    "/:rootUserId/remove",
-    wrap(async (request, response) => {
-      const params = getRootUserParamsSchema.parse(request.params);
-      const item = await service.removeRootUser(params);
-      response.status(200).json({ body: item });
-    }),
-  );
-
-  router.post(
-    "/:rootUserId/reactivate",
-    wrap(async (request, response) => {
-      const params = getRootUserParamsSchema.parse(request.params);
-      const item = await service.reActivateRootUser(params);
-      response.status(200).json({ body: item });
-    }),
-  );
-
+  router.use((error: unknown, _req: Request, res: Response, next: NextFunction) => {
+    if (error instanceof RootUserError) {
+      res.status(error.status).json({ code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) });
+      return;
+    }
+    next(error);
+  });
   return router;
-};
+}

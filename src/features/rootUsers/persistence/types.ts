@@ -1,15 +1,12 @@
-export type RootUserStatus = "active" | "inactive";
+export type RootUserRecordStatus = "active" | "inactive";
 
 export interface RootUserRecord {
   root_user_id: string;
   email: string;
-  normalized_email: string;
   first_name: string | null;
-  normalized_first_name: string | null;
   last_name: string | null;
-  normalized_last_name: string | null;
   anonymized: boolean;
-  status: RootUserStatus;
+  status: RootUserRecordStatus;
   created_at: Date;
   updated_at: Date;
   deleted_at: Date | null;
@@ -18,28 +15,19 @@ export interface RootUserRecord {
 export interface CreateRootUserRecordInput {
   rootUserId: string;
   email: string;
-  normalizedEmail: string;
-  firstName: string | null;
-  normalizedFirstName: string | null;
-  lastName: string | null;
-  normalizedLastName: string | null;
-  status: RootUserStatus;
+  firstName?: string;
+  lastName?: string;
 }
 
-export interface GetRootUserByIdInput {
+export interface UpdateRootUserRecordInput {
   rootUserId: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  status?: RootUserRecordStatus;
 }
 
-export interface GetRootUserByEmailInput {
-  normalizedEmail: string;
-}
-
-export interface ListPagination {
-  limit: number;
-  offset: number;
-}
-
-export interface RootUserListWhere {
+export interface RootUserRepositoryListFilters {
   emailPrefix?: string;
   firstNamePrefix?: string;
   lastNamePrefix?: string;
@@ -49,55 +37,20 @@ export interface RootUserListWhere {
   updatedAtTo?: string;
   deletedAtFrom?: string;
   deletedAtTo?: string;
-  status?: RootUserStatus;
-  includeDeleted: boolean;
-  deletedOnly: boolean;
-  excludeAnonymized: boolean;
-  activeOnly: boolean;
+  status?: RootUserRecordStatus;
+  excludeAnonymized?: boolean;
 }
 
-export interface RootUserListOrder {
-  orderBy:
-    | "email"
-    | "firstName"
-    | "lastName"
-    | "status"
-    | "createdAt"
-    | "updatedAt"
-    | "deletedAt";
+export interface RootUserRepositoryListInput {
+  page: number;
+  pageSize: number;
+  orderBy: string;
   orderDirection: "asc" | "desc";
+  filters: RootUserRepositoryListFilters;
 }
 
-export interface UpdateRootUserRecordInput {
-  rootUserId: string;
-  email?: string;
-  normalizedEmail?: string;
-  firstName?: string | null;
-  normalizedFirstName?: string | null;
-  lastName?: string | null;
-  normalizedLastName?: string | null;
-  status?: RootUserStatus;
-}
-
-export interface SoftDeleteRootUserRecordInput {
-  rootUserId: string;
-}
-
-export interface RemoveRootUserRecordInput {
-  rootUserId: string;
-  anonymizedEmail: string;
-  normalizedAnonymizedEmail: string;
-  anonymizedFirstName: string;
-  normalizedAnonymizedFirstName: string;
-  anonymizedLastName: string;
-  normalizedAnonymizedLastName: string;
-}
-
-export interface ReActivateRootUserRecordInput {
-  rootUserId: string;
-}
-
-export interface PaginatedRootUserRecords {
+export interface RootUserRepositoryListResult {
   items: RootUserRecord[];
-  totalItems: number;
+  totalSearchableRecords: number;
+  totalMatchingRecords: number;
 }

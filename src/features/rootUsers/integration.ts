@@ -1,12 +1,6 @@
-import type { Router } from "express";
+import type { Pool } from "pg";
 import { createRootUsersRouter } from "./transport/router";
 
-export interface RootUsersFeatureDependencies {
-  dbPool: {
-    query: (...args: any[]) => Promise<any>;
-  };
+export function createRootUserFeature(dbPool: Pool) {
+  return createRootUsersRouter(dbPool);
 }
-
-export const createRootUsersFeature = (
-  dependencies: RootUsersFeatureDependencies,
-): Router => createRootUsersRouter(dependencies);

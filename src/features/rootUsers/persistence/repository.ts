@@ -1,34 +1,22 @@
 import type {
   CreateRootUserRecordInput,
-  GetRootUserByEmailInput,
-  GetRootUserByIdInput,
-  PaginatedRootUserRecords,
-  RemoveRootUserRecordInput,
-  ReActivateRootUserRecordInput,
-  RootUserListOrder,
-  RootUserListWhere,
   RootUserRecord,
-  SoftDeleteRootUserRecordInput,
+  RootUserRepositoryListInput,
+  RootUserRepositoryListResult,
   UpdateRootUserRecordInput,
-  ListPagination,
 } from "./types";
 
 export interface RootUsersRepository {
   create(input: CreateRootUserRecordInput): Promise<RootUserRecord>;
-  findVisibleById(input: GetRootUserByIdInput): Promise<RootUserRecord | null>;
-  findVisibleByEmail(input: GetRootUserByEmailInput): Promise<RootUserRecord | null>;
-  findAnyById(input: GetRootUserByIdInput): Promise<RootUserRecord | null>;
-  list(
-    where: RootUserListWhere,
-    order: RootUserListOrder,
-    pagination: ListPagination,
-  ): Promise<PaginatedRootUserRecords>;
-  updateVisible(input: UpdateRootUserRecordInput): Promise<RootUserRecord | null>;
-  softDelete(input: SoftDeleteRootUserRecordInput): Promise<RootUserRecord | null>;
-  remove(input: RemoveRootUserRecordInput): Promise<RootUserRecord | null>;
-  reactivate(input: ReActivateRootUserRecordInput): Promise<RootUserRecord | null>;
-  existsActiveByNormalizedEmail(
-    normalizedEmail: string,
-    excludeRootUserId?: string,
-  ): Promise<boolean>;
+  findVisibleById(rootUserId: string): Promise<RootUserRecord | null>;
+  findVisibleByEmail(email: string): Promise<RootUserRecord | null>;
+  findAnyById(rootUserId: string): Promise<RootUserRecord | null>;
+  findNonDeletedByEmail(email: string): Promise<RootUserRecord | null>;
+  listAll(input: RootUserRepositoryListInput): Promise<RootUserRepositoryListResult>;
+  listActive(input: RootUserRepositoryListInput): Promise<RootUserRepositoryListResult>;
+  listDeleted(input: RootUserRepositoryListInput): Promise<RootUserRepositoryListResult>;
+  update(input: UpdateRootUserRecordInput): Promise<RootUserRecord>;
+  softDelete(rootUserId: string): Promise<RootUserRecord>;
+  remove(rootUserId: string, anonymizedEmail: string, anonymizedFirstName: string, anonymizedLastName: string): Promise<RootUserRecord>;
+  reactivate(rootUserId: string): Promise<RootUserRecord>;
 }
