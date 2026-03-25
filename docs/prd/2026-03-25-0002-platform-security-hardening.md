@@ -276,6 +276,36 @@ This platform security layer should be reusable by:
   limiting if needed
 - rollback and containment behavior must be documented
 
+## Operational Note
+
+### Owner
+
+Platform maintainers own the shared security middleware, rate-limit policies,
+and platform security persistence introduced by this change.
+
+### Monitoring
+
+Operational review should watch at least:
+
+- frequency of `429 RATE_LIMITED`
+- frequency of `AUTH_THROTTLED` and `AUTH_LOCKED_DOWN`
+- growth in auth abuse audit events such as `auth_rate_limited` and lock-down
+  start events
+- unexpected drops in successful login volume after deployment
+
+### Emergency Disablement
+
+If the hardening layer causes unacceptable false positives or blocks legitimate
+traffic, set `PLATFORM_SECURITY_ENABLED=false` and redeploy. This disables the
+shared rate-limiting and lock-down layer while leaving authentication and
+session validation in place.
+
+### Rollback
+
+If the release must be reverted fully, deploy the previous application version
+or return to the pre-hardening checkpoint branch. The platform security tables
+are additive and may remain in the database during rollback.
+
 ---
 
 ## Acceptance Criteria
@@ -303,28 +333,48 @@ This phase is complete when all of the following are true:
 
 ### NIST SSDF
 
-- Status: Planned
+- Status: Partial
 - Notes:
-  - This change directly addresses secure design, protected implementation, and
-    abuse-case handling for the platform.
-  - Implementation must include rollback and operational control notes.
+  - Shared security-sensitive behavior is centralized in platform middleware
+    and shared persistence rather than scattered across feature routers.
+  - New configuration is environment-driven and the repo now includes an
+    operational note covering owner, disablement, and rollback.
+  - Remaining work includes deterministic automated tests for throttling,
+    lock-down behavior, and abuse-audit branches.
 
 ### OWASP ASVS
 
-- Status: Planned
+- Status: Partial
 - Notes:
-  - This change targets ASVS concerns around HTTP security headers, session and
-    authentication abuse controls, logging, and safe API behavior.
-  - Sensitive endpoints must receive explicit abuse protections.
+  - The platform now applies baseline HTTP security headers, explicit `429`
+    responses, server-side abuse controls on sensitive auth endpoints, and
+    audit-visible auth abuse events.
+  - Public auth routes and protected routes now enforce rate limiting through
+    shared server-side middleware.
+  - Remaining work is stronger deterministic security test coverage and later
+    production monitoring maturity, not the absence of the controls themselves.
 
 ### NIST CSF 2.0
 
-- Status: Planned
+- Status: Partial
 - Notes:
-  - This change improves protection, detection, and response readiness for the
-    platform.
-  - Observability and operational disablement paths must be included in the
-    implementation.
+  - The change improves Protect and Detect through shared security headers,
+    throttling, lock-down behavior, and durable abuse audit events.
+  - The PRD now records owner, monitoring signals, emergency disablement, and
+    rollback direction for the hardening layer.
+  - Remaining work is a fuller production monitoring and response/runbook model
+    rather than no operational plan at all.
+
+### ISO 27001 / 27002
+
+- Status: Partial
+- Notes:
+  - The change is now traceable through a PRD, ADR, updated architecture docs,
+    and a documented operational note.
+  - A new third-party dependency, `helmet`, has been introduced intentionally
+    and is visible in the controlled dependency set.
+  - Remaining work is fuller approval and test evidence if this were being
+    prepared for a stricter audit trail.
 
 ### GDPR / Data Transfer
 
@@ -332,8 +382,9 @@ This phase is complete when all of the following are true:
 - Notes:
   - IP addresses and user agents are personal data and will appear in abuse
     visibility events.
-  - Implementation should avoid unnecessary duplication and should document
-    retention expectations for security events.
+  - The current implementation keeps the data use tied to security monitoring,
+    but retention and operational handling expectations still need to be
+    documented more fully before a stronger privacy pass.
 
 ### EU AI Act
 

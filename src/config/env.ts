@@ -40,6 +40,15 @@ function readEnvOrDefault(name: string, defaultValue: string): string {
   return readEnv(name) ?? defaultValue;
 }
 
+function readBooleanEnvOrDefault(name: string, defaultValue: boolean): boolean {
+  const value = readEnv(name);
+  return value === undefined ? defaultValue : parseBoolean(name, value);
+}
+
+function readNumberEnvOrDefault(name: string, defaultValue: number): number {
+  return parseNumber(name, readEnvOrDefault(name, String(defaultValue)));
+}
+
 const nodeEnv = requireEnv("NODE_ENV");
 const port = parseNumber("PORT", requireEnv("PORT"));
 
@@ -68,6 +77,47 @@ const rootAuthPasswordMinLength = parseNumber(
   readEnvOrDefault("ROOT_AUTH_PASSWORD_MIN_LENGTH", "12"),
 );
 
+const platformSecurityEnabled = readBooleanEnvOrDefault("PLATFORM_SECURITY_ENABLED", true);
+const publicReadWindowSeconds = readNumberEnvOrDefault("PUBLIC_READ_WINDOW_SECONDS", 60);
+const publicReadMaxAttempts = readNumberEnvOrDefault("PUBLIC_READ_MAX_ATTEMPTS", 120);
+const publicAuthWindowSeconds = readNumberEnvOrDefault("PUBLIC_AUTH_WINDOW_SECONDS", 300);
+const publicAuthMaxAttempts = readNumberEnvOrDefault("PUBLIC_AUTH_MAX_ATTEMPTS", 15);
+const publicWriteWindowSeconds = readNumberEnvOrDefault("PUBLIC_WRITE_WINDOW_SECONDS", 60);
+const publicWriteMaxAttempts = readNumberEnvOrDefault("PUBLIC_WRITE_MAX_ATTEMPTS", 30);
+const authenticatedGeneralWindowSeconds = readNumberEnvOrDefault(
+  "AUTHENTICATED_GENERAL_WINDOW_SECONDS",
+  60,
+);
+const authenticatedGeneralMaxAttempts = readNumberEnvOrDefault(
+  "AUTHENTICATED_GENERAL_MAX_ATTEMPTS",
+  240,
+);
+const authenticatedSensitiveWindowSeconds = readNumberEnvOrDefault(
+  "AUTHENTICATED_SENSITIVE_WINDOW_SECONDS",
+  300,
+);
+const authenticatedSensitiveMaxAttempts = readNumberEnvOrDefault(
+  "AUTHENTICATED_SENSITIVE_MAX_ATTEMPTS",
+  60,
+);
+const authFailureWindowSeconds = readNumberEnvOrDefault("AUTH_FAILURE_WINDOW_SECONDS", 900);
+const authFailureIpLockdownThreshold = readNumberEnvOrDefault(
+  "AUTH_FAILURE_IP_LOCKDOWN_THRESHOLD",
+  25,
+);
+const authFailureAccountLockdownThreshold = readNumberEnvOrDefault(
+  "AUTH_FAILURE_ACCOUNT_LOCKDOWN_THRESHOLD",
+  8,
+);
+const authFailureIpAccountLockdownThreshold = readNumberEnvOrDefault(
+  "AUTH_FAILURE_IP_ACCOUNT_LOCKDOWN_THRESHOLD",
+  5,
+);
+const authLockdownDurationSeconds = readNumberEnvOrDefault(
+  "AUTH_LOCKDOWN_DURATION_SECONDS",
+  900,
+);
+
 export const env = {
   nodeEnv,
   port,
@@ -85,5 +135,37 @@ export const env = {
     challengeTtlSeconds: rootAuthChallengeTtlSeconds,
     sessionTtlSeconds: rootAuthSessionTtlSeconds,
     passwordMinLength: rootAuthPasswordMinLength,
+  },
+  platformSecurity: {
+    enabled: platformSecurityEnabled,
+    rateLimitPolicies: {
+      publicRead: {
+        windowSeconds: publicReadWindowSeconds,
+        maxAttempts: publicReadMaxAttempts,
+      },
+      publicAuth: {
+        windowSeconds: publicAuthWindowSeconds,
+        maxAttempts: publicAuthMaxAttempts,
+      },
+      publicWrite: {
+        windowSeconds: publicWriteWindowSeconds,
+        maxAttempts: publicWriteMaxAttempts,
+      },
+      authenticatedGeneral: {
+        windowSeconds: authenticatedGeneralWindowSeconds,
+        maxAttempts: authenticatedGeneralMaxAttempts,
+      },
+      authenticatedSensitive: {
+        windowSeconds: authenticatedSensitiveWindowSeconds,
+        maxAttempts: authenticatedSensitiveMaxAttempts,
+      },
+    },
+    authAbuse: {
+      failureWindowSeconds: authFailureWindowSeconds,
+      ipLockdownThreshold: authFailureIpLockdownThreshold,
+      accountLockdownThreshold: authFailureAccountLockdownThreshold,
+      ipAccountLockdownThreshold: authFailureIpAccountLockdownThreshold,
+      lockdownDurationSeconds: authLockdownDurationSeconds,
+    },
   },
 } as const;

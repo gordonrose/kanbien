@@ -3,7 +3,7 @@
     "_postman_id": "8f5ddbc0-c542-4ea7-92c3-84c4c3e63626",
     "name": "Kanbien Root Platform",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for root-user authentication and the protected rootUsers feature."
+    "description": "Postman collection for root-user authentication and the protected rootUsers feature. Public auth routes may now return 429 RATE_LIMITED, AUTH_THROTTLED, or AUTH_LOCKED_DOWN. Protected routes may return 429 RATE_LIMITED when shared platform security middleware rejects the request."
   },
   "variable": [
     {
@@ -71,6 +71,7 @@
     },
     {
       "name": "Root Auth - Login Password",
+      "description": "Stage one of root login. On success it stores challenge variables. Repeated attempts may return 429 RATE_LIMITED, AUTH_THROTTLED, or AUTH_LOCKED_DOWN.",
       "request": {
         "method": "POST",
         "header": [
@@ -103,6 +104,8 @@
             "type": "text/javascript",
             "exec": [
               "const json = pm.response.json();",
+              "if (!json.challengeId) pm.collectionVariables.unset(\"challengeId\");",
+              "if (!json.challengeText) pm.collectionVariables.unset(\"challengeText\");",
               "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
               "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
             ]
@@ -112,6 +115,7 @@
     },
     {
       "name": "Root Auth - Sign Challenge",
+      "description": "Local helper request that signs the stored challenge text with your configured SSH private key.",
       "request": {
         "method": "POST",
         "header": [
@@ -150,6 +154,7 @@
     },
     {
       "name": "Root Auth - Login SSH",
+      "description": "Stage two of root login. On success it stores the bearer session token. Repeated failures may now trigger 429 RATE_LIMITED, AUTH_THROTTLED, or AUTH_LOCKED_DOWN.",
       "request": {
         "method": "POST",
         "header": [
@@ -182,6 +187,7 @@
             "type": "text/javascript",
             "exec": [
               "const json = pm.response.json();",
+              "if (!json.sessionId) pm.collectionVariables.unset(\"sessionToken\");",
               "if (json.sessionId) pm.collectionVariables.set(\"sessionToken\", json.sessionId);"
             ]
           }
@@ -190,6 +196,7 @@
     },
     {
       "name": "Root Auth - Create Principal",
+      "description": "Protected root-only credential-management route. This request can now be rejected with 429 RATE_LIMITED by authenticated-sensitive platform security middleware.",
       "request": {
         "method": "POST",
         "header": [
@@ -221,6 +228,7 @@
     },
     {
       "name": "Root Auth - Change Password",
+      "description": "Protected route. This request can now be rejected with 429 RATE_LIMITED by authenticated-sensitive platform security middleware.",
       "request": {
         "method": "POST",
         "header": [

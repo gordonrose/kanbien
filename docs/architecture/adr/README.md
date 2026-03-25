@@ -21,3 +21,4 @@ evolves.
 - `0007-standardize-cross-feature-api-and-entity-behavior-defaults.md`
 - `0008-standardize-searchable-field-storage-and-query-rules.md`
 - `0009-separate-authentication-from-business-features.md`
+- `0010-use-shared-platform-security-middleware.md`

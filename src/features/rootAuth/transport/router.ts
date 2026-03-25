@@ -1,7 +1,10 @@
 import { Router, type NextFunction, type Request, type Response } from "express";
+import { env } from "../../../config/env";
 import { ZodError } from "zod";
 import { createRequireRootSession } from "../../../lib/auth/middleware";
 import { getRequiredRootSessionContext } from "../../../lib/auth/requestContext";
+import { createRateLimitMiddleware } from "../../../lib/security/rateLimit";
+import type { PlatformSecurityRepository } from "../../../lib/security/repository";
 import {
   addRootUserSshPublicKeyBodySchema,
   changeRootUserPasswordBodySchema,
@@ -14,7 +17,7 @@ import {
 import { InvalidRequestError, RootAuthError } from "../contract/errors";
 import type { RootAuthRepository } from "../persistence/repository";
 import { createRootAuthService } from "../domain/service";
-import type { RootUsersRepository } from "../../rootUsers/persistence/repository";
+import type { RootUsersAuthStateReader } from "../../rootUsers";
 
 function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknown): T {
   try {
@@ -43,13 +46,53 @@ function getRequestMetadata(request: Request): { ipAddress?: string; userAgent?:
 
 export function createRootAuthRouter(
   authRepository: RootAuthRepository,
-  rootUsersRepository: RootUsersRepository,
+  rootUsersAuthStateReader: RootUsersAuthStateReader,
+  platformSecurityRepository: PlatformSecurityRepository,
 ): Router {
   const router = Router();
-  const service = createRootAuthService(authRepository, rootUsersRepository);
+  const service = createRootAuthService(
+    authRepository,
+    rootUsersAuthStateReader,
+    platformSecurityRepository,
+  );
   const requireRootSession = createRequireRootSession(authRepository);
+  const publicAuthRateLimit = createRateLimitMiddleware({
+    enabled: env.platformSecurity.enabled,
+    repository: platformSecurityRepository,
+    policy: {
+      endpointClass: "public-auth",
+      windowSeconds: env.platformSecurity.rateLimitPolicies.publicAuth.windowSeconds,
+      maxAttempts: env.platformSecurity.rateLimitPolicies.publicAuth.maxAttempts,
+      responseCode: "AUTH_THROTTLED",
+      responseMessage: "Too many authentication attempts. Please wait and try again.",
+    },
+    subjectScope: "ip",
+    getSubjectKey: (request) => request.ip ?? null,
+    signal: "public-auth",
+    createAuditEvent: (request) => ({
+      eventType: "auth_rate_limited",
+      eventOutcome: "failure",
+      ipAddress: request.ip,
+      userAgent: request.header("user-agent") ?? undefined,
+    }),
+  });
+  const authenticatedSensitiveRateLimit = createRateLimitMiddleware({
+    enabled: env.platformSecurity.enabled,
+    repository: platformSecurityRepository,
+    policy: {
+      endpointClass: "authenticated-sensitive",
+      windowSeconds: env.platformSecurity.rateLimitPolicies.authenticatedSensitive.windowSeconds,
+      maxAttempts: env.platformSecurity.rateLimitPolicies.authenticatedSensitive.maxAttempts,
+      responseCode: "RATE_LIMITED",
+      responseMessage: "Too many requests. Please wait and try again.",
+    },
+    subjectScope: "auth_user",
+    getSubjectKey: (request) =>
+      request.rootSession ? `${request.ip ?? "unknown"}|${request.rootSession.rootUserId}` : null,
+    signal: "authenticated-sensitive",
+  });
 
-  router.post("/login/password", async (request, response, next) => {
+  router.post("/login/password", publicAuthRateLimit, async (request, response, next) => {
     try {
       const body = parseOrThrow(loginRootUserWithPasswordBodySchema, request.body);
       const result = await service.loginRootUserWithPassword({
@@ -62,7 +105,7 @@ export function createRootAuthRouter(
     }
   });
 
-  router.post("/login/ssh", async (request, response, next) => {
+  router.post("/login/ssh", publicAuthRateLimit, async (request, response, next) => {
     try {
       const body = parseOrThrow(completeRootUserSshChallengeBodySchema, request.body);
       const result = await service.completeRootUserSshChallenge({
@@ -76,6 +119,7 @@ export function createRootAuthRouter(
   });
 
   router.use(requireRootSession);
+  router.use(authenticatedSensitiveRateLimit);
 
   router.post("/principals", async (request, response, next) => {
     try {

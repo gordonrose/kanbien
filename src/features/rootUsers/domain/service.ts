@@ -17,30 +17,30 @@ import type {
   RootUser,
   RootUserListInput,
   RootUserListResult,
+  RootUserData,
   UpdateRootUserInput,
 } from "./types";
 import type { RootUsersRepository } from "../persistence/repository";
-import type { RootUserRecord } from "../persistence/types";
 
 function toCountValue(value: number): CountValue {
   return value > 10000 ? "10000+" : value;
 }
 
-function toDomain(record: RootUserRecord): RootUser {
+function toDomain(record: RootUserData): RootUser {
   return {
-    rootUserId: record.root_user_id,
+    rootUserId: record.rootUserId,
     email: record.email,
-    firstName: record.first_name ?? undefined,
-    lastName: record.last_name ?? undefined,
+    firstName: record.firstName,
+    lastName: record.lastName,
     anonymized: record.anonymized,
     status: record.status,
-    createdAt: record.created_at.toISOString(),
-    updatedAt: record.updated_at.toISOString(),
-    deletedAt: record.deleted_at ? record.deleted_at.toISOString() : null,
+    createdAt: record.createdAt.toISOString(),
+    updatedAt: record.updatedAt.toISOString(),
+    deletedAt: record.deletedAt ? record.deletedAt.toISOString() : null,
   };
 }
 
-function toListResult(records: RootUserRecord[], page: number, pageSize: number, totalSearchableRecords: number, totalMatchingRecords: number): RootUserListResult {
+function toListResult(records: RootUserData[], page: number, pageSize: number, totalSearchableRecords: number, totalMatchingRecords: number): RootUserListResult {
   return {
     items: records.map(toDomain),
     page,
@@ -94,7 +94,7 @@ export function createRootUsersService(repository: RootUsersRepository): RootUse
       if (!current) throw new RootUserNotFoundError("We could not find an active root user with that ID.", { field: "rootUserId" });
       if (input.email && input.email !== current.email) {
         const collision = await repository.findNonDeletedByEmail(input.email);
-        if (collision && collision.root_user_id !== input.rootUserId) throw new RootUserEmailAlreadyExistsError();
+        if (collision && collision.rootUserId !== input.rootUserId) throw new RootUserEmailAlreadyExistsError();
       }
       return toDomain(await repository.update(input));
     },
@@ -102,7 +102,7 @@ export function createRootUsersService(repository: RootUsersRepository): RootUse
       const current = await repository.findAnyById(input.rootUserId);
       if (!current) throw new RootUserNotFoundError("We could not find an active root user with that ID.", { field: "rootUserId" });
       if (current.anonymized) throw new RootUserAlreadyAnonymizedError("That root user has already been anonymized and cannot be deleted again.");
-      if (current.deleted_at) throw new RootUserAlreadyDeletedError();
+      if (current.deletedAt) throw new RootUserAlreadyDeletedError();
       return toDomain(await repository.softDelete(input.rootUserId));
     },
     async removeRootUser(input) {
@@ -120,10 +120,10 @@ export function createRootUsersService(repository: RootUsersRepository): RootUse
     async reActivateRootUser(input) {
       const current = await repository.findAnyById(input.rootUserId);
       if (!current) throw new RootUserNotFoundError("We could not find a deleted root user with that ID.", { field: "rootUserId" });
-      if (!current.deleted_at) throw new RootUserNotDeletedError();
+      if (!current.deletedAt) throw new RootUserNotDeletedError();
       if (current.anonymized) throw new RootUserAlreadyAnonymizedError("That root user has been anonymized and cannot be reactivated.");
       const collision = await repository.findNonDeletedByEmail(current.email);
-      if (collision && collision.root_user_id !== input.rootUserId) throw new RootUserEmailAlreadyExistsError();
+      if (collision && collision.rootUserId !== input.rootUserId) throw new RootUserEmailAlreadyExistsError();
       return toDomain(await repository.reactivate(input.rootUserId));
     },
   };

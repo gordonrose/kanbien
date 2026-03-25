@@ -1,8 +1,11 @@
 import { randomBytes } from "node:crypto";
 import { env } from "../../../config/env";
-import type { RootUsersRepository } from "../../rootUsers/persistence/repository";
+import { createRootAuthAbuseProtection } from "../../../lib/security/rootAuthAbuse";
+import type { PlatformSecurityRepository } from "../../../lib/security/repository";
+import type { RootUsersAuthStateReader } from "../../rootUsers";
 import {
   AuthPrincipalEmailAlreadyExistsError,
+  AuthLockedDownError,
   DuplicateSshPublicKeyError,
   InvalidCredentialsError,
   InvalidCurrentPasswordError,
@@ -106,13 +109,23 @@ export interface RootAuthService {
 
 export function createRootAuthService(
   authRepository: RootAuthRepository,
-  rootUsersRepository: RootUsersRepository,
+  rootUsersAuthStateReader: RootUsersAuthStateReader,
+  platformSecurityRepository: PlatformSecurityRepository,
 ): RootAuthService {
+  const abuseProtection = createRootAuthAbuseProtection(
+    platformSecurityRepository,
+    {
+      enabled: env.platformSecurity.enabled,
+      ...env.platformSecurity.authAbuse,
+    },
+    () => new AuthLockedDownError(),
+  );
+
   return {
     async createRootUserAuthPrincipal(input) {
       assertPasswordPolicy(input.password, env.rootAuth.passwordMinLength);
 
-      const rootUser = await rootUsersRepository.findAuthStateById(input.rootUserId);
+      const rootUser = await rootUsersAuthStateReader.findAuthStateById(input.rootUserId);
 
       if (!rootUser) {
         throw new RootUserNotFoundError();
@@ -156,6 +169,11 @@ export function createRootAuthService(
     },
     async loginRootUserWithPassword(input) {
       const normalizedEmail = input.email.trim().toLowerCase();
+      await abuseProtection.assertPasswordAttemptAllowed({
+        normalizedEmail,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
       const principal = await authRepository.findPrincipalByNormalizedEmail(normalizedEmail);
 
       if (!principal) {
@@ -166,6 +184,11 @@ export function createRootAuthService(
           ipAddress: input.ipAddress,
           userAgent: input.userAgent,
           occurredAt: new Date(),
+        });
+        await abuseProtection.recordPasswordAttemptFailure({
+          normalizedEmail,
+          ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
         });
         throw new InvalidCredentialsError();
       }
@@ -183,10 +206,17 @@ export function createRootAuthService(
           userAgent: input.userAgent,
           occurredAt: new Date(),
         });
+        await abuseProtection.recordPasswordAttemptFailure({
+          normalizedEmail,
+          authPrincipalId: principal.auth_principal_id,
+          rootUserId: principal.root_user_id,
+          ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
+        });
         throw new InvalidCredentialsError();
       }
 
-      const rootUser = await rootUsersRepository.findAuthStateById(principal.root_user_id);
+      const rootUser = await rootUsersAuthStateReader.findAuthStateById(principal.root_user_id);
 
       if (!rootUser) {
         throw new InvalidCredentialsError();
@@ -204,6 +234,13 @@ export function createRootAuthService(
           ipAddress: input.ipAddress,
           userAgent: input.userAgent,
           occurredAt: new Date(),
+        });
+        await abuseProtection.recordPasswordAttemptFailure({
+          normalizedEmail,
+          authPrincipalId: principal.auth_principal_id,
+          rootUserId: principal.root_user_id,
+          ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
         });
         throw error;
       }
@@ -257,7 +294,14 @@ export function createRootAuthService(
         throw new InvalidCredentialsError();
       }
 
-      const rootUser = await rootUsersRepository.findAuthStateById(principal.root_user_id);
+      await abuseProtection.assertSshAttemptAllowed({
+        authPrincipalId: principal.auth_principal_id,
+        rootUserId: principal.root_user_id,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+
+      const rootUser = await rootUsersAuthStateReader.findAuthStateById(principal.root_user_id);
 
       if (!rootUser) {
         throw new InvalidCredentialsError();
@@ -275,6 +319,12 @@ export function createRootAuthService(
           ipAddress: input.ipAddress,
           userAgent: input.userAgent,
           occurredAt: new Date(),
+        });
+        await abuseProtection.recordSshAttemptFailure({
+          authPrincipalId: principal.auth_principal_id,
+          rootUserId: principal.root_user_id,
+          ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
         });
         throw error;
       }
@@ -302,6 +352,12 @@ export function createRootAuthService(
           userAgent: input.userAgent,
           occurredAt: new Date(),
         });
+        await abuseProtection.recordSshAttemptFailure({
+          authPrincipalId: principal.auth_principal_id,
+          rootUserId: principal.root_user_id,
+          ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
+        });
         throw error;
       }
 
@@ -327,6 +383,11 @@ export function createRootAuthService(
         userAgent: input.userAgent,
         occurredAt: authenticatedAt,
       });
+      await abuseProtection.clearAccountFailureState({
+        normalizedEmail: principal.login_email_normalized,
+        authPrincipalId: principal.auth_principal_id,
+        ipAddress: input.ipAddress,
+      });
 
       return toSessionSummary(session);
     },
@@ -336,6 +397,16 @@ export function createRootAuthService(
       const accepted = await authRepository.verifyPassword(input.authPrincipalId, input.currentPassword);
 
       if (!accepted) {
+        await authRepository.createAuditEvent({
+          eventId: createPrefixedId("evt"),
+          authPrincipalId: input.authPrincipalId,
+          rootUserId: input.rootUserId,
+          eventType: "password_change_rejected",
+          eventOutcome: "failure",
+          ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
+          occurredAt: new Date(),
+        });
         throw new InvalidCurrentPasswordError();
       }
 

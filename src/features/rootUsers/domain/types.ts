@@ -13,6 +13,26 @@ export interface RootUser {
   deletedAt: string | null;
 }
 
+export interface RootUserData {
+  rootUserId: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  anonymized: boolean;
+  status: RootUserStatus;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+}
+
+export interface RootUserAuthState {
+  rootUserId: string;
+  email: string;
+  status: RootUserStatus;
+  anonymized: boolean;
+  deletedAt: Date | null;
+}
+
 export interface CreateRootUserInput {
   email: string;
   firstName?: string;

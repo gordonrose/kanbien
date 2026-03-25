@@ -13,6 +13,8 @@ Today the system has:
 - two mounted features: `rootUsers` and `rootAuth`
 - one shared PostgreSQL connection pool
 - one migration runner that discovers feature-scoped SQL migrations
+- one shared platform security layer for headers, rate limiting, and auth abuse
+  controls
 
 ## Runtime Shape
 
@@ -25,13 +27,15 @@ Today the system has:
 ### Request Flow
 
 1. Requests enter the Express app in `src/app.ts`.
-2. Requests are routed under `/v1`.
-3. `src/routes/v1/index.ts` dispatches to explicitly registered feature routers.
-4. Auth-protected routes pass through shared bearer-session middleware.
-5. Feature transport code validates input and invokes feature services.
-6. Feature services use repositories to talk to PostgreSQL.
-7. Known feature errors are converted to JSON near the feature boundary.
-8. Unknown errors fall through to the app-level JSON error middleware.
+2. Global security middleware applies shared headers and JSON parsing.
+3. Requests are routed under `/v1`.
+4. `src/routes/v1/index.ts` applies route-class-specific rate limiting and
+   dispatches to explicitly registered feature routers.
+5. Auth-protected routes pass through shared bearer-session middleware.
+6. Feature transport code validates input and invokes feature services.
+7. Feature services use repositories to talk to PostgreSQL.
+8. Known feature errors are converted to JSON near the feature boundary.
+9. Unknown errors fall through to the app-level JSON error middleware.
 
 ## Source Layout
 
@@ -51,6 +55,8 @@ Today the system has:
   Migration discovery and execution.
 - `src/lib/auth/*`
   Shared root-session middleware and request auth context.
+- `src/lib/security/*`
+  Shared rate limiting, lock-down persistence, and root-auth abuse controls.
 
 ### Features
 
@@ -70,7 +76,8 @@ Each feature follows the same internal structure:
 - `integration.ts`
   feature entry point for platform wiring.
 - `index.ts`
-  exported public surface for the feature bundle.
+  exported public surface for the feature bundle, including any approved
+  cross-feature seams.
 
 ### Feature Anatomy And Naming Discipline
 
@@ -119,7 +126,10 @@ The current feature convention is:
   Exports `create<FeatureName>Feature` and wires feature dependencies into the
   router.
 - `index.ts`
-  Re-exports the feature's public entry point.
+  Re-exports the feature's public entry point and any approved narrow
+  cross-feature seams.
+- Cross-feature reads should happen through exported feature seams, not by
+  importing another feature's private persistence adapter or DB record types.
 
 This structure is intended to keep feature internals replaceable while making
 feature creation repeatable.
@@ -134,10 +144,34 @@ Current auth model:
 - `rootAuth` owns root-user auth principals, SSH public keys, login challenges,
   sessions, and auth audit events
 - `rootUsers` remains authoritative for root-user lifecycle state
+- `rootAuth` reads root-user sign-in eligibility through an exported
+  `rootUsers` auth-state reader rather than `rootUsers` private persistence
+  internals
 - root-user authentication is password plus SSH proof
 - authenticated requests use opaque bearer tokens backed by server-side session
   records
 - request authentication is separate from future authorization and scope checks
+
+### Platform Security Shape
+
+The current platform security layer is shared middleware and shared persistence,
+not feature-local logic duplicated across routers.
+
+Current platform security model:
+
+- `src/app.ts` applies `helmet` globally with an API-safe baseline and disables
+  `X-Powered-By`
+- route classes such as `public-read`, `public-auth`,
+  `authenticated-general`, and `authenticated-sensitive` use shared rate-limit
+  middleware
+- rate limits are backed by durable PostgreSQL state rather than in-memory
+  counters
+- root-auth login flows apply additional abuse checks and temporary lock-down
+  rules on top of general rate limiting
+- repeated failed auth behavior, rate limiting, and temporary lock-downs are
+  written as audit-visible events
+- the current design leaves room for future tenant-aware rate-limit keys and
+  policy selection
 
 ## Integration Model
 
@@ -151,7 +185,10 @@ The current pattern is:
 3. Mount the feature explicitly in `src/routes/v1/index.ts`.
 4. If the feature owns persistence, place SQL migrations under that feature's
    `persistence/migrations/` folder.
-5. Update tests and public API artifacts for externally visible behavior.
+5. If another feature needs a durable cross-feature read, export a narrow seam
+   from the owning feature's public surface rather than importing its private
+   persistence files.
+6. Update tests and public API artifacts for externally visible behavior.
 
 Router registration remains explicit:
 
@@ -182,6 +219,8 @@ This keeps feature development fast while preserving explicit platform control.
 - Unexpected failures should produce a generic JSON internal error response.
 - Authenticated protected routes use bearer token transport with server-side
   session lookup.
+- Shared platform security middleware may return `429` JSON responses for rate
+  limiting or temporary auth lock-down behavior.
 
 ## Current Strengths
 
@@ -189,6 +228,7 @@ This keeps feature development fast while preserving explicit platform control.
 - explicit feature registration
 - strong feature locality
 - separate authentication feature and shared auth context seam
+- shared platform security middleware with durable rate-limit state
 - feature-scoped migrations
 - fail-fast environment and database startup checks
 
@@ -198,6 +238,7 @@ This keeps feature development fast while preserving explicit platform control.
 - error handling is partly feature-local and partly app-global
 - migration identity depends on path stability
 - full authorization and scope evaluation are not yet implemented
+- strict browser-focused CSP is deferred until this service serves HTML
 
 ## Near-Term Architectural Focus
 
@@ -208,5 +249,7 @@ hardening the shared seams:
 - avoid hidden coupling between features
 - standardize error handling and API documentation patterns
 - keep authentication reusable as a platform seam for later authorization work
+- keep platform hardening reusable as a shared seam for later tenant-aware
+  controls
 - protect migration stability as more features are added
 - expand tests around platform integration seams

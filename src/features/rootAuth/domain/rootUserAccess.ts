@@ -1,12 +1,12 @@
 import { RootUserSignInBlockedError } from "../contract/errors";
-import type { RootUserAuthStateRecord } from "../../rootUsers/persistence/types";
+import type { RootUserAuthState } from "../../rootUsers";
 
-export function assertRootUserCanAuthenticate(rootUser: RootUserAuthStateRecord): void {
+export function assertRootUserCanAuthenticate(rootUser: RootUserAuthState): void {
   if (rootUser.anonymized) {
     throw new RootUserSignInBlockedError("anonymized");
   }
 
-  if (rootUser.deleted_at) {
+  if (rootUser.deletedAt) {
     throw new RootUserSignInBlockedError("deleted");
   }
 

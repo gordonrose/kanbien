@@ -32,6 +32,8 @@ A feature should be added primarily by creating or updating one folder under
   know feature internals.
 - Cross-feature reuse should happen through deliberate shared modules, not by
   reaching into another feature's private files.
+- When one feature must read another feature's data, the owning feature should
+  expose a narrow public seam for that purpose.
 
 Why:
 
@@ -50,6 +52,8 @@ Feature bundles should follow a repeatable internal structure and naming style.
 - `transport` owns HTTP routing and request handling only.
 - `integration.ts` owns feature wiring for the platform.
 - `index.ts` exposes the feature's public integration surface.
+- Cross-feature reads must use exported feature seams rather than importing
+  another feature's private persistence adapter or DB-shaped record types.
 - Query schemas must be first-class exports, not hidden inside route handlers.
 - Exact lookup schemas must be separate from list or search schemas.
 - Exact route params must never be optional.
@@ -91,6 +95,9 @@ operators care about.
   documented decision changes them.
 - Authentication context establishment should be separated from later
   authorization and scope evaluation.
+- Cross-feature platform security behaviors such as headers, throttling, and
+  lock-down responses should remain consistent unless a documented decision
+  changes them.
 
 Why:
 
@@ -109,6 +116,8 @@ Changes should favor deterministic behavior over convenience shortcuts.
 - File naming, registration, and execution order should be stable.
 - Persistence code, live schema, and indexes must agree on required columns,
   normalization rules, and uniqueness behavior.
+- Shared rate limiting and lock-down behavior should use durable state when the
+  platform needs consistent enforcement across requests and restarts.
 - Test coverage should protect platform seams and feature contracts.
 
 Why:
@@ -126,6 +135,11 @@ Security should be preserved by default, not added later by convention.
 - Error responses must not leak implementation details or sensitive data.
 - Authentication features should establish identity and session context without
   absorbing unrelated business management behavior.
+- Shared platform security middleware should provide secure-by-default headers.
+- Sensitive public routes should have explicit abuse controls, not just correct
+  credential checks.
+- Suspicious auth behavior should be audit visible through durable events or an
+  equivalent shared security record.
 
 Why:
 

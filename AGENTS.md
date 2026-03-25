@@ -135,6 +135,28 @@ Keep platform seams explicit:
 A feature is not fully integrated until it is explicitly mounted in
 `src/routes/v1/index.ts`.
 
+## Anti-Drift Seams
+
+Do not introduce cross-feature or platform/feature coupling casually.
+
+Default rules:
+
+- features must not import another feature's `persistence/*` files directly
+- cross-feature reads must go through the owning feature's exported public seam
+- `integration.ts` owns feature wiring; `transport/*` must not compose
+  repositories, DB adapters, or platform infrastructure
+- `domain/*` must not depend on DB-shaped persistence record types when a
+  domain-safe shape can be returned by the repository seam
+- shared `src/lib/*` modules must not depend on feature-specific contract or
+  persistence types
+
+If a change needs a new cross-feature seam:
+
+1. expose a narrow public interface from the owning feature
+2. keep the seam capability-specific rather than broad
+3. update the architecture docs or ADRs in the same change if the seam is
+   enduring
+
 ## Migration Safety
 
 Treat applied migration file names and paths as stable.

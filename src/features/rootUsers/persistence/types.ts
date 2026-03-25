@@ -58,7 +58,7 @@ export interface RootUserRepositoryListInput {
 }
 
 export interface RootUserRepositoryListResult {
-  items: RootUserRecord[];
+  items: import("../domain/types").RootUserData[];
   totalSearchableRecords: number;
   totalMatchingRecords: number;
 }

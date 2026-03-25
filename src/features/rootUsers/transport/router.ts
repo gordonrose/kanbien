@@ -1,5 +1,4 @@
 import { Router, type NextFunction, type Request, type Response } from "express";
-import type { Pool } from "pg";
 import { ZodError } from "zod";
 import {
   createRootUserBodySchema,
@@ -15,8 +14,7 @@ import {
   updateRootUserParamsSchema,
 } from "../contract/schemas";
 import { InvalidRequestError, RootUserError } from "../contract/errors";
-import { createPostgresRootUsersRepository } from "../persistence/postgresRepository";
-import { createRootUsersService } from "../domain/service";
+import type { RootUsersService } from "../domain/service";
 
 function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknown): T {
   try { return schema.parse(input); } catch (error) {
@@ -28,10 +26,8 @@ function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknow
   }
 }
 
-export function createRootUsersRouter(dbPool: Pool): Router {
+export function createRootUsersRouter(service: RootUsersService): Router {
   const router = Router();
-  const repository = createPostgresRootUsersRepository(dbPool);
-  const service = createRootUsersService(repository);
 
   router.post("/", async (req, res, next) => { try { res.status(201).json(await service.createRootUser(parseOrThrow(createRootUserBodySchema, req.body))); } catch (e) { next(e); } });
   router.get("/active", async (req, res, next) => { try {

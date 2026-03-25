@@ -21,8 +21,11 @@
 
 ```ts
 import { createRootAuthFeature } from "../../features/rootAuth";
+import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 
-v1Router.use("/root-auth", createRootAuthFeature(dbPool));
+const platformSecurityRepository = createPostgresPlatformSecurityRepository(dbPool);
+
+v1Router.use("/root-auth", createRootAuthFeature(dbPool, platformSecurityRepository));
 ```
 
 ## Important Integration Notes
@@ -34,6 +37,9 @@ v1Router.use("/root-auth", createRootAuthFeature(dbPool));
 - `rootAuth` owns auth principals, SSH public keys, login challenges, sessions,
   and auth audit events.
 - `rootUsers` remains authoritative for root-user lifecycle state.
+- `rootAuth` reads sign-in eligibility through the exported
+  `createRootUsersAuthStateReader` seam rather than importing `rootUsers`
+  persistence internals directly.
 
 ## API Notes
 

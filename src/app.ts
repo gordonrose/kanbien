@@ -1,9 +1,16 @@
 import express, { type NextFunction, type Request, type Response } from "express";
+import helmet from "helmet";
 import { v1Router } from "./routes/v1";
 
 export function createApp() {
   const app = express();
 
+  app.disable("x-powered-by");
+  app.use(
+    helmet({
+      contentSecurityPolicy: false,
+    }),
+  );
   app.use(express.json());
   app.use("/v1", v1Router);
   app.use(

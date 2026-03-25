@@ -8,6 +8,7 @@ import type {
   UpdateRootUserRecordInput,
   CreateRootUserRecordInput,
 } from "./types";
+import type { RootUserAuthState, RootUserData } from "../domain/types";
 
 const ORDER_BY_MAP: Record<string, string> = {
   email: "email",
@@ -47,17 +48,41 @@ function buildCommonFilters(filters: RootUserRepositoryListInput["filters"], val
 }
 
 export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersRepository {
-  async function queryOne(sql: string, params: unknown[]): Promise<RootUserRecord | null> {
+  function toRootUserData(record: RootUserRecord): RootUserData {
+    return {
+      rootUserId: record.root_user_id,
+      email: record.email,
+      firstName: record.first_name ?? undefined,
+      lastName: record.last_name ?? undefined,
+      anonymized: record.anonymized,
+      status: record.status,
+      createdAt: record.created_at,
+      updatedAt: record.updated_at,
+      deletedAt: record.deleted_at,
+    };
+  }
+
+  function toRootUserAuthState(record: RootUserAuthStateRecord): RootUserAuthState {
+    return {
+      rootUserId: record.root_user_id,
+      email: record.email,
+      status: record.status,
+      anonymized: record.anonymized,
+      deletedAt: record.deleted_at,
+    };
+  }
+
+  async function queryOne(sql: string, params: unknown[]): Promise<RootUserData | null> {
     const result = await dbPool.query<RootUserRecord>(sql, params);
-    return result.rows[0] ?? null;
+    return result.rows[0] ? toRootUserData(result.rows[0]) : null;
   }
 
   async function queryAuthState(
     sql: string,
     params: unknown[],
-  ): Promise<RootUserAuthStateRecord | null> {
+  ): Promise<RootUserAuthState | null> {
     const result = await dbPool.query<RootUserAuthStateRecord>(sql, params);
-    return result.rows[0] ?? null;
+    return result.rows[0] ? toRootUserAuthState(result.rows[0]) : null;
   }
 
   async function runList(baseScope: string, input: RootUserRepositoryListInput): Promise<RootUserRepositoryListResult> {
@@ -87,7 +112,7 @@ export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersReposi
     `;
     const data = await dbPool.query<RootUserRecord>(dataSql, values);
     return {
-      items: data.rows,
+      items: data.rows.map(toRootUserData),
       totalSearchableRecords: Number(totals.rows[0].total_searchable_records),
       totalMatchingRecords: Number(totals.rows[0].total_matching_records),
     };
@@ -121,7 +146,7 @@ export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersReposi
         input.lastName ?? null,
         normalizeOptionalName(input.lastName),
       ]);
-      return result.rows[0];
+      return toRootUserData(result.rows[0]);
     },
     findAuthStateById(rootUserId) {
       return queryAuthState(
@@ -163,11 +188,11 @@ export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersReposi
       assignments.push(`updated_at = NOW()`);
       values.push(input.rootUserId);
       const result = await dbPool.query<RootUserRecord>(`UPDATE root_users SET ${assignments.join(", ")} WHERE root_user_id = $${values.length} AND deleted_at IS NULL AND anonymized = false RETURNING *`, values);
-      return result.rows[0];
+      return toRootUserData(result.rows[0]);
     },
     async softDelete(rootUserId) {
       const result = await dbPool.query<RootUserRecord>(`UPDATE root_users SET status = 'inactive', deleted_at = NOW(), updated_at = NOW() WHERE root_user_id = $1 AND deleted_at IS NULL AND anonymized = false RETURNING *`, [rootUserId]);
-      return result.rows[0];
+      return toRootUserData(result.rows[0]);
     },
     async remove(rootUserId, anonymizedEmail, anonymizedFirstName, anonymizedLastName) {
       const result = await dbPool.query<RootUserRecord>(`
@@ -194,11 +219,11 @@ export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersReposi
         anonymizedLastName,
         normalizeOptionalName(anonymizedLastName),
       ]);
-      return result.rows[0];
+      return toRootUserData(result.rows[0]);
     },
     async reactivate(rootUserId) {
       const result = await dbPool.query<RootUserRecord>(`UPDATE root_users SET status = 'active', deleted_at = NULL, updated_at = NOW() WHERE root_user_id = $1 AND deleted_at IS NOT NULL AND anonymized = false RETURNING *`, [rootUserId]);
-      return result.rows[0];
+      return toRootUserData(result.rows[0]);
     },
   };
 }

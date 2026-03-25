@@ -42,19 +42,40 @@ Current mount point:
 - base route: `/v1/root-users`
 
 All `rootUsers` routes are protected by root-user authentication.
+All `rootUsers` routes also pass through shared authenticated-general rate
+limiting.
 `rootUsers` is no longer a public feature surface.
+The feature also exports a narrow auth-state reader that other features can use
+when they need root-user sign-in eligibility without reaching into
+`rootUsers/persistence/*`.
 
 ## Runtime Contracts
 
-### Router factory
+### Feature factory
 
-The feature now expects a raw `pg` `Pool` instance:
+The feature entry point expects a raw `pg` `Pool` instance:
 
 ```ts
 createRootUserFeature(dbPool)
 ```
 
 It no longer expects an object like `{ dbPool }`.
+`integration.ts` owns repository and service wiring.
+`transport/router.ts` now accepts a prebuilt `RootUsersService` so the transport
+layer stays focused on HTTP concerns.
+
+### Cross-feature auth-state seam
+
+The feature exports a narrow auth-state reader for other features:
+
+```ts
+import { createRootUsersAuthStateReader } from "../../features/rootUsers";
+
+const rootUsersAuthStateReader = createRootUsersAuthStateReader(dbPool);
+```
+
+This seam exists so features like `rootAuth` can check root-user sign-in
+eligibility without importing `rootUsers` private persistence internals.
 
 ### Error handling
 
@@ -86,6 +107,7 @@ Authentication:
 
 - all routes require a valid root-user bearer session
 - sessions are established through `/v1/root-auth/*`
+- shared authenticated-general rate limiting may return `429 RATE_LIMITED`
 
 Routes:
 
@@ -167,6 +189,8 @@ Notes:
 - `status` is not accepted on create
 - email is normalized to lowercase
 - duplicate non-deleted emails are rejected
+- create and other protected routes inherit platform-level authenticated-general
+  rate limiting after root-session authentication succeeds
 
 ### Exact lookup by email
 

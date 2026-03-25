@@ -31,11 +31,15 @@ v1Router.use("/root-users", createRequireRootSession(rootAuthRepository), create
 ## Important Integration Notes
 
 - The feature export is `createRootUserFeature`.
-- The router factory accepts `dbPool` directly, not `{ dbPool }`.
+- `integration.ts` owns repository and service wiring.
+- The feature entry point accepts `dbPool` directly, not `{ dbPool }`.
 - The migration runner will automatically discover `persistence/migrations/*.sql`.
 - The router handles known `RootUserError` failures locally and forwards unknown errors to the platform middleware.
 - All `rootUsers` routes are expected to sit behind root-user authentication.
 - Sessions are established through the separate `rootAuth` feature.
+- If another feature needs root-user sign-in eligibility only, use the exported
+  `createRootUsersAuthStateReader` seam instead of importing
+  `rootUsers/persistence/*` directly.
 
 ## API Notes
 

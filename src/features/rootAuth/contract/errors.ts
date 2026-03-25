@@ -32,6 +32,22 @@ export class InvalidCredentialsError extends RootAuthError {
   }
 }
 
+export class AuthThrottledError extends RootAuthError {
+  constructor() {
+    super(429, "AUTH_THROTTLED", "Too many authentication attempts. Please wait and try again.");
+  }
+}
+
+export class AuthLockedDownError extends RootAuthError {
+  constructor() {
+    super(
+      429,
+      "AUTH_LOCKED_DOWN",
+      "Authentication is temporarily locked due to repeated attempts. Please wait and try again.",
+    );
+  }
+}
+
 export class AuthPrincipalEmailAlreadyExistsError extends RootAuthError {
   constructor() {
     super(409, "AUTH_PRINCIPAL_EMAIL_ALREADY_EXISTS", "That login email is already registered for root auth.", {
