@@ -14,6 +14,37 @@ type MigrationFile = {
   checksum: string;
 };
 
+function escapeSqlLiteral(value: string): string {
+  return value.replace(/'/g, "''");
+}
+
+function computeSshPublicKeyFingerprint(publicKeyOpenSsh: string): string {
+  const parts = publicKeyOpenSsh.trim().split(/\s+/);
+  const keyBody = parts[1];
+
+  if (!keyBody) {
+    throw new Error("ROOT_AUTH_BOOTSTRAP_SSH_PUBLIC_KEY is not a valid OpenSSH public key");
+  }
+
+  return `SHA256:${createHash("sha256")
+    .update(Buffer.from(keyBody, "base64"))
+    .digest("base64")
+    .replace(/=+$/g, "")}`;
+}
+
+function renderMigrationSql(sql: string): string {
+  return sql
+    .replace(/{{ROOT_AUTH_BOOTSTRAP_PASSWORD}}/g, escapeSqlLiteral(env.rootAuth.bootstrapPassword))
+    .replace(
+      /{{ROOT_AUTH_BOOTSTRAP_SSH_PUBLIC_KEY}}/g,
+      escapeSqlLiteral(env.rootAuth.bootstrapSshPublicKey),
+    )
+    .replace(
+      /{{ROOT_AUTH_BOOTSTRAP_SSH_FINGERPRINT}}/g,
+      escapeSqlLiteral(computeSshPublicKeyFingerprint(env.rootAuth.bootstrapSshPublicKey)),
+    );
+}
+
 async function listFiles(directory: string): Promise<string[]> {
   const entries = await fs.readdir(directory, { withFileTypes: true });
   const files = await Promise.all(
@@ -80,7 +111,7 @@ async function applyMigration(pool: Pool, migration: MigrationFile): Promise<"cr
 
   try {
     await client.query("BEGIN");
-    await client.query(migration.sql);
+    await client.query(renderMigrationSql(migration.sql));
     await client.query(
       `
         INSERT INTO ${MIGRATIONS_TABLE} (migration_name, checksum, applied_at)

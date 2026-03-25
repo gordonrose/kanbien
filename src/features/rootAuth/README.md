@@ -1,0 +1,45 @@
+# Root Auth Feature Bundle
+
+## Files Included
+
+- `contract/`
+- `domain/`
+- `persistence/`
+- `transport/`
+- `integration.ts`
+- `index.ts`
+
+## Platform Assumptions
+
+- shared `pg` `Pool`
+- feature routes mounted from `src/routes/v1/index.ts`
+- migration runner that scans `src/features/**/migrations/*.sql`
+- app-level JSON error middleware for unhandled failures
+- root-user-protected routes use bearer-session middleware
+
+## Feature Entry Point
+
+```ts
+import { createRootAuthFeature } from "../../features/rootAuth";
+
+v1Router.use("/root-auth", createRootAuthFeature(dbPool));
+```
+
+## Important Integration Notes
+
+- The feature export is `createRootAuthFeature`.
+- Public login endpoints live in `rootAuth`.
+- Protected `rootAuth` and `rootUsers` routes both rely on the same
+  server-backed bearer session model.
+- `rootAuth` owns auth principals, SSH public keys, login challenges, sessions,
+  and auth audit events.
+- `rootUsers` remains authoritative for root-user lifecycle state.
+
+## API Notes
+
+- `POST /v1/root-auth/login/password` performs password-stage login.
+- `POST /v1/root-auth/login/ssh` completes login and returns an opaque session
+  token.
+- Protected requests must send `Authorization: Bearer <sessionId>`.
+- Root-user sign-in is blocked for inactive, deleted, or anonymized linked
+  `rootUsers`.

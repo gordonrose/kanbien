@@ -1,10 +1,10 @@
 openapi: 3.1.0
 info:
   title: Kanbien Platform API
-  version: 0.1.0
+  version: 0.2.0
   description: >
     OpenAPI specification for the platform API. This documents the platform
-    health route and the rootUsers feature mounted at /v1/root-users.
+    health route, root-user authentication, and the protected rootUsers feature.
 
 servers:
   - url: http://localhost:3000
@@ -12,6 +12,7 @@ servers:
 
 tags:
   - name: Platform
+  - name: Root Auth
   - name: Root Users
 
 paths:
@@ -29,12 +30,269 @@ paths:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
 
+  /v1/root-auth/login/password:
+    post:
+      tags:
+        - Root Auth
+      summary: Start root-user login with email and password
+      operationId: loginRootUserWithPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RootAuthPasswordLoginBody"
+      responses:
+        "200":
+          description: Password accepted and SSH challenge issued
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootAuthChallengeResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/login/ssh:
+    post:
+      tags:
+        - Root Auth
+      summary: Complete root-user login with SSH proof
+      operationId: completeRootUserSshChallenge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RootAuthSshLoginBody"
+      responses:
+        "200":
+          description: Root user authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootAuthSessionSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/principals:
+    post:
+      tags:
+        - Root Auth
+      summary: Create an auth principal for an existing root user
+      operationId: createRootUserAuthPrincipal
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRootAuthPrincipalBody"
+      responses:
+        "201":
+          description: Auth principal created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateRootAuthPrincipalResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/password/change:
+    post:
+      tags:
+        - Root Auth
+      summary: Change the authenticated root user's password
+      operationId: changeRootUserPassword
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeRootAuthPasswordBody"
+      responses:
+        "200":
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/ssh-keys:
+    post:
+      tags:
+        - Root Auth
+      summary: Register an SSH public key
+      operationId: addRootUserSshPublicKey
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddRootAuthSshKeyBody"
+      responses:
+        "201":
+          description: SSH key stored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootAuthSshKeySummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+    get:
+      tags:
+        - Root Auth
+      summary: List SSH public keys for the authenticated root user
+      operationId: listRootUserSshPublicKeys
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: SSH public keys
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootAuthSshKeyListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/ssh-keys/{keyId}:
+    delete:
+      tags:
+        - Root Auth
+      summary: Revoke an SSH public key
+      operationId: revokeRootUserSshPublicKey
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthSshKeyId"
+      responses:
+        "200":
+          description: SSH key revoked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/sessions:
+    get:
+      tags:
+        - Root Auth
+      summary: List sessions for the authenticated root user
+      operationId: listRootUserSessions
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Sessions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootAuthSessionListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/sessions/{sessionId}/revoke:
+    post:
+      tags:
+        - Root Auth
+      summary: Revoke one of the authenticated root user's sessions
+      operationId: revokeRootUserSession
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AuthSessionId"
+      responses:
+        "200":
+          description: Session revoked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/logout:
+    post:
+      tags:
+        - Root Auth
+      summary: Log out the current root-user session
+      operationId: logoutRootUserSession
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /v1/root-users:
     post:
       tags:
         - Root Users
       summary: Create a root user
       operationId: createRootUser
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -50,6 +308,8 @@ paths:
                 $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "409":
           $ref: "#/components/responses/Conflict"
         "500":
@@ -59,11 +319,9 @@ paths:
       tags:
         - Root Users
       summary: List root users or look up by exact email
-      description: >
-        Without the `email` query parameter, this returns a paginated list of
-        root users. When `email` is supplied, it returns a single visible root
-        user by exact email match.
       operationId: queryRootUsers
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
@@ -91,6 +349,8 @@ paths:
                   - $ref: "#/components/schemas/PaginatedRootUsers"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -102,6 +362,8 @@ paths:
         - Root Users
       summary: List active root users
       operationId: listActiveRootUsers
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
@@ -123,6 +385,8 @@ paths:
                 $ref: "#/components/schemas/PaginatedRootUsers"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -132,6 +396,8 @@ paths:
         - Root Users
       summary: List deleted root users
       operationId: listDeletedRootUsers
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/PageSize"
@@ -156,6 +422,8 @@ paths:
                 $ref: "#/components/schemas/PaginatedRootUsers"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -165,6 +433,8 @@ paths:
         - Root Users
       summary: Get a visible root user by ID
       operationId: getRootUserById
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/RootUserId"
       responses:
@@ -176,6 +446,8 @@ paths:
                 $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -186,6 +458,8 @@ paths:
         - Root Users
       summary: Update a visible root user
       operationId: updateRootUser
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/RootUserId"
       requestBody:
@@ -203,6 +477,8 @@ paths:
                 $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -215,6 +491,8 @@ paths:
         - Root Users
       summary: Soft delete a root user
       operationId: deleteRootUser
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/RootUserId"
       responses:
@@ -226,6 +504,8 @@ paths:
                 $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -239,6 +519,8 @@ paths:
         - Root Users
       summary: Anonymize and remove a root user
       operationId: removeRootUser
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/RootUserId"
       responses:
@@ -250,6 +532,8 @@ paths:
                 $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "500":
@@ -261,6 +545,8 @@ paths:
         - Root Users
       summary: Reactivate a soft-deleted root user
       operationId: reactivateRootUser
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: "#/components/parameters/RootUserId"
       responses:
@@ -272,6 +558,8 @@ paths:
                 $ref: "#/components/schemas/RootUser"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
         "409":
@@ -280,6 +568,12 @@ paths:
           $ref: "#/components/responses/InternalError"
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque-session-token
+
   parameters:
     RootUserId:
       name: rootUserId
@@ -288,6 +582,20 @@ components:
       schema:
         type: string
         format: uuid
+
+    AuthSshKeyId:
+      name: keyId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    AuthSessionId:
+      name: sessionId
+      in: path
+      required: true
+      schema:
+        type: string
 
     Page:
       name: page
@@ -438,6 +746,20 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
 
+    Unauthorized:
+      description: Authentication failed or was not supplied
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
+    Forbidden:
+      description: Authenticated caller is not allowed to complete the action
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
     NotFound:
       description: Resource not found
       content:
@@ -462,7 +784,6 @@ components:
   schemas:
     HealthResponse:
       type: object
-      additionalProperties: false
       properties:
         ok:
           type: boolean
@@ -481,7 +802,6 @@ components:
 
     RootUser:
       type: object
-      additionalProperties: false
       properties:
         rootUserId:
           type: string
@@ -517,7 +837,6 @@ components:
 
     PaginatedRootUsers:
       type: object
-      additionalProperties: false
       properties:
         items:
           type: array
@@ -541,9 +860,151 @@ components:
         - totalSearchableRecords
         - totalMatchingRecords
 
+    RootAuthPasswordLoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+
+    RootAuthChallengeResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [SSH_CHALLENGE_REQUIRED]
+        challengeId:
+          type: string
+        challengeText:
+          type: string
+      required: [status, challengeId, challengeText]
+
+    RootAuthSshLoginBody:
+      type: object
+      properties:
+        challengeId:
+          type: string
+        signature:
+          type: string
+        publicKeyFingerprint:
+          type: string
+      required: [challengeId, signature, publicKeyFingerprint]
+
+    RootAuthSessionSummary:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [AUTHENTICATED]
+        sessionId:
+          type: string
+        rootUserId:
+          type: string
+          format: uuid
+        authenticatedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+      required: [sessionId, rootUserId, authenticatedAt, expiresAt]
+
+    RootAuthSessionListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RootAuthSessionSummary"
+      required: [items]
+
+    CreateRootAuthPrincipalBody:
+      type: object
+      properties:
+        rootUserId:
+          type: string
+          format: uuid
+        loginEmail:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [rootUserId, loginEmail, password]
+
+    CreateRootAuthPrincipalResponse:
+      type: object
+      properties:
+        authPrincipalId:
+          type: string
+        rootUserId:
+          type: string
+          format: uuid
+        loginEmail:
+          type: string
+          format: email
+      required: [authPrincipalId, rootUserId, loginEmail]
+
+    ChangeRootAuthPasswordBody:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+      required: [currentPassword, newPassword]
+
+    AddRootAuthSshKeyBody:
+      type: object
+      properties:
+        label:
+          type: string
+        publicKey:
+          type: string
+      required: [label, publicKey]
+
+    RootAuthSshKeySummary:
+      type: object
+      properties:
+        keyId:
+          type: string
+        label:
+          type: string
+        algorithm:
+          type: string
+        fingerprint:
+          type: string
+        status:
+          type: string
+          enum: [active, revoked]
+        createdAt:
+          type: string
+          format: date-time
+        revokedAt:
+          type: [string, "null"]
+          format: date-time
+      required:
+        - keyId
+        - label
+        - algorithm
+        - fingerprint
+        - status
+        - createdAt
+        - revokedAt
+
+    RootAuthSshKeyListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RootAuthSshKeySummary"
+      required: [items]
+
     CreateRootUserBody:
       type: object
-      additionalProperties: false
       properties:
         email:
           type: string
@@ -558,7 +1019,6 @@ components:
 
     UpdateRootUserBody:
       type: object
-      additionalProperties: false
       minProperties: 1
       properties:
         email:
@@ -573,9 +1033,15 @@ components:
         status:
           $ref: "#/components/schemas/RootUserStatus"
 
+    StatusResponse:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
     ErrorDetails:
       type: object
-      additionalProperties: false
       properties:
         field:
           type: string
@@ -584,7 +1050,6 @@ components:
 
     ErrorResponse:
       type: object
-      additionalProperties: false
       properties:
         code:
           type: string

@@ -1,0 +1,1 @@
+export { createRootAuthFeature } from "./integration";

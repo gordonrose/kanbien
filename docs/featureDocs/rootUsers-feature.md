@@ -41,6 +41,9 @@ Current mount point:
 - `src/routes/v1/index.ts`
 - base route: `/v1/root-users`
 
+All `rootUsers` routes are protected by root-user authentication.
+`rootUsers` is no longer a public feature surface.
+
 ## Runtime Contracts
 
 ### Router factory
@@ -78,6 +81,11 @@ The migration manifest key is the file's relative path in `schema_migrations`, s
 Base path:
 
 - `/v1/root-users`
+
+Authentication:
+
+- all routes require a valid root-user bearer session
+- sessions are established through `/v1/root-auth/*`
 
 Routes:
 

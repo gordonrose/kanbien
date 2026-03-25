@@ -52,3 +52,7 @@ Before merging an architectural change, confirm:
 - Does it preserve security and reliability defaults?
 - Will another feature now need to do something special?
 - If the same change is repeated five times, will the architecture still scale?
+- Have live schema and repository writes been checked for drift on required
+  columns, normalized fields, and indexes?
+- If migrations perform bootstrap or repair work, has their execution model been
+  verified against database statement-visibility semantics?

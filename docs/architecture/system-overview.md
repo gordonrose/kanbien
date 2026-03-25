@@ -10,7 +10,7 @@ Today the system has:
 
 - one Express application
 - one versioned API router under `/v1`
-- one mounted feature: `rootUsers`
+- two mounted features: `rootUsers` and `rootAuth`
 - one shared PostgreSQL connection pool
 - one migration runner that discovers feature-scoped SQL migrations
 
@@ -27,10 +27,11 @@ Today the system has:
 1. Requests enter the Express app in `src/app.ts`.
 2. Requests are routed under `/v1`.
 3. `src/routes/v1/index.ts` dispatches to explicitly registered feature routers.
-4. Feature transport code validates input and invokes feature services.
-5. Feature services use repositories to talk to PostgreSQL.
-6. Known feature errors are converted to JSON near the feature boundary.
-7. Unknown errors fall through to the app-level JSON error middleware.
+4. Auth-protected routes pass through shared bearer-session middleware.
+5. Feature transport code validates input and invokes feature services.
+6. Feature services use repositories to talk to PostgreSQL.
+7. Known feature errors are converted to JSON near the feature boundary.
+8. Unknown errors fall through to the app-level JSON error middleware.
 
 ## Source Layout
 
@@ -48,13 +49,15 @@ Today the system has:
   Shared PostgreSQL pool and connectivity check.
 - `src/scripts/migrate.ts`
   Migration discovery and execution.
+- `src/lib/auth/*`
+  Shared root-session middleware and request auth context.
 
 ### Features
 
 Each feature lives under `src/features/<featureName>`.
 
-The active example is `src/features/rootUsers` with the following internal
-structure:
+The active examples are `src/features/rootUsers` and `src/features/rootAuth`.
+Each feature follows the same internal structure:
 
 - `contract/`
   API-facing schemas, request/response types, and feature errors.
@@ -121,6 +124,21 @@ The current feature convention is:
 This structure is intended to keep feature internals replaceable while making
 feature creation repeatable.
 
+### Authentication Shape
+
+The current authentication layer is implemented as a feature rather than as
+business logic embedded into `rootUsers`.
+
+Current auth model:
+
+- `rootAuth` owns root-user auth principals, SSH public keys, login challenges,
+  sessions, and auth audit events
+- `rootUsers` remains authoritative for root-user lifecycle state
+- root-user authentication is password plus SSH proof
+- authenticated requests use opaque bearer tokens backed by server-side session
+  records
+- request authentication is separate from future authorization and scope checks
+
 ## Integration Model
 
 The architecture is optimized for adding new features with minimal platform
@@ -162,22 +180,24 @@ This keeps feature development fast while preserving explicit platform control.
 - JSON is the default request and response format.
 - Validation and domain errors should produce structured JSON responses.
 - Unexpected failures should produce a generic JSON internal error response.
+- Authenticated protected routes use bearer token transport with server-side
+  session lookup.
 
 ## Current Strengths
 
 - simple platform bootstrap
 - explicit feature registration
 - strong feature locality
+- separate authentication feature and shared auth context seam
 - feature-scoped migrations
 - fail-fast environment and database startup checks
 
 ## Current Constraints
 
-- only one feature is currently mounted, so some conventions are still being
-  proven rather than broadly exercised
 - route registration is manual rather than discoverable
 - error handling is partly feature-local and partly app-global
 - migration identity depends on path stability
+- full authorization and scope evaluation are not yet implemented
 
 ## Near-Term Architectural Focus
 
@@ -187,5 +207,6 @@ hardening the shared seams:
 - keep feature addition cheap
 - avoid hidden coupling between features
 - standardize error handling and API documentation patterns
+- keep authentication reusable as a platform seam for later authorization work
 - protect migration stability as more features are added
 - expand tests around platform integration seams

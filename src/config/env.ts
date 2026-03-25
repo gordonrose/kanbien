@@ -32,6 +32,14 @@ function parseBoolean(name: string, rawValue: string): boolean {
   throw new Error(`Environment variable ${name} must be 'true' or 'false'`);
 }
 
+function readEnv(name: string): string | undefined {
+  return process.env[name];
+}
+
+function readEnvOrDefault(name: string, defaultValue: string): string {
+  return readEnv(name) ?? defaultValue;
+}
+
 const nodeEnv = requireEnv("NODE_ENV");
 const port = parseNumber("PORT", requireEnv("PORT"));
 
@@ -41,6 +49,24 @@ const databaseName = requireEnv("DATABASE_NAME");
 const databaseUser = requireEnv("DATABASE_USER");
 const databasePassword = requireEnv("DATABASE_PASSWORD");
 const databaseSsl = parseBoolean("DATABASE_SSL", requireEnv("DATABASE_SSL"));
+
+const rootAuthBootstrapPassword = readEnvOrDefault("ROOT_AUTH_BOOTSTRAP_PASSWORD", "@Nima2or1!");
+const rootAuthBootstrapSshPublicKey = readEnvOrDefault(
+  "ROOT_AUTH_BOOTSTRAP_SSH_PUBLIC_KEY",
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEZeNv6aKKHqLJQQoqsHUhYyFMFFbE8WWvgDSFH0WJiq gordon@<machine-name>",
+);
+const rootAuthChallengeTtlSeconds = parseNumber(
+  "ROOT_AUTH_CHALLENGE_TTL_SECONDS",
+  readEnvOrDefault("ROOT_AUTH_CHALLENGE_TTL_SECONDS", "300"),
+);
+const rootAuthSessionTtlSeconds = parseNumber(
+  "ROOT_AUTH_SESSION_TTL_SECONDS",
+  readEnvOrDefault("ROOT_AUTH_SESSION_TTL_SECONDS", "28800"),
+);
+const rootAuthPasswordMinLength = parseNumber(
+  "ROOT_AUTH_PASSWORD_MIN_LENGTH",
+  readEnvOrDefault("ROOT_AUTH_PASSWORD_MIN_LENGTH", "12"),
+);
 
 export const env = {
   nodeEnv,
@@ -52,5 +78,12 @@ export const env = {
     user: databaseUser,
     password: databasePassword,
     ssl: databaseSsl,
+  },
+  rootAuth: {
+    bootstrapPassword: rootAuthBootstrapPassword,
+    bootstrapSshPublicKey: rootAuthBootstrapSshPublicKey,
+    challengeTtlSeconds: rootAuthChallengeTtlSeconds,
+    sessionTtlSeconds: rootAuthSessionTtlSeconds,
+    passwordMinLength: rootAuthPasswordMinLength,
   },
 } as const;

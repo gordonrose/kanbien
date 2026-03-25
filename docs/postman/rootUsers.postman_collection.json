@@ -1,9 +1,9 @@
 {
   "info": {
     "_postman_id": "8f5ddbc0-c542-4ea7-92c3-84c4c3e63626",
-    "name": "Kanbien Root Users",
+    "name": "Kanbien Root Platform",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for the rootUsers feature mounted at /v1/root-users."
+    "description": "Postman collection for root-user authentication and the protected rootUsers feature."
   },
   "variable": [
     {
@@ -16,7 +16,39 @@
     },
     {
       "key": "email",
-      "value": "root.user@example.com"
+      "value": "elvis.presley@example.com"
+    },
+    {
+      "key": "password",
+      "value": "Test1234!"
+    },
+    {
+      "key": "signerUrl",
+      "value": "http://127.0.0.1:8787"
+    },
+    {
+      "key": "sessionToken",
+      "value": "sess_replace_me"
+    },
+    {
+      "key": "challengeId",
+      "value": "chal_replace_me"
+    },
+    {
+      "key": "challengeText",
+      "value": "challenge_text_replace_me"
+    },
+    {
+      "key": "publicKeyFingerprint",
+      "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY"
+    },
+    {
+      "key": "sshSignature",
+      "value": "base64_signature_over_challenge_text"
+    },
+    {
+      "key": "keyId",
+      "value": "key_replace_me"
     }
   ],
   "item": [
@@ -38,6 +70,337 @@
       }
     },
     {
+      "name": "Root Auth - Login Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/password",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "login",
+            "password"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
+              "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Sign Challenge",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeText\": \"{{challengeText}}\"\n}"
+        },
+        "url": {
+          "raw": "{{signerUrl}}/sign",
+          "host": [
+            "{{signerUrl}}"
+          ],
+          "path": [
+            "sign"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignature\", json.signature);",
+              "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Login SSH",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignature}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/ssh",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "login",
+            "ssh"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.sessionId) pm.collectionVariables.set(\"sessionToken\", json.sessionId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Create Principal",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rootUserId\": \"{{rootUserId}}\",\n  \"loginEmail\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/principals",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "principals"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Change Password",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currentPassword\": \"{{password}}\",\n  \"newPassword\": \"@Nima2or1!Change\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/password/change",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "password",
+            "change"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Add SSH Key",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"label\": \"personal-laptop\",\n  \"publicKey\": \"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEZeNv6aKKHqLJQQoqsHUhYyFMFFbE8WWvgDSFH0WJiq gordon@<machine-name>\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/ssh-keys",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "ssh-keys"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - List SSH Keys",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/ssh-keys",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "ssh-keys"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Revoke SSH Key",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/ssh-keys/{{keyId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "ssh-keys",
+            "{{keyId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - List Sessions",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/sessions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "sessions"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Revoke Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/sessions/{{sessionToken}}/revoke",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "sessions",
+            "{{sessionToken}}",
+            "revoke"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "logout"
+          ]
+        }
+      }
+    },
+    {
       "name": "Create Root User",
       "request": {
         "method": "POST",
@@ -45,6 +408,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
           }
         ],
         "body": {
@@ -67,7 +434,12 @@
       "name": "Get Root User By Id",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}",
           "host": [
@@ -85,7 +457,12 @@
       "name": "Get Root User By Email",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/v1/root-users?email={{email}}",
           "host": [
@@ -108,7 +485,12 @@
       "name": "List Root Users",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/v1/root-users?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc",
           "host": [
@@ -143,7 +525,12 @@
       "name": "List Active Root Users",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/v1/root-users/active?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc",
           "host": [
@@ -179,7 +566,12 @@
       "name": "List Deleted Root Users",
       "request": {
         "method": "GET",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/v1/root-users/deleted?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc&excludeAnonymized=false",
           "host": [
@@ -223,6 +615,10 @@
           {
             "key": "Content-Type",
             "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
           }
         ],
         "body": {
@@ -246,7 +642,12 @@
       "name": "Soft Delete Root User",
       "request": {
         "method": "DELETE",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}",
           "host": [
@@ -264,7 +665,12 @@
       "name": "Remove Root User",
       "request": {
         "method": "POST",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/remove",
           "host": [
@@ -283,7 +689,12 @@
       "name": "Reactivate Root User",
       "request": {
         "method": "POST",
-        "header": [],
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
         "url": {
           "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/reactivate",
           "host": [

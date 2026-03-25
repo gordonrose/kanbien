@@ -143,6 +143,18 @@ Treat applied migration file names and paths as stable.
 - do not rename applied migrations in shared environments
 - fix incorrect applied migrations with a new migration
 
+Before treating a migration-backed change as complete:
+
+- verify the SQL execution model matches the migration logic being used
+- do not assume multi-step bootstrap or repair logic is safe inside one
+  statement without checking DB visibility semantics
+- verify code, live schema, and indexes agree on required columns, normalized
+  fields, and uniqueness rules
+- prefer adding a corrective migration over editing an already-applied migration
+  when repairing existing environments
+- re-check representative read and write paths against the live database after
+  migration changes
+
 ## Escalate Before Changing
 
 Pause and surface the trade-offs before changing:
@@ -150,5 +162,19 @@ Pause and surface the trade-offs before changing:
 - public API contracts
 - persisted domain data semantics
 - migration discovery or identity rules
+- migration semantics or multi-step data backfill behavior
 - global error handling behavior
 - shared platform wiring or feature registration conventions
+
+## Root Cause Guardrails
+
+When adding a new feature that depends on existing entities or tables:
+
+- inspect the live schema, not just the current migration files
+- inspect the active repository queries and writes for the existing feature
+- confirm normalized fields, derived columns, and indexes are represented
+  consistently in contract, persistence, and migrations
+- treat bootstrap and backfill migrations as runtime logic that must be checked
+  with the target database's statement-visibility behavior
+- do not assume a feature seam is safe just because the folder structure is
+  correct; verify the persistence seam against the real tables it depends on

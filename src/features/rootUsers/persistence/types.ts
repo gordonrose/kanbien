@@ -12,6 +12,14 @@ export interface RootUserRecord {
   deleted_at: Date | null;
 }
 
+export interface RootUserAuthStateRecord {
+  root_user_id: string;
+  email: string;
+  status: RootUserRecordStatus;
+  anonymized: boolean;
+  deleted_at: Date | null;
+}
+
 export interface CreateRootUserRecordInput {
   rootUserId: string;
   email: string;

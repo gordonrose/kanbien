@@ -1,5 +1,6 @@
 import type {
   CreateRootUserRecordInput,
+  RootUserAuthStateRecord,
   RootUserRecord,
   RootUserRepositoryListInput,
   RootUserRepositoryListResult,
@@ -8,6 +9,7 @@ import type {
 
 export interface RootUsersRepository {
   create(input: CreateRootUserRecordInput): Promise<RootUserRecord>;
+  findAuthStateById(rootUserId: string): Promise<RootUserAuthStateRecord | null>;
   findVisibleById(rootUserId: string): Promise<RootUserRecord | null>;
   findVisibleByEmail(email: string): Promise<RootUserRecord | null>;
   findAnyById(rootUserId: string): Promise<RootUserRecord | null>;

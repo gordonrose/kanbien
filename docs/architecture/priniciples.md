@@ -89,6 +89,8 @@ operators care about.
 - Public API versioning and mount conventions should be stable.
 - Feature naming and integration conventions should remain consistent unless a
   documented decision changes them.
+- Authentication context establishment should be separated from later
+  authorization and scope evaluation.
 
 Why:
 
@@ -102,7 +104,11 @@ Changes should favor deterministic behavior over convenience shortcuts.
 
 - Startup should verify critical dependencies before serving traffic.
 - Migration behavior must be deterministic and repeatable.
+- Multi-step bootstrap or repair migrations should be written with the target
+  database's statement-visibility semantics in mind.
 - File naming, registration, and execution order should be stable.
+- Persistence code, live schema, and indexes must agree on required columns,
+  normalization rules, and uniqueness behavior.
 - Test coverage should protect platform seams and feature contracts.
 
 Why:
@@ -118,6 +124,8 @@ Security should be preserved by default, not added later by convention.
 - Database access must use parameterized queries.
 - Secrets and connection settings must come from environment configuration.
 - Error responses must not leak implementation details or sensitive data.
+- Authentication features should establish identity and session context without
+  absorbing unrelated business management behavior.
 
 Why:
 

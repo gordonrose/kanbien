@@ -20,3 +20,4 @@ evolves.
 - `0006-standardize-feature-internal-module-conventions.md`
 - `0007-standardize-cross-feature-api-and-entity-behavior-defaults.md`
 - `0008-standardize-searchable-field-storage-and-query-rules.md`
+- `0009-separate-authentication-from-business-features.md`
