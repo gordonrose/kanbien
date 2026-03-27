@@ -31,9 +31,37 @@ Mounting:
 
 ```ts
 import { createRootUserFeature } from "../../features/rootUsers";
+import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
+import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
+import { createRequireRootSession } from "../../lib/auth/middleware";
+import { createRateLimitMiddleware } from "../../lib/security/rateLimit";
+import { env } from "../../config/env";
 
-v1Router.use("/root-users", createRootUserFeature(dbPool));
+const rootAuthRepository = createPostgresRootAuthRepository(dbPool);
+const platformSecurityRepository = createPostgresPlatformSecurityRepository(dbPool);
+const requireRootSession = createRequireRootSession(rootAuthRepository);
+const authenticatedGeneralRateLimit = createRateLimitMiddleware({
+  enabled: env.platformSecurity.enabled,
+  repository: platformSecurityRepository,
+  policy: {
+    endpointClass: "authenticated-general",
+    windowSeconds: env.platformSecurity.rateLimitPolicies.authenticatedGeneral.windowSeconds,
+    maxAttempts: env.platformSecurity.rateLimitPolicies.authenticatedGeneral.maxAttempts,
+    responseCode: "RATE_LIMITED",
+    responseMessage: "Too many requests. Please wait and try again.",
+  },
+  subjectScope: "auth_user",
+  getSubjectKey: (request) =>
+    request.rootSession ? `${request.ip ?? "unknown"}|${request.rootSession.rootUserId}` : null,
+});
+
+v1Router.use(
+  "/root-users",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createRootUserFeature(dbPool),
+);
 ```
 
 Current mount point:
@@ -45,6 +73,10 @@ All `rootUsers` routes are protected by root-user authentication.
 All `rootUsers` routes also pass through shared authenticated-general rate
 limiting.
 `rootUsers` is no longer a public feature surface.
+The platform now also has a same-origin root-admin browser shell that
+authenticates through `rootAuth`, but phase one of that shell only exposes the
+authenticated current-user/session shell rather than the full `rootUsers`
+management UI.
 The feature also exports a narrow auth-state reader that other features can use
 when they need root-user sign-in eligibility without reaching into
 `rootUsers/persistence/*`.
@@ -77,6 +109,18 @@ const rootUsersAuthStateReader = createRootUsersAuthStateReader(dbPool);
 This seam exists so features like `rootAuth` can check root-user sign-in
 eligibility without importing `rootUsers` private persistence internals.
 
+### Browser shell relationship
+
+The root-admin browser shell is a separate frontend app area in the repo and
+consumes backend behavior through public HTTP routes.
+
+For phase one:
+
+- browser-authenticated root users can reach the shell through `rootAuth`
+- the shell can show minimal current-user information sourced from `rootUsers`
+- the broader `rootUsers` CRUD and list capabilities remain API-driven and are
+  not yet exposed as a full browser management UI
+
 ### Error handling
 
 Feature routes call `next(error)` for unexpected failures.
@@ -107,6 +151,9 @@ Authentication:
 
 - all routes require a valid root-user bearer session
 - sessions are established through `/v1/root-auth/*`
+- the root-admin browser shell uses a cookie-backed session transport through
+  `/v1/root-auth/browser/*`, but `rootUsers` routes themselves remain the same
+  protected backend API surface
 - shared authenticated-general rate limiting may return `429 RATE_LIMITED`
 
 Routes:
@@ -253,3 +300,78 @@ A user can be reactivated only when:
 - it is deleted
 - it is not anonymized
 - its email does not conflict with another non-deleted root user
+
+## How To Try It
+
+### Try it with Postman or another API client
+
+Prerequisites:
+
+- the app is running
+- you already have a valid root-user session from the `rootAuth` flow
+- you have the bearer `sessionId` returned by `POST /v1/root-auth/login/ssh`
+
+Steps:
+
+1. Set:
+
+```text
+Authorization: Bearer <sessionId>
+```
+
+2. Create a root user with `POST /v1/root-users`:
+
+```json
+{
+  "email": "ada.lovelace@example.com",
+  "firstName": "Ada",
+  "lastName": "Lovelace"
+}
+```
+
+3. List root users with:
+   - `GET /v1/root-users`
+
+4. Fetch the created user directly with:
+   - `GET /v1/root-users/:rootUserId`
+
+5. Try an exact email lookup with:
+   - `GET /v1/root-users?email=ada.lovelace@example.com`
+
+6. Try a normal soft delete with:
+   - `DELETE /v1/root-users/:rootUserId`
+
+7. Confirm it appears in:
+   - `GET /v1/root-users/deleted`
+
+8. Reactivate it with:
+   - `POST /v1/root-users/:rootUserId/reactivate`
+
+9. If you want to exercise irreversible removal behavior, use:
+   - `POST /v1/root-users/:rootUserId/remove`
+
+Notes:
+
+- `remove` anonymizes the record in place and is intentionally not reversible
+- full route and schema details live in
+  [`openapi.yaml`](/home/gordon/kanbien/docs/swagger/openapi.yaml)
+
+### Try it from the browser shell
+
+Phase one of the root-admin shell does not yet expose the full `rootUsers`
+management UI.
+
+What you can verify in the browser today:
+
+1. Complete browser login through:
+   - `http://localhost:<app-port>/root-admin`
+
+2. Confirm the authenticated shell loads successfully and shows the current
+   root-user summary sourced through the backend seam.
+
+3. Use browser devtools or your network inspector to confirm the shell is using:
+   - `GET /v1/root-auth/browser/session`
+
+4. For actual `rootUsers` create/list/update/delete testing in the current
+   phase, use Postman or another API client against the documented `/v1/root-users`
+   routes.

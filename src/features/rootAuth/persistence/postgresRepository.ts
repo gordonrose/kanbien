@@ -208,6 +208,19 @@ export function createPostgresRootAuthRepository(dbPool: Pool): RootAuthReposito
         [sessionId],
       );
     },
+    touchSession(sessionId, expiresAt) {
+      return queryOne<ActiveAuthSessionRecord>(
+        `
+          UPDATE auth_sessions
+          SET expires_at = $2
+          WHERE session_id = $1
+            AND revoked_at IS NULL
+            AND expires_at > NOW()
+          RETURNING *
+        `,
+        [sessionId, expiresAt],
+      );
+    },
     async revokeSession(sessionId, authPrincipalId) {
       const result = await dbPool.query(
         `

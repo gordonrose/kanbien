@@ -2,7 +2,15 @@ import { Router, type NextFunction, type Request, type Response } from "express"
 import { env } from "../../../config/env";
 import { ZodError } from "zod";
 import { createRequireRootSession } from "../../../lib/auth/middleware";
+import {
+  createRequireRootBrowserSession,
+  requireTrustedBrowserOrigin,
+} from "../../../lib/auth/browserSession";
 import { getRequiredRootSessionContext } from "../../../lib/auth/requestContext";
+import {
+  getRootAdminSessionClearCookieOptions,
+  getRootAdminSessionCookieOptions,
+} from "../../../lib/auth/rootAdminCookie";
 import { createRateLimitMiddleware } from "../../../lib/security/rateLimit";
 import type { PlatformSecurityRepository } from "../../../lib/security/repository";
 import {
@@ -17,7 +25,7 @@ import {
 import { InvalidRequestError, RootAuthError } from "../contract/errors";
 import type { RootAuthRepository } from "../persistence/repository";
 import { createRootAuthService } from "../domain/service";
-import type { RootUsersAuthStateReader } from "../../rootUsers";
+import type { RootUsersAuthStateReader, RootUsersBrowserSummaryReader } from "../../rootUsers";
 
 function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknown): T {
   try {
@@ -47,6 +55,7 @@ function getRequestMetadata(request: Request): { ipAddress?: string; userAgent?:
 export function createRootAuthRouter(
   authRepository: RootAuthRepository,
   rootUsersAuthStateReader: RootUsersAuthStateReader,
+  rootUsersBrowserSummaryReader: RootUsersBrowserSummaryReader,
   platformSecurityRepository: PlatformSecurityRepository,
 ): Router {
   const router = Router();
@@ -56,6 +65,7 @@ export function createRootAuthRouter(
     platformSecurityRepository,
   );
   const requireRootSession = createRequireRootSession(authRepository);
+  const requireRootBrowserSession = createRequireRootBrowserSession(authRepository);
   const publicAuthRateLimit = createRateLimitMiddleware({
     enabled: env.platformSecurity.enabled,
     repository: platformSecurityRepository,
@@ -117,6 +127,89 @@ export function createRootAuthRouter(
       next(error);
     }
   });
+
+  router.post("/browser/login/ssh", publicAuthRateLimit, async (request, response, next) => {
+    try {
+      const body = parseOrThrow(completeRootUserSshChallengeBodySchema, request.body);
+      const result = await service.completeRootUserSshChallenge({
+        ...body,
+        ...getRequestMetadata(request),
+      });
+      const rootUserSummary = await rootUsersBrowserSummaryReader.findBrowserSummaryById(
+        result.rootUserId,
+      );
+
+      response.cookie(
+        env.rootAdmin.sessionCookieName,
+        result.sessionId,
+        getRootAdminSessionCookieOptions(),
+      );
+      response.status(200).json({
+        rootUserId: result.rootUserId,
+        authPrincipalId: result.authPrincipalId,
+        displayName:
+          rootUserSummary?.firstName || rootUserSummary?.lastName
+            ? [rootUserSummary?.firstName, rootUserSummary?.lastName].filter(Boolean).join(" ")
+            : rootUserSummary?.email ?? "Root User",
+        email: rootUserSummary?.email ?? "",
+        expiresAt: result.expiresAt,
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.get(
+    "/browser/session",
+    requireRootBrowserSession,
+    authenticatedSensitiveRateLimit,
+    async (request, response, next) => {
+    try {
+      const session = getRequiredRootSessionContext(request);
+      const rootUserSummary = await rootUsersBrowserSummaryReader.findBrowserSummaryById(
+        session.rootUserId,
+      );
+
+      response.status(200).json({
+        rootUserId: session.rootUserId,
+        authPrincipalId: session.authPrincipalId,
+        displayName:
+          rootUserSummary?.firstName || rootUserSummary?.lastName
+            ? [rootUserSummary?.firstName, rootUserSummary?.lastName].filter(Boolean).join(" ")
+            : rootUserSummary?.email ?? "Root User",
+        email: rootUserSummary?.email ?? "",
+        expiresAt: session.expiresAt,
+      });
+    } catch (error) {
+      next(error);
+    }
+    },
+  );
+
+  router.post(
+    "/browser/logout",
+    requireRootBrowserSession,
+    authenticatedSensitiveRateLimit,
+    requireTrustedBrowserOrigin,
+    async (request, response, next) => {
+      try {
+        const session = getRequiredRootSessionContext(request);
+        const result = await service.logoutRootUserSession({
+          authPrincipalId: session.authPrincipalId,
+          rootUserId: session.rootUserId,
+          sessionId: session.sessionId,
+          ...getRequestMetadata(request),
+        });
+        response.clearCookie(
+          env.rootAdmin.sessionCookieName,
+          getRootAdminSessionClearCookieOptions(),
+        );
+        response.status(200).json(result);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 
   router.use(requireRootSession);
   router.use(authenticatedSensitiveRateLimit);

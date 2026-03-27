@@ -188,6 +188,60 @@ Pause and surface the trade-offs before changing:
 - global error handling behavior
 - shared platform wiring or feature registration conventions
 
+## Subagent Approval Rule
+
+Before using multiple subagents for a single user task, pause and ask for user
+approval.
+
+Defaults:
+
+- using zero or one subagent does not require advance approval
+- using two or more subagents for the same task requires a brief approval check
+  first
+- explain in one or two sentences why multiple subagents would help before
+  asking
+- if the user declines, continue with fewer or no subagents
+- do not treat this rule as permission to skip needed user approval for other
+  risky or breaking changes
+
+## Docs Alignment Audits
+
+When the user asks to compare documentation with implementation, audit drift,
+or use architecture as the tie-breaker, prefer the repo-local
+`docs-alignment-auditor` skill before making edits.
+
+## Repo Health Audits
+
+When the user asks for a whole-repo sanity check after a body of work,
+especially to find drift, contamination, inconsistency, contradictions, or
+iteration/scalability/security/compliance risks, prefer the repo-local
+`repo-health-auditor` skill before making edits.
+
+## Standards Compliance Audits
+
+When the user asks to check the entire repo against the standards gates or
+checklists in `docs/standards/`, especially across `docs/`, `src/`, `tests/`,
+`package.json`, and `vitest.config.ts`, prefer the repo-local
+`repo-standards-compliance-auditor` skill before making edits.
+
+## Data Dictionary Maintenance
+
+When the user asks to build or refresh entity documentation under
+`docs/data-dictionary`, prefer the repo-local `data-dictionary-maintainer`
+skill before making edits.
+
+## PRD Test Case Planning
+
+When the user asks to read a PRD and derive test cases under
+`docs/prd/test_cases`, prefer the repo-local `prd-test-case-planner` skill
+before making edits.
+
+## PRD Test Case Implementation
+
+When the user asks to read a PRD-derived test-case document and implement the
+corresponding executable tests under `tests/`, prefer the repo-local
+`prd-test-case-implementer` skill before making edits.
+
 ## Root Cause Guardrails
 
 When adding a new feature that depends on existing entities or tables:

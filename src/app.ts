@@ -1,6 +1,8 @@
 import express, { type NextFunction, type Request, type Response } from "express";
 import helmet from "helmet";
 import { v1Router } from "./routes/v1";
+import { env } from "./config/env";
+import { createRootAdminShellRouter } from "./frontend/rootAdminShell/router";
 
 export function createApp() {
   const app = express();
@@ -8,10 +10,24 @@ export function createApp() {
   app.disable("x-powered-by");
   app.use(
     helmet({
-      contentSecurityPolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'"],
+          imgSrc: ["'self'", "data:"],
+          fontSrc: ["'self'"],
+          connectSrc: ["'self'", `http://127.0.0.1:${env.rootAdmin.signerHelperPort}`],
+          objectSrc: ["'none'"],
+          frameAncestors: ["'none'"],
+          baseUri: ["'self'"],
+          formAction: ["'self'"],
+        },
+      },
     }),
   );
   app.use(express.json());
+  app.use("/root-admin", createRootAdminShellRouter());
   app.use("/v1", v1Router);
   app.use(
     (

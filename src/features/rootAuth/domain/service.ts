@@ -19,7 +19,7 @@ import {
 import { createPrefixedId } from "./ids";
 import { assertPasswordPolicy } from "./password";
 import { assertRootUserCanAuthenticate } from "./rootUserAccess";
-import { parseEd25519PublicKey, verifyEd25519Signature } from "./ssh";
+import { parseEd25519PublicKey, verifyRootLoginSignature } from "./ssh";
 import type {
   AddRootUserSshPublicKeyInput,
   ChangeRootUserPasswordInput,
@@ -29,6 +29,7 @@ import type {
   RevokeRootUserSessionInput,
   RevokeRootUserSshPublicKeyInput,
   RootAuthChallengeResult,
+  RootAuthLoginSshKeyOption,
   RootAuthSessionSummary,
   RootAuthSshKeySummary,
 } from "./types";
@@ -49,6 +50,7 @@ function createChallengeText(authPrincipalId: string, challengeId: string, expir
 
 function toSessionSummary(session: {
   session_id: string;
+  auth_principal_id: string;
   root_user_id: string;
   authenticated_at: Date;
   expires_at: Date;
@@ -56,6 +58,7 @@ function toSessionSummary(session: {
   return {
     status: "AUTHENTICATED",
     sessionId: session.session_id,
+    authPrincipalId: session.auth_principal_id,
     rootUserId: session.root_user_id,
     authenticatedAt: session.authenticated_at.toISOString(),
     expiresAt: session.expires_at.toISOString(),
@@ -79,6 +82,18 @@ function toSshKeySummary(record: {
     status: record.status,
     createdAt: record.created_at.toISOString(),
     revokedAt: record.revoked_at ? record.revoked_at.toISOString() : null,
+  };
+}
+
+function toLoginSshKeyOption(record: {
+  auth_ssh_public_key_id: string;
+  label: string;
+  fingerprint: string;
+}): RootAuthLoginSshKeyOption {
+  return {
+    keyId: record.auth_ssh_public_key_id,
+    label: record.label,
+    fingerprint: record.fingerprint,
   };
 }
 
@@ -266,11 +281,15 @@ export function createRootAuthService(
         userAgent: input.userAgent,
         occurredAt: new Date(),
       });
+      const availableSshKeys = (await authRepository.listSshPublicKeys(principal.auth_principal_id))
+        .filter((record) => record.status === "active" && record.revoked_at === null)
+        .map(toLoginSshKeyOption);
 
       return {
         status: "SSH_CHALLENGE_REQUIRED",
         challengeId,
         challengeText,
+        availableSshKeys,
       };
     },
     async completeRootUserSshChallenge(input) {
@@ -340,7 +359,7 @@ export function createRootAuthService(
         }
 
         const parsedKey = parseEd25519PublicKey(sshKeyRecord.public_key_openssh);
-        verifyEd25519Signature(challenge.challenge_text, input.signature, parsedKey);
+        verifyRootLoginSignature(challenge.challenge_text, input.signature, parsedKey);
       } catch (error) {
         await authRepository.createAuditEvent({
           eventId: createPrefixedId("evt"),

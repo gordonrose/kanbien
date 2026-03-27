@@ -1,0 +1,233 @@
+---
+name: prd-test-case-implementer
+description: Use when the user wants Codex to read a PRD-derived test-case document under docs/prd/test_cases and implement the executable tests under tests/. Preserve TC-* traceability, implement one layer at a time unless asked otherwise, and explicitly discuss non-trivial changes to existing tests before making them.
+---
+
+# PRD Test Case Implementer
+
+Use this skill when the user wants executable tests written from an existing
+PRD test-case document rather than just planning coverage.
+
+The goal is to take a file under `docs/prd/test_cases/` and implement the
+corresponding tests under `tests/` in the right layers, while preserving the
+repo's traceability, cleanup, and persistence-testing conventions.
+
+## Purpose
+
+This skill reads a PRD-derived test-case doc, maps the cases to the current
+test architecture, and implements executable tests under `tests/`.
+
+It should:
+
+- preserve `TC-*` IDs in test names
+- implement one layer at a time unless the user explicitly asks otherwise
+- use existing `tests/harness/*`, `tests/helpers/*`, and persistence-backed
+  utilities where possible
+- respect the test-data lifecycle and cleanup framework
+- distinguish additive new tests from changes to existing tests
+- pause for discussion when existing tests would need non-trivial expectation
+  changes, deletion, or restructuring
+
+## Authority Order
+
+Use this authority order unless the user explicitly says otherwise:
+
+1. `AGENTS.md`
+2. `docs/architecture/`
+3. the target file under `docs/prd/test_cases/`
+4. the source PRD under `docs/prd/`
+5. current implementation in `src/`
+6. current executable tests in `tests/`
+
+If the PRD-derived test-case doc and the code differ, prefer the documented PRD
+intent for new tests, but surface meaningful conflicts rather than silently
+rewriting existing expectations.
+
+## Where To Look
+
+Primary sources:
+
+- the target file under `docs/prd/test_cases/`
+- the source PRD under `docs/prd/`
+- `docs/architecture/system-overview.md`
+- `docs/architecture/priniciples.md`
+- relevant ADRs in `docs/architecture/adr/`
+- feature code in `src/features/`
+- shared seams in `src/lib/`
+- current tests under `tests/`
+- `tests/README.md`
+- `docs/testing/persistence-tests.md` when persistence-backed tests are needed
+
+Helpful repo utilities:
+
+- `tests/harness/`
+- `tests/helpers/`
+- `tests/setup/`
+- `src/lib/testingData/`
+
+## Workflow
+
+1. Read the PRD test-case document.
+Identify:
+- which layer the user wants now, or infer the next unfinished layer if clear
+- the `TC-*` IDs for that layer
+- any cases marked or implied as persistence-backed
+- any cleanup/test-helper expectations
+
+2. Inspect existing tests before editing.
+Check:
+- whether the target layer already has tests for these capabilities
+- whether the work is additive or would change existing expectations
+- whether current tests already partially cover the case under another ID
+- whether an existing persistence-backed test should be extended rather than
+  duplicated
+
+3. Surface existing-test impact if it is non-trivial.
+Discuss before editing when:
+- an existing test's expected behavior would need to change
+- an existing test would need to be deleted
+- a current suite appears to encode behavior that conflicts with the PRD
+- implementing the new case would require meaningful test harness restructuring
+
+Simple additive edits do not need a pause.
+
+4. Implement the selected layer under `tests/`.
+Default to one layer at a time:
+- `UNIT`
+- `INT`
+- `SEC`
+- `AUD`
+- `EDGE`
+
+Follow the suggested folders from the PRD test-case doc unless the repo's
+current test structure gives a better-established home.
+
+5. Preserve traceability.
+For every implemented case:
+- keep the `TC-*` ID in the Vitest test name, or
+- add it in a nearby executable test comment if one test honestly covers
+  multiple documented cases
+
+Do not invent a new ID format.
+
+6. Use the right test substrate.
+- Use in-memory or harness-backed tests for runtime behavior when honest
+- Use Postgres-backed persistence tests when the claim is about storage,
+  migrations, or durable audit records
+- Keep persistence-backed tests behind the repo's dedicated persistence flow
+  when that convention already exists
+
+7. Verify and report.
+After implementation:
+- run the narrowest relevant Vitest command first
+- run broader verification if the change touches shared test infrastructure
+- run `npm run test:traceability` when the implemented tests add or change
+  `TC-*` coverage
+- report what passed
+- report any remaining skipped persistence-backed cases honestly
+
+8. Update implementation status when appropriate.
+If the repo uses the PRD test-case doc as a living status artifact, update the
+relevant status section after implementation so it reflects:
+
+- the layer that is now implemented
+- whether it is runtime-tested
+- whether it is persistence-tested where required
+- any remaining not-yet-proven cases
+
+## Implementation Rules
+
+### Additive First
+
+Prefer additive test changes when possible:
+
+- add new tests before editing old ones
+- extend existing tests only when the fit is natural and honest
+- avoid refactoring unrelated test structure just because you are nearby
+
+### Existing Test Change Rule
+
+Bring the user into the loop before proceeding if:
+
+- an existing test's assertions would need to change materially
+- the PRD-intent-based test would cause an established test to fail and the
+  resolution is not obvious
+- a test harness must be reshaped in a way that changes multiple existing test
+  files
+
+When surfacing this, be concrete:
+
+- which file(s) are affected
+- whether this is an additive change or an expectation change
+- what conflict appears to exist between current tests and the PRD
+
+### Layer Placement
+
+Follow the repo conventions from `tests/README.md`:
+
+- `tests/unit/<area>/`
+- `tests/integration/<area>/`
+- `tests/security/<area>/`
+- `tests/audit/<area>/`
+- `tests/harness/` for shared test infrastructure
+
+Do not place test-only harness logic under `src/` unless it is truly runtime
+framework code already intended for shared script use.
+
+### Persistence-Backed Cases
+
+When a case requires real Postgres-backed proof:
+
+- use the existing persistence-backed harnesses under `tests/harness/postgres/`
+- keep those tests compatible with `npm run test:persistence`
+- do not silently make the normal `npm test` suite depend on a live database
+- if DB-backed tests share one test database, keep file-level execution
+  serialized if the repo already depends on that convention
+
+## Reporting Format
+
+When reporting before edits, use:
+
+1. `PRD Test Case Scope`
+2. `Planned Layer`
+3. `Existing Test Impact`
+4. `Implementation Plan`
+
+When reporting after edits, use:
+
+1. `Implemented`
+2. `Verification`
+3. `PRD Test Case Status`
+4. `Remaining Gaps`
+
+Keep the summary focused on:
+
+- which `TC-*` IDs were implemented
+- whether the work was additive or required existing-test discussion
+- which commands were run
+- whether the PRD test-case doc status was updated
+
+## Guardrails
+
+- Do not silently treat a PRD test-case doc as permission to rewrite existing
+  tests without discussion when the changes are non-trivial.
+- Do not claim a case is fully proven if it only has traceability but has not
+  been executed in the right layer yet.
+- Do not forget to refresh the PRD test-case status section when the repository
+  is using those files as living execution-status artifacts.
+- Do not move persistence-backed guarantees into in-memory tests just to make
+  the suite simpler.
+- Do not drop `TC-*` IDs from test names once present.
+- Do not ignore the cleanup/test-data lifecycle conventions when adding tests
+  that create durable data.
+
+## Trigger Phrases
+
+Trigger this skill for prompts like:
+
+- "implement these PRD test cases"
+- "turn this PRD test-case file into tests"
+- "add the executable tests for this PRD"
+- "implement the unit layer from docs/prd/test_cases"
+- "read the PRD test-case doc and add tests under /tests"
+- "use the prd-test-case-implementer skill"

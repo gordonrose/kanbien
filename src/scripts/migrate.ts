@@ -32,16 +32,43 @@ function computeSshPublicKeyFingerprint(publicKeyOpenSsh: string): string {
     .replace(/=+$/g, "")}`;
 }
 
+function requireRootAuthBootstrapConfig(): {
+  bootstrapPassword: string;
+  bootstrapSshPublicKey: string;
+} {
+  const bootstrapPassword = env.rootAuth.bootstrapPassword;
+  const bootstrapSshPublicKey = env.rootAuth.bootstrapSshPublicKey;
+
+  if (!bootstrapPassword) {
+    throw new Error(
+      "ROOT_AUTH_BOOTSTRAP_PASSWORD must be set before running migrations that seed or repair root auth bootstrap state.",
+    );
+  }
+
+  if (!bootstrapSshPublicKey) {
+    throw new Error(
+      "ROOT_AUTH_BOOTSTRAP_SSH_PUBLIC_KEY must be set before running migrations that seed or repair root auth bootstrap state.",
+    );
+  }
+
+  return {
+    bootstrapPassword,
+    bootstrapSshPublicKey,
+  };
+}
+
 function renderMigrationSql(sql: string): string {
+  const { bootstrapPassword, bootstrapSshPublicKey } = requireRootAuthBootstrapConfig();
+
   return sql
-    .replace(/{{ROOT_AUTH_BOOTSTRAP_PASSWORD}}/g, escapeSqlLiteral(env.rootAuth.bootstrapPassword))
+    .replace(/{{ROOT_AUTH_BOOTSTRAP_PASSWORD}}/g, escapeSqlLiteral(bootstrapPassword))
     .replace(
       /{{ROOT_AUTH_BOOTSTRAP_SSH_PUBLIC_KEY}}/g,
-      escapeSqlLiteral(env.rootAuth.bootstrapSshPublicKey),
+      escapeSqlLiteral(bootstrapSshPublicKey),
     )
     .replace(
       /{{ROOT_AUTH_BOOTSTRAP_SSH_FINGERPRINT}}/g,
-      escapeSqlLiteral(computeSshPublicKeyFingerprint(env.rootAuth.bootstrapSshPublicKey)),
+      escapeSqlLiteral(computeSshPublicKeyFingerprint(bootstrapSshPublicKey)),
     );
 }
 

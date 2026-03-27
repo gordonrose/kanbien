@@ -1,9 +1,34 @@
+import { spawnSync } from "node:child_process";
 import { createHash, createPublicKey, verify } from "node:crypto";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
   InvalidSshPublicKeyError,
   InvalidSshSignatureError,
   UnsupportedSshKeyAlgorithmError,
 } from "../contract/errors";
+
+const ROOT_AUTH_SSH_SIGNING_NAMESPACE = "kanbien-platform";
+const ROOT_AUTH_ALLOWED_SIGNER_IDENTITY = "root-login";
+
+export function assertRootAuthOpenSshVerificationAvailable(): void {
+  const result = spawnSync("ssh-keygen", ["-Y"], {
+    stdio: ["ignore", "ignore", "ignore"],
+    windowsHide: true,
+  });
+
+  const errorCode =
+    result.error && typeof result.error === "object" && "code" in result.error
+      ? result.error.code
+      : undefined;
+
+  if (errorCode === "ENOENT") {
+    throw new Error(
+      "OpenSSH ssh-keygen is required on the server for root-admin browser signature verification.",
+    );
+  }
+}
 
 function readString(buffer: Buffer, offset: number): { value: Buffer; nextOffset: number } {
   if (offset + 4 > buffer.length) {
@@ -108,4 +133,67 @@ export function verifyEd25519Signature(
   if (!accepted) {
     throw new InvalidSshSignatureError();
   }
+}
+
+function isArmoredOpenSshSignature(signature: string): boolean {
+  return signature.includes("-----BEGIN SSH SIGNATURE-----");
+}
+
+function verifyOpenSshArmoredSignature(
+  challengeText: string,
+  armoredSignature: string,
+  publicKey: ParsedSshPublicKey,
+): void {
+  const tempRoot = mkdtempSync(join(tmpdir(), "kanbien-root-auth-ssh-"));
+  const allowedSignersPath = join(tempRoot, "allowed_signers");
+  const signaturePath = join(tempRoot, "signature.sig");
+
+  try {
+    writeFileSync(
+      allowedSignersPath,
+      `${ROOT_AUTH_ALLOWED_SIGNER_IDENTITY} ${publicKey.publicKeyOpenSsh}\n`,
+      "utf8",
+    );
+    writeFileSync(signaturePath, armoredSignature, "utf8");
+
+    const result = spawnSync(
+      "ssh-keygen",
+      [
+        "-Y",
+        "verify",
+        "-f",
+        allowedSignersPath,
+        "-I",
+        ROOT_AUTH_ALLOWED_SIGNER_IDENTITY,
+        "-n",
+        ROOT_AUTH_SSH_SIGNING_NAMESPACE,
+        "-s",
+        signaturePath,
+      ],
+      {
+        input: Buffer.from(challengeText, "utf8"),
+        stdio: ["pipe", "pipe", "pipe"],
+        windowsHide: true,
+      },
+    );
+
+    if (result.error || result.status !== 0) {
+      throw new InvalidSshSignatureError();
+    }
+  } finally {
+    rmSync(tempRoot, { recursive: true, force: true });
+  }
+}
+
+export function verifyRootLoginSignature(
+  challengeText: string,
+  signature: string,
+  publicKey: ParsedSshPublicKey,
+): void {
+  if (isArmoredOpenSshSignature(signature)) {
+    verifyOpenSshArmoredSignature(challengeText, signature, publicKey);
+    return;
+  }
+
+  verifyEd25519Signature(challengeText, signature, publicKey);
 }

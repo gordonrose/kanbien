@@ -1,5 +1,5 @@
 import type { Pool } from "pg";
-import { createRootUsersAuthStateReader } from "../rootUsers";
+import { createRootUsersAuthStateReader, createRootUsersBrowserSummaryReader } from "../rootUsers";
 import { createPostgresRootAuthRepository } from "./persistence/postgresRepository";
 import { createRootAuthRouter } from "./transport/router";
 import type { PlatformSecurityRepository } from "../../lib/security/repository";
@@ -10,10 +10,12 @@ export function createRootAuthFeature(
 ) {
   const rootAuthRepository = createPostgresRootAuthRepository(dbPool);
   const rootUsersAuthStateReader = createRootUsersAuthStateReader(dbPool);
+  const rootUsersBrowserSummaryReader = createRootUsersBrowserSummaryReader(dbPool);
 
   return createRootAuthRouter(
     rootAuthRepository,
     rootUsersAuthStateReader,
+    rootUsersBrowserSummaryReader,
     platformSecurityRepository,
   );
 }

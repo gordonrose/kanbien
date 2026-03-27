@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Root Admin</title>
+    <link rel="stylesheet" href="/root-admin/assets/styles.css" />
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <section id="auth-view" class="panel">
+        <div class="eyebrow">Root Admin</div>
+        <h1>Authenticate</h1>
+        <p class="muted">Password verification happens first. SSH proof is required before a browser session is created.</p>
+        <form id="login-form" class="stack">
+          <label>
+            <span>Email</span>
+            <input id="email" name="email" type="email" autocomplete="username" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input id="password" name="password" type="password" autocomplete="current-password" required />
+          </label>
+          <button id="password-submit" type="submit">Verify Password</button>
+        </form>
+
+        <section id="ssh-stage" class="stack hidden">
+          <div class="panel subtle">
+            <h2>SSH Verification</h2>
+            <p id="ssh-instructions" class="muted"></p>
+            <label>
+              <span>Registered SSH key</span>
+              <select id="ssh-key-select"></select>
+            </label>
+            <div class="actions">
+              <button id="sign-submit" type="button">Complete SSH Login</button>
+            </div>
+          </div>
+        </section>
+
+        <div id="auth-message" class="message hidden" role="status" aria-live="polite"></div>
+      </section>
+
+      <section id="shell-view" class="panel hidden">
+        <div class="eyebrow">Authenticated Shell</div>
+        <h1>Root Session</h1>
+        <div id="session-summary" class="stack summary"></div>
+        <div class="actions">
+          <button id="logout-button" type="button">Log Out</button>
+        </div>
+        <div id="shell-message" class="message hidden" role="status" aria-live="polite"></div>
+      </section>
+
+      <div id="expiry-overlay" class="overlay hidden" aria-hidden="true">
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-modal" role="dialog" aria-modal="true" aria-labelledby="expiry-title">
+          <div class="eyebrow">Session Expired</div>
+          <h2 id="expiry-title">Your root-admin session has expired</h2>
+          <p>The shell has been locked. Return to login to continue.</p>
+          <button id="return-to-login" type="button">Return To Login</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/root-admin/assets/app.mjs"></script>
+  </body>
+</html>

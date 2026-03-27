@@ -21,11 +21,34 @@
 ```ts
 import { createRootUserFeature } from "../../features/rootUsers";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
+import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { createRequireRootSession } from "../../lib/auth/middleware";
+import { createRateLimitMiddleware } from "../../lib/security/rateLimit";
+import { env } from "../../config/env";
 
 const rootAuthRepository = createPostgresRootAuthRepository(dbPool);
+const platformSecurityRepository = createPostgresPlatformSecurityRepository(dbPool);
+const authenticatedGeneralRateLimit = createRateLimitMiddleware({
+  enabled: env.platformSecurity.enabled,
+  repository: platformSecurityRepository,
+  policy: {
+    endpointClass: "authenticated-general",
+    windowSeconds: env.platformSecurity.rateLimitPolicies.authenticatedGeneral.windowSeconds,
+    maxAttempts: env.platformSecurity.rateLimitPolicies.authenticatedGeneral.maxAttempts,
+    responseCode: "RATE_LIMITED",
+    responseMessage: "Too many requests. Please wait and try again.",
+  },
+  subjectScope: "auth_user",
+  getSubjectKey: (request) =>
+    request.rootSession ? `${request.ip ?? "unknown"}|${request.rootSession.rootUserId}` : null,
+});
 
-v1Router.use("/root-users", createRequireRootSession(rootAuthRepository), createRootUserFeature(dbPool));
+v1Router.use(
+  "/root-users",
+  createRequireRootSession(rootAuthRepository),
+  authenticatedGeneralRateLimit,
+  createRootUserFeature(dbPool),
+);
 ```
 
 ## Important Integration Notes
@@ -36,6 +59,7 @@ v1Router.use("/root-users", createRequireRootSession(rootAuthRepository), create
 - The migration runner will automatically discover `persistence/migrations/*.sql`.
 - The router handles known `RootUserError` failures locally and forwards unknown errors to the platform middleware.
 - All `rootUsers` routes are expected to sit behind root-user authentication.
+- All `rootUsers` routes also pass through shared authenticated-general rate limiting.
 - Sessions are established through the separate `rootAuth` feature.
 - If another feature needs root-user sign-in eligibility only, use the exported
   `createRootUsersAuthStateReader` seam instead of importing

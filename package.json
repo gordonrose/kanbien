@@ -4,11 +4,23 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node --import tsx src/scripts/copyFrontendAssets.ts",
     "db:migrate": "tsx src/scripts/migrate.ts",
     "dev": "npm run db:migrate && tsx src/server.ts",
     "start": "node dist/scripts/migrate.js && node dist/server.js",
-    "test": "vitest run"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "deps:audit": "npm audit --omit=dev",
+    "deps:audit:all": "npm audit",
+    "check:static": "npm run typecheck",
+    "check:repo": "npm run check:static && npm run deps:audit",
+    "test": "vitest run",
+    "root-admin:helper": "node src/rootAdminHelper/root-auth-signer-helper.mjs",
+    "test:persistence:prepare": "node --import tsx src/scripts/ensureTestDatabase.ts",
+    "test:persistence": "RUN_POSTGRES_TESTS=true vitest run --fileParallelism false tests/security/rootAuth/persistence.security.test.ts tests/security/platformSecurity/persistence.security.test.ts tests/audit/rootAuth/persistence.audit.test.ts tests/audit/platformSecurity/persistence.audit.test.ts tests/integration/rootAuth/persistence.edge.test.ts",
+    "test:traceability": "node --import tsx src/scripts/checkTestCaseCoverage.ts",
+    "test:cleanup": "node --import tsx src/scripts/cleanupTestData.ts",
+    "test:cleanup:dry": "node --import tsx src/scripts/cleanupTestData.ts --dry-run",
+    "test:all": "npm run test && npm run test:traceability"
   },
   "dependencies": {
     "dotenv": "^17.3.1",

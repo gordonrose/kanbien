@@ -59,11 +59,8 @@ const databaseUser = requireEnv("DATABASE_USER");
 const databasePassword = requireEnv("DATABASE_PASSWORD");
 const databaseSsl = parseBoolean("DATABASE_SSL", requireEnv("DATABASE_SSL"));
 
-const rootAuthBootstrapPassword = readEnvOrDefault("ROOT_AUTH_BOOTSTRAP_PASSWORD", "@Nima2or1!");
-const rootAuthBootstrapSshPublicKey = readEnvOrDefault(
-  "ROOT_AUTH_BOOTSTRAP_SSH_PUBLIC_KEY",
-  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEZeNv6aKKHqLJQQoqsHUhYyFMFFbE8WWvgDSFH0WJiq gordon@<machine-name>",
-);
+const rootAuthBootstrapPassword = readEnv("ROOT_AUTH_BOOTSTRAP_PASSWORD");
+const rootAuthBootstrapSshPublicKey = readEnv("ROOT_AUTH_BOOTSTRAP_SSH_PUBLIC_KEY");
 const rootAuthChallengeTtlSeconds = parseNumber(
   "ROOT_AUTH_CHALLENGE_TTL_SECONDS",
   readEnvOrDefault("ROOT_AUTH_CHALLENGE_TTL_SECONDS", "300"),
@@ -71,6 +68,23 @@ const rootAuthChallengeTtlSeconds = parseNumber(
 const rootAuthSessionTtlSeconds = parseNumber(
   "ROOT_AUTH_SESSION_TTL_SECONDS",
   readEnvOrDefault("ROOT_AUTH_SESSION_TTL_SECONDS", "28800"),
+);
+const rootAdminSessionIdleTtlSeconds = parseNumber(
+  "ROOT_ADMIN_SESSION_IDLE_TTL_SECONDS",
+  readEnvOrDefault("ROOT_ADMIN_SESSION_IDLE_TTL_SECONDS", "1800"),
+);
+const rootAdminSessionAbsoluteTtlSeconds = parseNumber(
+  "ROOT_ADMIN_SESSION_ABSOLUTE_TTL_SECONDS",
+  readEnvOrDefault("ROOT_ADMIN_SESSION_ABSOLUTE_TTL_SECONDS", "43200"),
+);
+const rootAdminSessionCookieName = readEnvOrDefault(
+  "ROOT_ADMIN_SESSION_COOKIE_NAME",
+  "kanbien_root_admin_session",
+);
+const rootAdminPublicOrigin = readEnv("ROOT_ADMIN_PUBLIC_ORIGIN");
+const rootAdminSignerHelperPort = parseNumber(
+  "ROOT_ADMIN_SIGNER_HELPER_PORT",
+  readEnvOrDefault("ROOT_ADMIN_SIGNER_HELPER_PORT", "8787"),
 );
 const rootAuthPasswordMinLength = parseNumber(
   "ROOT_AUTH_PASSWORD_MIN_LENGTH",
@@ -135,6 +149,13 @@ export const env = {
     challengeTtlSeconds: rootAuthChallengeTtlSeconds,
     sessionTtlSeconds: rootAuthSessionTtlSeconds,
     passwordMinLength: rootAuthPasswordMinLength,
+  },
+  rootAdmin: {
+    sessionIdleTtlSeconds: rootAdminSessionIdleTtlSeconds,
+    sessionAbsoluteTtlSeconds: rootAdminSessionAbsoluteTtlSeconds,
+    sessionCookieName: rootAdminSessionCookieName,
+    publicOrigin: rootAdminPublicOrigin,
+    signerHelperPort: rootAdminSignerHelperPort,
   },
   platformSecurity: {
     enabled: platformSecurityEnabled,

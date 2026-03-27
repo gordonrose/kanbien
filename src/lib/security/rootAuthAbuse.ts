@@ -69,6 +69,52 @@ export function createRootAuthAbuseProtection(
   },
   createLockedDownError: () => Error,
 ): RootAuthAbuseProtection {
+  const createSummaryEventIfNeeded = async (input: {
+    signal: "login_password" | "login_ssh";
+    subjectScope: SubjectScope;
+    subjectKey: string | null;
+    threshold: number;
+    attempts: number;
+    eventType:
+      | "password_failures_detected"
+      | "ssh_failures_detected"
+      | "ip_suspicious_auth_pattern_detected"
+      | "account_suspicious_auth_pattern_detected";
+    authPrincipalId?: string;
+    rootUserId?: string;
+    ipAddress?: string;
+    userAgent?: string;
+  }) => {
+    if (!input.subjectKey || input.attempts < input.threshold) {
+      return;
+    }
+
+    const now = new Date();
+    const summaryCount = await repository.incrementCounter({
+      namespace: "security_summary",
+      subjectScope: input.subjectScope,
+      subjectKey: input.subjectKey,
+      signal: `${input.signal}:${input.eventType}`,
+      windowSeconds: config.failureWindowSeconds,
+      now,
+    });
+
+    if (summaryCount !== 1) {
+      return;
+    }
+
+    await repository.createSecurityAuditEvent({
+      eventId: eventId(),
+      authPrincipalId: input.authPrincipalId,
+      rootUserId: input.rootUserId,
+      eventType: input.eventType,
+      eventOutcome: "failure",
+      ipAddress: input.ipAddress,
+      userAgent: input.userAgent,
+      occurredAt: now,
+    });
+  };
+
   const createLockdownIfNeeded = async (input: {
     signal: "login_password" | "login_ssh";
     endpointClass: EndpointClass;
@@ -174,6 +220,67 @@ export function createRootAuthAbuseProtection(
           })
         : 0;
 
+      await createSummaryEventIfNeeded({
+        signal: "login_password",
+        subjectScope: "ip",
+        subjectKey: input.ipAddress ?? null,
+        threshold: config.ipLockdownThreshold,
+        attempts: ipAttempts,
+        eventType: "password_failures_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+      await createSummaryEventIfNeeded({
+        signal: "login_password",
+        subjectScope: "ip",
+        subjectKey: input.ipAddress ?? null,
+        threshold: config.ipLockdownThreshold,
+        attempts: ipAttempts,
+        eventType: "ip_suspicious_auth_pattern_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+      await createSummaryEventIfNeeded({
+        signal: "login_password",
+        subjectScope: "account",
+        subjectKey: input.normalizedEmail,
+        threshold: config.accountLockdownThreshold,
+        attempts: accountAttempts,
+        eventType: "password_failures_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+      await createSummaryEventIfNeeded({
+        signal: "login_password",
+        subjectScope: "account",
+        subjectKey: input.normalizedEmail,
+        threshold: config.accountLockdownThreshold,
+        attempts: accountAttempts,
+        eventType: "account_suspicious_auth_pattern_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+      await createSummaryEventIfNeeded({
+        signal: "login_password",
+        subjectScope: "ip_account",
+        subjectKey: ipAccountKey,
+        threshold: config.ipAccountLockdownThreshold,
+        attempts: ipAccountAttempts,
+        eventType: "password_failures_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+
       await createLockdownIfNeeded({
         signal: "login_password",
         endpointClass: "public-auth",
@@ -274,6 +381,67 @@ export function createRootAuthAbuseProtection(
             now,
           })
         : 0;
+
+      await createSummaryEventIfNeeded({
+        signal: "login_ssh",
+        subjectScope: "ip",
+        subjectKey: input.ipAddress ?? null,
+        threshold: config.ipLockdownThreshold,
+        attempts: ipAttempts,
+        eventType: "ssh_failures_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+      await createSummaryEventIfNeeded({
+        signal: "login_ssh",
+        subjectScope: "ip",
+        subjectKey: input.ipAddress ?? null,
+        threshold: config.ipLockdownThreshold,
+        attempts: ipAttempts,
+        eventType: "ip_suspicious_auth_pattern_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+      await createSummaryEventIfNeeded({
+        signal: "login_ssh",
+        subjectScope: "account",
+        subjectKey: input.authPrincipalId,
+        threshold: config.accountLockdownThreshold,
+        attempts: accountAttempts,
+        eventType: "ssh_failures_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+      await createSummaryEventIfNeeded({
+        signal: "login_ssh",
+        subjectScope: "account",
+        subjectKey: input.authPrincipalId,
+        threshold: config.accountLockdownThreshold,
+        attempts: accountAttempts,
+        eventType: "account_suspicious_auth_pattern_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
+      await createSummaryEventIfNeeded({
+        signal: "login_ssh",
+        subjectScope: "ip_account",
+        subjectKey: ipAccountKey,
+        threshold: config.ipAccountLockdownThreshold,
+        attempts: ipAccountAttempts,
+        eventType: "ssh_failures_detected",
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+      });
 
       await createLockdownIfNeeded({
         signal: "login_ssh",

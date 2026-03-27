@@ -22,3 +22,7 @@ evolves.
 - `0008-standardize-searchable-field-storage-and-query-rules.md`
 - `0009-separate-authentication-from-business-features.md`
 - `0010-use-shared-platform-security-middleware.md`
+- `0011-adopt-prd-driven-traceable-test-coverage.md`
+- `0012-use-run-scoped-manifest-based-cleanup-for-persistent-test-data.md`
+- `0013-add-a-same-origin-root-admin-browser-auth-shell.md`
+- `0014-use-a-local-ssh-signing-helper-for-root-user-browser-auth.md`

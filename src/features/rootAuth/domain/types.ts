@@ -11,11 +11,13 @@ export interface RootAuthChallengeResult {
   status: "SSH_CHALLENGE_REQUIRED";
   challengeId: string;
   challengeText: string;
+  availableSshKeys: RootAuthLoginSshKeyOption[];
 }
 
 export interface RootAuthSessionSummary {
   status?: "AUTHENTICATED";
   sessionId: string;
+  authPrincipalId?: string;
   rootUserId: string;
   authenticatedAt: string;
   expiresAt: string;
@@ -29,6 +31,20 @@ export interface RootAuthSshKeySummary {
   status: "active" | "revoked";
   createdAt: string;
   revokedAt: string | null;
+}
+
+export interface RootAuthLoginSshKeyOption {
+  keyId: string;
+  label: string;
+  fingerprint: string;
+}
+
+export interface RootAuthBrowserSessionSummary {
+  rootUserId: string;
+  authPrincipalId: string;
+  displayName: string;
+  email: string;
+  expiresAt: string;
 }
 
 export interface LoginRootUserWithPasswordInput {

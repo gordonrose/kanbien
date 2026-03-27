@@ -46,6 +46,16 @@ v1Router.use("/root-auth", createRootAuthFeature(dbPool, platformSecurityReposit
 - `POST /v1/root-auth/login/password` performs password-stage login.
 - `POST /v1/root-auth/login/ssh` completes login and returns an opaque session
   token.
+- `POST /v1/root-auth/browser/login/ssh` completes browser login and sets the
+  root-admin session cookie.
+- `GET /v1/root-auth/browser/session` returns the minimal current-session
+  summary for the root-admin SPA.
+- `POST /v1/root-auth/browser/logout` revokes the browser session and clears
+  the cookie.
+- backend SSH verification remains compatible with legacy raw signatures while
+  also accepting the browser helper's OpenSSH-native signature format
+- the browser-helper path is intended to sign through workstation OpenSSH
+  tooling rather than direct runtime-managed private-key parsing
 - Protected requests must send `Authorization: Bearer <sessionId>`.
 - Root-user sign-in is blocked for inactive, deleted, or anonymized linked
   `rootUsers`.

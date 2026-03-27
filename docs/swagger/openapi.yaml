@@ -29,6 +29,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
 
   /v1/root-auth/login/password:
     post:
@@ -87,6 +89,80 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/browser/login/ssh:
+    post:
+      tags:
+        - Root Auth
+      summary: Complete browser root-user login with SSH proof and set a session cookie
+      operationId: completeRootUserBrowserSshChallenge
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RootAuthSshLoginBody"
+      responses:
+        "200":
+          description: Root user authenticated for the browser shell
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootAdminBrowserSessionSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/browser/session:
+    get:
+      tags:
+        - Root Auth
+      summary: Get the current browser root-admin session summary
+      operationId: getRootAdminBrowserSession
+      responses:
+        "200":
+          description: Current browser session summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootAdminBrowserSessionSummary"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-auth/browser/logout:
+    post:
+      tags:
+        - Root Auth
+      summary: Log the browser root-admin session out and clear its cookie
+      operationId: logoutRootAdminBrowserSession
+      responses:
+        "200":
+          description: Browser session logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatusResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "429":
           $ref: "#/components/responses/TooManyRequests"
         "500":
@@ -332,6 +408,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "409":
           $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -373,6 +451,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -407,6 +487,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -444,6 +526,8 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "401":
           $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -470,6 +554,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -503,6 +589,8 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -530,6 +618,8 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -556,6 +646,8 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -584,6 +676,8 @@ paths:
           $ref: "#/components/responses/NotFound"
         "409":
           $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -907,7 +1001,11 @@ components:
           type: string
         challengeText:
           type: string
-      required: [status, challengeId, challengeText]
+        availableSshKeys:
+          type: array
+          items:
+            $ref: "#/components/schemas/RootAuthLoginSshKeyOption"
+      required: [status, challengeId, challengeText, availableSshKeys]
 
     RootAuthSshLoginBody:
       type: object
@@ -928,6 +1026,8 @@ components:
           enum: [AUTHENTICATED]
         sessionId:
           type: string
+        authPrincipalId:
+          type: string
         rootUserId:
           type: string
           format: uuid
@@ -938,6 +1038,35 @@ components:
           type: string
           format: date-time
       required: [sessionId, rootUserId, authenticatedAt, expiresAt]
+
+    RootAuthLoginSshKeyOption:
+      type: object
+      properties:
+        keyId:
+          type: string
+        label:
+          type: string
+        fingerprint:
+          type: string
+      required: [keyId, label, fingerprint]
+
+    RootAdminBrowserSessionSummary:
+      type: object
+      properties:
+        rootUserId:
+          type: string
+          format: uuid
+        authPrincipalId:
+          type: string
+        displayName:
+          type: string
+        email:
+          type: string
+          format: email
+        expiresAt:
+          type: string
+          format: date-time
+      required: [rootUserId, authPrincipalId, displayName, email, expiresAt]
 
     RootAuthSessionListResponse:
       type: object

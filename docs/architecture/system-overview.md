@@ -148,8 +148,10 @@ Current auth model:
   `rootUsers` auth-state reader rather than `rootUsers` private persistence
   internals
 - root-user authentication is password plus SSH proof
-- authenticated requests use opaque bearer tokens backed by server-side session
-  records
+- authenticated API requests use opaque bearer tokens backed by server-side
+  session records
+- the root-admin browser shell uses the same server-side sessions through a
+  secure HTTP-only cookie transport and a browser bootstrap endpoint
 - request authentication is separate from future authorization and scope checks
 
 ### Platform Security Shape
@@ -159,8 +161,8 @@ not feature-local logic duplicated across routers.
 
 Current platform security model:
 
-- `src/app.ts` applies `helmet` globally with an API-safe baseline and disables
-  `X-Powered-By`
+- `src/app.ts` applies `helmet` globally, disables `X-Powered-By`, and now
+  enforces a least-privilege CSP for the served root-admin browser shell
 - route classes such as `public-read`, `public-auth`,
   `authenticated-general`, and `authenticated-sensitive` use shared rate-limit
   middleware
@@ -238,7 +240,8 @@ This keeps feature development fast while preserving explicit platform control.
 - error handling is partly feature-local and partly app-global
 - migration identity depends on path stability
 - full authorization and scope evaluation are not yet implemented
-- strict browser-focused CSP is deferred until this service serves HTML
+- browser CSP must now evolve carefully as the root-admin shell grows because
+  the service serves same-origin HTML
 
 ## Near-Term Architectural Focus
 

@@ -15,6 +15,7 @@ import type {
 
 export interface RootAuthSessionLookupRepository {
   findActiveSessionById(sessionId: string): Promise<ActiveAuthSessionRecord | null>;
+  touchSession(sessionId: string, expiresAt: Date): Promise<ActiveAuthSessionRecord | null>;
 }
 
 export interface RootAuthRepository extends RootAuthSessionLookupRepository {

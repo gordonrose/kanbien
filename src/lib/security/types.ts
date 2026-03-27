@@ -5,7 +5,7 @@ export type EndpointClass =
   | "authenticated-general"
   | "authenticated-sensitive";
 
-export type CounterNamespace = "rate_limit" | "auth_failure";
+export type CounterNamespace = "rate_limit" | "auth_failure" | "security_summary";
 export type SubjectScope = "ip" | "account" | "ip_account" | "auth_user";
 
 export interface RateLimitPolicy {

@@ -226,7 +226,21 @@ Events should support both:
 - IP-level suspicious auth pattern detected
 - account-level suspicious auth pattern detected
 - lockdown started
-- lockdown expired or cleared where tracked
+- lockdown cleared where tracked in this phase
+
+### Follow-up note on passive expiry
+
+Passive `lockdown expired` events are deferred for a later phase.
+
+Reason:
+
+- the current design models expiry through `expires_at` on durable lockdown rows
+- this phase does not introduce a background processing layer to observe expiry
+  and emit one-time lifecycle events
+
+Once a proper background processing layer exists, revisit passive expiry events
+and add a durable `lockdown expired` event if the platform still needs that
+operator visibility.
 
 ### Required metadata
 
