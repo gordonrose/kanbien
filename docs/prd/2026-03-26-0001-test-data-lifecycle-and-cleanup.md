@@ -20,9 +20,13 @@ with durable persistence, especially security-sensitive features such as
 
 This phase includes:
 
-- a run-scoped test data model for durable automated tests
-- a manifest-based record of durable entities created by tests
-- a separate cleanup command that runs after tests, not during test execution
+- a clear split between normal reset-first persistence-backed tests and optional
+  preserve/debug durable-test runs
+- a run-scoped test data model for preserved durable automated tests
+- a manifest-based record of durable entities created by preserved durable test
+  runs
+- a separate cleanup command that runs after preserved/debug tests, not during
+  test execution
 - dry-run cleanup support
 - safety rules that prevent cleanup in unsafe environments
 - test data conventions that make created records easy to identify during
@@ -81,9 +85,37 @@ The platform needs a deliberate approach rather than ad hoc helper code.
 
 ## Core Concepts
 
+### Normal persistence mode
+
+The default persistence-backed test mode is reset-first.
+
+Current behavior:
+
+- tests share one dedicated Postgres test database
+- the persistence harness resets relevant tables before each test
+- the suite runs serialized to avoid cross-test interference
+- routine runs optimize for determinism and isolation rather than preserving
+  failure state after the next test starts
+
+This is the normal mode for `npm run test:persistence`.
+
+### Preserve/debug mode
+
+Some durable test workflows need post-failure inspection before cleanup.
+
+Those workflows use an optional preserve/debug mode:
+
+- the test run receives a unique `testRunId`
+- helpers register created durable records in a manifest
+- rows are intentionally preserved until an operator runs cleanup later
+- cleanup remains separate from test execution
+
+This mode is for debugging and targeted durable-test workflows, not the default
+execution path for the whole persistence suite.
+
 ### Test run ID
 
-Every durable automated test run should have a unique `testRunId`.
+Every preserved durable automated test run should have a unique `testRunId`.
 
 Example shape:
 
@@ -98,7 +130,7 @@ This ID is used to:
 ### Manifest
 
 Durable test-created records should be written to a manifest as they are
-created.
+created when a test or helper is operating in preserve/debug mode.
 
 The first implementation should use a manifest file rather than a database
 table.
@@ -111,7 +143,7 @@ Reason:
 
 ### Separate cleanup step
 
-Cleanup must run separately from test execution.
+Cleanup must run separately from test execution for preserved/debug runs.
 
 Reason:
 
@@ -132,10 +164,14 @@ traceability tooling can report coverage.
 
 1. derive test cases from a PRD and assign `TC-*` IDs
 2. implement executable tests by layer under `tests/`
-3. run `npm test`
-4. inspect failures, rows, and audit records if needed
-5. run cleanup in dry-run mode first
-6. run cleanup for the chosen `testRunId`
+3. choose the intended persistence mode:
+   - normal reset-first mode for routine persistence-backed tests
+   - preserve/debug mode when post-failure inspection is required
+4. run the chosen test command
+5. if preserve/debug mode was used, inspect failures, rows, and audit records
+   as needed
+6. if preserve/debug mode was used, run cleanup in dry-run mode first
+7. if preserve/debug mode was used, run cleanup for the chosen `testRunId`
 
 Example commands:
 
@@ -150,9 +186,18 @@ npm run test:cleanup -- --run-id tr_20260326_001
 
 ## Test Data Rules
 
-### Creation rules
+### Normal-mode rules
 
-- durable test data must be created through shared helpers or factories
+- routine persistence-backed tests may rely on the dedicated reset-first test
+  database model
+- those tests do not need manifest registration if the intended lifecycle is
+  full harness-driven reset
+- their cleanup model is test-database reset, not later `testRunId` cleanup
+
+### Preserve/debug creation rules
+
+- durable preserved test data must be created through shared helpers or
+  factories
 - helpers must know the active `testRunId`
 - helpers must register every created durable record in the manifest
 - tests must not rely on manually seeded human-like shared records by default
@@ -171,6 +216,8 @@ This is for debugging convenience, not as the primary cleanup mechanism.
 
 ### Cleanup rules
 
+- cleanup applies to preserve/debug runs, not to routine reset-first
+  persistence runs
 - cleanup must prefer exact ID deletion from the manifest
 - cleanup must delete in dependency-safe order
 - cleanup must support dry-run mode
@@ -230,26 +277,35 @@ Initial guidance:
 
 This phase is complete when all of the following are true:
 
-1. durable test-created records can be tied to a specific `testRunId`
-2. tests that create durable data use shared helpers or factories
-3. a manifest exists for each durable test run
-4. cleanup can run separately from tests
-5. cleanup supports dry-run mode
-6. cleanup deletes only manifest-tracked records
-7. cleanup refuses unsafe environments
-8. PRD-derived test cases use stable `TC-*` IDs
-9. the traceability checker can report coverage by PRD and test type
-10. documented PRD test cases state their recommended test layer and folder
+1. the repo documents two explicit durable-test modes:
+   - normal reset-first persistence-backed testing
+   - optional preserve/debug testing with manifest cleanup
+2. routine persistence-backed tests can continue using the dedicated
+   reset-first test database model
+3. preserved durable test-created records can be tied to a specific
+   `testRunId`
+4. preserve/debug tests that create durable data use shared helpers or
+   factories
+5. a manifest exists for each preserved durable test run
+6. cleanup can run separately from preserved/debug tests
+7. cleanup supports dry-run mode
+8. cleanup deletes only manifest-tracked records
+9. cleanup refuses unsafe environments
+10. PRD-derived test cases use stable `TC-*` IDs
+11. the traceability checker can report coverage by PRD and test type
+12. documented PRD test cases state their recommended test layer and folder
 
 ---
 
 ## Risks And Open Questions
 
-- whether a manifest file remains sufficient if multi-process or distributed
-  test execution grows significantly
+- whether a manifest file remains sufficient if preserve/debug execution grows
+  beyond local serialized workflows
 - whether some migration-driven bootstrap checks should be treated differently
   from ordinary feature integration tests
 - whether long-lived shared environments need retention policies for stale
   manifests in addition to cleanup commands
 - how much PRD-intent-first testing should tolerate current code divergence
   before a discussion is required
+- whether preserve/debug mode should be exposed as a dedicated command,
+  environment toggle, or harness-level option first

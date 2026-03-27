@@ -6,7 +6,7 @@ import { applyPostgresTestMigrations } from "../../harness/postgres/migrations";
 import {
   createPostgresTestDatabasePool,
   hasPostgresTestDatabaseConfig,
-  resetPostgresTestDatabase,
+  resetPostgresTestDatabaseForRoutineIsolation,
 } from "../../harness/postgres/testDatabase";
 
 interface AuthAuditEventRow {
@@ -50,7 +50,7 @@ describeIfPostgres("platformSecurity postgres-backed audit visibility", () => {
   });
 
   beforeEach(async () => {
-    await resetPostgresTestDatabase(pool);
+    await resetPostgresTestDatabaseForRoutineIsolation(pool);
   });
 
   afterAll(async () => {

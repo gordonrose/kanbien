@@ -68,6 +68,10 @@ export function readPostgresTestDatabaseConfig(): PostgresTestDatabaseConfig {
   };
 }
 
+export function isPostgresTestDataPreserveModeEnabled(): boolean {
+  return process.env.PRESERVE_POSTGRES_TEST_DATA === "true";
+}
+
 export function createPostgresTestDatabasePool(): Pool {
   if (process.env.NODE_ENV !== "test") {
     throw new Error("Postgres-backed tests may only run when NODE_ENV=test.");
@@ -97,4 +101,12 @@ export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
     DROP TABLE IF EXISTS platform_security_counters CASCADE;
     DROP TABLE IF EXISTS schema_migrations CASCADE;
   `);
+}
+
+export async function resetPostgresTestDatabaseForRoutineIsolation(pool: Pool): Promise<void> {
+  if (isPostgresTestDataPreserveModeEnabled()) {
+    return;
+  }
+
+  await resetPostgresTestDatabase(pool);
 }

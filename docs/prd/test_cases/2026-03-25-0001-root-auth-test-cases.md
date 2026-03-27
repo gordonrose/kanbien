@@ -12,6 +12,9 @@
   - this file covers test cases, not executable test implementation
   - logging expectations are expressed as durable audit event coverage where the
     repo uses auth audit events instead of generic logs
+  - cleanup expectations in this file refer to preserved durable-test workflows;
+    the routine `npm run test:persistence` suite now remains reset-first unless
+    `npm run test:persistence:preserve` is used intentionally
 
 ## Current Status
 
@@ -36,6 +39,7 @@
   - `npm run test:traceability`
   - `npm test`
   - `npm run test:persistence`
+  - `npm run test:persistence:preserve`
 
 ## Unit Tests For Individual Capabilities
 

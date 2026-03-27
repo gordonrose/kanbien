@@ -12,7 +12,7 @@ import {
 import {
   createPostgresTestDatabasePool,
   hasPostgresTestDatabaseConfig,
-  resetPostgresTestDatabase,
+  resetPostgresTestDatabaseForRoutineIsolation,
 } from "../../harness/postgres/testDatabase";
 
 interface AuthPrincipalStorageRow {
@@ -45,7 +45,7 @@ describeIfPostgres("rootAuth postgres-backed secret handling", () => {
   });
 
   beforeEach(async () => {
-    await resetPostgresTestDatabase(pool);
+    await resetPostgresTestDatabaseForRoutineIsolation(pool);
   });
 
   afterAll(async () => {

@@ -242,6 +242,13 @@ When the user asks to read a PRD-derived test-case document and implement the
 corresponding executable tests under `tests/`, prefer the repo-local
 `prd-test-case-implementer` skill before making edits.
 
+## Change Loop Orchestration
+
+When the user has reached a clear direction and scope for a new feature,
+architectural change, or repo-process change and wants Codex to drive the full
+delivery loop consistently, prefer the repo-local `change-loop-orchestrator`
+skill before making edits.
+
 ## Root Cause Guardrails
 
 When adding a new feature that depends on existing entities or tables:

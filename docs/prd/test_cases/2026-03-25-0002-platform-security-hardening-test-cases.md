@@ -16,6 +16,9 @@
   - this PRD is primarily platform-owned rather than feature-owned
   - the current implementation already covers much of the PRD baseline through shared middleware, durable counters, lockdown tables, and auth-visible events
   - the main unresolved areas are summarized suspicious-pattern events and lockdown expiry or clear events, which are described by the PRD but not clearly implemented in current code
+  - cleanup expectations in this file refer to preserved durable-test workflows;
+    the routine `npm run test:persistence` suite now remains reset-first unless
+    `npm run test:persistence:preserve` is used intentionally
 
 ## Existing Test Impact
 
@@ -92,6 +95,7 @@
   - `npm run test:traceability`
   - `npm test`
   - `npm run test:persistence`
+  - `npm run test:persistence:preserve`
   - `npm run build`
 
 ## Unit Tests For Individual Capabilities

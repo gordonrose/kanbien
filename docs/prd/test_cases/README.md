@@ -49,6 +49,23 @@ Use the following terms consistently when discussing PRD test-case status:
   storage-sensitive or migration-sensitive cases may require
   `persistence-tested`.
 
+## Persistence-Mode Interpretation
+
+Persistence-backed tests now use two deliberate execution modes:
+
+- `npm run test:persistence`
+  The normal reset-first mode against the dedicated Postgres test database.
+- `npm run test:persistence:preserve`
+  The optional preserve/debug mode for forensic inspection when you do not want
+  routine per-test resets.
+
+Important:
+
+- preserve/debug mode does not automatically mean every persistence-backed test
+  writes a manifest
+- manifest cleanup expectations apply only to preserved durable test workflows
+  that actually register a `testRunId` through the shared durable-test helpers
+
 ## Recommended Reporting Pattern
 
 When summarizing a PRD test-case file, prefer reporting at the layer level:

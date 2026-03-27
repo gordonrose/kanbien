@@ -14,7 +14,8 @@
   - cleanup must interact safely with durable security and audit entities
 - Notes:
   - this file plans test coverage for the testing-data framework itself
-  - cleanup remains a separate operational step after tests, not part of test execution
+  - cleanup remains a separate operational step after preserve/debug tests, not part of test execution
+  - routine persistence-backed tests may still use reset-first database cleanup instead of manifests
 
 ## Unit Tests For Individual Capabilities
 
@@ -87,6 +88,21 @@
 
 ## Integration Tests For Features Working Together
 
+- Flow: routine persistence-backed tests use reset-first cleanup instead of
+  manifest cleanup
+  Test Case ID: `TC-TEST-DATA-INT-000`
+  Recommended Test Layer: `feature-integration`
+  Suggested Test Folder: `tests/integration/testData/`
+  Features:
+  - Postgres persistence harness
+  - reset-first test database lifecycle
+  Coverage:
+  - the persistence-backed harness resets relevant tables before each test
+  - routine `npm run test:persistence` behavior does not require a manifest
+  - docs and runtime behavior agree on this default lifecycle
+  Notes:
+  - this is the key regression guard for the clarified hybrid model
+
 - Flow: test helpers create durable records and manifest captures exact IDs
   Test Case ID: `TC-TEST-DATA-INT-001`
   Recommended Test Layer: `feature-integration`
@@ -96,10 +112,10 @@
   - manifest recording
   - durable feature records
   Coverage:
-  - helper-created records for `rootUsers` and `rootAuth` are registered immediately
+  - helper-created records for `rootUsers` and `rootAuth` are registered immediately when preserve/debug mode is used
   - manifest contains exact IDs needed for later cleanup
   Notes:
-  - this proves the framework can support durable feature tests
+  - this proves the framework can support preserved durable feature tests
 
 - Flow: cleanup dry-run reports without deleting
   Test Case ID: `TC-TEST-DATA-INT-002`
@@ -257,6 +273,18 @@
   - emails, labels, or other helper-generated values embed the run ID consistently
   Notes:
   - improves debugging but is not the primary cleanup mechanism
+
+- Scenario: preserve/debug cleanup expectations are not applied to routine
+  reset-first persistence tests
+  Test Case ID: `TC-TEST-DATA-EDGE-006`
+  Recommended Test Layer: `feature-integration`
+  Suggested Test Folder: `tests/integration/testData/`
+  Coverage:
+  - routine persistence-backed tests are documented and treated as reset-first
+  - preserve/debug manifest expectations remain limited to preserved durable
+    test runs
+  Notes:
+  - prevents docs and PRD assumptions from drifting ahead of implementation
 
 ## Coverage Gaps Or Open Questions
 

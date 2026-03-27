@@ -4,7 +4,7 @@ import { applyPostgresTestMigrations } from "../../harness/postgres/migrations";
 import {
   createPostgresTestDatabasePool,
   hasPostgresTestDatabaseConfig,
-  resetPostgresTestDatabase,
+  resetPostgresTestDatabaseForRoutineIsolation,
 } from "../../harness/postgres/testDatabase";
 import { createPostgresRootUsersRepository } from "../../../src/features/rootUsers/persistence/postgresRepository";
 
@@ -29,7 +29,7 @@ describeIfPostgres("rootAuth postgres-backed edge cases", () => {
   });
 
   beforeEach(async () => {
-    await resetPostgresTestDatabase(pool);
+    await resetPostgresTestDatabaseForRoutineIsolation(pool);
   });
 
   afterAll(async () => {
