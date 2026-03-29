@@ -245,6 +245,7 @@ function createInMemoryRootUsersRepository(store: Map<string, StoredRootUser>): 
         firstName: anonymizedFirstName,
         lastName: anonymizedLastName,
         anonymized: true,
+        status: "inactive" as const,
         deletedAt: new Date(),
         updatedAt: new Date(),
       };

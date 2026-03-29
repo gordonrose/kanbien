@@ -20,6 +20,7 @@
     "test:persistence": "RUN_POSTGRES_TESTS=true vitest run --fileParallelism false tests/security/rootAuth/persistence.security.test.ts tests/security/platformSecurity/persistence.security.test.ts tests/audit/rootAuth/persistence.audit.test.ts tests/audit/platformSecurity/persistence.audit.test.ts tests/integration/rootAuth/persistence.edge.test.ts",
     "test:persistence:preserve": "PRESERVE_POSTGRES_TEST_DATA=true RUN_POSTGRES_TESTS=true vitest run --fileParallelism false tests/security/rootAuth/persistence.security.test.ts tests/security/platformSecurity/persistence.security.test.ts tests/audit/rootAuth/persistence.audit.test.ts tests/audit/platformSecurity/persistence.audit.test.ts tests/integration/rootAuth/persistence.edge.test.ts",
     "test:traceability": "node --import tsx src/scripts/checkTestCaseCoverage.ts",
+    "test:lifecycle:report": "node --import tsx src/scripts/reportTestCaseLifecycle.ts",
     "test:cleanup": "node --import tsx src/scripts/cleanupTestData.ts",
     "test:cleanup:dry": "node --import tsx src/scripts/cleanupTestData.ts --dry-run",
     "test:all": "npm run test && npm run test:traceability"

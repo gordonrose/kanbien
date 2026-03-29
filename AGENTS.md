@@ -249,6 +249,12 @@ architectural change, or repo-process change and wants Codex to drive the full
 delivery loop consistently, prefer the repo-local `change-loop-orchestrator`
 skill before making edits.
 
+## Test-Case Lifecycle Review
+
+When the user wants to review PRD-derived test cases for anti-drift lifecycle
+changes such as `active`, `superseded`, `archived`, or `pending-review`,
+prefer the repo-local `test-case-lifecycle-reviewer` skill before making edits.
+
 ## Root Cause Guardrails
 
 When adding a new feature that depends on existing entities or tables:

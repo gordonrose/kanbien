@@ -15,6 +15,10 @@
   - cleanup expectations in this file refer to preserved durable-test workflows;
     the routine `npm run test:persistence` suite now remains reset-first unless
     `npm run test:persistence:preserve` is used intentionally
+  - Traceability Enforcement: enforced
+  - Lifecycle metadata defaults currently apply:
+    - `Version: v1`
+    - `Lifecycle Status: active`
 
 ## Current Status
 

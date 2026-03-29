@@ -26,3 +26,4 @@ evolves.
 - `0012-use-run-scoped-manifest-based-cleanup-for-persistent-test-data.md`
 - `0013-add-a-same-origin-root-admin-browser-auth-shell.md`
 - `0014-use-a-local-ssh-signing-helper-for-root-user-browser-auth.md`
+- `0015-version-prd-test-case-lifecycle-to-reduce-drift.md`

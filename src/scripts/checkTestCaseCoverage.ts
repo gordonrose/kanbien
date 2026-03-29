@@ -1,6 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { buildTraceabilityReport, formatTraceabilityReport } from "../lib/testingData/traceabilityReport";
+import { parseTraceabilityEnforcement } from "../lib/testingData/testCaseLifecycle";
 
 const repoRoot = process.cwd();
 const testCaseDir = join(repoRoot, "docs", "prd", "test_cases");
@@ -41,6 +42,9 @@ function readTestCaseIds(): string[] {
 
   for (const filePath of markdownFiles) {
     const contents = readFileSync(filePath, "utf8");
+    if (parseTraceabilityEnforcement(contents) === "deferred") {
+      continue;
+    }
 
     for (const match of contents.matchAll(idPattern)) {
       ids.add(match[1]);

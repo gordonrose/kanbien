@@ -28,6 +28,46 @@ Important interpretation:
 - it does not by itself prove that those tests were executed in the current run
 - execution proof still comes from running the relevant Vitest command, such as `npm test` or a narrower command like `npm run test:persistence`
 
+## Lifecycle Metadata
+
+PRD-derived test-case documents may also carry lifecycle metadata for
+anti-drift review.
+
+Recommended per-case fields:
+
+- `Version`
+- `Lifecycle Status`
+- `Supersedes`
+- `Superseded By`
+- `Reason`
+- `Approval Note`
+
+Current lifecycle states:
+
+- `active`
+- `superseded`
+- `archived`
+- `pending-review`
+
+Pilot default:
+
+- if a case omits lifecycle metadata, the repo currently treats it as:
+  - `Version: v1`
+  - `Lifecycle Status: active`
+
+## Traceability Enforcement
+
+PRD-derived test-case documents may declare:
+
+- `Traceability Enforcement: enforced`
+- `Traceability Enforcement: deferred`
+
+Use `deferred` only when a document is intentionally being added as a planning
+or pilot source of truth before executable coverage is expected to be
+traceability-clean.
+
+The current traceability checker skips deferred documents.
+
 ## Status Vocabulary
 
 Use the following terms consistently when discussing PRD test-case status:
