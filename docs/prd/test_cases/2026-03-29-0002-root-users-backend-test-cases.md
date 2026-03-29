@@ -51,7 +51,7 @@
   - `npm test`
   - `npm run test:persistence`
   - `npm run test:traceability`
-  - `npx vitest run tests/unit/rootUsers/service.test.ts tests/unit/rootUsers/schemas.test.ts tests/integration/rootUsers/flow.test.ts tests/security/rootUsers/security.test.ts tests/audit/rootUsers/audit.test.ts`
+  - `npx vitest run tests/unit/rootUsers/contracts.test.ts tests/unit/rootUsers/service.test.ts tests/unit/rootUsers/schemas.test.ts tests/integration/rootUsers/flow.test.ts tests/security/rootUsers/security.test.ts tests/audit/rootUsers/audit.test.ts`
 
 ## Unit Tests For Individual Capabilities
 

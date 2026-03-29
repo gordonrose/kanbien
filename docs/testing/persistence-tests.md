@@ -92,8 +92,9 @@ npm run test:persistence:reset
   share one dedicated database and perform schema resets and migration work.
 - Both `npm run test:persistence` and `npm run test:persistence:preserve`
   encode that serialized execution behavior directly.
-- The current persistence suite includes both `rootAuth` storage proofs and
-  platform-security durability proofs.
+- The current persistence suite includes `rootAuth` storage proofs,
+  `rootUsers` repository/storage proofs, and platform-security durability
+  proofs.
 - It also includes persistence-backed audit checks where we need to verify that
   durable audit rows do not store sensitive raw secrets.
 - During the normal `npm test` suite, they remain skipped by design.
