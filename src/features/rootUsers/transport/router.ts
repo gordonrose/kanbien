@@ -20,7 +20,21 @@ function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknow
   try { return schema.parse(input); } catch (error) {
     if (error instanceof ZodError) {
       const issue = error.issues[0];
-      throw new InvalidRequestError(undefined, issue ? { field: String(issue.path[0] ?? "unknown"), reason: issue.message } : undefined);
+      if (issue?.code === "unrecognized_keys" && issue.keys[0]) {
+        throw new InvalidRequestError(undefined, {
+          field: issue.keys[0],
+          reason: "unexpected_field",
+        });
+      }
+      throw new InvalidRequestError(
+        undefined,
+        issue
+          ? {
+              field: String(issue.path[0] ?? "unknown"),
+              reason: issue.message,
+            }
+          : undefined,
+      );
     }
     throw error;
   }

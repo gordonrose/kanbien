@@ -34,6 +34,15 @@ interface RootUserListResponse {
   pageSize: number;
 }
 
+interface ErrorResponse {
+  code: string;
+  message: string;
+  details?: {
+    field?: string;
+    reason?: string;
+  };
+}
+
 async function loginViaPasswordAndSsh(
   harness: RootAuthIntegrationHarness,
   identity: SeededAuthIdentity,
@@ -219,5 +228,142 @@ describe("rootUsers integration flows", () => {
     });
     expect(secondReactivate.status).toBe(409);
     expect(secondReactivate.body.code).toBe("ROOT_USER_ALREADY_ANONYMIZED");
+  });
+
+  it("TC-ROOT-USERS-INT-001 also proves active-list filtering, deleted-list excludeAnonymized, and exact duplicate-error payloads", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const activeAlpha = await invokeJson<RootUserResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        email: "alpha.active@example.test",
+        firstName: "Alpha",
+        lastName: "Active",
+      },
+    });
+    const activeBeta = await invokeJson<RootUserResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        email: "beta.active@example.test",
+        firstName: "Alpha",
+        lastName: "Beta",
+      },
+    });
+    const deletedVisible = await invokeJson<RootUserResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        email: "deleted.visible@example.test",
+        firstName: "Deleted",
+        lastName: "Visible",
+      },
+    });
+    const deletedAnonymized = await invokeJson<RootUserResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        email: "deleted.anon@example.test",
+        firstName: "Deleted",
+        lastName: "Anon",
+      },
+    });
+    expect(activeAlpha.status).toBe(201);
+    expect(activeBeta.status).toBe(201);
+    expect(deletedVisible.status).toBe(201);
+    expect(deletedAnonymized.status).toBe(201);
+
+    await invokeJson(harness.app, {
+      method: "PATCH",
+      path: `/v1/root-users/${activeBeta.body.rootUserId}`,
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        status: "inactive",
+      },
+    });
+    await invokeJson(harness.app, {
+      method: "DELETE",
+      path: `/v1/root-users/${deletedVisible.body.rootUserId}`,
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+    });
+    await invokeJson(harness.app, {
+      method: "DELETE",
+      path: `/v1/root-users/${deletedAnonymized.body.rootUserId}`,
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+    });
+    await invokeJson(harness.app, {
+      method: "POST",
+      path: `/v1/root-users/${deletedAnonymized.body.rootUserId}/remove`,
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {},
+    });
+
+    const activeList = await invokeJson<RootUserListResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users/active?firstNamePrefix=alp&orderBy=email&orderDirection=asc",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+    });
+    expect(activeList.status).toBe(200);
+    expect(activeList.body.items.map((item) => item.email)).toEqual([
+      "alpha.active@example.test",
+    ]);
+
+    const deletedList = await invokeJson<RootUserListResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users/deleted?excludeAnonymized=true&firstNamePrefix=del&orderBy=email&orderDirection=asc",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+    });
+    expect(deletedList.status).toBe(200);
+    expect(deletedList.body.items.map((item) => item.rootUserId)).toEqual([
+      deletedVisible.body.rootUserId,
+    ]);
+
+    const duplicateCreate = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        email: "ALPHA.ACTIVE@example.test",
+        firstName: "Duplicate",
+      },
+    });
+    expect(duplicateCreate.status).toBe(409);
+    expect(duplicateCreate.body).toEqual({
+      code: "ROOT_USER_EMAIL_ALREADY_EXISTS",
+      message: "That email address is already in use by another active root user.",
+      details: {
+        field: "email",
+        reason: "duplicate_active_email",
+      },
+    });
   });
 });

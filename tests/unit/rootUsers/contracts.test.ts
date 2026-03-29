@@ -85,4 +85,30 @@ describe("rootUsers contract schemas", () => {
       status: "inactive",
     });
   });
+
+  it("rejects client-supplied system-managed or unexpected fields explicitly", () => {
+    const createResult = createRootUserBodySchema.safeParse({
+      email: "person@example.com",
+      rootUserId: "11111111-1111-4111-8111-111111111111",
+    });
+    expect(createResult.success).toBe(false);
+    if (!createResult.success) {
+      expect(createResult.error.issues[0]).toMatchObject({
+        code: "unrecognized_keys",
+        keys: ["rootUserId"],
+      });
+    }
+
+    const updateResult = updateRootUserBodySchema.safeParse({
+      firstName: "Ada",
+      updatedAt: "2026-03-29T00:00:00.000Z",
+    });
+    expect(updateResult.success).toBe(false);
+    if (!updateResult.success) {
+      expect(updateResult.error.issues[0]).toMatchObject({
+        code: "unrecognized_keys",
+        keys: ["updatedAt"],
+      });
+    }
+  });
 });

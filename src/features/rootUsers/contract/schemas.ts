@@ -9,17 +9,18 @@ const pageSchema = z.coerce.number().int().min(1).default(1);
 const pageSizeSchema = z.coerce.number().int().min(1).max(100).default(25);
 const orderDirectionSchema = z.enum(["asc", "desc"]).default("desc");
 const statusSchema = z.enum(["active", "inactive"]);
+const strictObject = <T extends z.ZodRawShape>(shape: T) => z.object(shape).strict();
 
-export const createRootUserBodySchema = z.object({
+export const createRootUserBodySchema = strictObject({
   email: normalizedEmailSchema,
   firstName: trimmedNonEmptyString.optional(),
   lastName: trimmedNonEmptyString.optional(),
 });
 
-export const getRootUserParamsSchema = z.object({ rootUserId: uuidSchema });
-export const getRootUserByEmailQuerySchema = z.object({ email: normalizedEmailSchema });
+export const getRootUserParamsSchema = strictObject({ rootUserId: uuidSchema });
+export const getRootUserByEmailQuerySchema = strictObject({ email: normalizedEmailSchema });
 
-export const listRootUsersQuerySchema = z.object({
+export const listRootUsersQuerySchema = strictObject({
   page: pageSchema,
   pageSize: pageSizeSchema,
   orderBy: z.enum(["email", "firstName", "lastName", "status", "createdAt", "updatedAt", "deletedAt"]).default("updatedAt"),
@@ -36,7 +37,7 @@ export const listRootUsersQuerySchema = z.object({
   status: statusSchema.optional(),
 });
 
-export const listActiveRootUsersQuerySchema = z.object({
+export const listActiveRootUsersQuerySchema = strictObject({
   page: pageSchema,
   pageSize: pageSizeSchema,
   orderBy: z.enum(["email", "firstName", "lastName", "createdAt", "updatedAt"]).default("updatedAt"),
@@ -55,7 +56,7 @@ export const deleteRootUserParamsSchema = getRootUserParamsSchema;
 export const removeRootUserParamsSchema = getRootUserParamsSchema;
 export const reActivateRootUserParamsSchema = getRootUserParamsSchema;
 
-export const updateRootUserBodySchema = z.object({
+export const updateRootUserBodySchema = strictObject({
   email: normalizedEmailSchema.optional(),
   firstName: trimmedNonEmptyString.optional(),
   lastName: trimmedNonEmptyString.optional(),
@@ -64,7 +65,7 @@ export const updateRootUserBodySchema = z.object({
   message: "At least one field must be supplied.",
 });
 
-export const listDeletedRootUsersQuerySchema = z.object({
+export const listDeletedRootUsersQuerySchema = strictObject({
   page: pageSchema,
   pageSize: pageSizeSchema,
   orderBy: z.enum(["email", "firstName", "lastName", "status", "createdAt", "updatedAt", "deletedAt"]).default("updatedAt"),

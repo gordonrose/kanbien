@@ -173,6 +173,76 @@ describe("rootUsers security flows", () => {
       },
     });
     expect(badParam.status).toBe(400);
-    expect(badParam.body.code).toBe("INVALID_REQUEST");
+    expect(badParam.body).toEqual({
+      code: "INVALID_REQUEST",
+      message:
+        "Your request could not be accepted because one or more fields are missing or invalid.",
+      details: {
+        field: "rootUserId",
+        reason: "Invalid UUID",
+      },
+    });
+  });
+
+  it("TC-ROOT-USERS-SEC-001 also rejects client-supplied system-managed fields with exact invalid-request payloads", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const createWithManagedField = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        email: "managed@example.test",
+        rootUserId: "11111111-1111-4111-8111-111111111111",
+      },
+    });
+    expect(createWithManagedField.status).toBe(400);
+    expect(createWithManagedField.body).toEqual({
+      code: "INVALID_REQUEST",
+      message:
+        "Your request could not be accepted because one or more fields are missing or invalid.",
+      details: {
+        field: "rootUserId",
+        reason: "unexpected_field",
+      },
+    });
+
+    const created = await invokeJson<{ rootUserId: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        email: "ordinary@example.test",
+      },
+    });
+    expect(created.status).toBe(201);
+
+    const updateWithManagedField = await invokeJson<ErrorResponse>(harness.app, {
+      method: "PATCH",
+      path: `/v1/root-users/${created.body.rootUserId}`,
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        updatedAt: "2026-03-29T00:00:00.000Z",
+        firstName: "Ordinary",
+      },
+    });
+    expect(updateWithManagedField.status).toBe(400);
+    expect(updateWithManagedField.body).toEqual({
+      code: "INVALID_REQUEST",
+      message:
+        "Your request could not be accepted because one or more fields are missing or invalid.",
+      details: {
+        field: "updatedAt",
+        reason: "unexpected_field",
+      },
+    });
   });
 });

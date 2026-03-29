@@ -77,6 +77,112 @@ function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
 }
 
+function normalizeOptionalName(value: string | null | undefined): string | null | undefined {
+  if (value === undefined) {
+    return undefined;
+  }
+  if (value === null) {
+    return null;
+  }
+  return value.trim().toLowerCase();
+}
+
+function matchesPrefix(value: string | null | undefined, prefix: string | undefined): boolean {
+  if (!prefix) {
+    return true;
+  }
+  return (value ?? "").toLowerCase().startsWith(prefix.toLowerCase());
+}
+
+function matchesRange(
+  value: Date | null,
+  from: string | undefined,
+  to: string | undefined,
+): boolean {
+  if (from && (!value || value.getTime() < new Date(from).getTime())) {
+    return false;
+  }
+  if (to && (!value || value.getTime() > new Date(to).getTime())) {
+    return false;
+  }
+  return true;
+}
+
+function compareRootUsers(a: StoredRootUser, b: StoredRootUser, orderBy: string, direction: "asc" | "desc"): number {
+  const factor = direction === "asc" ? 1 : -1;
+  const valueFor = (record: StoredRootUser) => {
+    switch (orderBy) {
+      case "email":
+        return record.email;
+      case "firstName":
+        return record.firstName ?? "";
+      case "lastName":
+        return record.lastName ?? "";
+      case "status":
+        return record.status;
+      case "createdAt":
+        return record.createdAt.getTime();
+      case "deletedAt":
+        return record.deletedAt?.getTime() ?? Number.NEGATIVE_INFINITY;
+      case "updatedAt":
+      default:
+        return record.updatedAt.getTime();
+    }
+  };
+  const left = valueFor(a);
+  const right = valueFor(b);
+  if (left < right) {
+    return -1 * factor;
+  }
+  if (left > right) {
+    return 1 * factor;
+  }
+  return a.rootUserId.localeCompare(b.rootUserId) * factor;
+}
+
+function applyRootUserFilters(items: StoredRootUser[], filters: import("../../../src/features/rootUsers/domain/types").RootUserListFilters): StoredRootUser[] {
+  return items.filter((item) => {
+    if (!matchesPrefix(item.email, filters.emailPrefix)) {
+      return false;
+    }
+    if (!matchesPrefix(item.firstName, filters.firstNamePrefix)) {
+      return false;
+    }
+    if (!matchesPrefix(item.lastName, filters.lastNamePrefix)) {
+      return false;
+    }
+    if (!matchesRange(item.createdAt, filters.createdAtFrom, filters.createdAtTo)) {
+      return false;
+    }
+    if (!matchesRange(item.updatedAt, filters.updatedAtFrom, filters.updatedAtTo)) {
+      return false;
+    }
+    if (!matchesRange(item.deletedAt, filters.deletedAtFrom, filters.deletedAtTo)) {
+      return false;
+    }
+    if (filters.status && item.status !== filters.status) {
+      return false;
+    }
+    if (filters.excludeAnonymized === true && item.anonymized) {
+      return false;
+    }
+    return true;
+  });
+}
+
+function paginateAndSortRootUsers(
+  items: StoredRootUser[],
+  input: import("../../../src/features/rootUsers/domain/types").RootUserListInput,
+) {
+  const matching = applyRootUserFilters(items, input.filters);
+  const sorted = [...matching].sort((a, b) => compareRootUsers(a, b, input.orderBy, input.orderDirection));
+  const start = (input.page - 1) * input.pageSize;
+  return {
+    items: sorted.slice(start, start + input.pageSize),
+    totalMatchingRecords: matching.length,
+  };
+}
+
 function createRootUserRecord(overrides: Partial<StoredRootUser> = {}): StoredRootUser {
   const now = new Date("2026-03-26T00:00:00.000Z");
   return {
@@ -183,31 +289,48 @@ function createInMemoryRootUsersRepository(store: Map<string, StoredRootUser>): 
     },
     findVisibleById: async (rootUserId) => {
       const record = store.get(rootUserId);
-      if (!record || record.deletedAt) {
+      if (!record || record.deletedAt || record.anonymized) {
         return null;
       }
       return record;
     },
     findVisibleByEmail: async (email) => {
       const normalized = normalizeEmail(email);
-      return [...store.values()].find((record) => !record.deletedAt && record.email === normalized) ?? null;
+      return [...store.values()].find((record) => !record.deletedAt && !record.anonymized && record.email === normalized) ?? null;
     },
     findAnyById: async (rootUserId) => store.get(rootUserId) ?? null,
     findNonDeletedByEmail: async (email) => {
       const normalized = normalizeEmail(email);
       return [...store.values()].find((record) => !record.deletedAt && record.email === normalized) ?? null;
     },
-    listAll: async () => {
-      const items = [...store.values()].filter((item) => !item.deletedAt);
-      return { items, totalSearchableRecords: store.size, totalMatchingRecords: items.length };
+    listAll: async (input) => {
+      const searchable = [...store.values()].filter((item) => !item.deletedAt && !item.anonymized);
+      const result = paginateAndSortRootUsers(searchable, input);
+      return {
+        items: result.items,
+        totalSearchableRecords: searchable.length,
+        totalMatchingRecords: result.totalMatchingRecords,
+      };
     },
-    listActive: async () => {
-      const items = [...store.values()].filter((item) => !item.deletedAt && item.status === "active");
-      return { items, totalSearchableRecords: store.size, totalMatchingRecords: items.length };
+    listActive: async (input) => {
+      const searchable = [...store.values()].filter(
+        (item) => !item.deletedAt && !item.anonymized && item.status === "active",
+      );
+      const result = paginateAndSortRootUsers(searchable, input);
+      return {
+        items: result.items,
+        totalSearchableRecords: searchable.length,
+        totalMatchingRecords: result.totalMatchingRecords,
+      };
     },
-    listDeleted: async () => {
-      const items = [...store.values()].filter((item) => item.deletedAt);
-      return { items, totalSearchableRecords: store.size, totalMatchingRecords: items.length };
+    listDeleted: async (input) => {
+      const searchable = [...store.values()].filter((item) => item.deletedAt);
+      const result = paginateAndSortRootUsers(searchable, input);
+      return {
+        items: result.items,
+        totalSearchableRecords: searchable.length,
+        totalMatchingRecords: result.totalMatchingRecords,
+      };
     },
     update: async (input) => {
       const current = store.get(input.rootUserId);
@@ -231,6 +354,7 @@ function createInMemoryRootUsersRepository(store: Map<string, StoredRootUser>): 
         throw new Error("Missing root user");
       }
       const next = { ...current, deletedAt: new Date(), updatedAt: new Date() };
+      next.status = "inactive";
       store.set(rootUserId, next);
       return next;
     },
@@ -258,6 +382,7 @@ function createInMemoryRootUsersRepository(store: Map<string, StoredRootUser>): 
         throw new Error("Missing root user");
       }
       const next = { ...current, deletedAt: null, updatedAt: new Date() };
+      next.status = "active";
       store.set(rootUserId, next);
       return next;
     },

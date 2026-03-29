@@ -148,11 +148,15 @@ Current boundary rules:
 - email values must be trimmed and stored lowercase
 - empty strings must be rejected
 - client input must not set system-managed fields
+- requests that supply unexpected or system-managed fields must be rejected
+  explicitly with `INVALID_REQUEST`
 - normal reads must exclude soft-deleted rows by default
 - deleted rows must be exposed only through explicit deleted-list capabilities
 - successful update/delete/reactivate/remove operations must refresh `updatedAt`
 - soft delete must set `deletedAt`
 - uniqueness is enforced on normalized non-deleted email
+- representative invalid-request and duplicate-email errors must return stable
+  `code`, `message`, and `details` payloads
 
 ---
 
@@ -180,6 +184,8 @@ This phase is complete when all of the following are true:
 8. the auth-state seam remains narrow and usable by `rootAuth`
 9. shared root-session auth and authenticated-general throttling protect the
    feature routes
+10. representative invalid-request and duplicate-email failures return stable
+    error payloads with `code`, `message`, and relevant `details`
 
 ---
 
@@ -191,4 +197,3 @@ This phase is complete when all of the following are true:
   rather than relying only on surrounding auth/session visibility
 - whether root-users browser management should eventually receive its own PRD
   slice rather than extending this backend-focused spec directly
-

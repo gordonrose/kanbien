@@ -47,6 +47,13 @@
     - `TC-ROOT-USERS-EDGE-001`
     - `TC-ROOT-USERS-EDGE-002`
     - `TC-ROOT-USERS-EDGE-003`
+  - the current direct suite now also proves:
+    - explicit rejection of client-supplied system-managed fields through the
+      HTTP contract
+    - route-level `/active` filtering and `/deleted?excludeAnonymized=true`
+      behavior
+    - representative exact `code` / `message` / `details` payloads for invalid
+      request and duplicate-email failures
 - Verification commands for the current repo baseline:
   - `npm test`
   - `npm run test:persistence`
@@ -63,8 +70,9 @@
   - creates a root user with a generated ID
   - normalizes email before uniqueness checks and storage
   - rejects duplicate normalized email for a non-deleted row
+  - rejects unexpected or system-managed client fields explicitly
   Notes:
-  - should also prove no client-controlled system-managed fields are accepted
+  - representative duplicate-email error payloads should remain stable
 
 - Capability: `getRootUser`
   Test Case ID: `TC-ROOT-USERS-UNIT-002`
@@ -92,6 +100,8 @@
   - returns paginated visible results
   - applies filters and sorting deterministically
   - excludes deleted and anonymized rows from the normal list
+  - representative duplicate-email and invalid-request route payloads remain
+    stable where applicable
 
 - Capability: `listActiveRootUsers`
   Test Case ID: `TC-ROOT-USERS-UNIT-005`
@@ -100,6 +110,8 @@
   Coverage:
   - returns only active visible rows
   - applies active-list filters and sorting deterministically
+  - route-level `/active` behavior remains aligned with the filtered active-only
+    contract
 
 - Capability: `updateRootUser`
   Test Case ID: `TC-ROOT-USERS-UNIT-006`
@@ -127,6 +139,7 @@
   - returns deleted rows only
   - supports `excludeAnonymized`
   - applies deleted-list filters and sorting deterministically
+  - route-level `/deleted` behavior honors `excludeAnonymized`
 
 - Capability: `reActivateRootUser`
   Test Case ID: `TC-ROOT-USERS-UNIT-009`
@@ -202,6 +215,8 @@
   Coverage:
   - missing bearer rejected
   - invalid bearer rejected
+  - representative invalid-request responses retain stable `message` and
+    `details` payloads
   Notes:
   - currently exercised indirectly by existing root-auth security coverage
 
@@ -221,6 +236,8 @@
   Coverage:
   - deleted rows do not bypass normalized-email uniqueness incorrectly
   - anonymized rows remain excluded from normal visibility
+  - route-level error payloads for representative invalid requests remain
+    explicit and deterministic
 
 ## NFR Logging Or Audit Tests
 
@@ -244,6 +261,7 @@
   Suggested Test Folder: `tests/unit/rootUsers/`
   Coverage:
   - empty update body fails validation
+  - unexpected or system-managed fields are rejected explicitly
 
 - Scenario: exact route params remain required
   Test Case ID: `TC-ROOT-USERS-EDGE-002`
@@ -251,6 +269,8 @@
   Suggested Test Folder: `tests/integration/rootUsers/`
   Coverage:
   - invalid or missing `rootUserId` params are rejected deterministically
+  - representative invalid-request payloads retain exact `details.field` and
+    `details.reason`
 
 - Scenario: counts remain stable when totals exceed presentation threshold
   Test Case ID: `TC-ROOT-USERS-EDGE-003`
