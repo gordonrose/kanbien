@@ -3,12 +3,21 @@
 This index lists the current durable entities identified from architecture,
 feature-owned migrations, persistence record types, and domain services.
 
+These pages are intended to stand on their own for:
+
+- compliance-oriented review
+- rebuild-from-spec recovery
+
+For persistence-backed entities, the dictionary aims to capture not just field
+names, but also the storage model, indexes, lifecycle rules, mutation rules,
+and approved cross-feature read seams.
+
 ## Entity Inventory
 
 | Entity | Owning Feature | Description | Dictionary File |
 | --- | --- | --- | --- |
 | Root User | `rootUsers` | Privileged platform operator account and lifecycle record. | [root-user.md](./root-user.md) |
-| Auth Principal | `rootAuth` | Login identity linked to exactly one root user. | [auth-principal.md](./auth-principal.md) |
+| Auth Principal | `rootAuth` | Login identity linked to exactly one root user in the current phase. | [auth-principal.md](./auth-principal.md) |
 | Auth SSH Public Key | `rootAuth` | Registered SSH public key used for second-factor proof during root login. | [auth-ssh-public-key.md](./auth-ssh-public-key.md) |
 | Auth Login Challenge | `rootAuth` | Single-use SSH challenge issued after password-stage login. | [auth-login-challenge.md](./auth-login-challenge.md) |
 | Auth Session | `rootAuth` | Server-backed bearer session established after successful SSH proof. | [auth-session.md](./auth-session.md) |

@@ -18,6 +18,10 @@ Use this authority order unless the user explicitly says otherwise:
 3. current runtime source in `src/`
 4. executable test-backed behavior in `tests/`
 5. feature docs, README files, OpenAPI, and Postman docs
+6. source-independent docs such as `docs/api-contracts/` and
+   `docs/data-dictionary/` when they are relevant to the scoped behavior
+7. `docs/standards/platform-status/` when the scoped docs touch standards,
+   compliance, privacy, security posture, or repo-wide control claims
 
 If code and docs disagree, do not assume code is wrong. First check whether the architecture docs explicitly support one side.
 
@@ -37,6 +41,12 @@ Load only the files needed for the current task. Common targets:
   expected edge cases, persistence-backed guarantees, or test-backed workflow
   conventions
 - docs under `docs/featureDocs/`
+- docs under `docs/api-contracts/` when route or middleware behavior is in
+  scope
+- docs under `docs/data-dictionary/` when persistence, lifecycle, or
+  cross-feature seam behavior is in scope
+- docs under `docs/standards/platform-status/` when the task touches standards
+  posture, compliance claims, or current-state control summaries
 - `docs/swagger/openapi.yaml`
 - `docs/postman/`
 - feature `README.md` files under `src/features/`
@@ -61,11 +71,17 @@ Confirm:
 3. Compare that implementation picture to the docs.
 Check:
 - feature docs in `docs/featureDocs/`
+- source-independent API contract docs in `docs/api-contracts/` when routes,
+  auth, middleware, browser session, or response shape are in scope
+- source-independent persistence/entity docs in `docs/data-dictionary/` when
+  persistence, lifecycle, or cross-feature seams are in scope
 - feature `README.md` files
 - OpenAPI paths and documented responses
 - Postman descriptions, paths, and variables
 - PRD-derived test-case docs when the repository now uses them as maintained
   planning or status artifacts
+- standards baseline snapshots when the documentation claim includes current
+  platform posture rather than only route or entity behavior
 
 4. Classify each mismatch.
 Use exactly these buckets:
@@ -92,6 +108,10 @@ When reporting findings:
 - include file references for both the documented claim and the source behavior
 - include executable test references too when tests are part of the evidence
 - say whether `/docs/architecture` dictates the outcome
+- say when the newer build-from-spec artifact docs are the stale surface rather
+  than the feature docs or OpenAPI surface
+- say when the stale surface is a standards-baseline snapshot under
+  `docs/standards/platform-status/`
 - say whether the likely fix is docs, code, or a decision
 
 Use short sections in this order:
@@ -108,6 +128,11 @@ If no drift is found, say that explicitly and mention any residual blind spots.
 - Do not recommend changing code away from architecture-backed behavior just to satisfy stale docs.
 - Do not ignore executable tests when they are the strongest evidence of the
   intended or already-verified repository behavior.
+- Do not ignore newer source-independent docs such as `docs/api-contracts/` or
+  `docs/data-dictionary/` when they are now part of the repo's intended
+  documentation stack for the scoped behavior.
+- Do not ignore `docs/standards/platform-status/` when the repo now maintains
+  current-state standards posture as part of the documentation layer.
 - Respect the project default that backwards compatibility is required unless an approved compatibility plan exists.
 - If a mismatch touches public API, persistence, migrations, routing conventions, or shared platform behavior, call that out explicitly.
 - Prefer source-backed statements over memory. Quote behavior from actual files, not assumptions.

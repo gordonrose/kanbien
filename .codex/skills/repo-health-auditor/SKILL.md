@@ -22,6 +22,9 @@ Use this authority order unless the user explicitly says otherwise:
 3. current source in `src/`
 4. executable tests in `tests/`
 5. PRDs, test-case docs, feature docs, OpenAPI, Postman, and README files
+6. source-independent docs such as `docs/data-dictionary/`,
+   `docs/api-contracts/`, `docs/standards/platform-status/`, and
+   build-from-spec guidance when relevant
 
 If implementation and docs disagree, use architecture as the tie-breaker first.
 
@@ -36,6 +39,8 @@ Typical categories:
 - platform/feature contamination
 - cross-feature coupling through private seams
 - contradictions between docs, code, tests, and PRD status artifacts
+- missing, stale, or inconsistent build-from-spec artifacts that raise future
+  recovery or compliance risk
 - fragile or confusing deployment/runtime assumptions
 - public API or persistence compatibility risks
 - security regressions or convenience-over-security trade-offs that were not
@@ -54,6 +59,7 @@ Start with the files most likely to reveal integration drift:
 - `docs/architecture/system-overview.md`
 - `docs/architecture/priniciples.md`
 - `docs/architecture/change-control.md`
+- `docs/architecture/recoverability-and-build-from-spec.md`
 - relevant ADRs in `docs/architecture/adr/`
 - `src/app.ts`
 - `src/server.ts`
@@ -65,6 +71,10 @@ Start with the files most likely to reveal integration drift:
 - executable tests in `tests/`
 - PRD and PRD test-case docs under `docs/prd/` and `docs/prd/test_cases/`
 - feature docs and OpenAPI when public behavior is involved
+- `docs/data-dictionary/` and `docs/api-contracts/` when route or persistence
+  contract durability is relevant
+- `docs/standards/platform-status/` when recent work changed the platform's
+  security, privacy, operational, or compliance posture
 
 Load only what is needed for the current audit.
 
@@ -92,6 +102,10 @@ Look for:
 - runtime dependencies that are not fail-fast or not documented
 - "phase-one debt" that is still acceptable versus accidental drift that should
   be corrected now
+- places where the repo's new documentation standards and artifact model have
+  moved forward but the maintenance instructions or produced artifacts have not
+- places where `docs/standards/platform-status/` now misstates the actual repo
+  baseline after recent architectural work
 
 5. Classify findings by urgency.
 Use exactly these buckets:
@@ -127,6 +141,9 @@ Prioritize findings that threaten:
 - secure operator workflows
 - fail-fast startup and deployment clarity
 - test/PRD/doc traceability
+- rebuild-from-spec readiness
+- compliance-oriented artifact credibility
+- credibility of the repo's maintained standards-baseline snapshots
 
 Lower priority:
 
@@ -162,6 +179,10 @@ spots.
 - Do not recommend breaking compatibility without calling it out plainly.
 - Do not ignore executable tests when they are the clearest evidence of live
   behavior.
+- Do not ignore the repo's newer source-independent artifact layers when they
+  are part of the current health picture for a feature or seam.
+- Do not ignore stale standards-baseline snapshots when they create false
+  confidence about the platform's current posture.
 - Prefer concrete findings tied to files over generic advice.
 - Keep the review grounded in this repo's current stage; distinguish immediate
   blockers from later productization work.

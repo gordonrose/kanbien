@@ -10,6 +10,8 @@ This folder contains mandatory standards gates for architecture decisions, code 
 - `ISO-27001-27002-GATE.md`
 - `GDPR-DATA-TRANSFER-GATE.md`
 - `EU-AI-ACT-GATE.md`
+- `change-artifact-requirements.md`
+- `platform-status/`
 
 ## What each gate covers
 
@@ -55,6 +57,18 @@ Use for:
 - transparency and accountability
 - AI risk screening
 - rollback and monitoring for AI behavior
+
+### `change-artifact-requirements.md`
+Use for:
+- deciding which docs, tests, runbooks, and reviews a change must produce
+- making spec-driven implementation and rebuild work less ambiguous
+- preventing code-only changes from drifting ahead of the intended artifacts
+
+### `platform-status/`
+Use for:
+- tracking the current platform baseline against each standards gate
+- summarizing where the repo currently passes, partially meets, fails, or does not trigger a control area
+- giving PRD, ADR, and architecture work a realistic starting point before new changes are assessed
 
 ## How to use these gates
 
@@ -114,6 +128,21 @@ Examples:
 - vendor-hosted AI feature likely requires all six gates
 
 Mark non-applicable gates explicitly rather than silently skipping them.
+
+## Platform baseline snapshots
+
+The `platform-status/` folder contains one markdown file per standards gate.
+Each file mirrors the gate checklist and records the current platform baseline
+using:
+
+- `Pass`
+- `Partial`
+- `Fail`
+- `Not Applicable`
+
+These files are working platform snapshots, not certification claims. Use them
+to understand the current control posture before assessing a new change against
+the gate itself.
 
 ## Hard rule
 

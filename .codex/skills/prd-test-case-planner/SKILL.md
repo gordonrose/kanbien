@@ -41,6 +41,8 @@ Use this authority order unless the user explicitly says otherwise:
 3. the PRD the user named
 4. current source in `src/`
 5. existing files in `docs/prd/test_cases/`
+6. relevant source-independent docs such as `docs/api-contracts/` and
+   `docs/data-dictionary/` when they materially affect the scoped behavior
 
 If the PRD and code differ, do not silently force one to match the other.
 Report the mismatch.
@@ -52,12 +54,15 @@ Primary sources:
 - the target PRD under `docs/prd/`
 - `docs/architecture/system-overview.md`
 - `docs/architecture/priniciples.md`
+- `docs/standards/change-artifact-requirements.md`
 - relevant ADRs in `docs/architecture/adr/`
 - feature routers, services, persistence seams, and contract errors in `src/`
 
 Helpful secondary sources:
 
 - `docs/featureDocs/*`
+- `docs/api-contracts/*`
+- `docs/data-dictionary/*`
 - `docs/swagger/openapi.yaml`
 - `docs/postman/*`
 - existing tests, if present
@@ -120,6 +125,8 @@ test suite.
 - API surfaces
 - feature boundaries
 - cross-feature interactions
+- whether the change class carries explicit standards expectations for
+  auth/authz, audit, or verification coverage
 - required validations
 - explicitly mentioned failure modes
 - stated or implied security and logging expectations
@@ -239,6 +246,8 @@ Always consider:
 
 - authentication and authorization boundaries
 - soft-delete and inactive-state behavior
+- explicit allow/deny expectations when the capability is privileged or
+  permission-sensitive
 - invalid credential handling
 - rate limiting or abuse controls when relevant
 - sensitive input validation
@@ -266,6 +275,10 @@ Always consider whether the PRD or code implies:
 
 If the system uses audit records instead of generic logs, prefer the audit
 language used by the repo.
+
+When newer source-independent docs such as `docs/api-contracts/` or
+`docs/data-dictionary/` clarify the real contract, use them as helpful context
+instead of re-deriving everything from raw implementation files alone.
 
 If cleanup is intentionally separate from execution, include reporting or audit
 visibility around what was created, skipped, deleted, or refused.
@@ -316,7 +329,12 @@ Also include:
 - `Recommended Test Layer`
 - `Suggested Test Folder`
 
-When relevant, also include:
+## Guardrails
+
+- Do not plan a thinner test inventory than the current repo standards require
+  for the change class in `docs/standards/change-artifact-requirements.md`.
+- Do not ignore source-independent API contract or persistence-contract docs
+  when they materially clarify the expected behavior under test.
 
 - `Requires Shared Test Helper`
 - `Requires Manifest Tracking`

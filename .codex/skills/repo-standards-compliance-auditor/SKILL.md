@@ -27,6 +27,8 @@ Use this authority order unless the user explicitly says otherwise:
 6. `package.json`
 7. `vitest.config.ts`
 8. PRDs, PRD test-case docs, feature docs, README files, Postman, OpenAPI
+9. source-independent build-from-spec artifacts such as `docs/api-contracts/`,
+   `docs/data-dictionary/`, and template-backed change artifacts when relevant
 
 If implementation and docs disagree, use architecture and standards as the
 tie-breaker first.
@@ -49,6 +51,9 @@ Also read:
 - `docs/architecture/system-overview.md`
 - `docs/architecture/priniciples.md`
 - `docs/architecture/change-control.md`
+- `docs/architecture/recoverability-and-build-from-spec.md`
+- `docs/standards/change-artifact-requirements.md`
+- `docs/standards/platform-status/README.md`
 - relevant ADRs in `docs/architecture/adr/`
 
 Load only the feature, frontend, test, or doc files needed to support the
@@ -63,6 +68,16 @@ For a whole-repo audit, inspect these surfaces explicitly:
 - `tests/`
 - `package.json`
 - `vitest.config.ts`
+
+Within `docs/`, explicitly consider:
+
+- `docs/featureDocs/`
+- `docs/swagger/openapi.yaml`
+- `docs/data-dictionary/`
+- `docs/api-contracts/`
+- `docs/standards/platform-status/`
+- PRDs and PRD test-case docs
+- standards and recoverability/build-from-spec docs
 
 If the user narrows scope, still inspect any shared seams those files depend
 on.
@@ -81,6 +96,12 @@ Focus on:
 - AI feature implications, if any
 - contradictions between standards, architecture, docs, tests, and code
 - gaps where standards require evidence but the repo does not provide it
+- whether build-from-spec and compliance-oriented artifact trails exist for the
+  implemented repo surfaces
+- whether newer artifact classes such as API contracts and persistence-contract
+  docs are present, current, and believable
+- whether the maintained standards-baseline snapshots under
+  `docs/standards/platform-status/` still match the repo's real posture
 
 Do not claim compliance just because no obvious violation was found. Distinguish
 between:
@@ -148,9 +169,17 @@ signals.
 Read the standards gate docs and extract the mandatory pass criteria and fail
 conditions that apply to the repo.
 
+Also read the corresponding baseline snapshots under
+`docs/standards/platform-status/` so you can tell whether the maintained
+summary still reflects the repo's current state or has drifted.
+
 3. Build the architecture picture.
 Read `AGENTS.md`, architecture docs, and relevant ADRs so compliance judgments
 respect this repo's intended design.
+
+Also read the repo's current artifact-requirement and build-from-spec posture so
+evidence gaps are judged against the current standard rather than an older,
+thinner documentation model.
 
 4. Build the implementation picture.
 Inspect:
@@ -164,6 +193,10 @@ Inspect:
 - `vitest.config.ts`
 - PRDs, test-case docs, and feature docs when they provide evidence or reveal
   missing evidence
+- source-independent docs such as `docs/data-dictionary/` and
+  `docs/api-contracts/` when they are part of the evidence story
+- `docs/standards/platform-status/` when current-state control posture is part
+  of the evidence story
 
 5. Map evidence against each applicable gate.
 For every gate:
@@ -171,6 +204,14 @@ For every gate:
 - cite file-backed evidence
 - mark each examined criterion as `Pass`, `Partial`, `Fail`, `Not Assessed`, or
   `Not Applicable`
+
+Where a gate depends on documentation evidence, distinguish between:
+
+- implementation evidence exists
+- documentation evidence exists and is current
+- implementation exists but required artifact evidence is missing or stale
+- the gate evidence is stronger or weaker than the current
+  `docs/standards/platform-status/` snapshot claims
 
 6. Separate hard violations from missing evidence.
 Call out whether the problem is:
@@ -184,6 +225,10 @@ For every `Fail`, `Partial`, or important `Not Assessed` item:
 - say what fix is needed
 - say whether the fix is code, tests, docs, deployment/process, or architecture
 - say whether it should block further work or can wait
+
+If the repo's actual posture differs materially from the maintained baseline
+snapshot, include updating the relevant `docs/standards/platform-status/*.md`
+file as part of the fix.
 
 8. Pause before editing.
 Do not patch code or docs unless the user asks for fixes after reviewing the
@@ -201,6 +246,8 @@ Prioritize findings that threaten:
 - release trust and deployment integrity
 - test-backed verification of failure and abuse cases
 - standards evidence that would matter in a real audit or compliance review
+- stale platform-status summaries that overstate or understate the repo's
+  current control posture
 
 Lower priority:
 
@@ -252,6 +299,7 @@ Use this section for repeated patterns, for example:
 - good code but weak evidence trail
 - strong auth controls but weak deployment hardening
 - good tests for happy path but weak abuse-case coverage
+- implementation present but build-from-spec artifacts missing or stale
 
 ### Still Aligned
 
@@ -262,6 +310,10 @@ Call out where the repo is clearly on solid ground.
 - Do not claim "passed" without evidence.
 - Do not treat missing evidence as full compliance.
 - Do not ignore executable tests when they are the strongest proof available.
+- Do not treat code-only evidence as sufficient when current repo standards
+  explicitly require additional artifact evidence for the change class.
+- Do not ignore a drifted `docs/standards/platform-status/` snapshot when it
+  overstates or understates the repo's actual compliance posture.
 - Do not recommend breaking compatibility without calling it out explicitly.
 - Do not turn standards language into generic advice; tie findings to files.
 - Keep architecture-backed phase-one trade-offs distinct from accidental drift.

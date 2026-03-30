@@ -1,6 +1,6 @@
 ---
 name: test-case-lifecycle-reviewer
-description: Use when reviewing PRD-derived test cases for anti-drift lifecycle changes such as active, superseded, archived, and pending-review states. Best for prompts like "review test-case lifecycle drift", "propose superseded tests", "audit rootAuth/rootUsers test-case lifecycle", or "prepare lifecycle review candidates for approval."
+description: Use when reviewing PRD-derived test cases for anti-drift lifecycle changes such as active, superseded, archived, and pending-review states across features that maintain lifecycle metadata. Best for prompts like "review test-case lifecycle drift", "propose superseded tests", "audit test-case lifecycle", or "prepare lifecycle review candidates for approval."
 ---
 
 # Test Case Lifecycle Reviewer
@@ -8,8 +8,9 @@ description: Use when reviewing PRD-derived test cases for anti-drift lifecycle 
 Use this skill when the user wants Codex to review PRD-derived test cases for
 potential lifecycle changes without silently reclassifying them.
 
-This skill supports the anti-drift pilot for backend `rootAuth` and backend
-`rootUsers`.
+This skill began as an anti-drift pilot for backend `rootAuth` and backend
+`rootUsers`, but it should now be treated as a reusable review pattern for any
+feature that has maintained PRD-derived lifecycle metadata.
 
 ## Purpose
 
@@ -29,6 +30,10 @@ The source of truth is the PRD-derived test-case document under
 Executable tests provide proof for currently active behavior but are not the
 primary lifecycle-history artifact.
 
+When needed to judge whether an older expectation is truly obsolete, use the
+current PRD, architecture docs, and relevant source-independent artifacts such
+as `docs/api-contracts/` or `docs/data-dictionary/` as supporting context.
+
 ## Review Workflow
 
 ### 1. Build the lifecycle inventory
@@ -36,7 +41,7 @@ primary lifecycle-history artifact.
 Use the lifecycle report tooling first:
 
 ```bash
-npm run test:lifecycle:report -- root-auth root-users
+npm run test:lifecycle:report -- <feature-slug> [additional-feature-slugs...]
 ```
 
 This gives the current explicit or defaulted lifecycle state.
@@ -47,6 +52,9 @@ Review only the context needed for the requested change:
 
 - the relevant PRD test-case doc
 - the feature PRD
+- relevant architecture docs or ADRs when the design changed materially
+- relevant `docs/api-contracts/*` or `docs/data-dictionary/*` files when they
+  clarify current contract intent
 - the relevant executable tests
 - recent changed files if the user is asking after a body of work
 
@@ -55,6 +63,8 @@ Review only the context needed for the requested change:
 Look for things like:
 
 - a documented capability or flow replaced by a newer workflow
+- a documented expectation replaced by a newer source-independent contract
+  artifact or a standards-driven clarification
 - a route, capability, or seam removed from the current design
 - a new executable test that clearly replaces an older expectation lineage
 - duplicated test intent where only one expectation should remain active
@@ -99,12 +109,14 @@ Do not edit lifecycle metadata until the user approves or redirects.
 - Prefer `pending-review` only as a proposed state before approval, not as a
   hidden silent change.
 
-## Pilot Scope
+## Scope Guidance
 
-Default this skill to:
+If the user gives no scope, it is reasonable to start with the most mature
+current areas:
 
 - backend `rootAuth`
 - backend `rootUsers`
 
-If the user wants broader rollout later, that should go through the normal
-change-loop process.
+If the user names another feature with maintained PRD test-case lifecycle
+metadata, use this skill there too rather than treating the older pilot scope
+as a hard restriction.

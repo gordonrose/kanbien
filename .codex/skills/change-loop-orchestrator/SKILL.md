@@ -40,6 +40,9 @@ Use this authority order unless the user explicitly says otherwise:
 5. current source in `src/`
 6. executable tests in `tests/`
 7. feature docs, OpenAPI, Postman, README files
+8. source-independent build-from-spec artifacts such as `docs/api-contracts/`,
+   `docs/data-dictionary/`, capability matrices, and other template-backed
+   change artifacts when present
 
 ## When To Use This Skill
 
@@ -89,6 +92,15 @@ Default to a PRD when the change:
 - affects security, persistence, cleanup, auditability, or compliance posture
 
 If a PRD already exists, update it rather than creating a duplicate.
+
+Also check `docs/standards/change-artifact-requirements.md` so the loop uses
+the repo's current required artifact set for the change class rather than an
+older thinner documentation model.
+
+Also treat `docs/standards/platform-status/` as a maintained standards-baseline
+surface. If the change materially improves, weakens, or clarifies the current
+platform posture against a gate, the relevant status file should be reviewed
+and updated in the same loop.
 
 ### 3. Decide whether an ADR is needed
 
@@ -140,14 +152,27 @@ Check whether the change also requires updates to:
 
 - `docs/featureDocs/`
 - `docs/swagger/openapi.yaml`
+- `docs/api-contracts/`
 - `docs/postman/`
 - `docs/testing/`
 - `docs/operations/`
 - `docs/privacy/`
 - `docs/data-dictionary/`
+- `docs/standards/platform-status/`
+- capability matrix rows and other build-from-spec artifacts required by
+  `docs/standards/change-artifact-requirements.md`
+
+If the change introduces or changes backend routes in a meaningful way, prefer
+the repo-local `api-contract-maintainer` skill for the source-independent
+contract artifact under `docs/api-contracts/`.
 
 If the change affects docs truthfulness, run the repo-local
 `docs-alignment-auditor` skill before or after editing as appropriate.
+
+When the change affects security posture, privacy posture, operational
+readiness, release/recovery posture, or other standards-gated behavior, review
+the corresponding file under `docs/standards/platform-status/` and update it if
+the repo baseline has changed.
 
 ### 8. Run standards review
 
@@ -162,6 +187,10 @@ This is especially appropriate for:
 - persistence or audit changes
 - testing/cleanup model changes
 - external integrations
+
+When standards review reveals that the repo's baseline posture has moved,
+capture that in the relevant `docs/standards/platform-status/*.md` file instead
+of leaving the standards snapshot stale.
 
 ### 9. Run repo-health review
 
@@ -219,6 +248,17 @@ Do not bundle unrelated work just because it is nearby.
 If the loop should include a PRD, ADR, test-case doc, runbook, privacy note, or
 feature-doc update, call that out explicitly.
 
+Also call out other required build-from-spec artifacts when applicable, such
+as:
+
+- API contract docs
+- data dictionary updates
+- capability matrix rows
+- implementation blueprints
+- permission mapping artifacts for privileged or authorization-sensitive work
+- standards baseline snapshot updates under `docs/standards/platform-status/`
+  when the platform posture has materially changed
+
 ### Do not force every step when not needed
 
 This skill formalizes the loop, but it should still stay proportionate.
@@ -236,6 +276,7 @@ logic from scratch:
 
 - `prd-test-case-planner`
 - `prd-test-case-implementer`
+- `api-contract-maintainer`
 - `docs-alignment-auditor`
 - `repo-standards-compliance-auditor`
 - `repo-health-auditor`
@@ -258,6 +299,15 @@ After work is done, summarize:
 4. `Residual Debt`
 
 ## Guardrails
+
+- Do not run the loop using an older thinner artifact set when
+  `docs/standards/change-artifact-requirements.md` or newer repo docs require
+  additional build-from-spec evidence.
+- Do not leave route changes documented only in OpenAPI when a human-readable
+  API contract artifact is now part of the intended repo evidence model.
+- Do not treat capability matrix rows, implementation blueprints, or permission
+  mapping artifacts as optional when the current change class makes them
+  required by repo standards.
 
 - Do not treat architecture-affecting changes as implementation-only work.
 - Do not jump straight to code when the repo loop clearly needs design and test

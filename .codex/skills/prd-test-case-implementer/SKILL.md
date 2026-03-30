@@ -38,6 +38,8 @@ Use this authority order unless the user explicitly says otherwise:
 4. the source PRD under `docs/prd/`
 5. current implementation in `src/`
 6. current executable tests in `tests/`
+7. relevant source-independent docs such as `docs/api-contracts/` and
+   `docs/data-dictionary/` when they materially affect the scoped behavior
 
 If the PRD-derived test-case doc and the code differ, prefer the documented PRD
 intent for new tests, but surface meaningful conflicts rather than silently
@@ -51,6 +53,7 @@ Primary sources:
 - the source PRD under `docs/prd/`
 - `docs/architecture/system-overview.md`
 - `docs/architecture/priniciples.md`
+- `docs/standards/change-artifact-requirements.md`
 - relevant ADRs in `docs/architecture/adr/`
 - feature code in `src/features/`
 - shared seams in `src/lib/`
@@ -65,6 +68,11 @@ Helpful repo utilities:
 - `tests/setup/`
 - `src/lib/testingData/`
 
+Helpful supporting docs when relevant:
+
+- `docs/api-contracts/*`
+- `docs/data-dictionary/*`
+
 ## Workflow
 
 1. Read the PRD test-case document.
@@ -73,6 +81,8 @@ Identify:
 - the `TC-*` IDs for that layer
 - any cases marked or implied as persistence-backed
 - any cleanup/test-helper expectations
+- any standards-driven allow/deny, audit, or privileged-capability expectations
+  that must remain covered
 
 2. Inspect existing tests before editing.
 Check:
@@ -125,6 +135,9 @@ After implementation:
   `TC-*` coverage
 - report what passed
 - report any remaining skipped persistence-backed cases honestly
+- if the implemented cases exercise a privileged or security-sensitive
+  capability, explicitly say whether the relevant allow/deny or audit cases are
+  now covered
 
 8. Update implementation status when appropriate.
 If the repo uses the PRD test-case doc as a living status artifact, update the
@@ -220,6 +233,10 @@ Keep the summary focused on:
 - Do not drop `TC-*` IDs from test names once present.
 - Do not ignore the cleanup/test-data lifecycle conventions when adding tests
   that create durable data.
+- Do not implement a thinner executable test set than the current repo
+  standards require for the scoped change class.
+- Do not ignore source-independent API contract or persistence-contract docs
+  when they materially clarify the expected behavior under test.
 
 ## Trigger Phrases
 
