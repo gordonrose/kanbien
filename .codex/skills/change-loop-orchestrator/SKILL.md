@@ -29,6 +29,12 @@ Drive a change through the repo's preferred loop:
 The goal is to prevent drift, missing artifacts, and partially implemented
 design decisions from accumulating over time.
 
+Implementation is not considered complete by this skill until the required
+maintained artifact set for the change class has been reviewed and either:
+
+- updated in the same loop, or
+- explicitly called out as intentionally unchanged with a concrete reason
+
 ## Authority Order
 
 Use this authority order unless the user explicitly says otherwise:
@@ -129,6 +135,14 @@ Expected result:
 - layer recommendations
 - security/audit/edge coverage
 
+When the change adds or tightens authz gates on already-protected features,
+the test-case plan should also identify affected pre-existing suites that need
+review and likely updates, especially:
+
+- `tests/integration/<feature>/`
+- `tests/security/<feature>/`
+- `tests/audit/<feature>/`
+
 ### 5. Implement
 
 When the user wants the code/docs change carried through, use the
@@ -136,6 +150,11 @@ repo-local `prd-test-case-implementer` skill when a PRD test-case file exists.
 
 If no PRD test-case file exists but the change is still implementation-ready,
 implement directly while preserving traceability and docs updates.
+
+If the change adds or tightens role/capability gates, do not stop at adding
+new tests for the new feature alone. Also review and update affected existing
+protected-feature integration, security, and audit suites so the repo proves
+the new allow/deny boundary instead of only older session-presence behavior.
 
 ### 6. Update status artifacts
 
@@ -159,8 +178,31 @@ Check whether the change also requires updates to:
 - `docs/privacy/`
 - `docs/data-dictionary/`
 - `docs/standards/platform-status/`
+- `docs/workspace/architecture-map/`
 - capability matrix rows and other build-from-spec artifacts required by
   `docs/standards/change-artifact-requirements.md`
+
+Do not treat these as optional post-implementation cleanup. For route-bearing
+or persistence-bearing backend slices, the default expectation is that
+implementation should finish with:
+
+- code
+- executable tests
+- source-independent contract docs
+- `docs/swagger/openapi.yaml`
+- `docs/postman/` collection updates when collections exist
+- affected `docs/featureDocs/`
+- affected `docs/data-dictionary/`
+- relevant `docs/standards/platform-status/` review
+- relevant `docs/workspace/architecture-map/` review when the slice materially
+  changes platform-layer status or ordering assumptions
+
+Before considering the loop complete, explicitly sanity-check which of those
+surfaces changed and which did not.
+
+When the change materially alters protected-route access rules, treat affected
+existing test suites as supporting docs/evidence that must stay aligned, not as
+optional cleanup for later.
 
 If the change introduces or changes backend routes in a meaningful way, prefer
 the repo-local `api-contract-maintainer` skill for the source-independent
@@ -199,6 +241,19 @@ artifacts, or could create drift, finish with the repo-local
 `repo-health-auditor` skill.
 
 This is the final "did we leave the repo in a healthy state?" pass.
+
+## Completion Check
+
+Before declaring success on a material backend slice, explicitly confirm:
+
+- implementation and tests landed
+- OpenAPI and Postman are aligned when routes changed
+- feature docs and data dictionary are aligned when feature or persistence
+  behavior changed
+- standards baseline snapshots were reviewed when security/audit/compliance
+  posture changed
+- any intentionally deferred artifact updates are named explicitly rather than
+  silently omitted
 
 ## Loop Variants
 

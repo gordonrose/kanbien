@@ -14,6 +14,7 @@
 ## Implemented To Date
 
 - strong auth-focused audit persistence exists
+- root-role mutations and privileged denial visibility are now durable too
 - standards and docs now explicitly value audit expectations in the artifact
   chain
 
@@ -21,4 +22,5 @@
 
 - define generalized audit-event taxonomy and ownership model
 - define what must always be audited and at what granularity
-- extend audit persistence beyond `rootAuth`
+- extend audit persistence beyond auth and root-operator actions into broader
+  business and tenant layers

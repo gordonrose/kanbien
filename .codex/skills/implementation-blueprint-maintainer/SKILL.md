@@ -58,7 +58,9 @@ Use this authority order unless the user explicitly says otherwise:
    `docs/data-dictionary/` when relevant
 9. `docs/standards/platform-status/` when the slice materially affects
    standards-gated platform posture
-10. existing blueprint files under `docs/workspace/implementation-blueprints/`
+10. `docs/workspace/architecture-map/` when the slice materially changes
+    platform-layer status or roadmap assumptions
+11. existing blueprint files under `docs/workspace/implementation-blueprints/`
 
 If the capability matrix and PRD disagree, do not silently merge them. Prefer
 the higher-confidence approved input and call out the mismatch.
@@ -84,6 +86,7 @@ Helpful secondary sources:
 - `docs/swagger/openapi.yaml`
 - `docs/prd/test_cases/`
 - `docs/standards/platform-status/`
+- `docs/workspace/architecture-map/`
 - current feature structure in `src/features/`
 - relevant tests under `tests/`
 
@@ -159,6 +162,26 @@ does not omit required supporting artifacts such as:
 - runbook or privacy note when needed
 - relevant standards baseline snapshot updates when the slice changes the
   platform's current posture
+- relevant architecture-map updates when the slice changes the repo's current
+  platform-layer status in a meaningful way
+- updates to affected pre-existing protected-feature integration, security, and
+  audit tests when the slice adds or tightens authz gates on routes the repo
+  already exposes
+
+For backend slices that add routes, durable entities, or materially change
+security posture, the blueprint should default to naming all of these output
+surfaces explicitly:
+
+- `docs/api-contracts/`
+- `docs/swagger/openapi.yaml`
+- `docs/postman/` when a maintained collection exists
+- `docs/featureDocs/`
+- `docs/data-dictionary/`
+- `docs/standards/platform-status/`
+- `docs/workspace/architecture-map/` when platform-layer status has moved
+
+If one of those is intentionally out of scope, the blueprint should say why
+instead of silently leaving the artifact class out.
 
 5. Write the blueprint.
 Produce a build-ready Markdown artifact under

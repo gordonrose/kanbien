@@ -14,7 +14,7 @@
 ## Implemented To Date
 
 - `docs/api-contracts/` exists
-- root-auth and root-users route-family contract docs exist
+- root-auth, root-users, and root-roles route-family contract docs exist
 - `api-contract-maintainer` skill exists
 
 ## Still Missing / Next Steps

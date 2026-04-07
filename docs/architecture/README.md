@@ -16,6 +16,9 @@ security, reliability, modularity, consistency, or operational behavior.
   Architecture Decision Records for decisions that should remain visible over time.
 - `guides/`
   Repeatable implementation guidance that applies ADR decisions consistently.
+- `permission-mappings/`
+  Source-independent role-to-capability mapping artifacts for authorization and
+  other permission-sensitive work.
 - `recoverability-and-build-from-spec.md`
   Coverage map for making the repo rebuildable from specs and templates.
 - `build-from-spec-change-harness.md`
@@ -30,6 +33,8 @@ security, reliability, modularity, consistency, or operational behavior.
 - Add or supersede ADRs when the architecture changes in a lasting way.
 - Use `guides/` when applying architecture repeatedly across features and
   vertical slices.
+- Use `permission-mappings/` when defining source-independent role and
+  capability rules for authorization-sensitive work.
 - Use `recoverability-and-build-from-spec.md` when improving build-from-spec
   coverage.
 - Use `build-from-spec-change-harness.md` when explaining or reviewing the full

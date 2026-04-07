@@ -139,6 +139,10 @@ Check:
 - where logging, audit events, auth, rate limiting, or middleware matter
 - whether the tests will create durable data and therefore need run-scoped
   helpers, manifest registration, and separate cleanup planning
+- whether the PRD introduces or changes authentication, authorization, or other
+  protected-route gates that mean pre-existing integration, security, or audit
+  tests for already-protected features must be updated rather than left at the
+  older boundary assumption
 
 3. Build the test inventory in these sections:
 - unit tests
@@ -175,6 +179,16 @@ explicitly before making doc updates. Keep it short but concrete:
 - whether this looks additive or expectation-changing
 - whether the current tests appear to encode behavior that may conflict with
   the PRD
+
+When a PRD adds role/capability gates or materially changes protected-route
+access rules, explicitly call out affected pre-existing protected-feature test
+areas, especially:
+
+- integration tests that currently prove only authenticated-session access
+- security tests that currently lack explicit deny coverage for missing
+  capability grants
+- audit tests that may need to prove gated denials or newly gated privileged
+  mutations remain visible
 
 6. Ask before updating the file if it already exists.
 If no file exists yet, propose the initial file and then create it after user
@@ -253,6 +267,8 @@ Always consider:
 - sensitive input validation
 - session revocation or expiry behavior when relevant
 - safe handling of durable test data and cleanup guards when the PRD implies it
+- whether older protected-feature security tests must be revised so they prove
+  the new allow/deny gate model instead of only session presence
 
 Recommended layer label:
 

@@ -91,6 +91,9 @@ Check:
 - whether current tests already partially cover the case under another ID
 - whether an existing persistence-backed test should be extended rather than
   duplicated
+- whether the change introduces or tightens authz gates such that pre-existing
+  protected-feature integration, security, or audit tests now need expectation
+  updates rather than simple additive coverage
 
 3. Surface existing-test impact if it is non-trivial.
 Discuss before editing when:
@@ -98,6 +101,8 @@ Discuss before editing when:
 - an existing test would need to be deleted
 - a current suite appears to encode behavior that conflicts with the PRD
 - implementing the new case would require meaningful test harness restructuring
+- a new role/capability gate means older protected-feature tests currently stop
+  at authenticated-session access and must now prove gate success or denial
 
 Simple additive edits do not need a pause.
 
@@ -167,12 +172,18 @@ Bring the user into the loop before proceeding if:
   resolution is not obvious
 - a test harness must be reshaped in a way that changes multiple existing test
   files
+- authz-gate rollout means pre-existing protected-feature integration,
+  security, or audit tests need expectation changes rather than purely
+  additive new tests
 
 When surfacing this, be concrete:
 
 - which file(s) are affected
 - whether this is an additive change or an expectation change
 - what conflict appears to exist between current tests and the PRD
+- in authz-gate changes, explicitly name the affected existing suites such as
+  `tests/integration/<feature>/`, `tests/security/<feature>/`, and
+  `tests/audit/<feature>/`
 
 ### Layer Placement
 

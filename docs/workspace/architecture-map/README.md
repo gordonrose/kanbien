@@ -103,8 +103,9 @@ The biggest architectural gaps are still:
   Same-origin browser shell auth, trusted-origin logout, CSP, and cookie
   controls exist, but the broader frontend platform is still early.
 - `[08][partial]` Authorization / permissions architecture
-  Root-user authenticated boundary exists, but enduring role/permission
-  architecture is still explicitly unfinished.
+  Current root-platform role/capability authorization now exists through
+  `rootRoles`, but tenant-scoped and entity-scoped authorization remain
+  unfinished.
 - `[09][missing]` Entity-based permissions
   No generalized per-entity or per-scope permission system yet.
 - `[28][missing]` MFA
@@ -128,8 +129,9 @@ The biggest architectural gaps are still:
 - `[15][present]` Auth audit-event persistence
   Durable auth audit records exist for current auth-sensitive behavior.
 - `[19][partial]` Persistent auditing as a platform layer
-  Auth audit exists, but there is not yet a generalized cross-platform audit
-  model for broader business or operator actions.
+  Auth audit and root-role/operator audit now exist, but there is not yet a
+  generalized cross-platform audit model for broader business or tenant
+  actions.
 - `[20][partial]` Searchable storage discipline
   Good field/index rules exist for current backend work, but not yet a
   generalized platform-wide search architecture.
@@ -150,8 +152,8 @@ The biggest architectural gaps are still:
 - `[21][present]` OpenAPI foundation
   Current routes are documented in OpenAPI.
 - `[22][present]` Source-independent API contract docs
-  Route-family contract docs now exist for current `rootAuth` and `rootUsers`
-  surfaces.
+  Route-family contract docs now exist for current `rootAuth`, `rootUsers`,
+  and `rootRoles` surfaces.
 - `[37][partial]` Machine-readable contract manifest strategy
   Markdown-first API contracts exist, but machine-readable contract manifests
   remain an open design question.
@@ -161,11 +163,13 @@ The biggest architectural gaps are still:
 ### Frontend And Experience
 
 - `[23][partial]` Frontend implementation architecture
-  Frontend implementation guidance exists and the root-admin browser shell is
-  present, but the repo is still mostly backend-first.
+  Frontend implementation guidance exists and the root-admin browser shell now
+  includes a rudimentary operator console, but the repo is still mostly
+  backend-first.
 - `[24][partial]` Browser admin shell
-  Current shell covers browser auth/session summary, but not a full
-  operator-grade frontend management surface.
+  Current shell covers browser auth, session summary, and a rudimentary
+  root-user/root-role operator console, but not a full operator-grade frontend
+  management surface.
 - `[29][missing]` Frontend design system
   No generalized design system, component governance, or cross-app frontend
   platform yet.

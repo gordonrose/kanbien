@@ -15,9 +15,11 @@
 - frontend implementation guide exists
 - root-admin browser shell exists as an early frontend slice
 - browser auth/session model is documented
+- the current shell now includes a rudimentary operator console for existing
+  root-user and root-role workflows
 
 ## Still Missing / Next Steps
 
 - define broader frontend platform standards
-- extend beyond the current root-admin shell
+- extend beyond the current root-admin shell and rudimentary operator console
 - add stronger testing, design-system, and accessibility expectations
