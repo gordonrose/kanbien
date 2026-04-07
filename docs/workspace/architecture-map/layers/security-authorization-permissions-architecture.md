@@ -13,11 +13,14 @@
 ## Implemented To Date
 
 - a root-user authenticated boundary exists
-- docs and standards now explicitly call out the missing permission model
-- permission-mapping template exists as preparation
+- current root-platform capability enforcement exists through `rootRoles`
+- backend-to-authz and role-to-authz permission mappings exist for the current
+  root-platform boundary
+- docs and standards now explicitly distinguish current root-platform authz
+  from future tenant/entity-scoped authz
 
 ## Still Missing / Next Steps
 
-- define enduring permission model in PRD and likely ADR
-- define enforcement pattern and allow/deny expectations
-- add capability-to-role mapping and entity-scope rules
+- extend the model from root-platform authz into tenant-scoped authorization
+- add entity-scope and inherited-scope rules
+- add broader role families beyond `RootUserAdmin`

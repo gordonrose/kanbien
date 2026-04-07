@@ -8,8 +8,10 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 - Summary:
   The repo is already reasonably strong in authentication, session management,
   validation, and security event visibility for the implemented root-user
-  surfaces. The biggest ASVS gaps are enduring authorization, tenant/object
-  access control, and broader cryptographic/secrets governance.
+  surfaces. The new `rootRoles` slice materially improves explicit privileged
+  authorization on current root-platform routes, but the biggest ASVS gaps are
+  still tenant/object access control and broader cryptographic/secrets
+  governance.
 
 ## 1. Architecture
 
@@ -52,13 +54,15 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 ## 4. Access Control
 
 - `Partial` Authorization is checked on every protected request.
-  Authentication is enforced consistently, but enduring authorization is still
-  mostly a root-user boundary rather than a mature permission system.
+  Authentication is enforced consistently, and current privileged root-platform
+  routes now use explicit governing capabilities through `rootRoles`, but the
+  model is still root-scope only and not yet tenant/object complete.
 - `Pass` Access is denied by default.
   Protected routes require auth and reject missing/invalid sessions.
 - `Partial` Privileged operations require explicit permission.
-  Today the root-user boundary itself acts as the permission gate; finer-grain
-  permission architecture is not finished.
+  Current root-platform privileged operations now require explicit
+  capability-based permission checks, but the broader multi-tenant permission
+  architecture is not finished.
 - `Fail` Object-level and tenant-level access are checked where relevant.
   Ownership checks exist for some auth objects, but there is no tenant model
   and no generalized object-level permission layer.

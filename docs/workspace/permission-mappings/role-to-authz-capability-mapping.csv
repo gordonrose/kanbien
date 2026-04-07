@@ -1,0 +1,35 @@
+Role / Boundary,Authz Capability,Current Status,Grant Model,Mandatory,Protected,Notes
+public unauthenticated caller,public root login entrypoint,current,public route access for password and SSH login entrypoints,yes,yes,constrained by abuse controls and sign-in eligibility checks
+public unauthenticated caller,public root browser login entrypoint,current,public route access for browser SSH completion,yes,yes,constrained by abuse controls and browser-session transport rules
+RootUserAdmin,root-auth.principal.create,current,current root operator grant,yes,yes,create root auth principal
+RootUserAdmin,root-auth.password.change.own,current,current root operator grant with ownership semantics,yes,yes,current implementation is ownership-scoped
+RootUserAdmin,root-auth.ssh-key.create.own,current,current root operator grant with ownership semantics,yes,yes,current implementation is ownership-scoped
+RootUserAdmin,root-auth.ssh-key.read.own,current,current root operator grant with ownership semantics,yes,yes,current implementation is ownership-scoped
+RootUserAdmin,root-auth.ssh-key.revoke.own,current,current root operator grant with ownership semantics,yes,yes,current implementation is ownership-scoped
+RootUserAdmin,root-auth.session.read.own,current,current root operator grant with ownership semantics,yes,yes,current implementation is ownership-scoped
+RootUserAdmin,root-auth.session.revoke.own,current,current root operator grant with ownership semantics,yes,yes,current implementation is ownership-scoped
+RootUserAdmin,root-auth.session.logout.own,current,current root operator self-logout grant,yes,yes,explicit self-logout capability
+RootUserAdmin,root-admin-shell.session.read.own,current,current root browser-session grant,yes,yes,cookie-backed browser session summary
+RootUserAdmin,root-admin-shell.session.logout.own,current,current root browser-session grant with trusted-origin rule,yes,yes,cookie-backed browser logout
+RootUserAdmin,root-user.create,current,current root operator grant,yes,yes,create root user
+RootUserAdmin,root-user.read.visible,current,current root operator grant,yes,yes,exact lookup and visible listing
+RootUserAdmin,root-user.read.active,current,current root operator grant,no,no,active-only list specialization
+RootUserAdmin,root-user.read.deleted,current,current root operator grant,no,yes,deleted/anonymized visibility should stay explicit
+RootUserAdmin,root-user.update,current,current root operator grant,yes,yes,lifecycle-safe update path
+RootUserAdmin,root-user.delete,current,current root operator grant,no,yes,soft-delete action
+RootUserAdmin,root-user.remove,current,current root operator grant,no,yes,irreversible anonymized remove
+RootUserAdmin,root-user.reactivate,current,current root operator grant,no,yes,restore/reactivation action
+RootUserAdmin,root-role.create,target,approved PRD target root operator grant,yes,yes,create system root role
+RootUserAdmin,root-role.read,target,approved PRD target root operator grant,no,yes,exact role lookup; protected but intentionally not mandatory to leave room for future read-only root roles
+RootUserAdmin,root-role.list,target,approved PRD target root operator grant,no,yes,paginated role listing; protected but intentionally not mandatory
+RootUserAdmin,root-role.update,target,approved PRD target root operator grant,yes,yes,editable role metadata update
+RootUserAdmin,root-role.delete,target,approved PRD target root operator grant,yes,yes,deactivate role from future assignment
+RootUserAdmin,root-role.reactivate,target,approved PRD target root operator grant,yes,yes,reactivate durable role identity
+RootUserAdmin,root-role.capability-catalog.read,target,approved PRD target root operator grant,no,yes,eligible capability inspection for role editing
+RootUserAdmin,root-role.capability-assignment.read,target,approved PRD target root operator grant,no,yes,assigned grant inspection for role editing
+RootUserAdmin,root-role.capability-assignment.update,target,approved PRD target root operator grant,yes,yes,bulk-first role grant management
+RootUserAdmin,root-role.assignment.assign,target,approved PRD target root operator grant,yes,yes,assign active root role to root user
+RootUserAdmin,root-role.assignment.unassign,target,approved PRD target root operator grant,yes,yes,safe root-role assignment removal
+RootUserAdmin,root-role.assignment.list,target,approved PRD target root operator grant,no,yes,root-user assignment inspection
+RootUserAdmin,root-role.assignment.replace,target,approved PRD target root operator grant,yes,yes,atomic replacement workflow for evolving roles
+RootUserAdmin,root-role.effective-permissions.read,target,approved PRD target root operator grant,no,yes,effective-permission inspection with source attribution

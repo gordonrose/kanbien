@@ -4,7 +4,8 @@ info:
   version: 0.2.0
   description: >
     OpenAPI specification for the platform API. This documents the platform
-    health route, root-user authentication, and the protected rootUsers feature.
+    health route, root-user authentication, root-role authorization
+    administration, and the protected rootUsers feature.
 
 servers:
   - url: http://localhost:3000
@@ -13,6 +14,7 @@ servers:
 tags:
   - name: Platform
   - name: Root Auth
+  - name: Root Roles
   - name: Root Users
 
 paths:
@@ -681,6 +683,478 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /v1/root-roles:
+    post:
+      tags:
+        - Root Roles
+      summary: Create a system root role
+      operationId: createSystemRootRole
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRootRoleBody"
+      responses:
+        "201":
+          description: System root role created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootRoleSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    get:
+      tags:
+        - Root Roles
+      summary: List system root roles
+      operationId: listSystemRootRoles
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: includeInactive
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Paginated system root roles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedRootRoles"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-roles/{rootRoleId}:
+    get:
+      tags:
+        - Root Roles
+      summary: Get one system root role
+      operationId: getSystemRootRole
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootRoleId"
+      responses:
+        "200":
+          description: System root role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootRoleSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags:
+        - Root Roles
+      summary: Update mutable system root role metadata
+      operationId: updateSystemRootRole
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootRoleId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRootRoleBody"
+      responses:
+        "200":
+          description: Updated system root role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootRoleSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-roles/{rootRoleId}/deactivate:
+    post:
+      tags:
+        - Root Roles
+      summary: Deactivate a system root role for future assignment
+      operationId: deactivateSystemRootRole
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootRoleId"
+      responses:
+        "200":
+          description: Deactivated system root role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootRoleSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-roles/{rootRoleId}/reactivate:
+    post:
+      tags:
+        - Root Roles
+      summary: Reactivate a previously deactivated system root role
+      operationId: reactivateSystemRootRole
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootRoleId"
+      responses:
+        "200":
+          description: Reactivated system root role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootRoleSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-roles/{rootRoleId}/eligible-authz-capabilities:
+    get:
+      tags:
+        - Root Roles
+      summary: List eligible authz capabilities for one root role
+      operationId: listSystemRootRoleEligibleAuthzCapabilities
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootRoleId"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200":
+          description: Eligible authz capabilities for the selected role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedRootAuthzCapabilities"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-roles/{rootRoleId}/capability-assignments:
+    get:
+      tags:
+        - Root Roles
+      summary: List authz capability grants assigned to one root role
+      operationId: listSystemRootRoleCapabilityAssignments
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootRoleId"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200":
+          description: Assigned authz capabilities for the selected role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedRootAuthzCapabilities"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags:
+        - Root Roles
+      summary: Replace authz capability grants for one root role
+      operationId: updateSystemRootRoleCapabilityGrants
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootRoleId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRootRoleCapabilityGrantsBody"
+      responses:
+        "200":
+          description: Updated authz capability assignments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedRootAuthzCapabilities"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-users/{rootUserId}/root-role-assignments:
+    post:
+      tags:
+        - Root Roles
+      summary: Assign a system root role to a root user
+      operationId: assignSystemRootRoleToRootUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootUserId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignRootRoleBody"
+      responses:
+        "201":
+          description: Root-role assignment created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootUserRoleAssignmentSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-users/{rootUserId}/root-role-assignments/{rootRoleAssignmentId}/unassign:
+    post:
+      tags:
+        - Root Roles
+      summary: Unassign one system root role from a root user
+      operationId: unassignSystemRootRoleFromRootUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootUserId"
+        - $ref: "#/components/parameters/RootRoleAssignmentId"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReasonBody"
+      responses:
+        "200":
+          description: Root-role assignment unassigned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RootUserRoleAssignmentSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-users/{rootUserId}/root-roles:
+    get:
+      tags:
+        - Root Roles
+      summary: List active system root roles assigned to a root user
+      operationId: listRootUserAssignedSystemRootRoles
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootUserId"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+      responses:
+        "200":
+          description: Paginated root-role assignments for the selected root user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedRootUserRoleAssignments"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-users/{rootUserId}/root-role-assignments/replace:
+    post:
+      tags:
+        - Root Roles
+      summary: Atomically replace one root-role assignment with another
+      operationId: replaceRootUserSystemRootRole
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootUserId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReplaceRootRoleAssignmentBody"
+      responses:
+        "200":
+          description: Effective permissions after replacement
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EffectiveRootUserPermissions"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/root-users/{rootUserId}/effective-permissions:
+    get:
+      tags:
+        - Root Roles
+      summary: Read effective root permissions for a root user
+      operationId: getEffectiveRootUserPermissions
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/RootUserId"
+      responses:
+        "200":
+          description: Effective role and capability union for the selected root user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EffectiveRootUserPermissions"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -691,6 +1165,22 @@ components:
   parameters:
     RootUserId:
       name: rootUserId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    RootRoleId:
+      name: rootRoleId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    RootRoleAssignmentId:
+      name: rootRoleAssignmentId
       in: path
       required: true
       schema:
@@ -914,6 +1404,194 @@ components:
     RootUserStatus:
       type: string
       enum: [active, inactive]
+
+    RootRoleSummary:
+      type: object
+      properties:
+        rootRoleId:
+          type: string
+          format: uuid
+        roleKey:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        protected:
+          type: boolean
+        assignable:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deactivatedAt:
+          type: [string, "null"]
+          format: date-time
+        activeGrantCount:
+          type: integer
+      required:
+        - rootRoleId
+        - roleKey
+        - displayName
+        - description
+        - protected
+        - assignable
+        - createdAt
+        - updatedAt
+        - deactivatedAt
+        - activeGrantCount
+
+    PaginatedRootRoles:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RootRoleSummary"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalSearchableRecords:
+          $ref: "#/components/schemas/CountValue"
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalSearchableRecords
+        - totalMatchingRecords
+
+    RootAuthzCapabilitySummary:
+      type: object
+      properties:
+        capabilityKey:
+          type: string
+        description:
+          type: string
+        mandatory:
+          type: boolean
+        protected:
+          type: boolean
+      required: [capabilityKey, description, mandatory, protected]
+
+    PaginatedRootAuthzCapabilities:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RootAuthzCapabilitySummary"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalSearchableRecords:
+          $ref: "#/components/schemas/CountValue"
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalSearchableRecords
+        - totalMatchingRecords
+
+    RootUserRoleAssignmentSummary:
+      type: object
+      properties:
+        rootRoleAssignmentId:
+          type: string
+          format: uuid
+        rootUserId:
+          type: string
+          format: uuid
+        rootRoleId:
+          type: string
+          format: uuid
+        roleKey:
+          type: string
+        displayName:
+          type: string
+        protected:
+          type: boolean
+        assignedAt:
+          type: string
+          format: date-time
+        unassignedAt:
+          type: [string, "null"]
+          format: date-time
+      required:
+        - rootRoleAssignmentId
+        - rootUserId
+        - rootRoleId
+        - roleKey
+        - displayName
+        - protected
+        - assignedAt
+        - unassignedAt
+
+    PaginatedRootUserRoleAssignments:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/RootUserRoleAssignmentSummary"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalSearchableRecords:
+          $ref: "#/components/schemas/CountValue"
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalSearchableRecords
+        - totalMatchingRecords
+
+    EffectiveRootUserPermission:
+      type: object
+      properties:
+        capabilityKey:
+          type: string
+        grantedByRoleKeys:
+          type: array
+          items:
+            type: string
+      required: [capabilityKey, grantedByRoleKeys]
+
+    EffectiveRootUserPermissions:
+      type: object
+      properties:
+        rootUserId:
+          type: string
+          format: uuid
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/RootUserRoleAssignmentSummary"
+        permissions:
+          type: array
+          items:
+            $ref: "#/components/schemas/EffectiveRootUserPermission"
+      required: [rootUserId, roles, permissions]
 
     CountValue:
       oneOf:
@@ -1188,6 +1866,74 @@ components:
           minLength: 1
         status:
           $ref: "#/components/schemas/RootUserStatus"
+
+    CreateRootRoleBody:
+      type: object
+      properties:
+        roleKey:
+          type: string
+          minLength: 1
+        displayName:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          minLength: 1
+      required: [roleKey, displayName, description]
+
+    UpdateRootRoleBody:
+      type: object
+      minProperties: 1
+      properties:
+        displayName:
+          type: string
+          minLength: 1
+        description:
+          type: string
+          minLength: 1
+
+    AssignRootRoleBody:
+      type: object
+      properties:
+        rootRoleId:
+          type: string
+          format: uuid
+        reason:
+          type: string
+      required: [rootRoleId]
+
+    ReplaceRootRoleAssignmentBody:
+      type: object
+      properties:
+        sourceRootRoleAssignmentId:
+          type: string
+          format: uuid
+        sourceRootRoleId:
+          type: string
+          format: uuid
+        targetRootRoleId:
+          type: string
+          format: uuid
+        reason:
+          type: string
+      required: [targetRootRoleId]
+
+    UpdateRootRoleCapabilityGrantsBody:
+      type: object
+      properties:
+        capabilityKeys:
+          type: array
+          items:
+            type: string
+        reason:
+          type: string
+      required: [capabilityKeys]
+
+    ReasonBody:
+      type: object
+      properties:
+        reason:
+          type: string
 
     StatusResponse:
       type: object

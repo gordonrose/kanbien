@@ -388,4 +388,35 @@ describe("rootAuth audit visibility", () => {
       }),
     ]);
   });
+
+  it("TC-ROOT-ROLES-AUD-003 keeps newly gated rootAuth denials visible through platform security audit events", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    harness.setRootUserCapabilities(identity.rootUserId, ["root-auth.session.read.own"]);
+
+    const denied = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-auth/password/change",
+      body: {
+        currentPassword: identity.password,
+        newPassword: "ChangedPass1!",
+      },
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+    });
+    expect(denied.status).toBe(403);
+    expect(denied.body.code).toBe("FORBIDDEN");
+
+    expect(findSecurityEvents(harness, "root_capability_denied")).toEqual([
+      expect.objectContaining({
+        rootUserId: identity.rootUserId,
+        authPrincipalId: identity.authPrincipalId,
+        eventOutcome: "failure",
+        ipAddress: "127.0.0.1",
+      }),
+    ]);
+  });
 });

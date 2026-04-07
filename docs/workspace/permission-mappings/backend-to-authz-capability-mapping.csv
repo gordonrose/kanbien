@@ -1,0 +1,38 @@
+Mapping Area,Backend Feature,Backend Capability,Current Status,Governing Authz Capability,Scope Type,Role / Boundary,Notes
+root public login,rootAuth,startRootUserPasswordLogin,current,public root login entrypoint,n/a,public unauthenticated caller,password-stage public entrypoint plus abuse controls
+root public login,rootAuth,completeRootUserSshLogin,current,public root login entrypoint,n/a,public unauthenticated caller,SSH-stage public entrypoint plus abuse controls
+root browser login,rootAdminShell,completeRootUserBrowserSshChallenge,current,public root browser login entrypoint,n/a,public unauthenticated caller,browser SSH completion entrypoint plus abuse controls
+root auth,rootAuth,createRootAuthPrincipal,current,root-auth.principal.create,can(...),RootUserAdmin,create root auth principal for a root user
+root auth,rootAuth,changeRootAuthPassword,current,root-auth.password.change.own,can(...),RootUserAdmin,current implementation is ownership-scoped
+root auth,rootAuth,addRootUserSshPublicKey,current,root-auth.ssh-key.create.own,can(...),RootUserAdmin,current implementation is ownership-scoped
+root auth,rootAuth,listRootUserSshPublicKeys,current,root-auth.ssh-key.read.own,scope(...) and can(...),RootUserAdmin,current implementation is ownership-scoped
+root auth,rootAuth,revokeRootUserSshPublicKey,current,root-auth.ssh-key.revoke.own,can(...),RootUserAdmin,current implementation is ownership-scoped
+root auth,rootAuth,listRootUserSessions,current,root-auth.session.read.own,scope(...) and can(...),RootUserAdmin,current implementation is ownership-scoped
+root auth,rootAuth,revokeRootUserSession,current,root-auth.session.revoke.own,can(...),RootUserAdmin,current implementation is ownership-scoped
+root auth,rootAuth,logoutRootUserSession,current,root-auth.session.logout.own,can(...),RootUserAdmin,self-logout capability
+root browser session,rootAdminShell,getRootAdminBrowserSession,current,root-admin-shell.session.read.own,can(...),RootUserAdmin,cookie-backed browser session summary
+root browser session,rootAdminShell,logoutRootAdminBrowserSession,current,root-admin-shell.session.logout.own,can(...),RootUserAdmin,cookie-backed browser logout with trusted-origin rule
+root users,rootUsers,createRootUser,current,root-user.create,can(...),RootUserAdmin,create root user
+root users,rootUsers,getRootUser,current,root-user.read.visible,can(...),RootUserAdmin,visible-row exact lookup
+root users,rootUsers,getRootUserByEmail,current,root-user.read.visible,can(...),RootUserAdmin,exact visible email lookup
+root users,rootUsers,listRootUsers,current,root-user.read.visible,scope(...) and can(...),RootUserAdmin,visible root-user listing
+root users,rootUsers,listActiveRootUsers,current,root-user.read.active,scope(...),RootUserAdmin,active-only root-user listing
+root users,rootUsers,listDeletedRootUsers,current,root-user.read.deleted,scope(...),RootUserAdmin,deleted/anonymized visibility is explicit
+root users,rootUsers,updateRootUser,current,root-user.update,can(...),RootUserAdmin,root-user lifecycle update
+root users,rootUsers,deleteRootUser,current,root-user.delete,can(...),RootUserAdmin,soft-delete lifecycle action
+root users,rootUsers,removeRootUser,current,root-user.remove,can(...),RootUserAdmin,irreversible anonymized remove
+root users,rootUsers,reactivateRootUser,current,root-user.reactivate,can(...),RootUserAdmin,restore/reactivation action
+root roles,rootRoles,createSystemRootRole,target,root-role.create,can(...),RootUserAdmin,approved PRD target for creating durable system root roles
+root roles,rootRoles,getSystemRootRole,target,root-role.read,can(...),RootUserAdmin,approved PRD target for exact role lookup
+root roles,rootRoles,listSystemRootRoles,target,root-role.list,scope(...) and can(...),RootUserAdmin,approved PRD target for paginated role listing
+root roles,rootRoles,updateSystemRootRole,target,root-role.update,can(...),RootUserAdmin,approved PRD target for editable role metadata updates
+root roles,rootRoles,deleteSystemRootRole,target,root-role.delete,can(...),RootUserAdmin,approved PRD target for deactivation from future assignment
+root roles,rootRoles,reactivateSystemRootRole,target,root-role.reactivate,can(...),RootUserAdmin,approved PRD target for role reactivation
+root roles,rootRoles,listSystemRootRoleEligibleAuthzCapabilities,target,root-role.capability-catalog.read,scope(...) and can(...),RootUserAdmin,approved PRD target for catalog-backed eligible capability inspection
+root roles,rootRoles,listSystemRootRoleCapabilityAssignments,target,root-role.capability-assignment.read,scope(...) and can(...),RootUserAdmin,approved PRD target for assigned grant inspection
+root roles,rootRoles,updateSystemRootRoleCapabilityGrants,target,root-role.capability-assignment.update,can(...),RootUserAdmin,approved PRD target for bulk-first grant management
+root roles,rootRoles,assignSystemRootRoleToRootUser,target,root-role.assignment.assign,can(...),RootUserAdmin,approved PRD target for assigning active roles to root users
+root roles,rootRoles,unassignSystemRootRoleFromRootUser,target,root-role.assignment.unassign,can(...),RootUserAdmin,approved PRD target for safe assignment removal
+root roles,rootRoles,listRootUserAssignedSystemRootRoles,target,root-role.assignment.list,scope(...) and can(...),RootUserAdmin,approved PRD target for assignment inspection
+root roles,rootRoles,replaceRootUserSystemRootRole,target,root-role.assignment.replace,can(...),RootUserAdmin,approved PRD target for atomic role replacement
+root roles,rootRoles,getEffectiveRootUserPermissions,target,root-role.effective-permissions.read,scope(...) and can(...),RootUserAdmin,approved PRD target for effective-permission inspection with source attribution

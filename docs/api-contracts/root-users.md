@@ -29,8 +29,10 @@
 
 - Required auth state: Authenticated root-user session is required for every
   route in this family
-- Session transport(s): `Authorization: Bearer <sessionId>` only at the route
-  boundary for this family
+- Session transport(s):
+  - `Authorization: Bearer <sessionId>` for API/manual callers
+  - same-origin root-admin browser session cookie for the current browser
+    operator console
 
 ## Authorization
 
@@ -41,15 +43,16 @@
 
 ## Middleware And Platform Effects
 
-- Route protection middleware: Shared bearer-session middleware rejects missing
-  tokens with `401 UNAUTHORIZED` and invalid/expired sessions with
+- Route protection middleware: Shared root-session middleware rejects missing
+  session transport with `401 UNAUTHORIZED` and invalid/expired sessions with
   `401 INVALID_SESSION`
 - Rate limiting / abuse controls: Shared authenticated-general rate limiting
   applies to the entire `/v1/root-users` subtree and may return
   `429 RATE_LIMITED`
-- Browser-specific behavior: No route-local browser-cookie behavior. The
-  root-admin browser shell must still obtain an API-usable bearer session
-  through `rootAuth` if it wants to call these routes directly.
+- Browser-specific behavior: There is still no route-local cookie logic inside
+  `rootUsers` itself, but the mounted shared root-session middleware now
+  accepts the same root-admin browser-session cookie used by the same-origin
+  operator console.
 - Other shared platform behavior: App-level JSON error middleware handles
   unexpected failures outside the feature-local `RootUserError` mapping
 
@@ -118,7 +121,7 @@
     messages
   - duplicate email uses `{ field: "email", reason: "duplicate_active_email" }`
 - Shared middleware errors:
-  - `401 UNAUTHORIZED` when bearer token is missing
+  - `401 UNAUTHORIZED` when no accepted session transport is present
   - `401 INVALID_SESSION` when session is invalid or expired
   - `429 RATE_LIMITED` from authenticated-general platform throttling
 
@@ -149,8 +152,8 @@
     surface.
   - `GET /v1/root-users` intentionally combines exact email lookup and paginated
     listing. Callers must branch on whether they supplied the `email` query.
-  - Browser auth exists elsewhere in the system, but these routes themselves do
-    not switch to cookie transport.
+  - The same protected route family is now reachable through either bearer
+    session transport or the same-origin root-admin browser-session cookie.
   - The persisted lifecycle contract distinguishes soft delete from irreversible
     anonymized remove.
 

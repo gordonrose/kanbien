@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { createRootAuthFeature } from "../../features/rootAuth";
+import { createRootRolesFeature } from "../../features/rootRoles";
 import { createRootUserFeature } from "../../features/rootUsers";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
@@ -11,7 +12,10 @@ import { env } from "../../config/env";
 export const v1Router = Router();
 const rootAuthRepository = createPostgresRootAuthRepository(dbPool);
 const platformSecurityRepository = createPostgresPlatformSecurityRepository(dbPool);
-const requireRootSession = createRequireRootSession(rootAuthRepository);
+const requireRootSession = createRequireRootSession(rootAuthRepository, {
+  allowBrowserCookie: true,
+});
+const rootRolesFeature = createRootRolesFeature(dbPool, platformSecurityRepository);
 const publicReadRateLimit = createRateLimitMiddleware({
   enabled: env.platformSecurity.enabled,
   repository: platformSecurityRepository,
@@ -44,10 +48,24 @@ v1Router.get("/health", publicReadRateLimit, (_request, response) => {
   response.status(200).json({ ok: true });
 });
 
-v1Router.use("/root-auth", createRootAuthFeature(dbPool, platformSecurityRepository));
+v1Router.use(
+  "/root-auth",
+  createRootAuthFeature(dbPool, platformSecurityRepository, rootRolesFeature.capabilityChecker),
+);
+v1Router.use(
+  "/root-roles",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  rootRolesFeature.rootRolesRouter,
+);
 v1Router.use(
   "/root-users",
   requireRootSession,
   authenticatedGeneralRateLimit,
-  createRootUserFeature(dbPool),
+  rootRolesFeature.rootUserRoleAssignmentsRouter,
+  createRootUserFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
 );

@@ -1,6 +1,15 @@
 import express, { type Express } from "express";
 import helmet from "helmet";
 import { createRootAuthRouter } from "../../../src/features/rootAuth/transport/router";
+import {
+  ROOT_AUTHZ_CAPABILITY_CATALOG,
+  ROOT_USER_ADMIN_ROLE_KEY,
+} from "../../../src/features/rootRoles/domain/capabilityCatalog";
+import { createRootRolesService } from "../../../src/features/rootRoles/domain/service";
+import {
+  createRootRolesRouter,
+  createRootUserRoleAssignmentsRouter,
+} from "../../../src/features/rootRoles/transport/router";
 import { createRootUsersRouter } from "../../../src/features/rootUsers/transport/router";
 import { createRootUsersService } from "../../../src/features/rootUsers/domain/service";
 import { createRequireRootSession } from "../../../src/lib/auth/middleware";
@@ -17,6 +26,13 @@ import type {
 } from "../../../src/features/rootAuth/persistence/types";
 import type { RootUsersRepository } from "../../../src/features/rootUsers/persistence/repository";
 import type { RootUserAuthState, RootUserData } from "../../../src/features/rootUsers/domain/types";
+import type { RootRolesRepository } from "../../../src/features/rootRoles/persistence/repository";
+import type {
+  RootCapabilityCatalogItem,
+  RootRoleAssignmentData,
+  RootRoleData,
+  RootUserEligibilityState,
+} from "../../../src/features/rootRoles/domain/types";
 import type { PlatformSecurityRepository } from "../../../src/lib/security/repository";
 import type {
   ActiveLockdownRecord,
@@ -35,6 +51,19 @@ interface StoredPrincipal {
 
 interface StoredRootUser extends RootUserData {}
 
+export interface RootRoleAuditEventRecord {
+  actorRootUserId: string;
+  targetRootUserId?: string;
+  rootRoleId?: string;
+  assignmentId?: string;
+  eventType: string;
+  eventOutcome: "success" | "failure";
+  reason?: string;
+  beforeState?: unknown;
+  afterState?: unknown;
+  occurredAt: Date;
+}
+
 export interface SeededAuthIdentity {
   rootUserId: string;
   authPrincipalId: string;
@@ -50,6 +79,8 @@ export interface RootAuthIntegrationHarness {
   platformSecurityRepository: PlatformSecurityRepository;
   seedRootUser(overrides?: Partial<StoredRootUser>): StoredRootUser;
   deleteSeededRootUser(rootUserId: string): void;
+  setRootUserCapabilities(rootUserId: string, capabilityKeys: string[]): void;
+  getRootUserCapabilities(rootUserId: string): string[];
   seedAuthIdentity(options?: {
     rootUser?: Partial<StoredRootUser>;
     loginEmail?: string;
@@ -64,6 +95,7 @@ export interface RootAuthIntegrationHarness {
   }): SeededAuthIdentity;
   getAuthAuditEvents(): CreateAuthAuditEventInput[];
   getSecurityAuditEvents(): SecurityAuditEventInput[];
+  getRootRoleAuditEvents(): RootRoleAuditEventRecord[];
   getSessionIdsForAuthPrincipal(authPrincipalId: string): string[];
   getSshKeyIdsForAuthPrincipal(authPrincipalId: string): string[];
   getActiveLockdowns(): ActiveLockdownRecord[];
@@ -389,6 +421,427 @@ function createInMemoryRootUsersRepository(store: Map<string, StoredRootUser>): 
   };
 }
 
+function createRootUserAdminRole(): RootRoleData {
+  const now = new Date("2026-03-26T00:00:00.000Z");
+  return {
+    rootRoleId: "00000000-0000-0000-0000-000000000001",
+    roleKey: ROOT_USER_ADMIN_ROLE_KEY,
+    displayName: "Root User Admin",
+    description: "Protected bootstrap root operator role.",
+    protected: true,
+    createdAt: now,
+    updatedAt: now,
+    deactivatedAt: null,
+    activeGrantCount: ROOT_AUTHZ_CAPABILITY_CATALOG.length,
+  };
+}
+
+function createInMemoryRootRolesRepository(
+  rootUsers: Map<string, StoredRootUser>,
+) {
+  const roles = new Map<string, RootRoleData>();
+  const roleGrants = new Map<string, RootCapabilityCatalogItem[]>();
+  const assignments = new Map<string, RootRoleAssignmentData>();
+  const auditEvents: RootRoleAuditEventRecord[] = [];
+  const rootUserAdminRole = createRootUserAdminRole();
+  roles.set(rootUserAdminRole.rootRoleId, rootUserAdminRole);
+  roleGrants.set(
+    rootUserAdminRole.rootRoleId,
+    ROOT_AUTHZ_CAPABILITY_CATALOG.map((entry) => ({
+      capabilityKey: entry.capabilityKey,
+      description: entry.description,
+      mandatory: entry.mandatoryForRootUserAdmin,
+      protected: entry.protectedForRootUserAdmin,
+    })),
+  );
+
+  function syncBootstrapAssignment(rootUserId: string): void {
+    const rootUser = rootUsers.get(rootUserId);
+    if (!rootUser || rootUser.anonymized) {
+      return;
+    }
+    const existing = [...assignments.values()].find(
+      (assignment) =>
+        assignment.rootUserId === rootUserId &&
+        assignment.rootRoleId === rootUserAdminRole.rootRoleId &&
+        assignment.unassignedAt === null,
+    );
+    if (existing) {
+      return;
+    }
+    assignments.set(`assign_${rootUserId}`, {
+      rootRoleAssignmentId: `assign_${rootUserId}`,
+      rootUserId,
+      rootRoleId: rootUserAdminRole.rootRoleId,
+      roleKey: rootUserAdminRole.roleKey,
+      displayName: rootUserAdminRole.displayName,
+      protected: true,
+      assignedAt: new Date("2026-03-26T00:00:00.000Z"),
+      unassignedAt: null,
+    });
+  }
+
+  function getEffectivePermissionsForRootUser(rootUserId: string) {
+    const activeAssignments = [...assignments.values()].filter(
+      (assignment) => assignment.rootUserId === rootUserId && assignment.unassignedAt === null,
+    );
+    const byCapability = new Map<string, string[]>();
+    for (const assignment of activeAssignments) {
+      for (const grant of roleGrants.get(assignment.rootRoleId) ?? []) {
+        const grantedByRoleKeys = byCapability.get(grant.capabilityKey) ?? [];
+        if (!grantedByRoleKeys.includes(assignment.roleKey)) {
+          grantedByRoleKeys.push(assignment.roleKey);
+        }
+        byCapability.set(grant.capabilityKey, grantedByRoleKeys);
+      }
+    }
+    return {
+      rootUserId,
+      roles: activeAssignments,
+      permissions: [...byCapability.entries()]
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([capabilityKey, grantedByRoleKeys]) => ({
+          capabilityKey,
+          grantedByRoleKeys,
+        })),
+    };
+  }
+
+  function pushAuditEvent(input: Omit<RootRoleAuditEventRecord, "occurredAt">): void {
+    auditEvents.push({
+      ...input,
+      occurredAt: new Date(),
+    });
+  }
+
+  const repository: RootRolesRepository = {
+    async hasCapability(rootUserId, capabilityKey) {
+      return getEffectivePermissionsForRootUser(rootUserId).permissions.some(
+        (permission) => permission.capabilityKey === capabilityKey,
+      );
+    },
+    async createRole(input) {
+      const role: RootRoleData = {
+        rootRoleId: input.rootRoleId,
+        roleKey: input.roleKey.trim(),
+        displayName: input.displayName.trim(),
+        description: input.description.trim(),
+        protected: input.isProtected,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deactivatedAt: null,
+        activeGrantCount: 0,
+      };
+      roles.set(role.rootRoleId, role);
+      roleGrants.set(role.rootRoleId, []);
+      pushAuditEvent({
+        actorRootUserId: input.actorRootUserId,
+        rootRoleId: role.rootRoleId,
+        eventType: "root_role_created",
+        eventOutcome: "success",
+        afterState: role,
+      });
+      return role;
+    },
+    async findRoleById(rootRoleId) {
+      return roles.get(rootRoleId) ?? null;
+    },
+    async findRoleByKey(roleKey) {
+      return (
+        [...roles.values()].find(
+          (role) =>
+            role.roleKey.trim().toLowerCase() === roleKey.trim().toLowerCase() &&
+            role.deactivatedAt === null,
+        ) ?? null
+      );
+    },
+    async listRoles(input) {
+      const items = [...roles.values()].filter(
+        (role) => input.includeInactive || role.deactivatedAt === null,
+      );
+      return {
+        items,
+        totalSearchableRecords: items.length,
+        totalMatchingRecords: items.length,
+      };
+    },
+    async updateRole(input) {
+      const current = roles.get(input.rootRoleId);
+      if (!current) {
+        return null;
+      }
+      const next = {
+        ...current,
+        displayName: input.displayName ?? current.displayName,
+        description: input.description ?? current.description,
+        updatedAt: new Date(),
+      };
+      roles.set(next.rootRoleId, next);
+      pushAuditEvent({
+        actorRootUserId: input.actorRootUserId,
+        rootRoleId: next.rootRoleId,
+        eventType: "root_role_updated",
+        eventOutcome: "success",
+        beforeState: current,
+        afterState: next,
+      });
+      return next;
+    },
+    async deactivateRole(rootRoleId, actorRootUserId) {
+      const current = roles.get(rootRoleId);
+      if (!current) {
+        return null;
+      }
+      const next = { ...current, deactivatedAt: new Date(), updatedAt: new Date() };
+      roles.set(rootRoleId, next);
+      pushAuditEvent({
+        actorRootUserId,
+        rootRoleId,
+        eventType: "root_role_deactivated",
+        eventOutcome: "success",
+        beforeState: current,
+        afterState: next,
+      });
+      return next;
+    },
+    async reactivateRole(rootRoleId, actorRootUserId) {
+      const current = roles.get(rootRoleId);
+      if (!current) {
+        return null;
+      }
+      const next = { ...current, deactivatedAt: null, updatedAt: new Date() };
+      roles.set(rootRoleId, next);
+      pushAuditEvent({
+        actorRootUserId,
+        rootRoleId,
+        eventType: "root_role_reactivated",
+        eventOutcome: "success",
+        beforeState: current,
+        afterState: next,
+      });
+      return next;
+    },
+    async listEligibleCapabilities(input) {
+      void input.rootRoleId;
+      const items = ROOT_AUTHZ_CAPABILITY_CATALOG.map((entry) => ({
+        capabilityKey: entry.capabilityKey,
+        description: entry.description,
+        mandatory: entry.mandatoryForRootUserAdmin,
+        protected: entry.protectedForRootUserAdmin,
+      }));
+      return {
+        items: items.slice((input.page - 1) * input.pageSize, input.page * input.pageSize),
+        totalSearchableRecords: items.length,
+        totalMatchingRecords: items.length,
+      };
+    },
+    async listRoleCapabilityAssignments(input) {
+      const items = roleGrants.get(input.rootRoleId) ?? [];
+      return {
+        items: items.slice((input.page - 1) * input.pageSize, input.page * input.pageSize),
+        totalSearchableRecords: items.length,
+        totalMatchingRecords: items.length,
+      };
+    },
+    async replaceRoleCapabilityGrants(input) {
+      const beforeKeys = (roleGrants.get(input.rootRoleId) ?? [])
+        .map((item) => item.capabilityKey)
+        .sort();
+      const role = roles.get(input.rootRoleId);
+      const items = input.capabilityKeys.map((capabilityKey) => {
+        const entry = ROOT_AUTHZ_CAPABILITY_CATALOG.find((item) => item.capabilityKey === capabilityKey)!;
+        return {
+          capabilityKey: entry.capabilityKey,
+          description: entry.description,
+          mandatory:
+            role?.roleKey === ROOT_USER_ADMIN_ROLE_KEY ? entry.mandatoryForRootUserAdmin : false,
+          protected:
+            role?.roleKey === ROOT_USER_ADMIN_ROLE_KEY ? entry.protectedForRootUserAdmin : false,
+        };
+      });
+      roleGrants.set(input.rootRoleId, items);
+      pushAuditEvent({
+        actorRootUserId: input.actorRootUserId,
+        rootRoleId: input.rootRoleId,
+        eventType: "root_role_capability_grants_replaced",
+        eventOutcome: "success",
+        reason: input.reason,
+        beforeState: beforeKeys,
+        afterState: items.map((item) => item.capabilityKey).sort(),
+      });
+      return {
+        items,
+        totalSearchableRecords: items.length,
+        totalMatchingRecords: items.length,
+      };
+    },
+    async createRoleAssignment(input) {
+      const role = roles.get(input.rootRoleId)!;
+      const assignment: RootRoleAssignmentData = {
+        rootRoleAssignmentId: input.assignmentId,
+        rootUserId: input.rootUserId,
+        rootRoleId: input.rootRoleId,
+        roleKey: role.roleKey,
+        displayName: role.displayName,
+        protected: role.protected,
+        assignedAt: new Date(),
+        unassignedAt: null,
+      };
+      assignments.set(assignment.rootRoleAssignmentId, assignment);
+      pushAuditEvent({
+        actorRootUserId: input.actorRootUserId,
+        targetRootUserId: input.rootUserId,
+        rootRoleId: input.rootRoleId,
+        assignmentId: assignment.rootRoleAssignmentId,
+        eventType: "root_role_assignment_created",
+        eventOutcome: "success",
+        reason: input.reason,
+        afterState: assignment,
+      });
+      return assignment;
+    },
+    async unassignRoleAssignment(input) {
+      const current = assignments.get(input.rootRoleAssignmentId);
+      if (!current || current.rootUserId !== input.rootUserId || current.unassignedAt) {
+        return null;
+      }
+      const next = { ...current, unassignedAt: new Date() };
+      assignments.set(next.rootRoleAssignmentId, next);
+      pushAuditEvent({
+        actorRootUserId: input.actorRootUserId,
+        targetRootUserId: input.rootUserId,
+        rootRoleId: next.rootRoleId,
+        assignmentId: next.rootRoleAssignmentId,
+        eventType: "root_role_assignment_unassigned",
+        eventOutcome: "success",
+        reason: input.reason,
+        beforeState: current,
+        afterState: next,
+      });
+      return next;
+    },
+    async listRootUserAssignments(input) {
+      const items = [...assignments.values()].filter(
+        (assignment) => assignment.rootUserId === input.rootUserId && assignment.unassignedAt === null,
+      );
+      return {
+        items: items.slice((input.page - 1) * input.pageSize, input.page * input.pageSize),
+        totalSearchableRecords: items.length,
+        totalMatchingRecords: items.length,
+      };
+    },
+    async replaceRoleAssignment(input) {
+      const source = [...assignments.values()].find(
+        (assignment) =>
+          assignment.rootUserId === input.rootUserId &&
+          assignment.unassignedAt === null &&
+          (assignment.rootRoleAssignmentId === input.sourceRootRoleAssignmentId ||
+            assignment.rootRoleId === input.sourceRootRoleId),
+      );
+      if (!source) {
+        throw new Error("Missing source role assignment");
+      }
+      assignments.set(source.rootRoleAssignmentId, { ...source, unassignedAt: new Date() });
+      const role = roles.get(input.targetRootRoleId)!;
+      const nextAssignment: RootRoleAssignmentData = {
+        rootRoleAssignmentId: `replace_${input.rootUserId}_${input.targetRootRoleId}`,
+        rootUserId: input.rootUserId,
+        rootRoleId: input.targetRootRoleId,
+        roleKey: role.roleKey,
+        displayName: role.displayName,
+        protected: role.protected,
+        assignedAt: new Date(),
+        unassignedAt: null,
+      };
+      assignments.set(nextAssignment.rootRoleAssignmentId, nextAssignment);
+      pushAuditEvent({
+        actorRootUserId: input.actorRootUserId,
+        targetRootUserId: input.rootUserId,
+        rootRoleId: input.targetRootRoleId,
+        assignmentId: nextAssignment.rootRoleAssignmentId,
+        eventType: "root_role_assignment_replaced",
+        eventOutcome: "success",
+        reason: input.reason,
+        beforeState: source,
+        afterState: nextAssignment,
+      });
+      return getEffectivePermissionsForRootUser(input.rootUserId);
+    },
+    async getEffectivePermissions(rootUserId) {
+      return getEffectivePermissionsForRootUser(rootUserId);
+    },
+    async countActiveAssignmentsForRoleKey(roleKey) {
+      return [...assignments.values()].filter(
+        (assignment) => assignment.roleKey === roleKey && assignment.unassignedAt === null,
+      ).length;
+    },
+    async countActiveAssignmentsForRootUser(rootUserId) {
+      return [...assignments.values()].filter(
+        (assignment) => assignment.rootUserId === rootUserId && assignment.unassignedAt === null,
+      ).length;
+    },
+    async findActiveAssignmentByRole(rootUserId, rootRoleId) {
+      return (
+        [...assignments.values()].find(
+          (assignment) =>
+            assignment.rootUserId === rootUserId &&
+            assignment.rootRoleId === rootRoleId &&
+            assignment.unassignedAt === null,
+        ) ?? null
+      );
+    },
+    async findActiveAssignmentById(rootUserId, rootRoleAssignmentId) {
+      return (
+        [...assignments.values()].find(
+          (assignment) =>
+            assignment.rootUserId === rootUserId &&
+            assignment.rootRoleAssignmentId === rootRoleAssignmentId &&
+            assignment.unassignedAt === null,
+        ) ?? null
+      );
+    },
+  };
+
+  function setRootUserCapabilities(rootUserId: string, capabilityKeys: string[]) {
+    syncBootstrapAssignment(rootUserId);
+    const rootUserAdminAssignment = [...assignments.values()].find(
+      (assignment) =>
+        assignment.rootUserId === rootUserId &&
+        assignment.roleKey === ROOT_USER_ADMIN_ROLE_KEY &&
+        assignment.unassignedAt === null,
+    );
+    if (!rootUserAdminAssignment) {
+      return;
+    }
+    const items = capabilityKeys.map((capabilityKey) => {
+      const entry = ROOT_AUTHZ_CAPABILITY_CATALOG.find((item) => item.capabilityKey === capabilityKey);
+      return {
+        capabilityKey,
+        description: entry?.description ?? capabilityKey,
+        mandatory: entry?.mandatoryForRootUserAdmin ?? false,
+        protected: entry?.protectedForRootUserAdmin ?? false,
+      };
+    });
+    roleGrants.set(rootUserAdminAssignment.rootRoleId, items);
+  }
+
+  function getRootUserCapabilities(rootUserId: string): string[] {
+    return getEffectivePermissionsForRootUser(rootUserId).permissions.map(
+      (permission) => permission.capabilityKey,
+    );
+  }
+
+  return {
+    repository,
+    syncBootstrapAssignment,
+    setRootUserCapabilities,
+    getRootUserCapabilities,
+    getAuditEvents() {
+      return [...auditEvents];
+    },
+  };
+}
+
 function createInMemoryRootAuthRepository(
   principals: Map<string, StoredPrincipal>,
   challenges: Map<string, AuthLoginChallengeRecord>,
@@ -581,6 +1034,25 @@ export function createRootAuthIntegrationHarness(
   const sshKeys = new Map<string, AuthSshPublicKeyRecord>();
   const auditEvents: CreateAuthAuditEventInput[] = [];
   const rootUsersRepository = createInMemoryRootUsersRepository(rootUsers);
+  const rootRolesHarness = createInMemoryRootRolesRepository(rootUsers);
+  const capabilityChecker = {
+    hasCapability(input: { rootUserId: string; capabilityKey: string }) {
+      return rootRolesHarness.repository.hasCapability(input.rootUserId, input.capabilityKey);
+    },
+  };
+  const rootRolesService = createRootRolesService(rootRolesHarness.repository, {
+    findAuthStateById: async (rootUserId: string) => {
+      const record = rootUsers.get(rootUserId);
+      return record
+        ? ({
+            rootUserId: record.rootUserId,
+            status: record.status,
+            anonymized: record.anonymized,
+            deletedAt: record.deletedAt,
+          } satisfies RootUserEligibilityState)
+        : null;
+    },
+  });
   const authRepository = createInMemoryRootAuthRepository(
     principals,
     challenges,
@@ -643,10 +1115,13 @@ export function createRootAuthIntegrationHarness(
       rootUsersAuthStateReader,
       rootUsersBrowserSummaryReader,
       platformSecurityRepository,
+      capabilityChecker,
     ),
   );
 
-  const requireRootSession = createRequireRootSession(authRepository);
+  const requireRootSession = createRequireRootSession(authRepository, {
+    allowBrowserCookie: true,
+  });
   const authenticatedGeneralRateLimit = createRateLimitMiddleware({
     enabled: platformSecurityEnabled,
     repository: platformSecurityRepository,
@@ -662,10 +1137,25 @@ export function createRootAuthIntegrationHarness(
       request.rootSession ? `${request.ip ?? "unknown"}|${request.rootSession.rootUserId}` : null,
   });
   app.use(
+    "/v1/root-roles",
+    requireRootSession,
+    authenticatedGeneralRateLimit,
+    createRootRolesRouter(rootRolesService, capabilityChecker, platformSecurityRepository),
+  );
+  app.use(
     "/v1/root-users",
     requireRootSession,
     authenticatedGeneralRateLimit,
-    createRootUsersRouter(createRootUsersService(rootUsersRepository)),
+    createRootUserRoleAssignmentsRouter(
+      rootRolesService,
+      capabilityChecker,
+      platformSecurityRepository,
+    ),
+    createRootUsersRouter(
+      createRootUsersService(rootUsersRepository),
+      capabilityChecker,
+      platformSecurityRepository,
+    ),
   );
 
   return {
@@ -676,10 +1166,17 @@ export function createRootAuthIntegrationHarness(
     seedRootUser(overrides = {}) {
       const record = createRootUserRecord(overrides);
       rootUsers.set(record.rootUserId, record);
+      rootRolesHarness.syncBootstrapAssignment(record.rootUserId);
       return record;
     },
     deleteSeededRootUser(rootUserId: string) {
       rootUsers.delete(rootUserId);
+    },
+    setRootUserCapabilities(rootUserId: string, capabilityKeys: string[]) {
+      rootRolesHarness.setRootUserCapabilities(rootUserId, capabilityKeys);
+    },
+    getRootUserCapabilities(rootUserId: string) {
+      return rootRolesHarness.getRootUserCapabilities(rootUserId);
     },
     seedAuthIdentity(options = {}) {
       const rootUserOverrides = options.rootUser ?? {};
@@ -695,6 +1192,7 @@ export function createRootAuthIntegrationHarness(
         ...(rootUserOverrides.updatedAt !== undefined ? { updatedAt: rootUserOverrides.updatedAt } : {}),
       });
       rootUsers.set(rootUser.rootUserId, rootUser);
+      rootRolesHarness.syncBootstrapAssignment(rootUser.rootUserId);
 
       const authPrincipalId =
         rootUserOverrides.rootUserId !== undefined
@@ -806,6 +1304,9 @@ export function createRootAuthIntegrationHarness(
     },
     getSecurityAuditEvents() {
       return securityEvents ? [...securityEvents] : [];
+    },
+    getRootRoleAuditEvents() {
+      return rootRolesHarness.getAuditEvents();
     },
     getActiveLockdowns() {
       return activeLockdowns ? [...activeLockdowns] : [];

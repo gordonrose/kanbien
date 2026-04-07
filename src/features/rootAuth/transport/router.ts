@@ -3,6 +3,10 @@ import { env } from "../../../config/env";
 import { ZodError } from "zod";
 import { createRequireRootSession } from "../../../lib/auth/middleware";
 import {
+  createRequireRootCapability,
+  type RootCapabilityChecker,
+} from "../../../lib/authz/middleware";
+import {
   createRequireRootBrowserSession,
   requireTrustedBrowserOrigin,
 } from "../../../lib/auth/browserSession";
@@ -57,6 +61,7 @@ export function createRootAuthRouter(
   rootUsersAuthStateReader: RootUsersAuthStateReader,
   rootUsersBrowserSummaryReader: RootUsersBrowserSummaryReader,
   platformSecurityRepository: PlatformSecurityRepository,
+  capabilityChecker: RootCapabilityChecker,
 ): Router {
   const router = Router();
   const service = createRootAuthService(
@@ -66,6 +71,56 @@ export function createRootAuthRouter(
   );
   const requireRootSession = createRequireRootSession(authRepository);
   const requireRootBrowserSession = createRequireRootBrowserSession(authRepository);
+  const requireBrowserSessionRead = createRequireRootCapability(
+    capabilityChecker,
+    "root-admin-shell.session.read.own",
+    { platformSecurityRepository },
+  );
+  const requireBrowserSessionLogout = createRequireRootCapability(
+    capabilityChecker,
+    "root-admin-shell.session.logout.own",
+    { platformSecurityRepository },
+  );
+  const requireCreatePrincipal = createRequireRootCapability(
+    capabilityChecker,
+    "root-auth.principal.create",
+    { platformSecurityRepository },
+  );
+  const requirePasswordChange = createRequireRootCapability(
+    capabilityChecker,
+    "root-auth.password.change.own",
+    { platformSecurityRepository },
+  );
+  const requireSshKeyCreate = createRequireRootCapability(
+    capabilityChecker,
+    "root-auth.ssh-key.create.own",
+    { platformSecurityRepository },
+  );
+  const requireSshKeyRead = createRequireRootCapability(
+    capabilityChecker,
+    "root-auth.ssh-key.read.own",
+    { platformSecurityRepository },
+  );
+  const requireSshKeyRevoke = createRequireRootCapability(
+    capabilityChecker,
+    "root-auth.ssh-key.revoke.own",
+    { platformSecurityRepository },
+  );
+  const requireSessionRead = createRequireRootCapability(
+    capabilityChecker,
+    "root-auth.session.read.own",
+    { platformSecurityRepository },
+  );
+  const requireSessionRevoke = createRequireRootCapability(
+    capabilityChecker,
+    "root-auth.session.revoke.own",
+    { platformSecurityRepository },
+  );
+  const requireSessionLogout = createRequireRootCapability(
+    capabilityChecker,
+    "root-auth.session.logout.own",
+    { platformSecurityRepository },
+  );
   const publicAuthRateLimit = createRateLimitMiddleware({
     enabled: env.platformSecurity.enabled,
     repository: platformSecurityRepository,
@@ -163,6 +218,7 @@ export function createRootAuthRouter(
     "/browser/session",
     requireRootBrowserSession,
     authenticatedSensitiveRateLimit,
+    requireBrowserSessionRead,
     async (request, response, next) => {
     try {
       const session = getRequiredRootSessionContext(request);
@@ -190,6 +246,7 @@ export function createRootAuthRouter(
     "/browser/logout",
     requireRootBrowserSession,
     authenticatedSensitiveRateLimit,
+    requireBrowserSessionLogout,
     requireTrustedBrowserOrigin,
     async (request, response, next) => {
       try {
@@ -214,7 +271,7 @@ export function createRootAuthRouter(
   router.use(requireRootSession);
   router.use(authenticatedSensitiveRateLimit);
 
-  router.post("/principals", async (request, response, next) => {
+  router.post("/principals", requireCreatePrincipal, async (request, response, next) => {
     try {
       const body = parseOrThrow(createRootUserAuthPrincipalBodySchema, request.body);
       const result = await service.createRootUserAuthPrincipal({
@@ -227,7 +284,7 @@ export function createRootAuthRouter(
     }
   });
 
-  router.post("/password/change", async (request, response, next) => {
+  router.post("/password/change", requirePasswordChange, async (request, response, next) => {
     try {
       const body = parseOrThrow(changeRootUserPasswordBodySchema, request.body);
       const session = getRequiredRootSessionContext(request);
@@ -244,7 +301,7 @@ export function createRootAuthRouter(
     }
   });
 
-  router.post("/ssh-keys", async (request, response, next) => {
+  router.post("/ssh-keys", requireSshKeyCreate, async (request, response, next) => {
     try {
       const body = parseOrThrow(addRootUserSshPublicKeyBodySchema, request.body);
       const session = getRequiredRootSessionContext(request);
@@ -260,7 +317,7 @@ export function createRootAuthRouter(
     }
   });
 
-  router.get("/ssh-keys", async (request, response, next) => {
+  router.get("/ssh-keys", requireSshKeyRead, async (request, response, next) => {
     try {
       const session = getRequiredRootSessionContext(request);
       const result = await service.listRootUserSshPublicKeys(session.authPrincipalId);
@@ -270,7 +327,7 @@ export function createRootAuthRouter(
     }
   });
 
-  router.delete("/ssh-keys/:keyId", async (request, response, next) => {
+  router.delete("/ssh-keys/:keyId", requireSshKeyRevoke, async (request, response, next) => {
     try {
       const params = parseOrThrow(revokeRootUserSshPublicKeyParamsSchema, request.params);
       const session = getRequiredRootSessionContext(request);
@@ -286,7 +343,7 @@ export function createRootAuthRouter(
     }
   });
 
-  router.get("/sessions", async (request, response, next) => {
+  router.get("/sessions", requireSessionRead, async (request, response, next) => {
     try {
       const session = getRequiredRootSessionContext(request);
       const result = await service.listRootUserSessions(session.authPrincipalId);
@@ -296,7 +353,7 @@ export function createRootAuthRouter(
     }
   });
 
-  router.post("/sessions/:sessionId/revoke", async (request, response, next) => {
+  router.post("/sessions/:sessionId/revoke", requireSessionRevoke, async (request, response, next) => {
     try {
       const params = parseOrThrow(revokeRootUserSessionParamsSchema, request.params);
       const session = getRequiredRootSessionContext(request);
@@ -312,7 +369,7 @@ export function createRootAuthRouter(
     }
   });
 
-  router.post("/logout", async (request, response, next) => {
+  router.post("/logout", requireSessionLogout, async (request, response, next) => {
     try {
       const session = getRequiredRootSessionContext(request);
       const result = await service.logoutRootUserSession({

@@ -141,6 +141,27 @@ describe("rootAuth security flows", () => {
     expect(unauthorizedProtectedRoute.body.code).toBe("INVALID_SESSION");
   });
 
+  it("TC-ROOT-AUTH-SEC-005 and TC-ROOT-ROLES-SEC-005 reject authenticated callers that lack the governing protected rootAuth capability", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    harness.setRootUserCapabilities(identity.rootUserId, [
+      "root-user.read.visible",
+      "root-auth.password.change.own",
+    ]);
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const denied = await invokeJson<ErrorResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/root-auth/sessions",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+    });
+
+    expect(denied.status).toBe(403);
+    expect(denied.body.code).toBe("FORBIDDEN");
+  });
+
   it("TC-ROOT-AUTH-SEC-003 enforces single-use, expiry, and principal-bound SSH challenges", async () => {
     // Also covers TC-ROOT-AUTH-EDGE-002 and TC-ROOT-AUTH-EDGE-003.
     const replayHarness = createRootAuthIntegrationHarness();

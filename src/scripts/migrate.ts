@@ -93,7 +93,24 @@ async function findMigrationFiles(): Promise<MigrationFile[]> {
   const allFiles = await listFiles(FEATURES_ROOT);
   const migrationPaths = allFiles
     .filter((filepath) => filepath.includes(`${path.sep}migrations${path.sep}`) && filepath.endsWith(".sql"))
-    .sort((left, right) => left.localeCompare(right));
+    .sort((left, right) => {
+      const leftName = path.basename(left);
+      const rightName = path.basename(right);
+      const leftPrefix = Number.parseInt(leftName.split("_", 1)[0] ?? "", 10);
+      const rightPrefix = Number.parseInt(rightName.split("_", 1)[0] ?? "", 10);
+      const leftHasPrefix = Number.isFinite(leftPrefix);
+      const rightHasPrefix = Number.isFinite(rightPrefix);
+
+      if (leftHasPrefix && rightHasPrefix && leftPrefix !== rightPrefix) {
+        return leftPrefix - rightPrefix;
+      }
+
+      if (leftHasPrefix !== rightHasPrefix) {
+        return leftHasPrefix ? -1 : 1;
+      }
+
+      return left.localeCompare(right);
+    });
 
   return Promise.all(
     migrationPaths.map(async (filepath) => {

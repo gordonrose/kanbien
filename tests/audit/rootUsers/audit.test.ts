@@ -35,6 +35,10 @@ interface RootUserListResponse {
   pageSize: number;
 }
 
+interface ErrorResponse {
+  code: string;
+}
+
 async function loginViaPasswordAndSsh(
   harness: RootAuthIntegrationHarness,
   identity: SeededAuthIdentity,
@@ -143,5 +147,40 @@ describe("rootUsers audit visibility", () => {
     expect(removed.status).toBe(200);
     expect(removed.body.anonymized).toBe(true);
     expect(removed.body.status).toBe("inactive");
+  });
+
+  it("TC-ROOT-ROLES-AUD-003 keeps newly gated rootUsers denials visible through platform security audit events", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    harness.setRootUserCapabilities(identity.rootUserId, ["root-user.read.visible"]);
+
+    const denied = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        email: "denied.root@example.test",
+        firstName: "Denied",
+        lastName: "Root",
+      },
+    });
+    expect(denied.status).toBe(403);
+    expect(denied.body.code).toBe("FORBIDDEN");
+
+    expect(harness.getSecurityAuditEvents()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          eventType: "root_capability_denied",
+          eventOutcome: "failure",
+          rootUserId: identity.rootUserId,
+          authPrincipalId: identity.authPrincipalId,
+          ipAddress: "127.0.0.1",
+        }),
+      ]),
+    );
   });
 });

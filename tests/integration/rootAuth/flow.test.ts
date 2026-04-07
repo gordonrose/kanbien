@@ -214,6 +214,25 @@ describe("rootAuth integration flows", () => {
     expect(otherSessionResponse.body.code).toBe("INVALID_SESSION");
   });
 
+  it("TC-ROOT-ROLES-INT-005 keeps representative protected rootAuth routes reachable when the session user holds the required authz capability", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    expect(harness.getRootUserCapabilities(identity.rootUserId)).toContain("root-auth.session.read.own");
+
+    const response = await invokeJson<{ items: unknown[] }>(harness.app, {
+      method: "GET",
+      path: "/v1/root-auth/sessions",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.items).toHaveLength(1);
+  });
+
   it("TC-ROOT-AUTH-INT-005 prevents login with a revoked SSH key", async () => {
     const harness = createRootAuthIntegrationHarness();
     const identity = harness.seedAuthIdentity();

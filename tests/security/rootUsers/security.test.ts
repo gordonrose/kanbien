@@ -99,6 +99,27 @@ describe("rootUsers security flows", () => {
     expect(invalid.body.code).toBe("INVALID_SESSION");
   });
 
+  it("TC-ROOT-USERS-SEC-001 and TC-ROOT-ROLES-SEC-005 reject authenticated callers that lack the governing root-user capability", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    harness.setRootUserCapabilities(identity.rootUserId, [
+      "root-auth.password.change.own",
+      "root-auth.session.read.own",
+    ]);
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const denied = await invokeJson<ErrorResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+    });
+
+    expect(denied.status).toBe(403);
+    expect(denied.body.code).toBe("FORBIDDEN");
+  });
+
   it("TC-ROOT-USERS-SEC-002 enforces shared authenticated-general throttling on rootUsers routes", async () => {
     mutablePlatformSecurity.rateLimitPolicies.authenticatedGeneral.maxAttempts = 1;
     const harness = createRootAuthIntegrationHarness();

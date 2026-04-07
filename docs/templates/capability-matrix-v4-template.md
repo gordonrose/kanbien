@@ -1,6 +1,6 @@
 # Capability Matrix v4 Template
 
-Use one row per field in the matrix and fill in the following groups.
+Use one row per capability in the matrix and fill in the following groups.
 
 ## Capability Identity
 
@@ -23,9 +23,28 @@ Use one row per field in the matrix and fill in the following groups.
 - Minimum role required
 - Explicitly denied roles
 - Authorization summary
+- Governing authz capability
+- Authz scope type
+- Granted role / boundary
+- Mandatory grant?
+- Protected grant?
 - Frontend visibility rule
 - Backend enforcement rule
 - Audit actor role required?
+
+Use these fields so the matrix can act as the source artifact for rebuilding:
+
+- backend-to-authz capability mappings
+- role-to-authz capability mappings
+
+When a row is not a normal role-granted capability, fill the fields explicitly:
+
+- public entrypoints:
+  - `Granted role / boundary = public unauthenticated caller`
+- internal seams:
+  - `Granted role / boundary = system internal seam`
+- internal bootstrap or migration behavior:
+  - `Granted role / boundary = internal migration execution`
 
 ## Frontend Slice
 

@@ -122,6 +122,25 @@ describe("rootUsers integration flows", () => {
     expect(exactByEmail.body.email).toBe("created.root@example.test");
   });
 
+  it("TC-ROOT-ROLES-INT-005 keeps representative rootUsers routes reachable when the session user holds the required authz capability", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    expect(harness.getRootUserCapabilities(identity.rootUserId)).toContain("root-user.read.visible");
+
+    const response = await invokeJson<RootUserListResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.items.map((item) => item.rootUserId)).toContain(identity.rootUserId);
+  });
+
   it("TC-ROOT-USERS-INT-002 exposes root-user lifecycle state through the auth seam for rootAuth sign-in enforcement", async () => {
     for (const rootUser of [
       {

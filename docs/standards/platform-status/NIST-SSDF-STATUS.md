@@ -35,8 +35,9 @@ Source gate: [`NIST-SSDF-GATE.md`](/home/gordon/kanbien/docs/standards/NIST-SSDF
   Current docs clearly define privileged root-user trust boundaries and auth
   flows.
 - `Pass` Authentication, authorization, input validation, data protection, and audit needs are identified up front.
-  Auth, validation, and audit are strong; authorization is identified but still
-  incomplete as a lasting architecture.
+  Auth, validation, and audit are strong; current root-platform authorization
+  is now executable through `rootRoles`, though the lasting tenant-scale
+  architecture remains incomplete.
 - `Partial` The design follows least privilege.
   Good direction exists, but the current root-user boundary is still coarse and
   not yet backed by a full permission model.
@@ -53,7 +54,8 @@ Source gate: [`NIST-SSDF-GATE.md`](/home/gordon/kanbien/docs/standards/NIST-SSDF
 - `Pass` The change follows approved coding patterns and existing platform boundaries.
   Current backend slices align well with feature-bundle rules.
 - `Pass` Security-sensitive logic is centralized rather than scattered.
-  Auth, session, and shared security middleware are centralized appropriately.
+  Auth, session, shared security middleware, and current root capability
+  enforcement are centralized appropriately.
 - `Pass` Unsafe debug behavior, plaintext secret logging, and insecure defaults are absent.
   No obvious insecure debugging posture is present in the current implemented
   slices.

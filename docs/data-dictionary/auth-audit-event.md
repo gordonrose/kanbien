@@ -36,6 +36,9 @@
 - Auth throttling and lock-down visibility
   Source: `src/lib/security/rootAuthAbuse.ts`,
   `src/features/rootAuth/transport/router.ts`
+- Login abuse-state clear-on-success visibility
+  Source: `src/lib/security/rootAuthAbuse.ts`,
+  `src/features/rootAuth/domain/service.ts`
 
 ## Fields
 
@@ -61,7 +64,8 @@
   Description: Auth/security event category.
   Constraints / Notes: Required. Current values include principal creation,
   password-stage and SSH-stage login outcomes, password change, SSH key add and
-  revoke, session revoke, and bootstrap migration applied.
+  revoke, session revoke, login abuse-state clear-on-success, and bootstrap
+  migration applied.
   Source: `src/features/rootAuth/persistence/migrations/0002_create_root_auth.sql`,
   `src/features/rootAuth/domain/service.ts`
 - `event_outcome`

@@ -36,17 +36,26 @@ Mounting:
 
 ```ts
 import { createRootAuthFeature } from "../../features/rootAuth";
+import { createRootRolesFeature } from "../../features/rootRoles";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
 
 const platformSecurityRepository = createPostgresPlatformSecurityRepository(dbPool);
 
-v1Router.use("/root-auth", createRootAuthFeature(dbPool, platformSecurityRepository));
+const rootRolesFeature = createRootRolesFeature(dbPool, platformSecurityRepository);
+
+v1Router.use(
+  "/root-auth",
+  createRootAuthFeature(dbPool, platformSecurityRepository, rootRolesFeature.capabilityChecker),
+);
 ```
 
 Public auth routes also pass through shared public-auth rate limiting.
 Protected routes use bearer-session middleware plus authenticated-sensitive rate
-limiting.
+limiting. The mounted `/v1/root-users` and `/v1/root-roles` route families now
+also accept the same root-admin browser-session cookie through the shared
+root-session middleware so the same-origin browser console can call the
+existing protected admin APIs directly.
 The current platform mounts all `rootUsers` routes behind that auth seam.
 `rootAuth` reads sign-in eligibility through the exported
 `createRootUsersAuthStateReader` seam from the `rootUsers` feature.
@@ -65,10 +74,14 @@ The current platform mounts all `rootUsers` routes behind that auth seam.
 - the root-admin browser shell completes SSH login through browser-oriented
   endpoints that set a secure HTTP-only cookie backed by the same
   `auth_sessions` records
+- that same browser session can now drive the current `rootUsers` and
+  `rootRoles` admin APIs without requiring a separate browser-held bearer token
 - browser SSH completion depends on a narrow localhost signing helper rather
   than browser-held private keys
-- only root-user-authenticated callers can use protected `rootUsers` or
-  protected `rootAuth` capabilities
+- protected `rootAuth` and `rootUsers` routes now require both:
+  - a valid root-user session
+  - the governing root authz capability enforced through the shared rootRoles
+    authorization seam
 - authenticated root users are a tiny operator set and may perform explicit
   root-only credential-management actions for other root users
 - that privileged cross-user capability is a root-only exception and is not the
@@ -99,6 +112,19 @@ Protected routes:
 - `GET /v1/root-auth/sessions`
 - `POST /v1/root-auth/sessions/:sessionId/revoke`
 - `POST /v1/root-auth/logout`
+
+Current governing authz capabilities:
+
+- `root-auth.principal.create`
+- `root-auth.password.change.own`
+- `root-auth.ssh-key.create.own`
+- `root-auth.ssh-key.read.own`
+- `root-auth.ssh-key.revoke.own`
+- `root-auth.session.read.own`
+- `root-auth.session.revoke.own`
+- `root-auth.session.logout.own`
+- `root-admin-shell.session.read.own`
+- `root-admin-shell.session.logout.own`
 
 Transport notes:
 
@@ -133,6 +159,8 @@ Transport notes:
   logged
 - repeated failed auth behavior, rate limiting, and temporary lock-down events
   are also written to `auth_audit_events` as security-visible audit records
+- clear-on-success reset of root-auth abuse state is also written to platform
+  security audit events as `login_failure_state_cleared`
 
 Supporting notes:
 
@@ -226,6 +254,10 @@ Steps:
 4. If helper startup reports that required workstation tooling is missing or
    the local key cannot be used, resolve that prerequisite first rather than
    trying to work around low-level crypto errors in the browser.
+
+5. After successful login, use the browser console to exercise the current
+   `rootUsers` and `rootRoles` admin surfaces through the same-origin cookie
+   session instead of Postman.
 
 Example bash-style startup:
 

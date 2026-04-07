@@ -3,10 +3,12 @@ import { createRootUsersAuthStateReader, createRootUsersBrowserSummaryReader } f
 import { createPostgresRootAuthRepository } from "./persistence/postgresRepository";
 import { createRootAuthRouter } from "./transport/router";
 import type { PlatformSecurityRepository } from "../../lib/security/repository";
+import type { RootCapabilityChecker } from "../../lib/authz/middleware";
 
 export function createRootAuthFeature(
   dbPool: Pool,
   platformSecurityRepository: PlatformSecurityRepository,
+  capabilityChecker: RootCapabilityChecker,
 ) {
   const rootAuthRepository = createPostgresRootAuthRepository(dbPool);
   const rootUsersAuthStateReader = createRootUsersAuthStateReader(dbPool);
@@ -17,5 +19,6 @@ export function createRootAuthFeature(
     rootUsersAuthStateReader,
     rootUsersBrowserSummaryReader,
     platformSecurityRepository,
+    capabilityChecker,
   );
 }

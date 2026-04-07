@@ -42,7 +42,8 @@ Source gate: [`NIST-CSF-2.0-GATE.md`](/home/gordon/kanbien/docs/standards/NIST-C
 ## 3. Protect
 
 - `Pass` Access control is appropriate to the risk.
-  Reasonable for the current root-user phase.
+  Reasonable for the current root-user phase, with explicit route capability
+  gates now in place for the implemented root platform surface.
 - `Partial` Configuration is controlled and reviewable.
   Env config exists; richer configuration governance does not.
 - `Partial` Sensitive data is protected in storage, transit, and handling as required.
@@ -51,7 +52,9 @@ Source gate: [`NIST-CSF-2.0-GATE.md`](/home/gordon/kanbien/docs/standards/NIST-C
 - `Pass` Secure defaults are used.
   Current backend and browser auth defaults are cautious.
 - `Partial` Privileged operations are restricted.
-  Current root-user boundary exists, but fine-grained governance is missing.
+  Current root-user privileged operations are now narrowed through explicit
+  capability checks, but fine-grained tenant/object governance is still
+  missing.
 
 ## 4. Detect
 

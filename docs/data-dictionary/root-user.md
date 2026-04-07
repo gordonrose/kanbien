@@ -12,10 +12,12 @@
 
 - Primary table or durable record: `root_users`
 - Related durable records: `auth_principal_root_user_links`,
-  `auth_sessions`, `auth_audit_events`
+  `auth_sessions`, `auth_audit_events`, `root_user_role_assignments`,
+  `root_role_audit_events`
 - Primary key: `root_user_id`
 - Foreign key relationships: Referenced by `auth_principal_root_user_links`,
-  `auth_sessions`, and `auth_audit_events` from `rootAuth`.
+  `auth_sessions`, and `auth_audit_events` from `rootAuth`; referenced by
+  `root_user_role_assignments` and `root_role_audit_events` from `rootRoles`.
 
 ## Capabilities That Rely On This Entity
 
@@ -39,6 +41,9 @@
   Source: `src/features/rootUsers/domain/service.ts`
 - Reactivate root user
   Source: `src/features/rootUsers/domain/service.ts`
+- Root-role assignment and effective-access reads through the exported authz
+  seam
+  Source: `src/features/rootRoles/domain/service.ts`
 - Root-user sign-in eligibility checks through the exported auth-state seam
   Source: `src/features/rootUsers/authState.ts`,
   `src/features/rootAuth/domain/rootUserAccess.ts`
@@ -235,7 +240,7 @@
 ## Cross-Feature Read Seams
 
 - Exported seam: `createRootUsersAuthStateReader`
-  Consumer: `rootAuth`
+  Consumer: `rootAuth`, `rootRoles`
   Allowed read shape: `rootUserId`, `email`, `status`, `anonymized`,
   `deletedAt`
   Source: `src/features/rootUsers/authState.ts`,

@@ -31,6 +31,7 @@ Mounting:
 
 ```ts
 import { createRootUserFeature } from "../../features/rootUsers";
+import { createRootRolesFeature } from "../../features/rootRoles";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -40,6 +41,7 @@ import { env } from "../../config/env";
 
 const rootAuthRepository = createPostgresRootAuthRepository(dbPool);
 const platformSecurityRepository = createPostgresPlatformSecurityRepository(dbPool);
+const rootRolesFeature = createRootRolesFeature(dbPool, platformSecurityRepository);
 const requireRootSession = createRequireRootSession(rootAuthRepository);
 const authenticatedGeneralRateLimit = createRateLimitMiddleware({
   enabled: env.platformSecurity.enabled,
@@ -60,7 +62,8 @@ v1Router.use(
   "/root-users",
   requireRootSession,
   authenticatedGeneralRateLimit,
-  createRootUserFeature(dbPool),
+  rootRolesFeature.rootUserRoleAssignmentsRouter,
+  createRootUserFeature(dbPool, rootRolesFeature.capabilityChecker, platformSecurityRepository),
 );
 ```
 
@@ -72,11 +75,13 @@ Current mount point:
 All `rootUsers` routes are protected by root-user authentication.
 All `rootUsers` routes also pass through shared authenticated-general rate
 limiting.
+All `rootUsers` CRUD routes now also pass through governing root authz
+capability checks enforced by the shared `rootRoles` authorization seam.
 `rootUsers` is no longer a public feature surface.
 The platform now also has a same-origin root-admin browser shell that
-authenticates through `rootAuth`, but phase one of that shell only exposes the
-authenticated current-user/session shell rather than the full `rootUsers`
-management UI.
+authenticates through `rootAuth` and exposes a rudimentary operator console for
+current `rootUsers` and `rootRoles` workflows. It is still intentionally much
+narrower than a full polished admin product.
 The feature also exports a narrow auth-state reader that other features can use
 when they need root-user sign-in eligibility without reaching into
 `rootUsers/persistence/*`.
@@ -114,12 +119,15 @@ eligibility without importing `rootUsers` private persistence internals.
 The root-admin browser shell is a separate frontend app area in the repo and
 consumes backend behavior through public HTTP routes.
 
-For phase one:
+For the current phase:
 
 - browser-authenticated root users can reach the shell through `rootAuth`
 - the shell can show minimal current-user information sourced from `rootUsers`
-- the broader `rootUsers` CRUD and list capabilities remain API-driven and are
-  not yet exposed as a full browser management UI
+- the shell can also drive the current `rootUsers` CRUD/list routes and the
+  current `rootRoles` management routes through the same cookie-backed
+  protected session boundary
+- the browser console remains a rudimentary operator surface rather than a full
+  mature admin UI
 
 ### Error handling
 
@@ -167,6 +175,26 @@ Routes:
 - `DELETE /v1/root-users/:rootUserId`
 - `POST /v1/root-users/:rootUserId/remove`
 - `POST /v1/root-users/:rootUserId/reactivate`
+
+Current governing authz capabilities:
+
+- `root-user.create`
+- `root-user.read.visible`
+- `root-user.read.active`
+- `root-user.read.deleted`
+- `root-user.update`
+- `root-user.delete`
+- `root-user.remove`
+- `root-user.reactivate`
+
+Related root-role administration routes mounted under the same `/v1/root-users`
+base path:
+
+- `POST /v1/root-users/:rootUserId/root-role-assignments`
+- `POST /v1/root-users/:rootUserId/root-role-assignments/:rootRoleAssignmentId/unassign`
+- `GET /v1/root-users/:rootUserId/root-roles`
+- `POST /v1/root-users/:rootUserId/root-role-assignments/replace`
+- `GET /v1/root-users/:rootUserId/effective-permissions`
 
 ## Response Shapes
 
@@ -358,20 +386,28 @@ Notes:
 
 ### Try it from the browser shell
 
-Phase one of the root-admin shell does not yet expose the full `rootUsers`
-management UI.
-
 What you can verify in the browser today:
 
 1. Complete browser login through:
    - `http://localhost:<app-port>/root-admin`
 
-2. Confirm the authenticated shell loads successfully and shows the current
+2. Confirm the authenticated console loads successfully and shows the current
    root-user summary sourced through the backend seam.
 
-3. Use browser devtools or your network inspector to confirm the shell is using:
-   - `GET /v1/root-auth/browser/session`
+3. Use the `Root Users` workbench to:
+   - create a root user
+   - inspect visible and deleted users
+   - update a selected visible user
+   - soft-delete, reactivate, or remove a root user
 
-4. For actual `rootUsers` create/list/update/delete testing in the current
-   phase, use Postman or another API client against the documented `/v1/root-users`
-   routes.
+4. Use the selected-user panel to:
+   - inspect active root-role assignments
+   - inspect effective permissions
+   - assign, unassign, or replace root-role assignments
+
+5. Use browser devtools or your network inspector to confirm the console is
+   using:
+   - `GET /v1/root-auth/browser/session`
+   - `/v1/root-users/*`
+   - `/v1/root-users/:rootUserId/root-roles`
+   - `/v1/root-users/:rootUserId/effective-permissions`

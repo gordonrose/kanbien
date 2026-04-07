@@ -17,6 +17,11 @@ and approved cross-feature read seams.
 | Entity | Owning Feature | Description | Dictionary File |
 | --- | --- | --- | --- |
 | Root User | `rootUsers` | Privileged platform operator account and lifecycle record. | [root-user.md](./root-user.md) |
+| Root Authz Capability | `rootRoles` | Catalog entry for a root-platform authorization capability key. | [root-authz-capability.md](./root-authz-capability.md) |
+| System Root Role | `rootRoles` | Durable definition of a system root role such as `RootUserAdmin`. | [system-root-role.md](./system-root-role.md) |
+| Root Role Capability Grant | `rootRoles` | Durable assignment of one authz capability to one system root role. | [root-role-capability-grant.md](./root-role-capability-grant.md) |
+| Root User Role Assignment | `rootRoles` | Durable assignment of one system root role to one root user. | [root-user-role-assignment.md](./root-user-role-assignment.md) |
+| Root Role Audit Event | `rootRoles` | Durable audit record for root-role and assignment changes. | [root-role-audit-event.md](./root-role-audit-event.md) |
 | Auth Principal | `rootAuth` | Login identity linked to exactly one root user in the current phase. | [auth-principal.md](./auth-principal.md) |
 | Auth SSH Public Key | `rootAuth` | Registered SSH public key used for second-factor proof during root login. | [auth-ssh-public-key.md](./auth-ssh-public-key.md) |
 | Auth Login Challenge | `rootAuth` | Single-use SSH challenge issued after password-stage login. | [auth-login-challenge.md](./auth-login-challenge.md) |
@@ -27,5 +32,8 @@ and approved cross-feature read seams.
 
 - The `auth_principal_root_user_links` table is documented as a relationship
   within the relevant entity pages rather than as a standalone entity page.
+- The `rootRoles` feature introduces a second durable authorization layer in
+  addition to `rootAuth`; those entities are listed separately rather than
+  being folded into `root-user.md`.
 - Feature ownership follows `docs/architecture/system-overview.md` and
   `docs/architecture/adr/0009-separate-authentication-from-business-features.md`.
