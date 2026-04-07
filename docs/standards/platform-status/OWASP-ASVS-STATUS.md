@@ -64,8 +64,9 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
   capability-based permission checks, but the broader multi-tenant permission
   architecture is not finished.
 - `Fail` Object-level and tenant-level access are checked where relevant.
-  Ownership checks exist for some auth objects, but there is no tenant model
-  and no generalized object-level permission layer.
+  Ownership checks exist for some auth objects, and the repo now has a
+  root-operated tenant lifecycle model, but there is still no generalized
+  tenant-member or object-level permission layer.
 - `Partial` The design prevents horizontal and vertical privilege escalation.
   Current root-user scope is small and controlled, but the future permission
   model is still missing.

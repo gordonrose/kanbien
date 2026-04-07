@@ -117,6 +117,61 @@ export const ROOT_AUTHZ_CAPABILITY_CATALOG: RootAuthzCapabilityCatalogEntry[] = 
     protectedForRootUserAdmin: true,
   },
   {
+    capabilityKey: "tenant.create",
+    description: "Create a tenant.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "tenant.read",
+    description: "Read one visible tenant.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "tenant.list",
+    description: "List visible tenants.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "tenant.update",
+    description: "Update editable tenant metadata.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "tenant.read.deleted",
+    description: "Read one deleted tenant explicitly.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "tenant.list.deleted",
+    description: "List deleted tenants explicitly.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "tenant.delete",
+    description: "Soft-delete a tenant.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "tenant.reactivate",
+    description: "Reactivate a previously deleted tenant.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "tenant.remove",
+    description:
+      "Irreversibly remove a tenant while no dependent tenant-owned entities exist.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
     capabilityKey: "root-role.create",
     description: "Create a system root role.",
     mandatoryForRootUserAdmin: true,

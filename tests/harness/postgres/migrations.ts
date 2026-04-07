@@ -3,7 +3,12 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Pool } from "pg";
 
-type MigrationGroup = "rootUsers" | "platformSecurity" | "rootAuth";
+type MigrationGroup =
+  | "rootUsers"
+  | "platformSecurity"
+  | "rootAuth"
+  | "rootRoles"
+  | "tenants";
 
 interface TestMigrationFile {
   filename: string;
@@ -43,6 +48,14 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
   {
     group: "rootAuth",
     relativePath: "rootAuth/persistence/migrations/0004_backfill_root_auth_bootstrap_keys_and_events.sql",
+  },
+  {
+    group: "rootRoles",
+    relativePath: "rootRoles/persistence/migrations/0005_create_root_roles.sql",
+  },
+  {
+    group: "tenants",
+    relativePath: "tenants/persistence/migrations/0006_create_tenants.sql",
   },
 ];
 
@@ -142,7 +155,13 @@ async function applyMigration(pool: Pool, migration: TestMigrationFile): Promise
 
 export async function applyPostgresTestMigrations(
   pool: Pool,
-  groups: MigrationGroup[] = ["rootUsers", "platformSecurity", "rootAuth"],
+  groups: MigrationGroup[] = [
+    "rootUsers",
+    "platformSecurity",
+    "rootAuth",
+    "rootRoles",
+    "tenants",
+  ],
 ): Promise<void> {
   await ensureMigrationsTable(pool);
 

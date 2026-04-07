@@ -109,7 +109,7 @@ describe("rootRoles integration flows", () => {
       harness.app,
       {
         method: "GET",
-        path: `/v1/root-roles/${bootstrapRoleId}/eligible-authz-capabilities?page=1&pageSize=25`,
+        path: `/v1/root-roles/${bootstrapRoleId}/eligible-authz-capabilities?page=1&pageSize=100`,
         headers: {
           authorization: `Bearer ${session.sessionId}`,
         },

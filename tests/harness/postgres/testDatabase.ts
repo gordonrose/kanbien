@@ -90,6 +90,12 @@ export function createPostgresTestDatabasePool(): Pool {
 
 export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
   await pool.query(`
+    DROP TABLE IF EXISTS tenant CASCADE;
+    DROP TABLE IF EXISTS root_role_audit_events CASCADE;
+    DROP TABLE IF EXISTS root_user_role_assignments CASCADE;
+    DROP TABLE IF EXISTS system_root_role_capability_grants CASCADE;
+    DROP TABLE IF EXISTS system_root_roles CASCADE;
+    DROP TABLE IF EXISTS root_authz_capabilities CASCADE;
     DROP TABLE IF EXISTS auth_audit_events CASCADE;
     DROP TABLE IF EXISTS auth_sessions CASCADE;
     DROP TABLE IF EXISTS auth_login_challenges CASCADE;

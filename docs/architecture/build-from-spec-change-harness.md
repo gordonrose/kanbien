@@ -84,6 +84,9 @@ flowchart TB
    This defines what kinds of change are allowed and what evidence is required.
 2. Define the capability set.
    The capability matrix records what the platform or slice must do.
+   It should also classify each capability boundary as `root`, `tenant`, or
+   explicitly approved shared-cross-tenant, plus the tenant-context rule when
+   relevant.
 3. Write or refine the PRD.
    The PRD captures the intended behavior, actors, and scope.
 4. Add an ADR when the change is enduring.
@@ -94,12 +97,22 @@ flowchart TB
    privacy notes, runbooks, and platform standards snapshots where relevant.
 6. Translate the approved scope into an implementation blueprint.
    The blueprint explains how this repo should build the slice.
+   If the PRD or source-independent contract artifacts are materially reset
+   later in the same loop, refresh the blueprint before continuing.
 7. Derive PRD test cases.
    This turns intended behavior into an explicit verification inventory.
 8. Implement the change in `src/` and `tests/`.
+   Do not silently override reviewed PRD-derived test cases while writing
+   executable tests; if case IDs, grouping, lifecycle, or intended behavior
+   need to change, update the PRD test-case artifact first and re-review it.
+   When persistence-backed behavior is added, also refresh the shared
+   persistence harness and scripts in the same loop.
 9. Run standards and repo-health review.
 10. Update status-bearing artifacts so the repo does not keep stale planning or
     stale compliance posture summaries.
+    This includes architecture summaries, source-independent docs, OpenAPI,
+    feature docs, and platform-status snapshots whose truth changed during the
+    slice.
 
 ## What Each Artifact Is For
 
@@ -136,11 +149,18 @@ This harness reduces drift by:
 - requiring source-independent docs for routes and persistence, so important
   behavior is not trapped only in implementation files
 - deriving tests from the PRD rather than treating tests as ad hoc afterthoughts
+- keeping PRD-derived test cases under change control during implementation, so
+  reviewed verification intent is not silently redefined in code
 - forcing status updates after implementation so planned and implemented work do
   not quietly diverge
+- forcing downstream artifact refresh after upstream resets, so blueprint and
+  verification work do not keep stale assumptions after a PRD or contract
+  rewrite
 - maintaining `docs/standards/platform-status/` as the current baseline rather
   than leaving standards posture implicit
 - using standards and repo-health audits as explicit end-of-loop checks
+- requiring persistence-harness follow-through when a feature adds migration or
+  storage-backed verification responsibilities
 
 ## How The Harness Prevents Contamination
 

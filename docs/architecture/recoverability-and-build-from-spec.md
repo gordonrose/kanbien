@@ -13,7 +13,7 @@ source code alone.
 | Platform seam specs | `docs/architecture/guides/platform-seams-and-bootstrapping.md` | Added |
 | Feature seam contracts | `docs/architecture/guides/feature-seams-and-public-contracts.md` | Added |
 | API contract manifests/templates | `docs/templates/api-contract-template.md` | Added |
-| Permission model spec | `docs/architecture/guides/auth-and-authorization-guide.md` plus permission mappings and dedicated PRD/ADR | Partial: current root boundary added; future tenant model still architectural |
+| Permission model spec | `docs/architecture/guides/auth-and-authorization-guide.md` plus permission mappings and dedicated PRD/ADR | Partial: current root capability boundary and root-operated tenant lifecycle are documented; tenant-scoped membership and object authorization remain architectural |
 | Persistence model specs | `docs/architecture/guides/persistence-and-migrations-guide.md` | Added |
 | Frontend implementation spec | `docs/architecture/guides/frontend-implementation-guide.md` | Added |
 | Test harness and verification model | `docs/architecture/guides/testing-and-verification-guide.md` | Added |

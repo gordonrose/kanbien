@@ -10,7 +10,7 @@ Today the system has:
 
 - one Express application
 - one versioned API router under `/v1`
-- two mounted features: `rootUsers` and `rootAuth`
+- four mounted features: `rootAuth`, `rootRoles`, `rootUsers`, and `tenants`
 - one shared PostgreSQL connection pool
 - one migration runner that discovers feature-scoped SQL migrations
 - one shared platform security layer for headers, rate limiting, and auth abuse
@@ -62,7 +62,8 @@ Today the system has:
 
 Each feature lives under `src/features/<featureName>`.
 
-The active examples are `src/features/rootUsers` and `src/features/rootAuth`.
+The active examples are `src/features/rootAuth`, `src/features/rootRoles`,
+`src/features/rootUsers`, and `src/features/tenants`.
 Each feature follows the same internal structure:
 
 - `contract/`
@@ -109,6 +110,8 @@ The current feature convention is:
   capability.
 - `domain/service.ts`
   Composes capabilities behind a feature service.
+  For multi-capability features, this should remain a composition layer rather
+  than becoming the only place where all capability logic is implemented.
 - `persistence/types.ts`
   Defines DB-facing record shapes and explicit persistence inputs.
 - `persistence/repository.ts`

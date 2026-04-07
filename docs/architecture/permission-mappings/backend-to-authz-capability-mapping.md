@@ -19,7 +19,8 @@ For now that means:
 - public root-auth entrypoints
 - the current root operator role
 - the protected `rootAuth`, `rootUsers`, and root-admin browser-shell surface
-- the approved `rootRoles` target slice
+- the implemented `rootRoles` slice
+- the implemented root-only `tenants` administrative slice
 
 ## Current Role Baseline
 
@@ -48,6 +49,8 @@ boundary implemented by the repo.
 - `root-user.*` is reserved for root-user lifecycle management
 - `root-role.*` is reserved for system root-role definition, grant, and
   assignment management
+- `tenant.*` is reserved for root-managed tenant lifecycle and metadata
+  administration
 - `root-admin-shell.*` is reserved for cookie-backed browser-session shell
   behavior
 - public entrypoints stay explicitly marked as public entrypoints rather than
@@ -94,6 +97,15 @@ boundary implemented by the repo.
 | root roles | `rootRoles` | `listRootUserAssignedSystemRootRoles` | `current` | `root-role.assignment.list` | `scope(...) and can(...)` | `RootUserAdmin` | assignment inspection |
 | root roles | `rootRoles` | `replaceRootUserSystemRootRole` | `current` | `root-role.assignment.replace` | `can(...)` | `RootUserAdmin` | atomic role replacement |
 | root roles | `rootRoles` | `getEffectiveRootUserPermissions` | `current` | `root-role.effective-permissions.read` | `scope(...) and can(...)` | `RootUserAdmin` | effective-permission inspection with source attribution |
+| tenants | `tenants` | `createTenant` | `current` | `tenant.create` | `can(...)` | `RootUserAdmin` | create durable tenant record with creator attribution |
+| tenants | `tenants` | `getTenant` | `current` | `tenant.read` | `can(...)` | `RootUserAdmin` | exact visible tenant lookup |
+| tenants | `tenants` | `listTenants` | `current` | `tenant.list` | `scope(...) and can(...)` | `RootUserAdmin` | visible tenant listing with approved filters |
+| tenants | `tenants` | `updateTenant` | `current` | `tenant.update` | `can(...)` | `RootUserAdmin` | editable tenant metadata update |
+| tenants | `tenants` | `getDeletedTenant` | `current` | `tenant.read.deleted` | `can(...)` | `RootUserAdmin` | explicit deleted-only tenant lookup |
+| tenants | `tenants` | `listDeletedTenants` | `current` | `tenant.list.deleted` | `scope(...) and can(...)` | `RootUserAdmin` | explicit deleted-only tenant listing |
+| tenants | `tenants` | `softDeleteTenant` | `current` | `tenant.delete` | `can(...)` | `RootUserAdmin` | soft-delete lifecycle action |
+| tenants | `tenants` | `reactivateTenant` | `current` | `tenant.reactivate` | `can(...)` | `RootUserAdmin` | restore previously deleted tenant |
+| tenants | `tenants` | `removeTenant` | `current` | `tenant.remove` | `can(...)` | `RootUserAdmin` | irreversible tenant remove while no dependent tenant-owned entities exist |
 
 ## Deterministic Method For Future Roles
 

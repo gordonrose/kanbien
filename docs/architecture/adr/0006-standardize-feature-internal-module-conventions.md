@@ -31,7 +31,9 @@ Current expectations:
 - `domain/types.ts` defines domain entities and post-validation capability input
   and result types
 - `domain/<capabilityName>.ts` implements one clear business capability per file
-- `domain/service.ts` composes capabilities behind the feature service
+- `domain/service.ts` composes capabilities behind the feature service rather
+  than becoming the single implementation file for multiple distinct
+  capabilities
 - `persistence/types.ts` defines DB-facing record types and persistence inputs
 - `persistence/repository.ts` defines the repository seam with explicit filter,
   sorting, pagination, and scope contracts
@@ -46,6 +48,8 @@ Additional rules:
 - contract code must not define DB record types
 - domain input types must be post-validation, not raw transport strings
 - exact lookup and list or search capabilities must remain separate
+- multi-capability features should preserve that separation in file layout, not
+  only in method names inside one large service module
 - exact route params must never be optional
 - query schemas are first-class exports, not route-local details
 

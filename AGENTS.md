@@ -97,6 +97,45 @@ Default pagination and sorting rules:
 List endpoints should return a consistent shape unless a documented platform
 decision says otherwise.
 
+## Tenant Boundary Defaults
+
+Now that `tenant` is a real durable platform entity, treat tenant context as a
+first-class security and data-isolation boundary.
+
+Defaults:
+
+- root-user platform capabilities remain distinct from tenant-scoped
+  capabilities
+- every new capability should be classified explicitly as:
+  - `root`
+  - `tenant`
+  - `shared-cross-tenant` only with explicit approval
+- any non-root capability that acts on tenant-scoped data must define:
+  - actor type
+  - current tenant context
+  - governing authz capability
+  - cross-tenant deny rule
+  - object/entity-level rule when relevant
+- authorization for tenant-scoped requests must be evaluated in exactly one
+  current tenant context per request
+- do not infer tenant context from mutable request bodies when route params,
+  session context, or explicit selection state should own it
+- cross-tenant access must deny by default unless an explicitly approved
+  root/operator capability allows it
+
+### Tenant Session And Token Guidance
+
+- root-user sessions remain platform-operator sessions outside tenant authz
+  unless a future design explicitly states otherwise
+- tenant-scoped requests need a validated current tenant context in the server-
+  side auth/session context
+- in this repo, bearer tokens are opaque server-backed session identifiers, so
+  tenant context does not need to be embedded directly in the token string
+- if a future stateless token/claim model is adopted for tenant actors, any
+  embedded tenant context must still be validated server-side and treated as
+  exactly one current tenant context per request rather than as a broad
+  implicit grant over all memberships
+
 ### Searchable Storage Rules
 
 Before introducing a searchable field, define its storage model, supported
@@ -125,6 +164,17 @@ Follow the established feature structure:
 - `transport/`
 - `integration.ts`
 - `index.ts`
+
+For multi-capability features, follow the repo's capability-per-file domain
+shape by default:
+
+- `domain/<capabilityName>.ts` for each clear business capability
+- `domain/service.ts` as the composition layer that delegates to those
+  capability files
+
+Do not collapse multiple distinct capabilities into one large `domain/service.ts`
+implementation unless the prompt explicitly calls for an exception or the
+feature truly has only one business capability.
 
 Keep platform seams explicit:
 
@@ -176,6 +226,54 @@ Before treating a migration-backed change as complete:
   when repairing existing environments
 - re-check representative read and write paths against the live database after
   migration changes
+- when a feature adds persistence-backed tests or migration-time dependencies,
+  also review shared Postgres test harness files such as:
+  `tests/harness/postgres/migrations.ts`,
+  `tests/harness/postgres/testDatabase.ts`,
+  and the shared persistence test scripts in `package.json`
+
+## Downstream Artifact Refresh Rule
+
+When an upstream planning or contract artifact is materially reset during an
+active loop, refresh downstream artifacts before continuing.
+
+Examples:
+
+- recreating or materially narrowing a PRD should trigger a blueprint refresh
+- materially changing source-independent contracts should trigger a blueprint
+  and verification-artifact revalidation
+- materially changing verification scope should trigger a blueprint or PRD
+  test-case refresh where those assumptions were already written
+
+Do not continue implementation on top of knowingly stale downstream artifacts.
+
+## Source-Independent Doc Sync Rule
+
+When implementation changes the truth of source-independent docs, refresh the
+affected docs in the same change where practical.
+
+Common examples:
+
+- API contracts
+- data dictionary entries
+- feature docs
+- OpenAPI
+- architecture summaries
+- platform-status snapshots
+
+Do not leave the repo in a state where source-independent docs still describe
+the pre-change platform after the feature is otherwise considered delivered.
+
+## Pagination Test Robustness
+
+When writing tests for paginated catalogs, collections, or searchable lists:
+
+- do not assume a specific item remains on page 1 unless that is part of the
+  documented contract
+- prefer explicit filters or a large enough page size for the asserted fixture
+  set
+- separate pagination-contract tests from business-presence tests when both
+  matter
 
 ## Escalate Before Changing
 

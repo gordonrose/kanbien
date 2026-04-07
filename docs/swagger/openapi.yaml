@@ -5,7 +5,8 @@ info:
   description: >
     OpenAPI specification for the platform API. This documents the platform
     health route, root-user authentication, root-role authorization
-    administration, and the protected rootUsers feature.
+    administration, the protected rootUsers feature, and the protected
+    tenants feature.
 
 servers:
   - url: http://localhost:3000
@@ -16,6 +17,7 @@ tags:
   - name: Root Auth
   - name: Root Roles
   - name: Root Users
+  - name: Tenants
 
 paths:
   /v1/health:
@@ -683,6 +685,314 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /v1/tenants:
+    post:
+      tags:
+        - Tenants
+      summary: Create a tenant
+      operationId: createTenant
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTenantBody"
+      responses:
+        "201":
+          description: Tenant created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    get:
+      tags:
+        - Tenants
+      summary: List visible tenants
+      operationId: listTenants
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/OrderDirection"
+        - $ref: "#/components/parameters/TenantsOrderBy"
+        - $ref: "#/components/parameters/BizIdPrefix"
+        - $ref: "#/components/parameters/NamePrefix"
+        - $ref: "#/components/parameters/TenantCategory"
+        - $ref: "#/components/parameters/TenantStatus"
+        - $ref: "#/components/parameters/CreatedAtFrom"
+        - $ref: "#/components/parameters/CreatedAtTo"
+        - $ref: "#/components/parameters/UpdatedAtFrom"
+        - $ref: "#/components/parameters/UpdatedAtTo"
+      responses:
+        "200":
+          description: Paginated visible tenants
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedTenants"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/deleted:
+    get:
+      tags:
+        - Tenants
+      summary: List deleted tenants
+      operationId: listDeletedTenants
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/OrderDirection"
+        - $ref: "#/components/parameters/DeletedTenantsOrderBy"
+        - $ref: "#/components/parameters/BizIdPrefix"
+        - $ref: "#/components/parameters/NamePrefix"
+        - $ref: "#/components/parameters/TenantCategory"
+        - $ref: "#/components/parameters/TenantStatus"
+        - $ref: "#/components/parameters/CreatedAtFrom"
+        - $ref: "#/components/parameters/CreatedAtTo"
+        - $ref: "#/components/parameters/UpdatedAtFrom"
+        - $ref: "#/components/parameters/UpdatedAtTo"
+        - $ref: "#/components/parameters/DeletedAtFrom"
+        - $ref: "#/components/parameters/DeletedAtTo"
+      responses:
+        "200":
+          description: Paginated deleted tenants
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedTenants"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}:
+    get:
+      tags:
+        - Tenants
+      summary: Get a visible tenant by ID
+      operationId: getTenantById
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+      responses:
+        "200":
+          description: Tenant found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags:
+        - Tenants
+      summary: Update a visible tenant
+      operationId: updateTenant
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTenantBody"
+      responses:
+        "200":
+          description: Tenant updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/deleted/{tenantId}:
+    get:
+      tags:
+        - Tenants
+      summary: Get a deleted tenant by ID
+      operationId: getDeletedTenantById
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+      responses:
+        "200":
+          description: Deleted tenant found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}/delete:
+    post:
+      tags:
+        - Tenants
+      summary: Soft delete a tenant
+      operationId: deleteTenant
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+      responses:
+        "200":
+          description: Tenant soft deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}/reactivate:
+    post:
+      tags:
+        - Tenants
+      summary: Reactivate a soft-deleted tenant
+      operationId: reactivateTenant
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+      responses:
+        "200":
+          description: Tenant reactivated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}/remove:
+    post:
+      tags:
+        - Tenants
+      summary: Irreversibly remove a tenant
+      operationId: removeTenant
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RemoveTenantBody"
+      responses:
+        "200":
+          description: Tenant removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tenant"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /v1/root-roles:
     post:
       tags:
@@ -1187,6 +1497,14 @@ components:
         type: string
         format: uuid
 
+    TenantId:
+      name: tenantId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
     AuthSshKeyId:
       name: keyId
       in: path
@@ -1247,6 +1565,24 @@ components:
         enum: [email, firstName, lastName, createdAt, updatedAt]
         default: updatedAt
 
+    TenantsOrderBy:
+      name: orderBy
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [bizId, name, category, status, createdAt, updatedAt]
+        default: updatedAt
+
+    DeletedTenantsOrderBy:
+      name: orderBy
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [bizId, name, category, status, createdAt, updatedAt, deletedAt]
+        default: updatedAt
+
     Email:
       name: email
       in: query
@@ -1278,6 +1614,22 @@ components:
       schema:
         type: string
         minLength: 3
+
+    BizIdPrefix:
+      name: bizIdPrefix
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    NamePrefix:
+      name: namePrefix
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
 
     CreatedAtFrom:
       name: createdAtFrom
@@ -1333,6 +1685,20 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/RootUserStatus"
+
+    TenantCategory:
+      name: category
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/TenantCategory"
+
+    TenantStatus:
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/TenantStatus"
 
     ExcludeAnonymized:
       name: excludeAnonymized
@@ -1404,6 +1770,14 @@ components:
     RootUserStatus:
       type: string
       enum: [active, inactive]
+
+    TenantCategory:
+      type: string
+      enum: [customer, demo, test]
+
+    TenantStatus:
+      type: string
+      enum: [draft, live, disabled, inactive]
 
     RootRoleSummary:
       type: object
@@ -1659,6 +2033,101 @@ components:
         - totalSearchableRecords
         - totalMatchingRecords
 
+    Tenant:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+        bizId:
+          type: string
+        name:
+          type: string
+        category:
+          $ref: "#/components/schemas/TenantCategory"
+        status:
+          $ref: "#/components/schemas/TenantStatus"
+        createdByRootAdminUserId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: [string, "null"]
+          format: date-time
+      required:
+        - tenantId
+        - bizId
+        - name
+        - category
+        - status
+        - createdByRootAdminUserId
+        - createdAt
+        - updatedAt
+        - deletedAt
+
+    TenantListItem:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+        bizId:
+          type: string
+        name:
+          type: string
+        category:
+          $ref: "#/components/schemas/TenantCategory"
+        status:
+          $ref: "#/components/schemas/TenantStatus"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: [string, "null"]
+          format: date-time
+      required:
+        - tenantId
+        - bizId
+        - name
+        - category
+        - status
+        - createdAt
+        - updatedAt
+        - deletedAt
+
+    PaginatedTenants:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TenantListItem"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalSearchableRecords:
+          $ref: "#/components/schemas/CountValue"
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalSearchableRecords
+        - totalMatchingRecords
+
     RootAuthPasswordLoginBody:
       type: object
       properties:
@@ -1866,6 +2335,44 @@ components:
           minLength: 1
         status:
           $ref: "#/components/schemas/RootUserStatus"
+
+    CreateTenantBody:
+      type: object
+      properties:
+        bizId:
+          type: string
+          minLength: 1
+        name:
+          type: string
+          minLength: 1
+        category:
+          $ref: "#/components/schemas/TenantCategory"
+        status:
+          $ref: "#/components/schemas/TenantStatus"
+      required: [bizId, name, category]
+
+    UpdateTenantBody:
+      type: object
+      minProperties: 1
+      properties:
+        name:
+          type: string
+          minLength: 1
+        category:
+          $ref: "#/components/schemas/TenantCategory"
+        status:
+          $ref: "#/components/schemas/TenantStatus"
+
+    RemoveTenantBody:
+      type: object
+      properties:
+        confirm:
+          type: boolean
+          const: true
+        reason:
+          type: string
+          minLength: 1
+      required: [confirm, reason]
 
     CreateRootRoleBody:
       type: object

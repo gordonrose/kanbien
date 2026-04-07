@@ -39,8 +39,14 @@ Current rules:
 - `rootAuth` establishes identity and session context; authorization answers
   what the actor may do in the current tenant context
 - `rootUser` remains a permanent platform operator class outside tenant authz
+- every capability should be classified explicitly as:
+  - `root`
+  - `tenant`
+  - shared-cross-tenant only by explicit approval
 - one shared principal identity may belong to many tenants
 - authorization is evaluated in exactly one current tenant context per request
+- cross-tenant access denies by default unless an explicitly approved
+  root/operator capability allows it
 - a principal may hold multiple role assignments within a tenant
 - role grants combine by positive union; explicit deny rules are out of scope
   for this phase
@@ -53,6 +59,12 @@ Current rules:
   multiple backend operations may map to one authz capability
 - authorization checks must be performed through a central authorization seam
   rather than re-implementing role logic inside feature code
+- tenant context must be owned by validated auth/session context, explicit route
+  context, or another approved stable selection mechanism rather than by
+  mutable request payload convenience
+- opaque bearer/session tokens do not need to expose `tenantId` directly, but
+  tenant-scoped requests must still resolve to exactly one validated tenant
+  context before policy evaluation
 - the central authorization seam must support:
   - yes/no checks for single-resource or action execution
   - scope evaluation for list/read operations

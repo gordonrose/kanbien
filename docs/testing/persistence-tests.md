@@ -87,7 +87,10 @@ npm run test:persistence:reset
 - `npm run test:persistence:reset` is the operator recovery command for
   explicitly wiping the dedicated Postgres test database after a preserved run
   or an interrupted suite.
-- Persistence-backed tests only activate through `npm run test:persistence`.
+- `npm test` now runs the persistence-backed suite automatically when the
+  required `TEST_DATABASE_*` variables are configured locally.
+- `npm run test:persistence` remains the explicit operator command for running
+  just the Postgres-backed suite.
 - The persistence suite runs with file parallelism disabled because the tests
   share one dedicated database and perform schema resets and migration work.
 - Both `npm run test:persistence` and `npm run test:persistence:preserve`
@@ -97,6 +100,13 @@ npm run test:persistence:reset
   proofs.
 - It also includes persistence-backed audit checks where we need to verify that
   durable audit rows do not store sensitive raw secrets.
-- During the normal `npm test` suite, they remain skipped by design.
-- Tests are skipped when the required `TEST_DATABASE_*` variables are missing.
-- These tests are intentionally separate from the main in-memory test flow.
+- During `npm test`, the fast in-memory suite still runs first and the
+  Postgres-backed suite then runs separately with file parallelism disabled.
+- Seeing two Vitest runs during `npm test` is expected when the dedicated
+  Postgres test database is configured. The second run is the intentional
+  persistence-backed phase, not accidental duplicate execution.
+- The Postgres-backed portion is skipped only when the required
+  `TEST_DATABASE_*` variables are missing.
+- These tests remain operationally separate from the in-memory flow because
+  they share one real database and rely on serialized reset and migration
+  behavior.

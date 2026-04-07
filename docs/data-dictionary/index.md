@@ -17,6 +17,7 @@ and approved cross-feature read seams.
 | Entity | Owning Feature | Description | Dictionary File |
 | --- | --- | --- | --- |
 | Root User | `rootUsers` | Privileged platform operator account and lifecycle record. | [root-user.md](./root-user.md) |
+| Tenant | `tenants` | Durable platform tenant record and lifecycle root. | [tenant.md](./tenant.md) |
 | Root Authz Capability | `rootRoles` | Catalog entry for a root-platform authorization capability key. | [root-authz-capability.md](./root-authz-capability.md) |
 | System Root Role | `rootRoles` | Durable definition of a system root role such as `RootUserAdmin`. | [system-root-role.md](./system-root-role.md) |
 | Root Role Capability Grant | `rootRoles` | Durable assignment of one authz capability to one system root role. | [root-role-capability-grant.md](./root-role-capability-grant.md) |

@@ -1,0 +1,1 @@
+export { createTenantsFeature } from "./integration";

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { createRootAuthFeature } from "../../features/rootAuth";
 import { createRootRolesFeature } from "../../features/rootRoles";
 import { createRootUserFeature } from "../../features/rootUsers";
+import { createTenantsFeature } from "../../features/tenants";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -64,6 +65,16 @@ v1Router.use(
   authenticatedGeneralRateLimit,
   rootRolesFeature.rootUserRoleAssignmentsRouter,
   createRootUserFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/tenants",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createTenantsFeature(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,

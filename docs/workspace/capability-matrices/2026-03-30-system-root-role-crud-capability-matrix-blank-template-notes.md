@@ -46,3 +46,15 @@ This scaffold leaves the policy details blank on purpose, including:
 
 Those should be decided through the normal specification loop rather than
 filling them speculatively.
+
+## Current Capability-Matrix Rule
+
+New matrices should now classify each capability explicitly as:
+
+- `root`
+- `tenant`
+- shared-cross-tenant only by explicit approval
+
+They should also record the tenant-context rule when relevant, so downstream
+authn/authz design does not have to infer whether a capability is
+platform-operator-only or tenant-scoped.

@@ -228,8 +228,7 @@
   - [2026-03-30-root-roles-backend-foundation.md](/home/gordon/kanbien/docs/workspace/implementation-blueprints/2026-03-30-root-roles-backend-foundation.md)
   - [0016-adopt-tenant-scoped-role-based-authorization-with-central-policy-evaluation.md](/home/gordon/kanbien/docs/architecture/adr/0016-adopt-tenant-scoped-role-based-authorization-with-central-policy-evaluation.md)
 - OpenAPI:
-  - no current OpenAPI path yet; implementation landed before the OpenAPI file
-    was refreshed
+  - [openapi.yaml](/home/gordon/kanbien/docs/swagger/openapi.yaml)
 - Tests required or existing:
   - [2026-03-30-0004-system-root-role-crud-test-cases.md](/home/gordon/kanbien/docs/prd/test_cases/2026-03-30-0004-system-root-role-crud-test-cases.md)
 

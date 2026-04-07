@@ -18,6 +18,9 @@ finalized architecture, PRD, or standards artifact.
   sources before they are normalized or reviewed.
 - `exports/`
   Files generated from repo work for review or handoff.
+- `retrospectives/`
+  Dated lessons-learned or issue-summary notes for a delivered slice when the
+  repo should keep the context near other working artifacts.
 - `archive/`
   Superseded or dated working artifacts that should be kept for reference but
   are no longer active.
@@ -29,6 +32,9 @@ finalized architecture, PRD, or standards artifact.
   This is the requirements grid. It captures capabilities, actors, auth,
   routes, persistence expectations, audit expectations, and verification
   expectations across a set of capabilities.
+  It should now also make the capability boundary explicit:
+  `root`, `tenant`, or explicitly approved shared-cross-tenant, plus the
+  tenant-context rule when relevant.
 - Implementation blueprint:
   A build-ready plan for how one approved slice should be implemented in this
   repo. This is the construction drawing. It translates the approved PRD and

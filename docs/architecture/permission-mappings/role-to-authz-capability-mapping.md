@@ -73,6 +73,15 @@ are not a role.
 | `RootUserAdmin` | `root-role.assignment.list` | `current` | current root operator grant | no | yes | root-user assignment inspection |
 | `RootUserAdmin` | `root-role.assignment.replace` | `current` | current root operator grant | yes | yes | atomic replacement workflow for evolving roles |
 | `RootUserAdmin` | `root-role.effective-permissions.read` | `current` | current root operator grant | no | yes | effective-permission inspection with source attribution |
+| `RootUserAdmin` | `tenant.create` | `current` | current root operator grant | yes | yes | create tenant |
+| `RootUserAdmin` | `tenant.read` | `current` | current root operator grant | yes | yes | exact visible tenant lookup |
+| `RootUserAdmin` | `tenant.list` | `current` | current root operator grant | yes | yes | visible tenant listing |
+| `RootUserAdmin` | `tenant.update` | `current` | current root operator grant | yes | yes | editable tenant metadata update |
+| `RootUserAdmin` | `tenant.read.deleted` | `current` | current root operator grant | no | yes | deleted tenant visibility remains explicit |
+| `RootUserAdmin` | `tenant.list.deleted` | `current` | current root operator grant | no | yes | deleted tenant list remains explicit |
+| `RootUserAdmin` | `tenant.delete` | `current` | current root operator grant | no | yes | soft-delete lifecycle action |
+| `RootUserAdmin` | `tenant.reactivate` | `current` | current root operator grant | no | yes | restore deleted tenant |
+| `RootUserAdmin` | `tenant.remove` | `current` | current root operator grant | no | yes | irreversible tenant remove while tenant-owned durable entities do not yet exist |
 
 ## Deterministic Method For Future Roles
 

@@ -59,6 +59,16 @@ Each feature should split behavior into explicit capabilities:
 
 Avoid combining multiple distinct behaviors into one generic handler.
 
+For multi-capability backend features, capability splitting should also be
+visible in file layout:
+
+- prefer one `domain/<capabilityName>.ts` file per capability
+- keep `domain/service.ts` as the composition layer that delegates to those
+  capability files
+- treat a large all-capabilities `domain/service.ts` implementation as drift
+  unless the feature truly has only one business capability or an explicit
+  exception has been approved
+
 ## Contract Expectations
 
 Every externally visible capability should define:

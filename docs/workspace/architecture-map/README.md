@@ -51,7 +51,6 @@ The repo is strongest today in:
 
 The biggest architectural gaps are still:
 
-- tenancy
 - authorization and entity-scoped permissions
 - background processing and eventing
 - observability and enterprise operations
@@ -76,9 +75,10 @@ The biggest architectural gaps are still:
 - `[04][partial]` Implementation-blueprint layer
   Template and skill now exist, but populated blueprints are not yet a mature
   recurring artifact set.
-- `[10][missing]` Multi-tenant architecture
-  No tenant model, tenant identity, tenant isolation, or tenant lifecycle
-  platform yet.
+- `[10][partial]` Multi-tenant architecture
+  A root-operated tenant lifecycle and metadata platform now exists, but tenant
+  identity, tenant-member experience, and true tenant-scoped authorization and
+  isolation are still incomplete.
 - `[11][missing]` Tenant isolation model
   No documented row-level, schema-level, service-level, or operational tenant
   isolation strategy yet.
