@@ -105,6 +105,8 @@ It should make these things explicit:
 - which docs must be updated as part of the same slice
 - which test layers are required
 - which standards or audit expectations must be preserved
+- whether materially AI-assisted implementation work will need provenance,
+  verification, or high-risk review evidence
 
 This is not just a restatement of the PRD.
 It is the build plan that adapts the spec to this repository's structure and
@@ -160,6 +162,8 @@ does not omit required supporting artifacts such as:
 - PRD test-case work
 - standards review
 - runbook or privacy note when needed
+- AI-assistance/provenance and high-risk review notes when the implementation
+  is expected to rely materially on generative AI
 - relevant standards baseline snapshot updates when the slice changes the
   platform's current posture
 - relevant architecture-map updates when the slice changes the repo's current

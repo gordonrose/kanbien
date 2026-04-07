@@ -68,6 +68,24 @@ If the permission model itself changes, add:
 - dedicated PRD
 - ADR if the enforcement pattern is enduring
 
+### Materially AI-assisted change
+
+Required:
+
+- AI-assistance/provenance note for accepted output
+- independent verification note naming the repo source of truth used
+- deterministic test or verification evidence for behavior-changing output
+
+Also required when generated code, snippets, or dependencies are adopted:
+
+- dependency/license/provenance review note
+
+Also required for high-risk AI-assisted changes such as auth, crypto, secrets,
+security controls, compliance logic, migrations, or incident/monitoring logic:
+
+- model/tool/version traceability
+- expert-review note
+
 ## Required Documentation Dimensions For Build-From-Spec Work
 
 To make a capability reconstructable from docs and templates, document:
@@ -92,6 +110,7 @@ When a change lands, update the affected combination of:
 - runbook
 - privacy note
 - standards review notes
+- AI-assisted review notes when the change materially relied on generative AI
 
 Do not leave the implementation as the only place that knows the intended
 behavior.

@@ -40,6 +40,7 @@ having to reconstruct the control set manually.
 - `ISO-27001-27002-STATUS.md`
 - `GDPR-DATA-TRANSFER-STATUS.md`
 - `EU-AI-ACT-STATUS.md`
+- `AI-ASSISTED-DEVELOPMENT-STATUS.md`
 
 ## Use
 

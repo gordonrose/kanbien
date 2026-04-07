@@ -143,6 +143,10 @@ After implementation:
 - if the implemented cases exercise a privileged or security-sensitive
   capability, explicitly say whether the relevant allow/deny or audit cases are
   now covered
+- if the implementation was materially AI-assisted and high-risk, make sure the
+  change artifacts record independent verification and any required
+  model/tool/version traceability rather than treating generated tests as
+  self-proving
 
 8. Update implementation status when appropriate.
 If the repo uses the PRD test-case doc as a living status artifact, update the

@@ -22,6 +22,8 @@ Use this authority order unless the user explicitly says otherwise:
    `docs/data-dictionary/` when they are relevant to the scoped behavior
 7. `docs/standards/platform-status/` when the scoped docs touch standards,
    compliance, privacy, security posture, or repo-wide control claims
+8. `docs/standards/AI-ASSISTED-DEVELOPMENT-GATE.md` when the scoped docs touch
+   AI-assisted development expectations, provenance notes, or process claims
 
 If code and docs disagree, do not assume code is wrong. First check whether the architecture docs explicitly support one side.
 
@@ -47,6 +49,8 @@ Load only the files needed for the current task. Common targets:
   cross-feature seam behavior is in scope
 - docs under `docs/standards/platform-status/` when the task touches standards
   posture, compliance claims, or current-state control summaries
+- `docs/standards/AI-ASSISTED-DEVELOPMENT-GATE.md` when the task touches
+  AI-assisted development-process expectations or provenance claims
 - `docs/swagger/openapi.yaml`
 - `docs/postman/`
 - feature `README.md` files under `src/features/`

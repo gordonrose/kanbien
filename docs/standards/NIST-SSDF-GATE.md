@@ -12,6 +12,9 @@ This gate is for:
 - vulnerability handling
 - traceability and accountability
 
+When a change is materially assisted by generative AI, review this gate
+alongside `AI-ASSISTED-DEVELOPMENT-GATE.md`.
+
 ## Mandatory pass criteria
 
 A change must not proceed unless all applicable items below are satisfied.

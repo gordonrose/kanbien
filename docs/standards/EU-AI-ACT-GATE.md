@@ -15,6 +15,9 @@ This gate is required whenever the change:
 
 If a change has no AI capability at all, it may be marked not applicable.
 
+This gate does not replace `AI-ASSISTED-DEVELOPMENT-GATE.md` for internal use
+of generative AI during design, coding, testing, or documentation work.
+
 ## Core rule
 
 Do not treat “uses an API from an AI vendor” as outside scope by default.

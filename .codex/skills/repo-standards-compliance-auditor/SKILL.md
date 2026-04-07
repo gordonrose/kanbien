@@ -44,6 +44,7 @@ Always read:
 - `docs/standards/ISO-27001-27002-GATE.md`
 - `docs/standards/GDPR-DATA-TRANSFER-GATE.md`
 - `docs/standards/EU-AI-ACT-GATE.md`
+- `docs/standards/AI-ASSISTED-DEVELOPMENT-GATE.md`
 
 Also read:
 
@@ -94,6 +95,7 @@ Focus on:
 - logging, auditability, and evidence trails
 - privacy/data-transfer implications
 - AI feature implications, if any
+- AI-assisted development-process implications, if any
 - contradictions between standards, architecture, docs, tests, and code
 - gaps where standards require evidence but the repo does not provide it
 - whether build-from-spec and compliance-oriented artifact trails exist for the
@@ -126,6 +128,9 @@ Typical examples:
 
 - `EU-AI-ACT-GATE.md` may be `Not Applicable` if the repo has no AI features
   or integrations
+- `AI-ASSISTED-DEVELOPMENT-GATE.md` may still be `Applicable` or
+  `Partially Applicable` when the shipped feature has no AI capability but the
+  change itself was materially assisted by generative AI
 - `GDPR-DATA-TRANSFER-GATE.md` may be `Partially Applicable` if personal data
   exists but no cross-border transfer or vendor movement is implemented yet
 
@@ -172,6 +177,17 @@ conditions that apply to the repo.
 Also read the corresponding baseline snapshots under
 `docs/standards/platform-status/` so you can tell whether the maintained
 summary still reflects the repo's current state or has drifted.
+
+For `AI-ASSISTED-DEVELOPMENT-GATE.md`, explicitly assess whether the change or
+repo evidence shows:
+
+- human accountability for accepted AI output
+- provenance and traceability for material AI assistance
+- prompt/data-handling discipline
+- independent verification beyond model assertions
+- deterministic evidence for behavior-changing output
+- dependency/license review for adopted generated code
+- expert review for AI-assisted security or compliance controls
 
 3. Build the architecture picture.
 Read `AGENTS.md`, architecture docs, and relevant ADRs so compliance judgments
@@ -239,6 +255,8 @@ audit.
 Prioritize findings that threaten:
 
 - secure authentication and session handling
+- unaudited AI-assisted output in security-sensitive or compliance-sensitive
+  areas
 - server-side enforcement and deny-by-default behavior
 - rollback, revocation, disablement, and ownership clarity
 - auditability, safe logging, and incident investigation

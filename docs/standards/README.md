@@ -1,6 +1,8 @@
 # Architecture and Change Gates
 
-This folder contains mandatory standards gates for architecture decisions, code changes, security reviews, release readiness, privacy-impacting changes, and AI-related changes.
+This folder contains mandatory standards gates for architecture decisions, code
+changes, security reviews, release readiness, privacy-impacting changes,
+AI-assisted development, and AI-related product changes.
 
 ## Documents
 
@@ -10,6 +12,7 @@ This folder contains mandatory standards gates for architecture decisions, code 
 - `ISO-27001-27002-GATE.md`
 - `GDPR-DATA-TRANSFER-GATE.md`
 - `EU-AI-ACT-GATE.md`
+- `AI-ASSISTED-DEVELOPMENT-GATE.md`
 - `change-artifact-requirements.md`
 - `platform-status/`
 
@@ -58,6 +61,14 @@ Use for:
 - AI risk screening
 - rollback and monitoring for AI behavior
 
+### `AI-ASSISTED-DEVELOPMENT-GATE.md`
+Use for:
+- materially AI-assisted code, tests, docs, migrations, or operational content
+- provenance and traceability of accepted AI output
+- prompt/data-handling controls for development use
+- independent verification and deterministic evidence expectations
+- high-risk reviewer controls for AI-assisted security or compliance changes
+
 ### `change-artifact-requirements.md`
 Use for:
 - deciding which docs, tests, runbooks, and reviews a change must produce
@@ -72,7 +83,10 @@ Use for:
 
 ## How to use these gates
 
-Every architecture decision, feature, migration, external integration, material code change, privacy-impacting change, and AI-related change must be checked against these documents **before implementation**.
+Every architecture decision, feature, migration, external integration,
+material code change, privacy-impacting change, materially AI-assisted change,
+and AI-related product change must be checked against these documents **before
+implementation**.
 
 Recommended workflow:
 
@@ -116,6 +130,10 @@ Add a section like this to every PR or design doc:
 ### EU AI Act
 - [ ] Passed
 - Notes:
+
+### AI-Assisted Development
+- [ ] Passed
+- Notes:
 ```
 
 ## Applicability guidance
@@ -124,8 +142,14 @@ Not every gate will apply to every change.
 
 Examples:
 - pure internal refactor with no security, privacy, or operational impact may still require SSDF and basic CSF review, but not the AI Act gate
+- pure internal refactor created without material AI assistance may not require
+  the AI-assisted development gate
+- materially AI-assisted implementation work may require the AI-assisted
+  development gate even when the shipped feature has no AI capability
 - new authentication flow likely requires SSDF, ASVS, CSF, ISO, and possibly GDPR review
-- vendor-hosted AI feature likely requires all six gates
+- vendor-hosted AI feature likely requires all product and operational gates,
+  and may also require the AI-assisted development gate if the implementation
+  itself materially relied on generative AI
 
 Mark non-applicable gates explicitly rather than silently skipping them.
 
@@ -151,4 +175,5 @@ A change must not be implemented when it:
 - weakens authentication, authorization, auditability, or data protection without explicit approval
 - creates production dependencies with no ownership, no monitoring, or no rollback plan
 - bypasses secure development, review, or testing controls
-- introduces personal-data movement or AI capability without the required review
+- introduces personal-data movement, AI capability, or materially unaudited
+  AI-assisted output without the required review

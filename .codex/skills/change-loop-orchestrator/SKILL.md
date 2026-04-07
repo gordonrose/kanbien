@@ -103,6 +103,10 @@ Also check `docs/standards/change-artifact-requirements.md` so the loop uses
 the repo's current required artifact set for the change class rather than an
 older thinner documentation model.
 
+If the change is materially assisted by generative AI, also treat
+`docs/standards/AI-ASSISTED-DEVELOPMENT-GATE.md` as an applicable gate even
+when the shipped feature has no AI capability.
+
 Also treat `docs/standards/platform-status/` as a maintained standards-baseline
 surface. If the change materially improves, weakens, or clarifies the current
 platform posture against a gate, the relevant status file should be reviewed
@@ -216,6 +220,14 @@ readiness, release/recovery posture, or other standards-gated behavior, review
 the corresponding file under `docs/standards/platform-status/` and update it if
 the repo baseline has changed.
 
+When the change is materially AI-assisted, also check whether the supporting
+artifacts need:
+
+- an AI-assistance/provenance note
+- prompt/data-handling note when relevant
+- model/tool/version traceability for high-risk changes
+- expert-review note for AI-assisted security or compliance controls
+
 ### 8. Run standards review
 
 If the change is material, security-relevant, privacy-relevant, operationally
@@ -229,6 +241,8 @@ This is especially appropriate for:
 - persistence or audit changes
 - testing/cleanup model changes
 - external integrations
+- materially AI-assisted changes with security, persistence, migration, or
+  compliance significance
 
 When standards review reveals that the repo's baseline posture has moved,
 capture that in the relevant `docs/standards/platform-status/*.md` file instead

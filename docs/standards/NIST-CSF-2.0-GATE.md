@@ -6,6 +6,9 @@ Use this gate to determine whether a proposed architecture decision or code chan
 
 This gate is not just about code quality. It is about whether the change is governable, supportable, and defensible in production.
 
+When a change is materially assisted by generative AI, review this gate
+alongside `AI-ASSISTED-DEVELOPMENT-GATE.md`.
+
 ## CSF 2.0 lens
 
 Review the change against all six functions:
