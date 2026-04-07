@@ -49,6 +49,14 @@
     {
       "key": "keyId",
       "value": "key_replace_me"
+    },
+    {
+      "key": "rootRoleId",
+      "value": "00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "key": "rootRoleAssignmentId",
+      "value": "00000000-0000-0000-0000-000000000001"
     }
   ],
   "item": [
@@ -146,6 +154,7 @@
             "exec": [
               "const json = pm.response.json();",
               "if (json.signature) pm.collectionVariables.set(\"sshSignature\", json.signature);",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignatureJson\", JSON.stringify(json.signature).slice(1, -1));",
               "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
             ]
           }
@@ -165,7 +174,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignature}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}"
+          "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignatureJson}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/v1/root-auth/login/ssh",
@@ -713,6 +722,467 @@
             "root-users",
             "{{rootUserId}}",
             "reactivate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Root Roles",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles?page=1&pageSize=25",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "const firstRoleId = Array.isArray(json.items) && json.items.length > 0 ? json.items[0].rootRoleId : null;",
+              "if (!firstRoleId) pm.collectionVariables.unset(\"rootRoleId\");",
+              "if (firstRoleId) pm.collectionVariables.set(\"rootRoleId\", firstRoleId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Root Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"roleKey\": \"RootUserReadOnly\",\n  \"displayName\": \"Root User Read Only\",\n  \"description\": \"Read-only root role\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.rootRoleId) pm.collectionVariables.unset(\"rootRoleId\");",
+              "if (json.rootRoleId) pm.collectionVariables.set(\"rootRoleId\", json.rootRoleId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Root Role",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.rootRoleId) pm.collectionVariables.unset(\"rootRoleId\");",
+              "if (json.rootRoleId) pm.collectionVariables.set(\"rootRoleId\", json.rootRoleId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Root Role",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"displayName\": \"Root User Read Only Updated\",\n  \"description\": \"Updated read-only root role\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Eligible Root Role Capabilities",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/eligible-authz-capabilities?page=1&pageSize=25",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "eligible-authz-capabilities"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Root Role Capability Assignments",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/capability-assignments?page=1&pageSize=25",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "capability-assignments"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Root Role Capability Assignments",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"capabilityKeys\": [\"root-user.read.visible\", \"root-role.read\"],\n  \"reason\": \"prepare read-only role\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/capability-assignments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "capability-assignments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Deactivate Root Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/deactivate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "deactivate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Reactivate Root Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/reactivate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "reactivate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Assign Root Role To Root User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rootRoleId\": \"{{rootRoleId}}\",\n  \"reason\": \"grant additional root access\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/root-role-assignments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "root-role-assignments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Unassign Root Role From Root User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"remove obsolete root access\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/root-role-assignments/{{rootRoleAssignmentId}}/unassign",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "root-role-assignments",
+            "{{rootRoleAssignmentId}}",
+            "unassign"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Root User Root Roles",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/root-roles?page=1&pageSize=25",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "root-roles"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Replace Root User Root Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sourceRootRoleAssignmentId\": \"{{rootRoleAssignmentId}}\",\n  \"targetRootRoleId\": \"{{rootRoleId}}\",\n  \"reason\": \"replace retired role\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/root-role-assignments/replace",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "root-role-assignments",
+            "replace"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Effective Root User Permissions",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{sessionToken}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/effective-permissions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "effective-permissions"
           ]
         }
       }
