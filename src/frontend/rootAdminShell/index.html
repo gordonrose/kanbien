@@ -8,7 +8,7 @@
   </head>
   <body>
     <div id="app" class="app-shell">
-      <section id="auth-view" class="panel">
+      <section id="auth-view" class="panel auth-panel">
         <div class="eyebrow">Root Admin</div>
         <h1>Authenticate</h1>
         <p class="muted">Password verification happens first. SSH proof is required before a browser session is created.</p>
@@ -41,22 +41,219 @@
         <div id="auth-message" class="message hidden" role="status" aria-live="polite"></div>
       </section>
 
-      <section id="shell-view" class="panel hidden">
-        <div class="eyebrow">Authenticated Shell</div>
-        <h1>Root Session</h1>
-        <div id="session-summary" class="stack summary"></div>
-        <div class="actions">
-          <button id="logout-button" type="button">Log Out</button>
+      <section id="shell-view" class="shell-view hidden">
+        <header class="panel shell-header">
+          <div>
+            <div class="eyebrow">Authenticated Shell</div>
+            <h1>Root Admin Console</h1>
+            <p class="muted">Use the current browser session to review your details and manage root users without leaving the browser.</p>
+          </div>
+          <div class="actions">
+            <button id="refresh-console" type="button">Refresh Console</button>
+            <button id="logout-button" type="button">Log Out</button>
+          </div>
+        </header>
+
+        <div class="console-layout">
+          <aside class="panel console-nav">
+            <div class="eyebrow">Navigation</div>
+            <nav class="nav-stack" aria-label="Root admin sections">
+              <button id="nav-my-details" class="nav-button" type="button" data-page="my-details">
+                My Details
+              </button>
+              <button id="nav-view-users" class="nav-button" type="button" data-page="view-users">
+                View Users
+              </button>
+              <button id="nav-root-roles" class="nav-button" type="button" data-page="root-roles">
+                System Root Roles
+              </button>
+            </nav>
+          </aside>
+
+          <main class="console-main">
+            <div id="shell-message" class="message hidden" role="status" aria-live="polite"></div>
+
+            <section id="page-my-details" class="panel page-section">
+              <div class="section-header">
+                <div>
+                  <div class="eyebrow">Session</div>
+                  <h2>My Details</h2>
+                </div>
+              </div>
+              <div id="session-summary" class="stack summary"></div>
+            </section>
+
+            <section id="page-view-users" class="panel page-section hidden">
+              <div class="section-header">
+                <div>
+                  <div class="eyebrow">Workspace</div>
+                  <h2>View Users</h2>
+                </div>
+                <div class="actions">
+                  <button id="create-root-user" type="button">Create New User</button>
+                  <button id="refresh-root-users" type="button">Refresh Users</button>
+                </div>
+              </div>
+
+              <form id="users-search-form" class="toolbar-grid">
+                <label>
+                  <span>Filter</span>
+                  <select id="users-filter">
+                    <option value="all">All</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Search Field</span>
+                  <select id="users-search-field">
+                    <option value="email">Email</option>
+                    <option value="firstName">First Name</option>
+                    <option value="lastName">Last Name</option>
+                  </select>
+                </label>
+                <label class="search-span">
+                  <span>Search Prefix</span>
+                  <input id="users-search-input" type="text" placeholder="Minimum 3 characters" />
+                </label>
+                <label>
+                  <span>Page Size</span>
+                  <select id="users-page-size">
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                </label>
+                <div class="toolbar-actions">
+                  <button type="submit">Search</button>
+                  <button id="users-clear-search" class="secondary" type="button">Clear</button>
+                </div>
+              </form>
+
+              <div class="pagination-bar">
+                <div id="users-pagination-summary" class="muted"></div>
+                <div class="actions">
+                  <button id="users-prev-page" class="secondary" type="button">Previous</button>
+                  <span id="users-page-indicator" class="page-indicator">Page 1</span>
+                  <button id="users-next-page" class="secondary" type="button">Next</button>
+                </div>
+              </div>
+
+              <section class="subpanel">
+                <h3>Users</h3>
+                <div class="users-table-shell">
+                  <div class="users-table-header">
+                    <button class="column-sort" type="button" data-sort-by="firstName">Name</button>
+                    <button class="column-sort" type="button" data-sort-by="email">Email</button>
+                    <button class="column-sort" type="button" data-sort-by="status">Status</button>
+                    <button class="column-sort" type="button" data-sort-by="updatedAt">Updated</button>
+                    <span>Actions</span>
+                  </div>
+                  <div id="users-list" class="users-table-body"></div>
+                </div>
+              </section>
+            </section>
+
+            <section id="page-root-roles" class="panel page-section hidden">
+              <div class="section-header">
+                <div>
+                  <div class="eyebrow">Workspace</div>
+                  <h2>System Root Roles</h2>
+                  <p class="muted section-copy">
+                    Review the current system root roles, open any role to edit it,
+                    or start a new role from a blank slate.
+                  </p>
+                </div>
+                <div class="actions">
+                  <button id="create-root-role" type="button">Create New Role</button>
+                  <button id="refresh-root-roles" class="secondary" type="button">Refresh Roles</button>
+                </div>
+              </div>
+
+              <form id="root-roles-toolbar" class="toolbar-grid roles-toolbar">
+                <label>
+                  <span>Page Size</span>
+                  <select id="root-roles-page-size">
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Lifecycle</span>
+                  <select id="root-roles-include-inactive">
+                    <option value="true">All Roles</option>
+                    <option value="false">Active Only</option>
+                  </select>
+                </label>
+              </form>
+
+              <div class="pagination-bar">
+                <div id="root-roles-pagination-summary" class="muted"></div>
+                <div class="actions">
+                  <button id="root-roles-prev-page" class="secondary" type="button">Previous</button>
+                  <span id="root-roles-page-indicator" class="page-indicator">Page 1</span>
+                  <button id="root-roles-next-page" class="secondary" type="button">Next</button>
+                </div>
+              </div>
+
+              <section class="subpanel">
+                <h3>Roles</h3>
+                <div class="roles-table-shell">
+                  <div class="roles-table-header">
+                    <span>Name</span>
+                    <span>Role Key</span>
+                    <span>Grant Count</span>
+                    <span>Status</span>
+                    <span>Updated</span>
+                    <span>Actions</span>
+                  </div>
+                  <div id="root-roles-list" class="roles-table-body"></div>
+                </div>
+              </section>
+            </section>
+          </main>
         </div>
-        <div id="shell-message" class="message hidden" role="status" aria-live="polite"></div>
       </section>
+
+      <div id="user-drawer-overlay" class="drawer-overlay hidden" aria-hidden="true">
+        <div id="user-drawer-backdrop" class="drawer-backdrop"></div>
+        <aside id="user-drawer-panel" class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="user-drawer-title">
+          <div class="drawer-header">
+            <div>
+              <div class="eyebrow">Editor</div>
+              <h3 id="user-drawer-title">Selected User</h3>
+            </div>
+            <button id="close-user-drawer" class="drawer-close" type="button" aria-label="Close user editor">
+              ×
+            </button>
+          </div>
+          <div id="selected-root-user" class="detail-stack"></div>
+        </aside>
+      </div>
+
+      <div id="role-drawer-overlay" class="drawer-overlay hidden" aria-hidden="true">
+        <div id="role-drawer-backdrop" class="drawer-backdrop"></div>
+        <aside id="role-drawer-panel" class="drawer-panel drawer-panel-wide" role="dialog" aria-modal="true" aria-labelledby="role-drawer-title">
+          <div class="drawer-header">
+            <div>
+              <div class="eyebrow">Editor</div>
+              <h3 id="role-drawer-title">System Root Role</h3>
+            </div>
+            <button id="close-role-drawer" class="drawer-close" type="button" aria-label="Close role editor">
+              ×
+            </button>
+          </div>
+          <div id="selected-root-role" class="detail-stack"></div>
+        </aside>
+      </div>
 
       <div id="expiry-overlay" class="overlay hidden" aria-hidden="true">
         <div class="overlay-backdrop"></div>
         <div class="overlay-modal" role="dialog" aria-modal="true" aria-labelledby="expiry-title">
           <div class="eyebrow">Session Expired</div>
           <h2 id="expiry-title">Your root-admin session has expired</h2>
-          <p>The shell has been locked. Return to login to continue.</p>
+          <p>The console has been locked. Return to login to continue.</p>
           <button id="return-to-login" type="button">Return To Login</button>
         </div>
       </div>

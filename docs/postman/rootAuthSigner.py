@@ -3,14 +3,13 @@ import json
 import os
 from hashlib import sha256
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
 
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
-
-PRIVATE_KEY_PATH = os.environ.get(
-    "ROOT_AUTH_SIGNER_PRIVATE_KEY_PATH", "/mnt/c/Users/gordo/.ssh/id_ed25519"
-)
+DEFAULT_PRIVATE_KEY_PATH = str(Path.home() / ".ssh" / "id_ed25519")
+PRIVATE_KEY_PATH = os.environ.get("ROOT_AUTH_SIGNER_PRIVATE_KEY_PATH", DEFAULT_PRIVATE_KEY_PATH)
 HOST = os.environ.get("ROOT_AUTH_SIGNER_HOST", "127.0.0.1")
 PORT = int(os.environ.get("ROOT_AUTH_SIGNER_PORT", "8787"))
 
@@ -88,4 +87,5 @@ if __name__ == "__main__":
     print(f"Root auth signer listening on http://{HOST}:{PORT}")
     print(f"Using private key: {PRIVATE_KEY_PATH}")
     print(f"Fingerprint: {PUBLIC_KEY_FINGERPRINT}")
+    print("Override ROOT_AUTH_SIGNER_PRIVATE_KEY_PATH if you want to use a different key.")
     server.serve_forever()

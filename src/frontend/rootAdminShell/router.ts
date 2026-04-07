@@ -5,10 +5,16 @@ import { join, resolve } from "node:path";
 import { env } from "../../config/env";
 
 function resolveFrontendRoot(): string {
-  const candidates = [
-    resolve(process.cwd(), "dist/frontend/rootAdminShell"),
-    resolve(process.cwd(), "src/frontend/rootAdminShell"),
-  ];
+  const candidates =
+    env.nodeEnv === "production"
+      ? [
+          resolve(process.cwd(), "dist/frontend/rootAdminShell"),
+          resolve(process.cwd(), "src/frontend/rootAdminShell"),
+        ]
+      : [
+          resolve(process.cwd(), "src/frontend/rootAdminShell"),
+          resolve(process.cwd(), "dist/frontend/rootAdminShell"),
+        ];
 
   for (const candidate of candidates) {
     if (existsSync(candidate)) {

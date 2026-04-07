@@ -2,8 +2,9 @@
 
 ## Purpose
 
-This runbook covers the operational model for the phase-one root-admin browser
-auth shell and its localhost SSH signing helper.
+This runbook covers the operational model for the current root-admin browser
+auth shell, its rudimentary operator console, and its localhost SSH signing
+helper.
 
 It is intended for internal operators maintaining or troubleshooting root-user
 browser login.
@@ -14,6 +15,8 @@ This runbook covers:
 
 - same-origin root-admin SPA login
 - browser cookie session bootstrap and logout
+- browser-console access to current protected `rootUsers` and `rootRoles`
+  routes through the same root-admin session
 - localhost signing helper startup and failure handling
 - emergency disablement and rollback direction
 
@@ -58,7 +61,9 @@ Required for browser login:
 4. Browser completes `POST /v1/root-auth/browser/login/ssh`
 5. Backend sets secure HTTP-only browser cookie
 6. SPA bootstraps through `GET /v1/root-auth/browser/session`
-7. Logout uses `POST /v1/root-auth/browser/logout`
+7. The browser console calls current `rootUsers` and `rootRoles` routes
+   through the same cookie-backed root session
+8. Logout uses `POST /v1/root-auth/browser/logout`
 
 ## Monitoring And Evidence Signals
 

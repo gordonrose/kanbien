@@ -46,7 +46,7 @@ export class TestCookieJar {
 export async function invokeJson<TBody = unknown>(
   app: Express,
   options: {
-    method: "GET" | "POST" | "DELETE" | "PATCH";
+    method: "GET" | "POST" | "DELETE" | "PATCH" | "PUT";
     path: string;
     body?: object;
     headers?: Record<string, string>;

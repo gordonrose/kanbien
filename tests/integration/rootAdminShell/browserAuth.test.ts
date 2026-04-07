@@ -127,6 +127,28 @@ describe("root admin shell browser auth integration", () => {
         email: identity.loginEmail,
       });
 
+      const rootUsersWithCookie = await invokeJson<{ items: Array<{ rootUserId: string }> }>(harness.app, {
+        method: "GET",
+        path: "/v1/root-users",
+        headers: {
+          host: "admin.example.test",
+          ...(cookies.headerValue() ? { cookie: cookies.headerValue() } : {}),
+        },
+      });
+      expect(rootUsersWithCookie.status).toBe(200);
+      expect(rootUsersWithCookie.body.items.map((item) => item.rootUserId)).toContain(identity.rootUserId);
+
+      const rootRolesWithCookie = await invokeJson<{ items: Array<{ roleKey: string }> }>(harness.app, {
+        method: "GET",
+        path: "/v1/root-roles",
+        headers: {
+          host: "admin.example.test",
+          ...(cookies.headerValue() ? { cookie: cookies.headerValue() } : {}),
+        },
+      });
+      expect(rootRolesWithCookie.status).toBe(200);
+      expect(rootRolesWithCookie.body.items.map((item) => item.roleKey)).toContain("RootUserAdmin");
+
       const logout = await invokeJson<{ status: string }>(harness.app, {
       method: "POST",
       path: "/v1/root-auth/browser/logout",
@@ -165,6 +187,12 @@ describe("root admin shell browser auth integration", () => {
     );
 
     expect(mountedRootAdminRouter).toBeDefined();
+    const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
+      expect(frontendMarkup).toContain("My Details");
+      expect(frontendMarkup).toContain("View Users");
+      expect(frontendMarkup).toContain("System Root Roles");
+      expect(frontendMarkup).toContain("Create New Role");
+      expect(frontendMarkup).toContain("System Root Role");
   });
 
   it("TC-ROOT-ADMIN-SHELL-EDGE-001 and TC-ROOT-ADMIN-SHELL-EDGE-002 expose helper guidance and handle missing browser session cookies cleanly", async () => {

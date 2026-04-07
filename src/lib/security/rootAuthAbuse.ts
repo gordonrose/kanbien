@@ -25,7 +25,9 @@ export interface RootAuthAbuseProtection {
   clearAccountFailureState(input: {
     normalizedEmail: string;
     authPrincipalId: string;
+    rootUserId?: string;
     ipAddress?: string;
+    userAgent?: string;
   }): Promise<void>;
 }
 
@@ -518,6 +520,17 @@ export function createRootAuthAbuseProtection(
           "login_ssh",
         );
       }
+
+      await repository.createSecurityAuditEvent({
+        eventId: eventId(),
+        authPrincipalId: input.authPrincipalId,
+        rootUserId: input.rootUserId,
+        eventType: "login_failure_state_cleared",
+        eventOutcome: "success",
+        ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
+        occurredAt: new Date(),
+      });
     },
   };
 }

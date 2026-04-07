@@ -405,7 +405,9 @@ export function createRootAuthService(
       await abuseProtection.clearAccountFailureState({
         normalizedEmail: principal.login_email_normalized,
         authPrincipalId: principal.auth_principal_id,
+        rootUserId: principal.root_user_id,
         ipAddress: input.ipAddress,
+        userAgent: input.userAgent,
       });
 
       return toSessionSummary(session);

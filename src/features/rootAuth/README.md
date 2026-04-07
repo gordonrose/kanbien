@@ -15,7 +15,7 @@
 - feature routes mounted from `src/routes/v1/index.ts`
 - migration runner that scans `src/features/**/migrations/*.sql`
 - app-level JSON error middleware for unhandled failures
-- root-user-protected routes use bearer-session middleware
+- root-user-protected routes use shared root-session middleware
 
 ## Feature Entry Point
 
@@ -32,8 +32,8 @@ v1Router.use("/root-auth", createRootAuthFeature(dbPool, platformSecurityReposit
 
 - The feature export is `createRootAuthFeature`.
 - Public login endpoints live in `rootAuth`.
-- Protected `rootAuth` and `rootUsers` routes both rely on the same
-  server-backed bearer session model.
+- Protected `rootAuth`, `rootUsers`, and `rootRoles` routes all rely on the
+  same server-backed session model.
 - `rootAuth` owns auth principals, SSH public keys, login challenges, sessions,
   and auth audit events.
 - `rootUsers` remains authoritative for root-user lifecycle state.
@@ -56,6 +56,10 @@ v1Router.use("/root-auth", createRootAuthFeature(dbPool, platformSecurityReposit
   also accepting the browser helper's OpenSSH-native signature format
 - the browser-helper path is intended to sign through workstation OpenSSH
   tooling rather than direct runtime-managed private-key parsing
-- Protected requests must send `Authorization: Bearer <sessionId>`.
+- Protected `rootAuth` API/manual requests still send
+  `Authorization: Bearer <sessionId>`.
+- The same-origin root-admin browser console can call current `rootUsers` and
+  `rootRoles` APIs through the root-admin session cookie without browser-held
+  bearer-token storage.
 - Root-user sign-in is blocked for inactive, deleted, or anonymized linked
   `rootUsers`.

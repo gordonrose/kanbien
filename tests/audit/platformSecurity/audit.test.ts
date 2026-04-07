@@ -255,4 +255,60 @@ describe("platformSecurity audit visibility", () => {
     expect(findSecurityEvents(sshHarness, "ip_suspicious_auth_pattern_detected").length).toBeGreaterThan(0);
     expect(findSecurityEvents(sshHarness, "account_suspicious_auth_pattern_detected").length).toBeGreaterThan(0);
   });
+
+  it("TC-PLATFORM-SEC-AUD-007 records clear-on-success events for login abuse state where the current platform clears that state", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+
+    const failedPassword = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-auth/login/password",
+      body: {
+        email: identity.loginEmail,
+        password: "WrongPass1!",
+      },
+      headers: {
+        "user-agent": "platform-security-clear-test",
+      },
+    });
+    expect(failedPassword.status).toBe(401);
+
+    const passwordStage = await invokeJson<PasswordStageResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-auth/login/password",
+      body: {
+        email: identity.loginEmail,
+        password: identity.password,
+      },
+      headers: {
+        "user-agent": "platform-security-clear-test",
+      },
+    });
+    expect(passwordStage.status).toBe(200);
+
+    const sshStage = await invokeJson<{ sessionId: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/root-auth/login/ssh",
+      body: {
+        challengeId: passwordStage.body.challengeId,
+        publicKeyFingerprint: identity.sshKey.fingerprint,
+        signature: identity.sshKey.signChallengeText(passwordStage.body.challengeText),
+      },
+      headers: {
+        "user-agent": "platform-security-clear-test",
+      },
+    });
+    expect(sshStage.status).toBe(200);
+
+    expect(findSecurityEvents(harness, "login_failure_state_cleared")).toEqual([
+      expect.objectContaining({
+        authPrincipalId: identity.authPrincipalId,
+        rootUserId: identity.rootUserId,
+        eventType: "login_failure_state_cleared",
+        eventOutcome: "success",
+        ipAddress: "127.0.0.1",
+        userAgent: "platform-security-clear-test",
+      }),
+    ]);
+  });
 });

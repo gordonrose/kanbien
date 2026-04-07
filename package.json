@@ -14,6 +14,7 @@
     "check:static": "npm run typecheck",
     "check:repo": "npm run check:static && npm run deps:audit",
     "test": "vitest run",
+    "postman:signer": "node docs/postman/rootAuthSigner.mjs",
     "root-admin:helper": "node src/rootAdminHelper/root-auth-signer-helper.mjs",
     "test:persistence:prepare": "node --import tsx src/scripts/ensureTestDatabase.ts",
     "test:persistence:reset": "node --import tsx src/scripts/resetPostgresTestDatabase.ts",
