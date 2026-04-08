@@ -25,6 +25,9 @@ finalized architecture, PRD, or standards artifact.
   Dated review notes for materially AI-assisted, standards-sensitive, or
   otherwise notable delivery slices when the repo needs a durable close-out
   artifact beyond chat history.
+- `blogs/`
+  Draft blog post ideas, outlines, and working thought-pieces derived from
+  repo work before they are turned into polished external content.
 - `archive/`
   Superseded or dated working artifacts that should be kept for reference but
   are no longer active.
