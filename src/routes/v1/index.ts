@@ -4,6 +4,7 @@ import { createRootRolesFeature } from "../../features/rootRoles";
 import { createRootUserFeature } from "../../features/rootUsers";
 import { createTenantsFeature } from "../../features/tenants";
 import { createNotificationDeliveryFeature } from "../../features/notificationDelivery";
+import { createTenantAdminsFeature } from "../../features/tenantAdmins";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -18,6 +19,11 @@ const requireRootSession = createRequireRootSession(rootAuthRepository, {
   allowBrowserCookie: true,
 });
 const rootRolesFeature = createRootRolesFeature(dbPool, platformSecurityRepository);
+const tenantAdminsFeature = createTenantAdminsFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  platformSecurityRepository,
+);
 const publicReadRateLimit = createRateLimitMiddleware({
   enabled: env.platformSecurity.enabled,
   repository: platformSecurityRepository,
@@ -70,6 +76,16 @@ v1Router.use(
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,
   ),
+);
+v1Router.use(
+  "/tenant-admin-verification",
+  tenantAdminsFeature.tenantAdminVerificationRouter,
+);
+v1Router.use(
+  "/tenants/:tenantId/admins",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  tenantAdminsFeature.tenantAdminsRouter,
 );
 v1Router.use(
   "/tenants",

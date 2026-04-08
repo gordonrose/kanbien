@@ -85,6 +85,15 @@ are not a role.
 | `RootUserAdmin` | `notification.email.send` | `current` | current root operator grant | yes | yes | proof send and future operator-triggered outbound email send |
 | `RootUserAdmin` | `notification.email.resend` | `current` | current root operator grant | yes | yes | explicit resend for one logical outbound email |
 | `RootUserAdmin` | `notification.email.read` | `current` | current root operator grant | yes | yes | root-only metadata list and exact read |
+| public unauthenticated caller | `public tenant-admin verification redemption entrypoint` | `current` | public route access for tenant-admin verification redemption | yes | yes | bounded public workflow route with public-write rate limiting |
+| `RootUserAdmin` | `tenant-admin.create` | `current` | current root operator grant | yes | yes | create tenant-admin profile |
+| `RootUserAdmin` | `tenant-admin.read` | `current` | current root operator grant | yes | yes | exact visible tenant-admin lookup |
+| `RootUserAdmin` | `tenant-admin.list` | `current` | current root operator grant | yes | yes | visible tenant-admin listing |
+| `RootUserAdmin` | `tenant-admin.update` | `current` | current root operator grant | yes | yes | editable tenant-admin profile update |
+| `RootUserAdmin` | `tenant-admin.verification.send` | `current` | current root operator grant | yes | yes | initial verification send workflow |
+| `RootUserAdmin` | `tenant-admin.verification.resend` | `current` | current root operator grant | yes | yes | fresh-token verification resend workflow |
+| `RootUserAdmin` | `tenant-admin.delete` | `current` | current root operator grant | no | yes | soft-delete tenant-admin record |
+| `RootUserAdmin` | `tenant-admin.reactivate` | `current` | current root operator grant | no | yes | reactivate deleted tenant-admin record with verification reset |
 
 ## Deterministic Method For Future Roles
 

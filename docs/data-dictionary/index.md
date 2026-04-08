@@ -18,6 +18,8 @@ and approved cross-feature read seams.
 | --- | --- | --- | --- |
 | Root User | `rootUsers` | Privileged platform operator account and lifecycle record. | [root-user.md](./root-user.md) |
 | Tenant | `tenants` | Durable platform tenant record and lifecycle root. | [tenant.md](./tenant.md) |
+| Tenant Admin | `tenantAdmins` | Durable tenant-scoped admin profile record with verification-state fields. | [tenant-admin.md](./tenant-admin.md) |
+| Tenant Admin Verification Token | `tenantAdmins` | Feature-owned durable verification token record for tenant-admin email verification. | [tenant-admin-verification-token.md](./tenant-admin-verification-token.md) |
 | Outbound Email | `notificationDelivery` | Durable logical outbound email record and operator-visible delivery root. | [outbound-email.md](./outbound-email.md) |
 | Outbound Email Content | `notificationDelivery` | Durable sanitized content snapshot for one logical outbound email. | [outbound-email-content.md](./outbound-email-content.md) |
 | Outbound Email Attempt | `notificationDelivery` | Durable per-attempt delivery record for one logical outbound email. | [outbound-email-attempt.md](./outbound-email-attempt.md) |

@@ -53,6 +53,8 @@ boundary implemented by the repo.
   administration
 - `notification.email.*` is reserved for root-managed outbound email delivery
   and operator-visible metadata retrieval
+- `tenant-admin.*` is reserved for root-managed tenant-admin profile lifecycle
+  and verification workflows
 - `root-admin-shell.*` is reserved for cookie-backed browser-session shell
   behavior
 - public entrypoints stay explicitly marked as public entrypoints rather than
@@ -112,6 +114,15 @@ boundary implemented by the repo.
 | notification delivery | `notificationDelivery` | `resendEmail` | `current` | `notification.email.resend` | `can(...)` | `RootUserAdmin` | explicit resend for one logical outbound email |
 | notification delivery | `notificationDelivery` | `listOutboundEmails` | `current` | `notification.email.read` | `scope(...) and can(...)` | `RootUserAdmin` | root-only metadata list with approved filters |
 | notification delivery | `notificationDelivery` | `getOutboundEmail` | `current` | `notification.email.read` | `can(...)` | `RootUserAdmin` | root-only exact read with attempt and content-version history |
+| tenant admins | `tenantAdmins` | `createTenantAdmin` | `current` | `tenant-admin.create` | `can(...)` | `RootUserAdmin` | create a tenant-scoped tenant-admin profile |
+| tenant admins | `tenantAdmins` | `getTenantAdmin` | `current` | `tenant-admin.read` | `can(...)` | `RootUserAdmin` | exact visible tenant-admin lookup within a tenant |
+| tenant admins | `tenantAdmins` | `listTenantAdmins` | `current` | `tenant-admin.list` | `scope(...) and can(...)` | `RootUserAdmin` | visible tenant-admin listing within one tenant |
+| tenant admins | `tenantAdmins` | `updateTenantAdminProfile` | `current` | `tenant-admin.update` | `can(...)` | `RootUserAdmin` | editable tenant-admin profile update with reverification reset on email change |
+| tenant admins | `tenantAdmins` | `sendTenantAdminVerificationEmail` | `current` | `tenant-admin.verification.send` | `can(...)` | `RootUserAdmin` | issue tenant-admin verification token and send verification email |
+| tenant admins | `tenantAdmins` | `resendTenantAdminVerificationEmail` | `current` | `tenant-admin.verification.resend` | `can(...)` | `RootUserAdmin` | invalidate the prior active token and send fresh verification content |
+| tenant admins | `tenantAdmins` | `softDeleteTenantAdmin` | `current` | `tenant-admin.delete` | `can(...)` | `RootUserAdmin` | soft-delete tenant-admin record and invalidate active verification eligibility |
+| tenant admins | `tenantAdmins` | `reactivateTenantAdmin` | `current` | `tenant-admin.reactivate` | `can(...)` | `RootUserAdmin` | reactivate deleted tenant-admin and restore verification state to pending |
+| tenant admins | `tenantAdmins` | `redeemTenantAdminVerificationToken` | `current` | `public tenant-admin verification redemption entrypoint` | `n/a` | public unauthenticated caller | public token-redemption route updates verification state only and does not create auth sessions |
 
 ## Deterministic Method For Future Roles
 
