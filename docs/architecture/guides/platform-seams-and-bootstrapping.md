@@ -86,3 +86,10 @@ When platform seams change:
 - update `docs/architecture/system-overview.md`
 - update `docs/architecture/priniciples.md` if guardrails change
 - add or supersede an ADR if the pattern is enduring
+
+When runnable local setup, startup order, or helper-tool requirements change,
+also update:
+
+- `docs/architecture/guides/platform-bootstrap-and-local-helpers-guide.md`
+- `docs/architecture/build-from-spec-reconstruction-questionnaire.md` when the
+  change adds a new interchangeable tool or deployer-local choice

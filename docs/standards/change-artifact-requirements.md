@@ -27,11 +27,16 @@ Required:
 - source-independent doc and status sync for affected API contracts, data
   dictionary entries, feature docs, OpenAPI, architecture summaries, and
   platform-status snapshots where the implemented slice changed their truth
+- maintained-artifacts sweep covering status snapshots, registry or index docs,
+  and earlier planning artifacts whose wording became stale because the slice
+  now exists or materially changed current platform posture
 
 Consider:
 
 - ADR if a new enduring pattern or shared seam is introduced
 - runbook/privacy note if security, operator flow, or personal data changes
+- reconstruction questionnaire or bootstrap-guide update if runtime
+  dependencies, interchangeable tools, or required local helpers changed
 
 ### Full vertical slice
 
@@ -135,9 +140,34 @@ When a change lands, update the affected combination of:
 - privacy note
 - standards review notes
 - AI-assisted review notes when the change materially relied on generative AI
+- maintained status snapshots, registry docs, and earlier planning artifacts
+  whose current-state wording changed because the implementation now exists
+- reconstruction questionnaire when the slice changes interchangeable tools,
+  providers, or deployer-local choices
+- bootstrap and helper docs when the slice changes startup order, required
+  local helpers, or runnable env assumptions
+- harness-internals docs when the slice changes reusable test harness seams or
+  persistence-test infrastructure
+- script/helper behavior docs when the slice changes repo scripts, helper
+  tooling, or script side effects in a meaningful way
 
 Do not leave the implementation as the only place that knows the intended
 behavior.
+
+Before a slice is considered complete, perform a maintained-artifacts sweep.
+
+At minimum, check:
+
+- older PRD, PRD-derived test-case, or blueprint files for stale "not yet
+  implemented" wording
+- `docs/standards/platform-status/` files whose truth changed because of a new
+  vendor, service, processor, dependency, review workflow, or
+  standards-relevant control improvement
+- README, index, inventory, and registry docs that summarize current platform
+  capabilities, artifact sets, or entity inventories
+
+If a surface is reviewed and intentionally left unchanged, record the reason in
+the same loop rather than silently skipping it.
 
 When an upstream planning artifact is materially reset or rewritten during the
 same loop, revalidate downstream artifacts before continuing.

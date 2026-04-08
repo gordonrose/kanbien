@@ -172,6 +172,25 @@ export const ROOT_AUTHZ_CAPABILITY_CATALOG: RootAuthzCapabilityCatalogEntry[] = 
     protectedForRootUserAdmin: true,
   },
   {
+    capabilityKey: "notification.email.send",
+    description: "Send outbound emails through the shared notification-delivery feature.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "notification.email.resend",
+    description: "Resend an outbound email through the shared notification-delivery feature.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "notification.email.read",
+    description:
+      "List and inspect outbound-email metadata through the shared notification-delivery feature.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
     capabilityKey: "root-role.create",
     description: "Create a system root role.",
     mandatoryForRootUserAdmin: true,

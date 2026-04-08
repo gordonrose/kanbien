@@ -9,9 +9,10 @@ Source gate: [`AI-ASSISTED-DEVELOPMENT-GATE.md`](/home/gordon/kanbien/docs/stand
   The repo now defines an explicit AI-assisted development control model, but
   the current platform evidence is still process-heavy rather than
   enforcement-heavy. Architecture guardrails, deterministic testing
-  expectations, and human-review discipline are strong; provenance logging,
+  expectations, and human-review discipline are strong. The repo now also has
+  a lightweight provenance-note workflow and template, but provenance logging,
   prompt-handling evidence, and repeatable high-risk traceability are still
-  immature.
+  immature beyond the first durable review notes.
 
 ## 1. Human Accountability
 
@@ -30,16 +31,18 @@ Source gate: [`AI-ASSISTED-DEVELOPMENT-GATE.md`](/home/gordon/kanbien/docs/stand
 ## 2. Provenance And Traceability
 
 - `Partial` The change records whether AI materially contributed to the accepted output.
-  The gate now requires it, but current repo artifacts do not yet show a broad
-  established history of provenance notes.
+  The gate now requires it, and the repo now has dated review-note examples
+  under `docs/workspace/reviews/`, but there is not yet a broad established
+  history of repeated use across many slices.
 - `Fail` For high-risk changes, the model, tool, and version used are recorded.
   This is now expected but not yet embedded in the current artifact set.
 - `Partial` For high-risk changes, the accepted artifact can be traced back to the review context that justified adoption.
   Some traceability exists through PRDs, ADRs, and test cases, but not yet as
   an explicit AI provenance chain.
 - `Fail` Hidden provenance is not allowed for material accepted outputs.
-  The policy now says this, but the repo lacks a concrete enforcement or
-  review-template mechanism to prove it consistently.
+  The policy now says this, and the repo now has a concrete review template and
+  helper skill, but there is still no hard enforcement proving consistent use
+  on every materially AI-assisted slice.
 
 ## 3. Prompt And Data Handling
 
@@ -114,8 +117,8 @@ Source gate: [`AI-ASSISTED-DEVELOPMENT-GATE.md`](/home/gordon/kanbien/docs/stand
   Existing change-loop, test, and documentation expectations make rework and
   rollback of ordinary repo changes manageable.
 - `Partial` Review notes or artifacts are sufficient to revisit why the output was accepted.
-  PRDs, ADRs, and tests help, but AI-specific acceptance notes are not yet
-  routinely recorded.
+  PRDs, ADRs, and tests help, and the repo now has AI-specific acceptance-note
+  examples, but they are not yet routine enough to count as mature evidence.
 - `Partial` Known limitations or uncertain areas introduced by AI assistance are called out rather than hidden.
   Repo tone encourages this, but evidence is still informal.
 - `Partial` Over-trust in AI-generated output is treated as a review failure, not an acceptable workflow shortcut.
@@ -124,7 +127,6 @@ Source gate: [`AI-ASSISTED-DEVELOPMENT-GATE.md`](/home/gordon/kanbien/docs/stand
 
 ## Main Gaps To Close
 
-- add a lightweight provenance note pattern for materially AI-assisted changes
 - add high-risk model/tool/version traceability to the change artifact set
 - define how approved sensitive prompt-context use is recorded
 - add a durable review expectation for generated snippet/license provenance

@@ -2,7 +2,7 @@
 
 ## Current Status
 
-- `missing`
+- `partial`
 
 ## What This Layer Should Do
 
@@ -12,10 +12,12 @@
 
 ## Implemented To Date
 
-- no notification platform yet
+- `notificationDelivery` now establishes an email-first outbound notification
+  delivery foundation for operator and future feature-owned workflows
 
 ## Still Missing / Next Steps
 
 - define channel model and audience model
 - define notification preference and opt-out rules
-- define relationship to workflow, email, and analytics layers
+- define relationship to workflow, richer email operations, and analytics
+  layers

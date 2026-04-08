@@ -35,6 +35,10 @@ maintained artifact set for the change class has been reviewed and either:
 - updated in the same loop, or
 - explicitly called out as intentionally unchanged with a concrete reason
 
+This includes not only feature-local docs, but also maintained status,
+registry, and prior-planning surfaces whose truth changed because the slice
+now exists or materially changed platform posture.
+
 ## Authority Order
 
 Use this authority order unless the user explicitly says otherwise:
@@ -112,6 +116,10 @@ surface. If the change materially improves, weakens, or clarifies the current
 platform posture against a gate, the relevant status file should be reviewed
 and updated in the same loop.
 
+If the change affects runtime bootstrap, helper tooling, env assumptions, or
+interchangeable infrastructure choices, also treat the repo's rebuild-readiness
+docs as maintained source-independent surfaces.
+
 ### 3. Decide whether an ADR is needed
 
 Use `docs/architecture/change-control.md`.
@@ -183,8 +191,14 @@ Check whether the change also requires updates to:
 - `docs/data-dictionary/`
 - `docs/standards/platform-status/`
 - `docs/workspace/architecture-map/`
+- `docs/architecture/build-from-spec-reconstruction-questionnaire.md`
+- `docs/architecture/guides/platform-bootstrap-and-local-helpers-guide.md`
 - capability matrix rows and other build-from-spec artifacts required by
   `docs/standards/change-artifact-requirements.md`
+- older PRD, PRD test-case, or blueprint artifacts whose wording became stale
+  because the slice moved from planned to implemented
+- README, index, or registry surfaces that inventory current docs, entities,
+  capabilities, or platform layers
 
 Do not treat these as optional post-implementation cleanup. For route-bearing
 or persistence-bearing backend slices, the default expectation is that
@@ -204,6 +218,19 @@ implementation should finish with:
 Before considering the loop complete, explicitly sanity-check which of those
 surfaces changed and which did not.
 
+Treat this as a required maintained-artifacts sweep, not optional cleanup.
+The sweep should explicitly ask:
+
+- did this slice make any older planning artifact say something false, such as
+  "does not exist yet" or "not implemented yet"?
+- did this slice introduce a new vendor, service, processor, or external
+  dependency that changes the truth of a maintained standards snapshot?
+- did this slice introduce a new review workflow, provenance artifact, or
+  durable control pattern that changes the truth of a maintained process or
+  standards snapshot?
+- did this slice change any registry or index surface that inventories current
+  docs, features, entities, or platform layers?
+
 When the change materially alters protected-route access rules, treat affected
 existing test suites as supporting docs/evidence that must stay aligned, not as
 optional cleanup for later.
@@ -215,10 +242,18 @@ contract artifact under `docs/api-contracts/`.
 If the change affects docs truthfulness, run the repo-local
 `docs-alignment-auditor` skill before or after editing as appropriate.
 
+If the change affects rebuild-from-docs readiness, runtime bootstrap order,
+local helper tooling, or interchangeable provider/tool choices, prefer the
+repo-local `rebuild-readiness-maintainer` skill for those docs.
+
 When the change affects security posture, privacy posture, operational
 readiness, release/recovery posture, or other standards-gated behavior, review
 the corresponding file under `docs/standards/platform-status/` and update it if
 the repo baseline has changed.
+
+If the implementation changed the truth of a maintained status snapshot but the
+headline status level did not change, still refresh the wording when needed so
+the snapshot does not lag the repo's actual current state.
 
 When the change is materially AI-assisted, also check whether the supporting
 artifacts need:

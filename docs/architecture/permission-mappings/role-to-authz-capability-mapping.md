@@ -82,6 +82,9 @@ are not a role.
 | `RootUserAdmin` | `tenant.delete` | `current` | current root operator grant | no | yes | soft-delete lifecycle action |
 | `RootUserAdmin` | `tenant.reactivate` | `current` | current root operator grant | no | yes | restore deleted tenant |
 | `RootUserAdmin` | `tenant.remove` | `current` | current root operator grant | no | yes | irreversible tenant remove while tenant-owned durable entities do not yet exist |
+| `RootUserAdmin` | `notification.email.send` | `current` | current root operator grant | yes | yes | proof send and future operator-triggered outbound email send |
+| `RootUserAdmin` | `notification.email.resend` | `current` | current root operator grant | yes | yes | explicit resend for one logical outbound email |
+| `RootUserAdmin` | `notification.email.read` | `current` | current root operator grant | yes | yes | root-only metadata list and exact read |
 
 ## Deterministic Method For Future Roles
 

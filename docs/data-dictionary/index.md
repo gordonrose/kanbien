@@ -18,6 +18,9 @@ and approved cross-feature read seams.
 | --- | --- | --- | --- |
 | Root User | `rootUsers` | Privileged platform operator account and lifecycle record. | [root-user.md](./root-user.md) |
 | Tenant | `tenants` | Durable platform tenant record and lifecycle root. | [tenant.md](./tenant.md) |
+| Outbound Email | `notificationDelivery` | Durable logical outbound email record and operator-visible delivery root. | [outbound-email.md](./outbound-email.md) |
+| Outbound Email Content | `notificationDelivery` | Durable sanitized content snapshot for one logical outbound email. | [outbound-email-content.md](./outbound-email-content.md) |
+| Outbound Email Attempt | `notificationDelivery` | Durable per-attempt delivery record for one logical outbound email. | [outbound-email-attempt.md](./outbound-email-attempt.md) |
 | Root Authz Capability | `rootRoles` | Catalog entry for a root-platform authorization capability key. | [root-authz-capability.md](./root-authz-capability.md) |
 | System Root Role | `rootRoles` | Durable definition of a system root role such as `RootUserAdmin`. | [system-root-role.md](./system-root-role.md) |
 | Root Role Capability Grant | `rootRoles` | Durable assignment of one authz capability to one system root role. | [root-role-capability-grant.md](./root-role-capability-grant.md) |

@@ -20,6 +20,9 @@ These guides exist to make the repo:
 - `platform-seams-and-bootstrapping.md`
   How the app boots, where shared middleware lives, and how platform seams stay
   explicit.
+- `platform-bootstrap-and-local-helpers-guide.md`
+  How to make the repo runnable locally, which startup order matters, and which
+  helper scripts are required versus optional.
 - `feature-seams-and-public-contracts.md`
   How features expose public seams, how cross-feature reads work, and what
   stays private.
@@ -34,6 +37,12 @@ These guides exist to make the repo:
 - `testing-and-verification-guide.md`
   How PRD test cases, executable tests, persistence runs, and anti-drift review
   fit together.
+- `test-harness-and-fixture-internals-guide.md`
+  How the reusable test harness seams, fixture factories, and persistence test
+  infrastructure are structured.
+- `script-and-helper-behavior-guide.md`
+  How runtime scripts, test-support scripts, and local helper utilities behave
+  at a finer-grained level.
 
 ## Relationship To ADRs
 

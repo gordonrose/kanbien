@@ -58,9 +58,13 @@ Use this authority order unless the user explicitly says otherwise:
    `docs/data-dictionary/` when relevant
 9. `docs/standards/platform-status/` when the slice materially affects
    standards-gated platform posture
-10. `docs/workspace/architecture-map/` when the slice materially changes
+10. rebuild-readiness docs such as
+    `docs/architecture/build-from-spec-reconstruction-questionnaire.md` and
+    `docs/architecture/guides/platform-bootstrap-and-local-helpers-guide.md`
+    when the slice changes runtime assumptions or helper requirements
+11. `docs/workspace/architecture-map/` when the slice materially changes
     platform-layer status or roadmap assumptions
-11. existing blueprint files under `docs/workspace/implementation-blueprints/`
+12. existing blueprint files under `docs/workspace/implementation-blueprints/`
 
 If the capability matrix and PRD disagree, do not silently merge them. Prefer
 the higher-confidence approved input and call out the mismatch.
@@ -86,6 +90,8 @@ Helpful secondary sources:
 - `docs/swagger/openapi.yaml`
 - `docs/prd/test_cases/`
 - `docs/standards/platform-status/`
+- `docs/architecture/build-from-spec-reconstruction-questionnaire.md`
+- `docs/architecture/guides/platform-bootstrap-and-local-helpers-guide.md`
 - `docs/workspace/architecture-map/`
 - current feature structure in `src/features/`
 - relevant tests under `tests/`
@@ -123,6 +129,7 @@ When helpful, expand the template with additional subsections, especially for:
 - migration sequencing
 - standards-review checkpoints
 - standards baseline snapshot impact
+- maintained-artifacts sweep requirements
 - dependency ordering between backend, frontend, docs, and tests
 
 The blueprint should stay concise, but it must be specific enough that the next
@@ -168,6 +175,13 @@ does not omit required supporting artifacts such as:
   platform's current posture
 - relevant architecture-map updates when the slice changes the repo's current
   platform-layer status in a meaningful way
+- maintained-artifacts sweep follow-through for older planning docs, standards
+  snapshots, and registry or index surfaces whose wording will become stale
+  once implementation lands
+- reconstruction-questionnaire updates when the slice adds or changes
+  interchangeable tools, providers, or deployer-local runtime choices
+- bootstrap-guide updates when the slice adds helper scripts, startup
+  prerequisites, or runnable local setup requirements
 - updates to affected pre-existing protected-feature integration, security, and
   audit tests when the slice adds or tightens authz gates on routes the repo
   already exposes
@@ -182,7 +196,12 @@ surfaces explicitly:
 - `docs/featureDocs/`
 - `docs/data-dictionary/`
 - `docs/standards/platform-status/`
+- rebuild-readiness docs when runtime or helper assumptions changed
 - `docs/workspace/architecture-map/` when platform-layer status has moved
+- older PRD, PRD test-case, and blueprint artifacts that may contain
+  pre-implementation wording requiring refresh
+- README or index surfaces that inventory current docs, features, or entity
+  sets
 
 If one of those is intentionally out of scope, the blueprint should say why
 instead of silently leaving the artifact class out.
@@ -199,6 +218,10 @@ instead of hiding the gap inside vague wording.
 Also call out when implementation should be expected to update a file under
 `docs/standards/platform-status/` because the slice is likely to move the
 repo's current standards baseline.
+
+Also call out when implementation should be expected to refresh earlier
+planning or registry docs purely because the implementation will change their
+truth value, even if no behavioral change is needed in those documents.
 
 ## Writing Rules
 

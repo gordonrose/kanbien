@@ -7,9 +7,12 @@ Source gate: [`GDPR-DATA-TRANSFER-GATE.md`](/home/gordon/kanbien/docs/standards/
 - Current status: `Partial`
 - Summary:
   The repo clearly handles personal data already, especially around root-user
-  identity and auth telemetry. It is better than average in documentation
-  awareness, but still lacks a broad privacy architecture, formal data
-  classification, retention model, and transfer/vendor governance.
+  identity and auth telemetry. The current repo state now also includes a real
+  outbound email processor path through `notificationDelivery`, which makes
+  vendor and transfer governance more concrete. It is better than average in
+  documentation awareness, but still lacks a broad privacy architecture,
+  formal data classification, retention model, and mature transfer/vendor
+  governance.
 
 ## 1. Data Understanding
 
@@ -48,7 +51,9 @@ Source gate: [`GDPR-DATA-TRANSFER-GATE.md`](/home/gordon/kanbien/docs/standards/
 - `Fail` If data leaves the EEA, the transfer mechanism is identified.
   Not yet addressed.
 - `Fail` Vendor or subprocessor locations are known.
-  No supplier/privacy geography model yet.
+  A real email processor path now exists through the initial `Resend` adapter
+  in `notificationDelivery`, but the repo still does not maintain a documented
+  supplier/privacy geography model.
 - `Fail` Remote access by support or engineering personnel outside the EEA has been considered as a transfer/access issue where relevant.
   Not yet addressed.
 
@@ -63,7 +68,8 @@ Source gate: [`GDPR-DATA-TRANSFER-GATE.md`](/home/gordon/kanbien/docs/standards/
 - `Fail` Required contractual terms, DPAs, or transfer documents are identified.
   Not yet addressed.
 - `Pass` The change does not silently introduce a new international transfer path without review.
-  Current repo process would likely surface this, but the platform baseline is
+  Current repo process did surface the new outbound email processor path and
+  captured it in ADR, PRD, and review artifacts, but the platform baseline is
   still immature.
 
 ## 5. Security And Privacy Controls
@@ -98,7 +104,9 @@ Source gate: [`GDPR-DATA-TRANSFER-GATE.md`](/home/gordon/kanbien/docs/standards/
 - `Pass` The change record identifies whether personal data is involved.
   Current process increasingly supports this.
 - `Fail` New subprocessors, third countries, or major transfer changes are documented.
-  No such governance layer exists yet.
+  The initial email processor path is now visible in slice artifacts, but the
+  repo still lacks a durable platform-level subprocessor and geography
+  register.
 - `Pass` The owner of the data flow is clear.
   Current feature ownership is reasonably strong.
 - `Partial` Required privacy or legal review has been obtained where policy requires it.
@@ -107,7 +115,8 @@ Source gate: [`GDPR-DATA-TRANSFER-GATE.md`](/home/gordon/kanbien/docs/standards/
 ## Main Gaps To Close
 
 - broader privacy architecture
-- vendor/subprocessor and geography review
+- vendor/subprocessor and geography review, now including outbound email
+  providers
 - retention/deletion architecture
 - data subject rights handling
 - backup/restore and transfer governance

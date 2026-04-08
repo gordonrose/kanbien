@@ -8,7 +8,8 @@ type MigrationGroup =
   | "platformSecurity"
   | "rootAuth"
   | "rootRoles"
-  | "tenants";
+  | "tenants"
+  | "notificationDelivery";
 
 interface TestMigrationFile {
   filename: string;
@@ -56,6 +57,10 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
   {
     group: "tenants",
     relativePath: "tenants/persistence/migrations/0006_create_tenants.sql",
+  },
+  {
+    group: "notificationDelivery",
+    relativePath: "notificationDelivery/persistence/migrations/0007_create_notification_delivery.sql",
   },
 ];
 
@@ -161,6 +166,7 @@ export async function applyPostgresTestMigrations(
     "rootAuth",
     "rootRoles",
     "tenants",
+    "notificationDelivery",
   ],
 ): Promise<void> {
   await ensureMigrationsTable(pool);

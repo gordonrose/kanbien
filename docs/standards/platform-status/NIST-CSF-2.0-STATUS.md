@@ -31,13 +31,15 @@ Source gate: [`NIST-CSF-2.0-GATE.md`](/home/gordon/kanbien/docs/standards/NIST-C
 - `Pass` Data types handled by the change are known.
   Data dictionary and docs help here.
 - `Partial` Dependencies and external services are identified.
-  Current dependency picture is understandable, but not yet a full supplier-risk
-  program.
+  Current dependency picture is understandable, and the outbound email provider
+  path is now explicitly visible through `notificationDelivery`, but there is
+  still not a full supplier-risk program.
 - `Partial` Criticality of the change is understood.
   Often true in practice, but not yet formalized at enterprise operations
   level.
 - `Partial` Supply-chain impact is understood for new packages, vendors, or services.
-  Not yet a mature documented process.
+  Better than before because the first live email provider path is now
+  documented explicitly, but not yet a mature documented process.
 
 ## 3. Protect
 

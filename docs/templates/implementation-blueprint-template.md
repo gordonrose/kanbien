@@ -58,6 +58,18 @@ plan without losing architecture, tests, docs, or standards coverage.
 - PRD updates:
 - PRD test-case updates:
 - Feature docs:
+- API contract docs:
+- OpenAPI:
+- Postman:
+- Data dictionary:
+- Architecture map:
+- Standards platform-status snapshots:
+- Reconstruction questionnaire:
+- Bootstrap and helper docs:
+- Maintained-artifacts sweep:
+  list older PRD/test-case/blueprint docs, README files, index files, and
+  registry surfaces that may need refresh because implementation will change
+  their truth value
 - Runbook:
 - Privacy note:
 - Standards review:

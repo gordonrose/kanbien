@@ -24,6 +24,14 @@ security, reliability, modularity, consistency, or operational behavior.
 - `build-from-spec-change-harness.md`
   End-to-end diagram of the build-from-spec implementation harness and how it
   reduces drift, contamination, contradiction, and overlap.
+- `build-from-spec-reconstruction-questionnaire.md`
+  Source-independent questionnaire for interchangeable tools, providers, and
+  deployer-local choices needed to rebuild the platform without storing live
+  secrets in repo docs.
+- harness and helper behavior guides under `guides/`
+  Source-independent detail for runnable bootstrap, test harness internals, and
+  script/helper behavior that would otherwise stay trapped in `src/` and
+  `tests/`.
 
 ## How To Use This Folder
 
@@ -39,6 +47,9 @@ security, reliability, modularity, consistency, or operational behavior.
   coverage.
 - Use `build-from-spec-change-harness.md` when explaining or reviewing the full
   artifact chain around implementation work.
+- Use `build-from-spec-reconstruction-questionnaire.md` when a rebuilder needs
+  to choose between interchangeable tools or providers without exposing live
+  secrets in repo docs.
 
 ## Working Rule
 

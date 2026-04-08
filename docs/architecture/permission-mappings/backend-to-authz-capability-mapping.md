@@ -51,6 +51,8 @@ boundary implemented by the repo.
   assignment management
 - `tenant.*` is reserved for root-managed tenant lifecycle and metadata
   administration
+- `notification.email.*` is reserved for root-managed outbound email delivery
+  and operator-visible metadata retrieval
 - `root-admin-shell.*` is reserved for cookie-backed browser-session shell
   behavior
 - public entrypoints stay explicitly marked as public entrypoints rather than
@@ -106,6 +108,10 @@ boundary implemented by the repo.
 | tenants | `tenants` | `softDeleteTenant` | `current` | `tenant.delete` | `can(...)` | `RootUserAdmin` | soft-delete lifecycle action |
 | tenants | `tenants` | `reactivateTenant` | `current` | `tenant.reactivate` | `can(...)` | `RootUserAdmin` | restore previously deleted tenant |
 | tenants | `tenants` | `removeTenant` | `current` | `tenant.remove` | `can(...)` | `RootUserAdmin` | irreversible tenant remove while no dependent tenant-owned entities exist |
+| notification delivery | `notificationDelivery` | `sendEmail` | `current` | `notification.email.send` | `can(...)` | `RootUserAdmin` | proof send and future operator-triggered outbound email send |
+| notification delivery | `notificationDelivery` | `resendEmail` | `current` | `notification.email.resend` | `can(...)` | `RootUserAdmin` | explicit resend for one logical outbound email |
+| notification delivery | `notificationDelivery` | `listOutboundEmails` | `current` | `notification.email.read` | `scope(...) and can(...)` | `RootUserAdmin` | root-only metadata list with approved filters |
+| notification delivery | `notificationDelivery` | `getOutboundEmail` | `current` | `notification.email.read` | `can(...)` | `RootUserAdmin` | root-only exact read with attempt and content-version history |
 
 ## Deterministic Method For Future Roles
 

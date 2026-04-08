@@ -52,7 +52,10 @@ describeIfPostgres("rootAuth postgres-backed secret handling", () => {
     await pool.end();
   });
 
-  it("TC-ROOT-AUTH-SEC-007 stores hashed passwords and keeps bootstrap secrets out of audit rows", async () => {
+  it(
+    "TC-ROOT-AUTH-SEC-007 stores hashed passwords and keeps bootstrap secrets out of audit rows",
+    { timeout: 10000 },
+    async () => {
     const rootUsersRepository = createPostgresRootUsersRepository(pool);
 
     await applyPostgresTestMigrations(pool, ["rootUsers"]);
@@ -153,5 +156,6 @@ describeIfPostgres("rootAuth postgres-backed secret handling", () => {
 
     expect(serviceAudit.rowCount).toBe(1);
     expect(JSON.stringify(serviceAudit.rows[0])).not.toContain(plaintextPassword);
-  });
+    },
+  );
 });

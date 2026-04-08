@@ -131,6 +131,8 @@ const authLockdownDurationSeconds = readNumberEnvOrDefault(
   "AUTH_LOCKDOWN_DURATION_SECONDS",
   900,
 );
+const resendApiKey = readEnv("RESEND_API_KEY");
+const notificationEmailFrom = readEnvOrDefault("NOTIFICATION_EMAIL_FROM", "onboarding@resend.dev");
 
 export const env = {
   nodeEnv,
@@ -187,6 +189,14 @@ export const env = {
       accountLockdownThreshold: authFailureAccountLockdownThreshold,
       ipAccountLockdownThreshold: authFailureIpAccountLockdownThreshold,
       lockdownDurationSeconds: authLockdownDurationSeconds,
+    },
+  },
+  notificationDelivery: {
+    providers: {
+      resend: {
+        apiKey: resendApiKey,
+        fromEmail: notificationEmailFrom,
+      },
     },
   },
 } as const;

@@ -6,6 +6,11 @@ Describe the implementation harness this repo is building around change work so
 that a future project can be driven from specs and controlled artifacts rather
 than from existing feature code alone.
 
+The goal is functional and compliance-aligned reconstruction, not exact
+source-file reproduction. A successful rebuild should satisfy the same
+business outcomes, NFRs, architecture boundaries, and standards obligations
+even if internal code structure differs.
+
 This document answers two questions:
 
 1. what are the implementation steps
@@ -22,7 +27,7 @@ flowchart TD
     D -->|Yes| E[ADR / architecture update]
     D -->|No| F[Continue]
     E --> F
-    F --> G[Source-independent contract artifacts\nAPI contracts\ndata dictionary\npermission mapping\nprivacy / runbook\nplatform-status]
+    F --> G[Source-independent contract artifacts\nAPI contracts\ndata dictionary\npermission mapping\nprivacy / runbook\nplatform-status\nreconstruction questionnaire\nbootstrap guide\nharness guide\nscript guide]
     G --> H[Implementation Blueprint\nhow this repo should build it]
     H --> I[PRD-derived test cases\nwhat must be proven]
     I --> J[Implementation\nsrc + tests]
@@ -53,6 +58,10 @@ flowchart TB
       C3[Permission Mapping]
       C4[Runbook / Privacy Notes]
       C5[Platform Status]
+      C6[Reconstruction Questionnaire]
+      C7[Bootstrap And Helper Guide]
+      C8[Test Harness Internals]
+      C9[Script And Helper Behavior]
     end
 
     subgraph Planning
@@ -94,7 +103,9 @@ flowchart TB
    in implementation.
 5. Create or refresh source-independent artifacts.
    This includes API contracts, persistence contracts, permission mapping,
-   privacy notes, runbooks, and platform standards snapshots where relevant.
+   privacy notes, runbooks, platform standards snapshots, reconstruction
+   questionnaire updates, bootstrap or helper docs, test harness internals, and
+   script or helper behavior docs where relevant.
 6. Translate the approved scope into an implementation blueprint.
    The blueprint explains how this repo should build the slice.
    If the PRD or source-independent contract artifacts are materially reset
@@ -112,7 +123,9 @@ flowchart TB
     stale compliance posture summaries.
     This includes architecture summaries, source-independent docs, OpenAPI,
     feature docs, and platform-status snapshots whose truth changed during the
-    slice.
+    slice, plus reconstruction-questionnaire, bootstrap-guide, harness-guide,
+    and script-guide surfaces when runtime assumptions or helper requirements
+    changed.
 
 ## What Each Artifact Is For
 
@@ -129,6 +142,18 @@ flowchart TB
 - Permission mapping:
   Source-independent authorization model when the change is permission
   sensitive.
+- Reconstruction questionnaire:
+  Source-independent record of interchangeable tools, providers, and
+  deployer-local choices without storing live secrets.
+- Bootstrap and helper guide:
+  Source-independent record of startup order, helper scripts, and runnable
+  local assumptions.
+- Test harness internals:
+  Source-independent record of reusable harness seams, fixture factories, and
+  persistence-test support structure.
+- Script and helper behavior:
+  Source-independent record of script purpose, inputs, side effects, and local
+  helper utility behavior.
 - Implementation blueprint:
   Repo-shaped build plan for one approved slice.
 - PRD test cases:

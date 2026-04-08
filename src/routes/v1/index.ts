@@ -3,6 +3,7 @@ import { createRootAuthFeature } from "../../features/rootAuth";
 import { createRootRolesFeature } from "../../features/rootRoles";
 import { createRootUserFeature } from "../../features/rootUsers";
 import { createTenantsFeature } from "../../features/tenants";
+import { createNotificationDeliveryFeature } from "../../features/notificationDelivery";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -75,6 +76,16 @@ v1Router.use(
   requireRootSession,
   authenticatedGeneralRateLimit,
   createTenantsFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/notification-delivery",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createNotificationDeliveryFeature(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,

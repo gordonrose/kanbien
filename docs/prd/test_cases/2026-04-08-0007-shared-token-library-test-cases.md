@@ -26,15 +26,16 @@
 ## Existing Test Impact
 
 - Existing executable tests likely affected:
-  - none directly yet because `src/lib/tokens/` does not exist in code today
+  - `tests/unit/tokens/oneTimeToken.test.ts`
+  - `tests/integration/tokens/flow.test.ts`
   - future auth or invitation features may later add expectation-coupled tests
-    that rely on this seam once it is implemented
+    that rely on this seam
 - Nature of impact:
-  additive first; no expectation-changing conflicts are obvious at the current
-  repo state
+  additive first; now implemented with focused executable coverage and no
+  expectation-changing conflicts obvious at the current repo state
 - Discussion needed before changing existing tests:
-  no current blocker is obvious because this is a new shared seam with no
-  executable implementation yet
+  no current blocker is obvious; future changes should treat the live token
+  seam and its executable tests as the baseline
 
 ## Unit Tests For Individual Capabilities
 

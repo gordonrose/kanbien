@@ -5,8 +5,8 @@ info:
   description: >
     OpenAPI specification for the platform API. This documents the platform
     health route, root-user authentication, root-role authorization
-    administration, the protected rootUsers feature, and the protected
-    tenants feature.
+    administration, the protected rootUsers feature, the protected tenants
+    feature, and the protected notificationDelivery feature.
 
 servers:
   - url: http://localhost:3000
@@ -18,6 +18,7 @@ tags:
   - name: Root Roles
   - name: Root Users
   - name: Tenants
+  - name: Notification Delivery
 
 paths:
   /v1/health:
@@ -1465,6 +1466,151 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /v1/notification-delivery/emails/test:
+    post:
+      tags:
+        - Notification Delivery
+      summary: Send a root-admin proof email through the notification delivery feature
+      operationId: sendNotificationDeliveryTestEmail
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendTestEmailBody"
+      responses:
+        "201":
+          description: Proof email queued and attempted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutboundEmail"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/notification-delivery/emails:
+    get:
+      tags:
+        - Notification Delivery
+      summary: List durable outbound email metadata
+      operationId: listOutboundEmails
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/OrderDirection"
+        - $ref: "#/components/parameters/NotificationDeliveryOrderBy"
+        - $ref: "#/components/parameters/NotificationDeliveryTenantId"
+        - $ref: "#/components/parameters/NotificationType"
+        - $ref: "#/components/parameters/RecipientEmail"
+        - $ref: "#/components/parameters/RelatedEntityType"
+        - $ref: "#/components/parameters/RelatedEntityId"
+        - $ref: "#/components/parameters/OutboundEmailSubject"
+        - $ref: "#/components/parameters/OutboundEmailStatus"
+        - $ref: "#/components/parameters/NotificationProvider"
+        - $ref: "#/components/parameters/CreatedByActorType"
+        - $ref: "#/components/parameters/CreatedByActorId"
+        - $ref: "#/components/parameters/RequestedAtFrom"
+        - $ref: "#/components/parameters/RequestedAtTo"
+        - $ref: "#/components/parameters/SentAtFrom"
+        - $ref: "#/components/parameters/SentAtTo"
+      responses:
+        "200":
+          description: Paginated logical outbound-email summaries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedOutboundEmails"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/notification-delivery/emails/{emailId}:
+    get:
+      tags:
+        - Notification Delivery
+      summary: Read one logical outbound email with content-version and attempt history
+      operationId: getOutboundEmail
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/NotificationEmailId"
+      responses:
+        "200":
+          description: Logical outbound email with all content versions and attempts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutboundEmail"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/notification-delivery/emails/{emailId}/resend:
+    post:
+      tags:
+        - Notification Delivery
+      summary: Explicitly resend an existing logical outbound email
+      operationId: resendOutboundEmail
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/NotificationEmailId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResendEmailBody"
+      responses:
+        "200":
+          description: Existing logical email resent with a new attempt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutboundEmail"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1499,6 +1645,14 @@ components:
 
     TenantId:
       name: tenantId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    NotificationEmailId:
+      name: emailId
       in: path
       required: true
       schema:
@@ -1582,6 +1736,15 @@ components:
         type: string
         enum: [bizId, name, category, status, createdAt, updatedAt, deletedAt]
         default: updatedAt
+
+    NotificationDeliveryOrderBy:
+      name: orderBy
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [requestedAt, sentAt, subject, recipientEmail, status]
+        default: requestedAt
 
     Email:
       name: email
@@ -1692,6 +1855,110 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/TenantCategory"
+
+    NotificationDeliveryTenantId:
+      name: tenantId
+      in: query
+      required: false
+      schema:
+        type: string
+        format: uuid
+
+    NotificationType:
+      name: notificationType
+      in: query
+      required: false
+      schema:
+        type: string
+
+    RecipientEmail:
+      name: recipientEmail
+      in: query
+      required: false
+      schema:
+        type: string
+        format: email
+
+    RelatedEntityType:
+      name: relatedEntityType
+      in: query
+      required: false
+      schema:
+        type: string
+
+    RelatedEntityId:
+      name: relatedEntityId
+      in: query
+      required: false
+      schema:
+        type: string
+
+    OutboundEmailSubject:
+      name: subject
+      in: query
+      required: false
+      schema:
+        type: string
+
+    OutboundEmailStatus:
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/OutboundEmailStatus"
+
+    NotificationProvider:
+      name: provider
+      in: query
+      required: false
+      schema:
+        type: string
+
+    CreatedByActorType:
+      name: createdByActorType
+      in: query
+      required: false
+      schema:
+        type: string
+
+    CreatedByActorId:
+      name: createdByActorId
+      in: query
+      required: false
+      schema:
+        type: string
+
+    RequestedAtFrom:
+      name: requestedAtFrom
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+
+    RequestedAtTo:
+      name: requestedAtTo
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+
+    SentAtFrom:
+      name: sentAtFrom
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
+
+    SentAtTo:
+      name: sentAtTo
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date-time
 
     TenantStatus:
       name: status
@@ -2127,6 +2394,249 @@ components:
         - totalPages
         - totalSearchableRecords
         - totalMatchingRecords
+
+    OutboundEmailChannel:
+      type: string
+      enum: [email]
+
+    OutboundEmailStatus:
+      type: string
+      enum: [pending, sent, failed]
+
+    OutboundEmailAttemptStatus:
+      type: string
+      enum: [sent, failed]
+
+    OutboundEmailLatestAttempt:
+      type: object
+      properties:
+        attemptId:
+          type: string
+          format: uuid
+        contentSnapshotId:
+          type: string
+          format: uuid
+        contentVersionNumber:
+          type: integer
+        attemptNumber:
+          type: integer
+        status:
+          $ref: "#/components/schemas/OutboundEmailAttemptStatus"
+        providerMessageId:
+          type: [string, "null"]
+        providerResponseCode:
+          type: [string, "null"]
+        providerErrorSummary:
+          type: [string, "null"]
+        attemptedAt:
+          type: string
+          format: date-time
+        resendReason:
+          type: [string, "null"]
+      required:
+        - attemptId
+        - contentSnapshotId
+        - contentVersionNumber
+        - attemptNumber
+        - status
+        - providerMessageId
+        - providerResponseCode
+        - providerErrorSummary
+        - attemptedAt
+        - resendReason
+
+    OutboundEmailSummary:
+      type: object
+      properties:
+        emailId:
+          type: string
+          format: uuid
+        channel:
+          $ref: "#/components/schemas/OutboundEmailChannel"
+        notificationType:
+          type: string
+        templateKey:
+          type: [string, "null"]
+        tenantId:
+          type: [string, "null"]
+          format: uuid
+        relatedEntityType:
+          type: [string, "null"]
+        relatedEntityId:
+          type: [string, "null"]
+        recipientEmail:
+          type: string
+          format: email
+        subject:
+          type: string
+        status:
+          $ref: "#/components/schemas/OutboundEmailStatus"
+        provider:
+          type: string
+        createdByActorType:
+          type: string
+        createdByActorId:
+          type: string
+        requestedAt:
+          type: string
+          format: date-time
+        sentAt:
+          type: [string, "null"]
+          format: date-time
+        lastAttemptAt:
+          type: [string, "null"]
+          format: date-time
+        latestAttemptStatus:
+          oneOf:
+            - $ref: "#/components/schemas/OutboundEmailAttemptStatus"
+            - type: "null"
+        attemptCount:
+          type: integer
+        latestAttempt:
+          oneOf:
+            - $ref: "#/components/schemas/OutboundEmailLatestAttempt"
+            - type: "null"
+      required:
+        - emailId
+        - channel
+        - notificationType
+        - templateKey
+        - tenantId
+        - relatedEntityType
+        - relatedEntityId
+        - recipientEmail
+        - subject
+        - status
+        - provider
+        - createdByActorType
+        - createdByActorId
+        - requestedAt
+        - sentAt
+        - lastAttemptAt
+        - latestAttemptStatus
+        - attemptCount
+        - latestAttempt
+
+    OutboundEmailContentVersion:
+      type: object
+      properties:
+        contentSnapshotId:
+          type: string
+          format: uuid
+        contentVersionNumber:
+          type: integer
+        subject:
+          type: string
+        bodyText:
+          type: string
+        containsRedactedVerificationLink:
+          type: boolean
+        containsRedactedResetLink:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - contentSnapshotId
+        - contentVersionNumber
+        - subject
+        - bodyText
+        - containsRedactedVerificationLink
+        - containsRedactedResetLink
+        - createdAt
+
+    OutboundEmailAttempt:
+      allOf:
+        - $ref: "#/components/schemas/OutboundEmailLatestAttempt"
+        - type: object
+          properties:
+            resentByActorType:
+              type: [string, "null"]
+            resentByActorId:
+              type: [string, "null"]
+          required:
+            - resentByActorType
+            - resentByActorId
+
+    OutboundEmail:
+      allOf:
+        - $ref: "#/components/schemas/OutboundEmailSummary"
+        - type: object
+          properties:
+            contentVersions:
+              type: array
+              items:
+                $ref: "#/components/schemas/OutboundEmailContentVersion"
+            attempts:
+              type: array
+              items:
+                $ref: "#/components/schemas/OutboundEmailAttempt"
+          required:
+            - contentVersions
+            - attempts
+
+    PaginatedOutboundEmails:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OutboundEmailSummary"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalSearchableRecords:
+          $ref: "#/components/schemas/CountValue"
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalSearchableRecords
+        - totalMatchingRecords
+
+    SendTestEmailBody:
+      type: object
+      additionalProperties: false
+      properties:
+        recipientEmail:
+          type: string
+          format: email
+        subject:
+          type: string
+        bodyText:
+          type: string
+        notificationType:
+          type: string
+        tenantId:
+          type: [string, "null"]
+          format: uuid
+        relatedEntityType:
+          type: [string, "null"]
+        relatedEntityId:
+          type: [string, "null"]
+      required:
+        - recipientEmail
+        - subject
+        - bodyText
+        - notificationType
+
+    ResendEmailBody:
+      type: object
+      minProperties: 1
+      properties:
+        resendReason:
+          type: string
+        subject:
+          type: string
+        bodyText:
+          type: string
+      additionalProperties: false
 
     RootAuthPasswordLoginBody:
       type: object

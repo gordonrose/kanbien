@@ -57,7 +57,7 @@ The biggest architectural gaps are still:
 - observability and enterprise operations
 - analytics / OLAP
 - generalized frontend platform
-- notifications and email
+- enterprise-grade notification and email operations
 - stronger enterprise identity controls such as MFA and SSO
 
 ## Checklist
@@ -188,11 +188,15 @@ The biggest architectural gaps are still:
 
 ### Communications And Workflow
 
-- `[26][missing]` Email platform
-  No outbound email service, template system, delivery model, or operational
-  email architecture yet.
-- `[27][missing]` Notification platform
-  No in-app, push, SMS, or notification preference system yet.
+- `[26][partial]` Email platform
+  The repo now has a root-operated outbound email foundation through
+  `notificationDelivery`, including real-provider delivery, durable logical
+  emails, sanitized content versions, and attempt history, but enterprise
+  email operations are still incomplete.
+- `[27][partial]` Notification platform
+  The repo now has an email-first notification-delivery feature foundation,
+  but no broader channel model, preference system, or tenant-facing
+  notification experience yet.
 - `[25][missing]` Workflow / orchestration layer
   No generalized multi-step business workflow engine or process orchestration
   layer yet.

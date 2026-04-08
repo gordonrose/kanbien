@@ -2,7 +2,7 @@
 
 ## Current Status
 
-- `missing`
+- `partial`
 
 ## What This Layer Should Do
 
@@ -12,10 +12,19 @@
 
 ## Implemented To Date
 
-- no email platform yet
+- `notificationDelivery` now provides:
+  - provider-agnostic outbound email delivery with `Resend` as the first live
+    adapter
+  - root-admin proof-of-working send
+  - durable logical-email, sanitized content-version, and attempt history
+  - root-admin list and exact-read metadata retrieval
+  - explicit resend
 
 ## Still Missing / Next Steps
 
-- choose provider and delivery model
-- define template ownership and rendering strategy
-- define audit, privacy, and unsubscribe/preference rules where relevant
+- background jobs and automatic retry
+- bounce and complaint webhooks
+- suppression handling
+- scheduled sending
+- richer template ownership and rendering strategy
+- tenant branding and delivery observability

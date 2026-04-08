@@ -10,7 +10,8 @@ Today the system has:
 
 - one Express application
 - one versioned API router under `/v1`
-- four mounted features: `rootAuth`, `rootRoles`, `rootUsers`, and `tenants`
+- five mounted features: `rootAuth`, `rootRoles`, `rootUsers`, `tenants`,
+  and `notificationDelivery`
 - one shared PostgreSQL connection pool
 - one migration runner that discovers feature-scoped SQL migrations
 - one shared platform security layer for headers, rate limiting, and auth abuse
@@ -66,7 +67,8 @@ Today the system has:
 Each feature lives under `src/features/<featureName>`.
 
 The active examples are `src/features/rootAuth`, `src/features/rootRoles`,
-`src/features/rootUsers`, and `src/features/tenants`.
+`src/features/rootUsers`, `src/features/tenants`, and
+`src/features/notificationDelivery`.
 Each feature follows the same internal structure:
 
 - `contract/`
@@ -149,6 +151,9 @@ Current auth model:
 
 - `rootAuth` owns root-user auth principals, SSH public keys, login challenges,
   sessions, and auth audit events
+- `notificationDelivery` owns outbound email delivery, durable outbound-email
+  metadata, sanitized content versions, and attempt history for operator and
+  future feature-owned workflows
 - `rootUsers` remains authoritative for root-user lifecycle state
 - `rootAuth` reads root-user sign-in eligibility through an exported
   `rootUsers` auth-state reader rather than `rootUsers` private persistence
