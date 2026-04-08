@@ -57,6 +57,9 @@ Today the system has:
   Shared root-session middleware and request auth context.
 - `src/lib/security/*`
   Shared rate limiting, lock-down persistence, and root-auth abuse controls.
+- `src/lib/tokens/*`
+  Shared one-time token mechanics for feature-owned verification and recovery
+  workflows.
 
 ### Features
 

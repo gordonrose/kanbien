@@ -228,6 +228,9 @@ artifacts need:
 - model/tool/version traceability for high-risk changes
 - expert-review note for AI-assisted security or compliance controls
 
+Prefer the repo-local `ai-change-reviewer` skill for creating or refreshing
+that durable review note under `docs/workspace/reviews/`.
+
 ### 8. Run standards review
 
 If the change is material, security-relevant, privacy-relevant, operationally
@@ -247,6 +250,10 @@ This is especially appropriate for:
 When standards review reveals that the repo's baseline posture has moved,
 capture that in the relevant `docs/standards/platform-status/*.md` file instead
 of leaving the standards snapshot stale.
+
+When the change is materially AI-assisted, do not treat standards review alone
+as sufficient close-out evidence. Also run the repo-local `ai-change-reviewer`
+skill so the required provenance and high-risk review note exists in the repo.
 
 ### 9. Run repo-health review
 

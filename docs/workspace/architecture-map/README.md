@@ -45,6 +45,7 @@ The repo is strongest today in:
 - backend feature-bundle architecture
 - root-user authentication and session model
 - shared platform security middleware
+- shared verification/recovery token mechanics
 - feature-owned persistence and migrations
 - build-from-spec artifact foundations such as PRDs, test-case docs, API
   contracts, and data dictionary work
@@ -106,6 +107,10 @@ The biggest architectural gaps are still:
   Current root-platform role/capability authorization now exists through
   `rootRoles`, but tenant-scoped and entity-scoped authorization remain
   unfinished.
+- `[08.5][partial]` Verification and recovery token foundation
+  A reusable stored-record one-time token seam now exists for verification and
+  password-reset-style workflows, but durable token records, delivery, and
+  consuming auth features are still missing.
 - `[09][missing]` Entity-based permissions
   No generalized per-entity or per-scope permission system yet.
 - `[28][missing]` MFA

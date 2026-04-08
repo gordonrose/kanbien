@@ -21,6 +21,10 @@ finalized architecture, PRD, or standards artifact.
 - `retrospectives/`
   Dated lessons-learned or issue-summary notes for a delivered slice when the
   repo should keep the context near other working artifacts.
+- `reviews/`
+  Dated review notes for materially AI-assisted, standards-sensitive, or
+  otherwise notable delivery slices when the repo needs a durable close-out
+  artifact beyond chat history.
 - `archive/`
   Superseded or dated working artifacts that should be kept for reference but
   are no longer active.
