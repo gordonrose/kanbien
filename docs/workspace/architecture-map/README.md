@@ -115,8 +115,9 @@ The biggest architectural gaps are still:
   unfinished.
 - `[08.5][partial]` Verification and recovery token foundation
   A reusable stored-record one-time token seam now exists for verification and
-  password-reset-style workflows, but durable token records, delivery, and
-  consuming auth features are still missing.
+  password-reset-style workflows, and consuming features now own durable token
+  records and delivery-backed verification flows, but broader recovery and
+  enterprise operations are still incomplete.
 - `[09][missing]` Entity-based permissions
   No generalized per-entity or per-scope permission system yet.
 - `[28][missing]` MFA
@@ -164,7 +165,8 @@ The biggest architectural gaps are still:
   Current routes are documented in OpenAPI.
 - `[22][present]` Source-independent API contract docs
   Route-family contract docs now exist for current `rootAuth`, `rootUsers`,
-  and `rootRoles` surfaces.
+  `rootRoles`, `tenants`, `tenantAdmins`, `notificationDelivery`, and
+  `tenantAuth` surfaces.
 - `[37][partial]` Machine-readable contract manifest strategy
   Markdown-first API contracts exist, but machine-readable contract manifests
   remain an open design question.

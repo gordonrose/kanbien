@@ -2,7 +2,7 @@
 
 ## Current Status
 
-- `missing`
+- `partial`
 
 ## What This Layer Should Do
 
@@ -12,12 +12,19 @@
 
 ## Implemented To Date
 
-- no meaningful tenant model yet
+- durable root-managed tenant lifecycle and metadata now exist through the
+  `tenants` feature
+- tenant-scoped admin profile lifecycle and verification-ready onboarding now
+  exist through `tenantAdmins`
+- shared tenant-side authentication now exists in narrow foundational form
+  through `tenantAuth`, including shared principals, access grants,
+  server-backed sessions, and tenant selection
 
 ## Still Missing / Next Steps
 
-- define tenant entity and lifecycle
-- define tenant-aware routing and context model
-- define tenant ownership across features and persistence
-- codify the layer in PRD, ADR, capability matrix, data dictionary, API
-  contracts, and tests
+- tenant-scoped authorization and entity-level permission model
+- stronger tenant isolation strategy across data, services, and operations
+- broader tenant-member model beyond tenant-admin onboarding
+- richer tenant-facing frontend and operator tooling around tenant context
+- broader workflow ownership, billing, analytics, and support layers that are
+  consistently tenant-aware

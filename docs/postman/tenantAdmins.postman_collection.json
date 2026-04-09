@@ -1,0 +1,286 @@
+{
+  "info": {
+    "_postman_id": "f566cd22-8140-4450-8bc1-fd215614a2c6",
+    "name": "Kanbien Tenant Admins",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the protected tenantAdmins feature plus the public tenant-admin verification redemption route. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises create, list, exact read, update, verification send and resend, delete, reactivate, and public verification redemption. Public redemption requires a raw token copied from the actual verification email link."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "signerUrl", "value": "http://127.0.0.1:8787" },
+    { "key": "email", "value": "elvis.presley@example.com" },
+    { "key": "password", "value": "Test1234!" },
+    { "key": "challengeId", "value": "chal_replace_me" },
+    { "key": "challengeText", "value": "challenge_text_replace_me" },
+    { "key": "publicKeyFingerprint", "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY" },
+    { "key": "sshSignature", "value": "base64_signature_over_challenge_text" },
+    { "key": "sshSignatureJson", "value": "base64_signature_over_challenge_text" },
+    { "key": "sessionToken", "value": "sess_replace_me" },
+    { "key": "tenantId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "tenantAdminId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "tenantAdminEmail", "value": "tenant.admin@example.com" },
+    { "key": "firstName", "value": "Tenant" },
+    { "key": "lastName", "value": "Admin" },
+    { "key": "updatedFirstName", "value": "Updated" },
+    { "key": "updatedLastName", "value": "Admin" },
+    { "key": "resendReason", "value": "operator requested resend" },
+    { "key": "verificationToken", "value": "replace-with-raw-token-from-email-link" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "health"]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Login Password",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/password",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "root-auth", "login", "password"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.challengeId) pm.collectionVariables.unset(\"challengeId\");",
+              "if (!json.challengeText) pm.collectionVariables.unset(\"challengeText\");",
+              "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
+              "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Sign Challenge",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeText\": \"{{challengeText}}\"\n}"
+        },
+        "url": {
+          "raw": "{{signerUrl}}/sign",
+          "host": ["{{signerUrl}}"],
+          "path": ["sign"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignature\", json.signature);",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignatureJson\", JSON.stringify(json.signature).slice(1, -1));",
+              "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Login SSH",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignatureJson}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/ssh",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "root-auth", "login", "ssh"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.sessionId) pm.collectionVariables.unset(\"sessionToken\");",
+              "if (json.sessionId) pm.collectionVariables.set(\"sessionToken\", json.sessionId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenant Admins - Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{sessionToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{tenantAdminEmail}}\",\n  \"firstName\": \"{{firstName}}\",\n  \"lastName\": \"{{lastName}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenants", "{{tenantId}}", "admins"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.tenantAdminId) pm.collectionVariables.set(\"tenantAdminId\", json.tenantAdminId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenant Admins - List",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc&emailPrefix={{tenantAdminEmail}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenants", "{{tenantId}}", "admins"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "pageSize", "value": "25" },
+            { "key": "orderBy", "value": "updatedAt" },
+            { "key": "orderDirection", "value": "desc" },
+            { "key": "emailPrefix", "value": "{{tenantAdminEmail}}" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Tenant Admins - Get",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenants", "{{tenantId}}", "admins", "{{tenantAdminId}}"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Admins - Update",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{sessionToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"{{updatedFirstName}}\",\n  \"lastName\": \"{{updatedLastName}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenants", "{{tenantId}}", "admins", "{{tenantAdminId}}"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Admins - Send Verification",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}/verification/send",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenants", "{{tenantId}}", "admins", "{{tenantAdminId}}", "verification", "send"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Admins - Resend Verification",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{sessionToken}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"resendReason\": \"{{resendReason}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}/verification/resend",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenants", "{{tenantId}}", "admins", "{{tenantAdminId}}", "verification", "resend"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Admins - Redeem Verification",
+      "description": "Public onboarding route. Paste the raw token from the verification email link into the verificationToken variable first.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"{{verificationToken}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-admin-verification/redeem",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-admin-verification", "redeem"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Admins - Delete",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}/delete",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenants", "{{tenantId}}", "admins", "{{tenantAdminId}}", "delete"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Admins - Reactivate",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}/reactivate",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenants", "{{tenantId}}", "admins", "{{tenantAdminId}}", "reactivate"]
+        }
+      }
+    }
+  ]
+}

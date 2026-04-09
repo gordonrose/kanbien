@@ -24,14 +24,20 @@
 - deterministic side-effect-free verification against caller-owned stored
   record metadata is implemented
 - focused unit and integration tests now cover the seam
+- consuming features now own durable token persistence and lifecycle state for:
+  - tenant-admin verification tokens
+  - tenant-auth password-setup bootstrap tokens
+- email delivery and app-link generation now exist through the
+  `notificationDelivery` and `tenantAdmins` foundations
 
 ## Still Missing / Next Steps
 
-- durable token-record persistence model
-- mark-used and invalidation workflow ownership in consuming features
-- email delivery and app-link generation
 - broader consuming features beyond the current tenant-admin verification and
   tenant-auth bootstrap flows, such as invite acceptance, account activation,
   and password recovery
+- additional workflow-specific token persistence models where future features
+  need them
+- broader operational tooling, retention policy, and recovery-flow hardening
+  around token-bearing workflows
 - any future stateless signed-token model, if later justified, should be a
   separate reviewed decision

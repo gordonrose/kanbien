@@ -6,8 +6,8 @@ info:
     OpenAPI specification for the platform API. This documents the platform
     health route, root-user authentication, root-role authorization
     administration, the protected rootUsers feature, the protected tenants
-    feature, the protected notificationDelivery feature, and the shared
-    tenant-auth foundation.
+    feature, the protected tenantAdmins feature, the protected
+    notificationDelivery feature, and the shared tenant-auth foundation.
 
 servers:
   - url: http://localhost:3000
@@ -19,6 +19,7 @@ tags:
   - name: Root Roles
   - name: Root Users
   - name: Tenants
+  - name: Tenant Admins
   - name: Notification Delivery
   - name: Tenant Auth
 
@@ -1613,6 +1614,346 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /v1/tenants/{tenantId}/admins:
+    post:
+      tags:
+        - Tenant Admins
+      summary: Create a tenant-admin profile inside a tenant
+      operationId: createTenantAdmin
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTenantAdminBody"
+      responses:
+        "201":
+          description: Tenant admin created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAdminSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    get:
+      tags:
+        - Tenant Admins
+      summary: List tenant-admin profiles for a tenant
+      operationId: listTenantAdmins
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/TenantAdminsOrderBy"
+        - $ref: "#/components/parameters/OrderDirection"
+        - $ref: "#/components/parameters/EmailPrefix"
+        - $ref: "#/components/parameters/FirstNamePrefix"
+        - $ref: "#/components/parameters/LastNamePrefix"
+        - $ref: "#/components/parameters/TenantAdminEmailVerificationStatus"
+        - $ref: "#/components/parameters/CreatedAtFrom"
+        - $ref: "#/components/parameters/CreatedAtTo"
+        - $ref: "#/components/parameters/UpdatedAtFrom"
+        - $ref: "#/components/parameters/UpdatedAtTo"
+      responses:
+        "200":
+          description: Paginated tenant-admin list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedTenantAdmins"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}/admins/{tenantAdminId}:
+    get:
+      tags:
+        - Tenant Admins
+      summary: Read an exact tenant-admin profile
+      operationId: getTenantAdmin
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+        - $ref: "#/components/parameters/TenantAdminId"
+      responses:
+        "200":
+          description: Tenant admin found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAdminSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags:
+        - Tenant Admins
+      summary: Update editable tenant-admin profile fields
+      operationId: updateTenantAdmin
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+        - $ref: "#/components/parameters/TenantAdminId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTenantAdminBody"
+      responses:
+        "200":
+          description: Tenant admin updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAdminSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}/admins/{tenantAdminId}/verification/send:
+    post:
+      tags:
+        - Tenant Admins
+      summary: Send a tenant-admin verification email
+      operationId: sendTenantAdminVerificationEmail
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+        - $ref: "#/components/parameters/TenantAdminId"
+      responses:
+        "200":
+          description: Verification email requested
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAdminSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "502":
+          description: Verification email provider rejected the request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Verification email provider unavailable or misconfigured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}/admins/{tenantAdminId}/verification/resend:
+    post:
+      tags:
+        - Tenant Admins
+      summary: Explicitly resend a tenant-admin verification email
+      operationId: resendTenantAdminVerificationEmail
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+        - $ref: "#/components/parameters/TenantAdminId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResendTenantAdminVerificationBody"
+      responses:
+        "200":
+          description: Verification email resent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAdminSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "502":
+          description: Verification email provider rejected the resend request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "503":
+          description: Verification email provider unavailable or misconfigured
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}/admins/{tenantAdminId}/delete:
+    post:
+      tags:
+        - Tenant Admins
+      summary: Soft-delete a tenant-admin profile
+      operationId: deleteTenantAdmin
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+        - $ref: "#/components/parameters/TenantAdminId"
+      responses:
+        "200":
+          description: Tenant admin deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAdminSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}/admins/{tenantAdminId}/reactivate:
+    post:
+      tags:
+        - Tenant Admins
+      summary: Reactivate a deleted tenant-admin profile
+      operationId: reactivateTenantAdmin
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+        - $ref: "#/components/parameters/TenantAdminId"
+      responses:
+        "200":
+          description: Tenant admin reactivated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAdminSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenant-admin-verification/redeem:
+    post:
+      tags:
+        - Tenant Admins
+      summary: Publicly redeem a tenant-admin verification token
+      operationId: redeemTenantAdminVerificationToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RedeemTenantAdminVerificationBody"
+      responses:
+        "200":
+          description: Tenant admin verified
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAdminSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "410":
+          description: Tenant-admin verification token expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /v1/tenant-auth/principals/bootstrap:
     post:
       tags:
@@ -1859,6 +2200,14 @@ components:
         type: string
         format: uuid
 
+    TenantAdminId:
+      name: tenantAdminId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
     NotificationEmailId:
       name: emailId
       in: path
@@ -1953,6 +2302,15 @@ components:
         type: string
         enum: [requestedAt, sentAt, subject, recipientEmail, status]
         default: requestedAt
+
+    TenantAdminsOrderBy:
+      name: orderBy
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [updatedAt, createdAt, email, firstName, lastName]
+        default: updatedAt
 
     Email:
       name: email
@@ -2114,6 +2472,13 @@ components:
       required: false
       schema:
         $ref: "#/components/schemas/OutboundEmailStatus"
+
+    TenantAdminEmailVerificationStatus:
+      name: emailVerificationStatus
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/TenantAdminEmailVerificationStatus"
 
     NotificationProvider:
       name: provider
@@ -2585,6 +2950,85 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/TenantListItem"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalSearchableRecords:
+          $ref: "#/components/schemas/CountValue"
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalSearchableRecords
+        - totalMatchingRecords
+
+    TenantAdminEmailVerificationStatus:
+      type: string
+      enum: [pending, verified]
+
+    TenantAdminSummary:
+      type: object
+      properties:
+        tenantAdminId:
+          type: string
+          format: uuid
+        tenantId:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        firstName:
+          type: [string, "null"]
+        lastName:
+          type: [string, "null"]
+        emailVerificationStatus:
+          $ref: "#/components/schemas/TenantAdminEmailVerificationStatus"
+        emailVerifiedAt:
+          type: [string, "null"]
+          format: date-time
+        lastVerificationEmailRequestedAt:
+          type: [string, "null"]
+          format: date-time
+        createdByRootAdminUserId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: [string, "null"]
+          format: date-time
+      required:
+        - tenantAdminId
+        - tenantId
+        - email
+        - firstName
+        - lastName
+        - emailVerificationStatus
+        - emailVerifiedAt
+        - lastVerificationEmailRequestedAt
+        - createdByRootAdminUserId
+        - createdAt
+        - updatedAt
+        - deletedAt
+
+    PaginatedTenantAdmins:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TenantAdminSummary"
         page:
           type: integer
         pageSize:
@@ -3080,6 +3524,53 @@ components:
           $ref: "#/components/schemas/TenantCategory"
         status:
           $ref: "#/components/schemas/TenantStatus"
+
+    CreateTenantAdminBody:
+      type: object
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+      required: [email]
+
+    UpdateTenantAdminBody:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+          minLength: 1
+        lastName:
+          type: string
+          minLength: 1
+
+    ResendTenantAdminVerificationBody:
+      type: object
+      additionalProperties: false
+      properties:
+        resendReason:
+          type: string
+          minLength: 1
+
+    RedeemTenantAdminVerificationBody:
+      type: object
+      additionalProperties: false
+      properties:
+        token:
+          type: string
+          minLength: 1
+      required: [token]
 
     RemoveTenantBody:
       type: object
