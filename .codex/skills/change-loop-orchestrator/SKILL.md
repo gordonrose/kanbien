@@ -20,11 +20,14 @@ Drive a change through the repo's preferred loop:
 2. write or update the PRD
 3. decide whether an ADR is required
 4. derive PRD test cases
-5. implement the change
-6. update PRD/test-case implementation status
-7. update docs affected by the change
-8. run standards-compliance review where appropriate
-9. run repo-health review where appropriate
+5. derive or refresh journey and QA gate artifacts when required
+6. implement the change
+7. run the required executable verification layers
+8. record QA evidence and human QA artifacts when required
+9. update PRD/test-case implementation status
+10. update docs affected by the change
+11. run standards-compliance review where appropriate
+12. run repo-health review where appropriate
 
 The goal is to prevent drift, missing artifacts, and partially implemented
 design decisions from accumulating over time.
@@ -147,6 +150,23 @@ Expected result:
 - layer recommendations
 - security/audit/edge coverage
 
+Also determine whether the loop requires the broader QA artifact set now used
+by the repo, including:
+
+- a journey inventory under `docs/prd/journey_inventories/`
+- executable end-to-end coverage under `tests/e2e/`
+- persistence-backed verification
+- non-functional layers such as `performance`, `resilience`,
+  `concurrency/idempotency`, `compatibility/contract`, or `accessibility`
+- structured exploratory QA
+- a curated QA checklist or test-run summary under `docs/workspace/qa/` or
+  `docs/workspace/test-run-summaries/`
+
+Use `docs/architecture/guides/qa-coverage-matrix-guide.md`,
+`docs/architecture/guides/end-to-end-journey-testing-guide.md`, and
+`docs/standards/QA-RELEASE-GATE.md` as active gate inputs when selecting these
+layers and artifacts.
+
 When the change adds or tightens authz gates on already-protected features,
 the test-case plan should also identify affected pre-existing suites that need
 review and likely updates, especially:
@@ -167,6 +187,10 @@ If the change adds or tightens role/capability gates, do not stop at adding
 new tests for the new feature alone. Also review and update affected existing
 protected-feature integration, security, and audit suites so the repo proves
 the new allow/deny boundary instead of only older session-presence behavior.
+
+Implementation is not complete when the change class requires broader QA proof
+and the loop stops at only unit or happy-path integration checks. Apply the QA
+coverage matrix and journey rules before deciding the slice is done.
 
 ### 6. Update status artifacts
 
@@ -228,6 +252,11 @@ The sweep should explicitly ask:
 - did this slice introduce a new review workflow, provenance artifact, or
   durable control pattern that changes the truth of a maintained process or
   standards snapshot?
+- did this slice introduce or materially change authentication, authorization,
+  session handling, persistent security-sensitive entities, auditability,
+  privacy posture, or other standards-relevant controls that change the truth
+  of a maintained standards snapshot even if the headline status level remains
+  `Partial`?
 - did this slice change any registry or index surface that inventories current
   docs, features, entities, or platform layers?
 
@@ -255,6 +284,18 @@ If the implementation changed the truth of a maintained status snapshot but the
 headline status level did not change, still refresh the wording when needed so
 the snapshot does not lag the repo's actual current state.
 
+Do not limit the standards-baseline sweep to new vendors or review notes.
+Treat any material change to the repo's current control posture as an expected
+prompt to review `docs/standards/platform-status/`, especially when a slice
+adds or materially changes:
+
+- authentication or onboarding flows
+- authorization or permission enforcement
+- session issuance, transport, or revocation
+- durable audit visibility
+- persistent security-sensitive entities or secrets-adjacent workflows
+- privacy-significant data movement or retention behavior
+
 When the change is materially AI-assisted, also check whether the supporting
 artifacts need:
 
@@ -265,6 +306,17 @@ artifacts need:
 
 Prefer the repo-local `ai-change-reviewer` skill for creating or refreshing
 that durable review note under `docs/workspace/reviews/`.
+
+Also confirm whether the loop now requires QA control artifacts beyond code and
+tests, especially:
+
+- `docs/workspace/qa/*-qa-checklist.md`
+- `docs/workspace/qa/*-exploratory-qa-note.md`
+- `docs/workspace/qa/*-qa-waiver-or-quarantine.md`
+- `docs/workspace/test-run-summaries/*.md`
+
+Do not leave those out when the QA release gate or coverage matrix makes them
+part of the expected evidence chain.
 
 ### 8. Run standards review
 
@@ -303,6 +355,11 @@ This is the final "did we leave the repo in a healthy state?" pass.
 Before declaring success on a material backend slice, explicitly confirm:
 
 - implementation and tests landed
+- required QA layers from the coverage matrix landed and passed
+- required journey inventory and end-to-end coverage were refreshed when the
+  workflow or state machine changed
+- required QA checklist, exploratory note, curated run summary, or waiver
+  record exist when the change class triggers them
 - OpenAPI and Postman are aligned when routes changed
 - feature docs and data dictionary are aligned when feature or persistence
   behavior changed

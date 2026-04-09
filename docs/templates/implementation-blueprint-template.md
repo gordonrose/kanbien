@@ -18,6 +18,9 @@ plan without losing architecture, tests, docs, or standards coverage.
 - PRD:
 - ADR(s):
 - PRD test-case doc:
+- Journey inventory:
+- QA coverage matrix classification:
+- QA release-gate expectation:
 
 ## Frontend Plan
 
@@ -45,6 +48,7 @@ plan without losing architecture, tests, docs, or standards coverage.
 
 ## Verification Plan
 
+- Journey tier / workflow scope:
 - Unit:
 - Integration:
 - Security:
@@ -52,6 +56,16 @@ plan without losing architecture, tests, docs, or standards coverage.
 - Edge:
 - Frontend:
 - Persistence-backed:
+- End-to-end:
+- Concurrency / idempotency:
+- Performance:
+- Resilience / failure-injection:
+- Compatibility / contract:
+- Accessibility:
+- Structured exploratory QA:
+- QA checklist:
+- Curated test-run summary:
+- Waiver / quarantine expectation:
 
 ## Documentation Plan
 
@@ -64,6 +78,9 @@ plan without losing architecture, tests, docs, or standards coverage.
 - Data dictionary:
 - Architecture map:
 - Standards platform-status snapshots:
+  list which files under `docs/standards/platform-status/` must be reviewed
+  because the slice changes their current wording or evidence story, even if
+  the headline status level may stay the same
 - Reconstruction questionnaire:
 - Bootstrap and helper docs:
 - Maintained-artifacts sweep:
@@ -74,3 +91,9 @@ plan without losing architecture, tests, docs, or standards coverage.
 - Privacy note:
 - Standards review:
 - Repo health review:
+
+## Completion Guardrails
+
+- Blocking QA outcomes:
+- Explicitly deferred verification layers and rationale:
+- Expected release-gate residual risk statement:

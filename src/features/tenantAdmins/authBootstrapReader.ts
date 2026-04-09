@@ -83,7 +83,10 @@ export function createTenantAdminsAuthBootstrapReader(
         throw new TenantAdminVerificationTokenInvalidError();
       }
 
-      await repository.markVerificationTokenUsed(record.tokenId);
+      const consumed = await repository.consumeVerificationToken(record.tokenId);
+      if (!consumed) {
+        throw new TenantAdminVerificationTokenInvalidError();
+      }
       const verified =
         tenantAdmin.emailVerificationStatus === "verified"
           ? tenantAdmin

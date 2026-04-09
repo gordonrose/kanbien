@@ -32,5 +32,6 @@ export interface TenantAdminsRepository {
   attachOutboundEmailToVerificationToken(tokenId: string, outboundEmailId: string): Promise<void>;
   markVerificationEmailRequested(tenantAdminId: string, requestedAt: Date): Promise<TenantAdminData>;
   markVerificationTokenUsed(tokenId: string): Promise<void>;
+  consumeVerificationToken(tokenId: string): Promise<boolean>;
   markVerified(tenantAdminId: string): Promise<TenantAdminData>;
 }

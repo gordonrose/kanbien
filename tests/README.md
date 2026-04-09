@@ -24,10 +24,16 @@ Persistence-backed test environment setup is documented in
   Isolated capability tests with minimal dependencies.
 - `tests/integration/<area>/`
   Multi-module or cross-feature tests.
+- `tests/e2e/<area>/`
+  Multi-step end-to-end journey tests for customer or operator workflows that
+  cross capability boundaries or rely on durable workflow state.
 - `tests/security/<area>/`
   Security-focused tests when a dedicated folder becomes useful.
 - `tests/audit/<area>/`
   Audit or logging-focused tests when a dedicated folder becomes useful.
+- `tests/performance/<area>/`
+  Performance, stress, soak, or non-functional behavior checks when a
+  dedicated folder becomes useful.
 
 ## Current Convention
 
@@ -36,3 +42,5 @@ Persistence-backed test environment setup is documented in
 - Test-only factories and durable data helpers belong under `tests/harness/`.
 - PRD-derived executable tests should still live under their recommended test
   layer, even when they depend on shared harness utilities.
+- End-to-end journey tests should repeat reviewed `JY-*` journey IDs in the
+  test name or a nearby executable comment.

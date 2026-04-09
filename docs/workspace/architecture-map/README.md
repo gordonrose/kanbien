@@ -49,7 +49,8 @@ The repo is strongest today in:
 - shared verification/recovery token mechanics
 - feature-owned persistence and migrations
 - build-from-spec artifact foundations such as PRDs, test-case docs, API
-  contracts, and data dictionary work
+  contracts, data dictionary work, and the newer QA release-gate and journey
+  evidence chain
 
 The biggest architectural gaps are still:
 
@@ -73,7 +74,8 @@ The biggest architectural gaps are still:
   explicit mounting and narrow cross-feature seams.
 - `[03][present]` Build-from-spec artifact chain foundation
   PRDs, PRD test-case docs, capability matrices, API contracts, data
-  dictionary, workspace artifacts, and aligned repo-local skills now exist.
+  dictionary, workspace artifacts, QA operating artifacts, and aligned
+  repo-local skills now exist.
 - `[04][partial]` Implementation-blueprint layer
   Template and skill now exist, but populated blueprints are not yet a mature
   recurring artifact set.

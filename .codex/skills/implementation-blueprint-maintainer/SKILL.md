@@ -110,6 +110,7 @@ It should make these things explicit:
 - which persistence objects and migrations are needed
 - which docs must be updated as part of the same slice
 - which test layers are required
+- which journey inventory, QA gate, and curated QA artifacts are required
 - which standards or audit expectations must be preserved
 - whether materially AI-assisted implementation work will need provenance,
   verification, or high-risk review evidence
@@ -185,6 +186,13 @@ does not omit required supporting artifacts such as:
 - updates to affected pre-existing protected-feature integration, security, and
   audit tests when the slice adds or tightens authz gates on routes the repo
   already exposes
+- journey inventories and executable `tests/e2e/` slices when the workflow
+  changes in a way the repo's E2E policy covers
+- QA checklist, exploratory QA note, curated test-run summary, and waiver or
+  quarantine artifact when the QA release gate or coverage matrix requires them
+- non-functional verification layers such as `performance`, `resilience`,
+  `concurrency/idempotency`, `compatibility/contract`, and `accessibility`
+  when triggered by the change class
 
 For backend slices that add routes, durable entities, or materially change
 security posture, the blueprint should default to naming all of these output
@@ -206,6 +214,12 @@ surfaces explicitly:
 If one of those is intentionally out of scope, the blueprint should say why
 instead of silently leaving the artifact class out.
 
+Also use `docs/architecture/guides/qa-coverage-matrix-guide.md`,
+`docs/architecture/guides/end-to-end-journey-testing-guide.md`, and
+`docs/standards/QA-RELEASE-GATE.md` as active inputs. Do not let the blueprint
+fall back to a thinner older verification model when the current repo standard
+requires broader QA coverage.
+
 5. Write the blueprint.
 Produce a build-ready Markdown artifact under
 `docs/workspace/implementation-blueprints/`.
@@ -219,9 +233,29 @@ Also call out when implementation should be expected to update a file under
 `docs/standards/platform-status/` because the slice is likely to move the
 repo's current standards baseline.
 
+Do not treat this as only a vendor or review-workflow question.
+Also call it out when the slice is likely to change the truth of a current
+standards snapshot through implemented control changes such as:
+
+- new authentication or onboarding flows
+- new authorization or permission boundaries
+- new session models or session transports
+- new durable audit behaviors
+- new persistent security-sensitive entities or workflows
+- new privacy-significant data flows or retention implications
+
 Also call out when implementation should be expected to refresh earlier
 planning or registry docs purely because the implementation will change their
 truth value, even if no behavioral change is needed in those documents.
+
+Also call out when implementation should be expected to produce blocking-gate
+QA evidence beyond executable test files, such as:
+
+- a journey inventory refresh
+- a curated QA checklist
+- a structured exploratory QA note
+- a curated test-run summary
+- an explicit waiver or quarantine record when an exception is expected
 
 ## Writing Rules
 

@@ -13,6 +13,7 @@ AI-assisted development, and AI-related product changes.
 - `GDPR-DATA-TRANSFER-GATE.md`
 - `EU-AI-ACT-GATE.md`
 - `AI-ASSISTED-DEVELOPMENT-GATE.md`
+- `QA-RELEASE-GATE.md`
 - `change-artifact-requirements.md`
 - `platform-status/`
 
@@ -68,6 +69,14 @@ Use for:
 - prompt/data-handling controls for development use
 - independent verification and deterministic evidence expectations
 - high-risk reviewer controls for AI-assisted security or compliance changes
+
+### `QA-RELEASE-GATE.md`
+Use for:
+- release readiness beyond artifact completeness
+- blocking-defect and flaky-suite expectations
+- layer-complete QA review
+- waiver and quarantine discipline
+- defect feedback into stronger coverage rules
 
 ### `change-artifact-requirements.md`
 Use for:
@@ -147,6 +156,8 @@ Examples:
 - materially AI-assisted implementation work may require the AI-assisted
   development gate even when the shipped feature has no AI capability
 - new authentication flow likely requires SSDF, ASVS, CSF, ISO, and possibly GDPR review
+- high-risk workflow or release-critical change likely also requires the QA
+  release gate
 - vendor-hosted AI feature likely requires all product and operational gates,
   and may also require the AI-assisted development gate if the implementation
   itself materially relied on generative AI

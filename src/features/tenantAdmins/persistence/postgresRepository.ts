@@ -394,6 +394,19 @@ export function createPostgresTenantAdminsRepository(dbPool: Pool): TenantAdmins
         [tokenId],
       );
     },
+    async consumeVerificationToken(tokenId) {
+      const result = await dbPool.query(
+        `
+          UPDATE tenant_admin_verification_token
+          SET used_at = NOW()
+          WHERE token_id = $1
+            AND used_at IS NULL
+            AND invalidated_at IS NULL
+        `,
+        [tokenId],
+      );
+      return (result.rowCount ?? 0) === 1;
+    },
     async markVerified(tenantAdminId) {
       const result = await dbPool.query<TenantAdminRecord>(
         `

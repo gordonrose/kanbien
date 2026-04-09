@@ -325,6 +325,17 @@ export function createInMemoryTenantAdminsRepository(
         usedAt: new Date("2026-04-08T08:00:00.000Z"),
       });
     },
+    async consumeVerificationToken(tokenId) {
+      const token = verificationTokens.get(tokenId) ?? null;
+      if (!token || token.usedAt !== null || token.invalidatedAt !== null) {
+        return false;
+      }
+      verificationTokens.set(tokenId, {
+        ...token,
+        usedAt: new Date("2026-04-08T08:00:00.000Z"),
+      });
+      return true;
+    },
     async markVerified(tenantAdminId) {
       const current = records.get(tenantAdminId)!;
       const next = {

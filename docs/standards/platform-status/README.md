@@ -41,10 +41,14 @@ having to reconstruct the control set manually.
 - `GDPR-DATA-TRANSFER-STATUS.md`
 - `EU-AI-ACT-STATUS.md`
 - `AI-ASSISTED-DEVELOPMENT-STATUS.md`
+- `QA-RELEASE-STATUS.md`
 
 ## Use
 
 - update these snapshots after major architectural or platform changes
+- also update them after major verification, QA-governance, or evidence-posture
+  changes when the repo can now support a stronger or more precise statement of
+  current control confidence
 - use them during PRD, ADR, and architecture review to understand the current
   baseline
 - prefer keeping the checklist wording aligned with the source gate so drift is

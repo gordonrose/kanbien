@@ -264,4 +264,96 @@ describe("tenantAuth feature flow", () => {
     );
     expect(session.body.availableTenantContexts).toHaveLength(1);
   });
+
+  it("TC-TENANT-AUTH-UNIT-006 keeps tenant selection idempotent when the already-active tenant is selected again", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const mounted = mountTenantAuthFeature(harness.app, harness);
+    mounted.tenantAdminsRepository.records.set(
+      "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      createTenantAdminRecord({
+        tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        email: "idempotent@example.com",
+        normalizedEmail: "idempotent@example.com",
+        emailVerificationStatus: "pending",
+      }),
+    );
+    mounted.tenantAdminsRepository.records.set(
+      "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+      createTenantAdminRecord({
+        tenantAdminId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        email: "idempotent@example.com",
+        normalizedEmail: "idempotent@example.com",
+        emailVerificationStatus: "verified",
+      }),
+    );
+
+    const verificationToken = await issueTenantAdminVerificationToken(
+      mounted.tenantAdminsRepository,
+      { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
+    );
+    const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenant-auth/principals/bootstrap",
+      body: { verificationToken },
+    });
+    await invokeJson(harness.app, {
+      method: "POST",
+      path: "/v1/tenant-auth/password/setup",
+      body: {
+        bootstrapToken: bootstrap.body.bootstrapToken,
+        newPassword: "@Password1!",
+        repeatPassword: "@Password1!",
+      },
+    });
+
+    const login = await invokeJson<{ sessionId: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenant-auth/login/password",
+      body: {
+        email: "idempotent@example.com",
+        password: "@Password1!",
+      },
+    });
+
+    const firstSelection = await invokeJson<{
+      selectionRequired: boolean;
+      activeTenantContext: { tenantId: string } | null;
+      availableTenantContexts: Array<{ tenantId: string; isActive: boolean }>;
+    }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenant-auth/tenant-selection",
+      headers: { authorization: `Bearer ${login.body.sessionId}` },
+      body: { tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" },
+    });
+    expect(firstSelection.status).toBe(200);
+    expect(firstSelection.body.activeTenantContext?.tenantId).toBe(
+      "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    );
+
+    const repeatedSelection = await invokeJson<{
+      status: string;
+      selectionRequired: boolean;
+      activeTenantContext: { tenantId: string } | null;
+      availableTenantContexts: Array<{ tenantId: string; isActive: boolean }>;
+    }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenant-auth/tenant-selection",
+      headers: { authorization: `Bearer ${login.body.sessionId}` },
+      body: { tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" },
+    });
+
+    expect(repeatedSelection.status).toBe(200);
+    expect(repeatedSelection.body.status).toBe("AUTHENTICATED_SINGLE_TENANT");
+    expect(repeatedSelection.body.selectionRequired).toBe(false);
+    expect(repeatedSelection.body.activeTenantContext?.tenantId).toBe(
+      "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    );
+    expect(
+      repeatedSelection.body.availableTenantContexts.find(
+        (item) => item.tenantId === "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      )?.isActive,
+    ).toBe(true);
+  });
 });

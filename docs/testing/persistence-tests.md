@@ -96,8 +96,8 @@ npm run test:persistence:reset
 - Both `npm run test:persistence` and `npm run test:persistence:preserve`
   encode that serialized execution behavior directly.
 - The current persistence suite includes `rootAuth` storage proofs,
-  `rootUsers` repository/storage proofs, and platform-security durability
-  proofs.
+  `rootUsers` repository/storage proofs, `tenantAuth` storage/session proofs,
+  and platform-security durability proofs.
 - It also includes persistence-backed audit checks where we need to verify that
   durable audit rows do not store sensitive raw secrets.
 - During `npm test`, the fast in-memory suite still runs first and the

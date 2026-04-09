@@ -30,6 +30,7 @@ import {
   createTenantAdminRecord,
   createVisibleTenantsReader,
 } from "./tenantAdminsHarness";
+import type { VisibleTenantsReader } from "../../src/features/tenants";
 import type { RootAuthIntegrationHarness } from "../harness/rootAuth/integrationHarness";
 
 function normalizeEmail(value: string): string {
@@ -298,6 +299,36 @@ export function createInMemoryTenantAuthRepository(
         usedAt: new Date("2026-04-09T01:20:00.000Z"),
       });
     },
+    async completePasswordSetup(input) {
+      const principal = principals.get(input.authPrincipalId) ?? null;
+      if (!principal) {
+        return "principal_not_found";
+      }
+      if (principal.passwordState === "active") {
+        return "password_already_set";
+      }
+      const token = passwordSetupTokens.get(input.tokenId) ?? null;
+      if (
+        !token ||
+        token.authPrincipalId !== input.authPrincipalId ||
+        token.usedAt !== null ||
+        token.invalidatedAt !== null
+      ) {
+        return "token_not_active";
+      }
+
+      passwordSetupTokens.set(input.tokenId, {
+        ...token,
+        usedAt: new Date("2026-04-09T01:20:00.000Z"),
+      });
+      passwordHashes.set(input.authPrincipalId, input.newPassword);
+      principals.set(input.authPrincipalId, {
+        ...principal,
+        passwordState: "active",
+        updatedAt: new Date(input.passwordSetAt),
+      });
+      return "updated";
+    },
     async setPassword(authPrincipalId, newPassword, passwordSetAt) {
       passwordHashes.set(authPrincipalId, newPassword);
       const principal = principals.get(authPrincipalId)!;
@@ -415,6 +446,7 @@ export function mountTenantAuthFeature(
   options?: {
     tenantAuthRepository?: ReturnType<typeof createInMemoryTenantAuthRepository>;
     tenantAdminsRepository?: ReturnType<typeof createInMemoryTenantAdminsRepository>;
+    visibleTenantsReader?: VisibleTenantsReader;
   },
 ) {
   const tenantAuthRepository =
@@ -423,10 +455,12 @@ export function mountTenantAuthFeature(
     options?.tenantAdminsRepository ?? createInMemoryTenantAdminsRepository();
   const tenantAdminsAuthBootstrapReader =
     createTenantAdminsAuthBootstrapReader(tenantAdminsRepository);
-  const visibleTenantsReader = createVisibleTenantsReader([
-    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
-    "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
-  ]);
+  const visibleTenantsReader =
+    options?.visibleTenantsReader ??
+    createVisibleTenantsReader([
+      "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    ]);
   const service = createTenantAuthService(
     tenantAuthRepository,
     tenantAdminsAuthBootstrapReader,

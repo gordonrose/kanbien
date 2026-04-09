@@ -8,8 +8,12 @@ Source gate: [`NIST-SSDF-GATE.md`](/home/gordon/kanbien/docs/standards/NIST-SSDF
 - Summary:
   The repo has strong early work in secure design discipline, backend
   structure, artifact traceability, and security-sensitive testing intent.
-  It is still weak in deployment/release integrity, observability maturity, and
-  broader vulnerability-response readiness.
+  It now also has stronger feature-chain evidence for root auth, outbound email,
+  tenant-admin verification, and shared tenant-side authentication. It is still
+  weak in deployment/release integrity, observability maturity, and broader
+  vulnerability-response readiness, but the QA release-gate, coverage-matrix,
+  journey-inventory, and curated-QA-artifact work has materially improved the
+  repo's verification and review posture.
 
 ## 1. Preparation And Governance
 
@@ -32,12 +36,14 @@ Source gate: [`NIST-SSDF-GATE.md`](/home/gordon/kanbien/docs/standards/NIST-SSDF
 ## 2. Secure Design
 
 - `Pass` The design includes trust boundaries, data flows, and privileged operations.
-  Current docs clearly define privileged root-user trust boundaries and auth
+  Current docs clearly define privileged root-user flows, tenant-admin
+  onboarding proof, outbound email delivery boundaries, and tenant-side auth
   flows.
 - `Pass` Authentication, authorization, input validation, data protection, and audit needs are identified up front.
   Auth, validation, and audit are strong; current root-platform authorization
-  is now executable through `rootRoles`, though the lasting tenant-scale
-  architecture remains incomplete.
+  is executable through `rootRoles`, and tenant-side auth/session foundations
+  now exist too, though the lasting tenant-scale authorization architecture
+  remains incomplete.
 - `Partial` The design follows least privilege.
   Good direction exists, but the current root-user boundary is still coarse and
   not yet backed by a full permission model.
@@ -54,8 +60,8 @@ Source gate: [`NIST-SSDF-GATE.md`](/home/gordon/kanbien/docs/standards/NIST-SSDF
 - `Pass` The change follows approved coding patterns and existing platform boundaries.
   Current backend slices align well with feature-bundle rules.
 - `Pass` Security-sensitive logic is centralized rather than scattered.
-  Auth, session, shared security middleware, and current root capability
-  enforcement are centralized appropriately.
+  Auth, session, shared security middleware, token handling, outbound delivery,
+  and current root capability enforcement are centralized appropriately.
 - `Pass` Unsafe debug behavior, plaintext secret logging, and insecure defaults are absent.
   No obvious insecure debugging posture is present in the current implemented
   slices.
@@ -71,16 +77,23 @@ Source gate: [`NIST-SSDF-GATE.md`](/home/gordon/kanbien/docs/standards/NIST-SSDF
 - `Pass` The change has tests for expected behavior.
   Strong PRD/test-case structure exists and implemented features have tests.
 - `Pass` The change has tests for failure and abuse cases.
-  This is explicitly expected in the repo process and visible in auth work.
+  This is explicitly expected in the repo process and visible in auth,
+  verification-token, email-delivery, tenant-admin, and tenant-auth work.
 - `Partial` Security-critical branches are covered by deterministic tests.
-  Current posture is improving, but not yet broad enough across all future
-  layers to count as strong enterprise coverage.
+  Current posture is improving materially, with clearer planning for
+  auth/session, journey, persistence-backed, concurrency, and non-functional
+  verification, but it is not yet broad enough across all future layers to
+  count as strong enterprise coverage.
 - `Partial` Static analysis, linting, and dependency checks are run where available.
   Some quality gates likely exist, but this is not yet documented as a mature
   secure-SDLC evidence trail.
 - `Pass` Review includes security review, not just functional review.
   Standards gates and security-focused skills make this explicit in the repo
   process.
+- `Partial` Verification expectations are selected deterministically rather than ad hoc.
+  The repo now has an explicit QA coverage matrix, release gate, and QA
+  operating cadence, but these are still newer than much of the older feature
+  inventory and are not yet institutionalized across every slice.
 
 ## 5. Build And Release Integrity
 

@@ -17,7 +17,13 @@ Required:
 - capability matrix rows
 - PRD or PRD refinement
 - PRD-derived test-case doc
+- end-to-end journey scenario inventory when the slice changes a meaningful
+  customer or operator workflow, state-transition path, tenant or role
+  variation, remediation or recovery flow, or another multi-step journey
 - executable tests at the required layers
+- QA release-gate review when the change is material enough to affect blocking
+  workflow or release confidence
+- QA coverage-matrix classification naming the required verification layers
 - feature docs update when behavior is user-facing or operator-relevant
 - traceability-clean mapping between active PRD-derived `TC-*` IDs and
   executable tests, unless an explicit deferred or pending-review posture is
@@ -37,6 +43,12 @@ Consider:
 - runbook/privacy note if security, operator flow, or personal data changes
 - reconstruction questionnaire or bootstrap-guide update if runtime
   dependencies, interchangeable tools, or required local helpers changed
+- structured exploratory QA note for high-risk changes when deterministic
+  automation alone is not sufficient
+- QA checklist, defect-feedback review, or waiver/quarantine record when the
+  slice needs those controls to satisfy the QA release gate
+- curated source-controlled test-run summary when the slice is used as a
+  blocking-gate, standards-evidence, or reusable QA example
 
 ### Full vertical slice
 
@@ -45,6 +57,7 @@ Required:
 - capability matrix rows
 - PRD
 - PRD-derived test-case doc
+- end-to-end journey scenario inventory
 - frontend description
 - backend contract description
 - persistence impact description
@@ -126,6 +139,9 @@ To make a capability reconstructable from docs and templates, document:
 - persistence impact
 - security, privacy, and audit expectations
 - verification layers
+- end-to-end journey requirements and tier when applicable
+- QA coverage-matrix classification and required human QA artifacts when
+  applicable
 - docs and operational artifacts required
 
 ## Documentation Update Rule
@@ -134,6 +150,9 @@ When a change lands, update the affected combination of:
 
 - PRD
 - PRD-derived test-case doc
+- end-to-end journey scenario inventory when required by the testing policy
+- QA checklist, exploratory note, waiver/quarantine record, and curated test
+  summary when required by the QA release gate or coverage matrix
 - relevant feature docs
 - architecture guides or ADRs
 - runbook
@@ -163,6 +182,10 @@ At minimum, check:
 - `docs/standards/platform-status/` files whose truth changed because of a new
   vendor, service, processor, dependency, review workflow, or
   standards-relevant control improvement
+- `docs/standards/platform-status/` files whose wording became stale because a
+  slice materially changed the implemented control posture for authentication,
+  authorization, session management, auditability, privacy handling, or other
+  standards-gated behavior even when the headline status remains the same
 - README, index, inventory, and registry docs that summarize current platform
   capabilities, artifact sets, or entity inventories
 
@@ -182,6 +205,102 @@ Typical examples:
   before treating implementation as current
 
 Treat stale downstream artifacts after an upstream reset as drift.
+
+## End-To-End Journey Gate
+
+For every feature loop, explicitly determine whether end-to-end journey testing
+is required.
+
+In this repo, the default posture is:
+
+- all features have end-to-end testing expectations
+- the depth and tier may vary, but the requirement itself is not optional
+
+Required for every feature loop:
+
+- identify affected journeys
+- classify journey tier where relevant
+- identify workflow state dimensions that can change outcome
+- classify each dimension as behavior-changing, non-behavior-changing, or
+  pending-review
+- define equivalence classes for each behavior-changing dimension
+- review lifecycle, deletion/disablement, revocation, expiry, and credible
+  operator-induced state changes for inclusion rather than exclusion
+- define meaningful permutations, including tenant and role variation when the
+  feature can behave differently across them
+- define default pairwise coverage across behavior-changing dimensions and any
+  required higher-order interactions
+- include legacy/pre-change and post-change data states when behavior can differ
+- record known-pitfall research and add missing journey coverage where needed
+- ensure executable end-to-end tests or explicitly reviewed deferred posture
+  exist before considering the loop complete
+- identify required non-E2E layers from the QA coverage matrix when the change
+  class triggers them
+- identify required human QA artifacts such as checklist, exploratory note,
+  run summary, or waiver record when the gate requires them
+
+Default durable locations:
+
+- journey inventories:
+  `docs/prd/journey_inventories/`
+- executable end-to-end tests:
+  `tests/e2e/`
+- curated source-controlled run summaries:
+  `docs/workspace/test-run-summaries/`
+
+A feature loop is incomplete when:
+
+- the journey inventory changed but the end-to-end scenarios were not updated
+- the journey inventory does not explain the threshold for omitted permutations
+- lifecycle or credible operator-induced journey classes were silently excluded
+  rather than explicitly covered or deferred
+- required end-to-end traces are missing from the planned artifact chain
+- required end-to-end tests are flaky and unresolved without approved exception
+- the QA coverage-matrix classification was not recorded
+- required non-functional or human-QA artifacts were silently omitted even
+  though the change class triggered them
+
+## End-To-End Traceability Rule
+
+When end-to-end journey coverage is required, traceability must link:
+
+- capability matrix rows
+- PRD or PRD refinement
+- PRD-derived test cases where applicable
+- journey scenario inventory
+- executable end-to-end tests
+- curated run summaries when those runs are part of the reviewed gate or audit
+
+## Feature Loop Default
+
+For a material change, do not fall back to an older thin loop that stops at
+PRD, PRD-derived test cases, and a small hand-picked test run.
+
+The default feature loop should explicitly determine and document:
+
+- the QA coverage-matrix classification
+- the journey inventory requirement and journey tier
+- the required executable layer set
+- the required human QA artifacts
+- the required curated gate evidence
+
+If the recorded change-class classification says a broader QA layer or artifact
+is not required, record that decision explicitly rather than silently omitting
+it.
+
+Do not treat end-to-end tests as disposable implementation details when they
+are part of the reviewed verification plan.
+
+## QA Release-Gate Rule
+
+When a change affects blocking workflows, high-risk domains, or production
+confidence materially, the repo also requires review against:
+
+- [QA Release Gate](/home/gordon/kanbien/docs/standards/QA-RELEASE-GATE.md)
+
+And supporting layer selection from:
+
+- [QA Coverage Matrix Guide](/home/gordon/kanbien/docs/architecture/guides/qa-coverage-matrix-guide.md)
 
 ## PRD Test-Case Override Gate
 

@@ -109,6 +109,53 @@ describe("tenantAuth service", () => {
     ).toBe("active");
   });
 
+  it("TC-TENANT-AUTH-UNIT-002 rejects reused password-setup proof after the first successful password write", async () => {
+    const tenantAuthRepository = createInMemoryTenantAuthRepository({
+      principals: [
+        createTenantAuthPrincipalRecord({
+          authPrincipalId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+          loginEmail: "tenant-admin@example.com",
+          normalizedLoginEmail: "tenant-admin@example.com",
+          passwordState: "setup_required",
+        }),
+      ],
+    });
+    const tenantAdminsRepository = createInMemoryTenantAdminsRepository();
+    const service = createTenantAuthService(
+      tenantAuthRepository,
+      createTenantAdminsAuthBootstrapReader(tenantAdminsRepository),
+      createVisibleTenantsReader(),
+    );
+    const setupMaterial = await import("../../../src/lib/tokens").then(({ createOneTimeTokenMaterial }) =>
+      createOneTimeTokenMaterial({ purpose: "password_setup", ttlSeconds: 3600 }),
+    );
+
+    await tenantAuthRepository.createPasswordSetupToken({
+      tenantPasswordSetupTokenId: "abababab-abab-4aba-8aba-abababababab",
+      authPrincipalId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+      sourceTenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      tokenId: setupMaterial.tokenId,
+      secretHash: setupMaterial.secretHash,
+      expiresAt: setupMaterial.expiresAt,
+    });
+
+    await service.setInitialPassword({
+      bootstrapToken: setupMaterial.rawToken,
+      newPassword: "@Password1!",
+      repeatPassword: "@Password1!",
+    });
+
+    await expect(
+      service.setInitialPassword({
+        bootstrapToken: setupMaterial.rawToken,
+        newPassword: "@Password1!",
+        repeatPassword: "@Password1!",
+      }),
+    ).rejects.toMatchObject({
+      code: "TENANT_AUTH_PASSWORD_SETUP_INVALID",
+    });
+  });
+
   it("TC-TENANT-AUTH-UNIT-003 returns onboarding required when no principal exists but verified tenant-admin evidence does", async () => {
     const tenantAdminsRepository = createInMemoryTenantAdminsRepository([
       createTenantAdminRecord({
@@ -349,6 +396,80 @@ describe("tenantAuth service", () => {
 
     expect(result.selectionRequired).toBe(false);
     expect(result.activeTenantContext?.tenantId).toBe("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+  });
+
+  it("TC-TENANT-AUTH-UNIT-006 behaves idempotently when the requested tenant is already active", async () => {
+    const tenantAdminsRepository = createInMemoryTenantAdminsRepository([
+      createTenantAdminRecord({
+        tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        email: "tenant-admin@example.com",
+        normalizedEmail: "tenant-admin@example.com",
+        emailVerificationStatus: "verified",
+      }),
+      createTenantAdminRecord({
+        tenantAdminId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        email: "tenant-admin@example.com",
+        normalizedEmail: "tenant-admin@example.com",
+        emailVerificationStatus: "verified",
+      }),
+    ]);
+    const tenantAuthRepository = createInMemoryTenantAuthRepository({
+      principals: [
+        createTenantAuthPrincipalRecord({
+          authPrincipalId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+          loginEmail: "tenant-admin@example.com",
+          normalizedLoginEmail: "tenant-admin@example.com",
+          passwordState: "active",
+        }),
+      ],
+      accessGrants: [
+        createTenantAccessGrantRecord({
+          tenantAccessGrantId: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+          authPrincipalId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+          tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          subjectId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        }),
+        createTenantAccessGrantRecord({
+          tenantAccessGrantId: "ffffffff-ffff-4fff-8fff-ffffffffffff",
+          authPrincipalId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+          tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+          subjectId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        }),
+      ],
+      sessions: [
+        createTenantSessionRecord({
+          sessionId: "12121212-1212-4212-8212-121212121212",
+          authPrincipalId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+          activeTenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+          selectionRequired: false,
+        }),
+      ],
+      passwordSetPrincipals: ["dddddddd-dddd-4ddd-8ddd-dddddddddddd"],
+    });
+    const service = createTenantAuthService(
+      tenantAuthRepository,
+      createTenantAdminsAuthBootstrapReader(tenantAdminsRepository),
+      createVisibleTenantsReader([
+        "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      ]),
+    );
+
+    const before = tenantAuthRepository.sessions.get("12121212-1212-4212-8212-121212121212");
+    const result = await service.selectActiveTenantContext({
+      sessionId: "12121212-1212-4212-8212-121212121212",
+      authPrincipalId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+      tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    });
+    const after = tenantAuthRepository.sessions.get("12121212-1212-4212-8212-121212121212");
+
+    expect(result.selectionRequired).toBe(false);
+    expect(result.activeTenantContext?.tenantId).toBe("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+    expect(before?.activeTenantId).toBe("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+    expect(after?.activeTenantId).toBe("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+    expect(after?.selectionRequired).toBe(false);
   });
 
   it("TC-TENANT-AUTH-UNIT-007 revokes the current tenant session without mutating principal ownership", async () => {

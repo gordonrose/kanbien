@@ -1,6 +1,6 @@
 ---
 name: prd-test-case-planner
-description: Use when the user wants Codex to read a PRD and derive test cases under docs/prd/test_cases, especially unit tests for individual capabilities and integration tests for features working together. Include NFR coverage for security and logging, plus important edge cases, and explicitly surface when existing executable tests would likely need discussion before being changed.
+description: Use when the user wants Codex to read a PRD and derive test cases under docs/prd/test_cases, especially unit tests for individual capabilities and integration tests for features working together. Include repo-required NFR coverage such as security, audit/logging, performance, concurrency/idempotency, resilience, compatibility, and meaningful edge cases, and explicitly surface when existing executable tests would likely need discussion before being changed.
 ---
 
 # PRD Test Case Planner
@@ -22,10 +22,26 @@ architecture, and produces test case documentation that covers:
 - integration tests for features that work together
 - non-functional scenarios around security
 - non-functional scenarios around logging or audit visibility
+- end-to-end journey coverage when the workflow is multi-step or stateful
+- non-functional verification classes required by the QA coverage matrix
 - important edge cases and negative cases
 
 Each documented case should also say which test layer it belongs to and where
 the executable test would likely live under `tests/`.
+
+This skill should err on the side of explicit exploration for concrete test
+classes that often go missing in thin PRD-to-test translation, including:
+
+- race conditions
+- concurrency and idempotency
+- conflicting session or state writes
+- stress or burst-load behavior
+- soak or repeated-cycle behavior
+- latency or throughput-oriented performance verification
+- degraded dependency or retry behavior when relevant
+- compatibility/contract drift at external or consumer-facing seams
+- lifecycle, deletion/disablement, revocation, expiry, and credible
+  operator-induced state changes
 
 If the PRD suggests that existing executable tests would need expectation
 changes, removal, or meaningful restructuring, do not silently assume those
@@ -39,9 +55,13 @@ Use this authority order unless the user explicitly says otherwise:
 1. `AGENTS.md`
 2. `docs/architecture/`
 3. the PRD the user named
-4. current source in `src/`
-5. existing files in `docs/prd/test_cases/`
-6. relevant source-independent docs such as `docs/api-contracts/` and
+4. `docs/architecture/guides/testing-and-verification-guide.md`
+5. `docs/architecture/guides/qa-coverage-matrix-guide.md`
+6. `docs/architecture/guides/end-to-end-journey-testing-guide.md`
+7. `docs/standards/QA-RELEASE-GATE.md`
+8. current source in `src/`
+9. existing files in `docs/prd/test_cases/`
+10. relevant source-independent docs such as `docs/api-contracts/` and
    `docs/data-dictionary/` when they materially affect the scoped behavior
 
 If the PRD and code differ, do not silently force one to match the other.
@@ -54,7 +74,11 @@ Primary sources:
 - the target PRD under `docs/prd/`
 - `docs/architecture/system-overview.md`
 - `docs/architecture/priniciples.md`
+- `docs/architecture/guides/testing-and-verification-guide.md`
+- `docs/architecture/guides/qa-coverage-matrix-guide.md`
+- `docs/architecture/guides/end-to-end-journey-testing-guide.md`
 - `docs/standards/change-artifact-requirements.md`
+- `docs/standards/QA-RELEASE-GATE.md`
 - relevant ADRs in `docs/architecture/adr/`
 - feature routers, services, persistence seams, and contract errors in `src/`
 
@@ -80,6 +104,15 @@ Suggested file naming:
   `docs/prd/test_cases/2026-03-25-0001-root-auth-test-cases.md`
 
 Use the template in `references/test-case-template.md`.
+
+The output should not assume the PRD test-case doc is the whole verification
+story. When the change class requires it, explicitly call out the relationship
+between:
+
+- PRD-derived `TC-*` test cases
+- journey inventory coverage
+- required non-functional suites
+- curated QA evidence and human QA artifacts
 
 ## ID Convention
 
@@ -130,6 +163,11 @@ test suite.
 - required validations
 - explicitly mentioned failure modes
 - stated or implied security and logging expectations
+- whether the workflow implies end-to-end journey coverage
+- whether the change class likely triggers performance, resilience,
+  concurrency/idempotency, compatibility, or accessibility layers
+- whether the behavior implies operator-induced, lifecycle, or recovery-state
+  permutations that should be included by default
 
 2. Map PRD behavior to the current codebase.
 Check:
@@ -143,12 +181,24 @@ Check:
   protected-route gates that mean pre-existing integration, security, or audit
   tests for already-protected features must be updated rather than left at the
   older boundary assumption
+- whether the slice has race-prone, replay-prone, retry-prone, or
+  duplicate-submission-prone mutation paths
+- whether the slice has stateful sessions or other mutable workflow state that
+  could produce conflicting writes
+- whether the slice has latency-sensitive, high-volume, or repeated-cycle paths
+  that justify stress, soak, or performance verification
+- whether the slice has external, browser, schema, or consumer-facing
+  contracts that justify compatibility or contract checks
 
 3. Build the test inventory in these sections:
 - unit tests
 - integration tests
+- end-to-end journey tests when required
 - NFR security tests
 - NFR logging or audit tests
+- NFR concurrency/idempotency tests when triggered
+- NFR performance, stress, or soak tests when triggered
+- NFR resilience or compatibility tests when triggered
 - edge cases and negative tests
 
 Assign an ID to every test case while building the inventory.
@@ -159,6 +209,16 @@ If a case will create durable data, also note:
 - whether shared test helpers or factories are required
 - whether manifest registration is required
 - whether post-test cleanup expectations should be called out
+
+When the change class triggers them, also record explicit coverage intent for:
+
+- race-condition proof
+- conflicting-write proof
+- replay or duplicate-submission proof
+- stress or burst behavior proof
+- soak or repeated-cycle proof
+- latency or throughput proof
+- degraded dependency or retry proof
 
 4. Compare to any existing file under `docs/prd/test_cases/` for the same PRD.
 Summarize:
@@ -254,6 +314,13 @@ If integration cases create durable records, document:
 - expected manifest tracking
 - whether later cleanup should be verified separately
 
+Integration planning should explicitly consider whether the flow needs:
+
+- concurrent mutation coverage
+- conflicting session-write coverage
+- durable state truth after revocation, deletion, or disablement
+- legacy/pre-change versus post-change data-state coverage
+
 ### NFR Security Coverage
 
 Always consider:
@@ -308,6 +375,73 @@ Recommended target folders:
 - `tests/audit/`
 - `tests/integration/audit/`
 
+### NFR Concurrency And Idempotency Coverage
+
+Explicitly consider this section when the slice has mutable workflow state,
+replayable requests, shared proofs or tokens, multi-actor mutation paths, or
+other duplicate-submission risk.
+
+Typical planned cases include:
+
+- race condition on one-time proof or token consumption
+- duplicate submission safety for the same request intent
+- conflicting session or state writes on the same actor/session
+- last-write-truthfulness for concurrent mutations
+- idempotent repeat behavior when the same safe mutation is retried
+
+Recommended layer label:
+
+- `concurrency-integration`
+- `persistence-backed` when durable atomicity is part of the claim
+
+Recommended target folders:
+
+- `tests/integration/`
+- `tests/persistence/`
+- `tests/performance/` when the proof is contention-oriented
+
+### NFR Performance, Stress, And Soak Coverage
+
+Explicitly consider this section when the slice is latency-sensitive,
+high-volume, session-heavy, or vulnerable to degradation under repeated use.
+
+Typical planned cases include:
+
+- conservative latency verification for critical operations
+- burst or stress verification for concurrent reads or writes
+- soak or repeated-cycle verification for prolonged normal usage
+- throughput-oriented proof for expected high-volume paths
+
+Recommended layer label:
+
+- `performance`
+
+Recommended target folders:
+
+- `tests/performance/`
+
+### NFR Resilience And Compatibility Coverage
+
+Explicitly consider this section when the slice depends on retries, degraded
+dependencies, provider contracts, browser/API boundaries, or consumer-facing
+schemas that can drift.
+
+Typical planned cases include:
+
+- degraded dependency or retry behavior
+- fallback or truthful failure-state behavior
+- compatibility or contract checks against representative fixtures or schemas
+
+Recommended layer label:
+
+- `resilience`
+- `compatibility-contract`
+
+Recommended target folders:
+
+- `tests/integration/`
+- `tests/compatibility/`
+
 ### Edge Cases
 
 Always include meaningful edge coverage such as:
@@ -344,14 +478,6 @@ Also include:
 
 - `Recommended Test Layer`
 - `Suggested Test Folder`
-
-## Guardrails
-
-- Do not plan a thinner test inventory than the current repo standards require
-  for the change class in `docs/standards/change-artifact-requirements.md`.
-- Do not ignore source-independent API contract or persistence-contract docs
-  when they materially clarify the expected behavior under test.
-
 - `Requires Shared Test Helper`
 - `Requires Manifest Tracking`
 - `Cleanup Expectation`
@@ -363,6 +489,9 @@ Also include:
 - Keep unit and integration coverage separate.
 - Do not skip NFR security or audit coverage even if the PRD emphasizes only
   functional behavior.
+- Do not skip explicit consideration of concurrency/idempotency, race,
+  conflicting-write, stress, soak, performance, resilience, or compatibility
+  coverage when the workflow shape or repo standards suggest they may matter.
 - If the PRD omits an edge case but the code or architecture makes it important,
   include it and label it as inferred from source.
 - If logging is not explicit but durable audit events exist, document audit test
@@ -371,6 +500,10 @@ Also include:
   these files.
 - Do not assign all cases to one layer by default. Choose the smallest test
   layer that still exercises the intended behavior honestly.
+- Do not plan a thinner test inventory than the current repo standards require
+  for the change class in `docs/standards/change-artifact-requirements.md`.
+- Do not ignore source-independent API contract or persistence-contract docs
+  when they materially clarify the expected behavior under test.
 - If a newer PRD or ADR defines cross-cutting test-data lifecycle rules, apply
   those rules when updating older PRD test-case documents as well.
 - If existing executable tests appear likely to need changes, call that out as

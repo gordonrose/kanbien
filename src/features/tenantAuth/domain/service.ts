@@ -124,6 +124,11 @@ export function createTenantAuthService(
       throw new TenantAuthInvalidCredentialsError();
     }
 
+    if (principal.disabled_at) {
+      await repository.revokeSession(sessionId, authPrincipalId);
+      throw new TenantAuthInvalidCredentialsError();
+    }
+
     const contexts = await resolveAccessibleContexts(authPrincipalId);
 
     if (contexts.length === 0) {
@@ -289,18 +294,21 @@ export function createTenantAuthService(
           throw new TenantAuthPasswordSetupInvalidError();
         }
 
-        const principal = await repository.findPrincipalById(record.auth_principal_id);
-        if (!principal) {
+        const completion = await repository.completePasswordSetup({
+          tokenId: record.token_id,
+          authPrincipalId: record.auth_principal_id,
+          newPassword: input.newPassword,
+          passwordSetAt: new Date(),
+        });
+
+        if (completion === "principal_not_found" || completion === "token_not_active") {
           throw new TenantAuthPasswordSetupInvalidError();
         }
-        if (principal.password_state === "active") {
+        if (completion === "password_already_set") {
           throw new TenantAuthPasswordAlreadySetError();
         }
 
-        await repository.setPassword(principal.auth_principal_id, input.newPassword, new Date());
-        await repository.markPasswordSetupTokenUsed(record.token_id);
-
-        const refreshed = await repository.findPrincipalById(principal.auth_principal_id);
+        const refreshed = await repository.findPrincipalById(record.auth_principal_id);
         if (!refreshed) {
           throw new TenantAuthPasswordSetupInvalidError();
         }
@@ -308,7 +316,7 @@ export function createTenantAuthService(
         await writeAuditEvent(platformSecurityRepository, {
           eventType: "tenant_auth_password_set",
           eventOutcome: "success",
-          authPrincipalId: principal.auth_principal_id,
+          authPrincipalId: record.auth_principal_id,
           ipAddress: input.ipAddress,
           userAgent: input.userAgent,
         });

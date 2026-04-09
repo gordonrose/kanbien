@@ -2,6 +2,10 @@
 
 This folder contains test case documents derived from PRDs.
 
+Companion end-to-end journey inventories live under:
+
+- [`docs/prd/journey_inventories/`](/home/gordon/kanbien/docs/prd/journey_inventories/README.md)
+
 Expected contents:
 
 - one Markdown file per PRD
