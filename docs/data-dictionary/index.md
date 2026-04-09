@@ -20,6 +20,11 @@ and approved cross-feature read seams.
 | Tenant | `tenants` | Durable platform tenant record and lifecycle root. | [tenant.md](./tenant.md) |
 | Tenant Admin | `tenantAdmins` | Durable tenant-scoped admin profile record with verification-state fields. | [tenant-admin.md](./tenant-admin.md) |
 | Tenant Admin Verification Token | `tenantAdmins` | Feature-owned durable verification token record for tenant-admin email verification. | [tenant-admin-verification-token.md](./tenant-admin-verification-token.md) |
+| Tenant Auth Principal | `tenantAuth` | Shared non-root tenant-side login identity. | [tenant-auth-principal.md](./tenant-auth-principal.md) |
+| Tenant Password Credential | `tenantAuth` | Durable password credential for one tenant auth principal. | [tenant-password-credential.md](./tenant-password-credential.md) |
+| Tenant Access Grant | `tenantAuth` | Durable linkage from one shared principal into one tenant-scoped subject context. | [tenant-access-grant.md](./tenant-access-grant.md) |
+| Tenant Password Setup Token | `tenantAuth` | Single-use bootstrap proof used to set the first tenant-side password. | [tenant-password-setup-token.md](./tenant-password-setup-token.md) |
+| Tenant Session | `tenantAuth` | Server-backed bearer session for authenticated tenant-side principals. | [tenant-session.md](./tenant-session.md) |
 | Outbound Email | `notificationDelivery` | Durable logical outbound email record and operator-visible delivery root. | [outbound-email.md](./outbound-email.md) |
 | Outbound Email Content | `notificationDelivery` | Durable sanitized content snapshot for one logical outbound email. | [outbound-email-content.md](./outbound-email-content.md) |
 | Outbound Email Attempt | `notificationDelivery` | Durable per-attempt delivery record for one logical outbound email. | [outbound-email-attempt.md](./outbound-email-attempt.md) |

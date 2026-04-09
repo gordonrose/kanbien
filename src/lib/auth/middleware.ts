@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import type { RootAuthSessionLookupRepository } from "../../features/rootAuth/persistence/repository";
+import type { TenantAuthSessionLookupRepository } from "../../features/tenantAuth/persistence/repository";
 import { env } from "../../config/env";
 import { parseCookieHeader } from "./cookies";
 import { AuthMiddlewareError, InvalidSessionError, UnauthorizedError } from "./errors";
@@ -99,6 +100,48 @@ export function createRequireRootSession(
         if (usedBrowserCookie || (allowBrowserCookie && parseCookieSessionId(request, cookieName))) {
           response.clearCookie(cookieName, getRootAdminSessionClearCookieOptions());
         }
+        response.status(error.status).json({
+          code: error.code,
+          message: error.message,
+          ...(error.details ? { details: error.details } : {}),
+        });
+        return;
+      }
+
+      next(error);
+    }
+  };
+}
+
+export function createRequireTenantSession(
+  authRepository: TenantAuthSessionLookupRepository,
+) {
+  return async (request: Request, response: Response, next: NextFunction) => {
+    try {
+      const sessionId = parseBearerToken(request);
+
+      if (!sessionId) {
+        throw new UnauthorizedError();
+      }
+
+      const session = await authRepository.findActiveSessionById(sessionId);
+
+      if (!session) {
+        throw new InvalidSessionError();
+      }
+
+      request.tenantSession = {
+        sessionId: session.session_id,
+        authPrincipalId: session.auth_principal_id,
+        activeTenantId: session.active_tenant_id,
+        selectionRequired: session.selection_required,
+        authenticatedAt: session.authenticated_at.toISOString(),
+        expiresAt: session.expires_at.toISOString(),
+      };
+
+      next();
+    } catch (error) {
+      if (error instanceof AuthMiddlewareError) {
         response.status(error.status).json({
           code: error.code,
           message: error.message,

@@ -148,6 +148,14 @@ export function createInMemoryTenantAdminsRepository(
       const record = records.get(tenantAdminId) ?? null;
       return record ? { ...record } : null;
     },
+    async findVerifiedActiveById(tenantAdminId) {
+      const record = records.get(tenantAdminId) ?? null;
+      return record &&
+        record.deletedAt === null &&
+        record.emailVerificationStatus === "verified"
+        ? { ...record }
+        : null;
+    },
     async findActiveByNormalizedEmail(tenantId, normalizedEmail) {
       const record =
         [...records.values()].find(
@@ -157,6 +165,16 @@ export function createInMemoryTenantAdminsRepository(
             item.normalizedEmail === normalizeEmail(normalizedEmail),
         ) ?? null;
       return record ? { ...record } : null;
+    },
+    async findVerifiedActiveByNormalizedEmail(normalizedEmail) {
+      return [...records.values()]
+        .filter(
+          (item) =>
+            item.deletedAt === null &&
+            item.emailVerificationStatus === "verified" &&
+            item.normalizedEmail === normalizeEmail(normalizedEmail),
+        )
+        .map((item) => ({ ...item }));
     },
     async listVisible(input) {
       const visible = [...records.values()].filter(
@@ -346,7 +364,10 @@ export function mountTenantAdminsFeature(
   app: Express,
   harness: RootAuthIntegrationHarness,
   options?: {
-    repository?: TenantAdminsRepository;
+    repository?: TenantAdminsRepository & {
+      records: Map<string, TenantAdminData>;
+      verificationTokens: Map<string, TenantAdminVerificationTokenData>;
+    };
     notificationEmailWriter?: NotificationEmailWriter;
     visibleTenantsReader?: VisibleTenantsReader;
   },

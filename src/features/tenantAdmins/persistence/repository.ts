@@ -10,7 +10,9 @@ export interface TenantAdminsRepository {
   findVisibleById(tenantId: string, tenantAdminId: string): Promise<TenantAdminData | null>;
   findDeletedById(tenantId: string, tenantAdminId: string): Promise<TenantAdminData | null>;
   findAnyById(tenantAdminId: string): Promise<TenantAdminData | null>;
+  findVerifiedActiveById(tenantAdminId: string): Promise<TenantAdminData | null>;
   findActiveByNormalizedEmail(tenantId: string, normalizedEmail: string): Promise<TenantAdminData | null>;
+  findVerifiedActiveByNormalizedEmail(normalizedEmail: string): Promise<TenantAdminData[]>;
   listVisible(input: TenantAdminListInput): Promise<{
     items: TenantAdminData[];
     totalSearchableRecords: number;

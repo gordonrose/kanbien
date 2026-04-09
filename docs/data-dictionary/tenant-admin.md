@@ -148,7 +148,11 @@
 
 ## Cross-Feature Read Seams
 
-- Exported seam: pending future consumer seam from `tenantAdmins`
-  Consumer: later shared tenant-auth feature
-  Allowed read shape: verification-ready tenant-admin identity summary only
-  Source: `docs/workspace/implementation-blueprints/2026-04-08-tenant-admins-auth-ready-foundation.md`
+- Exported seam: `createTenantAdminsAuthBootstrapReader`
+  Consumer: shared `tenantAuth` feature
+  Allowed read shape:
+  - consume verification proof through the feature-owned verification-token
+    workflow
+  - list verified active tenant-admin identity summaries by normalized email
+  - exact verified active tenant-admin lookup by ID
+  Source: `src/features/tenantAdmins/authBootstrapReader.ts`

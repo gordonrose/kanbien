@@ -10,8 +10,8 @@ Today the system has:
 
 - one Express application
 - one versioned API router under `/v1`
-- five mounted features: `rootAuth`, `rootRoles`, `rootUsers`, `tenants`,
-  and `notificationDelivery`
+- seven mounted features: `rootAuth`, `rootRoles`, `rootUsers`, `tenants`,
+  `notificationDelivery`, `tenantAdmins`, and `tenantAuth`
 - one shared PostgreSQL connection pool
 - one migration runner that discovers feature-scoped SQL migrations
 - one shared platform security layer for headers, rate limiting, and auth abuse
@@ -55,7 +55,7 @@ Today the system has:
 - `src/scripts/migrate.ts`
   Migration discovery and execution.
 - `src/lib/auth/*`
-  Shared root-session middleware and request auth context.
+  Shared root-session and tenant-session middleware plus request auth context.
 - `src/lib/security/*`
   Shared rate limiting, lock-down persistence, and root-auth abuse controls.
 - `src/lib/tokens/*`
@@ -67,8 +67,9 @@ Today the system has:
 Each feature lives under `src/features/<featureName>`.
 
 The active examples are `src/features/rootAuth`, `src/features/rootRoles`,
-`src/features/rootUsers`, `src/features/tenants`, and
-`src/features/notificationDelivery`.
+`src/features/rootUsers`, `src/features/tenants`,
+`src/features/notificationDelivery`, `src/features/tenantAdmins`, and
+`src/features/tenantAuth`.
 Each feature follows the same internal structure:
 
 - `contract/`
@@ -151,6 +152,10 @@ Current auth model:
 
 - `rootAuth` owns root-user auth principals, SSH public keys, login challenges,
   sessions, and auth audit events
+- `tenantAuth` owns shared non-root tenant-side principals, password setup,
+  password login, tenant sessions, and active tenant selection
+- `tenantAdmins` remains authoritative for tenant-admin lifecycle state and
+  verification state
 - `notificationDelivery` owns outbound email delivery, durable outbound-email
   metadata, sanitized content versions, and attempt history for operator and
   future feature-owned workflows
@@ -158,11 +163,18 @@ Current auth model:
 - `rootAuth` reads root-user sign-in eligibility through an exported
   `rootUsers` auth-state reader rather than `rootUsers` private persistence
   internals
+- `tenantAuth` reads verified tenant-admin onboarding proof and subject context
+  through an exported `tenantAdmins` auth-bootstrap reader rather than
+  `tenantAdmins` private persistence internals
 - root-user authentication is password plus SSH proof
+- tenant-side authentication is email plus password after verified onboarding
+  proof
 - authenticated API requests use opaque bearer tokens backed by server-side
   session records
 - the root-admin browser shell uses the same server-side sessions through a
   secure HTTP-only cookie transport and a browser bootstrap endpoint
+- tenant-side session APIs currently use bearer transport only, but their
+  contracts are shaped to stay frontend-ready for a later browser transport
 - request authentication is separate from future authorization and scope checks
 
 ### Platform Security Shape

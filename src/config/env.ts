@@ -90,6 +90,10 @@ const rootAuthPasswordMinLength = parseNumber(
   "ROOT_AUTH_PASSWORD_MIN_LENGTH",
   readEnvOrDefault("ROOT_AUTH_PASSWORD_MIN_LENGTH", "12"),
 );
+const tenantAuthSessionTtlSeconds = parseNumber(
+  "TENANT_AUTH_SESSION_TTL_SECONDS",
+  readEnvOrDefault("TENANT_AUTH_SESSION_TTL_SECONDS", "28800"),
+);
 
 const platformSecurityEnabled = readBooleanEnvOrDefault("PLATFORM_SECURITY_ENABLED", true);
 const publicReadWindowSeconds = readNumberEnvOrDefault("PUBLIC_READ_WINDOW_SECONDS", 60);
@@ -150,6 +154,10 @@ export const env = {
     bootstrapSshPublicKey: rootAuthBootstrapSshPublicKey,
     challengeTtlSeconds: rootAuthChallengeTtlSeconds,
     sessionTtlSeconds: rootAuthSessionTtlSeconds,
+    passwordMinLength: rootAuthPasswordMinLength,
+  },
+  tenantAuth: {
+    sessionTtlSeconds: tenantAuthSessionTtlSeconds,
     passwordMinLength: rootAuthPasswordMinLength,
   },
   rootAdmin: {

@@ -44,6 +44,7 @@ The repo is strongest today in:
 
 - backend feature-bundle architecture
 - root-user authentication and session model
+- shared tenant-side authentication foundation
 - shared platform security middleware
 - shared verification/recovery token mechanics
 - feature-owned persistence and migrations
@@ -97,6 +98,11 @@ The biggest architectural gaps are still:
 - `[05][present]` Root-user authentication platform
   Password + SSH proof, bearer sessions, browser-cookie session transport,
   session revocation, key management, and auth audit events exist.
+- `[05.5][partial]` Shared tenant-side authentication foundation
+  Shared tenant principals, password setup, password login, bearer sessions,
+  multi-tenant selection-ready session state, and tenant-admin bootstrap proof
+  now exist, but tenant-wide reuse, browser transport, reset flows, MFA, and
+  richer identity controls remain unfinished.
 - `[06][present]` Shared rate limiting and auth-abuse controls
   Route-class rate limiting, durable counters, auth throttling, and lock-down
   behavior are implemented.

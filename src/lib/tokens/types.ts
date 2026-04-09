@@ -1,4 +1,7 @@
-export type OneTimeTokenPurpose = "email_verification" | "password_reset";
+export type OneTimeTokenPurpose =
+  | "email_verification"
+  | "password_reset"
+  | "password_setup";
 
 export interface CreateOneTimeTokenMaterialInput {
   purpose: OneTimeTokenPurpose;

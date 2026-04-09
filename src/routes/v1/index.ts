@@ -5,6 +5,7 @@ import { createRootUserFeature } from "../../features/rootUsers";
 import { createTenantsFeature } from "../../features/tenants";
 import { createNotificationDeliveryFeature } from "../../features/notificationDelivery";
 import { createTenantAdminsFeature } from "../../features/tenantAdmins";
+import { createTenantAuthFeature } from "../../features/tenantAuth";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -80,6 +81,10 @@ v1Router.use(
 v1Router.use(
   "/tenant-admin-verification",
   tenantAdminsFeature.tenantAdminVerificationRouter,
+);
+v1Router.use(
+  "/tenant-auth",
+  createTenantAuthFeature(dbPool, platformSecurityRepository),
 );
 v1Router.use(
   "/tenants/:tenantId/admins",

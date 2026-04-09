@@ -30,7 +30,8 @@
 - durable token-record persistence model
 - mark-used and invalidation workflow ownership in consuming features
 - email delivery and app-link generation
-- first consuming features such as tenant auth, invite acceptance, or account
-  activation
+- broader consuming features beyond the current tenant-admin verification and
+  tenant-auth bootstrap flows, such as invite acceptance, account activation,
+  and password recovery
 - any future stateless signed-token model, if later justified, should be a
   separate reviewed decision

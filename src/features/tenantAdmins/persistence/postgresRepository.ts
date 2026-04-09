@@ -154,11 +154,37 @@ export function createPostgresTenantAdminsRepository(dbPool: Pool): TenantAdmins
     findAnyById(tenantAdminId) {
       return queryOne(`SELECT * FROM tenant_admin WHERE tenant_admin_id = $1`, [tenantAdminId]);
     },
+    findVerifiedActiveById(tenantAdminId) {
+      return queryOne(
+        `
+          SELECT *
+          FROM tenant_admin
+          WHERE tenant_admin_id = $1
+            AND deleted_at IS NULL
+            AND email_verification_status = 'verified'
+        `,
+        [tenantAdminId],
+      );
+    },
     findActiveByNormalizedEmail(tenantId, normalizedEmail) {
       return queryOne(
         `SELECT * FROM tenant_admin WHERE tenant_id = $1 AND normalized_email = $2 AND deleted_at IS NULL`,
         [tenantId, normalizeEmail(normalizedEmail)],
       );
+    },
+    async findVerifiedActiveByNormalizedEmail(normalizedEmail) {
+      const result = await dbPool.query<TenantAdminRecord>(
+        `
+          SELECT *
+          FROM tenant_admin
+          WHERE normalized_email = $1
+            AND deleted_at IS NULL
+            AND email_verification_status = 'verified'
+          ORDER BY created_at ASC, tenant_admin_id ASC
+        `,
+        [normalizeEmail(normalizedEmail)],
+      );
+      return result.rows.map(toTenantAdminData);
     },
     async listVisible(input) {
       const values: unknown[] = [input.tenantId];

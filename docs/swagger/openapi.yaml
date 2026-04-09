@@ -6,7 +6,8 @@ info:
     OpenAPI specification for the platform API. This documents the platform
     health route, root-user authentication, root-role authorization
     administration, the protected rootUsers feature, the protected tenants
-    feature, and the protected notificationDelivery feature.
+    feature, the protected notificationDelivery feature, and the shared
+    tenant-auth foundation.
 
 servers:
   - url: http://localhost:3000
@@ -19,6 +20,7 @@ tags:
   - name: Root Users
   - name: Tenants
   - name: Notification Delivery
+  - name: Tenant Auth
 
 paths:
   /v1/health:
@@ -1611,6 +1613,212 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /v1/tenant-auth/principals/bootstrap:
+    post:
+      tags:
+        - Tenant Auth
+      summary: Bootstrap a shared tenant principal from verified onboarding proof
+      operationId: bootstrapTenantAuthPrincipal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TenantAuthBootstrapBody"
+      responses:
+        "200":
+          description: Shared tenant principal bootstrapped
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAuthBootstrapResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "410":
+          description: Bootstrap proof expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenant-auth/password/setup:
+    post:
+      tags:
+        - Tenant Auth
+      summary: Set the initial password for a bootstrapped tenant principal
+      operationId: setupTenantAuthPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TenantAuthPasswordSetupBody"
+      responses:
+        "200":
+          description: Initial password set
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAuthPasswordSetupResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "410":
+          description: Password-setup proof expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenant-auth/login/password:
+    post:
+      tags:
+        - Tenant Auth
+      summary: Log in a tenant principal with email and password
+      operationId: loginTenantAuthPrincipalWithPassword
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TenantAuthPasswordLoginBody"
+      responses:
+        "200":
+          description: Onboarding-required or authenticated tenant-auth state
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/TenantAuthOnboardingRequiredResponse"
+                  - $ref: "#/components/schemas/TenantAuthSessionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenant-auth/session:
+    get:
+      tags:
+        - Tenant Auth
+      summary: Read the current authenticated tenant session
+      operationId: getTenantAuthSession
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current tenant-auth session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAuthSessionResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenant-auth/tenant-contexts:
+    get:
+      tags:
+        - Tenant Auth
+      summary: List tenant contexts reachable by the current authenticated principal
+      operationId: listTenantAuthContexts
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Tenant contexts available to the current tenant session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAuthContextListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenant-auth/tenant-selection:
+    post:
+      tags:
+        - Tenant Auth
+      summary: Select the active tenant context for the current authenticated session
+      operationId: selectTenantAuthContext
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TenantAuthTenantSelectionBody"
+      responses:
+        "200":
+          description: Active tenant selected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAuthSessionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenant-auth/logout:
+    post:
+      tags:
+        - Tenant Auth
+      summary: Log out the current tenant session
+      operationId: logoutTenantAuthSession
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Tenant session logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAuthLogoutResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -2958,6 +3166,202 @@ components:
         status:
           type: string
       required: [status]
+
+    TenantAuthBootstrapBody:
+      type: object
+      properties:
+        verificationToken:
+          type: string
+          minLength: 1
+      required: [verificationToken]
+
+    TenantAuthPasswordSetupBody:
+      type: object
+      properties:
+        bootstrapToken:
+          type: string
+          minLength: 1
+        newPassword:
+          type: string
+          minLength: 1
+        repeatPassword:
+          type: string
+          minLength: 1
+      required: [bootstrapToken, newPassword, repeatPassword]
+
+    TenantAuthPasswordLoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 1
+      required: [email, password]
+
+    TenantAuthTenantSelectionBody:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+      required: [tenantId]
+
+    TenantAuthPrincipalSummary:
+      type: object
+      properties:
+        authPrincipalId:
+          type: string
+          format: uuid
+        loginEmail:
+          type: string
+          format: email
+      required: [authPrincipalId, loginEmail]
+
+    TenantAuthBootstrapResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [PRINCIPAL_BOOTSTRAPPED]
+        authPrincipalId:
+          type: string
+          format: uuid
+        loginEmail:
+          type: string
+          format: email
+        passwordSetupRequired:
+          type: boolean
+        bootstrapToken:
+          type: [string, "null"]
+      required:
+        - status
+        - authPrincipalId
+        - loginEmail
+        - passwordSetupRequired
+        - bootstrapToken
+
+    TenantAuthPasswordSetupResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [PASSWORD_SET]
+        authPrincipalId:
+          type: string
+          format: uuid
+        loginEmail:
+          type: string
+          format: email
+        nextStep:
+          type: string
+          enum: [LOGIN_REQUIRED]
+      required: [status, authPrincipalId, loginEmail, nextStep]
+
+    TenantAuthOnboardingRequiredResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ONBOARDING_REQUIRED]
+        loginEmail:
+          type: string
+          format: email
+      required: [status, loginEmail]
+
+    TenantAccessContextSummary:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+        tenantName:
+          type: string
+        subjectType:
+          type: string
+          enum: [tenant_admin]
+        subjectId:
+          type: string
+          format: uuid
+        subjectDisplayName:
+          type: [string, "null"]
+        subjectEmail:
+          type: string
+          format: email
+        isActive:
+          type: boolean
+      required:
+        - tenantId
+        - tenantName
+        - subjectType
+        - subjectId
+        - subjectDisplayName
+        - subjectEmail
+        - isActive
+
+    TenantAuthSessionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            [AUTHENTICATED, AUTHENTICATED_SINGLE_TENANT, AUTHENTICATED_SELECTION_REQUIRED]
+        sessionId:
+          type: string
+          format: uuid
+        authPrincipalId:
+          type: string
+          format: uuid
+        loginEmail:
+          type: string
+          format: email
+        activeTenantContext:
+          oneOf:
+            - $ref: "#/components/schemas/TenantAccessContextSummary"
+            - type: "null"
+        availableTenantContexts:
+          type: array
+          items:
+            $ref: "#/components/schemas/TenantAccessContextSummary"
+        selectionRequired:
+          type: boolean
+        authenticatedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+        - status
+        - sessionId
+        - authPrincipalId
+        - loginEmail
+        - activeTenantContext
+        - availableTenantContexts
+        - selectionRequired
+        - authenticatedAt
+        - expiresAt
+
+    TenantAuthContextListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TenantAccessContextSummary"
+      required: [items]
+
+    TenantAuthLogoutResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [LOGGED_OUT]
+        sessionRevoked:
+          type: boolean
+          const: true
+      required: [status, sessionRevoked]
 
     ErrorDetails:
       type: object

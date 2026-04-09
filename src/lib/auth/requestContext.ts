@@ -6,6 +6,15 @@ export interface RootSessionContext {
   expiresAt: string;
 }
 
+export interface TenantSessionContext {
+  sessionId: string;
+  authPrincipalId: string;
+  activeTenantId: string | null;
+  selectionRequired: boolean;
+  authenticatedAt: string;
+  expiresAt: string;
+}
+
 export function getRequiredRootSessionContext(
   request: Express.Request,
 ): RootSessionContext {
@@ -14,4 +23,14 @@ export function getRequiredRootSessionContext(
   }
 
   return request.rootSession;
+}
+
+export function getRequiredTenantSessionContext(
+  request: Express.Request,
+): TenantSessionContext {
+  if (!request.tenantSession) {
+    throw new Error("Missing tenant session context");
+  }
+
+  return request.tenantSession;
 }
