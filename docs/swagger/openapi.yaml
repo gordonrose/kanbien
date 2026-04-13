@@ -1954,6 +1954,106 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /v1/tenant/auth-policy:
+    get:
+      tags:
+        - Tenant Configuration
+      summary: Read the effective tenant auth policy for the current tenant session
+      operationId: getCurrentTenantAuthPolicy
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Effective tenant auth policy for the current tenant context
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EffectiveTenantAuthPolicyResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Current tenant context required before policy can be read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenants/{tenantId}/auth-policy:
+    get:
+      tags:
+        - Tenant Configuration
+      summary: Read the effective tenant auth policy for an exact tenant as root
+      operationId: getTenantAuthPolicyAsRoot
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+      responses:
+        "200":
+          description: Effective tenant auth policy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EffectiveTenantAuthPolicyResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Tenant not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    patch:
+      tags:
+        - Tenant Configuration
+      summary: Update tenant-scoped auth-policy overrides as root
+      operationId: updateTenantAuthPolicyAsRoot
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTenantAuthPolicyBody"
+      responses:
+        "200":
+          description: Effective tenant auth policy after update
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EffectiveTenantAuthPolicyResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Tenant not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /v1/tenant-auth/principals/bootstrap:
     post:
       tags:
@@ -2051,6 +2151,74 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenant-auth/remediation:
+    get:
+      tags:
+        - Tenant Auth
+      summary: Read the current remediation state for the authenticated tenant session
+      operationId: getTenantAuthRemediationState
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Current remediation workflow state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAuthRemediationResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Current tenant selection required before remediation can be read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/tenant-auth/remediation/password:
+    post:
+      tags:
+        - Tenant Auth
+      summary: Complete password remediation for the authenticated tenant session
+      operationId: completeTenantAuthPasswordRemediation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TenantAuthRemediationPasswordBody"
+      responses:
+        "200":
+          description: Remediation completed and authenticated session updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAuthSessionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Current tenant selection required or remediation not required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
         "429":
           $ref: "#/components/responses/TooManyRequests"
         "500":
@@ -3691,6 +3859,127 @@ components:
           minLength: 1
       required: [email, password]
 
+    TenantAuthRemediationPasswordBody:
+      type: object
+      properties:
+        newPassword:
+          type: string
+          minLength: 1
+        repeatPassword:
+          type: string
+          minLength: 1
+      required: [newPassword, repeatPassword]
+
+    UpdateTenantAuthPolicyBody:
+      type: object
+      properties:
+        minLength:
+          type: [integer, "null"]
+          minimum: 0
+        maxLength:
+          type: [integer, "null"]
+          minimum: 0
+        minUppercase:
+          type: [integer, "null"]
+          minimum: 0
+        maxUppercase:
+          type: [integer, "null"]
+          minimum: 0
+        minLowercase:
+          type: [integer, "null"]
+          minimum: 0
+        maxLowercase:
+          type: [integer, "null"]
+          minimum: 0
+        minNumbers:
+          type: [integer, "null"]
+          minimum: 0
+        maxNumbers:
+          type: [integer, "null"]
+          minimum: 0
+        minSymbols:
+          type: [integer, "null"]
+          minimum: 0
+        maxSymbols:
+          type: [integer, "null"]
+          minimum: 0
+
+    EffectiveTenantPasswordPolicy:
+      type: object
+      properties:
+        minLength:
+          type: integer
+        maxLength:
+          type: [integer, "null"]
+        minUppercase:
+          type: integer
+        maxUppercase:
+          type: [integer, "null"]
+        minLowercase:
+          type: integer
+        maxLowercase:
+          type: [integer, "null"]
+        minNumbers:
+          type: integer
+        maxNumbers:
+          type: [integer, "null"]
+        minSymbols:
+          type: integer
+        maxSymbols:
+          type: [integer, "null"]
+      required:
+        - minLength
+        - maxLength
+        - minUppercase
+        - maxUppercase
+        - minLowercase
+        - maxLowercase
+        - minNumbers
+        - maxNumbers
+        - minSymbols
+        - maxSymbols
+
+    TenantAuthPolicyHardFloors:
+      type: object
+      properties:
+        minLength:
+          type: integer
+        minUppercase:
+          type: integer
+        minLowercase:
+          type: integer
+        minNumbers:
+          type: integer
+        minSymbols:
+          type: integer
+      required: [minLength, minUppercase, minLowercase, minNumbers, minSymbols]
+
+    EffectiveTenantAuthPolicyResponse:
+      type: object
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+        policySource:
+          type: string
+          enum: [system_default, tenant_override]
+        hasTenantOverride:
+          type: boolean
+        passwordPolicy:
+          $ref: "#/components/schemas/EffectiveTenantPasswordPolicy"
+        hardFloors:
+          $ref: "#/components/schemas/TenantAuthPolicyHardFloors"
+        updatedAt:
+          type: [string, "null"]
+          format: date-time
+      required:
+        - tenantId
+        - policySource
+        - hasTenantOverride
+        - passwordPolicy
+        - hardFloors
+        - updatedAt
+
     TenantAuthTenantSelectionBody:
       type: object
       properties:
@@ -3817,6 +4106,15 @@ components:
             $ref: "#/components/schemas/TenantAccessContextSummary"
         selectionRequired:
           type: boolean
+        remediationRequired:
+          type: boolean
+        remediationReason:
+          type: [string, "null"]
+          enum: [password_policy_upgrade_required, null]
+        passwordPolicyRequirements:
+          oneOf:
+            - $ref: "#/components/schemas/EffectiveTenantPasswordPolicy"
+            - type: "null"
         authenticatedAt:
           type: string
           format: date-time
@@ -3831,8 +4129,37 @@ components:
         - activeTenantContext
         - availableTenantContexts
         - selectionRequired
+        - remediationRequired
+        - remediationReason
+        - passwordPolicyRequirements
         - authenticatedAt
         - expiresAt
+
+    TenantAuthRemediationResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [REMEDIATION_REQUIRED, REMEDIATION_NOT_REQUIRED]
+        remediationRequired:
+          type: boolean
+        remediationReason:
+          type: [string, "null"]
+          enum: [password_policy_upgrade_required, null]
+        activeTenantContext:
+          oneOf:
+            - $ref: "#/components/schemas/TenantAccessContextSummary"
+            - type: "null"
+        passwordPolicyRequirements:
+          oneOf:
+            - $ref: "#/components/schemas/EffectiveTenantPasswordPolicy"
+            - type: "null"
+      required:
+        - status
+        - remediationRequired
+        - remediationReason
+        - activeTenantContext
+        - passwordPolicyRequirements
 
     TenantAuthContextListResponse:
       type: object

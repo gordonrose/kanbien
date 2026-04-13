@@ -302,12 +302,14 @@ export function createPostgresTenantAuthRepository(dbPool: Pool): TenantAuthRepo
             auth_principal_id,
             active_tenant_id,
             selection_required,
+            remediation_required,
+            remediation_reason,
             authenticated_at,
             expires_at,
             revoked_at,
             created_at
           )
-          VALUES ($1, $2, $3, $4, $5, $6, NULL, NOW())
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NULL, NOW())
           RETURNING *
         `,
         [
@@ -315,6 +317,8 @@ export function createPostgresTenantAuthRepository(dbPool: Pool): TenantAuthRepo
           input.authPrincipalId,
           input.activeTenantId,
           input.selectionRequired,
+          input.remediationRequired,
+          input.remediationReason,
           input.authenticatedAt,
           input.expiresAt,
         ],
@@ -348,6 +352,20 @@ export function createPostgresTenantAuthRepository(dbPool: Pool): TenantAuthRepo
           RETURNING *
         `,
         [sessionId, authPrincipalId, activeTenantId, selectionRequired],
+      );
+    },
+    updateSessionRemediation(sessionId, authPrincipalId, remediationRequired, remediationReason) {
+      return queryOne<TenantSessionRecord>(
+        `
+          UPDATE tenant_session
+          SET remediation_required = $3,
+              remediation_reason = $4
+          WHERE session_id = $1
+            AND auth_principal_id = $2
+            AND revoked_at IS NULL
+          RETURNING *
+        `,
+        [sessionId, authPrincipalId, remediationRequired, remediationReason],
       );
     },
     async revokeSession(sessionId, authPrincipalId) {

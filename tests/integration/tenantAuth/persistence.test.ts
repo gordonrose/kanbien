@@ -52,6 +52,7 @@ describeIfPostgres("tenantAuth postgres repository", () => {
       "notificationDelivery",
       "tenantAdmins",
       "tenantAuth",
+      "tenantConfiguration",
     ]);
 
     const rootUsersRepository = createPostgresRootUsersRepository(pool);
@@ -191,6 +192,8 @@ describeIfPostgres("tenantAuth postgres repository", () => {
       authPrincipalId,
       activeTenantId: null,
       selectionRequired: true,
+      remediationRequired: false,
+      remediationReason: null,
       authenticatedAt: new Date("2026-04-09T14:00:00.000Z"),
       expiresAt: new Date("2099-04-09T15:00:00.000Z"),
     });
@@ -396,6 +399,8 @@ describeIfPostgres("tenantAuth postgres repository", () => {
       authPrincipalId,
       activeTenantId: null,
       selectionRequired: true,
+      remediationRequired: false,
+      remediationReason: null,
       authenticatedAt: new Date("2026-04-09T16:10:00.000Z"),
       expiresAt: new Date("2099-04-09T17:10:00.000Z"),
     });

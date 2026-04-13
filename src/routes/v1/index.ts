@@ -6,6 +6,7 @@ import { createTenantsFeature } from "../../features/tenants";
 import { createNotificationDeliveryFeature } from "../../features/notificationDelivery";
 import { createTenantAdminsFeature } from "../../features/tenantAdmins";
 import { createTenantAuthFeature } from "../../features/tenantAuth";
+import { createTenantConfigurationFeature } from "../../features/tenantConfiguration";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -21,6 +22,11 @@ const requireRootSession = createRequireRootSession(rootAuthRepository, {
 });
 const rootRolesFeature = createRootRolesFeature(dbPool, platformSecurityRepository);
 const tenantAdminsFeature = createTenantAdminsFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  platformSecurityRepository,
+);
+const tenantConfigurationFeature = createTenantConfigurationFeature(
   dbPool,
   rootRolesFeature.capabilityChecker,
   platformSecurityRepository,
@@ -84,7 +90,21 @@ v1Router.use(
 );
 v1Router.use(
   "/tenant-auth",
-  createTenantAuthFeature(dbPool, platformSecurityRepository),
+  createTenantAuthFeature(
+    dbPool,
+    platformSecurityRepository,
+    tenantConfigurationFeature.policyResolver,
+  ),
+);
+v1Router.use(
+  "/tenant/auth-policy",
+  tenantConfigurationFeature.tenantTenantConfigurationRouter,
+);
+v1Router.use(
+  "/tenants/:tenantId/auth-policy",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  tenantConfigurationFeature.rootTenantConfigurationRouter,
 );
 v1Router.use(
   "/tenants/:tenantId/admins",

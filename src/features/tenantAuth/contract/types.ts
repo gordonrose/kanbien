@@ -1,3 +1,5 @@
+import type { EffectiveTenantPasswordPolicy } from "../../tenantConfiguration";
+
 export interface TenantAuthPrincipalSummary {
   authPrincipalId: string;
   loginEmail: string;
@@ -44,8 +46,19 @@ export interface TenantAuthSessionResult {
   activeTenantContext: TenantAccessContextSummary | null;
   availableTenantContexts: TenantAccessContextSummary[];
   selectionRequired: boolean;
+  remediationRequired: boolean;
+  remediationReason: "password_policy_upgrade_required" | null;
+  passwordPolicyRequirements: EffectiveTenantPasswordPolicy | null;
   authenticatedAt: string;
   expiresAt: string;
+}
+
+export interface TenantAuthRemediationResult {
+  status: "REMEDIATION_REQUIRED" | "REMEDIATION_NOT_REQUIRED";
+  remediationRequired: boolean;
+  remediationReason: "password_policy_upgrade_required" | null;
+  activeTenantContext: TenantAccessContextSummary | null;
+  passwordPolicyRequirements: EffectiveTenantPasswordPolicy | null;
 }
 
 export interface TenantLogoutResult {

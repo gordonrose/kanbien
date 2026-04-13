@@ -3,10 +3,12 @@ import type {
   TenantAuthBootstrapResult,
   TenantAuthOnboardingRequiredResult,
   TenantAuthPrincipalSummary,
+  TenantAuthRemediationResult,
   TenantAuthSessionResult,
   TenantLogoutResult,
   TenantPasswordSetupResult,
 } from "../contract/types";
+import type { EffectiveTenantPasswordPolicy, TenantAuthPolicyResolver } from "../../tenantConfiguration";
 
 export interface TenantAuthPrincipalData {
   authPrincipalId: string;
@@ -55,6 +57,8 @@ export interface TenantSessionData {
   authPrincipalId: string;
   activeTenantId: string | null;
   selectionRequired: boolean;
+  remediationRequired: boolean;
+  remediationReason: "password_policy_upgrade_required" | null;
   authenticatedAt: Date;
   expiresAt: Date;
   revokedAt: Date | null;
@@ -75,6 +79,11 @@ export interface TenantAuthSessionShape {
   principal: TenantAuthPrincipalData;
   activeTenantContext: TenantAccessContextSummary | null;
   availableTenantContexts: TenantAccessContextSummary[];
+}
+
+export interface TenantAuthResolvedPolicyState {
+  activeTenantPolicy: EffectiveTenantPasswordPolicy | null;
+  aggregatePasswordPolicy: EffectiveTenantPasswordPolicy;
 }
 
 export interface TenantAuthService {
@@ -100,6 +109,10 @@ export interface TenantAuthService {
     sessionId: string;
     authPrincipalId: string;
   }): Promise<TenantAuthSessionResult>;
+  readCurrentTenantRemediationState(input: {
+    sessionId: string;
+    authPrincipalId: string;
+  }): Promise<TenantAuthRemediationResult>;
   listAvailableTenantContexts(input: {
     sessionId: string;
     authPrincipalId: string;
@@ -108,6 +121,14 @@ export interface TenantAuthService {
     sessionId: string;
     authPrincipalId: string;
     tenantId: string;
+    ipAddress?: string;
+    userAgent?: string;
+  }): Promise<TenantAuthSessionResult>;
+  completePasswordRemediation(input: {
+    sessionId: string;
+    authPrincipalId: string;
+    newPassword: string;
+    repeatPassword: string;
     ipAddress?: string;
     userAgent?: string;
   }): Promise<TenantAuthSessionResult>;
@@ -120,10 +141,13 @@ export interface TenantAuthService {
 }
 
 export type {
+  EffectiveTenantPasswordPolicy,
+  TenantAuthPolicyResolver,
   TenantAccessContextSummary,
   TenantAuthBootstrapResult,
   TenantAuthOnboardingRequiredResult,
   TenantAuthPrincipalSummary,
+  TenantAuthRemediationResult,
   TenantAuthSessionResult,
   TenantLogoutResult,
   TenantPasswordSetupResult,

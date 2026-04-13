@@ -4,6 +4,7 @@ import { createOneTimeTokenMaterial } from "../../src/lib/tokens";
 import { createRateLimitMiddleware } from "../../src/lib/security/rateLimit";
 import { env } from "../../src/config/env";
 import { createTenantAuthService } from "../../src/features/tenantAuth/domain/service";
+import type { TenantAuthPolicyResolver } from "../../src/features/tenantConfiguration";
 import type {
   TenantAccessGrantData,
   TenantAuthPrincipalData,
@@ -79,6 +80,8 @@ export function createTenantSessionRecord(
     authPrincipalId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
     activeTenantId: null,
     selectionRequired: true,
+    remediationRequired: false,
+    remediationReason: null,
     authenticatedAt: now,
     expiresAt: new Date(now.getTime() + 60 * 60 * 1000),
     revokedAt: null,
@@ -347,6 +350,8 @@ export function createInMemoryTenantAuthRepository(
         authPrincipalId: input.authPrincipalId,
         activeTenantId: input.activeTenantId,
         selectionRequired: input.selectionRequired,
+        remediationRequired: input.remediationRequired,
+        remediationReason: input.remediationReason,
         authenticatedAt: input.authenticatedAt,
         expiresAt: input.expiresAt,
         revokedAt: null,
@@ -358,6 +363,8 @@ export function createInMemoryTenantAuthRepository(
         auth_principal_id: record.authPrincipalId,
         active_tenant_id: record.activeTenantId,
         selection_required: record.selectionRequired,
+        remediation_required: record.remediationRequired,
+        remediation_reason: record.remediationReason,
         authenticated_at: record.authenticatedAt,
         expires_at: record.expiresAt,
         revoked_at: record.revokedAt,
@@ -372,6 +379,8 @@ export function createInMemoryTenantAuthRepository(
             auth_principal_id: record.authPrincipalId,
             active_tenant_id: record.activeTenantId,
             selection_required: record.selectionRequired,
+            remediation_required: record.remediationRequired,
+            remediation_reason: record.remediationReason,
             authenticated_at: record.authenticatedAt,
             expires_at: record.expiresAt,
             revoked_at: record.revokedAt,
@@ -395,6 +404,32 @@ export function createInMemoryTenantAuthRepository(
         auth_principal_id: next.authPrincipalId,
         active_tenant_id: next.activeTenantId,
         selection_required: next.selectionRequired,
+        remediation_required: next.remediationRequired,
+        remediation_reason: next.remediationReason,
+        authenticated_at: next.authenticatedAt,
+        expires_at: next.expiresAt,
+        revoked_at: next.revokedAt,
+        created_at: next.createdAt,
+      };
+    },
+    async updateSessionRemediation(sessionId, authPrincipalId, remediationRequired, remediationReason) {
+      const current = sessions.get(sessionId) ?? null;
+      if (!current || current.authPrincipalId !== authPrincipalId || current.revokedAt !== null) {
+        return null;
+      }
+      const next = {
+        ...current,
+        remediationRequired,
+        remediationReason,
+      };
+      sessions.set(sessionId, next);
+      return {
+        session_id: next.sessionId,
+        auth_principal_id: next.authPrincipalId,
+        active_tenant_id: next.activeTenantId,
+        selection_required: next.selectionRequired,
+        remediation_required: next.remediationRequired,
+        remediation_reason: next.remediationReason,
         authenticated_at: next.authenticatedAt,
         expires_at: next.expiresAt,
         revoked_at: next.revokedAt,
@@ -447,6 +482,7 @@ export function mountTenantAuthFeature(
     tenantAuthRepository?: ReturnType<typeof createInMemoryTenantAuthRepository>;
     tenantAdminsRepository?: ReturnType<typeof createInMemoryTenantAdminsRepository>;
     visibleTenantsReader?: VisibleTenantsReader;
+    policyResolver?: TenantAuthPolicyResolver;
   },
 ) {
   const tenantAuthRepository =
@@ -461,10 +497,12 @@ export function mountTenantAuthFeature(
       "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
       "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
     ]);
+  const policyResolver = options?.policyResolver;
   const service = createTenantAuthService(
     tenantAuthRepository,
     tenantAdminsAuthBootstrapReader,
     visibleTenantsReader,
+    policyResolver,
     harness.platformSecurityRepository,
   );
 

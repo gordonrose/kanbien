@@ -1,6 +1,7 @@
 import { performance } from "node:perf_hooks";
 import { describe, expect, it } from "vitest";
 import { createTenantAuthService } from "../../../src/features/tenantAuth/domain/service";
+import type { TenantAuthPolicyResolver } from "../../../src/features/tenantConfiguration";
 import { createTenantAdminsAuthBootstrapReader } from "../../../src/features/tenantAdmins";
 import {
   createInMemoryTenantAuthRepository,
@@ -18,6 +19,7 @@ function createTenantAuthPerformanceFixture(input?: {
   email?: string;
   multiTenant?: boolean;
   seedSession?: boolean;
+  policyResolver?: TenantAuthPolicyResolver;
 }) {
   const email = input?.email ?? "performance@example.com";
   const tenantAdminsRepository = createInMemoryTenantAdminsRepository([
@@ -88,6 +90,7 @@ function createTenantAuthPerformanceFixture(input?: {
       "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
       "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
     ]),
+    input?.policyResolver,
   );
 
   return {
@@ -183,5 +186,93 @@ describe("tenantAuth non-functional performance coverage", () => {
     const sessions = [...tenantAuthRepository.sessions.values()];
     expect(sessions).toHaveLength(iterations);
     expect(sessions.every((session) => session.revokedAt !== null)).toBe(true);
+  });
+
+  it("TC-TENANT-AUTH-POLICY-PERF-001 keeps policy-aware login and remediation-aware session reads inside a conservative local budget", async () => {
+    const policyResolver: TenantAuthPolicyResolver = {
+      async readEffectiveTenantAuthPolicy(tenantId) {
+        return {
+          tenantId,
+          policySource: "tenant_override",
+          hasTenantOverride: true,
+          passwordPolicy: {
+            minLength: 16,
+            maxLength: null,
+            minUppercase: 2,
+            maxUppercase: null,
+            minLowercase: 1,
+            maxLowercase: null,
+            minNumbers: 2,
+            maxNumbers: null,
+            minSymbols: 1,
+            maxSymbols: null,
+          },
+          hardFloors: {
+            minLength: 6,
+            minUppercase: 1,
+            minLowercase: 1,
+            minNumbers: 1,
+            minSymbols: 1,
+          },
+          updatedAt: "2026-04-10T12:00:00.000Z",
+        };
+      },
+      async resolveAggregatePasswordPolicy() {
+        return {
+          minLength: 16,
+          maxLength: null,
+          minUppercase: 2,
+          maxUppercase: null,
+          minLowercase: 1,
+          maxLowercase: null,
+          minNumbers: 2,
+          maxNumbers: null,
+          minSymbols: 1,
+          maxSymbols: null,
+        };
+      },
+      assertPasswordMeetsPolicy(password, policy) {
+        if (
+          password.length < policy.minLength ||
+          (password.match(/[A-Z]/g) ?? []).length < policy.minUppercase ||
+          (password.match(/[0-9]/g) ?? []).length < policy.minNumbers
+        ) {
+          const error = new Error("password_policy_violation");
+          error.name = "TenantAuthPolicyPasswordViolation";
+          throw error;
+        }
+      },
+    };
+
+    const { service } = createTenantAuthPerformanceFixture({
+      seedSession: false,
+      policyResolver,
+    });
+    const iterations = 20;
+    let loginElapsedMs = 0;
+    let sessionElapsedMs = 0;
+
+    for (let index = 0; index < iterations; index += 1) {
+      const loginStart = performance.now();
+      const loginResult = await service.loginTenantPrincipalWithPassword({
+        email: "performance@example.com",
+        password: "@Password1!",
+      });
+      loginElapsedMs += performance.now() - loginStart;
+
+      if (!("sessionId" in loginResult)) {
+        throw new Error("Expected authenticated tenant session from policy-aware fixture");
+      }
+
+      const sessionStart = performance.now();
+      await service.readCurrentTenantSession({
+        sessionId: loginResult.sessionId,
+        authPrincipalId: loginResult.authPrincipalId,
+      });
+      sessionElapsedMs += performance.now() - sessionStart;
+    }
+
+    expect(loginElapsedMs / iterations).toBeLessThan(30);
+    expect(sessionElapsedMs / iterations).toBeLessThan(20);
   });
 });

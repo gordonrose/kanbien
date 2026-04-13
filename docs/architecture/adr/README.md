@@ -28,3 +28,7 @@ evolves.
 - `0014-use-a-local-ssh-signing-helper-for-root-user-browser-auth.md`
 - `0015-version-prd-test-case-lifecycle-to-reduce-drift.md`
 - `0016-adopt-tenant-scoped-role-based-authorization-with-central-policy-evaluation.md`
+- `0017-add-a-shared-one-time-token-library-for-feature-owned-verification-flows.md`
+- `0018-add-a-notification-delivery-feature-with-provider-agnostic-email-delivery-and-durable-attempt-history.md`
+- `0019-add-a-shared-tenant-auth-foundation-with-principals-access-grants-and-session-based-tenant-selection.md`
+- `0020-add-a-tenant-scoped-configuration-foundation-starting-with-tenant-auth-policy.md`

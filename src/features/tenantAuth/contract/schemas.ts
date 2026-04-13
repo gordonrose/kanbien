@@ -23,3 +23,8 @@ export const loginTenantPrincipalBodySchema = strictObject({
 export const selectTenantContextBodySchema = strictObject({
   tenantId: uuidSchema,
 });
+
+export const completeRemediationPasswordBodySchema = strictObject({
+  newPassword: trimmedNonEmptyString,
+  repeatPassword: trimmedNonEmptyString,
+});

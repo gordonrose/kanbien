@@ -11,6 +11,8 @@
   - `POST /v1/tenant-auth/principals/bootstrap`
   - `POST /v1/tenant-auth/password/setup`
   - `POST /v1/tenant-auth/login/password`
+  - `GET /v1/tenant-auth/remediation`
+  - `POST /v1/tenant-auth/remediation/password`
   - `GET /v1/tenant-auth/session`
   - `GET /v1/tenant-auth/tenant-contexts`
   - `POST /v1/tenant-auth/tenant-selection`
@@ -58,6 +60,12 @@
 - `POST /v1/tenant-auth/login/password`
   - body:
     `{ email, password }`
+- `GET /v1/tenant-auth/remediation`
+  - bearer tenant session required
+- `POST /v1/tenant-auth/remediation/password`
+  - bearer tenant session required
+  - body:
+    `{ newPassword, repeatPassword }`
 - `GET /v1/tenant-auth/session`
   - bearer tenant session required
 - `GET /v1/tenant-auth/tenant-contexts`
@@ -85,11 +93,27 @@
   - `ONBOARDING_REQUIRED`
   - `AUTHENTICATED_SINGLE_TENANT`
   - `AUTHENTICATED_SELECTION_REQUIRED`
+- login and session reads also return:
+  - `remediationRequired`
+  - `remediationReason`
+  - `passwordPolicyRequirements` when a current tenant context exists and
+    remediation is active
+- remediation read returns:
+  - whether remediation is currently required
+  - remediation reason
+  - active tenant context after one current tenant has been established
+  - current tenant password-policy requirements
+  - `TENANT_AUTH_REMEDIATION_CURRENT_TENANT_REQUIRED` when remediation is read
+    before tenant selection has established a current tenant
+- remediation password completion returns:
+  - updated authenticated session state with remediation cleared when the new
+    password is accepted
 - authenticated session routes return:
   - principal summary
   - active tenant context when present
   - available tenant contexts
   - `selectionRequired`
+  - remediation state
   - session timestamps
 
 ## Error Contract
@@ -102,8 +126,11 @@
   - `TENANT_AUTH_PASSWORD_SETUP_EXPIRED`
   - `TENANT_AUTH_PASSWORD_ALREADY_SET`
   - `TENANT_AUTH_INVALID_CREDENTIALS`
+  - `TENANT_AUTH_INVALID_NEW_PASSWORD`
   - `TENANT_AUTH_NO_TENANT_ACCESS`
   - `TENANT_AUTH_TENANT_NOT_ACCESSIBLE`
+  - `TENANT_AUTH_REMEDIATION_CURRENT_TENANT_REQUIRED`
+  - `TENANT_AUTH_REMEDIATION_NOT_REQUIRED`
 - shared middleware:
   - `UNAUTHORIZED`
   - `INVALID_SESSION`
@@ -122,11 +149,14 @@
     required
 - password setup writes durable password credential state and marks the
   bootstrap token used
-- login creates one durable tenant session
+- login creates one durable tenant session and may mark it remediation-gated
+- remediation completion updates the durable password credential and clears
+  tenant-session remediation state
 - tenant selection mutates `tenant_session.active_tenant_id`
 - logout revokes the current tenant session
 - bootstrap, password setup, login, tenant selection, and logout currently
   create durable security-audit events through the shared audit surface
+- remediation completion creates a durable security-audit event
 
 ## Compatibility / Lifecycle Notes
 

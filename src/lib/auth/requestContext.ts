@@ -11,6 +11,8 @@ export interface TenantSessionContext {
   authPrincipalId: string;
   activeTenantId: string | null;
   selectionRequired: boolean;
+  remediationRequired: boolean;
+  remediationReason: "password_policy_upgrade_required" | null;
   authenticatedAt: string;
   expiresAt: string;
 }

@@ -227,6 +227,18 @@ export const ROOT_AUTHZ_CAPABILITY_CATALOG: RootAuthzCapabilityCatalogEntry[] = 
     protectedForRootUserAdmin: true,
   },
   {
+    capabilityKey: "tenant-auth-policy.read",
+    description: "Read the effective tenant auth policy for a tenant.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "tenant-auth-policy.update",
+    description: "Update tenant-scoped tenant auth policy overrides.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
     capabilityKey: "tenant-admin.delete",
     description: "Soft-delete a tenant-admin actor record.",
     mandatoryForRootUserAdmin: false,

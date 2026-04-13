@@ -19,10 +19,22 @@ The current repo has:
 The repo also has an initial enduring future authorization direction captured in:
 
 - [`ADR-0016`](../adr/0016-adopt-tenant-scoped-role-based-authorization-with-central-policy-evaluation.md)
+- [`ADR-0019`](../adr/0019-add-a-shared-tenant-auth-foundation-with-principals-access-grants-and-session-based-tenant-selection.md)
+- [`ADR-0020`](../adr/0020-add-a-tenant-scoped-configuration-foundation-starting-with-tenant-auth-policy.md)
 - [`2026-03-30-0003-tenant-role-based-authorization-architecture.md`](../../prd/2026-03-30-0003-tenant-role-based-authorization-architecture.md)
 
 That tenant-scoped implementation is still pending, but the intended
 architecture is now documented rather than left implicit.
+
+The tenant-auth and tenant-configuration direction should also be read together:
+
+- shared `tenantAuth` principal and session architecture comes from ADR-0019
+- tenant-scoped auth policy and future tenant-config direction comes from
+  ADR-0020
+
+For more detail on tenant-scoped auth policy and future SSO compatibility, see:
+
+- [Tenant Auth Policy And Tenant Configuration Guide](./tenant-auth-policy-and-tenant-configuration-guide.md)
 
 ## Separation Rule
 

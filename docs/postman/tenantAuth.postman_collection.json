@@ -3,7 +3,7 @@
     "_postman_id": "f0a22916-b3e2-4898-8e8a-537af530c9da",
     "name": "Kanbien Tenant Auth",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for the shared tenantAuth feature. It assumes you already have a raw tenant-admin verification token from the onboarding email, then exercises bootstrap, initial password setup, password login, current-session read, tenant-context listing, explicit tenant selection, and logout."
+    "description": "Postman collection for the shared tenantAuth feature. It assumes you already have a raw tenant-admin verification token from the onboarding email, then exercises bootstrap, initial password setup, password login, remediation-state reads and password remediation when required, current-session read, tenant-context listing, explicit tenant selection, and logout."
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000" },
@@ -13,7 +13,8 @@
     { "key": "newPassword", "value": "@Password1!" },
     { "key": "repeatPassword", "value": "@Password1!" },
     { "key": "tenantSessionId", "value": "00000000-0000-0000-0000-000000000000" },
-    { "key": "selectedTenantId", "value": "00000000-0000-0000-0000-000000000000" }
+    { "key": "selectedTenantId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "remediationPassword", "value": "@Password12!LongEnoughA" }
   ],
   "item": [
     {
@@ -76,7 +77,7 @@
     },
     {
       "name": "Tenant Auth - Login Password",
-      "description": "Logs in with email and password. On success it stores the tenant session ID and, when single-tenant, the active tenant ID.",
+      "description": "Logs in with email and password. On success it stores the tenant session ID and, when single-tenant, the active tenant ID. When remediation is required the session remains authenticated but blocked until password remediation succeeds.",
       "request": {
         "method": "POST",
         "header": [{ "key": "Content-Type", "value": "application/json" }],
@@ -103,6 +104,39 @@
           }
         }
       ]
+    },
+    {
+      "name": "Tenant Auth - Get Remediation State",
+      "description": "Reads the current remediation workflow state. This requires a current tenant to already be selected when remediation is active.",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{tenantSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/remediation",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "remediation"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Auth - Complete Password Remediation",
+      "description": "Submits a new password that satisfies the current effective tenant policy and clears the remediation gate on the authenticated tenant session.",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{tenantSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"newPassword\": \"{{remediationPassword}}\",\n  \"repeatPassword\": \"{{remediationPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/remediation/password",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "remediation", "password"]
+        }
+      }
     },
     {
       "name": "Tenant Auth - Get Session",
@@ -146,7 +180,19 @@
           "host": ["{{baseUrl}}"],
           "path": ["v1", "tenant-auth", "tenant-selection"]
         }
-      }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.activeTenantContext && json.activeTenantContext.tenantId) pm.collectionVariables.set(\"selectedTenantId\", json.activeTenantContext.tenantId);"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "Tenant Auth - Logout",

@@ -1,4 +1,16 @@
-export type TestCaseType = "UNIT" | "INT" | "SEC" | "AUD" | "EDGE" | "UNKNOWN";
+export type TestCaseType =
+  | "UNIT"
+  | "INT"
+  | "SEC"
+  | "AUD"
+  | "EDGE"
+  | "E2E"
+  | "CONC"
+  | "PERF"
+  | "RESILIENCE"
+  | "COMPAT"
+  | "A11Y"
+  | "UNKNOWN";
 
 export interface ParsedTestCaseId {
   id: string;
@@ -6,10 +18,22 @@ export interface ParsedTestCaseId {
   testType: TestCaseType;
 }
 
-const knownTypes = new Set<TestCaseType>(["UNIT", "INT", "SEC", "AUD", "EDGE"]);
+const knownTypes = new Set<TestCaseType>([
+  "UNIT",
+  "INT",
+  "SEC",
+  "AUD",
+  "EDGE",
+  "E2E",
+  "CONC",
+  "PERF",
+  "RESILIENCE",
+  "COMPAT",
+  "A11Y",
+]);
 
 export function parseTestCaseId(id: string): ParsedTestCaseId {
-  const match = /^TC-([A-Z0-9-]+)-([A-Z]+)-(\d+)$/.exec(id);
+  const match = /^TC-([A-Z0-9-]+)-([A-Z0-9]+)-(\d+)$/.exec(id);
 
   if (!match) {
     return {

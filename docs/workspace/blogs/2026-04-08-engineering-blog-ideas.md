@@ -189,3 +189,29 @@
   `docs/architecture/recoverability-and-build-from-spec.md`,
   `docs/workspace/reviews/*`,
   `.codex/skills/*`
+
+### 12. We Stopped Treating QA Coverage As A Test Suite
+
+- angle:
+  how the repo turned QA from "write some tests before merge" into a
+  deterministic system of coverage planning, journey modeling, executable
+  proof, and durable QA operating artifacts
+- audience:
+  engineering leaders, platform teams, technical founders, senior backend
+  engineers
+- core story:
+  capability matrices, blueprints, PRD test cases, journey inventories,
+  coverage-matrix rules, release-gate summaries, exploratory notes, and
+  concrete proof classes like race-condition, conflicting-write, stress, soak,
+  and performance verification now form one delivery system
+- supporting repo areas:
+  `docs/standards/QA-RELEASE-GATE.md`,
+  `docs/architecture/guides/qa-coverage-matrix-guide.md`,
+  `docs/architecture/guides/end-to-end-journey-testing-guide.md`,
+  `docs/architecture/guides/end-to-end-journey-operations-guide.md`,
+  `docs/architecture/guides/qa-operating-cadence-guide.md`,
+  `docs/workspace/qa/*`,
+  `docs/workspace/test-run-summaries/*`,
+  `.codex/skills/change-loop-orchestrator/SKILL.md`,
+  `.codex/skills/prd-test-case-planner/SKILL.md`,
+  `.codex/skills/prd-test-case-implementer/SKILL.md`

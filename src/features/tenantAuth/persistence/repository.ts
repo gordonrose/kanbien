@@ -46,5 +46,11 @@ export interface TenantAuthRepository extends TenantAuthSessionLookupRepository 
     activeTenantId: string | null,
     selectionRequired: boolean,
   ): Promise<TenantSessionRecord | null>;
+  updateSessionRemediation(
+    sessionId: string,
+    authPrincipalId: string,
+    remediationRequired: boolean,
+    remediationReason: "password_policy_upgrade_required" | null,
+  ): Promise<TenantSessionRecord | null>;
   revokeSession(sessionId: string, authPrincipalId: string): Promise<boolean>;
 }
