@@ -1,11 +1,20 @@
 # Project Instructions
 
+This file is the repo constitution.
+
+It should hold durable repo guardrails, not the full procedural change loop.
+
 Follow the architecture guidance in:
 
 - `docs/architecture/system-overview.md`
 - `docs/architecture/priniciples.md`
 - `docs/architecture/change-control.md`
 - `docs/architecture/adr/`
+
+For procedural change-loop requirements such as artifact completeness,
+documentation sync, QA evidence, and maintained-artifact sweeps, use:
+
+- `docs/standards/change-artifact-requirements.md`
 
 ## Default Change Posture
 
@@ -29,11 +38,17 @@ Instead:
 
 ## Durable Domain Data Rule
 
-Do not make the system depend only on mutable external or related records for facts that must remain stable over time.
+Do not make the system depend only on mutable external or related records for
+facts that must remain stable over time.
 
-If a fact about a user or any other domain entity may still matter later for behavior, permissions, billing, reporting, auditability, compliance, or historical correctness, persist that fact durably on the owning entity or in a durable domain record.
+If a fact about a user or any other domain entity may still matter later for
+behavior, permissions, billing, reporting, auditability, compliance, or
+historical correctness, persist that fact durably on the owning entity or in a
+durable domain record.
 
-If a related record can change, merge, disappear, or be reassigned, do not replace the durable fact with a live lookup unless the prompt also includes an approved migration or compatibility strategy.
+If a related record can change, merge, disappear, or be reassigned, do not
+replace the durable fact with a live lookup unless the prompt also includes an
+approved migration or compatibility strategy.
 
 ## API And Entity Behavior Defaults
 
@@ -99,8 +114,7 @@ decision says otherwise.
 
 ## Tenant Boundary Defaults
 
-Now that `tenant` is a real durable platform entity, treat tenant context as a
-first-class security and data-isolation boundary.
+Treat tenant context as a first-class security and data-isolation boundary.
 
 Defaults:
 
@@ -127,11 +141,11 @@ Defaults:
 
 - root-user sessions remain platform-operator sessions outside tenant authz
   unless a future design explicitly states otherwise
-- tenant-scoped requests need a validated current tenant context in the server-
-  side auth/session context
+- tenant-scoped requests need a validated current tenant context in the
+  server-side auth/session context
 - in this repo, bearer tokens are opaque server-backed session identifiers, so
   tenant context does not need to be embedded directly in the token string
-- if a future stateless token/claim model is adopted for tenant actors, any
+- if a future stateless token or claim model is adopted for tenant actors, any
   embedded tenant context must still be validated server-side and treated as
   exactly one current tenant context per request rather than as a broad
   implicit grant over all memberships
@@ -149,8 +163,8 @@ Defaults:
 - multi-value searchable attributes must not use comma-separated strings
 - multi-value searchable attributes that need reliable filtering at scale should
   use junction tables
-- array or JSONB storage for searchable multi-value attributes requires explicit
-  approval based on query patterns and scale
+- array or JSONB storage for searchable multi-value attributes requires
+  explicit approval based on query patterns and scale
 
 ## Feature Architecture
 
@@ -172,9 +186,9 @@ shape by default:
 - `domain/service.ts` as the composition layer that delegates to those
   capability files
 
-Do not collapse multiple distinct capabilities into one large `domain/service.ts`
-implementation unless the prompt explicitly calls for an exception or the
-feature truly has only one business capability.
+Do not collapse multiple distinct capabilities into one large
+`domain/service.ts` implementation unless the prompt explicitly calls for an
+exception or the feature truly has only one business capability.
 
 Keep platform seams explicit:
 
@@ -222,8 +236,8 @@ Before treating a migration-backed change as complete:
   statement without checking DB visibility semantics
 - verify code, live schema, and indexes agree on required columns, normalized
   fields, and uniqueness rules
-- prefer adding a corrective migration over editing an already-applied migration
-  when repairing existing environments
+- prefer adding a corrective migration over editing an already-applied
+  migration when repairing existing environments
 - re-check representative read and write paths against the live database after
   migration changes
 - when a feature adds persistence-backed tests or migration-time dependencies,
@@ -232,37 +246,15 @@ Before treating a migration-backed change as complete:
   `tests/harness/postgres/testDatabase.ts`,
   and the shared persistence test scripts in `package.json`
 
-## Downstream Artifact Refresh Rule
+## Artifact And Doc Sync
 
-When an upstream planning or contract artifact is materially reset during an
-active loop, refresh downstream artifacts before continuing.
-
-Examples:
-
-- recreating or materially narrowing a PRD should trigger a blueprint refresh
-- materially changing source-independent contracts should trigger a blueprint
-  and verification-artifact revalidation
-- materially changing verification scope should trigger a blueprint or PRD
-  test-case refresh where those assumptions were already written
+When implementation changes the truth of source-independent docs or materially
+resets upstream planning artifacts, follow
+`docs/standards/change-artifact-requirements.md`.
 
 Do not continue implementation on top of knowingly stale downstream artifacts.
-
-## Source-Independent Doc Sync Rule
-
-When implementation changes the truth of source-independent docs, refresh the
-affected docs in the same change where practical.
-
-Common examples:
-
-- API contracts
-- data dictionary entries
-- feature docs
-- OpenAPI
-- architecture summaries
-- platform-status snapshots
-
-Do not leave the repo in a state where source-independent docs still describe
-the pre-change platform after the feature is otherwise considered delivered.
+Do not leave source-independent docs describing the pre-change platform once
+the implementation is otherwise considered delivered.
 
 ## Pagination Test Robustness
 
@@ -274,6 +266,19 @@ When writing tests for paginated catalogs, collections, or searchable lists:
   set
 - separate pagination-contract tests from business-presence tests when both
   matter
+
+## Root Cause Guardrails
+
+When adding a new feature that depends on existing entities or tables:
+
+- inspect the live schema, not just the current migration files
+- inspect the active repository queries and writes for the existing feature
+- confirm normalized fields, derived columns, and indexes are represented
+  consistently in contract, persistence, and migrations
+- treat bootstrap and backfill migrations as runtime logic that must be checked
+  with the target database's statement-visibility behavior
+- do not assume a feature seam is safe just because the folder structure is
+  correct; verify the persistence seam against the real tables it depends on
 
 ## Escalate Before Changing
 
@@ -295,73 +300,39 @@ Defaults:
 
 - using zero or one subagent does not require advance approval
 - using two or more subagents for the same task requires a brief approval check
-  first
 - explain in one or two sentences why multiple subagents would help before
   asking
 - if the user declines, continue with fewer or no subagents
 - do not treat this rule as permission to skip needed user approval for other
   risky or breaking changes
 
-## Docs Alignment Audits
+## Skill Routing
 
-When the user asks to compare documentation with implementation, audit drift,
-or use architecture as the tie-breaker, prefer the repo-local
-`docs-alignment-auditor` skill before making edits.
+This section is routing guidance, not additional repo policy.
 
-## Repo Health Audits
+Use repo-local skills when the task clearly matches one of these workflows:
 
-When the user asks for a whole-repo sanity check after a body of work,
-especially to find drift, contamination, inconsistency, contradictions, or
-iteration/scalability/security/compliance risks, prefer the repo-local
-`repo-health-auditor` skill before making edits.
-
-## Standards Compliance Audits
-
-When the user asks to check the entire repo against the standards gates or
-checklists in `docs/standards/`, especially across `docs/`, `src/`, `tests/`,
-`package.json`, and `vitest.config.ts`, prefer the repo-local
-`repo-standards-compliance-auditor` skill before making edits.
-
-## Data Dictionary Maintenance
-
-When the user asks to build or refresh entity documentation under
-`docs/data-dictionary`, prefer the repo-local `data-dictionary-maintainer`
-skill before making edits.
-
-## PRD Test Case Planning
-
-When the user asks to read a PRD and derive test cases under
-`docs/prd/test_cases`, prefer the repo-local `prd-test-case-planner` skill
-before making edits.
-
-## PRD Test Case Implementation
-
-When the user asks to read a PRD-derived test-case document and implement the
-corresponding executable tests under `tests/`, prefer the repo-local
-`prd-test-case-implementer` skill before making edits.
-
-## Change Loop Orchestration
-
-When the user has reached a clear direction and scope for a new feature,
-architectural change, or repo-process change and wants Codex to drive the full
-delivery loop consistently, prefer the repo-local `change-loop-orchestrator`
-skill before making edits.
-
-## Test-Case Lifecycle Review
-
-When the user wants to review PRD-derived test cases for anti-drift lifecycle
-changes such as `active`, `superseded`, `archived`, or `pending-review`,
-prefer the repo-local `test-case-lifecycle-reviewer` skill before making edits.
-
-## Root Cause Guardrails
-
-When adding a new feature that depends on existing entities or tables:
-
-- inspect the live schema, not just the current migration files
-- inspect the active repository queries and writes for the existing feature
-- confirm normalized fields, derived columns, and indexes are represented
-  consistently in contract, persistence, and migrations
-- treat bootstrap and backfill migrations as runtime logic that must be checked
-  with the target database's statement-visibility behavior
-- do not assume a feature seam is safe just because the folder structure is
-  correct; verify the persistence seam against the real tables it depends on
+- docs drift or docs-vs-code comparison:
+  `docs-alignment-auditor`
+- repo-wide drift, contradictions, or architectural health review:
+  `repo-health-auditor`
+- repo-wide standards or compliance audit:
+  `repo-standards-compliance-auditor`
+- data dictionary maintenance:
+  `data-dictionary-maintainer`
+- PRD-derived test-case planning:
+  `prd-test-case-planner`
+- PRD-derived test implementation:
+  `prd-test-case-implementer`
+- source-independent API contract maintenance:
+  `api-contract-maintainer`
+- build-ready implementation blueprint maintenance:
+  `implementation-blueprint-maintainer`
+- rebuild-readiness or bootstrap/helper documentation maintenance:
+  `rebuild-readiness-maintainer`
+- materially AI-assisted review-note creation:
+  `ai-change-reviewer`
+- PRD test-case lifecycle review:
+  `test-case-lifecycle-reviewer`
+- full repo change-loop orchestration once scope is settled:
+  `change-loop-orchestrator`

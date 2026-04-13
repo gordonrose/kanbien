@@ -108,12 +108,8 @@ It should make these things explicit:
 - which files or modules are expected to change or be created
 - which cross-feature seams must be used instead of private imports
 - which persistence objects and migrations are needed
-- which docs must be updated as part of the same slice
-- which test layers are required
-- which journey inventory, QA gate, and curated QA artifacts are required
+- which docs and verification layers are expected to move with the slice
 - which standards or audit expectations must be preserved
-- whether materially AI-assisted implementation work will need provenance,
-  verification, or high-risk review evidence
 
 This is not just a restatement of the PRD.
 It is the build plan that adapts the spec to this repository's structure and
@@ -163,40 +159,15 @@ Determine:
 - docs updates required by the change class
 
 4. Check artifact completeness.
-Use `docs/standards/change-artifact-requirements.md` to make sure the blueprint
-does not omit required supporting artifacts such as:
-- API contract docs
-- data dictionary changes
-- PRD test-case work
-- standards review
-- runbook or privacy note when needed
-- AI-assistance/provenance and high-risk review notes when the implementation
-  is expected to rely materially on generative AI
-- relevant standards baseline snapshot updates when the slice changes the
-  platform's current posture
-- relevant architecture-map updates when the slice changes the repo's current
-  platform-layer status in a meaningful way
-- maintained-artifacts sweep follow-through for older planning docs, standards
-  snapshots, and registry or index surfaces whose wording will become stale
-  once implementation lands
-- reconstruction-questionnaire updates when the slice adds or changes
-  interchangeable tools, providers, or deployer-local runtime choices
-- bootstrap-guide updates when the slice adds helper scripts, startup
-  prerequisites, or runnable local setup requirements
-- updates to affected pre-existing protected-feature integration, security, and
-  audit tests when the slice adds or tightens authz gates on routes the repo
-  already exposes
-- journey inventories and executable `tests/e2e/` slices when the workflow
-  changes in a way the repo's E2E policy covers
-- QA checklist, exploratory QA note, curated test-run summary, and waiver or
-  quarantine artifact when the QA release gate or coverage matrix requires them
-- non-functional verification layers such as `performance`, `resilience`,
-  `concurrency/idempotency`, `compatibility/contract`, and `accessibility`
-  when triggered by the change class
+Use `docs/standards/change-artifact-requirements.md` as the canonical artifact
+matrix.
+
+The blueprint should name the supporting artifacts and verification layers that
+implementation will likely need for this slice.
 
 For backend slices that add routes, durable entities, or materially change
-security posture, the blueprint should default to naming all of these output
-surfaces explicitly:
+security posture, prefer naming the most relevant output surfaces explicitly,
+such as:
 
 - `docs/api-contracts/`
 - `docs/swagger/openapi.yaml`
@@ -206,19 +177,15 @@ surfaces explicitly:
 - `docs/standards/platform-status/`
 - rebuild-readiness docs when runtime or helper assumptions changed
 - `docs/workspace/architecture-map/` when platform-layer status has moved
-- older PRD, PRD test-case, and blueprint artifacts that may contain
-  pre-implementation wording requiring refresh
-- README or index surfaces that inventory current docs, features, or entity
-  sets
+- older planning or registry docs whose wording will become stale once
+  implementation lands
 
 If one of those is intentionally out of scope, the blueprint should say why
 instead of silently leaving the artifact class out.
 
 Also use `docs/architecture/guides/qa-coverage-matrix-guide.md`,
 `docs/architecture/guides/end-to-end-journey-testing-guide.md`, and
-`docs/standards/QA-RELEASE-GATE.md` as active inputs. Do not let the blueprint
-fall back to a thinner older verification model when the current repo standard
-requires broader QA coverage.
+`docs/standards/QA-RELEASE-GATE.md` as active inputs.
 
 5. Write the blueprint.
 Produce a build-ready Markdown artifact under
@@ -226,36 +193,16 @@ Produce a build-ready Markdown artifact under
 
 6. Surface gaps or blockers.
 If the blueprint depends on unresolved permission rules, missing API contracts,
-missing persistence specs, or unclear seam ownership, call that out explicitly
-instead of hiding the gap inside vague wording.
+missing persistence specs, unclear seam ownership, or missing verification
+expectations, call that out explicitly instead of hiding the gap inside vague
+wording.
 
-Also call out when implementation should be expected to update a file under
-`docs/standards/platform-status/` because the slice is likely to move the
-repo's current standards baseline.
+Also call out when implementation should be expected to refresh:
 
-Do not treat this as only a vendor or review-workflow question.
-Also call it out when the slice is likely to change the truth of a current
-standards snapshot through implemented control changes such as:
-
-- new authentication or onboarding flows
-- new authorization or permission boundaries
-- new session models or session transports
-- new durable audit behaviors
-- new persistent security-sensitive entities or workflows
-- new privacy-significant data flows or retention implications
-
-Also call out when implementation should be expected to refresh earlier
-planning or registry docs purely because the implementation will change their
-truth value, even if no behavioral change is needed in those documents.
-
-Also call out when implementation should be expected to produce blocking-gate
-QA evidence beyond executable test files, such as:
-
-- a journey inventory refresh
-- a curated QA checklist
-- a structured exploratory QA note
-- a curated test-run summary
-- an explicit waiver or quarantine record when an exception is expected
+- standards-baseline snapshots under `docs/standards/platform-status/`
+- earlier planning or registry docs whose truth value will change
+- blocking-gate QA evidence beyond executable test files when the change class
+  requires it
 
 ## Writing Rules
 

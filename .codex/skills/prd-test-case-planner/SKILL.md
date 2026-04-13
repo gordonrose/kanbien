@@ -29,6 +29,9 @@ architecture, and produces test case documentation that covers:
 Each documented case should also say which test layer it belongs to and where
 the executable test would likely live under `tests/`.
 
+Its core job is cross-layer planning: deciding which verification layers are
+needed for the slice and how those layers fit together in one coherent plan.
+
 This skill should err on the side of explicit exploration for concrete test
 classes that often go missing in thin PRD-to-test translation, including:
 
@@ -114,6 +117,10 @@ between:
 - required non-functional suites
 - curated QA evidence and human QA artifacts
 
+Use `docs/standards/change-artifact-requirements.md` and the QA guides as the
+canonical source for which broader artifact and verification layers are
+required. Do not restate the full repo artifact matrix in this skill.
+
 ## ID Convention
 
 Every documented test case must include a stable ID in backticks.
@@ -193,9 +200,9 @@ Check:
 3. Build the test inventory in these sections:
 - unit tests
 - integration tests
-- end-to-end journey tests when required
 - NFR security tests
 - NFR logging or audit tests
+- end-to-end journey tests when required
 - NFR concurrency/idempotency tests when triggered
 - NFR performance, stress, or soak tests when triggered
 - NFR resilience or compatibility tests when triggered
@@ -219,6 +226,10 @@ When the change class triggers them, also record explicit coverage intent for:
 - soak or repeated-cycle proof
 - latency or throughput proof
 - degraded dependency or retry proof
+
+Keep this as one integrated verification plan. The planner should decide which
+layers are needed for the slice rather than splitting planning into separate
+skills for unit, integration, end-to-end, performance, or security work.
 
 4. Compare to any existing file under `docs/prd/test_cases/` for the same PRD.
 Summarize:

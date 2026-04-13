@@ -30,6 +30,9 @@ It should:
 - avoid silently narrowing execution to only thin unit/integration coverage
   when the PRD, coverage matrix, or journey inventory requires broader proof
 
+Its core job is execution: turning a chosen slice of the PRD-derived test plan
+into honest executable tests without taking over the wider change-loop process.
+
 ## Authority Order
 
 Use this authority order unless the user explicitly says otherwise:
@@ -144,6 +147,11 @@ matrix requires broader layers such as:
 Follow the suggested folders from the PRD test-case doc unless the repo's
 current test structure gives a better-established home.
 
+Keep this as one integrated execution skill. It may implement different layers
+over time, but it should not be split into separate skills for unit,
+integration, end-to-end, performance, or security execution unless the repo
+later develops clearly different workflows for those layers.
+
 5. Preserve traceability.
 For every implemented case:
 - keep the `TC-*` ID in the Vitest test name, or
@@ -181,10 +189,10 @@ After implementation:
 - if the implemented cases exercise a privileged or security-sensitive
   capability, explicitly say whether the relevant allow/deny or audit cases are
   now covered
-- if the implementation was materially AI-assisted and high-risk, make sure the
-  change artifacts record independent verification and any required
-  model/tool/version traceability rather than treating generated tests as
-  self-proving
+
+Use `docs/standards/change-artifact-requirements.md` and the QA guides as the
+canonical source for any broader artifact or verification expectations beyond
+the executable test work handled by this skill.
 
 8. Update implementation status when appropriate.
 If the repo uses the PRD test-case doc as a living status artifact, update the
