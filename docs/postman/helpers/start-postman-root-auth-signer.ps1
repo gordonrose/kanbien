@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $repoPath = "\\wsl.localhost\Ubuntu\home\gordon\kanbien"
 $windowsKeyPath = "/mnt/c/Users/gordo/.ssh/id_ed25519"
-$wslCommand = "cd /home/gordon/kanbien && ROOT_AUTH_SIGNER_PRIVATE_KEY_PATH=$windowsKeyPath node docs/postman/rootAuthSigner.mjs"
+$wslCommand = "cd /home/gordon/kanbien && ROOT_AUTH_SIGNER_PRIVATE_KEY_PATH=$windowsKeyPath node docs/postman/helpers/rootAuthSigner.mjs"
 
 Write-Host "Starting Postman root auth signer from $repoPath" -ForegroundColor Cyan
 Write-Host "Helper URL: http://127.0.0.1:8787/sign" -ForegroundColor Green

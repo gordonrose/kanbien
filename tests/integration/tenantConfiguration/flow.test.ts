@@ -42,6 +42,7 @@ function createInMemoryTenantConfigurationRepository(
         maxNumbers: input.maxNumbers,
         minSymbols: input.minSymbols,
         maxSymbols: input.maxSymbols,
+        sessionTtlSeconds: input.sessionTtlSeconds,
         createdAt: current?.createdAt ?? now,
         updatedAt: now,
       };
@@ -133,6 +134,7 @@ describe("tenantConfiguration integration flow", () => {
       policySource: string;
       hasTenantOverride: boolean;
       passwordPolicy: { minLength: number; minNumbers: number };
+      sessionPolicy: { sessionTtlSeconds: number };
     }>(harness.app, {
       method: "PATCH",
       path: "/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/auth-policy",
@@ -140,6 +142,7 @@ describe("tenantConfiguration integration flow", () => {
       body: {
         minLength: 14,
         minNumbers: 2,
+        sessionTtlSeconds: 7200,
       },
     });
     expect(updated.status).toBe(200);
@@ -147,6 +150,7 @@ describe("tenantConfiguration integration flow", () => {
     expect(updated.body.hasTenantOverride).toBe(true);
     expect(updated.body.passwordPolicy.minLength).toBe(14);
     expect(updated.body.passwordPolicy.minNumbers).toBe(2);
+    expect(updated.body.sessionPolicy.sessionTtlSeconds).toBe(7200);
   });
 
   it("TC-TENANT-AUTH-POLICY-INT-002 reads effective tenant auth policy for the current tenant-admin session", async () => {
@@ -165,6 +169,7 @@ describe("tenantConfiguration integration flow", () => {
           maxNumbers: null,
           minSymbols: 1,
           maxSymbols: null,
+          sessionTtlSeconds: 5400,
           createdAt: new Date("2026-04-09T10:00:00.000Z"),
           updatedAt: new Date("2026-04-09T10:00:00.000Z"),
         },
@@ -174,6 +179,7 @@ describe("tenantConfiguration integration flow", () => {
     const response = await invokeJson<{
       policySource: string;
       passwordPolicy: { minLength: number; minUppercase: number };
+      sessionPolicy: { sessionTtlSeconds: number };
     }>(harness.app, {
       method: "GET",
       path: "/v1/tenant/auth-policy",
@@ -184,6 +190,7 @@ describe("tenantConfiguration integration flow", () => {
     expect(response.body.policySource).toBe("tenant_override");
     expect(response.body.passwordPolicy.minLength).toBe(16);
     expect(response.body.passwordPolicy.minUppercase).toBe(2);
+    expect(response.body.sessionPolicy.sessionTtlSeconds).toBe(5400);
   });
 
   it("TC-TENANT-AUTH-POLICY-EDGE-001 rejects invalid policy bounds through the root update route", async () => {

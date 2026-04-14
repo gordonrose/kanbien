@@ -30,6 +30,15 @@
   Constraints / Notes: `NULL` means inherit the system default for that field.
   Source: `src/features/tenantConfiguration/persistence/migrations/0010_create_tenant_auth_policy.sql`,
   `src/features/tenantConfiguration/domain/policy.ts`
+- `session_ttl_seconds`
+  Type / Shape: `INTEGER | NULL`
+  Description: Tenant-specific override for new tenant-session expiry in
+  seconds.
+  Constraints / Notes: `NULL` means inherit the platform default. Current hard
+  bounds are `300` through `2592000`.
+  Source:
+  `src/features/tenantConfiguration/persistence/migrations/0012_add_session_ttl_to_tenant_auth_policy.sql`,
+  `src/features/tenantConfiguration/domain/policy.ts`
 - `created_at`
   Type / Shape: `TIMESTAMPTZ`
   Description: Time the tenant override row was first created.
@@ -55,7 +64,8 @@
 - Mutation rule: updates replace the stored override columns for the target
   tenant.
   Effect on stored fields: the tenant's effective auth policy changes
-  immediately for later reads and policy-aware tenant-auth flows.
+  immediately for later reads and policy-aware tenant-auth flows, including the
+  tenant-session TTL used for newly created sessions.
   Source: `src/features/tenantConfiguration/domain/service.ts`,
   `src/features/tenantConfiguration/persistence/postgresRepository.ts`
 
@@ -64,7 +74,8 @@
 - Exported seam: `TenantAuthPolicyResolver`
   Consumer: `tenantAuth`
   Allowed read shape: effective tenant policy and aggregate shared-principal
-  password policy resolution
+  password policy resolution plus aggregate shared-principal session TTL
+  resolution
 
 ## Related Errors
 
@@ -73,6 +84,7 @@
   Field: policy-specific
   Reason: validation specific
   When It Happens: a requested tenant override falls below platform floors,
-  breaks a min/max pair, or creates an impossible aggregate composition.
+  breaks a min/max pair, creates an impossible aggregate composition, or sets
+  an unsupported tenant session TTL.
   Source: `src/features/tenantConfiguration/contract/errors.ts`,
   `src/features/tenantConfiguration/domain/policy.ts`

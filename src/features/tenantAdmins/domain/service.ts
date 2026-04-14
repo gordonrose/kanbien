@@ -9,13 +9,20 @@ import {
   TenantAdminEmailAlreadyExistsError,
   TenantAdminNotDeletedError,
   TenantAdminNotFoundError,
+  TenantAdminOnboardingRestartNotEligibleError,
   TenantAdminVerificationNotEligibleError,
   TenantAdminVerificationTokenExpiredError,
   TenantAdminVerificationTokenInvalidError,
 } from "../contract/errors";
-import { toTenantAdminListResult, toTenantAdminSummary } from "./presenters";
+import {
+  toTenantAdminOnboardingRestartResult,
+  toTenantAdminListResult,
+  toTenantAdminSummary,
+  toTenantAdminVerificationRedeemResult,
+} from "./presenters";
 import type { TenantAdminListResult } from "./types";
 import type { TenantAdminsRepository } from "../persistence/repository";
+import type { TenantAuthOnboardingProvisioner } from "../../tenantAuth/domain/types";
 
 const VERIFICATION_TTL_SECONDS = 60 * 60 * 24;
 
@@ -76,6 +83,7 @@ export interface TenantAdminsService {
     firstName?: string;
     lastName?: string;
     createdByRootAdminUserId: string;
+    requestedByActorId: string;
   }): Promise<ReturnType<typeof toTenantAdminSummary>>;
   getTenantAdmin(input: { tenantId: string; tenantAdminId: string }): Promise<ReturnType<typeof toTenantAdminSummary>>;
   listTenantAdmins(input: Parameters<TenantAdminsRepository["listVisible"]>[0]): Promise<TenantAdminListResult>;
@@ -85,6 +93,7 @@ export interface TenantAdminsService {
     email?: string;
     firstName?: string;
     lastName?: string;
+    requestedByActorId: string;
   }): Promise<ReturnType<typeof toTenantAdminSummary>>;
   sendTenantAdminVerificationEmail(input: {
     tenantId: string;
@@ -97,7 +106,18 @@ export interface TenantAdminsService {
     requestedByActorId: string;
     resendReason?: string;
   }): Promise<ReturnType<typeof toTenantAdminSummary>>;
-  redeemTenantAdminVerificationToken(input: { token: string }): Promise<ReturnType<typeof toTenantAdminSummary>>;
+  restartTenantAdminOnboarding(input: {
+    tenantId: string;
+    tenantAdminId: string;
+    requestedByActorId: string;
+    ipAddress?: string;
+    userAgent?: string;
+  }): Promise<ReturnType<typeof toTenantAdminOnboardingRestartResult>>;
+  redeemTenantAdminVerificationToken(input: {
+    token: string;
+    ipAddress?: string;
+    userAgent?: string;
+  }): Promise<ReturnType<typeof toTenantAdminVerificationRedeemResult>>;
   softDeleteTenantAdmin(input: { tenantId: string; tenantAdminId: string }): Promise<ReturnType<typeof toTenantAdminSummary>>;
   reactivateTenantAdmin(input: { tenantId: string; tenantAdminId: string }): Promise<ReturnType<typeof toTenantAdminSummary>>;
   writeAuditEvent(input: {
@@ -115,6 +135,7 @@ export function createTenantAdminsService(
   visibleTenantsReader: VisibleTenantsReader,
   notificationEmailWriter: NotificationEmailWriter,
   platformSecurityRepository?: PlatformSecurityRepository,
+  tenantAuthOnboardingProvisioner?: TenantAuthOnboardingProvisioner,
 ): TenantAdminsService {
   async function requireVisibleTenant(tenantId: string) {
     const tenant = await visibleTenantsReader.findVisibleTenantById(tenantId);
@@ -232,7 +253,11 @@ export function createTenantAdminsService(
         lastName: input.lastName?.trim() ?? null,
         createdByRootAdminUserId: input.createdByRootAdminUserId,
       });
-      return toTenantAdminSummary(created);
+      return issueVerificationEmail({
+        tenantId: created.tenantId,
+        tenantAdminId: created.tenantAdminId,
+        requestedByActorId: input.requestedByActorId,
+      });
     },
     async getTenantAdmin(input) {
       return toTenantAdminSummary(await requireVisibleTenantAdmin(input.tenantId, input.tenantAdminId));
@@ -265,6 +290,13 @@ export function createTenantAdminsService(
         lastName: input.lastName?.trim(),
         resetVerification: emailChanged,
       });
+      if (updated.emailVerificationStatus === "pending") {
+        return issueVerificationEmail({
+          tenantId: updated.tenantId,
+          tenantAdminId: updated.tenantAdminId,
+          requestedByActorId: input.requestedByActorId,
+        });
+      }
       return toTenantAdminSummary(updated);
     },
     async sendTenantAdminVerificationEmail(input) {
@@ -272,6 +304,41 @@ export function createTenantAdminsService(
     },
     async resendTenantAdminVerificationEmail(input) {
       return issueVerificationEmail(input);
+    },
+    async restartTenantAdminOnboarding(input) {
+      const tenantAdmin = await requireVisibleTenantAdmin(input.tenantId, input.tenantAdminId);
+      if (tenantAdmin.emailVerificationStatus !== "verified") {
+        throw new TenantAdminOnboardingRestartNotEligibleError(
+          "That tenant admin must already be verified before onboarding can be restarted.",
+        );
+      }
+      if (!tenantAuthOnboardingProvisioner) {
+        throw new Error("Tenant auth onboarding provisioner is required for onboarding restart.");
+      }
+
+      const onboarding =
+        await tenantAuthOnboardingProvisioner.provisionTenantAuthForVerifiedSubject({
+          source: {
+            tenantAdminId: tenantAdmin.tenantAdminId,
+            tenantId: tenantAdmin.tenantId,
+            email: tenantAdmin.email,
+            normalizedEmail: tenantAdmin.normalizedEmail,
+            firstName: tenantAdmin.firstName,
+            lastName: tenantAdmin.lastName,
+          },
+          ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
+        });
+
+      return toTenantAdminOnboardingRestartResult({
+        tenantAdmin,
+        onboarding: {
+          authPrincipalId: onboarding.authPrincipalId,
+          loginEmail: onboarding.loginEmail,
+          passwordSetupRequired: onboarding.passwordSetupRequired,
+          bootstrapToken: onboarding.bootstrapToken,
+        },
+      });
     },
     async redeemTenantAdminVerificationToken(input) {
       const parsed = parseOneTimeToken(input.token);
@@ -308,7 +375,33 @@ export function createTenantAdminsService(
       }
       await repository.markVerificationTokenUsed(record.tokenId);
       const verified = await repository.markVerified(record.tenantAdminId);
-      return toTenantAdminSummary(verified);
+      if (!tenantAuthOnboardingProvisioner) {
+        throw new Error("Tenant auth onboarding provisioner is required for verification redemption.");
+      }
+
+      const onboarding =
+        await tenantAuthOnboardingProvisioner.provisionTenantAuthForVerifiedSubject({
+          source: {
+            tenantAdminId: verified.tenantAdminId,
+            tenantId: verified.tenantId,
+            email: verified.email,
+            normalizedEmail: verified.normalizedEmail,
+            firstName: verified.firstName,
+            lastName: verified.lastName,
+          },
+          ipAddress: input.ipAddress,
+          userAgent: input.userAgent,
+        });
+
+      return toTenantAdminVerificationRedeemResult({
+        tenantAdmin: verified,
+        onboarding: {
+          authPrincipalId: onboarding.authPrincipalId,
+          loginEmail: onboarding.loginEmail,
+          passwordSetupRequired: onboarding.passwordSetupRequired,
+          bootstrapToken: onboarding.bootstrapToken,
+        },
+      });
     },
     async softDeleteTenantAdmin(input) {
       const current = await repository.findVisibleById(input.tenantId, input.tenantAdminId);

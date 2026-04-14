@@ -15,7 +15,9 @@ describe("tenantConfiguration policy", () => {
     expect(result.policySource).toBe("system_default");
     expect(result.hasTenantOverride).toBe(false);
     expect(result.passwordPolicy.minLength).toBeGreaterThanOrEqual(6);
+    expect(result.sessionPolicy.sessionTtlSeconds).toBeGreaterThanOrEqual(300);
     expect(result.hardFloors.minSymbols).toBe(1);
+    expect(result.hardLimits.minSessionTtlSeconds).toBe(300);
     expect(result.updatedAt).toBeNull();
   });
 
@@ -97,5 +99,25 @@ describe("tenantConfiguration policy", () => {
       minSymbols: 1,
       maxSymbols: null,
     });
+  });
+
+  it("TC-TENANT-AUTH-POLICY-UNIT-004 rejects session TTLs outside the supported platform bounds", () => {
+    expect(() => {
+      validateTenantAuthPolicyInput({
+        sessionTtlSeconds: 299,
+      });
+    }).toThrowError(/platform policy rules/i);
+
+    try {
+      validateTenantAuthPolicyInput({
+        sessionTtlSeconds: 299,
+      });
+      throw new Error("Expected session TTL floor validation to fail");
+    } catch (error) {
+      expect(error).toMatchObject({
+        code: "TENANT_AUTH_POLICY_INVALID",
+        details: { field: "sessionTtlSeconds", reason: "below_platform_floor" },
+      });
+    }
   });
 });

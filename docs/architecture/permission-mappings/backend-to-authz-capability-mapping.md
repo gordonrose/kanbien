@@ -120,9 +120,10 @@ boundary implemented by the repo.
 | tenant admins | `tenantAdmins` | `updateTenantAdminProfile` | `current` | `tenant-admin.update` | `can(...)` | `RootUserAdmin` | editable tenant-admin profile update with reverification reset on email change |
 | tenant admins | `tenantAdmins` | `sendTenantAdminVerificationEmail` | `current` | `tenant-admin.verification.send` | `can(...)` | `RootUserAdmin` | issue tenant-admin verification token and send verification email |
 | tenant admins | `tenantAdmins` | `resendTenantAdminVerificationEmail` | `current` | `tenant-admin.verification.resend` | `can(...)` | `RootUserAdmin` | invalidate the prior active token and send fresh verification content |
+| tenant admins | `tenantAdmins` | `restartTenantAdminOnboarding` | `current` | `tenant-admin.onboarding.restart` | `can(...)` | `RootUserAdmin` | restart tenant-auth onboarding for a verified tenant-admin without requiring a new verification email |
 | tenant admins | `tenantAdmins` | `softDeleteTenantAdmin` | `current` | `tenant-admin.delete` | `can(...)` | `RootUserAdmin` | soft-delete tenant-admin record and invalidate active verification eligibility |
 | tenant admins | `tenantAdmins` | `reactivateTenantAdmin` | `current` | `tenant-admin.reactivate` | `can(...)` | `RootUserAdmin` | reactivate deleted tenant-admin and restore verification state to pending |
-| tenant admins | `tenantAdmins` | `redeemTenantAdminVerificationToken` | `current` | `public tenant-admin verification redemption entrypoint` | `n/a` | public unauthenticated caller | public token-redemption route updates verification state only and does not create auth sessions |
+| tenant admins | `tenantAdmins` | `redeemTenantAdminVerificationToken` | `current` | `public tenant-admin verification redemption entrypoint` | `n/a` | public unauthenticated caller | public token-redemption route verifies the tenant-admin and returns tenant-auth onboarding state without creating an authenticated session |
 
 ## Deterministic Method For Future Roles
 

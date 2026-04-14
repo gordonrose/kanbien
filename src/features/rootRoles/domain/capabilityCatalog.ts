@@ -227,6 +227,12 @@ export const ROOT_AUTHZ_CAPABILITY_CATALOG: RootAuthzCapabilityCatalogEntry[] = 
     protectedForRootUserAdmin: true,
   },
   {
+    capabilityKey: "tenant-admin.onboarding.restart",
+    description: "Restart tenant-auth onboarding for a verified tenant admin.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
     capabilityKey: "tenant-auth-policy.read",
     description: "Read the effective tenant auth policy for a tenant.",
     mandatoryForRootUserAdmin: true,

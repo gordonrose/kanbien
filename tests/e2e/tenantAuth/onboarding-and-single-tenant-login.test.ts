@@ -6,13 +6,13 @@ import {
 } from "./helpers";
 
 describe("tenantAuth e2e onboarding and single-tenant login", () => {
-  it("JY-TENANT-AUTH-001 completes bootstrap, password setup, first login, and single-tenant session read", async () => {
+  it("JY-TENANT-AUTH-001 completes verification redemption, password setup, first login, and single-tenant session read", async () => {
     const { harness, bootstrap, setup, login } = await bootstrapSetPasswordAndLogin({
       email: "journey-single@example.com",
     });
 
     expect(bootstrap.status).toBe(200);
-    expect(bootstrap.body.status).toBe("PRINCIPAL_BOOTSTRAPPED");
+    expect(bootstrap.body.status).toBe("VERIFIED");
 
     expect(setup.status).toBe(200);
     expect(setup.body.status).toBe("PASSWORD_SET");

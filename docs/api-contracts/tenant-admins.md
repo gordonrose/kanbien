@@ -14,6 +14,7 @@
   - `PATCH /v1/tenants/{tenantId}/admins/{tenantAdminId}`
   - `POST /v1/tenants/{tenantId}/admins/{tenantAdminId}/verification/send`
   - `POST /v1/tenants/{tenantId}/admins/{tenantAdminId}/verification/resend`
+  - `POST /v1/tenants/{tenantId}/admins/{tenantAdminId}/onboarding/restart`
   - `POST /v1/tenants/{tenantId}/admins/{tenantAdminId}/delete`
   - `POST /v1/tenants/{tenantId}/admins/{tenantAdminId}/reactivate`
   - `POST /v1/tenant-admin-verification/redeem`
@@ -22,15 +23,17 @@
     for operator routes
   - `/v1/notification-delivery/*` routes that own outbound email persistence
     and attempt history
-  - `/v1/tenant-auth/*` routes that later bootstrap shared principals and
-    tenant sessions from verified onboarding proof
+  - `/v1/tenant-auth/*` routes that later complete password setup, login, and
+    tenant sessions after verification redemption has already provisioned the
+    tenant-auth identity
 
 ## Capability
 
 - Feature: `tenantAdmins`
 - Capability:
   manage durable tenant-admin profile records and tenant-admin email
-  verification workflows while keeping later tenant authentication separate
+  verification workflows while initiating reusable tenant-auth onboarding after
+  successful public redemption
 
 ## Authentication
 
@@ -104,6 +107,8 @@
     no body
   - verification resend:
     `{ resendReason? }`
+  - onboarding restart:
+    no body
   - delete:
     no body
   - reactivate:
@@ -126,15 +131,21 @@
 ## Response Contract
 
 - Success payload:
-  - create, exact read, update, send, resend, delete, reactivate, and public
-    redeem return a tenant-admin summary:
+  - create, exact read, update, send, resend, delete, and reactivate return a
+    tenant-admin summary:
     `{ tenantAdminId, tenantId, email, firstName, lastName, emailVerificationStatus, emailVerifiedAt, lastVerificationEmailRequestedAt, createdByRootAdminUserId, createdAt, updatedAt, deletedAt }`
+  - public redeem returns:
+    `{ status, tenantAdmin, tenantAuthOnboarding }`
+  - onboarding restart returns:
+    `{ status, tenantAdmin, tenantAuthOnboarding }`
+  - `tenantAuthOnboarding` includes:
+    `{ authPrincipalId, loginEmail, passwordSetupRequired, bootstrapToken, nextStep }`
   - list returns a paginated list shape:
     `{ items, page, pageSize, totalPages, totalSearchableRecords, totalMatchingRecords }`
 - Status code:
   - `201` for create success
-  - `200` for reads, lists, updates, verification send/resend, delete,
-    reactivate, and public redeem
+  - `200` for reads, lists, updates, verification send/resend, onboarding
+    restart, delete, reactivate, and public redeem
 - Response headers or cookies:
   - no route-family-specific response headers or cookies
 
@@ -147,6 +158,7 @@
     - `TENANT_ADMIN_EMAIL_ALREADY_EXISTS`
     - `TENANT_ADMIN_ALREADY_VERIFIED`
     - `TENANT_ADMIN_VERIFICATION_NOT_ELIGIBLE`
+    - `TENANT_ADMIN_ONBOARDING_RESTART_NOT_ELIGIBLE`
     - `TENANT_ADMIN_VERIFICATION_TOKEN_INVALID`
     - `TENANT_ADMIN_VERIFICATION_TOKEN_EXPIRED`
     - `TENANT_ADMIN_ALREADY_DELETED`
@@ -181,13 +193,22 @@
 
 - Durable writes:
   - create inserts a durable `tenant_admin` row with creator attribution and
-    pending verification state
+    pending verification state, then automatically issues a fresh verification
+    token and verification email
   - update changes editable profile fields, refreshes `updatedAt`, and resets
-    verification state plus invalidates active tokens when `email` changes
+    verification state plus invalidates active tokens when `email` changes; if
+    the tenant admin remains pending after the update, the feature also issues
+    a fresh verification token and verification email automatically
   - verification send and resend issue feature-owned durable verification-token
     rows and update `lastVerificationEmailRequestedAt`
-  - public redeem marks the chosen verification token used and marks the
-    tenant-admin verified
+  - public redeem marks the chosen verification token used, marks the
+    tenant-admin verified, provisions or reuses the tenant-auth principal, adds
+    any missing tenant access grants for matching verified tenant-admin
+    subjects, and issues a password-setup bootstrap token when the principal
+    still requires initial password setup
+  - onboarding restart reuses the same tenant-auth provisioning logic for an
+    already verified visible tenant-admin and may issue a fresh password-setup
+    bootstrap token when password setup is still required
   - soft delete stamps `deletedAt`, refreshes `updatedAt`, and invalidates
     active verification tokens
   - reactivate clears `deletedAt`, refreshes `updatedAt`, and restores
@@ -201,8 +222,9 @@
 - Cross-feature reads:
   - reads visible tenant context through the public `tenants` seam
 - Other side effects:
-  - verification emails flow through the shared `notificationDelivery` seam
-    with durable email and attempt history owned there
+  - create, update-for-pending, verification send, and verification resend
+    flow through the shared `notificationDelivery` seam with durable email and
+    attempt history owned there
   - older active verification tokens are invalidated before a fresh accepted
     token is issued
 
@@ -210,9 +232,11 @@
 
 - Notes:
   - this contract reflects the current root-managed tenant-admin slice, not the
-    later shared tenant-auth foundation
+    later full tenant-auth foundation
   - `tenantAdmins` remains authoritative for tenant-admin lifecycle state and
     email verification state
+  - public verification redemption is now the onboarding handoff point into
+    reusable tenant-auth identity provisioning
   - shared tenant login, password setup, session issuance, and tenant
     selection are intentionally separate and handled by `tenantAuth`
   - reactivation is intentionally stricter than a pure visibility restore and

@@ -12,6 +12,7 @@ export interface TenantAuthPolicyOverrideData {
   maxNumbers: number | null;
   minSymbols: number | null;
   maxSymbols: number | null;
+  sessionTtlSeconds: number | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,6 +20,7 @@ export interface TenantAuthPolicyOverrideData {
 export interface TenantAuthPolicyResolver {
   readEffectiveTenantAuthPolicy(tenantId: string): Promise<EffectiveTenantAuthPolicy | null>;
   resolveAggregatePasswordPolicy(tenantIds: string[]): Promise<EffectiveTenantPasswordPolicy>;
+  resolveAggregateSessionTtlSeconds(tenantIds: string[]): Promise<number>;
   assertPasswordMeetsPolicy(password: string, policy: EffectiveTenantPasswordPolicy): void;
 }
 
@@ -43,5 +45,6 @@ export interface TenantConfigurationService {
     maxNumbers?: number | null;
     minSymbols?: number | null;
     maxSymbols?: number | null;
+    sessionTtlSeconds?: number | null;
   }): Promise<EffectiveTenantAuthPolicy>;
 }

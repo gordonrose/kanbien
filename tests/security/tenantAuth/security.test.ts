@@ -14,18 +14,18 @@ interface ErrorResponse {
 }
 
 describe("tenantAuth security", () => {
-  it("TC-TENANT-AUTH-SEC-001 denies invalid bootstrap proof", async () => {
+  it("TC-TENANT-AUTH-SEC-001 denies invalid verification redemption proof", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountTenantAuthFeature(harness.app, harness);
 
     const response = await invokeJson<ErrorResponse>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken: "bad-token" },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: "bad-token" },
     });
 
-    expect(response.status).toBe(401);
-    expect(response.body.code).toBe("TENANT_AUTH_BOOTSTRAP_INVALID");
+    expect(response.status).toBe(400);
+    expect(response.body.code).toBe("TENANT_ADMIN_VERIFICATION_TOKEN_INVALID");
   });
 
   it("TC-TENANT-AUTH-SEC-002 denies unauthenticated session reads", async () => {
@@ -58,16 +58,18 @@ describe("tenantAuth security", () => {
       mounted.tenantAdminsRepository,
       { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
     );
-    const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+    const bootstrap = await invokeJson<{
+      tenantAuthOnboarding: { bootstrapToken: string };
+    }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     await invokeJson(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },

@@ -214,6 +214,13 @@ describe("tenantAuth non-functional performance coverage", () => {
             minNumbers: 1,
             minSymbols: 1,
           },
+          sessionPolicy: {
+            sessionTtlSeconds: 28800,
+          },
+          hardLimits: {
+            minSessionTtlSeconds: 300,
+            maxSessionTtlSeconds: 2592000,
+          },
           updatedAt: "2026-04-10T12:00:00.000Z",
         };
       },
@@ -230,6 +237,9 @@ describe("tenantAuth non-functional performance coverage", () => {
           minSymbols: 1,
           maxSymbols: null,
         };
+      },
+      async resolveAggregateSessionTtlSeconds() {
+        return 28800;
       },
       assertPasswordMeetsPolicy(password, policy) {
         if (

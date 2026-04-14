@@ -66,6 +66,17 @@ export class TenantAdminVerificationNotEligibleError extends TenantAdminError {
   }
 }
 
+export class TenantAdminOnboardingRestartNotEligibleError extends TenantAdminError {
+  constructor(
+    message = "That tenant admin is not eligible for onboarding restart right now.",
+  ) {
+    super(409, "TENANT_ADMIN_ONBOARDING_RESTART_NOT_ELIGIBLE", message, {
+      field: "tenantAdminId",
+      reason: "onboarding_restart_not_eligible",
+    });
+  }
+}
+
 export class TenantAdminVerificationTokenInvalidError extends TenantAdminError {
   constructor() {
     super(

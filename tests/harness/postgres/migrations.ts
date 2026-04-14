@@ -77,6 +77,10 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     group: "tenantConfiguration",
     relativePath: "tenantConfiguration/persistence/migrations/0010_create_tenant_auth_policy.sql",
   },
+  {
+    group: "tenantConfiguration",
+    relativePath: "tenantConfiguration/persistence/migrations/0012_add_session_ttl_to_tenant_auth_policy.sql",
+  },
 ];
 
 function escapeSqlLiteral(value: string): string {

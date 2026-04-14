@@ -59,9 +59,13 @@
 - `expires_at`
   Type / Shape: `TIMESTAMPTZ`
   Description: Session expiry time.
-  Constraints / Notes: Required. Derived from `TENANT_AUTH_SESSION_TTL_SECONDS`.
+  Constraints / Notes: Required. Derived at login time from the effective
+  tenant auth policy session TTL. When one shared principal can access multiple
+  tenants, the currently implemented rule uses the shortest effective tenant
+  TTL across accessible tenant contexts at session creation time.
   Source: `src/features/tenantAuth/persistence/migrations/0009_create_tenant_auth.sql`,
-  `src/config/env.ts`
+  `src/features/tenantAuth/domain/service.ts`,
+  `src/features/tenantConfiguration/domain/service.ts`
 - `revoked_at`
   Type / Shape: `TIMESTAMPTZ | NULL`
   Description: Revocation marker.
@@ -123,7 +127,8 @@
 
 - Mutation rule: password login inserts a new session row.
   Effect on stored fields: creates one durable authenticated session with
-  either an auto-selected tenant or `selection_required = true`.
+  either an auto-selected tenant or `selection_required = true`, and computes
+  `expires_at` from the effective shared-principal tenant TTL policy.
   Source: `src/features/tenantAuth/domain/service.ts`,
   `src/features/tenantAuth/persistence/postgresRepository.ts`
 - Mutation rule: explicit tenant selection updates `active_tenant_id` and clears

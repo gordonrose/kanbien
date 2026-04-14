@@ -41,7 +41,8 @@
   root routes are root-only; tenant policy read is current-tenant only;
   remediation is self-service only
 - Session / expiry behavior:
-  remediation uses the authenticated tenant bearer session
+  remediation uses the authenticated tenant bearer session; new tenant sessions
+  now derive expiry from the effective tenant auth policy session TTL
 - Browser security considerations:
   no browser-shell work in this slice
 
@@ -55,8 +56,10 @@
   - `POST /v1/tenant-auth/remediation/password`
 - Request/response/error contract:
   - effective policy responses return effective values plus provenance summary
+  - effective policy responses now include `sessionPolicy` and `hardLimits`
   - remediation returns explicit workflow state rather than fake login failure
-  - policy update uses root-only exact-tenant mutation
+  - policy update uses root-only exact-tenant mutation and now accepts
+    `sessionTtlSeconds`
   - tenant self-read uses current tenant session only
 - Feature-local files expected:
   - `src/features/tenantConfiguration/*`
@@ -76,8 +79,10 @@
 - Entities / rows affected:
   - new `tenant_auth_policy` table
   - extended `tenant_session` remediation state
+  - tenant auth policy refinement adds durable `session_ttl_seconds`
 - Migration changes:
   - add `tenantConfiguration` migration for policy overrides
+  - add corrective tenant-configuration migration for `session_ttl_seconds`
   - add corrective `tenantAuth` migration for remediation session fields
 - Index or uniqueness changes:
   - unique one-row-per-tenant auth policy
@@ -86,16 +91,20 @@
   exact read only in phase one
 - Compatibility notes:
   password policy resolution stays compatible with the current shared-principal
-  credential model through strictest-compatible aggregate validation
+  credential model through strictest-compatible aggregate validation; session
+  TTL stays compatible by taking the shortest effective tenant TTL when one
+  shared-principal session is minted across multiple accessible tenants
 
 ## Verification Plan
 
 - Journey tier / workflow scope:
   Tier 0 for remediation-required login/remediation flow and root policy write
 - Unit:
-  policy validation, default/override merge, aggregate policy resolution
+  policy validation, default/override merge, aggregate password-policy
+  resolution, and aggregate session TTL resolution
 - Integration:
-  root read/write, tenant self-read, remediation-aware login/session flow
+  root read/write, tenant self-read, remediation-aware login/session flow, and
+  effective session-expiry propagation
 - Security:
   root deny, tenant cross-context deny, remediation self-ownership
 - Audit:
@@ -105,7 +114,8 @@
 - Frontend:
   none
 - Persistence-backed:
-  policy row read/write and remediation-state session persistence
+  policy row read/write including session TTL and remediation-state session
+  persistence
 - End-to-end:
   remediation flow and multi-tenant selection interaction
 - Concurrency / idempotency:
@@ -130,9 +140,10 @@
 ## Documentation Plan
 
 - PRD updates:
-  create and then mark implemented status where appropriate
+  create and then mark implemented status where appropriate; refresh when the
+  policy family expands
 - PRD test-case updates:
-  create and update status
+  create and update status for password and session-policy refinements
 - Feature docs:
   add or update `tenantAuth` and new `tenantConfiguration` docs as needed
 - API contract docs:
@@ -143,7 +154,8 @@
 - Postman:
   update maintained collections and add tenant-configuration collection
 - Data dictionary:
-  add `tenant_auth_policy` and extended `tenant_session` fields
+  add `tenant_auth_policy` and extended `tenant_session` fields, then refresh
+  them when new policy columns change stored truth
 - Architecture map:
   review configuration and SSO layer notes
 - Standards platform-status snapshots:
@@ -155,7 +167,8 @@
   none expected
 - Maintained-artifacts sweep:
   refresh earlier planning docs that still say remediation/policy slice is
-  future work and implementation is pending
+  future work and implementation is pending; also refresh any earlier slice
+  artifacts that still describe tenant session TTL as global-only
 - Runbook:
   not required in phase one
 - Privacy note:

@@ -92,6 +92,7 @@ are not a role.
 | `RootUserAdmin` | `tenant-admin.update` | `current` | current root operator grant | yes | yes | editable tenant-admin profile update |
 | `RootUserAdmin` | `tenant-admin.verification.send` | `current` | current root operator grant | yes | yes | initial verification send workflow |
 | `RootUserAdmin` | `tenant-admin.verification.resend` | `current` | current root operator grant | yes | yes | fresh-token verification resend workflow |
+| `RootUserAdmin` | `tenant-admin.onboarding.restart` | `current` | current root operator grant | yes | yes | restart tenant-auth onboarding for a verified tenant-admin |
 | `RootUserAdmin` | `tenant-admin.delete` | `current` | current root operator grant | no | yes | soft-delete tenant-admin record |
 | `RootUserAdmin` | `tenant-admin.reactivate` | `current` | current root operator grant | no | yes | reactivate deleted tenant-admin record with verification reset |
 

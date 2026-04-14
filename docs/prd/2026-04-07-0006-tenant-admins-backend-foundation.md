@@ -19,6 +19,7 @@ It provides the backend capabilities required for:
 - send verification email
 - resend verification email
 - redeem verification token
+- restart onboarding for an already verified tenant-admin
 - soft delete
 - reactivation
 
@@ -46,6 +47,8 @@ This phase includes:
 - root-operator-triggered verification email send
 - root-operator-triggered verification email resend
 - public verification-token redemption without tenant login
+- protected operator onboarding restart for already verified tenant-admins who
+  still need tenant-auth password setup
 - soft delete
 - reactivation
 - durable creator attribution through `createdByRootAdminUserId`
@@ -69,6 +72,14 @@ This phase does **not** include:
 
 Those later capabilities are exactly why this slice exists, but they are not
 implemented here.
+
+The new onboarding-restart capability is intentionally narrow:
+
+- it does not create a tenant session
+- it does not replace password setup
+- it does not resend verification for already verified rows
+- it only recovers the verified-but-not-finished onboarding gap by asking the
+  shared tenant-auth layer for a fresh onboarding result
 
 ---
 

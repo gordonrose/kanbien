@@ -59,6 +59,7 @@ This inventory covers multi-step workflows for:
 
 - verified tenant-admin bootstrap into a shared auth principal
 - first password setup
+- root-operator onboarding restart after verification has already succeeded
 - first successful login
 - repeat login
 - single-tenant auto-selection
@@ -255,6 +256,41 @@ Example:
   production gate
 - Notes:
   distinguishes first-time onboarding from repeat login behavior
+
+### `JY-TENANT-AUTH-002A`
+
+- Journey Name:
+  root operator restarts onboarding for an already verified tenant-admin who
+  no longer has a usable setup proof
+- Tier:
+  `Tier 1`
+- Primary Actor:
+  `RootUserAdmin`
+- Tenant Variation:
+  exactly one tenant-admin row in one target tenant
+- Role Variation:
+  protected root operator action over tenant-admin lifecycle
+- Legacy/Post-Change State:
+  verified-but-password-not-set recovery state
+- Trigger:
+  operator invokes onboarding restart after verification was already redeemed
+- Expected Outcome:
+  route succeeds without sending a new verification email, returns a truthful
+  tenant-auth onboarding payload, and allows the user to continue to password
+  setup or direct login as appropriate
+- Related Capability Matrix Rows:
+  `restartTenantAdminOnboarding`,
+  `setInitialTenantPassword`
+- Related Test Cases:
+  `TC-TENANT-AUTH-UNIT-009`,
+  `TC-TENANT-AUTH-INT-006`
+- Suggested Test Path:
+  `tests/integration/tenantAdmins/flow.test.ts`
+- Execution Gates:
+  affected auth recovery workflow; full `Tier 1` production gate
+- Notes:
+  closes the operator recovery gap exposed when verification is complete but
+  the user still cannot finish password setup
 
 ### `JY-TENANT-AUTH-003`
 

@@ -28,6 +28,21 @@ These guides exist to make the repo:
   stays private.
 - `frontend-implementation-guide.md`
   How browser surfaces should be structured, integrated, and documented.
+- `frontend-governance-entry-point.md`
+  Canonical starting path for governed frontend work, required commands, and
+  manifest/update expectations.
+- `frontend-visual-and-interaction-charter.md`
+  Visual-language, layout, and interaction-direction charter for calm,
+  trustworthy, enterprise-grade frontend work.
+- `frontend-feature-loop-harness.md`
+  Required slice artifacts, review gates, telemetry expectations, and
+  escalation rules for frontend work.
+- `frontend-visual-verification-loop.md`
+  How frontend state manifests, visual baselines, overflow checks, and the
+  frontend gate work together.
+- `vertical-slice-frontend-backend-harness.md`
+  How frontend and backend artifact chains join into one coherent user-facing
+  vertical slice.
 - `persistence-and-migrations-guide.md`
   How durable data, migrations, searchable fields, and compatibility should be
   handled.

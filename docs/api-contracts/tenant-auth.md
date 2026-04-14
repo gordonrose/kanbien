@@ -8,7 +8,6 @@
   Public tenant-auth onboarding/login routes plus authenticated tenant-session
   routes
 - In-scope routes:
-  - `POST /v1/tenant-auth/principals/bootstrap`
   - `POST /v1/tenant-auth/password/setup`
   - `POST /v1/tenant-auth/login/password`
   - `GET /v1/tenant-auth/remediation`
@@ -22,14 +21,15 @@
 
 - Feature: `tenantAuth`
 - Capability:
-  Bootstrap a reusable tenant-side principal from verified tenant-admin proof,
   establish credentials, create tenant sessions, and manage active tenant
-  context
+  context for tenant-auth principals that are provisioned internally after
+  successful tenant-admin verification redemption
 
 ## Authentication
 
 - Required auth state:
-  - public for bootstrap, password setup, and login
+  - public for password setup and login
+  - root-authenticated operator for tenant-admin onboarding restart
   - authenticated tenant session for session read, tenant list, tenant
     selection, and logout
 - Session transport(s):
@@ -38,7 +38,8 @@
 ## Authorization
 
 - Allowed roles:
-  - public onboarding caller with valid proof for bootstrap and password setup
+  - public onboarding caller with a valid password-setup proof
+    for password setup
   - authenticated tenant-side principal for session routes
 - Denied roles:
   - unauthenticated callers on protected tenant-session routes
@@ -49,14 +50,14 @@
 
 ## Request Contract
 
-- `POST /v1/tenant-auth/principals/bootstrap`
-  - body:
-    `{ verificationToken }`
-  - current proof model:
-    consumes a tenant-admin verification token as the onboarding proof
-- `POST /v1/tenant-auth/password/setup`
+  - `POST /v1/tenant-auth/password/setup`
   - body:
     `{ bootstrapToken, newPassword, repeatPassword }`
+  - proof source:
+    the `bootstrapToken` is now issued by
+    `POST /v1/tenant-admin-verification/redeem`
+    or by the protected root-operator onboarding restart route:
+    `POST /v1/tenants/{tenantId}/admins/{tenantAdminId}/onboarding/restart`
 - `POST /v1/tenant-auth/login/password`
   - body:
     `{ email, password }`
@@ -80,11 +81,6 @@
 
 ## Response Contract
 
-- bootstrap returns:
-  - principal summary
-  - normalized login email
-  - `passwordSetupRequired`
-  - bootstrap token when password setup is still required
 - password setup returns:
   - `PASSWORD_SET`
   - principal summary
@@ -115,13 +111,14 @@
   - `selectionRequired`
   - remediation state
   - session timestamps
+  - tenant-session expiry still returns as `expiresAt`, but new sessions now use
+    the effective tenant auth policy session TTL rather than only the global
+    default
 
 ## Error Contract
 
 - feature-local:
   - `INVALID_REQUEST`
-  - `TENANT_AUTH_BOOTSTRAP_INVALID`
-  - `TENANT_AUTH_BOOTSTRAP_EXPIRED`
   - `TENANT_AUTH_PASSWORD_SETUP_INVALID`
   - `TENANT_AUTH_PASSWORD_SETUP_EXPIRED`
   - `TENANT_AUTH_PASSWORD_ALREADY_SET`
@@ -139,14 +136,6 @@
 
 ## Persistence / Side Effects
 
-- bootstrap may:
-  - mark the supplied tenant-admin verification token used
-  - mark the source tenant-admin verified
-  - create one shared principal
-  - create one or more tenant access grants for matching verified tenant-admin
-    subjects
-  - create one password-setup bootstrap token when password setup is still
-    required
 - password setup writes durable password credential state and marks the
   bootstrap token used
 - login creates one durable tenant session and may mark it remediation-gated
@@ -154,7 +143,7 @@
   tenant-session remediation state
 - tenant selection mutates `tenant_session.active_tenant_id`
 - logout revokes the current tenant session
-- bootstrap, password setup, login, tenant selection, and logout currently
+- password setup, login, tenant selection, and logout currently
   create durable security-audit events through the shared audit surface
 - remediation completion creates a durable security-audit event
 
@@ -162,6 +151,12 @@
 
 - tenant-admin profile lifecycle remains owned by `tenantAdmins`
 - one principal may accumulate multiple tenant access grants over time
+- tenant-auth provisioning is now triggered by successful
+  `tenant-admin-verification/redeem` rather than by a standalone public
+  tenant-auth bootstrap route
+- verified-but-incomplete onboarding can be recovered by the protected
+  tenant-admin onboarding restart route without requiring a second email
+  verification cycle
 - session contracts use generic `subjectType` and `subjectId` so future
   non-admin tenant actors can reuse the same API shape
 - forgot-password reset, MFA, and final browser transport are intentionally out

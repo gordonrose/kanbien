@@ -1,6 +1,10 @@
 import { env } from "../../../config/env";
 import { TenantAuthPolicyValidationError } from "../contract/errors";
-import type { EffectiveTenantAuthPolicy, EffectiveTenantPasswordPolicy } from "../contract/types";
+import type {
+  EffectiveTenantAuthPolicy,
+  EffectiveTenantPasswordPolicy,
+  EffectiveTenantSessionPolicy,
+} from "../contract/types";
 import type { TenantAuthPolicyOverrideData } from "./types";
 
 export const HARD_PASSWORD_POLICY_FLOORS = {
@@ -12,6 +16,8 @@ export const HARD_PASSWORD_POLICY_FLOORS = {
 } as const;
 
 export const PASSWORD_POLICY_HARD_MAX = 128;
+export const SESSION_TTL_SECONDS_HARD_FLOOR = 60 * 5;
+export const SESSION_TTL_SECONDS_HARD_CEILING = 60 * 60 * 24 * 30;
 
 export const SYSTEM_DEFAULT_PASSWORD_POLICY: EffectiveTenantPasswordPolicy = {
   minLength: env.tenantAuth.passwordMinLength,
@@ -26,9 +32,15 @@ export const SYSTEM_DEFAULT_PASSWORD_POLICY: EffectiveTenantPasswordPolicy = {
   maxSymbols: null,
 };
 
+export const SYSTEM_DEFAULT_SESSION_POLICY: EffectiveTenantSessionPolicy = {
+  sessionTtlSeconds: env.tenantAuth.sessionTtlSeconds,
+};
+
 type PolicyFields = Omit<EffectiveTenantPasswordPolicy, never>;
 type TenantAuthPolicyInput = {
   [K in keyof EffectiveTenantPasswordPolicy]?: EffectiveTenantPasswordPolicy[K] | null;
+} & {
+  sessionTtlSeconds?: number | null;
 };
 
 function assertNonNegativeOrNull(name: keyof PolicyFields, value: number | null | undefined) {
@@ -95,6 +107,21 @@ export function validateTenantAuthPolicyInput(input: TenantAuthPolicyInput): voi
   assertMinMaxPair("minNumbers", input.minNumbers, "maxNumbers", input.maxNumbers);
   assertMinMaxPair("minSymbols", input.minSymbols, "maxSymbols", input.maxSymbols);
 
+  if (input.sessionTtlSeconds !== undefined && input.sessionTtlSeconds !== null) {
+    if (input.sessionTtlSeconds < SESSION_TTL_SECONDS_HARD_FLOOR) {
+      throw new TenantAuthPolicyValidationError({
+        field: "sessionTtlSeconds",
+        reason: "below_platform_floor",
+      });
+    }
+    if (input.sessionTtlSeconds > SESSION_TTL_SECONDS_HARD_CEILING) {
+      throw new TenantAuthPolicyValidationError({
+        field: "sessionTtlSeconds",
+        reason: "above_platform_ceiling",
+      });
+    }
+  }
+
   const effective = {
     ...SYSTEM_DEFAULT_PASSWORD_POLICY,
     ...Object.fromEntries(
@@ -133,13 +160,22 @@ export function toEffectiveTenantAuthPolicy(
     minSymbols: override?.minSymbols ?? SYSTEM_DEFAULT_PASSWORD_POLICY.minSymbols,
     maxSymbols: override?.maxSymbols ?? SYSTEM_DEFAULT_PASSWORD_POLICY.maxSymbols,
   };
+  const sessionPolicy: EffectiveTenantSessionPolicy = {
+    sessionTtlSeconds:
+      override?.sessionTtlSeconds ?? SYSTEM_DEFAULT_SESSION_POLICY.sessionTtlSeconds,
+  };
 
   return {
     tenantId,
     policySource: override ? "tenant_override" : "system_default",
     hasTenantOverride: Boolean(override),
     passwordPolicy,
+    sessionPolicy,
     hardFloors: { ...HARD_PASSWORD_POLICY_FLOORS },
+    hardLimits: {
+      minSessionTtlSeconds: SESSION_TTL_SECONDS_HARD_FLOOR,
+      maxSessionTtlSeconds: SESSION_TTL_SECONDS_HARD_CEILING,
+    },
     updatedAt: override ? override.updatedAt.toISOString() : null,
   };
 }
@@ -169,6 +205,19 @@ export function resolveAggregatePasswordPolicy(
     minSymbols: maxOf(policies.map((policy) => policy.minSymbols)),
     maxSymbols: minNullable(policies.map((policy) => policy.maxSymbols)),
   };
+}
+
+export function resolveAggregateSessionTtlSeconds(
+  policies: EffectiveTenantSessionPolicy[],
+): number {
+  if (policies.length === 0) {
+    return SYSTEM_DEFAULT_SESSION_POLICY.sessionTtlSeconds;
+  }
+
+  return policies.reduce(
+    (current, policy) => Math.min(current, policy.sessionTtlSeconds),
+    Number.POSITIVE_INFINITY,
+  );
 }
 
 export function countPasswordClasses(password: string) {

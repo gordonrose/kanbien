@@ -148,22 +148,26 @@ This blueprint does **not** include:
 ## Backend Plan
 
 - Public route(s):
-  - `POST /v1/tenant-auth/principals/bootstrap`
+  - `POST /v1/tenant-admin-verification/redeem`
   - `POST /v1/tenant-auth/password/setup`
   - `POST /v1/tenant-auth/login/password`
+- Protected operator dependency route(s):
+  - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/onboarding/restart`
 - Authenticated route(s):
   - `GET /v1/tenant-auth/session`
   - `GET /v1/tenant-auth/tenant-contexts`
   - `POST /v1/tenant-auth/tenant-selection`
   - `POST /v1/tenant-auth/logout`
 - Request/response/error contract:
-  - bootstrap accepts:
-    - one single-use bootstrap or onboarding proof
-    - no client-supplied principal/session/grant identifiers
-  - bootstrap returns:
-    - principal summary
-    - normalized login email
-    - `passwordSetupRequired`
+  - verification redemption accepts:
+    - one single-use tenant-admin verification token
+  - verification redemption returns:
+    - verified tenant-admin summary
+    - reusable tenant-auth onboarding payload
+    - `PASSWORD_SETUP_REQUIRED` or `LOGIN_REQUIRED` next-step hint
+  - protected onboarding restart returns:
+    - the same reusable tenant-auth onboarding payload shape for already
+      verified tenant-admins
   - password setup accepts:
     - single-use bootstrap/onboarding proof
     - `newPassword`
@@ -191,7 +195,7 @@ This blueprint does **not** include:
     - no body
   - use repo-standard validation/auth error shape and stable feature-owned
     codes such as:
-    - `TENANT_AUTH_BOOTSTRAP_INVALID`
+    - `TENANT_ADMIN_VERIFICATION_TOKEN_INVALID`
     - `TENANT_AUTH_PRINCIPAL_ALREADY_EXISTS`
     - `TENANT_AUTH_PASSWORD_ALREADY_SET`
     - `TENANT_AUTH_ONBOARDING_REQUIRED`
@@ -207,7 +211,7 @@ This blueprint does **not** include:
   - `src/features/tenantAuth/contract/schemas.ts`
   - `src/features/tenantAuth/contract/types.ts`
   - capability-focused domain files, likely:
-    - `bootstrapPrincipal.ts`
+    - `provisionTenantAuthForVerifiedSubject.ts`
     - `setInitialPassword.ts`
     - `loginWithPassword.ts`
     - `readCurrentSession.ts`
@@ -382,7 +386,7 @@ This blueprint does **not** include:
 - OpenAPI:
   update `docs/swagger/openapi.yaml`
 - Postman:
-  add `docs/postman/tenantAuth.postman_collection.json`
+  add `docs/postman/collections/tenantAuth.postman_collection.json`
 - Feature doc:
   add `docs/featureDocs/tenantAuth-feature.md`
 - Data dictionary:

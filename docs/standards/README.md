@@ -14,6 +14,11 @@ AI-assisted development, and AI-related product changes.
 - `EU-AI-ACT-GATE.md`
 - `AI-ASSISTED-DEVELOPMENT-GATE.md`
 - `QA-RELEASE-GATE.md`
+- `WCAG-2.2-AA-GATE.md`
+- `FRONTEND-SECURITY-GATE.md`
+- `FRONTEND-ANALYTICS-GATE.md`
+- `FRONTEND-OBSERVABILITY-GATE.md`
+- `FRONTEND-ALERTING-GATE.md`
 - `change-artifact-requirements.md`
 - `platform-status/`
 
@@ -77,6 +82,35 @@ Use for:
 - layer-complete QA review
 - waiver and quarantine discipline
 - defect feedback into stronger coverage rules
+
+### `WCAG-2.2-AA-GATE.md`
+Use for:
+- frontend accessibility posture
+- semantic structure, keyboard, focus, validation, and responsive checks
+- themed, localized, and RTL-aware frontend review
+
+### `FRONTEND-SECURITY-GATE.md`
+Use for:
+- browser and mobile frontend security posture
+- frontend auth/session, storage, CSP, and third-party JavaScript review
+- tenant-isolation and client-side exposure checks
+
+### `FRONTEND-ANALYTICS-GATE.md`
+Use for:
+- event taxonomy review
+- consent and region-aware analytics review
+- replay and telemetry minimization review
+
+### `FRONTEND-OBSERVABILITY-GATE.md`
+Use for:
+- frontend logging, monitoring, KPI instrumentation, and diagnostic visibility
+- developer- and agent-facing structured telemetry review
+
+### `FRONTEND-ALERTING-GATE.md`
+Use for:
+- frontend alert-routing and severity review
+- proactive detection and production-blocker alertability review
+- noise, ownership, and business-impact classification review
 
 ### `change-artifact-requirements.md`
 Use for:

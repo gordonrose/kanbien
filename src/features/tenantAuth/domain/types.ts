@@ -84,14 +84,25 @@ export interface TenantAuthSessionShape {
 export interface TenantAuthResolvedPolicyState {
   activeTenantPolicy: EffectiveTenantPasswordPolicy | null;
   aggregatePasswordPolicy: EffectiveTenantPasswordPolicy;
+  aggregateSessionTtlSeconds: number;
 }
 
-export interface TenantAuthService {
-  bootstrapPrincipalFromVerification(input: {
-    verificationToken: string;
+export interface TenantAuthOnboardingProvisioner {
+  provisionTenantAuthForVerifiedSubject(input: {
+    source: {
+      tenantAdminId: string;
+      tenantId: string;
+      email: string;
+      normalizedEmail: string;
+      firstName: string | null;
+      lastName: string | null;
+    };
     ipAddress?: string;
     userAgent?: string;
   }): Promise<TenantAuthBootstrapResult>;
+}
+
+export interface TenantAuthService {
   setInitialPassword(input: {
     bootstrapToken: string;
     newPassword: string;

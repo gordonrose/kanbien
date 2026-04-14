@@ -16,6 +16,7 @@ function toOverrideData(record: TenantAuthPolicyRecord): TenantAuthPolicyOverrid
     maxNumbers: record.max_numbers,
     minSymbols: record.min_symbols,
     maxSymbols: record.max_symbols,
+    sessionTtlSeconds: record.session_ttl_seconds,
     createdAt: record.created_at,
     updatedAt: record.updated_at,
   };
@@ -50,10 +51,11 @@ export function createPostgresTenantConfigurationRepository(dbPool: Pool): Tenan
             max_numbers,
             min_symbols,
             max_symbols,
+            session_ttl_seconds,
             created_at,
             updated_at
           )
-          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,NOW(),NOW())
+          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,NOW(),NOW())
           ON CONFLICT (tenant_id)
           DO UPDATE SET
             min_length = EXCLUDED.min_length,
@@ -66,6 +68,7 @@ export function createPostgresTenantConfigurationRepository(dbPool: Pool): Tenan
             max_numbers = EXCLUDED.max_numbers,
             min_symbols = EXCLUDED.min_symbols,
             max_symbols = EXCLUDED.max_symbols,
+            session_ttl_seconds = EXCLUDED.session_ttl_seconds,
             updated_at = NOW()
           RETURNING *
         `,
@@ -81,6 +84,7 @@ export function createPostgresTenantConfigurationRepository(dbPool: Pool): Tenan
           input.maxNumbers,
           input.minSymbols,
           input.maxSymbols,
+          input.sessionTtlSeconds,
         ],
       );
       return toOverrideData(result.rows[0]);

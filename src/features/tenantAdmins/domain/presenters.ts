@@ -1,5 +1,10 @@
 import type { TenantAdminListResult as TenantAdminListResultData, TenantAdminData } from "./types";
-import type { TenantAdminSummary, TenantAdminListResult } from "../contract/types";
+import type {
+  TenantAdminSummary,
+  TenantAdminListResult,
+  TenantAdminOnboardingRestartResult,
+  TenantAdminVerificationRedeemResult,
+} from "../contract/types";
 
 export function toTenantAdminSummary(data: TenantAdminData): TenantAdminSummary {
   return {
@@ -26,5 +31,53 @@ export function toTenantAdminListResult(data: TenantAdminListResultData): Tenant
     totalPages: data.totalPages,
     totalSearchableRecords: data.totalSearchableRecords,
     totalMatchingRecords: data.totalMatchingRecords,
+  };
+}
+
+export function toTenantAdminVerificationRedeemResult(input: {
+  tenantAdmin: TenantAdminData;
+  onboarding: {
+    authPrincipalId: string;
+    loginEmail: string;
+    passwordSetupRequired: boolean;
+    bootstrapToken: string | null;
+  };
+}): TenantAdminVerificationRedeemResult {
+  return {
+    status: "VERIFIED",
+    tenantAdmin: toTenantAdminSummary(input.tenantAdmin),
+    tenantAuthOnboarding: {
+      authPrincipalId: input.onboarding.authPrincipalId,
+      loginEmail: input.onboarding.loginEmail,
+      passwordSetupRequired: input.onboarding.passwordSetupRequired,
+      bootstrapToken: input.onboarding.bootstrapToken,
+      nextStep: input.onboarding.passwordSetupRequired
+        ? "PASSWORD_SETUP_REQUIRED"
+        : "LOGIN_REQUIRED",
+    },
+  };
+}
+
+export function toTenantAdminOnboardingRestartResult(input: {
+  tenantAdmin: TenantAdminData;
+  onboarding: {
+    authPrincipalId: string;
+    loginEmail: string;
+    passwordSetupRequired: boolean;
+    bootstrapToken: string | null;
+  };
+}): TenantAdminOnboardingRestartResult {
+  return {
+    status: "ONBOARDING_RESTARTED",
+    tenantAdmin: toTenantAdminSummary(input.tenantAdmin),
+    tenantAuthOnboarding: {
+      authPrincipalId: input.onboarding.authPrincipalId,
+      loginEmail: input.onboarding.loginEmail,
+      passwordSetupRequired: input.onboarding.passwordSetupRequired,
+      bootstrapToken: input.onboarding.bootstrapToken,
+      nextStep: input.onboarding.passwordSetupRequired
+        ? "PASSWORD_SETUP_REQUIRED"
+        : "LOGIN_REQUIRED",
+    },
   };
 }

@@ -260,6 +260,9 @@ areas, especially:
   capability grants
 - audit tests that may need to prove gated denials or newly gated privileged
   mutations remain visible
+- persistence-backed tests that should verify capability seed rows and default
+  role grants exist after migrations when the capability matrix introduces new
+  protected backend capabilities
 
 6. Ask before updating the file if it already exists.
 If no file exists yet, propose the initial file and then create it after user

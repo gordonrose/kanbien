@@ -36,16 +36,18 @@ describe("tenantAuth end-to-end multi-tenant journeys", () => {
       mounted.tenantAdminsRepository,
       { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
     );
-    const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+    const bootstrap = await invokeJson<{
+      tenantAuthOnboarding: { bootstrapToken: string };
+    }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     await invokeJson(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },
@@ -110,16 +112,18 @@ describe("tenantAuth end-to-end multi-tenant journeys", () => {
       mounted.tenantAdminsRepository,
       { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
     );
-    const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+    const bootstrap = await invokeJson<{
+      tenantAuthOnboarding: { bootstrapToken: string };
+    }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     await invokeJson(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },

@@ -69,7 +69,6 @@ authenticated-sensitive rate limiting.
 
 Public routes:
 
-- `POST /v1/tenant-auth/principals/bootstrap`
 - `POST /v1/tenant-auth/password/setup`
 - `POST /v1/tenant-auth/login/password`
 
@@ -93,9 +92,7 @@ Transport notes:
 - login email is globally unique across non-root principals
 - passwords are stored as hashes, never plaintext
 - password setup depends on a single-use bootstrap token generated after
-  verified source-actor proof succeeds
-- bootstrap currently consumes a tenant-admin verification token as the trusted
-  onboarding proof
+  tenant-admin verification redemption succeeds
 - tenant-admin rows remain tenant-scoped profile records rather than becoming
   the login identity themselves
 - active tenant selection is validated against durable principal-to-tenant
@@ -104,7 +101,7 @@ Transport notes:
   throttling
 - authenticated session routes are protected by shared
   authenticated-sensitive throttling
-- bootstrap, password setup, login, tenant selection, and logout are audit
+- password setup, login, tenant selection, and logout are audit
   visible through the shared security audit surface
 
 ## Cross-Feature Seams
@@ -113,8 +110,8 @@ Transport notes:
   - exported seam:
     `createTenantAdminsAuthBootstrapReader`
   - current use:
-    consume verification proof and resolve verified active tenant-admin
-    subjects by normalized email or exact ID
+    resolve verified active tenant-admin subjects by normalized email or exact
+    ID so tenant-auth can provision access grants after verification redemption
 - `tenants`
   - exported seam:
     `createVisibleTenantsReader`
@@ -126,9 +123,9 @@ Transport notes:
 1. Create a `tenantAdmin` and send verification email through the existing
    root-only `tenantAdmins` routes.
 2. Copy the raw verification token from the email link.
-3. Call `POST /v1/tenant-auth/principals/bootstrap` with that verification
+3. Call `POST /v1/tenant-admin-verification/redeem` with that verification
    token.
-4. Use the returned `bootstrapToken` with
+4. Use the returned `tenantAuthOnboarding.bootstrapToken` with
    `POST /v1/tenant-auth/password/setup`.
 5. Log in with `POST /v1/tenant-auth/login/password`.
 6. If more than one tenant context is returned, call
@@ -141,3 +138,10 @@ Authorization: Bearer <sessionId>
 
 8. Read the current session through `GET /v1/tenant-auth/session`.
 9. End the session with `POST /v1/tenant-auth/logout`.
+
+Recovery note:
+
+- if the tenant admin is already verified but the original password-setup proof
+  is no longer available, a root operator can call
+  `POST /v1/tenants/:tenantId/admins/:tenantAdminId/onboarding/restart` to get
+  a fresh tenant-auth onboarding result without re-running email verification

@@ -85,6 +85,7 @@ Typical steps:
 - ADR decision check
 - PRD-derived test-case planning
 - implementation
+- migration execution when persistence or authz seed state changed
 - executable verification
 - maintained-artifact and docs updates
 - standards review
@@ -121,6 +122,8 @@ If a step is omitted, say why it was `not needed`.
 Before declaring success, explicitly confirm:
 
 - the required loop steps were completed
+- migration-backed changes were actually migrated or any deferral was stated
+  explicitly
 - required verification ran or any deferral was stated explicitly
 - required maintained artifacts were updated or intentionally left unchanged
   with a concrete reason
@@ -172,7 +175,8 @@ Typical order:
 4. run planning skills if required
 5. implement
 6. refresh maintained artifacts and source-independent docs as required
-7. run standards and repo-health review when the change class requires them
+7. run migrations when the change adds or repairs persistence or authz seed state
+8. run standards and repo-health review when the change class requires them
 
 ## Decision Rules
 
@@ -189,6 +193,18 @@ or source-independent doc update, call that out explicitly.
 
 Use `docs/standards/change-artifact-requirements.md` as the canonical artifact
 matrix instead of restating it here.
+
+When approved capability-matrix rows introduce new protected backend
+capabilities or change role-governed access:
+
+- explicitly check whether the implementation requires new
+  `root_authz_capabilities` or equivalent authz-catalog seed rows
+- explicitly check whether default role grants such as `RootUserAdmin` must be
+  added or repaired through migrations
+- do not treat route guards, capability-catalog code, or docs updates as
+  sufficient closure without the corresponding migration-backed authz state
+- prefer a new corrective migration over editing an already applied migration
+  when repairing missing grants or seed data
 
 ### Do not force every step when not needed
 

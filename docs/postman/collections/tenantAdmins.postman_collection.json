@@ -3,7 +3,7 @@
     "_postman_id": "f566cd22-8140-4450-8bc1-fd215614a2c6",
     "name": "Kanbien Tenant Admins",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for the protected tenantAdmins feature plus the public tenant-admin verification redemption route. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises create, list, exact read, update, verification send and resend, delete, reactivate, and public verification redemption. Public redemption requires a raw token copied from the actual verification email link."
+    "description": "Postman collection for the protected tenantAdmins feature plus the public tenant-admin verification redemption route. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises create, list, exact read, update, verification send and resend, onboarding restart, delete, reactivate, and public verification redemption. Create now auto-sends the initial verification email, and update auto-sends a fresh verification email whenever the tenant admin remains pending. Public redemption requires a raw token copied from the actual verification email link. Onboarding restart lets a root operator recover a verified tenant-admin who still needs password setup. Successful root login reads and writes shared root auth state through the active Postman environment so other root-protected collections can reuse it."
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000" },
@@ -15,7 +15,7 @@
     { "key": "publicKeyFingerprint", "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY" },
     { "key": "sshSignature", "value": "base64_signature_over_challenge_text" },
     { "key": "sshSignatureJson", "value": "base64_signature_over_challenge_text" },
-    { "key": "sessionToken", "value": "sess_replace_me" },
+    { "key": "rootSessionId", "value": "sess_replace_me" },
     { "key": "tenantId", "value": "00000000-0000-0000-0000-000000000000" },
     { "key": "tenantAdminId", "value": "00000000-0000-0000-0000-000000000000" },
     { "key": "tenantAdminEmail", "value": "tenant.admin@example.com" },
@@ -24,7 +24,8 @@
     { "key": "updatedFirstName", "value": "Updated" },
     { "key": "updatedLastName", "value": "Admin" },
     { "key": "resendReason", "value": "operator requested resend" },
-    { "key": "verificationToken", "value": "replace-with-raw-token-from-email-link" }
+    { "key": "verificationToken", "value": "replace-with-raw-token-from-email-link" },
+    { "key": "bootstrapToken", "value": "replace-after-redeem-or-onboarding-restart" }
   ],
   "item": [
     {
@@ -122,8 +123,8 @@
             "type": "text/javascript",
             "exec": [
               "const json = pm.response.json();",
-              "if (!json.sessionId) pm.collectionVariables.unset(\"sessionToken\");",
-              "if (json.sessionId) pm.collectionVariables.set(\"sessionToken\", json.sessionId);"
+              "if (!json.sessionId) pm.environment.unset(\"rootSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
             ]
           }
         }
@@ -134,7 +135,7 @@
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Authorization", "value": "Bearer {{sessionToken}}" },
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
           { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
@@ -164,7 +165,7 @@
       "name": "Tenant Admins - List",
       "request": {
         "method": "GET",
-        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
         "url": {
           "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc&emailPrefix={{tenantAdminEmail}}",
           "host": ["{{baseUrl}}"],
@@ -183,7 +184,7 @@
       "name": "Tenant Admins - Get",
       "request": {
         "method": "GET",
-        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
         "url": {
           "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}",
           "host": ["{{baseUrl}}"],
@@ -196,7 +197,7 @@
       "request": {
         "method": "PATCH",
         "header": [
-          { "key": "Authorization", "value": "Bearer {{sessionToken}}" },
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
           { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
@@ -214,7 +215,7 @@
       "name": "Tenant Admins - Send Verification",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
         "url": {
           "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}/verification/send",
           "host": ["{{baseUrl}}"],
@@ -227,7 +228,7 @@
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Authorization", "value": "Bearer {{sessionToken}}" },
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
           { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
@@ -256,13 +257,50 @@
           "host": ["{{baseUrl}}"],
           "path": ["v1", "tenant-admin-verification", "redeem"]
         }
-      }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.tenantAuthOnboarding && json.tenantAuthOnboarding.bootstrapToken) pm.collectionVariables.set(\"bootstrapToken\", json.tenantAuthOnboarding.bootstrapToken);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenant Admins - Restart Onboarding",
+      "description": "Protected recovery route for an already verified tenant-admin who still needs tenant-auth password setup. It returns the same onboarding payload shape as verification redemption.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}/onboarding/restart",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenants", "{{tenantId}}", "admins", "{{tenantAdminId}}", "onboarding", "restart"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.tenantAuthOnboarding && json.tenantAuthOnboarding.bootstrapToken) pm.collectionVariables.set(\"bootstrapToken\", json.tenantAuthOnboarding.bootstrapToken);"
+            ]
+          }
+        }
+      ]
     },
     {
       "name": "Tenant Admins - Delete",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
         "url": {
           "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}/delete",
           "host": ["{{baseUrl}}"],
@@ -274,7 +312,7 @@
       "name": "Tenant Admins - Reactivate",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
         "url": {
           "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/admins/{{tenantAdminId}}/reactivate",
           "host": ["{{baseUrl}}"],

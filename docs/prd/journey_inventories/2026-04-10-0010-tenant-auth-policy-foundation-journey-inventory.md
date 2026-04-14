@@ -25,6 +25,8 @@
   already selected / selection required
 - remediation state:
   not required / required
+- session TTL posture:
+  system default / tenant override / shortest-of-many-tenant-overrides
 
 ## Coverage Threshold
 
@@ -33,6 +35,7 @@
   tenant count x remediation state
   policy source x credential vintage
   current tenant state x remediation guidance visibility
+  tenant count x session TTL posture
 - no broader cartesian-product promise is made for this slice
 
 ## Journey Cases
@@ -52,12 +55,23 @@
   remediation guidance becomes tenant-specific once the current tenant is
   established.
 
+- `JY-TENANT-AUTH-POLICY-003`
+  A root operator configures a shorter tenant session TTL for one tenant while
+  a shared principal can still access multiple tenants.
+  The next successful login mints one durable tenant session whose `expiresAt`
+  reflects the shortest effective tenant TTL across those accessible tenant
+  contexts, while policy reads for each tenant remain tenant-specific.
+
 ## Executable Mapping
 
 - `JY-TENANT-AUTH-POLICY-001`
   [root-policy-change-remediation.test.ts](/home/gordon/kanbien/tests/e2e/tenantAuthPolicy/root-policy-change-remediation.test.ts)
 - `JY-TENANT-AUTH-POLICY-002`
   [multi-tenant-selection-before-remediation.test.ts](/home/gordon/kanbien/tests/e2e/tenantAuthPolicy/multi-tenant-selection-before-remediation.test.ts)
+- `JY-TENANT-AUTH-POLICY-003`
+  Deferred to focused unit plus integration coverage for the 2026-04-13
+  refinement because no browser/operator workflow changed and the new behavior
+  is a session-minting rule inside the existing login journey
 
 ## Deferred Scope
 

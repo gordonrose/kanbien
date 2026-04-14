@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { createTenantAuthService } from "../../../src/features/tenantAuth/domain/service";
 import {
   createInMemoryTenantAuthRepository,
@@ -6,22 +6,28 @@ import {
   createTenantAdminRecord,
   createTenantAuthPrincipalRecord,
   createTenantSessionRecord,
-  issueTenantAdminVerificationToken,
 } from "../../helpers/tenantAuthHarness";
 import {
   createInMemoryTenantAdminsRepository,
   createVisibleTenantsReader,
 } from "../../helpers/tenantAdminsHarness";
 import { createTenantAdminsAuthBootstrapReader } from "../../../src/features/tenantAdmins";
+import { createInMemoryTenantConfigurationRepository } from "../../helpers/tenantConfigurationHarness";
+import { createTenantConfigurationService } from "../../../src/features/tenantConfiguration/domain/service";
+
+afterEach(() => {
+  vi.useRealTimers();
+});
 
 describe("tenantAuth service", () => {
-  it("TC-TENANT-AUTH-UNIT-001 bootstraps a shared principal and tenant access grant from verification proof", async () => {
+  it("TC-TENANT-AUTH-UNIT-001 provisions a shared principal and tenant access grant from a verified onboarding subject", async () => {
     const tenantAdminsRepository = createInMemoryTenantAdminsRepository([
       createTenantAdminRecord({
         tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
         email: "multi@example.com",
         normalizedEmail: "multi@example.com",
-        emailVerificationStatus: "pending",
+        emailVerificationStatus: "verified",
+        emailVerifiedAt: new Date("2026-04-09T00:01:00.000Z"),
       }),
       createTenantAdminRecord({
         tenantAdminId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
@@ -31,9 +37,6 @@ describe("tenantAuth service", () => {
         emailVerificationStatus: "verified",
       }),
     ]);
-    const verificationToken = await issueTenantAdminVerificationToken(tenantAdminsRepository, {
-      tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
-    });
     const tenantAuthRepository = createInMemoryTenantAuthRepository();
     const service = createTenantAuthService(
       tenantAuthRepository,
@@ -44,8 +47,15 @@ describe("tenantAuth service", () => {
       ]),
     );
 
-    const result = await service.bootstrapPrincipalFromVerification({
-      verificationToken,
+    const result = await service.onboardingProvisioner.provisionTenantAuthForVerifiedSubject({
+      source: {
+        tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        email: "multi@example.com",
+        normalizedEmail: "multi@example.com",
+        firstName: "Alex",
+        lastName: "Admin",
+      },
     });
 
     expect(result.status).toBe("PRINCIPAL_BOOTSTRAPPED");
@@ -513,5 +523,117 @@ describe("tenantAuth service", () => {
     expect(
       tenantAuthRepository.principals.get("dddddddd-dddd-4ddd-8ddd-dddddddddddd")?.passwordState,
     ).toBe("active");
+  });
+
+  it("TC-TENANT-AUTH-UNIT-008 uses the strictest effective tenant session TTL when creating a shared-principal session", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-13T12:00:00.000Z"));
+
+    const tenantAdminsRepository = createInMemoryTenantAdminsRepository([
+      createTenantAdminRecord({
+        tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        email: "multi@example.com",
+        normalizedEmail: "multi@example.com",
+        emailVerificationStatus: "verified",
+      }),
+      createTenantAdminRecord({
+        tenantAdminId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+        email: "multi@example.com",
+        normalizedEmail: "multi@example.com",
+        emailVerificationStatus: "verified",
+      }),
+    ]);
+    const tenantAuthRepository = createInMemoryTenantAuthRepository({
+      principals: [
+        createTenantAuthPrincipalRecord({
+          authPrincipalId: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+          loginEmail: "multi@example.com",
+          normalizedLoginEmail: "multi@example.com",
+          passwordState: "active",
+        }),
+      ],
+      accessGrants: [
+        createTenantAccessGrantRecord({
+          tenantAccessGrantId: "11111111-1111-4111-8111-111111111111",
+          authPrincipalId: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+          tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          subjectId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        }),
+        createTenantAccessGrantRecord({
+          tenantAccessGrantId: "22222222-2222-4222-8222-222222222222",
+          authPrincipalId: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+          tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+          subjectId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+        }),
+      ],
+      passwordSetPrincipals: ["eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"],
+    });
+    tenantAuthRepository.passwordHashes.set("eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee", "@Password1!");
+
+    const tenantConfigurationService = createTenantConfigurationService(
+      createInMemoryTenantConfigurationRepository([
+        {
+          tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          minLength: null,
+          maxLength: null,
+          minUppercase: null,
+          maxUppercase: null,
+          minLowercase: null,
+          maxLowercase: null,
+          minNumbers: null,
+          maxNumbers: null,
+          minSymbols: null,
+          maxSymbols: null,
+          sessionTtlSeconds: 1800,
+          createdAt: new Date("2026-04-10T10:00:00.000Z"),
+          updatedAt: new Date("2026-04-10T10:00:00.000Z"),
+        },
+        {
+          tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+          minLength: null,
+          maxLength: null,
+          minUppercase: null,
+          maxUppercase: null,
+          minLowercase: null,
+          maxLowercase: null,
+          minNumbers: null,
+          maxNumbers: null,
+          minSymbols: null,
+          maxSymbols: null,
+          sessionTtlSeconds: 3600,
+          createdAt: new Date("2026-04-10T10:00:00.000Z"),
+          updatedAt: new Date("2026-04-10T10:00:00.000Z"),
+        },
+      ]),
+      createVisibleTenantsReader([
+        "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      ]),
+    );
+
+    const service = createTenantAuthService(
+      tenantAuthRepository,
+      createTenantAdminsAuthBootstrapReader(tenantAdminsRepository),
+      createVisibleTenantsReader([
+        "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      ]),
+      tenantConfigurationService.policyResolver,
+    );
+
+    const result = await service.loginTenantPrincipalWithPassword({
+      email: "multi@example.com",
+      password: "@Password1!",
+    });
+
+    expect(result.status).toBe("AUTHENTICATED_SELECTION_REQUIRED");
+    if (result.status === "ONBOARDING_REQUIRED") {
+      throw new Error("Expected authenticated tenant session for multi-tenant login");
+    }
+
+    expect(result.selectionRequired).toBe(true);
+    expect(result.expiresAt).toBe("2026-04-13T12:30:00.000Z");
   });
 });

@@ -47,10 +47,10 @@ Current test-facing scripts:
 
 Current helper utilities:
 
-- `docs/postman/rootAuthSigner.mjs`
-- `docs/postman/rootAuthSigner.py`
-- launcher helpers under `docs/postman/`
-- maintained Postman collections under `docs/postman/`
+- `docs/postman/helpers/rootAuthSigner.mjs`
+- `docs/postman/helpers/rootAuthSigner.py`
+- launcher helpers under `docs/postman/helpers/`
+- maintained Postman collections under `docs/postman/collections/`
 
 ## Script Behavior Inventory
 
@@ -198,9 +198,13 @@ Notable behavior:
 
 Files:
 
-- `docs/postman/rootAuthSigner.mjs`
-- `docs/postman/rootAuthSigner.py`
-- launcher helpers under `docs/postman/`
+- `docs/postman/helpers/rootAuthSigner.mjs`
+- `docs/postman/helpers/rootAuthSigner.py`
+- launcher helpers under `docs/postman/helpers/`
+
+Canonical helper:
+
+- `docs/postman/helpers/rootAuthSigner.mjs`
 
 Purpose:
 
@@ -216,9 +220,9 @@ Rebuild expectation:
 
 Files:
 
-- `docs/postman/rootUsers.postman_collection.json`
-- `docs/postman/tenants.postman_collection.json`
-- `docs/postman/notificationDelivery.postman_collection.json`
+- `docs/postman/collections/rootUsers.postman_collection.json`
+- `docs/postman/collections/tenants.postman_collection.json`
+- `docs/postman/collections/notificationDelivery.postman_collection.json`
 
 Purpose:
 

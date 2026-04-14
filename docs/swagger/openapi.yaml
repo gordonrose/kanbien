@@ -1922,6 +1922,39 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /v1/tenants/{tenantId}/admins/{tenantAdminId}/onboarding/restart:
+    post:
+      tags:
+        - Tenant Admins
+      summary: Restart tenant-auth onboarding for a verified tenant-admin
+      operationId: restartTenantAdminOnboarding
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/TenantId"
+        - $ref: "#/components/parameters/TenantAdminId"
+      responses:
+        "200":
+          description: Tenant-admin onboarding restarted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantAdminOnboardingRestartResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /v1/tenant-admin-verification/redeem:
     post:
       tags:
@@ -1940,7 +1973,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TenantAdminSummary"
+                $ref: "#/components/schemas/TenantAdminVerificationRedeemResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
         "410":
@@ -2045,40 +2078,6 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           description: Tenant not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "429":
-          $ref: "#/components/responses/TooManyRequests"
-        "500":
-          $ref: "#/components/responses/InternalError"
-
-  /v1/tenant-auth/principals/bootstrap:
-    post:
-      tags:
-        - Tenant Auth
-      summary: Bootstrap a shared tenant principal from verified onboarding proof
-      operationId: bootstrapTenantAuthPrincipal
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TenantAuthBootstrapBody"
-      responses:
-        "200":
-          description: Shared tenant principal bootstrapped
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TenantAuthBootstrapResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "410":
-          description: Bootstrap proof expired
           content:
             application/json:
               schema:
@@ -3826,14 +3825,6 @@ components:
           type: string
       required: [status]
 
-    TenantAuthBootstrapBody:
-      type: object
-      properties:
-        verificationToken:
-          type: string
-          minLength: 1
-      required: [verificationToken]
-
     TenantAuthPasswordSetupBody:
       type: object
       properties:
@@ -3903,6 +3894,9 @@ components:
         maxSymbols:
           type: [integer, "null"]
           minimum: 0
+        sessionTtlSeconds:
+          type: [integer, "null"]
+          minimum: 0
 
     EffectiveTenantPasswordPolicy:
       type: object
@@ -3954,6 +3948,22 @@ components:
           type: integer
       required: [minLength, minUppercase, minLowercase, minNumbers, minSymbols]
 
+    EffectiveTenantSessionPolicy:
+      type: object
+      properties:
+        sessionTtlSeconds:
+          type: integer
+      required: [sessionTtlSeconds]
+
+    TenantAuthPolicyHardLimits:
+      type: object
+      properties:
+        minSessionTtlSeconds:
+          type: integer
+        maxSessionTtlSeconds:
+          type: integer
+      required: [minSessionTtlSeconds, maxSessionTtlSeconds]
+
     EffectiveTenantAuthPolicyResponse:
       type: object
       properties:
@@ -3967,8 +3977,12 @@ components:
           type: boolean
         passwordPolicy:
           $ref: "#/components/schemas/EffectiveTenantPasswordPolicy"
+        sessionPolicy:
+          $ref: "#/components/schemas/EffectiveTenantSessionPolicy"
         hardFloors:
           $ref: "#/components/schemas/TenantAuthPolicyHardFloors"
+        hardLimits:
+          $ref: "#/components/schemas/TenantAuthPolicyHardLimits"
         updatedAt:
           type: [string, "null"]
           format: date-time
@@ -3977,7 +3991,9 @@ components:
         - policySource
         - hasTenantOverride
         - passwordPolicy
+        - sessionPolicy
         - hardFloors
+        - hardLimits
         - updatedAt
 
     TenantAuthTenantSelectionBody:
@@ -3999,12 +4015,9 @@ components:
           format: email
       required: [authPrincipalId, loginEmail]
 
-    TenantAuthBootstrapResponse:
+    TenantAdminVerificationRedeemOnboarding:
       type: object
       properties:
-        status:
-          type: string
-          enum: [PRINCIPAL_BOOTSTRAPPED]
         authPrincipalId:
           type: string
           format: uuid
@@ -4015,12 +4028,45 @@ components:
           type: boolean
         bootstrapToken:
           type: [string, "null"]
+        nextStep:
+          type: string
+          enum: [PASSWORD_SETUP_REQUIRED, LOGIN_REQUIRED]
       required:
-        - status
         - authPrincipalId
         - loginEmail
         - passwordSetupRequired
         - bootstrapToken
+        - nextStep
+
+    TenantAdminVerificationRedeemResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [VERIFIED]
+        tenantAdmin:
+          $ref: "#/components/schemas/TenantAdminSummary"
+        tenantAuthOnboarding:
+          $ref: "#/components/schemas/TenantAdminVerificationRedeemOnboarding"
+      required:
+        - status
+        - tenantAdmin
+        - tenantAuthOnboarding
+
+    TenantAdminOnboardingRestartResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ONBOARDING_RESTARTED]
+        tenantAdmin:
+          $ref: "#/components/schemas/TenantAdminSummary"
+        tenantAuthOnboarding:
+          $ref: "#/components/schemas/TenantAdminVerificationRedeemOnboarding"
+      required:
+        - status
+        - tenantAdmin
+        - tenantAuthOnboarding
 
     TenantAuthPasswordSetupResponse:
       type: object

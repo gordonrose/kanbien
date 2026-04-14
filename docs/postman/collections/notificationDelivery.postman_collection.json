@@ -3,7 +3,7 @@
     "_postman_id": "84e3cc4c-bf92-4735-bef0-42aa1d29460d",
     "name": "Kanbien Notification Delivery",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for the protected notificationDelivery feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises proof email send, durable list and exact read, and explicit resend. Protected requests may return 429 RATE_LIMITED when shared platform security middleware rejects the request."
+    "description": "Postman collection for the protected notificationDelivery feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises proof email send, durable list and exact read, and explicit resend. Protected requests may return 429 RATE_LIMITED when shared platform security middleware rejects the request. Successful root login writes a shared root session into the active Postman environment so other root-protected collections can reuse it."
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000" },
@@ -15,7 +15,7 @@
     { "key": "publicKeyFingerprint", "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY" },
     { "key": "sshSignature", "value": "base64_signature_over_challenge_text" },
     { "key": "sshSignatureJson", "value": "base64_signature_over_challenge_text" },
-    { "key": "sessionToken", "value": "sess_replace_me" },
+    { "key": "rootSessionId", "value": "sess_replace_me" },
     { "key": "outboundEmailId", "value": "00000000-0000-0000-0000-000000000000" },
     { "key": "proofRecipientEmail", "value": "replace-with-your-inbox@example.com" },
     { "key": "notificationType", "value": "proof_email" },
@@ -124,8 +124,8 @@
             "type": "text/javascript",
             "exec": [
               "const json = pm.response.json();",
-              "if (!json.sessionId) pm.collectionVariables.unset(\"sessionToken\");",
-              "if (json.sessionId) pm.collectionVariables.set(\"sessionToken\", json.sessionId);"
+              "if (!json.sessionId) pm.environment.unset(\"rootSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
             ]
           }
         }
@@ -137,7 +137,7 @@
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Authorization", "value": "Bearer {{sessionToken}}" },
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
           { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {
@@ -167,7 +167,7 @@
       "name": "Notification Delivery - List Emails",
       "request": {
         "method": "GET",
-        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
         "url": {
           "raw": "{{baseUrl}}/v1/notification-delivery/emails?page=1&pageSize=25&orderBy=requestedAt&orderDirection=desc&notificationType={{notificationType}}&recipientEmail={{proofRecipientEmail}}",
           "host": ["{{baseUrl}}"],
@@ -187,7 +187,7 @@
       "name": "Notification Delivery - Get Email",
       "request": {
         "method": "GET",
-        "header": [{ "key": "Authorization", "value": "Bearer {{sessionToken}}" }],
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
         "url": {
           "raw": "{{baseUrl}}/v1/notification-delivery/emails/{{outboundEmailId}}",
           "host": ["{{baseUrl}}"],
@@ -200,7 +200,7 @@
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Authorization", "value": "Bearer {{sessionToken}}" },
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
           { "key": "Content-Type", "value": "application/json" }
         ],
         "body": {

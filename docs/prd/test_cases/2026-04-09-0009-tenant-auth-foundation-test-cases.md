@@ -89,6 +89,22 @@
   - rejects repeated setup when a password is already present
   - does not create a tenant session as a side effect
 
+- Capability: `restartTenantAdminOnboarding`
+  Test Case ID: `TC-TENANT-AUTH-UNIT-009`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/tenantAdmins/`
+  Requires Shared Test Helper: yes; verified-tenant-admin fixture
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Coverage:
+  - allows a root-triggered recovery path for a visible verified tenant-admin
+  - reuses the shared tenant-auth provisioning seam rather than re-verifying
+    the email
+  - returns a fresh password-setup bootstrap token when password setup is still
+    required
+  - returns `LOGIN_REQUIRED` when the principal already has an active password
+  - rejects restart for pending, deleted, or missing tenant-admin rows
+
 - Capability: `loginTenantPrincipalWithPassword`
   Test Case ID: `TC-TENANT-AUTH-UNIT-003`
   Recommended Test Layer: `service-unit`
@@ -257,6 +273,26 @@
   - authenticated logout succeeds
   - subsequent session read fails truthfully
   - revoked session cannot be used to select tenant context
+
+- Flow: root operator restarts onboarding for a previously verified tenant
+  admin who still needs password setup
+  Test Case ID: `TC-TENANT-AUTH-INT-006`
+  Recommended Test Layer: `feature-integration`
+  Suggested Test Folder: `tests/integration/tenantAdmins/`
+  Requires Shared Test Helper: yes
+  Requires Manifest Tracking: yes
+  Cleanup Expectation:
+  register created principals, grants, and setup proofs if preserve-mode
+  debugging is used
+  Features:
+  - `tenantAdmins`
+  - `tenantAuth`
+  Coverage:
+  - verified tenant-admin onboarding can be restarted by a protected root
+    operator route
+  - restart returns tenant-auth onboarding payload without requiring a new
+    verification token
+  - returned next step is truthful for the principal password state
 
 ## NFR Security Tests
 

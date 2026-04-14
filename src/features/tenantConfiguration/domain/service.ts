@@ -1,6 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { TenantAuthPolicyCurrentTenantRequiredError, TenantAuthPolicyNotFoundError } from "../contract/errors";
-import { toEffectiveTenantAuthPolicy, resolveAggregatePasswordPolicy, validateTenantAuthPolicyInput, countPasswordClasses } from "./policy";
+import {
+  toEffectiveTenantAuthPolicy,
+  resolveAggregatePasswordPolicy,
+  resolveAggregateSessionTtlSeconds,
+  validateTenantAuthPolicyInput,
+  countPasswordClasses,
+} from "./policy";
 import type { TenantConfigurationService, TenantAuthPolicyResolver } from "./types";
 import type { TenantConfigurationRepository } from "../persistence/repository";
 import type { VisibleTenantsReader } from "../../tenants";
@@ -51,6 +57,17 @@ export function createTenantConfigurationService(
       }
       return resolveAggregatePasswordPolicy(policies);
     },
+    async resolveAggregateSessionTtlSeconds(tenantIds) {
+      const uniqueIds = [...new Set(tenantIds)];
+      const policies = [];
+      for (const tenantId of uniqueIds) {
+        const policy = await this.readEffectiveTenantAuthPolicy(tenantId);
+        if (policy) {
+          policies.push(policy.sessionPolicy);
+        }
+      }
+      return resolveAggregateSessionTtlSeconds(policies);
+    },
     assertPasswordMeetsPolicy(password, policy) {
       const reason = assertPasswordCountsMeetPolicy(password, policy);
       if (reason) {
@@ -99,6 +116,7 @@ export function createTenantConfigurationService(
         maxNumbers: input.maxNumbers ?? null,
         minSymbols: input.minSymbols ?? null,
         maxSymbols: input.maxSymbols ?? null,
+        sessionTtlSeconds: input.sessionTtlSeconds ?? null,
       });
 
       if (platformSecurityRepository && input.authPrincipalId) {

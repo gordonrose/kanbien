@@ -10,8 +10,8 @@ import {
 import { mountTenantAuthFeature } from "../../helpers/tenantAuthHarness";
 import type { ErrorResponse } from "./helpers";
 
-describe("tenantAuth e2e bootstrap denial for ineligible source actor", () => {
-  it("JY-TENANT-AUTH-008 denies bootstrap when a previously eligible tenant-admin source actor is deleted before the proof is consumed", async () => {
+describe("tenantAuth e2e verification redemption denial for ineligible source actor", () => {
+  it("JY-TENANT-AUTH-008 denies verification redemption when a previously eligible tenant-admin source actor is deleted before the proof is consumed", async () => {
     const harness = createRootAuthIntegrationHarness();
     const tenantAdminsRepository = createInMemoryTenantAdminsRepository();
     const mounted = mountTenantAuthFeature(harness.app, harness, {
@@ -49,12 +49,12 @@ describe("tenantAuth e2e bootstrap denial for ineligible source actor", () => {
 
     const bootstrap = await invokeJson<ErrorResponse>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken: tokenMaterial.rawToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: tokenMaterial.rawToken },
     });
 
-    expect(bootstrap.status).toBe(401);
-    expect(bootstrap.body.code).toBe("TENANT_AUTH_BOOTSTRAP_INVALID");
+    expect(bootstrap.status).toBe(400);
+    expect(bootstrap.body.code).toBe("TENANT_ADMIN_VERIFICATION_TOKEN_INVALID");
     expect(mounted.tenantAuthRepository.principals.size).toBe(0);
     expect(mounted.tenantAuthRepository.accessGrants.size).toBe(0);
   });

@@ -16,7 +16,8 @@
   QA checklist; exploratory QA note; curated test-run summary
 - Notes:
   explicit planning should consider remediation state, race/conflicting session
-  writes, and policy-aware password validation
+  writes, policy-aware password validation, and shared-principal session TTL
+  aggregation
 
 ## Existing Test Impact
 
@@ -44,6 +45,7 @@
   - default policy when no override exists
   - override merge when some fields are null
   - `policySource` and `hasTenantOverride` truthfulness
+  - effective session-policy defaults and hard-limit metadata
   Notes:
   include tenant category compatibility notes if defaults later diverge
 
@@ -59,6 +61,7 @@
   - hard platform floors
   - `min <= max`
   - aggregate mins not exceeding `maxLength`
+  - session TTL floor and ceiling validation
   - empty strings rejected by contract layer
   Notes:
   explicit reasons should be stable for corrective UX
@@ -78,6 +81,22 @@
   Notes:
   aggregate policy should remain compatible with the shared-principal model
 
+- Capability:
+  aggregate shared-principal session TTL resolution
+  Test Case ID: `TC-TENANT-AUTH-POLICY-UNIT-004`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/tenantAuth/`
+  Requires Shared Test Helper: no
+  Requires Manifest Tracking: no
+  Cleanup Expectation: none
+  Coverage:
+  - one tenant inherits its effective TTL
+  - multiple tenants resolve to the shortest allowed TTL
+  - no active contexts falls back to the system default TTL
+  Notes:
+  shared-principal sessions must not outlive a stricter tenant's configured
+  expiry posture
+
 ## Integration Tests For Features Working Together
 
 - Flow:
@@ -94,6 +113,7 @@
   - exact-tenant read
   - valid update
   - immediate effective-policy read-after-write
+  - session TTL override read-after-write
   Notes:
   include deleted-tenant not-found behavior
 
@@ -127,6 +147,7 @@
   - valid credentials accepted
   - remediationRequired returned
   - session remains authenticated but blocked
+  - session expiry comes from the effective shared-principal tenant TTL policy
   Notes:
   must not masquerade as invalid credentials
 
@@ -248,6 +269,7 @@
   Coverage:
   - login with policy resolution
   - remediation-aware session reads
+  - session TTL resolution stays inside the same local budget envelope
   Notes:
   can extend the existing tenant-auth non-functional package
 

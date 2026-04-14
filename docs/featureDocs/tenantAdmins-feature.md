@@ -10,7 +10,8 @@ shared tenant authentication. It owns:
 - exact tenant-admin lookup by tenant and ID
 - filtered and paginated tenant-admin listing per tenant
 - editable tenant-admin profile updates
-- verification-email send and explicit resend
+- automatic verification-email send on create and pending-state update, plus
+  explicit send and resend routes
 - public redemption of tenant-admin verification tokens
 - soft deletion and reactivation
 - feature-owned durable verification-token records linked to tenant-admins
@@ -131,6 +132,7 @@ Protected routes:
 - `PATCH /v1/tenants/:tenantId/admins/:tenantAdminId`
 - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/verification/send`
 - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/verification/resend`
+- `POST /v1/tenants/:tenantId/admins/:tenantAdminId/onboarding/restart`
 - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/delete`
 - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/reactivate`
 
@@ -208,7 +210,8 @@ Rules:
 - `email` is trimmed, normalized lowercase, and must be unique among active
   tenant-admins in the same tenant
 - `createdByRootAdminUserId` is stamped from the authenticated root session
-- new tenant-admins start with `emailVerificationStatus = "pending"`
+- new tenant-admins start with `emailVerificationStatus = "pending"` and the
+  feature automatically sends the initial verification email
 
 ### List and exact read
 
@@ -238,6 +241,8 @@ Rules:
 - `email`, `firstName`, and `lastName` are the only client-editable fields
 - changing `email` resets verification state to `pending`, clears
   `emailVerifiedAt`, and invalidates active verification tokens
+- when the tenant admin remains in pending verification state after an update,
+  the feature automatically sends a fresh verification email
 - updating a deleted tenant-admin through the normal update route is rejected
 
 ### Verification send and resend
@@ -252,6 +257,8 @@ Rules:
 - send and resend invalidate previously active verification tokens before
   issuing a fresh accepted token
 - resend may attach a `resendReason`
+- onboarding restart is root-only and reuses the shared tenant-auth
+  provisioning seam for already verified tenant-admin rows
 - notification delivery persists the logical email, content snapshot, and
   attempt history in the owning `notificationDelivery` feature
 - `lastVerificationEmailRequestedAt` is updated on the tenant-admin record
@@ -273,8 +280,24 @@ Rules:
 - the route is public and intended for browser/email-link onboarding flows
 - invalid, expired, used, invalidated, or deleted-subject tokens are rejected
 - successful redemption marks the tenant-admin verified and consumes the token
-- the route does not create a tenant-auth principal by itself; shared
-  `tenantAuth` bootstrap remains a later step
+- successful redemption also provisions or reuses the tenant-auth principal,
+  creates any missing tenant access grants for matching verified tenant-admin
+  subjects with the same normalized email, and returns the next onboarding step
+  for password setup or login
+
+### Protected onboarding restart
+
+`POST /v1/tenants/:tenantId/admins/:tenantAdminId/onboarding/restart`
+
+Rules:
+
+- the route is protected and root-operator only
+- the target tenant-admin must be visible and already verified
+- the route does not send a new verification email
+- it returns the same tenant-auth onboarding payload shape used by public
+  verification redemption
+- it exists to recover the verified-but-not-finished onboarding state where the
+  original setup proof is no longer available
 
 ### Delete and reactivate
 
@@ -321,16 +344,20 @@ depending on mutable delivery or related records alone.
 
 Postman collection:
 
-- `docs/postman/tenantAdmins.postman_collection.json`
+- `docs/postman/collections/tenantAdmins.postman_collection.json`
 
 Typical manual flow:
 
 1. complete root login through the built-in root-auth requests
 2. create a tenant admin inside an existing tenant
-3. send or resend the verification email
+3. the feature auto-sends the verification email on create and on later
+   pending-state updates; operators may still use send or resend explicitly
+   when needed
 4. copy the raw token from the real inbox verification link
 5. redeem it through the public verification route
-6. exact-read the tenant admin again to confirm
+6. use the returned tenant-auth onboarding payload to set the initial password
+   when `passwordSetupRequired = true`
+7. exact-read the tenant admin again to confirm
    `emailVerificationStatus = "verified"`
 
 ## Traceability

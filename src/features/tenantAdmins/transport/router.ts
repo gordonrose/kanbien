@@ -94,6 +94,11 @@ export function createTenantAdminsRouter(
     "tenant-admin.verification.resend",
     authzOptions,
   );
+  const requireOnboardingRestart = createRequireRootCapability(
+    capabilityChecker,
+    "tenant-admin.onboarding.restart",
+    authzOptions,
+  );
   const requireDelete = createRequireRootCapability(capabilityChecker, "tenant-admin.delete", authzOptions);
   const requireReactivate = createRequireRootCapability(capabilityChecker, "tenant-admin.reactivate", authzOptions);
   const authenticatedSensitiveRateLimit = platformSecurityRepository
@@ -123,8 +128,14 @@ export function createTenantAdminsRouter(
         ...params,
         ...body,
         createdByRootAdminUserId: session.rootUserId,
+        requestedByActorId: session.rootUserId,
       });
       await writeOperatorAuditEvent(request, platformSecurityRepository, "tenant_admin_created");
+      await writeOperatorAuditEvent(
+        request,
+        platformSecurityRepository,
+        "tenant_admin_verification_sent",
+      );
       response.status(201).json(result);
     } catch (error) {
       next(error);
@@ -171,8 +182,19 @@ export function createTenantAdminsRouter(
     try {
       const params = parseOrThrow(tenantAdminParamsSchema, request.params);
       const body = parseOrThrow(updateTenantAdminBodySchema, request.body);
-      const result = await service.updateTenantAdminProfile({ ...params, ...body });
+      const result = await service.updateTenantAdminProfile({
+        ...params,
+        ...body,
+        requestedByActorId: getRequiredRootSessionContext(request).rootUserId,
+      });
       await writeOperatorAuditEvent(request, platformSecurityRepository, "tenant_admin_updated");
+      if (result.emailVerificationStatus === "pending") {
+        await writeOperatorAuditEvent(
+          request,
+          platformSecurityRepository,
+          "tenant_admin_verification_sent",
+        );
+      }
       response.status(200).json(result);
     } catch (error) {
       next(error);
@@ -220,6 +242,31 @@ export function createTenantAdminsRouter(
           request,
           platformSecurityRepository,
           "tenant_admin_verification_resent",
+        );
+        response.status(200).json(result);
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  router.post(
+    "/:tenantAdminId/onboarding/restart",
+    authenticatedSensitiveRateLimit,
+    requireOnboardingRestart,
+    async (request, response, next) => {
+      try {
+        const session = getRequiredRootSessionContext(request);
+        const result = await service.restartTenantAdminOnboarding({
+          ...parseOrThrow(tenantAdminParamsSchema, request.params),
+          requestedByActorId: session.rootUserId,
+          ipAddress: request.ip,
+          userAgent: request.header("user-agent") ?? undefined,
+        });
+        await writeOperatorAuditEvent(
+          request,
+          platformSecurityRepository,
+          "tenant_admin_onboarding_restarted",
         );
         response.status(200).json(result);
       } catch (error) {
@@ -296,7 +343,11 @@ export function createTenantAdminVerificationRouter(
   router.post("/redeem", publicWriteRateLimit, async (request, response, next) => {
     try {
       const body = parseOrThrow(redeemVerificationBodySchema, request.body);
-      const result = await service.redeemTenantAdminVerificationToken(body);
+      const result = await service.redeemTenantAdminVerificationToken({
+        ...body,
+        ipAddress: request.ip,
+        userAgent: request.header("user-agent") ?? undefined,
+      });
       await service.writeAuditEvent({
         eventType: "tenant_admin_verification_redeemed",
         eventOutcome: "success",

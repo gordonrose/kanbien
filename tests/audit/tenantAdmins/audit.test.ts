@@ -20,14 +20,6 @@ describe("tenantAdmins audit visibility", () => {
     });
     expect(created.status).toBe(201);
 
-    const sent = await invokeJson<{ tenantAdminId: string }>(harness.app, {
-      method: "POST",
-      path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}/verification/send`,
-      headers: { authorization: `Bearer ${session.sessionId}` },
-      body: {},
-    });
-    expect(sent.status).toBe(200);
-
     expect(harness.getSecurityAuditEvents()).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -89,13 +81,6 @@ describe("tenantAdmins audit visibility", () => {
     });
     expect(created.status).toBe(201);
 
-    await invokeJson<{ tenantAdminId: string }>(harness.app, {
-      method: "POST",
-      path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}/verification/send`,
-      headers: { authorization: `Bearer ${session.sessionId}` },
-      body: {},
-    });
-
     const invalid = await invokeJson<{ code: string }>(harness.app, {
       method: "POST",
       path: "/v1/tenant-admin-verification/redeem",
@@ -121,6 +106,50 @@ describe("tenantAdmins audit visibility", () => {
         expect.objectContaining({
           eventType: "tenant_admin_verification_redeemed",
           eventOutcome: "success",
+        }),
+      ]),
+    );
+  });
+
+  it("keeps successful onboarding restart audit-visible for root operators", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const mounted = mountTenantAdminsFeature(harness.app, harness);
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const created = await invokeJson<{ tenantAdminId: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        email: "audit-restart@example.com",
+      },
+    });
+    expect(created.status).toBe(201);
+
+    const match = mounted.provider.sentInputs[0]!.bodyText.match(/token=([^\s]+)/);
+    const token = decodeURIComponent(match![1]);
+    const redeemed = await invokeJson<{ status: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token },
+    });
+    expect(redeemed.status).toBe(200);
+
+    const restarted = await invokeJson<{ status: string }>(harness.app, {
+      method: "POST",
+      path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}/onboarding/restart`,
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {},
+    });
+    expect(restarted.status).toBe(200);
+
+    expect(harness.getSecurityAuditEvents()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          eventType: "tenant_admin_onboarding_restarted",
+          eventOutcome: "success",
+          rootUserId: identity.rootUserId,
         }),
       ]),
     );

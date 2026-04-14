@@ -1,3 +1,9 @@
+"""Alternate Postman root-auth signing helper.
+
+Prefer `docs/postman/helpers/rootAuthSigner.mjs` as the canonical helper.
+Keep this Python variant only as an optional fallback.
+"""
+
 import base64
 import json
 import os

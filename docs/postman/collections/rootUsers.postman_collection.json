@@ -3,7 +3,7 @@
     "_postman_id": "8f5ddbc0-c542-4ea7-92c3-84c4c3e63626",
     "name": "Kanbien Root Platform",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for root-user authentication and the protected rootUsers feature. Public auth routes may now return 429 AUTH_THROTTLED or AUTH_LOCKED_DOWN. Protected routes may return 429 RATE_LIMITED when shared platform security middleware rejects the request."
+    "description": "Postman collection for root-user authentication and the protected rootUsers feature. Public auth routes may now return 429 AUTH_THROTTLED or AUTH_LOCKED_DOWN. Protected routes may return 429 RATE_LIMITED when shared platform security middleware rejects the request. Successful root login writes a shared root session into the active Postman environment so other root-protected collections can reuse it."
   },
   "variable": [
     {
@@ -27,7 +27,7 @@
       "value": "http://127.0.0.1:8787"
     },
     {
-      "key": "sessionToken",
+      "key": "rootSessionId",
       "value": "sess_replace_me"
     },
     {
@@ -196,8 +196,8 @@
             "type": "text/javascript",
             "exec": [
               "const json = pm.response.json();",
-              "if (!json.sessionId) pm.collectionVariables.unset(\"sessionToken\");",
-              "if (json.sessionId) pm.collectionVariables.set(\"sessionToken\", json.sessionId);"
+              "if (!json.sessionId) pm.environment.unset(\"rootSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
             ]
           }
         }
@@ -215,7 +215,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -247,7 +247,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -279,7 +279,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -306,7 +306,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -329,7 +329,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -353,7 +353,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -376,11 +376,11 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
-          "raw": "{{baseUrl}}/v1/root-auth/sessions/{{sessionToken}}/revoke",
+          "raw": "{{baseUrl}}/v1/root-auth/sessions/{{rootSessionId}}/revoke",
           "host": [
             "{{baseUrl}}"
           ],
@@ -388,7 +388,7 @@
             "v1",
             "root-auth",
             "sessions",
-            "{{sessionToken}}",
+            "{{rootSessionId}}",
             "revoke"
           ]
         }
@@ -401,7 +401,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -428,7 +428,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -454,7 +454,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -477,7 +477,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -505,7 +505,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -545,7 +545,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -586,7 +586,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -635,7 +635,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -662,7 +662,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -685,7 +685,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -709,7 +709,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -733,7 +733,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -783,7 +783,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -822,7 +822,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -862,7 +862,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -889,7 +889,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -923,7 +923,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -961,7 +961,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -989,7 +989,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -1013,7 +1013,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -1041,7 +1041,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -1073,7 +1073,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -1103,7 +1103,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -1141,7 +1141,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -1170,7 +1170,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {

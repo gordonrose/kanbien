@@ -23,5 +23,8 @@ export function createTenantAuthFeature(
     platformSecurityRepository,
   );
 
-  return createTenantAuthRouter(repository, service, platformSecurityRepository);
+  return {
+    tenantAuthRouter: createTenantAuthRouter(repository, service, platformSecurityRepository),
+    onboardingProvisioner: service.onboardingProvisioner,
+  };
 }

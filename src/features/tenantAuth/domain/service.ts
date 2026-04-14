@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { env } from "../../../config/env";
 import {
   createOneTimeTokenMaterial,
   parseOneTimeToken,
@@ -9,17 +8,14 @@ import type { PlatformSecurityRepository } from "../../../lib/security/repositor
 import type { TenantAdminAuthBootstrapSubject, TenantAdminsAuthBootstrapReader } from "../../tenantAdmins";
 import type { VisibleTenantsReader } from "../../tenants";
 import {
-  TenantAdminVerificationTokenExpiredError,
-  TenantAdminVerificationTokenInvalidError,
-} from "../../tenantAdmins/contract/errors";
-import {
   HARD_PASSWORD_POLICY_FLOORS,
+  SESSION_TTL_SECONDS_HARD_CEILING,
+  SESSION_TTL_SECONDS_HARD_FLOOR,
   SYSTEM_DEFAULT_PASSWORD_POLICY,
+  SYSTEM_DEFAULT_SESSION_POLICY,
 } from "../../tenantConfiguration/domain/policy";
 import type { TenantAuthPolicyResolver } from "../../tenantConfiguration";
 import {
-  TenantAuthBootstrapExpiredError,
-  TenantAuthBootstrapInvalidError,
   TenantAuthInvalidNewPasswordError,
   TenantAuthInvalidCredentialsError,
   TenantAuthNoTenantAccessError,
@@ -39,6 +35,7 @@ import {
 import type {
   EffectiveTenantPasswordPolicy,
   ResolvedTenantAccessContext,
+  TenantAuthOnboardingProvisioner,
   TenantAuthOnboardingRequiredResult,
   TenantAuthResolvedPolicyState,
   TenantAuthService,
@@ -74,7 +71,8 @@ async function writeAuditEvent(
     eventId: randomUUID(),
     eventType: input.eventType,
     eventOutcome: input.eventOutcome,
-    authPrincipalId: input.authPrincipalId,
+    // Platform audit storage currently keys auth_principal_id to root-auth
+    // principals, so tenant-auth events must not populate that FK.
     ipAddress: input.ipAddress,
     userAgent: input.userAgent,
     occurredAt: new Date(),
@@ -89,7 +87,12 @@ function createFallbackPolicyResolver(): TenantAuthPolicyResolver {
         policySource: "system_default",
         hasTenantOverride: false,
         passwordPolicy: { ...SYSTEM_DEFAULT_PASSWORD_POLICY },
+        sessionPolicy: { ...SYSTEM_DEFAULT_SESSION_POLICY },
         hardFloors: { ...HARD_PASSWORD_POLICY_FLOORS },
+        hardLimits: {
+          minSessionTtlSeconds: SESSION_TTL_SECONDS_HARD_FLOOR,
+          maxSessionTtlSeconds: SESSION_TTL_SECONDS_HARD_CEILING,
+        },
         updatedAt: null,
       };
     },
@@ -97,6 +100,9 @@ function createFallbackPolicyResolver(): TenantAuthPolicyResolver {
       return tenantIds.length === 0
         ? { ...SYSTEM_DEFAULT_PASSWORD_POLICY }
         : { ...SYSTEM_DEFAULT_PASSWORD_POLICY };
+    },
+    async resolveAggregateSessionTtlSeconds() {
+      return SYSTEM_DEFAULT_SESSION_POLICY.sessionTtlSeconds;
     },
     assertPasswordMeetsPolicy(password, policy) {
       if (password.length < policy.minLength) {
@@ -145,7 +151,7 @@ export function createTenantAuthService(
   visibleTenantsReader: VisibleTenantsReader,
   policyResolver: TenantAuthPolicyResolver = createFallbackPolicyResolver(),
   platformSecurityRepository?: PlatformSecurityRepository,
-): TenantAuthService {
+): TenantAuthService & { onboardingProvisioner: TenantAuthOnboardingProvisioner } {
   async function resolveAccessibleContexts(
     authPrincipalId: string,
   ): Promise<ResolvedTenantAccessContext[]> {
@@ -189,6 +195,9 @@ export function createTenantAuthService(
     const aggregatePasswordPolicy = await policyResolver.resolveAggregatePasswordPolicy(
       contexts.map((context) => context.tenantId),
     );
+    const aggregateSessionTtlSeconds = await policyResolver.resolveAggregateSessionTtlSeconds(
+      contexts.map((context) => context.tenantId),
+    );
     const activeTenantPolicy = activeTenantId
       ? (await policyResolver.readEffectiveTenantAuthPolicy(activeTenantId))?.passwordPolicy ?? null
       : null;
@@ -196,6 +205,7 @@ export function createTenantAuthService(
     return {
       activeTenantPolicy,
       aggregatePasswordPolicy,
+      aggregateSessionTtlSeconds,
     };
   }
 
@@ -252,101 +262,92 @@ export function createTenantAuthService(
     };
   }
 
-  return {
-    async bootstrapPrincipalFromVerification(input) {
-      try {
-        const source = await tenantAdminsAuthBootstrapReader.consumeVerificationProof(
-          input.verificationToken,
-        );
-        const normalizedEmail = normalizeEmail(source.email);
-        let principal = await repository.findPrincipalByNormalizedEmail(normalizedEmail);
+  async function provisionTenantAuthForVerifiedSubject(input: {
+    source: TenantAdminAuthBootstrapSubject;
+    ipAddress?: string;
+    userAgent?: string;
+  }) {
+    const normalizedEmail = normalizeEmail(input.source.email);
+    let principal = await repository.findPrincipalByNormalizedEmail(normalizedEmail);
 
-        if (!principal) {
-          principal = await repository.createPrincipal({
-            authPrincipalId: randomUUID(),
-            loginEmail: normalizedEmail,
-            normalizedLoginEmail: normalizedEmail,
-          });
-        }
+    if (!principal) {
+      principal = await repository.createPrincipal({
+        authPrincipalId: randomUUID(),
+        loginEmail: normalizedEmail,
+        normalizedLoginEmail: normalizedEmail,
+      });
+    }
 
-        const verifiedSubjects =
-          await tenantAdminsAuthBootstrapReader.listVerifiedActiveByNormalizedEmail(normalizedEmail);
+    const verifiedSubjects =
+      await tenantAdminsAuthBootstrapReader.listVerifiedActiveByNormalizedEmail(normalizedEmail);
 
-        for (const subject of verifiedSubjects) {
-          const existingGrant = await repository.findActiveAccessGrant(
-            principal.auth_principal_id,
-            subject.tenantId,
-            "tenant_admin",
-            subject.tenantAdminId,
-          );
-          if (!existingGrant) {
-            await repository.createAccessGrant({
-              tenantAccessGrantId: randomUUID(),
-              authPrincipalId: principal.auth_principal_id,
-              tenantId: subject.tenantId,
-              subjectType: "tenant_admin",
-              subjectId: subject.tenantAdminId,
-            });
-          }
-        }
-
-        let bootstrapToken: string | null = null;
-        const passwordSetupRequired = principal.password_state !== "active";
-
-        if (passwordSetupRequired) {
-          await repository.invalidateActivePasswordSetupTokens(principal.auth_principal_id);
-          const tokenMaterial = createOneTimeTokenMaterial({
-            purpose: "password_setup",
-            ttlSeconds: PASSWORD_SETUP_TTL_SECONDS,
-          });
-          await repository.createPasswordSetupToken({
-            tenantPasswordSetupTokenId: randomUUID(),
-            authPrincipalId: principal.auth_principal_id,
-            sourceTenantAdminId: source.tenantAdminId,
-            tokenId: tokenMaterial.tokenId,
-            secretHash: tokenMaterial.secretHash,
-            expiresAt: tokenMaterial.expiresAt,
-          });
-          bootstrapToken = tokenMaterial.rawToken;
-        }
-
-        await writeAuditEvent(platformSecurityRepository, {
-          eventType: "tenant_auth_principal_bootstrapped",
-          eventOutcome: "success",
+    for (const subject of verifiedSubjects) {
+      const existingGrant = await repository.findActiveAccessGrant(
+        principal.auth_principal_id,
+        subject.tenantId,
+        "tenant_admin",
+        subject.tenantAdminId,
+      );
+      if (!existingGrant) {
+        await repository.createAccessGrant({
+          tenantAccessGrantId: randomUUID(),
           authPrincipalId: principal.auth_principal_id,
-          ipAddress: input.ipAddress,
-          userAgent: input.userAgent,
+          tenantId: subject.tenantId,
+          subjectType: "tenant_admin",
+          subjectId: subject.tenantAdminId,
         });
-
-        return toTenantAuthBootstrapResult({
-          principal: {
-            authPrincipalId: principal.auth_principal_id,
-            loginEmail: principal.login_email,
-            normalizedLoginEmail: principal.normalized_login_email,
-            passwordState: principal.password_state,
-            createdAt: principal.created_at,
-            updatedAt: principal.updated_at,
-            disabledAt: principal.disabled_at,
-          },
-          passwordSetupRequired,
-          bootstrapToken,
-        });
-      } catch (error) {
-        await writeAuditEvent(platformSecurityRepository, {
-          eventType: "tenant_auth_principal_bootstrapped",
-          eventOutcome: "failure",
-          ipAddress: input.ipAddress,
-          userAgent: input.userAgent,
-        });
-        if (error instanceof TenantAdminVerificationTokenExpiredError) {
-          throw new TenantAuthBootstrapExpiredError();
-        }
-        if (error instanceof TenantAdminVerificationTokenInvalidError) {
-          throw new TenantAuthBootstrapInvalidError();
-        }
-        throw error;
       }
-    },
+    }
+
+    let bootstrapToken: string | null = null;
+    const passwordSetupRequired = principal.password_state !== "active";
+
+    if (passwordSetupRequired) {
+      await repository.invalidateActivePasswordSetupTokens(principal.auth_principal_id);
+      const tokenMaterial = createOneTimeTokenMaterial({
+        purpose: "password_setup",
+        ttlSeconds: PASSWORD_SETUP_TTL_SECONDS,
+      });
+      await repository.createPasswordSetupToken({
+        tenantPasswordSetupTokenId: randomUUID(),
+        authPrincipalId: principal.auth_principal_id,
+        sourceTenantAdminId: input.source.tenantAdminId,
+        tokenId: tokenMaterial.tokenId,
+        secretHash: tokenMaterial.secretHash,
+        expiresAt: tokenMaterial.expiresAt,
+      });
+      bootstrapToken = tokenMaterial.rawToken;
+    }
+
+    await writeAuditEvent(platformSecurityRepository, {
+      eventType: "tenant_auth_principal_bootstrapped",
+      eventOutcome: "success",
+      authPrincipalId: principal.auth_principal_id,
+      ipAddress: input.ipAddress,
+      userAgent: input.userAgent,
+    });
+
+    return toTenantAuthBootstrapResult({
+      principal: {
+        authPrincipalId: principal.auth_principal_id,
+        loginEmail: principal.login_email,
+        normalizedLoginEmail: principal.normalized_login_email,
+        passwordState: principal.password_state,
+        createdAt: principal.created_at,
+        updatedAt: principal.updated_at,
+        disabledAt: principal.disabled_at,
+      },
+      passwordSetupRequired,
+      bootstrapToken,
+    });
+  }
+
+  const onboardingProvisioner: TenantAuthOnboardingProvisioner = {
+    provisionTenantAuthForVerifiedSubject,
+  };
+
+  return {
+    onboardingProvisioner,
     async setInitialPassword(input) {
       try {
         if (input.newPassword !== input.repeatPassword) {
@@ -501,7 +502,7 @@ export function createTenantAuthService(
         remediationRequired,
         remediationReason,
         authenticatedAt: new Date(),
-        expiresAt: new Date(Date.now() + env.tenantAuth.sessionTtlSeconds * 1000),
+        expiresAt: new Date(Date.now() + policyState.aggregateSessionTtlSeconds * 1000),
       });
 
       await writeAuditEvent(platformSecurityRepository, {

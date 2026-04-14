@@ -9,7 +9,6 @@ import { createRateLimitMiddleware } from "../../../lib/security/rateLimit";
 import type { PlatformSecurityRepository } from "../../../lib/security/repository";
 import type { TenantAuthSessionLookupRepository } from "../persistence/repository";
 import {
-  bootstrapPrincipalBodySchema,
   completeRemediationPasswordBodySchema,
   loginTenantPrincipalBodySchema,
   selectTenantContextBodySchema,
@@ -85,20 +84,6 @@ export function createTenantAuthRouter(
         ? `${request.ip ?? "unknown"}|${request.tenantSession.authPrincipalId}`
         : null,
     signal: "authenticated-sensitive",
-  });
-
-  router.post("/principals/bootstrap", publicAuthRateLimit, async (request, response, next) => {
-    try {
-      const body = parseOrThrow(bootstrapPrincipalBodySchema, request.body);
-      response.status(200).json(
-        await service.bootstrapPrincipalFromVerification({
-          ...body,
-          ...getRequestMetadata(request),
-        }),
-      );
-    } catch (error) {
-      next(error);
-    }
   });
 
   router.post("/password/setup", publicAuthRateLimit, async (request, response, next) => {

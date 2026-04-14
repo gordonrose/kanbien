@@ -7,6 +7,7 @@ import { createPostgresTenantAuthRepository } from "../../../src/features/tenant
 import { createTenantAdminsAuthBootstrapReader } from "../../../src/features/tenantAdmins";
 import { createPostgresTenantsRepository } from "../../../src/features/tenants/persistence/postgresRepository";
 import { createVisibleTenantsReader } from "../../../src/features/tenants";
+import { createPostgresPlatformSecurityRepository } from "../../../src/lib/security/postgresRepository";
 import { applyPostgresTestMigrations } from "../../harness/postgres/migrations";
 import {
   createPostgresTestDatabasePool,
@@ -23,6 +24,17 @@ interface PasswordCredentialRow {
 interface TimestampRow {
   used_at: Date | null;
   invalidated_at: Date | null;
+}
+
+interface AuthAuditEventRow {
+  event_id: string;
+  auth_principal_id: string | null;
+  root_user_id: string | null;
+  event_type: string;
+  event_outcome: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  occurred_at: Date;
 }
 
 const describeIfPostgres =
@@ -288,46 +300,40 @@ describeIfPostgres("tenantAuth postgres repository", () => {
     expect(principal?.password_state).toBe("active");
   });
 
-  it("TC-TENANT-AUTH-UNIT-001 allows exactly one concurrent bootstrap consumption for the same raw verification proof", async () => {
-    const tenantAdminsRepository = createPostgresTenantAdminsRepository(pool);
+  it("TC-TENANT-AUTH-UNIT-001 allows only one durable principal/grant set to be created when onboarding provision races for the same verified subject", async () => {
     const tenantAuthRepository = createPostgresTenantAuthRepository(pool);
-    const bootstrapMaterial = createOneTimeTokenMaterial({
-      purpose: "email_verification",
-      ttlSeconds: 60 * 60,
-    });
-
-    await tenantAdminsRepository.createVerificationToken({
-      tenantAdminVerificationTokenId: "98989898-1212-4343-8787-565656565656",
-      tenantAdminId,
-      tokenId: bootstrapMaterial.tokenId,
-      secretHash: bootstrapMaterial.secretHash,
-      expiresAt: bootstrapMaterial.expiresAt,
-      requestedByActorType: "root_user",
-      requestedByActorId: actorRootUserId,
-    });
 
     const service = createTenantAuthService(
       tenantAuthRepository,
-      createTenantAdminsAuthBootstrapReader(tenantAdminsRepository),
+      createTenantAdminsAuthBootstrapReader(createPostgresTenantAdminsRepository(pool)),
       createVisibleTenantsReader(pool),
     );
 
     const results = await Promise.allSettled([
-      service.bootstrapPrincipalFromVerification({
-        verificationToken: bootstrapMaterial.rawToken,
+      service.onboardingProvisioner.provisionTenantAuthForVerifiedSubject({
+        source: {
+          tenantAdminId,
+          tenantId,
+          email: "tenant-admin@example.test",
+          normalizedEmail: "tenant-admin@example.test",
+          firstName: "Taylor",
+          lastName: "Admin",
+        },
       }),
-      service.bootstrapPrincipalFromVerification({
-        verificationToken: bootstrapMaterial.rawToken,
+      service.onboardingProvisioner.provisionTenantAuthForVerifiedSubject({
+        source: {
+          tenantAdminId,
+          tenantId,
+          email: "tenant-admin@example.test",
+          normalizedEmail: "tenant-admin@example.test",
+          firstName: "Taylor",
+          lastName: "Admin",
+        },
       }),
     ]);
 
     expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
     expect(results.filter((result) => result.status === "rejected")).toHaveLength(1);
-    expect(results.find((result) => result.status === "rejected")).toMatchObject({
-      reason: {
-        code: "TENANT_AUTH_BOOTSTRAP_INVALID",
-      },
-    });
 
     const principalCount = await pool.query<{ count: string }>(
       `
@@ -349,6 +355,51 @@ describeIfPostgres("tenantAuth postgres repository", () => {
 
     expect(Number(principalCount.rows[0].count)).toBe(1);
     expect(Number(grantCount.rows[0].count)).toBe(1);
+  });
+
+  it("TC-TENANT-AUTH-AUD-PERSIST-001 persists tenant-auth bootstrap audit events without writing tenant principals into the root-auth foreign key", async () => {
+    const tenantAuthRepository = createPostgresTenantAuthRepository(pool);
+    const platformSecurityRepository = createPostgresPlatformSecurityRepository(pool);
+    const service = createTenantAuthService(
+      tenantAuthRepository,
+      createTenantAdminsAuthBootstrapReader(createPostgresTenantAdminsRepository(pool)),
+      createVisibleTenantsReader(pool),
+      undefined,
+      platformSecurityRepository,
+    );
+
+    const bootstrapped = await service.onboardingProvisioner.provisionTenantAuthForVerifiedSubject({
+      source: {
+        tenantAdminId,
+        tenantId,
+        email: "tenant-admin@example.test",
+        normalizedEmail: "tenant-admin@example.test",
+        firstName: "Taylor",
+        lastName: "Admin",
+      },
+      ipAddress: "127.0.0.1",
+      userAgent: "tenant-auth-persistence-test",
+    });
+
+    const auditEvents = await pool.query<AuthAuditEventRow>(
+      `
+        SELECT *
+        FROM auth_audit_events
+        WHERE event_type = 'tenant_auth_principal_bootstrapped'
+        ORDER BY occurred_at ASC
+      `,
+    );
+
+    expect(bootstrapped.status).toBe("PRINCIPAL_BOOTSTRAPPED");
+    expect(auditEvents.rowCount).toBe(1);
+    expect(auditEvents.rows[0]).toMatchObject({
+      auth_principal_id: null,
+      root_user_id: null,
+      event_type: "tenant_auth_principal_bootstrapped",
+      event_outcome: "success",
+      ip_address: "127.0.0.1",
+      user_agent: "tenant-auth-persistence-test",
+    });
   });
 
   it("TC-TENANT-AUTH-UNIT-006 and TC-TENANT-AUTH-UNIT-007 keep the durable session safe when logout races tenant selection", async () => {

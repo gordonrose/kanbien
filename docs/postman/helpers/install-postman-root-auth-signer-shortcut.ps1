@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 $desktop = [Environment]::GetFolderPath("Desktop")
-$launcherSource = "\\wsl.localhost\Ubuntu\home\gordon\kanbien\docs\postman\start-postman-root-auth-signer.cmd"
+$launcherSource = "\\wsl.localhost\Ubuntu\home\gordon\kanbien\docs\postman\helpers\start-postman-root-auth-signer.cmd"
 $launcherTarget = Join-Path $desktop "Start-Postman-Root-Auth-Signer.cmd"
 $shortcutTarget = Join-Path $desktop "Postman Root Auth Signer.lnk"
 

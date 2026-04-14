@@ -8,7 +8,7 @@ import {
 } from "../../helpers/tenantAuthHarness";
 
 describe("tenantAuth end-to-end onboarding and session journeys", () => {
-  it("JY-TENANT-AUTH-001 covers TC-TENANT-AUTH-INT-001, TC-TENANT-AUTH-INT-002, and TC-TENANT-AUTH-INT-003 through bootstrap, password setup, first login, and single-tenant session read", async () => {
+  it("JY-TENANT-AUTH-001 covers TC-TENANT-AUTH-INT-001, TC-TENANT-AUTH-INT-002, and TC-TENANT-AUTH-INT-003 through verification redemption, password setup, first login, and single-tenant session read", async () => {
     const harness = createRootAuthIntegrationHarness();
     const mounted = mountTenantAuthFeature(harness.app, harness);
     mounted.tenantAdminsRepository.records.set(
@@ -31,23 +31,25 @@ describe("tenantAuth end-to-end onboarding and session journeys", () => {
 
     const bootstrap = await invokeJson<{
       status: string;
-      authPrincipalId: string;
-      bootstrapToken: string;
-      passwordSetupRequired: boolean;
+      tenantAuthOnboarding: {
+        authPrincipalId: string;
+        bootstrapToken: string;
+        passwordSetupRequired: boolean;
+      };
     }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     expect(bootstrap.status).toBe(200);
-    expect(bootstrap.body.status).toBe("PRINCIPAL_BOOTSTRAPPED");
-    expect(bootstrap.body.passwordSetupRequired).toBe(true);
+    expect(bootstrap.body.status).toBe("VERIFIED");
+    expect(bootstrap.body.tenantAuthOnboarding.passwordSetupRequired).toBe(true);
 
     const setup = await invokeJson<{ status: string }>(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },
@@ -114,16 +116,18 @@ describe("tenantAuth end-to-end onboarding and session journeys", () => {
         tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
       },
     );
-    const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+    const bootstrap = await invokeJson<{
+      tenantAuthOnboarding: { bootstrapToken: string };
+    }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     await invokeJson(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },

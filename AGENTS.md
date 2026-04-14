@@ -306,6 +306,28 @@ Defaults:
 - do not treat this rule as permission to skip needed user approval for other
   risky or breaking changes
 
+## Issue Reconciliation Rule
+
+When a user raises a bug, runtime defect, escaped regression, or asks why an
+issue was not caught earlier, treat that as an issue-reconciliation workflow,
+not only as a narrow fix request.
+
+Default expectations:
+
+- identify the concrete root cause
+- inspect the current executable tests to explain why the issue escaped
+- classify whether the gap was missing coverage, wrong-layer coverage, stale
+  expectations, unrealistic harness assumptions, or a shared-seam blind spot
+- add or repair the most honest tests or governed frontend scenarios that would
+  catch the issue and nearby similar failures in future
+- create or update a dated note under `docs/workspace/issue-reconciliations/`
+  capturing the symptom, root cause, why the loop missed it, and what was added
+  afterward
+
+Do not treat an escaped issue as complete just because the implementation bug
+was patched if the prevention-layer analysis and test reconciliation were
+skipped.
+
 ## Skill Routing
 
 This section is routing guidance, not additional repo policy.
@@ -334,5 +356,12 @@ Use repo-local skills when the task clearly matches one of these workflows:
   `ai-change-reviewer`
 - PRD test-case lifecycle review:
   `test-case-lifecycle-reviewer`
+- frontend verification, design-system scenario maintenance, frontend gate
+  updates, or RTL/responsive/accessibility/geometry coverage for frontend
+  atoms, molecules, components, page templates, or pages:
+  `frontend-test-case-maintainer`
 - full repo change-loop orchestration once scope is settled:
   `change-loop-orchestrator`
+- bug / escaped-regression reconciliation, "why was this missed?", or
+  prevention-oriented issue intake:
+  `issue-reconciliation-maintainer`

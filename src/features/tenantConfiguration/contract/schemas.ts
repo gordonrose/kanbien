@@ -20,4 +20,5 @@ export const updateTenantAuthPolicyBodySchema = strictObject({
   maxNumbers: nullableNonNegativeInt,
   minSymbols: nullableNonNegativeInt,
   maxSymbols: nullableNonNegativeInt,
+  sessionTtlSeconds: nullableNonNegativeInt,
 });

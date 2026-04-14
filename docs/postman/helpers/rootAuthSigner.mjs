@@ -1,3 +1,6 @@
+// Canonical Postman root-auth signing helper.
+// Prefer this Node/OpenSSH-backed implementation for local Postman flows.
+
 import http from "node:http";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";

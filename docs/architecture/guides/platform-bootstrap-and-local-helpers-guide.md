@@ -139,11 +139,15 @@ Used for:
 
 Current helper files:
 
-- `docs/postman/rootAuthSigner.mjs`
-- `docs/postman/rootAuthSigner.py`
-- `docs/postman/start-postman-root-auth-signer.cmd`
-- `docs/postman/start-postman-root-auth-signer.ps1`
-- `docs/postman/install-postman-root-auth-signer-shortcut.ps1`
+- `docs/postman/helpers/rootAuthSigner.mjs`
+- `docs/postman/helpers/rootAuthSigner.py`
+- `docs/postman/helpers/start-postman-root-auth-signer.cmd`
+- `docs/postman/helpers/start-postman-root-auth-signer.ps1`
+- `docs/postman/helpers/install-postman-root-auth-signer-shortcut.ps1`
+
+Canonical helper:
+
+- `docs/postman/helpers/rootAuthSigner.mjs`
 
 Why it matters:
 
@@ -168,9 +172,9 @@ Current runtime assumptions:
 
 Current maintained collections:
 
-- `docs/postman/rootUsers.postman_collection.json`
-- `docs/postman/tenants.postman_collection.json`
-- `docs/postman/notificationDelivery.postman_collection.json`
+- `docs/postman/collections/rootUsers.postman_collection.json`
+- `docs/postman/collections/tenants.postman_collection.json`
+- `docs/postman/collections/notificationDelivery.postman_collection.json`
 
 These are optional for runtime bootstrap, but useful for:
 
@@ -180,7 +184,7 @@ These are optional for runtime bootstrap, but useful for:
 
 ### Dummy-data utility
 
-- `docs/postman/createDummyRootUsers.mjs`
+- `docs/postman/helpers/createDummyRootUsers.mjs`
 
 This is optional and intended for local convenience, not bootstrap-critical
 runtime behavior.

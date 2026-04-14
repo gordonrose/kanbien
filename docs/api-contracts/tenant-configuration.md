@@ -46,7 +46,7 @@
     `{ tenantId }`
   - body:
     any subset of
-    `{ minLength, maxLength, minUppercase, maxUppercase, minLowercase, maxLowercase, minNumbers, maxNumbers, minSymbols, maxSymbols }`
+    `{ minLength, maxLength, minUppercase, maxUppercase, minLowercase, maxLowercase, minNumbers, maxNumbers, minSymbols, maxSymbols, sessionTtlSeconds }`
 - `GET /v1/tenant/auth-policy`
   - current tenant comes only from the authenticated tenant session
 
@@ -57,7 +57,9 @@
   - `policySource`
   - `hasTenantOverride`
   - `passwordPolicy`
+  - `sessionPolicy`
   - `hardFloors`
+  - `hardLimits`
   - `updatedAt`
 
 ## Error Contract
@@ -81,3 +83,5 @@
   tenant
 - effective password policy is also consumed by `tenantAuth` for password setup
   and remediation-aware login
+- effective session TTL policy is also consumed by `tenantAuth` when minting
+  new tenant sessions

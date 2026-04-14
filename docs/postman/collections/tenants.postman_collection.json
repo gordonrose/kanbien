@@ -3,7 +3,7 @@
     "_postman_id": "f3f6d34f-18ad-478b-abfb-7c4d72f4fd90",
     "name": "Kanbien Tenants",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for the protected tenants feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises tenant create, visible/deleted reads and lists, update, soft delete, reactivate, and confirmed remove. Public auth requests may return 429 AUTH_THROTTLED or AUTH_LOCKED_DOWN. Protected tenant requests may return 429 RATE_LIMITED when shared platform security middleware rejects the request."
+    "description": "Postman collection for the protected tenants feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises tenant create, visible/deleted reads and lists, update, soft delete, reactivate, and confirmed remove. Public auth requests may return 429 AUTH_THROTTLED or AUTH_LOCKED_DOWN. Protected tenant requests may return 429 RATE_LIMITED when shared platform security middleware rejects the request. Successful root login writes a shared root session into the active Postman environment, and tenant creation stores the active tenant ID there as well."
   },
   "variable": [
     {
@@ -23,7 +23,7 @@
       "value": "Test1234!"
     },
     {
-      "key": "sessionToken",
+      "key": "rootSessionId",
       "value": "sess_replace_me"
     },
     {
@@ -212,8 +212,8 @@
             "type": "text/javascript",
             "exec": [
               "const json = pm.response.json();",
-              "if (!json.sessionId) pm.collectionVariables.unset(\"sessionToken\");",
-              "if (json.sessionId) pm.collectionVariables.set(\"sessionToken\", json.sessionId);"
+              "if (!json.sessionId) pm.environment.unset(\"rootSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
             ]
           }
         }
@@ -230,7 +230,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -255,7 +255,7 @@
             "type": "text/javascript",
             "exec": [
               "const json = pm.response.json();",
-              "if (json.tenantId) pm.collectionVariables.set(\"tenantId\", json.tenantId);"
+              "if (json.tenantId) pm.environment.set(\"tenantId\", json.tenantId);"
             ]
           }
         }
@@ -268,7 +268,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -291,7 +291,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -351,7 +351,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -378,7 +378,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -402,7 +402,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -426,7 +426,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -471,7 +471,7 @@
         "header": [
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "url": {
@@ -500,7 +500,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {
@@ -542,7 +542,7 @@
           },
           {
             "key": "Authorization",
-            "value": "Bearer {{sessionToken}}"
+            "value": "Bearer {{rootSessionId}}"
           }
         ],
         "body": {

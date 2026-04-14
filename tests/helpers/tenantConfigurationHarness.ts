@@ -44,6 +44,7 @@ export function createInMemoryTenantConfigurationRepository(
         maxNumbers: input.maxNumbers,
         minSymbols: input.minSymbols,
         maxSymbols: input.maxSymbols,
+        sessionTtlSeconds: input.sessionTtlSeconds,
         createdAt: current?.createdAt ?? now,
         updatedAt: now,
       };

@@ -21,15 +21,21 @@ const requireRootSession = createRequireRootSession(rootAuthRepository, {
   allowBrowserCookie: true,
 });
 const rootRolesFeature = createRootRolesFeature(dbPool, platformSecurityRepository);
-const tenantAdminsFeature = createTenantAdminsFeature(
-  dbPool,
-  rootRolesFeature.capabilityChecker,
-  platformSecurityRepository,
-);
 const tenantConfigurationFeature = createTenantConfigurationFeature(
   dbPool,
   rootRolesFeature.capabilityChecker,
   platformSecurityRepository,
+);
+const tenantAuthFeature = createTenantAuthFeature(
+  dbPool,
+  platformSecurityRepository,
+  tenantConfigurationFeature.policyResolver,
+);
+const tenantAdminsFeature = createTenantAdminsFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  platformSecurityRepository,
+  tenantAuthFeature.onboardingProvisioner,
 );
 const publicReadRateLimit = createRateLimitMiddleware({
   enabled: env.platformSecurity.enabled,
@@ -90,11 +96,7 @@ v1Router.use(
 );
 v1Router.use(
   "/tenant-auth",
-  createTenantAuthFeature(
-    dbPool,
-    platformSecurityRepository,
-    tenantConfigurationFeature.policyResolver,
-  ),
+  tenantAuthFeature.tenantAuthRouter,
 );
 v1Router.use(
   "/tenant/auth-policy",

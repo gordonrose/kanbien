@@ -35,11 +35,13 @@ describe("tenantAuth e2e onboarding required before password setup", () => {
 
     const bootstrap = await invokeJson<{
       status: string;
-      bootstrapToken: string;
+      tenantAuthOnboarding: {
+        bootstrapToken: string;
+      };
     }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     expect(bootstrap.status).toBe(200);
 

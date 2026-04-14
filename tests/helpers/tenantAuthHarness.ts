@@ -5,6 +5,7 @@ import { createRateLimitMiddleware } from "../../src/lib/security/rateLimit";
 import { env } from "../../src/config/env";
 import { createTenantAuthService } from "../../src/features/tenantAuth/domain/service";
 import type { TenantAuthPolicyResolver } from "../../src/features/tenantConfiguration";
+import { createTenantAdminsService } from "../../src/features/tenantAdmins/domain/service";
 import type {
   TenantAccessGrantData,
   TenantAuthPrincipalData,
@@ -28,11 +29,18 @@ import type {
 } from "../../src/features/tenantAdmins/domain/types";
 import {
   createInMemoryTenantAdminsRepository,
+  createNoopTenantAuthOnboardingProvisioner,
   createTenantAdminRecord,
   createVisibleTenantsReader,
 } from "./tenantAdminsHarness";
 import type { VisibleTenantsReader } from "../../src/features/tenants";
 import type { RootAuthIntegrationHarness } from "../harness/rootAuth/integrationHarness";
+import { createTenantAdminVerificationRouter } from "../../src/features/tenantAdmins/transport/router";
+import { createNotificationDeliveryService } from "../../src/features/notificationDelivery/domain/service";
+import {
+  createInMemoryNotificationDeliveryRepository,
+  FakeNotificationEmailProvider,
+} from "./notificationDeliveryHarness";
 
 function normalizeEmail(value: string): string {
   return value.trim().toLowerCase();
@@ -505,6 +513,16 @@ export function mountTenantAuthFeature(
     policyResolver,
     harness.platformSecurityRepository,
   );
+  const tenantAdminsService = createTenantAdminsService(
+    tenantAdminsRepository,
+    visibleTenantsReader,
+    createNotificationDeliveryService(
+      createInMemoryNotificationDeliveryRepository(),
+      new FakeNotificationEmailProvider(),
+    ),
+    harness.platformSecurityRepository,
+    service.onboardingProvisioner ?? createNoopTenantAuthOnboardingProvisioner(),
+  );
 
   app.use(
     "/v1/tenant-auth",
@@ -514,10 +532,18 @@ export function mountTenantAuthFeature(
       harness.platformSecurityRepository,
     ),
   );
+  app.use(
+    "/v1/tenant-admin-verification",
+    createTenantAdminVerificationRouter(
+      tenantAdminsService,
+      harness.platformSecurityRepository,
+    ),
+  );
 
   return {
     tenantAuthRepository,
     tenantAdminsRepository,
+    tenantAdminsService,
   };
 }
 

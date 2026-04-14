@@ -10,6 +10,7 @@ export interface TenantAuthPolicyRecord {
   max_numbers: number | null;
   min_symbols: number | null;
   max_symbols: number | null;
+  session_ttl_seconds: number | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -26,4 +27,5 @@ export interface UpsertTenantAuthPolicyInput {
   maxNumbers: number | null;
   minSymbols: number | null;
   maxSymbols: number | null;
+  sessionTtlSeconds: number | null;
 }

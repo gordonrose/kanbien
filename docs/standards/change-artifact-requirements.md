@@ -59,8 +59,15 @@ Required:
 - PRD-derived test-case doc
 - end-to-end journey scenario inventory
 - frontend description
+- frontend route and screen-state definition
 - backend contract description
 - persistence impact description
+- permission expectations
+- accessibility considerations
+- design-system impact note
+- performance review
+- degraded-state UX note
+- telemetry and operational review
 - docs update plan
 - standards gate review
 
@@ -101,6 +108,8 @@ If the capability is tenant-scoped, also require:
 - source-independent note of whether the current tenant context is held in
   server-side session state, validated token claims, or another approved auth
   context mechanism
+- frontend visibility, disablement, or denied-state expectations when a
+  frontend surface exists
 
 If the permission model itself changes, add:
 
@@ -135,14 +144,79 @@ To make a capability reconstructable from docs and templates, document:
 - actor and permission model
 - tenant context rule when relevant
 - frontend surface and states if applicable
+- owning frontend module and journey when a frontend surface exists
+- route family and launch surface when a frontend surface exists
 - backend route and contract
 - persistence impact
 - security, privacy, and audit expectations
+- performance expectations and degraded-state behavior when a frontend surface
+  exists
+- analytics, logging, monitoring, and alerting expectations when a frontend
+  surface exists
 - verification layers
 - end-to-end journey requirements and tier when applicable
 - QA coverage-matrix classification and required human QA artifacts when
   applicable
 - docs and operational artifacts required
+
+## Frontend Slice Gate
+
+For a material frontend slice, do not treat "frontend description" as
+sufficiently specific on its own.
+
+Recommended starting templates:
+
+- [`frontend-slice-template.md`](/home/gordon/kanbien/docs/templates/frontend-slice-template.md)
+- [`frontend-telemetry-review-template.md`](/home/gordon/kanbien/docs/templates/frontend-telemetry-review-template.md)
+
+At minimum, define or update:
+
+- frontend module or feature description
+- route and screen-state definition
+- backend dependency map
+- permission expectations
+- accessibility considerations
+- design-system impact note
+- performance review
+- degraded-state UX note
+- test coverage plan
+- docs update plan
+
+If the slice is also security-, privacy-, performance-, or observability-
+sensitive, add:
+
+- security implications
+- analytics event expectations and forbidden analytics data
+- logging and monitoring expectations
+- alerting expectations and severity classification
+
+For material frontend and design-system work, also require:
+
+- machine-readable frontend quality-gate state manifest for the changed surface
+- frontend gate execution evidence, or an explicit environment blocker note
+- visual verification coverage for required viewport and direction states
+
+For public route or signed-off route-shell work, also require:
+
+- explicit human review using a public-route checklist or equivalent artifact
+- recorded qualitative findings when the route still has visible design issues
+  that automation did not classify as failures
+
+Treat the frontend loop as incomplete when:
+
+- the UI surface changed but route/screen states were not documented
+- degraded-performance behavior was left implicit
+- permission-aware rendering expectations were left implicit
+- accessibility expectations were omitted for a materially changed frontend
+  surface
+- the loading strategy and performance posture were not reviewed
+- telemetry implications were silently deferred even though the slice changes
+  a meaningful user journey, high-risk workflow, or production-critical module
+- the frontend quality gate manifest is missing or stale for a materially
+  changed governed surface
+- the frontend gate failed, was not run, or was treated as optional
+- a public route was presented as complete without an explicit qualitative
+  route review
 
 ## Documentation Update Rule
 
@@ -161,6 +235,8 @@ When a change lands, update the affected combination of:
 - AI-assisted review notes when the change materially relied on generative AI
 - maintained status snapshots, registry docs, and earlier planning artifacts
   whose current-state wording changed because the implementation now exists
+- frontend module or journey docs when a frontend surface now exists or
+  materially changed
 - reconstruction questionnaire when the slice changes interchangeable tools,
   providers, or deployer-local choices
 - bootstrap and helper docs when the slice changes startup order, required
@@ -228,6 +304,8 @@ Required for every feature loop:
   operator-induced state changes for inclusion rather than exclusion
 - define meaningful permutations, including tenant and role variation when the
   feature can behave differently across them
+- include frontend state classes such as loading, delayed, denied, expired,
+  degraded, and recovery states when a frontend surface exists
 - define default pairwise coverage across behavior-changing dimensions and any
   required higher-order interactions
 - include legacy/pre-change and post-change data states when behavior can differ
@@ -283,6 +361,9 @@ The default feature loop should explicitly determine and document:
 - the required executable layer set
 - the required human QA artifacts
 - the required curated gate evidence
+- the required frontend artifact set when a frontend surface exists
+- the required telemetry/accountability artifact set when the change affects
+  production workflows, user trust, or operational visibility
 
 If the recorded change-class classification says a broader QA layer or artifact
 is not required, record that decision explicitly rather than silently omitting

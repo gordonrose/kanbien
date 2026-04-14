@@ -3,11 +3,11 @@
     "_postman_id": "d3154a2e-1dd3-49c4-bbd2-e29c2a56ca92",
     "name": "Kanbien Tenant Configuration",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for the tenantConfiguration feature. It includes root-auth bootstrap to obtain a bearer session for exact-tenant root policy reads and updates, plus an optional tenant-session-backed current-tenant policy read."
+    "description": "Postman collection for the tenantConfiguration feature. It includes root-auth bootstrap to obtain a bearer session for exact-tenant root policy reads and updates, plus an optional tenant-session-backed current-tenant policy read. Root and tenant auth state are read from the active Postman environment when present so you do not need to log in again in each collection."
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000" },
-    { "key": "rootEmail", "value": "root@example.com" },
+    { "key": "rootEmail", "value": "gordonrose164@hotmail.com" },
     { "key": "rootPassword", "value": "Password123!" },
     { "key": "rootSessionId", "value": "00000000-0000-0000-0000-000000000000" },
     { "key": "tenantId", "value": "00000000-0000-0000-0000-000000000000" },
@@ -49,7 +49,8 @@
             "type": "text/javascript",
             "exec": [
               "const json = pm.response.json();",
-              "if (json.sessionId) pm.collectionVariables.set(\"rootSessionId\", json.sessionId);"
+              "if (!json.sessionId) pm.environment.unset(\"rootSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
             ]
           }
         }

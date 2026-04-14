@@ -123,19 +123,21 @@ export async function bootstrapSetPasswordAndLogin(input: {
 
   const bootstrap = await invokeJson<{
     status: string;
-    bootstrapToken: string;
-    authPrincipalId: string;
+    tenantAuthOnboarding: {
+      bootstrapToken: string;
+      authPrincipalId: string;
+    };
   }>(harness.app, {
     method: "POST",
-    path: "/v1/tenant-auth/principals/bootstrap",
-    body: { verificationToken },
+    path: "/v1/tenant-admin-verification/redeem",
+    body: { token: verificationToken },
   });
 
   const setup = await invokeJson<{ status: string }>(harness.app, {
     method: "POST",
     path: "/v1/tenant-auth/password/setup",
     body: {
-      bootstrapToken: bootstrap.body.bootstrapToken,
+      bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
       newPassword: DEFAULT_PASSWORD,
       repeatPassword: DEFAULT_PASSWORD,
     },

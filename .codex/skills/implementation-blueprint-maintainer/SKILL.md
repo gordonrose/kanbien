@@ -108,6 +108,8 @@ It should make these things explicit:
 - which files or modules are expected to change or be created
 - which cross-feature seams must be used instead of private imports
 - which persistence objects and migrations are needed
+- which authz capability rows and default role grants must be seeded or updated
+  when the capability matrix introduces protected backend behavior
 - which docs and verification layers are expected to move with the slice
 - which standards or audit expectations must be preserved
 
@@ -153,6 +155,9 @@ Determine:
 - router and contract files
 - domain/service files
 - persistence files and migrations
+- authz-catalog seed rows implied by the approved capability matrix
+- default role-grant migrations needed so protected roles receive the intended
+  capabilities in live environments
 - cross-feature seams
 - shared middleware or platform wiring
 - test folders and layers
@@ -182,6 +187,14 @@ such as:
 
 If one of those is intentionally out of scope, the blueprint should say why
 instead of silently leaving the artifact class out.
+
+When the approved capability matrix names privileged or role-governed backend
+capabilities, the blueprint should explicitly say:
+
+- where the capability keys will be seeded
+- which default roles receive them by migration-backed grant
+- which existing protected-feature flows or manual verification assets depend
+  on those grants after deployment
 
 Also use `docs/architecture/guides/qa-coverage-matrix-guide.md`,
 `docs/architecture/guides/end-to-end-journey-testing-guide.md`, and
@@ -226,6 +239,9 @@ Also call out when implementation should be expected to refresh:
   primarily about code.
 - Do not treat the blueprint as a generic checklist; it must be tailored to
   this repo's feature structure and change loop.
+- Do not leave capability-matrix-derived authz state implied. If a protected
+  route depends on a role grant, the blueprint should name the migration or
+  corrective migration that will create or repair that state.
 
 ## Trigger Phrases
 

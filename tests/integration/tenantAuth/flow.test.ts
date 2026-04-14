@@ -42,6 +42,9 @@ describe("tenantAuth feature flow", () => {
         policySource: "tenant_override",
         hasTenantOverride: true,
         passwordPolicy: { ...activePolicy },
+        sessionPolicy: {
+          sessionTtlSeconds: 28800,
+        },
         hardFloors: {
           minLength: 6,
           minUppercase: 1,
@@ -49,11 +52,18 @@ describe("tenantAuth feature flow", () => {
           minNumbers: 1,
           minSymbols: 1,
         },
+        hardLimits: {
+          minSessionTtlSeconds: 300,
+          maxSessionTtlSeconds: 2592000,
+        },
         updatedAt: "2026-04-09T12:00:00.000Z",
       };
     },
     async resolveAggregatePasswordPolicy() {
       return { ...activePolicy };
+    },
+    async resolveAggregateSessionTtlSeconds() {
+      return 28800;
     },
     assertPasswordMeetsPolicy(password, policy) {
       if (password.length < policy.minLength) {
@@ -99,21 +109,23 @@ describe("tenantAuth feature flow", () => {
 
     const bootstrap = await invokeJson<{
       status: string;
-      authPrincipalId: string;
-      bootstrapToken: string;
+      tenantAuthOnboarding: {
+        authPrincipalId: string;
+        bootstrapToken: string;
+      };
     }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     expect(bootstrap.status).toBe(200);
-    expect(bootstrap.body.status).toBe("PRINCIPAL_BOOTSTRAPPED");
+    expect(bootstrap.body.status).toBe("VERIFIED");
 
     const setup = await invokeJson<{ status: string }>(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },
@@ -189,16 +201,18 @@ describe("tenantAuth feature flow", () => {
       mounted.tenantAdminsRepository,
       { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
     );
-    const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+    const bootstrap = await invokeJson<{
+      tenantAuthOnboarding: { bootstrapToken: string };
+    }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     await invokeJson(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },
@@ -268,16 +282,18 @@ describe("tenantAuth feature flow", () => {
       mounted.tenantAdminsRepository,
       { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
     );
-    const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+    const bootstrap = await invokeJson<{
+      tenantAuthOnboarding: { bootstrapToken: string };
+    }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     await invokeJson(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },
@@ -353,16 +369,18 @@ describe("tenantAuth feature flow", () => {
         mounted.tenantAdminsRepository,
         { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
       );
-      const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+      const bootstrap = await invokeJson<{
+        tenantAuthOnboarding: { bootstrapToken: string };
+      }>(harness.app, {
         method: "POST",
-        path: "/v1/tenant-auth/principals/bootstrap",
-        body: { verificationToken },
+        path: "/v1/tenant-admin-verification/redeem",
+        body: { token: verificationToken },
       });
       await invokeJson(harness.app, {
         method: "POST",
         path: "/v1/tenant-auth/password/setup",
         body: {
-          bootstrapToken: bootstrap.body.bootstrapToken,
+          bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
           newPassword: "@Password1!LongEnough",
           repeatPassword: "@Password1!LongEnough",
         },
@@ -455,16 +473,18 @@ describe("tenantAuth feature flow", () => {
       mounted.tenantAdminsRepository,
       { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
     );
-    const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+    const bootstrap = await invokeJson<{
+      tenantAuthOnboarding: { bootstrapToken: string };
+    }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     await invokeJson(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },
@@ -553,6 +573,9 @@ describe("tenantAuth feature flow", () => {
           policySource: "tenant_override",
           hasTenantOverride: true,
           passwordPolicy: { ...activePolicy },
+          sessionPolicy: {
+            sessionTtlSeconds: 28800,
+          },
           hardFloors: {
             minLength: 6,
             minUppercase: 1,
@@ -560,11 +583,18 @@ describe("tenantAuth feature flow", () => {
             minNumbers: 1,
             minSymbols: 1,
           },
+          hardLimits: {
+            minSessionTtlSeconds: 300,
+            maxSessionTtlSeconds: 2592000,
+          },
           updatedAt: "2026-04-10T12:00:00.000Z",
         };
       },
       async resolveAggregatePasswordPolicy() {
         return { ...activePolicy };
+      },
+      async resolveAggregateSessionTtlSeconds() {
+        return 28800;
       },
       assertPasswordMeetsPolicy(password, policy) {
         if (
@@ -599,16 +629,18 @@ describe("tenantAuth feature flow", () => {
         mounted.tenantAdminsRepository,
         { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
       );
-      const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+      const bootstrap = await invokeJson<{
+        tenantAuthOnboarding: { bootstrapToken: string };
+      }>(harness.app, {
         method: "POST",
-        path: "/v1/tenant-auth/principals/bootstrap",
-        body: { verificationToken },
+        path: "/v1/tenant-admin-verification/redeem",
+        body: { token: verificationToken },
       });
       await invokeJson(harness.app, {
         method: "POST",
         path: "/v1/tenant-auth/password/setup",
         body: {
-          bootstrapToken: bootstrap.body.bootstrapToken,
+          bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
           newPassword: "@Password1!LongEnough",
           repeatPassword: "@Password1!LongEnough",
         },
