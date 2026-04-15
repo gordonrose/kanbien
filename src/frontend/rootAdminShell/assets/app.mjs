@@ -1,7 +1,6 @@
 import {
   createInitialState,
   deriveViewFlags,
-  displayNameForRootUser,
   displayNameForSession,
   markSessionExpired,
   resetToLoginState,
@@ -18,7 +17,26 @@ class ApiError extends Error {
   }
 }
 
+const languageOptions = [
+  { code: "en", name: "English", detail: "English" },
+  { code: "es", name: "Spanish", detail: "Espanol" },
+  { code: "fr", name: "French", detail: "Francais" },
+  { code: "de", name: "German", detail: "Deutsch" },
+  { code: "it", name: "Italian", detail: "Italiano" },
+  { code: "pt", name: "Portuguese", detail: "Portugues" },
+  { code: "nl", name: "Dutch", detail: "Nederlands" },
+  { code: "pl", name: "Polish", detail: "Polski" },
+  { code: "ar", name: "Arabic", detail: "Arabic" },
+  { code: "hi", name: "Hindi", detail: "Hindi" },
+  { code: "ja", name: "Japanese", detail: "Japanese" },
+  { code: "zh-Hans", name: "Chinese (Simplified)", detail: "Chinese Simplified" },
+];
+
 const state = createInitialState();
+state.navigation.currentPage = "overview";
+
+let activeLanguageCode = "en";
+let languageModalReturnFocusTarget = null;
 
 const authView = document.getElementById("auth-view");
 const shellView = document.getElementById("shell-view");
@@ -33,46 +51,42 @@ const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const loginForm = document.getElementById("login-form");
 const signSubmit = document.getElementById("sign-submit");
-const logoutButton = document.getElementById("logout-button");
 const returnToLogin = document.getElementById("return-to-login");
-const refreshConsoleButton = document.getElementById("refresh-console");
-const navButtons = Array.from(document.querySelectorAll("[data-page]"));
-const myDetailsPage = document.getElementById("page-my-details");
-const viewUsersPage = document.getElementById("page-view-users");
-const rootRolesPage = document.getElementById("page-root-roles");
+const refreshSessionButton = document.getElementById("refresh-session-button");
 
-const createRootUserButton = document.getElementById("create-root-user");
-const refreshRootUsersButton = document.getElementById("refresh-root-users");
-const usersSearchForm = document.getElementById("users-search-form");
-const usersFilterSelect = document.getElementById("users-filter");
-const usersSearchFieldSelect = document.getElementById("users-search-field");
-const usersSearchInput = document.getElementById("users-search-input");
-const usersClearSearchButton = document.getElementById("users-clear-search");
-const usersPageSizeSelect = document.getElementById("users-page-size");
-const usersPaginationSummary = document.getElementById("users-pagination-summary");
-const usersPageIndicator = document.getElementById("users-page-indicator");
-const usersPrevPageButton = document.getElementById("users-prev-page");
-const usersNextPageButton = document.getElementById("users-next-page");
-const usersList = document.getElementById("users-list");
-const selectedRootUser = document.getElementById("selected-root-user");
-const userDrawerOverlay = document.getElementById("user-drawer-overlay");
-const userDrawerBackdrop = document.getElementById("user-drawer-backdrop");
-const closeUserDrawerButton = document.getElementById("close-user-drawer");
-const userSortButtons = Array.from(document.querySelectorAll("[data-sort-by]"));
+const topNav = document.querySelector(".top-nav");
+const primaryNav = document.querySelector(".primary-nav");
+const primaryNavOverflow = document.getElementById("primary-nav-overflow");
+const primaryNavOverflowButton = document.getElementById("primary-nav-overflow-button");
+const primaryNavOverflowMenu = document.getElementById("primary-nav-overflow-menu");
+const primaryNavLinks = Array.from(document.querySelectorAll("#primary-nav-links .nav-link"));
+const mobileNavButton = document.getElementById("mobile-nav-button");
+const mobileNavMenu = document.getElementById("mobile-nav-menu");
+const mobileNavLinks = Array.from(document.querySelectorAll("#mobile-nav-menu > .nav-link"));
+const profileButton = document.getElementById("profile-menu-button");
+const profileMenu = document.getElementById("profile-menu");
+const profileLabel = document.getElementById("profile-label");
+const profileAvatar = document.getElementById("profile-avatar");
+const navUtilities = document.querySelector(".nav-utilities");
+const mobileProfileButton = document.getElementById("mobile-profile-button");
+const mobileProfileMenu = document.getElementById("mobile-profile-menu");
+const profileSessionLink = document.getElementById("profile-session-link");
+const profileLanguageButton = document.getElementById("profile-language-button");
+const profileLogoutButton = document.getElementById("profile-logout-button");
+const mobileLanguageButton = document.getElementById("mobile-language-button");
+const mobileLogoutButton = document.getElementById("mobile-logout-button");
 
-const createRootRoleButton = document.getElementById("create-root-role");
-const refreshRootRolesButton = document.getElementById("refresh-root-roles");
-const rootRolesPageSizeSelect = document.getElementById("root-roles-page-size");
-const rootRolesIncludeInactiveSelect = document.getElementById("root-roles-include-inactive");
-const rootRolesPaginationSummary = document.getElementById("root-roles-pagination-summary");
-const rootRolesPageIndicator = document.getElementById("root-roles-page-indicator");
-const rootRolesPrevPageButton = document.getElementById("root-roles-prev-page");
-const rootRolesNextPageButton = document.getElementById("root-roles-next-page");
-const rootRolesList = document.getElementById("root-roles-list");
-const selectedRootRole = document.getElementById("selected-root-role");
-const roleDrawerOverlay = document.getElementById("role-drawer-overlay");
-const roleDrawerBackdrop = document.getElementById("role-drawer-backdrop");
-const closeRoleDrawerButton = document.getElementById("close-role-drawer");
+const languageModal = document.getElementById("language-modal");
+const languageModalBackdrop = document.getElementById("language-modal-backdrop");
+const languageModalCloseButton = document.getElementById("language-modal-close");
+const languageOptionList = document.getElementById("language-option-list");
+
+const brandLabel = document.getElementById("brand-label");
+const pageSections = {
+  overview: document.getElementById("page-overview"),
+  "root-users": document.getElementById("page-root-users"),
+  "root-roles": document.getElementById("page-root-roles"),
+};
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -81,6 +95,26 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function initialsForSession(session) {
+  const name = displayNameForSession(session);
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((chunk) => chunk[0]?.toUpperCase() ?? "")
+    .join("");
+
+  return initials || "RU";
+}
+
+function formatTimestamp(value) {
+  if (!value) {
+    return "Unknown";
+  }
+
+  return new Date(value).toLocaleString();
 }
 
 function setMessage(node, message, tone = "info") {
@@ -94,16 +128,6 @@ function setShellMessage(message, tone = "info") {
   setMessage(shellMessage, message, tone);
 }
 
-function renderKeyOptions(keys) {
-  sshKeySelect.innerHTML = "";
-  for (const key of keys) {
-    const option = document.createElement("option");
-    option.value = key.fingerprint;
-    option.textContent = `${key.label} (${key.fingerprint})`;
-    sshKeySelect.append(option);
-  }
-}
-
 function renderSessionSummary(session) {
   if (!session) {
     sessionSummary.innerHTML = "";
@@ -113,407 +137,254 @@ function renderSessionSummary(session) {
   sessionSummary.innerHTML = `
     <div><strong>User</strong><span>${escapeHtml(displayNameForSession(session))}</span></div>
     <div><strong>Email</strong><span>${escapeHtml(session.email)}</span></div>
-    <div><strong>Root User ID</strong><span><code class="inline-code">${escapeHtml(session.rootUserId)}</code></span></div>
-    <div><strong>Principal ID</strong><span><code class="inline-code">${escapeHtml(session.authPrincipalId)}</code></span></div>
-    <div><strong>Session Expires</strong><span>${escapeHtml(session.expiresAt)}</span></div>
+    <div><strong>Root User ID</strong><span><code>${escapeHtml(session.rootUserId)}</code></span></div>
+    <div><strong>Principal ID</strong><span><code>${escapeHtml(session.authPrincipalId)}</code></span></div>
+    <div><strong>Session Expires</strong><span>${escapeHtml(formatTimestamp(session.expiresAt))}</span></div>
   `;
 }
 
-function renderBadges(items) {
-  return `
-    <div class="badges">
-      ${items
-        .map((item) => `<span class="badge"${item.tone ? ` data-tone="${escapeHtml(item.tone)}"` : ""}>${escapeHtml(item.label)}</span>`)
-        .join("")}
-    </div>
-  `;
+function setMenuOpen(open) {
+  profileButton?.setAttribute("aria-expanded", String(open));
+  profileMenu?.classList.toggle("hidden", !open);
 }
 
-function formatTimestamp(value) {
-  if (!value) {
-    return "Unknown";
-  }
-  return new Date(value).toLocaleString();
+function isMenuOpen() {
+  return profileButton?.getAttribute("aria-expanded") === "true";
 }
 
-function sortLabel(sortBy) {
-  const labels = {
-    firstName: "Name",
-    email: "Email",
-    status: "Status",
-    updatedAt: "Updated",
-  };
-  return labels[sortBy] ?? sortBy;
+function setPrimaryNavOverflowOpen(open) {
+  primaryNavOverflowButton?.setAttribute("aria-expanded", String(open));
+  primaryNavOverflowMenu?.classList.toggle("hidden", !open);
 }
 
-function renderUsersList() {
-  usersPaginationSummary.textContent =
-    state.rootUsers.totalMatchingRecords === 0
-      ? "No users match the current search."
-      : `Showing page ${state.rootUsers.page} of ${state.rootUsers.totalPages} across ${state.rootUsers.totalMatchingRecords} matching users`;
-  usersPageIndicator.textContent = `Page ${state.rootUsers.page} of ${state.rootUsers.totalPages}`;
-  usersPrevPageButton.disabled = state.rootUsers.page <= 1;
-  usersNextPageButton.disabled = state.rootUsers.page >= state.rootUsers.totalPages;
+function isPrimaryNavOverflowOpen() {
+  return primaryNavOverflowButton?.getAttribute("aria-expanded") === "true";
+}
 
-  for (const button of userSortButtons) {
-    const sortBy = button.dataset.sortBy;
-    const active = sortBy === state.rootUsers.orderBy;
-    const direction = active ? state.rootUsers.orderDirection : "";
-    button.classList.toggle("active", active);
-    button.textContent = active
-      ? `${sortLabel(sortBy)} ${direction === "asc" ? "↑" : "↓"}`
-      : sortLabel(sortBy);
-  }
+function setMobileNavOpen(open) {
+  mobileNavButton?.setAttribute("aria-expanded", String(open));
+  mobileNavMenu?.classList.toggle("hidden", !open);
+}
 
-  if (state.rootUsers.items.length === 0) {
-    usersList.innerHTML = `<div class="empty-state">No root users found for this filter.</div>`;
+function isMobileNavOpen() {
+  return mobileNavButton?.getAttribute("aria-expanded") === "true";
+}
+
+function setMobileProfileOpen(open) {
+  mobileProfileButton?.setAttribute("aria-expanded", String(open));
+  mobileProfileMenu?.classList.toggle("hidden", !open);
+}
+
+function isMobileProfileOpen() {
+  return mobileProfileButton?.getAttribute("aria-expanded") === "true";
+}
+
+function closeTransientShellSurfaces() {
+  setMenuOpen(false);
+  setPrimaryNavOverflowOpen(false);
+  setMobileNavOpen(false);
+  setMobileProfileOpen(false);
+}
+
+function setPrimaryNavLinkHidden(node, hidden) {
+  node.classList.toggle("hidden", hidden);
+}
+
+function renderPrimaryNavOverflowMenu(links) {
+  if (!primaryNavOverflowMenu) {
     return;
   }
 
-  usersList.innerHTML = state.rootUsers.items
-    .map((rootUser) => {
-      const selected = state.rootUsers.selected?.rootUserId === rootUser.rootUserId;
-      const isDeleted = Boolean(rootUser.deletedAt);
-      const isInactive = isDeleted || rootUser.status === "inactive";
+  primaryNavOverflowMenu.innerHTML = links
+    .map((link) => {
+      const href = link.getAttribute("href") ?? "/root-admin#overview";
+      const label = link.textContent?.trim() ?? "";
+      const isCurrent = link.getAttribute("aria-current") === "page";
+      const currentAttr = isCurrent ? ' aria-current="page"' : "";
+      const title = link.getAttribute("title") ?? label;
+      return `<a class="menu-item" href="${href}" data-page-link="${escapeHtml(link.dataset.pageLink ?? "")}" role="menuitem" title="${escapeHtml(title)}"${currentAttr}>${escapeHtml(label)}</a>`;
+    })
+    .join("");
+}
+
+function getVisiblePrimaryNavLinks() {
+  return primaryNavLinks.filter((link) => !link.classList.contains("hidden"));
+}
+
+function primaryNavFits() {
+  return primaryNav ? primaryNav.scrollWidth <= primaryNav.clientWidth : true;
+}
+
+function primaryNavOverlapsUtilities() {
+  if (!navUtilities) {
+    return false;
+  }
+
+  const navUtilitiesRect = navUtilities.getBoundingClientRect();
+  const lastVisibleLink = getVisiblePrimaryNavLinks().at(-1);
+
+  if (lastVisibleLink) {
+    const lastVisibleLinkRect = lastVisibleLink.getBoundingClientRect();
+    if (lastVisibleLinkRect.right > navUtilitiesRect.left) {
+      return true;
+    }
+  }
+
+  if (primaryNavOverflowButton && !primaryNavOverflow.classList.contains("hidden")) {
+    const overflowRect = primaryNavOverflowButton.getBoundingClientRect();
+    if (overflowRect.right > navUtilitiesRect.left) {
+      return true;
+    }
+  }
+
+  const primaryNavRect = primaryNav?.getBoundingClientRect();
+  return primaryNavRect ? primaryNavRect.right > navUtilitiesRect.left : false;
+}
+
+function primaryNavOverflowOverlapsVisibleLinks() {
+  if (!primaryNavOverflowButton || primaryNavOverflow.classList.contains("hidden")) {
+    return false;
+  }
+
+  const lastVisibleLink = getVisiblePrimaryNavLinks().at(-1);
+  if (!lastVisibleLink) {
+    return false;
+  }
+
+  const lastLinkRect = lastVisibleLink.getBoundingClientRect();
+  const overflowRect = primaryNavOverflowButton.getBoundingClientRect();
+  return lastLinkRect.right > overflowRect.left;
+}
+
+function updatePrimaryNavOverflow() {
+  if (!primaryNav || !topNav || primaryNavLinks.length === 0 || !primaryNavOverflow || !primaryNavOverflowButton) {
+    return;
+  }
+
+  topNav.classList.remove("force-mobile-nav");
+  primaryNavOverflow.classList.add("hidden");
+  setPrimaryNavOverflowOpen(false);
+  renderPrimaryNavOverflowMenu([]);
+
+  for (const link of primaryNavLinks) {
+    setPrimaryNavLinkHidden(link, false);
+  }
+
+  if (primaryNavFits() && !primaryNavOverlapsUtilities()) {
+    return;
+  }
+
+  primaryNavOverflow.classList.remove("hidden");
+
+  while (
+    getVisiblePrimaryNavLinks().length > 2
+    && (!primaryNavFits() || primaryNavOverlapsUtilities() || primaryNavOverflowOverlapsVisibleLinks())
+  ) {
+    const lastVisibleLink = getVisiblePrimaryNavLinks().at(-1);
+    if (!lastVisibleLink) {
+      break;
+    }
+    setPrimaryNavLinkHidden(lastVisibleLink, true);
+  }
+
+  if (primaryNavFits() && !primaryNavOverlapsUtilities() && !primaryNavOverflowOverlapsVisibleLinks()) {
+    renderPrimaryNavOverflowMenu(primaryNavLinks.filter((link) => link.classList.contains("hidden")));
+    return;
+  }
+
+  primaryNavOverflow.classList.add("hidden");
+  topNav.classList.add("force-mobile-nav");
+  setPrimaryNavOverflowOpen(false);
+}
+
+function getActiveLanguage() {
+  return languageOptions.find((language) => language.code === activeLanguageCode) ?? languageOptions[0];
+}
+
+function syncLanguageTriggers() {
+  const activeLanguage = getActiveLanguage();
+  const label = `Language: ${activeLanguage.name}`;
+
+  if (profileLanguageButton) {
+    profileLanguageButton.textContent = label;
+    profileLanguageButton.setAttribute("title", label);
+  }
+
+  if (mobileLanguageButton) {
+    mobileLanguageButton.textContent = label;
+    mobileLanguageButton.setAttribute("title", label);
+  }
+}
+
+function renderLanguageOptions() {
+  if (!languageOptionList) {
+    return;
+  }
+
+  languageOptionList.innerHTML = languageOptions
+    .map((language) => {
+      const isActive = language.code === activeLanguageCode;
+      const activeClass = isActive ? " active" : "";
+      const check = isActive ? '<span class="language-option-check" aria-hidden="true">Selected</span>' : "";
+
       return `
-        <article class="user-row${selected ? " selected" : ""}">
-          <div class="user-row-main">
-            <strong>${escapeHtml(displayNameForRootUser(rootUser))}</strong>
-            <span class="muted">${escapeHtml(rootUser.email)}</span>
-            <div>${renderBadges([
-              { label: rootUser.status, tone: rootUser.status === "active" ? "success" : "danger" },
-              ...(rootUser.deletedAt ? [{ label: "deleted", tone: "danger" }] : []),
-            ])}</div>
-            <span class="muted">${escapeHtml(formatTimestamp(rootUser.updatedAt))}</span>
-          </div>
-          <div class="actions compact-actions">
-            <button type="button" class="ghost" data-select-root-user="${escapeHtml(rootUser.rootUserId)}">Edit</button>
-            ${
-              isInactive
-                ? `<button type="button" class="secondary" data-activate-root-user="${escapeHtml(rootUser.rootUserId)}">${isDeleted ? "Reactivate" : "Activate"}</button>`
-                : `<button type="button" class="danger" data-deactivate-root-user="${escapeHtml(rootUser.rootUserId)}">Deactivate</button>`
-            }
-          </div>
-        </article>
+        <button
+          class="language-option${activeClass}"
+          type="button"
+          role="option"
+          data-language-code="${language.code}"
+          aria-selected="${String(isActive)}"
+        >
+          <span class="language-option-label">
+            <span class="language-option-name">${escapeHtml(language.name)}</span>
+            <span class="language-option-detail">${escapeHtml(language.detail)}</span>
+          </span>
+          ${check}
+        </button>
       `;
     })
     .join("");
 }
 
-function renderSelectedRootUser() {
-  const mode = state.rootUsers.drawerMode;
-  const rootUser = state.rootUsers.selected;
+function setLanguageModalOpen(open, trigger = null) {
+  languageModal?.classList.toggle("hidden", !open);
+  languageModal?.setAttribute("aria-hidden", String(!open));
 
-  if (!mode) {
-    selectedRootUser.innerHTML = `<div class="empty-state">Select a user from the list to open the edit drawer.</div>`;
-    return;
-  }
-
-  if (mode === "create") {
-    selectedRootUser.innerHTML = `
-      <div class="detail-stack user-drawer">
-        <div>
-          <div class="eyebrow">Create</div>
-          <h3>New Root User</h3>
-          <p class="muted">Create a new root user and normalize the email on save.</p>
-        </div>
-        <form id="selected-root-user-form" class="stack inline-form">
-          <label>
-            <span>Email</span>
-            <input name="email" type="email" value="" required />
-          </label>
-          <label>
-            <span>First Name</span>
-            <input name="firstName" type="text" value="" />
-          </label>
-          <label>
-            <span>Last Name</span>
-            <input name="lastName" type="text" value="" />
-          </label>
-          <div class="actions">
-            <button type="submit">Create User</button>
-          </div>
-        </form>
-      </div>
-    `;
-    return;
-  }
-
-  const isDeleted = Boolean(rootUser.deletedAt);
-  const isInactive = isDeleted || rootUser.status === "inactive";
-
-  selectedRootUser.innerHTML = `
-    <div class="detail-stack user-drawer">
-      <div>
-        <div class="eyebrow">Selected Root User</div>
-        <h3>${escapeHtml(displayNameForRootUser(rootUser))}</h3>
-        <p class="muted">${escapeHtml(rootUser.email)}</p>
-      </div>
-      <div class="meta-grid">
-        <div><strong>Status</strong><span>${escapeHtml(rootUser.status)}</span></div>
-        <div><strong>Root User ID</strong><span><code class="inline-code">${escapeHtml(rootUser.rootUserId)}</code></span></div>
-        <div><strong>Created At</strong><span>${escapeHtml(formatTimestamp(rootUser.createdAt))}</span></div>
-        <div><strong>Updated At</strong><span>${escapeHtml(formatTimestamp(rootUser.updatedAt))}</span></div>
-        <div><strong>Deleted At</strong><span>${escapeHtml(rootUser.deletedAt ? formatTimestamp(rootUser.deletedAt) : "Active")}</span></div>
-      </div>
-      ${
-        isInactive
-          ? `
-            <div class="message" data-tone="warning">
-              This root user is inactive. ${isDeleted ? "Reactivate" : "Activate"} the user before editing details.
-            </div>
-            <div class="actions">
-              <button type="button" class="secondary" data-activate-root-user="${escapeHtml(rootUser.rootUserId)}">${isDeleted ? "Reactivate" : "Activate"} User</button>
-            </div>
-          `
-          : `
-            <form id="selected-root-user-form" class="stack inline-form">
-              <label>
-                <span>Email</span>
-                <input name="email" type="email" value="${escapeHtml(rootUser.email)}" required />
-              </label>
-              <label>
-                <span>First Name</span>
-                <input name="firstName" type="text" value="${escapeHtml(rootUser.firstName ?? "")}" />
-              </label>
-              <label>
-                <span>Last Name</span>
-                <input name="lastName" type="text" value="${escapeHtml(rootUser.lastName ?? "")}" />
-              </label>
-              <div class="actions">
-                <button type="submit">Save Changes</button>
-                <button type="button" class="danger" data-deactivate-root-user="${escapeHtml(rootUser.rootUserId)}">Deactivate User</button>
-              </div>
-            </form>
-          `
+  if (open) {
+    languageModalReturnFocusTarget = trigger ?? document.activeElement;
+    renderLanguageOptions();
+    window.requestAnimationFrame(() => {
+      const selectedButton = languageOptionList?.querySelector(`[data-language-code="${activeLanguageCode}"]`);
+      if (selectedButton instanceof HTMLElement) {
+        selectedButton.focus();
+        return;
       }
-    </div>
-  `;
-}
-
-function renderRootRolesList() {
-  rootRolesPaginationSummary.textContent =
-    state.rootRoles.totalMatchingRecords === 0
-      ? "No system root roles found."
-      : `Showing page ${state.rootRoles.page} of ${state.rootRoles.totalPages} across ${state.rootRoles.totalMatchingRecords} matching roles`;
-  rootRolesPageIndicator.textContent = `Page ${state.rootRoles.page} of ${state.rootRoles.totalPages}`;
-  rootRolesPrevPageButton.disabled = state.rootRoles.page <= 1;
-  rootRolesNextPageButton.disabled = state.rootRoles.page >= state.rootRoles.totalPages;
-
-  if (state.rootRoles.items.length === 0) {
-    rootRolesList.innerHTML = `
-      <div class="empty-state empty-state-action">
-        <p>No system root roles found for this filter.</p>
-        <button type="button" class="ghost" data-open-create-root-role="true">Create New Role</button>
-      </div>
-    `;
+      languageModalCloseButton?.focus();
+    });
     return;
   }
 
-  rootRolesList.innerHTML = state.rootRoles.items
-    .map((role) => {
-      const selected = state.rootRoles.selected?.rootRoleId === role.rootRoleId;
-      const isInactive = Boolean(role.deactivatedAt) || role.assignable === false;
-      return `
-        <article class="role-row${selected ? " selected" : ""}" data-select-root-role="${escapeHtml(role.rootRoleId)}">
-          <div class="role-row-main">
-            <strong>${escapeHtml(role.displayName)}</strong>
-            <span class="muted"><code class="inline-code">${escapeHtml(role.roleKey)}</code></span>
-            <span>${escapeHtml(String(role.activeGrantCount))}</span>
-            <div>${renderBadges([
-              { label: isInactive ? "inactive" : "active", tone: isInactive ? "danger" : "success" },
-              ...(role.protected ? [{ label: "protected", tone: "danger" }] : []),
-            ])}</div>
-            <span class="muted">${escapeHtml(formatTimestamp(role.updatedAt))}</span>
-          </div>
-          <div class="actions compact-actions">
-            <button type="button" class="ghost" data-select-root-role="${escapeHtml(role.rootRoleId)}">Edit Role</button>
-            ${
-              isInactive
-                ? `<button type="button" class="secondary" data-reactivate-root-role="${escapeHtml(role.rootRoleId)}">Reactivate</button>`
-                : `<button type="button" class="danger" data-deactivate-root-role="${escapeHtml(role.rootRoleId)}">Deactivate</button>`
-            }
-          </div>
-        </article>
-      `;
-    })
-    .join("");
-}
-
-function renderCapabilityColumn(capabilities, selectedCapabilityKeys, mode) {
-  if (capabilities.length === 0) {
-    return `<div class="empty-state">No capabilities in this column.</div>`;
+  if (languageModalReturnFocusTarget instanceof HTMLElement) {
+    languageModalReturnFocusTarget.focus();
   }
-
-  return capabilities
-    .map((capability) => {
-      const selected = selectedCapabilityKeys.includes(capability.capabilityKey);
-      const actionLabel = mode === "assigned" ? "Remove" : "Add";
-      const actionDataset = mode === "assigned" ? "data-remove-capability" : "data-add-capability";
-      return `
-        <article class="capability-row">
-          <div class="capability-copy">
-            <h4><code class="inline-code">${escapeHtml(capability.capabilityKey)}</code></h4>
-            <p class="muted">${escapeHtml(capability.description)}</p>
-            ${renderBadges([
-              ...(capability.mandatory ? [{ label: "mandatory", tone: "danger" }] : []),
-              ...(capability.protected ? [{ label: "protected", tone: "danger" }] : []),
-              ...(selected ? [{ label: "applied", tone: "success" }] : []),
-            ])}
-          </div>
-          <div class="actions compact-actions">
-            <button type="button" class="${mode === "assigned" ? "secondary" : "ghost"}" ${actionDataset}="${escapeHtml(capability.capabilityKey)}" ${capability.mandatory && mode === "assigned" ? "disabled" : ""}>
-              ${actionLabel}
-            </button>
-          </div>
-        </article>
-      `;
-    })
-    .join("");
+  languageModalReturnFocusTarget = null;
 }
 
-function renderSelectedRootRole() {
-  const mode = state.rootRoles.drawerMode;
-  if (!mode) {
-    selectedRootRole.innerHTML = `<div class="empty-state">Select a role or create a new one to open the editor.</div>`;
-    return;
-  }
-
-  const role = state.rootRoles.selected;
-  const selectedCapabilityKeys = state.rootRoles.draftCapabilityKeys;
-  const assignedCapabilities = state.rootRoles.eligibleCapabilities.filter((capability) =>
-    selectedCapabilityKeys.includes(capability.capabilityKey),
-  );
-  const eligibleCapabilities = state.rootRoles.eligibleCapabilities.filter(
-    (capability) => !selectedCapabilityKeys.includes(capability.capabilityKey),
-  );
-
-  selectedRootRole.innerHTML = `
-    <div class="detail-stack user-drawer">
-      <div>
-        <div class="eyebrow">${mode === "create" ? "Create" : "Edit"} System Root Role</div>
-        <h3>${escapeHtml(role?.displayName ?? "New Root Role")}</h3>
-        <p class="muted">${mode === "create" ? "Create a new durable system root role and assign its initial capabilities." : "Update role metadata and move capabilities between applied and eligible columns."}</p>
-      </div>
-
-      <form id="root-role-form" class="stack inline-form">
-        <label>
-          <span>Role Key</span>
-          <input name="roleKey" type="text" value="${escapeHtml(role?.roleKey ?? "")}" ${mode === "edit" ? "readonly" : "required"} />
-        </label>
-        <label>
-          <span>Display Name</span>
-          <input name="displayName" type="text" value="${escapeHtml(role?.displayName ?? "")}" required />
-        </label>
-        <label>
-          <span>Description</span>
-          <textarea name="description" required>${escapeHtml(role?.description ?? "")}</textarea>
-        </label>
-        ${
-          mode === "edit"
-            ? `
-              <div class="meta-grid">
-                <div><strong>Status</strong><span>${escapeHtml(role?.deactivatedAt ? "inactive" : "active")}</span></div>
-                <div><strong>Protected</strong><span>${escapeHtml(role?.protected ? "yes" : "no")}</span></div>
-                <div><strong>Grant Count</strong><span>${escapeHtml(String(role?.activeGrantCount ?? 0))}</span></div>
-                <div><strong>Updated</strong><span>${escapeHtml(formatTimestamp(role?.updatedAt))}</span></div>
-              </div>
-            `
-            : ""
-        }
-        <div class="actions">
-          <button type="submit">${mode === "create" ? "Create Role" : "Save Changes"}</button>
-          ${
-            mode === "edit"
-              ? role?.deactivatedAt
-                ? `<button type="button" class="secondary" data-reactivate-root-role="${escapeHtml(role.rootRoleId)}">Reactivate Role</button>`
-                : `<button type="button" class="danger" data-deactivate-root-role="${escapeHtml(role.rootRoleId)}">Deactivate Role</button>`
-              : ""
-          }
-        </div>
-      </form>
-
-      <section class="capability-grid">
-        <div class="subpanel capability-panel">
-          <div class="section-header">
-            <div>
-              <div class="eyebrow">Applied</div>
-              <h4>Current Capabilities</h4>
-            </div>
-          </div>
-          <div class="capability-list">
-            ${renderCapabilityColumn(assignedCapabilities, selectedCapabilityKeys, "assigned")}
-          </div>
-        </div>
-
-        <div class="subpanel capability-panel">
-          <div class="section-header">
-            <div>
-              <div class="eyebrow">Eligible</div>
-              <h4>Available Capabilities</h4>
-            </div>
-          </div>
-          <div class="capability-list">
-            ${renderCapabilityColumn(eligibleCapabilities, selectedCapabilityKeys, "eligible")}
-          </div>
-        </div>
-      </section>
-    </div>
-  `;
+function isLanguageModalOpen() {
+  return !languageModal?.classList.contains("hidden");
 }
 
-function renderNavigation() {
-  for (const button of navButtons) {
-    const isActive = button.dataset.page === state.navigation.currentPage;
-    button.classList.toggle("active", isActive);
-    button.setAttribute("aria-current", isActive ? "page" : "false");
-  }
-
-  myDetailsPage.classList.toggle("hidden", state.navigation.currentPage !== "my-details");
-  viewUsersPage.classList.toggle("hidden", state.navigation.currentPage !== "view-users");
-  rootRolesPage.classList.toggle("hidden", state.navigation.currentPage !== "root-roles");
-}
-
-function renderShell() {
-  usersFilterSelect.value = state.rootUsers.filter;
-  usersSearchFieldSelect.value = state.rootUsers.searchField;
-  usersSearchInput.value = state.rootUsers.searchText;
-  usersPageSizeSelect.value = String(state.rootUsers.pageSize);
-  userDrawerOverlay.classList.toggle("hidden", !state.rootUsers.drawerMode);
-  userDrawerOverlay.setAttribute("aria-hidden", state.rootUsers.drawerMode ? "false" : "true");
-
-  rootRolesPageSizeSelect.value = String(state.rootRoles.pageSize);
-  rootRolesIncludeInactiveSelect.value = String(state.rootRoles.includeInactive);
-  roleDrawerOverlay.classList.toggle("hidden", !state.rootRoles.drawerMode);
-  roleDrawerOverlay.setAttribute("aria-hidden", state.rootRoles.drawerMode ? "false" : "true");
-
-  renderSessionSummary(state.session);
-  renderNavigation();
-  renderUsersList();
-  renderSelectedRootUser();
-  renderRootRolesList();
-  renderSelectedRootRole();
-}
-
-function render() {
-  const flags = deriveViewFlags(state);
-  authView.classList.toggle("hidden", !flags.showAuthView);
-  sshStage.classList.toggle("hidden", !flags.showSshStage);
-  shellView.classList.toggle("hidden", !flags.showShellView);
-  expiryOverlay.classList.toggle("hidden", !flags.showExpiryOverlay);
-  setMessage(authMessage, state.authMessage, "warning");
-  setMessage(shellMessage, state.shellMessage, shellMessage.dataset.tone || "info");
-
-  if (flags.showShellView) {
-    renderShell();
-  }
+function selectLanguage(languageCode) {
+  activeLanguageCode = languageCode;
+  syncLanguageTriggers();
+  renderLanguageOptions();
 }
 
 async function fetchJson(path, options = {}) {
   const response = await fetch(path, {
-    credentials: "same-origin",
     headers: {
-      "content-type": "application/json",
+      accept: "application/json",
+      ...(options.body ? { "content-type": "application/json" } : {}),
       ...(options.headers ?? {}),
     },
     ...options,
@@ -540,46 +411,114 @@ async function fetchJson(path, options = {}) {
   return body;
 }
 
-function toQueryString(input) {
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(input)) {
-    if (value === undefined || value === null || value === "") {
-      continue;
+function resolvePageFromLocation() {
+  const page = window.location.hash.replace(/^#/, "");
+  if (page === "root-users" || page === "root-roles") {
+    return page;
+  }
+  return "overview";
+}
+
+function setCurrentPage(page, { syncHash = true } = {}) {
+  state.navigation.currentPage = page;
+
+  if (syncHash) {
+    const targetHash = `#${page}`;
+    if (window.location.hash !== targetHash) {
+      window.history.replaceState(null, "", targetHash);
     }
-    params.set(key, String(value));
   }
-  return params.toString();
+
+  closeTransientShellSurfaces();
+  render();
 }
 
-function buildUsersQuery() {
-  const query = {
-    page: state.rootUsers.page,
-    pageSize: state.rootUsers.pageSize,
-    orderBy: state.rootUsers.orderBy,
-    orderDirection: state.rootUsers.orderDirection,
+function syncNavState() {
+  const currentPage = state.navigation.currentPage;
+  const syncLinkCollection = (collection) => {
+    for (const link of collection) {
+      const isCurrent = link.dataset.pageLink === currentPage;
+      link.classList.toggle("active", isCurrent);
+      if (isCurrent) {
+        link.setAttribute("aria-current", "page");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    }
   };
 
-  if (state.rootUsers.filter === "active") {
-    query.status = "active";
-  } else if (state.rootUsers.filter === "inactive") {
-    query.status = "inactive";
-  }
+  syncLinkCollection(primaryNavLinks);
+  syncLinkCollection(mobileNavLinks);
+  syncLinkCollection(Array.from(primaryNavOverflowMenu?.querySelectorAll("[data-page-link]") ?? []));
 
-  const searchText = state.rootUsers.searchText.trim();
-  if (searchText.length >= 3) {
-    const key = `${state.rootUsers.searchField}Prefix`;
-    query[key] = searchText;
+  for (const [page, section] of Object.entries(pageSections)) {
+    section?.classList.toggle("hidden", page !== currentPage);
   }
-
-  return query;
 }
 
-function buildRootRolesQuery() {
-  return {
-    page: state.rootRoles.page,
-    pageSize: state.rootRoles.pageSize,
-    includeInactive: state.rootRoles.includeInactive,
-  };
+function syncProfileIdentity() {
+  const sessionLabel = state.session ? displayNameForSession(state.session) : "Profile";
+  const avatar = state.session ? initialsForSession(state.session) : "RU";
+
+  if (profileLabel) {
+    profileLabel.textContent = sessionLabel;
+    profileLabel.setAttribute("title", sessionLabel);
+  }
+
+  if (profileButton) {
+    profileButton.setAttribute("title", sessionLabel);
+  }
+
+  if (mobileProfileButton) {
+    mobileProfileButton.textContent = sessionLabel;
+  }
+
+  if (profileAvatar) {
+    profileAvatar.textContent = avatar;
+  }
+
+  if (brandLabel) {
+    brandLabel.setAttribute("title", "Kanbien");
+  }
+}
+
+function render() {
+  const flags = deriveViewFlags(state);
+  authView?.classList.toggle("hidden", !flags.showAuthView);
+  shellView?.classList.toggle("hidden", !flags.showShellView);
+  sshStage?.classList.toggle("hidden", !flags.showSshStage);
+  expiryOverlay?.classList.toggle("hidden", !flags.showExpiryOverlay);
+
+  setMessage(authMessage, state.authMessage, "danger");
+  setMessage(shellMessage, state.shellMessage);
+  renderSessionSummary(state.session);
+  syncProfileIdentity();
+  syncLanguageTriggers();
+  syncNavState();
+
+  if (flags.showShellView) {
+    window.requestAnimationFrame(() => {
+      updatePrimaryNavOverflow();
+      syncNavState();
+    });
+  }
+}
+
+function messageForError(error, fallback) {
+  if (error instanceof ApiError) {
+    return error.message;
+  }
+  return fallback;
+}
+
+function renderKeyOptions(keys) {
+  sshKeySelect.innerHTML = "";
+  for (const key of keys) {
+    const option = document.createElement("option");
+    option.value = key.fingerprint;
+    option.textContent = `${key.label} (${key.fingerprint})`;
+    sshKeySelect.append(option);
+  }
 }
 
 async function bootstrapSession() {
@@ -587,7 +526,8 @@ async function bootstrapSession() {
     const session = await fetchJson("/v1/root-auth/browser/session", { method: "GET" });
     state.session = session;
     state.phase = "authenticated";
-    await loadConsoleData();
+    state.navigation.currentPage = resolvePageFromLocation();
+    render();
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       Object.assign(state, resetToLoginState(state));
@@ -599,129 +539,6 @@ async function bootstrapSession() {
     state.authMessage = "Could not restore the browser session. Please sign in again.";
     render();
   }
-}
-
-async function loadConsoleData() {
-  await Promise.all([
-    loadRootUsers({ preserveSelection: true }),
-    loadRootRoles({ preserveSelection: true }),
-  ]);
-  render();
-}
-
-async function loadRootUsers({ preserveSelection } = { preserveSelection: true }) {
-  const selectedId = preserveSelection ? state.rootUsers.selected?.rootUserId : null;
-  const response = await fetchJson(`/v1/root-users?${toQueryString(buildUsersQuery())}`);
-  state.rootUsers.items = response.items;
-  state.rootUsers.page = response.page;
-  state.rootUsers.pageSize = response.pageSize;
-  state.rootUsers.totalPages = Math.max(1, Number(response.totalPages ?? 1));
-  state.rootUsers.totalMatchingRecords =
-    typeof response.totalMatchingRecords === "number"
-      ? response.totalMatchingRecords
-      : Number.parseInt(String(response.totalMatchingRecords).replace("+", ""), 10);
-  state.rootUsers.totalSearchableRecords =
-    typeof response.totalSearchableRecords === "number"
-      ? response.totalSearchableRecords
-      : Number.parseInt(String(response.totalSearchableRecords).replace("+", ""), 10);
-  state.rootUsers.selected =
-    selectedId
-      ? state.rootUsers.items.find((item) => item.rootUserId === selectedId) ?? null
-      : null;
-}
-
-async function loadRootRoles({ preserveSelection } = { preserveSelection: true }) {
-  const selectedId = preserveSelection ? state.rootRoles.selected?.rootRoleId : null;
-  const response = await fetchJson(`/v1/root-roles?${toQueryString(buildRootRolesQuery())}`);
-  state.rootRoles.items = response.items;
-  state.rootRoles.page = response.page;
-  state.rootRoles.pageSize = response.pageSize;
-  state.rootRoles.totalPages = Math.max(1, Number(response.totalPages ?? 1));
-  state.rootRoles.totalMatchingRecords =
-    typeof response.totalMatchingRecords === "number"
-      ? response.totalMatchingRecords
-      : Number.parseInt(String(response.totalMatchingRecords).replace("+", ""), 10);
-  if (selectedId) {
-    const selected = state.rootRoles.items.find((item) => item.rootRoleId === selectedId) ?? null;
-    if (selected) {
-      await openRootRoleEditor("edit", selected.rootRoleId);
-    }
-  }
-}
-
-async function loadRootRoleCapabilities(rootRoleId) {
-  const [eligible, assigned] = await Promise.all([
-    fetchJson(`/v1/root-roles/${rootRoleId}/eligible-authz-capabilities?page=1&pageSize=100`),
-    fetchJson(`/v1/root-roles/${rootRoleId}/capability-assignments?page=1&pageSize=100`),
-  ]);
-  state.rootRoles.eligibleCapabilities = eligible.items;
-  state.rootRoles.assignedCapabilityKeys = assigned.items.map((item) => item.capabilityKey);
-  state.rootRoles.draftCapabilityKeys = [...state.rootRoles.assignedCapabilityKeys];
-}
-
-async function openRootRoleEditor(mode, rootRoleId = null) {
-  state.rootRoles.drawerMode = mode;
-
-  if (mode === "create") {
-    state.rootRoles.selected = {
-      rootRoleId: "",
-      roleKey: "",
-      displayName: "",
-      description: "",
-      protected: false,
-      assignable: true,
-      createdAt: "",
-      updatedAt: "",
-      deactivatedAt: null,
-      activeGrantCount: 0,
-    };
-    state.rootRoles.eligibleCapabilities = [];
-    state.rootRoles.assignedCapabilityKeys = [];
-    state.rootRoles.draftCapabilityKeys = [];
-    render();
-
-    const defaultRoleId = state.rootRoles.items[0]?.rootRoleId;
-    if (!defaultRoleId) {
-      return;
-    }
-
-    try {
-      const eligibleCapabilities = await fetchJson(
-        `/v1/root-roles/${defaultRoleId}/eligible-authz-capabilities?page=1&pageSize=100`,
-      );
-      state.rootRoles.eligibleCapabilities = eligibleCapabilities.items;
-      render();
-    } catch (_error) {
-      // Creating a role should not be blocked by optional capability preload.
-    }
-    return;
-  }
-
-  const detail = await fetchJson(`/v1/root-roles/${rootRoleId}`);
-  state.rootRoles.selected = detail;
-  await loadRootRoleCapabilities(rootRoleId);
-  render();
-}
-
-function closeRootRoleDrawer() {
-  state.rootRoles.drawerMode = null;
-  state.rootRoles.selected = null;
-  state.rootRoles.eligibleCapabilities = [];
-  state.rootRoles.assignedCapabilityKeys = [];
-  state.rootRoles.draftCapabilityKeys = [];
-  render();
-}
-
-function messageForError(error, fallback) {
-  if (error instanceof ApiError) {
-    return error.message;
-  }
-  return fallback;
-}
-
-function setCurrentPage(page) {
-  state.navigation.currentPage = page;
-  render();
 }
 
 async function handlePasswordSubmit(event) {
@@ -751,8 +568,10 @@ async function handleSshSubmit() {
   if (!state.challenge) {
     return;
   }
+
   state.authMessage = "";
   render();
+
   try {
     const helperResult = await signLoginChallenge(
       state.challenge.challengeText,
@@ -782,496 +601,131 @@ async function handleLogout() {
         origin: window.location.origin,
       },
     });
-  } catch (_error) {}
+  } catch (_error) {
+    // Session may already be expired. Reset locally either way.
+  }
 
+  window.history.replaceState(null, "", "/root-admin#overview");
   Object.assign(state, resetToLoginState(state));
   render();
 }
 
-async function handleRefreshConsole() {
+async function handleRefreshSession() {
   try {
-    setShellMessage("Refreshing console data...");
-    await bootstrapSession();
-    setShellMessage("Console refreshed.", "success");
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not refresh the console."), "danger");
-  }
-}
-
-function selectRootUser(rootUserId) {
-  state.rootUsers.selected = state.rootUsers.items.find((item) => item.rootUserId === rootUserId) ?? null;
-  state.rootUsers.drawerMode = state.rootUsers.selected ? "edit" : null;
-  state.navigation.currentPage = "view-users";
-  render();
-}
-
-async function handleRootUserUpdate(event) {
-  event.preventDefault();
-  const formData = new FormData(event.currentTarget);
-  try {
-    if (state.rootUsers.drawerMode === "create") {
-      await fetchJson("/v1/root-users", {
-        method: "POST",
-        body: JSON.stringify({
-          email: formData.get("email"),
-          firstName: formData.get("firstName") || undefined,
-          lastName: formData.get("lastName") || undefined,
-        }),
-      });
-      state.rootUsers.drawerMode = null;
-      state.rootUsers.selected = null;
-      await loadRootUsers({ preserveSelection: false });
-      render();
-      setShellMessage("Root user created.", "success");
-      return;
-    }
-
-    if (!state.rootUsers.selected) {
-      return;
-    }
-
-    await fetchJson(`/v1/root-users/${state.rootUsers.selected.rootUserId}`, {
-      method: "PATCH",
-      body: JSON.stringify({
-        email: formData.get("email"),
-        firstName: formData.get("firstName") || undefined,
-        lastName: formData.get("lastName") || undefined,
-      }),
-    });
-    await loadRootUsers({ preserveSelection: true });
+    setShellMessage("Refreshing browser session...");
+    const session = await fetchJson("/v1/root-auth/browser/session", { method: "GET" });
+    state.session = session;
     render();
-    setShellMessage("Root user updated.", "success");
+    setShellMessage("Browser session refreshed.", "success");
   } catch (error) {
-    setShellMessage(
-      messageForError(
-        error,
-        state.rootUsers.drawerMode === "create"
-          ? "Could not create the root user."
-          : "Could not update the selected root user.",
-      ),
-      "danger",
-    );
+    setShellMessage(messageForError(error, "Could not refresh the browser session."), "danger");
   }
 }
 
-async function deactivateRootUser(rootUserId) {
-  try {
-    await fetchJson(`/v1/root-users/${rootUserId}`, { method: "DELETE" });
-    await loadRootUsers({ preserveSelection: true });
-    render();
-    setShellMessage("Root user deactivated.", "success");
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not deactivate that root user."), "danger");
-  }
-}
-
-async function reactivateRootUser(rootUserId) {
-  try {
-    await fetchJson(`/v1/root-users/${rootUserId}/reactivate`, {
-      method: "POST",
-      body: JSON.stringify({}),
-    });
-    await loadRootUsers({ preserveSelection: true });
-    render();
-    setShellMessage("Root user reactivated.", "success");
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not reactivate that root user."), "danger");
-  }
-}
-
-async function activateRootUser(rootUserId) {
-  const current = state.rootUsers.items.find((item) => item.rootUserId === rootUserId) ?? state.rootUsers.selected;
-  if (!current) {
-    setShellMessage("Could not find the selected root user to activate.", "danger");
-    return;
-  }
-  if (current.deletedAt) {
-    await reactivateRootUser(rootUserId);
-    return;
-  }
-  try {
-    await fetchJson(`/v1/root-users/${rootUserId}`, {
-      method: "PATCH",
-      body: JSON.stringify({ status: "active" }),
-    });
-    await loadRootUsers({ preserveSelection: true });
-    render();
-    setShellMessage("Root user activated.", "success");
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not activate that root user."), "danger");
-  }
-}
-
-function handleUsersListClick(event) {
-  const target = event.target.closest("button");
-  if (!target) {
-    return;
-  }
-  if (target.dataset.selectRootUser) {
-    selectRootUser(target.dataset.selectRootUser);
-    return;
-  }
-  if (target.dataset.deactivateRootUser) {
-    deactivateRootUser(target.dataset.deactivateRootUser);
-    return;
-  }
-  if (target.dataset.activateRootUser) {
-    activateRootUser(target.dataset.activateRootUser);
-  }
-}
-
-function handleSelectedRootUserClick(event) {
-  const target = event.target.closest("button");
-  if (!target) {
-    return;
-  }
-  if (target.dataset.deactivateRootUser) {
-    deactivateRootUser(target.dataset.deactivateRootUser);
-    return;
-  }
-  if (target.dataset.activateRootUser) {
-    activateRootUser(target.dataset.activateRootUser);
-  }
-}
-
-async function handleUsersSearchSubmit(event) {
-  event.preventDefault();
-  state.rootUsers.filter = usersFilterSelect.value;
-  state.rootUsers.searchField = usersSearchFieldSelect.value;
-  state.rootUsers.searchText = usersSearchInput.value.trim();
-  state.rootUsers.pageSize = Number(usersPageSizeSelect.value);
-  state.rootUsers.page = 1;
-
-  try {
-    await loadRootUsers({ preserveSelection: false });
-    render();
-    if (state.rootUsers.searchText && state.rootUsers.searchText.length < 3) {
-      setShellMessage("Search prefixes must be at least 3 characters long. Showing the unfiltered list.", "warning");
-    } else {
-      setShellMessage("Users list updated.", "success");
-    }
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not search root users."), "danger");
-  }
-}
-
-async function handleUsersClearSearch() {
-  state.rootUsers.filter = "all";
-  state.rootUsers.searchField = "email";
-  state.rootUsers.searchText = "";
-  state.rootUsers.page = 1;
-  state.rootUsers.selected = null;
-  try {
-    await loadRootUsers({ preserveSelection: false });
-    render();
-    setShellMessage("Search cleared.", "success");
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not clear the current search."), "danger");
-  }
-}
-
-async function handleUsersPrevPage() {
-  state.rootUsers.page = Math.max(1, state.rootUsers.page - 1);
-  try {
-    await loadRootUsers({ preserveSelection: true });
-    render();
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not load the previous page."), "danger");
-  }
-}
-
-async function handleUsersNextPage() {
-  state.rootUsers.page = Math.min(state.rootUsers.totalPages, state.rootUsers.page + 1);
-  try {
-    await loadRootUsers({ preserveSelection: true });
-    render();
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not load the next page."), "danger");
-  }
-}
-
-async function handleUserSort(sortBy) {
-  if (state.rootUsers.orderBy === sortBy) {
-    state.rootUsers.orderDirection = state.rootUsers.orderDirection === "asc" ? "desc" : "asc";
-  } else {
-    state.rootUsers.orderBy = sortBy;
-    state.rootUsers.orderDirection = sortBy === "updatedAt" ? "desc" : "asc";
-  }
-  state.rootUsers.page = 1;
-  try {
-    await loadRootUsers({ preserveSelection: true });
-    render();
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not sort root users."), "danger");
-  }
-}
-
-async function handleRefreshRootUsers() {
-  try {
-    setShellMessage("Refreshing root users...");
-    await loadRootUsers({ preserveSelection: true });
-    render();
-    setShellMessage("Root users refreshed.", "success");
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not refresh root users."), "danger");
-  }
-}
-
-function handleCloseUserDrawer() {
-  state.rootUsers.drawerMode = null;
-  state.rootUsers.selected = null;
-  render();
-}
-
-function selectDraftCapability(capabilityKey) {
-  if (!state.rootRoles.draftCapabilityKeys.includes(capabilityKey)) {
-    state.rootRoles.draftCapabilityKeys = [...state.rootRoles.draftCapabilityKeys, capabilityKey].sort();
-    render();
-  }
-}
-
-function unselectDraftCapability(capabilityKey) {
-  state.rootRoles.draftCapabilityKeys = state.rootRoles.draftCapabilityKeys.filter((key) => key !== capabilityKey);
-  render();
-}
-
-async function handleRootRoleSubmit(event) {
-  event.preventDefault();
-  const formData = new FormData(event.currentTarget);
-  const mode = state.rootRoles.drawerMode;
-  try {
-    if (mode === "create") {
-      const created = await fetchJson("/v1/root-roles", {
-        method: "POST",
-        body: JSON.stringify({
-          roleKey: formData.get("roleKey"),
-          displayName: formData.get("displayName"),
-          description: formData.get("description"),
-        }),
-      });
-      if (state.rootRoles.draftCapabilityKeys.length > 0) {
-        await fetchJson(`/v1/root-roles/${created.rootRoleId}/capability-assignments`, {
-          method: "PUT",
-          body: JSON.stringify({ capabilityKeys: state.rootRoles.draftCapabilityKeys }),
-        });
-      }
-      await loadRootRoles({ preserveSelection: false });
-      await openRootRoleEditor("edit", created.rootRoleId);
-      setShellMessage("System root role created.", "success");
-      return;
-    }
-
-    if (mode === "edit" && state.rootRoles.selected?.rootRoleId) {
-      await fetchJson(`/v1/root-roles/${state.rootRoles.selected.rootRoleId}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          displayName: formData.get("displayName"),
-          description: formData.get("description"),
-        }),
-      });
-      await fetchJson(`/v1/root-roles/${state.rootRoles.selected.rootRoleId}/capability-assignments`, {
-        method: "PUT",
-        body: JSON.stringify({ capabilityKeys: state.rootRoles.draftCapabilityKeys }),
-      });
-      await loadRootRoles({ preserveSelection: true });
-      await openRootRoleEditor("edit", state.rootRoles.selected.rootRoleId);
-      setShellMessage("System root role updated.", "success");
-    }
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not save the root role."), "danger");
-  }
-}
-
-async function deactivateRootRole(rootRoleId) {
-  try {
-    await fetchJson(`/v1/root-roles/${rootRoleId}/deactivate`, {
-      method: "POST",
-      body: JSON.stringify({}),
-    });
-    await loadRootRoles({ preserveSelection: true });
-    if (state.rootRoles.drawerMode === "edit") {
-      await openRootRoleEditor("edit", rootRoleId);
-    }
-    setShellMessage("System root role deactivated.", "success");
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not deactivate that root role."), "danger");
-  }
-}
-
-async function reactivateRootRole(rootRoleId) {
-  try {
-    await fetchJson(`/v1/root-roles/${rootRoleId}/reactivate`, {
-      method: "POST",
-      body: JSON.stringify({}),
-    });
-    await loadRootRoles({ preserveSelection: true });
-    await openRootRoleEditor("edit", rootRoleId);
-    setShellMessage("System root role reactivated.", "success");
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not reactivate that root role."), "danger");
-  }
-}
-
-function handleRootRolesListClick(event) {
-  const target = event.target.closest("button");
-  if (target?.dataset.openCreateRootRole) {
-    openRootRoleEditor("create").catch((error) => {
-      setShellMessage(messageForError(error, "Could not open the root role creator."), "danger");
-    });
-    return;
-  }
-  if (target?.dataset.selectRootRole) {
-    openRootRoleEditor("edit", target.dataset.selectRootRole).catch((error) => {
-      setShellMessage(messageForError(error, "Could not load that root role."), "danger");
-    });
-    return;
-  }
-  if (target?.dataset.deactivateRootRole) {
-    deactivateRootRole(target.dataset.deactivateRootRole);
-    return;
-  }
-  if (target?.dataset.reactivateRootRole) {
-    reactivateRootRole(target.dataset.reactivateRootRole);
-    return;
-  }
-
-  const row = event.target.closest("[data-select-root-role]");
-  if (row) {
-    openRootRoleEditor("edit", row.dataset.selectRootRole).catch((error) => {
-      setShellMessage(messageForError(error, "Could not load that root role."), "danger");
-    });
-  }
-}
-
-function handleSelectedRootRoleClick(event) {
-  const target = event.target.closest("button");
-  if (!target) {
-    return;
-  }
-  if (target.dataset.addCapability) {
-    selectDraftCapability(target.dataset.addCapability);
-    return;
-  }
-  if (target.dataset.removeCapability) {
-    unselectDraftCapability(target.dataset.removeCapability);
-    return;
-  }
-  if (target.dataset.deactivateRootRole) {
-    deactivateRootRole(target.dataset.deactivateRootRole);
-    return;
-  }
-  if (target.dataset.reactivateRootRole) {
-    reactivateRootRole(target.dataset.reactivateRootRole);
-  }
-}
-
-async function handleRefreshRootRoles() {
-  try {
-    setShellMessage("Refreshing system root roles...");
-    await loadRootRoles({ preserveSelection: true });
-    render();
-    setShellMessage("System root roles refreshed.", "success");
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not refresh system root roles."), "danger");
-  }
-}
-
-async function handleRootRolesPrevPage() {
-  state.rootRoles.page = Math.max(1, state.rootRoles.page - 1);
-  try {
-    await loadRootRoles({ preserveSelection: true });
-    render();
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not load the previous roles page."), "danger");
-  }
-}
-
-async function handleRootRolesNextPage() {
-  state.rootRoles.page = Math.min(state.rootRoles.totalPages, state.rootRoles.page + 1);
-  try {
-    await loadRootRoles({ preserveSelection: true });
-    render();
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not load the next roles page."), "danger");
-  }
-}
-
-async function handleRootRolesToolbarChange() {
-  state.rootRoles.pageSize = Number(rootRolesPageSizeSelect.value);
-  state.rootRoles.includeInactive = rootRolesIncludeInactiveSelect.value === "true";
-  state.rootRoles.page = 1;
-  try {
-    await loadRootRoles({ preserveSelection: false });
-    render();
-  } catch (error) {
-    setShellMessage(messageForError(error, "Could not update the root role list."), "danger");
-  }
-}
-
-function handleReturnToLogin() {
+loginForm?.addEventListener("submit", handlePasswordSubmit);
+signSubmit?.addEventListener("click", handleSshSubmit);
+returnToLogin?.addEventListener("click", () => {
+  window.history.replaceState(null, "", "/root-admin#overview");
   Object.assign(state, resetToLoginState(state));
   render();
-}
+});
+refreshSessionButton?.addEventListener("click", handleRefreshSession);
+profileLanguageButton?.addEventListener("click", () => setLanguageModalOpen(true, profileLanguageButton));
+mobileLanguageButton?.addEventListener("click", () => setLanguageModalOpen(true, mobileLanguageButton));
+languageModalCloseButton?.addEventListener("click", () => setLanguageModalOpen(false));
+languageModalBackdrop?.addEventListener("click", () => setLanguageModalOpen(false));
+profileLogoutButton?.addEventListener("click", handleLogout);
+mobileLogoutButton?.addEventListener("click", handleLogout);
 
-loginForm.addEventListener("submit", handlePasswordSubmit);
-signSubmit.addEventListener("click", handleSshSubmit);
-logoutButton.addEventListener("click", handleLogout);
-returnToLogin.addEventListener("click", handleReturnToLogin);
-refreshConsoleButton.addEventListener("click", handleRefreshConsole);
+profileButton?.addEventListener("click", () => {
+  const nextState = !isMenuOpen();
+  setPrimaryNavOverflowOpen(false);
+  setMobileNavOpen(false);
+  setMobileProfileOpen(false);
+  setMenuOpen(nextState);
+});
 
-refreshRootUsersButton.addEventListener("click", handleRefreshRootUsers);
-createRootUserButton.addEventListener("click", () => {
-  state.rootUsers.drawerMode = "create";
-  state.rootUsers.selected = null;
-  state.navigation.currentPage = "view-users";
+primaryNavOverflowButton?.addEventListener("click", () => {
+  const nextState = !isPrimaryNavOverflowOpen();
+  setMenuOpen(false);
+  setMobileNavOpen(false);
+  setMobileProfileOpen(false);
+  setPrimaryNavOverflowOpen(nextState);
+});
+
+mobileNavButton?.addEventListener("click", () => {
+  const nextState = !isMobileNavOpen();
+  setMenuOpen(false);
+  setPrimaryNavOverflowOpen(false);
+  setMobileNavOpen(nextState);
+  if (!nextState) {
+    setMobileProfileOpen(false);
+  }
+});
+
+mobileProfileButton?.addEventListener("click", () => {
+  setMobileProfileOpen(!isMobileProfileOpen());
+});
+
+document.addEventListener("click", (event) => {
+  const target = event.target;
+
+  if (!(target instanceof Element)) {
+    return;
+  }
+
+  if (
+    !target.closest(".nav-utilities")
+    && !target.closest(".primary-nav-overflow")
+    && !target.closest("#mobile-nav-menu")
+    && !target.closest("#mobile-nav-button")
+  ) {
+    closeTransientShellSurfaces();
+  }
+
+  const pageLink = target.closest("[data-page-link]");
+  if (pageLink instanceof HTMLElement) {
+    const page = pageLink.dataset.pageLink;
+    if (page) {
+      event.preventDefault();
+      setCurrentPage(page);
+    }
+  }
+
+  const languageButton = target.closest("[data-language-code]");
+  if (languageButton instanceof HTMLElement) {
+    const languageCode = languageButton.dataset.languageCode;
+    if (languageCode) {
+      selectLanguage(languageCode);
+      setLanguageModalOpen(false);
+    }
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") {
+    return;
+  }
+
+  if (isLanguageModalOpen()) {
+    setLanguageModalOpen(false);
+    return;
+  }
+
+  closeTransientShellSurfaces();
+});
+
+window.addEventListener("resize", () => {
+  updatePrimaryNavOverflow();
+  syncNavState();
+});
+
+window.addEventListener("hashchange", () => {
+  state.navigation.currentPage = resolvePageFromLocation();
   render();
 });
-usersSearchForm.addEventListener("submit", handleUsersSearchSubmit);
-usersClearSearchButton.addEventListener("click", handleUsersClearSearch);
-usersPrevPageButton.addEventListener("click", handleUsersPrevPage);
-usersNextPageButton.addEventListener("click", handleUsersNextPage);
-usersList.addEventListener("click", handleUsersListClick);
-selectedRootUser.addEventListener("click", handleSelectedRootUserClick);
-selectedRootUser.addEventListener("submit", (event) => {
-  if (event.target.id === "selected-root-user-form") {
-    handleRootUserUpdate(event);
-  }
-});
-closeUserDrawerButton.addEventListener("click", handleCloseUserDrawer);
-userDrawerBackdrop.addEventListener("click", handleCloseUserDrawer);
 
-createRootRoleButton.addEventListener("click", () => {
-  openRootRoleEditor("create").catch((error) => {
-    setShellMessage(messageForError(error, "Could not open the root role creator."), "danger");
-  });
-});
-refreshRootRolesButton.addEventListener("click", handleRefreshRootRoles);
-rootRolesPageSizeSelect.addEventListener("change", handleRootRolesToolbarChange);
-rootRolesIncludeInactiveSelect.addEventListener("change", handleRootRolesToolbarChange);
-rootRolesPrevPageButton.addEventListener("click", handleRootRolesPrevPage);
-rootRolesNextPageButton.addEventListener("click", handleRootRolesNextPage);
-rootRolesList.addEventListener("click", handleRootRolesListClick);
-selectedRootRole.addEventListener("click", handleSelectedRootRoleClick);
-selectedRootRole.addEventListener("submit", (event) => {
-  if (event.target.id === "root-role-form") {
-    handleRootRoleSubmit(event);
-  }
-});
-closeRoleDrawerButton.addEventListener("click", closeRootRoleDrawer);
-roleDrawerBackdrop.addEventListener("click", closeRootRoleDrawer);
-
-for (const button of navButtons) {
-  button.addEventListener("click", () => {
-    setCurrentPage(button.dataset.page);
-  });
-}
-
-for (const button of userSortButtons) {
-  button.addEventListener("click", () => {
-    handleUserSort(button.dataset.sortBy);
-  });
-}
-
-state.phase = "login";
+state.phase = "bootstrapping";
+state.navigation.currentPage = resolvePageFromLocation();
 render();
 bootstrapSession();

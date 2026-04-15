@@ -7,256 +7,355 @@
     <link rel="stylesheet" href="/root-admin/assets/styles.css" />
   </head>
   <body>
-    <div id="app" class="app-shell">
-      <section id="auth-view" class="panel auth-panel">
-        <div class="eyebrow">Root Admin</div>
-        <h1>Authenticate</h1>
-        <p class="muted">Password verification happens first. SSH proof is required before a browser session is created.</p>
-        <form id="login-form" class="stack">
-          <label>
-            <span>Email</span>
-            <input id="email" name="email" type="email" autocomplete="username" required />
-          </label>
-          <label>
-            <span>Password</span>
-            <input id="password" name="password" type="password" autocomplete="current-password" required />
-          </label>
-          <button id="password-submit" type="submit">Verify Password</button>
-        </form>
+    <div id="app" class="root-admin-app">
+      <section id="auth-view" class="auth-shell">
+        <div class="auth-panel">
+          <div class="eyebrow">Root Admin</div>
+          <h1>Authenticate</h1>
+          <p class="auth-copy">
+            Password verification happens first. SSH proof is required before a browser session is created.
+          </p>
 
-        <section id="ssh-stage" class="stack hidden">
-          <div class="panel subtle">
-            <h2>SSH Verification</h2>
-            <p id="ssh-instructions" class="muted"></p>
+          <form id="login-form" class="stack">
             <label>
-              <span>Registered SSH key</span>
-              <select id="ssh-key-select"></select>
+              <span>Email</span>
+              <input id="email" name="email" type="email" autocomplete="username" required />
             </label>
-            <div class="actions">
-              <button id="sign-submit" type="button">Complete SSH Login</button>
-            </div>
-          </div>
-        </section>
+            <label>
+              <span>Password</span>
+              <input id="password" name="password" type="password" autocomplete="current-password" required />
+            </label>
+            <button id="password-submit" type="submit">Verify Password</button>
+          </form>
 
-        <div id="auth-message" class="message hidden" role="status" aria-live="polite"></div>
+          <section id="ssh-stage" class="stack hidden">
+            <div class="auth-subpanel">
+              <h2>SSH Verification</h2>
+              <p id="ssh-instructions" class="auth-copy"></p>
+              <div class="helper-panel">
+                <p class="helper-title">Need the local signer helper?</p>
+                <p class="helper-copy">
+                  If SSH signing does not respond, download or relaunch the trusted local helper before completing
+                  browser login.
+                </p>
+                <div class="helper-actions">
+                  <a
+                    class="secondary-button helper-link"
+                    href="/root-admin/helper/download/start-root-auth-signer-helper.ps1"
+                  >
+                    Launch Helper
+                  </a>
+                  <a
+                    class="secondary-button helper-link"
+                    href="/root-admin/helper/download/root-auth-signer-helper.mjs"
+                  >
+                    Download Helper Source
+                  </a>
+                </div>
+              </div>
+              <label>
+                <span>Registered SSH key</span>
+                <select id="ssh-key-select"></select>
+              </label>
+              <div class="auth-actions">
+                <button id="sign-submit" type="button">Complete SSH Login</button>
+              </div>
+            </div>
+          </section>
+
+          <div id="auth-message" class="message hidden" role="status" aria-live="polite"></div>
+        </div>
       </section>
 
       <section id="shell-view" class="shell-view hidden">
-        <header class="panel shell-header">
-          <div>
-            <div class="eyebrow">Authenticated Shell</div>
-            <h1>Root Admin Console</h1>
-            <p class="muted">Use the current browser session to review your details and manage root users without leaving the browser.</p>
-          </div>
-          <div class="actions">
-            <button id="refresh-console" type="button">Refresh Console</button>
-            <button id="logout-button" type="button">Log Out</button>
+        <header class="top-nav">
+          <a class="brand-lockup" href="/root-admin#overview" aria-label="Kanbien root admin home">
+            <span class="brand-mark" aria-hidden="true">K</span>
+            <span class="brand-copy">
+              <strong id="brand-label" title="Kanbien">Kanbien</strong>
+            </span>
+          </a>
+
+          <nav class="primary-nav" aria-label="Root admin primary">
+            <div id="primary-nav-links" class="primary-nav-links">
+              <a class="nav-link active" href="/root-admin#overview" data-page-link="overview" aria-current="page" title="Overview">
+                Overview
+              </a>
+              <a class="nav-link" href="/root-admin#root-users" data-page-link="root-users" title="Root Users">
+                Root Users
+              </a>
+              <a class="nav-link" href="/root-admin#root-roles" data-page-link="root-roles" title="System Root Roles">
+                System Root Roles
+              </a>
+            </div>
+            <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+              <button
+                id="primary-nav-overflow-button"
+                class="nav-link primary-nav-overflow-button"
+                type="button"
+                aria-expanded="false"
+                aria-controls="primary-nav-overflow-menu"
+              >
+                More
+              </button>
+              <div
+                id="primary-nav-overflow-menu"
+                class="primary-nav-overflow-menu hidden"
+                role="menu"
+                aria-labelledby="primary-nav-overflow-button"
+              ></div>
+            </div>
+          </nav>
+
+          <button
+            id="mobile-nav-button"
+            class="mobile-nav-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-nav-menu"
+            aria-label="Open root admin navigation"
+          >
+            <span class="burger-icon" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+
+          <div class="nav-utilities">
+            <button
+              id="profile-menu-button"
+              class="profile-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="profile-menu"
+              title="Profile"
+            >
+              <span id="profile-avatar" class="profile-avatar" aria-hidden="true">RU</span>
+              <span class="profile-meta">
+                <strong id="profile-label" title="Profile">Profile</strong>
+              </span>
+            </button>
+
+            <div
+              id="profile-menu"
+              class="profile-menu hidden"
+              role="menu"
+              aria-labelledby="profile-menu-button"
+            >
+              <a
+                id="profile-session-link"
+                class="menu-item"
+                href="/root-admin#overview"
+                data-page-link="overview"
+                role="menuitem"
+                title="My Session"
+              >
+                My Session
+              </a>
+              <button
+                id="profile-language-button"
+                class="menu-item menu-item-button"
+                type="button"
+                role="menuitem"
+                title="Language"
+              >
+                Language
+              </button>
+              <button
+                id="profile-logout-button"
+                class="menu-item menu-item-button"
+                type="button"
+                role="menuitem"
+                title="Sign Out"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
         </header>
 
-        <div class="console-layout">
-          <aside class="panel console-nav">
-            <div class="eyebrow">Navigation</div>
-            <nav class="nav-stack" aria-label="Root admin sections">
-              <button id="nav-my-details" class="nav-button" type="button" data-page="my-details">
-                My Details
+        <nav id="mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile root admin primary">
+          <a class="nav-link active" href="/root-admin#overview" data-page-link="overview" aria-current="page" title="Overview">
+            Overview
+          </a>
+          <a class="nav-link" href="/root-admin#root-users" data-page-link="root-users" title="Root Users">
+            Root Users
+          </a>
+          <a class="nav-link" href="/root-admin#root-roles" data-page-link="root-roles" title="System Root Roles">
+            System Root Roles
+          </a>
+          <div class="mobile-profile-group">
+            <button
+              id="mobile-profile-button"
+              class="mobile-profile-item"
+              type="button"
+              aria-expanded="false"
+              aria-controls="mobile-profile-menu"
+            >
+              Profile
+            </button>
+            <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
+              <a class="mobile-subnav-link" href="/root-admin#overview" data-page-link="overview" title="My Session">
+                My Session
+              </a>
+              <button
+                id="mobile-language-button"
+                class="mobile-subnav-link mobile-subnav-button"
+                type="button"
+                title="Language"
+              >
+                Language
               </button>
-              <button id="nav-view-users" class="nav-button" type="button" data-page="view-users">
-                View Users
+              <button
+                id="mobile-logout-button"
+                class="mobile-subnav-link mobile-subnav-button"
+                type="button"
+                title="Sign Out"
+              >
+                Sign Out
               </button>
-              <button id="nav-root-roles" class="nav-button" type="button" data-page="root-roles">
-                System Root Roles
-              </button>
-            </nav>
-          </aside>
+            </div>
+          </div>
+        </nav>
 
-          <main class="console-main">
-            <div id="shell-message" class="message hidden" role="status" aria-live="polite"></div>
+        <main class="root-admin-main">
+          <div id="shell-message" class="message hidden" role="status" aria-live="polite"></div>
 
-            <section id="page-my-details" class="panel page-section">
-              <div class="section-header">
-                <div>
-                  <div class="eyebrow">Session</div>
-                  <h2>My Details</h2>
-                </div>
+          <section id="page-overview" class="page-panel">
+            <div class="page-heading">
+              <div>
+                <div class="eyebrow">Shell POC</div>
+                <h1>Root Admin Shell POC</h1>
+                <p class="page-copy">
+                  This replaces the old authenticated root-admin frontend with the signed-off top-nav pattern while
+                  preserving the real browser-auth journey.
+                </p>
               </div>
-              <div id="session-summary" class="stack summary"></div>
-            </section>
-
-            <section id="page-view-users" class="panel page-section hidden">
-              <div class="section-header">
-                <div>
-                  <div class="eyebrow">Workspace</div>
-                  <h2>View Users</h2>
-                </div>
-                <div class="actions">
-                  <button id="create-root-user" type="button">Create New User</button>
-                  <button id="refresh-root-users" type="button">Refresh Users</button>
-                </div>
+              <div class="page-actions">
+                <button id="refresh-session-button" class="secondary-button" type="button">Refresh Session</button>
               </div>
+            </div>
 
-              <form id="users-search-form" class="toolbar-grid">
-                <label>
-                  <span>Filter</span>
-                  <select id="users-filter">
-                    <option value="all">All</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                  </select>
-                </label>
-                <label>
-                  <span>Search Field</span>
-                  <select id="users-search-field">
-                    <option value="email">Email</option>
-                    <option value="firstName">First Name</option>
-                    <option value="lastName">Last Name</option>
-                  </select>
-                </label>
-                <label class="search-span">
-                  <span>Search Prefix</span>
-                  <input id="users-search-input" type="text" placeholder="Minimum 3 characters" />
-                </label>
-                <label>
-                  <span>Page Size</span>
-                  <select id="users-page-size">
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </label>
-                <div class="toolbar-actions">
-                  <button type="submit">Search</button>
-                  <button id="users-clear-search" class="secondary" type="button">Clear</button>
-                </div>
-              </form>
-
-              <div class="pagination-bar">
-                <div id="users-pagination-summary" class="muted"></div>
-                <div class="actions">
-                  <button id="users-prev-page" class="secondary" type="button">Previous</button>
-                  <span id="users-page-indicator" class="page-indicator">Page 1</span>
-                  <button id="users-next-page" class="secondary" type="button">Next</button>
-                </div>
-              </div>
-
-              <section class="subpanel">
-                <h3>Users</h3>
-                <div class="users-table-shell">
-                  <div class="users-table-header">
-                    <button class="column-sort" type="button" data-sort-by="firstName">Name</button>
-                    <button class="column-sort" type="button" data-sort-by="email">Email</button>
-                    <button class="column-sort" type="button" data-sort-by="status">Status</button>
-                    <button class="column-sort" type="button" data-sort-by="updatedAt">Updated</button>
-                    <span>Actions</span>
-                  </div>
-                  <div id="users-list" class="users-table-body"></div>
-                </div>
+            <div class="content-grid">
+              <section class="content-card">
+                <div class="eyebrow">Authenticated Session</div>
+                <h2>My Session</h2>
+                <div id="session-summary" class="summary-grid"></div>
               </section>
-            </section>
 
-            <section id="page-root-roles" class="panel page-section hidden">
-              <div class="section-header">
-                <div>
-                  <div class="eyebrow">Workspace</div>
-                  <h2>System Root Roles</h2>
-                  <p class="muted section-copy">
-                    Review the current system root roles, open any role to edit it,
-                    or start a new role from a blank slate.
-                  </p>
-                </div>
-                <div class="actions">
-                  <button id="create-root-role" type="button">Create New Role</button>
-                  <button id="refresh-root-roles" class="secondary" type="button">Refresh Roles</button>
-                </div>
-              </div>
-
-              <form id="root-roles-toolbar" class="toolbar-grid roles-toolbar">
-                <label>
-                  <span>Page Size</span>
-                  <select id="root-roles-page-size">
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </label>
-                <label>
-                  <span>Lifecycle</span>
-                  <select id="root-roles-include-inactive">
-                    <option value="true">All Roles</option>
-                    <option value="false">Active Only</option>
-                  </select>
-                </label>
-              </form>
-
-              <div class="pagination-bar">
-                <div id="root-roles-pagination-summary" class="muted"></div>
-                <div class="actions">
-                  <button id="root-roles-prev-page" class="secondary" type="button">Previous</button>
-                  <span id="root-roles-page-indicator" class="page-indicator">Page 1</span>
-                  <button id="root-roles-next-page" class="secondary" type="button">Next</button>
-                </div>
-              </div>
-
-              <section class="subpanel">
-                <h3>Roles</h3>
-                <div class="roles-table-shell">
-                  <div class="roles-table-header">
-                    <span>Name</span>
-                    <span>Role Key</span>
-                    <span>Grant Count</span>
-                    <span>Status</span>
-                    <span>Updated</span>
-                    <span>Actions</span>
-                  </div>
-                  <div id="root-roles-list" class="roles-table-body"></div>
-                </div>
+              <section class="content-card">
+                <div class="eyebrow">Adoption Notes</div>
+                <h2>What This Proves</h2>
+                <ul class="content-list">
+                  <li>`/root-admin` can adopt the governed top-nav without replacing the browser-auth seam.</li>
+                  <li>The authenticated shell can preserve measured overflow, mobile nav, and profile-menu behavior.</li>
+                  <li>Feature destinations can stay capability-driven even while deeper page UIs are rebuilt later.</li>
+                </ul>
               </section>
-            </section>
-          </main>
+            </div>
+          </section>
+
+          <section id="page-root-users" class="page-panel hidden">
+            <div class="page-heading">
+              <div>
+                <div class="eyebrow">Reserved Destination</div>
+                <h1>Root Users</h1>
+                <p class="page-copy">
+                  The old in-browser CRUD workspace has been intentionally removed for this POC. The underlying
+                  root-user APIs remain the system of record while we rebuild the route against the signed-off design
+                  system.
+                </p>
+              </div>
+            </div>
+
+            <div class="content-grid">
+              <section class="content-card">
+                <h2>Capability Ownership</h2>
+                <ul class="content-list">
+                  <li>`root-user.read.visible` keeps this destination permission-aware.</li>
+                  <li>`root-user.create`, `root-user.update`, and lifecycle mutations are preserved as backend seams.</li>
+                  <li>The next feature-loop slice can rebuild list, detail, and editor states on top of this shell.</li>
+                </ul>
+              </section>
+
+              <section class="content-card">
+                <h2>Current POC Boundary</h2>
+                <p class="page-copy">
+                  This page currently proves navigation, orientation, and route ownership only. It does not yet attempt
+                  to recreate the old drawer and table UI inside the new shell.
+                </p>
+              </section>
+            </div>
+          </section>
+
+          <section id="page-root-roles" class="page-panel hidden">
+            <div class="page-heading">
+              <div>
+                <div class="eyebrow">Reserved Destination</div>
+                <h1>System Root Roles</h1>
+                <p class="page-copy">
+                  The previous role table and editor flow are deferred while the top-nav adoption is proven. The route
+                  stays visible as the future consumer for the root-role workflow family.
+                </p>
+              </div>
+            </div>
+
+            <div class="content-grid">
+              <section class="content-card">
+                <h2>Capability Ownership</h2>
+                <ul class="content-list">
+                  <li>`root-role.list` and `root-role.read` govern shell access and wayfinding.</li>
+                  <li>`root-role.update` and capability-assignment mutations remain live backend seams.</li>
+                  <li>The next rebuild slice can add list, editor, and assignment views without changing the shell chrome.</li>
+                </ul>
+              </section>
+
+              <section class="content-card">
+                <h2>Migration Intent</h2>
+                <p class="page-copy">
+                  This POC keeps the destination and language of the old console, but avoids porting the entire legacy
+                  UI into the new shell before the design-system loop is proven.
+                </p>
+              </section>
+            </div>
+          </section>
+        </main>
+
+        <div id="language-modal" class="language-modal hidden" aria-hidden="true">
+          <div id="language-modal-backdrop" class="language-modal-backdrop"></div>
+          <div class="language-modal-panel" role="dialog" aria-modal="true" aria-labelledby="language-modal-title">
+            <div class="language-modal-header">
+              <div>
+                <p class="language-modal-eyebrow">Preferences</p>
+                <h2 id="language-modal-title">Choose a language</h2>
+                <p class="language-modal-copy">
+                  This POC keeps language selection inside the lightweight profile-menu flow while deferring persistence.
+                </p>
+              </div>
+              <button
+                id="language-modal-close"
+                class="mobile-nav-button"
+                type="button"
+                aria-label="Close language selector"
+              >
+                Close
+              </button>
+            </div>
+            <div id="language-option-list" class="language-option-list" role="listbox" aria-label="Available languages"></div>
+          </div>
+        </div>
+
+        <div id="expiry-overlay" class="expiry-overlay hidden" aria-hidden="true">
+          <div class="expiry-backdrop"></div>
+          <div class="expiry-modal" role="dialog" aria-modal="true" aria-labelledby="expiry-title">
+            <div class="eyebrow">Session Expired</div>
+            <h2 id="expiry-title">Your root-admin session has expired</h2>
+            <p>The authenticated shell has been locked. Return to login to continue.</p>
+            <button id="return-to-login" type="button">Return To Login</button>
+          </div>
         </div>
       </section>
-
-      <div id="user-drawer-overlay" class="drawer-overlay hidden" aria-hidden="true">
-        <div id="user-drawer-backdrop" class="drawer-backdrop"></div>
-        <aside id="user-drawer-panel" class="drawer-panel" role="dialog" aria-modal="true" aria-labelledby="user-drawer-title">
-          <div class="drawer-header">
-            <div>
-              <div class="eyebrow">Editor</div>
-              <h3 id="user-drawer-title">Selected User</h3>
-            </div>
-            <button id="close-user-drawer" class="drawer-close" type="button" aria-label="Close user editor">
-              ×
-            </button>
-          </div>
-          <div id="selected-root-user" class="detail-stack"></div>
-        </aside>
-      </div>
-
-      <div id="role-drawer-overlay" class="drawer-overlay hidden" aria-hidden="true">
-        <div id="role-drawer-backdrop" class="drawer-backdrop"></div>
-        <aside id="role-drawer-panel" class="drawer-panel drawer-panel-wide" role="dialog" aria-modal="true" aria-labelledby="role-drawer-title">
-          <div class="drawer-header">
-            <div>
-              <div class="eyebrow">Editor</div>
-              <h3 id="role-drawer-title">System Root Role</h3>
-            </div>
-            <button id="close-role-drawer" class="drawer-close" type="button" aria-label="Close role editor">
-              ×
-            </button>
-          </div>
-          <div id="selected-root-role" class="detail-stack"></div>
-        </aside>
-      </div>
-
-      <div id="expiry-overlay" class="overlay hidden" aria-hidden="true">
-        <div class="overlay-backdrop"></div>
-        <div class="overlay-modal" role="dialog" aria-modal="true" aria-labelledby="expiry-title">
-          <div class="eyebrow">Session Expired</div>
-          <h2 id="expiry-title">Your root-admin session has expired</h2>
-          <p>The console has been locked. Return to login to continue.</p>
-          <button id="return-to-login" type="button">Return To Login</button>
-        </div>
-      </div>
     </div>
 
     <script type="module" src="/root-admin/assets/app.mjs"></script>
