@@ -32,6 +32,10 @@ For each reported issue, this skill should:
 - add or repair the narrowest honest tests that would have caught it
 - prefer coverage that also protects nearby similar failures, not just the one
   exact reproduction
+- treat implementation and automated verification as evidence, not closure
+- keep the issue in an unresolved state until the user confirms the
+  user-visible symptom is actually resolved, unless the user explicitly says
+  confirmation is not needed for this issue
 - leave behind a durable reconciliation note under
   `docs/workspace/issue-reconciliations/`
 
@@ -157,6 +161,16 @@ If the issue changes `TC-*`-backed test coverage, also run
 `npm run test:traceability`.
 If environment blockers prevent full verification, say so explicitly.
 
+8. Do not self-certify closure.
+After implementing the fix and prevention layer:
+- distinguish between `candidate fix` and `confirmed resolved`
+- report what evidence exists from code, tests, screenshots, or local checks
+- if the original symptom was user-reported and user confirmation is still
+  missing, keep the issue open and say that explicit confirmation is the next
+  required step
+- do not write as though the issue is fully resolved based only on source
+  reasoning or local verification
+
 ## Test-Layer Heuristics
 
 Use these defaults:
@@ -182,9 +196,16 @@ When responding after using this skill, include:
 2. `Why It Escaped`
 3. `Prevention Changes`
 4. `Verification`
-5. `Residual Risk`
+5. `Resolution Status`
+6. `Residual Risk`
 
 Keep the explanation concrete and evidence-based.
+
+Under `Resolution Status`, explicitly say one of:
+
+- `candidate fix awaiting user confirmation`
+- `confirmed resolved by user`
+- `not resolved`
 
 ## Guardrails
 
@@ -196,3 +217,7 @@ Keep the explanation concrete and evidence-based.
 - Do not treat in-memory tests as sufficient proof for schema or shared-storage
   issues.
 - Do not claim the issue is prevented if verification did not actually run.
+- Do not treat your own implementation confidence as proof that the reported
+  user-visible symptom is gone.
+- Do not mark a user-reported issue fully resolved until the user confirms it,
+  unless they explicitly waive that confirmation step.

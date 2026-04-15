@@ -215,3 +215,24 @@
   `.codex/skills/change-loop-orchestrator/SKILL.md`,
   `.codex/skills/prd-test-case-planner/SKILL.md`,
   `.codex/skills/prd-test-case-implementer/SKILL.md`
+
+### 13. Frontend Design Systems Are Really About Discovering The Real Contract
+
+- angle:
+  how recent design-system work showed that the hard part of frontend design is
+  not assembling polished parts, but discovering the real rendered contract and
+  encoding that learning into durable guardrails
+- audience:
+  frontend engineers, design-system teams, technical founders, full-stack
+  product builders
+- core story:
+  nav overflow drift, slot-measurement mistakes, layering regressions, RTL
+  anchoring issues, and screenshot-driven iteration forced a move away from
+  guessed geometry toward rendered truth, narrow visual contracts, honest
+  reconciliation, and confirmation-based closure
+- supporting repo areas:
+  `docs/workspace/issue-reconciliations/2026-04-14-*.md`,
+  `docs/workspace/issue-reconciliations/2026-04-15-design-system-*.md`,
+  `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`,
+  `.codex/skills/issue-reconciliation-maintainer/SKILL.md`,
+  `src/frontend/designSystem/*`

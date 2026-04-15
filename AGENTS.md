@@ -360,6 +360,10 @@ Use repo-local skills when the task clearly matches one of these workflows:
   updates, or RTL/responsive/accessibility/geometry coverage for frontend
   atoms, molecules, components, page templates, or pages:
   `frontend-test-case-maintainer`
+- screenshot-driven frontend design-system iteration, page-shell/component
+  primitive evolution on `/design-system`, or tight visual-contract work for
+  responsive/layout/overflow/layering/RTL/magnification behavior:
+  `frontend-design-system-loop-maintainer`
 - full repo change-loop orchestration once scope is settled:
   `change-loop-orchestrator`
 - bug / escaped-regression reconciliation, "why was this missed?", or

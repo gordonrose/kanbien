@@ -17,9 +17,13 @@
 - a controlled design-system loop is now documented
 - design-system authoring templates now exist for principles, patterns, and
   components
+- promotion-framework and component-inventory workspace artifacts now exist for
+  turning signed-off `/design-system` work into governed app adoption
 
 ## Still Missing / Next Steps
 
 - define the first active principle and token families under the new loop
-- author the first pattern artifacts before extracting reusable components
-- connect the governed patterns to frontend verification and adoption evidence
+- author the first pattern artifacts for the signed-off navigation, drawer, and
+  dialog families
+- connect the governed patterns to frontend verification checklists and first
+  adoption notes
