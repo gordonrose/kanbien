@@ -2,7 +2,7 @@
 
 ## Current Status
 
-- `missing`
+- `partial`
 
 ## What This Layer Should Do
 
@@ -13,10 +13,13 @@
 
 ## Implemented To Date
 
-- no generalized design system yet
+- dedicated `/design-system` browser surface exists
+- a controlled design-system loop is now documented
+- design-system authoring templates now exist for principles, patterns, and
+  components
 
 ## Still Missing / Next Steps
 
-- define component, token, and visual-language standards
-- define ownership and update process
-- connect design system to frontend architecture and accessibility
+- define the first active principle and token families under the new loop
+- author the first pattern artifacts before extracting reusable components
+- connect the governed patterns to frontend verification and adoption evidence
