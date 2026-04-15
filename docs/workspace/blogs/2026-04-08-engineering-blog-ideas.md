@@ -236,3 +236,9 @@
   `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`,
   `.codex/skills/issue-reconciliation-maintainer/SKILL.md`,
   `src/frontend/designSystem/*`
+- current maturity:
+  active outline drafted in
+  `docs/workspace/blogs/2026-04-15-frontend-design-system-discovery-outline.md`
+- next step:
+  turn the outline into a narrative/guide post centered on the `top-nav`
+  family, the codified loop, and the first `/root-admin` POC adoption

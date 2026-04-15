@@ -4,6 +4,13 @@
 
 Designing Frontend Systems Means Discovering The Real Contract
 
+## Alternate Titles
+
+- Frontend Design Systems Are Really About Discovering The Contract
+- We Stopped Treating The Browser As A Final Check
+- The Browser, Not The Mockup, Became The Source Of Truth
+- How Our Top Nav Became A Design-System Proving Ground
+
 ## Angle
 
 This post should tell the story of learning that frontend design-system work is
@@ -31,6 +38,42 @@ those lessons into tighter loops and better guardrails.
   good" post
 - it connects frontend craft to the repo’s broader AI-and-guardrails theme
 - it shows how visual bugs taught process lessons, not just CSS lessons
+- it now has a full proof-of-concept arc:
+  signed-off design-system work, codified loop artifacts, Playwright locking,
+  and first real app adoption in `/root-admin`
+
+## What Actually Happened This Week
+
+Use this as the factual spine of the post rather than speaking in generalities.
+
+- the `top-nav` family was iterated on `/design-system` until the behavior
+  could be locked explicitly instead of inferred from styling
+- a behavior-lock layer was introduced before the reference pack so the signed
+  off truth was about approved behavior, not accidental implementation details
+- the signed-off top-nav gained:
+  - a dedicated preview route
+  - canonical review routes
+  - query-driven deterministic states
+  - Playwright coverage for the full canonical state set
+- the loop itself was codified into:
+  - promotion framework
+  - behavior locks
+  - reference packs
+  - verification checklists
+  - token candidacy reviews
+  - adoption contracts
+  - canonical and parity conventions
+- the `top-nav` was then adopted as a first real app POC in `/root-admin`
+  while preserving the browser-auth login journey
+- two escaped issues sharpened the lesson further:
+  - the browser SSH helper affordance disappeared from the UI
+  - the Windows desktop launcher failed because WSL-mounted private keys were
+    too open for `ssh-keygen`
+
+## Candidate Subtitle
+
+Why the most important design-system progress in this repo came from narrowing
+the loop between rendered truth, user sign-off, and governed app adoption.
 
 ## Recommended Structure
 
@@ -67,6 +110,12 @@ Mention the current shell surface:
 - RTL, magnification, theme, and overflow behavior
 
 Frame this as a live proving ground rather than a static demo.
+
+Then add the turning point:
+
+The design-system stopped being just a gallery once the `top-nav` got its own
+preview route, canonical state launcher, and full Playwright-locked reference
+set. That was the moment the work became governed instead of aesthetic.
 
 ### 3. The Story Of Discovery
 
@@ -127,6 +176,38 @@ Repo anchors:
 - `.codex/skills/issue-reconciliation-maintainer/SKILL.md`
 - `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`
 
+#### Discovery 5. A Signed-Off Component Still Is Not App-Ready Without A Mapping Layer
+
+Key lesson:
+
+- a reusable component is not ready just because it looks good in the gallery
+- there has to be an explicit bridge from capability ownership and workflow
+  intent into the chosen design-system pattern
+- otherwise "adoption" just becomes another redesign
+
+Repo anchors:
+
+- `docs/templates/design-system-adoption-contract-template.md`
+- `docs/templates/design-system-component-poc-checklist.md`
+- `docs/workspace/design-system/adoption/root-admin-shell-top-nav-adoption-note.md`
+
+#### Discovery 6. The First Real Consumer Is Where The Loop Gets Honest
+
+Key lesson:
+
+- the real test of a design-system family is not whether it survives another
+  gallery state
+- it is whether it can replace a live app surface without breaking the real
+  workflow that surface still owns
+- in this case, the old `/root-admin` frontend could be stripped back, but the
+  browser-auth login journey had to remain intact
+
+Repo anchors:
+
+- `src/frontend/rootAdminShell/*`
+- `tests/integration/rootAdminShell/browserAuth.test.ts`
+- `docs/workspace/design-system/canonical-and-parity-conventions.md`
+
 ### 4. The New Frontend Working Rules
 
 This is the heart of the practical value in the post.
@@ -142,6 +223,18 @@ Suggested bullets to expand into prose:
 - separate implementation fixes from rendered proof
 - keep user-reported issues open until the user confirms the symptom is gone
 - when something escapes, add the narrowest honest prevention layer
+
+Then add the codified loop in concrete order:
+
+1. narrow visual contract
+2. behavior lock
+3. signed-off reference pack
+4. canonical routes and deterministic states
+5. rendered evidence and Playwright lock
+6. token candidacy review
+7. adoption contract
+8. first app consumer POC
+9. parity review against the reference pack
 
 ### 5. What Changed In My Thinking About Frontend Design
 
@@ -165,14 +258,33 @@ Suggested points:
 - the bottleneck moves from typing to judgment
 - screenshot-driven iteration and honest reconciliation become leverage, not
   bureaucracy
+- once the loop is codified in repo artifacts and skills, AI becomes more
+  useful because it has a stricter environment to work inside
 
-### 7. Closing
+### 7. The Unexpected Side Story: Tooling And Recovery Matter Too
+
+Use the root-admin browser signer issue as a concrete example that frontend
+"design-system progress" is not just about CSS.
+
+Points to hit:
+
+- once the `top-nav` became a real `/root-admin` POC, old shell assumptions
+  started colliding with real browser-auth tooling
+- the helper launcher had to become visible in the UI again
+- the desktop shortcut had to be created
+- even then, WSL-mounted Windows key permissions broke `ssh-keygen`
+- this reinforced the same underlying lesson:
+  the real contract lives in actual runtime conditions, not in implementation
+  confidence
+
+### 8. Closing
 
 Possible closing line:
 
 Frontend design systems stop feeling fragile when you stop treating them as a
 collection of styled parts and start treating them as a set of visual contracts
-discovered in the browser and defended by honest guardrails.
+discovered in the browser, adopted under real workflow pressure, and defended
+by honest guardrails.
 
 ## Core Lessons To Preserve
 
@@ -198,8 +310,14 @@ discovered in the browser and defended by honest guardrails.
 - `docs/workspace/issue-reconciliations/2026-04-15-design-system-primary-nav-overflow-menu-drift.md`
 - `docs/workspace/issue-reconciliations/2026-04-15-design-system-primary-nav-slot-measurement-regression.md`
 - `docs/workspace/issue-reconciliations/2026-04-15-design-system-top-nav-layering-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-15-root-admin-browser-helper-guidance-regression.md`
+- `docs/workspace/issue-reconciliations/2026-04-15-root-admin-browser-signer-windows-key-permissions-regression.md`
 - `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`
 - `.codex/skills/issue-reconciliation-maintainer/SKILL.md`
+- `docs/templates/design-system-adoption-contract-template.md`
+- `docs/templates/design-system-component-poc-checklist.md`
+- `docs/workspace/design-system/canonical-and-parity-conventions.md`
+- `src/frontend/rootAdminShell/*`
 
 ## Suggested Follow-Up
 
@@ -208,3 +326,13 @@ If this turns into a full post, the strongest version is probably:
 - personal and reflective in the opening and closing
 - highly concrete in the middle
 - framed as a story of improved judgment rather than a list of CSS tips
+
+## Suggested Next Deliverable
+
+Turn this outline into:
+
+- a narrative/guide hybrid post
+- 1,500 to 2,000 words
+- reflective in voice but structured enough that readers can borrow the loop
+- explicit about the `top-nav` POC as the turning point where the process
+  stopped being theory
