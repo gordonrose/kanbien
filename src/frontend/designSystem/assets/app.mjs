@@ -1,5 +1,6 @@
 const profileButton = document.getElementById("profile-menu-button");
 const profileMenu = document.getElementById("profile-menu");
+const profileLanguageButton = document.getElementById("profile-language-button");
 const closeProfileMenuButton = document.getElementById("close-profile-menu");
 const brandLockup = document.querySelector(".brand-lockup");
 const primaryNav = document.querySelector(".primary-nav");
@@ -11,8 +12,10 @@ const primaryNavOverflowMenu = document.getElementById("primary-nav-overflow-men
 const navUtilities = document.querySelector(".nav-utilities");
 const mobileNavButton = document.getElementById("mobile-nav-button");
 const mobileNavMenu = document.getElementById("mobile-nav-menu");
+const mobileNavLinks = Array.from(mobileNavMenu?.querySelectorAll(".nav-link") ?? []);
 const mobileProfileButton = document.getElementById("mobile-profile-button");
 const mobileProfileMenu = document.getElementById("mobile-profile-menu");
+const mobileLanguageButton = document.getElementById("mobile-language-button");
 const breadcrumbNav = document.querySelector(".breadcrumb-nav");
 const breadcrumbList = document.getElementById("breadcrumb-list");
 const breadcrumbCompact = document.getElementById("breadcrumb-compact");
@@ -46,6 +49,18 @@ const accentButtons = Array.from(document.querySelectorAll("[data-accent]"));
 const magnificationButtons = Array.from(document.querySelectorAll("[data-magnification-option]"));
 const topNav = document.querySelector(".top-nav");
 const subNav = document.querySelector(".sub-nav");
+const languageModal = document.getElementById("language-modal");
+const languageModalBackdrop = document.getElementById("language-modal-backdrop");
+const languageModalCloseButton = document.getElementById("language-modal-close");
+const languageOptionList = document.getElementById("language-option-list");
+const previewFrame = document.getElementById("top-nav-preview-frame");
+const previewWidthInput = document.getElementById("top-nav-preview-width");
+const previewWidthReadout = document.getElementById("top-nav-preview-width-readout");
+const previewWidthPresetButtons = Array.from(document.querySelectorAll("[data-preview-width-preset]"));
+const previewFixtureButtons = Array.from(document.querySelectorAll("[data-preview-fixture]"));
+const previewOpenStateButtons = Array.from(document.querySelectorAll("[data-preview-open-state]"));
+const previewBrandLabel = document.getElementById("preview-brand-label");
+const previewProfileLabel = document.getElementById("preview-profile-label");
 
 const filterOptionSets = {
   status: ["All", "Ready", "Draft", "In Review", "Blocked"],
@@ -53,7 +68,150 @@ const filterOptionSets = {
   lifecycle: ["Current", "Deprecated", "Experimental", "Archived", "Planned"],
 };
 
+const languageOptions = [
+  { code: "en", name: "English", detail: "English" },
+  { code: "es", name: "Spanish", detail: "Espanol" },
+  { code: "fr", name: "French", detail: "Francais" },
+  { code: "de", name: "German", detail: "Deutsch" },
+  { code: "it", name: "Italian", detail: "Italiano" },
+  { code: "pt", name: "Portuguese", detail: "Portugues" },
+  { code: "nl", name: "Dutch", detail: "Nederlands" },
+  { code: "pl", name: "Polish", detail: "Polski" },
+  { code: "ar", name: "Arabic", detail: "Arabic" },
+  { code: "hi", name: "Hindi", detail: "Hindi" },
+  { code: "ja", name: "Japanese", detail: "Japanese" },
+  { code: "zh-Hans", name: "Chinese (Simplified)", detail: "Simplified Chinese" },
+];
+
+const topNavPreviewFixtures = {
+  standard: {
+    brand: "Kanbien",
+    primary: ["Overview", "Foundations", "Components", "Patterns", "Resources"],
+    profile: "Profile",
+    mobileProfile: "Profile",
+    menu: ["Language", "Close menu"],
+    mobileMenu: ["My Profile", "Preferences", "Language", "Sign Out"],
+  },
+  "long-labels": {
+    brand: "Kanbien Internationalization Operations Console",
+    primary: [
+      "Overview and Platform Signals",
+      "Foundational Governance Rules",
+      "Components and Interaction Contracts",
+      "Patterns and Localization Guidance",
+      "Resources and Operational References",
+    ],
+    profile: "Profile and Personalization Preferences",
+    mobileProfile: "Profile and Personalization Preferences",
+    menu: ["Language and Regional Preferences", "Close account navigation menu"],
+    mobileMenu: [
+      "My Administrative Profile Settings",
+      "Preferences and Display Controls",
+      "Language and Regional Preferences",
+      "Sign Out of the Current Session",
+    ],
+  },
+};
+
 let activeFilterCategory = "status";
+let activeLanguageCode = "en";
+let languageModalReturnFocusTarget = null;
+let activeTopNavPreviewFixture = "standard";
+let activeTopNavPreviewOpenState = "closed";
+const topNavPreviewDefaults = {
+  width: 1120,
+  fixture: "standard",
+  open: "closed",
+  theme: "normal",
+  direction: "ltr",
+  magnification: 0,
+  accent: "#635bff",
+};
+const validPreviewThemes = new Set(["normal", "dark", "desert"]);
+const validPreviewDirections = new Set(["ltr", "rtl"]);
+const validPreviewFixtures = new Set(Object.keys(topNavPreviewFixtures));
+const validPreviewOpenStates = new Set(["closed", "overflow", "profile", "mobile"]);
+const validPreviewMagnificationValues = new Set([-50, 0, 50, 100]);
+const validPreviewAccents = new Set(
+  accentButtons.map((button) => button.dataset.accent).filter((accent) => typeof accent === "string"),
+);
+
+function clampNumber(value, min, max, fallback) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) {
+    return fallback;
+  }
+
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function normalizePreviewState(rawState = {}) {
+  const normalized = {
+    width: clampNumber(rawState.width, 480, 1320, topNavPreviewDefaults.width),
+    fixture: validPreviewFixtures.has(rawState.fixture) ? rawState.fixture : topNavPreviewDefaults.fixture,
+    open: validPreviewOpenStates.has(rawState.open) ? rawState.open : topNavPreviewDefaults.open,
+    theme: validPreviewThemes.has(rawState.theme) ? rawState.theme : topNavPreviewDefaults.theme,
+    direction: validPreviewDirections.has(rawState.direction) ? rawState.direction : topNavPreviewDefaults.direction,
+    magnification: validPreviewMagnificationValues.has(Number(rawState.magnification))
+      ? Number(rawState.magnification)
+      : topNavPreviewDefaults.magnification,
+    accent: validPreviewAccents.has(rawState.accent) ? rawState.accent : topNavPreviewDefaults.accent,
+  };
+
+  if (normalized.open === "overflow" && normalized.width > 880) {
+    normalized.width = 880;
+  }
+
+  if (normalized.open === "mobile") {
+    normalized.width = 560;
+  }
+
+  if (normalized.open === "profile" && normalized.width < 880) {
+    normalized.width = 1120;
+  }
+
+  return normalized;
+}
+
+function getTopNavPreviewStateFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+
+  return normalizePreviewState({
+    width: params.get("width") ?? topNavPreviewDefaults.width,
+    fixture: params.get("fixture") ?? topNavPreviewDefaults.fixture,
+    open: params.get("open") ?? topNavPreviewDefaults.open,
+    theme: params.get("theme") ?? topNavPreviewDefaults.theme,
+    direction: params.get("dir") ?? topNavPreviewDefaults.direction,
+    magnification: params.get("zoom") ?? topNavPreviewDefaults.magnification,
+    accent: params.get("accent") ?? topNavPreviewDefaults.accent,
+  });
+}
+
+function syncTopNavPreviewUrl() {
+  if (!previewFrame || !window.history?.replaceState) {
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const width = clampNumber(previewWidthInput?.value, 480, 1320, topNavPreviewDefaults.width);
+  const theme = document.documentElement.dataset.theme ?? topNavPreviewDefaults.theme;
+  const direction = document.documentElement.getAttribute("dir") ?? topNavPreviewDefaults.direction;
+  const magnification = Array.from(magnificationButtons).find((button) => button.classList.contains("active"))
+    ?.dataset.magnificationOption ?? String(topNavPreviewDefaults.magnification);
+  const accent = Array.from(accentButtons).find((button) => button.classList.contains("active"))?.dataset.accent
+    ?? topNavPreviewDefaults.accent;
+
+  params.set("width", String(width));
+  params.set("fixture", activeTopNavPreviewFixture);
+  params.set("open", activeTopNavPreviewOpenState);
+  params.set("theme", theme);
+  params.set("dir", direction);
+  params.set("zoom", String(Number(magnification)));
+  params.set("accent", accent);
+
+  const nextUrl = `${window.location.pathname}?${params.toString()}`;
+  window.history.replaceState(null, "", nextUrl);
+}
 
 function setPrimaryNavOverflowOpen(open) {
   primaryNavOverflowButton?.setAttribute("aria-expanded", String(open));
@@ -178,12 +336,11 @@ function updatePrimaryNavOverflow() {
     return;
   }
 
-  const navigationWidth = measurePrimaryNavOverflowButton("Navigation");
   primaryNavOverflowButton.textContent = "More";
   primaryNavOverflow.classList.remove("hidden");
 
   while (
-    getVisiblePrimaryNavLinks().length > 1
+    getVisiblePrimaryNavLinks().length > 2
     && (!primaryNavFits() || primaryNavOverlapsUtilities() || primaryNavOverflowOverlapsVisibleLinks())
   ) {
     const visibleLinks = getVisiblePrimaryNavLinks();
@@ -196,17 +353,6 @@ function updatePrimaryNavOverflow() {
 
   if (primaryNavFits() && !primaryNavOverlapsUtilities() && !primaryNavOverflowOverlapsVisibleLinks()) {
     renderPrimaryNavOverflowMenu(primaryNavLinks.filter((link) => link.classList.contains("hidden")));
-    return;
-  }
-
-  for (const link of primaryNavLinks) {
-    setPrimaryNavLinkHidden(link, true);
-  }
-
-  if (navigationWidth <= primaryNav.clientWidth) {
-    primaryNavOverflowButton.textContent = "Navigation";
-    renderPrimaryNavOverflowMenu(primaryNavLinks);
-    primaryNavOverflow.classList.remove("hidden");
     return;
   }
 
@@ -371,6 +517,181 @@ function isContextNavMoreOpen() {
   return contextNavMoreButton?.getAttribute("aria-expanded") === "true";
 }
 
+function setPreviewWidth(width) {
+  if (!previewFrame) {
+    return;
+  }
+
+  previewFrame.style.setProperty("--top-nav-preview-width", `${width}px`);
+
+  if (previewWidthInput) {
+    previewWidthInput.value = String(width);
+  }
+
+  if (previewWidthReadout) {
+    previewWidthReadout.textContent = `Preview width: ${width}px`;
+  }
+
+  for (const button of previewWidthPresetButtons) {
+    button.classList.toggle("active", button.dataset.previewWidthPreset === String(width));
+  }
+
+  syncTopNavPreviewUrl();
+}
+
+function setLabelText(node, value) {
+  if (!node) {
+    return;
+  }
+
+  node.textContent = value;
+  node.setAttribute("title", value);
+}
+
+function applyTopNavPreviewFixture(fixtureName) {
+  const fixture = topNavPreviewFixtures[fixtureName];
+  if (!fixture) {
+    return;
+  }
+
+  activeTopNavPreviewFixture = fixtureName;
+
+  setLabelText(previewBrandLabel, fixture.brand);
+  setLabelText(previewProfileLabel, fixture.profile);
+  setLabelText(mobileProfileButton, fixture.mobileProfile);
+  setLabelText(profileLanguageButton, fixture.menu[0]);
+  setLabelText(closeProfileMenuButton, fixture.menu[1]);
+  setLabelText(mobileLanguageButton, fixture.mobileMenu[2]);
+
+  for (const [index, label] of fixture.primary.entries()) {
+    setLabelText(primaryNavLinks[index], label);
+    setLabelText(mobileNavLinks[index], label);
+  }
+
+  const mobileMenuLabels = [
+    mobileProfileMenu?.querySelector('a[href="/design-system/profile"]'),
+    mobileProfileMenu?.querySelector('a[href="/design-system/profile/preferences"]'),
+    mobileLanguageButton,
+    mobileProfileMenu?.querySelector('a[href="/design-system/profile/sign-out"]'),
+  ];
+
+  for (const [index, label] of fixture.mobileMenu.entries()) {
+    setLabelText(mobileMenuLabels[index], label);
+  }
+
+  for (const button of previewFixtureButtons) {
+    button.classList.toggle("active", button.dataset.previewFixture === fixtureName);
+  }
+
+  syncTopNavPreviewUrl();
+}
+
+function applyTopNavPreviewOpenState(openState) {
+  activeTopNavPreviewOpenState = openState;
+
+  setMenuOpen(false);
+  setPrimaryNavOverflowOpen(false);
+  setMobileNavOpen(false);
+  setMobileProfileOpen(false);
+
+  if (openState === "overflow" && !primaryNavOverflow?.classList.contains("hidden")) {
+    setPrimaryNavOverflowOpen(true);
+  }
+
+  if (openState === "profile") {
+    setMenuOpen(true);
+  }
+
+  if (openState === "mobile" && topNav?.classList.contains("force-mobile-nav")) {
+    setMobileNavOpen(true);
+  }
+
+  for (const button of previewOpenStateButtons) {
+    button.classList.toggle("active", button.dataset.previewOpenState === openState);
+  }
+
+  syncTopNavPreviewUrl();
+}
+
+function getActiveLanguage() {
+  return languageOptions.find((language) => language.code === activeLanguageCode) ?? languageOptions[0];
+}
+
+function syncLanguageTriggers() {
+  const activeLanguage = getActiveLanguage();
+  if (profileLanguageButton) {
+    profileLanguageButton.textContent = `Language: ${activeLanguage.name}`;
+  }
+
+  if (mobileLanguageButton) {
+    mobileLanguageButton.textContent = `Language: ${activeLanguage.name}`;
+  }
+}
+
+function renderLanguageOptions() {
+  if (!languageOptionList) {
+    return;
+  }
+
+  languageOptionList.innerHTML = languageOptions
+    .map((language) => {
+      const isActive = language.code === activeLanguageCode;
+      const activeClass = isActive ? " active" : "";
+      const selectedState = String(isActive);
+      const check = isActive ? '<span class="language-option-check" aria-hidden="true">Selected</span>' : "";
+
+      return `
+        <button
+          class="language-option${activeClass}"
+          type="button"
+          role="option"
+          data-language-code="${language.code}"
+          aria-selected="${selectedState}"
+        >
+          <span class="language-option-label">
+            <span class="language-option-name">${language.name}</span>
+            <span class="language-option-detail">${language.detail}</span>
+          </span>
+          ${check}
+        </button>
+      `;
+    })
+    .join("");
+}
+
+function setLanguageModalOpen(open, trigger = null) {
+  languageModal?.classList.toggle("hidden", !open);
+
+  if (open) {
+    languageModalReturnFocusTarget = trigger ?? document.activeElement;
+    renderLanguageOptions();
+    window.requestAnimationFrame(() => {
+      const selectedButton = languageOptionList?.querySelector(`[data-language-code="${activeLanguageCode}"]`);
+      if (selectedButton instanceof HTMLElement) {
+        selectedButton.focus();
+        return;
+      }
+      languageModalCloseButton?.focus();
+    });
+    return;
+  }
+
+  if (languageModalReturnFocusTarget instanceof HTMLElement) {
+    languageModalReturnFocusTarget.focus();
+  }
+  languageModalReturnFocusTarget = null;
+}
+
+function isLanguageModalOpen() {
+  return !languageModal?.classList.contains("hidden");
+}
+
+function selectLanguage(languageCode) {
+  activeLanguageCode = languageCode;
+  syncLanguageTriggers();
+  renderLanguageOptions();
+}
+
 function hexToRgb(hex) {
   const normalized = hex.replace("#", "");
   const bigint = Number.parseInt(normalized, 16);
@@ -397,6 +718,8 @@ function applyAccent(hex) {
   for (const button of accentButtons) {
     button.classList.toggle("active", button.dataset.accent === hex);
   }
+
+  syncTopNavPreviewUrl();
 }
 
 function applyTheme(theme) {
@@ -404,6 +727,8 @@ function applyTheme(theme) {
   for (const button of themeButtons) {
     button.classList.toggle("active", button.dataset.themeOption === theme);
   }
+
+  syncTopNavPreviewUrl();
 }
 
 function applyDirection(direction) {
@@ -411,6 +736,8 @@ function applyDirection(direction) {
   for (const button of directionButtons) {
     button.classList.toggle("active", button.dataset.directionOption === direction);
   }
+
+  syncTopNavPreviewUrl();
 }
 
 function applyMagnification(value) {
@@ -420,6 +747,8 @@ function applyMagnification(value) {
   for (const button of magnificationButtons) {
     button.classList.toggle("active", button.dataset.magnificationOption === String(amount));
   }
+
+  syncTopNavPreviewUrl();
 }
 
 profileButton?.addEventListener("click", () => {
@@ -477,6 +806,96 @@ closeProfileMenuButton?.addEventListener("click", () => {
   profileButton?.focus();
 });
 
+profileLanguageButton?.addEventListener("click", () => {
+  setMenuOpen(false);
+  setLanguageModalOpen(true, profileLanguageButton);
+});
+
+mobileLanguageButton?.addEventListener("click", () => {
+  setMobileProfileOpen(false);
+  setLanguageModalOpen(true, mobileLanguageButton);
+});
+
+languageModalCloseButton?.addEventListener("click", () => {
+  setLanguageModalOpen(false);
+});
+
+languageModalBackdrop?.addEventListener("click", () => {
+  setLanguageModalOpen(false);
+});
+
+languageOptionList?.addEventListener("click", (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) {
+    return;
+  }
+
+  const button = target.closest("[data-language-code]");
+  if (!(button instanceof HTMLElement)) {
+    return;
+  }
+
+  const languageCode = button.dataset.languageCode;
+  if (!languageCode) {
+    return;
+  }
+
+  selectLanguage(languageCode);
+  setLanguageModalOpen(false);
+});
+
+previewWidthInput?.addEventListener("input", () => {
+  const width = Number(previewWidthInput.value);
+  setPreviewWidth(width);
+  window.requestAnimationFrame(() => {
+    updatePrimaryNavOverflow();
+    applyTopNavPreviewOpenState(activeTopNavPreviewOpenState);
+  });
+});
+
+for (const button of previewWidthPresetButtons) {
+  button.addEventListener("click", () => {
+    const width = Number(button.dataset.previewWidthPreset ?? "1120");
+    setPreviewWidth(width);
+    window.requestAnimationFrame(() => {
+      updatePrimaryNavOverflow();
+      applyTopNavPreviewOpenState(activeTopNavPreviewOpenState);
+    });
+  });
+}
+
+for (const button of previewFixtureButtons) {
+  button.addEventListener("click", () => {
+    applyTopNavPreviewFixture(button.dataset.previewFixture ?? "standard");
+    window.requestAnimationFrame(() => {
+      updatePrimaryNavOverflow();
+      applyTopNavPreviewOpenState(activeTopNavPreviewOpenState);
+    });
+  });
+}
+
+for (const button of previewOpenStateButtons) {
+  button.addEventListener("click", () => {
+    const previewState = normalizePreviewState({
+      width: previewWidthInput?.value,
+      fixture: activeTopNavPreviewFixture,
+      open: button.dataset.previewOpenState ?? "closed",
+      theme: document.documentElement.dataset.theme,
+      direction: document.documentElement.getAttribute("dir"),
+      magnification: Array.from(magnificationButtons).find((item) => item.classList.contains("active"))
+        ?.dataset.magnificationOption,
+      accent: Array.from(accentButtons).find((item) => item.classList.contains("active"))?.dataset.accent,
+    });
+
+    setPreviewWidth(previewState.width);
+
+    window.requestAnimationFrame(() => {
+      updatePrimaryNavOverflow();
+      applyTopNavPreviewOpenState(previewState.open);
+    });
+  });
+}
+
 primaryNavOverflowButton?.addEventListener("click", () => {
   setPrimaryNavOverflowOpen(!isPrimaryNavOverflowOpen());
 });
@@ -533,22 +952,37 @@ for (const button of accentButtons) {
 for (const button of magnificationButtons) {
   button.addEventListener("click", () => {
     applyMagnification(button.dataset.magnificationOption ?? "0");
+    window.requestAnimationFrame(() => {
+      updatePrimaryNavOverflow();
+      applyTopNavPreviewOpenState(activeTopNavPreviewOpenState);
+    });
   });
 }
+
+const initialTopNavPreviewState = getTopNavPreviewStateFromUrl();
 
 updateContextNavOffset();
 updatePrimaryNavOverflow();
 updateBreadcrumbOverflow();
-applyTheme("normal");
-applyDirection("ltr");
-applyAccent("#635bff");
-applyMagnification(0);
+applyTheme(initialTopNavPreviewState.theme);
+applyDirection(initialTopNavPreviewState.direction);
+applyAccent(initialTopNavPreviewState.accent);
+applyMagnification(initialTopNavPreviewState.magnification);
 renderFilterOptions(activeFilterCategory);
+syncLanguageTriggers();
+renderLanguageOptions();
+applyTopNavPreviewFixture(initialTopNavPreviewState.fixture);
+setPreviewWidth(initialTopNavPreviewState.width);
+window.requestAnimationFrame(() => {
+  updatePrimaryNavOverflow();
+  applyTopNavPreviewOpenState(initialTopNavPreviewState.open);
+});
 
 window.addEventListener("resize", () => {
   updateContextNavOffset();
   updatePrimaryNavOverflow();
   updateBreadcrumbOverflow();
+  applyTopNavPreviewOpenState(activeTopNavPreviewOpenState);
 });
 
 if ("ResizeObserver" in window) {
@@ -576,6 +1010,10 @@ if ("ResizeObserver" in window) {
   if (breadcrumbList) {
     headerObserver.observe(breadcrumbList);
   }
+
+  if (previewFrame) {
+    headerObserver.observe(previewFrame);
+  }
 }
 
 document.addEventListener("click", (event) => {
@@ -585,6 +1023,10 @@ document.addEventListener("click", (event) => {
   }
 
   if (profileButton?.contains(target) || profileMenu?.contains(target)) {
+    return;
+  }
+
+  if (languageModal?.contains(target)) {
     return;
   }
 
@@ -636,11 +1078,16 @@ document.addEventListener("click", (event) => {
   setFilterOptionsPanelOpen(false);
   setAccessibilityDrawerOpen(false);
   setContextNavMoreOpen(false);
+  setLanguageModalOpen(false);
 });
 
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape") {
     return;
+  }
+
+  if (isLanguageModalOpen()) {
+    setLanguageModalOpen(false);
   }
 
   if (isMenuOpen()) {

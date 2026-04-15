@@ -84,6 +84,14 @@
             role="menu"
             aria-labelledby="profile-menu-button"
           >
+            <button
+              id="profile-language-button"
+              class="menu-item menu-item-button"
+              type="button"
+              role="menuitem"
+            >
+              Language
+            </button>
             <button id="close-profile-menu" class="menu-item menu-item-button" type="button" role="menuitem">
               Close menu
             </button>
@@ -110,10 +118,48 @@
           <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
             <a class="mobile-subnav-link" href="/design-system/profile">My Profile</a>
             <a class="mobile-subnav-link" href="/design-system/profile/preferences">Preferences</a>
+            <button id="mobile-language-button" class="mobile-subnav-link mobile-subnav-button" type="button">
+              Language
+            </button>
             <a class="mobile-subnav-link" href="/design-system/profile/sign-out">Sign Out</a>
           </div>
         </div>
       </nav>
+
+      <div
+        id="language-modal"
+        class="language-modal hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="language-modal-title"
+      >
+        <div id="language-modal-backdrop" class="language-modal-backdrop"></div>
+        <div class="language-modal-panel">
+          <div class="language-modal-header">
+            <div>
+              <p class="language-modal-eyebrow">Profile Preference</p>
+              <h2 id="language-modal-title">Choose your language</h2>
+              <p id="language-modal-description" class="language-modal-copy">
+                Pick one of the common languages below for this design-system prototype.
+              </p>
+            </div>
+            <button
+              id="language-modal-close"
+              class="drawer-close-button"
+              type="button"
+              aria-label="Close language selector"
+            >
+              ×
+            </button>
+          </div>
+          <div
+            id="language-option-list"
+            class="language-option-list"
+            role="listbox"
+            aria-describedby="language-modal-description"
+          ></div>
+        </div>
+      </div>
 
       <section class="sub-nav" aria-label="Page search and breadcrumb">
         <nav class="breadcrumb-nav" aria-label="Breadcrumb">
