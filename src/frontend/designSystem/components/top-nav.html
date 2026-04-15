@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Top Nav</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body>
+    <div class="design-system-shell top-nav-preview-page">
+      <main class="top-nav-preview-layout">
+        <section class="top-nav-preview-intro">
+          <p class="top-nav-preview-eyebrow">Component Preview</p>
+          <h1>Top Nav</h1>
+          <p class="top-nav-preview-copy">
+            Use this page to visually confirm the signed-off top-nav behaviors before we freeze them into
+            automated Playwright coverage.
+          </p>
+        </section>
+
+        <section class="top-nav-preview-controls" aria-labelledby="top-nav-preview-controls-title">
+          <div class="top-nav-preview-controls-header">
+            <div>
+              <p class="top-nav-preview-eyebrow">Preview Controls</p>
+              <h2 id="top-nav-preview-controls-title">State Driver</h2>
+            </div>
+            <p id="top-nav-preview-width-readout" class="top-nav-preview-readout">Preview width: 1120px</p>
+          </div>
+
+          <div class="top-nav-preview-control-grid">
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Width Presets</p>
+              <div class="chip-row" role="group" aria-label="Width presets">
+                <button class="accessibility-chip active" type="button" data-preview-width-preset="1120">Wide</button>
+                <button class="accessibility-chip" type="button" data-preview-width-preset="880">Overflow</button>
+                <button class="accessibility-chip" type="button" data-preview-width-preset="760">Threshold</button>
+                <button class="accessibility-chip" type="button" data-preview-width-preset="560">Mobile</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <label class="top-nav-preview-label" for="top-nav-preview-width">Preview Width</label>
+              <input
+                id="top-nav-preview-width"
+                class="top-nav-preview-slider"
+                type="range"
+                min="480"
+                max="1320"
+                step="10"
+                value="1120"
+              />
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Content Fixture</p>
+              <div class="chip-row" role="group" aria-label="Content fixture">
+                <button class="accessibility-chip active" type="button" data-preview-fixture="standard">Standard</button>
+                <button class="accessibility-chip" type="button" data-preview-fixture="long-labels">Long Labels</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Open State</p>
+              <div class="chip-row" role="group" aria-label="Open state">
+                <button class="accessibility-chip active" type="button" data-preview-open-state="closed">None</button>
+                <button class="accessibility-chip" type="button" data-preview-open-state="overflow">Overflow Menu</button>
+                <button class="accessibility-chip" type="button" data-preview-open-state="profile">Profile Menu</button>
+                <button class="accessibility-chip" type="button" data-preview-open-state="mobile">Mobile Nav</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Theme</p>
+              <div class="chip-row" role="group" aria-label="Theme">
+                <button class="accessibility-chip active" type="button" data-theme-option="normal">Normal</button>
+                <button class="accessibility-chip" type="button" data-theme-option="dark">Dark</button>
+                <button class="accessibility-chip" type="button" data-theme-option="desert">Desert</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Direction</p>
+              <div class="chip-row" role="group" aria-label="Direction">
+                <button class="accessibility-chip active" type="button" data-direction-option="ltr">LTR</button>
+                <button class="accessibility-chip" type="button" data-direction-option="rtl">RTL</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Magnification</p>
+              <div class="chip-row chip-row-single-line" role="group" aria-label="Magnification">
+                <button class="accessibility-chip" type="button" data-magnification-option="-50">-50%</button>
+                <button class="accessibility-chip active" type="button" data-magnification-option="0">0%</button>
+                <button class="accessibility-chip" type="button" data-magnification-option="50">+50%</button>
+                <button class="accessibility-chip" type="button" data-magnification-option="100">+100%</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group top-nav-preview-control-group-full">
+              <p class="top-nav-preview-label">Primary Colour</p>
+              <div class="color-grid top-nav-preview-color-grid" role="group" aria-label="Primary colour">
+                <button class="color-swatch active" type="button" data-accent="#635bff" aria-label="Indigo"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#635bff" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#2563eb" aria-label="Blue"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2563eb" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#0891b2" aria-label="Cyan"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0891b2" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#0f766e" aria-label="Teal"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0f766e" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#2f855a" aria-label="Green"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2f855a" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#65a30d" aria-label="Lime"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#65a30d" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#ca8a04" aria-label="Gold"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ca8a04" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#ea580c" aria-label="Orange"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ea580c" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#dc2626" aria-label="Red"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#dc2626" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#e11d48" aria-label="Rose"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#e11d48" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#c026d3" aria-label="Fuchsia"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#c026d3" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#7c3aed" aria-label="Violet"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#7c3aed" /></svg></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="top-nav-preview-stage-section" aria-labelledby="top-nav-preview-stage-title">
+          <div class="top-nav-preview-stage-header">
+            <div>
+              <p class="top-nav-preview-eyebrow">Preview Surface</p>
+              <h2 id="top-nav-preview-stage-title">Signed-Off Top Nav Candidate</h2>
+            </div>
+            <p class="top-nav-preview-stage-note">
+              Review desktop, overflow, mobile, RTL, magnification, long labels, themes, and accent inheritance here
+              before we freeze Playwright baselines.
+            </p>
+          </div>
+
+          <div id="top-nav-preview-frame" class="top-nav-preview-frame" style="--top-nav-preview-width: 1120px;">
+            <div class="top-nav-preview-canvas">
+              <header class="top-nav">
+                <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+                  <span class="brand-mark" aria-hidden="true">K</span>
+                  <span class="brand-copy">
+                    <strong id="preview-brand-label" title="Kanbien">Kanbien</strong>
+                  </span>
+                </a>
+
+                <nav class="primary-nav" aria-label="Primary">
+                  <div id="primary-nav-links" class="primary-nav-links">
+                    <a class="nav-link active" href="/design-system" aria-current="page" title="Overview">Overview</a>
+                    <a class="nav-link" href="/design-system/foundations" title="Foundations">Foundations</a>
+                    <a class="nav-link" href="/design-system/components" title="Components">Components</a>
+                    <a class="nav-link" href="/design-system/patterns" title="Patterns">Patterns</a>
+                    <a class="nav-link" href="/design-system/resources" title="Resources">Resources</a>
+                  </div>
+                  <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+                    <button
+                      id="primary-nav-overflow-button"
+                      class="nav-link primary-nav-overflow-button"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="primary-nav-overflow-menu"
+                    >
+                      More
+                    </button>
+                    <div
+                      id="primary-nav-overflow-menu"
+                      class="primary-nav-overflow-menu hidden"
+                      role="menu"
+                      aria-labelledby="primary-nav-overflow-button"
+                    ></div>
+                  </div>
+                </nav>
+
+                <button
+                  id="mobile-nav-button"
+                  class="mobile-nav-button"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="mobile-nav-menu"
+                  aria-label="Open navigation menu"
+                >
+                  <span class="burger-icon" aria-hidden="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                </button>
+
+                <div class="nav-utilities">
+                  <button
+                    id="profile-menu-button"
+                    class="profile-button"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="profile-menu"
+                    title="Profile"
+                  >
+                    <span class="profile-avatar" aria-hidden="true">GP</span>
+                    <span class="profile-meta">
+                      <strong id="preview-profile-label" title="Profile">Profile</strong>
+                    </span>
+                  </button>
+
+                  <div
+                    id="profile-menu"
+                    class="profile-menu hidden"
+                    role="menu"
+                    aria-labelledby="profile-menu-button"
+                  >
+                    <button
+                      id="profile-language-button"
+                      class="menu-item menu-item-button"
+                      type="button"
+                      role="menuitem"
+                      title="Language"
+                    >
+                      Language
+                    </button>
+                    <button
+                      id="close-profile-menu"
+                      class="menu-item menu-item-button"
+                      type="button"
+                      role="menuitem"
+                      title="Close menu"
+                    >
+                      Close menu
+                    </button>
+                  </div>
+                </div>
+              </header>
+
+              <nav id="mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile primary">
+                <a class="nav-link active" href="/design-system" aria-current="page" title="Overview">Overview</a>
+                <a class="nav-link" href="/design-system/foundations" title="Foundations">Foundations</a>
+                <a class="nav-link" href="/design-system/components" title="Components">Components</a>
+                <a class="nav-link" href="/design-system/patterns" title="Patterns">Patterns</a>
+                <a class="nav-link" href="/design-system/resources" title="Resources">Resources</a>
+                <div class="mobile-profile-group">
+                  <button
+                    id="mobile-profile-button"
+                    class="mobile-profile-item"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="mobile-profile-menu"
+                  >
+                    Profile
+                  </button>
+                  <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
+                    <a class="mobile-subnav-link" href="/design-system/profile" title="My Profile">My Profile</a>
+                    <a class="mobile-subnav-link" href="/design-system/profile/preferences" title="Preferences">Preferences</a>
+                    <button
+                      id="mobile-language-button"
+                      class="mobile-subnav-link mobile-subnav-button"
+                      type="button"
+                      title="Language"
+                    >
+                      Language
+                    </button>
+                    <a class="mobile-subnav-link" href="/design-system/profile/sign-out" title="Sign Out">Sign Out</a>
+                  </div>
+                </div>
+              </nav>
+
+              <div
+                id="language-modal"
+                class="language-modal hidden"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="language-modal-title"
+              >
+                <div id="language-modal-backdrop" class="language-modal-backdrop"></div>
+                <div class="language-modal-panel">
+                  <div class="language-modal-header">
+                    <div>
+                      <p class="language-modal-eyebrow">Profile Preference</p>
+                      <h2 id="language-modal-title">Choose your language</h2>
+                      <p id="language-modal-description" class="language-modal-copy">
+                        Pick one of the common languages below for this design-system prototype.
+                      </p>
+                    </div>
+                    <button
+                      id="language-modal-close"
+                      class="drawer-close-button"
+                      type="button"
+                      aria-label="Close language selector"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div
+                    id="language-option-list"
+                    class="language-option-list"
+                    role="listbox"
+                    aria-describedby="language-modal-description"
+                  ></div>
+                </div>
+              </div>
+
+              <section class="sub-nav top-nav-preview-sub-nav" aria-label="Layering probe row">
+                <div class="top-nav-preview-sub-nav-copy">
+                  <p class="top-nav-preview-eyebrow">Layer Probe</p>
+                  <p class="top-nav-preview-copy">
+                    This row stays beneath the top-nav so you can visually confirm menu layering and shell separation.
+                  </p>
+                </div>
+                <form class="search-shell" role="search">
+                  <input
+                    class="search-input"
+                    type="search"
+                    name="q"
+                    placeholder="Search shell states"
+                  />
+                </form>
+              </section>
+
+              <section class="top-nav-preview-body">
+                <div class="top-nav-preview-body-card">
+                  <p class="top-nav-preview-eyebrow">Review Notes</p>
+                  <h3>What to look for</h3>
+                  <ul class="top-nav-preview-list">
+                    <li>Brand mark keeps its proportions.</li>
+                    <li>No overlap between brand, nav, and utilities.</li>
+                    <li>`More` appears before crowding.</li>
+                    <li>No `1 item + More` desktop state.</li>
+                    <li>Menus layer above the row below.</li>
+                    <li>Long labels truncate cleanly and still expose the full value via tooltip.</li>
+                  </ul>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

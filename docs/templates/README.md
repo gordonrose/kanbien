@@ -19,8 +19,14 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   Durable-rule template for visual, interaction, and composition principles.
 - `design-system-pattern-template.md`
   Pattern-first template connecting principles, tokens, states, and adoption.
+- `design-system-token-candidacy-template.md`
+  Review template for deciding which signed-off visual decisions become tokens,
+  primitives, or remain intentionally local.
 - `design-system-component-template.md`
   Reusable component seam template grounded in approved patterns and tokens.
+- `design-system-verification-checklist.md`
+  Promotion gate template separating source checks, rendered checks, sign-off,
+  and adoption readiness.
 - `frontend-slice-template.md`
   Frontend slice template covering route/state, permissions, accessibility,
   performance, degraded UX, and telemetry.

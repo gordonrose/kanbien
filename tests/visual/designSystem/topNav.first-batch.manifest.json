@@ -1,0 +1,50 @@
+{
+  "family": "top-nav",
+  "surface": "/design-system/components/top-nav",
+  "canonicalLauncher": "/design-system/canonicals/top-nav",
+  "batch": "first-evidence-batch",
+  "states": [
+    {
+      "refId": "TRP-001",
+      "label": "desktop default",
+      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "snapshot": "trp-001-desktop-default.png"
+    },
+    {
+      "refId": "TRP-002",
+      "label": "desktop overflow",
+      "route": "/design-system/components/top-nav?width=880&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "snapshot": "trp-002-desktop-overflow.png"
+    },
+    {
+      "refId": "TRP-003",
+      "label": "desktop threshold before mobile",
+      "route": "/design-system/components/top-nav?width=760&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "snapshot": "trp-003-threshold-before-mobile.png"
+    },
+    {
+      "refId": "TRP-005",
+      "label": "mobile shell open",
+      "route": "/design-system/components/top-nav?width=560&fixture=standard&open=mobile&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "snapshot": "trp-005-mobile-shell-open.png"
+    },
+    {
+      "refId": "TRP-006",
+      "label": "desktop profile menu open",
+      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=profile&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "snapshot": "trp-006-profile-menu-open.png"
+    },
+    {
+      "refId": "TRP-008",
+      "label": "rtl desktop",
+      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=rtl&zoom=0&accent=%23635bff",
+      "snapshot": "trp-008-rtl-desktop.png"
+    },
+    {
+      "refId": "TRP-010",
+      "label": "magnified desktop",
+      "route": "/design-system/components/top-nav?width=880&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=100&accent=%23635bff",
+      "snapshot": "trp-010-magnified-desktop.png"
+    }
+  ]
+}
