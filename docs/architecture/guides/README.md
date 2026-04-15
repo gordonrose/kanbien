@@ -28,6 +28,9 @@ These guides exist to make the repo:
   stays private.
 - `frontend-implementation-guide.md`
   How browser surfaces should be structured, integrated, and documented.
+- `design-system-loop-harness.md`
+  Pattern-first governance loop for principles, tokens, patterns, components,
+  and controlled adoption.
 - `frontend-governance-entry-point.md`
   Canonical starting path for governed frontend work, required commands, and
   manifest/update expectations.

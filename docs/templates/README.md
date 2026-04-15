@@ -15,6 +15,12 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   Route and contract template for backend capabilities.
 - `permission-mapping-template.md`
   Role-to-capability mapping template for future authorization architecture.
+- `design-system-principle-template.md`
+  Durable-rule template for visual, interaction, and composition principles.
+- `design-system-pattern-template.md`
+  Pattern-first template connecting principles, tokens, states, and adoption.
+- `design-system-component-template.md`
+  Reusable component seam template grounded in approved patterns and tokens.
 - `frontend-slice-template.md`
   Frontend slice template covering route/state, permissions, accessibility,
   performance, degraded UX, and telemetry.
