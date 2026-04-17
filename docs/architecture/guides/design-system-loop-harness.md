@@ -24,6 +24,15 @@ Do not introduce a reusable component as the first artifact unless the change
 already has an approved principle, token strategy, and pattern definition or
 the loop records why a direct component introduction is the safer choice.
 
+For governed frontend families, do not implement new real-app UI before the
+family has been signed off through the `/design-system` loop unless the user
+has explicitly approved a one-off exception for that app surface.
+
+If the family is intended to be adopted into the real application, the
+design-system loop must become the blocker, not a follow-up cleanup step.
+Implementation on the app surface is not the place to discover the missing
+behavior lock, canonical truth, or verification chain.
+
 ## Design System Loop Inputs
 
 Every loop should start from a concrete trigger:
@@ -69,6 +78,40 @@ Each artifact class owns a different concern:
 
 Do not let a component file become the only source of truth for usage,
 accessibility, or variant rules.
+
+## Public IA Rules
+
+The public `/design-system` route structure is part of the governed loop and
+should not be improvised page by page.
+
+Use these defaults:
+
+- `/design-system/components`:
+  public catalog for reusable component seams
+- `/design-system/patterns`:
+  public catalog for governed pattern families
+- `/design-system/canonicals/<family>`:
+  canonical launcher for one family, framed under that family's approved public
+  parent category
+
+Parent-category framing rules:
+
+- if the family is currently owned by the public pattern catalog, frame the
+  launcher under `Patterns`
+- if the family is currently owned by the public component catalog, frame the
+  launcher under `Components`
+- if a family has both a pattern artifact and a component artifact, do not
+  infer the public parent from file names or implementation maturity alone;
+  record the approved parent in the loop artifacts and use that explicit
+  decision for launcher framing
+
+When a family changes public parent category, refresh the affected:
+
+- catalog page
+- canonical launcher page
+- breadcrumb framing
+- top-nav active state
+- relevant route tests
 
 ## Loop Stages
 
@@ -161,6 +204,17 @@ Record:
 Do not describe a design-system artifact as complete if it has no verified
 adoption path.
 
+Do not start real-app adoption work for a new governed UI family until the
+upstream signoff chain is honest. At minimum, the family needs:
+
+- the governing behavior-lock truth
+- the canonical/reference truth for the approved states
+- the verification artifact that names the required proof
+- the adoption artifact that records the app boundary
+
+If one of those is missing, do the missing design-system work before app UI
+implementation unless the user has explicitly allowed an exception.
+
 ## Escalate Before Proceeding
 
 Pause and surface trade-offs before changing:
@@ -182,15 +236,111 @@ For each material loop, define:
 
 - affected viewports and responsive breakpoints
 - state coverage
+- real interactive states when the family is interactive:
+  typed input, focused input, native browser affordances, open menus, active
+  drawers, or other non-empty runtime states
 - keyboard and focus behavior
 - screen-reader or semantic expectations
 - overflow/wrapping checks
 - degraded-state behavior
 - visual-regression or governed screenshot expectations when applicable
 
+If the family is expected to be adopted into shell chrome rather than page
+content, verification must also define:
+
+- whether the family is an attached shell bar or a floating content card
+- whether it should span the shell width or remain intentionally contained
+- horizontal gutter alignment expectations relative to adjacent shell chrome
+- first-item and last-item alignment expectations when they are part of the
+  signed-off composition contract
+
+When browser-native controls can appear inside the governed surface, verification
+must explicitly cover coexistence with any custom affordances. Example:
+
+- native search-field clear affordance alongside custom in-field execution hints
+- browser focus ring and custom focus treatment together
+- browser text-selection or input behavior alongside custom overlays or suffixes
+
+Public `/design-system` routes must also preserve shell truth at the page level.
+Do not treat shell chrome as optional scaffolding on index, exploration,
+canonical-launcher, or canonical-render pages. Those pages should render inside
+the real governed shell trio. When page-level `context-nav` destinations are
+not yet approved as a larger IA set, use the real `context-nav` in a single
+current-page state:
+
+- `top-nav`
+- `sub-nav`
+- `context-nav`
+
+If page-level shell chrome and inner preview/canonical surfaces both render the
+same family classes, scope the runtime selectors and geometry observers so the
+outer shell stays truthful without hijacking the inner renderer. If page-level
+`context-nav` destinations are not yet approved beyond the current page, treat
+that as permission for the single-item fallback only, not for inventing a larger
+menu.
+
+Shell truth also includes parent-category truth. A canonical launcher that is
+framed under the wrong public parent is considered drift even if the family
+surface itself is otherwise correct.
+
+If a user-reported UI defect remains unresolved after the first attempted fix
+and the user has to report the same visual problem again, escalate the loop to
+browser-level inspection before making further geometry or layering changes.
+
+That escalation should inspect the live rendered surface for:
+
+- actual visible boxes and hover targets
+- clipping and overflow ancestors
+- stacking context and overlay behavior
+- runtime state after layout settles
+- differences between exploration and canonical renderers when both exist
+
+Do not continue with source-only debugging on the second pass for the same
+visual defect.
+
 If a component introduces or changes interactive behavior, the loop should also
 define the backend dependency posture and denied/expired/error rendering
 expectations for real consuming surfaces.
+
+## Canonical And Consumer Truth Rules
+
+Exploration and canonical proof serve different jobs and should not share one
+blurry surface by default.
+
+- exploration routes may expose interactive controls and state drivers
+- canonical routes should be locked and deterministic
+- canonical renderers should expose a render-ready contract before they are
+  trusted for screenshot capture or parity review
+- canonical widths must be honest for the named state; if the state silently
+  degrades, the canonical is wrong and should be widened or renamed
+
+Even when exploration and canonical renderers are isolated, the containing
+`/design-system` page should still retain the shared top-nav, sub-nav, and
+context-nav shell framing so review happens in honest shell conditions.
+
+Do not rely only on isolated canonicals once a family is being adopted into a
+real shell. Add consumer-level parity checks early enough to prove:
+
+- shell attachment versus floating treatment
+- full-width versus contained behavior
+- shared gutter alignment with adjacent chrome
+- real workflow interaction states, not only empty/default states
+- long-label, truncation, tooltip, and native-control coexistence in the real
+  consumer
+
+## Post-Loop Reconciliation
+
+Before promoting a family after a difficult iteration, record the loop
+learnings while they are still fresh.
+
+Capture:
+
+- what escaped
+- why it escaped
+- whether the miss was a coverage gap, an adoption-parity gap, a canonical
+  truth gap, or a process mistake
+- which durable loop rule, checklist item, or artifact requirement changes are
+  needed so the same class of miss is less likely to recur
 
 ## Completion Criteria
 

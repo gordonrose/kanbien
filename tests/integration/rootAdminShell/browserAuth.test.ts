@@ -190,8 +190,14 @@ describe("root admin shell browser auth integration", () => {
     const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
     expect(frontendMarkup).toContain("Root Admin Shell POC");
     expect(frontendMarkup).toContain("Overview");
-    expect(frontendMarkup).toContain("Root Users");
-    expect(frontendMarkup).toContain("System Root Roles");
+    expect(frontendMarkup).toContain("Users");
+    expect(frontendMarkup).toContain("Roles");
+    expect(frontendMarkup).toContain("Tenants");
+    expect(frontendMarkup).toContain("Tenant Admins");
+    expect(frontendMarkup).toContain('aria-label="Root admin section navigation"');
+    expect(frontendMarkup).toContain('aria-label="Current page breadcrumb"');
+    expect(frontendMarkup).toContain('role="search"');
+    expect(frontendMarkup).toContain("Search root admin sections");
     expect(frontendMarkup).toContain("Choose a language");
     expect(frontendMarkup).toContain("Sign Out");
   });

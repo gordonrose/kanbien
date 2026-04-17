@@ -40,6 +40,9 @@ decisions too early.
 - Warning:
 - Error:
 - Destructive:
+- Real interactive states:
+  filled input, native browser affordances, open menu, compact mode, or other
+  non-empty runtime states when relevant
 
 List only the states that genuinely apply, but do not leave state handling
 implicit.
@@ -76,12 +79,17 @@ implicit.
 - Tablet behavior:
 - Desktop behavior:
 - Overflow / wrapping expectations:
+- Shell attachment or floating expectations:
+- Width model:
+  full-width or intentionally contained when relevant
+- Alignment expectations with adjacent chrome when relevant:
 
 ## Composition Rules
 
 - Common parent contexts:
 - Compatible neighboring patterns:
 - Nesting guidance:
+- Browser-native affordance coexistence rules:
 - Misuse cases to avoid:
 
 ## Component Readiness
@@ -109,4 +117,3 @@ implicit.
 - Design-system route update required:
 - Architecture-map or guide updates required:
 - Follow-up component artifact:
-

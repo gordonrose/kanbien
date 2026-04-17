@@ -256,6 +256,36 @@ Do not continue implementation on top of knowingly stale downstream artifacts.
 Do not leave source-independent docs describing the pre-change platform once
 the implementation is otherwise considered delivered.
 
+## Design-System Signoff Before App UI
+
+For governed frontend families, do not implement new real-app UI until that UI
+has been signed off through the `/design-system` loop, unless the user has
+explicitly approved an exception for that surface.
+
+Treat this as a hard default for:
+
+- shell chrome
+- navigation families
+- drawers, dialogs, and menus
+- shared page chrome
+- reusable controls and settings surfaces
+- any new app UI that is supposed to come from the design system rather than
+  from a one-off exception
+
+If the signed-off design-system chain is missing or incomplete, stop and do
+the design-system governance work first. That means the relevant behavior lock,
+canonicals/reference truth, verification artifact, and adoption artifact must
+exist and be honest before real-app implementation is treated as allowed.
+
+Allowed exception posture:
+
+- the user explicitly approves a one-off or pre-signoff app implementation
+- the exception is stated as intentional for that surface, such as the login
+  page example
+
+Do not infer a pre-signoff exception from urgency, apparent simplicity, or the
+existence of partial design-system work.
+
 ## Pagination Test Robustness
 
 When writing tests for paginated catalogs, collections, or searchable lists:

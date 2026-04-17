@@ -91,9 +91,14 @@ Use when the artifact should no longer be the active source for new work.
 6. Get human sign-off.
 7. Freeze the signed-off reference pack and parity targets.
 8. Run a token candidacy review.
-9. Record the pattern, token decisions, and verification evidence.
-10. Promote only if the quality gate is met.
-11. Adopt in the app only after the artifact reaches `system-ready`.
+9. Create the first adoption contract before real app use.
+10. Record the pattern, token decisions, and verification evidence.
+11. Promote only if the quality gate is met.
+12. Adopt in the app only after the artifact reaches `system-ready`.
+13. Run app-vs-reference parity checks before treating the first consumer as
+    a trusted POC.
+14. Record loop learnings when the iteration surfaced misses, escaped states,
+    or adoption-parity surprises.
 
 ## Required Feedback Loops
 
@@ -120,8 +125,12 @@ Every governed design-system loop should preserve these feedback loops:
 
 ### Adoption Loop
 
+- create the adoption contract for the first real consumer
 - adopt in one real app surface
 - validate the pattern under real workflow pressure
+- compare the real consumer against the reference pack
+- compare the real consumer against the expected shell framing contract when
+  the family sits inside shell chrome
 - record drift or migration follow-ups
 
 ## Minimum Quality Gate For `system-ready`
@@ -140,9 +149,28 @@ true:
 - RTL expectations are documented
 - magnification or zoom behavior is documented when relevant
 - overflow, clipping, and layering behavior are documented when relevant
+- filled interactive states are documented when the family is interactive
 - supported and non-applicable states are explicit
 - known limitations are recorded
 - a first app adoption target is named
+- an adoption contract exists for the first real consumer
+- canonical route and parity conventions are followed
+
+## Minimum Quality Gate For First Consumer POC
+
+Do not treat the first real app consumer as a trustworthy POC until all of the
+following are true:
+
+- the family already satisfies the `system-ready` gate
+- the adoption contract exists
+- preserved backend or auth/session seams are named
+- route-local POC boundaries are explicit
+- parity review against the reference pack is recorded
+- shell-parity review is recorded when the consumer sits inside shell chrome
+- real interactive/runtime states are covered when they can change spacing,
+  layering, or native-control coexistence
+- targeted executable tests were updated or added
+- any escaped regressions were reconciled with durable notes
 
 ## Component Families On `/design-system`
 
@@ -195,6 +223,21 @@ Keep a value local when:
 Prefer a reusable primitive over a token when reuse depends on structure or
 behavior rather than on a single visual value.
 
+## Loop Learnings Must Feed Back Into The Harness
+
+When a promotion loop uncovers meaningful misses, do not stop at fixing the
+artifact.
+
+Update the loop itself when the iteration reveals missing guardrails such as:
+
+- exploration and canonical surfaces being conflated
+- missing render-ready or honest-width rules
+- missing first-consumer shell-parity checks
+- missing filled interactive states
+- missing browser-native affordance coexistence checks
+- missing RTL transition coverage
+- missing long-label or truncation coverage
+
 ## Working Rule For Real App Use
 
 Default rule:
@@ -207,6 +250,9 @@ Default rule:
 
 - `docs/architecture/guides/design-system-loop-harness.md`
 - `docs/workspace/design-system/behavior-locks/top-nav-behavior-lock.md`
+- `docs/workspace/design-system/canonical-and-parity-conventions.md`
+- `docs/templates/design-system-adoption-contract-template.md`
+- `docs/templates/design-system-component-poc-checklist.md`
 - `docs/templates/design-system-pattern-template.md`
 - `docs/templates/design-system-token-candidacy-template.md`
 - `docs/templates/design-system-component-template.md`

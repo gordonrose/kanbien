@@ -71,6 +71,25 @@ For escaped frontend regressions, use this skill together with
 
 ## Core Operating Rules
 
+### 0. No Real-App UI Before Design-System Signoff
+
+If a UI family is meant to be governed by the design system, do not implement
+new real-app UI for that family before it has been signed off through the
+`/design-system` loop unless the user has explicitly approved an exception for
+that app surface.
+
+Treat missing governance artifacts as a blocker, not as documentation debt to
+clean up after implementation. Before app UI work begins, the relevant family
+should already have an honest:
+
+- behavior lock
+- canonical/reference truth
+- verification artifact
+- adoption artifact
+
+If one of those is missing, stay in the design-system loop and create or
+refresh the upstream artifacts first.
+
 ### 1. Visual Contract First
 
 Treat each request as a narrow visual contract before treating it as an
@@ -128,6 +147,32 @@ Keep these statuses separate:
 Do not treat a user-reported issue as closed until the user confirms the last
 step.
 
+### 4A. Escalate To Browser Inspection After A Missed First Fix
+
+If a user-reported UI defect survives the first fix attempt and the user has to
+report the same issue again, escalate immediately to browser-level inspection.
+
+Use the live rendered surface to inspect:
+
+- actual geometry and box visibility
+- stacking and clipping
+- hover and focus behavior
+- runtime state after layout settles
+- the exact node that is visibly present in the browser
+
+Do not continue with source-only guesses after a second user report for the
+same visual defect.
+
+Treat browser inspection as required for issues involving:
+
+- layering or z-index
+- overflow or clipping
+- tooltip or menu reveal
+- responsive breakpoints
+- RTL mirroring
+- magnification
+- canonical renderer truth versus exploration truth
+
 ### 5. Accessibility And Alternate Modes Are Contract Surface
 
 Treat these as first-class, not as afterthoughts:
@@ -140,6 +185,75 @@ Treat these as first-class, not as afterthoughts:
 - layering and drawer stacking
 - mobile and narrow-width states
 - overflow and clipping behavior
+
+### 6. Cross-Cutting Review Dimensions Must Be Recorded
+
+For every design-system family or shared row under review, explicitly evaluate:
+
+- RTL behavior
+- theme support
+- primary-colour or accent inheritance when the family participates in shared
+  accent styling
+- accessibility expectations, including WCAG 2.2 AA concerns where relevant
+
+Do not omit these silently.
+
+For each dimension, do one of the following:
+
+- turn it into one or more behavior-lock statements when it materially affects
+  rendered behavior, interaction, parity, or adoption safety
+- record `not applicable` with a brief reason in the relevant artifact when the
+  dimension genuinely does not apply
+
+Do not force boilerplate behavior statements for dimensions that are truly not
+part of the family contract.
+
+Treat WCAG 2.2 AA as a required verification dimension, not as one giant vague
+behavior statement.
+
+Convert WCAG-related concerns into concrete statements only when they are
+specific enough to verify honestly, such as:
+
+- keyboard reachability
+- focus visibility
+- contrast-sensitive UI states
+- non-text contrast for controls
+- target size where relevant
+- visible-label or semantic-name expectations
+
+### 7. Empty-State Proof Is Not Enough
+
+For interactive families, do not stop at empty or resting states.
+
+You must look for the runtime states that create real UI collisions or shell
+pressure, such as:
+
+- filled search inputs
+- native browser search clear affordances
+- custom in-field hints or suffixes
+- long labels that force truncation
+- open menus and popovers
+- compact or preserved-lane states
+
+If a user is likely to type, hover, focus, clear, open, expand, or truncate
+something in the real product, that runtime state needs governed proof before
+you call the family stable.
+
+### 8. First Consumer Adoption Needs Shell-Parity Checks
+
+When a signed-off family is adopted into the real app, do not treat component
+parity as enough.
+
+You must also prove consumer framing:
+
+- is the adopted surface shell chrome or page content
+- should it hug adjacent chrome or float as a separate card
+- should it span the shell width or remain intentionally contained
+- what must align with adjacent shell elements such as the top-nav logo,
+  gutters, or end controls
+
+If those answers are not explicit, the consumer can look "component-correct"
+while still violating the signed-off shell contract.
 
 ## Default Workflow For Incremental Component Building
 
@@ -163,8 +277,11 @@ Decide what would actually prove success:
 - screenshot comparison
 - viewport-specific rendered check
 - overflow/fit state
+- filled-input and native-affordance coexistence state when relevant
 - keyboard interaction
 - RTL or magnification check
+- theme or accent-inheritance check when relevant
+- WCAG-oriented focus, contrast, or target-size check when relevant
 
 4. Make one small edit.
 Prefer the smallest implementation that can satisfy the contract.
@@ -175,6 +292,11 @@ State separately:
 - what was checked in source/tests
 - what rendered evidence exists
 - whether the issue is still awaiting user confirmation
+- which cross-cutting review dimensions were turned into explicit behaviors and
+  which were recorded as `not applicable`
+- whether the proof covered real interactive/runtime states or only empty
+  defaults
+- whether the adopted consumer still matches the shell framing contract
 
 6. Only then take the next adjacent improvement.
 If the primary contract is not closed, stay on it.
@@ -210,6 +332,8 @@ Frontend-specific issue-reconciliation defaults:
   or audit guidance tied to the failing state
 - if the bug depended on actual DOM geometry, do not claim prevention from a
   pure unit test alone
+- if the bug depended on real consumer framing, do not claim prevention from an
+  isolated `/design-system` canonical alone
 
 ## Screenshot Evidence Rules
 
@@ -228,6 +352,13 @@ the code "should" render.
 
 When screenshot evidence is not available but the contract is still geometric,
 be explicit that rendered success is unproven.
+
+When a family is already in app adoption, collect evidence at both layers when
+relevant:
+
+- the isolated canonical or design-system proof surface
+- the first real consumer surface where shell attachment, gutter alignment, or
+  browser-native controls may behave differently
 
 ## When To Stop Guessing And Ask For One Concrete Browser Observation
 

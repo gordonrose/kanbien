@@ -34,6 +34,7 @@ architecture docs too early.
   status model, feedback loops, and promotion gates
 - `top-nav-prevention-note.md`
   compact prevention note capturing the stable fix logic for the top-nav family
+  and a model for future family-specific prevention notes when needed
 
 ## Working Rule
 
@@ -45,9 +46,80 @@ Default order:
 4. token candidacy review
 5. pattern artifact
 6. component artifact
-7. adoption note
+7. adoption contract
+8. first app consumer POC checklist
+9. adoption note
 
 When a change skips a stage, record why.
+
+Treat exploration, canonical proof, and first-consumer parity as different jobs:
+
+- exploration surfaces may stay interactive
+- canonical surfaces must be locked and deterministic
+- first-consumer adoption must also prove shell framing, alignment, and real
+  runtime states rather than relying only on isolated canonicals
+
+Treat public `/design-system` navigation structure as governed information
+architecture, not as page-local convenience.
+
+- `/design-system/components` is the catalog for reusable component seams
+- `/design-system/patterns` is the catalog for governed pattern families
+- `/design-system/canonicals/<family>` should be framed under the public parent
+  category that owns that family today
+- if a family is currently treated as a pattern in the public IA, its canonical
+  launcher should frame under `Patterns`
+- if a family is currently treated as a component seam in the public IA, its
+  canonical launcher should frame under `Components`
+- if a family has both a pattern artifact and a component artifact, do not
+  guess which public parent wins; record the approved parent explicitly in the
+  loop artifacts before updating launcher framing
+
+Do not let a canonical launcher default to `Components` just because the route
+is implemented under `src/frontend/designSystem/canonicals/`. Public framing
+should follow approved family ownership, not file placement.
+
+All public `/design-system` pages should render inside the real shared shell
+chrome:
+
+- `top-nav`
+- `sub-nav`
+- `context-nav`
+
+This is a page-level rule, not just a family-preview preference. Overview
+pages, exploration pages, canonical launcher pages, and canonical display
+pages should all use the governed shell trio. If a page does not yet have an
+approved multi-item `context-nav` IA, render the real `context-nav` in a
+single-item locked state using only the current page. Do not invent additional
+destinations beyond that approved fallback.
+
+Do not call a family stable if only empty/resting states have been proven.
+Interactive families should also prove the runtime states that create real
+layout and layering pressure, such as filled search fields, native browser
+controls, truncation, open menus, and compact or preserved-lane states.
+
+If a UI issue survives the first fix and the same visual defect is reported
+again, escalate to browser-level inspection rather than continuing with
+source-only guesses.
+
+Current authored examples now include:
+
+- `behavior-locks/top-nav-behavior-lock.md`
+- `behavior-locks/sub-nav-row-behavior-lock.md`
+- `behavior-locks/context-nav-behavior-lock.md`
+- `patterns/navigation-shell-pattern.md`
+- `patterns/sub-nav-row-pattern.md`
+- `patterns/breadcrumb-pattern.md`
+- `patterns/search-shell-pattern.md`
+- `patterns/context-nav-pattern.md`
+- `components/top-nav-shell-component.md`
+- `components/sub-nav-row-component.md`
+- `verification/top-nav-verification-checklist.md`
+- `verification/sub-nav-row-verification-checklist.md`
+- `verification/breadcrumb-verification-checklist.md`
+- `verification/search-shell-verification-checklist.md`
+- `verification/context-nav-verification-checklist.md`
+- `token-reviews/context-nav-token-candidacy-review.md`
+- `adoption/root-admin-shell-context-nav-adoption-contract.md`
 
 ## Related Source Of Truth
 
@@ -57,4 +129,7 @@ When a change skips a stage, record why.
 - `docs/templates/design-system-pattern-template.md`
 - `docs/templates/design-system-component-template.md`
 - `docs/templates/design-system-verification-checklist.md`
+- `docs/templates/design-system-adoption-contract-template.md`
+- `docs/templates/design-system-component-poc-checklist.md`
+- `docs/workspace/design-system/canonical-and-parity-conventions.md`
 - `src/frontend/designSystem/`

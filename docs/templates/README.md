@@ -27,6 +27,12 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
 - `design-system-verification-checklist.md`
   Promotion gate template separating source checks, rendered checks, sign-off,
   and adoption readiness.
+- `design-system-adoption-contract-template.md`
+  Bridge template mapping capability or workflow ownership onto a signed-off
+  design-system family before real app adoption.
+- `design-system-component-poc-checklist.md`
+  First-consumer checklist for moving a signed-off family into a real app POC
+  with parity and verification gates.
 - `frontend-slice-template.md`
   Frontend slice template covering route/state, permissions, accessibility,
   performance, degraded UX, and telemetry.

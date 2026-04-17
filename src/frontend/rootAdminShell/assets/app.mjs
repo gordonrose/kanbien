@@ -32,11 +32,81 @@ const languageOptions = [
   { code: "zh-Hans", name: "Chinese (Simplified)", detail: "Chinese Simplified" },
 ];
 
+const displaySettingsCopy = {
+  ltr: {
+    launcher: "Display",
+    launcherTooltip: "Display Settings",
+    more: "More",
+    menuItem: "Display Settings",
+    eyebrow: "Display",
+    title: "Display Settings",
+    close: "Close display settings",
+    themeGroup: "Theme",
+    themeNormal: "Normal",
+    themeDark: "Dark",
+    themeDesert: "Desert",
+    magnificationGroup: "Magnification",
+  },
+  rtl: {
+    launcher: "العرض",
+    launcherTooltip: "إعدادات العرض",
+    more: "المزيد",
+    menuItem: "إعدادات العرض",
+    eyebrow: "العرض",
+    title: "إعدادات العرض",
+    close: "إغلاق إعدادات العرض",
+    themeGroup: "المظهر",
+    themeNormal: "عادي",
+    themeDark: "داكن",
+    themeDesert: "صحراوي",
+    magnificationGroup: "التكبير",
+  },
+};
+
+const pageAliases = {
+  "root-users": "users",
+  "root-roles": "roles",
+};
+
+const pageMetadata = {
+  overview: {
+    title: "Overview",
+    breadcrumbCurrent: null,
+    searchPlaceholder: "Search root admin sections",
+    searchKeywords: ["overview", "home", "session", "root admin"],
+  },
+  users: {
+    title: "Users",
+    breadcrumbCurrent: "Users",
+    searchPlaceholder: "Search users, routes, or shell guidance",
+    searchKeywords: ["users", "people", "accounts", "root users", "root user"],
+  },
+  roles: {
+    title: "Roles",
+    breadcrumbCurrent: "Roles",
+    searchPlaceholder: "Search roles, permissions, or shell guidance",
+    searchKeywords: ["roles", "permissions", "root roles", "system roles"],
+  },
+  tenants: {
+    title: "Tenants",
+    breadcrumbCurrent: "Tenants",
+    searchPlaceholder: "Search tenants, routes, or shell guidance",
+    searchKeywords: ["tenants", "organizations", "workspaces", "accounts"],
+  },
+  "tenant-admins": {
+    title: "Tenant Admins",
+    breadcrumbCurrent: "Tenant Admins",
+    searchPlaceholder: "Search tenant admins, routes, or shell guidance",
+    searchKeywords: ["tenant admins", "tenant admin", "admins", "administrators"],
+  },
+};
+
 const state = createInitialState();
 state.navigation.currentPage = "overview";
 
-let activeLanguageCode = "en";
+let activeLanguageCode = resolveInitialLanguageCode();
 let languageModalReturnFocusTarget = null;
+let displaySettingsReturnFocusTarget = null;
 
 const authView = document.getElementById("auth-view");
 const shellView = document.getElementById("shell-view");
@@ -63,6 +133,7 @@ const primaryNavLinks = Array.from(document.querySelectorAll("#primary-nav-links
 const mobileNavButton = document.getElementById("mobile-nav-button");
 const mobileNavMenu = document.getElementById("mobile-nav-menu");
 const mobileNavLinks = Array.from(document.querySelectorAll("#mobile-nav-menu > .nav-link"));
+const contextNavLinks = Array.from(document.querySelectorAll(".context-nav .context-nav-item[data-page-link]"));
 const profileButton = document.getElementById("profile-menu-button");
 const profileMenu = document.getElementById("profile-menu");
 const profileLabel = document.getElementById("profile-label");
@@ -75,6 +146,27 @@ const profileLanguageButton = document.getElementById("profile-language-button")
 const profileLogoutButton = document.getElementById("profile-logout-button");
 const mobileLanguageButton = document.getElementById("mobile-language-button");
 const mobileLogoutButton = document.getElementById("mobile-logout-button");
+const breadcrumbHomeItem = document.getElementById("breadcrumb-home-item");
+const breadcrumbHomeLink = document.getElementById("breadcrumb-home-link");
+const breadcrumbHomeSeparatorItem = document.getElementById("breadcrumb-home-separator-item");
+const breadcrumbCurrentItem = document.getElementById("breadcrumb-current-item");
+const breadcrumbCurrentLabel = document.getElementById("breadcrumb-current-label");
+const shellSearchForm = document.getElementById("shell-search-form");
+const shellSearchInput = document.getElementById("shell-search-input");
+const shellSubNav = document.querySelector(".sub-nav-row");
+const displaySettingsButton = document.getElementById("display-settings-button");
+const displaySettingsLabel = document.getElementById("display-settings-label");
+const contextNavMoreButton = document.getElementById("context-nav-more-button");
+const contextNavMoreMenu = document.getElementById("context-nav-more-menu");
+const contextNavMoreDisplaySettingsButton = document.getElementById("context-nav-more-display-settings");
+const displaySettingsDrawer = document.getElementById("display-settings-drawer");
+const displaySettingsEyebrow = document.getElementById("display-settings-eyebrow");
+const displaySettingsTitle = document.getElementById("display-settings-title");
+const displaySettingsCloseButton = document.getElementById("display-settings-close");
+const displaySettingsThemeLabel = document.getElementById("display-settings-theme-label");
+const displaySettingsMagnificationLabel = document.getElementById("display-settings-magnification-label");
+const themeButtons = Array.from(document.querySelectorAll("[data-theme-option]"));
+const magnificationButtons = Array.from(document.querySelectorAll("[data-magnification-option]"));
 
 const languageModal = document.getElementById("language-modal");
 const languageModalBackdrop = document.getElementById("language-modal-backdrop");
@@ -84,9 +176,37 @@ const languageOptionList = document.getElementById("language-option-list");
 const brandLabel = document.getElementById("brand-label");
 const pageSections = {
   overview: document.getElementById("page-overview"),
-  "root-users": document.getElementById("page-root-users"),
-  "root-roles": document.getElementById("page-root-roles"),
+  users: document.getElementById("page-users"),
+  roles: document.getElementById("page-roles"),
+  tenants: document.getElementById("page-tenants"),
+  "tenant-admins": document.getElementById("page-tenant-admins"),
 };
+
+function normalizePage(page) {
+  const normalizedPage = pageAliases[page] ?? page;
+  return Object.hasOwn(pageMetadata, normalizedPage) ? normalizedPage : "overview";
+}
+
+let activeSharedTooltipTarget = null;
+
+function resolveInitialLanguageCode() {
+  const params = new URLSearchParams(window.location.search);
+  const languageCode = params.get("lang");
+
+  if (languageCode && languageOptions.some((language) => language.code === languageCode)) {
+    return languageCode;
+  }
+
+  return "en";
+}
+
+function pageMetaFor(page) {
+  return pageMetadata[page] ?? pageMetadata.overview;
+}
+
+function languageMetaFor(code) {
+  return languageOptions.find((language) => language.code === code) ?? languageOptions[0];
+}
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -179,11 +299,48 @@ function isMobileProfileOpen() {
   return mobileProfileButton?.getAttribute("aria-expanded") === "true";
 }
 
-function closeTransientShellSurfaces() {
+function setContextNavMoreOpen(open) {
+  contextNavMoreButton?.setAttribute("aria-expanded", String(open));
+  contextNavMoreMenu?.classList.toggle("hidden", !open);
+}
+
+function isContextNavMoreOpen() {
+  return contextNavMoreButton?.getAttribute("aria-expanded") === "true";
+}
+
+function setDisplaySettingsDrawerOpen(open, { trigger = null, returnFocus = true } = {}) {
+  displaySettingsDrawer?.classList.toggle("hidden", !open);
+  displaySettingsDrawer?.setAttribute("aria-hidden", String(!open));
+  displaySettingsButton?.setAttribute("aria-expanded", String(open));
+
+  if (open) {
+    displaySettingsReturnFocusTarget = trigger ?? document.activeElement;
+    setContextNavMoreOpen(false);
+    window.requestAnimationFrame(() => {
+      displaySettingsCloseButton?.focus();
+    });
+    return;
+  }
+
+  if (returnFocus && displaySettingsReturnFocusTarget instanceof HTMLElement) {
+    displaySettingsReturnFocusTarget.focus();
+  }
+  displaySettingsReturnFocusTarget = null;
+}
+
+function isDisplaySettingsDrawerOpen() {
+  return !displaySettingsDrawer?.classList.contains("hidden");
+}
+
+function closeTransientShellSurfaces({ includeDisplaySettings = false, returnFocus = false } = {}) {
   setMenuOpen(false);
   setPrimaryNavOverflowOpen(false);
   setMobileNavOpen(false);
   setMobileProfileOpen(false);
+  if (includeDisplaySettings) {
+    setContextNavMoreOpen(false);
+    setDisplaySettingsDrawerOpen(false, { returnFocus });
+  }
 }
 
 function setPrimaryNavLinkHidden(node, hidden) {
@@ -215,30 +372,31 @@ function primaryNavFits() {
   return primaryNav ? primaryNav.scrollWidth <= primaryNav.clientWidth : true;
 }
 
+function horizontalRectsOverlap(rectA, rectB) {
+  return rectA.left < rectB.right && rectA.right > rectB.left;
+}
+
 function primaryNavOverlapsUtilities() {
   if (!navUtilities) {
     return false;
   }
 
   const navUtilitiesRect = navUtilities.getBoundingClientRect();
-  const lastVisibleLink = getVisiblePrimaryNavLinks().at(-1);
-
-  if (lastVisibleLink) {
-    const lastVisibleLinkRect = lastVisibleLink.getBoundingClientRect();
-    if (lastVisibleLinkRect.right > navUtilitiesRect.left) {
+  for (const link of getVisiblePrimaryNavLinks()) {
+    if (horizontalRectsOverlap(link.getBoundingClientRect(), navUtilitiesRect)) {
       return true;
     }
   }
 
   if (primaryNavOverflowButton && !primaryNavOverflow.classList.contains("hidden")) {
     const overflowRect = primaryNavOverflowButton.getBoundingClientRect();
-    if (overflowRect.right > navUtilitiesRect.left) {
+    if (horizontalRectsOverlap(overflowRect, navUtilitiesRect)) {
       return true;
     }
   }
 
   const primaryNavRect = primaryNav?.getBoundingClientRect();
-  return primaryNavRect ? primaryNavRect.right > navUtilitiesRect.left : false;
+  return primaryNavRect ? horizontalRectsOverlap(primaryNavRect, navUtilitiesRect) : false;
 }
 
 function primaryNavOverflowOverlapsVisibleLinks() {
@@ -246,14 +404,8 @@ function primaryNavOverflowOverlapsVisibleLinks() {
     return false;
   }
 
-  const lastVisibleLink = getVisiblePrimaryNavLinks().at(-1);
-  if (!lastVisibleLink) {
-    return false;
-  }
-
-  const lastLinkRect = lastVisibleLink.getBoundingClientRect();
   const overflowRect = primaryNavOverflowButton.getBoundingClientRect();
-  return lastLinkRect.right > overflowRect.left;
+  return getVisiblePrimaryNavLinks().some((link) => horizontalRectsOverlap(link.getBoundingClientRect(), overflowRect));
 }
 
 function updatePrimaryNavOverflow() {
@@ -298,7 +450,18 @@ function updatePrimaryNavOverflow() {
 }
 
 function getActiveLanguage() {
-  return languageOptions.find((language) => language.code === activeLanguageCode) ?? languageOptions[0];
+  return languageMetaFor(activeLanguageCode);
+}
+
+function syncDocumentLanguageDirection() {
+  const isRtl = activeLanguageCode === "ar";
+  const html = document.documentElement;
+  const body = document.body;
+  const activeLanguage = getActiveLanguage();
+
+  html.setAttribute("lang", activeLanguage.code);
+  html.setAttribute("dir", isRtl ? "rtl" : "ltr");
+  body?.setAttribute("dir", isRtl ? "rtl" : "ltr");
 }
 
 function syncLanguageTriggers() {
@@ -314,6 +477,108 @@ function syncLanguageTriggers() {
     mobileLanguageButton.textContent = label;
     mobileLanguageButton.setAttribute("title", label);
   }
+}
+
+function getDisplaySettingsLocale() {
+  return activeLanguageCode === "ar" ? displaySettingsCopy.rtl : displaySettingsCopy.ltr;
+}
+
+function syncDisplaySettingsCopy() {
+  const copy = getDisplaySettingsLocale();
+
+  if (displaySettingsLabel) {
+    displaySettingsLabel.textContent = copy.launcher;
+  }
+
+  if (displaySettingsButton) {
+    displaySettingsButton.dataset.tooltip = copy.launcherTooltip;
+    displaySettingsButton.setAttribute("title", copy.launcherTooltip);
+  }
+
+  if (contextNavMoreButton) {
+    contextNavMoreButton.setAttribute("title", copy.more);
+    const moreLabel = contextNavMoreButton.querySelector(".context-nav-label");
+    if (moreLabel) {
+      moreLabel.textContent = copy.more;
+    }
+  }
+
+  if (contextNavMoreDisplaySettingsButton) {
+    contextNavMoreDisplaySettingsButton.textContent = copy.menuItem;
+    contextNavMoreDisplaySettingsButton.setAttribute("title", copy.menuItem);
+  }
+
+  if (displaySettingsEyebrow) {
+    displaySettingsEyebrow.textContent = copy.eyebrow;
+  }
+
+  if (displaySettingsTitle) {
+    displaySettingsTitle.textContent = copy.title;
+  }
+
+  if (displaySettingsCloseButton) {
+    displaySettingsCloseButton.setAttribute("aria-label", copy.close);
+    displaySettingsCloseButton.setAttribute("title", copy.close);
+  }
+
+  if (displaySettingsThemeLabel) {
+    displaySettingsThemeLabel.textContent = copy.themeGroup;
+  }
+
+  if (displaySettingsMagnificationLabel) {
+    displaySettingsMagnificationLabel.textContent = copy.magnificationGroup;
+  }
+
+  for (const button of themeButtons) {
+    const key = button.dataset.themeOption;
+    if (key === "normal") {
+      button.textContent = copy.themeNormal;
+    }
+    if (key === "dark") {
+      button.textContent = copy.themeDark;
+    }
+    if (key === "desert") {
+      button.textContent = copy.themeDesert;
+    }
+  }
+}
+
+function applyTheme(theme) {
+  const nextTheme = ["dark", "desert"].includes(theme) ? theme : "normal";
+  if (nextTheme === "normal") {
+    document.documentElement.removeAttribute("data-theme");
+  } else {
+    document.documentElement.dataset.theme = nextTheme;
+  }
+
+  for (const button of themeButtons) {
+    const isActive = button.dataset.themeOption === nextTheme;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  }
+}
+
+function applyMagnification(value) {
+  const amount = Number(value);
+  const scale = 1 + amount / 200;
+
+  if (amount === 0) {
+    document.documentElement.style.removeProperty("--ui-scale");
+  } else {
+    document.documentElement.style.setProperty("--ui-scale", String(scale));
+  }
+
+  for (const button of magnificationButtons) {
+    const isActive = button.dataset.magnificationOption === String(amount);
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  }
+
+  window.requestAnimationFrame(() => {
+    updatePrimaryNavOverflow();
+    syncNavState();
+    scheduleContextNavOffsetUpdate();
+  });
 }
 
 function renderLanguageOptions() {
@@ -376,6 +641,7 @@ function isLanguageModalOpen() {
 
 function selectLanguage(languageCode) {
   activeLanguageCode = languageCode;
+  syncDocumentLanguageDirection();
   syncLanguageTriggers();
   renderLanguageOptions();
 }
@@ -412,24 +678,21 @@ async function fetchJson(path, options = {}) {
 }
 
 function resolvePageFromLocation() {
-  const page = window.location.hash.replace(/^#/, "");
-  if (page === "root-users" || page === "root-roles") {
-    return page;
-  }
-  return "overview";
+  return normalizePage(window.location.hash.replace(/^#/, ""));
 }
 
 function setCurrentPage(page, { syncHash = true } = {}) {
-  state.navigation.currentPage = page;
+  const normalizedPage = normalizePage(page);
+  state.navigation.currentPage = normalizedPage;
 
   if (syncHash) {
-    const targetHash = `#${page}`;
+    const targetHash = `#${normalizedPage}`;
     if (window.location.hash !== targetHash) {
       window.history.replaceState(null, "", targetHash);
     }
   }
 
-  closeTransientShellSurfaces();
+  closeTransientShellSurfaces({ includeDisplaySettings: true, returnFocus: false });
   render();
 }
 
@@ -449,10 +712,53 @@ function syncNavState() {
 
   syncLinkCollection(primaryNavLinks);
   syncLinkCollection(mobileNavLinks);
+  syncLinkCollection(contextNavLinks);
   syncLinkCollection(Array.from(primaryNavOverflowMenu?.querySelectorAll("[data-page-link]") ?? []));
 
   for (const [page, section] of Object.entries(pageSections)) {
     section?.classList.toggle("hidden", page !== currentPage);
+  }
+}
+
+function syncSubNavState() {
+  const currentPage = state.navigation.currentPage;
+  const meta = pageMetaFor(currentPage);
+  const isOverview = currentPage === "overview";
+
+  if (breadcrumbHomeItem) {
+    breadcrumbHomeItem.classList.remove("hidden");
+  }
+
+  if (breadcrumbHomeLink) {
+    breadcrumbHomeLink.textContent = "Root Admin";
+    breadcrumbHomeLink.setAttribute("title", "Root Admin");
+    breadcrumbHomeLink.setAttribute("href", "/root-admin#overview");
+
+    if (isOverview) {
+      breadcrumbHomeLink.setAttribute("aria-current", "page");
+      breadcrumbHomeLink.classList.add("breadcrumb-current");
+    } else {
+      breadcrumbHomeLink.removeAttribute("aria-current");
+      breadcrumbHomeLink.classList.remove("breadcrumb-current");
+    }
+  }
+
+  if (breadcrumbHomeSeparatorItem) {
+    breadcrumbHomeSeparatorItem.classList.toggle("hidden", isOverview);
+  }
+
+  if (breadcrumbCurrentItem) {
+    breadcrumbCurrentItem.classList.toggle("hidden", isOverview);
+  }
+
+  if (breadcrumbCurrentLabel) {
+    breadcrumbCurrentLabel.textContent = meta.breadcrumbCurrent ?? meta.title;
+    breadcrumbCurrentLabel.setAttribute("title", meta.breadcrumbCurrent ?? meta.title);
+  }
+
+  if (shellSearchInput) {
+    shellSearchInput.setAttribute("placeholder", meta.searchPlaceholder);
+    shellSearchInput.setAttribute("aria-label", meta.searchPlaceholder);
   }
 }
 
@@ -482,6 +788,162 @@ function syncProfileIdentity() {
   }
 }
 
+function matchPageFromSearch(query) {
+  const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) {
+    return null;
+  }
+
+  return Object.entries(pageMetadata).find(([, meta]) =>
+    meta.searchKeywords.some((keyword) => normalizedQuery.includes(keyword) || keyword.includes(normalizedQuery)),
+  )?.[0] ?? null;
+}
+
+function updateContextNavOffset() {
+  if (!topNav && !shellSubNav) {
+    return;
+  }
+
+  const headerBottom = Math.max(
+    topNav?.getBoundingClientRect().bottom ?? 0,
+    shellSubNav?.getBoundingClientRect().bottom ?? 0,
+  );
+
+  document.documentElement.style.setProperty("--context-nav-top", `${Math.ceil(headerBottom)}px`);
+}
+
+let shellOffsetFrame = 0;
+
+function scheduleContextNavOffsetUpdate() {
+  if (shellOffsetFrame) {
+    return;
+  }
+
+  shellOffsetFrame = window.requestAnimationFrame(() => {
+    shellOffsetFrame = 0;
+    updateContextNavOffset();
+  });
+}
+
+function getSharedTooltipElement() {
+  let tooltip = document.getElementById("shared-floating-tooltip");
+  if (tooltip instanceof HTMLElement) {
+    return tooltip;
+  }
+
+  tooltip = document.createElement("div");
+  tooltip.id = "shared-floating-tooltip";
+  tooltip.className = "shared-floating-tooltip hidden";
+  tooltip.setAttribute("role", "tooltip");
+  tooltip.setAttribute("aria-hidden", "true");
+  document.body.append(tooltip);
+  return tooltip;
+}
+
+function hideSharedTooltip() {
+  const tooltip = getSharedTooltipElement();
+  tooltip.classList.add("hidden");
+  tooltip.setAttribute("aria-hidden", "true");
+  tooltip.textContent = "";
+  tooltip.style.removeProperty("left");
+  tooltip.style.removeProperty("top");
+  tooltip.style.removeProperty("transform");
+  activeSharedTooltipTarget = null;
+}
+
+function positionSharedTooltip(target) {
+  if (!(target instanceof HTMLElement)) {
+    hideSharedTooltip();
+    return;
+  }
+
+  const label = target.dataset.tooltip?.trim();
+  if (!label) {
+    hideSharedTooltip();
+    return;
+  }
+
+  const tooltip = getSharedTooltipElement();
+  tooltip.textContent = label;
+  tooltip.classList.remove("hidden");
+  tooltip.setAttribute("aria-hidden", "false");
+
+  const rect = target.getBoundingClientRect();
+  const direction = document.documentElement.getAttribute("dir") === "rtl" ? "rtl" : "ltr";
+
+  if (direction === "rtl") {
+    tooltip.style.left = `${rect.left - 12}px`;
+    tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
+    tooltip.style.transform = "translate(-100%, -50%)";
+  } else {
+    tooltip.style.left = `${rect.right + 12}px`;
+    tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
+    tooltip.style.transform = "translateY(-50%)";
+  }
+
+  activeSharedTooltipTarget = target;
+}
+
+function getTooltipTargetFromNode(node) {
+  if (!(node instanceof Element)) {
+    return null;
+  }
+
+  return node.closest(".context-nav-item[data-tooltip]");
+}
+
+function getTooltipTargetFromEvent(event) {
+  if (!event || typeof event.composedPath !== "function") {
+    return getTooltipTargetFromNode(event?.target);
+  }
+
+  for (const node of event.composedPath()) {
+    const target = getTooltipTargetFromNode(node);
+    if (target) {
+      return target;
+    }
+  }
+
+  return null;
+}
+
+function wireSharedTooltipSystem() {
+  document.addEventListener("mouseover", (event) => {
+    const target = getTooltipTargetFromEvent(event);
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    positionSharedTooltip(target);
+  });
+
+  document.addEventListener("mouseout", (event) => {
+    const target = getTooltipTargetFromEvent(event);
+    if (!(target instanceof HTMLElement) || target !== activeSharedTooltipTarget) {
+      return;
+    }
+
+    const nextTarget = getTooltipTargetFromNode(event.relatedTarget);
+    if (nextTarget === target) {
+      return;
+    }
+
+    hideSharedTooltip();
+  });
+
+  window.addEventListener("scroll", () => {
+    if (activeSharedTooltipTarget instanceof HTMLElement) {
+      positionSharedTooltip(activeSharedTooltipTarget);
+    }
+  }, true);
+
+  window.addEventListener("resize", () => {
+    if (activeSharedTooltipTarget instanceof HTMLElement) {
+      positionSharedTooltip(activeSharedTooltipTarget);
+    }
+  });
+}
+
 function render() {
   const flags = deriveViewFlags(state);
   authView?.classList.toggle("hidden", !flags.showAuthView);
@@ -492,14 +954,18 @@ function render() {
   setMessage(authMessage, state.authMessage, "danger");
   setMessage(shellMessage, state.shellMessage);
   renderSessionSummary(state.session);
+  syncDocumentLanguageDirection();
   syncProfileIdentity();
   syncLanguageTriggers();
+  syncDisplaySettingsCopy();
   syncNavState();
+  syncSubNavState();
 
   if (flags.showShellView) {
     window.requestAnimationFrame(() => {
       updatePrimaryNavOverflow();
       syncNavState();
+      scheduleContextNavOffsetUpdate();
     });
   }
 }
@@ -622,6 +1088,29 @@ async function handleRefreshSession() {
   }
 }
 
+function handleShellSearchSubmit(event) {
+  event.preventDefault();
+
+  if (!(shellSearchInput instanceof HTMLInputElement)) {
+    return;
+  }
+
+  const query = shellSearchInput.value.trim();
+  if (!query) {
+    setShellMessage("Type a route, users, or roles term to navigate the shell.");
+    return;
+  }
+
+  const matchedPage = matchPageFromSearch(query);
+  if (!matchedPage) {
+    setShellMessage(`No root-admin destination matched “${query}”.`, "danger");
+    return;
+  }
+
+  setCurrentPage(matchedPage);
+  setShellMessage(`Opened ${pageMetaFor(matchedPage).title}.`, "success");
+}
+
 loginForm?.addEventListener("submit", handlePasswordSubmit);
 signSubmit?.addEventListener("click", handleSshSubmit);
 returnToLogin?.addEventListener("click", () => {
@@ -630,6 +1119,7 @@ returnToLogin?.addEventListener("click", () => {
   render();
 });
 refreshSessionButton?.addEventListener("click", handleRefreshSession);
+shellSearchForm?.addEventListener("submit", handleShellSearchSubmit);
 profileLanguageButton?.addEventListener("click", () => setLanguageModalOpen(true, profileLanguageButton));
 mobileLanguageButton?.addEventListener("click", () => setLanguageModalOpen(true, mobileLanguageButton));
 languageModalCloseButton?.addEventListener("click", () => setLanguageModalOpen(false));
@@ -643,6 +1133,23 @@ profileButton?.addEventListener("click", () => {
   setMobileNavOpen(false);
   setMobileProfileOpen(false);
   setMenuOpen(nextState);
+});
+
+displaySettingsButton?.addEventListener("click", () => {
+  setDisplaySettingsDrawerOpen(!isDisplaySettingsDrawerOpen(), { trigger: displaySettingsButton });
+});
+
+contextNavMoreButton?.addEventListener("click", () => {
+  setContextNavMoreOpen(!isContextNavMoreOpen());
+});
+
+contextNavMoreDisplaySettingsButton?.addEventListener("click", () => {
+  setContextNavMoreOpen(false);
+  setDisplaySettingsDrawerOpen(true, { trigger: contextNavMoreButton });
+});
+
+displaySettingsCloseButton?.addEventListener("click", () => {
+  setDisplaySettingsDrawerOpen(false, { returnFocus: true });
 });
 
 primaryNavOverflowButton?.addEventListener("click", () => {
@@ -667,6 +1174,18 @@ mobileProfileButton?.addEventListener("click", () => {
   setMobileProfileOpen(!isMobileProfileOpen());
 });
 
+for (const button of themeButtons) {
+  button.addEventListener("click", () => {
+    applyTheme(button.dataset.themeOption ?? "normal");
+  });
+}
+
+for (const button of magnificationButtons) {
+  button.addEventListener("click", () => {
+    applyMagnification(button.dataset.magnificationOption ?? "0");
+  });
+}
+
 document.addEventListener("click", (event) => {
   const target = event.target;
 
@@ -680,7 +1199,21 @@ document.addEventListener("click", (event) => {
     && !target.closest("#mobile-nav-menu")
     && !target.closest("#mobile-nav-button")
   ) {
-    closeTransientShellSurfaces();
+    setMenuOpen(false);
+    setPrimaryNavOverflowOpen(false);
+    setMobileNavOpen(false);
+    setMobileProfileOpen(false);
+  }
+
+  if (
+    !target.closest(".context-nav-more")
+    && !target.closest("#display-settings-drawer")
+    && !target.closest("#display-settings-button")
+  ) {
+    setContextNavMoreOpen(false);
+    if (isDisplaySettingsDrawerOpen()) {
+      setDisplaySettingsDrawerOpen(false, { returnFocus: true });
+    }
   }
 
   const pageLink = target.closest("[data-page-link]");
@@ -712,12 +1245,28 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
+  if (isDisplaySettingsDrawerOpen()) {
+    setContextNavMoreOpen(false);
+    setDisplaySettingsDrawerOpen(false, { returnFocus: true });
+    hideSharedTooltip();
+    return;
+  }
+
+  if (isContextNavMoreOpen()) {
+    setContextNavMoreOpen(false);
+    contextNavMoreButton?.focus();
+    hideSharedTooltip();
+    return;
+  }
+
   closeTransientShellSurfaces();
+  hideSharedTooltip();
 });
 
 window.addEventListener("resize", () => {
   updatePrimaryNavOverflow();
   syncNavState();
+  scheduleContextNavOffsetUpdate();
 });
 
 window.addEventListener("hashchange", () => {
@@ -725,7 +1274,12 @@ window.addEventListener("hashchange", () => {
   render();
 });
 
+window.addEventListener("scroll", scheduleContextNavOffsetUpdate, { passive: true });
+
 state.phase = "bootstrapping";
 state.navigation.currentPage = resolvePageFromLocation();
+wireSharedTooltipSystem();
+applyTheme("normal");
+applyMagnification(0);
 render();
 bootstrapSession();

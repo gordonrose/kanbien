@@ -25,6 +25,24 @@ current browser shape.
   HTTP/API contracts.
 - Same-origin runtime does not mean shared code ownership boundaries.
 
+## Governed UI Adoption Rule
+
+When a frontend surface is supposed to come from the design system, do not
+implement that UI in the real app before it has been signed off through the
+`/design-system` loop unless the user has explicitly approved a one-off
+exception.
+
+Before app implementation begins for a governed family, the design-system
+chain should already have the relevant:
+
+- behavior lock
+- canonical/reference truth
+- verification artifact
+- adoption contract or note
+
+If those are missing, do the design-system governance work first instead of
+using the app as the proving ground.
+
 ## Frontend Capability Checklist
 
 Every frontend capability should define:

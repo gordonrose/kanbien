@@ -81,12 +81,6 @@
               <a class="nav-link active" href="/root-admin#overview" data-page-link="overview" aria-current="page" title="Overview">
                 Overview
               </a>
-              <a class="nav-link" href="/root-admin#root-users" data-page-link="root-users" title="Root Users">
-                Root Users
-              </a>
-              <a class="nav-link" href="/root-admin#root-roles" data-page-link="root-roles" title="System Root Roles">
-                System Root Roles
-              </a>
             </div>
             <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
               <button
@@ -179,12 +173,6 @@
           <a class="nav-link active" href="/root-admin#overview" data-page-link="overview" aria-current="page" title="Overview">
             Overview
           </a>
-          <a class="nav-link" href="/root-admin#root-users" data-page-link="root-users" title="Root Users">
-            Root Users
-          </a>
-          <a class="nav-link" href="/root-admin#root-roles" data-page-link="root-roles" title="System Root Roles">
-            System Root Roles
-          </a>
           <div class="mobile-profile-group">
             <button
               id="mobile-profile-button"
@@ -219,6 +207,203 @@
           </div>
         </nav>
 
+        <section class="sub-nav-row" aria-label="Root admin page chrome">
+          <div class="sub-nav">
+            <nav class="breadcrumb-nav" aria-label="Current page breadcrumb">
+              <ol id="sub-nav-breadcrumb-list" class="breadcrumb-list">
+                <li id="breadcrumb-home-item">
+                  <a
+                    id="breadcrumb-home-link"
+                    class="breadcrumb-button"
+                    href="/root-admin#overview"
+                    data-page-link="overview"
+                    title="Root Admin"
+                  >
+                    Root Admin
+                  </a>
+                </li>
+                <li id="breadcrumb-home-separator-item">
+                  <span class="breadcrumb-separator" aria-hidden="true">/</span>
+                </li>
+                <li id="breadcrumb-current-item">
+                  <span id="breadcrumb-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">
+                    Overview
+                  </span>
+                </li>
+              </ol>
+            </nav>
+
+            <div class="search-shell">
+              <form id="shell-search-form" class="search-form" role="search">
+                <label class="sr-only" for="shell-search-input">Search root admin shell destinations</label>
+                <input
+                  id="shell-search-input"
+                  class="search-input"
+                  type="search"
+                  name="q"
+                  placeholder="Search root admin sections"
+                  autocomplete="off"
+                />
+                <span class="search-shell-hint" aria-hidden="true">
+                  <span class="search-shell-hint-copy">Press</span>
+                  <kbd class="search-shell-key">Enter</kbd>
+                </span>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <nav class="context-nav" aria-label="Root admin section navigation">
+          <div class="context-nav-main">
+            <div class="context-nav-main-items">
+              <a class="context-nav-item active" href="/root-admin#users" data-page-link="users" data-tooltip="Users" aria-current="page">
+                <span class="context-nav-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 4.5a3.5 3.5 0 1 1-3.5 3.5A3.5 3.5 0 0 1 12 4.5zm0 9c3.2 0 5.9 1.78 6.75 4.25A1.75 1.75 0 0 1 17.1 20H6.9a1.75 1.75 0 0 1-1.65-2.25C6.1 15.28 8.8 13.5 12 13.5z" />
+                  </svg>
+                </span>
+                <span class="context-nav-label">Users</span>
+              </a>
+              <a class="context-nav-item" href="/root-admin#roles" data-page-link="roles" data-tooltip="Roles">
+                <span class="context-nav-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 2.75 5.5 5v6.15c0 4.34 2.76 8.39 6.5 10.1 3.74-1.71 6.5-5.76 6.5-10.1V5zm0 4.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 6.85zm3.55 8.92a5.04 5.04 0 0 1-7.1 0 4.2 4.2 0 0 1 7.1 0z" />
+                  </svg>
+                </span>
+                <span class="context-nav-label">Roles</span>
+              </a>
+              <a class="context-nav-item" href="/root-admin#tenants" data-page-link="tenants" data-tooltip="Tenants">
+                <span class="context-nav-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M4 20.25V6.75a1.5 1.5 0 0 1 1.5-1.5h7a1.5 1.5 0 0 1 1.5 1.5v13.5h2V3.75a1.5 1.5 0 0 1 1.5-1.5h1A1.5 1.5 0 0 1 20 3.75v16.5h.75a.75.75 0 0 1 0 1.5H3.25a.75.75 0 0 1 0-1.5zm3-11.5v2h2v-2zm0 4.5v2h2v-2zm4-4.5v2h2v-2zm0 4.5v2h2v-2z" />
+                  </svg>
+                </span>
+                <span class="context-nav-label">Tenants</span>
+              </a>
+              <a class="context-nav-item" href="/root-admin#tenant-admins" data-page-link="tenant-admins" data-tooltip="Tenant Admins">
+                <span class="context-nav-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 3.25a4 4 0 1 1-4 4 4 4 0 0 1 4-4zm-4.9 16.5a5.45 5.45 0 0 1 9.8-3.31V20H7.95A1.5 1.5 0 0 1 7.1 19.75zm11.65-7 1.05 2.13 2.35.34-1.7 1.66.4 2.34-2.1-1.11-2.1 1.11.4-2.34-1.7-1.66 2.35-.34z" />
+                  </svg>
+                </span>
+                <span class="context-nav-label">Tenant Admins</span>
+              </a>
+            </div>
+          </div>
+          <div class="context-nav-bottom-group">
+            <button
+              id="display-settings-button"
+              class="context-nav-item context-nav-item-button context-nav-mobile-overflow-target"
+              type="button"
+              data-tooltip="Display Settings"
+              aria-expanded="false"
+              aria-controls="display-settings-drawer"
+            >
+              <span class="context-nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M4.75 5.25h14.5a1.5 1.5 0 0 1 1.5 1.5v8.5a1.5 1.5 0 0 1-1.5 1.5H13.5l.9 2h2.35a.75.75 0 0 1 0 1.5H7.25a.75.75 0 0 1 0-1.5H9.6l.9-2H4.75a1.5 1.5 0 0 1-1.5-1.5v-8.5a1.5 1.5 0 0 1 1.5-1.5zm0 1.5v8.5h14.5v-8.5zm7.25 2a2.5 2.5 0 1 1-2.5 2.5 2.5 2.5 0 0 1 2.5-2.5z" />
+                </svg>
+              </span>
+              <span id="display-settings-label" class="context-nav-label">Display</span>
+            </button>
+
+            <div class="context-nav-more">
+              <button
+                id="context-nav-more-button"
+                class="context-nav-item context-nav-item-button context-nav-more-button"
+                type="button"
+                data-tooltip="More"
+                aria-expanded="false"
+                aria-controls="context-nav-more-menu"
+              >
+                <span class="context-nav-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 6.75a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5z" />
+                  </svg>
+                </span>
+                <span class="context-nav-label">More</span>
+              </button>
+              <div
+                id="context-nav-more-menu"
+                class="context-nav-more-menu hidden"
+                role="menu"
+                aria-labelledby="context-nav-more-button"
+              >
+                <button
+                  id="context-nav-more-display-settings"
+                  class="menu-item menu-item-button"
+                  type="button"
+                  role="menuitem"
+                >
+                  Display Settings
+                </button>
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        <aside
+          id="display-settings-drawer"
+          class="side-panel display-settings-drawer hidden"
+          aria-labelledby="display-settings-title"
+          aria-hidden="true"
+        >
+          <div class="side-panel-header">
+            <div>
+              <p id="display-settings-eyebrow" class="drawer-eyebrow">Display</p>
+              <h2 id="display-settings-title">Display Settings</h2>
+            </div>
+            <button
+              id="display-settings-close"
+              class="icon-button"
+              type="button"
+              aria-label="Close display settings"
+            >
+              <span class="icon-button-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M6 6 18 18M18 6 6 18" />
+                </svg>
+              </span>
+            </button>
+          </div>
+
+          <div class="accessibility-group">
+            <p id="display-settings-theme-label" class="accessibility-label">Theme</p>
+            <div class="chip-row" role="group" aria-labelledby="display-settings-theme-label">
+              <button class="accessibility-chip active" type="button" data-theme-option="normal" aria-pressed="true">
+                Normal
+              </button>
+              <button class="accessibility-chip" type="button" data-theme-option="dark" aria-pressed="false">
+                Dark
+              </button>
+              <button class="accessibility-chip" type="button" data-theme-option="desert" aria-pressed="false">
+                Desert
+              </button>
+            </div>
+          </div>
+
+          <div class="accessibility-group">
+            <p id="display-settings-magnification-label" class="accessibility-label">Magnification</p>
+            <div class="chip-row chip-row-single-line" role="group" aria-labelledby="display-settings-magnification-label">
+              <button class="accessibility-chip" type="button" data-magnification-option="-100" aria-pressed="false">
+                -100%
+              </button>
+              <button class="accessibility-chip" type="button" data-magnification-option="-50" aria-pressed="false">
+                -50%
+              </button>
+              <button class="accessibility-chip active" type="button" data-magnification-option="0" aria-pressed="true">
+                0%
+              </button>
+              <button class="accessibility-chip" type="button" data-magnification-option="50" aria-pressed="false">
+                +50%
+              </button>
+              <button class="accessibility-chip" type="button" data-magnification-option="100" aria-pressed="false">
+                +100%
+              </button>
+            </div>
+          </div>
+        </aside>
+
         <main class="root-admin-main">
           <div id="shell-message" class="message hidden" role="status" aria-live="polite"></div>
 
@@ -228,8 +413,8 @@
                 <div class="eyebrow">Shell POC</div>
                 <h1>Root Admin Shell POC</h1>
                 <p class="page-copy">
-                  This replaces the old authenticated root-admin frontend with the signed-off top-nav pattern while
-                  preserving the real browser-auth journey.
+                  This replaces the old authenticated root-admin frontend with the signed-off top-nav and sub-nav
+                  patterns while preserving the real browser-auth journey.
                 </p>
               </div>
               <div class="page-actions">
@@ -249,73 +434,136 @@
                 <h2>What This Proves</h2>
                 <ul class="content-list">
                   <li>`/root-admin` can adopt the governed top-nav without replacing the browser-auth seam.</li>
-                  <li>The authenticated shell can preserve measured overflow, mobile nav, and profile-menu behavior.</li>
-                  <li>Feature destinations can stay capability-driven even while deeper page UIs are rebuilt later.</li>
+                  <li>The signed-off sub-nav row stays truthful while section pages change underneath it.</li>
+                  <li>The signed-off context-nav can own real root-admin section routing instead of local one-off shell chrome.</li>
+                  <li>New root-admin functions can be added in a controlled way before deeper page UIs are rebuilt later.</li>
                 </ul>
               </section>
             </div>
           </section>
 
-          <section id="page-root-users" class="page-panel hidden">
+          <section id="page-users" class="page-panel hidden">
             <div class="page-heading">
               <div>
                 <div class="eyebrow">Reserved Destination</div>
-                <h1>Root Users</h1>
+                <h1>Users</h1>
                 <p class="page-copy">
-                  The old in-browser CRUD workspace has been intentionally removed for this POC. The underlying
-                  root-user APIs remain the system of record while we rebuild the route against the signed-off design
-                  system.
+                  This placeholder proves that the root-admin shell can now route a real user-management destination
+                  through the governed sub-nav and context-nav seams before the page-level feature UI is rebuilt.
                 </p>
               </div>
             </div>
 
             <div class="content-grid">
               <section class="content-card">
-                <h2>Capability Ownership</h2>
+                <h2>Route Intent</h2>
                 <ul class="content-list">
-                  <li>`root-user.read.visible` keeps this destination permission-aware.</li>
-                  <li>`root-user.create`, `root-user.update`, and lifecycle mutations are preserved as backend seams.</li>
-                  <li>The next feature-loop slice can rebuild list, detail, and editor states on top of this shell.</li>
+                  <li>This section will become the governed shell entry point for root-level user management.</li>
+                  <li>The context-nav now owns the page switch, and the sub-nav keeps the page orientation honest.</li>
+                  <li>The next feature-loop slice can add lists, detail states, and editor flows without replacing the shell.</li>
                 </ul>
               </section>
 
               <section class="content-card">
-                <h2>Current POC Boundary</h2>
+                <h2>Current Boundary</h2>
                 <p class="page-copy">
-                  This page currently proves navigation, orientation, and route ownership only. It does not yet attempt
-                  to recreate the old drawer and table UI inside the new shell.
+                  This page is intentionally empty beyond shell proof. It exists so we can verify real route ownership,
+                  current-page visibility, mobile conversion, and RTL behavior before rebuilding the deeper feature UI.
                 </p>
               </section>
             </div>
           </section>
 
-          <section id="page-root-roles" class="page-panel hidden">
+          <section id="page-roles" class="page-panel hidden">
             <div class="page-heading">
               <div>
                 <div class="eyebrow">Reserved Destination</div>
-                <h1>System Root Roles</h1>
+                <h1>Roles</h1>
                 <p class="page-copy">
-                  The previous role table and editor flow are deferred while the top-nav adoption is proven. The route
-                  stays visible as the future consumer for the root-role workflow family.
+                  This placeholder keeps roles visible as a real root-admin section while the role-management surface is
+                  rebuilt against the adopted shell chrome.
                 </p>
               </div>
             </div>
 
             <div class="content-grid">
               <section class="content-card">
-                <h2>Capability Ownership</h2>
+                <h2>Route Intent</h2>
                 <ul class="content-list">
-                  <li>`root-role.list` and `root-role.read` govern shell access and wayfinding.</li>
-                  <li>`root-role.update` and capability-assignment mutations remain live backend seams.</li>
-                  <li>The next rebuild slice can add list, editor, and assignment views without changing the shell chrome.</li>
+                  <li>This section will hold root-level role and permission management.</li>
+                  <li>The route already participates in the same governed breadcrumb and shell search behavior as the other sections.</li>
+                  <li>The deeper list and editor surfaces can be added later without changing the shell framing.</li>
                 </ul>
               </section>
 
               <section class="content-card">
-                <h2>Migration Intent</h2>
+                <h2>Current Boundary</h2>
                 <p class="page-copy">
-                  This POC keeps the destination and language of the old console, but avoids porting the entire legacy
-                  UI into the new shell before the design-system loop is proven.
+                  This page intentionally stops at route and shell proof so the navigation contract can be validated
+                  first in the real consumer.
+                </p>
+              </section>
+            </div>
+          </section>
+
+          <section id="page-tenants" class="page-panel hidden">
+            <div class="page-heading">
+              <div>
+                <div class="eyebrow">Reserved Destination</div>
+                <h1>Tenants</h1>
+                <p class="page-copy">
+                  This placeholder proves that tenant-oriented root functions can be added as first-class shell
+                  sections without inventing one-off local navigation.
+                </p>
+              </div>
+            </div>
+
+            <div class="content-grid">
+              <section class="content-card">
+                <h2>Route Intent</h2>
+                <ul class="content-list">
+                  <li>This section will become the root-admin shell destination for tenant lifecycle and oversight work.</li>
+                  <li>The shell already provides the governed breadcrumb and context-nav orientation for that future workflow.</li>
+                  <li>Adding real tenant pages later should not require new shell chrome or local styling inventions.</li>
+                </ul>
+              </section>
+
+              <section class="content-card">
+                <h2>Current Boundary</h2>
+                <p class="page-copy">
+                  This page exists to prove the route slot and the shell behavior only. No tenant feature UI is being
+                  invented yet.
+                </p>
+              </section>
+            </div>
+          </section>
+
+          <section id="page-tenant-admins" class="page-panel hidden">
+            <div class="page-heading">
+              <div>
+                <div class="eyebrow">Reserved Destination</div>
+                <h1>Tenant Admins</h1>
+                <p class="page-copy">
+                  This placeholder holds the future tenant-admin management route while the shell navigation contract is
+                  proven in the real root-admin consumer.
+                </p>
+              </div>
+            </div>
+
+            <div class="content-grid">
+              <section class="content-card">
+                <h2>Route Intent</h2>
+                <ul class="content-list">
+                  <li>This section will become the root-admin destination for tenant-admin assignment and oversight work.</li>
+                  <li>The section already inherits truthful current-page state in both the sub-nav and context-nav.</li>
+                  <li>The eventual feature loop can focus on the page UI itself rather than re-solving shell navigation.</li>
+                </ul>
+              </section>
+
+              <section class="content-card">
+                <h2>Current Boundary</h2>
+                <p class="page-copy">
+                  This page is intentionally empty beyond route proof so we can validate the shared shell first.
                 </p>
               </section>
             </div>
