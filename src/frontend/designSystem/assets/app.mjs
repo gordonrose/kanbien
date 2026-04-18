@@ -39,6 +39,104 @@ function syncFormPickerOverlayState() {
   delete document.documentElement.dataset.formPickerOverlayOpen;
 }
 
+function closeFormSelectRoot(root) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const trigger = root.querySelector("[data-form-select-button]");
+  const listbox = root.querySelector("[data-form-select-listbox]");
+
+  if (!(trigger instanceof HTMLButtonElement) || !(listbox instanceof HTMLElement)) {
+    return;
+  }
+
+  trigger.setAttribute("aria-expanded", "false");
+  listbox.classList.add("hidden");
+}
+
+function closeFormDrawerSelectRoot(root) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const trigger = root.querySelector("[data-form-drawer-select-button]");
+  const panel = root.querySelector("[data-form-drawer-select-panel]");
+
+  if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+    return;
+  }
+
+  trigger.setAttribute("aria-expanded", "false");
+  panel.classList.add("hidden");
+  panel.setAttribute("aria-hidden", "true");
+  panel.setAttribute("aria-modal", "false");
+}
+
+function closeFormTimePickerRoot(root) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const trigger = root.querySelector("[data-form-time-button]");
+  const panel = root.querySelector("[data-form-time-panel]");
+
+  if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+    return;
+  }
+
+  trigger.setAttribute("aria-expanded", "false");
+  panel.classList.add("hidden");
+}
+
+function closeFormDatePickerRoot(root) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const trigger = root.querySelector("[data-form-date-button]");
+  const panel = root.querySelector("[data-form-date-panel]");
+
+  if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+    return;
+  }
+
+  trigger.setAttribute("aria-expanded", "false");
+  panel.classList.add("hidden");
+}
+
+function closeUnrelatedFormSurfaces({ preservedRoots = [] } = {}) {
+  const preserved = new Set(
+    preservedRoots.filter((root) => root instanceof HTMLElement),
+  );
+
+  for (const root of formSelectRoots) {
+    if (root instanceof HTMLElement && !preserved.has(root)) {
+      closeFormSelectRoot(root);
+    }
+  }
+
+  for (const root of formDrawerSelectRoots) {
+    if (root instanceof HTMLElement && !preserved.has(root)) {
+      closeFormDrawerSelectRoot(root);
+    }
+  }
+
+  for (const root of formTimePickerRoots) {
+    if (root instanceof HTMLElement && !preserved.has(root)) {
+      closeFormTimePickerRoot(root);
+    }
+  }
+
+  for (const root of formDatePickerRoots) {
+    if (root instanceof HTMLElement && !preserved.has(root)) {
+      closeFormDatePickerRoot(root);
+    }
+  }
+
+  syncFormPickerOverlayState();
+}
+
 function normalizePathname(pathname) {
   if (!pathname || pathname === "/") {
     return "/design-system";
@@ -73,68 +171,131 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/canonicals", label: "Canonicals" },
   ]],
   ["/design-system/components/top-nav", [
-    { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/top-nav", label: "Top Nav" },
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/canonicals/top-nav", label: "Top Nav" },
+    { href: "/design-system/components/top-nav", label: "Render" },
   ]],
   ["/design-system/components/sub-nav", [
-    { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/sub-nav", label: "Sub Nav" },
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/canonicals/sub-nav", label: "Sub Nav" },
+    { href: "/design-system/components/sub-nav", label: "Render" },
   ]],
   ["/design-system/components/context-nav", [
-    { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/context-nav", label: "Context Nav" },
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/canonicals/context-nav", label: "Context Nav" },
+    { href: "/design-system/components/context-nav", label: "Render" },
   ]],
   ["/design-system/components/list-record-card", [
-    { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/list-record-card", label: "List Record Card" },
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/canonicals/list-record-card", label: "List Record Card" },
+    { href: "/design-system/components/list-record-card", label: "Render" },
   ]],
   ["/design-system/components/list-detail-panel", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/list-detail-panel", label: "List Detail Panel" },
+    { href: "/design-system/canonicals/list-detail-panel", label: "List Detail Panel" },
+    { href: "/design-system/components/list-detail-panel", label: "Render" },
   ]],
   ["/design-system/components/list-detail-split-layout", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/list-detail-split-layout", label: "List Detail Split Layout" },
+    { href: "/design-system/canonicals/list-detail-split-layout", label: "List Detail Split Layout" },
+    { href: "/design-system/components/list-detail-split-layout", label: "Render" },
+  ]],
+  ["/design-system/components/simple-select", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals/simple-select", label: "Simple Select" },
+    { href: "/design-system/components/simple-select", label: "Render" },
+  ]],
+  ["/design-system/components/date-picker", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals/date-picker", label: "Date Picker" },
+    { href: "/design-system/components/date-picker", label: "Render" },
+  ]],
+  ["/design-system/components/time-picker", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals/time-picker", label: "Time Picker" },
+    { href: "/design-system/components/time-picker", label: "Render" },
   ]],
   ["/design-system/canonicals/top-nav", [
-    { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/top-nav", label: "Top Nav" },
-    { href: "/design-system/canonicals/top-nav", label: "Canonicals" },
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/top-nav", label: "Top Nav" },
   ]],
   ["/design-system/canonicals/sub-nav", [
-    { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/sub-nav", label: "Sub Nav" },
-    { href: "/design-system/canonicals/sub-nav", label: "Canonicals" },
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/sub-nav", label: "Sub Nav" },
   ]],
   ["/design-system/canonicals/context-nav", [
     { href: "/design-system/patterns", label: "Home" },
-    { href: "/design-system/patterns/context-nav", label: "Context Nav" },
-    { href: "/design-system/canonicals/context-nav", label: "Canonicals" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/context-nav", label: "Context Nav" },
   ]],
   ["/design-system/canonicals/context-nav-drawer", [
     { href: "/design-system/patterns", label: "Home" },
-    { href: "/design-system/patterns/drawer", label: "Drawer" },
-    { href: "/design-system/canonicals/context-nav-drawer", label: "Canonicals" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/context-nav-drawer", label: "Context-Nav Drawer" },
   ]],
   ["/design-system/canonicals/display-settings", [
     { href: "/design-system/patterns", label: "Home" },
-    { href: "/design-system/patterns/display-settings", label: "Display Settings" },
-    { href: "/design-system/canonicals/display-settings", label: "Canonicals" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/display-settings", label: "Display Settings" },
   ]],
   ["/design-system/canonicals/list-record-card", [
-    { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/list-record-card", label: "List Record Card" },
-    { href: "/design-system/canonicals/list-record-card", label: "Canonicals" },
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/list-record-card", label: "List Record Card" },
   ]],
   ["/design-system/canonicals/list-detail-panel", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/list-detail-panel", label: "List Detail Panel" },
-    { href: "/design-system/canonicals/list-detail-panel", label: "Canonicals" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/list-detail-panel", label: "List Detail Panel" },
   ]],
   ["/design-system/canonicals/list-detail-split-layout", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/components/list-detail-split-layout", label: "List Detail Split Layout" },
-    { href: "/design-system/canonicals/list-detail-split-layout", label: "Canonicals" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/list-detail-split-layout", label: "List Detail Split Layout" },
+  ]],
+  ["/design-system/canonicals/form-template", [
+    { href: "/design-system/templates", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/form-template", label: "Form Template" },
+  ]],
+  ["/design-system/canonicals/simple-select", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/simple-select", label: "Simple Select" },
+  ]],
+  ["/design-system/canonicals/time-picker", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/time-picker", label: "Time Picker" },
+  ]],
+  ["/design-system/canonicals/date-picker", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/date-picker", label: "Date Picker" },
+  ]],
+  ["/design-system/canonicals/drawer-select", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/drawer-select", label: "Drawer Select" },
+  ]],
+  ["/design-system/canonicals/choice-group", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/choice-group", label: "Choice Group" },
+  ]],
+  ["/design-system/components/drawer-select", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/drawer-select", label: "Drawer Select" },
+    { href: "/design-system/components/drawer-select", label: "Canonical Render" },
+  ]],
+  ["/design-system/components/choice-group", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/choice-group", label: "Choice Group" },
+    { href: "/design-system/components/choice-group", label: "Canonical Render" },
   ]],
   ["/design-system/exploration/top-nav", [
     { href: "/design-system/components", label: "Home" },
@@ -202,6 +363,10 @@ const designSystemBreadcrumbChains = new Map([
   ["/design-system/templates/table-page", [
     { href: "/design-system/templates", label: "Home" },
     { href: "/design-system/templates/table-page", label: "Table Page" },
+  ]],
+  ["/design-system/templates/form", [
+    { href: "/design-system/templates", label: "Home" },
+    { href: "/design-system/templates/form", label: "Form" },
   ]],
 ]);
 
@@ -433,8 +598,22 @@ function normalizeDesignSystemShellBeforeBinding() {
     return;
   }
 
-  const chain = resolveBreadcrumbChain(window.location.pathname);
+  const normalizedPath = normalizePathname(window.location.pathname);
+  const chain = resolveBreadcrumbChain(normalizedPath);
   breadcrumbNav.innerHTML = buildBreadcrumbMarkup(chain);
+
+  const preserveCanonicalFullTrail =
+    normalizedPath.startsWith("/design-system/canonicals/")
+    || (
+      normalizedPath.startsWith("/design-system/components/")
+      && normalizedPath !== "/design-system/components"
+    );
+
+  if (preserveCanonicalFullTrail) {
+    breadcrumbNav.dataset.canonicalShellMode = "full-trail";
+  } else {
+    delete breadcrumbNav.dataset.canonicalShellMode;
+  }
 }
 
 normalizeDesignSystemShellBeforeBinding();
@@ -1058,8 +1237,20 @@ const subNavCanonicalReferenceStates = [
 ];
 
 if (breadcrumbPageMinusOneLink) {
-  breadcrumbPageMinusOneLink.dataset.fullLabel = breadcrumbPageMinusOneLink.textContent?.trim() ?? "Page -1";
-  breadcrumbPageMinusOneLink.dataset.shortLabel = "Previous";
+  const fullLabel = breadcrumbPageMinusOneLink.textContent?.trim() ?? "Page -1";
+  const normalizedPath = normalizePathname(window.location.pathname);
+  const preserveCanonicalBreadcrumbLabel =
+    normalizedPath === "/design-system/canonicals"
+    || normalizedPath.startsWith("/design-system/canonicals/")
+    || (
+      normalizedPath.startsWith("/design-system/components/")
+      && normalizedPath !== "/design-system/components"
+    );
+
+  breadcrumbPageMinusOneLink.dataset.fullLabel = fullLabel;
+  breadcrumbPageMinusOneLink.dataset.shortLabel = preserveCanonicalBreadcrumbLabel
+    ? fullLabel
+    : "Previous";
 }
 
 function clampNumber(value, min, max, fallback) {
@@ -3234,10 +3425,10 @@ function applyResponsiveBreadcrumbPriority({
     );
 
   if (preserveCanonicalFullTrail) {
-    setBreadcrumbItemHidden(pageMinusOneItem, false);
-    setBreadcrumbItemHidden(separatorBeforePageMinusOne, false);
-    setBreadcrumbItemHidden(collapsedItem, false);
-    setBreadcrumbItemHidden(separatorBeforeCollapsed, false);
+    setBreadcrumbItemHidden(pageMinusOneItem, !allowPageMinusOne);
+    setBreadcrumbItemHidden(separatorBeforePageMinusOne, !allowPageMinusOne);
+    setBreadcrumbItemHidden(collapsedItem, !allowCollapsed);
+    setBreadcrumbItemHidden(separatorBeforeCollapsed, !allowCollapsed);
     compact?.classList.add("hidden");
     syncBreadcrumbCompactLayout(compact);
     list.classList.remove("hidden");
@@ -3577,6 +3768,30 @@ function initializeFormSelects() {
 
   let activeFormSelect = null;
 
+  function getFormSelectOptions(root) {
+    if (!(root instanceof HTMLElement)) {
+      return [];
+    }
+
+    return Array.from(root.querySelectorAll("[data-form-select-option]")).filter((option) =>
+      option instanceof HTMLButtonElement
+    );
+  }
+
+  function focusFormSelectOption(root, { preferLast = false } = {}) {
+    const options = getFormSelectOptions(root);
+
+    if (options.length === 0) {
+      return;
+    }
+
+    const selectedOption = options.find((option) => option.getAttribute("aria-selected") === "true");
+    const fallbackOption = preferLast ? options.at(-1) : options[0];
+    const targetOption = selectedOption ?? fallbackOption;
+
+    targetOption?.focus();
+  }
+
   function closeFormSelect(root, { restoreFocus = false } = {}) {
     if (!(root instanceof HTMLElement)) {
       return;
@@ -3601,14 +3816,12 @@ function initializeFormSelects() {
     }
   }
 
-  function openFormSelect(root) {
+  function openFormSelect(root, { focusOption = true, preferLastOption = false } = {}) {
     if (!(root instanceof HTMLElement)) {
       return;
     }
 
-    if (activeFormSelect && activeFormSelect !== root) {
-      closeFormSelect(activeFormSelect);
-    }
+    closeUnrelatedFormSurfaces({ preservedRoots: [root] });
 
     const trigger = root.querySelector("[data-form-select-button]");
     const listbox = root.querySelector("[data-form-select-listbox]");
@@ -3620,6 +3833,10 @@ function initializeFormSelects() {
     trigger.setAttribute("aria-expanded", "true");
     listbox.classList.remove("hidden");
     activeFormSelect = root;
+
+    if (focusOption) {
+      focusFormSelectOption(root, { preferLast: preferLastOption });
+    }
   }
 
   for (const root of formSelectRoots) {
@@ -3651,6 +3868,24 @@ function initializeFormSelects() {
       openFormSelect(root);
     });
 
+    trigger.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowDown" && event.key !== "ArrowUp") {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (trigger.getAttribute("aria-expanded") !== "true") {
+        openFormSelect(root, {
+          focusOption: true,
+          preferLastOption: event.key === "ArrowUp",
+        });
+        return;
+      }
+
+      focusFormSelectOption(root, { preferLast: event.key === "ArrowUp" });
+    });
+
     for (const option of options) {
       if (!(option instanceof HTMLButtonElement)) {
         continue;
@@ -3672,6 +3907,25 @@ function initializeFormSelects() {
 
         root.closest("[data-form-date-picker]")?.dispatchEvent(new CustomEvent("formselectchange", { bubbles: true }));
         closeFormSelect(root, { restoreFocus: true });
+      });
+
+      option.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowDown" && event.key !== "ArrowUp") {
+          return;
+        }
+
+        event.preventDefault();
+
+        const optionIndex = options.indexOf(option);
+        if (optionIndex === -1) {
+          return;
+        }
+
+        const nextIndex = event.key === "ArrowDown"
+          ? Math.min(optionIndex + 1, options.length - 1)
+          : Math.max(optionIndex - 1, 0);
+
+        options[nextIndex]?.focus();
       });
     }
   }
@@ -3744,6 +3998,19 @@ function initializeFormDrawerSelects() {
     });
   }
 
+  function resetDrawerSearch(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const searchInput = root.querySelector("[data-form-drawer-select-search]");
+    if (searchInput instanceof HTMLInputElement && searchInput.value !== "") {
+      searchInput.value = "";
+    }
+
+    renderDrawer(root);
+  }
+
   function closeDrawer(root, { restoreFocus = false } = {}) {
     if (!(root instanceof HTMLElement)) {
       return;
@@ -3775,9 +4042,8 @@ function initializeFormDrawerSelects() {
       return;
     }
 
-    if (activeFormDrawerSelect && activeFormDrawerSelect !== root) {
-      closeDrawer(activeFormDrawerSelect);
-    }
+    closeUnrelatedFormSurfaces({ preservedRoots: [root] });
+    resetDrawerSearch(root);
 
     const trigger = root.querySelector("[data-form-drawer-select-button]");
     const panel = root.querySelector("[data-form-drawer-select-panel]");
@@ -3815,6 +4081,7 @@ function initializeFormDrawerSelects() {
     const searchInput = root.querySelector("[data-form-drawer-select-search]");
     const emptyNode = root.querySelector("[data-form-drawer-select-empty]");
     const variant = root.dataset.formDrawerSelectVariant ?? "default";
+    const emptySummary = root.dataset.formDrawerSelectEmptySummary ?? "Choose collections";
 
     if (
       !(hiddenInput instanceof HTMLInputElement)
@@ -3840,7 +4107,7 @@ function initializeFormDrawerSelects() {
     const searchTerm = searchInput instanceof HTMLInputElement ? searchInput.value.trim().toLowerCase() : "";
 
     summaryNode.textContent = selectedRecords.length === 0
-      ? "Choose collections"
+      ? emptySummary
       : selectedRecords.length <= 2
         ? selectedRecords.map((item) => item.label).join(", ")
         : `${selectedRecords.slice(0, 2).map((item) => item.label).join(", ")} +${selectedRecords.length - 2} more`;
@@ -4058,9 +4325,10 @@ function initializeFormTimePickers() {
       return;
     }
 
-    if (activeFormTimePicker && activeFormTimePicker !== root) {
-      closeTimePicker(activeFormTimePicker);
-    }
+    const parentDatePicker = root.closest("[data-form-date-picker]");
+    closeUnrelatedFormSurfaces({
+      preservedRoots: parentDatePicker instanceof HTMLElement ? [root, parentDatePicker] : [root],
+    });
 
     const trigger = root.querySelector("[data-form-time-button]");
     const panel = root.querySelector("[data-form-time-panel]");
@@ -4529,9 +4797,7 @@ function initializeFormDatePickers() {
       return;
     }
 
-    if (activeFormDatePicker && activeFormDatePicker !== root) {
-      closeDatePicker(activeFormDatePicker);
-    }
+    closeUnrelatedFormSurfaces({ preservedRoots: [root] });
 
     const trigger = root.querySelector("[data-form-date-button]");
     const panel = root.querySelector("[data-form-date-panel]");

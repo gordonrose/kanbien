@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Drawer Select Canonical</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-drawer-select-surface="canonical" data-render-status="settling">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
+            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Templates</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">DS</span>
+            <span class="profile-meta"><strong>Drawer Select</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/components">Components</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonicals/drawer-select">Drawer Select</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Canonical Render</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search drawer-select canonical refs" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Drawer-select family navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/canonicals/drawer-select" data-tooltip="Canonicals" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v14H8l-4 3V5Zm4 4h8v2H8Zm0 4h8v2H8Z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main canonical-render-page">
+        <div id="drawer-select-render-layout" class="canonical-render-layout">
+          <section class="canonical-render-intro">
+            <p class="top-nav-preview-eyebrow">Canonical Render</p>
+            <h1>Drawer Select</h1>
+            <p class="canonical-launcher-copy">
+              This route is the dedicated canonical render surface for `Drawer Select`. Use the
+              <a href="/design-system/canonicals/drawer-select">canonical launcher</a> for ref selection and keep this
+              page for focused review of one child-seam state at a time.
+            </p>
+            <dl class="canonical-render-meta" aria-label="Canonical metadata">
+              <div class="canonical-render-meta-row">
+                <dt>Matched canonical</dt>
+                <dd id="drawer-select-canonical-match-list">Resolving canonical reference...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewing circumstances</dt>
+                <dd id="drawer-select-canonical-circumstances">Loading width, direction, and magnification...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Child state</dt>
+                <dd id="drawer-select-meta-state">Loading drawer-select state...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewport contract</dt>
+                <dd id="drawer-select-meta-viewport">Loading viewport contract...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Review note</dt>
+                <dd id="drawer-select-meta-notes">Loading review note...</dd>
+              </div>
+            </dl>
+            <div class="canonical-render-footer">
+              <nav class="canonical-stepper" aria-label="Canonical navigation">
+                <span id="drawer-select-canonical-current" class="canonical-stepper-current">Resolving current canonical...</span>
+                <a id="drawer-select-canonical-prev" class="canonical-stepper-link" href="#" aria-disabled="true">Previous</a>
+                <a id="drawer-select-canonical-next" class="canonical-stepper-link" href="#" aria-disabled="true">Next</a>
+              </nav>
+            </div>
+          </section>
+
+          <section class="top-nav-preview-stage-section" aria-labelledby="drawer-select-stage-title">
+            <div class="top-nav-preview-stage-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Canonical Surface</p>
+                <h2 id="drawer-select-stage-title">Drawer Select Canonical State</h2>
+              </div>
+              <p id="drawer-select-preview-summary" class="top-nav-preview-stage-note">
+                Canonical state loading from the URL.
+              </p>
+            </div>
+
+            <div id="drawer-select-preview-frame" class="canonical-render-frame">
+              <div
+                id="drawer-select-preview-shell"
+                class="form-page-shell"
+                data-form-error-mode="false"
+                data-form-disabled-mode="false"
+                data-form-mobile-view="false"
+                data-render-status="settling"
+              >
+                <section class="form-page-card" aria-labelledby="drawer-select-preview-card-title">
+                  <div class="form-page-section-header">
+                    <div>
+                      <p class="top-nav-preview-eyebrow">Parent Framing</p>
+                      <h3 id="drawer-select-preview-card-title" class="form-page-section-title">Drawer Select Hosted Field</h3>
+                    </div>
+                    <p class="form-page-section-copy">
+                      This render keeps parent-owned label, helper text, and field rhythm visible while isolating the
+                      `Drawer Select` child seam for direct review.
+                    </p>
+                  </div>
+
+                  <div class="form-page-grid">
+                    <div id="drawer-select-collections-field" class="form-field form-field-span-2 hidden" data-drawer-select-canonical-field="collections">
+                      <span class="form-field-label" id="drawer-select-collections-label">Drawer select</span>
+                      <div class="form-drawer-select" data-form-drawer-select data-form-drawer-select-canonical-fixture="collections" data-form-drawer-select-empty-summary="Choose collections">
+                        <input
+                          type="hidden"
+                          name="workspaceCollections"
+                          value="ops-core,customer-success,renewals-watch"
+                          data-form-drawer-select-value
+                        />
+                        <button
+                          class="form-drawer-select-trigger"
+                          type="button"
+                          id="drawer-select-collections-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="drawer-select-collections-label drawer-select-collections-trigger"
+                          data-form-drawer-select-button
+                        >
+                          <span class="form-drawer-select-trigger-copy">
+                            <span class="form-drawer-select-trigger-label" data-form-drawer-select-summary>Ops Core, Customer Success +1 more</span>
+                            <span class="form-drawer-select-trigger-meta" data-form-drawer-select-meta>3 selected</span>
+                          </span>
+                          <span class="form-drawer-select-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </span>
+                        </button>
+
+                        <aside
+                          class="form-drawer-select-panel hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="drawer-select-collections-drawer-title"
+                          aria-hidden="true"
+                          data-form-drawer-select-panel
+                        >
+                          <div class="side-panel-header">
+                            <div>
+                              <p class="drawer-eyebrow">Collection picker</p>
+                              <h2 id="drawer-select-collections-drawer-title">Choose workspace collections</h2>
+                            </div>
+                            <button
+                              class="icon-button"
+                              type="button"
+                              aria-label="Close workspace collection drawer"
+                              data-form-drawer-select-close
+                            >
+                              <span class="icon-button-glyph" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                  <path d="M6 6l12 12M18 6L6 18" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+
+                          <form class="search-shell form-drawer-select-search-shell" role="search">
+                            <label class="search-shell-field">
+                              <input
+                                class="search-input"
+                                type="search"
+                                placeholder="Search collections"
+                                autocomplete="off"
+                                data-form-drawer-select-search
+                              />
+                            </label>
+                          </form>
+
+                          <section class="form-drawer-select-selected-panel" aria-labelledby="drawer-select-collections-selected-title">
+                            <div class="form-drawer-select-selected-header">
+                              <div>
+                                <h3 id="drawer-select-collections-selected-title" class="form-drawer-select-selected-title">Selected</h3>
+                              </div>
+                              <span class="form-drawer-select-selected-count" data-form-drawer-select-selected-count>3 selected</span>
+                            </div>
+                            <p class="form-drawer-select-selected-empty hidden" data-form-drawer-select-selected-empty>No collections selected yet.</p>
+                            <div class="form-drawer-select-selected-list" data-form-drawer-select-selected-list></div>
+                          </section>
+
+                          <section class="form-drawer-select-catalog" aria-labelledby="drawer-select-collections-catalog-title">
+                            <div class="form-drawer-select-catalog-header">
+                              <h3 id="drawer-select-collections-catalog-title" class="form-drawer-select-selected-title">Available</h3>
+                            </div>
+                            <p class="form-drawer-select-empty hidden" data-form-drawer-select-empty>No collections match this search.</p>
+                            <div class="form-drawer-select-option-list" data-form-drawer-select-option-list>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="ops-core" data-label="Ops Core" data-description="Primary internal operating cohort for launch coordination.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Ops Core</strong>
+                                  <span>Primary internal operating cohort for launch coordination.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="finance-admins" data-label="Finance Admins" data-description="Billing owners and finance reviewers for customer-impacting changes.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Finance Admins</strong>
+                                  <span>Billing owners and finance reviewers for customer-impacting changes.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="customer-success" data-label="Customer Success" data-description="Account-facing operators who need launch timing and playbook visibility.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Customer Success</strong>
+                                  <span>Account-facing operators who need launch timing and playbook visibility.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="product-leads" data-label="Product Leads" data-description="Feature owners responsible for rollout narrative and follow-up signals.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Product Leads</strong>
+                                  <span>Feature owners responsible for rollout narrative and follow-up signals.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="risk-review" data-label="Risk Review" data-description="Compliance and escalation partners for sensitive tenant communications.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Risk Review</strong>
+                                  <span>Compliance and escalation partners for sensitive tenant communications.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="renewals-watch" data-label="Renewals Watch" data-description="Customer health and renewal monitoring cohort for near-term accounts.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Renewals Watch</strong>
+                                  <span>Customer health and renewal monitoring cohort for near-term accounts.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="trial-conversion" data-label="Trial Conversion" data-description="Lifecycle programs focused on first-value and conversion nudges.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Trial Conversion</strong>
+                                  <span>Lifecycle programs focused on first-value and conversion nudges.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="support-escalations" data-label="Support Escalations" data-description="Support leaders who need visibility into customer-facing launch exceptions.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Support Escalations</strong>
+                                  <span>Support leaders who need visibility into customer-facing launch exceptions.</span>
+                                </span>
+                              </button>
+                            </div>
+                          </section>
+                        </aside>
+                      </div>
+                      <span class="form-field-help">Use the drawer variant when people need to search, scan, and adjust a large selectable set without losing sight of what is already chosen.</span>
+                      <span class="form-field-error">Select at least one workspace collection.</span>
+                    </div>
+
+                    <div id="drawer-select-segments-field" class="form-field form-field-span-2 hidden" data-drawer-select-canonical-field="segments">
+                      <span class="form-field-label" id="drawer-select-segments-label">Drawer select simple</span>
+                      <div class="form-drawer-select form-drawer-select-attribute-cards" data-form-drawer-select data-form-drawer-select-canonical-fixture="segments" data-form-drawer-select-empty-summary="Choose segments" data-form-drawer-select-variant="attribute-cards">
+                        <input
+                          type="hidden"
+                          name="tenantSegments"
+                          value="new-admins,at-risk-renewals"
+                          data-form-drawer-select-value
+                        />
+                        <button
+                          class="form-drawer-select-trigger"
+                          type="button"
+                          id="drawer-select-segments-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="drawer-select-segments-label drawer-select-segments-trigger"
+                          data-form-drawer-select-button
+                        >
+                          <span class="form-drawer-select-trigger-copy">
+                            <span class="form-drawer-select-trigger-label" data-form-drawer-select-summary>New Admins, At-Risk Renewals</span>
+                            <span class="form-drawer-select-trigger-meta" data-form-drawer-select-meta>2 selected</span>
+                          </span>
+                          <span class="form-drawer-select-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </span>
+                        </button>
+
+                        <aside
+                          class="form-drawer-select-panel hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="drawer-select-segments-drawer-title"
+                          aria-hidden="true"
+                          data-form-drawer-select-panel
+                        >
+                          <div class="side-panel-header">
+                            <div>
+                              <p class="drawer-eyebrow">Segment picker</p>
+                              <h2 id="drawer-select-segments-drawer-title">Choose tenant segments</h2>
+                            </div>
+                            <button
+                              class="icon-button"
+                              type="button"
+                              aria-label="Close tenant segment drawer"
+                              data-form-drawer-select-close
+                            >
+                              <span class="icon-button-glyph" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                  <path d="M6 6l12 12M18 6L6 18" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+
+                          <form class="search-shell form-drawer-select-search-shell" role="search">
+                            <label class="search-shell-field">
+                              <input
+                                class="search-input"
+                                type="search"
+                                placeholder="Search segments"
+                                autocomplete="off"
+                                data-form-drawer-select-search
+                              />
+                            </label>
+                          </form>
+
+                          <section class="form-drawer-select-selected-panel" aria-labelledby="drawer-select-segments-selected-title">
+                            <div class="form-drawer-select-selected-header">
+                              <div>
+                                <h3 id="drawer-select-segments-selected-title" class="form-drawer-select-selected-title">Selected</h3>
+                              </div>
+                              <span class="form-drawer-select-selected-count" data-form-drawer-select-selected-count>2 selected</span>
+                            </div>
+                            <p class="form-drawer-select-selected-empty hidden" data-form-drawer-select-selected-empty>No segments selected yet.</p>
+                            <div class="form-drawer-select-selected-list" data-form-drawer-select-selected-list></div>
+                          </section>
+
+                          <section class="form-drawer-select-catalog" aria-labelledby="drawer-select-segments-catalog-title">
+                            <div class="form-drawer-select-catalog-header">
+                              <h3 id="drawer-select-segments-catalog-title" class="form-drawer-select-selected-title">Available</h3>
+                            </div>
+                            <p class="form-drawer-select-empty hidden" data-form-drawer-select-empty>No segments match this search.</p>
+                            <div class="form-drawer-select-option-list" data-form-drawer-select-option-list>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="enterprise-expansion" data-label="Enterprise Expansion" data-description="42 tenants" data-attribute="42 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Enterprise Expansion</strong>
+                                  <span>42 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="new-admins" data-label="New Admins" data-description="31 tenants" data-attribute="31 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>New Admins</strong>
+                                  <span>31 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="inactive-owners" data-label="Inactive Owners" data-description="18 tenants" data-attribute="18 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Inactive Owners</strong>
+                                  <span>18 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="at-risk-renewals" data-label="At-Risk Renewals" data-description="9 tenants" data-attribute="9 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>At-Risk Renewals</strong>
+                                  <span>9 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="high-growth-trials" data-label="High-Growth Trials" data-description="24 tenants" data-attribute="24 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>High-Growth Trials</strong>
+                                  <span>24 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="support-heavy" data-label="Support-Heavy Accounts" data-description="13 tenants" data-attribute="13 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Support-Heavy Accounts</strong>
+                                  <span>13 tenants</span>
+                                </span>
+                              </button>
+                            </div>
+                          </section>
+                        </aside>
+                      </div>
+                      <span class="form-field-help">This variant keeps each selectable card to one compact attribute line when density matters more than a full explanatory sentence.</span>
+                      <span class="form-field-error">Select at least one tenant segment.</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/drawerSelectCanonical.mjs"></script>
+  </body>
+</html>

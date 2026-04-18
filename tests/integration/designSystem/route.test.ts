@@ -108,6 +108,7 @@ describe("design system route", () => {
     expect(response.text).toContain("/design-system/canonicals/top-nav");
     expect(response.text).toContain("/design-system/canonicals/context-nav");
     expect(response.text).toContain("/design-system/canonicals/context-nav-drawer");
+    expect(response.text).toContain("/design-system/canonicals/time-picker");
   });
 
   it("serves the top-nav canonical launcher page for signed-off states", async () => {
@@ -130,6 +131,54 @@ describe("design system route", () => {
     expect(response.text).toContain("canonical-launcher-button-priority");
     expect(response.text).toContain("TRP-001");
     expect(response.text).toContain("/design-system/components/top-nav?width=1120&fixture=standard&open=closed");
+  });
+
+  it("serves the time-picker canonical launcher page for child seam states", async () => {
+    const response = await request(createApp()).get("/design-system/canonicals/time-picker").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("Time Picker Canonicals");
+    expect(response.text).toContain("breadcrumb-list");
+    expect(response.text).toContain(">Canonicals<");
+    expect(response.text).toContain(">Time Picker<");
+    expect(response.text).toContain("context-nav");
+    expect(response.text).toContain(">Canonicals<");
+    expect(response.text).toContain("TPR-002");
+    expect(response.text).toContain("canonical-launcher-button-priority");
+    expect(response.text).toContain("/design-system/components/time-picker?ref=TPR-006&width=390&state=mobile-open&theme=normal&dir=ltr&zoom=0");
+  });
+
+  it("serves the date-picker canonical launcher page with dedicated child render links", async () => {
+    const response = await request(createApp()).get("/design-system/canonicals/date-picker").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("Date Picker Canonicals");
+    expect(response.text).toContain("breadcrumb-list");
+    expect(response.text).toContain("href=\"/design-system/components\">Home<");
+    expect(response.text).toContain(">Canonicals<");
+    expect(response.text).toContain(">Date Picker<");
+    expect(response.text).toContain("context-nav");
+    expect(response.text).toContain("DTPR-004");
+    expect(response.text).toContain("canonical-launcher-button-priority");
+    expect(response.text).toContain("/design-system/components/date-picker?ref=DTPR-007&width=430&state=range-mobile-open&theme=normal&dir=ltr&zoom=0");
+    expect(response.text).not.toContain("/design-system/templates/form?ref=DTPR-");
+  });
+
+  it("serves the dedicated date-picker canonical render page", async () => {
+    const response = await request(createApp())
+      .get("/design-system/components/date-picker?ref=DTPR-001&width=520&state=single-open&theme=normal&dir=ltr&zoom=0")
+      .set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("Canonical Render");
+    expect(response.text).toContain("date-picker-canonical-match-list");
+    expect(response.text).toContain("date-picker-preview-frame");
+    expect(response.text).toContain("Date Picker Hosted Field");
+    expect(response.text).toContain("href=\"/design-system/canonicals/date-picker\"");
+    expect(response.text).toContain("data-date-picker-surface=\"canonical\"");
   });
 
   it("serves the public design-system components index page", async () => {

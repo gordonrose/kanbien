@@ -7,6 +7,8 @@ const canonicalShellRoutes = [
     current: "Canonicals",
     expectCanonicalLink: false,
     homeHref: "/design-system",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
   },
   {
     label: "top-nav canonical launcher",
@@ -14,6 +16,8 @@ const canonicalShellRoutes = [
     current: "Top Nav",
     expectCanonicalLink: true,
     homeHref: "/design-system/components",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
   },
   {
     label: "sub-nav canonical launcher",
@@ -21,6 +25,8 @@ const canonicalShellRoutes = [
     current: "Sub Nav",
     expectCanonicalLink: true,
     homeHref: "/design-system/components",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
   },
   {
     label: "context-nav canonical launcher",
@@ -28,6 +34,8 @@ const canonicalShellRoutes = [
     current: "Context Nav",
     expectCanonicalLink: true,
     homeHref: "/design-system/patterns",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
   },
   {
     label: "list-record-card canonical launcher",
@@ -35,6 +43,54 @@ const canonicalShellRoutes = [
     current: "List Record Card",
     expectCanonicalLink: true,
     homeHref: "/design-system/components",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
+  },
+  {
+    label: "simple-select canonical launcher",
+    route: "/design-system/canonicals/simple-select",
+    current: "Simple Select",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    expectCollapsedHidden: true,
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
+  },
+  {
+    label: "time-picker canonical launcher",
+    route: "/design-system/canonicals/time-picker",
+    current: "Time Picker",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
+  },
+  {
+    label: "date-picker canonical launcher",
+    route: "/design-system/canonicals/date-picker",
+    current: "Date Picker",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
+  },
+  {
+    label: "drawer-select canonical launcher",
+    route: "/design-system/canonicals/drawer-select",
+    current: "Drawer Select",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
+  },
+  {
+    label: "choice-group canonical launcher",
+    route: "/design-system/canonicals/choice-group",
+    current: "Choice Group",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
   },
   {
     label: "top-nav canonical render",
@@ -44,6 +100,8 @@ const canonicalShellRoutes = [
     expectCanonicalLink: true,
     previewPagesSelector: "#top-nav-preview-frame .primary-nav-links",
     homeHref: "/design-system/components",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
   },
   {
     label: "sub-nav canonical render",
@@ -52,6 +110,8 @@ const canonicalShellRoutes = [
     current: "Sub Nav",
     expectCanonicalLink: true,
     homeHref: "/design-system/components",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
   },
   {
     label: "context-nav canonical render",
@@ -61,6 +121,8 @@ const canonicalShellRoutes = [
     expectCanonicalLink: true,
     previewPagesSelector: "#context-nav-shell-primary-nav-links",
     homeHref: "/design-system/components",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
   },
   {
     label: "list-record-card canonical render",
@@ -68,6 +130,54 @@ const canonicalShellRoutes = [
     current: "List Record Card",
     expectCanonicalLink: true,
     homeHref: "/design-system/components",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
+  },
+  {
+    label: "simple-select canonical render",
+    route: "/design-system/components/simple-select?ref=SSR-001&width=420&state=baseline&theme=normal&dir=ltr&zoom=0",
+    current: "Simple Select",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    expectCollapsedHidden: true,
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
+  },
+  {
+    label: "time-picker canonical render",
+    route: "/design-system/components/time-picker?ref=TPR-001&width=420&state=baseline&theme=normal&dir=ltr&zoom=0",
+    current: "Time Picker",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
+  },
+  {
+    label: "date-picker canonical render",
+    route: "/design-system/components/date-picker?ref=DTPR-001&width=520&state=single-open&theme=normal&dir=ltr&zoom=0",
+    current: "Date Picker",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
+  },
+  {
+    label: "drawer-select canonical render",
+    route: "/design-system/components/drawer-select?ref=DSR-001&width=940&state=collections-resting&theme=normal&dir=ltr&zoom=0",
+    current: "Drawer Select",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
+  },
+  {
+    label: "choice-group canonical render",
+    route: "/design-system/components/choice-group?ref=CGR-001&width=520&state=radio-baseline&theme=normal&dir=ltr&zoom=0",
+    current: "Choice Group",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
   },
 ] as const;
 
@@ -81,8 +191,8 @@ test.describe("design-system canonical shell navigation", () => {
       await gotoRoute(page, scenario.route);
 
       const activePrimaryLink = page.locator(".design-system-shell > .top-nav .primary-nav .nav-link.active");
-      await expect(activePrimaryLink).toHaveText("Patterns");
-      await expect(activePrimaryLink).toHaveAttribute("href", "/design-system/patterns");
+      await expect(activePrimaryLink).toHaveText(scenario.activePrimary);
+      await expect(activePrimaryLink).toHaveAttribute("href", scenario.activePrimaryHref);
       await expect(
         page.locator(".design-system-shell > .top-nav .primary-nav").getByRole("link", { name: "Templates" }),
       ).toHaveAttribute("href", "/design-system/templates");
@@ -97,6 +207,11 @@ test.describe("design-system canonical shell navigation", () => {
       await expect(breadcrumb.getByRole("link", { name: "Home" })).toHaveAttribute("href", scenario.homeHref);
 
       await expect(breadcrumb.getByText(scenario.current, { exact: true })).toBeVisible();
+
+      if ("expectCollapsedHidden" in scenario && scenario.expectCollapsedHidden) {
+        await expect(breadcrumb.locator("#breadcrumb-collapsed-item")).toHaveClass(/hidden/);
+        await expect(breadcrumb.locator("#breadcrumb-separator-before-collapsed")).toHaveClass(/hidden/);
+      }
 
       if ("previewPagesSelector" in scenario && scenario.previewPagesSelector) {
         await expect(

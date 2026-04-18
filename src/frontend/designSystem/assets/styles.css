@@ -211,7 +211,7 @@ button {
 
 .top-nav-preview-intro h1,
 .top-nav-preview-controls h2,
-.top-nav-preview-stage-section h2,
+.top-nav-preview-stage-header h2,
 .top-nav-preview-body-card h3 {
   margin: 0;
   color: var(--ink);
@@ -1251,7 +1251,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--surface-1) 90%, white);
   color: var(--ink);
-  text-align: left;
+  text-align: start;
 }
 
 .form-select-trigger[aria-expanded="true"] {
@@ -1280,8 +1280,9 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 .form-select-menu {
   position: absolute;
   top: calc(100% + 0.4rem);
-  left: 0;
-  right: 0;
+  left: auto;
+  right: auto;
+  inset-inline: 0;
   z-index: 4;
   display: grid;
   gap: 0.35rem;
@@ -1316,7 +1317,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--ink);
-  text-align: left;
+  text-align: start;
 }
 
 .form-select-option:hover,
@@ -1349,7 +1350,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--surface-1) 90%, white);
   color: var(--ink);
-  text-align: left;
+  text-align: start;
 }
 
 .form-drawer-select-trigger[aria-expanded="true"] {
@@ -1479,7 +1480,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--accent-soft) 72%, var(--surface-1));
   color: var(--accent-text);
-  text-align: left;
+  text-align: start;
 }
 
 .form-drawer-select-selected-chip-copy {
@@ -1519,7 +1520,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   border-radius: var(--radius-sm);
   background: var(--surface-1);
   color: var(--ink);
-  text-align: left;
+  text-align: start;
 }
 
 .form-drawer-select-option:hover,
@@ -1601,6 +1602,33 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   line-height: 1.35;
 }
 
+html[data-theme="dark"] .form-drawer-select-attribute-cards .form-drawer-select-selected-chip,
+[data-theme-scope="dark"] .form-drawer-select-attribute-cards .form-drawer-select-selected-chip,
+html[data-theme="dark"] .form-drawer-select-attribute-cards .form-drawer-select-option.active,
+[data-theme-scope="dark"] .form-drawer-select-attribute-cards .form-drawer-select-option.active {
+  border-color: rgba(214, 219, 255, 0.34);
+  background: color-mix(in srgb, var(--accent-soft) 84%, white);
+  color: var(--accent-text);
+}
+
+html[data-theme="dark"] .form-drawer-select-attribute-cards .form-drawer-select-selected-chip-copy strong,
+[data-theme-scope="dark"] .form-drawer-select-attribute-cards .form-drawer-select-selected-chip-copy strong,
+html[data-theme="dark"] .form-drawer-select-attribute-cards .form-drawer-select-selected-chip-remove,
+[data-theme-scope="dark"] .form-drawer-select-attribute-cards .form-drawer-select-selected-chip-remove,
+html[data-theme="dark"] .form-drawer-select-attribute-cards .form-drawer-select-option.active .form-drawer-select-option-copy strong,
+[data-theme-scope="dark"] .form-drawer-select-attribute-cards .form-drawer-select-option.active .form-drawer-select-option-copy strong,
+html[data-theme="dark"] .form-drawer-select-attribute-cards .form-drawer-select-option.active .form-drawer-select-option-copy span,
+[data-theme-scope="dark"] .form-drawer-select-attribute-cards .form-drawer-select-option.active .form-drawer-select-option-copy span {
+  color: var(--accent-text);
+}
+
+html[data-theme="dark"] .form-drawer-select-selected-chip-copy span,
+[data-theme-scope="dark"] .form-drawer-select-selected-chip-copy span,
+html[data-theme="dark"] .form-drawer-select-option.active .form-drawer-select-option-copy span,
+[data-theme-scope="dark"] .form-drawer-select-option.active .form-drawer-select-option-copy span {
+  color: var(--accent-text);
+}
+
 .form-drawer-select-panel > .search-shell,
 .form-drawer-select-panel > .form-drawer-select-selected-panel,
 .form-drawer-select-panel > .form-drawer-select-catalog {
@@ -1628,7 +1656,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--surface-1) 90%, white);
   color: var(--ink);
-  text-align: left;
+  text-align: start;
 }
 
 .form-date-trigger[aria-expanded="true"] {
@@ -1657,7 +1685,9 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 .form-date-menu {
   position: absolute;
   top: calc(100% + 0.4rem);
-  left: 0;
+  left: auto;
+  right: auto;
+  inset-inline-start: 0;
   z-index: 5;
   display: grid;
   gap: 1rem;
@@ -1724,7 +1754,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  text-align: left;
+  text-align: start;
 }
 
 .form-date-jump-trigger[aria-expanded="true"] {
@@ -1754,7 +1784,9 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 .form-date-jump-menu {
   position: absolute;
   top: calc(100% + 0.35rem);
-  left: 0;
+  left: auto;
+  right: auto;
+  inset-inline-start: 0;
   z-index: 7;
   display: grid;
   gap: 0.2rem;
@@ -1770,7 +1802,9 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 
 .form-date-jump-group-end .form-date-jump-menu {
   left: auto;
-  right: 0;
+  right: auto;
+  inset-inline-start: auto;
+  inset-inline-end: 0;
 }
 
 .form-date-jump-menu::-webkit-scrollbar {
@@ -1796,7 +1830,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   background: transparent;
   color: var(--ink);
   font-size: 0.82rem;
-  text-align: left;
+  text-align: start;
 }
 
 .form-date-jump-option:hover,
@@ -2046,7 +2080,9 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 .form-time-menu {
   position: absolute;
   top: calc(100% + 0.4rem);
-  left: 0;
+  left: auto;
+  right: auto;
+  inset-inline-start: 0;
   z-index: 6;
   width: min(24rem, calc(100vw - 3rem));
   padding: 0.75rem;
@@ -2697,6 +2733,95 @@ html[dir="rtl"] .review-shell-main {
   transition: none;
 }
 
+#drawer-select-preview-frame {
+  display: grid;
+  justify-items: center;
+  padding: 1rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 76%, transparent), var(--surface-1)),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 18%, transparent), transparent 30%);
+  box-shadow: var(--shadow-soft);
+}
+
+#drawer-select-preview-shell {
+  position: relative;
+  width: min(var(--drawer-select-preview-width, 58.75rem), 100%);
+  zoom: var(--ui-scale, 1);
+  transform-origin: top center;
+}
+
+#drawer-select-preview-shell:not([data-viewport-class="mobile"]) .form-drawer-select {
+  position: static;
+}
+
+#drawer-select-preview-shell[data-drawer-open="true"]:not([data-viewport-class="mobile"]) {
+  height: 100rem;
+}
+
+#drawer-select-preview-shell[data-drawer-open="true"]:not([data-viewport-class="mobile"]) .form-page-card {
+  padding-inline-end: 1.6rem;
+}
+
+#drawer-select-preview-shell .form-drawer-select-panel {
+  position: absolute;
+  top: 4.55rem;
+  right: 1rem;
+  z-index: 8;
+  width: min(28rem, calc(100% - 2rem));
+  height: calc(100% - 4.55rem);
+}
+
+html[dir="rtl"] #drawer-select-preview-shell .form-drawer-select-panel {
+  right: auto;
+  left: 1rem;
+}
+
+#drawer-select-preview-shell[data-viewport-class="mobile"] {
+  min-height: 46rem;
+}
+
+#drawer-select-preview-shell[data-viewport-class="mobile"][data-drawer-open="true"] {
+  height: 100rem;
+}
+
+#drawer-select-preview-shell[data-viewport-class="mobile"] .form-page-card {
+  padding-inline-end: 1rem;
+}
+
+#drawer-select-preview-shell[data-viewport-class="mobile"] .form-page-section-header {
+  flex-direction: column;
+}
+
+#drawer-select-preview-shell[data-viewport-class="mobile"] .form-page-grid {
+  grid-template-columns: 1fr;
+}
+
+#drawer-select-preview-shell[data-viewport-class="mobile"] .form-field-span-2 {
+  grid-column: auto;
+}
+
+#drawer-select-preview-shell[data-viewport-class="mobile"] .form-drawer-select {
+  position: static;
+}
+
+#drawer-select-preview-shell[data-viewport-class="mobile"] .form-drawer-select-panel {
+  top: 0.75rem;
+  bottom: 0.75rem;
+  right: 0.5rem;
+  z-index: 8;
+  width: calc(100% - 1rem);
+  height: auto;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+}
+
+html[dir="rtl"] #drawer-select-preview-shell[data-viewport-class="mobile"] .form-drawer-select-panel {
+  right: auto;
+  left: 0.5rem;
+}
+
 .canonical-render-footer {
   position: relative;
   z-index: 2;
@@ -2845,6 +2970,108 @@ html[dir="rtl"] .review-shell-main {
   width: min(var(--list-record-card-preview-width, 47.5rem), 100%);
   zoom: var(--ui-scale, 1);
   transform-origin: top center;
+}
+
+.simple-select-preview-frame {
+  display: grid;
+  justify-items: center;
+  padding: 1rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 76%, transparent), var(--surface-1)),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 18%, transparent), transparent 30%);
+  box-shadow: var(--shadow-soft);
+}
+
+.simple-select-preview-shell {
+  width: min(var(--simple-select-preview-width, 26.25rem), 100%);
+  zoom: var(--ui-scale, 1);
+  transform-origin: top center;
+}
+
+.choice-group-preview-frame {
+  display: grid;
+  justify-items: center;
+  padding: 1rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 76%, transparent), var(--surface-1)),
+    linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 18%, transparent), transparent 30%);
+  box-shadow: var(--shadow-soft);
+}
+
+.choice-group-preview-shell {
+  width: min(var(--choice-group-preview-width, 58.75rem), 100%);
+  zoom: var(--ui-scale, 1);
+  transform-origin: top center;
+}
+
+.choice-group-preview-shell[data-visible-group-count="1"] .form-page-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+[data-theme-scope="dark"] #choice-group-preview-shell .form-page-section-title,
+[data-theme-scope="dark"] #choice-group-preview-shell .form-choice-legend,
+[data-theme-scope="dark"] #choice-group-preview-shell .form-choice-row strong,
+[data-theme-scope="dark"] #choice-group-preview-shell .form-choice-statement strong {
+  color: var(--ink);
+}
+
+[data-theme-scope="dark"] #choice-group-preview-shell .form-choice-row span span,
+[data-theme-scope="dark"] #choice-group-preview-shell .form-page-section-copy,
+[data-theme-scope="dark"] #choice-group-preview-shell .form-choice-statement {
+  color: var(--ink-soft);
+}
+
+[data-theme-scope="dark"] #choice-group-preview-shell .form-choice-row {
+  background: color-mix(in srgb, var(--surface-1) 92%, #18243a);
+}
+
+.time-picker-range-host-trigger {
+  pointer-events: none;
+}
+
+.time-picker-range-host-panel {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding: 1rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 92%, transparent), var(--surface-1)),
+    color-mix(in srgb, var(--accent-soft) 10%, var(--surface-1));
+  box-shadow: var(--shadow-soft);
+}
+
+.time-picker-range-host-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.time-picker-range-host-note {
+  max-width: 20rem;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.simple-select-preview-card {
+  padding: 1rem;
+}
+
+.simple-select-preview-card-header {
+  margin-bottom: 1rem;
+}
+
+.simple-select-preview-field {
+  width: 100%;
 }
 
 .list-record-card-preview-lane {
