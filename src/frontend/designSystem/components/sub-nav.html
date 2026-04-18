@@ -20,8 +20,9 @@
           <div class="primary-nav-links">
             <a class="nav-link" href="/design-system">Overview</a>
             <a class="nav-link" href="/design-system/foundations">Foundations</a>
-            <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
-            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link" href="/design-system/components">Components</a>
+            <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Pages</a>
             <a class="nav-link" href="/design-system/resources">Resources</a>
           </div>
         </nav>
@@ -116,18 +117,18 @@
             </p>
           </div>
 
-          <div
-            id="sub-nav-preview-frame"
-            class="sub-nav-preview-frame canonical-render-frame"
-            style="--sub-nav-preview-width: 1560px;"
-          >
+          <div class="canonical-render-surface-scroll">
             <div
-              id="sub-nav-preview-shell"
-              class="sub-nav-preview-shell"
-              data-render-status="settling"
-              data-canonical-state="pending"
+              id="sub-nav-preview-frame"
+              class="sub-nav-preview-frame canonical-render-frame"
             >
-              <section class="sub-nav" aria-label="Sub-nav canonical row">
+              <div
+                id="sub-nav-preview-shell"
+                class="sub-nav-preview-shell"
+                data-render-status="settling"
+                data-canonical-state="pending"
+              >
+                <section class="sub-nav" aria-label="Sub-nav canonical row">
                 <nav id="sub-nav-preview-breadcrumb-nav" class="breadcrumb-nav" aria-label="Breadcrumb">
                   <div id="sub-nav-preview-breadcrumb-compact" class="breadcrumb-compact hidden">
                     <button
@@ -203,7 +204,8 @@
                     </span>
                   </label>
                 </form>
-              </section>
+                </section>
+              </div>
             </div>
           </div>
 

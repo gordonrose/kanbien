@@ -13,7 +13,7 @@
     {
       "refId": "SNR-002",
       "label": "compressed desktop row",
-      "route": "/design-system/components/sub-nav?width=760&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-002",
+      "route": "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-002",
       "snapshot": "snr-002-compressed-desktop-row.png"
     },
     {
@@ -61,7 +61,7 @@
     {
       "refId": "BCR-003",
       "label": "reduced breadcrumb without Page -1",
-      "route": "/design-system/components/sub-nav?width=760&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-003",
+      "route": "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-003",
       "snapshot": "bcr-003-reduced-without-page-minus-one.png"
     },
     {
@@ -115,7 +115,7 @@
     {
       "refId": "SSR-003",
       "label": "compressed desktop search shell",
-      "route": "/design-system/components/sub-nav?width=760&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SSR-003",
+      "route": "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SSR-003",
       "snapshot": "ssr-003-compressed-desktop-search-shell.png"
     },
     {

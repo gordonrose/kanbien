@@ -22,6 +22,7 @@
             <a class="nav-link" href="/design-system/foundations">Foundations</a>
             <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
             <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Templates</a>
             <a class="nav-link" href="/design-system/resources">Resources</a>
           </div>
           <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
@@ -98,6 +99,7 @@
         <a class="nav-link" href="/design-system/foundations">Foundations</a>
         <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
         <a class="nav-link" href="/design-system/patterns">Patterns</a>
+        <a class="nav-link" href="/design-system/templates">Templates</a>
         <a class="nav-link" href="/design-system/resources">Resources</a>
         <div class="mobile-profile-group">
           <button
@@ -177,12 +179,11 @@
               role="menu"
               aria-labelledby="breadcrumb-compact-button"
             >
-              <a class="menu-item" href="/design-system" role="menuitem">Home</a>
-              <span class="menu-item breadcrumb-structure-current" aria-current="page">Components</span>
+              <span class="menu-item breadcrumb-structure-current" aria-current="page">Home</span>
             </div>
           </div>
           <ol id="breadcrumb-list" class="breadcrumb-list">
-            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system/components">Home</a></li>
             <li id="breadcrumb-separator-before-collapsed" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
             <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed hidden">
               <button
@@ -200,14 +201,12 @@
                 class="breadcrumb-collapse-menu hidden"
                 role="menu"
                 aria-labelledby="breadcrumb-collapse-button"
-              >
-                <a class="menu-item" href="/design-system/components" role="menuitem">Components</a>
-              </div>
+              ></div>
             </li>
             <li id="breadcrumb-separator-before-page-minus-one" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-page-minus-one-item" class="hidden"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="/design-system/components">Components</a></li>
-            <li id="breadcrumb-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-current-item"><span class="breadcrumb-button breadcrumb-current" aria-current="page">Components</span></li>
+            <li id="breadcrumb-page-minus-one-item" class="hidden"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="#"></a></li>
+            <li id="breadcrumb-separator-before-current" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-current-item" class="hidden"><span id="breadcrumb-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">Home</span></li>
           </ol>
         </nav>
 
@@ -270,6 +269,36 @@
               </div>
               <p class="component-catalog-card-copy">
                 The secondary row people use to understand where they are and quickly search within the current area.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/canonicals/list-record-card">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Component</p>
+                <h2 class="component-catalog-card-title">ListRecordCard</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The selectable summary-card seam extracted from `List Page`, with dedicated canonicals for full-width, half-page, and mobile review.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/canonicals/list-detail-panel">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Component</p>
+                <h2 class="component-catalog-card-title">ListDetailPanel</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The open detail-surface seam extracted from `List Page`, with dedicated canonicals for boundary, long-content, local-error, and narrow-panel review.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/canonicals/list-detail-split-layout">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Component</p>
+                <h2 class="component-catalog-card-title">ListDetailSplitLayout</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The master-detail lane seam extracted from `List Page`, with dedicated canonicals for desktop open/closed rhythm, mobile overlay posture, RTL mirroring, and split-lane pressure review.
               </p>
             </a>
           </div>

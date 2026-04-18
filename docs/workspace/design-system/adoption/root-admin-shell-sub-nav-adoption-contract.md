@@ -48,7 +48,7 @@
   shallow home breadcrumb, normal route breadcrumb, reduced breadcrumb under
   width pressure, RTL row behavior, mobile fallback
 - Workflow states explicitly deferred:
-  data-backed search execution semantics, tenant-facing shells, and any
+  broad cross-route search execution semantics, tenant-facing shells, and any
   route-local toolbar actions unrelated to wayfinding or search
 
 ## Pattern Mapping
@@ -69,8 +69,8 @@
   compact recovery behavior, centered bounded search behavior, mobile
   breadcrumb removal, and top-overlay tooltip behavior
 - Which parts are intentionally deferred in this first consumer?
-  data-backed route search results UI and any broader search execution may land
-  later, but the row geometry and child-family parity must not drift
+  broader cross-route search execution may land later, but the row geometry and
+  child-family parity must not drift
 
 ## Consumer Contract
 
@@ -89,6 +89,11 @@
   if broader search execution is unavailable, the shell may keep the bounded
   search affordance operating as route-level navigation, but must keep row
   layout parity
+- Current first exception:
+  the `rootAdminShell` `Users` route now owns capability-backed page search
+  through the same adopted search shell as part of the signed-off `List Page`
+  adoption, while other root-admin routes may still keep route-navigation
+  search behavior
 - Localization / long-label expectations:
   adoption must preserve RTL ordering, compact recovery, truncation, and
   tooltip reveal parity from the signed-off canonicals
@@ -118,8 +123,9 @@
   root-auth protected-shell session behavior, route capability checks, and any
   existing root-user or root-role APIs
 - What page-local behavior is allowed for the POC?
-  route-specific breadcrumb labels and non-destructive placeholder search
-  handling while real search execution is still deferred
+  route-specific breadcrumb labels and placeholder or capability-backed search
+  handling, as long as row parity is preserved and unsupported search semantics
+  are not faked
 - What is explicitly out of scope?
   redesigning top-nav, introducing tenant-scoped shell behavior, or coupling
   the adoption to unrelated drawer/dialog/preferences work
@@ -136,8 +142,8 @@
   review root-admin desktop, reduced, RTL, mobile, and long-label states
   against the design-system canonicals
 - Known blockers or environment constraints:
-  broader data-backed search semantics are intentionally deferred and must not
-  be faked as part of the chrome adoption
+  broader cross-route search semantics are still intentionally deferred and
+  must not be faked as part of the chrome adoption
 
 ## Promotion Decision
 

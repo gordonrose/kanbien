@@ -17,6 +17,33 @@ async function bootstrapAuthenticatedShell(page: Page, hash = "#overview", searc
     });
   });
 
+  await page.route("**/v1/root-users**", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        items: [
+          {
+            rootUserId: "00000000-0000-4000-8000-000000000001",
+            email: "root.admin@example.test",
+            firstName: "Root",
+            lastName: "Admin",
+            anonymized: false,
+            status: "active",
+            createdAt: "2026-04-01T10:00:00.000Z",
+            updatedAt: "2026-04-16T18:00:00.000Z",
+            deletedAt: null,
+          },
+        ],
+        page: 1,
+        pageSize: 25,
+        totalPages: 1,
+        totalMatchingRecords: 1,
+        totalSearchableRecords: 1,
+      }),
+    });
+  });
+
   await page.goto(`/root-admin${search}${hash}`);
   await page.locator("#shell-view").waitFor({ state: "visible" });
   await page.locator(".sub-nav-row").waitFor({ state: "visible" });
@@ -41,7 +68,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
     await expect(page.locator("#breadcrumb-current-label")).toHaveText("Users");
     await expect(page.locator("#shell-search-input")).toHaveAttribute(
       "placeholder",
-      "Search users, routes, or shell guidance",
+      "Search root users by exact email or 3+ email prefix",
     );
     await expect(page.locator('.context-nav .context-nav-item[aria-current="page"] .context-nav-label')).toHaveText("Users");
 

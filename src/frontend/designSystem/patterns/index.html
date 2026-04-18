@@ -22,6 +22,7 @@
             <a class="nav-link" href="/design-system/foundations">Foundations</a>
             <a class="nav-link" href="/design-system/components">Components</a>
             <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Templates</a>
             <a class="nav-link" href="/design-system/resources">Resources</a>
           </div>
           <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
@@ -98,6 +99,7 @@
         <a class="nav-link" href="/design-system/foundations">Foundations</a>
         <a class="nav-link" href="/design-system/components">Components</a>
         <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+        <a class="nav-link" href="/design-system/templates">Templates</a>
         <a class="nav-link" href="/design-system/resources">Resources</a>
         <div class="mobile-profile-group">
           <button
@@ -177,12 +179,11 @@
               role="menu"
               aria-labelledby="breadcrumb-compact-button"
             >
-              <a class="menu-item" href="/design-system" role="menuitem">Home</a>
-              <span class="menu-item breadcrumb-structure-current" aria-current="page">Patterns</span>
+              <span class="menu-item breadcrumb-structure-current" aria-current="page">Home</span>
             </div>
           </div>
           <ol id="breadcrumb-list" class="breadcrumb-list">
-            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system/patterns">Home</a></li>
             <li id="breadcrumb-separator-before-collapsed" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
             <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed hidden">
               <button
@@ -200,14 +201,12 @@
                 class="breadcrumb-collapse-menu hidden"
                 role="menu"
                 aria-labelledby="breadcrumb-collapse-button"
-              >
-                <a class="menu-item" href="/design-system/patterns" role="menuitem">Patterns</a>
-              </div>
+              ></div>
             </li>
             <li id="breadcrumb-separator-before-page-minus-one" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-page-minus-one-item" class="hidden"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li>
-            <li id="breadcrumb-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-current-item"><span class="breadcrumb-button breadcrumb-current" aria-current="page">Patterns</span></li>
+            <li id="breadcrumb-page-minus-one-item" class="hidden"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="#"></a></li>
+            <li id="breadcrumb-separator-before-current" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-current-item" class="hidden"><span id="breadcrumb-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">Home</span></li>
           </ol>
         </nav>
 
@@ -256,22 +255,42 @@
             <p class="top-nav-preview-eyebrow">Pattern Families</p>
             <h1 id="pattern-families-title" class="component-catalog-section-title">Governed Pattern Families</h1>
             <p class="component-catalog-meta">
-              These are the recurring navigation behaviours people rely on across the app, even when they are not yet packaged as reusable components.
+              These are the recurring UX contracts people rely on across the app, including shell families, secondary chrome, and reusable list-detail reading patterns.
             </p>
           </div>
 
           <div class="component-catalog-grid">
-            <a class="component-catalog-card" href="/design-system/canonicals/sub-nav#breadcrumb-family">
+            <a class="component-catalog-card" href="/design-system/patterns/navigation-shell">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Pattern</p>
+                <h2 class="component-catalog-card-title">Navigation Shell</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The shared application-shell rule for top navigation, overflow handling, mobile collapse, and account affordances.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/patterns/sub-nav-row">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Pattern</p>
+                <h2 class="component-catalog-card-title">Sub-Nav Row</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The shared secondary row contract that balances page wayfinding and search without letting either take over the chrome.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/patterns/breadcrumb">
               <div class="component-catalog-card-header">
                 <p class="top-nav-preview-eyebrow">Pattern</p>
                 <h2 class="component-catalog-card-title">Breadcrumb</h2>
               </div>
               <p class="component-catalog-card-copy">
-                Helps people understand where they are, recover the path they took, and stay oriented when space gets tight.
+                The local wayfinding rule for full trails, collapsed middle steps, and compact signpost recovery under width pressure.
               </p>
             </a>
 
-            <a class="component-catalog-card" href="/design-system/canonicals/sub-nav#search-shell-family">
+            <a class="component-catalog-card" href="/design-system/patterns/search-shell">
               <div class="component-catalog-card-header">
                 <p class="top-nav-preview-eyebrow">Pattern</p>
                 <h2 class="component-catalog-card-title">Search Shell</h2>
@@ -281,7 +300,7 @@
               </p>
             </a>
 
-            <a class="component-catalog-card" href="/design-system/canonicals/context-nav">
+            <a class="component-catalog-card" href="/design-system/patterns/context-nav">
               <div class="component-catalog-card-header">
                 <p class="top-nav-preview-eyebrow">Pattern</p>
                 <h2 class="component-catalog-card-title">Context Nav</h2>
@@ -291,13 +310,53 @@
               </p>
             </a>
 
-            <a class="component-catalog-card" href="/design-system/canonicals/top-nav">
+            <a class="component-catalog-card" href="/design-system/patterns/drawer">
               <div class="component-catalog-card-header">
                 <p class="top-nav-preview-eyebrow">Pattern</p>
-                <h2 class="component-catalog-card-title">Navigation Shell</h2>
+                <h2 class="component-catalog-card-title">Drawer</h2>
               </div>
               <p class="component-catalog-card-copy">
-                Sets the overall navigation structure so people can move confidently between major areas without relearning the interface on each page.
+                The shell-attached side-panel and bottom-sheet grammar used for context-nav drawers and future governed transient workflows.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/patterns/display-settings">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Pattern</p>
+                <h2 class="component-catalog-card-title">Display Settings</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The grouped theme, magnification, accent, and direction payload pattern hosted inside the signed-off drawer shell.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/patterns/list-record-card">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Pattern</p>
+                <h2 class="component-catalog-card-title">List Record Card</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The repeated record-summary and selection pattern extracted from the `List Page` parent template.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/patterns/list-detail-panel">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Pattern</p>
+                <h2 class="component-catalog-card-title">List Detail Panel</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The open-detail reading pattern for one selected record, including header zoning, local errors, and footer traversal.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/patterns/list-detail-split-layout">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Pattern</p>
+                <h2 class="component-catalog-card-title">List Detail Split Layout</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The master-detail lane relationship that keeps list browsing and open-record reading in one governed page rhythm.
               </p>
             </a>
           </div>

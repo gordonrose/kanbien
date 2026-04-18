@@ -12,7 +12,7 @@ const subNavCanonicalStates = [
     refId: "SNR-002",
     label: "compressed desktop row",
     route:
-      "/design-system/components/sub-nav?width=760&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-002",
+      "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-002",
     screenshot: "snr-002-compressed-desktop-row.png",
   },
   {
@@ -68,7 +68,7 @@ const subNavCanonicalStates = [
     refId: "BCR-003",
     label: "reduced breadcrumb without Page -1",
     route:
-      "/design-system/components/sub-nav?width=760&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-003",
+      "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-003",
     screenshot: "bcr-003-reduced-without-page-minus-one.png",
   },
   {
@@ -133,7 +133,7 @@ const subNavCanonicalStates = [
     refId: "SSR-003",
     label: "compressed desktop search shell",
     route:
-      "/design-system/components/sub-nav?width=760&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SSR-003",
+      "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SSR-003",
     screenshot: "ssr-003-compressed-desktop-search-shell.png",
   },
   {
@@ -244,6 +244,116 @@ test.describe("design-system sub-nav canonical states", () => {
     }
   });
 
+  test("BCR-011 and BCR-012 preserve the full breadcrumb trail for truncation review", async ({ page }) => {
+    for (const scenario of subNavCanonicalStates.filter((state) => state.refId === "BCR-011" || state.refId === "BCR-012")) {
+      await gotoCanonicalState(page, scenario.route);
+
+      const pageMinusOneItem = page.locator("#sub-nav-preview-page-minus-one-item");
+      const pageMinusOneLink = page.locator("#sub-nav-preview-page-minus-one-link");
+      const currentLabel = page.locator("#sub-nav-preview-current-label");
+
+      await expect(pageMinusOneItem).toBeVisible();
+      await expect(pageMinusOneLink).toHaveAttribute("data-tooltip", /.+/);
+      await expect(currentLabel).toHaveAttribute("data-tooltip", /.+/);
+
+      await hoverForTooltip(page, "#sub-nav-preview-page-minus-one-link");
+      await expect(page.locator("#shared-floating-tooltip")).toContainText(/\S+/);
+    }
+  });
+
+  test("SNR-001 preserves the canonical render width instead of squashing the row", async ({ page }) => {
+    await page.setViewportSize({
+      width: 1440,
+      height: 1400,
+    });
+    await page.goto(
+      "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-001",
+    );
+    await page.locator("#sub-nav-preview-frame").waitFor({ state: "visible" });
+    await page.locator('#sub-nav-preview-shell[data-render-status="ready"]').waitFor({ state: "visible" });
+
+    const renderState = await page.evaluate(() => {
+      const scroller = document.querySelector(".canonical-render-surface-scroll");
+      const frame = document.getElementById("sub-nav-preview-frame");
+      const shell = document.getElementById("sub-nav-preview-shell");
+      const pageMinusOne = document.getElementById("sub-nav-preview-page-minus-one-link");
+      const current = document.getElementById("sub-nav-preview-current-label");
+
+      return {
+        scrollerClientWidth: scroller instanceof HTMLElement ? Math.round(scroller.clientWidth) : 0,
+        scrollerScrollWidth: scroller instanceof HTMLElement ? Math.round(scroller.scrollWidth) : 0,
+        frameWidth: frame instanceof HTMLElement ? Math.round(frame.getBoundingClientRect().width) : 0,
+        shellIntrinsicWidth: shell instanceof HTMLElement ? Math.round(shell.offsetWidth) : 0,
+        pageMinusOneWidth: pageMinusOne instanceof HTMLElement ? Math.round(pageMinusOne.getBoundingClientRect().width) : 0,
+        currentWidth: current instanceof HTMLElement ? Math.round(current.getBoundingClientRect().width) : 0,
+      };
+    });
+
+    expect(renderState.shellIntrinsicWidth).toBe(1560);
+    expect(renderState.frameWidth).toBeLessThanOrEqual(renderState.scrollerClientWidth);
+    expect(renderState.pageMinusOneWidth).toBeGreaterThan(50);
+    expect(renderState.currentWidth).toBeGreaterThan(50);
+  });
+
+  test("full sub-nav row collapses instead of leaving breadcrumb chips crushed under local pressure", async ({ page }) => {
+    await gotoCanonicalState(
+      page,
+      "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-001",
+    );
+
+    await page.evaluate(() => {
+      const frame = document.getElementById("sub-nav-preview-frame");
+      frame?.style.setProperty("--sub-nav-preview-width", "880px");
+      window.dispatchEvent(new Event("resize"));
+    });
+    await page.waitForTimeout(300);
+
+    const renderState = await page.evaluate(() => {
+      const compact = document.getElementById("sub-nav-preview-breadcrumb-compact");
+      const list = document.getElementById("sub-nav-preview-breadcrumb-list");
+      const pageMinusOne = document.getElementById("sub-nav-preview-page-minus-one-link");
+      const current = document.getElementById("sub-nav-preview-current-label");
+
+      return {
+        compactVisible: compact instanceof HTMLElement && !compact.classList.contains("hidden"),
+        listHidden: list instanceof HTMLElement && list.classList.contains("hidden"),
+        pageMinusOneWidth: pageMinusOne instanceof HTMLElement ? Math.round(pageMinusOne.getBoundingClientRect().width) : 0,
+        currentWidth: current instanceof HTMLElement ? Math.round(current.getBoundingClientRect().width) : 0,
+      };
+    });
+
+    expect(renderState.compactVisible).toBe(true);
+    expect(renderState.listHidden).toBe(true);
+    expect(renderState.pageMinusOneWidth).toBe(0);
+    expect(renderState.currentWidth).toBe(0);
+  });
+
+  test("reduced breadcrumb without Page -1 keeps the middle segment visible instead of over-collapsing to compact", async ({ page }) => {
+    await gotoCanonicalState(
+      page,
+      "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-003",
+    );
+
+    const reducedState = await page.evaluate(() => {
+      const compact = document.getElementById("sub-nav-preview-breadcrumb-compact");
+      const list = document.getElementById("sub-nav-preview-breadcrumb-list");
+      const collapsedItem = document.getElementById("sub-nav-preview-collapsed-item");
+      const pageMinusOneItem = document.getElementById("sub-nav-preview-page-minus-one-item");
+
+      return {
+        compactVisible: compact instanceof HTMLElement && !compact.classList.contains("hidden"),
+        listHidden: list instanceof HTMLElement && list.classList.contains("hidden"),
+        collapsedHidden: collapsedItem instanceof HTMLElement && collapsedItem.classList.contains("hidden"),
+        pageMinusOneHidden: pageMinusOneItem instanceof HTMLElement && pageMinusOneItem.classList.contains("hidden"),
+      };
+    });
+
+    expect(reducedState.compactVisible).toBe(false);
+    expect(reducedState.listHidden).toBe(false);
+    expect(reducedState.collapsedHidden).toBe(false);
+    expect(reducedState.pageMinusOneHidden).toBe(true);
+  });
+
   test("sub-nav canonical layout width is scoped to the local render container", async ({ page }) => {
     await gotoCanonicalState(
       page,
@@ -296,6 +406,36 @@ test.describe("design-system sub-nav canonical states", () => {
     expect(magnificationState.documentScale).toBe("");
     expect(magnificationState.shellScale).toBe("1.5");
     expect(magnificationState.shellMagnification).toBe("100");
+  });
+
+  test("magnified reduced breadcrumb states still compact before pushing the search field off the row", async ({ page }) => {
+    await gotoCanonicalState(
+      page,
+      "/design-system/components/sub-nav?width=880&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=100&locale=long-latin&accent=%23635bff&ref=SNR-007",
+    );
+
+    const magnifiedState = await page.evaluate(() => {
+      const compact = document.getElementById("sub-nav-preview-breadcrumb-compact");
+      const list = document.getElementById("sub-nav-preview-breadcrumb-list");
+      const search = document.getElementById("sub-nav-preview-search-shell");
+      const row = document.querySelector("#sub-nav-preview-shell .sub-nav");
+      const frame = document.getElementById("sub-nav-preview-frame");
+
+      return {
+        compactVisible: compact instanceof HTMLElement && !compact.classList.contains("hidden"),
+        listHidden: list instanceof HTMLElement && list.classList.contains("hidden"),
+        searchWidth: search instanceof HTMLElement ? Math.round(search.getBoundingClientRect().width) : 0,
+        rowColumns: row instanceof HTMLElement ? getComputedStyle(row).gridTemplateColumns : "",
+        searchRight: search instanceof HTMLElement ? Math.round(search.getBoundingClientRect().right) : 0,
+        frameRight: frame instanceof HTMLElement ? Math.round(frame.getBoundingClientRect().right) : 0,
+      };
+    });
+
+    expect(magnifiedState.compactVisible).toBe(true);
+    expect(magnifiedState.listHidden).toBe(true);
+    expect(magnifiedState.searchWidth).toBeGreaterThan(500);
+    expect(magnifiedState.rowColumns.split(" ").length).toBe(2);
+    expect(magnifiedState.searchRight).toBeLessThanOrEqual(magnifiedState.frameRight);
   });
 
   test("sub-nav canonical RTL direction is owned by the local render surface", async ({ page }) => {

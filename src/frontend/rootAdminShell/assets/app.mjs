@@ -6,6 +6,7 @@ import {
   resetToLoginState,
 } from "./state.mjs";
 import { signLoginChallenge } from "./helperClient.mjs";
+import { createRootUsersListController } from "./rootUsersList.mjs";
 
 class ApiError extends Error {
   constructor(status, code, message, details) {
@@ -78,7 +79,7 @@ const pageMetadata = {
   users: {
     title: "Users",
     breadcrumbCurrent: "Users",
-    searchPlaceholder: "Search users, routes, or shell guidance",
+    searchPlaceholder: "Search root users by exact email or 3+ email prefix",
     searchKeywords: ["users", "people", "accounts", "root users", "root user"],
   },
   roles: {
@@ -174,6 +175,7 @@ const languageModalCloseButton = document.getElementById("language-modal-close")
 const languageOptionList = document.getElementById("language-option-list");
 
 const brandLabel = document.getElementById("brand-label");
+const rootAdminMain = document.getElementById("root-admin-main");
 const pageSections = {
   overview: document.getElementById("page-overview"),
   users: document.getElementById("page-users"),
@@ -181,6 +183,14 @@ const pageSections = {
   tenants: document.getElementById("page-tenants"),
   "tenant-admins": document.getElementById("page-tenant-admins"),
 };
+
+const rootUsersListController = createRootUsersListController({
+  root: document.getElementById("root-users-list-page"),
+  searchInput: shellSearchInput,
+  fetchJson,
+  setShellMessage,
+  getCurrentPage: () => state.navigation.currentPage,
+});
 
 function normalizePage(page) {
   const normalizedPage = pageAliases[page] ?? page;
@@ -718,6 +728,9 @@ function syncNavState() {
   for (const [page, section] of Object.entries(pageSections)) {
     section?.classList.toggle("hidden", page !== currentPage);
   }
+
+  rootAdminMain?.classList.toggle("root-admin-main-canonical-page", currentPage === "users");
+
 }
 
 function syncSubNavState() {
@@ -870,15 +883,20 @@ function positionSharedTooltip(target) {
 
   const rect = target.getBoundingClientRect();
   const direction = document.documentElement.getAttribute("dir") === "rtl" ? "rtl" : "ltr";
+  const isContextNavItem = target.matches(".context-nav-item");
 
-  if (direction === "rtl") {
+  if (isContextNavItem && direction === "rtl") {
     tooltip.style.left = `${rect.left - 12}px`;
     tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
     tooltip.style.transform = "translate(-100%, -50%)";
-  } else {
+  } else if (isContextNavItem) {
     tooltip.style.left = `${rect.right + 12}px`;
     tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
     tooltip.style.transform = "translateY(-50%)";
+  } else {
+    tooltip.style.left = `${rect.left + (rect.width / 2)}px`;
+    tooltip.style.top = `${Math.max(rect.top - 10, 12)}px`;
+    tooltip.style.transform = "translate(-50%, -100%)";
   }
 
   activeSharedTooltipTarget = target;
@@ -889,7 +907,7 @@ function getTooltipTargetFromNode(node) {
     return null;
   }
 
-  return node.closest(".context-nav-item[data-tooltip]");
+  return node.closest(".context-nav-item[data-tooltip], .tooltip-anchor[data-tooltip]");
 }
 
 function getTooltipTargetFromEvent(event) {
@@ -962,6 +980,10 @@ function render() {
   syncSubNavState();
 
   if (flags.showShellView) {
+    rootUsersListController.syncPageState();
+  }
+
+  if (flags.showShellView) {
     window.requestAnimationFrame(() => {
       updatePrimaryNavOverflow();
       syncNavState();
@@ -997,6 +1019,7 @@ async function bootstrapSession() {
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       Object.assign(state, resetToLoginState(state));
+      rootUsersListController.reset();
       state.phase = "login";
       render();
       return;
@@ -1073,6 +1096,7 @@ async function handleLogout() {
 
   window.history.replaceState(null, "", "/root-admin#overview");
   Object.assign(state, resetToLoginState(state));
+  rootUsersListController.reset();
   render();
 }
 
@@ -1088,7 +1112,7 @@ async function handleRefreshSession() {
   }
 }
 
-function handleShellSearchSubmit(event) {
+async function handleShellSearchSubmit(event) {
   event.preventDefault();
 
   if (!(shellSearchInput instanceof HTMLInputElement)) {
@@ -1096,6 +1120,11 @@ function handleShellSearchSubmit(event) {
   }
 
   const query = shellSearchInput.value.trim();
+  const handledByRootUsers = await rootUsersListController.handleShellSearchSubmit(query);
+  if (handledByRootUsers) {
+    return;
+  }
+
   if (!query) {
     setShellMessage("Type a route, users, or roles term to navigate the shell.");
     return;
@@ -1116,6 +1145,7 @@ signSubmit?.addEventListener("click", handleSshSubmit);
 returnToLogin?.addEventListener("click", () => {
   window.history.replaceState(null, "", "/root-admin#overview");
   Object.assign(state, resetToLoginState(state));
+  rootUsersListController.reset();
   render();
 });
 refreshSessionButton?.addEventListener("click", handleRefreshSession);

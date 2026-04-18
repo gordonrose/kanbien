@@ -1,3 +1,5 @@
+@import url("/design-system/assets/list-page-shared.css");
+
 :root {
   color-scheme: light;
   --ui-scale: 1;
@@ -809,7 +811,7 @@ html[dir="rtl"] .search-shell-hint {
   gap: 0.55rem;
   width: var(--context-nav-rail-width);
   padding: 0.75rem 0.5rem;
-  border-block-start: 0.0625rem solid var(--line);
+  border-block-start: 0;
   border-inline-end: 0.0625rem solid var(--line);
   background: var(--surface-2);
   box-shadow: var(--shadow-soft);
@@ -1087,6 +1089,16 @@ html[dir="rtl"] .side-panel {
   color: var(--accent-text);
 }
 
+.page-panel-users {
+  width: min(88rem, 100%);
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: hidden;
+}
 .root-admin-main {
   display: grid;
   gap: 1rem;
@@ -1094,6 +1106,20 @@ html[dir="rtl"] .side-panel {
   margin-block: 1rem 2rem;
   margin-inline: 1rem;
   margin-inline-start: calc(1rem + var(--context-nav-rail-width));
+}
+
+.root-admin-main.root-admin-main-canonical-page {
+  width: auto;
+  max-width: none;
+  margin-block: 0;
+  margin-inline: 0;
+  margin-inline-start: var(--context-nav-rail-width);
+  padding: 1.5rem;
+}
+
+html[dir="rtl"] .root-admin-main.root-admin-main-canonical-page {
+  margin-inline-start: 0;
+  margin-inline-end: var(--context-nav-rail-width);
 }
 
 .page-panel {
@@ -1351,6 +1377,17 @@ html[dir="rtl"] .side-panel {
     padding-bottom: calc(var(--context-nav-mobile-height) + 1rem);
   }
 
+  .root-admin-main.root-admin-main-canonical-page {
+    width: auto;
+    margin-inline: 0;
+    margin-inline-start: 0;
+    padding: 1rem 1rem calc(var(--context-nav-mobile-height) + 1rem);
+  }
+
+  html[dir="rtl"] .root-admin-main.root-admin-main-canonical-page {
+    margin-inline-end: 0;
+  }
+
   html[dir="rtl"] .context-nav {
     right: 0;
     left: 0;
@@ -1400,5 +1437,11 @@ html[dir="rtl"] .side-panel {
   .root-admin-main {
     margin-inline: 0.5rem;
     width: calc(100% - 1rem);
+  }
+
+  .root-admin-main.root-admin-main-canonical-page {
+    width: auto;
+    margin-inline: 0;
+    padding: 1rem 0.5rem calc(var(--context-nav-mobile-height) + 1rem);
   }
 }

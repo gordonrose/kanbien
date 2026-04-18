@@ -20,8 +20,9 @@
           <div id="primary-nav-links" class="primary-nav-links">
             <a class="nav-link" href="/design-system">Overview</a>
             <a class="nav-link" href="/design-system/foundations">Foundations</a>
-            <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
-            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link" href="/design-system/components">Components</a>
+            <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Pages</a>
             <a class="nav-link" href="/design-system/resources">Resources</a>
           </div>
           <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
@@ -96,8 +97,9 @@
       <nav id="mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile primary">
         <a class="nav-link" href="/design-system">Overview</a>
         <a class="nav-link" href="/design-system/foundations">Foundations</a>
-        <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
-        <a class="nav-link" href="/design-system/patterns">Patterns</a>
+        <a class="nav-link" href="/design-system/components">Components</a>
+        <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+        <a class="nav-link" href="/design-system/templates">Pages</a>
         <a class="nav-link" href="/design-system/resources">Resources</a>
         <div class="mobile-profile-group">
           <button
@@ -177,15 +179,15 @@
               role="menu"
               aria-labelledby="breadcrumb-compact-button"
             >
-              <a class="menu-item" href="/design-system" role="menuitem">Home</a>
-              <a class="menu-item" href="/design-system/canonicals" role="menuitem">Canonicals</a>
-              <span class="menu-item breadcrumb-structure-current" aria-current="page">Top Nav</span>
+              <a class="menu-item" href="/design-system/components" role="menuitem">Home</a>
+              <a class="menu-item" href="/design-system/components/top-nav" role="menuitem">Top Nav</a>
+              <span class="menu-item breadcrumb-structure-current" aria-current="page">Canonicals</span>
             </div>
           </div>
           <ol id="breadcrumb-list" class="breadcrumb-list">
-            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
-            <li id="breadcrumb-separator-before-collapsed"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed">
+            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system/components">Home</a></li>
+            <li id="breadcrumb-separator-before-collapsed" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed hidden">
               <button
                 id="breadcrumb-collapse-button"
                 class="breadcrumb-collapse-button"
@@ -201,14 +203,12 @@
                 class="breadcrumb-collapse-menu hidden"
                 role="menu"
                 aria-labelledby="breadcrumb-collapse-button"
-              >
-                <a class="menu-item" href="/design-system/canonicals" role="menuitem">Canonicals</a>
-              </div>
+              ></div>
             </li>
             <li id="breadcrumb-separator-before-page-minus-one"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-page-minus-one-item"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="/design-system/canonicals">Canonicals</a></li>
+            <li id="breadcrumb-page-minus-one-item"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="/design-system/components/top-nav">Top Nav</a></li>
             <li id="breadcrumb-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-current-item"><span class="breadcrumb-button breadcrumb-current" aria-current="page">Top Nav</span></li>
+            <li id="breadcrumb-current-item"><span id="breadcrumb-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">Canonicals</span></li>
           </ol>
         </nav>
 

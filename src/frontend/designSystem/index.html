@@ -22,6 +22,7 @@
             <a class="nav-link" href="/design-system/foundations">Foundations</a>
             <a class="nav-link" href="/design-system/components">Components</a>
             <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Pages</a>
             <a class="nav-link" href="/design-system/resources">Resources</a>
           </div>
           <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
@@ -44,6 +45,7 @@
               <a class="menu-item" href="/design-system/foundations" role="menuitem">Foundations</a>
               <a class="menu-item" href="/design-system/components" role="menuitem">Components</a>
               <a class="menu-item" href="/design-system/patterns" role="menuitem">Patterns</a>
+              <a class="menu-item" href="/design-system/templates" role="menuitem">Pages</a>
               <a class="menu-item" href="/design-system/resources" role="menuitem">Resources</a>
             </div>
           </div>
@@ -104,6 +106,7 @@
         <a class="nav-link" href="/design-system/foundations">Foundations</a>
         <a class="nav-link" href="/design-system/components">Components</a>
         <a class="nav-link" href="/design-system/patterns">Patterns</a>
+        <a class="nav-link" href="/design-system/templates">Pages</a>
         <a class="nav-link" href="/design-system/resources">Resources</a>
         <div class="mobile-profile-group">
           <button
@@ -184,17 +187,13 @@
               role="menu"
               aria-labelledby="breadcrumb-compact-button"
             >
-              <a class="menu-item" href="/design-system" role="menuitem">Home</a>
-              <a class="menu-item" href="/design-system/library" role="menuitem">Previous Page A</a>
-              <a class="menu-item" href="/design-system/library/navigation" role="menuitem">Previous Page B</a>
-              <a class="menu-item" href="/design-system/components/navigation" role="menuitem">Page -1</a>
-              <span class="menu-item breadcrumb-structure-current" aria-current="page">Page</span>
+              <span class="menu-item breadcrumb-structure-current" aria-current="page">Home</span>
             </div>
           </div>
           <ol id="breadcrumb-list" class="breadcrumb-list">
             <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
-            <li id="breadcrumb-separator-before-collapsed"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed">
+            <li id="breadcrumb-separator-before-collapsed" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed hidden">
               <button
                 id="breadcrumb-collapse-button"
                 class="breadcrumb-collapse-button"
@@ -210,15 +209,12 @@
                 class="breadcrumb-collapse-menu hidden"
                 role="menu"
                 aria-labelledby="breadcrumb-collapse-button"
-              >
-                <a class="menu-item" href="/design-system/library" role="menuitem">Previous Page A</a>
-                <a class="menu-item" href="/design-system/library/navigation" role="menuitem">Previous Page B</a>
-              </div>
+              ></div>
             </li>
-            <li id="breadcrumb-separator-before-page-minus-one"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-page-minus-one-item"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="/design-system/components/navigation">Page -1</a></li>
-            <li id="breadcrumb-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-current-item"><span class="breadcrumb-button breadcrumb-current" aria-current="page">Page</span></li>
+            <li id="breadcrumb-separator-before-page-minus-one" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-page-minus-one-item" class="hidden"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="#"></a></li>
+            <li id="breadcrumb-separator-before-current" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-current-item" class="hidden"><span id="breadcrumb-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">Home</span></li>
           </ol>
         </nav>
 
@@ -249,100 +245,20 @@
             </span>
             <span class="context-nav-label">Overview</span>
           </a>
-          <a class="context-nav-item" href="/design-system/components" data-tooltip="Components">
-            <span class="context-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 3.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0z" />
-              </svg>
-            </span>
-            <span class="context-nav-label">Components</span>
-          </a>
-          <a class="context-nav-item" href="/design-system/patterns" data-tooltip="Patterns">
-            <span class="context-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" />
-              </svg>
-            </span>
-            <span class="context-nav-label">Patterns</span>
-          </a>
-          <a class="context-nav-item" href="/design-system/resources" data-tooltip="Resources">
-            <span class="context-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M7 4h8l4 4v12H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm7 1.5V9h3.5" />
-              </svg>
-            </span>
-            <span class="context-nav-label">Resources</span>
-          </a>
-          <a class="context-nav-item context-nav-mobile-overflow-target" href="/design-system/profile" data-tooltip="Profile">
-            <span class="context-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-4.2 0-7 2.1-7 4v2h14v-2c0-1.9-2.8-4-7-4z" />
-              </svg>
-            </span>
-            <span class="context-nav-label">Profile</span>
-          </a>
-          <div class="context-nav-more">
-            <button
-              id="context-nav-more-button"
-              class="context-nav-item context-nav-item-button context-nav-more-button"
-              type="button"
-              data-tooltip="More"
-              aria-expanded="false"
-              aria-controls="context-nav-more-menu"
-            >
-              <span class="context-nav-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false">
-                  <path d="M12 6.75a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5z" />
-                </svg>
-              </span>
-              <span class="context-nav-label">More</span>
-            </button>
-            <div
-              id="context-nav-more-menu"
-              class="context-nav-more-menu hidden"
-              role="menu"
-              aria-labelledby="context-nav-more-button"
-            >
-              <a class="menu-item" href="/design-system/profile" role="menuitem">Profile</a>
-              <button id="context-nav-more-filter" class="menu-item menu-item-button" type="button" role="menuitem">
-                Filters
-              </button>
-              <button id="context-nav-more-accessibility" class="menu-item menu-item-button" type="button" role="menuitem">
-                Accessibility
-              </button>
-            </div>
-          </div>
         </div>
         <div class="context-nav-bottom-group">
           <button
-            id="filter-panel-button"
-            class="context-nav-item context-nav-item-button context-nav-item-bottom context-nav-mobile-overflow-target"
-            type="button"
-            data-tooltip="Filters"
-            aria-expanded="false"
-            aria-controls="filter-panel"
-          >
-            <span class="context-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M4 6h16l-6.5 7.25V19l-3-1.5v-4.25z" />
-              </svg>
-            </span>
-            <span class="context-nav-label">Filters</span>
-          </button>
-          <button
             id="accessibility-button"
-            class="context-nav-item context-nav-item-button context-nav-mobile-overflow-target"
+            class="context-nav-item context-nav-item-button"
             type="button"
-            data-tooltip="Accessibility"
+            data-tooltip="Design Drawer"
             aria-expanded="false"
             aria-controls="accessibility-drawer"
           >
             <span class="context-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75zm0 3.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 5.85zm0 11.55a5.4 5.4 0 0 1-4.19-1.97 4.87 4.87 0 0 1 8.38 0A5.4 5.4 0 0 1 12 17.4z" />
-              </svg>
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v14H4zm2 2v10h9V7zm11 0h1v10h-1z" /></svg>
             </span>
-            <span class="context-nav-label">Access</span>
+            <span class="context-nav-label">Drawer</span>
           </button>
         </div>
       </nav>
@@ -476,6 +392,51 @@
           </div>
         </div>
       </aside>
+
+      <main class="design-system-page-main">
+        <section class="component-catalog-section" aria-labelledby="design-system-overview-title">
+          <div class="component-catalog-section-header">
+            <p class="top-nav-preview-eyebrow">Overview</p>
+            <h1 id="design-system-overview-title" class="component-catalog-section-title">Design-System Route Families</h1>
+            <p class="component-catalog-meta">
+              The live design system now exposes first-class routes for components, patterns, templates, and canonical review sets. Exploration remains a supporting proof surface rather than a top-level family.
+            </p>
+          </div>
+
+          <div class="component-catalog-grid">
+            <a class="component-catalog-card" href="/design-system/components">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">First-Class Route</p>
+                <h2 class="component-catalog-card-title">Components</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                Reusable implementation seams with bounded surfaces, including extracted list-detail child artifacts and shell primitives.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/patterns">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">First-Class Route</p>
+                <h2 class="component-catalog-card-title">Patterns</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                Reusable UX contracts for shell behavior, secondary chrome, drawers, settings payloads, and list-detail reading relationships.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/templates">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">First-Class Route</p>
+                <h2 class="component-catalog-card-title">Templates</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                Reusable page structures like `Page Shell`, `List Page`, and `Table Page` that compose shared navigation, shell chrome, and workflow rhythm into governed full-page templates.
+              </p>
+            </a>
+          </div>
+        </section>
+
+      </main>
     </div>
 
     <script type="module" src="/design-system/assets/app.mjs"></script>

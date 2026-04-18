@@ -1,3 +1,444 @@
+function setTextContent(node, text) {
+  if (node instanceof HTMLElement) {
+    node.textContent = text;
+  }
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+const formTimeHourOptions = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, "0"));
+const formTimeMinuteOptions = Array.from({ length: 12 }, (_, index) => String(index * 5).padStart(2, "0"));
+
+function normalizeFormTimeValue(value) {
+  const [hours = "00", minutes = "00"] = String(value ?? "").split(":");
+  const normalizedHour = formTimeHourOptions.includes(hours) ? hours : "00";
+  const minuteNumber = Number(minutes);
+  const normalizedMinute = Number.isFinite(minuteNumber)
+    ? String(Math.min(55, Math.max(0, Math.round(minuteNumber / 5) * 5))).padStart(2, "0")
+    : "00";
+  return `${normalizedHour}:${normalizedMinute}`;
+}
+
+function syncFormPickerOverlayState() {
+  const activePicker = document.querySelector(
+    '.form-page-shell[data-form-mobile-view="true"] .form-date-menu:not(.hidden), .form-page-shell[data-form-mobile-view="true"] .form-time-menu:not(.hidden)',
+  );
+
+  if (activePicker) {
+    document.documentElement.dataset.formPickerOverlayOpen = "true";
+    return;
+  }
+
+  delete document.documentElement.dataset.formPickerOverlayOpen;
+}
+
+function normalizePathname(pathname) {
+  if (!pathname || pathname === "/") {
+    return "/design-system";
+  }
+
+  const trimmed = pathname.replace(/\/+$/g, "");
+  return trimmed === "" ? "/design-system" : trimmed;
+}
+
+const designSystemPrimaryNavItems = [
+  { href: "/design-system", label: "Overview" },
+  { href: "/design-system/components", label: "Components" },
+  { href: "/design-system/patterns", label: "Patterns" },
+  { href: "/design-system/templates", label: "Templates" },
+];
+
+const designSystemBreadcrumbChains = new Map([
+  ["/design-system", [
+    { href: "/design-system", label: "Home" },
+  ]],
+  ["/design-system/components", [
+    { href: "/design-system/components", label: "Home" },
+  ]],
+  ["/design-system/patterns", [
+    { href: "/design-system/patterns", label: "Home" },
+  ]],
+  ["/design-system/templates", [
+    { href: "/design-system/templates", label: "Home" },
+  ]],
+  ["/design-system/canonicals", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+  ]],
+  ["/design-system/components/top-nav", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/top-nav", label: "Top Nav" },
+  ]],
+  ["/design-system/components/sub-nav", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/sub-nav", label: "Sub Nav" },
+  ]],
+  ["/design-system/components/context-nav", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/context-nav", label: "Context Nav" },
+  ]],
+  ["/design-system/components/list-record-card", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/list-record-card", label: "List Record Card" },
+  ]],
+  ["/design-system/components/list-detail-panel", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/list-detail-panel", label: "List Detail Panel" },
+  ]],
+  ["/design-system/components/list-detail-split-layout", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/list-detail-split-layout", label: "List Detail Split Layout" },
+  ]],
+  ["/design-system/canonicals/top-nav", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/top-nav", label: "Top Nav" },
+    { href: "/design-system/canonicals/top-nav", label: "Canonicals" },
+  ]],
+  ["/design-system/canonicals/sub-nav", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/sub-nav", label: "Sub Nav" },
+    { href: "/design-system/canonicals/sub-nav", label: "Canonicals" },
+  ]],
+  ["/design-system/canonicals/context-nav", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/context-nav", label: "Context Nav" },
+    { href: "/design-system/canonicals/context-nav", label: "Canonicals" },
+  ]],
+  ["/design-system/canonicals/context-nav-drawer", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/drawer", label: "Drawer" },
+    { href: "/design-system/canonicals/context-nav-drawer", label: "Canonicals" },
+  ]],
+  ["/design-system/canonicals/display-settings", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/display-settings", label: "Display Settings" },
+    { href: "/design-system/canonicals/display-settings", label: "Canonicals" },
+  ]],
+  ["/design-system/canonicals/list-record-card", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/list-record-card", label: "List Record Card" },
+    { href: "/design-system/canonicals/list-record-card", label: "Canonicals" },
+  ]],
+  ["/design-system/canonicals/list-detail-panel", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/list-detail-panel", label: "List Detail Panel" },
+    { href: "/design-system/canonicals/list-detail-panel", label: "Canonicals" },
+  ]],
+  ["/design-system/canonicals/list-detail-split-layout", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/list-detail-split-layout", label: "List Detail Split Layout" },
+    { href: "/design-system/canonicals/list-detail-split-layout", label: "Canonicals" },
+  ]],
+  ["/design-system/exploration/top-nav", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/components/top-nav", label: "Top Nav" },
+    { href: "/design-system/exploration/top-nav", label: "Exploration" },
+  ]],
+  ["/design-system/exploration/sub-nav", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/sub-nav-row", label: "Sub-Nav Row" },
+    { href: "/design-system/exploration/sub-nav", label: "Exploration" },
+  ]],
+  ["/design-system/exploration/context-nav", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/context-nav", label: "Context Nav" },
+    { href: "/design-system/exploration/context-nav", label: "Exploration" },
+  ]],
+  ["/design-system/patterns/navigation-shell", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/navigation-shell", label: "Navigation Shell" },
+  ]],
+  ["/design-system/patterns/sub-nav-row", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/sub-nav-row", label: "Sub-Nav Row" },
+  ]],
+  ["/design-system/patterns/breadcrumb", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/breadcrumb", label: "Breadcrumb" },
+  ]],
+  ["/design-system/patterns/search-shell", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/search-shell", label: "Search Shell" },
+  ]],
+  ["/design-system/patterns/context-nav", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/context-nav", label: "Context Nav" },
+  ]],
+  ["/design-system/patterns/drawer", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/drawer", label: "Drawer" },
+  ]],
+  ["/design-system/patterns/display-settings", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/display-settings", label: "Display Settings" },
+  ]],
+  ["/design-system/patterns/list-record-card", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/list-record-card", label: "List Record Card" },
+  ]],
+  ["/design-system/patterns/list-detail-panel", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/list-detail-panel", label: "List Detail Panel" },
+  ]],
+  ["/design-system/patterns/list-detail-split-layout", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/list-detail-split-layout", label: "List Detail Split Layout" },
+  ]],
+  ["/design-system/templates/page-shell", [
+    { href: "/design-system/templates", label: "Home" },
+    { href: "/design-system/templates/page-shell", label: "Page Shell" },
+  ]],
+  ["/design-system/templates/list-page", [
+    { href: "/design-system/templates", label: "Home" },
+    { href: "/design-system/templates/list-page", label: "List Page" },
+  ]],
+  ["/design-system/templates/table-page", [
+    { href: "/design-system/templates", label: "Home" },
+    { href: "/design-system/templates/table-page", label: "Table Page" },
+  ]],
+]);
+
+function resolveBreadcrumbChain(pathname) {
+  const normalizedPath = normalizePathname(pathname);
+  return designSystemBreadcrumbChains.get(normalizedPath)
+    ?? designSystemBreadcrumbChains.get("/design-system");
+}
+
+function renderBreadcrumbMenuItems(items, currentLabel) {
+  return items.map((item, index) => {
+    const isCurrent = index === items.length - 1 && item.label === currentLabel;
+    if (isCurrent) {
+      return `<span class="menu-item breadcrumb-structure-current" aria-current="page">${escapeHtml(item.label)}</span>`;
+    }
+
+    return `<a class="menu-item" href="${escapeHtml(item.href)}" role="menuitem">${escapeHtml(item.label)}</a>`;
+  }).join("");
+}
+
+function buildBreadcrumbMarkup(chain) {
+  const current = chain[chain.length - 1];
+  const isSingleItem = chain.length === 1;
+  const collapsedItems = chain.length >= 4 ? chain.slice(1, -2) : [];
+  const pageMinusOne = chain.length >= 3 ? chain[chain.length - 2] : null;
+  const compactItems = chain.length > 1 ? chain.slice(0, -1) : [];
+  const compactMenuItems = [...compactItems, { href: current.href, label: current.label }];
+  const hasCollapsed = collapsedItems.length > 0;
+  const hasPageMinusOne = Boolean(pageMinusOne);
+  const collapsedMenu = renderBreadcrumbMenuItems(collapsedItems, current.label);
+  const compactMenu = renderBreadcrumbMenuItems(compactMenuItems, current.label);
+
+  return `
+    <div id="breadcrumb-compact" class="breadcrumb-compact hidden">
+      <button
+        id="breadcrumb-compact-button"
+        class="breadcrumb-collapse-button breadcrumb-compact-button"
+        type="button"
+        aria-expanded="false"
+        aria-controls="breadcrumb-compact-menu"
+        aria-label="Open page structure menu"
+      >
+        <span class="breadcrumb-compact-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M6 4.5a1.5 1.5 0 1 1 0 3H5v3h5.5a1.5 1.5 0 1 1 0 3H5v5h3.5a1.5 1.5 0 1 1 0 3H3.5a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 3.5 4.5zm11 0a4 4 0 0 1 0 8h-2v-3h2a1 1 0 1 0 0-2h-2v-3zm-2 9h3a4 4 0 1 1 0 8h-3v-3h3a1 1 0 1 0 0-2h-3z" />
+          </svg>
+        </span>
+      </button>
+      <div
+        id="breadcrumb-compact-menu"
+        class="breadcrumb-collapse-menu hidden"
+        role="menu"
+        aria-labelledby="breadcrumb-compact-button"
+      >
+        ${compactMenu}
+      </div>
+    </div>
+    <ol id="breadcrumb-list" class="breadcrumb-list">
+      <li id="breadcrumb-home-item">
+        <a id="breadcrumb-home-link" class="breadcrumb-button" href="${escapeHtml(chain[0].href)}">${escapeHtml(chain[0].label)}</a>
+      </li>
+      <li id="breadcrumb-separator-before-collapsed" class="${hasCollapsed ? "" : "hidden"}">
+        <span class="breadcrumb-separator" aria-hidden="true">/</span>
+      </li>
+      <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed ${hasCollapsed ? "" : "hidden"}">
+        <button
+          id="breadcrumb-collapse-button"
+          class="breadcrumb-collapse-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="breadcrumb-collapse-menu"
+          aria-label="Open collapsed breadcrumb menu"
+        >
+          ...
+        </button>
+        <div
+          id="breadcrumb-collapse-menu"
+          class="breadcrumb-collapse-menu hidden"
+          role="menu"
+          aria-labelledby="breadcrumb-collapse-button"
+        >
+          ${collapsedMenu}
+        </div>
+      </li>
+      <li id="breadcrumb-separator-before-page-minus-one" class="${hasPageMinusOne ? "" : "hidden"}">
+        <span class="breadcrumb-separator" aria-hidden="true">/</span>
+      </li>
+      <li id="breadcrumb-page-minus-one-item" class="${hasPageMinusOne ? "" : "hidden"}">
+        <a
+          id="breadcrumb-page-minus-one-link"
+          class="breadcrumb-button"
+          href="${hasPageMinusOne ? escapeHtml(pageMinusOne.href) : "#"}"
+        >${hasPageMinusOne ? escapeHtml(pageMinusOne.label) : ""}</a>
+      </li>
+      <li id="breadcrumb-separator-before-current" class="${chain.length > 1 ? "" : "hidden"}">
+        <span class="breadcrumb-separator" aria-hidden="true">/</span>
+      </li>
+      <li id="breadcrumb-current-item" class="${isSingleItem ? "hidden" : ""}">
+        <span id="breadcrumb-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">${escapeHtml(current.label)}</span>
+      </li>
+    </ol>
+  `;
+}
+
+function normalizeTemplatesRouteLabels(root = document) {
+  for (const link of root.querySelectorAll('a[href="/design-system/templates"]')) {
+    const contextNavLabel = link.querySelector(".context-nav-label");
+    const profileMetaLabel = link.querySelector(".profile-meta strong");
+    const label = contextNavLabel ?? profileMetaLabel;
+
+    if (label instanceof HTMLElement) {
+      label.textContent = "Templates";
+    } else if (link.childElementCount === 0) {
+      setTextContent(link, "Templates");
+    }
+
+    if (link instanceof HTMLElement && link.dataset.tooltip === "Pages") {
+      link.dataset.tooltip = "Templates";
+    }
+  }
+}
+
+function normalizeShellProfileLabels(root = document) {
+  const shellProfileLabel = root.querySelector(".design-system-shell > .top-nav .profile-meta strong");
+  if (shellProfileLabel instanceof HTMLElement) {
+    shellProfileLabel.textContent = "Profile";
+  }
+
+  const mobileProfileButton = root.querySelector(".design-system-shell > .mobile-nav-menu .mobile-profile-item");
+  if (mobileProfileButton instanceof HTMLElement) {
+    mobileProfileButton.textContent = "Profile";
+  }
+}
+
+function resolvePrimaryNavHomeHref(pathname) {
+  const chain = resolveBreadcrumbChain(pathname);
+  return chain[0]?.href ?? "/design-system";
+}
+
+function getAllowedPrimaryNavHref(href) {
+  return designSystemPrimaryNavItems.some((item) => item.href === href) ? href : null;
+}
+
+function getPrimaryNavHrefFromLink(link) {
+  if (!(link instanceof HTMLAnchorElement)) {
+    return null;
+  }
+
+  const href = normalizePathname(link.getAttribute("href") ?? "");
+  return getAllowedPrimaryNavHref(href);
+}
+
+function getPreferredPrimaryNavHref(container, fallbackHref) {
+  const activeLink = container.querySelector('a.nav-link[aria-current="page"], a.nav-link.active');
+  const activeHref = getPrimaryNavHrefFromLink(activeLink);
+  return activeHref ?? fallbackHref;
+}
+
+function buildPrimaryNavLinkMarkup(activeHref, { tooltipAnchors = false } = {}) {
+  return designSystemPrimaryNavItems.map((item) => {
+    const active = item.href === activeHref;
+    const current = active ? ' aria-current="page"' : "";
+    const activeClass = active ? " active" : "";
+    const tooltipClass = tooltipAnchors ? " tooltip-anchor" : "";
+    const tooltipAttribute = tooltipAnchors ? ` data-tooltip="${escapeHtml(item.label)}"` : "";
+    return `<a class="nav-link${tooltipClass}${activeClass}" href="${escapeHtml(item.href)}"${current}${tooltipAttribute}>${escapeHtml(item.label)}</a>`;
+  }).join("");
+}
+
+function buildPrimaryNavMenuMarkup(activeHref) {
+  return designSystemPrimaryNavItems.map((item) => {
+    const active = item.href === activeHref;
+    if (active) {
+      return `<span class="menu-item breadcrumb-structure-current" aria-current="page">${escapeHtml(item.label)}</span>`;
+    }
+    return `<a class="menu-item" href="${escapeHtml(item.href)}" role="menuitem">${escapeHtml(item.label)}</a>`;
+  }).join("");
+}
+
+function normalizePrimaryNav(root = document) {
+  const fallbackHref = resolvePrimaryNavHomeHref(window.location.pathname);
+
+  for (const primaryNavLinksContainer of root.querySelectorAll(".primary-nav-links")) {
+    if (!(primaryNavLinksContainer instanceof HTMLElement)) {
+      continue;
+    }
+
+    const tooltipAnchors = Boolean(primaryNavLinksContainer.querySelector(".tooltip-anchor"));
+    const activeHref = getPreferredPrimaryNavHref(primaryNavLinksContainer, fallbackHref);
+    primaryNavLinksContainer.innerHTML = buildPrimaryNavLinkMarkup(activeHref, { tooltipAnchors });
+  }
+
+  for (const primaryNavOverflowMenu of root.querySelectorAll(".primary-nav-overflow-menu")) {
+    if (!(primaryNavOverflowMenu instanceof HTMLElement)) {
+      continue;
+    }
+
+    const nav = primaryNavOverflowMenu.closest(".primary-nav");
+    const navLinksContainer = nav?.querySelector(".primary-nav-links");
+    const activeHref = navLinksContainer instanceof HTMLElement
+      ? getPreferredPrimaryNavHref(navLinksContainer, fallbackHref)
+      : fallbackHref;
+    primaryNavOverflowMenu.innerHTML = buildPrimaryNavMenuMarkup(activeHref);
+  }
+
+  for (const mobileNavMenu of root.querySelectorAll(".mobile-nav-menu")) {
+    if (!(mobileNavMenu instanceof HTMLElement)) {
+      continue;
+    }
+
+    const tooltipAnchors = Boolean(mobileNavMenu.querySelector(".tooltip-anchor"));
+    const activeHref = getPreferredPrimaryNavHref(mobileNavMenu, fallbackHref);
+    const mobileProfileGroup = mobileNavMenu.querySelector(".mobile-profile-group");
+    mobileNavMenu.querySelectorAll(":scope > a.nav-link").forEach((node) => node.remove());
+    mobileNavMenu.insertAdjacentHTML("afterbegin", buildPrimaryNavLinkMarkup(activeHref, { tooltipAnchors }));
+    if (mobileProfileGroup) {
+      mobileNavMenu.append(mobileProfileGroup);
+    }
+  }
+}
+
+function normalizeDesignSystemShellBeforeBinding() {
+  normalizeTemplatesRouteLabels();
+  normalizeShellProfileLabels();
+  normalizePrimaryNav();
+
+  const breadcrumbNav = document.querySelector(".breadcrumb-nav");
+  if (!(breadcrumbNav instanceof HTMLElement)) {
+    return;
+  }
+
+  const chain = resolveBreadcrumbChain(window.location.pathname);
+  breadcrumbNav.innerHTML = buildBreadcrumbMarkup(chain);
+}
+
+normalizeDesignSystemShellBeforeBinding();
+
 const profileButton = document.getElementById("profile-menu-button");
 const profileMenu = document.getElementById("profile-menu");
 const profileLanguageButton = document.getElementById("profile-language-button");
@@ -60,6 +501,13 @@ const languageModal = document.getElementById("language-modal");
 const languageModalBackdrop = document.getElementById("language-modal-backdrop");
 const languageModalCloseButton = document.getElementById("language-modal-close");
 const languageOptionList = document.getElementById("language-option-list");
+const formSelectRoots = Array.from(document.querySelectorAll("[data-form-select]"));
+const formDrawerSelectRoots = Array.from(document.querySelectorAll("[data-form-drawer-select]"));
+const formTimePickerRoots = Array.from(document.querySelectorAll("[data-form-time-picker]"));
+const formDatePickerRoots = Array.from(document.querySelectorAll("[data-form-date-picker]"));
+const formErrorToggleButtons = Array.from(document.querySelectorAll("[data-form-error-toggle]"));
+const formDrawerSettingButtons = Array.from(document.querySelectorAll("[data-form-drawer-setting]"));
+const formPageShells = Array.from(document.querySelectorAll(".form-page-shell[data-form-error-mode]"));
 const previewFrame = document.getElementById("top-nav-preview-frame");
 const topNavPreviewCanvas = previewFrame?.querySelector(".top-nav-preview-canvas");
 const topNavCanonicalRenderLayout = previewFrame?.closest(".canonical-render-layout");
@@ -110,6 +558,7 @@ const subNavPreviewCompactPageMinusOne = document.getElementById("sub-nav-previe
 const subNavPreviewCompactCurrent = document.getElementById("sub-nav-preview-compact-current");
 const subNavPreviewSearchInput = document.getElementById("sub-nav-preview-search-input");
 const subNavCanonicalRenderLayout = subNavPreviewFrame?.closest(".canonical-render-layout");
+const subNavCanonicalRenderScroller = subNavPreviewFrame?.closest(".canonical-render-surface-scroll");
 const contextNavPreviewFrame = document.getElementById("context-nav-preview-frame");
 const contextNavCanonicalRenderLayout = contextNavPreviewFrame?.closest(".canonical-render-layout");
 const contextNavPreviewShell = document.getElementById("context-nav-preview-shell");
@@ -164,6 +613,7 @@ const breadcrumbTooltipNodes = Array.from(
   document.querySelectorAll("#breadcrumb-list .breadcrumb-button, #sub-nav-preview-breadcrumb-list .breadcrumb-button"),
 );
 let subNavPreviewRenderPass = 0;
+let subNavCanonicalFitFrame = 0;
 let activeSharedTooltipTarget = null;
 
 function getSharedTooltipElement() {
@@ -205,7 +655,7 @@ const languageOptions = [
 const topNavPreviewFixtures = {
   standard: {
     brand: "Kanbien",
-    primary: ["Overview", "Foundations", "Components", "Patterns", "Resources"],
+    primary: ["Overview", "Components", "Patterns", "Templates"],
     profile: "Profile",
     mobileProfile: "Profile",
     menu: ["Language", "Close menu"],
@@ -215,10 +665,9 @@ const topNavPreviewFixtures = {
     brand: "Kanbien Internationalization Operations Console",
     primary: [
       "Overview and Platform Signals",
-      "Foundational Governance Rules",
       "Components and Interaction Contracts",
       "Patterns and Localization Guidance",
-      "Resources and Operational References",
+      "Templates and Reusable Shell Guidance",
     ],
     profile: "Profile and Personalization Preferences",
     mobileProfile: "Profile and Personalization Preferences",
@@ -456,13 +905,13 @@ const contextNavPrimaryFixtures = {
     { key: "overview", href: "/design-system", standard: "Overview", long: "Overview and Signals", active: true, icon: "home" },
     { key: "components", href: "/design-system/components", standard: "Components", long: "Components Library", icon: "grid" },
     { key: "patterns", href: "/design-system/patterns", standard: "Patterns", long: "Pattern Guidance", icon: "list" },
-    { key: "resources", href: "/design-system/resources", standard: "Resources", long: "Operational Resources", icon: "doc" },
+    { key: "templates", href: "/design-system/templates", standard: "Templates", long: "Template Guidance", icon: "doc" },
   ],
   tall: [
     { key: "overview", href: "/design-system", standard: "Overview", long: "Overview and Signals", active: true, icon: "home" },
     { key: "components", href: "/design-system/components", standard: "Components", long: "Components Library", icon: "grid" },
     { key: "patterns", href: "/design-system/patterns", standard: "Patterns", long: "Pattern Guidance", icon: "list" },
-    { key: "resources", href: "/design-system/resources", standard: "Resources", long: "Operational Resources", icon: "doc" },
+    { key: "templates", href: "/design-system/templates", standard: "Templates", long: "Template Guidance", icon: "doc" },
     { key: "tokens", href: "/design-system/tokens", standard: "Tokens", long: "Semantic Tokens", icon: "token" },
     { key: "motion", href: "/design-system/motion", standard: "Motion", long: "Motion Behavior", icon: "spark" },
     { key: "content", href: "/design-system/content", standard: "Content", long: "Content Contracts", icon: "text" },
@@ -575,7 +1024,7 @@ const subNavPreviewLocales = {
 };
 const subNavCanonicalReferenceStates = [
   { ref: "SNR-001", label: "Desktop default row", width: 1560, state: "full", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Desktop baseline row review with the full breadcrumb trail visible, centered search inactive, standard locale copy, normal theme, and LTR layout." },
-  { ref: "SNR-002", label: "Compressed desktop row", width: 760, state: "reduced-page-minus-one", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Compressed desktop row review where breadcrumb pressure removes Page -1 while search remains centered and inactive." },
+  { ref: "SNR-002", label: "Compressed desktop row", width: 1160, state: "reduced-page-minus-one", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Reduced desktop row review where breadcrumb pressure removes Page -1 while the middle segment still remains visible and search stays centered and inactive." },
   { ref: "SNR-003", label: "Desktop active search", width: 1560, state: "full", search: "active", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Desktop full-row review with active search focus, Enter hint visible, and the full breadcrumb trail retained." },
   { ref: "SNR-004", label: "Mobile fallback row", width: 560, state: "mobile", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Mobile fallback review where breadcrumb is absent and search expands to the full sub-nav width." },
   { ref: "SNR-005", label: "RTL row", width: 1920, state: "full", search: "inactive", theme: "normal", direction: "rtl", magnification: 0, locale: "rtl", circumstance: "Desktop RTL row review at the widened full canonical width so the collapsed middle breadcrumb and RTL locale copy remain honestly visible together." },
@@ -584,7 +1033,7 @@ const subNavCanonicalReferenceStates = [
   { ref: "SNR-008", label: "RTL reduced row", width: 1120, state: "reduced-page-minus-one", search: "inactive", theme: "normal", direction: "rtl", magnification: 0, locale: "rtl", circumstance: "RTL transition row review where Page -1 has already yielded so the remaining breadcrumb structure, separators, and search lane can be judged under medium-width pressure." },
   { ref: "BCR-001", label: "Full breadcrumb trail", width: 1560, state: "full", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Wide breadcrumb baseline showing home, collapsed middle path, Page -1, and current page under standard desktop conditions." },
   { ref: "BCR-002", label: "Shallow home breadcrumb", width: 1320, state: "shallow", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Shallow-navigation review where only the home breadcrumb appears because there is no real middle path or Page -1 depth." },
-  { ref: "BCR-003", label: "Reduced breadcrumb without Page -1", width: 760, state: "reduced-page-minus-one", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Responsive breadcrumb reduction review where Page -1 has yielded but the middle segment still remains visible." },
+  { ref: "BCR-003", label: "Reduced breadcrumb without Page -1", width: 1160, state: "reduced-page-minus-one", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Responsive breadcrumb reduction review where Page -1 has yielded while the middle segment still remains visible beside the centered search lane." },
   { ref: "BCR-004", label: "Reduced breadcrumb without middle segment", width: 700, state: "reduced-middle", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Responsive breadcrumb reduction review where the middle segment has yielded and the remaining structure stays out of the search lane." },
   { ref: "BCR-005", label: "Compact signpost mode", width: 640, state: "compact", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Compact signpost review where breadcrumb compresses to a single protected icon/menu and search yields around that dedicated lane." },
   { ref: "BCR-006", label: "RTL breadcrumb", width: 1920, state: "full", search: "inactive", theme: "normal", direction: "rtl", magnification: 0, locale: "rtl", circumstance: "RTL breadcrumb review at the widened full canonical width so the collapsed middle path, separators, and anchoring remain visible under RTL copy." },
@@ -596,7 +1045,7 @@ const subNavCanonicalReferenceStates = [
   { ref: "BCR-012", label: "RTL truncated breadcrumb labels", width: 1920, state: "full", search: "inactive", theme: "normal", direction: "rtl", magnification: 0, locale: "rtl-long-truncation", circumstance: "RTL breadcrumb truncation review at full desktop width where deliberately oversized mirrored button labels must ellipsize honestly, surface tooltips, and remain visible without forcing the row into a reduced breadcrumb state." },
   { ref: "SSR-001", label: "Desktop empty search", width: 1560, state: "full", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Desktop search-shell baseline with full row support, inactive search field, and standard placeholder copy." },
   { ref: "SSR-002", label: "Desktop active search", width: 1560, state: "full", search: "active", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Desktop active-search review showing focus treatment and Enter hint inside the full supported row." },
-  { ref: "SSR-003", label: "Compressed desktop search", width: 760, state: "reduced-page-minus-one", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Compressed desktop review where search must remain bounded and clear while the breadcrumb has already yielded Page -1." },
+  { ref: "SSR-003", label: "Compressed desktop search", width: 1160, state: "reduced-page-minus-one", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Reduced desktop review where search must remain bounded and clear while the breadcrumb has yielded Page -1 but preserved the middle segment." },
   { ref: "SSR-004", label: "Mobile search", width: 560, state: "mobile", search: "inactive", theme: "normal", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Mobile search review where the field fills the sub-nav width and the Enter hint is absent." },
   { ref: "SSR-005", label: "RTL search", width: 1920, state: "full", search: "inactive", theme: "normal", direction: "rtl", magnification: 0, locale: "rtl", circumstance: "RTL search-shell review at the widened full canonical width so the search field stays paired with the full supported breadcrumb structure under RTL content." },
   { ref: "SSR-006", label: "Theme readability search", width: 1560, state: "full", search: "inactive", theme: "dark", direction: "ltr", magnification: 0, locale: "standard", circumstance: "Dark-theme search-shell review focused on placeholder, border, and focus readability." },
@@ -820,7 +1269,7 @@ function positionSharedTooltip(target) {
     return;
   }
 
-  const label = target.dataset.tooltip?.trim();
+  const label = getTooltipLabelForTarget(target);
   if (!label) {
     hideSharedTooltip();
     return;
@@ -872,7 +1321,45 @@ function getTooltipTargetFromNode(node) {
     return null;
   }
 
-  return node.closest(".tooltip-anchor[data-tooltip], .context-nav-item[data-tooltip]");
+  return node.closest(
+    ".tooltip-anchor[data-tooltip], .context-nav-item[data-tooltip], .breadcrumb-button, .breadcrumb-current",
+  );
+}
+
+function getTooltipLabelForTarget(target) {
+  if (!(target instanceof HTMLElement)) {
+    return "";
+  }
+
+  const explicitLabel = target.dataset.tooltip?.trim();
+  if (explicitLabel) {
+    return explicitLabel;
+  }
+
+  const isBreadcrumbTarget =
+    target.classList.contains("breadcrumb-button")
+    || target.classList.contains("breadcrumb-current");
+
+  if (!isBreadcrumbTarget) {
+    return "";
+  }
+
+  const labelNode = ensureBreadcrumbLabel(target) ?? target;
+  const label = target.dataset.fullLabel?.trim() || labelNode.textContent?.trim() || "";
+  if (!label) {
+    return "";
+  }
+
+  const parentItem = target.closest("li");
+  const nodeTruncated = labelNode.scrollWidth > labelNode.clientWidth + 1;
+  const parentTruncated =
+    parentItem instanceof HTMLElement && parentItem.scrollWidth > parentItem.clientWidth + 1;
+  const isTruncated =
+    target.classList.contains("breadcrumb-home-icon-only")
+    || nodeTruncated
+    || parentTruncated;
+
+  return isTruncated ? label : "";
 }
 
 function getTooltipTargetFromEvent(event) {
@@ -1596,7 +2083,7 @@ function applySubNavPreviewState(state) {
       document.body.dataset.renderStatus = "ready";
       subNavPreviewShell.dataset.renderStatus = "ready";
 
-      if (normalizedState.state === "full") {
+      if (normalizedState.state !== "mobile" && normalizedState.state !== "compact") {
         applyResponsiveBreadcrumbPriority({
           list: subNavPreviewBreadcrumbList,
           container: subNavPreviewBreadcrumbList?.parentElement,
@@ -1606,6 +2093,8 @@ function applySubNavPreviewState(state) {
           collapsedItem: subNavPreviewCollapsedItem,
           separatorBeforeCollapsed: subNavPreviewSeparatorBeforeCollapsed,
           compact: subNavPreviewBreadcrumbCompact,
+          allowPageMinusOne: normalizedState.state !== "reduced-page-minus-one" && normalizedState.state !== "shallow",
+          allowCollapsed: normalizedState.state !== "reduced-middle" && normalizedState.state !== "shallow",
           closeExpandedMenus: () => {
             setSubNavPreviewBreadcrumbMenuOpen(false);
             setSubNavPreviewBreadcrumbCompactMenuOpen(false);
@@ -1614,6 +2103,8 @@ function applySubNavPreviewState(state) {
       } else {
         updateBreadcrumbOverflowTooltips();
       }
+
+      scheduleSubNavCanonicalFitScaleUpdate();
     });
   });
 
@@ -2301,6 +2792,9 @@ function updateBreadcrumbOverflow() {
     return;
   }
 
+  const allowPageMinusOne = Boolean(breadcrumbPageMinusOneLink?.textContent?.trim());
+  const allowCollapsed = Boolean(breadcrumbCollapseMenu?.children.length);
+
   applyResponsiveBreadcrumbPriority({
     list: breadcrumbList,
     container: breadcrumbList.parentElement,
@@ -2310,10 +2804,85 @@ function updateBreadcrumbOverflow() {
     collapsedItem: breadcrumbCollapsedItem,
     separatorBeforeCollapsed: breadcrumbSeparatorBeforeCollapsed,
     compact: breadcrumbCompact,
+    allowPageMinusOne,
+    allowCollapsed,
     closeExpandedMenus: () => {
       setBreadcrumbMenuOpen(false);
       setBreadcrumbCompactMenuOpen(false);
     },
+  });
+}
+
+function refreshSubNavPreviewResponsiveBreadcrumb() {
+  if (!subNavPreviewShell || !subNavPreviewBreadcrumbList) {
+    return;
+  }
+
+  const currentState = getSubNavPreviewStateFromUrl();
+
+  if (currentState.state !== "mobile" && currentState.state !== "compact") {
+    applyResponsiveBreadcrumbPriority({
+      list: subNavPreviewBreadcrumbList,
+      container: subNavPreviewBreadcrumbList.parentElement,
+      pageMinusOneLink: subNavPreviewPageMinusOneLink,
+      pageMinusOneItem: subNavPreviewPageMinusOneItem,
+      separatorBeforePageMinusOne: subNavPreviewSeparatorBeforePageMinusOne,
+      collapsedItem: subNavPreviewCollapsedItem,
+      separatorBeforeCollapsed: subNavPreviewSeparatorBeforeCollapsed,
+      compact: subNavPreviewBreadcrumbCompact,
+      allowPageMinusOne: currentState.state !== "reduced-page-minus-one" && currentState.state !== "shallow",
+      allowCollapsed: currentState.state !== "reduced-middle" && currentState.state !== "shallow",
+      closeExpandedMenus: () => {
+        setSubNavPreviewBreadcrumbMenuOpen(false);
+        setSubNavPreviewBreadcrumbCompactMenuOpen(false);
+      },
+    });
+    return;
+  }
+
+  syncSubNavPreviewRowLayout(currentState.state);
+  updateBreadcrumbOverflowTooltips();
+}
+
+function updateSubNavCanonicalFitScale() {
+  if (
+    subNavSurfaceMode !== "canonical"
+    || !(subNavPreviewFrame instanceof HTMLElement)
+    || !(subNavPreviewShell instanceof HTMLElement)
+    || !(subNavCanonicalRenderScroller instanceof HTMLElement)
+  ) {
+    return;
+  }
+
+  const desiredWidth = Number.parseFloat(
+    getComputedStyle(subNavPreviewFrame).getPropertyValue("--sub-nav-preview-width"),
+  );
+  const uiScale = Number.parseFloat(getComputedStyle(subNavPreviewShell).getPropertyValue("--ui-scale")) || 1;
+
+  if (!Number.isFinite(desiredWidth) || desiredWidth <= 0) {
+    return;
+  }
+
+  const desiredVisibleWidth = desiredWidth * uiScale;
+  const desiredVisibleHeight = subNavPreviewShell.offsetHeight * uiScale;
+  const availableWidth = subNavCanonicalRenderScroller.clientWidth;
+  const scale = availableWidth > 0 ? Math.min(1, availableWidth / desiredVisibleWidth) : 1;
+  const fittedWidth = Math.ceil(desiredVisibleWidth * scale);
+  const fittedHeight = Math.ceil(desiredVisibleHeight * scale);
+
+  subNavPreviewFrame.style.setProperty("--sub-nav-canonical-fit-scale", String(scale));
+  subNavPreviewFrame.style.setProperty("--sub-nav-preview-fitted-width", `${fittedWidth}px`);
+  subNavPreviewFrame.style.setProperty("--sub-nav-preview-fitted-height", `${fittedHeight}px`);
+}
+
+function scheduleSubNavCanonicalFitScaleUpdate() {
+  if (subNavCanonicalFitFrame) {
+    return;
+  }
+
+  subNavCanonicalFitFrame = window.requestAnimationFrame(() => {
+    subNavCanonicalFitFrame = 0;
+    updateSubNavCanonicalFitScale();
   });
 }
 
@@ -2380,7 +2949,19 @@ function isSubNavPreviewBreadcrumbCompactMenuOpen() {
   return subNavPreviewBreadcrumbCompactButton?.getAttribute("aria-expanded") === "true";
 }
 
-function setAccessibilityDrawerOpen(open) {
+function isFocusableOutsideTarget(node) {
+  if (!(node instanceof Element)) {
+    return false;
+  }
+
+  const focusable = node.closest(
+    "input:not([type='hidden']):not([disabled]), textarea:not([disabled]), select:not([disabled]), button:not([disabled]), a[href], [tabindex]:not([tabindex='-1']), [contenteditable='true']",
+  );
+
+  return focusable instanceof HTMLElement;
+}
+
+function setAccessibilityDrawerOpen(open, { restoreFocus = true } = {}) {
   accessibilityButton?.setAttribute("aria-expanded", String(open));
   accessibilityDrawer?.classList.toggle("hidden", !open);
   accessibilityDrawer?.setAttribute("aria-hidden", String(!open));
@@ -2393,7 +2974,7 @@ function setAccessibilityDrawerOpen(open) {
     return;
   }
 
-  if (accessibilityDrawerReturnFocusTarget instanceof HTMLElement) {
+  if (restoreFocus && accessibilityDrawerReturnFocusTarget instanceof HTMLElement) {
     accessibilityDrawerReturnFocusTarget.focus();
   }
 }
@@ -2532,7 +3113,7 @@ function syncOverflowTooltip(node) {
     return;
   }
 
-  const label = measurementNode.textContent?.trim() ?? "";
+  const label = node.dataset.fullLabel?.trim() || measurementNode.textContent?.trim() || "";
   const forceCanonicalTooltip =
     subNavPreviewShell?.dataset.breadcrumbCanonicalMode === "button-truncation"
     && (
@@ -2604,8 +3185,25 @@ function syncSubNavPreviewRowLayout(state) {
     return;
   }
 
-  const preserveBreadcrumbLane = state === "reduced-page-minus-one" || state === "reduced-middle" || state === "compact";
+  const preserveBreadcrumbLane = state === "compact";
   row.classList.toggle("sub-nav-compact-layout", preserveBreadcrumbLane);
+}
+
+function breadcrumbPresentationNeedsCompaction({ list, pageMinusOneLink, allowPageMinusOne = true }) {
+  if (!(list instanceof HTMLElement)) {
+    return false;
+  }
+
+  const currentLabel = list.querySelector(".breadcrumb-current");
+  const nodes = [currentLabel];
+  if (allowPageMinusOne) {
+    nodes.unshift(pageMinusOneLink);
+  }
+  return nodes.some((node) => (
+    node instanceof HTMLElement
+    && !node.closest(".hidden")
+    && isBreadcrumbNodeTruncated(node)
+  ));
 }
 
 function applyResponsiveBreadcrumbPriority({
@@ -2617,24 +3215,48 @@ function applyResponsiveBreadcrumbPriority({
   collapsedItem,
   separatorBeforeCollapsed,
   compact,
+  allowPageMinusOne = true,
+  allowCollapsed = true,
   closeExpandedMenus,
 }) {
   if (!list) {
     return;
   }
 
-  const availableWidth = container?.clientWidth ?? list.clientWidth;
+  const preserveCanonicalFullTrail =
+    (
+      list === breadcrumbList
+      && breadcrumbNav?.dataset.canonicalShellMode === "full-trail"
+    )
+    || (
+      list === subNavPreviewBreadcrumbList
+      && subNavPreviewShell?.dataset.breadcrumbCanonicalMode === "button-truncation"
+    );
+
+  if (preserveCanonicalFullTrail) {
+    setBreadcrumbItemHidden(pageMinusOneItem, false);
+    setBreadcrumbItemHidden(separatorBeforePageMinusOne, false);
+    setBreadcrumbItemHidden(collapsedItem, false);
+    setBreadcrumbItemHidden(separatorBeforeCollapsed, false);
+    compact?.classList.add("hidden");
+    syncBreadcrumbCompactLayout(compact);
+    list.classList.remove("hidden");
+    updateBreadcrumbOverflowTooltips();
+    return;
+  }
 
   const fullPageMinusOneLabel = pageMinusOneLink?.dataset.fullLabel ?? pageMinusOneLink?.textContent?.trim() ?? "";
   const shortPageMinusOneLabel = pageMinusOneLink?.dataset.shortLabel ?? fullPageMinusOneLabel;
 
-  setBreadcrumbItemHidden(pageMinusOneItem, false);
-  setBreadcrumbItemHidden(separatorBeforePageMinusOne, false);
-  setBreadcrumbItemHidden(collapsedItem, false);
-  setBreadcrumbItemHidden(separatorBeforeCollapsed, false);
+  setBreadcrumbItemHidden(pageMinusOneItem, !allowPageMinusOne);
+  setBreadcrumbItemHidden(separatorBeforePageMinusOne, !allowPageMinusOne);
+  setBreadcrumbItemHidden(collapsedItem, !allowCollapsed);
+  setBreadcrumbItemHidden(separatorBeforeCollapsed, !allowCollapsed);
   compact?.classList.add("hidden");
   syncBreadcrumbCompactLayout(compact);
   list.classList.remove("hidden");
+
+  const availableWidth = container?.clientWidth ?? list.clientWidth;
 
   if (pageMinusOneLink) {
     setBreadcrumbButtonLabel(pageMinusOneLink, fullPageMinusOneLabel);
@@ -2644,25 +3266,38 @@ function applyResponsiveBreadcrumbPriority({
     setBreadcrumbButtonLabel(pageMinusOneLink, shortPageMinusOneLabel);
   }
 
-  if (list.scrollWidth <= availableWidth) {
+  if (
+    list.scrollWidth <= availableWidth
+    && !breadcrumbPresentationNeedsCompaction({ list, pageMinusOneLink, allowPageMinusOne })
+  ) {
     syncBreadcrumbCompactLayout(compact);
     updateBreadcrumbOverflowTooltips();
     return;
   }
 
-  setBreadcrumbItemHidden(pageMinusOneItem, true);
-  setBreadcrumbItemHidden(separatorBeforePageMinusOne, true);
+  if (allowPageMinusOne) {
+    setBreadcrumbItemHidden(pageMinusOneItem, true);
+    setBreadcrumbItemHidden(separatorBeforePageMinusOne, true);
+  }
 
-  if (list.scrollWidth <= availableWidth) {
+  if (
+    list.scrollWidth <= availableWidth
+    && !breadcrumbPresentationNeedsCompaction({ list, pageMinusOneLink, allowPageMinusOne })
+  ) {
     syncBreadcrumbCompactLayout(compact);
     updateBreadcrumbOverflowTooltips();
     return;
   }
 
-  setBreadcrumbItemHidden(collapsedItem, true);
-  setBreadcrumbItemHidden(separatorBeforeCollapsed, true);
+  if (allowCollapsed) {
+    setBreadcrumbItemHidden(collapsedItem, true);
+    setBreadcrumbItemHidden(separatorBeforeCollapsed, true);
+  }
 
-  if (list.scrollWidth <= availableWidth) {
+  if (
+    list.scrollWidth <= availableWidth
+    && !breadcrumbPresentationNeedsCompaction({ list, pageMinusOneLink, allowPageMinusOne })
+  ) {
     syncBreadcrumbCompactLayout(compact);
     updateBreadcrumbOverflowTooltips();
     return;
@@ -2935,6 +3570,1272 @@ function applyMagnification(value) {
   }
 }
 
+function initializeFormSelects() {
+  if (formSelectRoots.length === 0) {
+    return;
+  }
+
+  let activeFormSelect = null;
+
+  function closeFormSelect(root, { restoreFocus = false } = {}) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const trigger = root.querySelector("[data-form-select-button]");
+    const listbox = root.querySelector("[data-form-select-listbox]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(listbox instanceof HTMLElement)) {
+      return;
+    }
+
+    trigger.setAttribute("aria-expanded", "false");
+    listbox.classList.add("hidden");
+
+    if (restoreFocus) {
+      trigger.focus();
+    }
+
+    if (activeFormSelect === root) {
+      activeFormSelect = null;
+    }
+  }
+
+  function openFormSelect(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    if (activeFormSelect && activeFormSelect !== root) {
+      closeFormSelect(activeFormSelect);
+    }
+
+    const trigger = root.querySelector("[data-form-select-button]");
+    const listbox = root.querySelector("[data-form-select-listbox]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(listbox instanceof HTMLElement)) {
+      return;
+    }
+
+    trigger.setAttribute("aria-expanded", "true");
+    listbox.classList.remove("hidden");
+    activeFormSelect = root;
+  }
+
+  for (const root of formSelectRoots) {
+    if (!(root instanceof HTMLElement)) {
+      continue;
+    }
+
+    const trigger = root.querySelector("[data-form-select-button]");
+    const hiddenInput = root.querySelector("[data-form-select-value]");
+    const currentLabel = root.querySelector("[data-form-select-current-label]");
+    const options = Array.from(root.querySelectorAll("[data-form-select-option]"));
+
+    if (
+      !(trigger instanceof HTMLButtonElement)
+      || !(hiddenInput instanceof HTMLInputElement)
+      || !(currentLabel instanceof HTMLElement)
+    ) {
+      continue;
+    }
+
+    trigger.addEventListener("click", () => {
+      const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        closeFormSelect(root);
+        return;
+      }
+
+      openFormSelect(root);
+    });
+
+    for (const option of options) {
+      if (!(option instanceof HTMLButtonElement)) {
+        continue;
+      }
+
+      option.addEventListener("click", () => {
+        hiddenInput.value = option.dataset.value ?? "";
+        currentLabel.textContent = option.textContent?.trim() ?? "";
+
+        for (const candidate of options) {
+          if (!(candidate instanceof HTMLButtonElement)) {
+            continue;
+          }
+
+          const isSelected = candidate === option;
+          candidate.classList.toggle("active", isSelected);
+          candidate.setAttribute("aria-selected", String(isSelected));
+        }
+
+        root.closest("[data-form-date-picker]")?.dispatchEvent(new CustomEvent("formselectchange", { bubbles: true }));
+        closeFormSelect(root, { restoreFocus: true });
+      });
+    }
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Node)) {
+      return;
+    }
+
+    if (activeFormSelect && !activeFormSelect.contains(event.target)) {
+      closeFormSelect(activeFormSelect);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !activeFormSelect) {
+      return;
+    }
+
+    closeFormSelect(activeFormSelect, { restoreFocus: true });
+  });
+}
+
+function initializeFormDrawerSelects() {
+  if (formDrawerSelectRoots.length === 0) {
+    return;
+  }
+
+  let activeFormDrawerSelect = null;
+  const focusableDrawerSelector = [
+    "button:not([disabled])",
+    "input:not([disabled])",
+    "select:not([disabled])",
+    "textarea:not([disabled])",
+    "a[href]",
+    "[tabindex]:not([tabindex='-1'])",
+  ].join(",");
+
+  function getSelectedValues(hiddenInput) {
+    if (!(hiddenInput instanceof HTMLInputElement)) {
+      return [];
+    }
+
+    return hiddenInput.value
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
+  }
+
+  function setSelectedValues(hiddenInput, values) {
+    if (hiddenInput instanceof HTMLInputElement) {
+      hiddenInput.value = values.join(",");
+    }
+  }
+
+  function getFocusableDrawerElements(panel) {
+    if (!(panel instanceof HTMLElement)) {
+      return [];
+    }
+
+    return Array.from(panel.querySelectorAll(focusableDrawerSelector)).filter((element) => {
+      if (!(element instanceof HTMLElement)) {
+        return false;
+      }
+
+      return !element.hasAttribute("disabled")
+        && !element.hidden
+        && !element.classList.contains("hidden")
+        && element.getAttribute("aria-hidden") !== "true";
+    });
+  }
+
+  function closeDrawer(root, { restoreFocus = false } = {}) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const trigger = root.querySelector("[data-form-drawer-select-button]");
+    const panel = root.querySelector("[data-form-drawer-select-panel]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    trigger.setAttribute("aria-expanded", "false");
+    panel.classList.add("hidden");
+    panel.setAttribute("aria-hidden", "true");
+    panel.setAttribute("aria-modal", "false");
+
+    if (restoreFocus) {
+      trigger.focus();
+    }
+
+    if (activeFormDrawerSelect === root) {
+      activeFormDrawerSelect = null;
+    }
+  }
+
+  function openDrawer(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    if (activeFormDrawerSelect && activeFormDrawerSelect !== root) {
+      closeDrawer(activeFormDrawerSelect);
+    }
+
+    const trigger = root.querySelector("[data-form-drawer-select-button]");
+    const panel = root.querySelector("[data-form-drawer-select-panel]");
+    const searchInput = root.querySelector("[data-form-drawer-select-search]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    trigger.setAttribute("aria-expanded", "true");
+    panel.classList.remove("hidden");
+    panel.setAttribute("aria-hidden", "false");
+    panel.setAttribute("aria-modal", "true");
+    activeFormDrawerSelect = root;
+
+    window.requestAnimationFrame(() => {
+      if (searchInput instanceof HTMLInputElement) {
+        searchInput.focus();
+      }
+    });
+  }
+
+  function renderDrawer(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const hiddenInput = root.querySelector("[data-form-drawer-select-value]");
+    const summaryNode = root.querySelector("[data-form-drawer-select-summary]");
+    const metaNode = root.querySelector("[data-form-drawer-select-meta]");
+    const selectedCountNode = root.querySelector("[data-form-drawer-select-selected-count]");
+    const selectedList = root.querySelector("[data-form-drawer-select-selected-list]");
+    const selectedEmpty = root.querySelector("[data-form-drawer-select-selected-empty]");
+    const options = Array.from(root.querySelectorAll("[data-form-drawer-select-option]"));
+    const searchInput = root.querySelector("[data-form-drawer-select-search]");
+    const emptyNode = root.querySelector("[data-form-drawer-select-empty]");
+    const variant = root.dataset.formDrawerSelectVariant ?? "default";
+
+    if (
+      !(hiddenInput instanceof HTMLInputElement)
+      || !(summaryNode instanceof HTMLElement)
+      || !(metaNode instanceof HTMLElement)
+      || !(selectedCountNode instanceof HTMLElement)
+      || !(selectedList instanceof HTMLElement)
+      || !(selectedEmpty instanceof HTMLElement)
+      || !(emptyNode instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const selectedValues = getSelectedValues(hiddenInput);
+    const optionRecords = options.map((option) => ({
+      element: option,
+      value: option.dataset.value ?? "",
+      label: option.dataset.label ?? option.textContent?.trim() ?? "",
+      description: option.dataset.description ?? "",
+      attribute: option.dataset.attribute ?? option.dataset.description ?? "",
+    }));
+    const selectedRecords = optionRecords.filter((option) => selectedValues.includes(option.value));
+    const searchTerm = searchInput instanceof HTMLInputElement ? searchInput.value.trim().toLowerCase() : "";
+
+    summaryNode.textContent = selectedRecords.length === 0
+      ? "Choose collections"
+      : selectedRecords.length <= 2
+        ? selectedRecords.map((item) => item.label).join(", ")
+        : `${selectedRecords.slice(0, 2).map((item) => item.label).join(", ")} +${selectedRecords.length - 2} more`;
+
+    const selectedMeta = `${selectedRecords.length} selected`;
+    metaNode.textContent = selectedMeta;
+    selectedCountNode.textContent = selectedMeta;
+
+    selectedList.innerHTML = selectedRecords.map((item) => {
+      const detail = variant === "attribute-cards" ? item.attribute : item.description;
+      return `
+        <button class="form-drawer-select-selected-chip" type="button" data-form-drawer-select-remove="${escapeHtml(item.value)}">
+          <span class="form-drawer-select-selected-chip-copy">
+            <strong>${escapeHtml(item.label)}</strong>
+            <span>${escapeHtml(detail)}</span>
+          </span>
+          <span class="form-drawer-select-selected-chip-remove">Remove</span>
+        </button>
+      `;
+    }).join("");
+
+    selectedEmpty.classList.toggle("hidden", selectedRecords.length > 0);
+    selectedList.classList.toggle("hidden", selectedRecords.length === 0);
+
+    let visibleOptions = 0;
+
+    for (const option of optionRecords) {
+      const isSelected = selectedValues.includes(option.value);
+      const matchesSearch = searchTerm === ""
+        || option.label.toLowerCase().includes(searchTerm)
+        || option.description.toLowerCase().includes(searchTerm);
+
+      option.element.classList.toggle("active", isSelected);
+      option.element.setAttribute("aria-pressed", String(isSelected));
+      option.element.classList.toggle("hidden", !matchesSearch);
+
+      if (matchesSearch) {
+        visibleOptions += 1;
+      }
+    }
+
+    emptyNode.classList.toggle("hidden", visibleOptions > 0);
+  }
+
+  function toggleValue(root, value) {
+    if (!(root instanceof HTMLElement) || !value) {
+      return;
+    }
+
+    const hiddenInput = root.querySelector("[data-form-drawer-select-value]");
+    if (!(hiddenInput instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const nextValues = getSelectedValues(hiddenInput);
+    const existingIndex = nextValues.indexOf(value);
+
+    if (existingIndex >= 0) {
+      nextValues.splice(existingIndex, 1);
+    } else {
+      nextValues.push(value);
+    }
+
+    setSelectedValues(hiddenInput, nextValues);
+    renderDrawer(root);
+  }
+
+  for (const root of formDrawerSelectRoots) {
+    if (!(root instanceof HTMLElement)) {
+      continue;
+    }
+
+    const trigger = root.querySelector("[data-form-drawer-select-button]");
+    const panel = root.querySelector("[data-form-drawer-select-panel]");
+    const closeButton = root.querySelector("[data-form-drawer-select-close]");
+    const searchForm = root.querySelector(".form-drawer-select-search-shell");
+    const searchInput = root.querySelector("[data-form-drawer-select-search]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+      continue;
+    }
+
+    renderDrawer(root);
+
+    trigger.addEventListener("click", () => {
+      const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        closeDrawer(root);
+        return;
+      }
+
+      openDrawer(root);
+    });
+
+    closeButton?.addEventListener("click", () => {
+      closeDrawer(root, { restoreFocus: true });
+    });
+
+    searchForm?.addEventListener("submit", (event) => {
+      event.preventDefault();
+    });
+
+    searchInput?.addEventListener("input", () => {
+      renderDrawer(root);
+    });
+
+    panel.addEventListener("click", (event) => {
+      event.stopPropagation();
+
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const removeButton = target.closest("[data-form-drawer-select-remove]");
+      if (removeButton instanceof HTMLButtonElement) {
+        toggleValue(root, removeButton.dataset.formDrawerSelectRemove ?? "");
+        return;
+      }
+
+      const optionButton = target.closest("[data-form-drawer-select-option]");
+      if (optionButton instanceof HTMLButtonElement) {
+        toggleValue(root, optionButton.dataset.value ?? "");
+      }
+    });
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Node)) {
+      return;
+    }
+
+    if (activeFormDrawerSelect && !activeFormDrawerSelect.contains(event.target)) {
+      closeDrawer(activeFormDrawerSelect);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (!activeFormDrawerSelect) {
+      return;
+    }
+
+    if (event.key === "Tab") {
+      const panel = activeFormDrawerSelect.querySelector("[data-form-drawer-select-panel]");
+      if (!(panel instanceof HTMLElement)) {
+        return;
+      }
+
+      const focusableElements = getFocusableDrawerElements(panel);
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      const activeElement = document.activeElement;
+
+      if (event.shiftKey && activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+        return;
+      }
+
+      if (!event.shiftKey && activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+
+      return;
+    }
+
+    if (event.key === "Escape") {
+      closeDrawer(activeFormDrawerSelect, { restoreFocus: true });
+    }
+  });
+}
+
+function initializeFormTimePickers() {
+  if (formTimePickerRoots.length === 0) {
+    return;
+  }
+
+  let activeFormTimePicker = null;
+
+  function closeTimePicker(root, { restoreFocus = false } = {}) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const trigger = root.querySelector("[data-form-time-button]");
+    const panel = root.querySelector("[data-form-time-panel]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    trigger.setAttribute("aria-expanded", "false");
+    panel.classList.add("hidden");
+
+    if (restoreFocus) {
+      trigger.focus();
+    }
+
+    if (activeFormTimePicker === root) {
+      activeFormTimePicker = null;
+    }
+
+    syncFormPickerOverlayState();
+  }
+
+  function openTimePicker(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    if (activeFormTimePicker && activeFormTimePicker !== root) {
+      closeTimePicker(activeFormTimePicker);
+    }
+
+    const trigger = root.querySelector("[data-form-time-button]");
+    const panel = root.querySelector("[data-form-time-panel]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    trigger.setAttribute("aria-expanded", "true");
+    panel.classList.remove("hidden");
+    activeFormTimePicker = root;
+    syncFormPickerOverlayState();
+  }
+
+  function syncTimePicker(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const hiddenInput = root.querySelector("[data-form-time-value]");
+    const currentLabel = root.querySelector("[data-form-time-current-label]");
+    const hoursContainer = root.querySelector("[data-form-time-hours]");
+    const minutesContainer = root.querySelector("[data-form-time-minutes]");
+
+    if (
+      !(hiddenInput instanceof HTMLInputElement)
+      || !(currentLabel instanceof HTMLElement)
+      || !(hoursContainer instanceof HTMLElement)
+      || !(minutesContainer instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const normalizedValue = normalizeFormTimeValue(hiddenInput.value);
+    hiddenInput.value = normalizedValue;
+    currentLabel.textContent = normalizedValue;
+
+    const [selectedHour, selectedMinute] = normalizedValue.split(":");
+
+    hoursContainer.innerHTML = formTimeHourOptions.map((hour) => {
+      const isSelected = hour === selectedHour;
+      return `<button class="form-time-option${isSelected ? " active" : ""}" type="button" data-form-time-hour="${hour}" aria-pressed="${String(isSelected)}">${hour}</button>`;
+    }).join("");
+
+    minutesContainer.innerHTML = formTimeMinuteOptions.map((minute) => {
+      const isSelected = minute === selectedMinute;
+      return `<button class="form-time-option${isSelected ? " active" : ""}" type="button" data-form-time-minute="${minute}" aria-pressed="${String(isSelected)}">${minute}</button>`;
+    }).join("");
+  }
+
+  function updateTimeValue(root, nextPartialValue, { closeAfterSelect = false } = {}) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const hiddenInput = root.querySelector("[data-form-time-value]");
+    if (!(hiddenInput instanceof HTMLInputElement)) {
+      return;
+    }
+
+    hiddenInput.value = normalizeFormTimeValue(nextPartialValue);
+    syncTimePicker(root);
+    root.dispatchEvent(new CustomEvent("formtimechange", { bubbles: true }));
+
+    if (closeAfterSelect) {
+      closeTimePicker(root, { restoreFocus: true });
+    }
+  }
+
+  for (const root of formTimePickerRoots) {
+    if (!(root instanceof HTMLElement)) {
+      continue;
+    }
+
+    const trigger = root.querySelector("[data-form-time-button]");
+    const panel = root.querySelector("[data-form-time-panel]");
+    const hiddenInput = root.querySelector("[data-form-time-value]");
+
+    if (
+      !(trigger instanceof HTMLButtonElement)
+      || !(panel instanceof HTMLElement)
+      || !(hiddenInput instanceof HTMLInputElement)
+    ) {
+      continue;
+    }
+
+    syncTimePicker(root);
+
+    trigger.addEventListener("click", () => {
+      const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        closeTimePicker(root);
+        return;
+      }
+
+      openTimePicker(root);
+    });
+
+    panel.addEventListener("click", (event) => {
+      event.stopPropagation();
+
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const closeButton = target.closest("[data-form-time-close]");
+      if (closeButton instanceof HTMLButtonElement) {
+        closeTimePicker(root, { restoreFocus: true });
+        return;
+      }
+
+      const hourButton = target.closest("[data-form-time-hour]");
+      if (hourButton instanceof HTMLButtonElement) {
+        const currentMinute = normalizeFormTimeValue(hiddenInput.value).split(":")[1];
+        updateTimeValue(root, `${hourButton.dataset.formTimeHour ?? "00"}:${currentMinute}`);
+        return;
+      }
+
+      const minuteButton = target.closest("[data-form-time-minute]");
+      if (minuteButton instanceof HTMLButtonElement) {
+        const currentHour = normalizeFormTimeValue(hiddenInput.value).split(":")[0];
+        updateTimeValue(root, `${currentHour}:${minuteButton.dataset.formTimeMinute ?? "00"}`, { closeAfterSelect: true });
+      }
+    });
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Node)) {
+      return;
+    }
+
+    if (activeFormTimePicker && !activeFormTimePicker.contains(event.target)) {
+      closeTimePicker(activeFormTimePicker);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !activeFormTimePicker) {
+      return;
+    }
+
+    closeTimePicker(activeFormTimePicker, { restoreFocus: true });
+  });
+}
+
+function initializeFormErrorModeToggles() {
+  if (formErrorToggleButtons.length === 0 && formDrawerSettingButtons.length === 0) {
+    return;
+  }
+
+  function parseFormReviewFlag(value) {
+    if (typeof value !== "string") {
+      return false;
+    }
+
+    return value === "true" || value === "1" || value === "yes" || value === "on";
+  }
+
+  function getFormReviewStateFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+
+    return {
+      errors: parseFormReviewFlag(params.get("errors")),
+      disabled: parseFormReviewFlag(params.get("disabled")),
+      mobile: parseFormReviewFlag(params.get("mobile")),
+    };
+  }
+
+  function setFormShellState(shell, key, enabled) {
+    if (!(shell instanceof HTMLElement)) {
+      return;
+    }
+
+    if (key === "errors") {
+      shell.dataset.formErrorMode = String(enabled);
+    }
+
+    if (key === "disabled") {
+      shell.dataset.formDisabledMode = String(enabled);
+
+      const controls = shell.querySelectorAll("input:not([type=\"hidden\"]), textarea, select, button");
+      for (const control of controls) {
+        if (
+          control instanceof HTMLInputElement
+          || control instanceof HTMLTextAreaElement
+          || control instanceof HTMLSelectElement
+          || control instanceof HTMLButtonElement
+        ) {
+          control.disabled = enabled;
+        }
+      }
+    }
+
+    if (key === "mobile") {
+      shell.dataset.formMobileView = String(enabled);
+    }
+  }
+
+  function syncFormShellState(shell) {
+    if (!(shell instanceof HTMLElement)) {
+      return;
+    }
+
+    const isErrorMode = shell.dataset.formErrorMode === "true";
+    const isDisabledMode = shell.dataset.formDisabledMode === "true";
+    const isMobileView = shell.dataset.formMobileView === "true";
+
+    for (const button of formErrorToggleButtons) {
+      if (!(button instanceof HTMLButtonElement)) {
+        continue;
+      }
+
+      const targetShell = button.closest("[data-form-error-mode]");
+      if (targetShell !== shell) {
+        continue;
+      }
+
+      button.setAttribute("aria-pressed", String(isErrorMode));
+      button.textContent = isErrorMode ? "Hide errors" : "Show errors";
+    }
+
+    for (const button of formDrawerSettingButtons) {
+      if (!(button instanceof HTMLButtonElement)) {
+        continue;
+      }
+
+      const setting = button.dataset.formDrawerSetting ?? "";
+      const isActive = setting === "errors"
+        ? isErrorMode
+        : setting === "disabled"
+          ? isDisabledMode
+          : isMobileView;
+
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    }
+  }
+
+  for (const shell of formPageShells) {
+    if (!(shell instanceof HTMLElement)) {
+      continue;
+    }
+
+    const initialState = getFormReviewStateFromUrl();
+    setFormShellState(shell, "errors", initialState.errors);
+    setFormShellState(shell, "disabled", initialState.disabled);
+    setFormShellState(shell, "mobile", initialState.mobile);
+    syncFormShellState(shell);
+  }
+
+  for (const button of formErrorToggleButtons) {
+    if (!(button instanceof HTMLButtonElement)) {
+      continue;
+    }
+
+    const shell = button.closest("[data-form-error-mode]");
+    if (!(shell instanceof HTMLElement)) {
+      continue;
+    }
+
+    button.addEventListener("click", () => {
+      setFormShellState(shell, "errors", shell.dataset.formErrorMode !== "true");
+      syncFormShellState(shell);
+    });
+  }
+
+  for (const button of formDrawerSettingButtons) {
+    if (!(button instanceof HTMLButtonElement)) {
+      continue;
+    }
+
+    const setting = button.dataset.formDrawerSetting ?? "";
+    const shell = formPageShells[0];
+    if (!(shell instanceof HTMLElement) || (setting !== "errors" && setting !== "disabled" && setting !== "mobile")) {
+      continue;
+    }
+
+    button.addEventListener("click", () => {
+      const nextState = setting === "errors"
+        ? shell.dataset.formErrorMode !== "true"
+        : setting === "disabled"
+          ? shell.dataset.formDisabledMode !== "true"
+          : shell.dataset.formMobileView !== "true";
+
+      setFormShellState(shell, setting, nextState);
+      syncFormShellState(shell);
+    });
+  }
+}
+
+function initializeFormDatePickers() {
+  if (formDatePickerRoots.length === 0) {
+    return;
+  }
+
+  let activeFormDatePicker = null;
+  const weekdayFormatter = new Intl.DateTimeFormat("en-US", { weekday: "narrow" });
+  const monthTitleFormatter = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" });
+  const fieldLabelFormatter = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const isoFormatter = new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" });
+  const timeLabelFormatter = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" });
+  const monthOptionFormatter = new Intl.DateTimeFormat("en-US", { month: "long" });
+  const baseYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 151 }, (_, index) => String(baseYear - 100 + index));
+
+  function addMonths(date, delta) {
+    return new Date(date.getFullYear(), date.getMonth() + delta, 1);
+  }
+
+  function startOfMonth(date) {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  function formatIsoDate(date) {
+    return isoFormatter.format(date);
+  }
+
+  function formatTimeLabel(value) {
+    const [hours = "00", minutes = "00"] = normalizeFormTimeValue(value).split(":");
+    const date = new Date(2026, 0, 1, Number(hours), Number(minutes));
+    return timeLabelFormatter.format(date);
+  }
+
+  function getDisplayedAnchorDate(root, anchor) {
+    const startInput = root.querySelector("[data-form-date-start-value]");
+    const mode = root.dataset.pickerMode ?? "single";
+    const monthCount = Number(root.dataset.monthCount ?? (mode === "single" ? "1" : "3"));
+    const startValue = startInput instanceof HTMLInputElement ? startInput.value : formatIsoDate(new Date());
+    const viewStart = new Date(`${root.dataset.viewStart ?? startValue}T12:00:00`);
+    const safeViewStart = Number.isNaN(viewStart.getTime()) ? new Date(`${startValue}T12:00:00`) : viewStart;
+    return anchor === "end" ? addMonths(startOfMonth(safeViewStart), monthCount - 1) : startOfMonth(safeViewStart);
+  }
+
+  function buildDateJumpMenu(kind, anchor, selectedValue, activeJumpKey, optionEntries) {
+    const jumpKey = `${anchor}:${kind}`;
+    const isOpen = activeJumpKey === jumpKey;
+    const optionMarkup = optionEntries.map(({ value, label }) => {
+      const isSelected = String(value) === String(selectedValue);
+      return `
+        <button
+          class="form-date-jump-option${isSelected ? " active" : ""}"
+          type="button"
+          data-form-date-jump-option
+          data-form-date-jump-kind="${kind}"
+          data-form-date-jump-anchor="${anchor}"
+          data-value="${escapeHtml(String(value))}"
+          aria-selected="${String(isSelected)}"
+        >
+          ${escapeHtml(label)}
+        </button>
+      `;
+    }).join("");
+
+    return `
+      <div class="form-date-jump-control">
+        <button
+          class="form-date-jump-trigger"
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded="${String(isOpen)}"
+          data-form-date-jump-button
+          data-form-date-jump-kind="${kind}"
+          data-form-date-jump-anchor="${anchor}"
+        >
+          <span>${escapeHtml(String(optionEntries.find((entry) => String(entry.value) === String(selectedValue))?.label ?? selectedValue))}</span>
+          <span class="form-date-jump-trigger-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </span>
+        </button>
+        <div class="form-date-jump-menu${isOpen ? "" : " hidden"}" role="listbox">
+          ${optionMarkup}
+        </div>
+      </div>
+    `;
+  }
+
+  function buildDateJumpGroup(root, anchor, monthDate) {
+    const activeJumpKey = root.dataset.activeJumpControl ?? "";
+    const currentYear = monthDate.getFullYear();
+    const yearEntries = [...yearOptions];
+
+    if (!yearEntries.includes(String(currentYear))) {
+      yearEntries.push(String(currentYear));
+      yearEntries.sort((left, right) => Number(left) - Number(right));
+    }
+
+    return `
+      <div class="form-date-jump-group form-date-jump-group-${anchor}">
+        ${buildDateJumpMenu(
+          "month",
+          anchor,
+          monthDate.getMonth(),
+          activeJumpKey,
+          Array.from({ length: 12 }, (_, monthIndex) => ({
+            value: monthIndex,
+            label: monthOptionFormatter.format(new Date(2026, monthIndex, 1)),
+          })),
+        )}
+        ${buildDateJumpMenu(
+          "year",
+          anchor,
+          currentYear,
+          activeJumpKey,
+          yearEntries.map((year) => ({ value: year, label: year })),
+        )}
+      </div>
+    `;
+  }
+
+  function applyDateJumpSelection(root, anchor, kind, rawValue) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const mode = root.dataset.pickerMode ?? "single";
+    const monthCount = Number(root.dataset.monthCount ?? (mode === "single" ? "1" : "3"));
+    const displayedAnchorDate = getDisplayedAnchorDate(root, anchor);
+    const nextMonth = kind === "month" ? Number(rawValue) : displayedAnchorDate.getMonth();
+    const nextYear = kind === "year" ? Number(rawValue) : displayedAnchorDate.getFullYear();
+
+    if (!Number.isInteger(nextMonth) || !Number.isInteger(nextYear)) {
+      return;
+    }
+
+    const nextAnchorDate = new Date(nextYear, nextMonth, 1);
+    const nextViewStart = anchor === "end"
+      ? addMonths(nextAnchorDate, -(monthCount - 1))
+      : nextAnchorDate;
+
+    root.dataset.viewStart = formatIsoDate(nextViewStart);
+    root.dataset.activeJumpControl = "";
+  }
+
+  function closeDatePicker(root, { restoreFocus = false } = {}) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const trigger = root.querySelector("[data-form-date-button]");
+    const panel = root.querySelector("[data-form-date-panel]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    trigger.setAttribute("aria-expanded", "false");
+    panel.classList.add("hidden");
+
+    if (restoreFocus) {
+      trigger.focus();
+    }
+
+    if (activeFormDatePicker === root) {
+      activeFormDatePicker = null;
+    }
+
+    syncFormPickerOverlayState();
+  }
+
+  function openDatePicker(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    if (activeFormDatePicker && activeFormDatePicker !== root) {
+      closeDatePicker(activeFormDatePicker);
+    }
+
+    const trigger = root.querySelector("[data-form-date-button]");
+    const panel = root.querySelector("[data-form-date-panel]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    trigger.setAttribute("aria-expanded", "true");
+    panel.classList.remove("hidden");
+    activeFormDatePicker = root;
+    syncFormPickerOverlayState();
+  }
+
+  function renderDatePicker(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const startInput = root.querySelector("[data-form-date-start-value]");
+    const endInput = root.querySelector("[data-form-date-end-value]");
+    const currentLabel = root.querySelector("[data-form-date-current-label]");
+    const monthsContainer = root.querySelector("[data-form-date-months]");
+    const rangeSummary = root.querySelector("[data-form-date-range-summary]");
+    const startTimeInput = root.querySelector("[data-form-date-start-time]");
+    const endTimeInput = root.querySelector("[data-form-date-end-time]");
+    const doneButton = root.querySelector("[data-form-date-done]");
+    const mode = root.dataset.pickerMode ?? "single";
+    const monthCount = Number(root.dataset.monthCount ?? (mode === "single" ? "1" : "3"));
+    const selectionStage = root.dataset.selectionStage ?? "start";
+
+    if (
+      !(startInput instanceof HTMLInputElement)
+      || !(currentLabel instanceof HTMLElement)
+      || !(monthsContainer instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const startValue = startInput.value;
+    const endValue = endInput instanceof HTMLInputElement ? endInput.value : "";
+    const selectedStartDate = new Date(`${startValue}T12:00:00`);
+    const selectedEndDate = endValue ? new Date(`${endValue}T12:00:00`) : null;
+    const viewStart = new Date(`${root.dataset.viewStart ?? startValue}T12:00:00`);
+    const safeViewStart = Number.isNaN(viewStart.getTime()) ? new Date(`${startValue}T12:00:00`) : viewStart;
+    if (mode === "single") {
+      currentLabel.textContent = fieldLabelFormatter.format(selectedStartDate);
+    } else if (mode === "range-time" && selectedEndDate && startTimeInput instanceof HTMLInputElement && endTimeInput instanceof HTMLInputElement) {
+      currentLabel.textContent = `${fieldLabelFormatter.format(selectedStartDate)} ${formatTimeLabel(startTimeInput.value)} - ${fieldLabelFormatter.format(selectedEndDate)} ${formatTimeLabel(endTimeInput.value)}`;
+    } else if (selectedEndDate) {
+      currentLabel.textContent = `${fieldLabelFormatter.format(selectedStartDate)} - ${fieldLabelFormatter.format(selectedEndDate)}`;
+    } else {
+      currentLabel.textContent = `${fieldLabelFormatter.format(selectedStartDate)} - Choose end date`;
+    }
+
+    if (rangeSummary instanceof HTMLElement) {
+      if (selectedEndDate && selectionStage !== "end") {
+        rangeSummary.textContent = `Selected range: ${fieldLabelFormatter.format(selectedStartDate)} through ${fieldLabelFormatter.format(selectedEndDate)}. Review it, then press Done.`;
+      } else if (selectionStage === "end") {
+        rangeSummary.textContent = `Start selected: ${fieldLabelFormatter.format(selectedStartDate)}. Choose an end date next.`;
+      } else {
+        rangeSummary.textContent = `Select a start date, then an end date.`;
+      }
+    }
+
+    const monthsMarkup = Array.from({ length: monthCount }, (_, index) => {
+      const monthDate = addMonths(startOfMonth(safeViewStart), index);
+      const year = monthDate.getFullYear();
+      const month = monthDate.getMonth();
+      const firstDay = new Date(year, month, 1);
+      const offset = (firstDay.getDay() + 6) % 7;
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const weekdayMarkup = Array.from({ length: 7 }, (_, dayIndex) => {
+        const day = new Date(2026, 2, 2 + dayIndex);
+        return `<span class="form-date-weekday" aria-hidden="true">${weekdayFormatter.format(day)}</span>`;
+      }).join("");
+
+      const dayMarkup = [];
+
+      for (let emptyIndex = 0; emptyIndex < offset; emptyIndex += 1) {
+        dayMarkup.push('<span class="form-date-day form-date-day-empty" aria-hidden="true"></span>');
+      }
+
+      for (let day = 1; day <= daysInMonth; day += 1) {
+        const date = new Date(year, month, day);
+        const isoDate = formatIsoDate(date);
+        const isStart = isoDate === startValue;
+        const isEnd = isoDate === endValue;
+        const isSelected = mode === "single" ? isStart : isStart || isEnd;
+        const isInRange = mode !== "single" && endValue && isoDate > startValue && isoDate < endValue;
+        const today = formatIsoDate(new Date()) === isoDate;
+        const classes = [
+          "form-date-day",
+          isSelected ? "form-date-day-selected" : "",
+          isInRange ? "form-date-day-in-range" : "",
+          today ? "form-date-day-today" : "",
+        ].filter(Boolean).join(" ");
+
+        dayMarkup.push(
+          `<button class="${classes}" type="button" data-form-date-day data-date="${isoDate}" aria-pressed="${String(isSelected)}">${day}</button>`,
+        );
+      }
+
+      const shouldRenderJumpGroup = index === 0 || (monthCount > 1 && index === monthCount - 1);
+      const anchor = index === monthCount - 1 && monthCount > 1 ? "end" : "start";
+      const titleMarkup = shouldRenderJumpGroup
+        ? `<div class="form-date-month-heading form-date-month-heading-${anchor}">${buildDateJumpGroup(root, anchor, monthDate)}</div>`
+        : `<h5 class="form-date-month-title">${monthTitleFormatter.format(monthDate)}</h5>`;
+
+      return `
+        <section class="form-date-month" aria-label="${monthTitleFormatter.format(monthDate)}">
+          ${titleMarkup}
+          <div class="form-date-weekdays">${weekdayMarkup}</div>
+          <div class="form-date-grid">${dayMarkup.join("")}</div>
+        </section>
+      `;
+    }).join("");
+
+    monthsContainer.innerHTML = monthsMarkup;
+
+    const openJumpMenus = Array.from(root.querySelectorAll(".form-date-jump-menu:not(.hidden)"));
+    for (const menu of openJumpMenus) {
+      if (!(menu instanceof HTMLElement)) {
+        continue;
+      }
+
+      const selectedOption = menu.querySelector(".form-date-jump-option.active, .form-date-jump-option[aria-selected=\"true\"]");
+      if (selectedOption instanceof HTMLElement) {
+        selectedOption.scrollIntoView({ block: "center" });
+      }
+    }
+
+    if (doneButton instanceof HTMLButtonElement) {
+      doneButton.disabled = !selectedEndDate;
+    }
+  }
+
+  for (const root of formDatePickerRoots) {
+    if (!(root instanceof HTMLElement)) {
+      continue;
+    }
+
+    const startInput = root.querySelector("[data-form-date-start-value]");
+    const endInput = root.querySelector("[data-form-date-end-value]");
+    const trigger = root.querySelector("[data-form-date-button]");
+    const panel = root.querySelector("[data-form-date-panel]");
+    const navButtons = Array.from(root.querySelectorAll("[data-form-date-nav]"));
+    const doneButton = root.querySelector("[data-form-date-done]");
+    const mode = root.dataset.pickerMode ?? "single";
+
+    if (
+      !(startInput instanceof HTMLInputElement)
+      || !(trigger instanceof HTMLButtonElement)
+      || !(panel instanceof HTMLElement)
+    ) {
+      continue;
+    }
+
+    root.dataset.viewStart = startInput.value;
+    root.dataset.selectionStage = "start";
+    renderDatePicker(root);
+
+    trigger.addEventListener("click", () => {
+      const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        closeDatePicker(root);
+        return;
+      }
+
+      if (mode !== "single") {
+        root.dataset.selectionStage = "start";
+      }
+      openDatePicker(root);
+      renderDatePicker(root);
+    });
+
+    panel.addEventListener("click", (event) => {
+      event.stopPropagation();
+
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const navButton = target.closest("[data-form-date-nav]");
+      if (navButton instanceof HTMLButtonElement) {
+        const delta = Number(navButton.dataset.formDateNav ?? "0");
+        const currentView = new Date(`${root.dataset.viewStart ?? startInput.value}T12:00:00`);
+        root.dataset.activeJumpControl = "";
+        root.dataset.viewStart = formatIsoDate(addMonths(currentView, delta));
+        renderDatePicker(root);
+        return;
+      }
+
+      const jumpOption = target.closest("[data-form-date-jump-option]");
+      if (jumpOption instanceof HTMLButtonElement) {
+        const kind = jumpOption.dataset.formDateJumpKind ?? "month";
+        const anchor = jumpOption.dataset.formDateJumpAnchor ?? "start";
+        applyDateJumpSelection(root, anchor, kind, jumpOption.dataset.value ?? "");
+        renderDatePicker(root);
+        return;
+      }
+
+      const jumpButton = target.closest("[data-form-date-jump-button]");
+      if (jumpButton instanceof HTMLButtonElement) {
+        const jumpKey = `${jumpButton.dataset.formDateJumpAnchor ?? "start"}:${jumpButton.dataset.formDateJumpKind ?? "month"}`;
+        root.dataset.activeJumpControl = root.dataset.activeJumpControl === jumpKey ? "" : jumpKey;
+        renderDatePicker(root);
+        return;
+      }
+
+      const dayButton = target.closest("[data-form-date-day]");
+      if (dayButton instanceof HTMLButtonElement) {
+        const selectedDate = dayButton.dataset.date ?? startInput.value;
+
+        if (mode === "single") {
+          startInput.value = selectedDate;
+          root.dataset.activeJumpControl = "";
+          root.dataset.viewStart = startInput.value;
+          renderDatePicker(root);
+          closeDatePicker(root, { restoreFocus: true });
+          return;
+        }
+
+        if (!(endInput instanceof HTMLInputElement)) {
+          return;
+        }
+
+        const selectionStage = root.dataset.selectionStage ?? "start";
+
+        if (selectionStage === "start") {
+          startInput.value = selectedDate;
+          endInput.value = "";
+          root.dataset.selectionStage = "end";
+          root.dataset.activeJumpControl = "";
+          root.dataset.viewStart = startInput.value;
+          renderDatePicker(root);
+          return;
+        }
+
+        if (selectedDate < startInput.value) {
+          endInput.value = startInput.value;
+          startInput.value = selectedDate;
+        } else {
+          endInput.value = selectedDate;
+        }
+
+        root.dataset.selectionStage = "start";
+        root.dataset.activeJumpControl = "";
+        root.dataset.viewStart = startInput.value;
+        renderDatePicker(root);
+        return;
+      }
+
+      if (root.dataset.activeJumpControl) {
+        root.dataset.activeJumpControl = "";
+        renderDatePicker(root);
+      }
+    });
+
+    for (const navButton of navButtons) {
+      if (navButton instanceof HTMLButtonElement) {
+        navButton.type = "button";
+      }
+    }
+
+    doneButton?.addEventListener("click", () => {
+      if (!(doneButton instanceof HTMLButtonElement) || doneButton.disabled) {
+        return;
+      }
+
+      closeDatePicker(root, { restoreFocus: true });
+    });
+
+    root.addEventListener("formselectchange", () => {
+      renderDatePicker(root);
+    });
+
+    root.addEventListener("formtimechange", () => {
+      renderDatePicker(root);
+    });
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Node)) {
+      return;
+    }
+
+    if (activeFormDatePicker && !activeFormDatePicker.contains(event.target)) {
+      closeDatePicker(activeFormDatePicker);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !activeFormDatePicker) {
+      return;
+    }
+
+    closeDatePicker(activeFormDatePicker, { restoreFocus: true });
+  });
+}
+
 profileButton?.addEventListener("click", () => {
   setMenuOpen(!isMenuOpen());
 });
@@ -3023,6 +4924,12 @@ languageOptionList?.addEventListener("click", (event) => {
   selectLanguage(languageCode);
   setLanguageModalOpen(false);
 });
+
+initializeFormDrawerSelects();
+initializeFormTimePickers();
+initializeFormSelects();
+initializeFormDatePickers();
+initializeFormErrorModeToggles();
 
 previewWidthInput?.addEventListener("input", () => {
   const width = Number(previewWidthInput.value);
@@ -3307,7 +5214,9 @@ window.addEventListener("resize", () => {
   }
   updatePrimaryNavOverflow();
   updateBreadcrumbOverflow();
+  refreshSubNavPreviewResponsiveBreadcrumb();
   updateBreadcrumbOverflowTooltips();
+  scheduleSubNavCanonicalFitScaleUpdate();
   updateContextNavReviewFrameOffset();
   updateContextNavPreviewShellLayout();
   applyTopNavPreviewOpenState(activeTopNavPreviewOpenState);
@@ -3332,6 +5241,9 @@ if ("ResizeObserver" in window) {
       scheduleContextNavOffsetUpdate();
     }
     updateBreadcrumbOverflow();
+    refreshSubNavPreviewResponsiveBreadcrumb();
+    updateBreadcrumbOverflowTooltips();
+    scheduleSubNavCanonicalFitScaleUpdate();
     updateContextNavReviewFrameOffset();
     updateContextNavPreviewShellLayout();
   });
@@ -3362,6 +5274,18 @@ if ("ResizeObserver" in window) {
 
   if (subNavPreviewFrame) {
     headerObserver.observe(subNavPreviewFrame);
+  }
+
+  if (subNavCanonicalRenderScroller) {
+    headerObserver.observe(subNavCanonicalRenderScroller);
+  }
+
+  if (subNavPreviewBreadcrumbNav) {
+    headerObserver.observe(subNavPreviewBreadcrumbNav);
+  }
+
+  if (subNavPreviewBreadcrumbList) {
+    headerObserver.observe(subNavPreviewBreadcrumbList);
   }
 
   if (contextNavPreviewFrame) {
@@ -3457,7 +5381,7 @@ document.addEventListener("click", (event) => {
   setSubNavPreviewBreadcrumbCompactMenuOpen(false);
   setFilterPanelOpen(false);
   setFilterOptionsPanelOpen(false);
-  setAccessibilityDrawerOpen(false);
+  setAccessibilityDrawerOpen(false, { restoreFocus: !isFocusableOutsideTarget(target) });
   setContextNavMoreOpen(false);
   setLanguageModalOpen(false);
 });

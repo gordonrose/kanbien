@@ -23,6 +23,28 @@ describe("design system breadcrumb overflow", () => {
     expect(markup).toContain('id="breadcrumb-page-minus-one-link"');
     expect(markup).toContain('id="breadcrumb-compact-button"');
     expect(markup).toContain('id="breadcrumb-compact-menu"');
+    expect(script).toContain("const designSystemBreadcrumbChains = new Map([");
+    expect(script).toContain("const designSystemPrimaryNavItems = [");
+    expect(script).toContain('{ href: "/design-system/templates", label: "Templates" }');
+    expect(script).toContain('["/design-system/components/top-nav", [');
+    expect(script).toContain('{ href: "/design-system/components", label: "Home" },');
+    expect(script).toContain('["/design-system/canonicals/top-nav", [');
+    expect(script).toContain('["/design-system/exploration/context-nav", [');
+    expect(script).toContain('["/design-system/templates", [');
+    expect(script).toContain('{ href: "/design-system/templates", label: "Home" },');
+    expect(script).toContain("function resolveBreadcrumbChain(pathname)");
+    expect(script).toContain("function buildBreadcrumbMarkup(chain)");
+    expect(script).toContain("function normalizePrimaryNav(root = document)");
+    expect(script).toContain("function resolvePrimaryNavHomeHref(pathname)");
+    expect(script).toContain("const isSingleItem = chain.length === 1;");
+    expect(script).toContain("const collapsedItems = chain.length >= 4 ? chain.slice(1, -2) : [];");
+    expect(script).toContain("const pageMinusOne = chain.length >= 3 ? chain[chain.length - 2] : null;");
+    expect(script).toContain('id="breadcrumb-current-label"');
+    expect(script).toContain("normalizeDesignSystemShellBeforeBinding()");
+    expect(script).not.toContain("Previous Page A");
+    expect(script).not.toContain("Previous Page B");
+    expect(script).not.toContain('href="/design-system/library"');
+    expect(script).not.toContain('href="/design-system/components/navigation"');
     expect(script).toContain("function setBreadcrumbCompactMenuOpen(open)");
     expect(script).toContain("function syncOverflowTooltip(node)");
     expect(script).toContain("function ensureBreadcrumbLabel(node)");
@@ -48,6 +70,8 @@ describe("design system breadcrumb overflow", () => {
     expect(script).toContain("measurementNode.scrollWidth > measurementNode.clientWidth + 1");
     expect(script).toContain("parentItem instanceof HTMLElement && parentItem.scrollWidth > parentItem.clientWidth + 1");
     expect(script).toContain("const availableWidth = container?.clientWidth ?? list.clientWidth;");
+    expect(script).toContain("const allowPageMinusOne = Boolean(breadcrumbPageMinusOneLink?.textContent?.trim());");
+    expect(script).toContain("const allowCollapsed = Boolean(breadcrumbCollapseMenu?.children.length);");
     expect(script).toContain("compact?.classList.add(\"hidden\");");
     expect(script).toContain("list.classList.remove(\"hidden\");");
     expect(script).toContain("updateBreadcrumbOverflow();");
@@ -95,5 +119,58 @@ describe("design system breadcrumb overflow", () => {
     expect(styles).toContain("white-space: nowrap;");
     expect(styles).toContain(".search-shell {\n  grid-column: 2;\n  position: relative;\n  z-index: 1;");
     expect(styles).toContain(".breadcrumb-compact-button {");
+  });
+
+  it("keeps representative static html breadcrumbs aligned with the governed hierarchy before hydration", () => {
+    const script = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/assets/app.mjs"),
+      "utf8",
+    );
+    const overviewMarkup = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/index.html"),
+      "utf8",
+    );
+    const templatesMarkup = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/templates/index.html"),
+      "utf8",
+    );
+    const componentMarkup = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/components/top-nav.html"),
+      "utf8",
+    );
+    const explorationMarkup = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/exploration/top-nav/index.html"),
+      "utf8",
+    );
+    const canonicalMarkup = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/canonicals/top-nav/index.html"),
+      "utf8",
+    );
+
+    expect(overviewMarkup).not.toContain("Previous Page A");
+    expect(overviewMarkup).not.toContain("Previous Page B");
+    expect(overviewMarkup).not.toContain("Page -1");
+    expect(overviewMarkup).toContain('id="breadcrumb-current-label"');
+    expect(overviewMarkup).toContain('id="breadcrumb-current-item" class="hidden"');
+    expect(overviewMarkup).toContain(">Home</span>");
+    expect(script).toContain('["/design-system/components", [');
+    expect(script).toContain('["/design-system/patterns", [');
+    expect(script).toContain('["/design-system/templates", [');
+
+    expect(templatesMarkup).toContain('href="/design-system/templates">Home<');
+    expect(templatesMarkup).not.toContain('href="/design-system/templates">Pages<');
+    expect(templatesMarkup).toContain('id="breadcrumb-current-item" class="hidden"');
+
+    expect(componentMarkup).toContain('href="/design-system/components">Home<');
+    expect(componentMarkup).not.toContain('href="/design-system/canonicals">Canonicals<');
+
+    expect(explorationMarkup).toContain('href="/design-system/components/top-nav">Top Nav<');
+    expect(explorationMarkup).toContain(">Exploration<");
+
+    expect(canonicalMarkup).toContain('href="/design-system/components">Home<');
+    expect(canonicalMarkup).toContain('href="/design-system/components/top-nav">Top Nav<');
+    expect(canonicalMarkup).toContain(">Canonicals<");
+    expect(templatesMarkup).toContain('id="breadcrumb-collapsed-item" class="breadcrumb-collapsed hidden"');
+    expect(templatesMarkup).toContain('id="breadcrumb-page-minus-one-item" class="hidden"');
   });
 });
