@@ -1,6 +1,14 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-const subNavCanonicalStates = [
+type SubNavCanonicalState = {
+  refId: string;
+  label: string;
+  route: string;
+  screenshot: string;
+  hoverSelector?: string;
+};
+
+const subNavCanonicalStates: readonly SubNavCanonicalState[] = [
   {
     refId: "SNR-001",
     label: "desktop default row",
@@ -241,6 +249,13 @@ test.describe("design-system sub-nav canonical states", () => {
       const tooltip = page.locator("#shared-floating-tooltip");
       await expect(tooltip).toBeVisible();
       await expect(tooltip).toHaveAttribute("aria-hidden", "false");
+
+      const tooltipBox = await tooltip.boundingBox();
+      expect(tooltipBox).not.toBeNull();
+      expect(tooltipBox!.x).toBeGreaterThanOrEqual(0);
+      expect(tooltipBox!.y).toBeGreaterThanOrEqual(0);
+      expect(tooltipBox!.x + tooltipBox!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+      expect(tooltipBox!.y + tooltipBox!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
     }
   });
 

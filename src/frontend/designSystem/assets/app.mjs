@@ -1493,29 +1493,43 @@ function positionSharedTooltip(target) {
   const direction = topNavPreviewCanvas?.getAttribute("dir") === "rtl" || document.documentElement.getAttribute("dir") === "rtl"
     ? "rtl"
     : "ltr";
+  const viewportPadding = 8;
+  const tooltipGap = 12;
+  let left = 0;
+  let top = 0;
 
   if (isBreadcrumbTooltip) {
     tooltip.dataset.placement = "below";
-    tooltip.style.left = `${rect.left + (rect.width / 2)}px`;
-    tooltip.style.top = `${rect.bottom + 12}px`;
-    tooltip.style.transform = "translateX(-50%)";
+    tooltip.style.transform = "none";
+    const tooltipRect = tooltip.getBoundingClientRect();
+    left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+    top = rect.bottom + tooltipGap;
   } else if (isContextNavTooltip) {
     tooltip.dataset.placement = direction === "rtl" ? "left" : "right";
+    tooltip.style.transform = "none";
+    const tooltipRect = tooltip.getBoundingClientRect();
     if (direction === "rtl") {
-      tooltip.style.left = `${rect.left - 12}px`;
-      tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
-      tooltip.style.transform = "translate(-100%, -50%)";
+      left = rect.left - tooltipGap - tooltipRect.width;
+      top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
     } else {
-      tooltip.style.left = `${rect.right + 12}px`;
-      tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
-      tooltip.style.transform = "translateY(-50%)";
+      left = rect.right + tooltipGap;
+      top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
     }
   } else {
     tooltip.dataset.placement = "above";
-    tooltip.style.left = `${rect.left + (rect.width / 2)}px`;
-    tooltip.style.top = `${rect.top - 12}px`;
-    tooltip.style.transform = "translate(-50%, -100%)";
+    tooltip.style.transform = "none";
+    const tooltipRect = tooltip.getBoundingClientRect();
+    left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+    top = rect.top - tooltipGap - tooltipRect.height;
   }
+
+  const measuredTooltip = tooltip.getBoundingClientRect();
+  const maxLeft = window.innerWidth - measuredTooltip.width - viewportPadding;
+  const maxTop = window.innerHeight - measuredTooltip.height - viewportPadding;
+  const clampedLeft = Math.min(Math.max(left, viewportPadding), Math.max(viewportPadding, maxLeft));
+  const clampedTop = Math.min(Math.max(top, viewportPadding), Math.max(viewportPadding, maxTop));
+  tooltip.style.left = `${clampedLeft}px`;
+  tooltip.style.top = `${clampedTop}px`;
 
   activeSharedTooltipTarget = target;
 }
