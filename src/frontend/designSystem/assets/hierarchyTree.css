@@ -1,0 +1,645 @@
+.hierarchy-tree-page {
+  display: grid;
+  gap: 1.25rem;
+  width: min(108rem, 100%);
+  margin: 0 auto;
+  --hierarchy-drawer-width: 28rem;
+  --hierarchy-drawer-min-width: 20rem;
+  --hierarchy-display-drawer-width: 28rem;
+}
+
+.hierarchy-tree-layout {
+  display: grid;
+}
+
+.hierarchy-tree-intro {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.hierarchy-tree-preview-shell {
+  position: relative;
+  min-height: 44rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 96%, white), color-mix(in srgb, var(--paper) 84%, white));
+  box-shadow: 0 0.45rem 1.2rem rgba(15, 31, 45, 0.05);
+  overflow: hidden;
+}
+
+.hierarchy-tree-preview-page {
+  display: grid;
+  gap: 1.25rem;
+  min-height: 44rem;
+  padding: 1.5rem 1.5rem 1.5rem calc(1.5rem + var(--hierarchy-drawer-width));
+}
+
+.hierarchy-tree-preview-header {
+  display: flex;
+  justify-content: start;
+  gap: 1rem;
+  align-items: start;
+}
+
+.hierarchy-tree-preview-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+}
+
+.hierarchy-tree-preview-card {
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.0625rem);
+  background: color-mix(in srgb, var(--surface-1) 96%, white);
+  padding: 1rem;
+  min-width: 0;
+}
+
+.hierarchy-tree-preview-card h3 {
+  margin: 0 0 0.45rem;
+}
+
+.hierarchy-tree-preview-card-wide {
+  grid-column: 1 / -1;
+}
+
+.hierarchy-tree-preview-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.hierarchy-tree-preview-line {
+  height: 0.9rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line) 62%, white);
+}
+
+.hierarchy-tree-preview-line-strong {
+  width: 72%;
+  background: color-mix(in srgb, var(--line-strong) 76%, white);
+}
+
+.hierarchy-tree-preview-line-half {
+  width: 48%;
+}
+
+.hierarchy-tree-drawer-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  background: rgba(15, 23, 42, 0.12);
+}
+
+.hierarchy-tree-display-copy,
+.hierarchy-tree-detail-copy,
+.hierarchy-tree-delete-copy,
+.hierarchy-tree-help-list,
+.hierarchy-tree-detail-meta dd {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.hierarchy-tree-button,
+.hierarchy-tree-menu-button,
+.hierarchy-tree-action-button {
+  border: 0.0625rem solid var(--line);
+  border-radius: 0.75rem;
+  background: var(--surface-1);
+  color: var(--ink-soft);
+  padding: 0.5rem 0.75rem;
+}
+
+.hierarchy-tree-button-primary {
+  border-color: color-mix(in srgb, var(--accent) 18%, var(--line));
+  background: color-mix(in srgb, var(--surface-1) 90%, var(--accent-soft));
+  color: var(--ink);
+}
+
+.hierarchy-tree-button-danger {
+  border-color: color-mix(in srgb, var(--error-ink) 18%, var(--line));
+  color: var(--error-ink);
+}
+
+.hierarchy-tree-button:hover,
+.hierarchy-tree-button:focus-visible,
+.hierarchy-tree-menu-button:hover,
+.hierarchy-tree-menu-button:focus-visible,
+.hierarchy-tree-action-button:hover,
+.hierarchy-tree-action-button:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 16%, var(--line));
+  outline: none;
+}
+
+.hierarchy-tree-tree {
+  padding: 0;
+}
+
+#hierarchy-tree-drawer.side-panel {
+  width: var(--hierarchy-drawer-width);
+  min-width: var(--hierarchy-drawer-min-width);
+  max-width: calc(100vw - 4.25rem);
+}
+
+#hierarchy-tree-display-drawer.side-panel-secondary {
+  left: calc(4.25rem + var(--hierarchy-drawer-width));
+  width: clamp(22rem, 24vw, var(--hierarchy-display-drawer-width));
+  max-width: calc(100vw - 4.25rem - var(--hierarchy-drawer-width));
+}
+
+html[dir="rtl"] #hierarchy-tree-display-drawer.side-panel-secondary {
+  left: auto;
+  right: calc(4.25rem + var(--hierarchy-drawer-width));
+}
+
+.hierarchy-tree-drawer-resize {
+  position: absolute;
+  top: 0;
+  right: -0.25rem;
+  bottom: 0;
+  width: 0.5rem;
+  cursor: col-resize;
+  z-index: 3;
+}
+
+.hierarchy-tree-drawer-resize::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0.06rem;
+  transform: translateY(-50%);
+  width: 0.125rem;
+  height: 4rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line-strong) 72%, transparent);
+}
+
+.hierarchy-tree-drawer-header-actions {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hierarchy-tree-root-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 3rem;
+  z-index: 8;
+  min-width: 12rem;
+  padding: 0.35rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--surface-1) 96%, white);
+  box-shadow: 0 0.7rem 1.4rem rgba(15, 31, 45, 0.1);
+}
+
+.hierarchy-tree-root-menu-item {
+  cursor: pointer;
+}
+
+.hierarchy-tree-list,
+.hierarchy-tree-children {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hierarchy-tree-node {
+  position: relative;
+}
+
+.hierarchy-tree-children {
+  margin-inline-start: 0.7rem;
+  padding-inline-start: 0.45rem;
+  border-inline-start: 0.0625rem dashed color-mix(in srgb, var(--line-strong) 68%, transparent);
+}
+
+.hierarchy-tree-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.35rem;
+  border-radius: 0.6rem;
+  transition: background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.hierarchy-tree-node[data-depth="3"] .hierarchy-tree-children,
+.hierarchy-tree-node[data-depth="4"] .hierarchy-tree-children,
+.hierarchy-tree-node[data-depth="5"] .hierarchy-tree-children {
+  margin-inline-start: 0.45rem;
+  padding-inline-start: 0.3rem;
+}
+
+.hierarchy-tree-row[data-selected="true"] {
+  background: color-mix(in srgb, var(--accent-soft) 30%, white);
+  box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.hierarchy-tree-row[data-current="true"] {
+  background: color-mix(in srgb, var(--sun) 8%, white);
+  box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--sun) 18%, transparent);
+}
+
+.hierarchy-tree-row[data-selected="true"][data-current="true"] {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent-soft) 34%, white),
+    color-mix(in srgb, var(--sun) 10%, white)
+  );
+  box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.hierarchy-tree-row[data-drop-target="inside"] {
+  background: color-mix(in srgb, var(--accent-soft) 34%, white);
+  box-shadow: inset 0 0 0 0.125rem color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.hierarchy-tree-row[data-drop-target="before"]::before,
+.hierarchy-tree-row[data-drop-target="after"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0.35rem;
+  height: 0.18rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 62%, var(--accent-strong));
+}
+
+.hierarchy-tree-row[data-drop-target="before"]::before {
+  top: -0.08rem;
+}
+
+.hierarchy-tree-row[data-drop-target="after"]::after {
+  bottom: -0.08rem;
+}
+
+.hierarchy-tree-expander,
+.hierarchy-tree-placeholder {
+  inline-size: 1.65rem;
+  block-size: 1.65rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.45rem;
+}
+
+.hierarchy-tree-expander {
+  border: 0.0625rem solid transparent;
+  background: transparent;
+  color: var(--ink-soft);
+}
+
+.hierarchy-tree-expander:hover,
+.hierarchy-tree-expander:focus-visible {
+  border-color: var(--line);
+  background: var(--surface-1);
+}
+
+.hierarchy-tree-expander-icon {
+  font-size: 0.7rem;
+  transition: transform 140ms ease;
+}
+
+html[dir="rtl"] .hierarchy-tree-expander-icon {
+  transform: rotate(180deg);
+}
+
+.hierarchy-tree-expander[aria-expanded="true"] .hierarchy-tree-expander-icon {
+  transform: rotate(90deg);
+}
+
+.hierarchy-tree-content {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.hierarchy-tree-row-main {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.hierarchy-tree-label-button,
+.hierarchy-tree-title-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.hierarchy-tree-label-button {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+html[dir="rtl"] .hierarchy-tree-label-button,
+html[dir="rtl"] .hierarchy-tree-title-input {
+  text-align: right;
+}
+
+.hierarchy-tree-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  font-size: 0.98rem;
+}
+
+.hierarchy-tree-title-input {
+  border: 0.0625rem solid color-mix(in srgb, var(--accent) 36%, var(--line));
+  border-radius: 0.65rem;
+  background: color-mix(in srgb, white 92%, var(--accent-soft));
+  color: var(--ink);
+  padding: 0.45rem 0.6rem;
+}
+
+.hierarchy-tree-row-sub {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.28rem;
+  align-items: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+html[dir="rtl"] .hierarchy-tree-row-sub {
+  justify-content: flex-start;
+}
+
+.hierarchy-tree-state-chip,
+.hierarchy-tree-changed {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 999px;
+  padding: 0.08rem 0.34rem;
+  font-size: 0.66rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hierarchy-tree-state-chip {
+  background: color-mix(in srgb, var(--surface-1) 96%, var(--paper));
+  color: var(--ink-soft);
+}
+
+.hierarchy-tree-state-chip[data-kind="current"] {
+  background: color-mix(in srgb, var(--sun) 16%, white);
+  color: #7b6742;
+}
+
+.hierarchy-tree-state-chip[data-kind="selected"] {
+  background: color-mix(in srgb, var(--accent-soft) 36%, white);
+  color: #5a6383;
+}
+
+.hierarchy-tree-changed {
+  background: color-mix(in srgb, var(--accent) 7%, white);
+  color: #6a7190;
+}
+
+.hierarchy-tree-row-actions {
+  position: relative;
+  display: flex;
+  justify-content: end;
+}
+
+html[dir="rtl"] .hierarchy-tree-row-actions {
+  justify-content: start;
+}
+
+.hierarchy-tree-menu-button {
+  inline-size: 1.9rem;
+  block-size: 1.9rem;
+  padding: 0;
+  border-radius: 0.55rem;
+  font-weight: 500;
+}
+
+.hierarchy-tree-row-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  inset-inline-end: 0;
+  z-index: 20;
+  display: grid;
+  gap: 0.3rem;
+  min-width: 12.5rem;
+  padding: 0.45rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: 0.9rem;
+  background: color-mix(in srgb, var(--surface-1) 96%, white);
+  box-shadow: 0 0.7rem 1.4rem rgba(15, 31, 45, 0.1);
+}
+
+.hierarchy-tree-action-button {
+  text-align: left;
+}
+
+.hierarchy-tree-detail-card {
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.0625rem);
+  background: color-mix(in srgb, var(--surface-1) 96%, white);
+  padding: 0.85rem;
+}
+
+.hierarchy-tree-drawer-summary {
+  margin-top: 1rem;
+}
+
+.hierarchy-tree-detail-meta {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.hierarchy-tree-detail-meta-row {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.hierarchy-tree-detail-meta dt {
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hierarchy-tree-help-list {
+  padding-inline-start: 1rem;
+}
+
+.hierarchy-tree-help-list li + li {
+  margin-top: 0.35rem;
+}
+
+.hierarchy-tree-empty {
+  padding: 2rem 1rem;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.hierarchy-tree-delete-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.38);
+}
+
+.hierarchy-tree-delete-panel {
+  width: min(32rem, 100%);
+  display: grid;
+  gap: 1rem;
+  padding: 1.2rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--surface-1) 96%, white);
+  box-shadow: 0 1.5rem 3rem rgba(15, 31, 45, 0.18);
+}
+
+.hierarchy-tree-delete-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+#hierarchy-tree-nav-button[aria-expanded="true"],
+#hierarchy-tree-display-button[aria-expanded="true"] {
+  border-color: rgba(99, 91, 255, 0.22);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+@media (max-width: 78rem) {
+  .hierarchy-tree-page {
+    width: 100%;
+  }
+
+  .hierarchy-tree-preview-page {
+    padding-inline-start: 1.5rem;
+  }
+}
+
+@media (max-width: 56rem) {
+  .hierarchy-tree-intro,
+  .hierarchy-tree-preview-header {
+    flex-direction: column;
+  }
+
+  .hierarchy-tree-preview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hierarchy-tree-preview-card-wide {
+    grid-column: auto;
+  }
+
+  .hierarchy-tree-drawer-resize {
+    display: none;
+  }
+
+  #hierarchy-tree-drawer.side-panel,
+  #hierarchy-tree-display-drawer.side-panel-secondary {
+    top: var(--context-nav-top, 0);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+}
+
+html[data-theme="dark"] .hierarchy-tree-preview-shell {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 96%, #0f1524), color-mix(in srgb, var(--paper) 88%, #0f1524));
+  box-shadow: 0 0.6rem 1.4rem rgba(0, 0, 0, 0.28);
+}
+
+html[data-theme="dark"] .hierarchy-tree-preview-card,
+html[data-theme="dark"] .hierarchy-tree-detail-card,
+html[data-theme="dark"] .hierarchy-tree-root-menu,
+html[data-theme="dark"] .hierarchy-tree-row-menu,
+html[data-theme="dark"] .hierarchy-tree-delete-panel {
+  background: color-mix(in srgb, var(--surface-1) 96%, #0f1524);
+  border-color: var(--line-strong);
+}
+
+html[data-theme="dark"] .hierarchy-tree-button,
+html[data-theme="dark"] .hierarchy-tree-menu-button,
+html[data-theme="dark"] .hierarchy-tree-action-button {
+  background: color-mix(in srgb, var(--surface-1) 94%, #0f1524);
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .hierarchy-tree-button-primary {
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface-1));
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--line-strong));
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .hierarchy-tree-preview-line {
+  background: color-mix(in srgb, var(--line-strong) 72%, var(--surface-1));
+}
+
+html[data-theme="dark"] .hierarchy-tree-row[data-selected="true"] {
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface-1));
+  box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+html[data-theme="dark"] .hierarchy-tree-row[data-current="true"] {
+  background: color-mix(in srgb, var(--sun) 12%, var(--surface-1));
+  box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--sun) 22%, transparent);
+}
+
+html[data-theme="dark"] .hierarchy-tree-row[data-selected="true"][data-current="true"] {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 16%, var(--surface-1)),
+    color-mix(in srgb, var(--sun) 10%, var(--surface-1))
+  );
+}
+
+html[data-theme="dark"] .hierarchy-tree-state-chip,
+html[data-theme="dark"] .hierarchy-tree-changed {
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .hierarchy-tree-state-chip {
+  background: color-mix(in srgb, var(--surface-1) 88%, var(--line));
+}
+
+html[data-theme="dark"] .hierarchy-tree-state-chip[data-kind="current"] {
+  background: color-mix(in srgb, var(--sun) 18%, var(--surface-1));
+}
+
+html[data-theme="dark"] .hierarchy-tree-state-chip[data-kind="selected"] {
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface-1));
+}
+
+html[data-theme="dark"] .hierarchy-tree-changed {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-1));
+}
+
+html[data-theme="dark"] .hierarchy-tree-drawer-resize::before {
+  background: color-mix(in srgb, var(--ink-soft) 56%, transparent);
+}

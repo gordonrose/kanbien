@@ -240,6 +240,11 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/canonicals", label: "Canonicals" },
     { href: "/design-system/canonicals/display-settings", label: "Display Settings" },
   ]],
+  ["/design-system/canonicals/hierarchy-tree", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/hierarchy-tree", label: "Hierarchy Tree" },
+    { href: "/design-system/canonicals/hierarchy-tree", label: "Canonicals" },
+  ]],
   ["/design-system/canonicals/list-record-card", [
     { href: "/design-system/patterns", label: "Home" },
     { href: "/design-system/canonicals", label: "Canonicals" },
@@ -367,6 +372,12 @@ const designSystemBreadcrumbChains = new Map([
   ["/design-system/templates/form", [
     { href: "/design-system/templates", label: "Home" },
     { href: "/design-system/templates/form", label: "Form" },
+  ]],
+  ["/design-system/patterns/hierarchy-tree/render", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/patterns/hierarchy-tree", label: "Hierarchy Tree" },
+    { href: "/design-system/canonicals/hierarchy-tree", label: "Canonicals" },
+    { href: "/design-system/patterns/hierarchy-tree/render", label: "Render" },
   ]],
 ]);
 
@@ -604,6 +615,7 @@ function normalizeDesignSystemShellBeforeBinding() {
 
   const preserveCanonicalFullTrail =
     normalizedPath.startsWith("/design-system/canonicals/")
+    || normalizedPath.startsWith("/design-system/patterns/hierarchy-tree/render")
     || (
       normalizedPath.startsWith("/design-system/components/")
       && normalizedPath !== "/design-system/components"
@@ -1242,6 +1254,7 @@ if (breadcrumbPageMinusOneLink) {
   const preserveCanonicalBreadcrumbLabel =
     normalizedPath === "/design-system/canonicals"
     || normalizedPath.startsWith("/design-system/canonicals/")
+    || normalizedPath.startsWith("/design-system/patterns/hierarchy-tree/render")
     || (
       normalizedPath.startsWith("/design-system/components/")
       && normalizedPath !== "/design-system/components"
