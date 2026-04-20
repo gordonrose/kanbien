@@ -123,9 +123,11 @@ For the current phase:
 
 - browser-authenticated root users can reach the shell through `rootAuth`
 - the shell can show minimal current-user information sourced from `rootUsers`
-- the shell can also drive the current `rootUsers` CRUD/list routes and the
-  current `rootRoles` management routes through the same cookie-backed
-  protected session boundary
+- the shell now adopts the signed-off `List Page` baseline for the real
+  `Users` route, driving the visible `rootUsers` directory through the same
+  cookie-backed protected session boundary
+- the shell can also drive the current `rootRoles` management routes through
+  that same protected boundary
 - the browser console remains a rudimentary operator surface rather than a full
   mature admin UI
 
