@@ -47,6 +47,71 @@ test("hierarchy-tree top-level chevrons collapse roots and root menu supports co
   await expect(rows).toHaveCount(10);
 });
 
+test("hierarchy-tree desktop row hover and focus reveal subtle open actions with correct link semantics", async ({ page }) => {
+  await page.goto("/design-system/patterns/hierarchy-tree");
+
+  const roadmapRow = page.locator(".hierarchy-tree-row").filter({ hasText: "Roadmap" }).first();
+  const inlineActions = roadmapRow.locator(".hierarchy-tree-inline-actions");
+  const links = inlineActions.locator(".hierarchy-tree-inline-action");
+
+  await expect(links).toHaveCount(2);
+  await expect(inlineActions).toHaveCSS("opacity", "0");
+
+  await roadmapRow.hover();
+  await expect(inlineActions).toHaveCSS("opacity", "1");
+  await expect(links.nth(0)).toHaveAttribute("aria-label", "Open Roadmap");
+  await expect(links.nth(0)).toHaveAttribute("href", /\/design-system\/patterns\/hierarchy-tree\/render\?/);
+  await expect(links.nth(1)).toHaveAttribute("aria-label", "Open Roadmap in a new tab");
+  await expect(links.nth(1)).toHaveAttribute("href", "/product/roadmap");
+  await expect(links.nth(1)).toHaveAttribute("target", "_blank");
+  await expect(links.nth(1)).toHaveAttribute("rel", "noopener noreferrer");
+
+  const openIconState = await links.nth(0).evaluate((link) => {
+    const svg = link.querySelector("svg");
+    const outline = svg?.querySelector("path");
+    const pupil = svg?.querySelector("circle");
+
+    if (!(svg instanceof SVGElement) || !(outline instanceof SVGPathElement) || !(pupil instanceof SVGCircleElement)) {
+      return null;
+    }
+
+    const outlineStyle = window.getComputedStyle(outline);
+    const pupilStyle = window.getComputedStyle(pupil);
+
+    return {
+      outlineStroke: outlineStyle.stroke,
+      outlineFill: outlineStyle.fill,
+      pupilStroke: pupilStyle.stroke,
+      pupilFill: pupilStyle.fill,
+    };
+  });
+
+  expect(openIconState).not.toBeNull();
+  expect(openIconState?.outlineFill).toBe("none");
+  expect(openIconState?.pupilFill).toBe("none");
+  expect(openIconState?.outlineStroke).not.toBe("none");
+  expect(openIconState?.outlineStroke).not.toBe("transparent");
+  expect(openIconState?.pupilStroke).not.toBe("none");
+  expect(openIconState?.pupilStroke).not.toBe("transparent");
+
+  await roadmapRow.locator(".hierarchy-tree-label-button").focus();
+  await expect(inlineActions).toHaveCSS("opacity", "1");
+});
+
+test("hierarchy-tree mobile keeps open actions in the menu and hides inline hover icons", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.goto(
+    "/design-system/patterns/hierarchy-tree/render?ref=HTR-022&state=mobile-row-menu&width=390&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+  );
+
+  const roadmapRow = page.locator(".hierarchy-tree-row").filter({ hasText: "Roadmap" }).first();
+  await expect(roadmapRow.locator(".hierarchy-tree-inline-actions")).toBeHidden();
+
+  const rowMenu = page.locator(".hierarchy-tree-row-menu");
+  await expect(rowMenu).toContainText("Open");
+  await expect(rowMenu).toContainText("Open in new tab");
+});
+
 test("hierarchy-tree RTL canonical mirrors row chrome and content docking", async ({ page }) => {
   await page.goto(
     "/design-system/patterns/hierarchy-tree/render?ref=HTR-024&state=rtl-docking&width=1220&theme=normal&dir=rtl&zoom=0&accent=%23635bff",

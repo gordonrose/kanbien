@@ -134,6 +134,108 @@ function scheduleHierarchyBreadcrumbRefresh() {
   });
 }
 
+function isNonEmptyHref(value) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function getNodeOpenHref(node) {
+  return node?.meta?.openHref
+    ?? node?.meta?.activeLocator?.canonicalLocator
+    ?? node?.activeLocator?.canonicalLocator
+    ?? null;
+}
+
+function getNodeOpenInNewTabHref(node) {
+  return node?.meta?.externalHref
+    ?? node?.meta?.resolvedFullRoutePath
+    ?? node?.resolvedFullRoutePath
+    ?? null;
+}
+
+function createHierarchyActionIcon(kind) {
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("viewBox", "0 0 16 16");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("focusable", "false");
+  svg.classList.add("hierarchy-tree-inline-action-icon");
+
+  if (kind === "open") {
+    const path = document.createElementNS(svgNS, "path");
+    path.setAttribute(
+      "d",
+      "M1.75 8s2.5-4.25 6.25-4.25S14.25 8 14.25 8 11.75 12.25 8 12.25 1.75 8 1.75 8Z",
+    );
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", "currentColor");
+    path.setAttribute("stroke-width", "1.5");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("stroke-linejoin", "round");
+    svg.append(path);
+
+    const pupil = document.createElementNS(svgNS, "circle");
+    pupil.setAttribute("cx", "8");
+    pupil.setAttribute("cy", "8");
+    pupil.setAttribute("r", "2");
+    pupil.setAttribute("fill", "none");
+    pupil.setAttribute("stroke", "currentColor");
+    pupil.setAttribute("stroke-width", "1.5");
+    pupil.setAttribute("stroke-linecap", "round");
+    pupil.setAttribute("stroke-linejoin", "round");
+    svg.append(pupil);
+    return svg;
+  }
+
+  const path = document.createElementNS(svgNS, "path");
+  path.setAttribute(
+    "d",
+    "M3.75 3.25h3.5v1.5h-2v5.5h5.5v-2h1.5v3.5H3.75v-8.5Zm4.5 0h4v4h-1.5V5.81L7.28 9.28 6.22 8.22l3.47-3.47H8.25v-1.5Z",
+  );
+  path.setAttribute("fill", "currentColor");
+  svg.append(path);
+  return svg;
+}
+
+function createHierarchyActionLink({
+  label,
+  href,
+  icon,
+  newTab = false,
+}) {
+  const link = document.createElement("a");
+  link.className = "hierarchy-tree-inline-action";
+  link.href = href;
+  link.setAttribute("aria-label", label);
+  link.title = label;
+
+  if (newTab) {
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+  }
+
+  link.append(createHierarchyActionIcon(icon));
+  return link;
+}
+
+function createHierarchyActionButton({
+  label,
+  icon,
+  callback,
+}) {
+  const button = document.createElement("button");
+  button.className = "hierarchy-tree-inline-action";
+  button.type = "button";
+  button.setAttribute("aria-label", label);
+  button.title = label;
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    callback();
+  });
+  button.append(createHierarchyActionIcon(icon));
+  return button;
+}
+
 function loadExpandedState() {
   try {
     const raw = window.localStorage.getItem(storageKey);
@@ -617,7 +719,832 @@ function applyCanonicalState(state, expandedState, request) {
   }
 }
 
-function mountHierarchyTreeDemo() {
+export function mountRootAdminHierarchyTree({
+  treeRoot,
+  liveNote,
+  detailTitle,
+  detailCopy,
+  detailMeta,
+  drawer,
+  drawerScrim,
+  drawerNavButton,
+  drawerClose,
+  resizeHandle,
+  rootMenuButton,
+  rootMenu,
+  previewSummary,
+  onRenameNode = null,
+  onMoveNode = null,
+  onOpenNode = null,
+  storageKey = "root-admin-web-app-hierarchy-expanded",
+  initialDrawerWidth = 448,
+} = {}) {
+  if (
+    !(treeRoot instanceof HTMLElement) ||
+    !(liveNote instanceof HTMLElement) ||
+    !(detailTitle instanceof HTMLElement) ||
+    !(detailCopy instanceof HTMLElement) ||
+    !(detailMeta instanceof HTMLElement) ||
+    !(drawer instanceof HTMLElement) ||
+    !(drawerScrim instanceof HTMLElement) ||
+    !(drawerNavButton instanceof HTMLButtonElement) ||
+    !(drawerClose instanceof HTMLButtonElement) ||
+    !(resizeHandle instanceof HTMLElement) ||
+    !(rootMenuButton instanceof HTMLButtonElement) ||
+    !(rootMenu instanceof HTMLElement)
+  ) {
+    return null;
+  }
+
+  const state = {
+    tree: [],
+    currentId: null,
+    selectedId: null,
+    activeMenuId: null,
+    drawerOpen: true,
+    rootMenuOpen: false,
+    drawerWidth: initialDrawerWidth,
+    loading: true,
+    error: null,
+    editingId: null,
+    editingValue: "",
+    mutatingId: null,
+  };
+
+  function loadExpandedStateForConsumer(defaultIds = []) {
+    try {
+      const raw = window.localStorage.getItem(storageKey);
+      if (!raw) {
+        return defaultIds;
+      }
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : defaultIds;
+    } catch {
+      return defaultIds;
+    }
+  }
+
+  function saveExpandedStateForConsumer(expandedState) {
+    window.localStorage.setItem(storageKey, JSON.stringify(Array.from(expandedState)));
+  }
+
+  const expandedState = new Set(loadExpandedStateForConsumer());
+
+  function isMobileView() {
+    return window.matchMedia("(max-width: 56rem)").matches;
+  }
+
+  function getDrawerBounds() {
+    const minWidth = isMobileView() ? Math.min(window.innerWidth, 320) : 320;
+    const maxWidth = isMobileView() ? window.innerWidth : Math.min(window.innerWidth - 68, 1280);
+    return { minWidth, maxWidth };
+  }
+
+  function clampDrawerWidth(width) {
+    const { minWidth, maxWidth } = getDrawerBounds();
+    return Math.min(maxWidth, Math.max(minWidth, width));
+  }
+
+  function getFlatTree(nodes = state.tree, parentId = null) {
+    return nodes.flatMap((node, index) => [
+      { node, parentId, list: nodes, index },
+      ...getFlatTree(node.children, node.id),
+    ]);
+  }
+
+  function getNodeRecordById(id, nodes = state.tree, parentId = null, list = state.tree) {
+    for (let index = 0; index < nodes.length; index += 1) {
+      const node = nodes[index];
+      if (node.id === id) {
+        return { node, parentId, list, index };
+      }
+      const nested = getNodeRecordById(id, node.children, node.id, node.children);
+      if (nested) {
+        return nested;
+      }
+    }
+    return null;
+  }
+
+  function isExpanded(node) {
+    return expandedState.has(node.id);
+  }
+
+  function getExpandableNodeIds(nodes = state.tree) {
+    return nodes.flatMap((node) => {
+      const descendantIds = getExpandableNodeIds(node.children);
+      if (node.children.length > 0) {
+        return [node.id, ...descendantIds];
+      }
+      return descendantIds;
+    });
+  }
+
+  function getProtectedRootIds(nodes = state.tree) {
+    return nodes.filter((node) => node.protectedNode).map((node) => node.id);
+  }
+
+  function toggleExpanded(id) {
+    const record = getNodeRecordById(id);
+    if (!record) {
+      return;
+    }
+    if (expandedState.has(id)) {
+      expandedState.delete(id);
+    } else {
+      expandedState.add(id);
+    }
+    saveExpandedStateForConsumer(expandedState);
+    render();
+  }
+
+  function expandAncestors(id) {
+    const chain = [];
+    function walk(nodes, ancestors = []) {
+      for (const node of nodes) {
+        if (node.id === id) {
+          chain.push(...ancestors);
+          return true;
+        }
+        if (walk(node.children, [...ancestors, node.id])) {
+          return true;
+        }
+      }
+      return false;
+    }
+    walk(state.tree);
+    chain.forEach((ancestorId) => expandedState.add(ancestorId));
+    saveExpandedStateForConsumer(expandedState);
+  }
+
+  function detailMetaRow(label, value) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "hierarchy-tree-detail-meta-row";
+    const dt = document.createElement("dt");
+    dt.textContent = label;
+    const dd = document.createElement("dd");
+    dd.textContent = value;
+    wrapper.append(dt, dd);
+    return wrapper;
+  }
+
+  function formatTimestamp(value) {
+    if (!value) {
+      return "Unknown";
+    }
+    return new Date(value).toLocaleString();
+  }
+
+  function humanizeNodeType(node) {
+    if (node.kind === "root-family") {
+      return "Root family";
+    }
+    if (node.kind === "module") {
+      return "Module";
+    }
+    return "Page";
+  }
+
+  function rowActionButton(label, callback) {
+    const button = document.createElement("button");
+    button.className = "hierarchy-tree-action-button";
+    button.type = "button";
+    button.role = "menuitem";
+    button.textContent = label;
+    button.addEventListener("click", async () => {
+      state.activeMenuId = null;
+      await callback();
+    });
+    return button;
+  }
+
+  function canRename(node) {
+    return typeof onRenameNode === "function" && (node.kind === "page" || node.kind === "module");
+  }
+
+  function beginRename(id) {
+    const record = getNodeRecordById(id);
+    if (!record || !canRename(record.node)) {
+      return;
+    }
+    state.selectedId = id;
+    state.editingId = id;
+    state.editingValue = record.node.title;
+    state.activeMenuId = null;
+    render();
+  }
+
+  async function commitRename(id) {
+    const record = getNodeRecordById(id);
+    if (!record || typeof onRenameNode !== "function") {
+      cancelRename();
+      return;
+    }
+
+    const nextTitle = state.editingValue.trim();
+    if (!nextTitle || nextTitle === record.node.title) {
+      cancelRename();
+      return;
+    }
+
+    state.mutatingId = id;
+    render();
+
+    try {
+      await onRenameNode({
+        id,
+        node: record.node,
+        title: nextTitle,
+      });
+      state.editingId = null;
+      state.editingValue = "";
+    } finally {
+      state.mutatingId = null;
+      render();
+    }
+  }
+
+  function cancelRename() {
+    state.editingId = null;
+    state.editingValue = "";
+    render();
+  }
+
+  function canOutdent(record) {
+    return Boolean(typeof onMoveNode === "function" && record?.node.kind === "page" && record.parentId);
+  }
+
+  function canOrphan(record) {
+    return Boolean(
+      typeof onMoveNode === "function" &&
+      record?.node.kind === "page" &&
+      record.node.meta?.placementType !== "orphaned",
+    );
+  }
+
+  async function moveNode(id, action) {
+    const record = getNodeRecordById(id);
+    if (!record || typeof onMoveNode !== "function") {
+      return;
+    }
+
+    const parentRecord = record.parentId ? getNodeRecordById(record.parentId) : null;
+    const grandParentRecord = parentRecord?.parentId ? getNodeRecordById(parentRecord.parentId) : null;
+
+    state.selectedId = id;
+    state.activeMenuId = null;
+    state.mutatingId = id;
+    render();
+
+    try {
+      await onMoveNode({
+        id,
+        action,
+        node: record.node,
+        parentNode: parentRecord?.node ?? null,
+        grandParentNode: grandParentRecord?.node ?? null,
+      });
+    } finally {
+      state.mutatingId = null;
+      render();
+    }
+  }
+
+  function openSelectedNode(id) {
+    state.currentId = id;
+    state.selectedId = id;
+    state.activeMenuId = null;
+    expandAncestors(id);
+    render();
+  }
+
+  function renderDetail() {
+    const currentRecord = getNodeRecordById(state.currentId);
+    const selectedRecord = getNodeRecordById(state.selectedId);
+
+    if (state.loading) {
+      detailTitle.textContent = "Loading hierarchy";
+      detailCopy.textContent = "Reading durable web app hierarchy truth from GetTree.";
+      detailMeta.replaceChildren(detailMetaRow("State", "Loading"));
+      return;
+    }
+
+    if (state.error) {
+      detailTitle.textContent = "Hierarchy unavailable";
+      detailCopy.textContent = state.error;
+      detailMeta.replaceChildren(detailMetaRow("State", "Error"));
+      return;
+    }
+
+    if (!currentRecord || !selectedRecord) {
+      detailTitle.textContent = "No hierarchy records";
+      detailCopy.textContent = "No readable hierarchy records are currently available.";
+      detailMeta.replaceChildren(detailMetaRow("State", "Empty"));
+      return;
+    }
+
+    const currentNode = currentRecord.node;
+    const selectedNode = selectedRecord.node;
+    const selectedMeta = selectedNode.meta ?? {};
+
+    detailTitle.textContent = currentNode.title;
+    detailCopy.textContent =
+      state.currentId === state.selectedId
+        ? `${humanizeNodeType(currentNode)} selected and open in the read-first hierarchy view.`
+        : `Current stays on ${currentNode.title} while the selected row targets ${selectedNode.title}.`;
+
+    const rows = [
+      detailMetaRow("Selected row", selectedNode.title),
+      detailMetaRow("Selected type", humanizeNodeType(selectedNode)),
+      detailMetaRow("Root family", selectedMeta.rootFamilyLabel ?? selectedMeta.rootFamilyId ?? "Unknown"),
+    ];
+
+    if (selectedMeta.moduleLabel) {
+      rows.push(detailMetaRow("Module", selectedMeta.moduleLabel));
+    }
+    if (selectedMeta.placementType) {
+      rows.push(detailMetaRow("Placement", humanizeStatus(selectedMeta.placementType)));
+    }
+    if (selectedMeta.resolvedFullRoutePath) {
+      rows.push(detailMetaRow("Route path", selectedMeta.resolvedFullRoutePath));
+    }
+    if (selectedNode.status) {
+      rows.push(detailMetaRow("Status", humanizeStatus(selectedNode.status)));
+    }
+    rows.push(detailMetaRow("Child pages", String(selectedNode.children.length)));
+    if (selectedMeta.createdAt) {
+      rows.push(detailMetaRow("Created", formatTimestamp(selectedMeta.createdAt)));
+    }
+    if (selectedMeta.updatedAt) {
+      rows.push(detailMetaRow("Updated", formatTimestamp(selectedMeta.updatedAt)));
+    }
+
+    detailMeta.replaceChildren(...rows);
+  }
+
+  function renderTree(nodes, depth = 0) {
+    const list = document.createElement("ul");
+    list.className = depth === 0 ? "hierarchy-tree-list" : "hierarchy-tree-children";
+
+    for (const node of nodes) {
+      const item = document.createElement("li");
+      item.className = "hierarchy-tree-node";
+      item.dataset.depth = String(depth);
+
+      const row = document.createElement("div");
+      row.className = "hierarchy-tree-row";
+      row.dataset.selected = String(state.selectedId === node.id);
+      row.dataset.current = String(state.currentId === node.id);
+
+      const hasChildren = node.children.length > 0;
+      if (hasChildren) {
+        const expander = document.createElement("button");
+        expander.className = "hierarchy-tree-expander";
+        expander.type = "button";
+        expander.setAttribute("aria-label", isExpanded(node) ? `Collapse ${node.title}` : `Expand ${node.title}`);
+        expander.setAttribute("aria-expanded", String(isExpanded(node)));
+        expander.innerHTML = '<span class="hierarchy-tree-expander-icon" aria-hidden="true">▶</span>';
+        expander.addEventListener("click", () => toggleExpanded(node.id));
+        row.append(expander);
+      } else {
+        const placeholder = document.createElement("span");
+        placeholder.className = "hierarchy-tree-placeholder";
+        row.append(placeholder);
+      }
+
+      const content = document.createElement("div");
+      content.className = "hierarchy-tree-content";
+      const main = document.createElement("div");
+      main.className = "hierarchy-tree-row-main";
+
+      if (state.editingId === node.id) {
+        const renameField = document.createElement("input");
+        renameField.className = "hierarchy-tree-inline-input";
+        renameField.type = "text";
+        renameField.value = state.editingValue;
+        renameField.setAttribute("aria-label", `Rename ${node.title}`);
+        renameField.disabled = state.mutatingId === node.id;
+        renameField.addEventListener("input", () => {
+          state.editingValue = renameField.value;
+        });
+        renameField.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            void commitRename(node.id);
+          }
+          if (event.key === "Escape") {
+            event.preventDefault();
+            cancelRename();
+          }
+        });
+        renameField.addEventListener("blur", () => {
+          if (state.editingId === node.id) {
+            void commitRename(node.id);
+          }
+        });
+        main.append(renameField);
+        requestAnimationFrame(() => {
+          renameField.focus();
+          renameField.select();
+        });
+      } else {
+        const labelButton = document.createElement("button");
+        labelButton.className = "hierarchy-tree-label-button";
+        labelButton.type = "button";
+        labelButton.addEventListener("click", () => {
+          state.selectedId = node.id;
+          state.activeMenuId = null;
+          render();
+        });
+        if (canRename(node)) {
+          labelButton.addEventListener("dblclick", () => beginRename(node.id));
+        }
+
+        const title = document.createElement("span");
+        title.className = "hierarchy-tree-title";
+        title.dataset.fullLabel = node.title;
+        title.textContent = node.title;
+        labelButton.append(title);
+        main.append(labelButton);
+      }
+      content.append(main);
+
+      const rowSub = document.createElement("div");
+      rowSub.className = "hierarchy-tree-row-sub";
+
+      if (state.currentId === node.id) {
+        const chip = document.createElement("span");
+        chip.className = "hierarchy-tree-state-chip";
+        chip.dataset.kind = "current";
+        chip.textContent = "Current";
+        rowSub.append(chip);
+      }
+
+      if (state.selectedId === node.id) {
+        const chip = document.createElement("span");
+        chip.className = "hierarchy-tree-state-chip";
+        chip.dataset.kind = "selected";
+        chip.textContent = "Selected";
+        rowSub.append(chip);
+      }
+
+      if (node.changed) {
+        const changed = document.createElement("span");
+        changed.className = "hierarchy-tree-changed";
+        changed.textContent = "Changed";
+        rowSub.append(changed);
+      }
+
+      content.append(rowSub);
+      row.append(content);
+
+      const rowActions = document.createElement("div");
+      rowActions.className = "hierarchy-tree-row-actions";
+      const hasPrimaryOpenAction = typeof onOpenNode === "function" || isNonEmptyHref(getNodeOpenHref(node));
+      const openHref = getNodeOpenHref(node);
+      const openInNewTabHref = getNodeOpenInNewTabHref(node);
+      const hasInlineLinks = hasPrimaryOpenAction || isNonEmptyHref(openInNewTabHref);
+
+      if (hasInlineLinks) {
+        const inlineActions = document.createElement("div");
+        inlineActions.className = "hierarchy-tree-inline-actions";
+
+        if (typeof onOpenNode === "function") {
+          inlineActions.append(
+            createHierarchyActionButton({
+              label: `Open ${node.title}`,
+              icon: "open",
+              callback: () => {
+                onOpenNode({ id: node.id, node });
+              },
+            }),
+          );
+        } else if (isNonEmptyHref(openHref)) {
+          inlineActions.append(
+            createHierarchyActionLink({
+              label: `Open ${node.title}`,
+              href: openHref,
+              icon: "open",
+            }),
+          );
+        }
+
+        if (isNonEmptyHref(openInNewTabHref)) {
+          inlineActions.append(
+            createHierarchyActionLink({
+              label: `Open ${node.title} in a new tab`,
+              href: openInNewTabHref,
+              icon: "external",
+              newTab: true,
+            }),
+          );
+        }
+
+        rowActions.append(inlineActions);
+      }
+
+      const menuButton = document.createElement("button");
+      menuButton.className = "hierarchy-tree-menu-button";
+      menuButton.type = "button";
+      menuButton.setAttribute("aria-label", `Open actions for ${node.title}`);
+      menuButton.setAttribute("aria-expanded", String(state.activeMenuId === node.id));
+      menuButton.textContent = "…";
+      menuButton.disabled = state.mutatingId === node.id;
+      menuButton.addEventListener("click", () => {
+        state.selectedId = node.id;
+        state.activeMenuId = state.activeMenuId === node.id ? null : node.id;
+        render();
+      });
+      rowActions.append(menuButton);
+
+      if (state.activeMenuId === node.id) {
+        const menu = document.createElement("div");
+        menu.className = "hierarchy-tree-row-menu";
+        menu.role = "menu";
+        const record = getNodeRecordById(node.id);
+        menu.append(
+          rowActionButton("Select row", () => {
+            state.selectedId = node.id;
+            render();
+          }),
+          rowActionButton("Open selected", () => {
+            openSelectedNode(node.id);
+          }),
+        );
+
+        if (typeof onOpenNode === "function") {
+          menu.append(
+            rowActionButton("Open", () => {
+              onOpenNode({ id: node.id, node });
+            }),
+          );
+        } else if (isNonEmptyHref(openHref)) {
+          menu.append(
+            rowActionButton("Open", () => {
+              window.location.assign(openHref);
+            }),
+          );
+        }
+
+        if (isNonEmptyHref(openInNewTabHref)) {
+          menu.append(
+            rowActionButton("Open in new tab", () => {
+              window.open(openInNewTabHref, "_blank", "noopener,noreferrer");
+            }),
+          );
+        }
+
+        if (canRename(node)) {
+          menu.append(
+            rowActionButton("Rename", async () => {
+              beginRename(node.id);
+            }),
+          );
+        }
+
+        if (hasChildren) {
+          menu.append(
+            rowActionButton(isExpanded(node) ? "Collapse branch" : "Expand branch", () => {
+              toggleExpanded(node.id);
+            }),
+          );
+        }
+
+        if (record && canOutdent(record)) {
+          menu.append(
+            rowActionButton("Move to parent level", async () => {
+              await moveNode(node.id, "outdent");
+            }),
+          );
+        }
+
+        if (record && canOrphan(record)) {
+          menu.append(
+            rowActionButton("Send to orphan pool", async () => {
+              await moveNode(node.id, "orphan");
+            }),
+          );
+        }
+
+        rowActions.append(menu);
+      }
+
+      row.append(rowActions);
+      item.append(row);
+
+      if (hasChildren && isExpanded(node)) {
+        item.append(renderTree(node.children, depth + 1));
+      }
+
+      list.append(item);
+    }
+
+    return list;
+  }
+
+  function renderRootMenu() {
+    rootMenu.classList.toggle("hidden", !state.rootMenuOpen);
+    rootMenuButton.setAttribute("aria-expanded", String(state.rootMenuOpen));
+  }
+
+  function render() {
+    drawer.classList.toggle("hidden", !state.drawerOpen);
+    drawer.setAttribute("aria-hidden", String(!state.drawerOpen));
+    drawerNavButton.setAttribute("aria-expanded", String(state.drawerOpen));
+    drawerScrim.classList.toggle("hidden", !isMobileView() || !state.drawerOpen);
+    drawer.style.setProperty("--hierarchy-drawer-width", `${clampDrawerWidth(state.drawerWidth)}px`);
+
+    if (previewSummary instanceof HTMLElement) {
+      if (state.loading) {
+        previewSummary.textContent = "Loading durable hierarchy truth from GetTree.";
+      } else if (state.error) {
+        previewSummary.textContent = "The hierarchy read failed without changing the signed-off tree posture.";
+      } else {
+        previewSummary.textContent = "Root-admin consumer using the signed-off hierarchy-tree family with live rename and structural move actions backed by GetTree.";
+      }
+    }
+
+    if (state.loading) {
+      liveNote.textContent = "Loading hierarchy from GetTree.";
+    } else if (state.error) {
+      liveNote.textContent = "Hierarchy read failed.";
+    } else {
+      liveNote.textContent = "Rename and structural move actions are active.";
+    }
+
+    renderRootMenu();
+    treeRoot.replaceChildren();
+
+    if (state.loading) {
+      const empty = document.createElement("div");
+      empty.className = "hierarchy-tree-empty";
+      empty.textContent = "Loading hierarchy…";
+      treeRoot.append(empty);
+    } else if (state.error) {
+      const empty = document.createElement("div");
+      empty.className = "hierarchy-tree-empty";
+      empty.textContent = state.error;
+      treeRoot.append(empty);
+    } else if (state.tree.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "hierarchy-tree-empty";
+      empty.textContent = "No hierarchy rows are currently available.";
+      treeRoot.append(empty);
+    } else {
+      treeRoot.append(renderTree(state.tree));
+    }
+
+    renderDetail();
+    requestAnimationFrame(() => syncHierarchyTitleOverflowTooltips(treeRoot));
+  }
+
+  rootMenu.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const action = target.dataset.rootAction;
+    if (!action) {
+      return;
+    }
+
+    if (action === "expand-all") {
+      getExpandableNodeIds().forEach((id) => expandedState.add(id));
+      saveExpandedStateForConsumer(expandedState);
+    }
+
+    if (action === "collapse-all") {
+      expandedState.clear();
+      getProtectedRootIds().forEach((id) => expandedState.add(id));
+      saveExpandedStateForConsumer(expandedState);
+    }
+
+    if (action === "reset-open") {
+      expandedState.clear();
+      getProtectedRootIds().forEach((id) => expandedState.add(id));
+      saveExpandedStateForConsumer(expandedState);
+    }
+
+    if (action === "open-selected" && state.selectedId) {
+      state.currentId = state.selectedId;
+      expandAncestors(state.selectedId);
+    }
+
+    if (action === "select-current" && state.currentId) {
+      state.selectedId = state.currentId;
+    }
+
+    state.rootMenuOpen = false;
+    render();
+  });
+
+  rootMenuButton.addEventListener("click", () => {
+    state.rootMenuOpen = !state.rootMenuOpen;
+    renderRootMenu();
+  });
+
+  drawerNavButton.addEventListener("click", () => {
+    state.drawerOpen = !state.drawerOpen;
+    state.rootMenuOpen = false;
+    render();
+  });
+
+  drawerClose.addEventListener("click", () => {
+    state.drawerOpen = false;
+    state.rootMenuOpen = false;
+    render();
+  });
+
+  drawerScrim.addEventListener("click", () => {
+    state.drawerOpen = false;
+    state.rootMenuOpen = false;
+    render();
+  });
+
+  resizeHandle.addEventListener("pointerdown", (event) => {
+    if (isMobileView()) {
+      return;
+    }
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = state.drawerWidth;
+    resizeHandle.setPointerCapture(event.pointerId);
+
+    const onMove = (moveEvent) => {
+      const delta = moveEvent.clientX - startX;
+      state.drawerWidth = clampDrawerWidth(startWidth + delta);
+      render();
+    };
+
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+    };
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+  });
+
+  window.addEventListener("resize", render);
+
+  return {
+    setData({ tree, currentId = null, selectedId = null } = {}) {
+      state.tree = Array.isArray(tree) ? cloneTree(tree) : [];
+      const protectedRootIds = getProtectedRootIds(state.tree);
+      if (expandedState.size === 0) {
+        protectedRootIds.forEach((id) => expandedState.add(id));
+      }
+      saveExpandedStateForConsumer(expandedState);
+      const flat = getFlatTree();
+      const validIds = new Set(flat.map((entry) => entry.node.id));
+      const firstVisibleId = flat[1]?.node.id ?? flat[0]?.node.id ?? null;
+      state.currentId = currentId && validIds.has(currentId) ? currentId : firstVisibleId;
+      state.selectedId = selectedId && validIds.has(selectedId) ? selectedId : state.currentId;
+      if (state.currentId) {
+        expandAncestors(state.currentId);
+      }
+      if (state.selectedId) {
+        expandAncestors(state.selectedId);
+      }
+      state.loading = false;
+      state.error = null;
+      state.editingId = null;
+      state.editingValue = "";
+      render();
+    },
+    setLoading(message = "Loading hierarchy from GetTree.") {
+      state.loading = true;
+      state.error = null;
+      liveNote.textContent = message;
+      render();
+    },
+    setError(message = "Hierarchy could not load.") {
+      state.loading = false;
+      state.error = message;
+      state.editingId = null;
+      state.editingValue = "";
+      render();
+    },
+    getViewState() {
+      return {
+        currentId: state.currentId,
+        selectedId: state.selectedId,
+      };
+    },
+    openNode(id) {
+      const record = getNodeRecordById(id);
+      if (!record) {
+        return;
+      }
+      openSelectedNode(id);
+    },
+    render,
+  };
+}
+
+export function mountHierarchyTreeDemo() {
   const request = getCanonicalRequest();
   setDocumentEnvironment(request);
 
@@ -1154,6 +2081,38 @@ function mountHierarchyTreeDemo() {
 
       const actions = document.createElement("div");
       actions.className = "hierarchy-tree-row-actions";
+      const openHref = getNodeOpenHref(node);
+      const openInNewTabHref = getNodeOpenInNewTabHref(node);
+      const hasInlineLinks = isNonEmptyHref(openHref) || isNonEmptyHref(openInNewTabHref);
+
+      if (hasInlineLinks) {
+        const inlineActions = document.createElement("div");
+        inlineActions.className = "hierarchy-tree-inline-actions";
+
+        if (isNonEmptyHref(openHref)) {
+          inlineActions.append(
+            createHierarchyActionLink({
+              label: `Open ${node.title}`,
+              href: openHref,
+              icon: "open",
+            }),
+          );
+        }
+
+        if (isNonEmptyHref(openInNewTabHref)) {
+          inlineActions.append(
+            createHierarchyActionLink({
+              label: `Open ${node.title} in a new tab`,
+              href: openInNewTabHref,
+              icon: "external",
+              newTab: true,
+            }),
+          );
+        }
+
+        actions.append(inlineActions);
+      }
+
       const menuButton = document.createElement("button");
       menuButton.className = "hierarchy-tree-menu-button";
       menuButton.type = "button";
@@ -1173,6 +2132,16 @@ function mountHierarchyTreeDemo() {
         menu.role = "menu";
         menu.append(
           actionButton("Open page", () => openPage(node.id)),
+          ...(isNonEmptyHref(openHref)
+            ? [actionButton("Open", () => {
+              window.location.assign(openHref);
+            })]
+            : []),
+          ...(isNonEmptyHref(openInNewTabHref)
+            ? [actionButton("Open in new tab", () => {
+              window.open(openInNewTabHref, "_blank", "noopener,noreferrer");
+            })]
+            : []),
           actionButton("Rename", () => beginRename(node.id)),
           actionButton("Add child", () => addChild(node.id)),
           actionButton("Add sibling", () => addSibling(node.id)),
@@ -1492,8 +2461,10 @@ function mountHierarchyTreeDemo() {
   render();
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", mountHierarchyTreeDemo, { once: true });
-} else {
-  mountHierarchyTreeDemo();
+if (document.body?.dataset.hierarchyTreeOwner === "design-system") {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mountHierarchyTreeDemo, { once: true });
+  } else {
+    mountHierarchyTreeDemo();
+  }
 }
