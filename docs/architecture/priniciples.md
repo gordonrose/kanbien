@@ -155,6 +155,9 @@ Implementation details may change, but stable seams should not churn casually.
 - Docs, tests, Postman collections, and OpenAPI specs should track externally
   visible behavior.
 - A feature may evolve internally without forcing unrelated platform changes.
+- Governed frontend families adopted into real app routes should expose
+  approved consumption seams for styling, render structure, and interaction
+  behavior rather than requiring app-local markup or controller duplication.
 
 Why:
 

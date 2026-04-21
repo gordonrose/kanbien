@@ -73,7 +73,12 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 - `Partial` Privileged operations require explicit permission.
   Current root-platform privileged operations now require explicit
   capability-based permission checks, but the broader multi-tenant permission
-  architecture is not finished.
+  architecture is not finished. The new `webAppHierarchyBuilder` root-operated
+  routes follow that same explicit-capability pattern, including the newer
+  design-system create/preview/apply routes and the newer
+  preview/apply/link-status reconcile capabilities. The sibling
+  `webAppPageSettings` routes and the dedicated module-landing-page route now
+  follow the same explicit-capability posture.
 - `Fail` Object-level and tenant-level access are checked where relevant.
   Ownership checks exist for some auth objects, the repo now has a
   root-operated tenant lifecycle model plus tenant-side session context, but
@@ -111,6 +116,11 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 
 - `Pass` Security-relevant events are logged.
   Auth audit events are durable and meaningful.
+  Denied `web-app-hierarchy.*` capability-gated actions are also visible
+  through shared platform security audit events, including denied
+  design-system create/preview/apply and discovery link-status requests.
+  Denied `web-app-page-settings.*` requests are now visible through the same
+  shared platform security audit path.
 - `Pass` Logs avoid plaintext secrets and sensitive values.
   Current model is careful here.
 - `Partial` Logs are useful for incident investigation.

@@ -79,6 +79,17 @@ Each artifact class owns a different concern:
 Do not let a component file become the only source of truth for usage,
 accessibility, or variant rules.
 
+For governed families that are expected to be adopted into real app routes, the
+component or adoption seam should explicitly define:
+
+- the shared CSS entrypoint
+- the shared render or markup seam
+- the shared interaction or controller seam
+- the allowed consumer inputs and callbacks
+
+Do not treat shared CSS publication alone as enough to call a governed family
+app-consumable.
+
 ## Public IA Rules
 
 The public `/design-system` route structure is part of the governed loop and
@@ -200,6 +211,13 @@ Record:
 - which older implementations remain and why
 - whether migration is partial, complete, or intentionally deferred
 - any frontend quality-gate or visual-baseline work required
+- whether the real consumer is using the design-system-owned render and
+  controller seams or still duplicating markup or interaction logic locally
+- the family-owned versus host-owned boundary for the consumer surface
+- the exact source route, reference pack, or canonical set the consumer will
+  be compared against
+- whether app-consumption entrypoints are expected to stay visually identical
+  to the canonical `/design-system` entrypoint or are intentionally narrower
 
 Do not describe a design-system artifact as complete if it has no verified
 adoption path.
@@ -214,6 +232,21 @@ upstream signoff chain is honest. At minimum, the family needs:
 
 If one of those is missing, do the missing design-system work before app UI
 implementation unless the user has explicitly allowed an exception.
+
+If the family lacks a consumable shared render or behavior seam, stop and raise
+the blocker for human decision rather than letting the app route duplicate the
+family markup, ARIA semantics, or controller logic locally.
+
+Default governed-adoption preflight for first consumers:
+
+1. identify the literal signed-off source route and reference truth
+2. list which visible regions are family-owned versus host-owned
+3. confirm shared CSS, render, and controller seams exist
+4. record any intentionally approved deviations before implementation
+5. name the consumer-level parity evidence required before closure
+
+Do not skip this preflight just because the family already has signed-off
+canonicals upstream.
 
 ## Escalate Before Proceeding
 
@@ -244,6 +277,19 @@ For each material loop, define:
 - overflow/wrapping checks
 - degraded-state behavior
 - visual-regression or governed screenshot expectations when applicable
+
+For first-consumer governed adoption, verification must also define:
+
+- consumer-level executable proof on the real app route, not only on
+  `/design-system`
+- full row, state, or interaction grammar the consumer exposes
+- host or shell-parity evidence when the family is hosted inside governed
+  chrome
+- direct human-visible regression guards for likely failure modes such as:
+  overlap, clipping, escape, false affordance, contrast drift, or collapsed
+  rendered controls
+- whether canonical and app-consumption entrypoints need an explicit parity
+  comparison to catch shared-entrypoint drift
 
 If the family is expected to be adopted into shell chrome rather than page
 content, verification must also define:
@@ -283,6 +329,64 @@ Shell truth also includes parent-category truth. A canonical launcher that is
 framed under the wrong public parent is considered drift even if the family
 surface itself is otherwise correct.
 
+For child seams, launcher truth also includes render-surface truth. A canonical
+launcher is incomplete if its links still point at the parent host page instead
+of a dedicated child render surface.
+
+Minimum child canonical launcher contract:
+
+1. dedicated launcher route
+2. dedicated child render route
+3. launcher links target the child render route, not the parent page
+4. breadcrumb and canonical-shell coverage exists for both launcher and render
+5. executable tests assert launcher `href` truth, not only button count or
+   route visibility
+
+If a child seam still depends on the parent route for deterministic ref
+reopening, record that as a provisional host-route batch rather than calling
+the child canonicals complete.
+
+Consumer parity must be literal rather than token-based. Do not accept these as
+enough on their own:
+
+- shared CSS imports
+- reused class names
+- reused child controls
+- passing happy-path interaction tests
+
+The real question is whether the visible app route still matches the signed-off
+source truth in browser posture and behavior.
+
+When a child seam has been signed off on a parent page or template before the
+dedicated child canonical renderer exists, treat that approved host surface as
+the visual source of truth for the child renderer.
+
+Default child-render parity rule:
+
+1. recreate the approved child-seam state on the signed-off host surface
+2. capture screenshot evidence from the hosted seam itself, not from the whole
+   page chrome
+3. render the matching state on the dedicated child canonical route
+4. compare the child canonical back to the approved hosted seam
+5. keep the child renderer in-progress until that parity check passes
+
+This rule is especially important when:
+
+- the child seam inherits parent framing but owns its own open/interactive
+  behavior
+- the child canonical renderer uses local scaffolding that could drift from the
+  approved parent runtime
+- a recent escaped issue proved that narrow geometry assertions were not enough
+
+Where clean one-to-one source states exist, verification should prefer:
+
+- approved-host screenshot parity with an honest pixel-diff tolerance
+- one direct geometry relationship check for the key seam contract, such as
+  overlay anchoring, stacking, or containment
+
+Do not let dedicated child canonicals become their own visual truth when a
+signed-off parent host surface already exists and can be used for parity.
+
 If a user-reported UI defect remains unresolved after the first attempted fix
 and the user has to report the same visual problem again, escalate the loop to
 browser-level inspection before making further geometry or layering changes.
@@ -313,6 +417,10 @@ blurry surface by default.
   trusted for screenshot capture or parity review
 - canonical widths must be honest for the named state; if the state silently
   degrades, the canonical is wrong and should be widened or renamed
+
+For child seams, a dedicated launcher without a dedicated render surface is not
+enough. Do not mark the family `canonical-created` until the child render
+surface exists and the launcher points to it directly.
 
 Even when exploration and canonical renderers are isolated, the containing
 `/design-system` page should still retain the shared top-nav, sub-nav, and
@@ -354,6 +462,8 @@ Treat the design-system loop as incomplete when:
 - responsive behavior was not specified
 - the adoption plan is unknown
 - docs still describe the pre-change system
+- a child canonical launcher still points at the parent host page rather than a
+  dedicated child render surface
 
 ## Recommended Repo Layout
 

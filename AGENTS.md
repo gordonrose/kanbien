@@ -256,6 +256,38 @@ Do not continue implementation on top of knowingly stale downstream artifacts.
 Do not leave source-independent docs describing the pre-change platform once
 the implementation is otherwise considered delivered.
 
+## Feature Loop Completion Gate
+
+Do not stop a material feature loop at "code plus a few tests" when the
+change-control artifact chain says more outputs are required.
+
+Before treating a backend, frontend, vertical-slice, or permission-sensitive
+change as complete:
+
+- determine the required artifact set from
+  `docs/standards/change-artifact-requirements.md`
+- complete the required maintained-artifacts sweep
+- update source-independent docs whose truth changed
+- update permission-mapping artifacts when new authz capability keys or grants
+  were introduced
+- update API contract docs, OpenAPI, and maintained Postman artifacts when the
+  route contract changed and those artifacts are maintained for the seam
+- update feature docs, status snapshots, and earlier planning artifacts whose
+  current-state wording became stale because the slice now exists
+
+Do not present a slice as finished when any required artifact remains missing,
+stale, or explicitly deferred without being called out as an incomplete loop.
+
+If time or scope pressure means the implementation must stop before the full
+artifact run is complete, say so plainly and classify the result as:
+
+- implementation-only
+- partially documented
+- blocked on artifact completion
+
+Do not use "done", "complete", or equivalent close-out language for that
+state.
+
 ## Design-System Signoff Before App UI
 
 For governed frontend families, do not implement new real-app UI until that UI
@@ -277,6 +309,37 @@ the design-system governance work first. That means the relevant behavior lock,
 canonicals/reference truth, verification artifact, and adoption artifact must
 exist and be honest before real-app implementation is treated as allowed.
 
+For first-consumer app adoption of a signed-off governed family:
+
+- consume the shared signed-off source of truth rather than copying the family
+  CSS or layout rules into the app
+- shared CSS imports alone do not count as governed adoption
+- consume the design-system-owned source of truth for:
+  - visual styling
+  - render structure and markup
+  - interaction behavior
+  - accessibility and state semantics
+- first-consumer app adoption should prefer design-system-owned render and
+  controller seams rather than app-local HTML or controller reconstruction
+- preserve the signed-off outer page or shell framing, not just the inner
+  component styling
+- treat app-local copy, counters, spacing, helper text, or wrapper posture as
+  drift unless an explicit exception is approved
+- duplicating governed component markup in an app page is drift unless an
+  explicit exception is approved
+- duplicating governed interaction logic in an app page is drift unless an
+  explicit exception is approved
+- do not treat "close to the canonical" as sufficient parity when the rendered
+  browser result still differs from the signed-off design-system truth
+
+If a governed family does not yet expose a consumable shared render or
+behavior seam:
+
+- stop and raise the gap for human decision
+- do not satisfy adoption by copying HTML structure, ARIA or state behavior, or
+  page-local controller logic into the app
+- do not treat CSS sharing alone as sufficient governed adoption
+
 Allowed exception posture:
 
 - the user explicitly approves a one-off or pre-signoff app implementation
@@ -285,6 +348,93 @@ Allowed exception posture:
 
 Do not infer a pre-signoff exception from urgency, apparent simplicity, or the
 existence of partial design-system work.
+
+### App-Page CSS Prohibition
+
+For governed app pages, do not add or modify app-page CSS as part of a page
+build.
+
+This is an ironclad repo rule:
+
+- CSS additions or CSS changes for governed page layout, spacing, columns,
+  wrappers, shell posture, or page-specific presentation are allowed only as
+  part of an explicit `/design-system` loop
+- app implementation work must consume existing signed-off design-system CSS
+  seams as-is rather than adding page-local CSS in `src/frontend/*/assets/*.css`
+- if the page cannot be built cleanly from existing signed-off seams, stop
+  rather than inventing app CSS
+
+When the needed styling or layout seam does not already exist:
+
+- do not add app-page CSS anyway
+- do not unilaterally move the work into a design-system loop
+- raise the blocker and require human intervention to decide whether to:
+  - pause the app change
+  - run a design-system loop
+  - approve an explicit exception
+
+Never treat "small", "temporary", "cleanup", "follow-up", "candidate fix", or
+"just enough to make the page work" as justification for adding app-page CSS.
+
+## Frontend Topology Governance
+
+For governed app frontend families, distinguish explicitly between:
+
+- durable frontend topology
+- journey-local state
+- UI-local state
+- support-only routes
+
+Defaults:
+
+- the curated topology model owns only durable product places such as
+  permanent pages and durable subroutes
+- nested workflow steps, conditional journey branches, and transient screen
+  posture must not be modeled as global topology by default
+- feature-local state machines, query contracts, or equivalent feature-owned
+  seams should own journey-local and UI-local state unless an explicit
+  promotion decision is approved
+- support-only and technical routes must remain explicitly classified and must
+  not be silently treated as normal user-facing pages
+
+Materialization and safety rules:
+
+- curated frontend topology may be the primary source of truth for governed app
+  structure, but repo changes must materialize only through explicit preview
+  and apply seams
+- do not silently hand-edit governed generated routing, import wiring, or repo
+  structure when a topology materialization seam owns that surface
+- deterministic code must classify topology changes as additive,
+  compatibility-sensitive, blocked, or invalid before apply
+- compatibility-sensitive changes such as route renames, route removals,
+  locator-type changes, or path/hash migrations require an explicit
+  compatibility strategy
+- moving a journey from hash-backed addressing to path-backed addressing is a
+  routing-model migration, not a normal edit
+
+Promotion rule:
+
+- promote a journey-local state into durable topology only when it becomes a
+  stable product place with meaningful deep-linking, support, analytics,
+  permission, or compatibility requirements
+
+## Frontend State Replay Security
+
+Treat page-state replay and troubleshooting-state capture as separate from
+durable topology.
+
+Defaults:
+
+- only explicitly approved low-risk state may be serialized directly in a URL
+- rich, sensitive, or unstable replay state must use explicit server-backed
+  snapshots rather than direct URL encoding
+- secrets, credentials, tokens, proof material, and internal security signals
+  must never be serialized into URLs or replay payloads by default
+- replay links and snapshots must not act as authority for tenant, role,
+  permission, or entity access; current server-side authn and authz must still
+  be enforced on replay
+- do not treat troubleshooting convenience as justification to weaken privacy,
+  auditability, or least-privilege handling of page state
 
 ## Pagination Test Robustness
 
@@ -386,14 +536,26 @@ Use repo-local skills when the task clearly matches one of these workflows:
   `ai-change-reviewer`
 - PRD test-case lifecycle review:
   `test-case-lifecycle-reviewer`
-- frontend verification, design-system scenario maintenance, frontend gate
-  updates, or RTL/responsive/accessibility/geometry coverage for frontend
-  atoms, molecules, components, page templates, or pages:
+- frontend verification architecture, visual regression scenario maintenance,
+  screenshot/geometry helper work, frontend gate updates, or
+  RTL/responsive/accessibility/geometry coverage for frontend atoms,
+  molecules, components, page templates, or pages:
   `frontend-test-case-maintainer`
 - screenshot-driven frontend design-system iteration, page-shell/component
   primitive evolution on `/design-system`, or tight visual-contract work for
   responsive/layout/overflow/layering/RTL/magnification behavior:
   `frontend-design-system-loop-maintainer`
+- frontend architecture definition, current-state frontend runtime mapping,
+  frontend architecture drift review, or ADR maintenance for browser/runtime
+  seams: `frontend-architecture-maintainer`
+- senior frontend implementation review across architecture, design-system
+  adoption, topology/state hygiene, accessibility, performance, UX resilience,
+  and frontend verification quality:
+  `frontend-implementation-auditor`
+- durable frontend topology governance, page versus journey-state
+  classification, preview/apply materialization rules, compatibility handling
+  for route moves, or repo-structure ownership boundaries for governed app
+  routing: `frontend-topology-governor`
 - full repo change-loop orchestration once scope is settled:
   `change-loop-orchestrator`
 - bug / escaped-regression reconciliation, "why was this missed?", or

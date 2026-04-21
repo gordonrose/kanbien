@@ -86,10 +86,17 @@ Source gate: [`QA-RELEASE-GATE.md`](/home/gordon/kanbien/docs/standards/QA-RELEA
 - `Partial` Curated run-summary expectations are defined.
   The folder, expected content, and first worked examples now exist, but the
   repo does not yet contain a meaningful history of completed QA release
-  summaries across many features and releases.
+  summaries across many features and releases. Recent feature-loop summaries
+  now also include the `webAppHierarchyBuilder` backend foundation slice and
+  the later structure-aware reconcile extension, plus the first
+  `design-system` topology materialization backend/materializer slice.
 - `Pass` Traceability between planning and executable coverage is strong.
   `TC-*` and `JY-*` linkage, plus build-from-spec artifact expectations, are
   now stronger than before.
+- `Pass` Recent governed topology work now includes a sibling page-settings
+  backend slice with unit, integration, security, and audit coverage.
+  The current implemented evidence now includes `webAppPageSettings` exact
+  read/update/options coverage plus additive hierarchy landing-page cases.
 
 ## Main Gaps To Close
 

@@ -196,6 +196,26 @@ For material frontend and design-system work, also require:
 - frontend gate execution evidence, or an explicit environment blocker note
 - visual verification coverage for required viewport and direction states
 
+For first-consumer governed app adoption or materially changed governed
+adoption, also require:
+
+- a governed app-adoption preflight artifact or equivalent note naming:
+  - the exact signed-off source route or reference truth
+  - the family-owned versus host-owned boundary
+  - the required shared CSS, render, and controller seams
+  - any explicitly approved intentional deviations
+- an adoption contract or parity checklist that records:
+  - literal route-parity expectations
+  - required consumer-level shell or host-parity proof
+  - required real interactive parity states
+- consumer-level executable proof on the real app route, not only on
+  `/design-system`
+- at least one direct human-visible regression guard when the surface is
+  visually sensitive or has already had an escaped visual issue
+- explicit review of whether app-consumption entrypoints and canonical
+  `/design-system` entrypoints are expected to stay visually identical or are
+  intentionally scoped differently
+
 For public route or signed-off route-shell work, also require:
 
 - explicit human review using a public-route checklist or equivalent artifact
@@ -214,6 +234,12 @@ Treat the frontend loop as incomplete when:
   a meaningful user journey, high-risk workflow, or production-critical module
 - the frontend quality gate manifest is missing or stale for a materially
   changed governed surface
+- a governed first-consumer adoption was treated as complete without a preflight
+  artifact, adoption boundary declaration, or consumer-parity proof
+- the real app route still owns governed markup or interaction behavior locally
+  even though the family is being presented as governed adoption
+- the only proof for governed adoption is canonical or design-system coverage
+  with no consumer-level executable evidence
 - the frontend gate failed, was not run, or was treated as optional
 - a public route was presented as complete without an explicit qualitative
   route review
@@ -245,6 +271,44 @@ When a change lands, update the affected combination of:
   persistence-test infrastructure
 - script/helper behavior docs when the slice changes repo scripts, helper
   tooling, or script side effects in a meaningful way
+
+## Feature Loop Stop Rule
+
+Do not stop a material feature loop early just because implementation and a
+small validating test run exist.
+
+If the change introduced or changed any of these, the loop remains incomplete
+until the maintained artifacts are updated or an explicit blocker/deferred
+posture is recorded:
+
+- backend routes or request/response/error contracts
+- new authz capability keys or role-grant baseline changes
+- source-independent feature behavior
+- maintained OpenAPI or Postman artifacts for the affected seam
+- platform-status or standards-relevant snapshots whose truth changed
+- planning artifacts whose current-state wording became stale because the slice
+  now exists
+
+For backend capability work, the default close-out check must explicitly review:
+
+- PRD and PRD-derived test-case doc
+- implementation blueprint when it exists for the slice
+- feature docs
+- API contract docs
+- OpenAPI
+- maintained Postman artifacts
+- permission-mapping artifacts when authz changed
+- standards/platform-status snapshots when standards-relevant truth changed
+- earlier PRD, blueprint, or note files whose "not implemented yet" wording is
+  now stale
+
+If any required artifact is not updated, the loop must be reported as one of:
+
+- blocked on artifact completion
+- partially documented
+- implementation-only by explicit pause
+
+Do not treat that state as feature-complete.
 
 Do not leave the implementation as the only place that knows the intended
 behavior.
@@ -337,6 +401,9 @@ A feature loop is incomplete when:
 - the QA coverage-matrix classification was not recorded
 - required non-functional or human-QA artifacts were silently omitted even
   though the change class triggered them
+- required maintained Postman, OpenAPI, permission-mapping, feature-doc, or
+  status-snapshot updates were skipped even though the implemented slice
+  changed their truth
 
 ## End-To-End Traceability Rule
 

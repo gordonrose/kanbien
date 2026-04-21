@@ -137,6 +137,21 @@ Prefer:
   truths
 - using visual/frontend gate scenarios for governed UI-state regressions
 
+For escaped frontend visual issues, also add at least one direct
+human-visible regression guard at the right layer. That guard should assert the
+failure the way a reviewer would describe it in the browser, such as:
+
+- visible overlap between two rendered surfaces
+- clipping or escape outside the review frame
+- unreadable contrast on the risky visual treatment
+- a control stacking in the wrong place
+
+Do not treat route-loaded, state-attribute, or focus-only assertions as
+sufficient prevention when the actual escaped bug was "this looks broken."
+
+Prefer shared helpers under `tests/visual/` when the new regression pattern is
+likely to recur across seams.
+
 Do not add fake confidence:
 - do not add a thin unit test for a persistence or routing truth
 - do not add a mocked test when the escaped bug depended on a real seam
@@ -221,3 +236,5 @@ Under `Resolution Status`, explicitly say one of:
   user-visible symptom is gone.
 - Do not mark a user-reported issue fully resolved until the user confirms it,
   unless they explicitly waive that confirmation step.
+- Do not stop at indirect DOM assertions when the user-reported escape was a
+  human-visible layout, layering, clipping, or contrast failure.

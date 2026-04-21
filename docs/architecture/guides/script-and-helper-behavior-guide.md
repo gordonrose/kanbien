@@ -43,6 +43,12 @@ Current test-facing scripts:
 - `src/scripts/resetPostgresTestDatabase.ts`
 - `src/scripts/cleanupTestData.ts`
 
+### Developer governance scripts
+
+Current developer-governance scripts:
+
+- `src/scripts/checkFrontendArchitectureDocs.ts`
+
 ### Local helper utilities
 
 Current helper utilities:
@@ -158,6 +164,40 @@ Notable behavior:
 - fails when documented active `TC-*` IDs are not traceable in code/tests
 - is intentionally source-independent first and implementation-aware second
 
+### `src/scripts/checkFrontendArchitectureDocs.ts`
+
+Purpose:
+
+- guard architecture-sensitive frontend changes from landing without a current
+  frontend architecture doc update and ADR attention
+
+Inputs and assumptions:
+
+- runs inside a git worktree
+- inspects changed files from either:
+  - `git status --porcelain`
+  - `git diff --cached --name-only --diff-filter=ACMR` when `--staged` is used
+- expects the maintained frontend architecture map at
+  `docs/architecture/frontend-overview.md`
+
+Notable behavior:
+
+- treats frontend routers, frontend discovery seams, frontend app mounting, and
+  frontend copy/build wiring as architecture-sensitive trigger files
+- fails when those trigger files changed without a staged update to
+  `docs/architecture/frontend-overview.md`
+- also fails when no ADR file under `docs/architecture/adr/` is staged in the
+  same change
+- prints a softer reminder to consider `docs/architecture/system-overview.md`
+  when it was not updated
+
+Safety expectation:
+
+- keep the trigger-file list conservative and tune it only when real misses or
+  false positives appear
+- bypass intentionally with `--no-verify` only after explicitly reviewing the
+  architecture-doc impact
+
 ### `src/scripts/reportTestCaseLifecycle.ts`
 
 Purpose:
@@ -242,6 +282,7 @@ A rebuild from `/docs` should preserve:
 - env-loading expectations for test-support scripts
 - migration and persistence-test bootstrap order
 - traceability and lifecycle-report tooling as part of repo governance
+- frontend architecture drift guarding as part of repo governance
 - helper tooling required for root-auth and other nontrivial local workflows
 
 ## Maintenance Rule
@@ -253,3 +294,4 @@ Update this guide when a change:
 - changes the two-phase test-runner contract
 - adds or removes a meaningful local helper under `docs/postman/`
 - changes which helpers are required versus optional for local operation
+- adds or materially changes a maintained governance script or repo-local hook

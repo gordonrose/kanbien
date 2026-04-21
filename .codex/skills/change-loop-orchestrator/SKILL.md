@@ -105,6 +105,8 @@ Prefer narrower repo-local skills when they fit the task:
 - rebuild-readiness docs: `rebuild-readiness-maintainer`
 - materially AI-assisted review notes: `ai-change-reviewer`
 - implementation blueprint maintenance: `implementation-blueprint-maintainer`
+- frontend architecture mapping or ADR maintenance:
+  `frontend-architecture-maintainer`
 
 When a narrower skill applies, use it instead of restating its logic here.
 
@@ -228,6 +230,7 @@ logic from scratch:
 - `repo-standards-compliance-auditor`
 - `repo-health-auditor`
 - `data-dictionary-maintainer`
+- `frontend-architecture-maintainer`
 
 ## Reporting Format
 

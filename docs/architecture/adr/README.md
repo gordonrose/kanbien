@@ -32,3 +32,12 @@ evolves.
 - `0018-add-a-notification-delivery-feature-with-provider-agnostic-email-delivery-and-durable-attempt-history.md`
 - `0019-add-a-shared-tenant-auth-foundation-with-principals-access-grants-and-session-based-tenant-selection.md`
 - `0020-add-a-tenant-scoped-configuration-foundation-starting-with-tenant-auth-policy.md`
+- `0021-add-a-versioned-entity-definition-foundation-with-derived-export-seams.md`
+- `0022-add-a-web-app-surface-discovery-foundation-with-explicit-provider-seams-and-reconcile-links.md`
+- `0023-maintain-frontend-architecture-with-a-dedicated-overview-and-adr-guard.md`
+- `0024-adopt-a-durable-frontend-topology-model-with-deterministic-repo-materialization.md`
+- `0025-adopt-a-security-first-page-state-replay-model.md`
+- `0026-separate-durable-page-settings-from-curated-frontend-topology.md`
+- `0027-use-approved-design-system-shared-asset-entrypoints-for-governed-app-page-adoption.md`
+- `0028-require-design-system-owned-render-and-controller-seams-for-governed-app-adoption.md`
+- `0029-adopt-design-system-owned-page-shells-for-governed-app-route-families.md`

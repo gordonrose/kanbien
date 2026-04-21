@@ -10,12 +10,18 @@ Today the system has:
 
 - one Express application
 - one versioned API router under `/v1`
-- seven mounted features: `rootAuth`, `rootRoles`, `rootUsers`, `tenants`,
-  `notificationDelivery`, `tenantAdmins`, and `tenantAuth`
+- twelve mounted API features: `rootAuth`, `rootRoles`, `rootUsers`,
+  `tenants`, `notificationDelivery`, `tenantAdmins`, `tenantAuth`,
+  `tenantConfiguration`, `webAppHierarchyBuilder`, `webAppPageSettings`,
+  `entityBuilder`, and `webAppSurfaceDiscovery`
+- two mounted browser/frontend route families:
+  `/design-system` and `/root-admin`
 - one shared PostgreSQL connection pool
 - one migration runner that discovers feature-scoped SQL migrations
 - one shared platform security layer for headers, rate limiting, and auth abuse
   controls
+
+Frontend current-state detail lives in `docs/architecture/frontend-overview.md`.
 
 ## Runtime Shape
 
@@ -29,14 +35,16 @@ Today the system has:
 
 1. Requests enter the Express app in `src/app.ts`.
 2. Global security middleware applies shared headers and JSON parsing.
-3. Requests are routed under `/v1`.
-4. `src/routes/v1/index.ts` applies route-class-specific rate limiting and
+3. Browser/frontend route families such as `/design-system` and `/root-admin`
+   are mounted explicitly in `src/app.ts`.
+4. Versioned API requests are routed under `/v1`.
+5. `src/routes/v1/index.ts` applies route-class-specific rate limiting and
    dispatches to explicitly registered feature routers.
-5. Auth-protected routes pass through shared bearer-session middleware.
-6. Feature transport code validates input and invokes feature services.
-7. Feature services use repositories to talk to PostgreSQL.
-8. Known feature errors are converted to JSON near the feature boundary.
-9. Unknown errors fall through to the app-level JSON error middleware.
+6. Auth-protected routes pass through shared bearer-session middleware.
+7. Feature transport code validates input and invokes feature services.
+8. Feature services use repositories to talk to PostgreSQL.
+9. Known feature errors are converted to JSON near the feature boundary.
+10. Unknown errors fall through to the app-level JSON error middleware.
 
 ## Source Layout
 
@@ -62,14 +70,35 @@ Today the system has:
   Shared one-time token mechanics for feature-owned verification and recovery
   workflows.
 
+### Frontend
+
+- `src/frontend/designSystem/*`
+  Governed design-system reference, canonical, pattern, and template surfaces.
+  Governed app adoption is expected to consume design-system-owned styling,
+  render, and interaction seams rather than app-local reconstructions. For
+  governed app route families, the page shell itself is also now treated as a
+  design-system-owned artifact rather than an app-local host.
+- `src/frontend/rootAdminShell/*`
+  Same-origin root-admin browser shell and helper-download surface. Current
+  state remains locally owned shell structure and styling; accepted target
+  architecture is migration toward a design-system-owned page shell for
+  non-exception authenticated surfaces.
+- `src/frontend/login/*`
+  Reserved discovery seam for a later explicit login route family.
+
+See `docs/architecture/frontend-overview.md` for the current frontend runtime,
+route-family, and browser-boundary definition.
+
 ### Features
 
 Each feature lives under `src/features/<featureName>`.
 
 The active examples are `src/features/rootAuth`, `src/features/rootRoles`,
 `src/features/rootUsers`, `src/features/tenants`,
-`src/features/notificationDelivery`, `src/features/tenantAdmins`, and
-`src/features/tenantAuth`.
+`src/features/notificationDelivery`, `src/features/tenantAdmins`,
+`src/features/tenantAuth`, `src/features/tenantConfiguration`,
+`src/features/webAppHierarchyBuilder`, `src/features/webAppPageSettings`,
+`src/features/entityBuilder`, and `src/features/webAppSurfaceDiscovery`.
 Each feature follows the same internal structure:
 
 - `contract/`
@@ -185,7 +214,8 @@ not feature-local logic duplicated across routers.
 Current platform security model:
 
 - `src/app.ts` applies `helmet` globally, disables `X-Powered-By`, and now
-  enforces a least-privilege CSP for the served root-admin browser shell
+  enforces a least-privilege CSP for the served root-admin browser shell and
+  same-origin frontend assets
 - route classes such as `public-read`, `public-auth`,
   `authenticated-general`, and `authenticated-sensitive` use shared rate-limit
   middleware
@@ -246,6 +276,8 @@ This keeps feature development fast while preserving explicit platform control.
   session lookup.
 - Shared platform security middleware may return `429` JSON responses for rate
   limiting or temporary auth lock-down behavior.
+- the same Express app also serves governed browser/frontend route families
+  such as `/design-system` and `/root-admin`
 
 ## Current Strengths
 
