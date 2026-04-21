@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Kanbien Design System - Context-Nav Drawer Canonicals</title>
+    <title>Kanbien Design System - Page-Shell Banner Canonicals</title>
     <link rel="stylesheet" href="/design-system/assets/styles.css" />
   </head>
   <body>
@@ -62,8 +62,8 @@
             aria-expanded="false"
             aria-controls="profile-menu"
           >
-            <span class="profile-avatar" aria-hidden="true">AD</span>
-            <span class="profile-meta"><strong>Context-Nav Drawer</strong></span>
+            <span class="profile-avatar" aria-hidden="true">PB</span>
+            <span class="profile-meta"><strong>Page-Shell Banner</strong></span>
           </button>
           <div id="profile-menu" class="profile-menu hidden" role="menu" aria-labelledby="profile-menu-button">
             <button id="profile-language-button" class="menu-item menu-item-button" type="button" role="menuitem">
@@ -91,15 +91,15 @@
             aria-expanded="false"
             aria-controls="mobile-profile-menu"
           >
-            Context-Nav Drawer
+            Page-Shell Banner
           </button>
           <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
-            <a class="mobile-subnav-link" href="/design-system/exploration/context-nav">Exploration</a>
+            <a class="mobile-subnav-link" href="/design-system/templates/page-shell">Page Shell</a>
             <a
               class="mobile-subnav-link"
-              href="/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff"
+              href="/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0"
             >
-              Locked Display
+              Locked Banner
             </a>
             <button id="mobile-language-button" class="mobile-subnav-link mobile-subnav-button" type="button">
               Language
@@ -145,46 +145,19 @@
 
       <section class="sub-nav" aria-label="Page search and breadcrumb">
         <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-          <div id="breadcrumb-compact" class="breadcrumb-compact hidden">
-            <button
-              id="breadcrumb-compact-button"
-              class="breadcrumb-collapse-button breadcrumb-compact-button"
-              type="button"
-              aria-expanded="false"
-              aria-controls="breadcrumb-compact-menu"
-              aria-label="Open page structure menu"
-            >
-              <span class="breadcrumb-compact-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" focusable="false">
-                  <path d="M6 4.5a1.5 1.5 0 1 1 0 3H5v3h5.5a1.5 1.5 0 1 1 0 3H5v5h3.5a1.5 1.5 0 1 1 0 3H3.5a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 3.5 4.5zm11 0a4 4 0 0 1 0 8h-2v-3h2a1 1 0 1 0 0-2h-2v-3zm-2 9h3a4 4 0 1 1 0 8h-3v-3h3a1 1 0 1 0 0-2h-3z" />
-                </svg>
-              </span>
-            </button>
-            <div
-              id="breadcrumb-compact-menu"
-              class="breadcrumb-collapse-menu hidden"
-              role="menu"
-              aria-labelledby="breadcrumb-compact-button"
-            >
-              <a class="menu-item" href="/design-system" role="menuitem">Home</a>
-              <a class="menu-item" href="/design-system/patterns" role="menuitem">Patterns</a>
-              <a class="menu-item" href="/design-system/canonicals" role="menuitem">Canonicals</a>
-              <span class="menu-item breadcrumb-structure-current" aria-current="page">Context-Nav Drawer</span>
-            </div>
-          </div>
-          <ol id="breadcrumb-list" class="breadcrumb-list">
-            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
-            <li id="breadcrumb-separator-before-collapsed"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-collapsed-item"><a class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li>
-            <li id="breadcrumb-separator-before-page-minus-one"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-page-minus-one-item"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="/design-system/canonicals">Canonicals</a></li>
-            <li id="breadcrumb-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
-            <li id="breadcrumb-current-item"><span class="breadcrumb-button breadcrumb-current" aria-current="page">Context-Nav Drawer</span></li>
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system/patterns">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonicals">Canonicals</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Page-Shell Banner</span></li>
           </ol>
         </nav>
         <form class="search-shell" role="search">
           <label class="search-shell-field">
-            <input id="design-system-search" class="search-input" type="search" name="q" placeholder="Search context-nav drawer canonical refs" />
+            <input id="design-system-search" class="search-input" type="search" name="q" placeholder="Search page-shell banner canonical refs" />
             <span class="search-submit-hint" aria-hidden="true">
               <span class="search-submit-hint-copy">Press</span>
               <span class="search-submit-hint-key">Enter</span>
@@ -193,25 +166,25 @@
         </form>
       </section>
 
-      <nav class="context-nav" aria-label="Accessibility-drawer family navigation">
+      <nav class="context-nav" aria-label="Page-shell-banner family navigation">
         <div class="context-nav-main">
-          <a class="context-nav-item" href="/design-system/exploration/context-nav" data-tooltip="Exploration">
+          <a class="context-nav-item" href="/design-system/templates/page-shell" data-tooltip="Page Shell">
             <span class="context-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 4 20 20H4z" /></svg>
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v4H4zm0 6h10v3H4zm12 0h4v3h-4zM4 16h16v3H4z" /></svg>
             </span>
-            <span class="context-nav-label">Explore</span>
+            <span class="context-nav-label">Page Shell</span>
           </a>
           <a
             class="context-nav-item"
-            href="/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff"
-            data-tooltip="Locked Display"
+            href="/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0"
+            data-tooltip="Locked Banner"
           >
             <span class="context-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6h16v12H4zm3 3v6h10V9z" /></svg>
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M6 4h12a2 2 0 0 1 2 2v12.5a1.5 1.5 0 0 1-2.56 1.06l-2.88-2.88a1.5 1.5 0 0 0-1.06-.44H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm1.5 4.25a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5zm0 3.75a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5z" /></svg>
             </span>
-            <span class="context-nav-label">Locked Display</span>
+            <span class="context-nav-label">Locked Banner</span>
           </a>
-          <a class="context-nav-item active" href="/design-system/canonicals/context-nav-drawer" data-tooltip="Canonicals" aria-current="page">
+          <a class="context-nav-item active" href="/design-system/canonicals/page-shell-banner" data-tooltip="Canonicals" aria-current="page">
             <span class="context-nav-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" /></svg>
             </span>
@@ -224,93 +197,81 @@
         <div class="canonical-launcher-layout">
           <section class="canonical-launcher-intro">
             <p class="top-nav-preview-eyebrow">Canonical Launcher</p>
-            <h1>Context-Nav Drawer Canonicals</h1>
+            <h1>Page-Shell Banner Canonicals</h1>
             <p class="canonical-launcher-copy">
-              Open the dedicated context-nav drawer runtime states in separate tabs so the drawer family can be
-              reviewed directly instead of inheriting signoff only from broader <code>context-nav</code> coverage.
-              Use <a href="/design-system/exploration/context-nav"><code>/design-system/exploration/context-nav</code></a>
-              for experimentation and keep this page for repeatable canonical review.
+              Open the signed-off `page-shell-banner` states in separate tabs so the shell-owned banner family can be
+              reviewed directly on its dedicated render surface rather than only inside the page-shell template demo.
+              Use <a href="/design-system/templates/page-shell"><code>/design-system/templates/page-shell</code></a> for
+              the host-shell demo and keep this page for canonical truth.
             </p>
             <div class="canonical-render-footer">
               <nav class="canonical-stepper" aria-label="Canonical set navigation">
-                <span class="canonical-stepper-current">Context-Nav Drawer Canonicals</span>
-                <a class="canonical-stepper-link" href="/design-system/canonicals/context-nav">Previous</a>
-                <a class="canonical-stepper-link" href="/design-system/canonicals/display-settings">Next</a>
+                <span class="canonical-stepper-current">Page-Shell Banner Canonicals</span>
+                <a class="canonical-stepper-link" href="/design-system/canonicals/display-settings">Previous</a>
+                <a class="canonical-stepper-link" href="/design-system/canonicals/list-record-card">Next</a>
               </nav>
             </div>
           </section>
 
-          <section class="canonical-launcher-panel" aria-labelledby="context-nav-drawer-full-title">
+          <section class="canonical-launcher-panel" aria-labelledby="page-shell-banner-full-title">
             <div class="canonical-launcher-panel-header">
               <div>
                 <p class="top-nav-preview-eyebrow">Canonical Set</p>
-                <h2 id="context-nav-drawer-full-title">Context-Nav Drawer Reference States</h2>
+                <h2 id="page-shell-banner-full-title">Page-Shell Banner Reference States</h2>
               </div>
               <p class="canonical-launcher-note">
-                Review these as live runtime shell states. The current payload still demonstrates accessibility-style
-                controls, but the family truth here is the reusable drawer chassis: launcher ownership, overlay
-                behavior, close grammar, mobile attachment, RTL anchoring, and runtime stability.
+                Review these as dedicated banner-family states: four-state stack, success, warning, danger, and the
+                remaining stack after one dismiss action.
               </p>
             </div>
 
             <div class="canonical-launcher-grid">
               <a
                 class="canonical-launcher-button canonical-launcher-button-priority"
-                href="/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff"
+                href="/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <span class="canonical-launcher-priority">Priority</span>
-                <span class="canonical-launcher-ref">CDR-001</span>
-                <span class="canonical-launcher-label">Desktop attached drawer open</span>
-              </a>
-              <a
-                class="canonical-launcher-button canonical-launcher-button-priority"
-                href="/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=rtl&zoom=0&accent=%23635bff"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span class="canonical-launcher-priority">Priority</span>
-                <span class="canonical-launcher-ref">CDR-002</span>
-                <span class="canonical-launcher-label">RTL right-edge attached drawer</span>
-              </a>
-              <a
-                class="canonical-launcher-button canonical-launcher-button-priority"
-                href="/design-system/components/context-nav?width=560&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span class="canonical-launcher-priority">Priority</span>
-                <span class="canonical-launcher-ref">CDR-003</span>
-                <span class="canonical-launcher-label">Mobile bottom-sheet drawer open</span>
+                <span class="canonical-launcher-ref">PSBR-001</span>
+                <span class="canonical-launcher-label">Full four-state stack</span>
               </a>
               <a
                 class="canonical-launcher-button"
-                href="/design-system/components/context-nav?width=560&height=760&stack=tall&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff"
+                href="/design-system/components/page-shell-banner?ref=PSBR-002&theme=normal&dir=ltr&zoom=0"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span class="canonical-launcher-ref">CDR-004</span>
-                <span class="canonical-launcher-label">Mobile tall-stack utility path</span>
+                <span class="canonical-launcher-ref">PSBR-002</span>
+                <span class="canonical-launcher-label">Success state with dismiss affordance</span>
+              </a>
+              <a
+                class="canonical-launcher-button"
+                href="/design-system/components/page-shell-banner?ref=PSBR-003&theme=normal&dir=ltr&zoom=0"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="canonical-launcher-ref">PSBR-003</span>
+                <span class="canonical-launcher-label">Warning state with dismiss affordance</span>
+              </a>
+              <a
+                class="canonical-launcher-button"
+                href="/design-system/components/page-shell-banner?ref=PSBR-004&theme=normal&dir=ltr&zoom=0"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="canonical-launcher-ref">PSBR-004</span>
+                <span class="canonical-launcher-label">Danger state with dismiss affordance</span>
               </a>
               <a
                 class="canonical-launcher-button canonical-launcher-button-priority"
-                href="/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=long&open=accessibility&theme=dark&dir=ltr&zoom=100&accent=%237c3aed"
+                href="/design-system/components/page-shell-banner?ref=PSBR-005&theme=normal&dir=ltr&zoom=0"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <span class="canonical-launcher-priority">Priority</span>
-                <span class="canonical-launcher-ref">CDR-005</span>
-                <span class="canonical-launcher-label">Dark theme with magnification</span>
-              </a>
-              <a
-                class="canonical-launcher-button"
-                href="/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=long&open=accessibility&theme=desert&dir=ltr&zoom=50&accent=%230f766e"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span class="canonical-launcher-ref">CDR-006</span>
-                <span class="canonical-launcher-label">Long-label readability and alternate theme</span>
+                <span class="canonical-launcher-ref">PSBR-005</span>
+                <span class="canonical-launcher-label">Partial stack after one dismiss</span>
               </a>
             </div>
           </section>

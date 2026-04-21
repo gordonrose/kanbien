@@ -328,10 +328,32 @@
             <button class="accessibility-chip" type="button" data-direction-option="rtl" data-display-settings-copy="direction-rtl">Right to left</button>
           </div>
         </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="banner-group">Banner Demo</p>
+          <div class="chip-row" role="group" aria-label="Banner visibility">
+            <button
+              class="accessibility-chip"
+              type="button"
+              data-page-shell-banner-visibility="show"
+              data-display-settings-copy="banner-show"
+              aria-pressed="false"
+            >Show banners</button>
+            <button
+              class="accessibility-chip active"
+              type="button"
+              data-page-shell-banner-visibility="hide"
+              data-display-settings-copy="banner-hide"
+              aria-pressed="true"
+            >Hide banners</button>
+          </div>
+        </div>
       </aside>
 
       <main class="design-system-page-main">
         <section class="component-catalog-section" aria-labelledby="page-shell-canvas-title">
+          <div class="page-shell-banner-demo hidden" data-page-shell-banner-demo aria-label="Shell banner demo"></div>
+
           <div class="component-catalog-section-header">
             <p class="top-nav-preview-eyebrow">Baseline Reference</p>
             <h1 id="page-shell-canvas-title" class="component-catalog-section-title">Page Shell Template</h1>

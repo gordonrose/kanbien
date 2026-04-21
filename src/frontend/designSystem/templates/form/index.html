@@ -1130,6 +1130,84 @@
                       <span class="form-field-error">Select at least one tenant segment.</span>
                     </div>
 
+                    <div class="form-field">
+                      <span class="form-field-label" id="form-campaign-icon-label">Icon grid</span>
+                      <div class="form-icon-grid" data-form-icon-grid>
+                        <input type="hidden" name="campaignIcon" value="spark" data-form-icon-grid-value />
+                        <button
+                          class="form-icon-grid-trigger"
+                          type="button"
+                          id="form-campaign-icon-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="form-campaign-icon-label form-campaign-icon-trigger"
+                          data-form-icon-grid-button
+                        >
+                          <span class="form-icon-grid-trigger-preview">
+                            <span class="form-icon-grid-trigger-glyph" aria-hidden="true" data-form-icon-grid-trigger-glyph>
+                              <svg viewBox="0 0 24 24" focusable="false">
+                                <path d="M12 2.5 14.2 8l5.3 2-5.3 2-2.2 5.5L9.8 12 4.5 10l5.3-2zm-5 13 1.15 2.85L11 19.5l-2.85 1.15L7 23.5l-1.15-2.85L3 19.5l2.85-1.15z" />
+                              </svg>
+                            </span>
+                            <span class="form-icon-grid-trigger-copy">
+                              <span class="form-icon-grid-trigger-label" data-form-icon-grid-current-label>Spark</span>
+                              <span class="form-icon-grid-trigger-meta">Search approved design-system icons</span>
+                            </span>
+                          </span>
+                          <span class="form-icon-grid-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-icon-grid-modal hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="form-campaign-icon-modal-title"
+                          aria-hidden="true"
+                          data-form-icon-grid-panel
+                        >
+                          <div class="form-icon-grid-backdrop" data-form-icon-grid-backdrop></div>
+                          <div class="form-icon-grid-panel">
+                            <div class="side-panel-header form-icon-grid-header">
+                              <div>
+                                <p class="drawer-eyebrow">Icon picker</p>
+                                <h2 id="form-campaign-icon-modal-title">Choose campaign icon</h2>
+                              </div>
+                              <button class="icon-button" type="button" aria-label="Close icon picker" data-form-icon-grid-close>
+                                <span class="icon-button-glyph" aria-hidden="true">
+                                  <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="M6 6l12 12M18 6L6 18" />
+                                  </svg>
+                                </span>
+                              </button>
+                            </div>
+
+                            <form class="search-shell form-icon-grid-search-shell" role="search">
+                              <label class="search-shell-field">
+                                <input
+                                  class="search-input"
+                                  type="search"
+                                  placeholder="Search icons"
+                                  autocomplete="off"
+                                  data-form-icon-grid-search
+                                />
+                              </label>
+                            </form>
+
+                            <p class="form-icon-grid-copy">
+                              Uses the same approved icon library already present across the governed design system.
+                            </p>
+                            <p class="form-icon-grid-empty hidden" data-form-icon-grid-empty>No icons match this search.</p>
+                            <div class="form-icon-grid-option-list" data-form-icon-grid-option-list></div>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="form-field-help">Choose a governed icon from the shared design-system icon library.</span>
+                      <span class="form-field-error">Choose an icon before publishing.</span>
+                    </div>
+
                     <fieldset class="form-choice-group form-choice-group-statement form-field-span-2">
                       <legend class="form-choice-legend">Checkboxes with shared statement</legend>
                       <div class="form-choice-statement">

@@ -1,3 +1,5 @@
+import { createPageShellBannerController } from "./pageShellBanner.mjs";
+
 function setTextContent(node, text) {
   if (node instanceof HTMLElement) {
     node.textContent = text;
@@ -32,6 +34,371 @@ async function fetchJson(url, options = {}) {
 
 const formTimeHourOptions = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, "0"));
 const formTimeMinuteOptions = Array.from({ length: 12 }, (_, index) => String(index * 5).padStart(2, "0"));
+const designSystemIconDefinitions = [
+  {
+    key: "home",
+    label: "Home",
+    aliases: ["house", "dashboard", "landing"],
+    markup: '<path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z" />',
+  },
+  {
+    key: "grid",
+    label: "Grid",
+    aliases: ["apps", "tiles", "catalog"],
+    markup: '<path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 3.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0z" />',
+  },
+  {
+    key: "list",
+    label: "List",
+    aliases: ["rows", "menu", "items"],
+    markup: '<path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" />',
+  },
+  {
+    key: "doc",
+    label: "Document",
+    aliases: ["file", "page", "record"],
+    markup: '<path d="M7 4h8l4 4v12H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm7 1.5V9h3.5" />',
+  },
+  {
+    key: "token",
+    label: "Token",
+    aliases: ["badge", "seal", "module"],
+    markup: '<path d="m12 3 7 4v10l-7 4-7-4V7zm0 3.1L8.1 8.3v4.4L12 15l3.9-2.3V8.3z" />',
+  },
+  {
+    key: "spark",
+    label: "Spark",
+    aliases: ["magic", "highlight", "featured"],
+    markup: '<path d="M12 2.5 14.2 8l5.3 2-5.3 2-2.2 5.5L9.8 12 4.5 10l5.3-2zm-5 13 1.15 2.85L11 19.5l-2.85 1.15L7 23.5l-1.15-2.85L3 19.5l2.85-1.15z" />',
+  },
+  {
+    key: "text",
+    label: "Text",
+    aliases: ["type", "content", "copy"],
+    markup: '<path d="M5 5h14v3h-5.5v11h-3V8H5z" />',
+  },
+  {
+    key: "shield",
+    label: "Shield",
+    aliases: ["secure", "security", "protection"],
+    markup: '<path d="M12 3.2 18.5 5v5.2c0 4.3-2.75 8.05-6.5 9.8-3.75-1.75-6.5-5.5-6.5-9.8V5zM10.8 14.7l4.7-4.7-1.4-1.4-3.3 3.3-1.8-1.8-1.4 1.4z" />',
+  },
+  {
+    key: "globe",
+    label: "Globe",
+    aliases: ["world", "global", "internet"],
+    markup: '<path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm5.85 8h-3.2a14.4 14.4 0 0 0-1.2-5A7.03 7.03 0 0 1 17.85 11zM12 5.2A12.1 12.1 0 0 1 13.4 11h-2.8A12.1 12.1 0 0 1 12 5.2zM6.15 13h3.2a14.4 14.4 0 0 0 1.2 5A7.03 7.03 0 0 1 6.15 13zm3.2-2h-3.2A7.03 7.03 0 0 1 10.55 6a14.4 14.4 0 0 0-1.2 5zm2.65 7.8A12.1 12.1 0 0 1 10.6 13h2.8A12.1 12.1 0 0 1 12 18.8zM13.45 18a14.4 14.4 0 0 0 1.2-5h3.2A7.03 7.03 0 0 1 13.45 18z" />',
+  },
+  {
+    key: "filter",
+    label: "Filter",
+    aliases: ["funnel", "refine", "segment"],
+    markup: '<path d="M4 6h16l-6.5 7.25V19l-3-1.5v-4.25z" />',
+  },
+  {
+    key: "dashboard",
+    label: "Dashboard",
+    aliases: ["overview", "summary", "kpi"],
+    markup: '<path d="M4 5h7v6H4zm9 0h7v4h-7zM4 13h7v6H4zm9 2h7v4h-7z" />',
+  },
+  {
+    key: "search",
+    label: "Search",
+    aliases: ["find", "lookup", "magnify"],
+    markup: '<path d="M10.5 4.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm4.25 10.25L19.5 19.5" />',
+  },
+  {
+    key: "sort",
+    label: "Sort",
+    aliases: ["order", "arrange", "rank"],
+    markup: '<path d="M7 5v12m0 0-3-3m3 3 3-3M17 19V7m0 0-3 3m3-3 3 3" />',
+  },
+  {
+    key: "email",
+    label: "Email",
+    aliases: ["mail", "inbox", "message"],
+    markup: '<path d="M4 7.5h16v9H4zm1.5.5 6.5 5 6.5-5" />',
+  },
+  {
+    key: "notification",
+    label: "Notification",
+    aliases: ["alert", "bell", "reminder"],
+    markup: '<path d="M12 4.5a4 4 0 0 1 4 4v2.5c0 .9.3 1.78.86 2.5L18 15.5H6l1.14-2c.56-.72.86-1.6.86-2.5V8.5a4 4 0 0 1 4-4zm-1.75 13a1.75 1.75 0 0 0 3.5 0" />',
+  },
+  {
+    key: "help",
+    label: "Help",
+    aliases: ["question", "support", "faq"],
+    markup: '<path d="M12 3.5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 0 1 0-17zm-2.25 6a2.25 2.25 0 1 1 3.85 1.6c-.66.65-1.6 1.14-1.6 2.4m0 3h.01" />',
+  },
+  {
+    key: "settings",
+    label: "Settings",
+    aliases: ["preferences", "gear", "configuration"],
+    markup: '<path d="m12 3 1.05 2.2 2.43.35.7 2.35 2.22 1.1-.42 2.42 1.52 1.92-1.52 1.92.42 2.42-2.22 1.1-.7 2.35-2.43.35L12 21l-1.05-2.2-2.43-.35-.7-2.35-2.22-1.1.42-2.42L4.5 11.5l1.52-1.92-.42-2.42 2.22-1.1.7-2.35 2.43-.35zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" />',
+  },
+  {
+    key: "users",
+    label: "Users",
+    aliases: ["team", "members", "people"],
+    markup: '<path d="M9 6.25a2.75 2.75 0 1 1-2.75 2.75A2.75 2.75 0 0 1 9 6.25zm6 1a2.25 2.25 0 1 1-2.25 2.25A2.25 2.25 0 0 1 15 7.25zM5.5 18a3.75 3.75 0 0 1 7 0m1.75-.5a3 3 0 0 1 4.25-.25c.33.2.64.45.92.75" />',
+  },
+  {
+    key: "building",
+    label: "Building",
+    aliases: ["company", "office", "organization"],
+    markup: '<path d="M5 20V6.5A1.5 1.5 0 0 1 6.5 5H14v15m0 0h5V9.5A1.5 1.5 0 0 0 17.5 8H14m-5-1v2m0 3v2m0 3v2m4-9v2m0 3v2m0 3v2" />',
+  },
+  {
+    key: "building-block",
+    label: "Building Block",
+    aliases: ["block", "cube", "module", "component"],
+    markup: '<path d="m12 3.5 4.75 2.75v5.5L12 14.5 7.25 11.75v-5.5zm0 2.31-2.75 1.6v3.18l2.75 1.6 2.75-1.6V7.41zm-7 9 4.75-2.75v5.5L5 20.31l-4-2.31v-4.5zm14-2.75 4 2.31V18L19 20.31l-4.75-2.75v-5.5z" />',
+  },
+  {
+    key: "brick-wall",
+    label: "Brick Wall",
+    aliases: ["bricks", "masonry", "wall", "foundation"],
+    markup: '<path d="M4 6.5h7v4H4zm9 0h7v4h-7zM2 13h7v4H2zm9 0h7v4h-7zm-4.5 0h3v4h-3z" />',
+  },
+  {
+    key: "lego",
+    label: "Lego",
+    aliases: ["toy brick", "stud block", "snap brick", "construction toy"],
+    markup: '<path d="M7.5 8.5h9A1.5 1.5 0 0 1 18 10v8.5H6V10a1.5 1.5 0 0 1 1.5-1.5zm1.25-3h2.5v2h-2.5zm4 0h2.5v2h-2.5zm-3.75 6v4m6-4v4M6 13.5h12" />',
+  },
+  {
+    key: "jigsaw",
+    label: "Jigsaw",
+    aliases: ["interlock", "connector", "piece", "fit"],
+    markup: '<path d="M9 4.5h3.25a1.75 1.75 0 1 1 3.5 0H19v4.25a1.75 1.75 0 1 0 0 3.5V16H14.75a1.75 1.75 0 1 1-3.5 0H7V11.75a1.75 1.75 0 1 0 0-3.5V4.5z" />',
+  },
+  {
+    key: "puzzle",
+    label: "Puzzle",
+    aliases: ["brain teaser", "problem", "solution", "assembly"],
+    markup: '<path d="M8 5h3.25a1.75 1.75 0 1 1 3.5 0H18a1 1 0 0 1 1 1v3.25a1.75 1.75 0 1 0 0 3.5V16a1 1 0 0 1-1 1h-3.25a1.75 1.75 0 1 1-3.5 0H8a1 1 0 0 1-1-1v-3.25a1.75 1.75 0 1 0 0-3.5V6a1 1 0 0 1 1-1z" />',
+  },
+  {
+    key: "lock",
+    label: "Lock",
+    aliases: ["private", "secure", "restricted"],
+    markup: '<path d="M8 10V8a4 4 0 1 1 8 0v2m-9 0h10v9H7zm5 3v2" />',
+  },
+  {
+    key: "key",
+    label: "Key",
+    aliases: ["credential", "access", "secret"],
+    markup: '<path d="M14 8.5a3.5 3.5 0 1 1-1.03 2.47L5 19h3v-2h2v-2h2l1.22-1.22A3.49 3.49 0 0 1 14 8.5z" />',
+  },
+  {
+    key: "eye",
+    label: "Eye",
+    aliases: ["view", "visible", "preview"],
+    markup: '<path d="M2.5 12s3.5-5.5 9.5-5.5 9.5 5.5 9.5 5.5-3.5 5.5-9.5 5.5S2.5 12 2.5 12zm9.5-2.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z" />',
+  },
+  {
+    key: "eye-off",
+    label: "Eye Off",
+    aliases: ["hidden", "masked", "invisible"],
+    markup: '<path d="M4 4 20 20M9.6 9.6A2.5 2.5 0 0 0 12 14.5c.7 0 1.33-.29 1.79-.75M6.2 6.3A13.5 13.5 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a18.7 18.7 0 0 1-4 4.41M9.03 17.95c.95.35 1.93.55 2.97.55 6 0 9.5-6.5 9.5-6.5a18.34 18.34 0 0 0-2.76-3.62M2.5 12A18.3 18.3 0 0 1 5.66 8.2" />',
+  },
+  {
+    key: "analytics",
+    label: "Analytics",
+    aliases: ["insights", "metrics", "reporting"],
+    markup: '<path d="M5 18h14M7 16V9m5 7V6m5 10v-4" />',
+  },
+  {
+    key: "chart-bar",
+    label: "Chart Bar",
+    aliases: ["bars", "counts", "statistics"],
+    markup: '<path d="M5 19h14M7 19v-5m5 5V8m5 11V5" />',
+  },
+  {
+    key: "chart-line",
+    label: "Chart Line",
+    aliases: ["trend", "growth", "timeseries"],
+    markup: '<path d="M5 18h14M6.5 14.5 10 11l3 2 4.5-5" />',
+  },
+  {
+    key: "folder",
+    label: "Folder",
+    aliases: ["directory", "collection", "files"],
+    markup: '<path d="M3.5 7.5h6l1.5 2H20v7.5A1.5 1.5 0 0 1 18.5 18.5h-13A1.5 1.5 0 0 1 4 17V9A1.5 1.5 0 0 1 5.5 7.5z" />',
+  },
+  {
+    key: "database",
+    label: "Database",
+    aliases: ["storage", "data", "persistence"],
+    markup: '<path d="M12 5c4.42 0 8 1.34 8 3s-3.58 3-8 3-8-1.34-8-3 3.58-3 8-3zm8 3v8c0 1.66-3.58 3-8 3s-8-1.34-8-3V8m16 4c0 1.66-3.58 3-8 3s-8-1.34-8-3" />',
+  },
+  {
+    key: "integration",
+    label: "Integration",
+    aliases: ["connect", "sync", "external"],
+    markup: '<path d="M8 8h8m-5.5 8h-2A2.5 2.5 0 0 1 6 13.5v-1A2.5 2.5 0 0 1 8.5 10h2m3-2h2A2.5 2.5 0 0 1 18 10.5v1a2.5 2.5 0 0 1-2.5 2.5h-2" />',
+  },
+  {
+    key: "code",
+    label: "Code",
+    aliases: ["developer", "api", "technical"],
+    markup: '<path d="m8.5 8.5-4 3.5 4 3.5M15.5 8.5l4 3.5-4 3.5M13.5 6.5l-3 11" />',
+  },
+  {
+    key: "triangle",
+    label: "Explore",
+    aliases: ["triangle", "warning", "explore"],
+    markup: '<path d="M12 4 20 20H4z" />',
+  },
+  {
+    key: "panel",
+    label: "Panel",
+    aliases: ["window", "drawer", "overlay"],
+    markup: '<path d="M4 5h16v4H4zm0 6h16v8H4z" />',
+  },
+  {
+    key: "form",
+    label: "Form",
+    aliases: ["campaign", "editor", "template"],
+    markup: '<path d="M6 4h12v16H6zm2 3v2h8V7zm0 4v2h8v-2zm0 4v2h5v-2z" />',
+  },
+  {
+    key: "message",
+    label: "Message",
+    aliases: ["comment", "chat", "campaign"],
+    markup: '<path d="M6 4h12a2 2 0 0 1 2 2v12.5a1.5 1.5 0 0 1-2.56 1.06l-2.88-2.88a1.5 1.5 0 0 0-1.06-.44H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm1.5 4.25a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5zm0 3.75a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5z" />',
+  },
+  {
+    key: "calendar",
+    label: "Calendar",
+    aliases: ["date", "schedule", "launch"],
+    markup: '<path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />',
+  },
+  {
+    key: "clock",
+    label: "Clock",
+    aliases: ["time", "hour", "minute"],
+    markup: '<path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75Zm.75 4.5h-1.5v5.1l3.65 2.2.78-1.28-2.93-1.77Z" />',
+  },
+  {
+    key: "hierarchy",
+    label: "Hierarchy",
+    aliases: ["tree", "structure", "nodes"],
+    markup: '<path d="M4 6h8v4H4zm0 8h8v4H4zm10-4h6v4h-6zm-2-2h2v8h-2z" />',
+  },
+  {
+    key: "browser",
+    label: "Browser",
+    aliases: ["window", "screen", "frame"],
+    markup: '<path d="M4 6h16v12H4zm3 3v6h10V9z" />',
+  },
+  {
+    key: "layout",
+    label: "Layout",
+    aliases: ["navigation", "shell", "sections"],
+    markup: '<path d="M4 5h16v4H4zm0 6h10v3H4zm12 0h4v3h-4zM4 16h16v3H4z" />',
+  },
+  {
+    key: "row",
+    label: "Sub Nav Row",
+    aliases: ["sub nav", "row", "header"],
+    markup: '<path d="M4 5h16v3H4zm0 6h16v8H4zm4 2h8v4H8z" />',
+  },
+  {
+    key: "split",
+    label: "Split View",
+    aliases: ["split", "columns", "detail"],
+    markup: '<path d="M3 5h8v14H3zm10 0h8v14h-8zm1.5 2v10h5V7z" />',
+  },
+  {
+    key: "record",
+    label: "Record Panel",
+    aliases: ["record", "detail", "card"],
+    markup: '<path d="M5 5h14v8H5zm0 6h14v8H5zm3 2v4h8v-4z" />',
+  },
+  {
+    key: "drawer",
+    label: "Drawer",
+    aliases: ["side panel", "picker", "slideout"],
+    markup: '<path d="M4 5h16v14H8l-4 3V5Zm4 4h8v2H8Zm0 4h8v2H8Z" />',
+  },
+  {
+    key: "workspace",
+    label: "Workspace",
+    aliases: ["product", "app", "platform"],
+    markup: '<path d="M4 20.25V6.75a1.5 1.5 0 0 1 1.5-1.5h7a1.5 1.5 0 0 1 1.5 1.5v13.5h2V3.75a1.5 1.5 0 0 1 1.5-1.5h1A1.5 1.5 0 0 1 20 3.75v16.5h.75a.75.75 0 0 1 0 1.5H3.25a.75.75 0 0 1 0-1.5zm3-11.5v2h2v-2zm0 4.5v2h2v-2zm4-4.5v2h2v-2zm0 4.5v2h2v-2z" />',
+  },
+  {
+    key: "user",
+    label: "User",
+    aliases: ["person", "profile", "member"],
+    markup: '<path d="M12 4.5a3.5 3.5 0 1 1-3.5 3.5A3.5 3.5 0 0 1 12 4.5zm0 9c3.2 0 5.9 1.78 6.75 4.25A1.75 1.75 0 0 1 17.1 20H6.9a1.75 1.75 0 0 1-1.65-2.25C6.1 15.28 8.8 13.5 12 13.5z" />',
+  },
+  {
+    key: "secure-user",
+    label: "Secure User",
+    aliases: ["protected user", "verified user", "trusted user"],
+    markup: '<path d="M10 4.75a3.25 3.25 0 1 1-3.25 3.25A3.25 3.25 0 0 1 10 4.75zm-4.1 13a4.4 4.4 0 0 1 8.2 0M15.75 5.5l4.25 1.2v3.4c0 2.8-1.8 5.25-4.25 6.4-2.45-1.15-4.25-3.6-4.25-6.4V6.7zm-1 5.7 1.1 1.1 2.6-2.6" />',
+  },
+  {
+    key: "super-user",
+    label: "Super User",
+    aliases: ["power user", "advanced user", "elevated user"],
+    markup: '<path d="M12 4.5a3.5 3.5 0 1 1-3.5 3.5A3.5 3.5 0 0 1 12 4.5zm0 9c3.2 0 5.9 1.78 6.75 4.25A1.75 1.75 0 0 1 17.1 20H6.9a1.75 1.75 0 0 1-1.65-2.25C6.1 15.28 8.8 13.5 12 13.5zm6.2-8.7.6 1.2 1.33.2-.96.93.23 1.32-1.2-.63-1.2.63.23-1.32-.96-.93 1.33-.2z" />',
+  },
+  {
+    key: "normal-user",
+    label: "Normal User",
+    aliases: ["standard user", "basic user", "regular user"],
+    markup: '<path d="M12 4.5a3.5 3.5 0 1 1-3.5 3.5A3.5 3.5 0 0 1 12 4.5zm0 9c3.2 0 5.9 1.78 6.75 4.25A1.75 1.75 0 0 1 17.1 20H6.9a1.75 1.75 0 0 1-1.65-2.25C6.1 15.28 8.8 13.5 12 13.5zM8.5 17.25h7" />',
+  },
+  {
+    key: "admin",
+    label: "Admin Shield",
+    aliases: ["operator", "admin", "protected"],
+    markup: '<path d="M12 2.75 5.5 5v6.15c0 4.34 2.76 8.39 6.5 10.1 3.74-1.71 6.5-5.76 6.5-10.1V5zm0 4.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 6.85zm3.55 8.92a5.04 5.04 0 0 1-7.1 0 4.2 4.2 0 0 1 7.1 0z" />',
+  },
+  {
+    key: "administrator",
+    label: "Administrator",
+    aliases: ["system admin", "platform admin", "admin user"],
+    markup: '<path d="M12 4.5a3.5 3.5 0 1 1-3.5 3.5A3.5 3.5 0 0 1 12 4.5zm0 9c3.2 0 5.9 1.78 6.75 4.25A1.75 1.75 0 0 1 17.1 20H6.9a1.75 1.75 0 0 1-1.65-2.25C6.1 15.28 8.8 13.5 12 13.5zm6.4-7.9.58 1.18 1.3.19-.94.92.22 1.28-1.16-.61-1.16.61.22-1.28-.94-.92 1.3-.19zm0 9.8.58 1.18 1.3.19-.94.92.22 1.28-1.16-.61-1.16.61.22-1.28-.94-.92 1.3-.19z" />',
+  },
+  {
+    key: "leader",
+    label: "Leader",
+    aliases: ["manager", "owner", "team lead"],
+    markup: '<path d="M12 4.5a3.5 3.5 0 1 1-3.5 3.5A3.5 3.5 0 0 1 12 4.5zm0 9c3.2 0 5.9 1.78 6.75 4.25A1.75 1.75 0 0 1 17.1 20H6.9a1.75 1.75 0 0 1-1.65-2.25C6.1 15.28 8.8 13.5 12 13.5zm-3.5-8.6L10.2 7l1.8-1.1L13.8 7l1.7-2.1" />',
+  },
+  {
+    key: "tenant",
+    label: "Tenant",
+    aliases: ["organization", "workspace member", "account"],
+    markup: '<path d="M12 3.25a4 4 0 1 1-4 4 4 4 0 0 1 4-4zm-4.9 16.5a5.45 5.45 0 0 1 9.8-3.31V20H7.95A1.5 1.5 0 0 1 7.1 19.75zm11.65-7 1.05 2.13 2.35.34-1.7 1.66.4 2.34-2.1-1.11-2.1 1.11.4-2.34-1.7-1.66 2.35-.34z" />',
+  },
+  {
+    key: "monitor",
+    label: "Monitor",
+    aliases: ["display", "screen", "preview"],
+    markup: '<path d="M4.75 5.25h14.5a1.5 1.5 0 0 1 1.5 1.5v8.5a1.5 1.5 0 0 1-1.5 1.5H13.5l.9 2h2.35a.75.75 0 0 1 0 1.5H7.25a.75.75 0 0 1 0-1.5H9.6l.9-2H4.75a1.5 1.5 0 0 1-1.5-1.5v-8.5a1.5 1.5 0 0 1 1.5-1.5zm0 1.5v8.5h14.5v-8.5zm7.25 2a2.5 2.5 0 1 1-2.5 2.5 2.5 2.5 0 0 1 2.5-2.5z" />',
+  },
+  {
+    key: "checklist",
+    label: "Checklist",
+    aliases: ["choice group", "steps", "tasks"],
+    markup: '<path d="M5 7.5h14v2H5zm0 7h14v2H5zm2.5-3.5A1.75 1.75 0 1 0 7.5 7.5a1.75 1.75 0 0 0 0 3.5Zm0 7A1.75 1.75 0 1 0 7.5 14.5a1.75 1.75 0 0 0 0 3.5Z" />',
+  },
+  {
+    key: "accessibility",
+    label: "Accessibility",
+    aliases: ["inclusive", "assistive", "a11y"],
+    markup: '<path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75zm0 3.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 5.85zm0 11.55a5.4 5.4 0 0 1-4.19-1.97 4.87 4.87 0 0 1 8.38 0A5.4 5.4 0 0 1 12 17.4z" />',
+  },
+];
+const designSystemIconMarkupByKey = Object.fromEntries(
+  designSystemIconDefinitions.map((icon) => [icon.key, icon.markup]),
+);
 
 function normalizeFormTimeValue(value) {
   const [hours = "00", minutes = "00"] = String(value ?? "").split(":");
@@ -56,6 +423,15 @@ function syncFormPickerOverlayState() {
   delete document.documentElement.dataset.formPickerOverlayOpen;
 }
 
+function getDesignSystemIconRecord(iconKey) {
+  return designSystemIconDefinitions.find((icon) => icon.key === iconKey) ?? designSystemIconDefinitions[0];
+}
+
+function renderDesignSystemIconSvg(iconKey) {
+  const iconMarkup = designSystemIconMarkupByKey[iconKey] ?? designSystemIconMarkupByKey.grid;
+  return `<svg viewBox="0 0 24 24" focusable="false">${iconMarkup}</svg>`;
+}
+
 function closeFormSelectRoot(root) {
   if (!(root instanceof HTMLElement)) {
     return;
@@ -70,6 +446,24 @@ function closeFormSelectRoot(root) {
 
   trigger.setAttribute("aria-expanded", "false");
   listbox.classList.add("hidden");
+}
+
+function closeFormIconGridRoot(root) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const trigger = root.querySelector("[data-form-icon-grid-button]");
+  const panel = root.querySelector("[data-form-icon-grid-panel]");
+
+  if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+    return;
+  }
+
+  trigger.setAttribute("aria-expanded", "false");
+  panel.classList.add("hidden");
+  panel.setAttribute("aria-hidden", "true");
+  panel.setAttribute("aria-modal", "false");
 }
 
 function closeFormDrawerSelectRoot(root) {
@@ -130,6 +524,12 @@ function closeUnrelatedFormSurfaces({ preservedRoots = [] } = {}) {
   for (const root of formSelectRoots) {
     if (root instanceof HTMLElement && !preserved.has(root)) {
       closeFormSelectRoot(root);
+    }
+  }
+
+  for (const root of formIconGridRoots) {
+    if (root instanceof HTMLElement && !preserved.has(root)) {
+      closeFormIconGridRoot(root);
     }
   }
 
@@ -261,6 +661,11 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/canonicals", label: "Canonicals" },
     { href: "/design-system/canonicals/display-settings", label: "Display Settings" },
   ]],
+  ["/design-system/canonicals/page-shell-banner", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/page-shell-banner", label: "Page-Shell Banner" },
+  ]],
   ["/design-system/canonicals/hierarchy-tree", [
     { href: "/design-system/patterns", label: "Home" },
     { href: "/design-system/patterns/hierarchy-tree", label: "Hierarchy Tree" },
@@ -306,6 +711,11 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/canonicals", label: "Canonicals" },
     { href: "/design-system/canonicals/drawer-select", label: "Drawer Select" },
   ]],
+  ["/design-system/canonicals/icon-grid", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/icon-grid", label: "Icon Grid" },
+  ]],
   ["/design-system/canonicals/choice-group", [
     { href: "/design-system/components", label: "Home" },
     { href: "/design-system/canonicals", label: "Canonicals" },
@@ -316,6 +726,12 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/canonicals", label: "Canonicals" },
     { href: "/design-system/canonicals/drawer-select", label: "Drawer Select" },
     { href: "/design-system/components/drawer-select", label: "Canonical Render" },
+  ]],
+  ["/design-system/components/icon-grid", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/icon-grid", label: "Icon Grid" },
+    { href: "/design-system/components/icon-grid", label: "Canonical Render" },
   ]],
   ["/design-system/components/choice-group", [
     { href: "/design-system/components", label: "Home" },
@@ -393,6 +809,11 @@ const designSystemBreadcrumbChains = new Map([
   ["/design-system/templates/form", [
     { href: "/design-system/templates", label: "Home" },
     { href: "/design-system/templates/form", label: "Form" },
+  ]],
+  ["/design-system/components/page-shell-banner", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals/page-shell-banner", label: "Page-Shell Banner Canonicals" },
+    { href: "/design-system/components/page-shell-banner", label: "Canonical Render" },
   ]],
   ["/design-system/patterns/hierarchy-tree/render", [
     { href: "/design-system/patterns", label: "Home" },
@@ -600,6 +1021,195 @@ function buildPrimaryNavMenuMarkup(activeHref) {
   return buildPrimaryNavMenuMarkupFromItems(designSystemPrimaryNavItems, activeHref);
 }
 
+function ensureElementId(element, id) {
+  if (element instanceof HTMLElement && !element.id) {
+    element.id = id;
+  }
+}
+
+function ensureDesignSystemShellScaffold(root = document) {
+  const shell = root.querySelector(".design-system-shell");
+  if (!(shell instanceof HTMLElement)) {
+    return;
+  }
+
+  const topNav = shell.querySelector(":scope > .top-nav");
+  if (!(topNav instanceof HTMLElement)) {
+    return;
+  }
+
+  const activeHref = resolvePrimaryNavActiveHref(
+    window.location.pathname,
+    designSystemPrimaryNavItems,
+    resolvePrimaryNavHomeHref(window.location.pathname),
+  );
+  const profileLabel =
+    topNav.querySelector(".profile-meta strong")?.textContent?.trim()
+    ?? "Profile";
+
+  const primaryNav = topNav.querySelector(":scope > .primary-nav");
+  if (primaryNav instanceof HTMLElement) {
+    const primaryNavLinks = primaryNav.querySelector(":scope > .primary-nav-links");
+    ensureElementId(primaryNavLinks, "primary-nav-links");
+
+    let primaryNavOverflow = primaryNav.querySelector(":scope > .primary-nav-overflow");
+    if (!(primaryNavOverflow instanceof HTMLElement)) {
+      primaryNav.insertAdjacentHTML(
+        "beforeend",
+        `
+          <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+            <button
+              id="primary-nav-overflow-button"
+              class="nav-link primary-nav-overflow-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="primary-nav-overflow-menu"
+            >
+              More
+            </button>
+            <div
+              id="primary-nav-overflow-menu"
+              class="primary-nav-overflow-menu hidden"
+              role="menu"
+              aria-labelledby="primary-nav-overflow-button"
+            ></div>
+          </div>
+        `,
+      );
+      primaryNavOverflow = primaryNav.querySelector(":scope > .primary-nav-overflow");
+    }
+
+    if (primaryNavOverflow instanceof HTMLElement) {
+      ensureElementId(primaryNavOverflow, "primary-nav-overflow");
+      ensureElementId(
+        primaryNavOverflow.querySelector(".primary-nav-overflow-button"),
+        "primary-nav-overflow-button",
+      );
+      ensureElementId(
+        primaryNavOverflow.querySelector(".primary-nav-overflow-menu"),
+        "primary-nav-overflow-menu",
+      );
+    }
+  }
+
+  const mobileNavButton = topNav.querySelector(":scope > .mobile-nav-button");
+  if (mobileNavButton instanceof HTMLButtonElement) {
+    ensureElementId(mobileNavButton, "mobile-nav-button");
+    mobileNavButton.setAttribute("aria-controls", "mobile-nav-menu");
+  }
+
+  const navUtilities = topNav.querySelector(":scope > .nav-utilities");
+  const profileButton = navUtilities?.querySelector(":scope > .profile-button");
+  if (profileButton instanceof HTMLButtonElement) {
+    ensureElementId(profileButton, "profile-menu-button");
+    profileButton.setAttribute("aria-controls", "profile-menu");
+
+    let profileMenu = navUtilities?.querySelector(":scope > .profile-menu");
+    if (!(profileMenu instanceof HTMLElement) && navUtilities instanceof HTMLElement) {
+      navUtilities.insertAdjacentHTML(
+        "beforeend",
+        `
+          <div
+            id="profile-menu"
+            class="profile-menu hidden"
+            role="menu"
+            aria-labelledby="profile-menu-button"
+          >
+            <button
+              id="profile-language-button"
+              class="menu-item menu-item-button"
+              type="button"
+              role="menuitem"
+            >
+              Language
+            </button>
+            <button id="close-profile-menu" class="menu-item menu-item-button" type="button" role="menuitem">
+              Close menu
+            </button>
+          </div>
+        `,
+      );
+      profileMenu = navUtilities.querySelector(":scope > .profile-menu");
+    }
+
+    if (profileMenu instanceof HTMLElement) {
+      ensureElementId(profileMenu, "profile-menu");
+      ensureElementId(profileMenu.querySelector('[id="profile-language-button"], #profile-language-button, button'), "profile-language-button");
+      const closeButton = Array.from(profileMenu.querySelectorAll("button")).find(
+        (button) => button.id === "close-profile-menu" || /close menu/i.test(button.textContent ?? ""),
+      );
+      ensureElementId(closeButton, "close-profile-menu");
+    }
+  }
+
+  let mobileNavMenu = shell.querySelector(":scope > .mobile-nav-menu");
+  if (!(mobileNavMenu instanceof HTMLElement)) {
+    topNav.insertAdjacentHTML(
+      "afterend",
+      `
+        <nav id="mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile primary">
+          ${buildPrimaryNavLinkMarkup(activeHref)}
+          <div class="mobile-profile-group">
+            <button
+              id="mobile-profile-button"
+              class="mobile-profile-item"
+              type="button"
+              aria-expanded="false"
+              aria-controls="mobile-profile-menu"
+            >
+              ${escapeHtml(profileLabel)}
+            </button>
+            <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
+              <button id="mobile-language-button" class="mobile-subnav-link mobile-subnav-button" type="button">
+                Language
+              </button>
+            </div>
+          </div>
+        </nav>
+      `,
+    );
+    mobileNavMenu = shell.querySelector(":scope > .mobile-nav-menu");
+  }
+
+  if (mobileNavMenu instanceof HTMLElement) {
+    ensureElementId(mobileNavMenu, "mobile-nav-menu");
+    let mobileProfileGroup = mobileNavMenu.querySelector(":scope > .mobile-profile-group");
+    if (!(mobileProfileGroup instanceof HTMLElement)) {
+      mobileNavMenu.insertAdjacentHTML(
+        "beforeend",
+        `
+          <div class="mobile-profile-group">
+            <button
+              id="mobile-profile-button"
+              class="mobile-profile-item"
+              type="button"
+              aria-expanded="false"
+              aria-controls="mobile-profile-menu"
+            >
+              ${escapeHtml(profileLabel)}
+            </button>
+            <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
+              <button id="mobile-language-button" class="mobile-subnav-link mobile-subnav-button" type="button">
+                Language
+              </button>
+            </div>
+          </div>
+        `,
+      );
+      mobileProfileGroup = mobileNavMenu.querySelector(":scope > .mobile-profile-group");
+    }
+
+    if (mobileProfileGroup instanceof HTMLElement) {
+      ensureElementId(mobileProfileGroup.querySelector(".mobile-profile-item"), "mobile-profile-button");
+      ensureElementId(mobileProfileGroup.querySelector(".mobile-profile-menu"), "mobile-profile-menu");
+      const mobileLanguageButton = Array.from(mobileProfileGroup.querySelectorAll("button")).find(
+        (button) => button.id === "mobile-language-button" || /language/i.test(button.textContent ?? ""),
+      );
+      ensureElementId(mobileLanguageButton, "mobile-language-button");
+    }
+  }
+}
+
 function normalizePrimaryNav(root = document) {
   const fallbackHref = resolvePrimaryNavHomeHref(window.location.pathname);
 
@@ -642,7 +1252,190 @@ function normalizePrimaryNav(root = document) {
   }
 }
 
+function flattenHierarchyPages(pages) {
+  return pages.flatMap((page) => [page, ...flattenHierarchyPages(page.children ?? [])]);
+}
+
+function buildGovernedDesignSystemTopNavCandidates(tree) {
+  const rootFamily = tree?.rootFamilies?.find((family) => family.rootFamilyId === "design-system");
+  if (!rootFamily || !Array.isArray(rootFamily.modules)) {
+    return [];
+  }
+
+  let fallbackOrder = 0;
+
+  return rootFamily.modules.flatMap((module) =>
+    flattenHierarchyPages(module.pages ?? [])
+      .filter((page) => page?.parentPageId === null && typeof page?.resolvedFullRoutePath === "string")
+      .map((page) => ({
+        webAppPageId: page.webAppPageId,
+        displayLabel: page.displayLabel,
+        href: page.resolvedFullRoutePath,
+        fallbackOrder: fallbackOrder++,
+      })),
+  );
+}
+
+function sortGovernedDesignSystemTopNavItems(items) {
+  return [...items].sort((left, right) => {
+    if (left.href === "/design-system" && right.href !== "/design-system") {
+      return -1;
+    }
+
+    if (right.href === "/design-system" && left.href !== "/design-system") {
+      return 1;
+    }
+
+    const leftOrder = typeof left.topNavOrder === "number" ? left.topNavOrder : Number.POSITIVE_INFINITY;
+    const rightOrder = typeof right.topNavOrder === "number" ? right.topNavOrder : Number.POSITIVE_INFINITY;
+    if (leftOrder !== rightOrder) {
+      return leftOrder - rightOrder;
+    }
+
+    const leftIndex = designSystemPrimaryNavOrderIndex.get(left.href) ?? Number.POSITIVE_INFINITY;
+    const rightIndex = designSystemPrimaryNavOrderIndex.get(right.href) ?? Number.POSITIVE_INFINITY;
+    if (leftIndex !== rightIndex) {
+      return leftIndex - rightIndex;
+    }
+
+    if (left.fallbackOrder !== right.fallbackOrder) {
+      return left.fallbackOrder - right.fallbackOrder;
+    }
+
+    return left.displayLabel.localeCompare(right.displayLabel);
+  });
+}
+
+function setHostPrimaryNavCollections(items) {
+  const fallbackHref = resolvePrimaryNavHomeHref(window.location.pathname);
+  const activeHref = resolvePrimaryNavActiveHref(window.location.pathname, items, fallbackHref);
+  const hostPrimaryNavLinksContainer = designSystemShell?.querySelector(":scope > .top-nav .primary-nav-links");
+  const hostPrimaryNavOverflowMenu = designSystemShell?.querySelector(":scope > .top-nav .primary-nav-overflow-menu");
+  const hostMobileNavMenu = designSystemShell?.querySelector(":scope > .mobile-nav-menu");
+
+  if (hostPrimaryNavLinksContainer instanceof HTMLElement) {
+    const tooltipAnchors = Boolean(hostPrimaryNavLinksContainer.querySelector(".tooltip-anchor"));
+    hostPrimaryNavLinksContainer.innerHTML = buildPrimaryNavLinkMarkupFromItems(items, activeHref, { tooltipAnchors });
+
+    if (hostPrimaryNavLinksContainer === primaryNavLinksContainer) {
+      primaryNavLinks.splice(
+        0,
+        primaryNavLinks.length,
+        ...Array.from(hostPrimaryNavLinksContainer.querySelectorAll(".nav-link")),
+      );
+    }
+  }
+
+  if (hostPrimaryNavOverflowMenu instanceof HTMLElement) {
+    hostPrimaryNavOverflowMenu.innerHTML = buildPrimaryNavMenuMarkupFromItems(items, activeHref);
+  }
+
+  if (hostMobileNavMenu instanceof HTMLElement) {
+    const tooltipAnchors = Boolean(hostMobileNavMenu.querySelector(".tooltip-anchor"));
+    const mobileProfileGroup = hostMobileNavMenu.querySelector(".mobile-profile-group");
+    hostMobileNavMenu.querySelectorAll(":scope > a.nav-link").forEach((node) => node.remove());
+    hostMobileNavMenu.insertAdjacentHTML(
+      "afterbegin",
+      buildPrimaryNavLinkMarkupFromItems(items, activeHref, { tooltipAnchors }),
+    );
+    if (mobileProfileGroup) {
+      hostMobileNavMenu.append(mobileProfileGroup);
+    }
+
+    if (hostMobileNavMenu === mobileNavMenu) {
+      mobileNavLinks.splice(
+        0,
+        mobileNavLinks.length,
+        ...Array.from(hostMobileNavMenu.querySelectorAll(":scope > a.nav-link")),
+      );
+    }
+  }
+}
+
+let governedTopNavRequestId = 0;
+
+async function refreshGovernedPrimaryNav() {
+  const requestId = ++governedTopNavRequestId;
+
+  try {
+    const tree = await fetchJson("/v1/web-app-hierarchy/design-system/applied-tree");
+    const candidates = buildGovernedDesignSystemTopNavCandidates(tree);
+
+    const settingsItems = await Promise.all(
+      candidates.map(async (candidate) => {
+        try {
+          const settings = await fetchJson(
+            `/v1/web-app-page-settings/pages/${encodeURIComponent(candidate.webAppPageId)}`,
+          );
+          return {
+            ...candidate,
+            displayLabel: settings?.displayLabel ?? candidate.displayLabel,
+            hasStoredSettings: settings?.hasStoredSettings === true,
+            showInTopNav: settings?.showInTopNav === true,
+            topNavOrder: settings?.topNavOrder ?? null,
+          };
+        } catch (_error) {
+          return {
+            ...candidate,
+            hasStoredSettings: false,
+            showInTopNav: false,
+            topNavOrder: null,
+          };
+        }
+      }),
+    );
+
+    if (requestId !== governedTopNavRequestId) {
+      return;
+    }
+
+    const itemsByHref = new Map();
+    for (const item of settingsItems) {
+      const includeByDefault = item.href === "/design-system" && item.hasStoredSettings !== true;
+      if (item.showInTopNav || includeByDefault) {
+        itemsByHref.set(item.href, item);
+      }
+    }
+
+    const overviewCandidate = settingsItems.find((item) => item.href === "/design-system");
+
+    if (
+      !itemsByHref.has("/design-system")
+      && (!overviewCandidate || overviewCandidate.hasStoredSettings !== true)
+    ) {
+      const overviewItem = designSystemPrimaryNavItems.find((item) => item.href === "/design-system");
+      if (overviewItem) {
+        itemsByHref.set("/design-system", {
+          webAppPageId: null,
+          displayLabel: overviewItem.label,
+          href: overviewItem.href,
+          fallbackOrder: -1,
+          showInTopNav: true,
+          topNavOrder: -1,
+        });
+      }
+    }
+
+    const nextItems = sortGovernedDesignSystemTopNavItems([...itemsByHref.values()]).map((item) => ({
+      href: item.href,
+      label: item.displayLabel,
+    }));
+
+    if (nextItems.length === 0) {
+      return;
+    }
+
+    setHostPrimaryNavCollections(nextItems);
+    updatePrimaryNavOverflow();
+  } catch (_error) {
+    if (requestId !== governedTopNavRequestId) {
+      return;
+    }
+  }
+}
+
 function normalizeDesignSystemShellBeforeBinding() {
+  ensureDesignSystemShellScaffold();
   normalizeTemplatesRouteLabels();
   normalizeShellProfileLabels();
   normalizePrimaryNav();
@@ -726,6 +1519,8 @@ const themeButtons = Array.from(document.querySelectorAll("[data-theme-option]")
 const directionButtons = Array.from(document.querySelectorAll("[data-direction-option]"));
 const accentButtons = Array.from(document.querySelectorAll("[data-accent]"));
 const magnificationButtons = Array.from(document.querySelectorAll("[data-magnification-option]"));
+const pageShellBannerDemoRoot = document.querySelector("[data-page-shell-banner-demo]");
+const pageShellBannerVisibilityButtons = Array.from(document.querySelectorAll("[data-page-shell-banner-visibility]"));
 const topNav = document.querySelector(".top-nav");
 const subNav = document.querySelector(".sub-nav");
 const designSystemShell = document.querySelector(".design-system-shell");
@@ -736,6 +1531,7 @@ const languageModalBackdrop = document.getElementById("language-modal-backdrop")
 const languageModalCloseButton = document.getElementById("language-modal-close");
 const languageOptionList = document.getElementById("language-option-list");
 const formSelectRoots = Array.from(document.querySelectorAll("[data-form-select]"));
+const formIconGridRoots = Array.from(document.querySelectorAll("[data-form-icon-grid]"));
 const formDrawerSelectRoots = Array.from(document.querySelectorAll("[data-form-drawer-select]"));
 const formTimePickerRoots = Array.from(document.querySelectorAll("[data-form-time-picker]"));
 const formDatePickerRoots = Array.from(document.querySelectorAll("[data-form-date-picker]"));
@@ -921,9 +1717,20 @@ let languageModalReturnFocusTarget = null;
 let accessibilityDrawerReturnFocusTarget = null;
 let activeTopNavPreviewFixture = "standard";
 let activeTopNavPreviewOpenState = "closed";
+let pageShellBannerDemoVisible = false;
 const topNavSurfaceMode = document.body.dataset.topNavSurface ?? "exploration";
 const contextNavSurfaceMode = document.body.dataset.contextNavSurface ?? "inactive";
 const subNavSurfaceMode = document.body.dataset.subNavSurface ?? "exploration";
+const pageShellBannerDemoController = pageShellBannerDemoRoot instanceof HTMLElement
+  ? createPageShellBannerController(pageShellBannerDemoRoot, {
+    visible: false,
+    ariaLabel: pageShellBannerDemoRoot.getAttribute("aria-label") ?? "Shell banner demo",
+    onVisibilityChange(nextVisible) {
+      pageShellBannerDemoVisible = nextVisible;
+      syncPageShellBannerDemo();
+    },
+  })
+  : null;
 
 function usesLocalCanonicalAppearanceScope() {
   return topNavSurfaceMode === "canonical" || subNavSurfaceMode === "canonical" || contextNavSurfaceMode === "canonical";
@@ -1035,6 +1842,9 @@ const displaySettingsCopy = {
     "direction-group": "Direction",
     "direction-ltr": "Left to right",
     "direction-rtl": "Right to left",
+    "banner-group": "Banner Demo",
+    "banner-show": "Show banners",
+    "banner-hide": "Hide banners",
   },
   rtl: {
     eyebrow: "العرض",
@@ -1048,6 +1858,9 @@ const displaySettingsCopy = {
     "direction-group": "الاتجاه",
     "direction-ltr": "من اليسار إلى اليمين",
     "direction-rtl": "من اليمين إلى اليسار",
+    "banner-group": "عرض اللافتات",
+    "banner-show": "إظهار اللافتات",
+    "banner-hide": "إخفاء اللافتات",
   },
 };
 const displaySettingsAriaLabels = {
@@ -1308,189 +2121,6 @@ if (breadcrumbPageMinusOneLink) {
     ? fullLabel
     : "Previous";
 }
-
-function flattenHierarchyPages(pages) {
-  return pages.flatMap((page) => [page, ...flattenHierarchyPages(page.children ?? [])]);
-}
-
-function buildGovernedDesignSystemTopNavCandidates(tree) {
-  const rootFamily = tree?.rootFamilies?.find((family) => family.rootFamilyId === "design-system");
-  if (!rootFamily || !Array.isArray(rootFamily.modules)) {
-    return [];
-  }
-
-  let fallbackOrder = 0;
-
-  return rootFamily.modules.flatMap((module) =>
-    flattenHierarchyPages(module.pages ?? [])
-      .filter((page) => page?.parentPageId === null && typeof page?.resolvedFullRoutePath === "string")
-      .map((page) => ({
-        webAppPageId: page.webAppPageId,
-        displayLabel: page.displayLabel,
-        href: page.resolvedFullRoutePath,
-        fallbackOrder: fallbackOrder++,
-      })),
-  );
-}
-
-function sortGovernedDesignSystemTopNavItems(items) {
-  return [...items].sort((left, right) => {
-    if (left.href === "/design-system" && right.href !== "/design-system") {
-      return -1;
-    }
-
-    if (right.href === "/design-system" && left.href !== "/design-system") {
-      return 1;
-    }
-
-    const leftOrder = typeof left.topNavOrder === "number" ? left.topNavOrder : Number.POSITIVE_INFINITY;
-    const rightOrder = typeof right.topNavOrder === "number" ? right.topNavOrder : Number.POSITIVE_INFINITY;
-    if (leftOrder !== rightOrder) {
-      return leftOrder - rightOrder;
-    }
-
-    const leftIndex = designSystemPrimaryNavOrderIndex.get(left.href) ?? Number.POSITIVE_INFINITY;
-    const rightIndex = designSystemPrimaryNavOrderIndex.get(right.href) ?? Number.POSITIVE_INFINITY;
-    if (leftIndex !== rightIndex) {
-      return leftIndex - rightIndex;
-    }
-
-    if (left.fallbackOrder !== right.fallbackOrder) {
-      return left.fallbackOrder - right.fallbackOrder;
-    }
-
-    return left.displayLabel.localeCompare(right.displayLabel);
-  });
-}
-
-function setHostPrimaryNavCollections(items) {
-  const fallbackHref = resolvePrimaryNavHomeHref(window.location.pathname);
-  const activeHref = resolvePrimaryNavActiveHref(window.location.pathname, items, fallbackHref);
-  const hostPrimaryNavLinksContainer = designSystemShell?.querySelector(":scope > .top-nav .primary-nav-links");
-  const hostPrimaryNavOverflowMenu = designSystemShell?.querySelector(":scope > .top-nav .primary-nav-overflow-menu");
-  const hostMobileNavMenu = designSystemShell?.querySelector(":scope > .mobile-nav-menu");
-
-  if (hostPrimaryNavLinksContainer instanceof HTMLElement) {
-    const tooltipAnchors = Boolean(hostPrimaryNavLinksContainer.querySelector(".tooltip-anchor"));
-    hostPrimaryNavLinksContainer.innerHTML = buildPrimaryNavLinkMarkupFromItems(items, activeHref, { tooltipAnchors });
-
-    if (hostPrimaryNavLinksContainer === primaryNavLinksContainer) {
-      primaryNavLinks.splice(
-        0,
-        primaryNavLinks.length,
-        ...Array.from(hostPrimaryNavLinksContainer.querySelectorAll(".nav-link")),
-      );
-    }
-  }
-
-  if (hostPrimaryNavOverflowMenu instanceof HTMLElement) {
-    hostPrimaryNavOverflowMenu.innerHTML = buildPrimaryNavMenuMarkupFromItems(items, activeHref);
-  }
-
-  if (hostMobileNavMenu instanceof HTMLElement) {
-    const tooltipAnchors = Boolean(hostMobileNavMenu.querySelector(".tooltip-anchor"));
-    const mobileProfileGroup = hostMobileNavMenu.querySelector(".mobile-profile-group");
-    hostMobileNavMenu.querySelectorAll(":scope > a.nav-link").forEach((node) => node.remove());
-    hostMobileNavMenu.insertAdjacentHTML(
-      "afterbegin",
-      buildPrimaryNavLinkMarkupFromItems(items, activeHref, { tooltipAnchors }),
-    );
-    if (mobileProfileGroup) {
-      hostMobileNavMenu.append(mobileProfileGroup);
-    }
-
-    if (hostMobileNavMenu === mobileNavMenu) {
-      mobileNavLinks.splice(
-        0,
-        mobileNavLinks.length,
-        ...Array.from(hostMobileNavMenu.querySelectorAll(":scope > a.nav-link")),
-      );
-    }
-  }
-}
-
-let governedTopNavRequestId = 0;
-
-async function refreshGovernedPrimaryNav() {
-  const requestId = ++governedTopNavRequestId;
-
-  try {
-    const tree = await fetchJson("/v1/web-app-hierarchy/design-system/applied-tree");
-    const candidates = buildGovernedDesignSystemTopNavCandidates(tree);
-
-    const settingsItems = await Promise.all(
-      candidates.map(async (candidate) => {
-        try {
-          const settings = await fetchJson(
-            `/v1/web-app-page-settings/pages/${encodeURIComponent(candidate.webAppPageId)}`,
-          );
-          return {
-            ...candidate,
-            displayLabel: settings?.displayLabel ?? candidate.displayLabel,
-            hasStoredSettings: settings?.hasStoredSettings === true,
-            showInTopNav: settings?.showInTopNav === true,
-            topNavOrder: settings?.topNavOrder ?? null,
-          };
-        } catch (_error) {
-          return {
-            ...candidate,
-            hasStoredSettings: false,
-            showInTopNav: false,
-            topNavOrder: null,
-          };
-        }
-      }),
-    );
-
-    if (requestId !== governedTopNavRequestId) {
-      return;
-    }
-
-    const itemsByHref = new Map();
-    for (const item of settingsItems) {
-      const includeByDefault = item.href === "/design-system" && item.hasStoredSettings !== true;
-      if (item.showInTopNav || includeByDefault) {
-        itemsByHref.set(item.href, item);
-      }
-    }
-
-    const overviewCandidate = settingsItems.find((item) => item.href === "/design-system");
-
-    if (
-      !itemsByHref.has("/design-system")
-      && (!overviewCandidate || overviewCandidate.hasStoredSettings !== true)
-    ) {
-      const overviewItem = designSystemPrimaryNavItems.find((item) => item.href === "/design-system");
-      if (overviewItem) {
-        itemsByHref.set("/design-system", {
-          webAppPageId: null,
-          displayLabel: overviewItem.label,
-          href: overviewItem.href,
-          fallbackOrder: -1,
-          showInTopNav: true,
-          topNavOrder: -1,
-        });
-      }
-    }
-
-    const nextItems = sortGovernedDesignSystemTopNavItems([...itemsByHref.values()]).map((item) => ({
-      href: item.href,
-      label: item.displayLabel,
-    }));
-
-    if (nextItems.length === 0) {
-      return;
-    }
-
-    setHostPrimaryNavCollections(nextItems);
-    updatePrimaryNavOverflow();
-  } catch (_error) {
-    if (requestId !== governedTopNavRequestId) {
-      return;
-    }
-  }
-}
-
 
 function clampNumber(value, min, max, fallback) {
   const parsed = Number(value);
@@ -1766,7 +2396,7 @@ function getTooltipTargetFromNode(node) {
   }
 
   return node.closest(
-    ".tooltip-anchor[data-tooltip], .context-nav-item[data-tooltip], .breadcrumb-button, .breadcrumb-current",
+    ".tooltip-anchor[data-tooltip], .context-nav-item[data-tooltip], .form-icon-grid-option[data-tooltip], .breadcrumb-button, .breadcrumb-current",
   );
 }
 
@@ -1894,22 +2524,11 @@ function describeSubNavCanonicalCircumstances(state, matches) {
 }
 
 function getContextNavIconMarkup(icon) {
-  const icons = {
-    home: '<path d="M4 11.5 12 5l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5h-5v5H5a1 1 0 0 1-1-1z" />',
-    grid: '<path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 3.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0z" />',
-    list: '<path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" />',
-    doc: '<path d="M7 4h8l4 4v12H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm7 1.5V9h3.5" />',
-    token: '<path d="m12 3 7 4v10l-7 4-7-4V7zm0 3.1L8.1 8.3v4.4L12 15l3.9-2.3V8.3z" />',
-    spark: '<path d="M12 2.5 14.2 8l5.3 2-5.3 2-2.2 5.5L9.8 12 4.5 10l5.3-2zm-5 13 1.15 2.85L11 19.5l-2.85 1.15L7 23.5l-1.15-2.85L3 19.5l2.85-1.15z" />',
-    text: '<path d="M5 5h14v3h-5.5v11h-3V8H5z" />',
-    shield: '<path d="M12 3.2 18.5 5v5.2c0 4.3-2.75 8.05-6.5 9.8-3.75-1.75-6.5-5.5-6.5-9.8V5zM10.8 14.7l4.7-4.7-1.4-1.4-3.3 3.3-1.8-1.8-1.4 1.4z" />',
-    globe: '<path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm5.85 8h-3.2a14.4 14.4 0 0 0-1.2-5A7.03 7.03 0 0 1 17.85 11zM12 5.2A12.1 12.1 0 0 1 13.4 11h-2.8A12.1 12.1 0 0 1 12 5.2zM6.15 13h3.2a14.4 14.4 0 0 0 1.2 5A7.03 7.03 0 0 1 6.15 13zm3.2-2h-3.2A7.03 7.03 0 0 1 10.55 6a14.4 14.4 0 0 0-1.2 5zm2.65 7.8A12.1 12.1 0 0 1 10.6 13h2.8A12.1 12.1 0 0 1 12 18.8zM13.45 18a14.4 14.4 0 0 0 1.2-5h3.2A7.03 7.03 0 0 1 13.45 18z" />',
-    more: '<path d="M12 6.75a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5z" />',
-    filter: '<path d="M4 6h16l-6.5 7.25V19l-3-1.5v-4.25z" />',
-    accessibility: '<path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75zm0 3.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 5.85zm0 11.55a5.4 5.4 0 0 1-4.19-1.97 4.87 4.87 0 0 1 8.38 0A5.4 5.4 0 0 1 12 17.4z" />',
-  };
+  if (icon === "more") {
+    return '<path d="M12 6.75a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5z" />';
+  }
 
-  return icons[icon] ?? icons.grid;
+  return designSystemIconMarkupByKey[icon] ?? designSystemIconMarkupByKey.grid;
 }
 
 function normalizeContextNavPreviewState(rawState = {}) {
@@ -2013,6 +2632,31 @@ function updateDisplaySettingsCopy(direction) {
       button.setAttribute("aria-label", nextLabel);
     }
   }
+}
+
+function syncPageShellBannerDemo() {
+  if (!pageShellBannerDemoController) {
+    return;
+  }
+
+  for (const button of pageShellBannerVisibilityButtons) {
+    const mode = button.dataset.pageShellBannerVisibility ?? "hide";
+    const isActive = mode === (pageShellBannerDemoVisible ? "show" : "hide");
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  }
+}
+
+function setPageShellBannerDemoVisible(visible) {
+  pageShellBannerDemoVisible = visible;
+  if (pageShellBannerDemoController) {
+    if (visible) {
+      pageShellBannerDemoController.showAll();
+    } else {
+      pageShellBannerDemoController.hide();
+    }
+  }
+  syncPageShellBannerDemo();
 }
 
 function getActiveContextNavCanonicalReference(matches) {
@@ -4202,6 +4846,274 @@ function initializeFormSelects() {
   });
 }
 
+function initializeFormIconGrids() {
+  if (formIconGridRoots.length === 0) {
+    return;
+  }
+
+  let activeFormIconGrid = null;
+  const focusableSelector = [
+    "button:not([disabled])",
+    "input:not([disabled])",
+    "[tabindex]:not([tabindex='-1'])",
+  ].join(",");
+
+  function getFocusableElements(panel) {
+    if (!(panel instanceof HTMLElement)) {
+      return [];
+    }
+
+    return Array.from(panel.querySelectorAll(focusableSelector)).filter((element) => {
+      if (!(element instanceof HTMLElement)) {
+        return false;
+      }
+
+      return !element.hidden
+        && !element.classList.contains("hidden")
+        && element.getAttribute("aria-hidden") !== "true";
+    });
+  }
+
+  function getSearchInput(root) {
+    const input = root.querySelector("[data-form-icon-grid-search]");
+    return input instanceof HTMLInputElement ? input : null;
+  }
+
+  function getFilteredIcons(searchTerm) {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    if (normalizedSearch === "") {
+      return designSystemIconDefinitions;
+    }
+
+    return designSystemIconDefinitions.filter((icon) => {
+      const searchable = [icon.key, icon.label, ...icon.aliases].join(" ").toLowerCase();
+      return searchable.includes(normalizedSearch);
+    });
+  }
+
+  function renderIconGrid(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const hiddenInput = root.querySelector("[data-form-icon-grid-value]");
+    const labelNode = root.querySelector("[data-form-icon-grid-current-label]");
+    const glyphNode = root.querySelector("[data-form-icon-grid-trigger-glyph]");
+    const optionsNode = root.querySelector("[data-form-icon-grid-option-list]");
+    const emptyNode = root.querySelector("[data-form-icon-grid-empty]");
+    const searchInput = getSearchInput(root);
+
+    if (
+      !(hiddenInput instanceof HTMLInputElement)
+      || !(labelNode instanceof HTMLElement)
+      || !(glyphNode instanceof HTMLElement)
+      || !(optionsNode instanceof HTMLElement)
+      || !(emptyNode instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const selectedIcon = getDesignSystemIconRecord(hiddenInput.value);
+    const filteredIcons = getFilteredIcons(searchInput?.value ?? "");
+
+    hiddenInput.value = selectedIcon.key;
+    labelNode.textContent = selectedIcon.label;
+    glyphNode.innerHTML = renderDesignSystemIconSvg(selectedIcon.key);
+    optionsNode.innerHTML = filteredIcons.map((icon) => {
+      const isSelected = icon.key === selectedIcon.key;
+      return `
+        <button
+          class="form-icon-grid-option${isSelected ? " active" : ""}"
+          type="button"
+          data-form-icon-grid-option="${escapeHtml(icon.key)}"
+          data-tooltip="${escapeHtml(icon.label)}"
+          aria-pressed="${String(isSelected)}"
+          aria-label="Choose ${escapeHtml(icon.label)} icon"
+        >
+          <span class="form-icon-grid-option-glyph" aria-hidden="true">${renderDesignSystemIconSvg(icon.key)}</span>
+        </button>
+      `;
+    }).join("");
+
+    emptyNode.classList.toggle("hidden", filteredIcons.length > 0);
+  }
+
+  function closeIconGrid(root, { restoreFocus = false } = {}) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    const trigger = root.querySelector("[data-form-icon-grid-button]");
+    const panel = root.querySelector("[data-form-icon-grid-panel]");
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    trigger.setAttribute("aria-expanded", "false");
+    panel.classList.add("hidden");
+    panel.setAttribute("aria-hidden", "true");
+    panel.setAttribute("aria-modal", "false");
+
+    if (restoreFocus) {
+      trigger.focus();
+    }
+
+    if (activeFormIconGrid === root) {
+      activeFormIconGrid = null;
+    }
+  }
+
+  function openIconGrid(root) {
+    if (!(root instanceof HTMLElement)) {
+      return;
+    }
+
+    closeUnrelatedFormSurfaces({ preservedRoots: [root] });
+
+    const trigger = root.querySelector("[data-form-icon-grid-button]");
+    const panel = root.querySelector("[data-form-icon-grid-panel]");
+    const searchInput = getSearchInput(root);
+
+    if (!(trigger instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    if (searchInput) {
+      searchInput.value = "";
+    }
+
+    renderIconGrid(root);
+    trigger.setAttribute("aria-expanded", "true");
+    panel.classList.remove("hidden");
+    panel.setAttribute("aria-hidden", "false");
+    panel.setAttribute("aria-modal", "true");
+    activeFormIconGrid = root;
+
+    window.requestAnimationFrame(() => {
+      searchInput?.focus();
+    });
+  }
+
+  for (const root of formIconGridRoots) {
+    if (!(root instanceof HTMLElement)) {
+      continue;
+    }
+
+    const trigger = root.querySelector("[data-form-icon-grid-button]");
+    const hiddenInput = root.querySelector("[data-form-icon-grid-value]");
+    const panel = root.querySelector("[data-form-icon-grid-panel]");
+    const searchForm = root.querySelector(".form-icon-grid-search-shell");
+    const searchInput = getSearchInput(root);
+
+    if (
+      !(trigger instanceof HTMLButtonElement)
+      || !(hiddenInput instanceof HTMLInputElement)
+      || !(panel instanceof HTMLElement)
+    ) {
+      continue;
+    }
+
+    renderIconGrid(root);
+
+    trigger.addEventListener("click", () => {
+      const isOpen = trigger.getAttribute("aria-expanded") === "true";
+
+      if (isOpen) {
+        closeIconGrid(root);
+        return;
+      }
+
+      openIconGrid(root);
+    });
+
+    searchForm?.addEventListener("submit", (event) => {
+      event.preventDefault();
+    });
+
+    searchInput?.addEventListener("input", () => {
+      renderIconGrid(root);
+    });
+
+    panel.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const closeButton = target.closest("[data-form-icon-grid-close]");
+      if (closeButton instanceof HTMLButtonElement) {
+        closeIconGrid(root, { restoreFocus: true });
+        return;
+      }
+
+      const backdrop = target.closest("[data-form-icon-grid-backdrop]");
+      if (backdrop instanceof HTMLElement) {
+        closeIconGrid(root);
+        return;
+      }
+
+      const optionButton = target.closest("[data-form-icon-grid-option]");
+      if (optionButton instanceof HTMLButtonElement) {
+        hiddenInput.value = optionButton.dataset.formIconGridOption ?? designSystemIconDefinitions[0].key;
+        renderIconGrid(root);
+        closeIconGrid(root, { restoreFocus: true });
+      }
+    });
+  }
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Node)) {
+      return;
+    }
+
+    if (activeFormIconGrid && !activeFormIconGrid.contains(event.target)) {
+      closeIconGrid(activeFormIconGrid);
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (!activeFormIconGrid) {
+      return;
+    }
+
+    if (event.key === "Escape") {
+      closeIconGrid(activeFormIconGrid, { restoreFocus: true });
+      return;
+    }
+
+    if (event.key !== "Tab") {
+      return;
+    }
+
+    const panel = activeFormIconGrid.querySelector("[data-form-icon-grid-panel]");
+    if (!(panel instanceof HTMLElement)) {
+      return;
+    }
+
+    const focusableElements = getFocusableElements(panel);
+    if (focusableElements.length === 0) {
+      event.preventDefault();
+      return;
+    }
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    const activeElement = document.activeElement;
+
+    if (event.shiftKey && activeElement === firstElement) {
+      event.preventDefault();
+      lastElement.focus();
+      return;
+    }
+
+    if (!event.shiftKey && activeElement === lastElement) {
+      event.preventDefault();
+      firstElement.focus();
+    }
+  });
+}
+
 function initializeFormDrawerSelects() {
   if (formDrawerSelectRoots.length === 0) {
     return;
@@ -5447,6 +6359,7 @@ languageOptionList?.addEventListener("click", (event) => {
 initializeFormDrawerSelects();
 initializeFormTimePickers();
 initializeFormSelects();
+initializeFormIconGrids();
 initializeFormDatePickers();
 initializeFormErrorModeToggles();
 
@@ -5686,10 +6599,17 @@ for (const button of magnificationButtons) {
   });
 }
 
+for (const button of pageShellBannerVisibilityButtons) {
+  button.addEventListener("click", () => {
+    setPageShellBannerDemoVisible((button.dataset.pageShellBannerVisibility ?? "hide") === "show");
+  });
+}
+
 const initialTopNavPreviewState = getTopNavPreviewStateFromUrl();
 const initialSubNavPreviewState = getSubNavPreviewStateFromUrl();
 const initialContextNavPreviewState = getContextNavPreviewStateFromUrl();
 
+syncPageShellBannerDemo();
 updateContextNavOffset();
 updatePrimaryNavOverflow();
 updateBreadcrumbOverflow();

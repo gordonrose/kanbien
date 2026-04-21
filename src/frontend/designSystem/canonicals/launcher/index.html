@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Launcher Canonicals</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link" href="/design-system/components">Components</a>
+            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link active" href="/design-system/templates" aria-current="page">Pages</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">LC</span>
+            <span class="profile-meta"><strong>Launcher Canonicals</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/templates">Pages</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonicals">Canonicals</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Launcher</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search launcher canonical refs" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Launcher canonical navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/templates/launcher" data-tooltip="Template">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M9 4h8a2 2 0 0 1 2 2v9h-2V6H9zm-2 4h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2zm1 2v2h6v-2zm0 4v2h6v-2z" /></svg>
+            </span>
+            <span class="context-nav-label">Template</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/canonicals/launcher" data-tooltip="Canonicals" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+      </nav>
+
+      <main class="design-system-page-main canonical-launcher-page">
+        <div class="canonical-launcher-layout">
+          <section class="canonical-launcher-intro">
+            <p class="top-nav-preview-eyebrow">Canonical Launcher</p>
+            <h1>Launcher Canonicals</h1>
+            <p class="canonical-launcher-copy">
+              Open the named launcher-template reference states on the governed template route. These links preserve the
+              agreed `ref`, direction, and zoom posture; use the viewport sizes named in each card when reviewing the
+              full lane-width contract.
+            </p>
+          </section>
+
+          <section class="canonical-launcher-panel" aria-labelledby="launcher-canonical-title">
+            <div class="canonical-launcher-panel-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Canonical Set</p>
+                <h2 id="launcher-canonical-title">Launcher Reference States</h2>
+              </div>
+              <p class="canonical-launcher-note">
+                The template route is the truthful host surface for this family. Each state below reopens that route
+                with the agreed review posture.
+              </p>
+            </div>
+
+            <div class="canonical-launcher-grid">
+              <a class="canonical-launcher-button canonical-launcher-button-priority" href="/design-system/templates/launcher?ref=LTR-BASE-5&theme=normal&dir=ltr&zoom=0">
+                <span class="canonical-launcher-priority">Priority</span>
+                <span class="canonical-launcher-ref">LTR-BASE-5</span>
+                <span class="canonical-launcher-label">Default desktop LTR baseline at the 5-column review width</span>
+              </a>
+              <a class="canonical-launcher-button canonical-launcher-button-priority" href="/design-system/templates/launcher?ref=LTR-WIDE-8&theme=normal&dir=ltr&zoom=0">
+                <span class="canonical-launcher-priority">Priority</span>
+                <span class="canonical-launcher-ref">LTR-WIDE-8</span>
+                <span class="canonical-launcher-label">Wide desktop LTR review that expands to the 8-column ceiling</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/templates/launcher?ref=RTL-BASE-5&theme=normal&dir=rtl&zoom=0">
+                <span class="canonical-launcher-ref">RTL-BASE-5</span>
+                <span class="canonical-launcher-label">Default desktop RTL baseline that preserves the 5-column grid</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/templates/launcher?ref=ZO-100-WIDE-8&theme=normal&dir=ltr&zoom=-100">
+                <span class="canonical-launcher-ref">ZO-100-WIDE-8</span>
+                <span class="canonical-launcher-label">Wide desktop zoomed-out review that keeps the 8-column lane</span>
+              </a>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

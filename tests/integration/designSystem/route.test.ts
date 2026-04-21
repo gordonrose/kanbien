@@ -24,14 +24,19 @@ describe("design system route", () => {
       "/design-system",
       "/design-system/components",
       "/design-system/patterns",
+      "/design-system/templates/launcher",
+      "/design-system/templates/form",
       "/design-system/canonicals",
+      "/design-system/canonicals/launcher",
       "/design-system/canonicals/top-nav",
       "/design-system/canonicals/sub-nav",
       "/design-system/canonicals/context-nav",
       "/design-system/canonicals/context-nav-drawer",
+      "/design-system/canonicals/page-shell-banner",
       "/design-system/components/top-nav",
       "/design-system/components/sub-nav",
       "/design-system/components/context-nav",
+      "/design-system/components/page-shell-banner",
       "/design-system/exploration/top-nav",
       "/design-system/exploration/sub-nav",
       "/design-system/exploration/context-nav",
@@ -57,10 +62,7 @@ describe("design system route", () => {
     expect(response.text).toContain("breadcrumb-collapse-button");
     expect(response.text).toContain("design-system-search");
     expect(response.text).toContain("context-nav");
-    expect(response.text).toContain("filter-panel-button");
-    expect(response.text).toContain("filter-panel");
-    expect(response.text).toContain("filter-options-panel");
-    expect(response.text).toContain("filter-options-search");
+    expect(response.text).toContain("accessibility-button");
     expect(response.text).toContain("accessibility-drawer");
     expect(response.text).toContain("Design System");
     expect(response.text).toContain("/design-system/assets/styles.css");
@@ -105,10 +107,54 @@ describe("design system route", () => {
     expect(response.status).toBe(200);
     expect(response.text).toContain("Design-System Canonicals");
     expect(response.text).toContain("Available Canonical Sets");
+    expect(response.text).toContain("/design-system/canonicals/launcher");
     expect(response.text).toContain("/design-system/canonicals/top-nav");
     expect(response.text).toContain("/design-system/canonicals/context-nav");
     expect(response.text).toContain("/design-system/canonicals/context-nav-drawer");
+    expect(response.text).toContain("/design-system/canonicals/page-shell-banner");
     expect(response.text).toContain("/design-system/canonicals/time-picker");
+  });
+
+  it("serves the page-shell-banner canonical launcher page with dedicated render links", async () => {
+    const response = await request(createApp()).get("/design-system/canonicals/page-shell-banner").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("Page-Shell Banner Canonicals");
+    expect(response.text).toContain(">Patterns<");
+    expect(response.text).toContain(">Canonicals<");
+    expect(response.text).toContain(">Page-Shell Banner<");
+    expect(response.text).toContain("/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0");
+    expect(response.text).not.toContain("/design-system/templates/page-shell?ref=PSBR-");
+  });
+
+  it("serves the launcher canonical page with named launcher template refs", async () => {
+    const response = await request(createApp()).get("/design-system/canonicals/launcher").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("Launcher Canonicals");
+    expect(response.text).toContain(">Pages<");
+    expect(response.text).toContain(">Canonicals<");
+    expect(response.text).toContain(">Launcher<");
+    expect(response.text).toContain("/design-system/templates/launcher?ref=LTR-BASE-5&theme=normal&dir=ltr&zoom=0");
+    expect(response.text).toContain("/design-system/templates/launcher?ref=LTR-WIDE-8&theme=normal&dir=ltr&zoom=0");
+    expect(response.text).toContain("/design-system/templates/launcher?ref=RTL-BASE-5&theme=normal&dir=rtl&zoom=0");
+    expect(response.text).toContain("/design-system/templates/launcher?ref=ZO-100-WIDE-8&theme=normal&dir=ltr&zoom=-100");
+  });
+
+  it("serves the dedicated page-shell-banner canonical render page", async () => {
+    const response = await request(createApp())
+      .get("/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0")
+      .set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("Canonical Render");
+    expect(response.text).toContain("page-shell-banner-canonical-match-list");
+    expect(response.text).toContain("page-shell-banner-preview-frame");
+    expect(response.text).toContain("href=\"/design-system/canonicals/page-shell-banner\"");
+    expect(response.text).toContain("data-page-shell-banner-surface=\"canonical\"");
   });
 
   it("serves the top-nav canonical launcher page for signed-off states", async () => {
@@ -181,6 +227,19 @@ describe("design system route", () => {
     expect(response.text).toContain("data-date-picker-surface=\"canonical\"");
   });
 
+  it("serves the form template host page instead of leaked source text", async () => {
+    const response = await request(createApp()).get("/design-system/templates/form").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("Kanbien Design System - Form Template");
+    expect(response.text).toContain("id=\"form-page-canvas-title\"");
+    expect(response.text).toContain("class=\"form-page-shell\"");
+    expect(response.text).toContain("Create workspace campaign");
+    expect(response.text).toContain("/design-system/assets/styles.css");
+    expect(response.text).not.toContain("src/frontend/designSystem/assets/formTemplate.css:71:.form-page-section");
+  });
+
   it("serves the public design-system components index page", async () => {
     const response = await request(createApp()).get("/design-system/components").set("host", "admin.example.test");
 
@@ -206,12 +265,29 @@ describe("design system route", () => {
     expect(response.text).toContain("primary-nav-overflow-button");
     expect(response.text).toContain("breadcrumb-list");
     expect(response.text).toContain(">Patterns<");
-    expect(response.text).toContain("/design-system/canonicals/context-nav");
-    expect(response.text).toContain("/design-system/canonicals/sub-nav#breadcrumb-family");
+    expect(response.text).toContain("/design-system/patterns/context-nav");
+    expect(response.text).toContain("/design-system/patterns/sub-nav-row");
     expectShellTrio(response.text);
     expect(response.text).toContain("Design-system section navigation");
     expect(response.text).toContain(">Patterns<");
     expect(response.text).toContain(">Canonicals<");
+  });
+
+  it("serves the launcher template detail page", async () => {
+    const response = await request(createApp()).get("/design-system/templates/launcher").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("Kanbien Design System - Launcher Template");
+    expect(response.text).toContain(">Pages<");
+    expect(response.text).toContain(">Launcher<");
+    expect(response.text).toContain("/design-system/canonicals");
+    expect(response.text).toContain("/design-system/canonicals/top-nav");
+    expect(response.text).toContain("/design-system/canonicals/list-detail-panel");
+    expect(response.text).toContain("canonical-launcher-page");
+    expect(response.text).toContain("accessibility-button");
+    expect(response.text).toContain("accessibility-drawer");
+    expect(response.text).toContain("Display Settings");
   });
 
   it("serves the context-nav exploration page", async () => {
