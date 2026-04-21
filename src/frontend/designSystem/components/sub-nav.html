@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Sub Nav Canonical</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-sub-nav-surface="canonical" data-render-status="settling">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy">
+            <strong>Kanbien Design System</strong>
+          </span>
+        </a>
+
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link" href="/design-system/components">Components</a>
+            <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Pages</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+        </nav>
+
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">SN</span>
+            <span class="profile-meta">
+              <strong>Sub Nav</strong>
+            </span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/components">Components</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonicals/sub-nav">Sub Nav Canonicals</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Canonical Render</span></li>
+          </ol>
+        </nav>
+
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search sub-nav reference states" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Sub-nav family navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/exploration/sub-nav" data-tooltip="Exploration">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 4 20 20H4z" /></svg>
+            </span>
+            <span class="context-nav-label">Explore</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/canonicals/sub-nav" data-tooltip="Canonicals" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main canonical-render-page">
+        <div class="canonical-render-layout">
+        <section class="canonical-render-intro">
+          <p class="top-nav-preview-eyebrow">Canonical Render</p>
+          <h1>Sub Nav</h1>
+          <p class="canonical-launcher-copy">
+            This route is the locked canonical renderer for approved `sub-nav`, `breadcrumb`, and `search-shell`
+            states. Use the <a href="/design-system/canonicals/sub-nav">canonical launcher</a> for deterministic ref
+            review and the exploration page for interactive adjustment and early feedback.
+          </p>
+          <dl class="canonical-render-meta" aria-label="Canonical metadata">
+            <div class="canonical-render-meta-row">
+              <dt>Matched canonicals</dt>
+              <dd id="sub-nav-canonical-match-list">Resolving canonical references...</dd>
+            </div>
+            <div class="canonical-render-meta-row">
+              <dt>Viewing circumstances</dt>
+              <dd id="sub-nav-canonical-circumstances">Loading URL-driven viewing circumstances...</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="top-nav-preview-stage-section" aria-labelledby="sub-nav-preview-stage-title">
+          <div class="top-nav-preview-stage-header">
+            <div>
+              <p class="top-nav-preview-eyebrow">Canonical Surface</p>
+              <h2 id="sub-nav-preview-stage-title">Sub-Nav Canonical State</h2>
+            </div>
+            <p id="sub-nav-preview-summary" class="top-nav-preview-stage-note">
+              Canonical state loading from the URL.
+            </p>
+          </div>
+
+          <div class="canonical-render-surface-scroll">
+            <div
+              id="sub-nav-preview-frame"
+              class="sub-nav-preview-frame canonical-render-frame"
+            >
+              <div
+                id="sub-nav-preview-shell"
+                class="sub-nav-preview-shell"
+                data-render-status="settling"
+                data-canonical-state="pending"
+              >
+                <section class="sub-nav" aria-label="Sub-nav canonical row">
+                <nav id="sub-nav-preview-breadcrumb-nav" class="breadcrumb-nav" aria-label="Breadcrumb">
+                  <div id="sub-nav-preview-breadcrumb-compact" class="breadcrumb-compact hidden">
+                    <button
+                      id="sub-nav-preview-breadcrumb-compact-button"
+                      class="breadcrumb-collapse-button breadcrumb-compact-button"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="sub-nav-preview-breadcrumb-compact-menu"
+                      aria-label="Open page structure menu"
+                    >
+                      <span class="breadcrumb-compact-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                          <path d="M6 4.5a1.5 1.5 0 1 1 0 3H5v3h5.5a1.5 1.5 0 1 1 0 3H5v5h3.5a1.5 1.5 0 1 1 0 3H3.5a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 3.5 4.5zm11 0a4 4 0 0 1 0 8h-2v-3h2a1 1 0 1 0 0-2h-2v-3zm-2 9h3a4 4 0 1 1 0 8h-3v-3h3a1 1 0 1 0 0-2h-3z" />
+                        </svg>
+                      </span>
+                    </button>
+                    <div
+                      id="sub-nav-preview-breadcrumb-compact-menu"
+                      class="breadcrumb-collapse-menu hidden"
+                      role="menu"
+                      aria-labelledby="sub-nav-preview-breadcrumb-compact-button"
+                    >
+                      <a id="sub-nav-preview-compact-home" class="menu-item" href="/design-system" role="menuitem">Home</a>
+                      <a id="sub-nav-preview-compact-middle-a" class="menu-item" href="/design-system/library" role="menuitem">Library</a>
+                      <a id="sub-nav-preview-compact-middle-b" class="menu-item" href="/design-system/library/navigation" role="menuitem">Navigation</a>
+                      <a id="sub-nav-preview-compact-page-minus-one" class="menu-item" href="/design-system/components/navigation" role="menuitem">Sub-nav</a>
+                      <span id="sub-nav-preview-compact-current" class="menu-item breadcrumb-structure-current" aria-current="page">Search</span>
+                    </div>
+                  </div>
+                  <ol id="sub-nav-preview-breadcrumb-list" class="breadcrumb-list">
+                    <li id="sub-nav-preview-home-item"><a id="sub-nav-preview-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
+                    <li id="sub-nav-preview-separator-before-collapsed"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+                    <li id="sub-nav-preview-collapsed-item" class="breadcrumb-collapsed">
+                      <button
+                        id="sub-nav-preview-breadcrumb-collapse-button"
+                        class="breadcrumb-collapse-button"
+                        type="button"
+                        aria-expanded="false"
+                        aria-controls="sub-nav-preview-breadcrumb-collapse-menu"
+                        aria-label="Open collapsed breadcrumb menu"
+                      >
+                        ...
+                      </button>
+                      <div
+                        id="sub-nav-preview-breadcrumb-collapse-menu"
+                        class="breadcrumb-collapse-menu hidden"
+                        role="menu"
+                        aria-labelledby="sub-nav-preview-breadcrumb-collapse-button"
+                      >
+                        <a id="sub-nav-preview-middle-a-link" class="menu-item" href="/design-system/library" role="menuitem">Library</a>
+                        <a id="sub-nav-preview-middle-b-link" class="menu-item" href="/design-system/library/navigation" role="menuitem">Navigation</a>
+                      </div>
+                    </li>
+                    <li id="sub-nav-preview-separator-before-page-minus-one"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+                    <li id="sub-nav-preview-page-minus-one-item"><a id="sub-nav-preview-page-minus-one-link" class="breadcrumb-button" href="/design-system/components/navigation">Sub-nav</a></li>
+                    <li id="sub-nav-preview-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+                    <li id="sub-nav-preview-current-item"><span id="sub-nav-preview-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">Search</span></li>
+                  </ol>
+                </nav>
+
+                <form id="sub-nav-preview-search-shell" class="search-shell" role="search">
+                  <label class="search-shell-field">
+                    <input
+                      id="sub-nav-preview-search-input"
+                      class="search-input"
+                      type="search"
+                      name="q"
+                      placeholder="Search components, patterns, or docs"
+                    />
+                    <span class="search-submit-hint" aria-hidden="true">
+                      <span class="search-submit-hint-copy">Press</span>
+                      <span class="search-submit-hint-key">Enter</span>
+                    </span>
+                  </label>
+                </form>
+                </section>
+              </div>
+            </div>
+          </div>
+
+          <div class="canonical-render-footer">
+            <nav class="canonical-stepper" aria-label="Canonical navigation">
+              <span id="sub-nav-canonical-current" class="canonical-stepper-current">
+                Resolving current canonical...
+              </span>
+              <a id="sub-nav-canonical-prev" class="canonical-stepper-link" href="#" aria-disabled="true">
+                Previous
+              </a>
+              <a id="sub-nav-canonical-next" class="canonical-stepper-link" href="#" aria-disabled="true">
+                Next
+              </a>
+            </nav>
+          </div>
+        </section>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

@@ -36,8 +36,13 @@ production-readiness as separate checkpoints.
 - Required direction states checked:
 - Required theme states checked:
 - Required magnification states checked:
+- Real interactive states checked:
+  filled inputs, native browser affordances, open menus, compact modes, or
+  other non-empty runtime states
 - Overflow or clipping checks:
 - Layering or anchoring checks:
+- Attachment / shell-framing checks:
+- Alignment or shared-gutter checks:
 - Screenshot or rendered evidence reference:
 
 ## Accessibility Verification
@@ -48,6 +53,7 @@ production-readiness as separate checkpoints.
 - Screen-reader naming and labeling:
 - Contrast or motion considerations:
 - Localization or long-content considerations:
+- Browser-native affordance coexistence considerations:
 
 ## State Coverage
 
@@ -79,6 +85,7 @@ Record `not applicable` explicitly rather than leaving state handling implicit.
 
 - Workspace artifact location:
 - Design-system route update required:
+- Canonical render-ready / honest-width check required:
 - Frontend gate manifest update required:
 - Architecture-map update required:
 - Real-app adoption now allowed:

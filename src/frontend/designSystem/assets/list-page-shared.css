@@ -1,0 +1,587 @@
+.drawer-close-button {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.list-page-shell {
+  display: grid;
+  gap: 1rem;
+}
+
+.list-page-shell-split {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  min-height: calc(100vh - 12.5rem);
+  overflow: visible;
+}
+
+.list-page-shell-split.detail-open {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  height: calc(100vh - 12.5rem);
+  overflow: hidden;
+}
+
+.list-page-list-column {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+  align-content: start;
+  height: auto;
+  padding-right: 0;
+  overflow: visible;
+}
+
+.list-page-shell-split.detail-open .list-page-list-column {
+  height: 100%;
+  padding-right: 0.35rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.list-page-loading-group {
+  display: grid;
+  gap: 1rem;
+}
+
+.list-page-append-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem 0.15rem;
+}
+
+.list-page-append-error-copy {
+  margin: 0;
+  color: #9a3412;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.list-page-append-error-button {
+  min-height: 2.4rem;
+  padding: 0.55rem 0.9rem;
+}
+
+.list-page-state-card {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.25rem 1.35rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-2) 92%, var(--accent-soft) 8%) 0%,
+    var(--surface-2) 100%
+  );
+  box-shadow: var(--shadow-soft);
+}
+
+.list-page-state-eyebrow {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.list-page-state-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.2rem;
+}
+
+.list-page-state-description {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.list-page-state-query {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.list-page-state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.list-page-state-button {
+  min-height: 2.75rem;
+  padding: 0.7rem 1rem;
+  border: 0.0625rem solid color-mix(in srgb, var(--accent) 24%, var(--line));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface-1) 88%, var(--accent-soft) 12%);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.list-page-state-button:hover,
+.list-page-state-button:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line-strong));
+  background: color-mix(in srgb, var(--surface-1) 82%, var(--accent-soft) 18%);
+}
+
+[data-selectable-list-items] {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.list-page-loading-label {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.list-page-loading-card {
+  display: grid;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 1rem 1.15rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-soft);
+}
+
+.list-page-loading-line,
+.list-page-loading-chip {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-1) 84%, var(--ink-soft) 16%);
+}
+
+.list-page-loading-line::after,
+.list-page-loading-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, white 72%, transparent) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: list-page-loading-shimmer 1.25s ease-in-out infinite;
+}
+
+.list-page-loading-line-title {
+  width: min(18rem, 72%);
+  height: 1.05rem;
+}
+
+.list-page-loading-line-subtitle {
+  width: min(14rem, 56%);
+  height: 0.8rem;
+}
+
+.list-page-loading-line-body {
+  width: 100%;
+  height: 0.82rem;
+}
+
+.list-page-loading-line-body-short {
+  width: min(24rem, 78%);
+}
+
+.list-page-loading-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.list-page-loading-chip {
+  width: 4.8rem;
+  height: 1.65rem;
+}
+
+.list-page-card {
+  display: grid;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 1rem 1.15rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-soft);
+}
+
+.list-page-card-button {
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.list-page-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.list-page-card-copy {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.list-page-card-title {
+  margin: 0;
+  display: block;
+  max-width: 100%;
+  color: var(--ink);
+  font-size: 1.15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-page-card-subtitle {
+  margin: 0;
+  display: block;
+  max-width: 100%;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-page-card-description {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.list-page-card-button:hover,
+.list-page-card-button:focus-visible {
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--surface-2) 90%, var(--accent-soft) 10%);
+}
+
+.list-page-card-button.active {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+  background: color-mix(in srgb, var(--surface-2) 82%, var(--accent-soft) 18%);
+}
+
+.list-page-card-tags,
+.list-page-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.list-page-tag {
+  display: inline-flex;
+  align-items: center;
+  max-width: min(100%, 12rem);
+  padding: 0.3rem 0.6rem;
+  border: 0.0625rem solid color-mix(in srgb, var(--accent) 18%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-1) 84%, var(--accent-soft) 16%);
+  color: var(--ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-page-detail-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 1rem;
+  min-width: 0;
+  height: 100%;
+  padding: 1rem 1.15rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: calc(var(--radius) + 0.125rem);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-soft);
+  overflow: auto;
+}
+
+.list-page-detail-panel.hidden {
+  display: none;
+}
+
+.list-page-detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.list-page-detail-copy {
+  display: grid;
+  flex: 1 1 18rem;
+  gap: 0.3rem;
+  min-width: min(100%, 18rem);
+}
+
+.list-page-detail-controls {
+  display: grid;
+  flex: 0 0 auto;
+  justify-items: end;
+  margin-inline-start: auto;
+  flex-shrink: 0;
+}
+
+.list-page-detail-action-row,
+.list-page-detail-nav-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+}
+
+.list-page-detail-nav-anchor {
+  display: inline-flex;
+}
+
+.list-page-detail-action-button,
+.list-page-detail-nav-button {
+  min-height: 2.5rem;
+  padding: 0.55rem 0.9rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.list-page-detail-action-button:hover,
+.list-page-detail-action-button:focus-visible,
+.list-page-detail-nav-button:hover,
+.list-page-detail-nav-button:focus-visible {
+  border-color: var(--line-strong);
+  background: color-mix(in srgb, var(--surface-1) 90%, var(--accent-soft) 10%);
+}
+
+.list-page-detail-nav-button[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.list-page-detail-footer {
+  padding-top: 0.25rem;
+  border-top: 0.0625rem solid color-mix(in srgb, var(--line) 88%, transparent);
+}
+
+.list-page-detail-meta {
+  margin: 0;
+  max-width: min(100%, 18rem);
+  overflow: hidden;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.list-page-detail-title {
+  margin: 0;
+  color: var(--ink);
+  font-size: 1.2rem;
+}
+
+.list-page-detail-subtitle {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.list-page-detail-panel[data-header-condensed="true"] .list-page-detail-header {
+  gap: 0.55rem;
+}
+
+.list-page-detail-panel[data-header-condensed="true"] .list-page-detail-copy {
+  gap: 0.18rem;
+}
+
+.list-page-detail-panel[data-header-condensed="true"] .list-page-detail-meta {
+  font-size: 0.72rem;
+}
+
+.list-page-detail-panel[data-header-condensed="true"] .list-page-detail-title {
+  font-size: 1.02rem;
+  line-height: 1.2;
+}
+
+.list-page-detail-panel[data-header-condensed="true"] .list-page-detail-subtitle {
+  display: none;
+}
+
+.list-page-detail-panel[data-header-condensed="true"] .list-page-detail-action-row {
+  gap: 0.4rem;
+}
+
+.list-page-detail-body {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  min-block-size: 8rem;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.list-page-detail-error {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1rem 1.05rem;
+  border: 0.0625rem solid color-mix(in srgb, #dc2626 22%, var(--line));
+  border-radius: calc(var(--radius) + 0.0625rem);
+  background: color-mix(in srgb, var(--surface-2) 88%, #fee2e2 12%);
+}
+
+.list-page-detail-description {
+  margin: 0;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.list-page-lazy-load-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.85rem 1rem 0.15rem;
+}
+
+.list-page-lazy-load-status-button {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--ink-soft);
+  font: inherit;
+  font-size: 0.84rem;
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 0.14em;
+  cursor: pointer;
+}
+
+.list-page-lazy-load-status-button:hover,
+.list-page-lazy-load-status-button:focus-visible {
+  color: var(--ink);
+}
+
+.list-page-lazy-load-status-button:disabled {
+  color: var(--ink-soft);
+  text-decoration: none;
+  cursor: default;
+}
+
+.list-page-lazy-load-sentinel {
+  block-size: 0.0625rem;
+}
+
+@keyframes list-page-loading-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@media (max-width: 60rem) {
+  .list-page-shell-split {
+    height: auto;
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .list-page-shell-split.detail-open {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .list-page-detail-panel {
+    position: fixed;
+    top: var(--context-nav-top, 0);
+    right: 0;
+    bottom: var(--context-nav-mobile-bar-offset, calc(4.125rem + env(safe-area-inset-bottom, 0)));
+    left: 0;
+    z-index: 1;
+    height: auto;
+    padding: 1rem;
+    border-top: 0.0625rem solid var(--line);
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 0;
+    background: var(--surface-1);
+    box-shadow: none;
+  }
+
+  .list-page-detail-panel.hidden {
+    display: none;
+  }
+
+  .list-page-list-column {
+    height: auto;
+    padding-right: 0;
+    overflow: visible;
+  }
+
+  .list-page-detail-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 0.75rem;
+    position: relative;
+  }
+
+  .list-page-detail-copy {
+    grid-column: 1 / -1;
+    padding-inline-end: 3.25rem;
+  }
+
+  .list-page-detail-controls {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-items: stretch;
+    margin-inline-start: 0;
+  }
+
+  .list-page-detail-nav-row {
+    justify-content: flex-start;
+  }
+
+  .list-page-detail-action-row {
+    align-items: start;
+  }
+
+  .list-page-detail-action-row > :last-child {
+    position: absolute;
+    top: 0;
+    inset-inline-end: 0;
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "info": {
+    "_postman_id": "6f42f03e-6677-4f91-b152-5c36f74d0b8d",
+    "name": "Kanbien Web App Surface Discovery",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the protected webAppSurfaceDiscovery feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises root-triggered discovery, discovered-surface reads, discovered-structure reads, and discovery-run history reads."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "signerUrl", "value": "http://127.0.0.1:8787" },
+    { "key": "email", "value": "elvis.presley@example.com" },
+    { "key": "password", "value": "Test1234!" },
+    { "key": "rootSessionId", "value": "sess_replace_me" },
+    { "key": "challengeId", "value": "chal_replace_me" },
+    { "key": "challengeText", "value": "challenge_text_replace_me" },
+    { "key": "publicKeyFingerprint", "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY" },
+    { "key": "sshSignatureJson", "value": "base64_signature_over_challenge_text" },
+    { "key": "webAppDiscoveryRunId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "discoveredWebAppSurfaceId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "discoveredWebAppStructureNodeId", "value": "00000000-0000-0000-0000-000000000000" }
+  ],
+  "item": [
+    {
+      "name": "Root Auth - Login Password",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/root-auth/login/password", "host": ["{{baseUrl}}"], "path": ["v1", "root-auth", "login", "password"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
+          "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
+        ] }
+      }]
+    },
+    {
+      "name": "Root Auth - Sign Challenge",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"challengeText\": \"{{challengeText}}\"\n}" },
+        "url": { "raw": "{{signerUrl}}/sign", "host": ["{{signerUrl}}"], "path": ["sign"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.signature) pm.collectionVariables.set(\"sshSignatureJson\", JSON.stringify(json.signature).slice(1, -1));",
+          "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
+        ] }
+      }]
+    },
+    {
+      "name": "Root Auth - Login SSH",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignatureJson}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/root-auth/login/ssh", "host": ["{{baseUrl}}"], "path": ["v1", "root-auth", "login", "ssh"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
+        ] }
+      }]
+    },
+    {
+      "name": "Run Discovery",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"scopeKey\": \"current-approved-root-families\",\n  \"triggerKind\": \"manual\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-surface-discovery/runs", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-surface-discovery", "runs"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.webAppDiscoveryRunId) pm.environment.set(\"webAppDiscoveryRunId\", json.webAppDiscoveryRunId);"
+        ] }
+      }]
+    },
+    {
+      "name": "List Discovered Surfaces",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-surface-discovery/surfaces?page=1&pageSize=25&staleStatus=all",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "web-app-surface-discovery", "surfaces"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "pageSize", "value": "25" },
+            { "key": "staleStatus", "value": "all" }
+          ]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.items && json.items[0] && json.items[0].discoveredWebAppSurfaceId) {",
+          "  pm.environment.set(\"discoveredWebAppSurfaceId\", json.items[0].discoveredWebAppSurfaceId);",
+          "}"
+        ] }
+      }]
+    },
+    {
+      "name": "Get Discovered Surface",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-surface-discovery/surfaces/{{discoveredWebAppSurfaceId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "web-app-surface-discovery", "surfaces", "{{discoveredWebAppSurfaceId}}"]
+        }
+      }
+    },
+    {
+      "name": "List Discovered Structure Tree",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-surface-discovery/structure?staleStatus=all",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "web-app-surface-discovery", "structure"],
+          "query": [
+            { "key": "staleStatus", "value": "all" }
+          ]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.items && json.items[0] && json.items[0].discoveredWebAppStructureNodeId) {",
+          "  pm.environment.set(\"discoveredWebAppStructureNodeId\", json.items[0].discoveredWebAppStructureNodeId);",
+          "}"
+        ] }
+      }]
+    },
+    {
+      "name": "Get Discovered Structure Node",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-surface-discovery/structure/{{discoveredWebAppStructureNodeId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "web-app-surface-discovery", "structure", "{{discoveredWebAppStructureNodeId}}"]
+        }
+      }
+    },
+    {
+      "name": "List Discovery Runs",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-surface-discovery/runs?page=1&pageSize=25",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "web-app-surface-discovery", "runs"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "pageSize", "value": "25" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Discovery Run",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-surface-discovery/runs/{{webAppDiscoveryRunId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "web-app-surface-discovery", "runs", "{{webAppDiscoveryRunId}}"]
+        }
+      }
+    }
+  ]
+}

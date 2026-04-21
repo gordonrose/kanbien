@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "featureName": "rootRoles",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createRootRolesFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for root role and assignment routes."
+    },
+    {
+      "seamId": "authorization-checker",
+      "symbol": "createRootAuthorizationChecker",
+      "path": "index.ts",
+      "kind": "authorization-seam",
+      "stability": "stable",
+      "description": "Shared authorization capability checker for root-user capability enforcement."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "rootUsers",
+      "seamIds": [
+        "auth-state-reader"
+      ],
+      "description": "Validates root-user sign-in and lifecycle state through the rootUsers auth-state reader."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing the root authorization checker contract can break shared capability enforcement across the platform.",
+    "Changing role assignment persistence or effective-permission semantics can break downstream authorization assumptions."
+  ]
+}

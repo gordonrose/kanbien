@@ -1,0 +1,567 @@
+{
+  "info": {
+    "_postman_id": "f3f6d34f-18ad-478b-abfb-7c4d72f4fd90",
+    "name": "Kanbien Tenants",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the protected tenants feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises tenant create, visible/deleted reads and lists, update, soft delete, reactivate, and confirmed remove. Public auth requests may return 429 AUTH_THROTTLED or AUTH_LOCKED_DOWN. Protected tenant requests may return 429 RATE_LIMITED when shared platform security middleware rejects the request. Successful root login writes a shared root session into the active Postman environment, and tenant creation stores the active tenant ID there as well."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "signerUrl",
+      "value": "http://127.0.0.1:8787"
+    },
+    {
+      "key": "email",
+      "value": "elvis.presley@example.com"
+    },
+    {
+      "key": "password",
+      "value": "Test1234!"
+    },
+    {
+      "key": "rootSessionId",
+      "value": "sess_replace_me"
+    },
+    {
+      "key": "challengeId",
+      "value": "chal_replace_me"
+    },
+    {
+      "key": "challengeText",
+      "value": "challenge_text_replace_me"
+    },
+    {
+      "key": "publicKeyFingerprint",
+      "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY"
+    },
+    {
+      "key": "sshSignature",
+      "value": "base64_signature_over_challenge_text"
+    },
+    {
+      "key": "sshSignatureJson",
+      "value": "base64_signature_over_challenge_text"
+    },
+    {
+      "key": "tenantId",
+      "value": "00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "key": "tenantBizId",
+      "value": "acme-primary"
+    },
+    {
+      "key": "tenantName",
+      "value": "Acme Primary"
+    },
+    {
+      "key": "tenantCategory",
+      "value": "customer"
+    },
+    {
+      "key": "tenantStatus",
+      "value": "draft"
+    },
+    {
+      "key": "removableTenantId",
+      "value": "00000000-0000-0000-0000-000000000002"
+    },
+    {
+      "key": "removableTenantBizId",
+      "value": "acme-removable"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "health"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Login Password",
+      "description": "Stage one of root login. On success it stores challenge variables.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/password",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "login",
+            "password"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.challengeId) pm.collectionVariables.unset(\"challengeId\");",
+              "if (!json.challengeText) pm.collectionVariables.unset(\"challengeText\");",
+              "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
+              "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Sign Challenge",
+      "description": "Local helper request that signs the stored challenge text with your configured SSH private key.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeText\": \"{{challengeText}}\"\n}"
+        },
+        "url": {
+          "raw": "{{signerUrl}}/sign",
+          "host": [
+            "{{signerUrl}}"
+          ],
+          "path": [
+            "sign"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignature\", json.signature);",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignatureJson\", JSON.stringify(json.signature).slice(1, -1));",
+              "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Login SSH",
+      "description": "Stage two of root login. On success it stores the bearer session token.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignatureJson}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/ssh",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "login",
+            "ssh"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.sessionId) pm.environment.unset(\"rootSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Tenant",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bizId\": \"{{tenantBizId}}\",\n  \"name\": \"{{tenantName}}\",\n  \"category\": \"{{tenantCategory}}\",\n  \"status\": \"{{tenantStatus}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.tenantId) pm.environment.set(\"tenantId\", json.tenantId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Tenant",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants",
+            "{{tenantId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Tenants",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc&bizIdPrefix=acme&namePrefix=acme&category=customer&status=draft",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            },
+            {
+              "key": "orderBy",
+              "value": "updatedAt"
+            },
+            {
+              "key": "orderDirection",
+              "value": "desc"
+            },
+            {
+              "key": "bizIdPrefix",
+              "value": "acme"
+            },
+            {
+              "key": "namePrefix",
+              "value": "acme"
+            },
+            {
+              "key": "category",
+              "value": "customer"
+            },
+            {
+              "key": "status",
+              "value": "draft"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Tenant",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Acme Primary Updated\",\n  \"category\": \"demo\",\n  \"status\": \"live\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants",
+            "{{tenantId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Soft Delete Tenant",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/delete",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants",
+            "{{tenantId}}",
+            "delete"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Deleted Tenant",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/deleted/{{tenantId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants",
+            "deleted",
+            "{{tenantId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Deleted Tenants",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/deleted?page=1&pageSize=25&orderBy=deletedAt&orderDirection=desc&status=inactive",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants",
+            "deleted"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            },
+            {
+              "key": "orderBy",
+              "value": "deletedAt"
+            },
+            {
+              "key": "orderDirection",
+              "value": "desc"
+            },
+            {
+              "key": "status",
+              "value": "inactive"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Reactivate Tenant",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{tenantId}}/reactivate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants",
+            "{{tenantId}}",
+            "reactivate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Removable Tenant",
+      "description": "Creates a fresh tenant intended for the hard-remove path so the main lifecycle fixture can remain available.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bizId\": \"{{removableTenantBizId}}\",\n  \"name\": \"Removable Tenant\",\n  \"category\": \"test\",\n  \"status\": \"draft\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.tenantId) pm.collectionVariables.set(\"removableTenantId\", json.tenantId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Remove Tenant",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"confirm\": true,\n  \"reason\": \"cleanup after manual tenant API exercise\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenants/{{removableTenantId}}/remove",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "tenants",
+            "{{removableTenantId}}",
+            "remove"
+          ]
+        }
+      }
+    }
+  ]
+}

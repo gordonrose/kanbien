@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "featureName": "entityBuilder",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createEntityBuilderFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for the entity builder feature."
+    },
+    {
+      "seamId": "entity-definition-response-types",
+      "symbol": "EntityDefinitionCurrentResponse | EntityDefinitionExportResponse | EntityDefinitionVersionResponse",
+      "path": "index.ts",
+      "kind": "contract-types",
+      "stability": "stable",
+      "description": "Exported entity builder response types for downstream consumers."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Removing or renaming exported entity definition response types can break downstream consumers that compile against this contract surface.",
+    "Changing durable entity definition persistence or export semantics can invalidate snapshot tooling and compatibility assumptions."
+  ]
+}

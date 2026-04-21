@@ -12,6 +12,8 @@ It provides the backend capabilities required for:
 
 - bootstrap of a shared non-root auth principal from a verified `tenantAdmin`
 - initial password setup
+- root-operator onboarding restart for a verified tenant-admin whose password
+  setup still needs to be completed
 - email-plus-password login
 - authenticated tenant-session read
 - available tenant-context listing
@@ -37,6 +39,7 @@ This phase includes:
 - a new `tenantAuth` feature under `src/features/tenantAuth`
 - shared non-root auth-principal bootstrap from a verified `tenantAdmin`
 - initial password setup for newly bootstrapped principals
+- protected onboarding restart for already verified tenant-admins
 - public email-plus-password login for non-root principals
 - server-backed authenticated tenant-session creation
 - authenticated exact session read
@@ -156,6 +159,28 @@ Rules:
 
 Separating password setup from login keeps the onboarding flow deterministic
 and avoids hiding session semantics inside credential creation.
+
+### Operator onboarding restart
+
+This slice also needs a protected recovery path for the case where:
+
+- the tenant-admin email has already been verified
+- the verification proof has already been consumed
+- no usable password-setup proof is still available
+- a root operator needs to help the user finish onboarding
+
+Rules:
+
+- onboarding restart is a root-only operator action
+- it is allowed only for visible verified tenant-admin rows
+- it reuses the same tenant-auth provisioning seam as public verification
+  redemption
+- it may mint a fresh password-setup bootstrap token when the principal still
+  needs an initial password
+- it may return `LOGIN_REQUIRED` when a password already exists and no password
+  setup is needed
+- it must not require a second email-verification cycle or mutate verified
+  email state back to pending
 
 ### Tenant session
 
@@ -404,34 +429,35 @@ Rules:
 
 ## API Endpoints
 
-### `POST /v1/tenant-auth/principals/bootstrap`
+### `POST /v1/tenant-admin-verification/redeem`
 
-Purpose: bootstrap a shared non-root principal from verified tenant-admin
-evidence.
+Purpose: verify the tenant-admin email, provision or reuse the shared non-root
+principal, and hand back the next onboarding step.
 
 #### Request
 
-The final request proof may be:
-
-- a single-use tenant-auth bootstrap token issued after successful
-  tenant-admin verification redemption
-- or an equivalent feature-owned onboarding proof
-
-The request must not accept:
-
-- client-supplied `authPrincipalId`
-- client-supplied `tenantAccessGrantId`
-- password hashes
-- session identifiers
+```json
+{
+  "token": "verify_123"
+}
+```
 
 #### Success Response
 
 ```json
 {
-  "status": "PRINCIPAL_BOOTSTRAPPED",
-  "authPrincipalId": "ap_123",
-  "loginEmail": "admin@example.com",
-  "passwordSetupRequired": true
+  "status": "VERIFIED",
+  "tenantAdmin": {
+    "tenantAdminId": "ta_123",
+    "emailVerificationStatus": "verified"
+  },
+  "tenantAuthOnboarding": {
+    "authPrincipalId": "ap_123",
+    "loginEmail": "admin@example.com",
+    "passwordSetupRequired": true,
+    "bootstrapToken": "boot_123",
+    "nextStep": "PASSWORD_SETUP_REQUIRED"
+  }
 }
 ```
 
@@ -446,6 +472,30 @@ Purpose: set the first password for a bootstrapped principal.
   "bootstrapToken": "boot_123",
   "newPassword": "user-typed-password",
   "repeatPassword": "user-typed-password"
+}
+```
+
+### `POST /v1/tenants/{tenantId}/admins/{tenantAdminId}/onboarding/restart`
+
+Purpose: allow a root operator to restart tenant-auth onboarding for an already
+verified tenant admin without forcing a second verification-email loop.
+
+#### Success Response
+
+```json
+{
+  "status": "ONBOARDING_RESTARTED",
+  "tenantAdmin": {
+    "tenantAdminId": "ta_123",
+    "emailVerificationStatus": "verified"
+  },
+  "tenantAuthOnboarding": {
+    "authPrincipalId": "ap_123",
+    "loginEmail": "admin@example.com",
+    "passwordSetupRequired": true,
+    "bootstrapToken": "boot_456",
+    "nextStep": "PASSWORD_SETUP_REQUIRED"
+  }
 }
 ```
 

@@ -40,6 +40,11 @@ if (hasPostgresTestDatabaseConfig()) {
     "tests/integration/rootUsers/persistence.test.ts",
     "tests/integration/tenants/persistence.test.ts",
     "tests/integration/notificationDelivery/persistence.test.ts",
+    "tests/integration/tenantAuth/persistence.test.ts",
+    "tests/integration/tenantConfiguration/persistence.test.ts",
+    "tests/integration/entityBuilder/persistence.test.ts",
+    "tests/integration/webAppHierarchyBuilder/persistence.test.ts",
+    "tests/integration/webAppSurfaceDiscovery/persistence.test.ts",
   ], {
     RUN_POSTGRES_TESTS: "true",
   });

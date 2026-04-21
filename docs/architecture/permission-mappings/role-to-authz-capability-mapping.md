@@ -92,8 +92,40 @@ are not a role.
 | `RootUserAdmin` | `tenant-admin.update` | `current` | current root operator grant | yes | yes | editable tenant-admin profile update |
 | `RootUserAdmin` | `tenant-admin.verification.send` | `current` | current root operator grant | yes | yes | initial verification send workflow |
 | `RootUserAdmin` | `tenant-admin.verification.resend` | `current` | current root operator grant | yes | yes | fresh-token verification resend workflow |
+| `RootUserAdmin` | `tenant-admin.onboarding.restart` | `current` | current root operator grant | yes | yes | restart tenant-auth onboarding for a verified tenant-admin |
 | `RootUserAdmin` | `tenant-admin.delete` | `current` | current root operator grant | no | yes | soft-delete tenant-admin record |
 | `RootUserAdmin` | `tenant-admin.reactivate` | `current` | current root operator grant | no | yes | reactivate deleted tenant-admin record with verification reset |
+| `RootUserAdmin` | `web-app-hierarchy.create-module` | `current` | current root operator grant | yes | yes | create a curated web-app module |
+| `RootUserAdmin` | `web-app-hierarchy.update-module` | `current` | current root operator grant | yes | yes | update editable curated module metadata |
+| `RootUserAdmin` | `web-app-hierarchy.update-module-landing-page` | `current` | current root operator grant | yes | yes | update direct-child module landing-page truth |
+| `RootUserAdmin` | `web-app-hierarchy.create-page` | `current` | current root operator grant | yes | yes | create a curated web-app page |
+| `RootUserAdmin` | `web-app-hierarchy.create-design-system-page` | `current` | current root operator grant | yes | yes | create a proposed top-level design-system page |
+| `RootUserAdmin` | `web-app-hierarchy.create-design-system-subpage` | `current` | current root operator grant | yes | yes | create a proposed design-system child page |
+| `RootUserAdmin` | `web-app-hierarchy.update-page` | `current` | current root operator grant | yes | yes | update editable curated page metadata |
+| `RootUserAdmin` | `web-app-hierarchy.move-page` | `current` | current root operator grant | yes | yes | move or orphan a curated page safely |
+| `RootUserAdmin` | `web-app-hierarchy.read-tree` | `current` | current root operator grant | yes | yes | read the resolved curated tree |
+| `RootUserAdmin` | `web-app-hierarchy.preview-design-system-materialization` | `current` | current root operator grant | yes | yes | preview deterministic design-system materialization |
+| `RootUserAdmin` | `web-app-hierarchy.apply-design-system-materialization` | `current` | current root operator grant | yes | yes | apply approved design-system materialization |
+| `RootUserAdmin` | `web-app-hierarchy.read-planner-options` | `current` | current root operator grant | yes | yes | read planner-selectable hierarchy nodes |
+| `RootUserAdmin` | `web-app-hierarchy.list-orphans` | `current` | current root operator grant | yes | yes | list orphaned curated pages |
+| `RootUserAdmin` | `web-app-hierarchy.bootstrap` | `current` | current root operator grant | yes | yes | explicit-input hierarchy bootstrap |
+| `RootUserAdmin` | `web-app-hierarchy.sync-discovery` | `current` | current root operator grant | yes | yes | compatibility sync wrapper that returns the updated tree |
+| `RootUserAdmin` | `web-app-hierarchy.preview-discovery-sync` | `current` | current root operator grant | yes | yes | preview structure-aware discovery reconcile |
+| `RootUserAdmin` | `web-app-hierarchy.apply-discovery-sync` | `current` | current root operator grant | yes | yes | apply structure-aware discovery reconcile |
+| `RootUserAdmin` | `web-app-hierarchy.read-discovery-link-status` | `current` | current root operator grant | yes | yes | inspect discovery-link and drift status |
+| `RootUserAdmin` | `web-app-page-settings.read` | `current` | current root operator grant | yes | yes | exact read of durable page settings |
+| `RootUserAdmin` | `web-app-page-settings.update` | `current` | current root operator grant | yes | yes | exact mutation of durable page settings |
+| `RootUserAdmin` | `web-app-page-settings.read-options` | `current` | current root operator grant | yes | yes | read approved page-settings options and eligible target pages |
+| `RootUserAdmin` | `web-app-surface-discovery.run` | `current` | current root operator grant | yes | yes | run approved-route web-app discovery |
+| `RootUserAdmin` | `web-app-surface-discovery.read` | `current` | current root operator grant | yes | yes | read current discovered surfaces |
+| `RootUserAdmin` | `web-app-surface-discovery.read-runs` | `current` | current root operator grant | yes | yes | read discovery run history |
+| `RootUserAdmin` | `web-app-surface-discovery.read-structure` | `current` | current root operator grant | yes | yes | read current discovered structure trees and exact nodes |
+| `RootUserAdmin` | `entity-builder.create` | `current` | current root operator grant | yes | yes | create entity-definition lineages or replacement versions |
+| `RootUserAdmin` | `entity-builder.update` | `current` | current root operator grant | yes | yes | update draft entity-definition versions |
+| `RootUserAdmin` | `entity-builder.read` | `current` | current root operator grant | yes | yes | current and exact historical entity-definition reads |
+| `RootUserAdmin` | `entity-builder.catalog.read` | `current` | current root operator grant | yes | yes | approved attribute and form-pattern catalog reads |
+| `RootUserAdmin` | `entity-builder.validate` | `current` | current root operator grant | yes | yes | validation readiness reads for activation and export |
+| `RootUserAdmin` | `entity-builder.export` | `current` | current root operator grant | yes | yes | canonical derived export generation |
 
 ## Deterministic Method For Future Roles
 

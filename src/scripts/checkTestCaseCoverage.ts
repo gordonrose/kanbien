@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { buildTraceabilityReport, formatTraceabilityReport } from "../lib/testingData/traceabilityReport";
-import { parseTraceabilityEnforcement } from "../lib/testingData/testCaseLifecycle";
+import { parseLifecycleDocument } from "../lib/testingData/testCaseLifecycle";
 
 const repoRoot = process.cwd();
 const testCaseDir = join(repoRoot, "docs", "prd", "test_cases");
@@ -9,6 +9,13 @@ const searchRoots = [
   join(repoRoot, "tests"),
   join(repoRoot, "src"),
 ];
+
+interface TestCaseSourceSummary {
+  activeIds: string[];
+  deferredIds: string[];
+  deferredDocumentPaths: string[];
+  skippedCaseIdsByStatus: Record<string, string[]>;
+}
 
 function walkFiles(root: string, predicate: (path: string) => boolean, acc: string[] = []): string[] {
   for (const entry of readdirSync(root)) {
@@ -32,26 +39,49 @@ function walkFiles(root: string, predicate: (path: string) => boolean, acc: stri
   return acc;
 }
 
-function readTestCaseIds(): string[] {
+function readTestCaseSourceSummary(): TestCaseSourceSummary {
   const markdownFiles = walkFiles(
     testCaseDir,
     (path) => path.endsWith(".md") && !path.endsWith("README.md"),
   );
-  const idPattern = /`(TC-[A-Z0-9-]+)`/g;
-  const ids = new Set<string>();
+  const activeIds = new Set<string>();
+  const deferredIds = new Set<string>();
+  const deferredDocumentPaths: string[] = [];
+  const skippedCaseIdsByStatus: Record<string, string[]> = {};
 
   for (const filePath of markdownFiles) {
-    const contents = readFileSync(filePath, "utf8");
-    if (parseTraceabilityEnforcement(contents) === "deferred") {
+    const document = parseLifecycleDocument(filePath);
+
+    if (document.traceabilityEnforcement === "deferred") {
+      deferredDocumentPaths.push(filePath);
+      const deferredMatches = new Set(readFileSync(filePath, "utf8").match(/TC-[A-Z0-9-]+/g) ?? []);
+      for (const testCaseId of deferredMatches) {
+        deferredIds.add(testCaseId);
+      }
       continue;
     }
 
-    for (const match of contents.matchAll(idPattern)) {
-      ids.add(match[1]);
+    for (const testCase of document.cases) {
+      if (testCase.status === "active") {
+        activeIds.add(testCase.testCaseId);
+        continue;
+      }
+
+      skippedCaseIdsByStatus[testCase.status] ??= [];
+      skippedCaseIdsByStatus[testCase.status].push(testCase.testCaseId);
     }
   }
 
-  return [...ids].sort();
+  for (const key of Object.keys(skippedCaseIdsByStatus)) {
+    skippedCaseIdsByStatus[key].sort();
+  }
+
+  return {
+    activeIds: [...activeIds].sort(),
+    deferredIds: [...deferredIds].sort(),
+    deferredDocumentPaths: deferredDocumentPaths.sort(),
+    skippedCaseIdsByStatus,
+  };
 }
 
 function readSearchCorpus(): string {
@@ -68,24 +98,46 @@ function readSearchCorpus(): string {
 }
 
 function main() {
-  const ids = readTestCaseIds();
+  const sourceSummary = readTestCaseSourceSummary();
+  const ids = sourceSummary.activeIds;
 
   if (ids.length === 0) {
-    console.error("No `TC-*` test case IDs were found under docs/prd/test_cases.");
+    console.error("No active enforced `TC-*` test case IDs were found under docs/prd/test_cases.");
     process.exit(1);
   }
 
   const corpus = readSearchCorpus();
   const report = buildTraceabilityReport(ids, corpus);
+  report.orphanedExecutableIds = report.orphanedExecutableIds.filter((id) => (
+    !sourceSummary.deferredIds.includes(id)
+  ));
 
-  const writer = report.missingIds.length > 0 ? console.error : console.log;
+  const hasFailures =
+    report.missingIds.length > 0 ||
+    report.orphanedExecutableIds.length > 0 ||
+    report.malformedIds.length > 0;
+  const writer = hasFailures ? console.error : console.log;
+
+  writer(`Deferred PRD test-case docs skipped: ${sourceSummary.deferredDocumentPaths.length}`);
+  for (const path of sourceSummary.deferredDocumentPaths) {
+    writer(`- ${path}`);
+  }
+
+  const skippedStatuses = Object.keys(sourceSummary.skippedCaseIdsByStatus).sort();
+  writer(`Non-active documented test cases skipped: ${skippedStatuses.reduce((sum, status) => (
+    sum + sourceSummary.skippedCaseIdsByStatus[status].length
+  ), 0)}`);
+  for (const status of skippedStatuses) {
+    writer(`- ${status}: ${sourceSummary.skippedCaseIdsByStatus[status].length}`);
+  }
+
   for (const line of formatTraceabilityReport(report)) {
     writer(line);
   }
 
-  if (report.missingIds.length > 0) {
+  if (hasFailures) {
     console.error(
-      "\nAdd each ID to an executable test name or nearby test comment so the documented plan stays traceable.",
+      "\nKeep reviewed PRD test cases active only when they still require executable proof, and keep executable `TC-*` IDs aligned with reviewed docs.",
     );
     process.exit(1);
   }

@@ -4,6 +4,8 @@ import { createOneTimeTokenMaterial } from "../../src/lib/tokens";
 import { createRateLimitMiddleware } from "../../src/lib/security/rateLimit";
 import { env } from "../../src/config/env";
 import { createTenantAuthService } from "../../src/features/tenantAuth/domain/service";
+import type { TenantAuthPolicyResolver } from "../../src/features/tenantConfiguration";
+import { createTenantAdminsService } from "../../src/features/tenantAdmins/domain/service";
 import type {
   TenantAccessGrantData,
   TenantAuthPrincipalData,
@@ -27,10 +29,18 @@ import type {
 } from "../../src/features/tenantAdmins/domain/types";
 import {
   createInMemoryTenantAdminsRepository,
+  createNoopTenantAuthOnboardingProvisioner,
   createTenantAdminRecord,
   createVisibleTenantsReader,
 } from "./tenantAdminsHarness";
+import type { VisibleTenantsReader } from "../../src/features/tenants";
 import type { RootAuthIntegrationHarness } from "../harness/rootAuth/integrationHarness";
+import { createTenantAdminVerificationRouter } from "../../src/features/tenantAdmins/transport/router";
+import { createNotificationDeliveryService } from "../../src/features/notificationDelivery/domain/service";
+import {
+  createInMemoryNotificationDeliveryRepository,
+  FakeNotificationEmailProvider,
+} from "./notificationDeliveryHarness";
 
 function normalizeEmail(value: string): string {
   return value.trim().toLowerCase();
@@ -78,6 +88,8 @@ export function createTenantSessionRecord(
     authPrincipalId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
     activeTenantId: null,
     selectionRequired: true,
+    remediationRequired: false,
+    remediationReason: null,
     authenticatedAt: now,
     expiresAt: new Date(now.getTime() + 60 * 60 * 1000),
     revokedAt: null,
@@ -298,6 +310,36 @@ export function createInMemoryTenantAuthRepository(
         usedAt: new Date("2026-04-09T01:20:00.000Z"),
       });
     },
+    async completePasswordSetup(input) {
+      const principal = principals.get(input.authPrincipalId) ?? null;
+      if (!principal) {
+        return "principal_not_found";
+      }
+      if (principal.passwordState === "active") {
+        return "password_already_set";
+      }
+      const token = passwordSetupTokens.get(input.tokenId) ?? null;
+      if (
+        !token ||
+        token.authPrincipalId !== input.authPrincipalId ||
+        token.usedAt !== null ||
+        token.invalidatedAt !== null
+      ) {
+        return "token_not_active";
+      }
+
+      passwordSetupTokens.set(input.tokenId, {
+        ...token,
+        usedAt: new Date("2026-04-09T01:20:00.000Z"),
+      });
+      passwordHashes.set(input.authPrincipalId, input.newPassword);
+      principals.set(input.authPrincipalId, {
+        ...principal,
+        passwordState: "active",
+        updatedAt: new Date(input.passwordSetAt),
+      });
+      return "updated";
+    },
     async setPassword(authPrincipalId, newPassword, passwordSetAt) {
       passwordHashes.set(authPrincipalId, newPassword);
       const principal = principals.get(authPrincipalId)!;
@@ -316,6 +358,8 @@ export function createInMemoryTenantAuthRepository(
         authPrincipalId: input.authPrincipalId,
         activeTenantId: input.activeTenantId,
         selectionRequired: input.selectionRequired,
+        remediationRequired: input.remediationRequired,
+        remediationReason: input.remediationReason,
         authenticatedAt: input.authenticatedAt,
         expiresAt: input.expiresAt,
         revokedAt: null,
@@ -327,6 +371,8 @@ export function createInMemoryTenantAuthRepository(
         auth_principal_id: record.authPrincipalId,
         active_tenant_id: record.activeTenantId,
         selection_required: record.selectionRequired,
+        remediation_required: record.remediationRequired,
+        remediation_reason: record.remediationReason,
         authenticated_at: record.authenticatedAt,
         expires_at: record.expiresAt,
         revoked_at: record.revokedAt,
@@ -341,6 +387,8 @@ export function createInMemoryTenantAuthRepository(
             auth_principal_id: record.authPrincipalId,
             active_tenant_id: record.activeTenantId,
             selection_required: record.selectionRequired,
+            remediation_required: record.remediationRequired,
+            remediation_reason: record.remediationReason,
             authenticated_at: record.authenticatedAt,
             expires_at: record.expiresAt,
             revoked_at: record.revokedAt,
@@ -364,6 +412,32 @@ export function createInMemoryTenantAuthRepository(
         auth_principal_id: next.authPrincipalId,
         active_tenant_id: next.activeTenantId,
         selection_required: next.selectionRequired,
+        remediation_required: next.remediationRequired,
+        remediation_reason: next.remediationReason,
+        authenticated_at: next.authenticatedAt,
+        expires_at: next.expiresAt,
+        revoked_at: next.revokedAt,
+        created_at: next.createdAt,
+      };
+    },
+    async updateSessionRemediation(sessionId, authPrincipalId, remediationRequired, remediationReason) {
+      const current = sessions.get(sessionId) ?? null;
+      if (!current || current.authPrincipalId !== authPrincipalId || current.revokedAt !== null) {
+        return null;
+      }
+      const next = {
+        ...current,
+        remediationRequired,
+        remediationReason,
+      };
+      sessions.set(sessionId, next);
+      return {
+        session_id: next.sessionId,
+        auth_principal_id: next.authPrincipalId,
+        active_tenant_id: next.activeTenantId,
+        selection_required: next.selectionRequired,
+        remediation_required: next.remediationRequired,
+        remediation_reason: next.remediationReason,
         authenticated_at: next.authenticatedAt,
         expires_at: next.expiresAt,
         revoked_at: next.revokedAt,
@@ -415,6 +489,8 @@ export function mountTenantAuthFeature(
   options?: {
     tenantAuthRepository?: ReturnType<typeof createInMemoryTenantAuthRepository>;
     tenantAdminsRepository?: ReturnType<typeof createInMemoryTenantAdminsRepository>;
+    visibleTenantsReader?: VisibleTenantsReader;
+    policyResolver?: TenantAuthPolicyResolver;
   },
 ) {
   const tenantAuthRepository =
@@ -423,15 +499,29 @@ export function mountTenantAuthFeature(
     options?.tenantAdminsRepository ?? createInMemoryTenantAdminsRepository();
   const tenantAdminsAuthBootstrapReader =
     createTenantAdminsAuthBootstrapReader(tenantAdminsRepository);
-  const visibleTenantsReader = createVisibleTenantsReader([
-    "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
-    "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
-  ]);
+  const visibleTenantsReader =
+    options?.visibleTenantsReader ??
+    createVisibleTenantsReader([
+      "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+    ]);
+  const policyResolver = options?.policyResolver;
   const service = createTenantAuthService(
     tenantAuthRepository,
     tenantAdminsAuthBootstrapReader,
     visibleTenantsReader,
+    policyResolver,
     harness.platformSecurityRepository,
+  );
+  const tenantAdminsService = createTenantAdminsService(
+    tenantAdminsRepository,
+    visibleTenantsReader,
+    createNotificationDeliveryService(
+      createInMemoryNotificationDeliveryRepository(),
+      new FakeNotificationEmailProvider(),
+    ),
+    harness.platformSecurityRepository,
+    service.onboardingProvisioner ?? createNoopTenantAuthOnboardingProvisioner(),
   );
 
   app.use(
@@ -442,10 +532,18 @@ export function mountTenantAuthFeature(
       harness.platformSecurityRepository,
     ),
   );
+  app.use(
+    "/v1/tenant-admin-verification",
+    createTenantAdminVerificationRouter(
+      tenantAdminsService,
+      harness.platformSecurityRepository,
+    ),
+  );
 
   return {
     tenantAuthRepository,
     tenantAdminsRepository,
+    tenantAdminsService,
   };
 }
 

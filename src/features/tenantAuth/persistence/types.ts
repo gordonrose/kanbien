@@ -45,6 +45,8 @@ export interface TenantSessionRecord {
   auth_principal_id: string;
   active_tenant_id: string | null;
   selection_required: boolean;
+  remediation_required: boolean;
+  remediation_reason: "password_policy_upgrade_required" | null;
   authenticated_at: Date;
   expires_at: Date;
   revoked_at: Date | null;
@@ -79,6 +81,8 @@ export interface CreateTenantSessionInput {
   authPrincipalId: string;
   activeTenantId: string | null;
   selectionRequired: boolean;
+  remediationRequired: boolean;
+  remediationReason: "password_policy_upgrade_required" | null;
   authenticatedAt: Date;
   expiresAt: Date;
 }

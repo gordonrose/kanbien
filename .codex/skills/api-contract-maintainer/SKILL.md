@@ -136,6 +136,8 @@ implementation plan, call out whether these should also be reviewed:
 
 - `docs/standards/platform-status/*.md`
 - `docs/workspace/implementation-blueprints/`
+- affected `src/features/<featureName>/feature.manifest.json`
+- `docs/architecture/generated/feature-dependency-graph.*`
 - other build-from-spec artifacts required by
   `docs/standards/change-artifact-requirements.md`
 
@@ -161,6 +163,9 @@ implementation plan, call out whether these should also be reviewed:
   flows add real behavior.
 - Do not update an API contract in isolation when the change clearly shifts the
   repo's maintained standards baseline or build plan; surface that impact.
+- Do not leave feature manifests or generated dependency artifacts stale when a
+  route-family change adds, removes, or changes a feature public seam or
+  cross-feature dependency.
 - Do not collapse public login routes and protected session-management routes
   into one doc if they have materially different auth and middleware behavior.
 - If a route family includes browser-cookie behavior, document the cookie and

@@ -39,6 +39,18 @@
   Description: Whether the session still requires explicit tenant selection.
   Constraints / Notes: Required.
   Source: `src/features/tenantAuth/persistence/migrations/0009_create_tenant_auth.sql`
+- `remediation_required`
+  Type / Shape: `BOOLEAN`
+  Description: Whether the authenticated session is currently blocked pending
+  remediation.
+  Constraints / Notes: Required. Defaults to `FALSE`.
+  Source: `src/features/tenantConfiguration/persistence/migrations/0010_create_tenant_auth_policy.sql`
+- `remediation_reason`
+  Type / Shape: `TEXT | NULL`
+  Description: Current remediation reason attached to the session.
+  Constraints / Notes: `NULL` when no remediation is required. Phase one allows
+  only `password_policy_upgrade_required`.
+  Source: `src/features/tenantConfiguration/persistence/migrations/0010_create_tenant_auth_policy.sql`
 - `authenticated_at`
   Type / Shape: `TIMESTAMPTZ`
   Description: Session creation/authentication time.
@@ -47,9 +59,13 @@
 - `expires_at`
   Type / Shape: `TIMESTAMPTZ`
   Description: Session expiry time.
-  Constraints / Notes: Required. Derived from `TENANT_AUTH_SESSION_TTL_SECONDS`.
+  Constraints / Notes: Required. Derived at login time from the effective
+  tenant auth policy session TTL. When one shared principal can access multiple
+  tenants, the currently implemented rule uses the shortest effective tenant
+  TTL across accessible tenant contexts at session creation time.
   Source: `src/features/tenantAuth/persistence/migrations/0009_create_tenant_auth.sql`,
-  `src/config/env.ts`
+  `src/features/tenantAuth/domain/service.ts`,
+  `src/features/tenantConfiguration/domain/service.ts`
 - `revoked_at`
   Type / Shape: `TIMESTAMPTZ | NULL`
   Description: Revocation marker.
@@ -80,6 +96,13 @@
   Definition / Rule: Expiry-oriented secondary index on `expires_at`.
   Why It Matters: Supports active-session filtering and later maintenance jobs.
   Source: `src/features/tenantAuth/persistence/migrations/0009_create_tenant_auth.sql`
+- `ix_tenant_session_remediation_active`
+  Type: `other`
+  Definition / Rule: Partial index on `(auth_principal_id, active_tenant_id,
+  expires_at DESC)` for unrevoked remediation-gated sessions.
+  Why It Matters: Supports exact remediation-state lookups without scanning all
+  active sessions for a principal.
+  Source: `src/features/tenantConfiguration/persistence/migrations/0010_create_tenant_auth_policy.sql`
 
 ## Lifecycle Semantics
 
@@ -94,18 +117,36 @@
   Meaning: session state stays aligned with current access rather than blindly
   preserving stale active-tenant values.
   Source: `src/features/tenantAuth/domain/service.ts`
+- State or lifecycle rule: valid credential login may create a remediation-gated
+  session instead of denying authentication immediately.
+  Meaning: an authenticated principal can be blocked from normal access until a
+  policy-compliant password change clears the session remediation state.
+  Source: `src/features/tenantAuth/domain/service.ts`
 
 ## Mutation Semantics
 
 - Mutation rule: password login inserts a new session row.
   Effect on stored fields: creates one durable authenticated session with
-  either an auto-selected tenant or `selection_required = true`.
+  either an auto-selected tenant or `selection_required = true`, and computes
+  `expires_at` from the effective shared-principal tenant TTL policy.
   Source: `src/features/tenantAuth/domain/service.ts`,
   `src/features/tenantAuth/persistence/postgresRepository.ts`
 - Mutation rule: explicit tenant selection updates `active_tenant_id` and clears
   `selection_required`.
   Effect on stored fields: session becomes bound to the chosen tenant context
   until later context changes.
+  Source: `src/features/tenantAuth/domain/service.ts`,
+  `src/features/tenantAuth/persistence/postgresRepository.ts`
+- Mutation rule: remediation-aware login may set `remediation_required = TRUE`
+  and `remediation_reason = 'password_policy_upgrade_required'`.
+  Effect on stored fields: authenticated session truthfully carries the blocking
+  remediation state until the password is updated or the session is revoked.
+  Source: `src/features/tenantAuth/domain/service.ts`,
+  `src/features/tenantAuth/persistence/postgresRepository.ts`
+- Mutation rule: successful password remediation clears `remediation_required`
+  and `remediation_reason`.
+  Effect on stored fields: the session returns to normal authenticated state
+  without creating a second session solely to clear the gate.
   Source: `src/features/tenantAuth/domain/service.ts`,
   `src/features/tenantAuth/persistence/postgresRepository.ts`
 - Mutation rule: logout sets `revoked_at = COALESCE(revoked_at, NOW())`.
@@ -120,7 +161,8 @@
   tenant-auth routes
   Allowed read shape: active session record with `session_id`,
   `auth_principal_id`, `active_tenant_id`, `selection_required`,
-  `authenticated_at`, and `expires_at`
+  `remediation_required`, `remediation_reason`, `authenticated_at`, and
+  `expires_at`
   Source: `src/features/tenantAuth/persistence/repository.ts`,
   `src/lib/auth/middleware.ts`
 
@@ -144,5 +186,6 @@
 ## Source
 
 - `src/features/tenantAuth/persistence/migrations/0009_create_tenant_auth.sql`
+- `src/features/tenantConfiguration/persistence/migrations/0010_create_tenant_auth_policy.sql`
 - `src/features/tenantAuth/domain/service.ts`
 - `src/lib/auth/middleware.ts`

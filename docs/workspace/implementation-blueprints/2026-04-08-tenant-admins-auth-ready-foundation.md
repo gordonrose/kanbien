@@ -92,6 +92,7 @@ This blueprint does **not** include:
   - `PATCH /v1/tenants/:tenantId/admins/:tenantAdminId`
   - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/verification/send`
   - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/verification/resend`
+  - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/onboarding/restart`
   - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/delete`
   - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/reactivate`
 - Public workflow route:
@@ -119,6 +120,9 @@ This blueprint does **not** include:
     operator-visible reason if the final contract keeps it narrow
   - verification redemption accepts:
     - raw verification token only
+  - onboarding restart returns:
+    - tenant-admin summary
+    - tenant-auth onboarding payload
   - use repo-standard authz and validation error shape
   - normalize workflow-specific failures into stable feature-owned codes such as:
     - `TENANT_ADMIN_NOT_FOUND`
@@ -199,6 +203,7 @@ This blueprint does **not** include:
   - `tenant-admin.update`
   - `tenant-admin.verification.send`
   - `tenant-admin.verification.resend`
+  - `tenant-admin.onboarding.restart`
   - `tenant-admin.delete`
   - `tenant-admin.reactivate`
 - treat `RootUserAdmin` as the initial granting role
@@ -300,6 +305,8 @@ This blueprint does **not** include:
   - all operator routes require authenticated root session
   - all operator routes stay tenant-scoped by exact route tenant ownership
   - verification send and resend require visible unverified tenant-admin rows
+  - onboarding restart requires a visible verified tenant-admin row
+  - onboarding restart must not send a new verification email
   - verification send and resend stamp
     `lastVerificationEmailRequestedAt`
   - resend mints a fresh verification token and must not replay old

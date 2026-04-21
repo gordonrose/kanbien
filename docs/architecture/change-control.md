@@ -34,6 +34,8 @@ Examples:
 - switching from explicit registration to automatic discovery
 - changing the global error response contract
 - introducing a new shared infrastructure dependency
+- changing governed frontend adoption from CSS-only reuse to shared render or
+  behavior seams
 
 ## Documentation Update Rule
 

@@ -7,35 +7,176 @@
     <link rel="stylesheet" href="/design-system/assets/styles.css" />
   </head>
   <body>
-    <div class="design-system-shell canonical-launcher-page">
-      <main class="canonical-launcher-layout">
-        <section class="canonical-launcher-intro">
-          <p class="top-nav-preview-eyebrow">Canonical Launcher</p>
-          <h1>Design-System Canonicals</h1>
-          <p class="canonical-launcher-copy">
-            Use this index to open signed-off canonical review sets for individual design-system families.
-          </p>
-        </section>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy">
+            <strong>Kanbien Design System</strong>
+          </span>
+        </a>
 
-        <section class="canonical-launcher-panel" aria-labelledby="canonical-family-title">
-          <div class="canonical-launcher-panel-header">
-            <div>
-              <p class="top-nav-preview-eyebrow">Family Index</p>
-              <h2 id="canonical-family-title">Available Canonical Sets</h2>
-            </div>
-            <p class="canonical-launcher-note">
-              Each family page contains the canonical review links and first evidence batch for that component.
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link" href="/design-system/components">Components</a>
+            <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Pages</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+        </nav>
+
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">CN</span>
+            <span class="profile-meta">
+              <strong>Patterns</strong>
+            </span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Canonicals</span></li>
+          </ol>
+        </nav>
+
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search canonical review sets" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Design-system section navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/canonicals" data-tooltip="Canonicals" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" />
+              </svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main canonical-launcher-page">
+        <div class="canonical-launcher-layout">
+          <section class="canonical-launcher-intro">
+            <p class="top-nav-preview-eyebrow">Canonical Launcher</p>
+            <h1>Design-System Canonicals</h1>
+            <p class="canonical-launcher-copy">
+              Use this index to open signed-off canonical review sets for individual design-system families.
             </p>
-          </div>
+          </section>
 
-          <div class="canonical-launcher-grid">
-            <a class="canonical-launcher-button" href="/design-system/canonicals/top-nav">
-              <span class="canonical-launcher-ref">top-nav</span>
-              <span class="canonical-launcher-label">Top Nav Canonicals</span>
-            </a>
-          </div>
-        </section>
+          <section class="canonical-launcher-panel" aria-labelledby="canonical-family-title">
+            <div class="canonical-launcher-panel-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Family Index</p>
+                <h2 id="canonical-family-title">Available Canonical Sets</h2>
+              </div>
+              <p class="canonical-launcher-note">
+                Each family page contains the canonical review links and first evidence batch for that component.
+              </p>
+            </div>
+
+            <div class="canonical-launcher-grid">
+              <a class="canonical-launcher-button" href="/design-system/canonicals/launcher">
+                <span class="canonical-launcher-ref">launcher</span>
+                <span class="canonical-launcher-label">Launcher Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/top-nav">
+                <span class="canonical-launcher-ref">top-nav</span>
+                <span class="canonical-launcher-label">Top Nav Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/sub-nav">
+                <span class="canonical-launcher-ref">sub-nav</span>
+                <span class="canonical-launcher-label">Sub Nav Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/context-nav">
+                <span class="canonical-launcher-ref">context-nav</span>
+                <span class="canonical-launcher-label">Context Nav Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/context-nav-drawer">
+                <span class="canonical-launcher-ref">context-nav-drawer</span>
+                <span class="canonical-launcher-label">Context-Nav Drawer Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/hierarchy-tree">
+                <span class="canonical-launcher-ref">hierarchy-tree</span>
+                <span class="canonical-launcher-label">Hierarchy Tree Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/display-settings">
+                <span class="canonical-launcher-ref">display-settings</span>
+                <span class="canonical-launcher-label">Display Settings Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/page-shell-banner">
+                <span class="canonical-launcher-ref">page-shell-banner</span>
+                <span class="canonical-launcher-label">Page-Shell Banner Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/list-record-card">
+                <span class="canonical-launcher-ref">list-record-card</span>
+                <span class="canonical-launcher-label">List Record Card Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/list-detail-panel">
+                <span class="canonical-launcher-ref">list-detail-panel</span>
+                <span class="canonical-launcher-label">List Detail Panel Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/list-detail-split-layout">
+                <span class="canonical-launcher-ref">list-detail-split-layout</span>
+                <span class="canonical-launcher-label">List Detail Split Layout Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/form-template">
+                <span class="canonical-launcher-ref">form-template</span>
+                <span class="canonical-launcher-label">Form Template Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/simple-select">
+                <span class="canonical-launcher-ref">simple-select</span>
+                <span class="canonical-launcher-label">Simple Select Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/date-picker">
+                <span class="canonical-launcher-ref">date-picker</span>
+                <span class="canonical-launcher-label">Date Picker Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/time-picker">
+                <span class="canonical-launcher-ref">time-picker</span>
+                <span class="canonical-launcher-label">Time Picker Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/drawer-select">
+                <span class="canonical-launcher-ref">drawer-select</span>
+                <span class="canonical-launcher-label">Drawer Select Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/icon-grid">
+                <span class="canonical-launcher-ref">icon-grid</span>
+                <span class="canonical-launcher-label">Icon Grid Canonicals</span>
+              </a>
+              <a class="canonical-launcher-button" href="/design-system/canonicals/choice-group">
+                <span class="canonical-launcher-ref">choice-group</span>
+                <span class="canonical-launcher-label">Choice Group Canonicals</span>
+              </a>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
   </body>
 </html>

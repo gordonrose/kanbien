@@ -17,7 +17,13 @@ Required:
 - capability matrix rows
 - PRD or PRD refinement
 - PRD-derived test-case doc
+- end-to-end journey scenario inventory when the slice changes a meaningful
+  customer or operator workflow, state-transition path, tenant or role
+  variation, remediation or recovery flow, or another multi-step journey
 - executable tests at the required layers
+- QA release-gate review when the change is material enough to affect blocking
+  workflow or release confidence
+- QA coverage-matrix classification naming the required verification layers
 - feature docs update when behavior is user-facing or operator-relevant
 - traceability-clean mapping between active PRD-derived `TC-*` IDs and
   executable tests, unless an explicit deferred or pending-review posture is
@@ -27,6 +33,8 @@ Required:
 - source-independent doc and status sync for affected API contracts, data
   dictionary entries, feature docs, OpenAPI, architecture summaries, and
   platform-status snapshots where the implemented slice changed their truth
+- feature manifest and dependency-graph sync when the slice adds, removes, or
+  changes a feature public seam or cross-feature dependency
 - maintained-artifacts sweep covering status snapshots, registry or index docs,
   and earlier planning artifacts whose wording became stale because the slice
   now exists or materially changed current platform posture
@@ -37,6 +45,12 @@ Consider:
 - runbook/privacy note if security, operator flow, or personal data changes
 - reconstruction questionnaire or bootstrap-guide update if runtime
   dependencies, interchangeable tools, or required local helpers changed
+- structured exploratory QA note for high-risk changes when deterministic
+  automation alone is not sufficient
+- QA checklist, defect-feedback review, or waiver/quarantine record when the
+  slice needs those controls to satisfy the QA release gate
+- curated source-controlled test-run summary when the slice is used as a
+  blocking-gate, standards-evidence, or reusable QA example
 
 ### Full vertical slice
 
@@ -45,9 +59,17 @@ Required:
 - capability matrix rows
 - PRD
 - PRD-derived test-case doc
+- end-to-end journey scenario inventory
 - frontend description
+- frontend route and screen-state definition
 - backend contract description
 - persistence impact description
+- permission expectations
+- accessibility considerations
+- design-system impact note
+- performance review
+- degraded-state UX note
+- telemetry and operational review
 - docs update plan
 - standards gate review
 
@@ -63,6 +85,8 @@ Required:
 - ADR
 - system-overview update
 - principles update if guardrails change
+- affected `src/features/<featureName>/feature.manifest.json` updates
+- regenerated `docs/architecture/generated/feature-dependency-graph.*`
 - PRD or design record if the change is feature-driven
 - standards gate review
 
@@ -88,6 +112,8 @@ If the capability is tenant-scoped, also require:
 - source-independent note of whether the current tenant context is held in
   server-side session state, validated token claims, or another approved auth
   context mechanism
+- frontend visibility, disablement, or denied-state expectations when a
+  frontend surface exists
 
 If the permission model itself changes, add:
 
@@ -122,11 +148,105 @@ To make a capability reconstructable from docs and templates, document:
 - actor and permission model
 - tenant context rule when relevant
 - frontend surface and states if applicable
+- owning frontend module and journey when a frontend surface exists
+- route family and launch surface when a frontend surface exists
 - backend route and contract
 - persistence impact
 - security, privacy, and audit expectations
+- performance expectations and degraded-state behavior when a frontend surface
+  exists
+- analytics, logging, monitoring, and alerting expectations when a frontend
+  surface exists
 - verification layers
+- end-to-end journey requirements and tier when applicable
+- QA coverage-matrix classification and required human QA artifacts when
+  applicable
 - docs and operational artifacts required
+
+## Frontend Slice Gate
+
+For a material frontend slice, do not treat "frontend description" as
+sufficiently specific on its own.
+
+Recommended starting templates:
+
+- [`frontend-slice-template.md`](/home/gordon/kanbien/docs/templates/frontend-slice-template.md)
+- [`frontend-telemetry-review-template.md`](/home/gordon/kanbien/docs/templates/frontend-telemetry-review-template.md)
+
+At minimum, define or update:
+
+- frontend module or feature description
+- route and screen-state definition
+- backend dependency map
+- permission expectations
+- accessibility considerations
+- design-system impact note
+- performance review
+- degraded-state UX note
+- test coverage plan
+- docs update plan
+
+If the slice is also security-, privacy-, performance-, or observability-
+sensitive, add:
+
+- security implications
+- analytics event expectations and forbidden analytics data
+- logging and monitoring expectations
+- alerting expectations and severity classification
+
+For material frontend and design-system work, also require:
+
+- machine-readable frontend quality-gate state manifest for the changed surface
+- frontend gate execution evidence, or an explicit environment blocker note
+- visual verification coverage for required viewport and direction states
+
+For first-consumer governed app adoption or materially changed governed
+adoption, also require:
+
+- a governed app-adoption preflight artifact or equivalent note naming:
+  - the exact signed-off source route or reference truth
+  - the family-owned versus host-owned boundary
+  - the required shared CSS, render, and controller seams
+  - any explicitly approved intentional deviations
+- an adoption contract or parity checklist that records:
+  - literal route-parity expectations
+  - required consumer-level shell or host-parity proof
+  - required real interactive parity states
+- consumer-level executable proof on the real app route, not only on
+  `/design-system`
+- at least one direct human-visible regression guard when the surface is
+  visually sensitive or has already had an escaped visual issue
+- explicit review of whether app-consumption entrypoints and canonical
+  `/design-system` entrypoints are expected to stay visually identical or are
+  intentionally scoped differently
+
+For public route or signed-off route-shell work, also require:
+
+- explicit human review using a public-route checklist or equivalent artifact
+- recorded qualitative findings when the route still has visible design issues
+  that automation did not classify as failures
+
+Treat the frontend loop as incomplete when:
+
+- the UI surface changed but route/screen states were not documented
+- degraded-performance behavior was left implicit
+- permission-aware rendering expectations were left implicit
+- accessibility expectations were omitted for a materially changed frontend
+  surface
+- the loading strategy and performance posture were not reviewed
+- telemetry implications were silently deferred even though the slice changes
+  a meaningful user journey, high-risk workflow, or production-critical module
+- the frontend quality gate manifest is missing or stale for a materially
+  changed governed surface
+- a governed first-consumer adoption was treated as complete without a preflight
+  artifact, adoption boundary declaration, or consumer-parity proof
+- the real app route still owns governed markup or interaction behavior locally
+  even though the family is being presented as governed adoption
+- the only proof for governed adoption is canonical or design-system coverage
+  with no consumer-level executable evidence
+- the frontend gate failed, was not run, or was treated as optional
+- a public route was presented as complete without an explicit qualitative
+  route review
 
 ## Documentation Update Rule
 
@@ -134,7 +254,12 @@ When a change lands, update the affected combination of:
 
 - PRD
 - PRD-derived test-case doc
+- end-to-end journey scenario inventory when required by the testing policy
+- QA checklist, exploratory note, waiver/quarantine record, and curated test
+  summary when required by the QA release gate or coverage matrix
 - relevant feature docs
+- affected feature manifests and generated dependency graph artifacts when
+  feature seams or cross-feature dependencies changed
 - architecture guides or ADRs
 - runbook
 - privacy note
@@ -142,6 +267,8 @@ When a change lands, update the affected combination of:
 - AI-assisted review notes when the change materially relied on generative AI
 - maintained status snapshots, registry docs, and earlier planning artifacts
   whose current-state wording changed because the implementation now exists
+- frontend module or journey docs when a frontend surface now exists or
+  materially changed
 - reconstruction questionnaire when the slice changes interchangeable tools,
   providers, or deployer-local choices
 - bootstrap and helper docs when the slice changes startup order, required
@@ -150,6 +277,44 @@ When a change lands, update the affected combination of:
   persistence-test infrastructure
 - script/helper behavior docs when the slice changes repo scripts, helper
   tooling, or script side effects in a meaningful way
+
+## Feature Loop Stop Rule
+
+Do not stop a material feature loop early just because implementation and a
+small validating test run exist.
+
+If the change introduced or changed any of these, the loop remains incomplete
+until the maintained artifacts are updated or an explicit blocker/deferred
+posture is recorded:
+
+- backend routes or request/response/error contracts
+- new authz capability keys or role-grant baseline changes
+- source-independent feature behavior
+- maintained OpenAPI or Postman artifacts for the affected seam
+- platform-status or standards-relevant snapshots whose truth changed
+- planning artifacts whose current-state wording became stale because the slice
+  now exists
+
+For backend capability work, the default close-out check must explicitly review:
+
+- PRD and PRD-derived test-case doc
+- implementation blueprint when it exists for the slice
+- feature docs
+- API contract docs
+- OpenAPI
+- maintained Postman artifacts
+- permission-mapping artifacts when authz changed
+- standards/platform-status snapshots when standards-relevant truth changed
+- earlier PRD, blueprint, or note files whose "not implemented yet" wording is
+  now stale
+
+If any required artifact is not updated, the loop must be reported as one of:
+
+- blocked on artifact completion
+- partially documented
+- implementation-only by explicit pause
+
+Do not treat that state as feature-complete.
 
 Do not leave the implementation as the only place that knows the intended
 behavior.
@@ -163,6 +328,14 @@ At minimum, check:
 - `docs/standards/platform-status/` files whose truth changed because of a new
   vendor, service, processor, dependency, review workflow, or
   standards-relevant control improvement
+- `docs/standards/platform-status/` files whose wording became stale because a
+  slice materially changed the implemented control posture for authentication,
+  authorization, session management, auditability, privacy handling, or other
+  standards-gated behavior even when the headline status remains the same
+- affected `src/features/<featureName>/feature.manifest.json` entries for
+  changed seams or cross-feature dependencies
+- `docs/architecture/generated/feature-dependency-graph.json`
+- `docs/architecture/generated/feature-dependency-graph.md`
 - README, index, inventory, and registry docs that summarize current platform
   capabilities, artifact sets, or entity inventories
 
@@ -182,6 +355,110 @@ Typical examples:
   before treating implementation as current
 
 Treat stale downstream artifacts after an upstream reset as drift.
+
+## End-To-End Journey Gate
+
+For every feature loop, explicitly determine whether end-to-end journey testing
+is required.
+
+In this repo, the default posture is:
+
+- all features have end-to-end testing expectations
+- the depth and tier may vary, but the requirement itself is not optional
+
+Required for every feature loop:
+
+- identify affected journeys
+- classify journey tier where relevant
+- identify workflow state dimensions that can change outcome
+- classify each dimension as behavior-changing, non-behavior-changing, or
+  pending-review
+- define equivalence classes for each behavior-changing dimension
+- review lifecycle, deletion/disablement, revocation, expiry, and credible
+  operator-induced state changes for inclusion rather than exclusion
+- define meaningful permutations, including tenant and role variation when the
+  feature can behave differently across them
+- include frontend state classes such as loading, delayed, denied, expired,
+  degraded, and recovery states when a frontend surface exists
+- define default pairwise coverage across behavior-changing dimensions and any
+  required higher-order interactions
+- include legacy/pre-change and post-change data states when behavior can differ
+- record known-pitfall research and add missing journey coverage where needed
+- ensure executable end-to-end tests or explicitly reviewed deferred posture
+  exist before considering the loop complete
+- identify required non-E2E layers from the QA coverage matrix when the change
+  class triggers them
+- identify required human QA artifacts such as checklist, exploratory note,
+  run summary, or waiver record when the gate requires them
+
+Default durable locations:
+
+- journey inventories:
+  `docs/prd/journey_inventories/`
+- executable end-to-end tests:
+  `tests/e2e/`
+- curated source-controlled run summaries:
+  `docs/workspace/test-run-summaries/`
+
+A feature loop is incomplete when:
+
+- the journey inventory changed but the end-to-end scenarios were not updated
+- the journey inventory does not explain the threshold for omitted permutations
+- lifecycle or credible operator-induced journey classes were silently excluded
+  rather than explicitly covered or deferred
+- required end-to-end traces are missing from the planned artifact chain
+- required end-to-end tests are flaky and unresolved without approved exception
+- the QA coverage-matrix classification was not recorded
+- required non-functional or human-QA artifacts were silently omitted even
+  though the change class triggered them
+- required maintained Postman, OpenAPI, permission-mapping, feature-doc, or
+  status-snapshot updates were skipped even though the implemented slice
+  changed their truth
+
+## End-To-End Traceability Rule
+
+When end-to-end journey coverage is required, traceability must link:
+
+- capability matrix rows
+- PRD or PRD refinement
+- PRD-derived test cases where applicable
+- journey scenario inventory
+- executable end-to-end tests
+- curated run summaries when those runs are part of the reviewed gate or audit
+
+## Feature Loop Default
+
+For a material change, do not fall back to an older thin loop that stops at
+PRD, PRD-derived test cases, and a small hand-picked test run.
+
+The default feature loop should explicitly determine and document:
+
+- the QA coverage-matrix classification
+- the journey inventory requirement and journey tier
+- the required executable layer set
+- the required human QA artifacts
+- the required curated gate evidence
+- the required frontend artifact set when a frontend surface exists
+- the required telemetry/accountability artifact set when the change affects
+  production workflows, user trust, or operational visibility
+
+If the recorded change-class classification says a broader QA layer or artifact
+is not required, record that decision explicitly rather than silently omitting
+it.
+
+Do not treat end-to-end tests as disposable implementation details when they
+are part of the reviewed verification plan.
+
+## QA Release-Gate Rule
+
+When a change affects blocking workflows, high-risk domains, or production
+confidence materially, the repo also requires review against:
+
+- [QA Release Gate](/home/gordon/kanbien/docs/standards/QA-RELEASE-GATE.md)
+
+And supporting layer selection from:
+
+- [QA Coverage Matrix Guide](/home/gordon/kanbien/docs/architecture/guides/qa-coverage-matrix-guide.md)
 
 ## PRD Test-Case Override Gate
 

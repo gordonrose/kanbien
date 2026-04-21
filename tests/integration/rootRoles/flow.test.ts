@@ -85,7 +85,7 @@ describe("rootRoles integration flows", () => {
     expect(response.body.items.map((item) => item.roleKey)).toContain("RootUserAdmin");
   });
 
-  it("TC-ROOT-ROLES-INT-001A loads the bootstrap role and its eligible capability catalog by exact UUID", async () => {
+  it("TC-ROOT-ROLES-INT-001 loads the bootstrap role and its eligible capability catalog by exact UUID", async () => {
     const harness = createRootAuthIntegrationHarness();
     const identity = harness.seedAuthIdentity();
     const session = await loginViaPasswordAndSsh(harness, identity);

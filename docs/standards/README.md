@@ -13,6 +13,12 @@ AI-assisted development, and AI-related product changes.
 - `GDPR-DATA-TRANSFER-GATE.md`
 - `EU-AI-ACT-GATE.md`
 - `AI-ASSISTED-DEVELOPMENT-GATE.md`
+- `QA-RELEASE-GATE.md`
+- `WCAG-2.2-AA-GATE.md`
+- `FRONTEND-SECURITY-GATE.md`
+- `FRONTEND-ANALYTICS-GATE.md`
+- `FRONTEND-OBSERVABILITY-GATE.md`
+- `FRONTEND-ALERTING-GATE.md`
 - `change-artifact-requirements.md`
 - `platform-status/`
 
@@ -68,6 +74,43 @@ Use for:
 - prompt/data-handling controls for development use
 - independent verification and deterministic evidence expectations
 - high-risk reviewer controls for AI-assisted security or compliance changes
+
+### `QA-RELEASE-GATE.md`
+Use for:
+- release readiness beyond artifact completeness
+- blocking-defect and flaky-suite expectations
+- layer-complete QA review
+- waiver and quarantine discipline
+- defect feedback into stronger coverage rules
+
+### `WCAG-2.2-AA-GATE.md`
+Use for:
+- frontend accessibility posture
+- semantic structure, keyboard, focus, validation, and responsive checks
+- themed, localized, and RTL-aware frontend review
+
+### `FRONTEND-SECURITY-GATE.md`
+Use for:
+- browser and mobile frontend security posture
+- frontend auth/session, storage, CSP, and third-party JavaScript review
+- tenant-isolation and client-side exposure checks
+
+### `FRONTEND-ANALYTICS-GATE.md`
+Use for:
+- event taxonomy review
+- consent and region-aware analytics review
+- replay and telemetry minimization review
+
+### `FRONTEND-OBSERVABILITY-GATE.md`
+Use for:
+- frontend logging, monitoring, KPI instrumentation, and diagnostic visibility
+- developer- and agent-facing structured telemetry review
+
+### `FRONTEND-ALERTING-GATE.md`
+Use for:
+- frontend alert-routing and severity review
+- proactive detection and production-blocker alertability review
+- noise, ownership, and business-impact classification review
 
 ### `change-artifact-requirements.md`
 Use for:
@@ -147,6 +190,8 @@ Examples:
 - materially AI-assisted implementation work may require the AI-assisted
   development gate even when the shipped feature has no AI capability
 - new authentication flow likely requires SSDF, ASVS, CSF, ISO, and possibly GDPR review
+- high-risk workflow or release-critical change likely also requires the QA
+  release gate
 - vendor-hosted AI feature likely requires all product and operational gates,
   and may also require the AI-assisted development gate if the implementation
   itself materially relied on generative AI

@@ -1,0 +1,803 @@
+import { expect, test } from "@playwright/test";
+
+test.describe("design-system list page", () => {
+  test("recomposes the parent route from the signed-off child seam shapes", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const seamState = await page.evaluate(() => {
+      const splitLayout = document.querySelector("[data-selectable-list-layout]");
+      const firstCard = document.querySelector("[data-selectable-list-card]");
+      const detailPanel = document.querySelector("[data-selectable-list-detail-panel]");
+
+      return {
+        splitSeam: splitLayout instanceof HTMLElement ? splitLayout.dataset.listPageChildSeam ?? "" : "",
+        listSlot: document.querySelector("[data-list-detail-split-layout-slot='list']") instanceof HTMLElement,
+        detailSlot: document.querySelector("[data-list-detail-split-layout-slot='detail']") instanceof HTMLElement,
+        cardSeam: firstCard instanceof HTMLElement ? firstCard.dataset.listPageChildSeam ?? "" : "",
+        cardTitleExists: firstCard?.querySelector("[data-list-record-card-slot='title']") instanceof HTMLElement,
+        detailSeam: detailPanel instanceof HTMLElement ? detailPanel.dataset.listPageChildSeam ?? "" : "",
+      };
+    });
+
+    expect(seamState.splitSeam).toBe("list-detail-split-layout");
+    expect(seamState.listSlot).toBe(true);
+    expect(seamState.detailSlot).toBe(true);
+    expect(seamState.cardSeam).toBe("list-record-card");
+    expect(seamState.cardTitleExists).toBe(true);
+    expect(seamState.detailSeam).toBe("list-detail-panel");
+  });
+
+  test("shows a governed loading placeholder before initial list hydration when requested", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?listLoading=initial");
+
+    const loadingGroup = page.locator("[data-selectable-list-loading]");
+    const itemsContainer = page.locator("[data-selectable-list-items]");
+
+    await expect(loadingGroup).toBeVisible();
+    await expect(loadingGroup).toContainText("Loading list items...");
+    await expect(itemsContainer).toBeHidden();
+
+    await expect(itemsContainer).toBeVisible();
+    await expect(loadingGroup).toBeHidden();
+  });
+
+  test("shows an in-region initial load error with a retry path that restores the list", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?listLoadError=initial");
+
+    const errorState = page.locator("[data-selectable-list-initial-error-state]");
+    const retry = page.locator("[data-selectable-list-initial-retry]");
+    const itemsContainer = page.locator("[data-selectable-list-items]");
+    const announcement = page.locator("[data-selectable-list-announcement]");
+
+    await expect(errorState).toBeVisible();
+    await expect(itemsContainer).toBeHidden();
+    await expect(announcement).toHaveText("List items could not load.");
+
+    await retry.click();
+
+    await expect(errorState).toBeHidden();
+    await expect(itemsContainer).toBeVisible();
+  });
+
+  test("shows a governed empty state with a neutral recovery action", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?listState=empty");
+
+    const emptyState = page.locator("[data-selectable-list-empty-state]");
+    const itemsContainer = page.locator("[data-selectable-list-items]");
+    const recoveryButton = page.locator("[data-selectable-list-empty-reset]");
+
+    await expect(emptyState).toBeVisible();
+    await expect(emptyState).toContainText("No placeholder records yet");
+    await expect(recoveryButton).toBeVisible();
+    await expect(itemsContainer).toBeHidden();
+
+    await recoveryButton.click();
+
+    await expect(emptyState).toBeHidden();
+    await expect(itemsContainer).toBeVisible();
+  });
+
+  test("shows a governed no-results state for the search query and clears back to the full list", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const searchInput = page.locator("#design-system-search");
+    const noResultsState = page.locator("[data-selectable-list-no-results-state]");
+    const itemsContainer = page.locator("[data-selectable-list-items]");
+    const clearSearch = page.locator("[data-selectable-list-clear-search]");
+    const announcement = page.locator("[data-selectable-list-announcement]");
+
+    await searchInput.fill("no-results");
+    await searchInput.press("Enter");
+
+    await page.waitForURL("**/design-system/templates/list-page?q=no-results");
+    await expect(noResultsState).toBeVisible();
+    await expect(noResultsState).toContainText('"no-results"');
+    await expect(itemsContainer).toBeHidden();
+    await expect(announcement).toHaveText("No results found for no-results.");
+
+    await clearSearch.click();
+
+    await expect(noResultsState).toBeHidden();
+    await expect(searchInput).toHaveValue("");
+    await expect(itemsContainer).toBeVisible();
+  });
+
+  test("closes the drawer and returns focus to search when filtering removes the active record", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const searchInput = page.locator("#design-system-search");
+    const secondItem = page.locator("[data-selectable-list-card]").nth(1);
+    const detailPanel = page.locator("[data-selectable-list-detail-panel]");
+    const announcement = page.locator("[data-selectable-list-announcement]");
+
+    await secondItem.click();
+    await expect(detailPanel).toBeVisible();
+
+    await searchInput.fill("Title Field");
+    await searchInput.press("Enter");
+
+    await page.waitForURL("**/design-system/templates/list-page?q=Title+Field");
+    await expect(detailPanel).toBeHidden();
+    await expect(searchInput).toBeFocused();
+    await expect(announcement).toHaveText("Closed details because the active record is not in results for Title Field.");
+  });
+
+  test("uses primary fallback and omits secondary fields in the governed missing-attributes preview", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?listState=missing-attributes");
+
+    const items = page.locator("[data-selectable-list-card]");
+    const firstItem = items.first();
+    const secondItem = items.nth(1);
+    const thirdItem = items.nth(2);
+
+    await expect(firstItem.locator(".list-page-card-title")).toHaveText("Untitled record");
+    await expect(firstItem.locator(".list-page-card-subtitle")).toBeHidden();
+    await expect(firstItem.locator(".list-page-card-tags")).toBeHidden();
+
+    await secondItem.click();
+
+    await expect(page.locator("#list-page-detail-title")).toHaveText("Placeholder Item Two");
+    await expect(page.locator("#list-page-detail-subtitle")).toBeHidden();
+    await expect(page.locator("#list-page-detail-meta")).toBeHidden();
+    await expect(page.locator("#list-page-detail-tags")).toBeHidden();
+
+    await thirdItem.click();
+
+    await expect(thirdItem.locator(".list-page-card-description")).toBeHidden();
+    await expect(page.locator("#list-page-detail-description")).toBeHidden();
+  });
+
+  test("truncates compact list fields with tooltip recovery while keeping detail identity and body wrapped", async ({ browser }) => {
+    const page = await browser.newPage({
+      viewport: { width: 1080, height: 760 },
+    });
+
+    await page.goto("/design-system/templates/list-page?listState=long-attributes");
+
+    const firstItem = page.locator("[data-selectable-list-card]").first();
+    const cardTitle = firstItem.locator(".list-page-card-title");
+    const firstTag = firstItem.locator(".list-page-tag").first();
+
+    await firstItem.click();
+
+    await expect(cardTitle).toHaveAttribute(
+      "data-tooltip",
+      /intentionally extended title that should truncate cleanly in the list card/,
+    );
+    await expect(firstTag).toHaveAttribute(
+      "data-tooltip",
+      /Extremely long governed tag label for tooltip recovery/,
+    );
+
+    await expect(page.locator("#list-page-detail-meta")).toHaveAttribute(
+      "data-tooltip",
+      /Extremely long metadata label for the detail header/,
+    );
+
+    const detailWrapState = await page.evaluate(() => {
+      const detailTitle = document.getElementById("list-page-detail-title");
+      const detailDescription = document.getElementById("list-page-detail-description");
+
+      if (!(detailTitle instanceof HTMLElement) || !(detailDescription instanceof HTMLElement)) {
+        return null;
+      }
+
+      const titleStyle = getComputedStyle(detailTitle);
+      const descriptionStyle = getComputedStyle(detailDescription);
+
+      return {
+        titleWhiteSpace: titleStyle.whiteSpace,
+        titleTextOverflow: titleStyle.textOverflow,
+        descriptionWhiteSpace: descriptionStyle.whiteSpace,
+        descriptionTextOverflow: descriptionStyle.textOverflow,
+        titleTooltip: detailTitle.dataset.tooltip ?? null,
+      };
+    });
+
+    expect(detailWrapState).not.toBeNull();
+    expect(detailWrapState?.titleWhiteSpace).not.toBe("nowrap");
+    expect(detailWrapState?.descriptionWhiteSpace).not.toBe("nowrap");
+    expect(detailWrapState?.titleTextOverflow).not.toBe("ellipsis");
+    expect(detailWrapState?.descriptionTextOverflow).not.toBe("ellipsis");
+    expect(detailWrapState?.titleTooltip).toBeNull();
+
+    await page.close();
+  });
+
+  test("keeps the split layout readable under magnification and long-content pressure", async ({ browser }) => {
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 760 },
+    });
+
+    await page.goto("/design-system/templates/list-page?listState=long-attributes&zoom=100");
+    await page.locator("[data-selectable-list-card]").first().click();
+
+    const magnifiedState = await page.evaluate(() => {
+      const root = document.documentElement;
+      const listColumn = document.querySelector("[data-selectable-list-column]");
+      const detailPanel = document.querySelector("[data-selectable-list-detail-panel]");
+      const detailBody = document.querySelector(".list-page-detail-body");
+      const detailFooter = document.querySelector(".list-page-detail-footer");
+      const closeButton = document.getElementById("list-page-detail-close");
+      const prevButton = document.getElementById("list-page-detail-prev");
+      const nextButton = document.getElementById("list-page-detail-next");
+      const rect = (node: Element | null) =>
+        node instanceof HTMLElement ? node.getBoundingClientRect() : null;
+
+      return {
+        uiScale: root.style.getPropertyValue("--ui-scale"),
+        listColumn: rect(listColumn),
+        detailPanel: rect(detailPanel),
+        detailBody: rect(detailBody),
+        detailFooter: rect(detailFooter),
+        closeButton: rect(closeButton),
+        prevButton: rect(prevButton),
+        nextButton: rect(nextButton),
+        detailPanelOverflowY:
+          detailPanel instanceof HTMLElement ? getComputedStyle(detailPanel).overflowY : null,
+        detailPanelClientHeight:
+          detailPanel instanceof HTMLElement ? detailPanel.clientHeight : null,
+        detailPanelScrollHeight:
+          detailPanel instanceof HTMLElement ? detailPanel.scrollHeight : null,
+        detailBodyOverflowY:
+          detailBody instanceof HTMLElement ? getComputedStyle(detailBody).overflowY : null,
+      };
+    });
+
+    expect(magnifiedState.uiScale).toBe("1.5");
+    expect(magnifiedState.listColumn).not.toBeNull();
+    expect(magnifiedState.detailPanel).not.toBeNull();
+    expect(magnifiedState.detailBody).not.toBeNull();
+    expect(magnifiedState.detailFooter).not.toBeNull();
+    expect(magnifiedState.closeButton).not.toBeNull();
+    expect(magnifiedState.prevButton).not.toBeNull();
+    expect(magnifiedState.nextButton).not.toBeNull();
+    expect(["auto", "scroll"]).toContain(magnifiedState.detailPanelOverflowY);
+    expect(["auto", "scroll"]).toContain(magnifiedState.detailBodyOverflowY);
+
+    if (
+      !magnifiedState.listColumn
+      || !magnifiedState.detailPanel
+      || !magnifiedState.detailBody
+      || !magnifiedState.detailFooter
+      || !magnifiedState.closeButton
+      || !magnifiedState.prevButton
+      || !magnifiedState.nextButton
+    ) {
+      await page.close();
+      return;
+    }
+
+    expect(magnifiedState.listColumn.width).toBeGreaterThan(240);
+    expect(magnifiedState.detailPanel.width).toBeGreaterThan(240);
+    expect(magnifiedState.detailBody.height).toBeGreaterThan(120);
+    expect(magnifiedState.closeButton.right).toBeLessThanOrEqual(magnifiedState.detailPanel.right + 1);
+    expect(magnifiedState.closeButton.top).toBeGreaterThanOrEqual(magnifiedState.detailPanel.top - 1);
+    expect(magnifiedState.detailPanelScrollHeight).toBeGreaterThan(magnifiedState.detailPanelClientHeight ?? 0);
+
+    await page.locator("[data-selectable-list-detail-panel]").evaluate((node) => {
+      if (node instanceof HTMLElement) {
+        node.scrollTop = node.scrollHeight;
+      }
+    });
+
+    await expect(page.locator(".list-page-detail-footer")).toBeInViewport();
+
+    await page.close();
+  });
+
+  test("moves focus into the detail drawer on open and returns it to the originating card on close", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const firstItem = page.locator("[data-selectable-list-card]").first();
+    const announcement = page.locator("[data-selectable-list-announcement]");
+
+    await firstItem.focus();
+    await page.keyboard.press("Enter");
+
+    await expect(page.locator("#list-page-detail-title")).toBeFocused();
+    await expect(announcement).toHaveText("Opened details for Title Field.");
+
+    await page.keyboard.press("Escape");
+
+    await expect(firstItem).toBeFocused();
+    await expect(page.locator("[data-selectable-list-detail-panel]")).toBeHidden();
+  });
+
+  test("traps tab focus inside the mobile full-sheet detail drawer", async ({ browser }) => {
+    const page = await browser.newPage({
+      viewport: { width: 560, height: 900 },
+    });
+
+    await page.goto("/design-system/templates/list-page");
+    await page.locator("[data-selectable-list-card]").first().click();
+
+    const detailPanel = page.locator("[data-selectable-list-detail-panel]");
+    const editButton = page.locator(".list-page-detail-action-button").first();
+    const nextButton = page.locator("#list-page-detail-next");
+
+    await expect(detailPanel).toHaveAttribute("role", "dialog");
+    await expect(detailPanel).toHaveAttribute("aria-modal", "true");
+    await expect(page.locator("#list-page-detail-title")).toBeFocused();
+
+    await nextButton.focus();
+    await page.keyboard.press("Tab");
+    await expect(editButton).toBeFocused();
+
+    await editButton.focus();
+    await page.keyboard.press("Shift+Tab");
+    await expect(nextButton).toBeFocused();
+
+    await page.close();
+  });
+
+  test("keeps the mobile drawer close affordance top-right while header actions sit below the copy block", async ({ browser }) => {
+    const page = await browser.newPage({
+      viewport: { width: 560, height: 900 },
+    });
+
+    await page.goto("/design-system/templates/list-page");
+    await page.locator("[data-selectable-list-card]").first().click();
+
+    const mobileHeaderState = await page.evaluate(() => {
+      const copy = document.querySelector(".list-page-detail-copy");
+      const edit = document.querySelector(".list-page-detail-action-row > :nth-child(1)");
+      const share = document.querySelector(".list-page-detail-action-row > :nth-child(2)");
+      const close = document.getElementById("list-page-detail-close");
+
+      const rect = (node: Element | null) => node instanceof HTMLElement ? node.getBoundingClientRect() : null;
+
+      return {
+        copyRect: rect(copy),
+        editRect: rect(edit),
+        shareRect: rect(share),
+        closeRect: rect(close),
+      };
+    });
+
+    expect(mobileHeaderState.copyRect).not.toBeNull();
+    expect(mobileHeaderState.editRect).not.toBeNull();
+    expect(mobileHeaderState.shareRect).not.toBeNull();
+    expect(mobileHeaderState.closeRect).not.toBeNull();
+
+    if (!mobileHeaderState.copyRect || !mobileHeaderState.editRect || !mobileHeaderState.shareRect || !mobileHeaderState.closeRect) {
+      await page.close();
+      return;
+    }
+
+    expect(mobileHeaderState.closeRect.top).toBeLessThanOrEqual(mobileHeaderState.copyRect.top + 8);
+    expect(mobileHeaderState.closeRect.right).toBeGreaterThan(mobileHeaderState.shareRect.right);
+    expect(mobileHeaderState.editRect.top).toBeGreaterThanOrEqual(mobileHeaderState.copyRect.bottom - 1);
+    expect(mobileHeaderState.shareRect.top).toBeGreaterThanOrEqual(mobileHeaderState.copyRect.bottom - 1);
+
+    await page.close();
+  });
+
+  test("mirrors the desktop master-detail layout and card posture natively in RTL", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?dir=rtl");
+
+    const firstItem = page.locator("[data-selectable-list-card]").first();
+    await firstItem.click();
+
+    const rtlState = await page.evaluate(() => {
+      const listColumn = document.querySelector("[data-selectable-list-column]");
+      const detailPanel = document.querySelector("[data-selectable-list-detail-panel]");
+      const cardButton = document.querySelector("[data-selectable-list-card]");
+      const cardTitle = document.querySelector(".list-page-card-title");
+      const rect = (node: Element | null) =>
+        node instanceof HTMLElement ? node.getBoundingClientRect() : null;
+
+      return {
+        documentDir: document.documentElement.getAttribute("dir"),
+        listColumn: rect(listColumn),
+        detailPanel: rect(detailPanel),
+        cardButtonTextAlign:
+          cardButton instanceof HTMLElement ? getComputedStyle(cardButton).textAlign : null,
+        cardTitleTextAlign:
+          cardTitle instanceof HTMLElement ? getComputedStyle(cardTitle).textAlign : null,
+      };
+    });
+
+    expect(rtlState.documentDir).toBe("rtl");
+    expect(rtlState.listColumn).not.toBeNull();
+    expect(rtlState.detailPanel).not.toBeNull();
+    expect(rtlState.cardButtonTextAlign).toBe("start");
+    expect(rtlState.cardTitleTextAlign).toBe("start");
+
+    if (!rtlState.listColumn || !rtlState.detailPanel) {
+      return;
+    }
+
+    expect(rtlState.detailPanel.left).toBeLessThan(rtlState.listColumn.left);
+  });
+
+  test("opens a split detail drawer on item click and closes it with the drawer close button", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const splitLayout = page.locator("[data-selectable-list-layout]");
+    const firstItem = page.locator("[data-selectable-list-card]").first();
+    const detailPanel = page.locator("[data-selectable-list-detail-panel]");
+    const detailClose = page.locator("#list-page-detail-close");
+
+    await expect(detailPanel).toBeHidden();
+    await expect(splitLayout).not.toHaveClass(/detail-open/);
+
+    await firstItem.click();
+
+    await expect(detailPanel).toBeVisible();
+    await expect(detailPanel).toHaveAttribute("aria-hidden", "false");
+    await expect(splitLayout).toHaveClass(/detail-open/);
+    await expect(firstItem).toHaveAttribute("aria-pressed", "true");
+
+    await detailClose.click();
+
+    await expect(detailPanel).toBeHidden();
+    await expect(detailPanel).toHaveAttribute("aria-hidden", "true");
+    await expect(splitLayout).not.toHaveClass(/detail-open/);
+    await expect(firstItem).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("mirrors drawer header actions and footer navigation order coherently in RTL", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?dir=rtl");
+
+    await page.locator("[data-selectable-list-card]").first().click();
+
+    const rtlControlState = await page.evaluate(() => {
+      const actionButtons = Array.from(document.querySelectorAll(".list-page-detail-action-row button"));
+      const prev = document.getElementById("list-page-detail-prev");
+      const next = document.getElementById("list-page-detail-next");
+      const copy = document.querySelector(".list-page-detail-copy");
+      const controls = document.querySelector(".list-page-detail-controls");
+      const rect = (node: Element | null) =>
+        node instanceof HTMLElement ? node.getBoundingClientRect() : null;
+
+      return {
+        documentDir: document.documentElement.getAttribute("dir"),
+        actionOrder: actionButtons.map((button) => ({
+          label: button.textContent?.trim() ?? "",
+          rect: rect(button),
+        })),
+        prev: rect(prev),
+        next: rect(next),
+        copy: rect(copy),
+        controls: rect(controls),
+      };
+    });
+
+    expect(rtlControlState.documentDir).toBe("rtl");
+    expect(rtlControlState.actionOrder).toHaveLength(3);
+    expect(rtlControlState.copy).not.toBeNull();
+    expect(rtlControlState.controls).not.toBeNull();
+    expect(rtlControlState.prev).not.toBeNull();
+    expect(rtlControlState.next).not.toBeNull();
+
+    const [edit, share, close] = rtlControlState.actionOrder;
+
+    expect(edit.label).toBe("Edit");
+    expect(share.label).toBe("Share");
+    expect(close.label).toBe("×");
+
+    if (
+      !edit.rect
+      || !share.rect
+      || !close.rect
+      || !rtlControlState.copy
+      || !rtlControlState.controls
+      || !rtlControlState.prev
+      || !rtlControlState.next
+    ) {
+      return;
+    }
+
+    expect(rtlControlState.controls.left).toBeLessThan(rtlControlState.copy.left);
+    expect(edit.rect.left).toBeGreaterThan(share.rect.left);
+    expect(share.rect.left).toBeGreaterThan(close.rect.left);
+    expect(rtlControlState.prev.left).toBeGreaterThan(rtlControlState.next.left);
+  });
+
+  test("lets the drawer navigate to previous and next list items", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const items = page.locator("[data-selectable-list-card]");
+    const detailTitle = page.locator("#list-page-detail-title");
+    const prevButton = page.locator("#list-page-detail-prev");
+    const nextButton = page.locator("#list-page-detail-next");
+
+    await items.nth(1).click();
+
+    await expect(detailTitle).toHaveText("Placeholder Item Two");
+    await expect(prevButton).toBeEnabled();
+    await expect(nextButton).toBeEnabled();
+
+    await nextButton.click();
+    await expect(detailTitle).toHaveText("Placeholder Item Three");
+
+    await prevButton.click();
+    await expect(detailTitle).toHaveText("Placeholder Item Two");
+
+    await items.first().click();
+    await expect(prevButton).toBeDisabled();
+  });
+
+  test("uses next to load more items at the boundary", async ({ browser }) => {
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 620 },
+    });
+
+    await page.goto("/design-system/templates/list-page");
+
+    const items = page.locator("[data-selectable-list-card]");
+    const nextButton = page.locator("#list-page-detail-next");
+    const nextAnchor = page.locator("#list-page-detail-next-anchor");
+    const detailTitle = page.locator("#list-page-detail-title");
+    const announcement = page.locator("[data-selectable-list-announcement]");
+    const initialCount = await items.count();
+
+    await items.nth(initialCount - 1).click();
+    await nextButton.click();
+
+    await expect(page.locator("[data-selectable-list-loading]")).toContainText("Loading more items...");
+    await expect(items).toHaveCount(initialCount + 6);
+    await expect(announcement).toHaveText("Loaded 6 more list items.");
+    await expect(detailTitle).toHaveText("Placeholder Item Four");
+    await expect(nextButton).toBeEnabled();
+
+    await nextButton.click();
+    await expect(detailTitle).toHaveText(`Placeholder Item ${initialCount + 1}`);
+
+    await page.close();
+  });
+
+  test("keeps loaded items visible and offers inline retry when append loading fails", async ({ browser }) => {
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 620 },
+    });
+
+    await page.goto("/design-system/templates/list-page?listLoadError=append");
+
+    const itemCards = page.locator("[data-selectable-list-card]");
+    const appendError = page.locator("[data-selectable-list-append-error]");
+    const appendRetry = page.locator("[data-selectable-list-append-retry]");
+    const announcement = page.locator("[data-selectable-list-announcement]");
+    const nextButton = page.locator("#list-page-detail-next");
+    const initialCount = await itemCards.count();
+
+    await itemCards.nth(initialCount - 1).click();
+    await nextButton.click();
+
+    await expect(appendError).toBeVisible();
+    await expect(itemCards).toHaveCount(initialCount);
+    await expect(announcement).toHaveText("Could not load more list items.");
+
+    await appendRetry.click();
+
+    await expect(appendError).toBeHidden();
+    await expect(itemCards).toHaveCount(initialCount + 6);
+
+    await page.close();
+  });
+
+  test("uses the lazy-load status link when no scroll affordance exists", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const listColumn = page.locator("[data-selectable-list-column]");
+    const itemCards = page.locator("[data-selectable-list-card]");
+    const statusAction = page.locator("[data-selectable-list-status-action]");
+    const announcement = page.locator("[data-selectable-list-announcement]");
+
+    await expect(statusAction).toHaveText("Scroll to load more placeholder items.");
+    await expect(listColumn).not.toHaveAttribute("aria-busy", "true");
+
+    const initialCount = await itemCards.count();
+
+    await listColumn.evaluate((node) => {
+      if (!(node instanceof HTMLElement)) {
+        return;
+      }
+
+      node.style.height = `${node.scrollHeight + 400}px`;
+      node.style.maxHeight = "none";
+      window.dispatchEvent(new Event("resize"));
+    });
+
+    await page.waitForTimeout(250);
+    await expect(statusAction).toBeVisible();
+    await expect(statusAction).toBeEnabled();
+    await page.waitForTimeout(400);
+    await expect(statusAction).toBeVisible();
+    await expect(statusAction).toBeEnabled();
+
+    await statusAction.click();
+
+    await expect(itemCards).toHaveCount(initialCount + 6);
+    await expect(announcement).toHaveText("Loaded 6 more list items.");
+  });
+
+  test("keeps the lazy-load status link usable with the side drawer open", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const listColumn = page.locator("[data-selectable-list-column]");
+    const itemCards = page.locator("[data-selectable-list-card]");
+    const firstItem = itemCards.first();
+    const statusAction = page.locator("[data-selectable-list-status-action]");
+    const detailPanel = page.locator("[data-selectable-list-detail-panel]");
+    const announcement = page.locator("[data-selectable-list-announcement]");
+
+    const initialCount = await itemCards.count();
+
+    await firstItem.click();
+    await expect(detailPanel).toBeVisible();
+
+    await listColumn.evaluate((node) => {
+      if (!(node instanceof HTMLElement)) {
+        return;
+      }
+
+      node.style.height = `${node.scrollHeight + 400}px`;
+      node.style.maxHeight = "none";
+      window.dispatchEvent(new Event("resize"));
+    });
+
+    await page.waitForTimeout(250);
+    await expect(statusAction).toBeVisible();
+    await expect(statusAction).toBeEnabled();
+    await page.waitForTimeout(400);
+    await expect(statusAction).toBeVisible();
+    await expect(statusAction).toBeEnabled();
+
+    await statusAction.click();
+
+    await expect(itemCards).toHaveCount(initialCount + 6);
+    await expect(detailPanel).toBeVisible();
+    await expect(announcement).toHaveText("Loaded 6 more list items.");
+  });
+
+  test("keeps the drawer open and offers local retry when detail content fails", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?detailError=1");
+
+    const firstItem = page.locator("[data-selectable-list-card]").first();
+    const detailPanel = page.locator("[data-selectable-list-detail-panel]");
+    const detailError = page.locator("[data-selectable-list-detail-error]");
+    const detailRetry = page.locator("[data-selectable-list-detail-retry]");
+    const detailDescription = page.locator("#list-page-detail-description");
+    const announcement = page.locator("[data-selectable-list-announcement]");
+
+    await firstItem.click();
+
+    await expect(detailPanel).toBeVisible();
+    await expect(detailError).toBeVisible();
+    await expect(detailDescription).toBeHidden();
+    await expect(announcement).toHaveText("Detail content could not load for Title Field.");
+
+    await detailRetry.click();
+
+    await expect(detailError).toBeHidden();
+    await expect(detailDescription).toBeVisible();
+    await expect(detailDescription).toContainText("Long Description Field.");
+  });
+
+  test("keeps desktop list and detail surfaces independently scrollable", async ({ browser }) => {
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 620 },
+    });
+
+    await page.goto("/design-system/templates/list-page");
+
+    const firstItem = page.locator("[data-selectable-list-card]").first();
+
+    await firstItem.click();
+
+    const scrollState = await page.evaluate(() => {
+      const listColumn = document.querySelector("[data-selectable-list-column]");
+      const detailBody = document.querySelector(".list-page-detail-body");
+
+      if (!(listColumn instanceof HTMLElement) || !(detailBody instanceof HTMLElement)) {
+        return null;
+      }
+
+      listColumn.scrollTop = 180;
+      detailBody.scrollTop = 120;
+
+      return {
+        listOverflowY: getComputedStyle(listColumn).overflowY,
+        detailOverflowY: getComputedStyle(detailBody).overflowY,
+        listScrollTop: listColumn.scrollTop,
+        detailScrollTop: detailBody.scrollTop,
+        listClientHeight: listColumn.clientHeight,
+        detailClientHeight: detailBody.clientHeight,
+      };
+    });
+
+    expect(scrollState).not.toBeNull();
+    expect(["auto", "scroll"]).toContain(scrollState?.listOverflowY);
+    expect(["auto", "scroll"]).toContain(scrollState?.detailOverflowY);
+    expect(scrollState?.listClientHeight).toBeGreaterThan(0);
+    expect(scrollState?.detailClientHeight).toBeGreaterThan(0);
+    expect(scrollState?.listScrollTop).toBeGreaterThan(0);
+    expect(scrollState?.detailScrollTop).toBeGreaterThan(0);
+
+    await page.close();
+  });
+
+  test("lazy-loads additional list items from browser scroll while the desktop list is closed", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const listColumn = page.locator("[data-selectable-list-column]");
+    const itemCards = page.locator("[data-selectable-list-card]");
+    const initialCount = await itemCards.count();
+
+    expect(initialCount).toBeGreaterThanOrEqual(4);
+
+    const closedState = await listColumn.evaluate((node) => {
+      if (!(node instanceof HTMLElement)) {
+        return null;
+      }
+
+      return {
+        overflowY: getComputedStyle(node).overflowY,
+        clientHeight: node.clientHeight,
+      };
+    });
+
+    expect(closedState).not.toBeNull();
+    expect(closedState?.overflowY).toBe("visible");
+    expect(closedState?.clientHeight).toBeGreaterThan(0);
+
+    await page.evaluate(() => {
+      window.scrollTo(0, document.documentElement.scrollHeight);
+      window.dispatchEvent(new Event("scroll"));
+    });
+
+    await expect(page.locator("[data-selectable-list-loading]")).toContainText("Loading more items...");
+    await expect(itemCards).toHaveCount(initialCount + 6);
+    await expect(page.locator("[data-selectable-list-status]")).toContainText("More placeholder items loaded");
+  });
+
+  test("uses a mobile overlay drawer that stays beneath shell menus and the design drawer", async ({ browser }) => {
+    const page = await browser.newPage({
+      viewport: { width: 560, height: 900 },
+    });
+
+    await page.goto("/design-system/templates/list-page");
+    await page.locator("[data-selectable-list-card]").first().click();
+
+    const mobileState = await page.evaluate(() => {
+      const panel = document.getElementById("list-page-detail-panel");
+      const designDrawer = document.getElementById("accessibility-drawer");
+      const topNav = document.querySelector(".top-nav");
+      const subNav = document.querySelector(".sub-nav");
+      const layout = document.getElementById("list-page-split-layout");
+
+      if (
+        !(panel instanceof HTMLElement)
+        || !(designDrawer instanceof HTMLElement)
+        || !(topNav instanceof HTMLElement)
+        || !(subNav instanceof HTMLElement)
+        || !(layout instanceof HTMLElement)
+      ) {
+        return null;
+      }
+
+      const panelStyle = getComputedStyle(panel);
+      const drawerStyle = getComputedStyle(designDrawer);
+
+      return {
+        panelPosition: panelStyle.position,
+        panelZIndex: panelStyle.zIndex,
+        designDrawerZIndex: drawerStyle.zIndex,
+        topNavZIndex: getComputedStyle(topNav).zIndex,
+        subNavZIndex: getComputedStyle(subNav).zIndex,
+        layoutColumns: getComputedStyle(layout).gridTemplateColumns,
+      };
+    });
+
+    expect(mobileState).not.toBeNull();
+    expect(mobileState?.panelPosition).toBe("fixed");
+    expect(mobileState?.layoutColumns).not.toMatch(/  /);
+    expect(Number(mobileState?.panelZIndex)).toBeLessThan(Number(mobileState?.designDrawerZIndex));
+    expect(Number(mobileState?.panelZIndex)).toBeLessThan(Number(mobileState?.subNavZIndex));
+    expect(Number(mobileState?.panelZIndex)).toBeLessThan(Number(mobileState?.topNavZIndex));
+
+    await page.close();
+  });
+});

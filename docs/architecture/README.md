@@ -8,6 +8,9 @@ security, reliability, modularity, consistency, or operational behavior.
 
 - `system-overview.md`
   Snapshot of the architecture that exists today.
+- `frontend-overview.md`
+  Current-state frontend architecture, route-family shape, and browser/runtime
+  boundaries.
 - `priniciples.md`
   Day-to-day architectural guardrails for platform and feature changes.
 - `change-control.md`
@@ -36,6 +39,8 @@ security, reliability, modularity, consistency, or operational behavior.
 ## How To Use This Folder
 
 - Read `system-overview.md` before changing platform seams.
+- Read `frontend-overview.md` before changing frontend route families, browser
+  runtime seams, or frontend delivery posture.
 - Use `priniciples.md` when deciding whether a change is acceptable.
 - Use `change-control.md` to determine whether a change needs a new ADR.
 - Add or supersede ADRs when the architecture changes in a lasting way.

@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Time Picker Canonical</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-time-picker-surface="canonical" data-render-status="settling">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
+            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Pages</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">TP</span>
+            <span class="profile-meta"><strong>Time Picker</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/components">Components</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonicals/time-picker">Time Picker Canonicals</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Canonical Render</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search time-picker canonical refs" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Time-picker family navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/canonicals/time-picker" data-tooltip="Canonicals" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75Zm.75 4.5h-1.5v5.1l3.65 2.2.78-1.28-2.93-1.77Z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main canonical-render-page">
+        <div class="canonical-render-layout">
+          <section class="canonical-render-intro">
+            <p class="top-nav-preview-eyebrow">Canonical Render</p>
+            <h1>Time Picker</h1>
+            <p class="canonical-launcher-copy">
+              This route is the dedicated canonical render surface for `Time Picker`. Use the
+              <a href="/design-system/canonicals/time-picker">canonical launcher</a> for ref selection and keep this
+              page for focused review of one state at a time.
+            </p>
+            <dl class="canonical-render-meta" aria-label="Canonical metadata">
+              <div class="canonical-render-meta-row">
+                <dt>Matched canonical</dt>
+                <dd id="time-picker-canonical-match-list">Resolving canonical reference...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewing circumstances</dt>
+                <dd id="time-picker-canonical-circumstances">Loading width, direction, and magnification...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Child state</dt>
+                <dd id="time-picker-meta-state">Loading time-picker state...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewport contract</dt>
+                <dd id="time-picker-meta-viewport">Loading viewport contract...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Review note</dt>
+                <dd id="time-picker-meta-notes">Loading review note...</dd>
+              </div>
+            </dl>
+            <div class="canonical-render-footer">
+              <nav class="canonical-stepper" aria-label="Canonical navigation">
+                <span id="time-picker-canonical-current" class="canonical-stepper-current">Resolving current canonical...</span>
+                <a id="time-picker-canonical-prev" class="canonical-stepper-link" href="#" aria-disabled="true">Previous</a>
+                <a id="time-picker-canonical-next" class="canonical-stepper-link" href="#" aria-disabled="true">Next</a>
+              </nav>
+            </div>
+          </section>
+
+          <section class="top-nav-preview-stage-section" aria-labelledby="time-picker-stage-title">
+            <div class="top-nav-preview-stage-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Canonical Surface</p>
+                <h2 id="time-picker-stage-title">Time Picker Canonical State</h2>
+              </div>
+              <p id="time-picker-preview-summary" class="top-nav-preview-stage-note">
+                Canonical state loading from the URL.
+              </p>
+            </div>
+
+            <div id="time-picker-preview-frame" class="canonical-render-frame">
+              <div
+                id="time-picker-preview-shell"
+                class="form-page-shell"
+                data-form-error-mode="false"
+                data-form-disabled-mode="false"
+                data-form-mobile-view="false"
+                data-render-status="settling"
+              >
+                <section class="form-page-card" aria-labelledby="time-picker-preview-card-title">
+                  <div class="form-page-section-header">
+                    <div>
+                      <p class="top-nav-preview-eyebrow">Parent Framing</p>
+                      <h3 id="time-picker-preview-card-title" class="form-page-section-title">Time Picker Hosted States</h3>
+                    </div>
+                    <p class="form-page-section-copy">
+                      This render keeps parent-owned label, help, and host framing visible while isolating the child seam
+                      for direct standalone and nested review.
+                    </p>
+                  </div>
+
+                  <div class="form-page-grid">
+                    <div class="form-field">
+                      <span class="form-field-label" id="time-picker-preview-label">Standalone time picker</span>
+                      <div id="time-picker-standalone-root" class="form-time-picker" data-form-time-picker>
+                        <input type="hidden" name="timePickerStandalone" value="09:30" data-form-time-value />
+                        <button
+                          id="time-picker-preview-trigger"
+                          class="form-time-trigger"
+                          type="button"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="time-picker-preview-label time-picker-preview-trigger"
+                          data-form-time-button
+                        >
+                          <span data-form-time-current-label>09:30</span>
+                          <span class="form-time-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-time-menu hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="time-picker-preview-label"
+                          data-form-time-panel
+                        >
+                          <div class="side-panel-header form-time-menu-header">
+                            <div>
+                              <p class="drawer-eyebrow">Time picker</p>
+                              <h4 class="form-time-menu-title">Choose launch time</h4>
+                            </div>
+                            <button
+                              class="icon-button"
+                              type="button"
+                              aria-label="Close standalone time picker"
+                              data-form-time-close
+                            >
+                              <span class="icon-button-glyph" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                  <path d="M6 6l12 12M18 6L6 18" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+                          <div class="form-time-columns">
+                            <section class="form-time-column">
+                              <p class="form-time-column-title">Hour</p>
+                              <div class="form-time-option-list" data-form-time-hours></div>
+                            </section>
+                            <section class="form-time-column">
+                              <p class="form-time-column-title">Minute</p>
+                              <div class="form-time-option-list" data-form-time-minutes></div>
+                            </section>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="form-field-help">Parent-owned helper copy stays adjacent while the child seam owns trigger and panel behavior.</span>
+                      <span class="form-field-error">Parent-owned error copy stays outside the child seam contract.</span>
+                    </div>
+
+                    <div class="form-field form-field-span-2">
+                      <span class="form-field-label" id="time-picker-range-host-label">Nested inside date range with time</span>
+                      <div
+                        id="time-picker-range-host-trigger"
+                        class="form-date-trigger time-picker-range-host-trigger"
+                        aria-hidden="true"
+                      >
+                        <span id="time-picker-range-host-current-label">May 4, 2026 9:00 AM - May 10, 2026 5:00 PM</span>
+                        <span class="form-date-trigger-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" focusable="false">
+                            <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />
+                          </svg>
+                        </span>
+                      </div>
+                      <div id="time-picker-range-host-panel" class="time-picker-range-host-panel">
+                        <div class="time-picker-range-host-header">
+                          <div>
+                            <p class="top-nav-preview-eyebrow">Date Range With Time Host</p>
+                            <h4 class="form-date-menu-title">Nested time-picker overlap review</h4>
+                          </div>
+                          <p class="time-picker-range-host-note">Parent host stays open while the child seam edits only time.</p>
+                        </div>
+                        <div class="form-date-time-grid">
+                          <div class="form-date-time-field">
+                            <span class="form-date-time-label" id="time-picker-nested-start-label">Start time</span>
+                            <div id="time-picker-nested-root" class="form-time-picker" data-form-time-picker>
+                              <input type="hidden" name="timePickerNestedStart" value="09:00" data-form-time-value />
+                              <button
+                                id="time-picker-nested-start-trigger"
+                                class="form-time-trigger"
+                                type="button"
+                                aria-haspopup="dialog"
+                                aria-expanded="false"
+                                aria-labelledby="time-picker-nested-start-label time-picker-nested-start-trigger"
+                                data-form-time-button
+                              >
+                                <span data-form-time-current-label>09:00</span>
+                                <span class="form-time-trigger-icon" aria-hidden="true">
+                                  <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="m6 9 6 6 6-6" />
+                                  </svg>
+                                </span>
+                              </button>
+                              <div
+                                class="form-time-menu hidden"
+                                role="dialog"
+                                aria-modal="false"
+                                aria-labelledby="time-picker-nested-start-label"
+                                data-form-time-panel
+                              >
+                                <div class="side-panel-header form-time-menu-header">
+                                  <div>
+                                    <p class="drawer-eyebrow">Time picker</p>
+                                    <h4 class="form-time-menu-title">Choose start time</h4>
+                                  </div>
+                                  <button
+                                    class="icon-button"
+                                    type="button"
+                                    aria-label="Close nested start time picker"
+                                    data-form-time-close
+                                  >
+                                    <span class="icon-button-glyph" aria-hidden="true">
+                                      <svg viewBox="0 0 24 24" focusable="false">
+                                        <path d="M6 6l12 12M18 6L6 18" />
+                                      </svg>
+                                    </span>
+                                  </button>
+                                </div>
+                                <div class="form-time-columns">
+                                  <section class="form-time-column">
+                                    <p class="form-time-column-title">Hour</p>
+                                    <div class="form-time-option-list" data-form-time-hours></div>
+                                  </section>
+                                  <section class="form-time-column">
+                                    <p class="form-time-column-title">Minute</p>
+                                    <div class="form-time-option-list" data-form-time-minutes></div>
+                                  </section>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-date-time-field">
+                            <span class="form-date-time-label">End time</span>
+                            <div class="form-time-trigger" aria-hidden="true">
+                              <span>17:00</span>
+                              <span class="form-time-trigger-icon">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                  <path d="m6 9 6 6 6-6" />
+                                </svg>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-date-range-summary">Parent-owned range summary and date staging stay outside the child seam.</div>
+                      </div>
+                      <span class="form-field-help">This host keeps the parent range shell visible while the child seam proves the allowed nested overlap.</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/timePickerCanonical.mjs"></script>
+  </body>
+</html>

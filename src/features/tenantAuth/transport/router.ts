@@ -9,7 +9,7 @@ import { createRateLimitMiddleware } from "../../../lib/security/rateLimit";
 import type { PlatformSecurityRepository } from "../../../lib/security/repository";
 import type { TenantAuthSessionLookupRepository } from "../persistence/repository";
 import {
-  bootstrapPrincipalBodySchema,
+  completeRemediationPasswordBodySchema,
   loginTenantPrincipalBodySchema,
   selectTenantContextBodySchema,
   setupPasswordBodySchema,
@@ -86,20 +86,6 @@ export function createTenantAuthRouter(
     signal: "authenticated-sensitive",
   });
 
-  router.post("/principals/bootstrap", publicAuthRateLimit, async (request, response, next) => {
-    try {
-      const body = parseOrThrow(bootstrapPrincipalBodySchema, request.body);
-      response.status(200).json(
-        await service.bootstrapPrincipalFromVerification({
-          ...body,
-          ...getRequestMetadata(request),
-        }),
-      );
-    } catch (error) {
-      next(error);
-    }
-  });
-
   router.post("/password/setup", publicAuthRateLimit, async (request, response, next) => {
     try {
       const body = parseOrThrow(setupPasswordBodySchema, request.body);
@@ -127,6 +113,48 @@ export function createTenantAuthRouter(
       next(error);
     }
   });
+
+  router.get(
+    "/remediation",
+    requireTenantSession,
+    authenticatedSensitiveRateLimit,
+    async (request, response, next) => {
+      try {
+        const session = getRequiredTenantSessionContext(request);
+        response.status(200).json(
+          await service.readCurrentTenantRemediationState({
+            sessionId: session.sessionId,
+            authPrincipalId: session.authPrincipalId,
+          }),
+        );
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  router.post(
+    "/remediation/password",
+    requireTenantSession,
+    authenticatedSensitiveRateLimit,
+    async (request, response, next) => {
+      try {
+        const session = getRequiredTenantSessionContext(request);
+        const body = parseOrThrow(completeRemediationPasswordBodySchema, request.body);
+        response.status(200).json(
+          await service.completePasswordRemediation({
+            sessionId: session.sessionId,
+            authPrincipalId: session.authPrincipalId,
+            newPassword: body.newPassword,
+            repeatPassword: body.repeatPassword,
+            ...getRequestMetadata(request),
+          }),
+        );
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 
   router.get(
     "/session",

@@ -15,6 +15,30 @@ export interface TenantAdminSummary {
   deletedAt: string | null;
 }
 
+export interface TenantAdminVerificationRedeemResult {
+  status: "VERIFIED";
+  tenantAdmin: TenantAdminSummary;
+  tenantAuthOnboarding: {
+    authPrincipalId: string;
+    loginEmail: string;
+    passwordSetupRequired: boolean;
+    bootstrapToken: string | null;
+    nextStep: "PASSWORD_SETUP_REQUIRED" | "LOGIN_REQUIRED";
+  };
+}
+
+export interface TenantAdminOnboardingRestartResult {
+  status: "ONBOARDING_RESTARTED";
+  tenantAdmin: TenantAdminSummary;
+  tenantAuthOnboarding: {
+    authPrincipalId: string;
+    loginEmail: string;
+    passwordSetupRequired: boolean;
+    bootstrapToken: string | null;
+    nextStep: "PASSWORD_SETUP_REQUIRED" | "LOGIN_REQUIRED";
+  };
+}
+
 export interface TenantAdminListResult {
   items: TenantAdminSummary[];
   page: number;

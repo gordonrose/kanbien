@@ -1,0 +1,1271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Form Template</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy">
+            <strong>Kanbien Design System</strong>
+          </span>
+        </a>
+
+        <nav class="primary-nav" aria-label="Primary">
+          <div id="primary-nav-links" class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link" href="/design-system/components">Components</a>
+            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link active" href="/design-system/templates" aria-current="page">Pages</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+          <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+            <button
+              id="primary-nav-overflow-button"
+              class="nav-link primary-nav-overflow-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="primary-nav-overflow-menu"
+            >
+              More
+            </button>
+            <div
+              id="primary-nav-overflow-menu"
+              class="primary-nav-overflow-menu hidden"
+              role="menu"
+              aria-labelledby="primary-nav-overflow-button"
+            ></div>
+          </div>
+        </nav>
+
+        <button
+          id="mobile-nav-button"
+          class="mobile-nav-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-nav-menu"
+          aria-label="Open navigation menu"
+        >
+          <span class="burger-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="nav-utilities">
+          <button
+            id="profile-menu-button"
+            class="profile-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="profile-menu"
+          >
+            <span class="profile-avatar" aria-hidden="true">FM</span>
+            <span class="profile-meta">
+              <strong>Pages</strong>
+            </span>
+          </button>
+
+          <div
+            id="profile-menu"
+            class="profile-menu hidden"
+            role="menu"
+            aria-labelledby="profile-menu-button"
+          >
+            <button
+              id="profile-language-button"
+              class="menu-item menu-item-button"
+              type="button"
+              role="menuitem"
+            >
+              Language
+            </button>
+            <button id="close-profile-menu" class="menu-item menu-item-button" type="button" role="menuitem">
+              Close menu
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <nav id="mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile primary">
+        <a class="nav-link" href="/design-system">Overview</a>
+        <a class="nav-link" href="/design-system/foundations">Foundations</a>
+        <a class="nav-link" href="/design-system/components">Components</a>
+        <a class="nav-link" href="/design-system/patterns">Patterns</a>
+        <a class="nav-link active" href="/design-system/templates" aria-current="page">Pages</a>
+        <a class="nav-link" href="/design-system/resources">Resources</a>
+        <div class="mobile-profile-group">
+          <button
+            id="mobile-profile-button"
+            class="mobile-profile-item"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-profile-menu"
+          >
+            Pages
+          </button>
+          <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
+            <a class="mobile-subnav-link" href="/design-system/templates">Back to Pages</a>
+            <a class="mobile-subnav-link" href="#form-page-canvas-title">Form Canvas</a>
+            <button id="mobile-language-button" class="mobile-subnav-link mobile-subnav-button" type="button">
+              Language
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div
+        id="language-modal"
+        class="language-modal hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="language-modal-title"
+      >
+        <div id="language-modal-backdrop" class="language-modal-backdrop"></div>
+        <div class="language-modal-panel">
+          <div class="language-modal-header">
+            <div>
+              <p class="language-modal-eyebrow">Profile Preference</p>
+              <h2 id="language-modal-title">Choose your language</h2>
+              <p id="language-modal-description" class="language-modal-copy">
+                Pick one of the common languages below for this design-system prototype.
+              </p>
+            </div>
+            <button
+              id="language-modal-close"
+              class="drawer-close-button"
+              type="button"
+              aria-label="Close language selector"
+            >
+              ×
+            </button>
+          </div>
+          <div
+            id="language-option-list"
+            class="language-option-list"
+            role="listbox"
+            aria-describedby="language-modal-description"
+          ></div>
+        </div>
+      </div>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <div id="breadcrumb-compact" class="breadcrumb-compact hidden">
+            <button
+              id="breadcrumb-compact-button"
+              class="breadcrumb-collapse-button breadcrumb-compact-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="breadcrumb-compact-menu"
+              aria-label="Open page structure menu"
+            >
+              <span class="breadcrumb-compact-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M6 4.5a1.5 1.5 0 1 1 0 3H5v3h5.5a1.5 1.5 0 1 1 0 3H5v5h3.5a1.5 1.5 0 1 1 0 3H3.5a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 3.5 4.5zm11 0a4 4 0 0 1 0 8h-2v-3h2a1 1 0 1 0 0-2h-2v-3zm-2 9h3a4 4 0 1 1 0 8h-3v-3h3a1 1 0 1 0 0-2h-3z" />
+                </svg>
+              </span>
+            </button>
+            <div
+              id="breadcrumb-compact-menu"
+              class="breadcrumb-collapse-menu hidden"
+              role="menu"
+              aria-labelledby="breadcrumb-compact-button"
+            >
+              <a class="menu-item" href="/design-system" role="menuitem">Home</a>
+              <a class="menu-item" href="/design-system/templates" role="menuitem">Templates</a>
+              <span class="menu-item breadcrumb-structure-current" aria-current="page">Form</span>
+            </div>
+          </div>
+          <ol id="breadcrumb-list" class="breadcrumb-list">
+            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li id="breadcrumb-separator-before-collapsed" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed hidden">
+              <button
+                id="breadcrumb-collapse-button"
+                class="breadcrumb-collapse-button"
+                type="button"
+                aria-expanded="false"
+                aria-controls="breadcrumb-collapse-menu"
+                aria-label="Open collapsed breadcrumb menu"
+              >
+                ...
+              </button>
+              <div
+                id="breadcrumb-collapse-menu"
+                class="breadcrumb-collapse-menu hidden"
+                role="menu"
+                aria-labelledby="breadcrumb-collapse-button"
+              >
+                <a class="menu-item" href="/design-system/templates" role="menuitem">Templates</a>
+              </div>
+            </li>
+            <li id="breadcrumb-separator-before-page-minus-one"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-page-minus-one-item"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="/design-system/templates">Templates</a></li>
+            <li id="breadcrumb-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-current-item"><span class="breadcrumb-button breadcrumb-current" aria-current="page">Form</span></li>
+          </ol>
+        </nav>
+
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input
+              id="design-system-search"
+              class="search-input"
+              type="search"
+              name="q"
+              placeholder="Search form template notes"
+            />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Form-page section navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/templates/form" data-tooltip="Form" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M6 4h12a2 2 0 0 1 2 2v12.5a1.5 1.5 0 0 1-2.56 1.06l-2.88-2.88a1.5 1.5 0 0 0-1.06-.44H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm1.5 4.25a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5zm0 3.75a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5z" />
+              </svg>
+            </span>
+            <span class="context-nav-label">Form</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group">
+          <button
+            id="accessibility-button"
+            class="context-nav-item context-nav-item-button context-nav-mobile-overflow-target"
+            type="button"
+            data-tooltip="Accessibility"
+            aria-expanded="false"
+            aria-controls="accessibility-drawer"
+          >
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75zm0 3.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 5.85zm0 11.55a5.4 5.4 0 0 1-4.19-1.97 4.87 4.87 0 0 1 8.38 0A5.4 5.4 0 0 1 12 17.4z" />
+              </svg>
+            </span>
+            <span class="context-nav-label">Design Drawer</span>
+          </button>
+        </div>
+      </nav>
+
+      <aside
+        id="accessibility-drawer"
+        class="side-panel accessibility-drawer hidden"
+        aria-labelledby="accessibility-title"
+        aria-hidden="true"
+      >
+        <div class="side-panel-header accessibility-drawer-header">
+          <div>
+            <p class="drawer-eyebrow" data-display-settings-copy="eyebrow">Display</p>
+            <h2 id="accessibility-title" data-display-settings-copy="title">Display Settings</h2>
+          </div>
+          <button
+            id="accessibility-close"
+            class="drawer-close-button"
+            type="button"
+            aria-label="Close display settings"
+            data-display-settings-aria-label="close"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="theme-group">Theme</p>
+          <div class="chip-row" role="group" aria-label="Theme">
+            <button class="accessibility-chip active" type="button" data-theme-option="normal" data-display-settings-copy="theme-normal">Normal</button>
+            <button class="accessibility-chip" type="button" data-theme-option="dark" data-display-settings-copy="theme-dark">Dark</button>
+            <button class="accessibility-chip" type="button" data-theme-option="desert" data-display-settings-copy="theme-desert">Desert</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="magnification-group">Magnification</p>
+          <div class="chip-row chip-row-single-line" role="group" aria-label="Magnification">
+            <button class="accessibility-chip" type="button" data-magnification-option="-100">-100%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="-50">-50%</button>
+            <button class="accessibility-chip active" type="button" data-magnification-option="0">0%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="50">+50%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="100">+100%</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="accent-group">Primary Colour</p>
+          <div class="color-grid" role="group" aria-label="Primary colour">
+            <button class="color-swatch active" type="button" data-accent="#635bff" aria-label="Indigo"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#635bff" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#2563eb" aria-label="Blue"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2563eb" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#0891b2" aria-label="Cyan"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0891b2" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#0f766e" aria-label="Teal"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0f766e" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#2f855a" aria-label="Green"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2f855a" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#65a30d" aria-label="Lime"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#65a30d" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#ca8a04" aria-label="Gold"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ca8a04" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#ea580c" aria-label="Orange"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ea580c" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#dc2626" aria-label="Red"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#dc2626" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#e11d48" aria-label="Rose"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#e11d48" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#c026d3" aria-label="Fuchsia"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#c026d3" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#7c3aed" aria-label="Violet"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#7c3aed" /></svg></button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="direction-group">Direction</p>
+          <div class="chip-row" role="group" aria-label="Direction">
+            <button class="accessibility-chip active" type="button" data-direction-option="ltr" data-display-settings-copy="direction-ltr">Left to right</button>
+            <button class="accessibility-chip" type="button" data-direction-option="rtl" data-display-settings-copy="direction-rtl">Right to left</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label">Form States</p>
+          <div class="chip-row" role="group" aria-label="Form states">
+            <button class="accessibility-chip" type="button" data-form-drawer-setting="errors" aria-pressed="false">Error</button>
+            <button class="accessibility-chip" type="button" data-form-drawer-setting="disabled" aria-pressed="false">Disabled</button>
+            <button class="accessibility-chip" type="button" data-form-drawer-setting="mobile" aria-pressed="false">Mobile view</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="design-system-page-main">
+        <section class="component-catalog-section" aria-labelledby="form-page-canvas-title">
+          <div class="component-catalog-section-header">
+            <p class="top-nav-preview-eyebrow">Baseline Reference</p>
+            <h1 id="form-page-canvas-title" class="component-catalog-section-title">Form Template</h1>
+            <p class="component-catalog-meta">
+              This first version gives us a reusable editing canvas with grouped fields, choice controls, and a stable action rail so we can start the formal behavior-lock and canonical loop from something concrete.
+            </p>
+            <div class="component-catalog-section-actions">
+              <span class="form-page-status">Draft autosaved 2 minutes ago</span>
+              <button class="accessibility-chip" type="button" aria-pressed="false" data-form-error-toggle>Show errors</button>
+              <button class="accessibility-chip" type="button">Preview</button>
+              <button class="accessibility-chip active" type="button">Publish</button>
+            </div>
+          </div>
+
+          <section
+            class="form-page-shell"
+            aria-labelledby="form-page-shell-title"
+            data-form-error-mode="false"
+            data-form-disabled-mode="false"
+            data-form-mobile-view="false"
+          >
+            <div class="form-page-layout">
+              <form class="form-page-card" aria-label="Campaign form" aria-labelledby="form-page-shell-title">
+                <section class="form-page-section" aria-labelledby="form-section-basics">
+                  <div class="form-page-section-header form-page-intro">
+                    <div>
+                      <p class="top-nav-preview-eyebrow">Editor</p>
+                      <h2 id="form-page-shell-title" class="form-page-title">Create workspace campaign</h2>
+                      <p class="component-catalog-meta">
+                        A starter form canvas for configuration-heavy flows where authors need clear sections, inline guidance, and dependable primary actions.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="form-page-section-header">
+                    <div>
+                      <p class="top-nav-preview-eyebrow">Section 01</p>
+                      <h3 id="form-section-basics" class="form-page-section-title">Basics</h3>
+                    </div>
+                    <p class="form-page-section-copy">Start with the primary text fields and the first scheduling choices.</p>
+                  </div>
+
+                  <div class="form-page-grid">
+                    <label class="form-field form-field-span-2">
+                      <span class="form-field-label">Text field</span>
+                      <input class="form-field-input" type="text" value="April renewal outreach" />
+                      <span class="form-field-help">Use the public-facing title people will recognize in dashboards and alerts.</span>
+                      <span class="form-field-error">Enter a campaign title before continuing.</span>
+                    </label>
+
+                    <div class="form-field">
+                      <span class="form-field-label" id="form-audience-label">Dropdown</span>
+                      <div class="form-select" data-form-select>
+                        <input type="hidden" name="audience" value="all-active-tenants" data-form-select-value />
+                        <button
+                          class="form-select-trigger"
+                          type="button"
+                          id="form-audience-trigger"
+                          aria-haspopup="listbox"
+                          aria-expanded="false"
+                          aria-labelledby="form-audience-label form-audience-trigger"
+                          data-form-select-button
+                        >
+                          <span data-form-select-current-label>All active tenants</span>
+                          <span class="form-select-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-select-menu hidden"
+                          role="listbox"
+                          tabindex="-1"
+                          aria-labelledby="form-audience-label"
+                          data-form-select-listbox
+                        >
+                          <button
+                            class="form-select-option active"
+                            type="button"
+                            role="option"
+                            aria-selected="true"
+                            data-form-select-option
+                            data-value="all-active-tenants"
+                          >
+                            All active tenants
+                          </button>
+                          <button
+                            class="form-select-option"
+                            type="button"
+                            role="option"
+                            aria-selected="false"
+                            data-form-select-option
+                            data-value="trial-tenants"
+                          >
+                            Trial tenants
+                          </button>
+                          <button
+                            class="form-select-option"
+                            type="button"
+                            role="option"
+                            aria-selected="false"
+                            data-form-select-option
+                            data-value="enterprise-tenants"
+                          >
+                            Enterprise tenants
+                          </button>
+                        </div>
+                      </div>
+                      <span class="form-field-error">Choose an audience before publishing.</span>
+                    </div>
+
+                    <div class="form-field">
+                      <span class="form-field-label" id="form-launch-date-label">Date picker</span>
+                      <div class="form-date-picker" data-form-date-picker data-picker-mode="single" data-month-count="1">
+                        <input type="hidden" name="launchDate" value="2026-04-24" data-form-date-start-value />
+                        <button
+                          class="form-date-trigger"
+                          type="button"
+                          id="form-launch-date-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="form-launch-date-label form-launch-date-trigger"
+                          data-form-date-button
+                        >
+                          <span data-form-date-current-label>Apr 24, 2026</span>
+                          <span class="form-date-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-date-menu hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="form-launch-date-label"
+                          data-form-date-panel
+                        >
+                          <div class="form-date-menu-header">
+                            <div>
+                              <p class="top-nav-preview-eyebrow">Date Picker</p>
+                              <h4 class="form-date-menu-title">Choose single date</h4>
+                            </div>
+                            <div class="form-date-menu-controls">
+                              <div class="form-date-menu-actions">
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="-1">Previous</button>
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="1">Next</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-date-months" data-form-date-months></div>
+                        </div>
+                      </div>
+                      <span class="form-field-error">Choose a launch date.</span>
+                    </div>
+
+                    <div class="form-field">
+                      <span class="form-field-label" id="form-launch-time-label">Time picker</span>
+                      <div class="form-time-picker" data-form-time-picker>
+                        <input type="hidden" name="launchTime" value="09:30" data-form-time-value />
+                        <button
+                          class="form-time-trigger"
+                          type="button"
+                          id="form-launch-time-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="form-launch-time-label form-launch-time-trigger"
+                          data-form-time-button
+                        >
+                          <span data-form-time-current-label>09:30</span>
+                          <span class="form-time-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-time-menu hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="form-launch-time-label"
+                          data-form-time-panel
+                        >
+                          <div class="side-panel-header form-time-menu-header">
+                            <div>
+                              <p class="drawer-eyebrow">Time picker</p>
+                              <h4 class="form-time-menu-title">Choose launch time</h4>
+                            </div>
+                            <button
+                              class="icon-button"
+                              type="button"
+                              aria-label="Close launch time picker"
+                              data-form-time-close
+                            >
+                              <span class="icon-button-glyph" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                  <path d="M6 6l12 12M18 6L6 18" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+                          <div class="form-time-columns">
+                            <section class="form-time-column">
+                              <p class="form-time-column-title">Hour</p>
+                              <div class="form-time-option-list" data-form-time-hours></div>
+                            </section>
+                            <section class="form-time-column">
+                              <p class="form-time-column-title">Minute</p>
+                              <div class="form-time-option-list" data-form-time-minutes></div>
+                            </section>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="form-field-error">Choose a launch time.</span>
+                    </div>
+
+                    <div class="form-field form-field-span-2">
+                      <span class="form-field-label" id="form-review-range-label">Date range</span>
+                      <div class="form-date-picker" data-form-date-picker data-picker-mode="range" data-month-count="3">
+                        <input type="hidden" name="reviewRangeStart" value="2026-04-24" data-form-date-start-value />
+                        <input type="hidden" name="reviewRangeEnd" value="2026-05-02" data-form-date-end-value />
+                        <button
+                          class="form-date-trigger"
+                          type="button"
+                          id="form-review-range-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="form-review-range-label form-review-range-trigger"
+                          data-form-date-button
+                        >
+                          <span data-form-date-current-label>Apr 24, 2026 - May 2, 2026</span>
+                          <span class="form-date-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-date-menu hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="form-review-range-label"
+                          data-form-date-panel
+                        >
+                          <div class="form-date-menu-header">
+                            <div>
+                              <p class="top-nav-preview-eyebrow">Date Range</p>
+                              <h4 class="form-date-menu-title">Choose start and end dates</h4>
+                            </div>
+                            <div class="form-date-menu-controls">
+                              <div class="form-date-menu-actions">
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="-1">Previous</button>
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="1">Next</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-date-range-summary" data-form-date-range-summary>Select a start date, then an end date.</div>
+                          <div class="form-date-months" data-form-date-months></div>
+                          <div class="form-date-menu-footer">
+                            <button class="form-date-done-button" type="button" data-form-date-done>Done</button>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="form-field-help">Date range without time keeps the review window focused on day-level scheduling only.</span>
+                      <span class="form-field-error">Select both a start and end date.</span>
+                    </div>
+
+                    <div class="form-field form-field-span-2">
+                      <span class="form-field-label" id="form-release-window-label">Date range with time</span>
+                      <div class="form-date-picker" data-form-date-picker data-picker-mode="range-time" data-month-count="3">
+                        <input type="hidden" name="releaseWindowStart" value="2026-05-04" data-form-date-start-value />
+                        <input type="hidden" name="releaseWindowEnd" value="2026-05-10" data-form-date-end-value />
+                        <button
+                          class="form-date-trigger"
+                          type="button"
+                          id="form-release-window-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="form-release-window-label form-release-window-trigger"
+                          data-form-date-button
+                        >
+                          <span data-form-date-current-label>May 4, 2026 09:00 AM - May 10, 2026 05:00 PM</span>
+                          <span class="form-date-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-date-menu hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="form-release-window-label"
+                          data-form-date-panel
+                        >
+                          <div class="form-date-menu-header">
+                            <div>
+                              <p class="top-nav-preview-eyebrow">Date Range With Time</p>
+                              <h4 class="form-date-menu-title">Choose window and handoff times</h4>
+                            </div>
+                            <div class="form-date-menu-controls">
+                              <div class="form-date-menu-actions">
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="-1">Previous</button>
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="1">Next</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-date-time-grid">
+                            <div class="form-date-time-field">
+                              <span class="form-date-time-label" id="form-release-window-start-time-label">Start time</span>
+                              <div class="form-time-picker" data-form-time-picker>
+                                <input type="hidden" name="releaseWindowStartTime" value="09:00" data-form-time-value data-form-date-start-time />
+                                <button
+                                  class="form-time-trigger"
+                                  type="button"
+                                  id="form-release-window-start-time-trigger"
+                                  aria-haspopup="dialog"
+                                  aria-expanded="false"
+                                  aria-labelledby="form-release-window-start-time-label form-release-window-start-time-trigger"
+                                  data-form-time-button
+                                >
+                                  <span data-form-time-current-label>09:00</span>
+                                  <span class="form-time-trigger-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                      <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                  </span>
+                                </button>
+                                <div
+                                  class="form-time-menu hidden"
+                                  role="dialog"
+                                  aria-modal="false"
+                                  aria-labelledby="form-release-window-start-time-label"
+                                  data-form-time-panel
+                                >
+                                  <div class="side-panel-header form-time-menu-header">
+                                    <div>
+                                      <p class="drawer-eyebrow">Time picker</p>
+                                      <h4 class="form-time-menu-title">Choose start time</h4>
+                                    </div>
+                                    <button
+                                      class="icon-button"
+                                      type="button"
+                                      aria-label="Close start time picker"
+                                      data-form-time-close
+                                    >
+                                      <span class="icon-button-glyph" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" focusable="false">
+                                          <path d="M6 6l12 12M18 6L6 18" />
+                                        </svg>
+                                      </span>
+                                    </button>
+                                  </div>
+                                  <div class="form-time-columns">
+                                    <section class="form-time-column">
+                                      <p class="form-time-column-title">Hour</p>
+                                      <div class="form-time-option-list" data-form-time-hours></div>
+                                    </section>
+                                    <section class="form-time-column">
+                                      <p class="form-time-column-title">Minute</p>
+                                      <div class="form-time-option-list" data-form-time-minutes></div>
+                                    </section>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-date-time-field">
+                              <span class="form-date-time-label" id="form-release-window-end-time-label">End time</span>
+                              <div class="form-time-picker" data-form-time-picker>
+                                <input type="hidden" name="releaseWindowEndTime" value="17:00" data-form-time-value data-form-date-end-time />
+                                <button
+                                  class="form-time-trigger"
+                                  type="button"
+                                  id="form-release-window-end-time-trigger"
+                                  aria-haspopup="dialog"
+                                  aria-expanded="false"
+                                  aria-labelledby="form-release-window-end-time-label form-release-window-end-time-trigger"
+                                  data-form-time-button
+                                >
+                                  <span data-form-time-current-label>17:00</span>
+                                  <span class="form-time-trigger-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                      <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                  </span>
+                                </button>
+                                <div
+                                  class="form-time-menu hidden"
+                                  role="dialog"
+                                  aria-modal="false"
+                                  aria-labelledby="form-release-window-end-time-label"
+                                  data-form-time-panel
+                                >
+                                  <div class="side-panel-header form-time-menu-header">
+                                    <div>
+                                      <p class="drawer-eyebrow">Time picker</p>
+                                      <h4 class="form-time-menu-title">Choose end time</h4>
+                                    </div>
+                                    <button
+                                      class="icon-button"
+                                      type="button"
+                                      aria-label="Close end time picker"
+                                      data-form-time-close
+                                    >
+                                      <span class="icon-button-glyph" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" focusable="false">
+                                          <path d="M6 6l12 12M18 6L6 18" />
+                                        </svg>
+                                      </span>
+                                    </button>
+                                  </div>
+                                  <div class="form-time-columns">
+                                    <section class="form-time-column">
+                                      <p class="form-time-column-title">Hour</p>
+                                      <div class="form-time-option-list" data-form-time-hours></div>
+                                    </section>
+                                    <section class="form-time-column">
+                                      <p class="form-time-column-title">Minute</p>
+                                      <div class="form-time-option-list" data-form-time-minutes></div>
+                                    </section>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-date-range-summary" data-form-date-range-summary>Select a start date, then an end date.</div>
+                          <div class="form-date-months" data-form-date-months></div>
+                          <div class="form-date-menu-footer">
+                            <button class="form-date-done-button" type="button" data-form-date-done>Done</button>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="form-field-help">Date range with time adds start and end time elements to the same three-month scheduling surface.</span>
+                      <span class="form-field-error">Select both dates and confirm the handoff times.</span>
+                    </div>
+
+                    <label class="form-field form-field-span-2">
+                      <span class="form-field-label">Text area</span>
+                      <textarea class="form-field-input form-field-textarea" rows="5">Keep the first send narrow, review open and click trends, then widen if the first 24 hours stay clean.</textarea>
+                      <span class="form-field-help">Long-form notes stay inside the same field rhythm rather than moving into a detached side panel.</span>
+                      <span class="form-field-error">Add a short owner note for the rollout team.</span>
+                    </label>
+                  </div>
+                </section>
+
+                <section class="form-page-section" aria-labelledby="form-section-preferences">
+                  <div class="form-page-section-header">
+                    <div>
+                      <p class="top-nav-preview-eyebrow">Section 02</p>
+                      <h3 id="form-section-preferences" class="form-page-section-title">Preferences</h3>
+                    </div>
+                    <p class="form-page-section-copy">Choice controls should feel equally clear whether they are single-select, multi-select, or mode toggles.</p>
+                  </div>
+
+                  <div class="form-page-grid">
+                    <fieldset class="form-choice-group">
+                      <legend class="form-choice-legend">Radio buttons</legend>
+                      <div class="form-choice-stack">
+                        <label class="form-choice-row">
+                          <input type="radio" name="deliveryMode" checked />
+                          <span>
+                            <strong>Scheduled</strong>
+                            <span>Launch on the chosen date and keep timing predictable.</span>
+                          </span>
+                        </label>
+                        <label class="form-choice-row">
+                          <input type="radio" name="deliveryMode" />
+                          <span>
+                            <strong>Manual release</strong>
+                            <span>Prepare everything now and publish after a final review.</span>
+                          </span>
+                        </label>
+                      </div>
+                      <span class="form-group-error">Choose a delivery mode.</span>
+                    </fieldset>
+
+                    <fieldset class="form-choice-group">
+                      <legend class="form-choice-legend">Checkboxes</legend>
+                      <div class="form-choice-stack">
+                        <label class="form-choice-row">
+                          <input type="checkbox" checked />
+                          <span>
+                            <strong>Email digest</strong>
+                            <span>Primary outbound summary for admins and owners.</span>
+                          </span>
+                        </label>
+                        <label class="form-choice-row">
+                          <input type="checkbox" checked />
+                          <span>
+                            <strong>In-app banner</strong>
+                            <span>Reinforces the message once users land in the workspace.</span>
+                          </span>
+                        </label>
+                        <label class="form-choice-row">
+                          <input type="checkbox" />
+                          <span>
+                            <strong>SMS escalation</strong>
+                            <span>Reserved for urgent reminders and exceptions only.</span>
+                          </span>
+                        </label>
+                      </div>
+                      <span class="form-group-error">Select at least one channel.</span>
+                    </fieldset>
+
+                    <div class="form-field form-field-span-2">
+                      <span class="form-field-label" id="form-collection-label">Drawer select</span>
+                      <div class="form-drawer-select" data-form-drawer-select data-form-drawer-select-canonical-fixture="collections" data-form-drawer-select-empty-summary="Choose collections">
+                        <input
+                          type="hidden"
+                          name="workspaceCollections"
+                          value="ops-core,customer-success,renewals-watch"
+                          data-form-drawer-select-value
+                        />
+                        <button
+                          class="form-drawer-select-trigger"
+                          type="button"
+                          id="form-collection-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="form-collection-label form-collection-trigger"
+                          data-form-drawer-select-button
+                        >
+                          <span class="form-drawer-select-trigger-copy">
+                            <span class="form-drawer-select-trigger-label" data-form-drawer-select-summary>Ops Core, Customer Success +1 more</span>
+                            <span class="form-drawer-select-trigger-meta" data-form-drawer-select-meta>3 selected</span>
+                          </span>
+                          <span class="form-drawer-select-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </span>
+                        </button>
+
+                        <aside
+                          class="form-drawer-select-panel hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="form-collection-drawer-title"
+                          aria-hidden="true"
+                          data-form-drawer-select-panel
+                        >
+                          <div class="side-panel-header">
+                            <div>
+                              <p class="drawer-eyebrow">Collection picker</p>
+                              <h2 id="form-collection-drawer-title">Choose workspace collections</h2>
+                            </div>
+                            <button
+                              class="icon-button"
+                              type="button"
+                              aria-label="Close workspace collection drawer"
+                              data-form-drawer-select-close
+                            >
+                              <span class="icon-button-glyph" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                  <path d="M6 6l12 12M18 6L6 18" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+
+                          <form class="search-shell form-drawer-select-search-shell" role="search">
+                            <label class="search-shell-field">
+                              <input
+                                class="search-input"
+                                type="search"
+                                placeholder="Search collections"
+                                autocomplete="off"
+                                data-form-drawer-select-search
+                              />
+                            </label>
+                          </form>
+
+                          <section class="form-drawer-select-selected-panel" aria-labelledby="form-collection-selected-title">
+                            <div class="form-drawer-select-selected-header">
+                              <div>
+                                <h3 id="form-collection-selected-title" class="form-drawer-select-selected-title">Selected</h3>
+                              </div>
+                              <span class="form-drawer-select-selected-count" data-form-drawer-select-selected-count>3 selected</span>
+                            </div>
+                            <p class="form-drawer-select-selected-empty hidden" data-form-drawer-select-selected-empty>No collections selected yet.</p>
+                            <div class="form-drawer-select-selected-list" data-form-drawer-select-selected-list></div>
+                          </section>
+
+                          <section class="form-drawer-select-catalog" aria-labelledby="form-collection-catalog-title">
+                            <div class="form-drawer-select-catalog-header">
+                              <h3 id="form-collection-catalog-title" class="form-drawer-select-selected-title">Available</h3>
+                            </div>
+                            <p class="form-drawer-select-empty hidden" data-form-drawer-select-empty>No collections match this search.</p>
+                            <div class="form-drawer-select-option-list" data-form-drawer-select-option-list>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="ops-core" data-label="Ops Core" data-description="Primary internal operating cohort for launch coordination.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Ops Core</strong>
+                                  <span>Primary internal operating cohort for launch coordination.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="finance-admins" data-label="Finance Admins" data-description="Billing owners and finance reviewers for customer-impacting changes.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Finance Admins</strong>
+                                  <span>Billing owners and finance reviewers for customer-impacting changes.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="customer-success" data-label="Customer Success" data-description="Account-facing operators who need launch timing and playbook visibility.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Customer Success</strong>
+                                  <span>Account-facing operators who need launch timing and playbook visibility.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="product-leads" data-label="Product Leads" data-description="Feature owners responsible for rollout narrative and follow-up signals.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Product Leads</strong>
+                                  <span>Feature owners responsible for rollout narrative and follow-up signals.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="risk-review" data-label="Risk Review" data-description="Compliance and escalation partners for sensitive tenant communications.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Risk Review</strong>
+                                  <span>Compliance and escalation partners for sensitive tenant communications.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="renewals-watch" data-label="Renewals Watch" data-description="Customer health and renewal monitoring cohort for near-term accounts.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Renewals Watch</strong>
+                                  <span>Customer health and renewal monitoring cohort for near-term accounts.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="trial-conversion" data-label="Trial Conversion" data-description="Lifecycle programs focused on first-value and conversion nudges.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Trial Conversion</strong>
+                                  <span>Lifecycle programs focused on first-value and conversion nudges.</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="support-escalations" data-label="Support Escalations" data-description="Support leaders who need visibility into customer-facing launch exceptions.">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Support Escalations</strong>
+                                  <span>Support leaders who need visibility into customer-facing launch exceptions.</span>
+                                </span>
+                              </button>
+                            </div>
+                          </section>
+                        </aside>
+                      </div>
+                      <span class="form-field-help">Use the drawer variant when people need to search, scan, and adjust a large selectable set without losing sight of what is already chosen.</span>
+                      <span class="form-field-error">Select at least one workspace collection.</span>
+                    </div>
+
+                    <div class="form-field form-field-span-2">
+                      <span class="form-field-label" id="form-segment-label">Drawer select simple</span>
+                      <div class="form-drawer-select form-drawer-select-attribute-cards" data-form-drawer-select data-form-drawer-select-canonical-fixture="segments" data-form-drawer-select-empty-summary="Choose segments" data-form-drawer-select-variant="attribute-cards">
+                        <input
+                          type="hidden"
+                          name="tenantSegments"
+                          value="new-admins,at-risk-renewals"
+                          data-form-drawer-select-value
+                        />
+                        <button
+                          class="form-drawer-select-trigger"
+                          type="button"
+                          id="form-segment-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="form-segment-label form-segment-trigger"
+                          data-form-drawer-select-button
+                        >
+                          <span class="form-drawer-select-trigger-copy">
+                            <span class="form-drawer-select-trigger-label" data-form-drawer-select-summary>New Admins, At-Risk Renewals</span>
+                            <span class="form-drawer-select-trigger-meta" data-form-drawer-select-meta>2 selected</span>
+                          </span>
+                          <span class="form-drawer-select-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </span>
+                        </button>
+
+                        <aside
+                          class="form-drawer-select-panel hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="form-segment-drawer-title"
+                          aria-hidden="true"
+                          data-form-drawer-select-panel
+                        >
+                          <div class="side-panel-header">
+                            <div>
+                              <p class="drawer-eyebrow">Segment picker</p>
+                              <h2 id="form-segment-drawer-title">Choose tenant segments</h2>
+                            </div>
+                            <button
+                              class="icon-button"
+                              type="button"
+                              aria-label="Close tenant segment drawer"
+                              data-form-drawer-select-close
+                            >
+                              <span class="icon-button-glyph" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" focusable="false">
+                                  <path d="M6 6l12 12M18 6L6 18" />
+                                </svg>
+                              </span>
+                            </button>
+                          </div>
+
+                          <form class="search-shell form-drawer-select-search-shell" role="search">
+                            <label class="search-shell-field">
+                              <input
+                                class="search-input"
+                                type="search"
+                                placeholder="Search segments"
+                                autocomplete="off"
+                                data-form-drawer-select-search
+                              />
+                            </label>
+                          </form>
+
+                          <section class="form-drawer-select-selected-panel" aria-labelledby="form-segment-selected-title">
+                            <div class="form-drawer-select-selected-header">
+                              <div>
+                                <h3 id="form-segment-selected-title" class="form-drawer-select-selected-title">Selected</h3>
+                              </div>
+                              <span class="form-drawer-select-selected-count" data-form-drawer-select-selected-count>2 selected</span>
+                            </div>
+                            <p class="form-drawer-select-selected-empty hidden" data-form-drawer-select-selected-empty>No segments selected yet.</p>
+                            <div class="form-drawer-select-selected-list" data-form-drawer-select-selected-list></div>
+                          </section>
+
+                          <section class="form-drawer-select-catalog" aria-labelledby="form-segment-catalog-title">
+                            <div class="form-drawer-select-catalog-header">
+                              <h3 id="form-segment-catalog-title" class="form-drawer-select-selected-title">Available</h3>
+                            </div>
+                            <p class="form-drawer-select-empty hidden" data-form-drawer-select-empty>No segments match this search.</p>
+                            <div class="form-drawer-select-option-list" data-form-drawer-select-option-list>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="enterprise-expansion" data-label="Enterprise Expansion" data-description="42 tenants" data-attribute="42 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Enterprise Expansion</strong>
+                                  <span>42 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="new-admins" data-label="New Admins" data-description="31 tenants" data-attribute="31 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>New Admins</strong>
+                                  <span>31 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="inactive-owners" data-label="Inactive Owners" data-description="18 tenants" data-attribute="18 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Inactive Owners</strong>
+                                  <span>18 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option active" type="button" data-form-drawer-select-option data-value="at-risk-renewals" data-label="At-Risk Renewals" data-description="9 tenants" data-attribute="9 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>At-Risk Renewals</strong>
+                                  <span>9 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="high-growth-trials" data-label="High-Growth Trials" data-description="24 tenants" data-attribute="24 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>High-Growth Trials</strong>
+                                  <span>24 tenants</span>
+                                </span>
+                              </button>
+                              <button class="form-drawer-select-option" type="button" data-form-drawer-select-option data-value="support-heavy" data-label="Support-Heavy Accounts" data-description="13 tenants" data-attribute="13 tenants">
+                                <span class="form-drawer-select-option-toggle" aria-hidden="true"></span>
+                                <span class="form-drawer-select-option-copy">
+                                  <strong>Support-Heavy Accounts</strong>
+                                  <span>13 tenants</span>
+                                </span>
+                              </button>
+                            </div>
+                          </section>
+                        </aside>
+                      </div>
+                      <span class="form-field-help">This variant keeps each selectable card to one compact attribute line when density matters more than a full explanatory sentence.</span>
+                      <span class="form-field-error">Select at least one tenant segment.</span>
+                    </div>
+
+                    <div class="form-field">
+                      <span class="form-field-label" id="form-campaign-icon-label">Icon grid</span>
+                      <div class="form-icon-grid" data-form-icon-grid>
+                        <input type="hidden" name="campaignIcon" value="spark" data-form-icon-grid-value />
+                        <button
+                          class="form-icon-grid-trigger"
+                          type="button"
+                          id="form-campaign-icon-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="form-campaign-icon-label form-campaign-icon-trigger"
+                          data-form-icon-grid-button
+                        >
+                          <span class="form-icon-grid-trigger-preview">
+                            <span class="form-icon-grid-trigger-glyph" aria-hidden="true" data-form-icon-grid-trigger-glyph>
+                              <svg viewBox="0 0 24 24" focusable="false">
+                                <path d="M12 2.5 14.2 8l5.3 2-5.3 2-2.2 5.5L9.8 12 4.5 10l5.3-2zm-5 13 1.15 2.85L11 19.5l-2.85 1.15L7 23.5l-1.15-2.85L3 19.5l2.85-1.15z" />
+                              </svg>
+                            </span>
+                            <span class="form-icon-grid-trigger-copy">
+                              <span class="form-icon-grid-trigger-label" data-form-icon-grid-current-label>Spark</span>
+                              <span class="form-icon-grid-trigger-meta">Search approved design-system icons</span>
+                            </span>
+                          </span>
+                          <span class="form-icon-grid-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-icon-grid-modal hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="form-campaign-icon-modal-title"
+                          aria-hidden="true"
+                          data-form-icon-grid-panel
+                        >
+                          <div class="form-icon-grid-backdrop" data-form-icon-grid-backdrop></div>
+                          <div class="form-icon-grid-panel">
+                            <div class="side-panel-header form-icon-grid-header">
+                              <div>
+                                <p class="drawer-eyebrow">Icon picker</p>
+                                <h2 id="form-campaign-icon-modal-title">Choose campaign icon</h2>
+                              </div>
+                              <button class="icon-button" type="button" aria-label="Close icon picker" data-form-icon-grid-close>
+                                <span class="icon-button-glyph" aria-hidden="true">
+                                  <svg viewBox="0 0 24 24" focusable="false">
+                                    <path d="M6 6l12 12M18 6L6 18" />
+                                  </svg>
+                                </span>
+                              </button>
+                            </div>
+
+                            <form class="search-shell form-icon-grid-search-shell" role="search">
+                              <label class="search-shell-field">
+                                <input
+                                  class="search-input"
+                                  type="search"
+                                  placeholder="Search icons"
+                                  autocomplete="off"
+                                  data-form-icon-grid-search
+                                />
+                              </label>
+                            </form>
+
+                            <p class="form-icon-grid-copy">
+                              Uses the same approved icon library already present across the governed design system.
+                            </p>
+                            <p class="form-icon-grid-empty hidden" data-form-icon-grid-empty>No icons match this search.</p>
+                            <div class="form-icon-grid-option-list" data-form-icon-grid-option-list></div>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="form-field-help">Choose a governed icon from the shared design-system icon library.</span>
+                      <span class="form-field-error">Choose an icon before publishing.</span>
+                    </div>
+
+                    <fieldset class="form-choice-group form-choice-group-statement form-field-span-2">
+                      <legend class="form-choice-legend">Checkboxes with shared statement</legend>
+                      <div class="form-choice-statement">
+                        <strong>Before publishing this campaign, confirm the release checklist items below.</strong>
+                        <span>These boxes sit beneath one shared statement instead of repeating the whole sentence per option.</span>
+                      </div>
+                      <div class="form-choice-stack">
+                        <label class="form-choice-row">
+                          <input type="checkbox" checked />
+                          <span>
+                            <strong>Copy approved</strong>
+                            <span>Marketing and support have signed off the final message.</span>
+                          </span>
+                        </label>
+                        <label class="form-choice-row">
+                          <input type="checkbox" />
+                          <span>
+                            <strong>Fallback path verified</strong>
+                            <span>Rollback and pause instructions are visible to the release owner.</span>
+                          </span>
+                        </label>
+                        <label class="form-choice-row">
+                          <input type="checkbox" />
+                          <span>
+                            <strong>Analytics ready</strong>
+                            <span>Open, click, and conversion dashboards are prepared for launch review.</span>
+                          </span>
+                        </label>
+                      </div>
+                      <span class="form-group-error">Check all required acknowledgement items before publishing.</span>
+                    </fieldset>
+
+                    <label class="form-toggle-row form-field-span-2">
+                      <span class="form-toggle-copy">
+                        <span class="form-field-label">Toggle</span>
+                        <span class="form-field-help">Use a high-visibility toggle for binary settings that change the publication workflow.</span>
+                      </span>
+                      <span class="form-toggle-control">
+                        <input class="form-toggle-input" type="checkbox" checked />
+                        <span class="form-toggle-track" aria-hidden="true"></span>
+                      </span>
+                      <span class="form-toggle-error">Manager approval must stay enabled for this audience.</span>
+                    </label>
+                  </div>
+                </section>
+
+                <footer class="form-page-footer">
+                  <button class="accessibility-chip" type="button">Cancel</button>
+                  <button class="accessibility-chip" type="button">Save draft</button>
+                  <button class="accessibility-chip active" type="submit">Publish campaign</button>
+                </footer>
+              </form>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

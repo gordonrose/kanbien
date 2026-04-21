@@ -4,6 +4,7 @@ import { createRateLimitMiddleware } from "../../src/lib/security/rateLimit";
 import { env } from "../../src/config/env";
 import { createNotificationDeliveryService } from "../../src/features/notificationDelivery/domain/service";
 import type { NotificationEmailWriter } from "../../src/features/notificationDelivery";
+import type { TenantAuthOnboardingProvisioner } from "../../src/features/tenantAuth/domain/types";
 import type { VisibleTenantsReader } from "../../src/features/tenants";
 import { createTenantAdminsService } from "../../src/features/tenantAdmins/domain/service";
 import type {
@@ -101,6 +102,20 @@ export function createTenantAdminRecord(
     updatedAt: now,
     deletedAt: null,
     ...overrides,
+  };
+}
+
+export function createNoopTenantAuthOnboardingProvisioner(): TenantAuthOnboardingProvisioner {
+  return {
+    async provisionTenantAuthForVerifiedSubject(input) {
+      return {
+        status: "PRINCIPAL_BOOTSTRAPPED",
+        authPrincipalId: "11111111-1111-4111-8111-111111111111",
+        loginEmail: input.source.email,
+        passwordSetupRequired: true,
+        bootstrapToken: "noop-bootstrap-token",
+      };
+    },
   };
 }
 
@@ -325,6 +340,17 @@ export function createInMemoryTenantAdminsRepository(
         usedAt: new Date("2026-04-08T08:00:00.000Z"),
       });
     },
+    async consumeVerificationToken(tokenId) {
+      const token = verificationTokens.get(tokenId) ?? null;
+      if (!token || token.usedAt !== null || token.invalidatedAt !== null) {
+        return false;
+      }
+      verificationTokens.set(tokenId, {
+        ...token,
+        usedAt: new Date("2026-04-08T08:00:00.000Z"),
+      });
+      return true;
+    },
     async markVerified(tenantAdminId) {
       const current = records.get(tenantAdminId)!;
       const next = {
@@ -370,6 +396,7 @@ export function mountTenantAdminsFeature(
     };
     notificationEmailWriter?: NotificationEmailWriter;
     visibleTenantsReader?: VisibleTenantsReader;
+    onboardingProvisioner?: TenantAuthOnboardingProvisioner;
   },
 ) {
   const repository = options?.repository ?? createInMemoryTenantAdminsRepository();
@@ -384,6 +411,7 @@ export function mountTenantAdminsFeature(
     visibleTenantsReader,
     notificationEmailWriter,
     harness.platformSecurityRepository,
+    options?.onboardingProvisioner ?? createNoopTenantAuthOnboardingProvisioner(),
   );
   const requireRootSession = createRequireRootSession(harness.authRepository, {
     allowBrowserCookie: true,

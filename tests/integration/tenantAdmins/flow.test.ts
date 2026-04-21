@@ -25,6 +25,18 @@ interface TenantAdminResponse {
   deletedAt: string | null;
 }
 
+interface TenantAdminOnboardingRestartResponse {
+  status: "ONBOARDING_RESTARTED";
+  tenantAdmin: TenantAdminResponse;
+  tenantAuthOnboarding: {
+    authPrincipalId: string;
+    loginEmail: string;
+    passwordSetupRequired: boolean;
+    bootstrapToken: string | null;
+    nextStep: "PASSWORD_SETUP_REQUIRED" | "LOGIN_REQUIRED";
+  };
+}
+
 describe("tenantAdmins integration flows", () => {
   it("TC-TENANT-ADMINS-INT-001 TC-TENANT-ADMINS-INT-002 and TC-TENANT-ADMINS-EDGE-003 mount protected tenant-admin lifecycle routes under an authenticated root session", async () => {
     const harness = createRootAuthIntegrationHarness();
@@ -46,6 +58,7 @@ describe("tenantAdmins integration flows", () => {
     });
     expect(created.status).toBe(201);
     expect(created.body.email).toBe("tenant.admin@example.com");
+    expect(created.body.lastVerificationEmailRequestedAt).not.toBeNull();
 
     const exact = await invokeJson<TenantAdminResponse>(harness.app, {
       method: "GET",
@@ -64,6 +77,7 @@ describe("tenantAdmins integration flows", () => {
       },
     });
     expect(updated.status).toBe(200);
+    expect(updated.body.lastVerificationEmailRequestedAt).not.toBeNull();
 
     const deleted = await invokeJson<TenantAdminResponse>(harness.app, {
       method: "POST",
@@ -85,7 +99,7 @@ describe("tenantAdmins integration flows", () => {
     expect(reactivated.body.emailVerificationStatus).toBe("pending");
   });
 
-  it("TC-TENANT-ADMINS-INT-003 TC-TENANT-ADMINS-INT-004 TC-TENANT-ADMINS-INT-005 TC-TENANT-ADMINS-EDGE-005 and TC-TENANT-ADMINS-SEC-005 keep token and outbound-email history truthful across send resend and redeem", async () => {
+  it("TC-TENANT-ADMINS-INT-003 TC-TENANT-ADMINS-INT-004 TC-TENANT-ADMINS-INT-005 TC-TENANT-ADMINS-EDGE-005 and TC-TENANT-ADMINS-SEC-005 keep token and outbound-email history truthful across automatic send resend and redeem", async () => {
     const harness = createRootAuthIntegrationHarness();
     const mounted = mountTenantAdminsFeature(harness.app, harness);
     const repository = mounted.repository as ReturnType<typeof createInMemoryTenantAdminsRepository>;
@@ -101,15 +115,7 @@ describe("tenantAdmins integration flows", () => {
       },
     });
     expect(created.status).toBe(201);
-
-    const sent = await invokeJson<TenantAdminResponse>(harness.app, {
-      method: "POST",
-      path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}/verification/send`,
-      headers: { authorization: `Bearer ${session.sessionId}` },
-      body: {},
-    });
-    expect(sent.status).toBe(200);
-    expect(sent.body.lastVerificationEmailRequestedAt).not.toBeNull();
+    expect(created.body.lastVerificationEmailRequestedAt).not.toBeNull();
 
     const firstActiveToken = [...repository.verificationTokens.values()].find(
       (item) => item.invalidatedAt === null && item.usedAt === null,
@@ -145,7 +151,7 @@ describe("tenantAdmins integration flows", () => {
     const deliveredToken = extractTokenFromBody(
       mounted.provider.sentInputs[mounted.provider.sentInputs.length - 1]!.bodyText,
     );
-    const redeemOk = await invokeJson<TenantAdminResponse>(harness.app, {
+    const redeemOk = await invokeJson<{ tenantAdmin: TenantAdminResponse }>(harness.app, {
       method: "POST",
       path: "/v1/tenant-admin-verification/redeem",
       body: {
@@ -153,7 +159,7 @@ describe("tenantAdmins integration flows", () => {
       },
     });
     expect(redeemOk.status).toBe(200);
-    expect(redeemOk.body.emailVerificationStatus).toBe("verified");
+    expect(redeemOk.body.tenantAdmin.emailVerificationStatus).toBe("verified");
   });
 
   it("TC-TENANT-ADMINS-EDGE-002 invalidates earlier verification eligibility after soft delete", async () => {
@@ -170,12 +176,6 @@ describe("tenantAdmins integration flows", () => {
     });
     expect(created.status).toBe(201);
 
-    await invokeJson<TenantAdminResponse>(harness.app, {
-      method: "POST",
-      path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}/verification/send`,
-      headers: { authorization: `Bearer ${session.sessionId}` },
-      body: {},
-    });
     const deliveredToken = extractTokenFromBody(mounted.provider.sentInputs[0]!.bodyText);
 
     await invokeJson<TenantAdminResponse>(harness.app, {
@@ -207,13 +207,8 @@ describe("tenantAdmins integration flows", () => {
       body: { email: "dup-send@example.com" },
     });
     expect(created.status).toBe(201);
+    expect(created.body.lastVerificationEmailRequestedAt).not.toBeNull();
 
-    const first = await invokeJson<TenantAdminResponse>(harness.app, {
-      method: "POST",
-      path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}/verification/send`,
-      headers: { authorization: `Bearer ${session.sessionId}` },
-      body: {},
-    });
     const second = await invokeJson<{ code: string }>(harness.app, {
       method: "POST",
       path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}/verification/send`,
@@ -221,12 +216,46 @@ describe("tenantAdmins integration flows", () => {
       body: {},
     });
 
-    expect(first.status).toBe(200);
     expect(second.status).toBe(200);
     expect(
       [...mounted.repository.verificationTokens.values()].filter(
         (item) => item.invalidatedAt === null && item.usedAt === null,
       ),
     ).toHaveLength(1);
+  });
+
+  it("restarts tenant-auth onboarding for an already verified tenant admin through the protected operator route", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const mounted = mountTenantAdminsFeature(harness.app, harness);
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const created = await invokeJson<TenantAdminResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: { email: "restart@example.com" },
+    });
+    expect(created.status).toBe(201);
+
+    const deliveredToken = extractTokenFromBody(mounted.provider.sentInputs[0]!.bodyText);
+    const redeemed = await invokeJson<{ tenantAdmin: TenantAdminResponse }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: deliveredToken },
+    });
+    expect(redeemed.status).toBe(200);
+
+    const restarted = await invokeJson<TenantAdminOnboardingRestartResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}/onboarding/restart`,
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {},
+    });
+    expect(restarted.status).toBe(200);
+    expect(restarted.body.status).toBe("ONBOARDING_RESTARTED");
+    expect(restarted.body.tenantAdmin.emailVerificationStatus).toBe("verified");
+    expect(restarted.body.tenantAuthOnboarding.passwordSetupRequired).toBe(true);
+    expect(restarted.body.tenantAuthOnboarding.bootstrapToken).toEqual(expect.any(String));
   });
 });

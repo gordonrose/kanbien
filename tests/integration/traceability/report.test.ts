@@ -4,6 +4,9 @@ import {
   formatTraceabilityReport,
 } from "../../../src/lib/testingData/traceabilityReport";
 
+const ROOT_AUTH_UNIT_999 = ["TC", "ROOT", "AUTH", "UNIT", "999"].join("-");
+const BAD_TRACEABILITY_ID = ["TC", "BAD", "ID"].join("-");
+
 describe("traceability reporting integration", () => {
   it("TC-TEST-DATA-INT-004 keeps docs and grouped traceability summaries aligned", () => {
     const report = buildTraceabilityReport(
@@ -22,6 +25,21 @@ describe("traceability reporting integration", () => {
     expect(report.missingIds).toEqual(["TC-ROOT-AUTH-INT-001"]);
     expect(report.byPrd["ROOT-AUTH"]).toEqual({ traced: 1, total: 2 });
     expect(report.byPrdAndType["ROOT-AUTH / INT"]).toEqual({ traced: 0, total: 1 });
+  });
+
+  it("reports executable IDs that do not exist in reviewed docs", () => {
+    const report = buildTraceabilityReport(
+      [
+        "TC-ROOT-AUTH-UNIT-001",
+      ],
+      `TC-ROOT-AUTH-UNIT-001\n${ROOT_AUTH_UNIT_999}`,
+    );
+
+    expect(report.executableIds).toEqual([
+      "TC-ROOT-AUTH-UNIT-001",
+      ROOT_AUTH_UNIT_999,
+    ]);
+    expect(report.orphanedExecutableIds).toEqual([ROOT_AUTH_UNIT_999]);
   });
 
   it("TC-TEST-DATA-EDGE-004 keeps grouped reporting correct across multiple PRDs", () => {
@@ -44,13 +62,13 @@ describe("traceability reporting integration", () => {
     const report = buildTraceabilityReport(
       [
         "TC-ROOT-AUTH-UNIT-001",
-        "TC-BAD-ID",
+        BAD_TRACEABILITY_ID,
       ],
       "TC-ROOT-AUTH-UNIT-001",
     );
 
-    expect(report.malformedIds).toEqual(["TC-BAD-ID"]);
-    expect(report.missingByType.UNKNOWN).toEqual(["TC-BAD-ID"]);
+    expect(report.malformedIds).toEqual([BAD_TRACEABILITY_ID]);
+    expect(report.missingByType.UNKNOWN).toEqual([BAD_TRACEABILITY_ID]);
   });
 
   it("TC-TEST-DATA-AUD-002 formats grouped traceability output for review", () => {
@@ -59,14 +77,17 @@ describe("traceability reporting integration", () => {
         "TC-ROOT-AUTH-UNIT-001",
         "TC-TEST-DATA-SEC-001",
       ],
-      "TC-ROOT-AUTH-UNIT-001",
+      `TC-ROOT-AUTH-UNIT-001\n${ROOT_AUTH_UNIT_999}`,
     );
 
     const lines = formatTraceabilityReport(report);
 
-    expect(lines).toContain("Tracked PRD test cases: 2");
+    expect(lines).toContain("Tracked active PRD test cases: 2");
     expect(lines).toContain("Traceability by PRD:");
+    expect(lines).toContain("Executable IDs without reviewed PRD cases: 1");
     expect(lines).toContain("ROOT-AUTH: 1/1 traceable");
     expect(lines).toContain("TEST-DATA / SEC: 0/1 traceable");
+    expect(lines).toContain("Executable test-case IDs missing from reviewed PRD docs:");
+    expect(lines).toContain(`- ${ROOT_AUTH_UNIT_999}`);
   });
 });

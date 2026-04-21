@@ -90,9 +90,33 @@ export function createPostgresTestDatabasePool(): Pool {
 
 export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
   await pool.query(`
+    DROP TABLE IF EXISTS web_app_page_context_nav_items CASCADE;
+    DROP TABLE IF EXISTS web_app_page_settings CASCADE;
+    DROP TABLE IF EXISTS web_app_discovery_links CASCADE;
+    DROP TABLE IF EXISTS web_app_page_locators CASCADE;
+    DROP TABLE IF EXISTS discovered_web_app_structure_nodes CASCADE;
+    DROP TABLE IF EXISTS discovered_web_app_surfaces CASCADE;
+    DROP TABLE IF EXISTS web_app_discovery_runs CASCADE;
+    DROP TABLE IF EXISTS web_app_pages CASCADE;
+    DROP TABLE IF EXISTS web_app_modules CASCADE;
+    DROP TABLE IF EXISTS web_app_root_families CASCADE;
+    DROP TABLE IF EXISTS entity_definition_attribute_source_link CASCADE;
+    DROP TABLE IF EXISTS entity_definition_attribute_option CASCADE;
+    DROP TABLE IF EXISTS entity_definition_attribute_validation_rule CASCADE;
+    DROP TABLE IF EXISTS entity_definition_attribute CASCADE;
+    DROP TABLE IF EXISTS entity_definition_version CASCADE;
+    DROP TABLE IF EXISTS entity_definition CASCADE;
     DROP TABLE IF EXISTS outbound_email_attempt CASCADE;
     DROP TABLE IF EXISTS outbound_email_content CASCADE;
     DROP TABLE IF EXISTS outbound_email CASCADE;
+    DROP TABLE IF EXISTS tenant_session CASCADE;
+    DROP TABLE IF EXISTS tenant_auth_policy CASCADE;
+    DROP TABLE IF EXISTS tenant_password_setup_token CASCADE;
+    DROP TABLE IF EXISTS tenant_access_grant CASCADE;
+    DROP TABLE IF EXISTS tenant_password_credential CASCADE;
+    DROP TABLE IF EXISTS tenant_auth_principal CASCADE;
+    DROP TABLE IF EXISTS tenant_admin_verification_token CASCADE;
+    DROP TABLE IF EXISTS tenant_admin CASCADE;
     DROP TABLE IF EXISTS tenant CASCADE;
     DROP TABLE IF EXISTS root_role_audit_events CASCADE;
     DROP TABLE IF EXISTS root_user_role_assignments CASCADE;

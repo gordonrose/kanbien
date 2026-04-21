@@ -1,0 +1,953 @@
+{
+  "ruleVersion": 2,
+  "ruleSummary": "Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.",
+  "featureCount": 12,
+  "edgeCount": 12,
+  "violationCount": 0,
+  "features": [
+    {
+      "featureName": "entityBuilder",
+      "manifestPath": "src/features/entityBuilder/feature.manifest.json",
+      "fileCount": 23,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createEntityBuilderFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "entity-definition-response-types",
+          "symbol": "EntityDefinitionCurrentResponse | EntityDefinitionExportResponse | EntityDefinitionVersionResponse",
+          "kind": "contract-types",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [],
+      "publicDependencies": [],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": [
+        "Removing or renaming exported entity definition response types can break downstream consumers that compile against this contract surface.",
+        "Changing durable entity definition persistence or export semantics can invalidate snapshot tooling and compatibility assumptions."
+      ]
+    },
+    {
+      "featureName": "notificationDelivery",
+      "manifestPath": "src/features/notificationDelivery/feature.manifest.json",
+      "fileCount": 19,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createNotificationDeliveryFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "notification-email-writer",
+          "symbol": "createNotificationEmailWriter | NotificationEmailWriter",
+          "kind": "writer-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "notification-delivery-error",
+          "symbol": "NotificationDeliveryError",
+          "kind": "error-type",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [],
+      "publicDependencies": [],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "tenantAdmins"
+      ],
+      "breakingChangeRisks": [
+        "Changing the notification email writer contract can break features that delegate onboarding or verification email delivery through this seam.",
+        "Changing outbound email persistence or resend semantics can affect auditability and historical correctness for feature-owned workflows."
+      ]
+    },
+    {
+      "featureName": "rootAuth",
+      "manifestPath": "src/features/rootAuth/feature.manifest.json",
+      "fileCount": 15,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createRootAuthFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "rootUsers"
+      ],
+      "publicDependencies": [
+        "rootUsers"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": [
+        "Changing root authentication route or session behavior is externally breaking for operator login and browser bootstrap flows.",
+        "Changing the expected root-user auth-state seam can break sign-in eligibility checks delegated to rootUsers."
+      ]
+    },
+    {
+      "featureName": "rootRoles",
+      "manifestPath": "src/features/rootRoles/feature.manifest.json",
+      "fileCount": 12,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createRootRolesFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "authorization-checker",
+          "symbol": "createRootAuthorizationChecker",
+          "kind": "authorization-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "rootUsers"
+      ],
+      "publicDependencies": [
+        "rootUsers"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": [
+        "Changing the root authorization checker contract can break shared capability enforcement across the platform.",
+        "Changing role assignment persistence or effective-permission semantics can break downstream authorization assumptions."
+      ]
+    },
+    {
+      "featureName": "rootUsers",
+      "manifestPath": "src/features/rootUsers/feature.manifest.json",
+      "fileCount": 23,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createRootUserFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "auth-state-reader",
+          "symbol": "createRootUsersAuthStateReader | RootUsersAuthStateReader",
+          "kind": "reader-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "browser-summary-reader",
+          "symbol": "createRootUsersBrowserSummaryReader | RootUsersBrowserSummaryReader | RootUserBrowserSummary",
+          "kind": "reader-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "root-user-auth-state-type",
+          "symbol": "RootUserAuthState",
+          "kind": "domain-type",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [],
+      "publicDependencies": [],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "rootAuth",
+        "rootRoles"
+      ],
+      "breakingChangeRisks": [
+        "Changing root-user normalization, lifecycle, or soft-delete semantics can break authentication and authorization features that depend on stable operator identity facts.",
+        "Changing exported auth-state or browser-summary seams can break rootAuth and rootRoles integration."
+      ]
+    },
+    {
+      "featureName": "tenantAdmins",
+      "manifestPath": "src/features/tenantAdmins/feature.manifest.json",
+      "fileCount": 13,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createTenantAdminsFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "auth-bootstrap-reader",
+          "symbol": "createTenantAdminsAuthBootstrapReader | TenantAdminsAuthBootstrapReader",
+          "kind": "reader-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "tenant-admin-auth-bootstrap-subject",
+          "symbol": "TenantAdminAuthBootstrapSubject",
+          "kind": "domain-type",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "notificationDelivery",
+        "tenantAuth",
+        "tenants"
+      ],
+      "publicDependencies": [
+        "notificationDelivery",
+        "tenantAuth",
+        "tenants"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "tenantAuth"
+      ],
+      "breakingChangeRisks": [
+        "Changing tenant-admin verification or onboarding restart semantics can break the downstream tenant-auth onboarding flow.",
+        "Changing the auth bootstrap reader seam can break tenant-auth access grant and password setup flows."
+      ]
+    },
+    {
+      "featureName": "tenantAuth",
+      "manifestPath": "src/features/tenantAuth/feature.manifest.json",
+      "fileCount": 13,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createTenantAuthFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "session-lookup-repository-factory",
+          "symbol": "createTenantAuthSessionLookupRepository",
+          "kind": "repository-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "session-lookup-repository-type",
+          "symbol": "TenantAuthSessionLookupRepository",
+          "kind": "repository-type",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "onboarding-provisioner-type",
+          "symbol": "TenantAuthOnboardingProvisioner",
+          "kind": "service-type",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "tenantAdmins",
+        "tenantConfiguration",
+        "tenants"
+      ],
+      "publicDependencies": [
+        "tenantAdmins",
+        "tenantConfiguration",
+        "tenants"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "tenantAdmins",
+        "tenantConfiguration"
+      ],
+      "breakingChangeRisks": [
+        "Changing tenant-auth session or remediation semantics can break tenant-scoped browser and API authentication flows.",
+        "Changing exported onboarding or session lookup seams can break tenantAdmins and tenantConfiguration integration."
+      ]
+    },
+    {
+      "featureName": "tenantConfiguration",
+      "manifestPath": "src/features/tenantConfiguration/feature.manifest.json",
+      "fileCount": 12,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createTenantConfigurationFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "tenant-auth-policy-resolver",
+          "symbol": "TenantAuthPolicyResolver",
+          "kind": "policy-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "effective-tenant-auth-policy-type",
+          "symbol": "EffectiveTenantAuthPolicy",
+          "kind": "contract-type",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "effective-tenant-password-policy-type",
+          "symbol": "EffectiveTenantPasswordPolicy",
+          "kind": "contract-type",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "effective-tenant-session-policy-type",
+          "symbol": "EffectiveTenantSessionPolicy",
+          "kind": "contract-type",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "password-policy-floor-constants",
+          "symbol": "HARD_PASSWORD_POLICY_FLOORS",
+          "kind": "constants",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "session-ttl-limit-constants",
+          "symbol": "SESSION_TTL_SECONDS_HARD_FLOOR | SESSION_TTL_SECONDS_HARD_CEILING",
+          "kind": "constants",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "system-default-policy-constants",
+          "symbol": "SYSTEM_DEFAULT_PASSWORD_POLICY | SYSTEM_DEFAULT_SESSION_POLICY",
+          "kind": "constants",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "tenantAuth",
+        "tenants"
+      ],
+      "publicDependencies": [
+        "tenantAuth",
+        "tenants"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "tenantAuth"
+      ],
+      "breakingChangeRisks": [
+        "Changing tenant auth policy response or resolver semantics can break tenantAuth policy evaluation and remediation flows.",
+        "Changing tenant policy persistence or normalization rules can break durable configuration behavior across tenant-scoped authentication."
+      ]
+    },
+    {
+      "featureName": "tenants",
+      "manifestPath": "src/features/tenants/feature.manifest.json",
+      "fileCount": 22,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createTenantsFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "visible-tenants-reader",
+          "symbol": "createVisibleTenantsReader | VisibleTenantsReader",
+          "kind": "reader-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "visible-tenant-summary-type",
+          "symbol": "VisibleTenantSummary",
+          "kind": "domain-type",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [],
+      "publicDependencies": [],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "tenantAdmins",
+        "tenantAuth",
+        "tenantConfiguration"
+      ],
+      "breakingChangeRisks": [
+        "Changing tenant visibility or lifecycle semantics can break tenant-admin, tenant-auth, and tenant-configuration flows that depend on current active tenant context.",
+        "Changing the visible-tenants reader contract can break every feature that validates tenant context through this shared seam."
+      ]
+    },
+    {
+      "featureName": "webAppHierarchyBuilder",
+      "manifestPath": "src/features/webAppHierarchyBuilder/feature.manifest.json",
+      "fileCount": 27,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createWebAppHierarchyBuilderFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "hierarchy-integration-seam-factory",
+          "symbol": "createWebAppHierarchyIntegrationSeam",
+          "kind": "integration-seam-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "hierarchy-integration-seam",
+          "symbol": "WebAppHierarchyIntegrationSeam | WebAppHierarchySettingsSelectablePage",
+          "kind": "integration-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "hierarchy-contract-types",
+          "symbol": "PlannerSelectableHierarchyNode | ResolvedWebAppHierarchyTree | WebAppModule | WebAppPage | WebAppPageLocator | WebAppRootFamily",
+          "kind": "contract-types",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "webAppSurfaceDiscovery"
+      ],
+      "publicDependencies": [
+        "webAppSurfaceDiscovery"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "webAppPageSettings"
+      ],
+      "breakingChangeRisks": [
+        "Changing hierarchy integration seam behavior can break webAppPageSettings and any future feature that reads curated page topology through this seam.",
+        "Changing curated hierarchy persistence or locator semantics can break governed route compatibility and discovery reconciliation."
+      ]
+    },
+    {
+      "featureName": "webAppPageSettings",
+      "manifestPath": "src/features/webAppPageSettings/feature.manifest.json",
+      "fileCount": 18,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createWebAppPageSettingsFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "page-settings-contract-types",
+          "symbol": "ApprovedIconCatalogEntryResponse | ApprovedPageTemplateCatalogEntryResponse | SelectablePageOptionResponse | WebAppPageContextNavProjectionResponse | WebAppPageSettingsResponse",
+          "kind": "contract-types",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "webAppHierarchyBuilder"
+      ],
+      "publicDependencies": [
+        "webAppHierarchyBuilder"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": [
+        "Changing page settings response shape or context-nav projection semantics can break governed app surfaces that consume these durable settings.",
+        "Changing page settings behavior without compatibility planning can break curated hierarchy adoption flows that rely on stable page identifiers and relationships."
+      ]
+    },
+    {
+      "featureName": "webAppSurfaceDiscovery",
+      "manifestPath": "src/features/webAppSurfaceDiscovery/feature.manifest.json",
+      "fileCount": 18,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createWebAppSurfaceDiscoveryFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "surface-discovery-integration-seam-factory",
+          "symbol": "createWebAppSurfaceDiscoveryIntegrationSeam",
+          "kind": "integration-seam-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "surface-discovery-integration-seam",
+          "symbol": "WebAppSurfaceDiscoveryIntegrationSeam",
+          "kind": "integration-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "discovery-contract-types",
+          "symbol": "DiscoveredWebAppStructureNodeResponse | DiscoveredWebAppSurfaceResponse | WebAppDiscoveryRunResponse",
+          "kind": "contract-types",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "discovery-data-types",
+          "symbol": "DiscoveredWebAppSurfaceData | DiscoveredWebAppStructureNodeData | WebAppDiscoveryRunData",
+          "kind": "domain-types",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [],
+      "publicDependencies": [],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "webAppHierarchyBuilder"
+      ],
+      "breakingChangeRisks": [
+        "Changing discovery structure or discovered-surface data semantics can break webAppHierarchyBuilder reconciliation and preview logic.",
+        "Changing approved discovery run behavior can break operator workflows that depend on stable discovery scope and output shape."
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "sourceFeature": "rootAuth",
+      "targetFeature": "rootUsers",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "auth-state-reader",
+        "browser-summary-reader",
+        "root-user-auth-state-type"
+      ],
+      "publicImportCount": 4,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/rootAuth/domain/rootUserAccess.ts",
+          "importPath": "../../rootUsers",
+          "line": 2,
+          "resolvedPath": "src/features/rootUsers/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/rootAuth/domain/service.ts",
+          "importPath": "../../rootUsers",
+          "line": 5,
+          "resolvedPath": "src/features/rootUsers/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/rootAuth/integration.ts",
+          "importPath": "../rootUsers",
+          "line": 2,
+          "resolvedPath": "src/features/rootUsers/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/rootAuth/transport/router.ts",
+          "importPath": "../../rootUsers",
+          "line": 32,
+          "resolvedPath": "src/features/rootUsers/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "rootRoles",
+      "targetFeature": "rootUsers",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "auth-state-reader"
+      ],
+      "publicImportCount": 1,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/rootRoles/integration.ts",
+          "importPath": "../rootUsers",
+          "line": 2,
+          "resolvedPath": "src/features/rootUsers/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "tenantAdmins",
+      "targetFeature": "notificationDelivery",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "notification-email-writer",
+        "notification-delivery-error"
+      ],
+      "publicImportCount": 3,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/tenantAdmins/domain/service.ts",
+          "importPath": "../../notificationDelivery",
+          "line": 4,
+          "resolvedPath": "src/features/notificationDelivery/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAdmins/integration.ts",
+          "importPath": "../notificationDelivery",
+          "line": 4,
+          "resolvedPath": "src/features/notificationDelivery/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAdmins/transport/router.ts",
+          "importPath": "../../notificationDelivery",
+          "line": 12,
+          "resolvedPath": "src/features/notificationDelivery/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "tenantAdmins",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "onboarding-provisioner-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/tenantAdmins/domain/service.ts",
+          "importPath": "../../tenantAuth",
+          "line": 25,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAdmins/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 5,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "tenantAdmins",
+      "targetFeature": "tenants",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "visible-tenants-reader"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/tenantAdmins/domain/service.ts",
+          "importPath": "../../tenants",
+          "line": 5,
+          "resolvedPath": "src/features/tenants/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAdmins/integration.ts",
+          "importPath": "../tenants",
+          "line": 6,
+          "resolvedPath": "src/features/tenants/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "tenantAuth",
+      "targetFeature": "tenantAdmins",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "auth-bootstrap-reader",
+        "tenant-admin-auth-bootstrap-subject"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/tenantAuth/domain/service.ts",
+          "importPath": "../../tenantAdmins",
+          "line": 8,
+          "resolvedPath": "src/features/tenantAdmins/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAuth/integration.ts",
+          "importPath": "../tenantAdmins",
+          "line": 4,
+          "resolvedPath": "src/features/tenantAdmins/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "tenantAuth",
+      "targetFeature": "tenantConfiguration",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "tenant-auth-policy-resolver",
+        "effective-tenant-password-policy-type",
+        "password-policy-floor-constants",
+        "session-ttl-limit-constants",
+        "system-default-policy-constants"
+      ],
+      "publicImportCount": 5,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/tenantAuth/contract/types.ts",
+          "importPath": "../../tenantConfiguration",
+          "line": 1,
+          "resolvedPath": "src/features/tenantConfiguration/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAuth/domain/presenters.ts",
+          "importPath": "../../tenantConfiguration",
+          "line": 8,
+          "resolvedPath": "src/features/tenantConfiguration/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAuth/domain/service.ts",
+          "importPath": "../../tenantConfiguration",
+          "line": 10,
+          "resolvedPath": "src/features/tenantConfiguration/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAuth/domain/types.ts",
+          "importPath": "../../tenantConfiguration",
+          "line": 11,
+          "resolvedPath": "src/features/tenantConfiguration/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAuth/integration.ts",
+          "importPath": "../tenantConfiguration",
+          "line": 3,
+          "resolvedPath": "src/features/tenantConfiguration/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "tenantAuth",
+      "targetFeature": "tenants",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "visible-tenants-reader"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/tenantAuth/domain/service.ts",
+          "importPath": "../../tenants",
+          "line": 9,
+          "resolvedPath": "src/features/tenants/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAuth/integration.ts",
+          "importPath": "../tenants",
+          "line": 7,
+          "resolvedPath": "src/features/tenants/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "tenantConfiguration",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/tenantConfiguration/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 4,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantConfiguration/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 8,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "tenantConfiguration",
+      "targetFeature": "tenants",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "visible-tenants-reader"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/tenantConfiguration/domain/service.ts",
+          "importPath": "../../tenants",
+          "line": 12,
+          "resolvedPath": "src/features/tenants/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantConfiguration/integration.ts",
+          "importPath": "../tenants",
+          "line": 5,
+          "resolvedPath": "src/features/tenants/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "webAppHierarchyBuilder",
+      "targetFeature": "webAppSurfaceDiscovery",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "surface-discovery-integration-seam-factory",
+        "surface-discovery-integration-seam",
+        "discovery-data-types"
+      ],
+      "publicImportCount": 5,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/webAppHierarchyBuilder/domain/service.ts",
+          "importPath": "../../webAppSurfaceDiscovery",
+          "line": 55,
+          "resolvedPath": "src/features/webAppSurfaceDiscovery/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppHierarchyBuilder/domain/structureAwareDiscoverySync.ts",
+          "importPath": "../../webAppSurfaceDiscovery",
+          "line": 1,
+          "resolvedPath": "src/features/webAppSurfaceDiscovery/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppHierarchyBuilder/domain/structureAwareDiscoverySync.ts",
+          "importPath": "../../webAppSurfaceDiscovery",
+          "line": 2,
+          "resolvedPath": "src/features/webAppSurfaceDiscovery/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppHierarchyBuilder/domain/syncWebAppHierarchyFromDiscovery.ts",
+          "importPath": "../../webAppSurfaceDiscovery",
+          "line": 1,
+          "resolvedPath": "src/features/webAppSurfaceDiscovery/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppHierarchyBuilder/integration.ts",
+          "importPath": "../webAppSurfaceDiscovery",
+          "line": 4,
+          "resolvedPath": "src/features/webAppSurfaceDiscovery/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "webAppPageSettings",
+      "targetFeature": "webAppHierarchyBuilder",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "hierarchy-integration-seam-factory",
+        "hierarchy-integration-seam",
+        "hierarchy-contract-types"
+      ],
+      "publicImportCount": 7,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/webAppPageSettings/domain/getWebAppPageContextNavProjection.ts",
+          "importPath": "../../webAppHierarchyBuilder",
+          "line": 4,
+          "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppPageSettings/domain/getWebAppPageSettings.ts",
+          "importPath": "../../webAppHierarchyBuilder",
+          "line": 5,
+          "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppPageSettings/domain/getWebAppPageSettingsOptions.ts",
+          "importPath": "../../webAppHierarchyBuilder",
+          "line": 5,
+          "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppPageSettings/domain/presenters.ts",
+          "importPath": "../../webAppHierarchyBuilder",
+          "line": 12,
+          "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppPageSettings/domain/service.ts",
+          "importPath": "../../webAppHierarchyBuilder",
+          "line": 15,
+          "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppPageSettings/domain/updateWebAppPageSettings.ts",
+          "importPath": "../../webAppHierarchyBuilder",
+          "line": 12,
+          "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppPageSettings/integration.ts",
+          "importPath": "../webAppHierarchyBuilder",
+          "line": 4,
+          "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
+          "visibility": "public"
+        }
+      ]
+    }
+  ],
+  "violations": []
+}

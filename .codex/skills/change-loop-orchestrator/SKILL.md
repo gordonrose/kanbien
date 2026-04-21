@@ -14,30 +14,15 @@ skills; it decides when to use them and in what order.
 
 ## Purpose
 
-Drive a change through the repo's preferred loop:
+Drive a change through the repo's preferred loop by:
 
-1. confirm scope and change class
-2. write or update the PRD
-3. decide whether an ADR is required
-4. derive PRD test cases
-5. implement the change
-6. update PRD/test-case implementation status
-7. update docs affected by the change
-8. run standards-compliance review where appropriate
-9. run repo-health review where appropriate
+1. classifying the change
+2. deciding which loop steps are required, recommended, or not needed
+3. routing specialist work to the right repo-local skills
+4. checking that the loop closed without leaving artifact or verification drift
 
-The goal is to prevent drift, missing artifacts, and partially implemented
-design decisions from accumulating over time.
-
-Implementation is not considered complete by this skill until the required
-maintained artifact set for the change class has been reviewed and either:
-
-- updated in the same loop, or
-- explicitly called out as intentionally unchanged with a concrete reason
-
-This includes not only feature-local docs, but also maintained status,
-registry, and prior-planning surfaces whose truth changed because the slice
-now exists or materially changed platform posture.
+The goal is to keep the delivery loop consistent without restating every
+specialist workflow in this file.
 
 ## Authority Order
 
@@ -45,14 +30,12 @@ Use this authority order unless the user explicitly says otherwise:
 
 1. `AGENTS.md`
 2. `docs/architecture/`
-3. existing ADRs
-4. relevant PRDs and PRD test-case docs
-5. current source in `src/`
-6. executable tests in `tests/`
-7. feature docs, OpenAPI, Postman, README files
-8. source-independent build-from-spec artifacts such as `docs/api-contracts/`,
-   `docs/data-dictionary/`, capability matrices, and other template-backed
-   change artifacts when present
+3. `docs/architecture/change-control.md`
+4. `docs/standards/change-artifact-requirements.md`
+5. relevant ADRs, PRDs, and PRD test-case docs
+6. current source in `src/`
+7. executable tests in `tests/`
+8. maintained docs and source-independent artifacts for the scoped area
 
 ## When To Use This Skill
 
@@ -83,233 +66,71 @@ Determine whether the change is:
 - a test/process/tooling change
 - a docs-only clarification
 
-This classification determines whether the loop needs:
+Use this classification together with
+`docs/architecture/change-control.md` and
+`docs/standards/change-artifact-requirements.md` to decide which loop steps are
+required.
 
-- PRD only
-- PRD + ADR
-- PRD + test cases only
-- implementation only
-- or a reduced loop
+### 2. Decide the loop steps
 
-### 2. Confirm whether a PRD is needed
+For each step, explicitly mark one of:
 
-Default to a PRD when the change:
+- required
+- recommended
+- not needed
 
-- introduces a new feature
-- changes user-visible or operator-visible behavior
-- changes testing/process conventions in an enduring way
-- adds or changes a browser/admin workflow
-- affects security, persistence, cleanup, auditability, or compliance posture
+Typical steps:
 
-If a PRD already exists, update it rather than creating a duplicate.
+- PRD creation or refresh
+- ADR decision check
+- PRD-derived test-case planning
+- implementation
+- migration execution when persistence or authz seed state changed
+- executable verification
+- maintained-artifact and docs updates
+- standards review
+- repo-health review
 
-Also check `docs/standards/change-artifact-requirements.md` so the loop uses
-the repo's current required artifact set for the change class rather than an
-older thinner documentation model.
+### 3. Route specialist work
 
-If the change is materially assisted by generative AI, also treat
-`docs/standards/AI-ASSISTED-DEVELOPMENT-GATE.md` as an applicable gate even
-when the shipped feature has no AI capability.
+Prefer narrower repo-local skills when they fit the task:
 
-Also treat `docs/standards/platform-status/` as a maintained standards-baseline
-surface. If the change materially improves, weakens, or clarifies the current
-platform posture against a gate, the relevant status file should be reviewed
-and updated in the same loop.
+- PRD-derived test cases: `prd-test-case-planner`
+- PRD-derived test implementation: `prd-test-case-implementer`
+- API contract docs: `api-contract-maintainer`
+- docs drift classification: `docs-alignment-auditor`
+- standards review: `repo-standards-compliance-auditor`
+- repo-health review: `repo-health-auditor`
+- data dictionary maintenance: `data-dictionary-maintainer`
+- rebuild-readiness docs: `rebuild-readiness-maintainer`
+- materially AI-assisted review notes: `ai-change-reviewer`
+- implementation blueprint maintenance: `implementation-blueprint-maintainer`
+- frontend architecture mapping or ADR maintenance:
+  `frontend-architecture-maintainer`
 
-If the change affects runtime bootstrap, helper tooling, env assumptions, or
-interchangeable infrastructure choices, also treat the repo's rebuild-readiness
-docs as maintained source-independent surfaces.
+When a narrower skill applies, use it instead of restating its logic here.
 
-### 3. Decide whether an ADR is needed
+### 4. Keep the loop proportional
 
-Use `docs/architecture/change-control.md`.
+Do not force the heaviest version of the loop for every change.
 
-Default to requiring an ADR when the change:
+Also do not silently skip steps that are required by the current repo process
+docs for the change class.
 
-- changes a shared platform seam
-- introduces a new lasting pattern
-- changes security posture or operational expectations materially
-- changes feature integration rules
-- changes migration behavior or execution assumptions
-- changes testing architecture in an enduring repo-wide way
-
-If no ADR is needed, say why.
-
-### 4. Plan PRD-derived test cases
-
-If the change is governed by a PRD and affects executable behavior, use the
-repo-local `prd-test-case-planner` skill.
-
-Expected result:
-
-- a file under `docs/prd/test_cases/`
-- stable `TC-*` IDs
-- layer recommendations
-- security/audit/edge coverage
-
-When the change adds or tightens authz gates on already-protected features,
-the test-case plan should also identify affected pre-existing suites that need
-review and likely updates, especially:
-
-- `tests/integration/<feature>/`
-- `tests/security/<feature>/`
-- `tests/audit/<feature>/`
-
-### 5. Implement
-
-When the user wants the code/docs change carried through, use the
-repo-local `prd-test-case-implementer` skill when a PRD test-case file exists.
-
-If no PRD test-case file exists but the change is still implementation-ready,
-implement directly while preserving traceability and docs updates.
-
-If the change adds or tightens role/capability gates, do not stop at adding
-new tests for the new feature alone. Also review and update affected existing
-protected-feature integration, security, and audit suites so the repo proves
-the new allow/deny boundary instead of only older session-presence behavior.
-
-### 6. Update status artifacts
-
-After implementation, update:
-
-- PRD implementation status if the PRD is used as a living artifact
-- PRD test-case status if the repo uses it as a living artifact
-
-Do not leave planned-vs-implemented drift behind.
-
-### 7. Update supporting docs
-
-Check whether the change also requires updates to:
-
-- `docs/featureDocs/`
-- `docs/swagger/openapi.yaml`
-- `docs/api-contracts/`
-- `docs/postman/`
-- `docs/testing/`
-- `docs/operations/`
-- `docs/privacy/`
-- `docs/data-dictionary/`
-- `docs/standards/platform-status/`
-- `docs/workspace/architecture-map/`
-- `docs/architecture/build-from-spec-reconstruction-questionnaire.md`
-- `docs/architecture/guides/platform-bootstrap-and-local-helpers-guide.md`
-- capability matrix rows and other build-from-spec artifacts required by
-  `docs/standards/change-artifact-requirements.md`
-- older PRD, PRD test-case, or blueprint artifacts whose wording became stale
-  because the slice moved from planned to implemented
-- README, index, or registry surfaces that inventory current docs, entities,
-  capabilities, or platform layers
-
-Do not treat these as optional post-implementation cleanup. For route-bearing
-or persistence-bearing backend slices, the default expectation is that
-implementation should finish with:
-
-- code
-- executable tests
-- source-independent contract docs
-- `docs/swagger/openapi.yaml`
-- `docs/postman/` collection updates when collections exist
-- affected `docs/featureDocs/`
-- affected `docs/data-dictionary/`
-- relevant `docs/standards/platform-status/` review
-- relevant `docs/workspace/architecture-map/` review when the slice materially
-  changes platform-layer status or ordering assumptions
-
-Before considering the loop complete, explicitly sanity-check which of those
-surfaces changed and which did not.
-
-Treat this as a required maintained-artifacts sweep, not optional cleanup.
-The sweep should explicitly ask:
-
-- did this slice make any older planning artifact say something false, such as
-  "does not exist yet" or "not implemented yet"?
-- did this slice introduce a new vendor, service, processor, or external
-  dependency that changes the truth of a maintained standards snapshot?
-- did this slice introduce a new review workflow, provenance artifact, or
-  durable control pattern that changes the truth of a maintained process or
-  standards snapshot?
-- did this slice change any registry or index surface that inventories current
-  docs, features, entities, or platform layers?
-
-When the change materially alters protected-route access rules, treat affected
-existing test suites as supporting docs/evidence that must stay aligned, not as
-optional cleanup for later.
-
-If the change introduces or changes backend routes in a meaningful way, prefer
-the repo-local `api-contract-maintainer` skill for the source-independent
-contract artifact under `docs/api-contracts/`.
-
-If the change affects docs truthfulness, run the repo-local
-`docs-alignment-auditor` skill before or after editing as appropriate.
-
-If the change affects rebuild-from-docs readiness, runtime bootstrap order,
-local helper tooling, or interchangeable provider/tool choices, prefer the
-repo-local `rebuild-readiness-maintainer` skill for those docs.
-
-When the change affects security posture, privacy posture, operational
-readiness, release/recovery posture, or other standards-gated behavior, review
-the corresponding file under `docs/standards/platform-status/` and update it if
-the repo baseline has changed.
-
-If the implementation changed the truth of a maintained status snapshot but the
-headline status level did not change, still refresh the wording when needed so
-the snapshot does not lag the repo's actual current state.
-
-When the change is materially AI-assisted, also check whether the supporting
-artifacts need:
-
-- an AI-assistance/provenance note
-- prompt/data-handling note when relevant
-- model/tool/version traceability for high-risk changes
-- expert-review note for AI-assisted security or compliance controls
-
-Prefer the repo-local `ai-change-reviewer` skill for creating or refreshing
-that durable review note under `docs/workspace/reviews/`.
-
-### 8. Run standards review
-
-If the change is material, security-relevant, privacy-relevant, operationally
-significant, or otherwise subject to the repo's standards gates, use the
-repo-local `repo-standards-compliance-auditor` skill.
-
-This is especially appropriate for:
-
-- authentication/session changes
-- browser/admin surface changes
-- persistence or audit changes
-- testing/cleanup model changes
-- external integrations
-- materially AI-assisted changes with security, persistence, migration, or
-  compliance significance
-
-When standards review reveals that the repo's baseline posture has moved,
-capture that in the relevant `docs/standards/platform-status/*.md` file instead
-of leaving the standards snapshot stale.
-
-When the change is materially AI-assisted, do not treat standards review alone
-as sufficient close-out evidence. Also run the repo-local `ai-change-reviewer`
-skill so the required provenance and high-risk review note exists in the repo.
-
-### 9. Run repo-health review
-
-If the change materially affects shared seams, introduces new docs/process
-artifacts, or could create drift, finish with the repo-local
-`repo-health-auditor` skill.
-
-This is the final "did we leave the repo in a healthy state?" pass.
+If a step is omitted, say why it was `not needed`.
 
 ## Completion Check
 
-Before declaring success on a material backend slice, explicitly confirm:
+Before declaring success, explicitly confirm:
 
-- implementation and tests landed
-- OpenAPI and Postman are aligned when routes changed
-- feature docs and data dictionary are aligned when feature or persistence
-  behavior changed
-- standards baseline snapshots were reviewed when security/audit/compliance
-  posture changed
-- any intentionally deferred artifact updates are named explicitly rather than
-  silently omitted
+- the required loop steps were completed
+- migration-backed changes were actually migrated or any deferral was stated
+  explicitly
+- required verification ran or any deferral was stated explicitly
+- required maintained artifacts were updated or intentionally left unchanged
+  with a concrete reason
+- the result is consistent with
+  `docs/standards/change-artifact-requirements.md`
 
 ## Loop Variants
 
@@ -346,6 +167,19 @@ Typical order:
 3. standards review if evidence posture changed materially
 4. repo health review if the backfill affects architectural clarity
 
+## Suggested Sequence
+
+Typical order:
+
+1. classify the change
+2. decide required, recommended, and not-needed loop steps
+3. run PRD and ADR work if required
+4. run planning skills if required
+5. implement
+6. refresh maintained artifacts and source-independent docs as required
+7. run migrations when the change adds or repairs persistence or authz seed state
+8. run standards and repo-health review when the change class requires them
+
 ## Decision Rules
 
 ### Default to small PRDs
@@ -356,19 +190,23 @@ Do not bundle unrelated work just because it is nearby.
 
 ### Do not silently skip artifacts
 
-If the loop should include a PRD, ADR, test-case doc, runbook, privacy note, or
-feature-doc update, call that out explicitly.
+If the loop should include a PRD, ADR, test-case doc, runbook, privacy note,
+or source-independent doc update, call that out explicitly.
 
-Also call out other required build-from-spec artifacts when applicable, such
-as:
+Use `docs/standards/change-artifact-requirements.md` as the canonical artifact
+matrix instead of restating it here.
 
-- API contract docs
-- data dictionary updates
-- capability matrix rows
-- implementation blueprints
-- permission mapping artifacts for privileged or authorization-sensitive work
-- standards baseline snapshot updates under `docs/standards/platform-status/`
-  when the platform posture has materially changed
+When approved capability-matrix rows introduce new protected backend
+capabilities or change role-governed access:
+
+- explicitly check whether the implementation requires new
+  `root_authz_capabilities` or equivalent authz-catalog seed rows
+- explicitly check whether default role grants such as `RootUserAdmin` must be
+  added or repaired through migrations
+- do not treat route guards, capability-catalog code, or docs updates as
+  sufficient closure without the corresponding migration-backed authz state
+- prefer a new corrective migration over editing an already applied migration
+  when repairing missing grants or seed data
 
 ### Do not force every step when not needed
 
@@ -392,6 +230,7 @@ logic from scratch:
 - `repo-standards-compliance-auditor`
 - `repo-health-auditor`
 - `data-dictionary-maintainer`
+- `frontend-architecture-maintainer`
 
 ## Reporting Format
 
@@ -411,22 +250,16 @@ After work is done, summarize:
 
 ## Guardrails
 
-- Do not run the loop using an older thinner artifact set when
-  `docs/standards/change-artifact-requirements.md` or newer repo docs require
-  additional build-from-spec evidence.
-- Do not leave route changes documented only in OpenAPI when a human-readable
-  API contract artifact is now part of the intended repo evidence model.
-- Do not treat capability matrix rows, implementation blueprints, or permission
-  mapping artifacts as optional when the current change class makes them
-  required by repo standards.
-
 - Do not treat architecture-affecting changes as implementation-only work.
 - Do not jump straight to code when the repo loop clearly needs design and test
   artifacts first.
 - Do not create ADRs for tiny local changes that do not alter enduring rules.
+- Do not silently skip maintained artifacts required by
+  `docs/standards/change-artifact-requirements.md`.
 - Do not leave PRDs, test-case docs, and implementation status out of sync.
 - Do not skip standards or repo-health review when the change materially affects
   security, privacy, testing architecture, or shared seams.
+- Do not replace specialist skills with hand-waved orchestration prose.
 
 ## Trigger Phrases
 

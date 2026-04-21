@@ -25,7 +25,7 @@ pattern artifact and intentionally more concrete than the behavior lock.
 - Related prevention note:
   `docs/workspace/design-system/top-nav-prevention-note.md`
 - Related machine-readable state manifest:
-  `tests/visual/designSystem/topNav.canonical.manifest.json`
+  `tests/visual/designSystem/canonicals/manifests/topNav.canonical.manifest.json`
 
 ## What This Pack Is For
 
@@ -79,6 +79,8 @@ This pack turns them into concrete comparison targets.
 - The isolated preview route used for sign-off must visually match the original
   signed-off top-nav behaviors rather than introducing preview-only styling
   drift.
+- Exploration controls belong on `/design-system/exploration/top-nav`; the
+  canonical sign-off surface belongs on `/design-system/components/top-nav`.
 
 ## Required Reference States
 
@@ -86,24 +88,24 @@ Each state below should eventually have captured evidence and parity notes.
 
 | Ref ID | Canonical route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `TRP-001` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Desktop default | Baseline full-width shell composition | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-001-desktop-default.png` |
-| `TRP-002` | `/design-system/components/top-nav?width=880&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Desktop overflow | Confirms overflow before overlap | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-002-desktop-overflow.png` |
-| `TRP-003` | `/design-system/components/top-nav?width=760&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Desktop threshold before mobile | Confirms approved `2 items + More` rule | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-003-threshold-before-mobile.png`; guard assertion prevents `1 item + More` regression |
-| `TRP-004` | `/design-system/components/top-nav?width=560&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Mobile shell closed | Confirms narrow-width fallback composition | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-004-mobile-shell-closed.png` |
-| `TRP-005` | `/design-system/components/top-nav?width=560&fixture=standard&open=mobile&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Mobile shell open | Confirms narrow-width navigation access | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-005-mobile-shell-open.png` |
-| `TRP-006` | `/design-system/components/top-nav?width=1120&fixture=standard&open=profile&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Desktop profile menu open | Confirms anchored lightweight menu behavior | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-006-profile-menu-open.png` |
-| `TRP-007` | `/design-system/components/top-nav?width=880&fixture=standard&open=overflow&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Desktop overflow menu open | Confirms overflow menu derivation and current-route treatment | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-007-overflow-menu-open.png` |
-| `TRP-008` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=rtl&zoom=0&accent=%23635bff` | RTL desktop | Confirms native-feeling RTL header behavior | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-008-rtl-desktop.png` |
-| `TRP-009` | `/design-system/components/top-nav?width=560&fixture=standard&open=mobile&theme=normal&dir=rtl&zoom=0&accent=%23635bff` | RTL mobile | Confirms native-feeling RTL narrow shell | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-009-rtl-mobile.png` |
-| `TRP-010` | `/design-system/components/top-nav?width=880&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=100&accent=%23635bff` | Magnified desktop | Confirms graceful fallback under UI scaling | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-010-magnified-desktop.png`; guard assertion checks overflow or mobile fallback under pressure |
-| `TRP-011` | `/design-system/components/top-nav?width=1120&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Long brand label | Confirms brand text can yield without distorting brand mark | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-011-long-brand-label.png` |
-| `TRP-012` | `/design-system/components/top-nav?width=880&fixture=long-labels&open=overflow&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Long primary destination label | Confirms long nav labels do not break shell geometry | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-012-long-primary-label.png` |
-| `TRP-013` | `/design-system/components/top-nav?width=1120&fixture=long-labels&open=profile&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Long profile trigger or menu label | Confirms long account labels do not break shell geometry | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-013-long-profile-label.png` |
-| `TRP-014A` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Theme variant: normal | Confirms the default approved theme preserves shell readability | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-014a-theme-normal.png` |
-| `TRP-014B` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=dark&dir=ltr&zoom=0&accent=%23635bff` | Theme variant: dark | Confirms the dark approved theme preserves shell readability | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-014b-theme-dark.png` |
-| `TRP-014C` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=desert&dir=ltr&zoom=0&accent=%23635bff` | Theme variant: desert | Confirms the desert approved theme preserves shell readability | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-014c-theme-desert.png` |
-| `TRP-015A` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Primary-colour inheritance: indigo | Confirms the default shared primary colour drives shell states consistently | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-015a-accent-indigo.png` |
-| `TRP-015B` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%237c3aed` | Primary-colour inheritance: violet | Confirms an alternate approved primary colour drives shell states consistently | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-015b-accent-violet.png` |
+| `TRP-001` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-001` | Desktop default | Baseline full-width shell composition | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-001-desktop-default.png` |
+| `TRP-002` | `/design-system/components/top-nav?width=880&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-002` | Desktop overflow | Confirms overflow before overlap | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-002-desktop-overflow.png` |
+| `TRP-003` | `/design-system/components/top-nav?width=760&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-003` | Desktop threshold before mobile | Confirms approved `2 items + More` rule | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-003-threshold-before-mobile.png`; guard assertion prevents `1 item + More` regression |
+| `TRP-004` | `/design-system/components/top-nav?width=560&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-004` | Mobile shell closed | Confirms narrow-width fallback composition | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-004-mobile-shell-closed.png` |
+| `TRP-005` | `/design-system/components/top-nav?width=560&fixture=standard&open=mobile&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-005` | Mobile shell open | Confirms narrow-width navigation access | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-005-mobile-shell-open.png` |
+| `TRP-006` | `/design-system/components/top-nav?width=1120&fixture=standard&open=profile&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-006` | Desktop profile menu open | Confirms anchored lightweight menu behavior | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-006-profile-menu-open.png` |
+| `TRP-007` | `/design-system/components/top-nav?width=880&fixture=standard&open=overflow&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-007` | Desktop overflow menu open | Confirms overflow menu derivation and current-route treatment | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-007-overflow-menu-open.png` |
+| `TRP-008` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=rtl&zoom=0&accent=%23635bff&ref=TRP-008` | RTL desktop | Confirms native-feeling RTL header behavior | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-008-rtl-desktop.png` |
+| `TRP-009` | `/design-system/components/top-nav?width=560&fixture=standard&open=mobile&theme=normal&dir=rtl&zoom=0&accent=%23635bff&ref=TRP-009` | RTL mobile | Confirms native-feeling RTL narrow shell | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-009-rtl-mobile.png` |
+| `TRP-010` | `/design-system/components/top-nav?width=880&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=100&accent=%23635bff&ref=TRP-010` | Magnified desktop | Confirms graceful fallback under UI scaling | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-010-magnified-desktop.png`; guard assertion checks overflow or mobile fallback under pressure |
+| `TRP-011` | `/design-system/components/top-nav?width=1120&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-011` | Long brand label | Confirms brand text can yield without distorting brand mark | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-011-long-brand-label.png` |
+| `TRP-012` | `/design-system/components/top-nav?width=880&fixture=long-labels&open=overflow&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-012` | Long primary destination label | Confirms long nav labels do not break shell geometry | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-012-long-primary-label.png` |
+| `TRP-013` | `/design-system/components/top-nav?width=1120&fixture=long-labels&open=profile&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-013` | Long profile trigger or menu label | Confirms long account labels do not break shell geometry | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-013-long-profile-label.png` |
+| `TRP-014A` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-014A` | Theme variant: normal | Confirms the default approved theme preserves shell readability | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-014a-theme-normal.png` |
+| `TRP-014B` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=dark&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-014B` | Theme variant: dark | Confirms the dark approved theme preserves shell readability | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-014b-theme-dark.png` |
+| `TRP-014C` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=desert&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-014C` | Theme variant: desert | Confirms the desert approved theme preserves shell readability | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-014c-theme-desert.png` |
+| `TRP-015A` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-015A` | Primary-colour inheritance: indigo | Confirms the default shared primary colour drives shell states consistently | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-015a-accent-indigo.png` |
+| `TRP-015B` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%237c3aed&ref=TRP-015B` | Primary-colour inheritance: violet | Confirms an alternate approved primary colour drives shell states consistently | captured, Playwright-locked | Evidence at `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-015b-accent-violet.png` |
 
 Representative-set decision:
 
@@ -139,21 +141,25 @@ This initial batch is the smallest useful set for making the pack operational.
 
 | Ref ID | Canonical route | Capture condition | Evidence location | Status | Blocker or note |
 | --- | --- | --- | --- | --- | --- |
-| `TRP-001` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Desktop default at a wide viewport | `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-001-desktop-default.png` | captured | Locked by `tests/visual/designSystem/topNav.spec.ts` |
-| `TRP-002` | `/design-system/components/top-nav?width=880&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Desktop overflow while desktop shell remains active | `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-002-desktop-overflow.png` | captured | Locked by `tests/visual/designSystem/topNav.spec.ts` |
-| `TRP-003` | `/design-system/components/top-nav?width=760&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Desktop threshold before mobile; verify it does not continue into `1 item + More` | `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-003-threshold-before-mobile.png` | captured | Locked by screenshot plus explicit guard assertion in `tests/visual/designSystem/topNav.spec.ts` |
-| `TRP-005` | `/design-system/components/top-nav?width=560&fixture=standard&open=mobile&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Mobile shell open with full-width buttons and matching profile/submenu styling | `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-005-mobile-shell-open.png` | captured | Locked by `tests/visual/designSystem/topNav.spec.ts` |
-| `TRP-006` | `/design-system/components/top-nav?width=1120&fixture=standard&open=profile&theme=normal&dir=ltr&zoom=0&accent=%23635bff` | Desktop profile menu open at a desktop viewport | `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-006-profile-menu-open.png` | captured | Locked by `tests/visual/designSystem/topNav.spec.ts` |
-| `TRP-008` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=rtl&zoom=0&accent=%23635bff` | RTL desktop | `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-008-rtl-desktop.png` | captured | Locked by `tests/visual/designSystem/topNav.spec.ts` |
-| `TRP-010` | `/design-system/components/top-nav?width=880&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=100&accent=%23635bff` | Magnified desktop with overflow/mobile pressure visible | `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-010-magnified-desktop.png` | captured | Locked by screenshot plus explicit guard assertion in `tests/visual/designSystem/topNav.spec.ts` |
+| `TRP-001` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-001` | Desktop default at a wide viewport | `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-001-desktop-default.png` | captured | Locked by `tests/visual/designSystem/canonicals/navigation/topNav.spec.ts` |
+| `TRP-002` | `/design-system/components/top-nav?width=880&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-002` | Desktop overflow while desktop shell remains active | `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-002-desktop-overflow.png` | captured | Locked by `tests/visual/designSystem/canonicals/navigation/topNav.spec.ts` |
+| `TRP-003` | `/design-system/components/top-nav?width=760&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-003` | Desktop threshold before mobile; verify it does not continue into `1 item + More` | `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-003-threshold-before-mobile.png` | captured | Locked by screenshot plus explicit guard assertion in `tests/visual/designSystem/canonicals/navigation/topNav.spec.ts` |
+| `TRP-005` | `/design-system/components/top-nav?width=560&fixture=standard&open=mobile&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-005` | Mobile shell open with full-width buttons and matching profile/submenu styling | `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-005-mobile-shell-open.png` | captured | Locked by `tests/visual/designSystem/canonicals/navigation/topNav.spec.ts` |
+| `TRP-006` | `/design-system/components/top-nav?width=1120&fixture=standard&open=profile&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-006` | Desktop profile menu open at a desktop viewport | `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-006-profile-menu-open.png` | captured | Locked by `tests/visual/designSystem/canonicals/navigation/topNav.spec.ts` |
+| `TRP-008` | `/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=rtl&zoom=0&accent=%23635bff&ref=TRP-008` | RTL desktop | `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-008-rtl-desktop.png` | captured | Locked by `tests/visual/designSystem/canonicals/navigation/topNav.spec.ts` |
+| `TRP-010` | `/design-system/components/top-nav?width=880&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=100&accent=%23635bff&ref=TRP-010` | Magnified desktop with overflow/mobile pressure visible | `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-010-magnified-desktop.png` | captured | Locked by screenshot plus explicit guard assertion in `tests/visual/designSystem/canonicals/navigation/topNav.spec.ts` |
 
 ## Preview Route For Capture
 
 - Route:
+  `/design-system/exploration/top-nav`
+- Canonical render route:
   `/design-system/components/top-nav`
 - Canonical launcher:
   `/design-system/canonicals/top-nav`
 - Preview source:
+  `src/frontend/designSystem/exploration/top-nav/index.html`
+- Canonical render source:
   `src/frontend/designSystem/components/top-nav.html`
 - Runtime seam:
   `src/frontend/designSystem/router.ts`
@@ -161,10 +167,10 @@ This initial batch is the smallest useful set for making the pack operational.
 The route is suitable for capture once a local preview server and browser
 capture environment are available.
 
-The preview route is part of the reference workflow, not a disposable demo.
-If preview-only state controls are used to force overflow or mobile behavior,
-they must still render the same shell treatment as the original signed-off
-top-nav states.
+The exploration route is part of the reference workflow, not a disposable
+demo. The signed truth for evidence and Playwright capture now lives on the
+dedicated canonical render route, which should stay free of interactive
+preview controls.
 
 ## Preview Route Query Contract
 

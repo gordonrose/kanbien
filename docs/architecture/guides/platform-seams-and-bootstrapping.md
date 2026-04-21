@@ -64,10 +64,18 @@ Before serving traffic, verify critical dependencies such as:
 When adding a new feature:
 
 1. create `src/features/<featureName>/`
-2. expose a feature entry point from `index.ts`
-3. wire dependencies in `integration.ts`
-4. mount the feature explicitly in `src/routes/v1/index.ts`
-5. update docs, tests, and externally visible artifacts
+2. create and maintain `feature.manifest.json`
+3. expose a feature entry point from `index.ts`
+4. wire dependencies in `integration.ts`
+5. mount the feature explicitly in `src/routes/v1/index.ts`
+6. regenerate `docs/architecture/generated/feature-dependency-graph.*`
+7. update docs, tests, and externally visible artifacts
+
+`feature.manifest.json` should declare:
+
+- the feature's public seams exported through `index.ts`
+- the feature's current cross-feature dependencies
+- feature-specific breaking-change risk notes
 
 ## Build-From-Spec Expectations
 

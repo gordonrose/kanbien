@@ -27,6 +27,23 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
 - `design-system-verification-checklist.md`
   Promotion gate template separating source checks, rendered checks, sign-off,
   and adoption readiness.
+- `design-system-adoption-contract-template.md`
+  Bridge template mapping capability or workflow ownership onto a signed-off
+  design-system family before real app adoption.
+- `governed-app-adoption-preflight-template.md`
+  Preflight template for first-consumer or materially changed governed app
+  adoption so seam readiness, ownership boundaries, literal parity targets,
+  and stop conditions are recorded before implementation starts.
+- `chat-branch-bootstrap-template.md`
+  Operational template for capturing a chat's explicit base commit, branch,
+  worktree path, intended write scope, and shared seams before material work
+  begins in parallel.
+- `design-system-component-poc-checklist.md`
+  First-consumer checklist for moving a signed-off family into a real app POC
+  with parity and verification gates.
+- `page-shell-planning-feature-template.md`
+  Source-independent feature-seam template for planning a new governed page
+  shell, including catalogs, CSV export, and future form-field contracts.
 - `frontend-slice-template.md`
   Frontend slice template covering route/state, permissions, accessibility,
   performance, degraded UX, and telemetry.
@@ -39,3 +56,7 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
 - `vertical-slice-template.md`
   Combined frontend/backend slice template for one user-facing workflow across
   contracts, permissions, persistence, verification, and operations.
+
+For backend and cross-feature work, treat `src/features/<featureName>/feature.manifest.json`
+and `docs/architecture/generated/feature-dependency-graph.*` as normal
+maintained artifacts alongside the templates above.

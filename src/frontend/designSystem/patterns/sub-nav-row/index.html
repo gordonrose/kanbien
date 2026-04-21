@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Sub-Nav Row Pattern</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home"><span class="brand-mark" aria-hidden="true">K</span><span class="brand-copy"><strong>Kanbien Design System</strong></span></a>
+        <nav class="primary-nav" aria-label="Primary"><div class="primary-nav-links"><a class="nav-link" href="/design-system">Overview</a><a class="nav-link" href="/design-system/foundations">Foundations</a><a class="nav-link" href="/design-system/components">Components</a><a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a><a class="nav-link" href="/design-system/templates">Pages</a><a class="nav-link" href="/design-system/resources">Resources</a></div></nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu"><span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span></button>
+        <div class="nav-utilities"><button class="profile-button" type="button" aria-expanded="false"><span class="profile-avatar" aria-hidden="true">SR</span><span class="profile-meta"><strong>Pattern</strong></span></button></div>
+      </header>
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb"><ol class="breadcrumb-list"><li><a class="breadcrumb-button" href="/design-system">Home</a></li><li><span class="breadcrumb-separator" aria-hidden="true">/</span></li><li><a class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li><li><span class="breadcrumb-separator" aria-hidden="true">/</span></li><li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Sub-Nav Row</span></li></ol></nav>
+        <form class="search-shell" role="search"><label class="search-shell-field"><input class="search-input" type="search" name="q" placeholder="Search sub-nav-row pattern notes" /><span class="search-submit-hint" aria-hidden="true"><span class="search-submit-hint-copy">Press</span><span class="search-submit-hint-key">Enter</span></span></label></form>
+      </section>
+      <nav class="context-nav" aria-label="Sub-nav-row pattern navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/patterns/sub-nav-row" data-tooltip="Pattern" aria-current="page"><span class="context-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" /></svg></span><span class="context-nav-label">Pattern</span></a>
+          <a class="context-nav-item" href="/design-system/canonicals/sub-nav#sub-nav-family" data-tooltip="Canonicals"><span class="context-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v3H4zm0 6h16v8H4zm4 2h8v4H8z" /></svg></span><span class="context-nav-label">Canonicals</span></a>
+          <a class="context-nav-item" href="/design-system/exploration/sub-nav" data-tooltip="Exploration"><span class="context-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 4 20 20H4z" /></svg></span><span class="context-nav-label">Explore</span></a>
+        </div><div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+      <main class="design-system-page-main canonical-launcher-page">
+        <div class="canonical-launcher-layout">
+          <section class="canonical-launcher-intro">
+            <p class="top-nav-preview-eyebrow">Pattern Detail</p><h1>Sub-Nav Row</h1>
+            <p class="canonical-launcher-copy">The shared secondary chrome row that balances breadcrumb wayfinding and bounded search without letting either steal the whole lane.</p>
+            <dl class="canonical-render-meta" aria-label="Pattern metadata"><div class="canonical-render-meta-row"><dt>Status</dt><dd>Active</dd></div><div class="canonical-render-meta-row"><dt>Primary proof</dt><dd>`sub-nav` canonical family and exploration surface</dd></div><div class="canonical-render-meta-row"><dt>Related child patterns</dt><dd>`breadcrumb` and `search-shell`</dd></div></dl>
+          </section>
+          <section class="canonical-launcher-panel" aria-labelledby="sub-nav-row-live-surfaces">
+            <div class="canonical-launcher-panel-header"><div><p class="top-nav-preview-eyebrow">Live Surfaces</p><h2 id="sub-nav-row-live-surfaces">Review This Pattern</h2></div><p class="canonical-launcher-note">Use the shared sub-nav proof surfaces to validate row balance, collapse, and search placement.</p></div>
+            <div class="canonical-launcher-grid">
+              <a class="canonical-launcher-button canonical-launcher-button-priority" href="/design-system/canonicals/sub-nav#sub-nav-family"><span class="canonical-launcher-priority">Priority</span><span class="canonical-launcher-ref">canonicals</span><span class="canonical-launcher-label">Sub-nav family canonicals</span></a>
+              <a class="canonical-launcher-button" href="/design-system/exploration/sub-nav"><span class="canonical-launcher-ref">exploration</span><span class="canonical-launcher-label">Interactive sub-nav exploration</span></a>
+              <a class="canonical-launcher-button" href="/design-system/components/sub-nav"><span class="canonical-launcher-ref">component</span><span class="canonical-launcher-label">Direct sub-nav render surface</span></a>
+            </div>
+          </section>
+        </div>
+        <section class="component-catalog-section" aria-labelledby="sub-nav-row-contract-title">
+          <div class="component-catalog-section-header"><p class="top-nav-preview-eyebrow">Contract Highlights</p><h2 id="sub-nav-row-contract-title" class="component-catalog-section-title">What This Pattern Governs</h2><p class="component-catalog-meta">The row itself is the contract: breadcrumb should yield first, search should stay centered and bounded, and the shell should remain stable under pressure.</p></div>
+          <div class="component-catalog-grid">
+            <article class="component-catalog-card"><div class="component-catalog-card-header"><p class="top-nav-preview-eyebrow">Layout</p><h3 class="component-catalog-card-title">Shared row container</h3></div><p class="component-catalog-card-copy">Breadcrumb occupies the leading slot while search stays in the centered slot instead of turning into ad hoc page-local placement.</p></article>
+            <article class="component-catalog-card"><div class="component-catalog-card-header"><p class="top-nav-preview-eyebrow">Pressure rule</p><h3 class="component-catalog-card-title">Breadcrumb yields first</h3></div><p class="component-catalog-card-copy">Long breadcrumb labels should collapse or compact before the search shell loses its governed width or alignment.</p></article>
+            <article class="component-catalog-card"><div class="component-catalog-card-header"><p class="top-nav-preview-eyebrow">Adoption</p><h3 class="component-catalog-card-title">Page chrome reuse</h3></div><p class="component-catalog-card-copy">This pattern exists so every page family can inherit one honest secondary-chrome relationship instead of negotiating breadcrumb and search from scratch.</p></article>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

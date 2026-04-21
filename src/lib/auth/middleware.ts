@@ -135,6 +135,8 @@ export function createRequireTenantSession(
         authPrincipalId: session.auth_principal_id,
         activeTenantId: session.active_tenant_id,
         selectionRequired: session.selection_required,
+        remediationRequired: session.remediation_required,
+        remediationReason: session.remediation_reason,
         authenticatedAt: session.authenticated_at.toISOString(),
         expiresAt: session.expires_at.toISOString(),
       };

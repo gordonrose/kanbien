@@ -27,18 +27,23 @@
   Promote the signed-off `/design-system` top-nav family toward governed app
   adoption.
 - What changed since the last review:
-  The full canonical `top-nav` state set has now been human-reviewed, captured,
-  and Playwright-locked through the dedicated preview route and canonical
-  launcher.
+  The full canonical `top-nav` state set now renders through the dedicated
+  canonical page at `/design-system/components/top-nav`, while exploration
+  controls remain on `/design-system/exploration/top-nav`. The canonical
+  `TRP-*` set has been refreshed and Playwright-locked against that dedicated
+  render surface, and the canonical hardening pass now keeps theme,
+  magnification, and RTL direction local to the rendered shell instead of the
+  host document.
 
 ## Source Verification
 
 - Source files inspected:
-  `src/frontend/designSystem/index.html`
+  `src/frontend/designSystem/components/top-nav.html`
+  `src/frontend/designSystem/exploration/top-nav/index.html`
   `src/frontend/designSystem/assets/styles.css`
   `src/frontend/designSystem/assets/app.mjs`
 - Implementation updated:
-  no
+  yes, to separate canonical render truth from the exploration surface
 - Known source-level risks:
   rendered verification is still required for longer labels, mobile utility
   transitions, and utility-region fit under real consumer content
@@ -60,7 +65,11 @@
 - Screenshot or rendered evidence reference:
   human sign-off completed through `/design-system/canonicals/top-nav`; the
   full canonical snapshot set is stored under
-  `tests/visual/__snapshots__/designSystem/topNav.spec.ts/`
+  `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/`
+  and now comes from the dedicated canonical render page rather than the
+  interactive exploration page
+  with the broader host/surface posture tracked in
+  `docs/workspace/design-system/verification/canonical-host-surface-isolation-audit.md`
 
 ## Prevention-Derived Checks
 
@@ -100,8 +109,12 @@
   must verify accent-driven shell states stay in sync with the shared primary
   colour selection
 - Deterministic preview-entry preserved:
-  must verify the isolated preview route can reopen signed-off states directly
-  from query parameters so humans and Playwright evaluate the same conditions
+  must verify the dedicated canonical render route can reopen signed-off states
+  directly from query parameters so humans and Playwright evaluate the same
+  conditions
+- Canonical host/surface isolation preserved:
+  must verify theme, magnification, and direction stay owned by the rendered
+  canonical surface rather than by the host review page
 
 ## Accessibility Verification
 

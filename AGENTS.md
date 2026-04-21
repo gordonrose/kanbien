@@ -1,11 +1,20 @@
 # Project Instructions
 
+This file is the repo constitution.
+
+It should hold durable repo guardrails, not the full procedural change loop.
+
 Follow the architecture guidance in:
 
 - `docs/architecture/system-overview.md`
 - `docs/architecture/priniciples.md`
 - `docs/architecture/change-control.md`
 - `docs/architecture/adr/`
+
+For procedural change-loop requirements such as artifact completeness,
+documentation sync, QA evidence, and maintained-artifact sweeps, use:
+
+- `docs/standards/change-artifact-requirements.md`
 
 ## Default Change Posture
 
@@ -29,11 +38,17 @@ Instead:
 
 ## Durable Domain Data Rule
 
-Do not make the system depend only on mutable external or related records for facts that must remain stable over time.
+Do not make the system depend only on mutable external or related records for
+facts that must remain stable over time.
 
-If a fact about a user or any other domain entity may still matter later for behavior, permissions, billing, reporting, auditability, compliance, or historical correctness, persist that fact durably on the owning entity or in a durable domain record.
+If a fact about a user or any other domain entity may still matter later for
+behavior, permissions, billing, reporting, auditability, compliance, or
+historical correctness, persist that fact durably on the owning entity or in a
+durable domain record.
 
-If a related record can change, merge, disappear, or be reassigned, do not replace the durable fact with a live lookup unless the prompt also includes an approved migration or compatibility strategy.
+If a related record can change, merge, disappear, or be reassigned, do not
+replace the durable fact with a live lookup unless the prompt also includes an
+approved migration or compatibility strategy.
 
 ## API And Entity Behavior Defaults
 
@@ -99,8 +114,7 @@ decision says otherwise.
 
 ## Tenant Boundary Defaults
 
-Now that `tenant` is a real durable platform entity, treat tenant context as a
-first-class security and data-isolation boundary.
+Treat tenant context as a first-class security and data-isolation boundary.
 
 Defaults:
 
@@ -127,11 +141,11 @@ Defaults:
 
 - root-user sessions remain platform-operator sessions outside tenant authz
   unless a future design explicitly states otherwise
-- tenant-scoped requests need a validated current tenant context in the server-
-  side auth/session context
+- tenant-scoped requests need a validated current tenant context in the
+  server-side auth/session context
 - in this repo, bearer tokens are opaque server-backed session identifiers, so
   tenant context does not need to be embedded directly in the token string
-- if a future stateless token/claim model is adopted for tenant actors, any
+- if a future stateless token or claim model is adopted for tenant actors, any
   embedded tenant context must still be validated server-side and treated as
   exactly one current tenant context per request rather than as a broad
   implicit grant over all memberships
@@ -149,8 +163,8 @@ Defaults:
 - multi-value searchable attributes must not use comma-separated strings
 - multi-value searchable attributes that need reliable filtering at scale should
   use junction tables
-- array or JSONB storage for searchable multi-value attributes requires explicit
-  approval based on query patterns and scale
+- array or JSONB storage for searchable multi-value attributes requires
+  explicit approval based on query patterns and scale
 
 ## Feature Architecture
 
@@ -164,6 +178,7 @@ Follow the established feature structure:
 - `transport/`
 - `integration.ts`
 - `index.ts`
+- `feature.manifest.json`
 
 For multi-capability features, follow the repo's capability-per-file domain
 shape by default:
@@ -172,9 +187,9 @@ shape by default:
 - `domain/service.ts` as the composition layer that delegates to those
   capability files
 
-Do not collapse multiple distinct capabilities into one large `domain/service.ts`
-implementation unless the prompt explicitly calls for an exception or the
-feature truly has only one business capability.
+Do not collapse multiple distinct capabilities into one large
+`domain/service.ts` implementation unless the prompt explicitly calls for an
+exception or the feature truly has only one business capability.
 
 Keep platform seams explicit:
 
@@ -185,6 +200,17 @@ Keep platform seams explicit:
 A feature is not fully integrated until it is explicitly mounted in
 `src/routes/v1/index.ts`.
 
+Each feature must maintain `src/features/<featureName>/feature.manifest.json`
+as the declared source of truth for:
+
+- the feature's public seams exported through `index.ts`
+- the feature's current cross-feature dependencies
+- feature-specific breaking-change risk notes
+
+Treat `docs/architecture/generated/feature-dependency-graph.json` and
+`docs/architecture/generated/feature-dependency-graph.md` as maintained repo
+artifacts, not optional local diagnostics.
+
 ## Anti-Drift Seams
 
 Do not introduce cross-feature or platform/feature coupling casually.
@@ -193,6 +219,8 @@ Default rules:
 
 - features must not import another feature's `persistence/*` files directly
 - cross-feature reads must go through the owning feature's exported public seam
+- cross-feature dependencies must be declared in each affected
+  `feature.manifest.json`
 - `integration.ts` owns feature wiring; `transport/*` must not compose
   repositories, DB adapters, or platform infrastructure
 - `domain/*` must not depend on DB-shaped persistence record types when a
@@ -204,7 +232,9 @@ If a change needs a new cross-feature seam:
 
 1. expose a narrow public interface from the owning feature
 2. keep the seam capability-specific rather than broad
-3. update the architecture docs or ADRs in the same change if the seam is
+3. update the owning feature's `feature.manifest.json`
+4. regenerate `docs/architecture/generated/feature-dependency-graph.*`
+5. update the architecture docs or ADRs in the same change if the seam is
    enduring
 
 ## Migration Safety
@@ -222,8 +252,8 @@ Before treating a migration-backed change as complete:
   statement without checking DB visibility semantics
 - verify code, live schema, and indexes agree on required columns, normalized
   fields, and uniqueness rules
-- prefer adding a corrective migration over editing an already-applied migration
-  when repairing existing environments
+- prefer adding a corrective migration over editing an already-applied
+  migration when repairing existing environments
 - re-check representative read and write paths against the live database after
   migration changes
 - when a feature adds persistence-backed tests or migration-time dependencies,
@@ -232,37 +262,216 @@ Before treating a migration-backed change as complete:
   `tests/harness/postgres/testDatabase.ts`,
   and the shared persistence test scripts in `package.json`
 
-## Downstream Artifact Refresh Rule
+## Artifact And Doc Sync
 
-When an upstream planning or contract artifact is materially reset during an
-active loop, refresh downstream artifacts before continuing.
-
-Examples:
-
-- recreating or materially narrowing a PRD should trigger a blueprint refresh
-- materially changing source-independent contracts should trigger a blueprint
-  and verification-artifact revalidation
-- materially changing verification scope should trigger a blueprint or PRD
-  test-case refresh where those assumptions were already written
+When implementation changes the truth of source-independent docs or materially
+resets upstream planning artifacts, follow
+`docs/standards/change-artifact-requirements.md`.
 
 Do not continue implementation on top of knowingly stale downstream artifacts.
+Do not leave source-independent docs describing the pre-change platform once
+the implementation is otherwise considered delivered.
 
-## Source-Independent Doc Sync Rule
+## Feature Loop Completion Gate
 
-When implementation changes the truth of source-independent docs, refresh the
-affected docs in the same change where practical.
+Do not stop a material feature loop at "code plus a few tests" when the
+change-control artifact chain says more outputs are required.
 
-Common examples:
+Before treating a backend, frontend, vertical-slice, or permission-sensitive
+change as complete:
 
-- API contracts
-- data dictionary entries
-- feature docs
-- OpenAPI
-- architecture summaries
-- platform-status snapshots
+- determine the required artifact set from
+  `docs/standards/change-artifact-requirements.md`
+- complete the required maintained-artifacts sweep
+- update affected `feature.manifest.json` files when a feature gained, lost, or
+  changed a public seam, a cross-feature dependency, or a breaking-change-risk
+  note
+- regenerate and verify
+  `docs/architecture/generated/feature-dependency-graph.*` when feature
+  manifests or cross-feature dependencies changed
+- update source-independent docs whose truth changed
+- update permission-mapping artifacts when new authz capability keys or grants
+  were introduced
+- update API contract docs, OpenAPI, and maintained Postman artifacts when the
+  route contract changed and those artifacts are maintained for the seam
+- update feature docs, status snapshots, and earlier planning artifacts whose
+  current-state wording became stale because the slice now exists
 
-Do not leave the repo in a state where source-independent docs still describe
-the pre-change platform after the feature is otherwise considered delivered.
+Do not present a slice as finished when any required artifact remains missing,
+stale, or explicitly deferred without being called out as an incomplete loop.
+
+If time or scope pressure means the implementation must stop before the full
+artifact run is complete, say so plainly and classify the result as:
+
+- implementation-only
+- partially documented
+- blocked on artifact completion
+
+Do not use "done", "complete", or equivalent close-out language for that
+state.
+
+## Design-System Signoff Before App UI
+
+For governed frontend families, do not implement new real-app UI until that UI
+has been signed off through the `/design-system` loop, unless the user has
+explicitly approved an exception for that surface.
+
+Treat this as a hard default for:
+
+- shell chrome
+- navigation families
+- drawers, dialogs, and menus
+- shared page chrome
+- reusable controls and settings surfaces
+- any new app UI that is supposed to come from the design system rather than
+  from a one-off exception
+
+If the signed-off design-system chain is missing or incomplete, stop and do
+the design-system governance work first. That means the relevant behavior lock,
+canonicals/reference truth, verification artifact, and adoption artifact must
+exist and be honest before real-app implementation is treated as allowed.
+
+For first-consumer app adoption of a signed-off governed family:
+
+- consume the shared signed-off source of truth rather than copying the family
+  CSS or layout rules into the app
+- shared CSS imports alone do not count as governed adoption
+- consume the design-system-owned source of truth for:
+  - visual styling
+  - render structure and markup
+  - interaction behavior
+  - accessibility and state semantics
+- first-consumer app adoption should prefer design-system-owned render and
+  controller seams rather than app-local HTML or controller reconstruction
+- preserve the signed-off outer page or shell framing, not just the inner
+  component styling
+- treat app-local copy, counters, spacing, helper text, or wrapper posture as
+  drift unless an explicit exception is approved
+- duplicating governed component markup in an app page is drift unless an
+  explicit exception is approved
+- duplicating governed interaction logic in an app page is drift unless an
+  explicit exception is approved
+- do not treat "close to the canonical" as sufficient parity when the rendered
+  browser result still differs from the signed-off design-system truth
+
+If a governed family does not yet expose a consumable shared render or
+behavior seam:
+
+- stop and raise the gap for human decision
+- do not satisfy adoption by copying HTML structure, ARIA or state behavior, or
+  page-local controller logic into the app
+- do not treat CSS sharing alone as sufficient governed adoption
+
+Allowed exception posture:
+
+- the user explicitly approves a one-off or pre-signoff app implementation
+- the exception is stated as intentional for that surface, such as the login
+  page example
+
+Do not infer a pre-signoff exception from urgency, apparent simplicity, or the
+existence of partial design-system work.
+
+### App-Page CSS Prohibition
+
+For governed app pages, do not add or modify app-page CSS as part of a page
+build.
+
+This is an ironclad repo rule:
+
+- CSS additions or CSS changes for governed page layout, spacing, columns,
+  wrappers, shell posture, or page-specific presentation are allowed only as
+  part of an explicit `/design-system` loop
+- app implementation work must consume existing signed-off design-system CSS
+  seams as-is rather than adding page-local CSS in `src/frontend/*/assets/*.css`
+- if the page cannot be built cleanly from existing signed-off seams, stop
+  rather than inventing app CSS
+
+When the needed styling or layout seam does not already exist:
+
+- do not add app-page CSS anyway
+- do not unilaterally move the work into a design-system loop
+- raise the blocker and require human intervention to decide whether to:
+  - pause the app change
+  - run a design-system loop
+  - approve an explicit exception
+
+Never treat "small", "temporary", "cleanup", "follow-up", "candidate fix", or
+"just enough to make the page work" as justification for adding app-page CSS.
+
+## Frontend Topology Governance
+
+For governed app frontend families, distinguish explicitly between:
+
+- durable frontend topology
+- journey-local state
+- UI-local state
+- support-only routes
+
+Defaults:
+
+- the curated topology model owns only durable product places such as
+  permanent pages and durable subroutes
+- nested workflow steps, conditional journey branches, and transient screen
+  posture must not be modeled as global topology by default
+- feature-local state machines, query contracts, or equivalent feature-owned
+  seams should own journey-local and UI-local state unless an explicit
+  promotion decision is approved
+- support-only and technical routes must remain explicitly classified and must
+  not be silently treated as normal user-facing pages
+
+Current root-admin migration posture:
+
+- selected root-admin suites now use path-backed canonical routes:
+  - `/root-admin`
+  - `/root-admin/web-app-hierarchy`
+  - `/root-admin/users`
+  - `/root-admin/tenants`
+  - `/root-admin/tenant-admins`
+  - `/root-admin/roles`
+- legacy hash URLs such as `/root-admin#users` and
+  `/root-admin#web-app-hierarchy` are compatibility aliases during migration,
+  not canonical route truth
+- do not introduce new hash-backed root-admin suite destinations when the
+  surface is intended to be a durable product place
+
+Materialization and safety rules:
+
+- curated frontend topology may be the primary source of truth for governed app
+  structure, but repo changes must materialize only through explicit preview
+  and apply seams
+- do not silently hand-edit governed generated routing, import wiring, or repo
+  structure when a topology materialization seam owns that surface
+- deterministic code must classify topology changes as additive,
+  compatibility-sensitive, blocked, or invalid before apply
+- compatibility-sensitive changes such as route renames, route removals,
+  locator-type changes, or path/hash migrations require an explicit
+  compatibility strategy
+- moving a journey from hash-backed addressing to path-backed addressing is a
+  routing-model migration, not a normal edit
+
+Promotion rule:
+
+- promote a journey-local state into durable topology only when it becomes a
+  stable product place with meaningful deep-linking, support, analytics,
+  permission, or compatibility requirements
+
+## Frontend State Replay Security
+
+Treat page-state replay and troubleshooting-state capture as separate from
+durable topology.
+
+Defaults:
+
+- only explicitly approved low-risk state may be serialized directly in a URL
+- rich, sensitive, or unstable replay state must use explicit server-backed
+  snapshots rather than direct URL encoding
+- secrets, credentials, tokens, proof material, and internal security signals
+  must never be serialized into URLs or replay payloads by default
+- replay links and snapshots must not act as authority for tenant, role,
+  permission, or entity access; current server-side authn and authz must still
+  be enforced on replay
+- do not treat troubleshooting convenience as justification to weaken privacy,
+  auditability, or least-privilege handling of page state
 
 ## Pagination Test Robustness
 
@@ -274,6 +483,126 @@ When writing tests for paginated catalogs, collections, or searchable lists:
   set
 - separate pagination-contract tests from business-presence tests when both
   matter
+
+## Root Cause Guardrails
+
+When adding a new feature that depends on existing entities or tables:
+
+- inspect the live schema, not just the current migration files
+- inspect the active repository queries and writes for the existing feature
+- confirm normalized fields, derived columns, and indexes are represented
+  consistently in contract, persistence, and migrations
+- treat bootstrap and backfill migrations as runtime logic that must be checked
+  with the target database's statement-visibility behavior
+- do not assume a feature seam is safe just because the folder structure is
+  correct; verify the persistence seam against the real tables it depends on
+
+## Git Hygiene And Branching
+
+Default to a branch-per-task workflow for material repo changes.
+
+Defaults:
+
+- for non-trivial code, test, docs, migration, or artifact changes, create a
+  dedicated task branch before editing when practical
+- use a short branch name derived from the task, preferably
+  `codex/<scope>-<slug>`
+- read-only investigation, tiny local inspection, or trivial one-line edits do
+  not require a new branch by default
+- if the current branch is already a clean, dedicated branch for the scoped
+  task, continue on it rather than creating another branch
+- if the worktree already contains unrelated changes, do not silently create a
+  new branch and pile new work on top; pause, surface the state, and ask how to
+  proceed when separation is non-obvious
+- do not auto-commit immediately after implementation just because the task is
+  technically working
+- wait for explicit user approval such as "looks good", "commit this", or
+  equivalent before creating commits
+- when approved to commit, prefer one or more scoped commits rather than one
+  large mixed commit
+- do not push by default after committing unless the user asks for a push or PR
+
+### Chat Bootstrap Gate
+
+For any material multi-file chat, branch-per-task is no longer sufficient on
+its own. Use an explicit chat bootstrap before editing.
+
+Required bootstrap outputs:
+
+- an explicit base commit, not just the current checked-out branch name
+- a dedicated worktree for the chat when parallel chats are active or likely
+- a dedicated task branch created from that explicit base commit
+- a short bootstrap record capturing the branch, worktree path, and intended
+  write scope
+
+Default bootstrap rules:
+
+- do not start a new material chat from ambient `HEAD` when other chats may
+  still be in flight
+- do not assume the currently checked-out branch is a safe starting point just
+  because its name looks related
+- if another chat may commit while this chat is in progress, prefer a separate
+  worktree rather than only a separate branch
+- if the bootstrap record is missing, treat the chat as not yet isolated
+
+Preferred bootstrap artifact:
+
+- create a short record under `docs/workspace/chat-bootstraps/` using
+  `docs/templates/chat-branch-bootstrap-template.md`
+
+Minimum record fields:
+
+- chat scope or slug
+- base commit
+- source branch at bootstrap time
+- dedicated branch name
+- worktree path
+- intended write set
+- known shared seams
+
+Do not treat this record as optional process garnish. Its purpose is to stop a
+later commit in one chat from silently becoming the effective base for another.
+
+## Multi-Chat Parallel Work
+
+When multiple chats are active against the same repo, treat them like separate
+engineers working concurrently rather than like one shared scratchpad.
+
+Defaults:
+
+- each material chat should have one scoped task branch of its own; do not use
+  one branch for multiple unrelated chats
+- do not silently continue a chat on a branch that already contains unrelated
+  work from another chat; pause, surface the overlap, and ask how to proceed
+  when separation is non-obvious
+- prefer parallel chats only when their intended write sets are disjoint or
+  overlap only in an explicitly planned integration seam
+- if two chats need to edit the same files or the same durable seam, either:
+  - designate one chat as the integration owner
+  - or serialize the work instead of pretending the changes are independent
+- shared-seam work must be called out early when multiple chats are active
+- treat the following as shared seams by default:
+  - platform routing and feature registration
+  - shared auth, authz, and security middleware
+  - migrations and persistence harnesses
+  - exported feature public seams in `src/features/<feature>/index.ts`
+  - governed generated or materialized outputs
+  - architecture docs, ADRs, and maintained source-independent contracts
+- when starting a new material chat while another is active, create the new
+  branch from an explicit recorded base commit rather than from whatever `HEAD`
+  currently points to
+- if a chat needs to be rebased onto a newer commit from another chat, record
+  that rebase decision explicitly in the bootstrap artifact or handoff
+- before merging or handing work off, each chat should state its blast radius:
+  changed features, changed shared seams, changed maintained artifacts, and any
+  known downstream dependents
+- when a change depends on another in-flight chat, record that dependency
+  explicitly in the handoff or PR summary rather than assuming merge order will
+  be obvious later
+
+Do not treat multi-chat concurrency as justification for weakening the repo's
+normal expectations around branch isolation, narrow public seams, compatibility
+planning, or artifact honesty.
 
 ## Escalate Before Changing
 
@@ -295,73 +624,87 @@ Defaults:
 
 - using zero or one subagent does not require advance approval
 - using two or more subagents for the same task requires a brief approval check
-  first
 - explain in one or two sentences why multiple subagents would help before
   asking
 - if the user declines, continue with fewer or no subagents
 - do not treat this rule as permission to skip needed user approval for other
   risky or breaking changes
 
-## Docs Alignment Audits
+## Issue Reconciliation Rule
 
-When the user asks to compare documentation with implementation, audit drift,
-or use architecture as the tie-breaker, prefer the repo-local
-`docs-alignment-auditor` skill before making edits.
+When a user raises a bug, runtime defect, escaped regression, or asks why an
+issue was not caught earlier, treat that as an issue-reconciliation workflow,
+not only as a narrow fix request.
 
-## Repo Health Audits
+Default expectations:
 
-When the user asks for a whole-repo sanity check after a body of work,
-especially to find drift, contamination, inconsistency, contradictions, or
-iteration/scalability/security/compliance risks, prefer the repo-local
-`repo-health-auditor` skill before making edits.
+- identify the concrete root cause
+- inspect the current executable tests to explain why the issue escaped
+- classify whether the gap was missing coverage, wrong-layer coverage, stale
+  expectations, unrealistic harness assumptions, or a shared-seam blind spot
+- add or repair the most honest tests or governed frontend scenarios that would
+  catch the issue and nearby similar failures in future
+- create or update a dated note under `docs/workspace/issue-reconciliations/`
+  capturing the symptom, root cause, why the loop missed it, and what was added
+  afterward
 
-## Standards Compliance Audits
+Do not treat an escaped issue as complete just because the implementation bug
+was patched if the prevention-layer analysis and test reconciliation were
+skipped.
 
-When the user asks to check the entire repo against the standards gates or
-checklists in `docs/standards/`, especially across `docs/`, `src/`, `tests/`,
-`package.json`, and `vitest.config.ts`, prefer the repo-local
-`repo-standards-compliance-auditor` skill before making edits.
+## Skill Routing
 
-## Data Dictionary Maintenance
+This section is routing guidance, not additional repo policy.
 
-When the user asks to build or refresh entity documentation under
-`docs/data-dictionary`, prefer the repo-local `data-dictionary-maintainer`
-skill before making edits.
+Use repo-local skills when the task clearly matches one of these workflows:
 
-## PRD Test Case Planning
-
-When the user asks to read a PRD and derive test cases under
-`docs/prd/test_cases`, prefer the repo-local `prd-test-case-planner` skill
-before making edits.
-
-## PRD Test Case Implementation
-
-When the user asks to read a PRD-derived test-case document and implement the
-corresponding executable tests under `tests/`, prefer the repo-local
-`prd-test-case-implementer` skill before making edits.
-
-## Change Loop Orchestration
-
-When the user has reached a clear direction and scope for a new feature,
-architectural change, or repo-process change and wants Codex to drive the full
-delivery loop consistently, prefer the repo-local `change-loop-orchestrator`
-skill before making edits.
-
-## Test-Case Lifecycle Review
-
-When the user wants to review PRD-derived test cases for anti-drift lifecycle
-changes such as `active`, `superseded`, `archived`, or `pending-review`,
-prefer the repo-local `test-case-lifecycle-reviewer` skill before making edits.
-
-## Root Cause Guardrails
-
-When adding a new feature that depends on existing entities or tables:
-
-- inspect the live schema, not just the current migration files
-- inspect the active repository queries and writes for the existing feature
-- confirm normalized fields, derived columns, and indexes are represented
-  consistently in contract, persistence, and migrations
-- treat bootstrap and backfill migrations as runtime logic that must be checked
-  with the target database's statement-visibility behavior
-- do not assume a feature seam is safe just because the folder structure is
-  correct; verify the persistence seam against the real tables it depends on
+- docs drift or docs-vs-code comparison:
+  `docs-alignment-auditor`
+- repo-wide drift, contradictions, or architectural health review:
+  `repo-health-auditor`
+- repo-wide standards or compliance audit:
+  `repo-standards-compliance-auditor`
+- data dictionary maintenance:
+  `data-dictionary-maintainer`
+- PRD-derived test-case planning:
+  `prd-test-case-planner`
+- PRD-derived test implementation:
+  `prd-test-case-implementer`
+- source-independent API contract maintenance:
+  `api-contract-maintainer`
+- build-ready implementation blueprint maintenance:
+  `implementation-blueprint-maintainer`
+- branch-per-task workflow setup, worktree hygiene rules, or approval-gated
+  commit/push workflow maintenance:
+  `branch-and-commit-governor`
+- rebuild-readiness or bootstrap/helper documentation maintenance:
+  `rebuild-readiness-maintainer`
+- materially AI-assisted review-note creation:
+  `ai-change-reviewer`
+- PRD test-case lifecycle review:
+  `test-case-lifecycle-reviewer`
+- frontend verification architecture, visual regression scenario maintenance,
+  screenshot/geometry helper work, frontend gate updates, or
+  RTL/responsive/accessibility/geometry coverage for frontend atoms,
+  molecules, components, page templates, or pages:
+  `frontend-test-case-maintainer`
+- screenshot-driven frontend design-system iteration, page-shell/component
+  primitive evolution on `/design-system`, or tight visual-contract work for
+  responsive/layout/overflow/layering/RTL/magnification behavior:
+  `frontend-design-system-loop-maintainer`
+- frontend architecture definition, current-state frontend runtime mapping,
+  frontend architecture drift review, or ADR maintenance for browser/runtime
+  seams: `frontend-architecture-maintainer`
+- senior frontend implementation review across architecture, design-system
+  adoption, topology/state hygiene, accessibility, performance, UX resilience,
+  and frontend verification quality:
+  `frontend-implementation-auditor`
+- durable frontend topology governance, page versus journey-state
+  classification, preview/apply materialization rules, compatibility handling
+  for route moves, or repo-structure ownership boundaries for governed app
+  routing: `frontend-topology-governor`
+- full repo change-loop orchestration once scope is settled:
+  `change-loop-orchestrator`
+- bug / escaped-regression reconciliation, "why was this missed?", or
+  prevention-oriented issue intake:
+  `issue-reconciliation-maintainer`

@@ -33,6 +33,22 @@ and approved cross-feature read seams.
 | Root Role Capability Grant | `rootRoles` | Durable assignment of one authz capability to one system root role. | [root-role-capability-grant.md](./root-role-capability-grant.md) |
 | Root User Role Assignment | `rootRoles` | Durable assignment of one system root role to one root user. | [root-user-role-assignment.md](./root-user-role-assignment.md) |
 | Root Role Audit Event | `rootRoles` | Durable audit record for root-role and assignment changes. | [root-role-audit-event.md](./root-role-audit-event.md) |
+| Entity Definition | `entityBuilder` | Stable lineage record for one repo-facing entity-definition family. | [entity-definition.md](./entity-definition.md) |
+| Entity Definition Version | `entityBuilder` | Immutable version snapshot under one stable entity-definition lineage. | [entity-definition-version.md](./entity-definition-version.md) |
+| Entity Definition Attribute | `entityBuilder` | Version-owned attribute truth including form-facing metadata and option posture. | [entity-definition-attribute.md](./entity-definition-attribute.md) |
+| Entity Definition Attribute Validation Rule | `entityBuilder` | Typed validation-rule row owned by one entity-definition attribute. | [entity-definition-attribute-validation-rule.md](./entity-definition-attribute-validation-rule.md) |
+| Entity Definition Attribute Option | `entityBuilder` | Inline bounded option row for one entity-definition attribute. | [entity-definition-attribute-option.md](./entity-definition-attribute-option.md) |
+| Entity Definition Attribute Source Link | `entityBuilder` | Ordered dependency row for computed attributes within one version. | [entity-definition-attribute-source-link.md](./entity-definition-attribute-source-link.md) |
+| Web App Discovery Run | `webAppSurfaceDiscovery` | Durable operator-triggered run record for one approved discovery refresh. | [web-app-discovery-run.md](./web-app-discovery-run.md) |
+| Discovered Web App Surface | `webAppSurfaceDiscovery` | Durable current discovered-truth row for one implemented route, shell state, or support route. | [discovered-web-app-surface.md](./discovered-web-app-surface.md) |
+| Discovered Web App Surface Observation | `webAppSurfaceDiscovery` | Append-only per-run snapshot recording what one discovery run observed for one discovered surface. | [discovered-web-app-surface-observation.md](./discovered-web-app-surface-observation.md) |
+| Web App Root Family | `webAppHierarchyBuilder` | Durable top-level root-family record representing app-entry families such as `root-admin`, `login`, and `design-system`. | [web-app-root-family.md](./web-app-root-family.md) |
+| Web App Module | `webAppHierarchyBuilder` | Durable user-facing business-module record that owns a navigable branch of the web app hierarchy under one root family. | [web-app-module.md](./web-app-module.md) |
+| Web App Page | `webAppHierarchyBuilder` | Durable page node record used to model a general tree of module-root pages, child pages, and orphaned pages. | [web-app-page.md](./web-app-page.md) |
+| Web App Page Locator | `webAppHierarchyBuilder` | Durable locator record that lets one curated page resolve through a path or hash-state canonical locator. | [web-app-page-locator.md](./web-app-page-locator.md) |
+| Web App Discovery Link | `webAppHierarchyBuilder` | Durable discovered-to-curated reconcile record for match, block, and drift posture. | [web-app-discovery-link.md](./web-app-discovery-link.md) |
+| Web App Page Settings | `webAppPageSettings` | Durable page-attached settings record for governed icon, top-nav, template, and related configuration truth. | [web-app-page-settings.md](./web-app-page-settings.md) |
+| Web App Page Context Nav Item | `webAppPageSettings` | Durable ordered context-navigation membership row attached to one curated page. | [web-app-page-context-nav-item.md](./web-app-page-context-nav-item.md) |
 | Auth Principal | `rootAuth` | Login identity linked to exactly one root user in the current phase. | [auth-principal.md](./auth-principal.md) |
 | Auth SSH Public Key | `rootAuth` | Registered SSH public key used for second-factor proof during root login. | [auth-ssh-public-key.md](./auth-ssh-public-key.md) |
 | Auth Login Challenge | `rootAuth` | Single-use SSH challenge issued after password-stage login. | [auth-login-challenge.md](./auth-login-challenge.md) |
@@ -48,3 +64,6 @@ and approved cross-feature read seams.
   being folded into `root-user.md`.
 - Feature ownership follows `docs/architecture/system-overview.md` and
   `docs/architecture/adr/0009-separate-authentication-from-business-features.md`.
+- Source-independent entity-definition drafts still exist under
+  `docs/workspace/entity-definitions/`, but the live inventory above now
+  reflects the currently implemented hierarchy and discovery entities.

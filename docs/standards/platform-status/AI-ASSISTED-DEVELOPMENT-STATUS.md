@@ -10,9 +10,12 @@ Source gate: [`AI-ASSISTED-DEVELOPMENT-GATE.md`](/home/gordon/kanbien/docs/stand
   the current platform evidence is still process-heavy rather than
   enforcement-heavy. Architecture guardrails, deterministic testing
   expectations, and human-review discipline are strong. The repo now also has
-  a lightweight provenance-note workflow and template, but provenance logging,
-  prompt-handling evidence, and repeatable high-risk traceability are still
-  immature beyond the first durable review notes.
+  a lightweight provenance-note workflow and template plus multiple durable
+  review notes for high-risk slices. The newer QA release-gate, coverage
+  matrix, journey-inventory, and curated-QA-artifact model also improves how
+  materially AI-assisted changes are independently verified once adopted.
+  Provenance logging, prompt-handling evidence, and repeatable exact-model
+  traceability are still immature.
 
 ## 1. Human Accountability
 
@@ -25,15 +28,16 @@ Source gate: [`AI-ASSISTED-DEVELOPMENT-GATE.md`](/home/gordon/kanbien/docs/stand
 - `Pass` Decision rights are clear for accepting, rejecting, or reworking AI-produced content.
   Review authority is explicit in the docs and change-loop expectations.
 - `Partial` High-risk AI-assisted changes receive reviewer attention appropriate to the risk.
-  The rule now exists, but the repo does not yet have a mature evidence trail
-  proving repeated application on real changes.
+  The rule now exists, and the repo now has several real review-note examples,
+  but the evidence trail is still not mature enough to count as broadly
+  institutionalized.
 
 ## 2. Provenance And Traceability
 
 - `Partial` The change records whether AI materially contributed to the accepted output.
   The gate now requires it, and the repo now has dated review-note examples
   under `docs/workspace/reviews/`, but there is not yet a broad established
-  history of repeated use across many slices.
+  history across many more slices and teams.
 - `Fail` For high-risk changes, the model, tool, and version used are recorded.
   This is now expected but not yet embedded in the current artifact set.
 - `Partial` For high-risk changes, the accepted artifact can be traced back to the review context that justified adoption.
@@ -65,7 +69,8 @@ Source gate: [`AI-ASSISTED-DEVELOPMENT-GATE.md`](/home/gordon/kanbien/docs/stand
 - `Pass` The change is not accepted only because the model claimed it was correct, compliant, or secure.
   Current repo process rejects unsupported claims in favor of primary evidence.
 - `Pass` Behavior-changing output is backed by deterministic tests or equivalent deterministic verification evidence.
-  The repo has strong traceable test-planning and executable-test expectations.
+  The repo has strong traceable test-planning, journey, QA-gate, and
+  executable-test expectations.
 - `Pass` Security-critical, persistence-critical, and contract-critical paths are verified with repo-appropriate executable evidence.
   This is a core current repo norm, though coverage maturity still varies by
   slice.
@@ -117,8 +122,8 @@ Source gate: [`AI-ASSISTED-DEVELOPMENT-GATE.md`](/home/gordon/kanbien/docs/stand
   Existing change-loop, test, and documentation expectations make rework and
   rollback of ordinary repo changes manageable.
 - `Partial` Review notes or artifacts are sufficient to revisit why the output was accepted.
-  PRDs, ADRs, and tests help, and the repo now has AI-specific acceptance-note
-  examples, but they are not yet routine enough to count as mature evidence.
+  PRDs, ADRs, tests, and multiple AI-specific acceptance notes now help, but
+  they are not yet routine enough to count as mature evidence.
 - `Partial` Known limitations or uncertain areas introduced by AI assistance are called out rather than hidden.
   Repo tone encourages this, but evidence is still informal.
 - `Partial` Over-trust in AI-generated output is treated as a review failure, not an acceptable workflow shortcut.

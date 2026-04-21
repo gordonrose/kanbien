@@ -7,11 +7,16 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 - Current status: `Partial`
 - Summary:
   The repo is already reasonably strong in authentication, session management,
-  validation, and security event visibility for the implemented root-user
-  surfaces. The new `rootRoles` slice materially improves explicit privileged
-  authorization on current root-platform routes, but the biggest ASVS gaps are
-  still tenant/object access control and broader cryptographic/secrets
-  governance.
+  validation, and security event visibility for the implemented root-user and
+  tenant-side identity foundations. The platform now has `rootAuth`,
+  `tenantAdmins`, `tenantAuth`, and `notificationDelivery` working together for
+  verified onboarding, password setup, password login, bearer sessions, and
+  email-backed identity workflows. QA planning, deterministic verification
+  rules, journey coverage, and curated QA evidence have also become much
+  stronger, which improves confidence in the implemented security posture even
+  where the control itself has not materially changed. The biggest ASVS gaps are still
+  tenant/object access control, MFA/step-up maturity, and broader
+  cryptographic/secrets governance.
 
 ## 1. Architecture
 
@@ -27,11 +32,14 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 ## 2. Authentication
 
 - `Pass` Authentication logic is centralized.
-  `rootAuth` owns authentication behavior centrally.
+  `rootAuth` and `tenantAuth` now own authentication behavior centrally for
+  their respective principal types rather than leaving it inside business
+  features.
 - `Pass` Passwords are hashed using approved mechanisms where passwords exist.
   Current implementation hashes passwords in persistence logic.
 - `Pass` Account state checks are enforced during authentication.
-  Root-user lifecycle and auth-state checks are enforced.
+  Root-user lifecycle, tenant-admin verification state, and tenant principal
+  eligibility checks are enforced.
 - `Pass` Authentication errors avoid unnecessary account enumeration.
   Generic invalid-credentials behavior exists.
 - `Partial` Re-authentication is required for sensitive account changes where applicable.
@@ -41,13 +49,15 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 ## 3. Session Management
 
 - `Pass` Sessions or tokens have clear expiry behavior.
-  Bearer and browser sessions both have defined expiry semantics.
+  Root bearer/browser sessions and tenant bearer sessions both have defined
+  expiry semantics.
 - `Pass` Sessions can be revoked.
   Revoke and logout flows exist.
 - `Pass` Session creation occurs only after full authentication succeeds.
   Password-only success does not create a session.
 - `Pass` Session identifiers or tokens are protected from insecure exposure.
-  Server-backed opaque sessions and HTTP-only cookies are used appropriately.
+  Server-backed opaque sessions and HTTP-only cookies are used appropriately
+  for the currently implemented transports.
 - `Pass` Logout invalidates authenticated state server-side where applicable.
   Logout revokes the server-side session.
 
@@ -55,18 +65,24 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 
 - `Partial` Authorization is checked on every protected request.
   Authentication is enforced consistently, and current privileged root-platform
-  routes now use explicit governing capabilities through `rootRoles`, but the
-  model is still root-scope only and not yet tenant/object complete.
+  routes now use explicit governing capabilities through `rootRoles`. Tenant
+  sessions and tenant selection now exist too, but tenant/object authorization
+  is still not complete.
 - `Pass` Access is denied by default.
   Protected routes require auth and reject missing/invalid sessions.
 - `Partial` Privileged operations require explicit permission.
   Current root-platform privileged operations now require explicit
   capability-based permission checks, but the broader multi-tenant permission
-  architecture is not finished.
+  architecture is not finished. The new `webAppHierarchyBuilder` root-operated
+  routes follow that same explicit-capability pattern, including the newer
+  design-system create/preview/apply routes and the newer
+  preview/apply/link-status reconcile capabilities. The sibling
+  `webAppPageSettings` routes and the dedicated module-landing-page route now
+  follow the same explicit-capability posture.
 - `Fail` Object-level and tenant-level access are checked where relevant.
-  Ownership checks exist for some auth objects, and the repo now has a
-  root-operated tenant lifecycle model, but there is still no generalized
-  tenant-member or object-level permission layer.
+  Ownership checks exist for some auth objects, the repo now has a
+  root-operated tenant lifecycle model plus tenant-side session context, but
+  there is still no generalized tenant-member or object-level permission layer.
 - `Partial` The design prevents horizontal and vertical privilege escalation.
   Current root-user scope is small and controlled, but the future permission
   model is still missing.
@@ -100,10 +116,17 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 
 - `Pass` Security-relevant events are logged.
   Auth audit events are durable and meaningful.
+  Denied `web-app-hierarchy.*` capability-gated actions are also visible
+  through shared platform security audit events, including denied
+  design-system create/preview/apply and discovery link-status requests.
+  Denied `web-app-page-settings.*` requests are now visible through the same
+  shared platform security audit path.
 - `Pass` Logs avoid plaintext secrets and sensitive values.
   Current model is careful here.
 - `Partial` Logs are useful for incident investigation.
-  Good for auth-specific investigation; weaker as a general observability layer.
+  Good for auth-specific investigation, and the repo now has stronger QA and
+  review evidence around auth/session behavior; broader general observability
+  is still weak.
 - `Partial` Alert-worthy failure conditions are identifiable.
   Some abuse signals exist, but broader monitoring and alerting are not yet in
   place.
@@ -111,12 +134,15 @@ Source gate: [`OWASP-ASVS-GATE.md`](/home/gordon/kanbien/docs/standards/OWASP-AS
 ## 8. API And Service Behavior
 
 - `Pass` APIs enforce authentication and authorization consistently.
-  Authentication is consistent; authorization is consistent only at the current
-  coarse root-user boundary.
+  Authentication is consistent across root and tenant-side foundations;
+  authorization is still stronger at the root boundary than at the tenant and
+  object levels.
 - `Pass` Rate limiting or abuse controls exist for sensitive endpoints where needed.
   Public-auth and authenticated-sensitive controls exist.
 - `Pass` State-changing endpoints are protected against the relevant classes of misuse.
-  Current session, origin, and auth protections are meaningful.
+  Current session, origin, and auth protections are meaningful, and the repo
+  now has stronger journey, persistence-backed, concurrency, and
+  non-functional verification planning for these security-sensitive paths.
 - `Partial` External integrations are authenticated and scoped appropriately.
   No meaningful external integration platform exists yet.
 

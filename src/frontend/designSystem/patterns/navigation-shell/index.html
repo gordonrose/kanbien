@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Navigation Shell Pattern</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link" href="/design-system/components">Components</a>
+            <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Pages</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">NS</span>
+            <span class="profile-meta"><strong>Pattern</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Navigation Shell</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search navigation-shell pattern notes" />
+            <span class="search-submit-hint" aria-hidden="true"><span class="search-submit-hint-copy">Press</span><span class="search-submit-hint-key">Enter</span></span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Navigation-shell pattern navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/patterns/navigation-shell" data-tooltip="Pattern" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" /></svg></span>
+            <span class="context-nav-label">Pattern</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/canonicals/top-nav" data-tooltip="Canonicals">
+            <span class="context-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v4H4zm0 6h10v3H4zm12 0h4v3h-4zM4 16h16v3H4z" /></svg></span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/exploration/top-nav" data-tooltip="Exploration">
+            <span class="context-nav-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M12 4 20 20H4z" /></svg></span>
+            <span class="context-nav-label">Explore</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main canonical-launcher-page">
+        <div class="canonical-launcher-layout">
+          <section class="canonical-launcher-intro">
+            <p class="top-nav-preview-eyebrow">Pattern Detail</p>
+            <h1>Navigation Shell</h1>
+            <p class="canonical-launcher-copy">
+              The shared shell contract for brand lockup, primary navigation, overflow handling, mobile navigation collapse, and account affordances.
+            </p>
+            <dl class="canonical-render-meta" aria-label="Pattern metadata">
+              <div class="canonical-render-meta-row"><dt>Status</dt><dd>Active</dd></div>
+              <div class="canonical-render-meta-row"><dt>Primary proof</dt><dd>`top-nav` canonical family and exploration surface</dd></div>
+              <div class="canonical-render-meta-row"><dt>Primary consumers</dt><dd>`/design-system` now, `rootAdminShell` as the governed adoption target</dd></div>
+            </dl>
+          </section>
+
+          <section class="canonical-launcher-panel" aria-labelledby="navigation-shell-live-surfaces">
+            <div class="canonical-launcher-panel-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Live Surfaces</p>
+                <h2 id="navigation-shell-live-surfaces">Review This Pattern</h2>
+              </div>
+              <p class="canonical-launcher-note">Use the pattern page for intent and the linked live surfaces for rendered proof.</p>
+            </div>
+            <div class="canonical-launcher-grid">
+              <a class="canonical-launcher-button canonical-launcher-button-priority" href="/design-system/canonicals/top-nav"><span class="canonical-launcher-priority">Priority</span><span class="canonical-launcher-ref">canonicals</span><span class="canonical-launcher-label">Top-nav canonical set</span></a>
+              <a class="canonical-launcher-button" href="/design-system/exploration/top-nav"><span class="canonical-launcher-ref">exploration</span><span class="canonical-launcher-label">Interactive top-nav exploration</span></a>
+              <a class="canonical-launcher-button" href="/design-system/components/top-nav"><span class="canonical-launcher-ref">component</span><span class="canonical-launcher-label">Direct top-nav render surface</span></a>
+            </div>
+          </section>
+        </div>
+
+        <section class="component-catalog-section" aria-labelledby="navigation-shell-contract-title">
+          <div class="component-catalog-section-header">
+            <p class="top-nav-preview-eyebrow">Contract Highlights</p>
+            <h2 id="navigation-shell-contract-title" class="component-catalog-section-title">What This Pattern Governs</h2>
+            <p class="component-catalog-meta">
+              Keep the shell stable across desktop, overflowed desktop, and collapsed mobile states without inventing page-local navigation behavior.
+            </p>
+          </div>
+          <div class="component-catalog-grid">
+            <article class="component-catalog-card"><div class="component-catalog-card-header"><p class="top-nav-preview-eyebrow">Anatomy</p><h3 class="component-catalog-card-title">Shared shell parts</h3></div><p class="component-catalog-card-copy">Brand lockup, primary navigation region, overflow behavior, utility region, and mobile navigation surface stay in one governed family.</p></article>
+            <article class="component-catalog-card"><div class="component-catalog-card-header"><p class="top-nav-preview-eyebrow">Responsive Rule</p><h3 class="component-catalog-card-title">Measured fit first</h3></div><p class="component-catalog-card-copy">Desktop overflow and mobile collapse should come from actual fit pressure rather than page-local breakpoint guesses.</p></article>
+            <article class="component-catalog-card"><div class="component-catalog-card-header"><p class="top-nav-preview-eyebrow">Adoption</p><h3 class="component-catalog-card-title">Cross-page shell reuse</h3></div><p class="component-catalog-card-copy">This pattern exists so app surfaces can inherit one shell grammar instead of rebuilding top navigation for each page family.</p></article>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

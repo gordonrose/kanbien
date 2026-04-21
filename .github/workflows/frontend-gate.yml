@@ -1,0 +1,74 @@
+name: Frontend Gate
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/frontend-gate.yml"
+      - "docs/architecture/guides/frontend-*.md"
+      - "docs/standards/frontend-gates/**"
+      - "docs/standards/WCAG-2.2-AA-GATE.md"
+      - "docs/templates/frontend-*.md"
+      - "package.json"
+      - "package-lock.json"
+      - "playwright.config.ts"
+      - "src/frontend/**"
+      - "src/lib/frontendQualityGateManifest.ts"
+      - "src/scripts/checkFrontendGovernance.ts"
+      - "src/scripts/runFrontendGate.ts"
+      - "tests/visual/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/frontend-gate.yml"
+      - "docs/architecture/guides/frontend-*.md"
+      - "docs/standards/frontend-gates/**"
+      - "docs/standards/WCAG-2.2-AA-GATE.md"
+      - "docs/templates/frontend-*.md"
+      - "package.json"
+      - "package-lock.json"
+      - "playwright.config.ts"
+      - "src/frontend/**"
+      - "src/lib/frontendQualityGateManifest.ts"
+      - "src/scripts/checkFrontendGovernance.ts"
+      - "src/scripts/runFrontendGate.ts"
+      - "tests/visual/**"
+
+jobs:
+  frontend-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Validate frontend governance
+        run: npm run frontend:governance
+
+      - name: Run frontend gate
+        run: npm run frontend:gate
+
+      - name: Run Lighthouse on public design-system routes
+        run: npm run frontend:lighthouse
+
+      - name: Upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-gate-artifacts
+          path: |
+            test-results
+          if-no-files-found: ignore

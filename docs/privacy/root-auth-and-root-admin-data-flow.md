@@ -12,6 +12,7 @@ and later GDPR/data-transfer analysis.
 
 - `rootAuth`
 - root-admin browser auth shell
+- `webAppHierarchyBuilder` root-operated backend foundation
 - localhost SSH signing helper
 
 ## Personal Data Categories
@@ -22,8 +23,14 @@ The current flow may process:
 - root-user first name
 - root-user last name
 - root-user identity identifiers
+- root-operator attribution on created hierarchy records
 - request IP address
 - user agent
+- web-app hierarchy metadata:
+  - root-family ids
+  - module keys and labels
+  - page keys and labels
+  - route segments and derived route paths
 - SSH public key metadata:
   - key label
   - fingerprint
@@ -38,6 +45,8 @@ The current purposes are:
 - authenticate privileged root users
 - establish server-backed session state
 - enforce account-state and abuse protections
+- manage durable web-app hierarchy truth for root-admin planning and future
+  downstream generation seams
 - support security/audit investigation of privileged login activity
 - render minimal current-user/session information in the browser shell
 
@@ -75,6 +84,7 @@ secondary use of this data.
 - login stages
 - failures
 - session revocation/logout
+- privileged hierarchy mutations and denied capability-gated requests
 - rate-limit and auth-abuse events
 
 may record security-relevant metadata such as IP address and user agent.
@@ -102,6 +112,8 @@ Current minimization choices:
 - SSH private keys remain on the operator workstation and are not uploaded to
   the backend
 - only SSH public key material and metadata are stored server-side
+- hierarchy records store route and structure metadata, not end-user content or
+  customer business data in this slice
 
 ## Retention And Deletion Considerations
 

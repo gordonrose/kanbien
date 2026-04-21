@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "featureName": "tenantAdmins",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createTenantAdminsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for tenant-admin lifecycle and verification routes."
+    },
+    {
+      "seamId": "auth-bootstrap-reader",
+      "symbol": "createTenantAdminsAuthBootstrapReader | TenantAdminsAuthBootstrapReader",
+      "path": "index.ts",
+      "kind": "reader-seam",
+      "stability": "stable",
+      "description": "Cross-feature seam for verified tenant-admin bootstrap subject reads."
+    },
+    {
+      "seamId": "tenant-admin-auth-bootstrap-subject",
+      "symbol": "TenantAdminAuthBootstrapSubject",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "stable",
+      "description": "Shared type describing the tenant-admin subject used during tenant-auth onboarding."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "notificationDelivery",
+      "seamIds": [
+        "notification-email-writer",
+        "notification-delivery-error"
+      ],
+      "description": "Sends and handles tenant-admin verification emails through notification delivery public seams."
+    },
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "onboarding-provisioner-type"
+      ],
+      "description": "Coordinates tenant-auth onboarding provisioning through the exported tenantAuth onboarding seam."
+    },
+    {
+      "featureName": "tenants",
+      "seamIds": [
+        "visible-tenants-reader"
+      ],
+      "description": "Validates tenant visibility before tenant-admin lifecycle changes."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing tenant-admin verification or onboarding restart semantics can break the downstream tenant-auth onboarding flow.",
+    "Changing the auth bootstrap reader seam can break tenant-auth access grant and password setup flows."
+  ]
+}

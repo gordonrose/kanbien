@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "featureName": "rootAuth",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createRootAuthFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for root authentication and session routes."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "rootUsers",
+      "seamIds": [
+        "auth-state-reader",
+        "browser-summary-reader",
+        "root-user-auth-state-type"
+      ],
+      "description": "Reads root-user sign-in eligibility and browser bootstrap summary through rootUsers public seams."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing root authentication route or session behavior is externally breaking for operator login and browser bootstrap flows.",
+    "Changing the expected root-user auth-state seam can break sign-in eligibility checks delegated to rootUsers."
+  ]
+}

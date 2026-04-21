@@ -18,7 +18,7 @@ import type { RootUserAuthState } from "../../../src/features/rootUsers";
 import type { PlatformSecurityRepository } from "../../../src/lib/security/repository";
 
 export const sampleEd25519PublicKey =
-  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEZeNv6aKKHqLJQQoqsHUhYyFMFFbE8WWvgDSFH0WJiq gordon@test-machine";
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+fWomSs6CBXFwaDSUYCy2FHG5UtnFJF7RE/O1hoozG fixture-root-auth@example.test";
 
 export interface RootAuthServiceHarness {
   service: RootAuthService;

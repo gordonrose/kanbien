@@ -9,6 +9,7 @@ import {
 } from "../../helpers/notificationDeliveryHarness";
 import {
   createInMemoryTenantAdminsRepository,
+  createNoopTenantAuthOnboardingProvisioner,
   createTenantAdminRecord,
   createVisibleTenantsReader,
 } from "../../helpers/tenantAdminsHarness";
@@ -28,6 +29,8 @@ describe("tenantAdmins service", () => {
         createInMemoryNotificationDeliveryRepository(),
         new FakeNotificationEmailProvider(),
       ),
+      undefined,
+      createNoopTenantAuthOnboardingProvisioner(),
     );
 
     await expect(
@@ -35,6 +38,7 @@ describe("tenantAdmins service", () => {
         tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
         email: "TAKEN@example.com",
         createdByRootAdminUserId: "11111111-1111-1111-1111-111111111111",
+        requestedByActorId: "11111111-1111-1111-1111-111111111111",
       }),
     ).rejects.toBeInstanceOf(TenantAdminEmailAlreadyExistsError);
 
@@ -42,10 +46,11 @@ describe("tenantAdmins service", () => {
       tenantId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
       email: "NEW.ADMIN@example.com",
       createdByRootAdminUserId: "11111111-1111-1111-1111-111111111111",
+      requestedByActorId: "11111111-1111-1111-1111-111111111111",
     });
     expect(created.email).toBe("new.admin@example.com");
     expect(created.emailVerificationStatus).toBe("pending");
-    expect(created.lastVerificationEmailRequestedAt).toBeNull();
+    expect(created.lastVerificationEmailRequestedAt).not.toBeNull();
   });
 
   it("TC-TENANT-ADMINS-UNIT-004 resets verification state when a verified email changes", async () => {
@@ -62,17 +67,21 @@ describe("tenantAdmins service", () => {
         createInMemoryNotificationDeliveryRepository(),
         new FakeNotificationEmailProvider(),
       ),
+      undefined,
+      createNoopTenantAuthOnboardingProvisioner(),
     );
 
     const updated = await service.updateTenantAdminProfile({
       tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
       tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
       email: "changed@example.com",
+      requestedByActorId: "11111111-1111-1111-1111-111111111111",
     });
 
     expect(updated.email).toBe("changed@example.com");
     expect(updated.emailVerificationStatus).toBe("pending");
     expect(updated.emailVerifiedAt).toBeNull();
+    expect(updated.lastVerificationEmailRequestedAt).not.toBeNull();
   });
 
   it("TC-TENANT-ADMINS-UNIT-002 and TC-TENANT-ADMINS-UNIT-003 read one tenant admin exactly and list tenant-scoped results deterministically", async () => {
@@ -92,6 +101,8 @@ describe("tenantAdmins service", () => {
         createInMemoryNotificationDeliveryRepository(),
         new FakeNotificationEmailProvider(),
       ),
+      undefined,
+      createNoopTenantAuthOnboardingProvisioner(),
     );
 
     const exact = await service.getTenantAdmin({
@@ -126,6 +137,8 @@ describe("tenantAdmins service", () => {
         createInMemoryNotificationDeliveryRepository(),
         new FakeNotificationEmailProvider(),
       ),
+      undefined,
+      createNoopTenantAuthOnboardingProvisioner(),
     );
 
     const deleted = await service.softDeleteTenantAdmin({
@@ -151,6 +164,8 @@ describe("tenantAdmins service", () => {
       repository,
       createVisibleTenantsReader(),
       createNotificationDeliveryService(notificationRepository, provider),
+      undefined,
+      createNoopTenantAuthOnboardingProvisioner(),
     );
 
     const sent = await service.sendTenantAdminVerificationEmail({
@@ -196,7 +211,68 @@ describe("tenantAdmins service", () => {
     const redeemed = await service.redeemTenantAdminVerificationToken({
       token: tokenMaterial.rawToken,
     });
-    expect(redeemed.emailVerificationStatus).toBe("verified");
-    expect(redeemed.emailVerifiedAt).not.toBeNull();
+    expect(redeemed.status).toBe("VERIFIED");
+    expect(redeemed.tenantAdmin.emailVerificationStatus).toBe("verified");
+    expect(redeemed.tenantAdmin.emailVerifiedAt).not.toBeNull();
+    expect(redeemed.tenantAuthOnboarding.authPrincipalId).toBe(
+      "11111111-1111-4111-8111-111111111111",
+    );
+  });
+
+  it("auto-sends a fresh verification email when an unverified tenant admin is updated", async () => {
+    const repository = createInMemoryTenantAdminsRepository([createTenantAdminRecord()]);
+    const notificationRepository = createInMemoryNotificationDeliveryRepository();
+    const provider = new FakeNotificationEmailProvider("fake-provider");
+    const service = createTenantAdminsService(
+      repository,
+      createVisibleTenantsReader(),
+      createNotificationDeliveryService(notificationRepository, provider),
+      undefined,
+      createNoopTenantAuthOnboardingProvisioner(),
+    );
+
+    const updated = await service.updateTenantAdminProfile({
+      tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      firstName: "Renamed",
+      requestedByActorId: "11111111-1111-1111-1111-111111111111",
+    });
+
+    expect(updated.emailVerificationStatus).toBe("pending");
+    expect(updated.lastVerificationEmailRequestedAt).not.toBeNull();
+    expect(provider.sentInputs).toHaveLength(1);
+    expect(notificationRepository.records.size).toBe(1);
+  });
+
+  it("restarts onboarding for a verified tenant admin and returns a fresh tenant-auth onboarding payload", async () => {
+    const repository = createInMemoryTenantAdminsRepository([
+      createTenantAdminRecord({
+        emailVerificationStatus: "verified",
+        emailVerifiedAt: new Date("2026-04-08T09:00:00.000Z"),
+      }),
+    ]);
+    const service = createTenantAdminsService(
+      repository,
+      createVisibleTenantsReader(),
+      createNotificationDeliveryService(
+        createInMemoryNotificationDeliveryRepository(),
+        new FakeNotificationEmailProvider(),
+      ),
+      undefined,
+      createNoopTenantAuthOnboardingProvisioner(),
+    );
+
+    const restarted = await service.restartTenantAdminOnboarding({
+      tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      requestedByActorId: "11111111-1111-1111-1111-111111111111",
+    });
+
+    expect(restarted.status).toBe("ONBOARDING_RESTARTED");
+    expect(restarted.tenantAdmin.emailVerificationStatus).toBe("verified");
+    expect(restarted.tenantAuthOnboarding.authPrincipalId).toBe(
+      "11111111-1111-4111-8111-111111111111",
+    );
+    expect(restarted.tenantAuthOnboarding.nextStep).toBe("PASSWORD_SETUP_REQUIRED");
   });
 });

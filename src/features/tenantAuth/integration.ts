@@ -1,5 +1,6 @@
 import type { Pool } from "pg";
 import type { PlatformSecurityRepository } from "../../lib/security/repository";
+import type { TenantAuthPolicyResolver } from "../tenantConfiguration";
 import {
   createTenantAdminsAuthBootstrapReader,
 } from "../tenantAdmins";
@@ -11,14 +12,19 @@ import { createTenantAuthRouter } from "./transport/router";
 export function createTenantAuthFeature(
   dbPool: Pool,
   platformSecurityRepository: PlatformSecurityRepository,
+  tenantAuthPolicyResolver?: TenantAuthPolicyResolver,
 ) {
   const repository = createPostgresTenantAuthRepository(dbPool);
   const service = createTenantAuthService(
     repository,
     createTenantAdminsAuthBootstrapReader(dbPool),
     createVisibleTenantsReader(dbPool),
+    tenantAuthPolicyResolver,
     platformSecurityRepository,
   );
 
-  return createTenantAuthRouter(repository, service, platformSecurityRepository);
+  return {
+    tenantAuthRouter: createTenantAuthRouter(repository, service, platformSecurityRepository),
+    onboardingProvisioner: service.onboardingProvisioner,
+  };
 }

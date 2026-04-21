@@ -31,6 +31,12 @@ export interface TenantAuthRepository extends TenantAuthSessionLookupRepository 
   findPasswordSetupTokenByTokenId(tokenId: string): Promise<TenantPasswordSetupTokenRecord | null>;
   invalidateActivePasswordSetupTokens(authPrincipalId: string): Promise<void>;
   markPasswordSetupTokenUsed(tokenId: string): Promise<void>;
+  completePasswordSetup(input: {
+    tokenId: string;
+    authPrincipalId: string;
+    newPassword: string;
+    passwordSetAt: Date;
+  }): Promise<"updated" | "token_not_active" | "principal_not_found" | "password_already_set">;
   setPassword(authPrincipalId: string, newPassword: string, passwordSetAt: Date): Promise<void>;
   verifyPassword(authPrincipalId: string, password: string): Promise<boolean>;
   createSession(input: CreateTenantSessionInput): Promise<TenantSessionRecord>;
@@ -39,6 +45,12 @@ export interface TenantAuthRepository extends TenantAuthSessionLookupRepository 
     authPrincipalId: string,
     activeTenantId: string | null,
     selectionRequired: boolean,
+  ): Promise<TenantSessionRecord | null>;
+  updateSessionRemediation(
+    sessionId: string,
+    authPrincipalId: string,
+    remediationRequired: boolean,
+    remediationReason: "password_policy_upgrade_required" | null,
   ): Promise<TenantSessionRecord | null>;
   revokeSession(sessionId: string, authPrincipalId: string): Promise<boolean>;
 }

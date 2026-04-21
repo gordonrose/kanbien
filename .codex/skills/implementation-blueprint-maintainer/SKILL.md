@@ -107,12 +107,12 @@ It should make these things explicit:
 - which feature owns the work
 - which files or modules are expected to change or be created
 - which cross-feature seams must be used instead of private imports
+- which `feature.manifest.json` files will need refresh
 - which persistence objects and migrations are needed
-- which docs must be updated as part of the same slice
-- which test layers are required
+- which authz capability rows and default role grants must be seeded or updated
+  when the capability matrix introduces protected backend behavior
+- which docs and verification layers are expected to move with the slice
 - which standards or audit expectations must be preserved
-- whether materially AI-assisted implementation work will need provenance,
-  verification, or high-risk review evidence
 
 This is not just a restatement of the PRD.
 It is the build plan that adapts the spec to this repository's structure and
@@ -156,55 +156,53 @@ Determine:
 - router and contract files
 - domain/service files
 - persistence files and migrations
+- authz-catalog seed rows implied by the approved capability matrix
+- default role-grant migrations needed so protected roles receive the intended
+  capabilities in live environments
 - cross-feature seams
+- feature-manifest updates needed for new or changed seams and dependencies
 - shared middleware or platform wiring
 - test folders and layers
 - docs updates required by the change class
 
 4. Check artifact completeness.
-Use `docs/standards/change-artifact-requirements.md` to make sure the blueprint
-does not omit required supporting artifacts such as:
-- API contract docs
-- data dictionary changes
-- PRD test-case work
-- standards review
-- runbook or privacy note when needed
-- AI-assistance/provenance and high-risk review notes when the implementation
-  is expected to rely materially on generative AI
-- relevant standards baseline snapshot updates when the slice changes the
-  platform's current posture
-- relevant architecture-map updates when the slice changes the repo's current
-  platform-layer status in a meaningful way
-- maintained-artifacts sweep follow-through for older planning docs, standards
-  snapshots, and registry or index surfaces whose wording will become stale
-  once implementation lands
-- reconstruction-questionnaire updates when the slice adds or changes
-  interchangeable tools, providers, or deployer-local runtime choices
-- bootstrap-guide updates when the slice adds helper scripts, startup
-  prerequisites, or runnable local setup requirements
-- updates to affected pre-existing protected-feature integration, security, and
-  audit tests when the slice adds or tightens authz gates on routes the repo
-  already exposes
+Use `docs/standards/change-artifact-requirements.md` as the canonical artifact
+matrix.
+
+The blueprint should name the supporting artifacts and verification layers that
+implementation will likely need for this slice.
 
 For backend slices that add routes, durable entities, or materially change
-security posture, the blueprint should default to naming all of these output
-surfaces explicitly:
+security posture, prefer naming the most relevant output surfaces explicitly,
+such as:
 
 - `docs/api-contracts/`
 - `docs/swagger/openapi.yaml`
 - `docs/postman/` when a maintained collection exists
 - `docs/featureDocs/`
 - `docs/data-dictionary/`
+- `src/features/<featureName>/feature.manifest.json`
+- `docs/architecture/generated/feature-dependency-graph.*`
 - `docs/standards/platform-status/`
 - rebuild-readiness docs when runtime or helper assumptions changed
 - `docs/workspace/architecture-map/` when platform-layer status has moved
-- older PRD, PRD test-case, and blueprint artifacts that may contain
-  pre-implementation wording requiring refresh
-- README or index surfaces that inventory current docs, features, or entity
-  sets
+- older planning or registry docs whose wording will become stale once
+  implementation lands
 
 If one of those is intentionally out of scope, the blueprint should say why
 instead of silently leaving the artifact class out.
+
+When the approved capability matrix names privileged or role-governed backend
+capabilities, the blueprint should explicitly say:
+
+- where the capability keys will be seeded
+- which default roles receive them by migration-backed grant
+- which existing protected-feature flows or manual verification assets depend
+  on those grants after deployment
+
+Also use `docs/architecture/guides/qa-coverage-matrix-guide.md`,
+`docs/architecture/guides/end-to-end-journey-testing-guide.md`, and
+`docs/standards/QA-RELEASE-GATE.md` as active inputs.
 
 5. Write the blueprint.
 Produce a build-ready Markdown artifact under
@@ -212,16 +210,16 @@ Produce a build-ready Markdown artifact under
 
 6. Surface gaps or blockers.
 If the blueprint depends on unresolved permission rules, missing API contracts,
-missing persistence specs, or unclear seam ownership, call that out explicitly
-instead of hiding the gap inside vague wording.
+missing persistence specs, unclear seam ownership, or missing verification
+expectations, call that out explicitly instead of hiding the gap inside vague
+wording.
 
-Also call out when implementation should be expected to update a file under
-`docs/standards/platform-status/` because the slice is likely to move the
-repo's current standards baseline.
+Also call out when implementation should be expected to refresh:
 
-Also call out when implementation should be expected to refresh earlier
-planning or registry docs purely because the implementation will change their
-truth value, even if no behavioral change is needed in those documents.
+- standards-baseline snapshots under `docs/standards/platform-status/`
+- earlier planning or registry docs whose truth value will change
+- blocking-gate QA evidence beyond executable test files when the change class
+  requires it
 
 ## Writing Rules
 
@@ -245,6 +243,9 @@ truth value, even if no behavioral change is needed in those documents.
   primarily about code.
 - Do not treat the blueprint as a generic checklist; it must be tailored to
   this repo's feature structure and change loop.
+- Do not leave capability-matrix-derived authz state implied. If a protected
+  route depends on a role grant, the blueprint should name the migration or
+  corrective migration that will create or repair that state.
 
 ## Trigger Phrases
 

@@ -6,6 +6,11 @@ import { createTenantsFeature } from "../../features/tenants";
 import { createNotificationDeliveryFeature } from "../../features/notificationDelivery";
 import { createTenantAdminsFeature } from "../../features/tenantAdmins";
 import { createTenantAuthFeature } from "../../features/tenantAuth";
+import { createTenantConfigurationFeature } from "../../features/tenantConfiguration";
+import { createWebAppHierarchyBuilderFeature } from "../../features/webAppHierarchyBuilder";
+import { createWebAppPageSettingsFeature } from "../../features/webAppPageSettings";
+import { createEntityBuilderFeature } from "../../features/entityBuilder";
+import { createWebAppSurfaceDiscoveryFeature } from "../../features/webAppSurfaceDiscovery";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -20,10 +25,21 @@ const requireRootSession = createRequireRootSession(rootAuthRepository, {
   allowBrowserCookie: true,
 });
 const rootRolesFeature = createRootRolesFeature(dbPool, platformSecurityRepository);
+const tenantConfigurationFeature = createTenantConfigurationFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  platformSecurityRepository,
+);
+const tenantAuthFeature = createTenantAuthFeature(
+  dbPool,
+  platformSecurityRepository,
+  tenantConfigurationFeature.policyResolver,
+);
 const tenantAdminsFeature = createTenantAdminsFeature(
   dbPool,
   rootRolesFeature.capabilityChecker,
   platformSecurityRepository,
+  tenantAuthFeature.onboardingProvisioner,
 );
 const publicReadRateLimit = createRateLimitMiddleware({
   enabled: env.platformSecurity.enabled,
@@ -84,7 +100,17 @@ v1Router.use(
 );
 v1Router.use(
   "/tenant-auth",
-  createTenantAuthFeature(dbPool, platformSecurityRepository),
+  tenantAuthFeature.tenantAuthRouter,
+);
+v1Router.use(
+  "/tenant/auth-policy",
+  tenantConfigurationFeature.tenantTenantConfigurationRouter,
+);
+v1Router.use(
+  "/tenants/:tenantId/auth-policy",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  tenantConfigurationFeature.rootTenantConfigurationRouter,
 );
 v1Router.use(
   "/tenants/:tenantId/admins",
@@ -97,6 +123,46 @@ v1Router.use(
   requireRootSession,
   authenticatedGeneralRateLimit,
   createTenantsFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/web-app-hierarchy",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createWebAppHierarchyBuilderFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/web-app-page-settings",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createWebAppPageSettingsFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/entity-definitions",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createEntityBuilderFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/web-app-surface-discovery",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createWebAppSurfaceDiscoveryFeature(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,

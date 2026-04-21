@@ -26,6 +26,67 @@
   - [0019-add-a-shared-tenant-auth-foundation-with-principals-access-grants-and-session-based-tenant-selection.md](/home/gordon/kanbien/docs/architecture/adr/0019-add-a-shared-tenant-auth-foundation-with-principals-access-grants-and-session-based-tenant-selection.md)
 - PRD test-case doc:
   [2026-04-09-0009-tenant-auth-foundation-test-cases.md](/home/gordon/kanbien/docs/prd/test_cases/2026-04-09-0009-tenant-auth-foundation-test-cases.md)
+- Journey inventory:
+  [2026-04-09-0009-tenant-auth-foundation-journey-inventory.md](/home/gordon/kanbien/docs/prd/journey_inventories/2026-04-09-0009-tenant-auth-foundation-journey-inventory.md)
+
+## QA Coverage Classification
+
+- Coverage matrix guide:
+  [qa-coverage-matrix-guide.md](/home/gordon/kanbien/docs/architecture/guides/qa-coverage-matrix-guide.md)
+- QA release gate:
+  [QA-RELEASE-GATE.md](/home/gordon/kanbien/docs/standards/QA-RELEASE-GATE.md)
+- Change-class classification:
+  - auth, session, credential, or recovery flow
+  - authorization and tenant-isolation sensitive workflow
+  - persistence schema and durable workflow change
+  - shared platform seam change for tenant-side auth/session behavior
+- Required layers from the matrix:
+  - unit
+  - integration
+  - end-to-end journey
+  - security
+  - audit
+  - persistence-backed verification
+- Additional required checks:
+  - structured exploratory QA
+  - deny-path review
+  - migration safety review
+- Current non-functional posture for this slice:
+  - performance:
+    not a primary gate for the foundation slice
+  - resilience/failure-injection:
+    review required when external providers or retry-sensitive dependencies are
+    introduced later; not primary in this backend-only foundation
+  - concurrency/idempotency:
+    should be reviewed for bootstrap-proof reuse and session/selection
+    mutation idempotency where implementation reaches that level
+  - compatibility/contract:
+    API contract stability matters and should be reflected in source-
+    independent route contracts even before dedicated contract suites exist
+
+## QA Release-Gate Expectations
+
+For this slice, the default blocking posture should be:
+
+- zero open `critical`
+- zero open `high`
+- zero flaky blocking-suite tests
+- full pass of required unit, integration, security, audit, persistence-backed,
+  and `Tier 0`/`Tier 1` end-to-end suites before production by default
+
+Required curated summary once this slice is implemented and gated:
+
+- one source-controlled test summary under
+  `docs/workspace/test-run-summaries/`
+  for the blocking feature-loop or release gate
+
+Required structured exploratory QA artifact once this slice is implemented:
+
+- a short exploratory note covering:
+  - onboarding truthfulness
+  - tenant-selection truthfulness
+  - deny behavior for deleted principal and deleted tenant paths
+  - session revocation and stale-session behavior
 
 ## Scope Confirmation
 
@@ -87,22 +148,26 @@ This blueprint does **not** include:
 ## Backend Plan
 
 - Public route(s):
-  - `POST /v1/tenant-auth/principals/bootstrap`
+  - `POST /v1/tenant-admin-verification/redeem`
   - `POST /v1/tenant-auth/password/setup`
   - `POST /v1/tenant-auth/login/password`
+- Protected operator dependency route(s):
+  - `POST /v1/tenants/:tenantId/admins/:tenantAdminId/onboarding/restart`
 - Authenticated route(s):
   - `GET /v1/tenant-auth/session`
   - `GET /v1/tenant-auth/tenant-contexts`
   - `POST /v1/tenant-auth/tenant-selection`
   - `POST /v1/tenant-auth/logout`
 - Request/response/error contract:
-  - bootstrap accepts:
-    - one single-use bootstrap or onboarding proof
-    - no client-supplied principal/session/grant identifiers
-  - bootstrap returns:
-    - principal summary
-    - normalized login email
-    - `passwordSetupRequired`
+  - verification redemption accepts:
+    - one single-use tenant-admin verification token
+  - verification redemption returns:
+    - verified tenant-admin summary
+    - reusable tenant-auth onboarding payload
+    - `PASSWORD_SETUP_REQUIRED` or `LOGIN_REQUIRED` next-step hint
+  - protected onboarding restart returns:
+    - the same reusable tenant-auth onboarding payload shape for already
+      verified tenant-admins
   - password setup accepts:
     - single-use bootstrap/onboarding proof
     - `newPassword`
@@ -130,7 +195,7 @@ This blueprint does **not** include:
     - no body
   - use repo-standard validation/auth error shape and stable feature-owned
     codes such as:
-    - `TENANT_AUTH_BOOTSTRAP_INVALID`
+    - `TENANT_ADMIN_VERIFICATION_TOKEN_INVALID`
     - `TENANT_AUTH_PRINCIPAL_ALREADY_EXISTS`
     - `TENANT_AUTH_PASSWORD_ALREADY_SET`
     - `TENANT_AUTH_ONBOARDING_REQUIRED`
@@ -146,7 +211,7 @@ This blueprint does **not** include:
   - `src/features/tenantAuth/contract/schemas.ts`
   - `src/features/tenantAuth/contract/types.ts`
   - capability-focused domain files, likely:
-    - `bootstrapPrincipal.ts`
+    - `provisionTenantAuthForVerifiedSubject.ts`
     - `setInitialPassword.ts`
     - `loginWithPassword.ts`
     - `readCurrentSession.ts`
@@ -321,7 +386,7 @@ This blueprint does **not** include:
 - OpenAPI:
   update `docs/swagger/openapi.yaml`
 - Postman:
-  add `docs/postman/tenantAuth.postman_collection.json`
+  add `docs/postman/collections/tenantAuth.postman_collection.json`
 - Feature doc:
   add `docs/featureDocs/tenantAuth-feature.md`
 - Data dictionary:

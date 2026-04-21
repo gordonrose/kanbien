@@ -1,0 +1,1191 @@
+{
+  "info": {
+    "_postman_id": "8f5ddbc0-c542-4ea7-92c3-84c4c3e63626",
+    "name": "Kanbien Root Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for root-user authentication and the protected rootUsers feature. Public auth routes may now return 429 AUTH_THROTTLED or AUTH_LOCKED_DOWN. Protected routes may return 429 RATE_LIMITED when shared platform security middleware rejects the request. Successful root login writes a shared root session into the active Postman environment so other root-protected collections can reuse it."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "rootUserId",
+      "value": "11111111-1111-1111-1111-111111111111"
+    },
+    {
+      "key": "email",
+      "value": "elvis.presley@example.com"
+    },
+    {
+      "key": "password",
+      "value": "Test1234!"
+    },
+    {
+      "key": "signerUrl",
+      "value": "http://127.0.0.1:8787"
+    },
+    {
+      "key": "rootSessionId",
+      "value": "sess_replace_me"
+    },
+    {
+      "key": "challengeId",
+      "value": "chal_replace_me"
+    },
+    {
+      "key": "challengeText",
+      "value": "challenge_text_replace_me"
+    },
+    {
+      "key": "publicKeyFingerprint",
+      "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY"
+    },
+    {
+      "key": "sshSignature",
+      "value": "base64_signature_over_challenge_text"
+    },
+    {
+      "key": "keyId",
+      "value": "key_replace_me"
+    },
+    {
+      "key": "rootRoleId",
+      "value": "00000000-0000-0000-0000-000000000001"
+    },
+    {
+      "key": "rootRoleAssignmentId",
+      "value": "00000000-0000-0000-0000-000000000001"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "health"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Login Password",
+      "description": "Stage one of root login. On success it stores challenge variables. Repeated attempts may return 429 AUTH_THROTTLED or AUTH_LOCKED_DOWN.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/password",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "login",
+            "password"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.challengeId) pm.collectionVariables.unset(\"challengeId\");",
+              "if (!json.challengeText) pm.collectionVariables.unset(\"challengeText\");",
+              "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
+              "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Sign Challenge",
+      "description": "Local helper request that signs the stored challenge text with your configured SSH private key.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeText\": \"{{challengeText}}\"\n}"
+        },
+        "url": {
+          "raw": "{{signerUrl}}/sign",
+          "host": [
+            "{{signerUrl}}"
+          ],
+          "path": [
+            "sign"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignature\", json.signature);",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignatureJson\", JSON.stringify(json.signature).slice(1, -1));",
+              "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Login SSH",
+      "description": "Stage two of root login. On success it stores the bearer session token. Repeated failures may now trigger 429 AUTH_THROTTLED or AUTH_LOCKED_DOWN.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignatureJson}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/ssh",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "login",
+            "ssh"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.sessionId) pm.environment.unset(\"rootSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Create Principal",
+      "description": "Protected root-only credential-management route. This request can now be rejected with 429 RATE_LIMITED by authenticated-sensitive platform security middleware.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rootUserId\": \"{{rootUserId}}\",\n  \"loginEmail\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/principals",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "principals"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Change Password",
+      "description": "Protected route. This request can now be rejected with 429 RATE_LIMITED by authenticated-sensitive platform security middleware.",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currentPassword\": \"{{password}}\",\n  \"newPassword\": \"@Nima2or1!Change\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/password/change",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "password",
+            "change"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Add SSH Key",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"label\": \"personal-laptop\",\n  \"publicKey\": \"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+fWomSs6CBXFwaDSUYCy2FHG5UtnFJF7RE/O1hoozG fixture-root-auth@example.test\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/ssh-keys",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "ssh-keys"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - List SSH Keys",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/ssh-keys",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "ssh-keys"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Revoke SSH Key",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/ssh-keys/{{keyId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "ssh-keys",
+            "{{keyId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - List Sessions",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/sessions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "sessions"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Revoke Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/sessions/{{rootSessionId}}/revoke",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "sessions",
+            "{{rootSessionId}}",
+            "revoke"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/logout",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-auth",
+            "logout"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Root User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"firstName\": \"Root\",\n  \"lastName\": \"User\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Root User By Id",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Root User By Email",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users?email={{email}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users"
+          ],
+          "query": [
+            {
+              "key": "email",
+              "value": "{{email}}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Root Users",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            },
+            {
+              "key": "orderBy",
+              "value": "updatedAt"
+            },
+            {
+              "key": "orderDirection",
+              "value": "desc"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Active Root Users",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/active?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "active"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            },
+            {
+              "key": "orderBy",
+              "value": "updatedAt"
+            },
+            {
+              "key": "orderDirection",
+              "value": "desc"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Deleted Root Users",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/deleted?page=1&pageSize=25&orderBy=updatedAt&orderDirection=desc&excludeAnonymized=false",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "deleted"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            },
+            {
+              "key": "orderBy",
+              "value": "updatedAt"
+            },
+            {
+              "key": "orderDirection",
+              "value": "desc"
+            },
+            {
+              "key": "excludeAnonymized",
+              "value": "false"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Root User",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"Updated\",\n  \"lastName\": \"User\",\n  \"status\": \"inactive\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Soft Delete Root User",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Remove Root User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/remove",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "remove"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Reactivate Root User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/reactivate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "reactivate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Root Roles",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles?page=1&pageSize=25",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "const firstRoleId = Array.isArray(json.items) && json.items.length > 0 ? json.items[0].rootRoleId : null;",
+              "if (!firstRoleId) pm.collectionVariables.unset(\"rootRoleId\");",
+              "if (firstRoleId) pm.collectionVariables.set(\"rootRoleId\", firstRoleId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Root Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"roleKey\": \"RootUserReadOnly\",\n  \"displayName\": \"Root User Read Only\",\n  \"description\": \"Read-only root role\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.rootRoleId) pm.collectionVariables.unset(\"rootRoleId\");",
+              "if (json.rootRoleId) pm.collectionVariables.set(\"rootRoleId\", json.rootRoleId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get Root Role",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.rootRoleId) pm.collectionVariables.unset(\"rootRoleId\");",
+              "if (json.rootRoleId) pm.collectionVariables.set(\"rootRoleId\", json.rootRoleId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update Root Role",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"displayName\": \"Root User Read Only Updated\",\n  \"description\": \"Updated read-only root role\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Eligible Root Role Capabilities",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/eligible-authz-capabilities?page=1&pageSize=25",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "eligible-authz-capabilities"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Root Role Capability Assignments",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/capability-assignments?page=1&pageSize=25",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "capability-assignments"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Root Role Capability Assignments",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"capabilityKeys\": [\"root-user.read.visible\", \"root-role.read\"],\n  \"reason\": \"prepare read-only role\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/capability-assignments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "capability-assignments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Deactivate Root Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/deactivate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "deactivate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Reactivate Root Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-roles/{{rootRoleId}}/reactivate",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-roles",
+            "{{rootRoleId}}",
+            "reactivate"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Assign Root Role To Root User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rootRoleId\": \"{{rootRoleId}}\",\n  \"reason\": \"grant additional root access\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/root-role-assignments",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "root-role-assignments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Unassign Root Role From Root User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"reason\": \"remove obsolete root access\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/root-role-assignments/{{rootRoleAssignmentId}}/unassign",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "root-role-assignments",
+            "{{rootRoleAssignmentId}}",
+            "unassign"
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Root User Root Roles",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/root-roles?page=1&pageSize=25",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "root-roles"
+          ],
+          "query": [
+            {
+              "key": "page",
+              "value": "1"
+            },
+            {
+              "key": "pageSize",
+              "value": "25"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Replace Root User Root Role",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"sourceRootRoleAssignmentId\": \"{{rootRoleAssignmentId}}\",\n  \"targetRootRoleId\": \"{{rootRoleId}}\",\n  \"reason\": \"replace retired role\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/root-role-assignments/replace",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "root-role-assignments",
+            "replace"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Effective Root User Permissions",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{rootSessionId}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}/effective-permissions",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "v1",
+            "root-users",
+            "{{rootUserId}}",
+            "effective-permissions"
+          ]
+        }
+      }
+    }
+  ]
+}

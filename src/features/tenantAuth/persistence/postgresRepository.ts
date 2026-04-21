@@ -166,6 +166,93 @@ export function createPostgresTenantAuthRepository(dbPool: Pool): TenantAuthRepo
         [tokenId],
       );
     },
+    async completePasswordSetup(input) {
+      const client = await dbPool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        const principalResult = await client.query<{
+          auth_principal_id: string;
+          password_state: "setup_required" | "active";
+        }>(
+          `
+            SELECT auth_principal_id, password_state
+            FROM tenant_auth_principal
+            WHERE auth_principal_id = $1
+            FOR UPDATE
+          `,
+          [input.authPrincipalId],
+        );
+
+        const principal = principalResult.rows[0];
+        if (!principal) {
+          await client.query("ROLLBACK");
+          return "principal_not_found";
+        }
+
+        if (principal.password_state === "active") {
+          await client.query("ROLLBACK");
+          return "password_already_set";
+        }
+
+        const tokenResult = await client.query<{ token_id: string }>(
+          `
+            UPDATE tenant_password_setup_token
+            SET used_at = NOW()
+            WHERE token_id = $1
+              AND auth_principal_id = $2
+              AND used_at IS NULL
+              AND invalidated_at IS NULL
+            RETURNING token_id
+          `,
+          [input.tokenId, input.authPrincipalId],
+        );
+
+        if ((tokenResult.rowCount ?? 0) === 0) {
+          await client.query("ROLLBACK");
+          return "token_not_active";
+        }
+
+        await client.query(
+          `
+            INSERT INTO tenant_password_credential (
+              tenant_password_credential_id,
+              auth_principal_id,
+              password_hash,
+              password_set_at,
+              created_at,
+              updated_at
+            )
+            VALUES (gen_random_uuid(), $1, crypt($2, gen_salt('bf', 12)), $3, NOW(), NOW())
+            ON CONFLICT (auth_principal_id)
+            DO UPDATE SET
+              password_hash = crypt($2, gen_salt('bf', 12)),
+              password_set_at = EXCLUDED.password_set_at,
+              updated_at = NOW()
+          `,
+          [input.authPrincipalId, input.newPassword, input.passwordSetAt],
+        );
+
+        await client.query(
+          `
+            UPDATE tenant_auth_principal
+            SET password_state = 'active',
+                updated_at = NOW()
+            WHERE auth_principal_id = $1
+          `,
+          [input.authPrincipalId],
+        );
+
+        await client.query("COMMIT");
+        return "updated";
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+    },
     async setPassword(authPrincipalId, newPassword, passwordSetAt) {
       await dbPool.query(
         `
@@ -215,12 +302,14 @@ export function createPostgresTenantAuthRepository(dbPool: Pool): TenantAuthRepo
             auth_principal_id,
             active_tenant_id,
             selection_required,
+            remediation_required,
+            remediation_reason,
             authenticated_at,
             expires_at,
             revoked_at,
             created_at
           )
-          VALUES ($1, $2, $3, $4, $5, $6, NULL, NOW())
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NULL, NOW())
           RETURNING *
         `,
         [
@@ -228,6 +317,8 @@ export function createPostgresTenantAuthRepository(dbPool: Pool): TenantAuthRepo
           input.authPrincipalId,
           input.activeTenantId,
           input.selectionRequired,
+          input.remediationRequired,
+          input.remediationReason,
           input.authenticatedAt,
           input.expiresAt,
         ],
@@ -261,6 +352,20 @@ export function createPostgresTenantAuthRepository(dbPool: Pool): TenantAuthRepo
           RETURNING *
         `,
         [sessionId, authPrincipalId, activeTenantId, selectionRequired],
+      );
+    },
+    updateSessionRemediation(sessionId, authPrincipalId, remediationRequired, remediationReason) {
+      return queryOne<TenantSessionRecord>(
+        `
+          UPDATE tenant_session
+          SET remediation_required = $3,
+              remediation_reason = $4
+          WHERE session_id = $1
+            AND auth_principal_id = $2
+            AND revoked_at IS NULL
+          RETURNING *
+        `,
+        [sessionId, authPrincipalId, remediationRequired, remediationReason],
       );
     },
     async revokeSession(sessionId, authPrincipalId) {

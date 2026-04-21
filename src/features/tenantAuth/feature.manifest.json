@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "featureName": "tenantAuth",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createTenantAuthFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for tenant-side authentication and session routes."
+    },
+    {
+      "seamId": "session-lookup-repository-factory",
+      "symbol": "createTenantAuthSessionLookupRepository",
+      "path": "index.ts",
+      "kind": "repository-factory",
+      "stability": "stable",
+      "description": "Cross-feature seam for tenant-session lookup without private repository reach-through."
+    },
+    {
+      "seamId": "session-lookup-repository-type",
+      "symbol": "TenantAuthSessionLookupRepository",
+      "path": "index.ts",
+      "kind": "repository-type",
+      "stability": "stable",
+      "description": "Shared repository contract for validating active tenant sessions."
+    },
+    {
+      "seamId": "onboarding-provisioner-type",
+      "symbol": "TenantAuthOnboardingProvisioner",
+      "path": "index.ts",
+      "kind": "service-type",
+      "stability": "stable",
+      "description": "Shared provisioning seam for creating tenant-auth onboarding state from tenant-admin workflows."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "tenantAdmins",
+      "seamIds": [
+        "auth-bootstrap-reader",
+        "tenant-admin-auth-bootstrap-subject"
+      ],
+      "description": "Reads verified tenant-admin bootstrap subject context through tenantAdmins public seams."
+    },
+    {
+      "featureName": "tenantConfiguration",
+      "seamIds": [
+        "tenant-auth-policy-resolver",
+        "effective-tenant-password-policy-type",
+        "password-policy-floor-constants",
+        "session-ttl-limit-constants",
+        "system-default-policy-constants"
+      ],
+      "description": "Resolves effective tenant auth policy and default password/session constraints through tenantConfiguration public seams."
+    },
+    {
+      "featureName": "tenants",
+      "seamIds": [
+        "visible-tenants-reader"
+      ],
+      "description": "Validates current tenant visibility during authentication and active-tenant selection."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing tenant-auth session or remediation semantics can break tenant-scoped browser and API authentication flows.",
+    "Changing exported onboarding or session lookup seams can break tenantAdmins and tenantConfiguration integration."
+  ]
+}

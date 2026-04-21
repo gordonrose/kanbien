@@ -25,6 +25,7 @@ export interface ParsedTestCaseLifecycleDocument {
 }
 
 const TEST_CASE_ID_PATTERN = /^ {2}Test Case ID: `(TC-[A-Z0-9-]+)`$/m;
+const SHORTHAND_TEST_CASE_ID_PATTERN = /^- `(TC-[A-Z0-9-]+)`$/m;
 
 function readField(block: string, label: string): string | null {
   const expression = new RegExp(`^ {2}${label}:\\s*(.+)$`, "m");
@@ -68,10 +69,10 @@ export function parseLifecycleDocument(path: string): ParsedTestCaseLifecycleDoc
   const traceabilityEnforcement = parseTraceabilityEnforcement(contents);
   const blocks = contents
     .split(/\n(?=- )/)
-    .filter((block) => TEST_CASE_ID_PATTERN.test(block));
+    .filter((block) => TEST_CASE_ID_PATTERN.test(block) || SHORTHAND_TEST_CASE_ID_PATTERN.test(block));
 
   const cases = blocks.map((block) => {
-    const idMatch = block.match(TEST_CASE_ID_PATTERN);
+    const idMatch = block.match(TEST_CASE_ID_PATTERN) ?? block.match(SHORTHAND_TEST_CASE_ID_PATTERN);
     if (!idMatch) {
       throw new Error(`Unable to parse test-case ID in ${path}`);
     }

@@ -113,3 +113,36 @@ export class TenantAuthTenantNotAccessibleError extends TenantAuthError {
     );
   }
 }
+
+export class TenantAuthInvalidNewPasswordError extends TenantAuthError {
+  constructor(reason: string) {
+    super(
+      400,
+      "TENANT_AUTH_INVALID_NEW_PASSWORD",
+      "The password does not satisfy the current tenant auth policy requirements.",
+      { field: "newPassword", reason },
+    );
+  }
+}
+
+export class TenantAuthRemediationCurrentTenantRequiredError extends TenantAuthError {
+  constructor() {
+    super(
+      409,
+      "TENANT_AUTH_REMEDIATION_CURRENT_TENANT_REQUIRED",
+      "A current tenant must be selected before remediation requirements can be read or completed.",
+      { field: "tenantId", reason: "current_tenant_required" },
+    );
+  }
+}
+
+export class TenantAuthRemediationNotRequiredError extends TenantAuthError {
+  constructor() {
+    super(
+      409,
+      "TENANT_AUTH_REMEDIATION_NOT_REQUIRED",
+      "There is no active tenant-auth remediation requirement for this session.",
+      { field: "remediation", reason: "not_required" },
+    );
+  }
+}

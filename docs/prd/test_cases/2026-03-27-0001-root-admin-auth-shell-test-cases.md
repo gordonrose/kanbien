@@ -5,13 +5,14 @@
 
 ## Current Status
 
-- all `17/17` root-admin-shell PRD test cases are traceable in executable test code
+- all `19/19` root-admin-shell PRD test cases are traceable in executable test code
 - unit coverage is runtime-tested for helper client behavior, OpenSSH-native
   backend signature verification compatibility, and session-expiry state logic
 - integration coverage is runtime-tested for browser login, bootstrap, logout,
   same-origin shell mount shape, and OpenSSH-native helper signature acceptance
 - security coverage is runtime-tested for cookie policy, browser-origin checks,
-  CSP allowlist direction, and no-browser-storage handling
+  CSP allowlist direction, helper integrity verification, and
+  no-browser-storage handling
 - audit coverage is runtime-tested for browser login and logout audit visibility
 - verification commands:
   - `npm test`
@@ -84,6 +85,11 @@
   - Recommended Test Layer: `security-integration`
   - Suggested Test Folder: `tests/security/rootAdminShell/`
 
+- `TC-ROOT-ADMIN-SHELL-SEC-005`
+  - Scenario: downloadable helper-launch scripts verify the expected helper binary integrity before execution
+  - Recommended Test Layer: `feature-integration`
+  - Suggested Test Folder: `tests/integration/rootAdminShell/`
+
 ## Audit
 
 - `TC-ROOT-ADMIN-SHELL-AUD-001`
@@ -112,3 +118,8 @@
   - Scenario: expired browser session produces the expected shell-locking behavior in state logic
   - Recommended Test Layer: `service-unit`
   - Suggested Test Folder: `tests/unit/rootAdminShell/`
+
+- `TC-ROOT-ADMIN-SHELL-EDGE-004`
+  - Scenario: the Windows launcher stages the SSH private key into a locked-down WSL temp path before invoking the helper
+  - Recommended Test Layer: `feature-integration`
+  - Suggested Test Folder: `tests/integration/rootAdminShell/`

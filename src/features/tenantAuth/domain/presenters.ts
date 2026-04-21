@@ -1,9 +1,11 @@
 import type {
   TenantAccessContextSummary,
   TenantAuthBootstrapResult,
+  TenantAuthRemediationResult,
   TenantAuthSessionResult,
   TenantPasswordSetupResult,
 } from "../contract/types";
+import type { EffectiveTenantPasswordPolicy } from "../../tenantConfiguration";
 import type {
   ResolvedTenantAccessContext,
   TenantAuthPrincipalData,
@@ -63,6 +65,7 @@ export function toTenantAuthSessionResult(input: {
   principal: TenantAuthPrincipalData;
   session: TenantSessionData;
   availableContexts: ResolvedTenantAccessContext[];
+  passwordPolicyRequirements?: EffectiveTenantPasswordPolicy | null;
 }): TenantAuthSessionResult {
   const availableTenantContexts = input.availableContexts.map((context) =>
     toTenantAccessContextSummary(context, input.session.activeTenantId),
@@ -83,7 +86,30 @@ export function toTenantAuthSessionResult(input: {
     activeTenantContext,
     availableTenantContexts,
     selectionRequired: input.session.selectionRequired,
+    remediationRequired: input.session.remediationRequired,
+    remediationReason: input.session.remediationReason,
+    passwordPolicyRequirements: input.passwordPolicyRequirements ?? null,
     authenticatedAt: input.session.authenticatedAt.toISOString(),
     expiresAt: input.session.expiresAt.toISOString(),
+  };
+}
+
+export function toTenantAuthRemediationResult(input: {
+  session: TenantSessionData;
+  availableContexts: ResolvedTenantAccessContext[];
+  passwordPolicyRequirements: EffectiveTenantPasswordPolicy | null;
+}): TenantAuthRemediationResult {
+  const availableTenantContexts = input.availableContexts.map((context) =>
+    toTenantAccessContextSummary(context, input.session.activeTenantId),
+  );
+  const activeTenantContext =
+    availableTenantContexts.find((context) => context.isActive) ?? null;
+
+  return {
+    status: input.session.remediationRequired ? "REMEDIATION_REQUIRED" : "REMEDIATION_NOT_REQUIRED",
+    remediationRequired: input.session.remediationRequired,
+    remediationReason: input.session.remediationReason,
+    activeTenantContext,
+    passwordPolicyRequirements: input.passwordPolicyRequirements,
   };
 }

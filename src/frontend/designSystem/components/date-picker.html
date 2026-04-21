@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Date Picker Canonical</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-date-picker-surface="canonical" data-render-status="settling">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
+            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Pages</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">DP</span>
+            <span class="profile-meta"><strong>Date Picker</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/components">Components</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonicals/date-picker">Date Picker Canonicals</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Canonical Render</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search date-picker canonical refs" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Date-picker family navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/canonicals/date-picker" data-tooltip="Canonicals" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main canonical-render-page">
+        <div class="canonical-render-layout">
+          <section class="canonical-render-intro">
+            <p class="top-nav-preview-eyebrow">Canonical Render</p>
+            <h1>Date Picker</h1>
+            <p class="canonical-launcher-copy">
+              This route is the dedicated canonical render surface for `Date Picker`. Use the
+              <a href="/design-system/canonicals/date-picker">canonical launcher</a> for ref selection and keep this
+              page for focused review of one state at a time.
+            </p>
+            <dl class="canonical-render-meta" aria-label="Canonical metadata">
+              <div class="canonical-render-meta-row">
+                <dt>Matched canonical</dt>
+                <dd id="date-picker-canonical-match-list">Resolving canonical reference...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewing circumstances</dt>
+                <dd id="date-picker-canonical-circumstances">Loading width, direction, and magnification...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Date-picker state</dt>
+                <dd id="date-picker-meta-state">Loading picker state...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewport contract</dt>
+                <dd id="date-picker-meta-viewport">Loading viewport contract...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Review note</dt>
+                <dd id="date-picker-meta-notes">Loading review note...</dd>
+              </div>
+            </dl>
+            <div class="canonical-render-footer">
+              <nav class="canonical-stepper" aria-label="Canonical navigation">
+                <span id="date-picker-canonical-current" class="canonical-stepper-current">Resolving current canonical...</span>
+                <a id="date-picker-canonical-prev" class="canonical-stepper-link" href="#" aria-disabled="true">Previous</a>
+                <a id="date-picker-canonical-next" class="canonical-stepper-link" href="#" aria-disabled="true">Next</a>
+              </nav>
+            </div>
+          </section>
+
+          <section class="top-nav-preview-stage-section" aria-labelledby="date-picker-stage-title">
+            <div class="top-nav-preview-stage-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Canonical Surface</p>
+                <h2 id="date-picker-stage-title">Date Picker Canonical State</h2>
+              </div>
+              <p id="date-picker-preview-summary" class="top-nav-preview-stage-note">
+                Canonical state loading from the URL.
+              </p>
+            </div>
+
+            <div id="date-picker-preview-frame" class="canonical-render-frame">
+              <div
+                id="date-picker-preview-shell"
+                class="form-page-shell"
+                data-form-error-mode="false"
+                data-form-disabled-mode="false"
+                data-form-mobile-view="false"
+                data-render-status="settling"
+              >
+                <section class="form-page-card" aria-labelledby="date-picker-preview-card-title">
+                  <div class="form-page-section-header">
+                    <div>
+                      <p class="top-nav-preview-eyebrow">Parent Framing</p>
+                      <h3 id="date-picker-preview-card-title" class="form-page-section-title">Date Picker Hosted Field</h3>
+                    </div>
+                    <p class="form-page-section-copy">
+                      This render keeps parent-owned label, help, and error rhythm visible while isolating the date-picker
+                      child seam for direct scenario review.
+                    </p>
+                  </div>
+
+                  <div class="form-page-grid">
+                    <div id="date-picker-single-field" class="form-field hidden">
+                      <span class="form-field-label" id="date-picker-single-label">Date picker</span>
+                      <div class="form-date-picker" data-form-date-picker data-picker-mode="single" data-month-count="1">
+                        <input type="hidden" name="launchDate" value="2026-04-24" data-form-date-start-value />
+                        <button
+                          class="form-date-trigger"
+                          type="button"
+                          id="date-picker-single-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="date-picker-single-label date-picker-single-trigger"
+                          data-form-date-button
+                        >
+                          <span data-form-date-current-label>Apr 24, 2026</span>
+                          <span class="form-date-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-date-menu hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="date-picker-single-label"
+                          data-form-date-panel
+                        >
+                          <div class="form-date-menu-header">
+                            <div>
+                              <p class="top-nav-preview-eyebrow">Date Picker</p>
+                              <h4 class="form-date-menu-title">Choose single date</h4>
+                            </div>
+                            <div class="form-date-menu-controls">
+                              <div class="form-date-menu-actions">
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="-1">Previous</button>
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="1">Next</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-date-months" data-form-date-months></div>
+                        </div>
+                      </div>
+                      <span class="form-field-help">Parent-owned helper copy stays adjacent while the child seam owns trigger and calendar behavior.</span>
+                      <span class="form-field-error">Parent-owned error copy stays outside the child seam contract.</span>
+                    </div>
+
+                    <div id="date-picker-range-field" class="form-field form-field-span-2 hidden">
+                      <span class="form-field-label" id="date-picker-range-label">Date range</span>
+                      <div class="form-date-picker" data-form-date-picker data-picker-mode="range" data-month-count="3">
+                        <input type="hidden" name="reviewRangeStart" value="2026-04-24" data-form-date-start-value />
+                        <input type="hidden" name="reviewRangeEnd" value="2026-05-02" data-form-date-end-value />
+                        <button
+                          class="form-date-trigger"
+                          type="button"
+                          id="date-picker-range-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="date-picker-range-label date-picker-range-trigger"
+                          data-form-date-button
+                        >
+                          <span data-form-date-current-label>Apr 24, 2026 - May 2, 2026</span>
+                          <span class="form-date-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-date-menu hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="date-picker-range-label"
+                          data-form-date-panel
+                        >
+                          <div class="form-date-menu-header">
+                            <div>
+                              <p class="top-nav-preview-eyebrow">Date Range</p>
+                              <h4 class="form-date-menu-title">Choose start and end dates</h4>
+                            </div>
+                            <div class="form-date-menu-controls">
+                              <div class="form-date-menu-actions">
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="-1">Previous</button>
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="1">Next</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-date-range-summary" data-form-date-range-summary>Select a start date, then an end date.</div>
+                          <div class="form-date-months" data-form-date-months></div>
+                          <div class="form-date-menu-footer">
+                            <button class="form-date-done-button" type="button" data-form-date-done>Done</button>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="form-field-help">Parent-owned helper copy stays adjacent while the child seam owns staged range selection.</span>
+                      <span class="form-field-error">Parent-owned error copy stays outside the child seam contract.</span>
+                    </div>
+
+                    <div id="date-picker-range-time-field" class="form-field form-field-span-2 hidden">
+                      <span class="form-field-label" id="date-picker-range-time-label">Date range with time</span>
+                      <div class="form-date-picker" data-form-date-picker data-picker-mode="range-time" data-month-count="3">
+                        <input type="hidden" name="releaseWindowStart" value="2026-05-04" data-form-date-start-value />
+                        <input type="hidden" name="releaseWindowEnd" value="2026-05-10" data-form-date-end-value />
+                        <button
+                          class="form-date-trigger"
+                          type="button"
+                          id="date-picker-range-time-trigger"
+                          aria-haspopup="dialog"
+                          aria-expanded="false"
+                          aria-labelledby="date-picker-range-time-label date-picker-range-time-trigger"
+                          data-form-date-button
+                        >
+                          <span data-form-date-current-label>May 4, 2026 09:00 AM - May 10, 2026 05:00 PM</span>
+                          <span class="form-date-trigger-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />
+                            </svg>
+                          </span>
+                        </button>
+                        <div
+                          class="form-date-menu hidden"
+                          role="dialog"
+                          aria-modal="false"
+                          aria-labelledby="date-picker-range-time-label"
+                          data-form-date-panel
+                        >
+                          <div class="form-date-menu-header">
+                            <div>
+                              <p class="top-nav-preview-eyebrow">Date Range With Time</p>
+                              <h4 class="form-date-menu-title">Choose window and handoff times</h4>
+                            </div>
+                            <div class="form-date-menu-controls">
+                              <div class="form-date-menu-actions">
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="-1">Previous</button>
+                                <button class="form-date-nav-button" type="button" data-form-date-nav="1">Next</button>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-date-time-grid">
+                            <div class="form-date-time-field">
+                              <span class="form-date-time-label" id="date-picker-start-time-label">Start time</span>
+                              <div class="form-time-picker" data-form-time-picker>
+                                <input type="hidden" name="releaseWindowStartTime" value="09:00" data-form-time-value data-form-date-start-time />
+                                <button
+                                  class="form-time-trigger"
+                                  type="button"
+                                  id="date-picker-start-time-trigger"
+                                  aria-haspopup="dialog"
+                                  aria-expanded="false"
+                                  aria-labelledby="date-picker-start-time-label date-picker-start-time-trigger"
+                                  data-form-time-button
+                                >
+                                  <span data-form-time-current-label>09:00</span>
+                                  <span class="form-time-trigger-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                      <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                  </span>
+                                </button>
+                                <div
+                                  class="form-time-menu hidden"
+                                  role="dialog"
+                                  aria-modal="false"
+                                  aria-labelledby="date-picker-start-time-label"
+                                  data-form-time-panel
+                                >
+                                  <div class="side-panel-header form-time-menu-header">
+                                    <div>
+                                      <p class="drawer-eyebrow">Time picker</p>
+                                      <h4 class="form-time-menu-title">Choose start time</h4>
+                                    </div>
+                                    <button
+                                      class="icon-button"
+                                      type="button"
+                                      aria-label="Close start time picker"
+                                      data-form-time-close
+                                    >
+                                      <span class="icon-button-glyph" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" focusable="false">
+                                          <path d="M6 6l12 12M18 6L6 18" />
+                                        </svg>
+                                      </span>
+                                    </button>
+                                  </div>
+                                  <div class="form-time-columns">
+                                    <section class="form-time-column">
+                                      <p class="form-time-column-title">Hour</p>
+                                      <div class="form-time-option-list" data-form-time-hours></div>
+                                    </section>
+                                    <section class="form-time-column">
+                                      <p class="form-time-column-title">Minute</p>
+                                      <div class="form-time-option-list" data-form-time-minutes></div>
+                                    </section>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-date-time-field">
+                              <span class="form-date-time-label" id="date-picker-end-time-label">End time</span>
+                              <div class="form-time-picker" data-form-time-picker>
+                                <input type="hidden" name="releaseWindowEndTime" value="17:00" data-form-time-value data-form-date-end-time />
+                                <button
+                                  class="form-time-trigger"
+                                  type="button"
+                                  id="date-picker-end-time-trigger"
+                                  aria-haspopup="dialog"
+                                  aria-expanded="false"
+                                  aria-labelledby="date-picker-end-time-label date-picker-end-time-trigger"
+                                  data-form-time-button
+                                >
+                                  <span data-form-time-current-label>17:00</span>
+                                  <span class="form-time-trigger-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" focusable="false">
+                                      <path d="m6 9 6 6 6-6" />
+                                    </svg>
+                                  </span>
+                                </button>
+                                <div
+                                  class="form-time-menu hidden"
+                                  role="dialog"
+                                  aria-modal="false"
+                                  aria-labelledby="date-picker-end-time-label"
+                                  data-form-time-panel
+                                >
+                                  <div class="side-panel-header form-time-menu-header">
+                                    <div>
+                                      <p class="drawer-eyebrow">Time picker</p>
+                                      <h4 class="form-time-menu-title">Choose end time</h4>
+                                    </div>
+                                    <button
+                                      class="icon-button"
+                                      type="button"
+                                      aria-label="Close end time picker"
+                                      data-form-time-close
+                                    >
+                                      <span class="icon-button-glyph" aria-hidden="true">
+                                        <svg viewBox="0 0 24 24" focusable="false">
+                                          <path d="M6 6l12 12M18 6L6 18" />
+                                        </svg>
+                                      </span>
+                                    </button>
+                                  </div>
+                                  <div class="form-time-columns">
+                                    <section class="form-time-column">
+                                      <p class="form-time-column-title">Hour</p>
+                                      <div class="form-time-option-list" data-form-time-hours></div>
+                                    </section>
+                                    <section class="form-time-column">
+                                      <p class="form-time-column-title">Minute</p>
+                                      <div class="form-time-option-list" data-form-time-minutes></div>
+                                    </section>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-date-range-summary" data-form-date-range-summary>Select a start date, then an end date.</div>
+                          <div class="form-date-months" data-form-date-months></div>
+                          <div class="form-date-menu-footer">
+                            <button class="form-date-done-button" type="button" data-form-date-done>Done</button>
+                          </div>
+                        </div>
+                      </div>
+                      <span class="form-field-help">Parent-owned helper copy stays adjacent while the child seam owns the composed range-with-time contract.</span>
+                      <span class="form-field-error">Parent-owned error copy stays outside the child seam contract.</span>
+                    </div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/datePickerCanonical.mjs"></script>
+  </body>
+</html>

@@ -77,6 +77,41 @@ describe("tenantAdmins security flows", () => {
     expect(denied.body.code).toBe("FORBIDDEN");
   });
 
+  it("denies onboarding restart without the mapped capability", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const mounted = mountTenantAdminsFeature(harness.app, harness);
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const created = await invokeJson<{ tenantAdminId: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: { email: "restart-denied@example.com" },
+    });
+    expect(created.status).toBe(201);
+
+    const tokenMatch = mounted.provider.sentInputs[0]!.bodyText.match(/token=([^\s]+)/);
+    const token = decodeURIComponent(tokenMatch![1]);
+    const redeemed = await invokeJson<{ status: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token },
+    });
+    expect(redeemed.status).toBe(200);
+
+    harness.setRootUserCapabilities(identity.rootUserId, ["tenant-admin.read", "tenant-admin.list"]);
+
+    const denied = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}/onboarding/restart`,
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {},
+    });
+    expect(denied.status).toBe(403);
+    expect(denied.body.code).toBe("FORBIDDEN");
+  });
+
   it("TC-TENANT-ADMINS-SEC-004 rejects malformed public redemption safely", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountTenantAdminsFeature(harness.app, harness);

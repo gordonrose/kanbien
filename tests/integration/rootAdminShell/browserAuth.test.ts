@@ -188,11 +188,18 @@ describe("root admin shell browser auth integration", () => {
 
     expect(mountedRootAdminRouter).toBeDefined();
     const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
-      expect(frontendMarkup).toContain("My Details");
-      expect(frontendMarkup).toContain("View Users");
-      expect(frontendMarkup).toContain("System Root Roles");
-      expect(frontendMarkup).toContain("Create New Role");
-      expect(frontendMarkup).toContain("System Root Role");
+    expect(frontendMarkup).toContain("Root Admin Shell POC");
+    expect(frontendMarkup).toContain("Overview");
+    expect(frontendMarkup).toContain("Users");
+    expect(frontendMarkup).toContain("Roles");
+    expect(frontendMarkup).toContain("Tenants");
+    expect(frontendMarkup).toContain("Tenant Admins");
+    expect(frontendMarkup).toContain('aria-label="Root admin section navigation"');
+    expect(frontendMarkup).toContain('aria-label="Current page breadcrumb"');
+    expect(frontendMarkup).toContain('role="search"');
+    expect(frontendMarkup).toContain("Search root admin sections");
+    expect(frontendMarkup).toContain("Choose a language");
+    expect(frontendMarkup).toContain("Sign Out");
   });
 
   it("TC-ROOT-ADMIN-SHELL-EDGE-001 and TC-ROOT-ADMIN-SHELL-EDGE-002 expose helper guidance and handle missing browser session cookies cleanly", async () => {
@@ -210,7 +217,9 @@ describe("root admin shell browser auth integration", () => {
       },
     );
 
-    expect(frontendMarkup).not.toContain("Install / Reinstall Helper");
+    expect(frontendMarkup).toContain("/root-admin/helper/download/start-root-auth-signer-helper.ps1");
+    expect(frontendMarkup).toContain("/root-admin/helper/download/root-auth-signer-helper.mjs");
+    expect(frontendMarkup).toContain("Launch Helper");
     expect(missingSession.status).toBe(401);
     expect(missingSession.body.code).toBe("UNAUTHORIZED");
   });

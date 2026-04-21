@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "featureName": "tenants",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createTenantsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for tenant lifecycle routes."
+    },
+    {
+      "seamId": "visible-tenants-reader",
+      "symbol": "createVisibleTenantsReader | VisibleTenantsReader",
+      "path": "index.ts",
+      "kind": "reader-seam",
+      "stability": "stable",
+      "description": "Cross-feature seam for visible active tenant summaries."
+    },
+    {
+      "seamId": "visible-tenant-summary-type",
+      "symbol": "VisibleTenantSummary",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "stable",
+      "description": "Shared type describing a visible tenant summary."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing tenant visibility or lifecycle semantics can break tenant-admin, tenant-auth, and tenant-configuration flows that depend on current active tenant context.",
+    "Changing the visible-tenants reader contract can break every feature that validates tenant context through this shared seam."
+  ]
+}

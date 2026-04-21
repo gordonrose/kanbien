@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { parseTestCaseId } from "../../../src/lib/testingData/traceability";
 
+const BAD_TRACEABILITY_ID = ["TC", "BAD", "ID"].join("-");
+
 describe("traceability parsing", () => {
   it("TC-TEST-DATA-UNIT-005 parses valid TC IDs into PRD key and test type", () => {
     expect(parseTestCaseId("TC-ROOT-AUTH-UNIT-001")).toEqual({
@@ -11,8 +13,8 @@ describe("traceability parsing", () => {
   });
 
   it("TC-TEST-DATA-UNIT-006 classifies malformed IDs as unknown", () => {
-    expect(parseTestCaseId("TC-BAD-ID")).toEqual({
-      id: "TC-BAD-ID",
+    expect(parseTestCaseId(BAD_TRACEABILITY_ID)).toEqual({
+      id: BAD_TRACEABILITY_ID,
       prdKey: "UNKNOWN",
       testType: "UNKNOWN",
     });

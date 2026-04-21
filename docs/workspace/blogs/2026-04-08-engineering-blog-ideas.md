@@ -189,3 +189,56 @@
   `docs/architecture/recoverability-and-build-from-spec.md`,
   `docs/workspace/reviews/*`,
   `.codex/skills/*`
+
+### 12. We Stopped Treating QA Coverage As A Test Suite
+
+- angle:
+  how the repo turned QA from "write some tests before merge" into a
+  deterministic system of coverage planning, journey modeling, executable
+  proof, and durable QA operating artifacts
+- audience:
+  engineering leaders, platform teams, technical founders, senior backend
+  engineers
+- core story:
+  capability matrices, blueprints, PRD test cases, journey inventories,
+  coverage-matrix rules, release-gate summaries, exploratory notes, and
+  concrete proof classes like race-condition, conflicting-write, stress, soak,
+  and performance verification now form one delivery system
+- supporting repo areas:
+  `docs/standards/QA-RELEASE-GATE.md`,
+  `docs/architecture/guides/qa-coverage-matrix-guide.md`,
+  `docs/architecture/guides/end-to-end-journey-testing-guide.md`,
+  `docs/architecture/guides/end-to-end-journey-operations-guide.md`,
+  `docs/architecture/guides/qa-operating-cadence-guide.md`,
+  `docs/workspace/qa/*`,
+  `docs/workspace/test-run-summaries/*`,
+  `.codex/skills/change-loop-orchestrator/SKILL.md`,
+  `.codex/skills/prd-test-case-planner/SKILL.md`,
+  `.codex/skills/prd-test-case-implementer/SKILL.md`
+
+### 13. Frontend Design Systems Are Really About Discovering The Real Contract
+
+- angle:
+  how recent design-system work showed that the hard part of frontend design is
+  not assembling polished parts, but discovering the real rendered contract and
+  encoding that learning into durable guardrails
+- audience:
+  frontend engineers, design-system teams, technical founders, full-stack
+  product builders
+- core story:
+  nav overflow drift, slot-measurement mistakes, layering regressions, RTL
+  anchoring issues, and screenshot-driven iteration forced a move away from
+  guessed geometry toward rendered truth, narrow visual contracts, honest
+  reconciliation, and confirmation-based closure
+- supporting repo areas:
+  `docs/workspace/issue-reconciliations/2026-04-14-*.md`,
+  `docs/workspace/issue-reconciliations/2026-04-15-design-system-*.md`,
+  `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`,
+  `.codex/skills/issue-reconciliation-maintainer/SKILL.md`,
+  `src/frontend/designSystem/*`
+- current maturity:
+  active outline drafted in
+  `docs/workspace/blogs/2026-04-15-frontend-design-system-discovery-outline.md`
+- next step:
+  turn the outline into a narrative/guide post centered on the `top-nav`
+  family, the codified loop, and the first `/root-admin` POC adoption

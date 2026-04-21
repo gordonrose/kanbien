@@ -1,0 +1,170 @@
+{
+  "family": "sub-nav",
+  "surface": "/design-system/components/sub-nav",
+  "canonicalLauncher": "/design-system/canonicals/sub-nav",
+  "batch": "full-canonical-set",
+  "states": [
+    {
+      "refId": "SNR-001",
+      "label": "desktop default row",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-001",
+      "snapshot": "snr-001-desktop-default-row.png"
+    },
+    {
+      "refId": "SNR-002",
+      "label": "compressed desktop row",
+      "route": "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-002",
+      "snapshot": "snr-002-compressed-desktop-row.png"
+    },
+    {
+      "refId": "SNR-003",
+      "label": "desktop active search",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=active&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-003",
+      "snapshot": "snr-003-desktop-active-search.png"
+    },
+    {
+      "refId": "SNR-004",
+      "label": "mobile fallback row",
+      "route": "/design-system/components/sub-nav?width=560&state=mobile&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-004",
+      "snapshot": "snr-004-mobile-fallback-row.png"
+    },
+    {
+      "refId": "SNR-005",
+      "label": "rtl full row",
+      "route": "/design-system/components/sub-nav?width=1920&state=full&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl&accent=%23635bff&ref=SNR-005",
+      "snapshot": "snr-005-rtl-full-row.png"
+    },
+    {
+      "refId": "SNR-006",
+      "label": "theme readability row",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=dark&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-006",
+      "snapshot": "snr-006-theme-readability-row.png"
+    },
+    {
+      "refId": "SNR-007",
+      "label": "magnified or long-content row",
+      "route": "/design-system/components/sub-nav?width=880&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=100&locale=long-latin&accent=%23635bff&ref=SNR-007",
+      "snapshot": "snr-007-magnified-long-content-row.png"
+    },
+    {
+      "refId": "SNR-008",
+      "label": "rtl reduced row",
+      "route": "/design-system/components/sub-nav?width=1120&state=reduced-page-minus-one&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl&accent=%23635bff&ref=SNR-008",
+      "snapshot": "snr-008-rtl-reduced-row.png"
+    },
+    {
+      "refId": "BCR-002",
+      "label": "shallow home breadcrumb",
+      "route": "/design-system/components/sub-nav?width=1320&state=shallow&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-002",
+      "snapshot": "bcr-002-shallow-home-breadcrumb.png"
+    },
+    {
+      "refId": "BCR-003",
+      "label": "reduced breadcrumb without Page -1",
+      "route": "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-003",
+      "snapshot": "bcr-003-reduced-without-page-minus-one.png"
+    },
+    {
+      "refId": "BCR-004",
+      "label": "reduced breadcrumb without middle segment",
+      "route": "/design-system/components/sub-nav?width=700&state=reduced-middle&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-004",
+      "snapshot": "bcr-004-reduced-without-middle-segment.png"
+    },
+    {
+      "refId": "BCR-005",
+      "label": "compact breadcrumb signpost",
+      "route": "/design-system/components/sub-nav?width=640&state=compact&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-005",
+      "snapshot": "bcr-005-compact-signpost.png"
+    },
+    {
+      "refId": "BCR-007",
+      "label": "long-label breadcrumb",
+      "route": "/design-system/components/sub-nav?width=880&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=long-latin&accent=%23635bff&ref=BCR-007",
+      "snapshot": "bcr-007-long-label-breadcrumb.png"
+    },
+    {
+      "refId": "BCR-009",
+      "label": "rtl reduced breadcrumb",
+      "route": "/design-system/components/sub-nav?width=1120&state=reduced-page-minus-one&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl&accent=%23635bff&ref=BCR-009",
+      "snapshot": "bcr-009-rtl-reduced-breadcrumb.png"
+    },
+    {
+      "refId": "BCR-010",
+      "label": "rtl compact breadcrumb",
+      "route": "/design-system/components/sub-nav?width=760&state=compact&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl&accent=%23635bff&ref=BCR-010",
+      "snapshot": "bcr-010-rtl-compact-breadcrumb.png"
+    },
+    {
+      "refId": "BCR-011",
+      "label": "ltr truncated breadcrumb labels with tooltip",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=normal&dir=ltr&zoom=0&locale=long-latin-truncation&accent=%23635bff&ref=BCR-011",
+      "snapshot": "bcr-011-ltr-truncation-tooltip.png"
+    },
+    {
+      "refId": "BCR-012",
+      "label": "rtl truncated breadcrumb labels with tooltip",
+      "route": "/design-system/components/sub-nav?width=1920&state=full&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl-long-truncation&accent=%23635bff&ref=BCR-012",
+      "snapshot": "bcr-012-rtl-truncation-tooltip.png"
+    },
+    {
+      "refId": "SSR-002",
+      "label": "desktop active search shell",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=active&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SSR-002",
+      "snapshot": "ssr-002-desktop-active-search-shell.png"
+    },
+    {
+      "refId": "SSR-003",
+      "label": "compressed desktop search shell",
+      "route": "/design-system/components/sub-nav?width=1160&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SSR-003",
+      "snapshot": "ssr-003-compressed-desktop-search-shell.png"
+    },
+    {
+      "refId": "SSR-004",
+      "label": "mobile search shell",
+      "route": "/design-system/components/sub-nav?width=560&state=mobile&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SSR-004",
+      "snapshot": "ssr-004-mobile-search-shell.png"
+    },
+    {
+      "refId": "SSR-006",
+      "label": "theme readability search shell",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=dark&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SSR-006",
+      "snapshot": "ssr-006-theme-readability-search-shell.png"
+    },
+    {
+      "refId": "SSR-007",
+      "label": "magnified long-placeholder search shell",
+      "route": "/design-system/components/sub-nav?width=880&state=reduced-page-minus-one&search=inactive&theme=normal&dir=ltr&zoom=100&locale=long-latin&accent=%23635bff&ref=SSR-007",
+      "snapshot": "ssr-007-magnified-long-placeholder-search-shell.png"
+    },
+    {
+      "refId": "SSR-008",
+      "label": "localized long Latin search shell",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=normal&dir=ltr&zoom=0&locale=long-latin&accent=%23635bff&ref=SSR-008",
+      "snapshot": "ssr-008-localized-long-latin-search-shell.png"
+    },
+    {
+      "refId": "SSR-009",
+      "label": "localized rtl search shell",
+      "route": "/design-system/components/sub-nav?width=1920&state=full&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl&accent=%23635bff&ref=SSR-009",
+      "snapshot": "ssr-009-localized-rtl-search-shell.png"
+    },
+    {
+      "refId": "SSR-010",
+      "label": "localized cjk search shell",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=normal&dir=ltr&zoom=0&locale=cjk&accent=%23635bff&ref=SSR-010",
+      "snapshot": "ssr-010-localized-cjk-search-shell.png"
+    },
+    {
+      "refId": "SSR-011",
+      "label": "symbol-heavy search shell",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=normal&dir=ltr&zoom=0&locale=symbols&accent=%23635bff&ref=SSR-011",
+      "snapshot": "ssr-011-symbol-heavy-search-shell.png"
+    },
+    {
+      "refId": "SSR-012",
+      "label": "rtl reduced search shell",
+      "route": "/design-system/components/sub-nav?width=1120&state=reduced-page-minus-one&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl&accent=%23635bff&ref=SSR-012",
+      "snapshot": "ssr-012-rtl-reduced-search-shell.png"
+    }
+  ]
+}

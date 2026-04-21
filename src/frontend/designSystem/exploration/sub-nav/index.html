@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Sub Nav Exploration</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-sub-nav-surface="exploration">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy">
+            <strong>Kanbien Design System</strong>
+          </span>
+        </a>
+
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
+            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Templates</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+        </nav>
+
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">SN</span>
+            <span class="profile-meta">
+              <strong>Sub Nav</strong>
+            </span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/patterns/sub-nav-row">Sub-Nav Row</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Exploration</span></li>
+          </ol>
+        </nav>
+
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search sub-nav exploration states" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Sub-nav family navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/exploration/sub-nav" data-tooltip="Exploration" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 4 20 20H4z" /></svg>
+            </span>
+            <span class="context-nav-label">Explore</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/canonicals/sub-nav" data-tooltip="Canonicals">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main top-nav-preview-page">
+        <div class="top-nav-preview-layout">
+        <section class="top-nav-preview-intro">
+          <p class="top-nav-preview-eyebrow">Exploration Surface</p>
+          <h1>Sub Nav Exploration</h1>
+          <p class="top-nav-preview-copy">
+            Use this page for early feedback and exploratory adjustment of breadcrumb and search-shell behavior.
+            Canonical review links should use the locked renderer instead of this interactive surface.
+          </p>
+        </section>
+
+        <section class="top-nav-preview-controls" aria-labelledby="sub-nav-preview-controls-title">
+          <div class="top-nav-preview-controls-header">
+            <div>
+              <p class="top-nav-preview-eyebrow">Preview Controls</p>
+              <h2 id="sub-nav-preview-controls-title">State Driver</h2>
+            </div>
+            <p id="sub-nav-preview-width-readout" class="top-nav-preview-readout">Preview width: 1560px</p>
+          </div>
+
+          <div class="top-nav-preview-control-grid">
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Width Presets</p>
+              <div class="chip-row" role="group" aria-label="Width presets">
+                <button class="accessibility-chip active" type="button" data-sub-nav-width-preset="1560">Full</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-width-preset="1120">Reduced</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-width-preset="880">Compact</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-width-preset="560">Mobile</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <label class="top-nav-preview-label" for="sub-nav-preview-width">Preview Width</label>
+              <input
+                id="sub-nav-preview-width"
+                class="top-nav-preview-slider"
+                type="range"
+                min="480"
+                max="1680"
+                step="10"
+                value="1560"
+              />
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Row State</p>
+              <div class="chip-row" role="group" aria-label="Row state">
+                <button class="accessibility-chip active" type="button" data-sub-nav-state="full">Full</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-state="shallow">Shallow</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-state="reduced-page-minus-one">No Page -1</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-state="reduced-middle">No Middle</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-state="compact">Compact</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-state="mobile">Mobile</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Search State</p>
+              <div class="chip-row" role="group" aria-label="Search state">
+                <button class="accessibility-chip active" type="button" data-sub-nav-search-state="inactive">Inactive</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-search-state="active">Active</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Theme</p>
+              <div class="chip-row" role="group" aria-label="Theme">
+                <button class="accessibility-chip active" type="button" data-theme-option="normal">Normal</button>
+                <button class="accessibility-chip" type="button" data-theme-option="dark">Dark</button>
+                <button class="accessibility-chip" type="button" data-theme-option="desert">Desert</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Direction</p>
+              <div class="chip-row" role="group" aria-label="Direction">
+                <button class="accessibility-chip active" type="button" data-direction-option="ltr">LTR</button>
+                <button class="accessibility-chip" type="button" data-direction-option="rtl">RTL</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group">
+              <p class="top-nav-preview-label">Magnification</p>
+              <div class="chip-row chip-row-single-line" role="group" aria-label="Magnification">
+                <button class="accessibility-chip" type="button" data-magnification-option="-50">-50%</button>
+                <button class="accessibility-chip active" type="button" data-magnification-option="0">0%</button>
+                <button class="accessibility-chip" type="button" data-magnification-option="50">+50%</button>
+                <button class="accessibility-chip" type="button" data-magnification-option="100">+100%</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group top-nav-preview-control-group-full">
+              <p class="top-nav-preview-label">Locale Fixture</p>
+              <div class="chip-row" role="group" aria-label="Locale fixture">
+                <button class="accessibility-chip active" type="button" data-sub-nav-locale="standard">Standard</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-locale="long-latin">Long Latin</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-locale="rtl">RTL Copy</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-locale="cjk">CJK</button>
+                <button class="accessibility-chip" type="button" data-sub-nav-locale="symbols">Symbols</button>
+              </div>
+            </div>
+
+            <div class="top-nav-preview-control-group top-nav-preview-control-group-full">
+              <p class="top-nav-preview-label">Primary Colour</p>
+              <div class="color-grid top-nav-preview-color-grid" role="group" aria-label="Primary colour">
+                <button class="color-swatch active" type="button" data-accent="#635bff" aria-label="Indigo"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#635bff" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#2563eb" aria-label="Blue"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2563eb" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#0891b2" aria-label="Cyan"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0891b2" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#0f766e" aria-label="Teal"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0f766e" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#2f855a" aria-label="Green"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2f855a" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#65a30d" aria-label="Lime"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#65a30d" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#ca8a04" aria-label="Gold"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ca8a04" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#ea580c" aria-label="Orange"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ea580c" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#dc2626" aria-label="Red"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#dc2626" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#e11d48" aria-label="Rose"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#e11d48" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#c026d3" aria-label="Fuchsia"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#c026d3" /></svg></button>
+                <button class="color-swatch" type="button" data-accent="#7c3aed" aria-label="Violet"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#7c3aed" /></svg></button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="top-nav-preview-stage-section" aria-labelledby="sub-nav-preview-stage-title">
+          <div class="top-nav-preview-stage-header">
+            <div>
+              <p class="top-nav-preview-eyebrow">Preview Surface</p>
+              <h2 id="sub-nav-preview-stage-title">Sub-Nav Canonical State</h2>
+            </div>
+            <p id="sub-nav-preview-summary" class="top-nav-preview-stage-note">
+              Deterministic state loaded from the URL.
+            </p>
+          </div>
+
+          <div id="sub-nav-preview-frame" class="sub-nav-preview-frame" style="--sub-nav-preview-width: 1560px;">
+            <div id="sub-nav-preview-shell" class="sub-nav-preview-shell">
+              <section class="sub-nav" aria-label="Sub-nav preview row">
+                <nav id="sub-nav-preview-breadcrumb-nav" class="breadcrumb-nav" aria-label="Breadcrumb">
+                  <div id="sub-nav-preview-breadcrumb-compact" class="breadcrumb-compact hidden">
+                    <button
+                      id="sub-nav-preview-breadcrumb-compact-button"
+                      class="breadcrumb-collapse-button breadcrumb-compact-button"
+                      type="button"
+                      aria-expanded="false"
+                      aria-controls="sub-nav-preview-breadcrumb-compact-menu"
+                      aria-label="Open page structure menu"
+                    >
+                      <span class="breadcrumb-compact-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" focusable="false">
+                          <path d="M6 4.5a1.5 1.5 0 1 1 0 3H5v3h5.5a1.5 1.5 0 1 1 0 3H5v5h3.5a1.5 1.5 0 1 1 0 3H3.5a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 3.5 4.5zm11 0a4 4 0 0 1 0 8h-2v-3h2a1 1 0 1 0 0-2h-2v-3zm-2 9h3a4 4 0 1 1 0 8h-3v-3h3a1 1 0 1 0 0-2h-3z" />
+                        </svg>
+                      </span>
+                    </button>
+                    <div
+                      id="sub-nav-preview-breadcrumb-compact-menu"
+                      class="breadcrumb-collapse-menu hidden"
+                      role="menu"
+                      aria-labelledby="sub-nav-preview-breadcrumb-compact-button"
+                    >
+                      <a id="sub-nav-preview-compact-home" class="menu-item" href="/design-system" role="menuitem">Home</a>
+                      <a id="sub-nav-preview-compact-middle-a" class="menu-item" href="/design-system/library" role="menuitem">Library</a>
+                      <a id="sub-nav-preview-compact-middle-b" class="menu-item" href="/design-system/library/navigation" role="menuitem">Navigation</a>
+                      <a id="sub-nav-preview-compact-page-minus-one" class="menu-item" href="/design-system/components/navigation" role="menuitem">Sub-nav</a>
+                      <span id="sub-nav-preview-compact-current" class="menu-item breadcrumb-structure-current" aria-current="page">Search</span>
+                    </div>
+                  </div>
+                  <ol id="sub-nav-preview-breadcrumb-list" class="breadcrumb-list">
+                    <li id="sub-nav-preview-home-item"><a id="sub-nav-preview-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
+                    <li id="sub-nav-preview-separator-before-collapsed"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+                    <li id="sub-nav-preview-collapsed-item" class="breadcrumb-collapsed">
+                      <button
+                        id="sub-nav-preview-breadcrumb-collapse-button"
+                        class="breadcrumb-collapse-button"
+                        type="button"
+                        aria-expanded="false"
+                        aria-controls="sub-nav-preview-breadcrumb-collapse-menu"
+                        aria-label="Open collapsed breadcrumb menu"
+                      >
+                        ...
+                      </button>
+                      <div
+                        id="sub-nav-preview-breadcrumb-collapse-menu"
+                        class="breadcrumb-collapse-menu hidden"
+                        role="menu"
+                        aria-labelledby="sub-nav-preview-breadcrumb-collapse-button"
+                      >
+                        <a id="sub-nav-preview-middle-a-link" class="menu-item" href="/design-system/library" role="menuitem">Library</a>
+                        <a id="sub-nav-preview-middle-b-link" class="menu-item" href="/design-system/library/navigation" role="menuitem">Navigation</a>
+                      </div>
+                    </li>
+                    <li id="sub-nav-preview-separator-before-page-minus-one"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+                    <li id="sub-nav-preview-page-minus-one-item"><a id="sub-nav-preview-page-minus-one-link" class="breadcrumb-button" href="/design-system/components/navigation">Sub-nav</a></li>
+                    <li id="sub-nav-preview-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+                    <li id="sub-nav-preview-current-item"><span id="sub-nav-preview-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">Search</span></li>
+                  </ol>
+                </nav>
+
+                <form id="sub-nav-preview-search-shell" class="search-shell" role="search">
+                  <label class="search-shell-field">
+                    <input
+                      id="sub-nav-preview-search-input"
+                      class="search-input"
+                      type="search"
+                      name="q"
+                      placeholder="Search components, patterns, or docs"
+                    />
+                    <span class="search-submit-hint" aria-hidden="true">
+                      <span class="search-submit-hint-copy">Press</span>
+                      <span class="search-submit-hint-key">Enter</span>
+                    </span>
+                  </label>
+                </form>
+              </section>
+            </div>
+          </div>
+        </section>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

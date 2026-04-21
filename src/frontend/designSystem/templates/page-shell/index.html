@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Page Shell Template</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy">
+            <strong>Kanbien Design System</strong>
+          </span>
+        </a>
+
+        <nav class="primary-nav" aria-label="Primary">
+          <div id="primary-nav-links" class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link" href="/design-system/components">Components</a>
+            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link active" href="/design-system/templates" aria-current="page">Pages</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+          <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+            <button
+              id="primary-nav-overflow-button"
+              class="nav-link primary-nav-overflow-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="primary-nav-overflow-menu"
+            >
+              More
+            </button>
+            <div
+              id="primary-nav-overflow-menu"
+              class="primary-nav-overflow-menu hidden"
+              role="menu"
+              aria-labelledby="primary-nav-overflow-button"
+            ></div>
+          </div>
+        </nav>
+
+        <button
+          id="mobile-nav-button"
+          class="mobile-nav-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-nav-menu"
+          aria-label="Open navigation menu"
+        >
+          <span class="burger-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="nav-utilities">
+          <button
+            id="profile-menu-button"
+            class="profile-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="profile-menu"
+          >
+            <span class="profile-avatar" aria-hidden="true">PS</span>
+            <span class="profile-meta">
+              <strong>Pages</strong>
+            </span>
+          </button>
+
+          <div
+            id="profile-menu"
+            class="profile-menu hidden"
+            role="menu"
+            aria-labelledby="profile-menu-button"
+          >
+            <button
+              id="profile-language-button"
+              class="menu-item menu-item-button"
+              type="button"
+              role="menuitem"
+            >
+              Language
+            </button>
+            <button id="close-profile-menu" class="menu-item menu-item-button" type="button" role="menuitem">
+              Close menu
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <nav id="mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile primary">
+        <a class="nav-link" href="/design-system">Overview</a>
+        <a class="nav-link" href="/design-system/foundations">Foundations</a>
+        <a class="nav-link" href="/design-system/components">Components</a>
+        <a class="nav-link" href="/design-system/patterns">Patterns</a>
+        <a class="nav-link active" href="/design-system/templates" aria-current="page">Pages</a>
+        <a class="nav-link" href="/design-system/resources">Resources</a>
+        <div class="mobile-profile-group">
+          <button
+            id="mobile-profile-button"
+            class="mobile-profile-item"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-profile-menu"
+          >
+            Pages
+          </button>
+          <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
+            <a class="mobile-subnav-link" href="/design-system/templates">Back to Pages</a>
+            <a class="mobile-subnav-link" href="#page-shell-canvas-title">Canvas</a>
+            <button id="mobile-language-button" class="mobile-subnav-link mobile-subnav-button" type="button">
+              Language
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div
+        id="language-modal"
+        class="language-modal hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="language-modal-title"
+      >
+        <div id="language-modal-backdrop" class="language-modal-backdrop"></div>
+        <div class="language-modal-panel">
+          <div class="language-modal-header">
+            <div>
+              <p class="language-modal-eyebrow">Profile Preference</p>
+              <h2 id="language-modal-title">Choose your language</h2>
+              <p id="language-modal-description" class="language-modal-copy">
+                Pick one of the common languages below for this design-system prototype.
+              </p>
+            </div>
+            <button
+              id="language-modal-close"
+              class="drawer-close-button"
+              type="button"
+              aria-label="Close language selector"
+            >
+              ×
+            </button>
+          </div>
+          <div
+            id="language-option-list"
+            class="language-option-list"
+            role="listbox"
+            aria-describedby="language-modal-description"
+          ></div>
+        </div>
+      </div>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <div id="breadcrumb-compact" class="breadcrumb-compact hidden">
+            <button
+              id="breadcrumb-compact-button"
+              class="breadcrumb-collapse-button breadcrumb-compact-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="breadcrumb-compact-menu"
+              aria-label="Open page structure menu"
+            >
+              <span class="breadcrumb-compact-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M6 4.5a1.5 1.5 0 1 1 0 3H5v3h5.5a1.5 1.5 0 1 1 0 3H5v5h3.5a1.5 1.5 0 1 1 0 3H3.5a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 3.5 4.5zm11 0a4 4 0 0 1 0 8h-2v-3h2a1 1 0 1 0 0-2h-2v-3zm-2 9h3a4 4 0 1 1 0 8h-3v-3h3a1 1 0 1 0 0-2h-3z" />
+                </svg>
+              </span>
+            </button>
+            <div
+              id="breadcrumb-compact-menu"
+              class="breadcrumb-collapse-menu hidden"
+              role="menu"
+              aria-labelledby="breadcrumb-compact-button"
+            >
+              <a class="menu-item" href="/design-system" role="menuitem">Home</a>
+              <a class="menu-item" href="/design-system/templates" role="menuitem">Templates</a>
+              <span class="menu-item breadcrumb-structure-current" aria-current="page">Page Shell</span>
+            </div>
+          </div>
+          <ol id="breadcrumb-list" class="breadcrumb-list">
+            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li id="breadcrumb-separator-before-collapsed" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed hidden">
+              <button
+                id="breadcrumb-collapse-button"
+                class="breadcrumb-collapse-button"
+                type="button"
+                aria-expanded="false"
+                aria-controls="breadcrumb-collapse-menu"
+                aria-label="Open collapsed breadcrumb menu"
+              >
+                ...
+              </button>
+              <div
+                id="breadcrumb-collapse-menu"
+                class="breadcrumb-collapse-menu hidden"
+                role="menu"
+                aria-labelledby="breadcrumb-collapse-button"
+              >
+                <a class="menu-item" href="/design-system/templates" role="menuitem">Templates</a>
+              </div>
+            </li>
+            <li id="breadcrumb-separator-before-page-minus-one"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-page-minus-one-item"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="/design-system/templates">Templates</a></li>
+            <li id="breadcrumb-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-current-item"><span class="breadcrumb-button breadcrumb-current" aria-current="page">Page Shell</span></li>
+          </ol>
+        </nav>
+
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input
+              id="design-system-search"
+              class="search-input"
+              type="search"
+              name="q"
+              placeholder="Search page shell template notes"
+            />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Page-shell section navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/templates/page-shell" data-tooltip="Page Shell" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4 5h16v3H4zm0 5h10v3H4zm0 5h16v4H4zm12-5h4v3h-4z" />
+              </svg>
+            </span>
+            <span class="context-nav-label">Page Shell</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group">
+          <button
+            id="accessibility-button"
+            class="context-nav-item context-nav-item-button context-nav-mobile-overflow-target"
+            type="button"
+            data-tooltip="Accessibility"
+            aria-expanded="false"
+            aria-controls="accessibility-drawer"
+          >
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75zm0 3.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 5.85zm0 11.55a5.4 5.4 0 0 1-4.19-1.97 4.87 4.87 0 0 1 8.38 0A5.4 5.4 0 0 1 12 17.4z" />
+              </svg>
+            </span>
+            <span class="context-nav-label">Design Drawer</span>
+          </button>
+        </div>
+      </nav>
+
+      <aside
+        id="accessibility-drawer"
+        class="side-panel accessibility-drawer hidden"
+        aria-labelledby="accessibility-title"
+        aria-hidden="true"
+      >
+        <div class="side-panel-header accessibility-drawer-header">
+          <div>
+            <p class="drawer-eyebrow" data-display-settings-copy="eyebrow">Display</p>
+            <h2 id="accessibility-title" data-display-settings-copy="title">Display Settings</h2>
+          </div>
+          <button
+            id="accessibility-close"
+            class="drawer-close-button"
+            type="button"
+            aria-label="Close display settings"
+            data-display-settings-aria-label="close"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="theme-group">Theme</p>
+          <div class="chip-row" role="group" aria-label="Theme">
+            <button class="accessibility-chip active" type="button" data-theme-option="normal" data-display-settings-copy="theme-normal">Normal</button>
+            <button class="accessibility-chip" type="button" data-theme-option="dark" data-display-settings-copy="theme-dark">Dark</button>
+            <button class="accessibility-chip" type="button" data-theme-option="desert" data-display-settings-copy="theme-desert">Desert</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="magnification-group">Magnification</p>
+          <div class="chip-row chip-row-single-line" role="group" aria-label="Magnification">
+            <button class="accessibility-chip" type="button" data-magnification-option="-100">-100%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="-50">-50%</button>
+            <button class="accessibility-chip active" type="button" data-magnification-option="0">0%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="50">+50%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="100">+100%</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="accent-group">Primary Colour</p>
+          <div class="color-grid" role="group" aria-label="Primary colour">
+            <button class="color-swatch active" type="button" data-accent="#635bff" aria-label="Indigo"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#635bff" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#2563eb" aria-label="Blue"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2563eb" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#0891b2" aria-label="Cyan"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0891b2" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#0f766e" aria-label="Teal"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0f766e" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#2f855a" aria-label="Green"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2f855a" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#65a30d" aria-label="Lime"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#65a30d" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#ca8a04" aria-label="Gold"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ca8a04" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#ea580c" aria-label="Orange"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ea580c" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#dc2626" aria-label="Red"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#dc2626" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#e11d48" aria-label="Rose"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#e11d48" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#c026d3" aria-label="Fuchsia"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#c026d3" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#7c3aed" aria-label="Violet"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#7c3aed" /></svg></button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="direction-group">Direction</p>
+          <div class="chip-row" role="group" aria-label="Direction">
+            <button class="accessibility-chip active" type="button" data-direction-option="ltr" data-display-settings-copy="direction-ltr">Left to right</button>
+            <button class="accessibility-chip" type="button" data-direction-option="rtl" data-display-settings-copy="direction-rtl">Right to left</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="banner-group">Banner Demo</p>
+          <div class="chip-row" role="group" aria-label="Banner visibility">
+            <button
+              class="accessibility-chip"
+              type="button"
+              data-page-shell-banner-visibility="show"
+              data-display-settings-copy="banner-show"
+              aria-pressed="false"
+            >Show banners</button>
+            <button
+              class="accessibility-chip active"
+              type="button"
+              data-page-shell-banner-visibility="hide"
+              data-display-settings-copy="banner-hide"
+              aria-pressed="true"
+            >Hide banners</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="design-system-page-main">
+        <section class="component-catalog-section" aria-labelledby="page-shell-canvas-title">
+          <div class="page-shell-banner-demo hidden" data-page-shell-banner-demo aria-label="Shell banner demo"></div>
+
+          <div class="component-catalog-section-header">
+            <p class="top-nav-preview-eyebrow">Baseline Reference</p>
+            <h1 id="page-shell-canvas-title" class="component-catalog-section-title">Page Shell Template</h1>
+            <p class="component-catalog-meta">
+              This is the shell-only reference state. The content area is intentionally quiet so future templates can inherit the same frame without carrying accidental workflow decisions.
+            </p>
+          </div>
+
+          <div class="component-catalog-grid">
+            <article class="component-catalog-card">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Canvas</p>
+                <h2 class="component-catalog-card-title">Content Placeholder</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                Use this area as the insertion point for list, content, table, or builder payloads once their own template contracts are defined.
+              </p>
+            </article>
+
+            <article class="component-catalog-card">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Reference Rule</p>
+                <h2 class="component-catalog-card-title">Shell Before Workflow</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                Keep the shell anatomy stable first, then let each future page family decide what belongs inside the main content region and inside the drawer payload.
+              </p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

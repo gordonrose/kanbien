@@ -1,0 +1,218 @@
+{
+  "info": {
+    "_postman_id": "84e3cc4c-bf92-4735-bef0-42aa1d29460d",
+    "name": "Kanbien Notification Delivery",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the protected notificationDelivery feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises proof email send, durable list and exact read, and explicit resend. Protected requests may return 429 RATE_LIMITED when shared platform security middleware rejects the request. Successful root login writes a shared root session into the active Postman environment so other root-protected collections can reuse it."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "signerUrl", "value": "http://127.0.0.1:8787" },
+    { "key": "email", "value": "elvis.presley@example.com" },
+    { "key": "password", "value": "Test1234!" },
+    { "key": "challengeId", "value": "chal_replace_me" },
+    { "key": "challengeText", "value": "challenge_text_replace_me" },
+    { "key": "publicKeyFingerprint", "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY" },
+    { "key": "sshSignature", "value": "base64_signature_over_challenge_text" },
+    { "key": "sshSignatureJson", "value": "base64_signature_over_challenge_text" },
+    { "key": "rootSessionId", "value": "sess_replace_me" },
+    { "key": "outboundEmailId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "proofRecipientEmail", "value": "replace-with-your-inbox@example.com" },
+    { "key": "notificationType", "value": "proof_email" },
+    { "key": "relatedEntityType", "value": "diagnostic" },
+    { "key": "relatedEntityId", "value": "proof-check-001" },
+    { "key": "subject", "value": "Kanbien notification delivery proof" },
+    { "key": "bodyText", "value": "This is a proof email from the notificationDelivery feature." },
+    { "key": "resendReason", "value": "operator verification resend" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "health"]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Login Password",
+      "description": "Stage one of root login. On success it stores challenge variables.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/password",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "root-auth", "login", "password"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.challengeId) pm.collectionVariables.unset(\"challengeId\");",
+              "if (!json.challengeText) pm.collectionVariables.unset(\"challengeText\");",
+              "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
+              "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Sign Challenge",
+      "description": "Local helper request that signs the stored challenge text with your configured SSH private key.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeText\": \"{{challengeText}}\"\n}"
+        },
+        "url": {
+          "raw": "{{signerUrl}}/sign",
+          "host": ["{{signerUrl}}"],
+          "path": ["sign"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignature\", json.signature);",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignatureJson\", JSON.stringify(json.signature).slice(1, -1));",
+              "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Login SSH",
+      "description": "Stage two of root login. On success it stores the bearer session token.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignatureJson}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/ssh",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "root-auth", "login", "ssh"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.sessionId) pm.environment.unset(\"rootSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notification Delivery - Send Test Email",
+      "description": "Sends a proof email and stores the logical outbound email ID for later exact read and resend.",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"recipientEmail\": \"{{proofRecipientEmail}}\",\n  \"subject\": \"{{subject}}\",\n  \"bodyText\": \"{{bodyText}}\",\n  \"notificationType\": \"{{notificationType}}\",\n  \"relatedEntityType\": \"{{relatedEntityType}}\",\n  \"relatedEntityId\": \"{{relatedEntityId}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/notification-delivery/emails/test",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "notification-delivery", "emails", "test"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.emailId) pm.collectionVariables.set(\"outboundEmailId\", json.emailId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notification Delivery - List Emails",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/notification-delivery/emails?page=1&pageSize=25&orderBy=requestedAt&orderDirection=desc&notificationType={{notificationType}}&recipientEmail={{proofRecipientEmail}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "notification-delivery", "emails"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "pageSize", "value": "25" },
+            { "key": "orderBy", "value": "requestedAt" },
+            { "key": "orderDirection", "value": "desc" },
+            { "key": "notificationType", "value": "{{notificationType}}" },
+            { "key": "recipientEmail", "value": "{{proofRecipientEmail}}" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Notification Delivery - Get Email",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/notification-delivery/emails/{{outboundEmailId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "notification-delivery", "emails", "{{outboundEmailId}}"]
+        }
+      }
+    },
+    {
+      "name": "Notification Delivery - Resend Email",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"resendReason\": \"{{resendReason}}\",\n  \"subject\": \"{{subject}} (resent)\",\n  \"bodyText\": \"{{bodyText}}\\n\\nResent by operator.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/notification-delivery/emails/{{outboundEmailId}}/resend",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "notification-delivery", "emails", "{{outboundEmailId}}", "resend"]
+        }
+      }
+    }
+  ]
+}

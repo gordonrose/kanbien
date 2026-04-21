@@ -1,4 +1,4 @@
-import { parseTestCaseId, type ParsedTestCaseId, type TestCaseType } from "./traceability";
+import { parseTestCaseId } from "./traceability";
 
 export interface CoverageBucket {
   total: number;
@@ -9,6 +9,8 @@ export interface TraceabilityReport {
   totalIds: number;
   coveredIds: string[];
   missingIds: string[];
+  executableIds: string[];
+  orphanedExecutableIds: string[];
   byPrd: Record<string, CoverageBucket>;
   byType: Record<string, CoverageBucket>;
   byPrdAndType: Record<string, CoverageBucket>;
@@ -40,10 +42,14 @@ function sortedKeys<T extends string>(record: Partial<Record<T, unknown>>): T[] 
 }
 
 export function buildTraceabilityReport(documentedIds: string[], corpus: string): TraceabilityReport {
-  const coveredIds = documentedIds.filter((id) => corpus.includes(id));
-  const missingIds = documentedIds.filter((id) => !corpus.includes(id));
+  const executableIds = [...new Set(corpus.match(/TC-[A-Z0-9-]+/g) ?? [])].sort();
+  const executableSet = new Set(executableIds);
+  const coveredIds = documentedIds.filter((id) => executableSet.has(id));
+  const missingIds = documentedIds.filter((id) => !executableSet.has(id));
   const coveredSet = new Set(coveredIds);
+  const documentedSet = new Set(documentedIds);
   const parsedIds = documentedIds.map(parseTestCaseId);
+  const orphanedExecutableIds = executableIds.filter((id) => !documentedSet.has(id));
   const byPrdGroup = groupBy(parsedIds, (item) => item.prdKey);
   const byTypeGroup = groupBy(parsedIds, (item) => item.testType);
   const missingByTypeGroup = groupBy(missingIds.map(parseTestCaseId), (item) => item.testType);
@@ -77,6 +83,8 @@ export function buildTraceabilityReport(documentedIds: string[], corpus: string)
     totalIds: documentedIds.length,
     coveredIds,
     missingIds,
+    executableIds,
+    orphanedExecutableIds,
     byPrd,
     byType,
     byPrdAndType,
@@ -91,9 +99,10 @@ export function formatCoverageBucket(title: string, bucket: CoverageBucket): str
 
 export function formatTraceabilityReport(report: TraceabilityReport): string[] {
   const lines = [
-    `Tracked PRD test cases: ${report.totalIds}`,
+    `Tracked active PRD test cases: ${report.totalIds}`,
     `Traceable in executable tests/code: ${report.coveredIds.length}`,
     `Missing mappings: ${report.missingIds.length}`,
+    `Executable IDs without reviewed PRD cases: ${report.orphanedExecutableIds.length}`,
     "Interpretation: this command reports traceability of documented `TC-*` IDs in code, not whether those tests were executed in the current run.",
     "",
     "Traceability by PRD:",
@@ -116,6 +125,13 @@ export function formatTraceabilityReport(report: TraceabilityReport): string[] {
   if (report.malformedIds.length > 0) {
     lines.push("", "Malformed documented test-case IDs:");
     for (const id of report.malformedIds) {
+      lines.push(`- ${id}`);
+    }
+  }
+
+  if (report.orphanedExecutableIds.length > 0) {
+    lines.push("", "Executable test-case IDs missing from reviewed PRD docs:");
+    for (const id of report.orphanedExecutableIds) {
       lines.push(`- ${id}`);
     }
   }

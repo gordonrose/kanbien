@@ -1,6 +1,6 @@
 ---
 name: prd-test-case-implementer
-description: Use when the user wants Codex to read a PRD-derived test-case document under docs/prd/test_cases and implement the executable tests under tests/. Preserve TC-* traceability, implement one layer at a time unless asked otherwise, and explicitly discuss non-trivial changes to existing tests before making them.
+description: Use when the user wants Codex to read a PRD-derived test-case document under docs/prd/test_cases and implement the executable tests under tests/. Preserve TC-* traceability, implement one layer at a time unless asked otherwise, and explicitly discuss non-trivial changes to existing tests before making them. Follow the repo's broader QA model, including end-to-end, persistence-backed, concurrency/idempotency, performance, resilience, and compatibility layers when the scoped change class requires them.
 ---
 
 # PRD Test Case Implementer
@@ -27,6 +27,11 @@ It should:
 - distinguish additive new tests from changes to existing tests
 - pause for discussion when existing tests would need non-trivial expectation
   changes, deletion, or restructuring
+- avoid silently narrowing execution to only thin unit/integration coverage
+  when the PRD, coverage matrix, or journey inventory requires broader proof
+
+Its core job is execution: turning a chosen slice of the PRD-derived test plan
+into honest executable tests without taking over the wider change-loop process.
 
 ## Authority Order
 
@@ -36,9 +41,13 @@ Use this authority order unless the user explicitly says otherwise:
 2. `docs/architecture/`
 3. the target file under `docs/prd/test_cases/`
 4. the source PRD under `docs/prd/`
-5. current implementation in `src/`
-6. current executable tests in `tests/`
-7. relevant source-independent docs such as `docs/api-contracts/` and
+5. `docs/architecture/guides/testing-and-verification-guide.md`
+6. `docs/architecture/guides/qa-coverage-matrix-guide.md`
+7. `docs/architecture/guides/end-to-end-journey-testing-guide.md`
+8. `docs/standards/QA-RELEASE-GATE.md`
+9. current implementation in `src/`
+10. current executable tests in `tests/`
+11. relevant source-independent docs such as `docs/api-contracts/` and
    `docs/data-dictionary/` when they materially affect the scoped behavior
 
 If the PRD-derived test-case doc and the code differ, prefer the documented PRD
@@ -53,7 +62,11 @@ Primary sources:
 - the source PRD under `docs/prd/`
 - `docs/architecture/system-overview.md`
 - `docs/architecture/priniciples.md`
+- `docs/architecture/guides/testing-and-verification-guide.md`
+- `docs/architecture/guides/qa-coverage-matrix-guide.md`
+- `docs/architecture/guides/end-to-end-journey-testing-guide.md`
 - `docs/standards/change-artifact-requirements.md`
+- `docs/standards/QA-RELEASE-GATE.md`
 - relevant ADRs in `docs/architecture/adr/`
 - feature code in `src/features/`
 - shared seams in `src/lib/`
@@ -80,6 +93,8 @@ Identify:
 - which layer the user wants now, or infer the next unfinished layer if clear
 - the `TC-*` IDs for that layer
 - any cases marked or implied as persistence-backed
+- any cases marked or implied as end-to-end, concurrency/idempotency,
+  performance, resilience, or compatibility-oriented
 - any cleanup/test-helper expectations
 - any standards-driven allow/deny, audit, or privileged-capability expectations
   that must remain covered
@@ -94,6 +109,10 @@ Check:
 - whether the change introduces or tightens authz gates such that pre-existing
   protected-feature integration, security, or audit tests now need expectation
   updates rather than simple additive coverage
+- whether the planned behavior requires real contention, stress, soak, or
+  conflicting-write proof rather than another single-request happy-path test
+- whether a journey inventory or curated QA artifact will need refresh because
+  the implemented layer changes the reviewed verification story
 
 3. Surface existing-test impact if it is non-trivial.
 Discuss before editing when:
@@ -114,8 +133,24 @@ Default to one layer at a time:
 - `AUD`
 - `EDGE`
 
+But do not silently stop at those five if the documented plan or QA coverage
+matrix requires broader layers such as:
+
+- `E2E`
+- `PERSISTENCE`
+- `CONCURRENCY`
+- `PERF`
+- `RESILIENCE`
+- `COMPAT`
+- `A11Y`
+
 Follow the suggested folders from the PRD test-case doc unless the repo's
 current test structure gives a better-established home.
+
+Keep this as one integrated execution skill. It may implement different layers
+over time, but it should not be split into separate skills for unit,
+integration, end-to-end, performance, or security execution unless the repo
+later develops clearly different workflows for those layers.
 
 5. Preserve traceability.
 For every implemented case:
@@ -131,6 +166,12 @@ Do not invent a new ID format.
   migrations, or durable audit records
 - Keep persistence-backed tests behind the repo's dedicated persistence flow
   when that convention already exists
+- Use real contention-oriented execution when the claim is about races,
+  one-time proof consumption, conflicting writes, or other concurrency truths
+- Use performance-oriented suites when the claim is about latency, burst, or
+  soak behavior
+- Use compatibility or contract-oriented proof when the claim is about schema,
+  provider, or consumer-boundary truth
 
 7. Verify and report.
 After implementation:
@@ -138,15 +179,20 @@ After implementation:
 - run broader verification if the change touches shared test infrastructure
 - run `npm run test:traceability` when the implemented tests add or change
   `TC-*` coverage
+- run the right specialized command or suite when the implemented claim is
+  persistence-backed, end-to-end, concurrency-sensitive, performance-oriented,
+  or compatibility-oriented
 - report what passed
 - report any remaining skipped persistence-backed cases honestly
+- report any remaining not-yet-proven concurrency, conflicting-write, stress,
+  soak, or performance cases honestly
 - if the implemented cases exercise a privileged or security-sensitive
   capability, explicitly say whether the relevant allow/deny or audit cases are
   now covered
-- if the implementation was materially AI-assisted and high-risk, make sure the
-  change artifacts record independent verification and any required
-  model/tool/version traceability rather than treating generated tests as
-  self-proving
+
+Use `docs/standards/change-artifact-requirements.md` and the QA guides as the
+canonical source for any broader artifact or verification expectations beyond
+the executable test work handled by this skill.
 
 8. Update implementation status when appropriate.
 If the repo uses the PRD test-case doc as a living status artifact, update the
@@ -212,6 +258,26 @@ When a case requires real Postgres-backed proof:
 - if DB-backed tests share one test database, keep file-level execution
   serialized if the repo already depends on that convention
 
+### Concurrency, Race, And Conflicting-Write Cases
+
+When a case makes a truth claim about races or concurrent mutation:
+
+- prefer a real contention-oriented proof over a merely sequential test
+- use durable atomicity proof when the correctness claim depends on storage
+- test conflicting session or workflow writes explicitly when they can change
+  visible system truth
+- treat replay, duplicate submission, and one-time proof consumption as
+  first-class concurrency concerns rather than generic edge cases
+
+### Performance, Stress, And Soak Cases
+
+When a case makes a truth claim about speed or sustained usage:
+
+- use `tests/performance/` or the repo's current performance layer
+- keep thresholds conservative and honest
+- distinguish latency verification from burst stress and repeated-cycle soak
+- report environment sensitivity and remaining limits honestly
+
 ## Reporting Format
 
 When reporting before edits, use:
@@ -250,6 +316,9 @@ Keep the summary focused on:
   that create durable data.
 - Do not implement a thinner executable test set than the current repo
   standards require for the scoped change class.
+- Do not reduce race, conflicting-write, stress, soak, performance, or
+  compatibility claims to thin single-request tests when the reviewed plan
+  requires stronger proof.
 - Do not ignore source-independent API contract or persistence-contract docs
   when they materially clarify the expected behavior under test.
 

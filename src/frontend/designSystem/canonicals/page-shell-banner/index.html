@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Page-Shell Banner Canonicals</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div id="primary-nav-links" class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link" href="/design-system/components">Components</a>
+            <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Pages</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+          <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+            <button
+              id="primary-nav-overflow-button"
+              class="nav-link primary-nav-overflow-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="primary-nav-overflow-menu"
+            >
+              More
+            </button>
+            <div
+              id="primary-nav-overflow-menu"
+              class="primary-nav-overflow-menu hidden"
+              role="menu"
+              aria-labelledby="primary-nav-overflow-button"
+            ></div>
+          </div>
+        </nav>
+        <button
+          id="mobile-nav-button"
+          class="mobile-nav-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-nav-menu"
+          aria-label="Open navigation menu"
+        >
+          <span class="burger-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        <div class="nav-utilities">
+          <button
+            id="profile-menu-button"
+            class="profile-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="profile-menu"
+          >
+            <span class="profile-avatar" aria-hidden="true">PB</span>
+            <span class="profile-meta"><strong>Page-Shell Banner</strong></span>
+          </button>
+          <div id="profile-menu" class="profile-menu hidden" role="menu" aria-labelledby="profile-menu-button">
+            <button id="profile-language-button" class="menu-item menu-item-button" type="button" role="menuitem">
+              Language
+            </button>
+            <button id="close-profile-menu" class="menu-item menu-item-button" type="button" role="menuitem">
+              Close menu
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <nav id="mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile primary">
+        <a class="nav-link" href="/design-system">Overview</a>
+        <a class="nav-link" href="/design-system/foundations">Foundations</a>
+        <a class="nav-link" href="/design-system/components">Components</a>
+        <a class="nav-link active" href="/design-system/patterns" aria-current="page">Patterns</a>
+        <a class="nav-link" href="/design-system/templates">Pages</a>
+        <a class="nav-link" href="/design-system/resources">Resources</a>
+        <div class="mobile-profile-group">
+          <button
+            id="mobile-profile-button"
+            class="mobile-profile-item"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-profile-menu"
+          >
+            Page-Shell Banner
+          </button>
+          <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
+            <a class="mobile-subnav-link" href="/design-system/templates/page-shell">Page Shell</a>
+            <a
+              class="mobile-subnav-link"
+              href="/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0"
+            >
+              Locked Banner
+            </a>
+            <button id="mobile-language-button" class="mobile-subnav-link mobile-subnav-button" type="button">
+              Language
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div
+        id="language-modal"
+        class="language-modal hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="language-modal-title"
+      >
+        <div id="language-modal-backdrop" class="language-modal-backdrop"></div>
+        <div class="language-modal-panel">
+          <div class="language-modal-header">
+            <div>
+              <p class="language-modal-eyebrow">Profile Preference</p>
+              <h2 id="language-modal-title">Choose your language</h2>
+              <p id="language-modal-description" class="language-modal-copy">
+                Pick one of the common languages below for this design-system prototype.
+              </p>
+            </div>
+            <button
+              id="language-modal-close"
+              class="drawer-close-button"
+              type="button"
+              aria-label="Close language selector"
+            >
+              ×
+            </button>
+          </div>
+          <div
+            id="language-option-list"
+            class="language-option-list"
+            role="listbox"
+            aria-describedby="language-modal-description"
+          ></div>
+        </div>
+      </div>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system/patterns">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonicals">Canonicals</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Page-Shell Banner</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input id="design-system-search" class="search-input" type="search" name="q" placeholder="Search page-shell banner canonical refs" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Page-shell-banner family navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/templates/page-shell" data-tooltip="Page Shell">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v4H4zm0 6h10v3H4zm12 0h4v3h-4zM4 16h16v3H4z" /></svg>
+            </span>
+            <span class="context-nav-label">Page Shell</span>
+          </a>
+          <a
+            class="context-nav-item"
+            href="/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0"
+            data-tooltip="Locked Banner"
+          >
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M6 4h12a2 2 0 0 1 2 2v12.5a1.5 1.5 0 0 1-2.56 1.06l-2.88-2.88a1.5 1.5 0 0 0-1.06-.44H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm1.5 4.25a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5zm0 3.75a.75.75 0 0 0 0 1.5h9a.75.75 0 0 0 0-1.5z" /></svg>
+            </span>
+            <span class="context-nav-label">Locked Banner</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/canonicals/page-shell-banner" data-tooltip="Canonicals" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+      </nav>
+
+      <main class="design-system-page-main canonical-launcher-page">
+        <div class="canonical-launcher-layout">
+          <section class="canonical-launcher-intro">
+            <p class="top-nav-preview-eyebrow">Canonical Launcher</p>
+            <h1>Page-Shell Banner Canonicals</h1>
+            <p class="canonical-launcher-copy">
+              Open the signed-off `page-shell-banner` states in separate tabs so the shell-owned banner family can be
+              reviewed directly on its dedicated render surface rather than only inside the page-shell template demo.
+              Use <a href="/design-system/templates/page-shell"><code>/design-system/templates/page-shell</code></a> for
+              the host-shell demo and keep this page for canonical truth.
+            </p>
+            <div class="canonical-render-footer">
+              <nav class="canonical-stepper" aria-label="Canonical set navigation">
+                <span class="canonical-stepper-current">Page-Shell Banner Canonicals</span>
+                <a class="canonical-stepper-link" href="/design-system/canonicals/display-settings">Previous</a>
+                <a class="canonical-stepper-link" href="/design-system/canonicals/list-record-card">Next</a>
+              </nav>
+            </div>
+          </section>
+
+          <section class="canonical-launcher-panel" aria-labelledby="page-shell-banner-full-title">
+            <div class="canonical-launcher-panel-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Canonical Set</p>
+                <h2 id="page-shell-banner-full-title">Page-Shell Banner Reference States</h2>
+              </div>
+              <p class="canonical-launcher-note">
+                Review these as dedicated banner-family states: four-state stack, success, warning, danger, and the
+                remaining stack after one dismiss action.
+              </p>
+            </div>
+
+            <div class="canonical-launcher-grid">
+              <a
+                class="canonical-launcher-button canonical-launcher-button-priority"
+                href="/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="canonical-launcher-priority">Priority</span>
+                <span class="canonical-launcher-ref">PSBR-001</span>
+                <span class="canonical-launcher-label">Full four-state stack</span>
+              </a>
+              <a
+                class="canonical-launcher-button"
+                href="/design-system/components/page-shell-banner?ref=PSBR-002&theme=normal&dir=ltr&zoom=0"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="canonical-launcher-ref">PSBR-002</span>
+                <span class="canonical-launcher-label">Success state with dismiss affordance</span>
+              </a>
+              <a
+                class="canonical-launcher-button"
+                href="/design-system/components/page-shell-banner?ref=PSBR-003&theme=normal&dir=ltr&zoom=0"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="canonical-launcher-ref">PSBR-003</span>
+                <span class="canonical-launcher-label">Warning state with dismiss affordance</span>
+              </a>
+              <a
+                class="canonical-launcher-button"
+                href="/design-system/components/page-shell-banner?ref=PSBR-004&theme=normal&dir=ltr&zoom=0"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="canonical-launcher-ref">PSBR-004</span>
+                <span class="canonical-launcher-label">Danger state with dismiss affordance</span>
+              </a>
+              <a
+                class="canonical-launcher-button canonical-launcher-button-priority"
+                href="/design-system/components/page-shell-banner?ref=PSBR-005&theme=normal&dir=ltr&zoom=0"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="canonical-launcher-priority">Priority</span>
+                <span class="canonical-launcher-ref">PSBR-005</span>
+                <span class="canonical-launcher-label">Partial stack after one dismiss</span>
+              </a>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+display_name: Frontend Design System Loop Maintainer
+short_description: Tight screenshot-driven frontend design-system iteration
+default_prompt: >-
+  Use this skill to evolve Kanbien frontend design-system components and
+  page-shell primitives through small, visually verifiable iterations on
+  /design-system, with strong guardrails for responsive behavior, overflow,
+  layering, RTL, issue reconciliation, and first-consumer app adoption parity
+  against the signed-off canonical.

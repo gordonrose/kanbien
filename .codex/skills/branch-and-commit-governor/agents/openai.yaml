@@ -1,0 +1,7 @@
+display_name: Branch And Commit Governor
+short_description: Branch-per-task and approval-gated commit workflow
+default_prompt: >-
+  Use this skill to keep Kanbien git work clean by default: create dedicated
+  task branches for material changes, avoid mixing unrelated worktree state,
+  wait for explicit approval before committing, split commits by scope, and
+  push only when the user asks.

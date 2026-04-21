@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "featureName": "rootUsers",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createRootUserFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for root-user lifecycle routes."
+    },
+    {
+      "seamId": "auth-state-reader",
+      "symbol": "createRootUsersAuthStateReader | RootUsersAuthStateReader",
+      "path": "index.ts",
+      "kind": "reader-seam",
+      "stability": "stable",
+      "description": "Cross-feature seam for root-user sign-in and lifecycle state reads."
+    },
+    {
+      "seamId": "browser-summary-reader",
+      "symbol": "createRootUsersBrowserSummaryReader | RootUsersBrowserSummaryReader | RootUserBrowserSummary",
+      "path": "index.ts",
+      "kind": "reader-seam",
+      "stability": "stable",
+      "description": "Cross-feature seam for browser bootstrap summaries of the current root user."
+    },
+    {
+      "seamId": "root-user-auth-state-type",
+      "symbol": "RootUserAuthState",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "stable",
+      "description": "Shared type describing root-user auth eligibility state."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing root-user normalization, lifecycle, or soft-delete semantics can break authentication and authorization features that depend on stable operator identity facts.",
+    "Changing exported auth-state or browser-summary seams can break rootAuth and rootRoles integration."
+  ]
+}

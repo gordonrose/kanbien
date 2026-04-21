@@ -8,7 +8,7 @@ import {
 } from "../../helpers/tenantAuthHarness";
 
 describe("tenantAuth audit visibility", () => {
-  it("TC-TENANT-AUTH-AUD-001 keeps successful bootstrap, password setup, login, tenant selection, and logout audit-visible", async () => {
+  it("TC-TENANT-AUTH-AUD-001 keeps successful verification redemption, password setup, login, tenant selection, and logout audit-visible", async () => {
     const harness = createRootAuthIntegrationHarness();
     const mounted = mountTenantAuthFeature(harness.app, harness);
     mounted.tenantAdminsRepository.records.set(
@@ -36,19 +36,24 @@ describe("tenantAuth audit visibility", () => {
       mounted.tenantAdminsRepository,
       { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
     );
-    const bootstrap = await invokeJson<{ bootstrapToken: string; authPrincipalId: string }>(
+    const bootstrap = await invokeJson<{
+      tenantAuthOnboarding: {
+        bootstrapToken: string;
+        authPrincipalId: string;
+      };
+    }>(
       harness.app,
       {
         method: "POST",
-        path: "/v1/tenant-auth/principals/bootstrap",
-        body: { verificationToken },
+        path: "/v1/tenant-admin-verification/redeem",
+        body: { token: verificationToken },
       },
     );
     await invokeJson(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },
@@ -79,7 +84,6 @@ describe("tenantAuth audit visibility", () => {
         expect.objectContaining({
           eventType: "tenant_auth_principal_bootstrapped",
           eventOutcome: "success",
-          authPrincipalId: bootstrap.body.authPrincipalId,
         }),
         expect.objectContaining({
           eventType: "tenant_auth_password_set",
@@ -101,16 +105,16 @@ describe("tenantAuth audit visibility", () => {
     );
   });
 
-  it("TC-TENANT-AUTH-AUD-002 keeps denied bootstrap and tenant selection attempts audit-visible", async () => {
+  it("TC-TENANT-AUTH-AUD-002 keeps denied verification redemption and tenant selection attempts audit-visible", async () => {
     const harness = createRootAuthIntegrationHarness();
     const mounted = mountTenantAuthFeature(harness.app, harness);
 
     const invalidBootstrap = await invokeJson<{ code: string }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken: "bad-token" },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: "bad-token" },
     });
-    expect(invalidBootstrap.status).toBe(401);
+    expect(invalidBootstrap.status).toBe(400);
 
     mounted.tenantAdminsRepository.records.set(
       "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
@@ -126,16 +130,18 @@ describe("tenantAuth audit visibility", () => {
       mounted.tenantAdminsRepository,
       { tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" },
     );
-    const bootstrap = await invokeJson<{ bootstrapToken: string }>(harness.app, {
+    const bootstrap = await invokeJson<{
+      tenantAuthOnboarding: { bootstrapToken: string };
+    }>(harness.app, {
       method: "POST",
-      path: "/v1/tenant-auth/principals/bootstrap",
-      body: { verificationToken },
+      path: "/v1/tenant-admin-verification/redeem",
+      body: { token: verificationToken },
     });
     await invokeJson(harness.app, {
       method: "POST",
       path: "/v1/tenant-auth/password/setup",
       body: {
-        bootstrapToken: bootstrap.body.bootstrapToken,
+        bootstrapToken: bootstrap.body.tenantAuthOnboarding.bootstrapToken,
         newPassword: "@Password1!",
         repeatPassword: "@Password1!",
       },
@@ -159,7 +165,7 @@ describe("tenantAuth audit visibility", () => {
     expect(harness.getSecurityAuditEvents()).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          eventType: "tenant_auth_principal_bootstrapped",
+          eventType: "tenant_admin_verification_redeemed",
           eventOutcome: "failure",
         }),
         expect.objectContaining({

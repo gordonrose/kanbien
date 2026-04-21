@@ -9,9 +9,14 @@ type MigrationGroup =
   | "rootAuth"
   | "rootRoles"
   | "tenants"
+  | "webAppHierarchyBuilder"
+  | "webAppPageSettings"
+  | "webAppSurfaceDiscovery"
+  | "entityBuilder"
   | "notificationDelivery"
   | "tenantAdmins"
-  | "tenantAuth";
+  | "tenantAuth"
+  | "tenantConfiguration";
 
 interface TestMigrationFile {
   filename: string;
@@ -25,7 +30,7 @@ const MIGRATIONS_TABLE = "schema_migrations";
 const FEATURES_ROOT = path.resolve(process.cwd(), "src", "features");
 const DEFAULT_BOOTSTRAP_PASSWORD = "@Nima2or1!";
 const DEFAULT_BOOTSTRAP_SSH_PUBLIC_KEY =
-  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEZeNv6aKKHqLJQQoqsHUhYyFMFFbE8WWvgDSFH0WJiq gordon@<machine-name>";
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+fWomSs6CBXFwaDSUYCy2FHG5UtnFJF7RE/O1hoozG fixture-root-auth.test";
 
 const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = [
   {
@@ -61,6 +66,94 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     relativePath: "tenants/persistence/migrations/0006_create_tenants.sql",
   },
   {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0013_create_web_app_hierarchy.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0018_add_web_app_hierarchy_sync_discovery_capability.sql",
+  },
+  {
+    group: "webAppPageSettings",
+    relativePath:
+      "webAppPageSettings/persistence/migrations/0027_create_web_app_page_settings.sql",
+  },
+  {
+    group: "webAppPageSettings",
+    relativePath:
+      "webAppPageSettings/persistence/migrations/0028_seed_web_app_page_settings_capabilities.sql",
+  },
+  {
+    group: "webAppPageSettings",
+    relativePath:
+      "webAppPageSettings/persistence/migrations/0029_add_parent_page_to_web_app_page_settings.sql",
+  },
+  {
+    group: "entityBuilder",
+    relativePath: "entityBuilder/persistence/migrations/0014_create_entity_builder_foundation.sql",
+  },
+  {
+    group: "entityBuilder",
+    relativePath: "entityBuilder/persistence/migrations/0015_seed_entity_builder_root_capabilities.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0016_create_web_app_surface_discovery.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0017_seed_web_app_surface_discovery_root_capabilities.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0019_create_web_app_surface_discovery_structure.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0020_seed_web_app_surface_discovery_structure_root_capabilities.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0021_relax_group_linked_surface_constraint.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0021_create_web_app_hierarchy_reconcile_extension.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0022_seed_web_app_hierarchy_reconcile_capabilities.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0023_add_design_system_topology_materialization_v1.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0024_seed_design_system_topology_materialization_capabilities.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0025_add_module_landing_page.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0026_seed_module_landing_page_capability.sql",
+  },
+  {
     group: "notificationDelivery",
     relativePath: "notificationDelivery/persistence/migrations/0007_create_notification_delivery.sql",
   },
@@ -71,6 +164,18 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
   {
     group: "tenantAuth",
     relativePath: "tenantAuth/persistence/migrations/0009_create_tenant_auth.sql",
+  },
+  {
+    group: "tenantConfiguration",
+    relativePath: "tenantConfiguration/persistence/migrations/0010_create_tenant_auth_policy.sql",
+  },
+  {
+    group: "tenantConfiguration",
+    relativePath: "tenantConfiguration/persistence/migrations/0011_seed_tenant_auth_policy_root_capabilities.sql",
+  },
+  {
+    group: "tenantConfiguration",
+    relativePath: "tenantConfiguration/persistence/migrations/0012_add_session_ttl_to_tenant_auth_policy.sql",
   },
 ];
 
@@ -176,14 +281,22 @@ export async function applyPostgresTestMigrations(
     "rootAuth",
     "rootRoles",
     "tenants",
+    "webAppHierarchyBuilder",
+    "webAppPageSettings",
+    "webAppSurfaceDiscovery",
+    "entityBuilder",
     "notificationDelivery",
     "tenantAdmins",
     "tenantAuth",
+    "tenantConfiguration",
   ],
 ): Promise<void> {
   await ensureMigrationsTable(pool);
 
   const allowedGroups = new Set(groups);
+  if (allowedGroups.has("webAppHierarchyBuilder") || allowedGroups.has("webAppPageSettings")) {
+    allowedGroups.add("webAppSurfaceDiscovery");
+  }
   const migrations = (await loadOrderedMigrations()).filter((migration) =>
     allowedGroups.has(migration.group),
   );

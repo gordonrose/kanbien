@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Components</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy">
+            <strong>Kanbien Design System</strong>
+          </span>
+        </a>
+
+        <nav class="primary-nav" aria-label="Primary">
+          <div id="primary-nav-links" class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link" href="/design-system/foundations">Foundations</a>
+            <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
+            <a class="nav-link" href="/design-system/patterns">Patterns</a>
+            <a class="nav-link" href="/design-system/templates">Templates</a>
+            <a class="nav-link" href="/design-system/resources">Resources</a>
+          </div>
+          <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+            <button
+              id="primary-nav-overflow-button"
+              class="nav-link primary-nav-overflow-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="primary-nav-overflow-menu"
+            >
+              More
+            </button>
+            <div
+              id="primary-nav-overflow-menu"
+              class="primary-nav-overflow-menu hidden"
+              role="menu"
+              aria-labelledby="primary-nav-overflow-button"
+            ></div>
+          </div>
+        </nav>
+
+        <button
+          id="mobile-nav-button"
+          class="mobile-nav-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="mobile-nav-menu"
+          aria-label="Open navigation menu"
+        >
+          <span class="burger-icon" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="nav-utilities">
+          <button
+            id="profile-menu-button"
+            class="profile-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="profile-menu"
+          >
+            <span class="profile-avatar" aria-hidden="true">DS</span>
+            <span class="profile-meta">
+              <strong>Components</strong>
+            </span>
+          </button>
+
+          <div
+            id="profile-menu"
+            class="profile-menu hidden"
+            role="menu"
+            aria-labelledby="profile-menu-button"
+          >
+            <button
+              id="profile-language-button"
+              class="menu-item menu-item-button"
+              type="button"
+              role="menuitem"
+            >
+              Language
+            </button>
+            <button id="close-profile-menu" class="menu-item menu-item-button" type="button" role="menuitem">
+              Close menu
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <nav id="mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile primary">
+        <a class="nav-link" href="/design-system">Overview</a>
+        <a class="nav-link" href="/design-system/foundations">Foundations</a>
+        <a class="nav-link active" href="/design-system/components" aria-current="page">Components</a>
+        <a class="nav-link" href="/design-system/patterns">Patterns</a>
+        <a class="nav-link" href="/design-system/templates">Templates</a>
+        <a class="nav-link" href="/design-system/resources">Resources</a>
+        <div class="mobile-profile-group">
+          <button
+            id="mobile-profile-button"
+            class="mobile-profile-item"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-profile-menu"
+          >
+            Components
+          </button>
+          <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
+            <a class="mobile-subnav-link" href="/design-system/canonicals">Canonical Index</a>
+            <a class="mobile-subnav-link" href="/design-system/exploration/sub-nav">Sub-Nav Exploration</a>
+            <button id="mobile-language-button" class="mobile-subnav-link mobile-subnav-button" type="button">
+              Language
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div
+        id="language-modal"
+        class="language-modal hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="language-modal-title"
+      >
+        <div id="language-modal-backdrop" class="language-modal-backdrop"></div>
+        <div class="language-modal-panel">
+          <div class="language-modal-header">
+            <div>
+              <p class="language-modal-eyebrow">Profile Preference</p>
+              <h2 id="language-modal-title">Choose your language</h2>
+              <p id="language-modal-description" class="language-modal-copy">
+                Pick one of the common languages below for this design-system prototype.
+              </p>
+            </div>
+            <button
+              id="language-modal-close"
+              class="drawer-close-button"
+              type="button"
+              aria-label="Close language selector"
+            >
+              ×
+            </button>
+          </div>
+          <div
+            id="language-option-list"
+            class="language-option-list"
+            role="listbox"
+            aria-describedby="language-modal-description"
+          ></div>
+        </div>
+      </div>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <div id="breadcrumb-compact" class="breadcrumb-compact hidden">
+            <button
+              id="breadcrumb-compact-button"
+              class="breadcrumb-collapse-button breadcrumb-compact-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="breadcrumb-compact-menu"
+              aria-label="Open page structure menu"
+            >
+              <span class="breadcrumb-compact-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M6 4.5a1.5 1.5 0 1 1 0 3H5v3h5.5a1.5 1.5 0 1 1 0 3H5v5h3.5a1.5 1.5 0 1 1 0 3H3.5a1.5 1.5 0 0 1-1.5-1.5V6A1.5 1.5 0 0 1 3.5 4.5zm11 0a4 4 0 0 1 0 8h-2v-3h2a1 1 0 1 0 0-2h-2v-3zm-2 9h3a4 4 0 1 1 0 8h-3v-3h3a1 1 0 1 0 0-2h-3z" />
+                </svg>
+              </span>
+            </button>
+            <div
+              id="breadcrumb-compact-menu"
+              class="breadcrumb-collapse-menu hidden"
+              role="menu"
+              aria-labelledby="breadcrumb-compact-button"
+            >
+              <span class="menu-item breadcrumb-structure-current" aria-current="page">Home</span>
+            </div>
+          </div>
+          <ol id="breadcrumb-list" class="breadcrumb-list">
+            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system/components">Home</a></li>
+            <li id="breadcrumb-separator-before-collapsed" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-collapsed-item" class="breadcrumb-collapsed hidden">
+              <button
+                id="breadcrumb-collapse-button"
+                class="breadcrumb-collapse-button"
+                type="button"
+                aria-expanded="false"
+                aria-controls="breadcrumb-collapse-menu"
+                aria-label="Open collapsed breadcrumb menu"
+              >
+                ...
+              </button>
+              <div
+                id="breadcrumb-collapse-menu"
+                class="breadcrumb-collapse-menu hidden"
+                role="menu"
+                aria-labelledby="breadcrumb-collapse-button"
+              ></div>
+            </li>
+            <li id="breadcrumb-separator-before-page-minus-one" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-page-minus-one-item" class="hidden"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="#"></a></li>
+            <li id="breadcrumb-separator-before-current" class="hidden"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-current-item" class="hidden"><span id="breadcrumb-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">Home</span></li>
+          </ol>
+        </nav>
+
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input
+              id="design-system-search"
+              class="search-input"
+              type="search"
+              name="q"
+              placeholder="Search components, patterns, or canonicals"
+            />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Design-system section navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/components" data-tooltip="Components" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 3.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0z" />
+              </svg>
+            </span>
+            <span class="context-nav-label">Components</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main">
+        <section class="component-catalog-section" aria-labelledby="component-seams-title">
+          <div class="component-catalog-section-header">
+            <p class="top-nav-preview-eyebrow">Component Seams</p>
+            <h1 id="component-seams-title" class="component-catalog-section-title">Reusable Component Artifacts</h1>
+            <p class="component-catalog-meta">
+              These are the shared interface pieces people use to move around the app and find what they need.
+            </p>
+          </div>
+
+          <div class="component-catalog-grid">
+            <a class="component-catalog-card" href="/design-system/canonicals/top-nav">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Component</p>
+                <h2 class="component-catalog-card-title">TopNavShell</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The main header people use to move between the app's top-level areas, open navigation on mobile, and reach account actions.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/canonicals/sub-nav#sub-nav-family">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Component</p>
+                <h2 class="component-catalog-card-title">SubNavRow</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The secondary row people use to understand where they are and quickly search within the current area.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/canonicals/list-record-card">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Component</p>
+                <h2 class="component-catalog-card-title">ListRecordCard</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The selectable summary-card seam extracted from `List Page`, with dedicated canonicals for full-width, half-page, and mobile review.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/canonicals/list-detail-panel">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Component</p>
+                <h2 class="component-catalog-card-title">ListDetailPanel</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The open detail-surface seam extracted from `List Page`, with dedicated canonicals for boundary, long-content, local-error, and narrow-panel review.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/canonicals/list-detail-split-layout">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Component</p>
+                <h2 class="component-catalog-card-title">ListDetailSplitLayout</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The master-detail lane seam extracted from `List Page`, with dedicated canonicals for desktop open/closed rhythm, mobile overlay posture, RTL mirroring, and split-lane pressure review.
+              </p>
+            </a>
+
+            <a class="component-catalog-card" href="/design-system/canonicals/icon-grid">
+              <div class="component-catalog-card-header">
+                <p class="top-nav-preview-eyebrow">Component</p>
+                <h2 class="component-catalog-card-title">IconGrid</h2>
+              </div>
+              <p class="component-catalog-card-copy">
+                The searchable icon-picker seam extracted from `Form Template`, with dedicated canonicals for full-catalog review, filtering, selection sync, RTL, and compact stress states.
+              </p>
+            </a>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

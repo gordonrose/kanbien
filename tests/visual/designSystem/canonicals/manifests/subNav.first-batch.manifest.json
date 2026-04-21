@@ -1,0 +1,56 @@
+{
+  "family": "sub-nav",
+  "surface": "/design-system/components/sub-nav",
+  "canonicalLauncher": "/design-system/canonicals/sub-nav",
+  "batch": "first-evidence-batch",
+  "states": [
+    {
+      "refId": "SNR-001",
+      "label": "desktop default row",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-001",
+      "snapshot": "snr-001-desktop-default-row.png"
+    },
+    {
+      "refId": "SNR-003",
+      "label": "desktop active search",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=active&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-003",
+      "snapshot": "snr-003-desktop-active-search.png"
+    },
+    {
+      "refId": "SNR-004",
+      "label": "mobile fallback row",
+      "route": "/design-system/components/sub-nav?width=560&state=mobile&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-004",
+      "snapshot": "snr-004-mobile-fallback-row.png"
+    },
+    {
+      "refId": "SNR-005",
+      "label": "rtl full row",
+      "route": "/design-system/components/sub-nav?width=1920&state=full&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl&accent=%23635bff&ref=SNR-005",
+      "snapshot": "snr-005-rtl-full-row.png"
+    },
+    {
+      "refId": "SNR-008",
+      "label": "rtl reduced row",
+      "route": "/design-system/components/sub-nav?width=1120&state=reduced-page-minus-one&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl&accent=%23635bff&ref=SNR-008",
+      "snapshot": "snr-008-rtl-reduced-row.png"
+    },
+    {
+      "refId": "BCR-005",
+      "label": "compact breadcrumb signpost",
+      "route": "/design-system/components/sub-nav?width=640&state=compact&search=inactive&theme=normal&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=BCR-005",
+      "snapshot": "bcr-005-compact-signpost.png"
+    },
+    {
+      "refId": "BCR-011",
+      "label": "ltr truncated breadcrumb labels with tooltip",
+      "route": "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=normal&dir=ltr&zoom=0&locale=long-latin-truncation&accent=%23635bff&ref=BCR-011",
+      "snapshot": "bcr-011-ltr-truncation-tooltip.png"
+    },
+    {
+      "refId": "BCR-012",
+      "label": "rtl truncated breadcrumb labels with tooltip",
+      "route": "/design-system/components/sub-nav?width=1920&state=full&search=inactive&theme=normal&dir=rtl&zoom=0&locale=rtl-long-truncation&accent=%23635bff&ref=BCR-012",
+      "snapshot": "bcr-012-rtl-truncation-tooltip.png"
+    }
+  ]
+}

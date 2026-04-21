@@ -1,0 +1,213 @@
+{
+  "info": {
+    "_postman_id": "f0a22916-b3e2-4898-8e8a-537af530c9da",
+    "name": "Kanbien Tenant Auth",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the shared tenantAuth feature. It assumes you already have either a raw tenant-admin verification token from the onboarding email or a fresh onboarding result from the protected tenant-admin onboarding-restart route, then exercises verification redemption, initial password setup, password login, remediation-state reads and password remediation when required, current-session read, tenant-context listing, explicit tenant selection, and logout. Successful tenant login writes shared tenant auth state into the active Postman environment so other collections can reuse it."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "verificationToken", "value": "replace-with-raw-verification-token-from-email-link" },
+    { "key": "bootstrapToken", "value": "replace-after-verification-redemption" },
+    { "key": "loginEmail", "value": "gordon.m.rose@gmail.com" },
+    { "key": "newPassword", "value": "@Password1!" },
+    { "key": "repeatPassword", "value": "@Password1!" },
+    { "key": "tenantSessionId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "selectedTenantId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "remediationPassword", "value": "@Password12!LongEnoughA" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "health"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Admin Verification - Redeem And Provision Auth",
+      "description": "Consumes a raw tenant-admin verification token, verifies the tenant admin, provisions or reuses the tenant-auth principal, and stores the returned password-setup bootstrap token when password setup is still required.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"token\": \"{{verificationToken}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-admin-verification/redeem",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-admin-verification", "redeem"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.tenantAuthOnboarding && json.tenantAuthOnboarding.bootstrapToken) pm.collectionVariables.set(\"bootstrapToken\", json.tenantAuthOnboarding.bootstrapToken);",
+              "if (json.tenantAuthOnboarding && json.tenantAuthOnboarding.loginEmail) pm.collectionVariables.set(\"loginEmail\", json.tenantAuthOnboarding.loginEmail);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenant Auth - Set Initial Password",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"bootstrapToken\": \"{{bootstrapToken}}\",\n  \"newPassword\": \"{{newPassword}}\",\n  \"repeatPassword\": \"{{repeatPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/password/setup",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "password", "setup"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Auth - Login Password",
+      "description": "Logs in with email and password. On success it stores the tenant session ID and, when single-tenant, the active tenant ID. When remediation is required the session remains authenticated but blocked until password remediation succeeds.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{loginEmail}}\",\n  \"password\": \"{{newPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/login/password",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "login", "password"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.sessionId) pm.environment.unset(\"tenantSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"tenantSessionId\", json.sessionId);",
+              "if (json.activeTenantContext && json.activeTenantContext.tenantId) pm.environment.set(\"selectedTenantId\", json.activeTenantContext.tenantId);",
+              "if (json.activeTenantContext && json.activeTenantContext.tenantId) pm.environment.set(\"tenantId\", json.activeTenantContext.tenantId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenant Auth - Get Remediation State",
+      "description": "Reads the current remediation workflow state. This requires a current tenant to already be selected when remediation is active.",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{tenantSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/remediation",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "remediation"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Auth - Complete Password Remediation",
+      "description": "Submits a new password that satisfies the current effective tenant policy and clears the remediation gate on the authenticated tenant session.",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{tenantSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"newPassword\": \"{{remediationPassword}}\",\n  \"repeatPassword\": \"{{remediationPassword}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/remediation/password",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "remediation", "password"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Auth - Get Session",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{tenantSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/session",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "session"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Auth - List Tenant Contexts",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{tenantSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/tenant-contexts",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "tenant-contexts"]
+        }
+      }
+    },
+    {
+      "name": "Tenant Auth - Select Tenant",
+      "description": "Only needed when login returned AUTHENTICATED_SELECTION_REQUIRED.",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{tenantSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tenantId\": \"{{selectedTenantId}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/tenant-selection",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "tenant-selection"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.activeTenantContext && json.activeTenantContext.tenantId) pm.environment.set(\"selectedTenantId\", json.activeTenantContext.tenantId);",
+              "if (json.activeTenantContext && json.activeTenantContext.tenantId) pm.environment.set(\"tenantId\", json.activeTenantContext.tenantId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tenant Auth - Logout",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{tenantSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/tenant-auth/logout",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "tenant-auth", "logout"]
+        }
+      }
+    }
+  ]
+}
