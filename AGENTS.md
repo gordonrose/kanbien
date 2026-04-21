@@ -460,6 +460,31 @@ When adding a new feature that depends on existing entities or tables:
 - do not assume a feature seam is safe just because the folder structure is
   correct; verify the persistence seam against the real tables it depends on
 
+## Git Hygiene And Branching
+
+Default to a branch-per-task workflow for material repo changes.
+
+Defaults:
+
+- for non-trivial code, test, docs, migration, or artifact changes, create a
+  dedicated task branch before editing when practical
+- use a short branch name derived from the task, preferably
+  `codex/<scope>-<slug>`
+- read-only investigation, tiny local inspection, or trivial one-line edits do
+  not require a new branch by default
+- if the current branch is already a clean, dedicated branch for the scoped
+  task, continue on it rather than creating another branch
+- if the worktree already contains unrelated changes, do not silently create a
+  new branch and pile new work on top; pause, surface the state, and ask how to
+  proceed when separation is non-obvious
+- do not auto-commit immediately after implementation just because the task is
+  technically working
+- wait for explicit user approval such as "looks good", "commit this", or
+  equivalent before creating commits
+- when approved to commit, prefer one or more scoped commits rather than one
+  large mixed commit
+- do not push by default after committing unless the user asks for a push or PR
+
 ## Escalate Before Changing
 
 Pause and surface the trade-offs before changing:
@@ -530,6 +555,9 @@ Use repo-local skills when the task clearly matches one of these workflows:
   `api-contract-maintainer`
 - build-ready implementation blueprint maintenance:
   `implementation-blueprint-maintainer`
+- branch-per-task workflow setup, worktree hygiene rules, or approval-gated
+  commit/push workflow maintenance:
+  `branch-and-commit-governor`
 - rebuild-readiness or bootstrap/helper documentation maintenance:
   `rebuild-readiness-maintainer`
 - materially AI-assisted review-note creation:
