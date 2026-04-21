@@ -46,7 +46,7 @@
   `src/frontend/designSystem/components/list-detail-panel.html`
   `src/frontend/designSystem/canonicals/list-detail-panel/index.html`
   `src/frontend/designSystem/assets/listDetailPanelCanonical.mjs`
-  `tests/visual/designSystem/listDetailPanel.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listDetailPanel.spec.ts`
 - Implementation updated:
   yes
 - Known source-level risks:
@@ -78,7 +78,7 @@
 - Alignment or shared-gutter checks:
   source-inspected only
 - Screenshot or rendered evidence reference:
-  `tests/visual/designSystem/listDetailPanel.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listDetailPanel.spec.ts`
   `docs/workspace/issue-reconciliations/2026-04-17-list-detail-panel-half-page-scroll-flicker.md`
 
 ## Accessibility Verification

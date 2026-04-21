@@ -126,8 +126,8 @@ capture or parity comparison.
 - Screenshots should use the ref ID in the filename
 - Machine-readable manifests should be family-scoped
 - Example:
-  - `tests/visual/designSystem/topNav.canonical.manifest.json`
-  - `tests/visual/__snapshots__/designSystem/topNav.spec.ts/trp-001-desktop-default.png`
+  - `tests/visual/designSystem/canonicals/manifests/topNav.canonical.manifest.json`
+  - `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/trp-001-desktop-default.png`
 
 ## Preview Route Contract
 

@@ -40,7 +40,7 @@ instead of by a stable expanded-header measurement.
 - The scroll trigger now uses hysteresis:
   - it enters the condensed state after a deeper scroll threshold
   - it exits only when the user returns much closer to the top
-- `tests/visual/designSystem/listDetailPanel.spec.ts` now includes a dedicated
+- `tests/visual/designSystem/canonicals/data-display/listDetailPanel.spec.ts` now includes a dedicated
   regression that scrolls `LDP-005` through multiple positions and asserts the
   header compaction state does not bounce back and forth.
 

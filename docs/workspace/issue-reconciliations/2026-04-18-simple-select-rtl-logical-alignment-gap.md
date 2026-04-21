@@ -40,7 +40,7 @@ but it did not prove:
 - applied the same logical alignment correction to the related
   `form-drawer-select` trigger, selected-chip, and option surfaces so the same
   RTL bias does not remain in the adjacent heavier seam
-- extended `tests/visual/designSystem/simpleSelectCanonical.spec.ts` so
+- extended `tests/visual/designSystem/canonicals/forms/simpleSelectCanonical.spec.ts` so
   `SSR-005` now asserts the computed text alignment for the trigger and first
   option under RTL
 

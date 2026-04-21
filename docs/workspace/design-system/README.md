@@ -15,6 +15,9 @@ architecture docs too early.
   enduring visual and interaction rules
 - `patterns/`
   reusable anatomy, state, and composition definitions
+- `templates/`
+  reusable page-shape notes for governed list, content, table, builder, and
+  other repeatable app surfaces
 - token candidacy reviews
   use the template to decide which visual decisions become semantic tokens and
   which intentionally stay local
@@ -64,6 +67,8 @@ architecture, not as page-local convenience.
 
 - `/design-system/components` is the catalog for reusable component seams
 - `/design-system/patterns` is the catalog for governed pattern families
+- `/design-system/templates` is the catalog for governed page templates and
+  reusable page-shape contracts
 - `/design-system/canonicals/<family>` should be framed under the public parent
   category that owns that family today
 - if a family is currently treated as a pattern in the public IA, its canonical
@@ -104,20 +109,49 @@ source-only guesses.
 Current authored examples now include:
 
 - `behavior-locks/top-nav-behavior-lock.md`
+- `behavior-locks/list-page-behavior-lock.md`
+- `behavior-locks/form-template-behavior-lock.md`
+- `behavior-locks/time-picker-behavior-lock.md`
+- `behavior-locks/list-record-card-behavior-lock.md`
+- `behavior-locks/list-detail-panel-behavior-lock.md`
+- `behavior-locks/list-detail-split-layout-behavior-lock.md`
 - `behavior-locks/sub-nav-row-behavior-lock.md`
 - `behavior-locks/context-nav-behavior-lock.md`
 - `patterns/navigation-shell-pattern.md`
+- `patterns/list-record-card-pattern.md`
+- `patterns/list-detail-panel-pattern.md`
+- `patterns/list-detail-split-layout-pattern.md`
 - `patterns/sub-nav-row-pattern.md`
 - `patterns/breadcrumb-pattern.md`
 - `patterns/search-shell-pattern.md`
 - `patterns/context-nav-pattern.md`
+- `components/list-record-card-component.md`
+- `components/list-detail-panel-component.md`
+- `components/list-detail-split-layout-component.md`
 - `components/top-nav-shell-component.md`
 - `components/sub-nav-row-component.md`
+- `templates/list-page-template.md`
+- `templates/launcher-template.md`
+- `templates/canonical-render-page-template.md`
+- `templates/form-template.md`
 - `verification/top-nav-verification-checklist.md`
+- `verification/list-record-card-verification-checklist.md`
+- `verification/form-template-verification-checklist.md`
+- `verification/time-picker-verification-checklist.md`
+- `verification/list-detail-panel-verification-checklist.md`
+- `verification/list-detail-split-layout-verification-checklist.md`
 - `verification/sub-nav-row-verification-checklist.md`
 - `verification/breadcrumb-verification-checklist.md`
 - `verification/search-shell-verification-checklist.md`
 - `verification/context-nav-verification-checklist.md`
+- `reference-packs/list-page-reference-pack.md`
+- `reference-packs/form-template-reference-pack.md`
+- `reference-packs/time-picker-reference-pack.md`
+- `reference-packs/list-record-card-reference-pack.md`
+- `reference-packs/list-detail-panel-reference-pack.md`
+- `reference-packs/list-detail-split-layout-reference-pack.md`
+- `canonicals/time-picker/index.html`
+- `token-reviews/list-record-card-token-candidacy-review.md`
 - `token-reviews/context-nav-token-candidacy-review.md`
 - `adoption/root-admin-shell-context-nav-adoption-contract.md`
 

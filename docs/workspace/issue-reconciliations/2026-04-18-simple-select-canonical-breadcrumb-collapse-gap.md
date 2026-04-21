@@ -43,7 +43,7 @@ The gap was:
 - fixed the shared `full-trail` preservation branch so it only reveals the
   collapsed breadcrumb segment when that segment is actually allowed for the
   current chain
-- extended `tests/visual/designSystem/canonicalShell.spec.ts` so the
+- extended `tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts` so the
   `Simple Select` launcher and dedicated render route explicitly assert that
   the collapsed breadcrumb item and its separator remain hidden
 

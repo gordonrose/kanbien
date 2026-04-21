@@ -32,7 +32,7 @@ logic and styles.
 - moved the interactive demo logic into
   `src/frontend/designSystem/assets/hierarchyTree.mjs`
 - updated the pattern page to load those assets through same-origin URLs
-- added `tests/visual/designSystem/hierarchyTree.spec.ts` to assert the page
+- added `tests/visual/designSystem/canonicals/data-display/hierarchyTree.spec.ts` to assert the page
   mounts, renders rows, and finishes without console or page errors
 
 ## Follow-Up

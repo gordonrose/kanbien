@@ -29,7 +29,7 @@ inline alignment context and left the two buttons slightly offset.
 
 - The split-layout preview footer now matches the shared detail-panel footer
   structure by restoring the nav-anchor wrapper around `Next`.
-- `tests/visual/designSystem/listDetailSplitLayout.spec.ts` now includes a
+- `tests/visual/designSystem/canonicals/data-display/listDetailSplitLayout.spec.ts` now includes a
   geometry regression that compares the `Previous` and `Next` button edges and
   fails if they drift out of vertical alignment.
 

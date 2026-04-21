@@ -46,7 +46,7 @@
   `src/frontend/designSystem/components/list-detail-split-layout.html`
   `src/frontend/designSystem/canonicals/list-detail-split-layout/index.html`
   `src/frontend/designSystem/assets/listDetailSplitLayoutCanonical.mjs`
-  `tests/visual/designSystem/listDetailSplitLayout.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listDetailSplitLayout.spec.ts`
 - Implementation updated:
   yes
 - Known source-level risks:
@@ -78,7 +78,7 @@
 - Alignment or shared-gutter checks:
   desktop and RTL lane placement reviewed directly
 - Screenshot or rendered evidence reference:
-  `tests/visual/designSystem/listDetailSplitLayout.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listDetailSplitLayout.spec.ts`
 
 ## Accessibility Verification
 

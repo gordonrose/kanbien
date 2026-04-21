@@ -66,7 +66,7 @@
 - Screenshot or rendered evidence reference:
   human sign-off completed through `/design-system/canonicals/context-nav`; the
   executable geometry and interaction checks live in
-  `tests/visual/designSystem/contextNavCanonicalFrame.spec.ts`
+  `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts`
   and the cross-family isolation posture is tracked in
   `docs/workspace/design-system/verification/canonical-host-surface-isolation-audit.md`
 

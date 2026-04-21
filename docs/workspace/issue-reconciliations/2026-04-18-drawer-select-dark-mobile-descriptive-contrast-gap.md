@@ -23,5 +23,5 @@ without a human-visible foreground-color guard on its helper copy.
 - shared dark-theme foreground override for descriptive selected and active
   helper copy on bright accent surfaces
 - new executable regression in
-  `tests/visual/designSystem/drawerSelectCanonical.spec.ts` for `DSR-026`
+  `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts` for `DSR-026`
 

@@ -62,7 +62,7 @@ ownership rather than a missing hover test on one fixed state.
   live rendered node instead of requiring already-correct `data-tooltip` state
 - removed the CSP-violating inline width from
   `src/frontend/designSystem/components/sub-nav.html`
-- added regressions in `tests/visual/designSystem/subNav.spec.ts` that verify:
+- added regressions in `tests/visual/designSystem/canonicals/navigation/subNav.spec.ts` that verify:
   - `SNR-001` preserves the canonical render width instead of silently
     shrinking
   - a locally pressured full row collapses instead of leaving crushed

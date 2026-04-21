@@ -60,9 +60,9 @@ child canonical routes.
 - added breadcrumb registry coverage for:
   - `/design-system/canonicals/date-picker`
   - `/design-system/components/date-picker`
-- strengthened `tests/visual/designSystem/datePickerCanonical.spec.ts` so it
+- strengthened `tests/visual/designSystem/canonicals/forms/datePickerCanonical.spec.ts` so it
   asserts launcher links target the dedicated render surface
-- extended `tests/visual/designSystem/canonicalShell.spec.ts` to cover both the
+- extended `tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts` to cover both the
   `Date Picker` launcher and render routes
 - synced the `Date Picker` reference-pack and verification checklist to the
   dedicated render surface
@@ -83,7 +83,7 @@ own.
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/datePickerCanonical.spec.ts tests/visual/designSystem/datePicker.spec.ts tests/visual/designSystem/formTemplate.spec.ts tests/visual/designSystem/canonicalShell.spec.ts`
+- `npx playwright test tests/visual/designSystem/canonicals/forms/datePickerCanonical.spec.ts tests/visual/designSystem/canonicals/forms/datePicker.spec.ts tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts`
 
 ## Resolution Status
 

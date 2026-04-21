@@ -98,6 +98,8 @@ npm run test:persistence:reset
 - The current persistence suite includes `rootAuth` storage proofs,
   `rootUsers` repository/storage proofs, `tenantAuth` storage/session proofs,
   and platform-security durability proofs.
+- It now also includes `entityBuilder` storage proofs for version replacement
+  and current-version historical honesty.
 - It also includes persistence-backed audit checks where we need to verify that
   durable audit rows do not store sensitive raw secrets.
 - During `npm test`, the fast in-memory suite still runs first and the

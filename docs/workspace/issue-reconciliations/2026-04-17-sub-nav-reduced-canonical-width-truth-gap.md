@@ -20,7 +20,7 @@ The issue was not that the breadcrumb collapse algorithm was failing. The issue 
 
 ## Prevention Added
 
-- Added an explicit executable assertion in `tests/visual/designSystem/subNav.spec.ts` that `BCR-003` must remain in the reduced breadcrumb state instead of compact mode.
+- Added an explicit executable assertion in `tests/visual/designSystem/canonicals/navigation/subNav.spec.ts` that `BCR-003` must remain in the reduced breadcrumb state instead of compact mode.
 - Re-measured the scenario and promoted the affected canonical width from `760` to `1160`, which is the first honest width where the approved state exists.
 - Synced the canonical launcher routes, manifest routes, and reference-pack URLs to the corrected width.
 

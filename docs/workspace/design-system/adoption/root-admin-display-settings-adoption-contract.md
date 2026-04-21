@@ -97,7 +97,7 @@
   utility action siblings
 - Required parity evidence:
   `CNR-007`, `CDR-*` drawer-shell states, `DSR-*` payload states, and
-  `tests/visual/rootAdminShell/rootAdminShellSubNav.spec.ts`
+  `tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts`
 
 ## Adoption Boundary
 
@@ -119,7 +119,7 @@
   grammar, `Escape`, focus return, theme control behavior, and magnification
   control behavior against the signed-off `CDR-*` and `DSR-*` states
 - Required executable tests:
-  `tests/visual/rootAdminShell/rootAdminShellSubNav.spec.ts`
+  `tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts`
 - Required manual sign-off steps:
   review root-admin desktop, mobile, and RTL parity against the signed-off
   drawer-shell and payload canonicals before treating the app consumer as

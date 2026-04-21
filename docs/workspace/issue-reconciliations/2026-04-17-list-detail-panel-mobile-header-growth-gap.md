@@ -37,7 +37,7 @@ subtitle and the action row.
   canonical preview.
 - The mobile preview header gap is tightened directly through a smaller
   explicit header gap and a reset `margin-inline-start` on the controls block.
-- `tests/visual/designSystem/listDetailPanel.spec.ts` now includes a dedicated
+- `tests/visual/designSystem/canonicals/data-display/listDetailPanel.spec.ts` now includes a dedicated
   regression check that asserts:
   - the mobile preview copy block no longer grows vertically
   - the gap between the subtitle and the controls row stays compact

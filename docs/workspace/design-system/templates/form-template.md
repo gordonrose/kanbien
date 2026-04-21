@@ -80,11 +80,17 @@
    This seam is now a signed-off child family with its own canonical launcher,
    dedicated child render surface, and locked quick-pick, close, focus-return,
    nested-overlap, mobile, and RTL stress behavior.
-4. `Drawer Select`
+4. `Icon Grid`
+   This seam stays smaller than drawer-select but broader than simple-select:
+   a single trigger opens a compact searchable modal that exposes the approved
+   design-system icon library and returns one governed icon choice to the
+   parent field shell. It now also has a dedicated child render route and
+   canonical launcher.
+5. `Drawer Select`
    This remains a larger separate seam because the repeated selection drawer
    chassis carries search, selected-stack, and broader overlay behavior that
    should not be folded into simple select or date-picker.
-5. `Choice Group`
+6. `Choice Group`
    This seam now has an exploratory child artifact chain, but it remains
    deferred from child canonical extraction until grouped-choice behavior is
    proven beyond this one parent route or gains stronger child-owned proof.
@@ -135,6 +141,16 @@
   close behavior, seam-owned focus return, nested overlap inside
   `date range with time`, mobile open-panel posture, and RTL mirrored
   alignment for its child-owned surfaces.
+- `Icon Grid`
+  `docs/workspace/design-system/behavior-locks/icon-grid-behavior-lock.md`
+  `docs/workspace/design-system/reference-packs/icon-grid-reference-pack.md`
+  `docs/workspace/design-system/verification/icon-grid-verification-checklist.md`
+  This child seam now owns the compact searchable modal, icon-grid option
+  rendering, single-selection summary, and reuse of the approved shared
+  design-system icon library while inheriting parent field framing from
+  `form-template`; its direct child review surfaces now live at
+  `/design-system/canonicals/icon-grid` and
+  `/design-system/components/icon-grid`.
 - `Choice Group`
   `docs/workspace/design-system/behavior-locks/choice-group-behavior-lock.md`
   `docs/workspace/design-system/reference-packs/choice-group-reference-pack.md`
@@ -158,11 +174,11 @@
 - Parent interaction controller:
   `src/frontend/designSystem/assets/app.mjs`
 - Parent regression coverage:
-  `tests/visual/designSystem/formTemplate.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
 - Current composition note:
   the parent route currently proves grouped text fields, select-like controls,
   date and time pickers, drawer-based multi-select variants, choice groups,
-  toggle posture, and self-contained form guidance inside one reusable
+  toggle posture, icon-grid selection, and self-contained form guidance inside one reusable
   form-page canvas
 
 ## Fallback Posture

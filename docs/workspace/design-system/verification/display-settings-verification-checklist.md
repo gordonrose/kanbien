@@ -64,7 +64,7 @@
   starting reference
 - Screenshot or rendered evidence reference:
   executable browser checks now live in
-  `tests/visual/designSystem/contextNavCanonicalFrame.spec.ts` for the
+  `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts` for the
   `DSR-*` states
 
 ## Accessibility Verification

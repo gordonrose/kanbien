@@ -55,14 +55,14 @@ that hands focus to another interactive target.
 
 ## Added Prevention
 
-- added `tests/visual/designSystem/formTemplate.spec.ts`
+- added `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
 - new regression:
   `clicking a form field while display settings is open preserves focus on that field`
 
 ## Verification
 
 - intended focused check:
-  `npx playwright test tests/visual/designSystem/formTemplate.spec.ts --workers=1`
+  `npx playwright test tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts --workers=1`
 
 ## Residual Risk
 

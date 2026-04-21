@@ -1,0 +1,342 @@
+{
+  "info": {
+    "_postman_id": "5b5074a5-8f02-4f54-b6be-b8f98b7f3503",
+    "name": "Kanbien Web App Hierarchy Builder",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the protected webAppHierarchyBuilder feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises module create, page create, design-system proposal/preview/apply flows, tree read, planner-node read, orphan read, page move, explicit-input bootstrap, structure-aware preview/apply/link-status flows, and the chained discovery-backed compatibility sync."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "signerUrl", "value": "http://127.0.0.1:8787" },
+    { "key": "email", "value": "elvis.presley@example.com" },
+    { "key": "password", "value": "Test1234!" },
+    { "key": "rootSessionId", "value": "sess_replace_me" },
+    { "key": "challengeId", "value": "chal_replace_me" },
+    { "key": "challengeText", "value": "challenge_text_replace_me" },
+    { "key": "publicKeyFingerprint", "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY" },
+    { "key": "sshSignature", "value": "base64_signature_over_challenge_text" },
+    { "key": "sshSignatureJson", "value": "base64_signature_over_challenge_text" },
+    { "key": "rootFamilyId", "value": "root-admin" },
+    { "key": "moduleKey", "value": "catalog" },
+    { "key": "moduleLabel", "value": "Catalog" },
+    { "key": "webAppModuleId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "moduleLandingPageId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "pageKey", "value": "catalog-home" },
+    { "key": "pageLabel", "value": "Catalog Home" },
+    { "key": "routeSegment", "value": "catalog" },
+    { "key": "webAppPageId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "designSystemModuleId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "designSystemParentPageId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "proposalPageId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "previewHash", "value": "preview_hash_replace_me" },
+    { "key": "designSystemPageLabel", "value": "New Pattern" },
+    { "key": "designSystemRouteSegment", "value": "new-pattern" },
+    { "key": "templateKey", "value": "static-html-page" }
+  ],
+  "item": [
+    {
+      "name": "Root Auth - Login Password",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/root-auth/login/password", "host": ["{{baseUrl}}"], "path": ["v1", "root-auth", "login", "password"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
+          "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
+        ] }
+      }]
+    },
+    {
+      "name": "Root Auth - Sign Challenge",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"challengeText\": \"{{challengeText}}\"\n}" },
+        "url": { "raw": "{{signerUrl}}/sign", "host": ["{{signerUrl}}"], "path": ["sign"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.signature) pm.collectionVariables.set(\"sshSignatureJson\", JSON.stringify(json.signature).slice(1, -1));",
+          "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
+        ] }
+      }]
+    },
+    {
+      "name": "Root Auth - Login SSH",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignatureJson}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/root-auth/login/ssh", "host": ["{{baseUrl}}"], "path": ["v1", "root-auth", "login", "ssh"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
+        ] }
+      }]
+    },
+    {
+      "name": "Create Module",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"rootFamilyId\": \"{{rootFamilyId}}\",\n  \"moduleKey\": \"{{moduleKey}}\",\n  \"displayLabel\": \"{{moduleLabel}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/modules", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "modules"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.webAppModuleId) pm.environment.set(\"webAppModuleId\", json.webAppModuleId);"
+        ] }
+      }]
+    },
+    {
+      "name": "Create Page",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"rootFamilyId\": \"{{rootFamilyId}}\",\n  \"webAppModuleId\": \"{{webAppModuleId}}\",\n  \"pageKey\": \"{{pageKey}}\",\n  \"displayLabel\": \"{{pageLabel}}\",\n  \"routeSegment\": \"{{routeSegment}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/pages", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "pages"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.webAppPageId) pm.environment.set(\"webAppPageId\", json.webAppPageId);"
+        ] }
+      }]
+    },
+    {
+      "name": "Update Module Landing Page",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"landingPageWebAppPageId\": \"{{moduleLandingPageId}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/modules/{{webAppModuleId}}/landing-page", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "modules", "{{webAppModuleId}}", "landing-page"] }
+      }
+    },
+    {
+      "name": "Get Tree",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/tree?includeInactive=false&includeOrphaned=true", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "tree"], "query": [
+          { "key": "includeInactive", "value": "false" },
+          { "key": "includeOrphaned", "value": "true" }
+        ] }
+      }
+    },
+    {
+      "name": "Create Design-System Page Proposal",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"webAppModuleId\": \"{{designSystemModuleId}}\",\n  \"displayLabel\": \"{{designSystemPageLabel}}\",\n  \"routeSegment\": \"{{designSystemRouteSegment}}\",\n  \"templateKey\": \"{{templateKey}}\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/design-system/pages", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "design-system", "pages"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.proposalPage?.webAppPageId) pm.environment.set(\"proposalPageId\", json.proposalPage.webAppPageId);"
+        ] }
+      }]
+    },
+    {
+      "name": "Create Design-System Subpage Proposal",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"parentPageId\": \"{{designSystemParentPageId}}\",\n  \"displayLabel\": \"{{designSystemPageLabel}}\",\n  \"routeSegment\": \"{{designSystemRouteSegment}}\",\n  \"templateKey\": \"{{templateKey}}\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/design-system/subpages", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "design-system", "subpages"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.proposalPage?.webAppPageId) pm.environment.set(\"proposalPageId\", json.proposalPage.webAppPageId);"
+        ] }
+      }]
+    },
+    {
+      "name": "Preview Design-System Materialization",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"proposalPageIds\": [\"{{proposalPageId}}\"]\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/design-system/materialization/preview", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "design-system", "materialization", "preview"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.previewHash) pm.environment.set(\"previewHash\", json.previewHash);"
+        ] }
+      }]
+    },
+    {
+      "name": "Apply Design-System Materialization",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"proposalPageIds\": [\"{{proposalPageId}}\"],\n  \"previewHash\": \"{{previewHash}}\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/design-system/materialization/apply", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "design-system", "materialization", "apply"] }
+      }
+    },
+    {
+      "name": "Get Design-System Applied Tree",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/design-system/applied-tree", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "design-system", "applied-tree"] }
+      }
+    },
+    {
+      "name": "List Planner Nodes",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/planner-nodes?includeInactive=false", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "planner-nodes"], "query": [
+          { "key": "includeInactive", "value": "false" }
+        ] }
+      }
+    },
+    {
+      "name": "List Orphaned Pages",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/orphaned-pages?includeInactive=false&rootFamilyId={{rootFamilyId}}", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "orphaned-pages"], "query": [
+          { "key": "includeInactive", "value": "false" },
+          { "key": "rootFamilyId", "value": "{{rootFamilyId}}" }
+        ] }
+      }
+    },
+    {
+      "name": "Move Page To Orphaned",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\n  \"rootFamilyId\": \"{{rootFamilyId}}\",\n  \"webAppModuleId\": \"{{webAppModuleId}}\",\n  \"placementType\": \"orphaned\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/pages/{{webAppPageId}}/move", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "pages", "{{webAppPageId}}", "move"] }
+      }
+    },
+    {
+      "name": "Bootstrap Hierarchy",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"observedRootFamilies\": [\n    {\n      \"rootFamilyId\": \"root-admin\",\n      \"modules\": [\n        {\n          \"moduleKey\": \"catalog\",\n          \"displayLabel\": \"Catalog\",\n          \"pages\": [\n            {\n              \"pageKey\": \"catalog-home\",\n              \"displayLabel\": \"Catalog Home\",\n              \"routeSegment\": \"catalog\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/bootstrap", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "bootstrap"] }
+      }
+    },
+    {
+      "name": "Preview Discovery Sync",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"includeBlocked\": true,\n  \"includeStaleDiscovered\": false,\n  \"includeMetadataDrift\": true\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/discovery-sync/preview", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "discovery-sync", "preview"] }
+      }
+    },
+    {
+      "name": "Apply Discovery Sync",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"includeBlocked\": true,\n  \"includeStaleDiscovered\": false,\n  \"includeMetadataDrift\": true,\n  \"includeInactive\": false,\n  \"includeOrphaned\": false\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/discovery-sync/apply", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "discovery-sync", "apply"] }
+      }
+    },
+    {
+      "name": "List Discovery Links",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/discovery-links?page=1&pageSize=25", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "discovery-links"], "query": [
+          { "key": "page", "value": "1" },
+          { "key": "pageSize", "value": "25" }
+        ] }
+      }
+    },
+    {
+      "name": "Sync Discovery Into Hierarchy",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"includeInactive\": false,\n  \"includeOrphaned\": false\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/v1/web-app-hierarchy/sync-discovery", "host": ["{{baseUrl}}"], "path": ["v1", "web-app-hierarchy", "sync-discovery"] }
+      }
+    }
+  ]
+}

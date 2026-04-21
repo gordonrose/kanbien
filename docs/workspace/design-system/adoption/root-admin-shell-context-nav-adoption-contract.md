@@ -130,7 +130,7 @@
 - Required executable tests:
   existing `contextNavCanonicalFrame.spec.ts` remains green; root-admin
   consumer parity is now covered by
-  `tests/visual/rootAdminShell/rootAdminShellSubNav.spec.ts`, including
+  `tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts`, including
   desktop drawer launch, mobile `More` sheet launch, bottom attachment, close
   behavior, focus return, and app-scoped theme/magnification controls
 - Required manual sign-off steps:

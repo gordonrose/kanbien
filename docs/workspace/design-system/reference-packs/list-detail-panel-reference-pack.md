@@ -27,8 +27,8 @@ canonical set must preserve.
 - Related component artifact:
   `docs/workspace/design-system/components/list-detail-panel-component.md`
 - Existing executable verification:
-  `tests/visual/designSystem/listPage.spec.ts`
-  `tests/visual/designSystem/listDetailPanel.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listPage.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listDetailPanel.spec.ts`
 
 ## Signed-Off Rule Source
 

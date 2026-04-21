@@ -87,8 +87,8 @@
   parent-owned framing remains visible on the dedicated render surface and is
   intentionally hosted rather than redefined
 - Screenshot or rendered evidence reference:
-  `tests/visual/designSystem/datePicker.spec.ts`
-  `tests/visual/designSystem/datePickerCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/datePicker.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/datePickerCanonical.spec.ts`
 
 ## Accessibility Verification
 

@@ -33,10 +33,10 @@
     [src/frontend/designSystem/canonicals/top-nav/index.html](/home/gordon/kanbien/src/frontend/designSystem/canonicals/top-nav/index.html)
   - visual-governance harness additions in
     [playwright.config.ts](/home/gordon/kanbien/playwright.config.ts),
-    [tests/visual/designSystem/previewServer.ts](/home/gordon/kanbien/tests/visual/designSystem/previewServer.ts),
-    [tests/visual/designSystem/topNav.spec.ts](/home/gordon/kanbien/tests/visual/designSystem/topNav.spec.ts),
+    [tests/visual/designSystem/support/servers/previewServer.ts](/home/gordon/kanbien/tests/visual/designSystem/support/servers/previewServer.ts),
+    [tests/visual/designSystem/canonicals/navigation/topNav.spec.ts](/home/gordon/kanbien/tests/visual/designSystem/canonicals/navigation/topNav.spec.ts),
     and
-    [tests/visual/designSystem/topNav.canonical.manifest.json](/home/gordon/kanbien/tests/visual/designSystem/topNav.canonical.manifest.json)
+    [tests/visual/designSystem/canonicals/manifests/topNav.canonical.manifest.json](/home/gordon/kanbien/tests/visual/designSystem/canonicals/manifests/topNav.canonical.manifest.json)
   - documentation artifacts under
     [docs/workspace/design-system](/home/gordon/kanbien/docs/workspace/design-system)
     including the behavior lock, prevention note, verification checklist, and
@@ -90,7 +90,7 @@
   ,
   [contextNavResponsive.test.ts](/home/gordon/kanbien/tests/audit/designSystem/contextNavResponsive.test.ts)
   , and
-  [topNav.spec.ts](/home/gordon/kanbien/tests/visual/designSystem/topNav.spec.ts)
+  [topNav.spec.ts](/home/gordon/kanbien/tests/visual/designSystem/canonicals/navigation/topNav.spec.ts)
 
 ## Prompt And Data Handling
 
@@ -120,7 +120,7 @@
     seam exist in the runtime source
   - the full canonical `top-nav` state set is now stored as
     Playwright baselines under
-    `tests/visual/__snapshots__/designSystem/topNav.spec.ts/`
+    `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/`
   - the visual spec also includes guard assertions for the approved threshold
     rule and magnification pressure fallback
 

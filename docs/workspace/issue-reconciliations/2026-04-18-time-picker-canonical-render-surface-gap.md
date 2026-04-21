@@ -78,8 +78,8 @@ surface once a seam is being governed as its own family.
 - removed the temporary parent-hosted `TPR-*` state bootstrap from
   `src/frontend/designSystem/assets/app.mjs`
 - extended executable proof so the issue would have been caught:
-  - `tests/visual/designSystem/timePickerCanonical.spec.ts`
-  - `tests/visual/designSystem/canonicalShell.spec.ts`
+  - `tests/visual/designSystem/canonicals/forms/timePickerCanonical.spec.ts`
+  - `tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts`
 
 ## Coverage Lesson
 
@@ -96,7 +96,7 @@ repo's canonical architecture honestly.
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/timePickerCanonical.spec.ts tests/visual/designSystem/canonicalShell.spec.ts tests/visual/designSystem/formTemplate.spec.ts`
+- `npx playwright test tests/visual/designSystem/canonicals/forms/timePickerCanonical.spec.ts tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
 
 ## Resolution Status
 

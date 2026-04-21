@@ -35,6 +35,20 @@
 - Which parts of the pattern are mandatory for parity?
 - Which parts are intentionally deferred in this first consumer?
 
+## Governed Adoption Preflight
+
+- Exact signed-off source route or render surface:
+- Exact reference pack or canonical source:
+- Shared CSS seam:
+- Shared render seam:
+- Shared controller seam:
+- Family-owned visible regions:
+- Host-owned visible regions:
+- Approved intentional deviations before implementation:
+- Shared-entrypoint parity expectation:
+  identical to canonical / intentionally narrower / not yet decided
+- Stop condition if a required seam is missing:
+
 ## Consumer Contract
 
 - Primary destinations:
@@ -58,9 +72,12 @@
 - Must match reference pack:
 - May differ intentionally:
 - Must not drift:
+- What would count as false confidence here?
+  shared CSS / reused classes / reused child controls / happy-path tests / other
 - Required parity evidence:
 - Required real interactive parity states:
 - Required consumer-level shell-parity evidence:
+- Required human-visible regression guards:
 
 ## Adoption Boundary
 
@@ -74,6 +91,8 @@
 - Required rendered checks:
 - Required executable tests:
 - Required manual sign-off steps:
+- Required consumer-level route proof:
+- Required shared-entrypoint parity proof:
 - Known blockers or environment constraints:
 
 ## Canonical And Consumer Truth

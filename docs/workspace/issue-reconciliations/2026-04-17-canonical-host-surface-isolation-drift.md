@@ -185,19 +185,19 @@ That broader audit is now recorded at:
 
 Evidence run for this incident:
 
-- `PLAYWRIGHT_PREVIEW_PORT=4318 npx playwright test tests/visual/designSystem/contextNavCanonicalFrame.spec.ts -g "host-page scroll|CDR-001 desktop canonical|CDR-002|CDR-003"`
+- `PLAYWRIGHT_PREVIEW_PORT=4318 npx playwright test tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts -g "host-page scroll|CDR-001 desktop canonical|CDR-002|CDR-003"`
 
 That suite now proves the immediate `CDR-001` scroll-coupling regression is
 fixed on the clean updated preview server.
 
 Follow-on hardening evidence also now includes:
 
-- `npx playwright test tests/visual/designSystem/topNav.spec.ts --update-snapshots --workers=1`
-- `npx playwright test tests/visual/designSystem/subNav.spec.ts --update-snapshots --workers=1`
-- `npx playwright test tests/visual/designSystem/contextNavCanonicalFrame.spec.ts -g "host offset state|theme and magnification stay scoped|RTL direction is owned by the local render surface|CDR-001 desktop drawer stays below the rendered sub-nav after host-page scroll" --workers=1`
-- `npx playwright test tests/visual/designSystem/subNav.spec.ts -g "RTL direction is owned by the local render surface|theme and magnification stay scoped to the local render layout" --workers=1`
-- `npx playwright test tests/visual/designSystem/topNav.spec.ts -g "TRP-008 rtl desktop|TRP-009 rtl mobile|theme and magnification stay scoped|RTL direction is owned by the local render surface|dedicated canonical page" --workers=1`
-- `npx playwright test tests/visual/designSystem/topNav.spec.ts tests/visual/designSystem/subNav.spec.ts tests/visual/designSystem/contextNavCanonicalFrame.spec.ts --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/navigation/topNav.spec.ts --update-snapshots --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/navigation/subNav.spec.ts --update-snapshots --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts -g "host offset state|theme and magnification stay scoped|RTL direction is owned by the local render surface|CDR-001 desktop drawer stays below the rendered sub-nav after host-page scroll" --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/navigation/subNav.spec.ts -g "RTL direction is owned by the local render surface|theme and magnification stay scoped to the local render layout" --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/navigation/topNav.spec.ts -g "TRP-008 rtl desktop|TRP-009 rtl mobile|theme and magnification stay scoped|RTL direction is owned by the local render surface|dedicated canonical page" --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/navigation/topNav.spec.ts tests/visual/designSystem/canonicals/navigation/subNav.spec.ts tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts --workers=1`
 
 ## Resolution Status
 

@@ -36,7 +36,7 @@ quietly drifted away from the governed design-system implementation.
 
 ## Prevention Layer
 
-- `tests/visual/rootAdminShell/rootAdminShellSubNav.spec.ts` now includes a
+- `tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts` now includes a
   desktop hover tooltip assertion for the adopted `context-nav`
 - future first-consumer parity work should treat hover/runtime states as
   required evidence, not as optional follow-up polish

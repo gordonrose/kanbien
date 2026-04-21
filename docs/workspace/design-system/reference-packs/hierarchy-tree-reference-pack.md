@@ -28,7 +28,7 @@ review and later proof.
 - Related canonical render surface:
   `/design-system/patterns/hierarchy-tree/render`
 - Existing executable verification:
-  `tests/visual/designSystem/hierarchyTree.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/hierarchyTree.spec.ts`
 - Related host families:
   `docs/workspace/design-system/behavior-locks/context-nav-behavior-lock.md`
   `docs/workspace/design-system/behavior-locks/context-nav-drawer-behavior-lock.md`
@@ -88,10 +88,14 @@ Those remain governed upstream by the existing shell and drawer families.
 - The family must remain calm, drawer-hosted, and shell-attached rather than
   turning into a noisy dashboard specimen
 - Tree rows must preserve the signed-off one-line row reading model with title,
-  expander, compact state markers, and row menu
+  expander, compact state markers, row menu, and desktop-only subtle
+  open-navigation icons when valid locators exist
 - The family must preserve separate `current` and `selected` states
 - Structural editing must preserve the approved hybrid model:
   inline for light edits, menu-backed for risky or structural actions
+- Desktop hover and focus-within may reveal icon-only `Open` and `Open in new
+  tab` actions for rows with valid locators; mobile keeps those navigation
+  actions inside the row menu
 - Desktop must preserve both drag-and-drop and an equivalent non-drag move path
 - The hierarchy drawer must remain resizable on desktop and full-screen on
   mobile
@@ -204,7 +208,7 @@ rules, mirrored directionality, and accessibility-sensitive readability.
   `/design-system/patterns/hierarchy-tree`
 - the behavior lock now names the family contract directly
 - current executable proof exists in
-  `tests/visual/designSystem/hierarchyTree.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/hierarchyTree.spec.ts`
 - current executable proof is still limited to:
   - CSP-safe route mount
   - baseline row rendering

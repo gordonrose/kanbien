@@ -50,7 +50,7 @@ checks breadcrumb truth for other canonical launchers and render surfaces.
 
 - added `Simple Select` breadcrumb chains to
   `src/frontend/designSystem/assets/app.mjs`
-- extended `tests/visual/designSystem/canonicalShell.spec.ts` to cover both:
+- extended `tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts` to cover both:
   - the `Simple Select` canonical launcher
   - the `Simple Select` canonical render surface
 
@@ -68,7 +68,7 @@ registry is not safe in this repo.
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/canonicalShell.spec.ts tests/visual/designSystem/simpleSelectCanonical.spec.ts tests/visual/designSystem/simpleSelect.spec.ts`
+- `npx playwright test tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts tests/visual/designSystem/canonicals/forms/simpleSelectCanonical.spec.ts tests/visual/designSystem/canonicals/forms/simpleSelect.spec.ts`
 
 ## Resolution Status
 

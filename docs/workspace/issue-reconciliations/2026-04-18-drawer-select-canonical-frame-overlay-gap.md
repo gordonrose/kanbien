@@ -50,7 +50,7 @@ inside the renderer it was supposed to be demonstrating.
 - preserved the existing mobile-specific overlay posture while making the
   desktop canonical drawer local to the preview frame
 - added a geometry regression test to
-  `tests/visual/designSystem/drawerSelectCanonical.spec.ts` that asserts the
+  `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts` that asserts the
   open desktop drawer stays inside `#drawer-select-preview-frame`
 
 ## Prevention Lesson
@@ -62,7 +62,7 @@ framing.
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/drawerSelectCanonical.spec.ts`
+- `npx playwright test tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts`
 
 ## Resolution Status
 

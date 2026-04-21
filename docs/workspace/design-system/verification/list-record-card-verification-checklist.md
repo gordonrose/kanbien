@@ -41,7 +41,7 @@
   `src/frontend/designSystem/components/list-record-card.html`
   `src/frontend/designSystem/canonicals/list-record-card/index.html`
   `src/frontend/designSystem/assets/listRecordCardCanonical.mjs`
-  `tests/visual/designSystem/listRecordCard.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listRecordCard.spec.ts`
 - Implementation updated:
   yes
 - Known source-level risks:
@@ -73,7 +73,7 @@
 - Alignment or shared-gutter checks:
   source-inspected only
 - Screenshot or rendered evidence reference:
-  `tests/visual/designSystem/listRecordCard.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listRecordCard.spec.ts`
 
 ## Accessibility Verification
 

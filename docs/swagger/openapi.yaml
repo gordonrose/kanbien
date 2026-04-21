@@ -7,7 +7,9 @@ info:
     health route, root-user authentication, root-role authorization
     administration, the protected rootUsers feature, the protected tenants
     feature, the protected tenantAdmins feature, the protected
-    notificationDelivery feature, and the shared tenant-auth foundation.
+    notificationDelivery feature, the protected web-app-hierarchy feature,
+    the protected web-app-page-settings feature, the protected
+    web-app-surface-discovery feature, and the shared tenant-auth foundation.
 
 servers:
   - url: http://localhost:3000
@@ -21,6 +23,9 @@ tags:
   - name: Tenants
   - name: Tenant Admins
   - name: Notification Delivery
+  - name: Web App Hierarchy
+  - name: Web App Page Settings
+  - name: Web App Surface Discovery
   - name: Tenant Auth
 
 paths:
@@ -1614,6 +1619,1009 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /v1/web-app-hierarchy/modules:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Create a web-app module within one root family
+      operationId: createWebAppModule
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWebAppModuleBody"
+      responses:
+        "201":
+          description: Web-app module created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppModuleSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/modules/{webAppModuleId}:
+    patch:
+      tags:
+        - Web App Hierarchy
+      summary: Update editable web-app module metadata
+      operationId: updateWebAppModule
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WebAppModuleId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWebAppModuleBody"
+      responses:
+        "200":
+          description: Web-app module updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppModuleSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/modules/{webAppModuleId}/landing-page:
+    patch:
+      tags:
+        - Web App Hierarchy
+      summary: Set or clear the direct-child landing page for a web-app module
+      operationId: updateWebAppModuleLandingPage
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WebAppModuleId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWebAppModuleLandingPageBody"
+      responses:
+        "200":
+          description: Web-app module landing page updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppModuleSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/pages:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Create a durable web-app page node
+      operationId: createWebAppPage
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWebAppPageBody"
+      responses:
+        "201":
+          description: Web-app page created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppPageSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/design-system/pages:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Create a proposed top-level design-system page
+      operationId: createDesignSystemPageProposal
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDesignSystemPageBody"
+      responses:
+        "201":
+          description: Proposed design-system page created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemProposalCreateResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/design-system/subpages:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Create a proposed child design-system page
+      operationId: createDesignSystemSubpageProposal
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDesignSystemSubpageBody"
+      responses:
+        "201":
+          description: Proposed design-system subpage created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemProposalCreateResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/pages/{webAppPageId}:
+    patch:
+      tags:
+        - Web App Hierarchy
+      summary: Update editable web-app page metadata
+      operationId: updateWebAppPage
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WebAppPageId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWebAppPageBody"
+      responses:
+        "200":
+          description: Web-app page updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppPageSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/pages/{webAppPageId}/move:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Move or orphan a web-app page node
+      operationId: moveWebAppPage
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WebAppPageId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoveWebAppPageBody"
+      responses:
+        "200":
+          description: Web-app page moved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppPageSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/tree:
+    get:
+      tags:
+        - Web App Hierarchy
+      summary: Read the resolved web-app hierarchy tree
+      operationId: getResolvedWebAppHierarchyTree
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IncludeInactive"
+        - $ref: "#/components/parameters/IncludeOrphaned"
+      responses:
+        "200":
+          description: Resolved hierarchy tree
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppHierarchyTree"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/design-system/applied-tree:
+    get:
+      tags:
+        - Web App Hierarchy
+      summary: Read the applied-only design-system hierarchy tree
+      operationId: readAppliedDesignSystemTopologyTree
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Applied design-system hierarchy tree
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppHierarchyTree"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/design-system/materialization/preview:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Preview governed design-system repo materialization
+      operationId: previewDesignSystemMaterialization
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PreviewDesignSystemMaterializationBody"
+      responses:
+        "200":
+          description: Deterministic preview classification and planned outputs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemMaterializationPreviewResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/design-system/materialization/apply:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Apply a preview-approved design-system materialization
+      operationId: applyDesignSystemMaterialization
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplyDesignSystemMaterializationBody"
+      responses:
+        "200":
+          description: Design-system materialization applied and tree refreshed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemMaterializationApplyResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/planner-nodes:
+    get:
+      tags:
+        - Web App Hierarchy
+      summary: List planner-selectable hierarchy nodes
+      operationId: listPlannerSelectableHierarchyNodes
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IncludeInactive"
+      responses:
+        "200":
+          description: Planner-selectable hierarchy nodes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PlannerSelectableHierarchyNode"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/orphaned-pages:
+    get:
+      tags:
+        - Web App Hierarchy
+      summary: List orphaned web-app pages
+      operationId: listOrphanedWebAppPages
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/IncludeInactive"
+        - $ref: "#/components/parameters/WebAppRootFamilyIdQuery"
+      responses:
+        "200":
+          description: Orphaned web-app page summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WebAppPageSummary"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/bootstrap:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Bootstrap hierarchy truth from observed navigable pages
+      operationId: bootstrapWebAppHierarchy
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BootstrapWebAppHierarchyBody"
+      responses:
+        "200":
+          description: Bootstrapped resolved hierarchy tree
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppHierarchyTree"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/discovery-sync/preview:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Preview structure-aware discovery reconcile
+      operationId: previewStructureAwareWebAppHierarchySync
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PreviewStructureAwareWebAppHierarchySyncBody"
+      responses:
+        "200":
+          description: Structure-aware preview summary and planned items
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppHierarchyDiscoveryPreviewResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/discovery-sync/apply:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Apply structure-aware discovery reconcile
+      operationId: applyStructureAwareWebAppHierarchySync
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplyStructureAwareWebAppHierarchySyncBody"
+      responses:
+        "200":
+          description: Applied structure-aware reconcile and updated curated tree
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppHierarchyDiscoveryApplyResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/discovery-links:
+    get:
+      tags:
+        - Web App Hierarchy
+      summary: List durable discovery-link and drift status
+      operationId: listWebAppHierarchyDiscoveryLinks
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/WebAppRootFamilyIdQuery"
+      responses:
+        "200":
+          description: Paginated discovery-link status list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppHierarchyDiscoveryLinkList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-hierarchy/sync-discovery:
+    post:
+      tags:
+        - Web App Hierarchy
+      summary: Run discovery-backed hierarchy sync and return the updated tree
+      operationId: syncWebAppHierarchyFromDiscovery
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SyncWebAppHierarchyFromDiscoveryBody"
+      responses:
+        "200":
+          description: Discovery-backed hierarchy sync summary and updated tree
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppHierarchyDiscoverySyncResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-page-settings/pages/{webAppPageId}:
+    get:
+      tags:
+        - Web App Page Settings
+      summary: Read durable page settings for one curated page
+      operationId: getWebAppPageSettings
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WebAppPageId"
+      responses:
+        "200":
+          description: Page settings read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppPageSettingsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags:
+        - Web App Page Settings
+      summary: Create or update durable page settings for one curated page
+      operationId: updateWebAppPageSettings
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WebAppPageId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWebAppPageSettingsBody"
+      responses:
+        "200":
+          description: Page settings updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppPageSettingsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-page-settings/root-families/{rootFamilyId}/pages/{pageKey}/context-nav:
+    get:
+      tags:
+        - Web App Page Settings
+      summary: Read page-settings-driven context nav for one shell page
+      operationId: getWebAppPageContextNavProjection
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: rootFamilyId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/WebAppRootFamilyId"
+        - name: pageKey
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        "200":
+          description: Context-nav projection read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppPageContextNavProjectionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-page-settings/options:
+    get:
+      tags:
+        - Web App Page Settings
+      summary: Read approved page-settings options for one curated page
+      operationId: getWebAppPageSettingsOptions
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: webAppPageId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Page-settings options read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppPageSettingsOptionsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-surface-discovery/runs:
+    post:
+      tags:
+        - Web App Surface Discovery
+      summary: Run root-triggered web-app surface discovery
+      operationId: runWebAppSurfaceDiscovery
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunWebAppSurfaceDiscoveryBody"
+      responses:
+        "200":
+          description: Discovery run completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppDiscoveryRun"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    get:
+      tags:
+        - Web App Surface Discovery
+      summary: List web-app discovery runs
+      operationId: listWebAppDiscoveryRuns
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/WebAppDiscoveryRunStatusQuery"
+        - $ref: "#/components/parameters/WebAppDiscoveryTriggerKindQuery"
+      responses:
+        "200":
+          description: Paginated discovery-run history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedWebAppDiscoveryRuns"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-surface-discovery/runs/{webAppDiscoveryRunId}:
+    get:
+      tags:
+        - Web App Surface Discovery
+      summary: Read one web-app discovery run
+      operationId: getWebAppDiscoveryRun
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WebAppDiscoveryRunId"
+      responses:
+        "200":
+          description: Discovery-run detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebAppDiscoveryRun"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-surface-discovery/surfaces:
+    get:
+      tags:
+        - Web App Surface Discovery
+      summary: List current discovered web-app surfaces
+      operationId: listDiscoveredWebAppSurfaces
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/WebAppRootFamilyIdQuery"
+        - $ref: "#/components/parameters/DiscoveredSurfaceKindQuery"
+        - $ref: "#/components/parameters/DiscoveredSurfaceDispositionQuery"
+        - $ref: "#/components/parameters/ProviderKeyQuery"
+        - $ref: "#/components/parameters/DiscoveredSurfaceStaleStatusQuery"
+      responses:
+        "200":
+          description: Paginated current discovered-surface catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedDiscoveredWebAppSurfaces"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-surface-discovery/surfaces/{discoveredWebAppSurfaceId}:
+    get:
+      tags:
+        - Web App Surface Discovery
+      summary: Read one discovered web-app surface
+      operationId: getDiscoveredWebAppSurface
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DiscoveredWebAppSurfaceId"
+      responses:
+        "200":
+          description: Discovered-surface detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiscoveredWebAppSurface"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-surface-discovery/structure:
+    get:
+      tags:
+        - Web App Surface Discovery
+      summary: Read the current discovered web-app structure tree
+      operationId: listDiscoveredWebAppStructureTree
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/WebAppRootFamilyIdQuery"
+        - $ref: "#/components/parameters/DiscoveredSurfaceStaleStatusQuery"
+      responses:
+        "200":
+          description: Current discovered structure tree
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiscoveredWebAppStructureTree"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/web-app-surface-discovery/structure/{discoveredWebAppStructureNodeId}:
+    get:
+      tags:
+        - Web App Surface Discovery
+      summary: Read one discovered web-app structure node
+      operationId: getDiscoveredWebAppStructureNode
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/DiscoveredWebAppStructureNodeId"
+      responses:
+        "200":
+          description: Discovered structure-node detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DiscoveredWebAppStructureNode"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /v1/tenants/{tenantId}/admins:
     post:
       tags:
@@ -2383,6 +3391,46 @@ components:
         type: string
         format: uuid
 
+    WebAppModuleId:
+      name: webAppModuleId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    WebAppPageId:
+      name: webAppPageId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    WebAppDiscoveryRunId:
+      name: webAppDiscoveryRunId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    DiscoveredWebAppSurfaceId:
+      name: discoveredWebAppSurfaceId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    DiscoveredWebAppStructureNodeId:
+      name: discoveredWebAppStructureNodeId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
     AuthSshKeyId:
       name: keyId
       in: path
@@ -2715,6 +3763,74 @@ components:
         type: boolean
         default: false
 
+    IncludeInactive:
+      name: includeInactive
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+
+    IncludeOrphaned:
+      name: includeOrphaned
+      in: query
+      required: false
+      schema:
+        type: boolean
+        default: false
+
+    WebAppRootFamilyIdQuery:
+      name: rootFamilyId
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/WebAppRootFamilyId"
+
+    DiscoveredSurfaceKindQuery:
+      name: surfaceKind
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/DiscoveredSurfaceKind"
+
+    DiscoveredSurfaceDispositionQuery:
+      name: userFacingDisposition
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/DiscoveredSurfaceDisposition"
+
+    ProviderKeyQuery:
+      name: providerKey
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    DiscoveredSurfaceStaleStatusQuery:
+      name: staleStatus
+      in: query
+      required: false
+      schema:
+        type: string
+        enum: [current, stale, all]
+        default: all
+
+    WebAppDiscoveryRunStatusQuery:
+      name: status
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/WebAppDiscoveryRunStatus"
+
+    WebAppDiscoveryTriggerKindQuery:
+      name: triggerKind
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/WebAppDiscoveryTriggerKind"
+
   responses:
     BadRequest:
       description: Invalid request
@@ -2785,6 +3901,18 @@ components:
     TenantStatus:
       type: string
       enum: [draft, live, disabled, inactive]
+
+    WebAppRootFamilyId:
+      type: string
+      enum: [root-admin, login, design-system]
+
+    WebAppHierarchyStatus:
+      type: string
+      enum: [draft, review, live, inactive]
+
+    WebAppPagePlacementType:
+      type: string
+      enum: [module-root, child-page, orphaned]
 
     RootRoleSummary:
       type: object
@@ -3133,6 +4261,1232 @@ components:
         - pageSize
         - totalPages
         - totalSearchableRecords
+        - totalMatchingRecords
+
+    WebAppRootFamilySummary:
+      type: object
+      properties:
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        displayLabel:
+          type: string
+        routePrefix:
+          type: string
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - rootFamilyId
+        - displayLabel
+        - routePrefix
+        - sortOrder
+        - createdAt
+        - updatedAt
+
+    WebAppModuleSummary:
+      type: object
+      properties:
+        webAppModuleId:
+          type: string
+          format: uuid
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        moduleKey:
+          type: string
+        displayLabel:
+          type: string
+        landingPageWebAppPageId:
+          type: [string, "null"]
+          format: uuid
+        status:
+          $ref: "#/components/schemas/WebAppHierarchyStatus"
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - webAppModuleId
+        - rootFamilyId
+        - moduleKey
+        - displayLabel
+        - landingPageWebAppPageId
+        - status
+        - sortOrder
+        - createdAt
+        - updatedAt
+
+    WebAppPageSummary:
+      type: object
+      properties:
+        webAppPageId:
+          type: string
+          format: uuid
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        webAppModuleId:
+          type: string
+          format: uuid
+        parentPageId:
+          type: [string, "null"]
+          format: uuid
+        placementType:
+          $ref: "#/components/schemas/WebAppPagePlacementType"
+        pageKey:
+          type: string
+        displayLabel:
+          type: string
+        routeSegment:
+          type: string
+        resolvedFullRoutePath:
+          type: [string, "null"]
+        activeLocator:
+          oneOf:
+            - $ref: "#/components/schemas/WebAppPageLocator"
+            - type: "null"
+        status:
+          $ref: "#/components/schemas/WebAppHierarchyStatus"
+        sortOrder:
+          type: integer
+        createdByRootAdminUserId:
+          type: string
+          format: uuid
+        bootstrapSource:
+          type: [string, "null"]
+        topologyState:
+          $ref: "#/components/schemas/WebAppTopologyState"
+        templateKey:
+          oneOf:
+            - $ref: "#/components/schemas/DesignSystemPageTemplateKey"
+            - type: "null"
+        materializedAt:
+          type: [string, "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - webAppPageId
+        - rootFamilyId
+        - webAppModuleId
+        - parentPageId
+        - placementType
+        - pageKey
+        - displayLabel
+        - routeSegment
+        - resolvedFullRoutePath
+        - activeLocator
+        - status
+        - sortOrder
+        - createdByRootAdminUserId
+        - bootstrapSource
+        - topologyState
+        - templateKey
+        - materializedAt
+        - createdAt
+        - updatedAt
+
+    WebAppPageTreeNode:
+      allOf:
+        - $ref: "#/components/schemas/WebAppPageSummary"
+        - type: object
+          properties:
+            children:
+              type: array
+              items:
+                $ref: "#/components/schemas/WebAppPageTreeNode"
+          required: [children]
+
+    WebAppModuleTreeNode:
+      allOf:
+        - $ref: "#/components/schemas/WebAppModuleSummary"
+        - type: object
+          properties:
+            pages:
+              type: array
+              items:
+                $ref: "#/components/schemas/WebAppPageTreeNode"
+            orphanedPages:
+              type: array
+              items:
+                $ref: "#/components/schemas/WebAppPageTreeNode"
+          required: [pages]
+
+    WebAppRootFamilyTreeNode:
+      allOf:
+        - $ref: "#/components/schemas/WebAppRootFamilySummary"
+        - type: object
+          properties:
+            modules:
+              type: array
+              items:
+                $ref: "#/components/schemas/WebAppModuleTreeNode"
+          required: [modules]
+
+    WebAppHierarchyTree:
+      type: object
+      properties:
+        rootFamilies:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppRootFamilyTreeNode"
+      required: [rootFamilies]
+
+    WebAppPageSettingsContextNavItem:
+      type: object
+      properties:
+        targetWebAppPageId:
+          type: string
+          format: uuid
+        displayLabel:
+          type: string
+        resolvedFullRoutePath:
+          type: [string, "null"]
+        sortOrder:
+          type: integer
+        source:
+          type: string
+          enum: [explicit, fallback-self]
+      required:
+        - targetWebAppPageId
+        - displayLabel
+        - resolvedFullRoutePath
+        - sortOrder
+        - source
+
+    WebAppPageContextNavProjectionItem:
+      type: object
+      properties:
+        webAppPageId:
+          type: string
+          format: uuid
+        shellPageKey:
+          type: string
+        displayLabel:
+          type: string
+        resolvedFullRoutePath:
+          type: [string, "null"]
+        iconKey:
+          type: [string, "null"]
+        effectiveIconKey:
+          type: string
+        sortOrder:
+          type: integer
+      required:
+        - webAppPageId
+        - shellPageKey
+        - displayLabel
+        - resolvedFullRoutePath
+        - iconKey
+        - effectiveIconKey
+        - sortOrder
+
+    WebAppPageContextNavProjectionResponse:
+      type: object
+      properties:
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        shellPageKey:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppPageContextNavProjectionItem"
+      required:
+        - rootFamilyId
+        - shellPageKey
+        - items
+
+    WebAppPageSettingsResponse:
+      type: object
+      properties:
+        webAppPageId:
+          type: string
+          format: uuid
+        parentPageId:
+          type: [string, "null"]
+          format: uuid
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        displayLabel:
+          type: string
+        hasStoredSettings:
+          type: boolean
+        iconKey:
+          type: [string, "null"]
+        effectiveIconKey:
+          type: string
+        showInTopNav:
+          type: boolean
+        topNavOrder:
+          type: [integer, "null"]
+        pageTemplateKey:
+          type: [string, "null"]
+        effectivePageTemplateKey:
+          type: [string, "null"]
+        contextNavItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppPageSettingsContextNavItem"
+        createdAt:
+          type: [string, "null"]
+          format: date-time
+        updatedAt:
+          type: [string, "null"]
+          format: date-time
+      required:
+        - webAppPageId
+        - parentPageId
+        - rootFamilyId
+        - displayLabel
+        - hasStoredSettings
+        - iconKey
+        - effectiveIconKey
+        - showInTopNav
+        - topNavOrder
+        - pageTemplateKey
+        - effectivePageTemplateKey
+        - contextNavItems
+        - createdAt
+        - updatedAt
+
+    WebAppPageSettingsIconOption:
+      type: object
+      properties:
+        iconKey:
+          type: string
+        label:
+          type: string
+        status:
+          type: string
+          enum: [approved]
+      required: [iconKey, label, status]
+
+    WebAppPageSettingsTemplateOption:
+      type: object
+      properties:
+        pageTemplateKey:
+          type: string
+        label:
+          type: string
+        status:
+          type: string
+          enum: [approved]
+      required: [pageTemplateKey, label, status]
+
+    WebAppPageSettingsSelectablePageOption:
+      type: object
+      properties:
+        webAppPageId:
+          type: string
+          format: uuid
+        parentPageId:
+          type: [string, "null"]
+          format: uuid
+        displayLabel:
+          type: string
+        resolvedFullRoutePath:
+          type: [string, "null"]
+        pageKey:
+          type: string
+      required:
+        - webAppPageId
+        - parentPageId
+        - displayLabel
+        - resolvedFullRoutePath
+        - pageKey
+
+    WebAppPageSettingsOptionsResponse:
+      type: object
+      properties:
+        webAppPageId:
+          type: string
+          format: uuid
+        parentPageId:
+          type: [string, "null"]
+          format: uuid
+        defaultIconKey:
+          type: string
+        currentTopologyTemplateKey:
+          type: [string, "null"]
+        icons:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppPageSettingsIconOption"
+        pageTemplates:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppPageSettingsTemplateOption"
+        eligibleContextNavTargets:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppPageSettingsSelectablePageOption"
+      required:
+        - webAppPageId
+        - parentPageId
+        - defaultIconKey
+        - currentTopologyTemplateKey
+        - icons
+        - pageTemplates
+        - eligibleContextNavTargets
+
+    WebAppTopologyState:
+      type: string
+      enum: [proposed, applied]
+
+    DesignSystemPageTemplateKey:
+      type: string
+      enum: [static-html-page]
+
+    DesignSystemProposalCreateResult:
+      type: object
+      properties:
+        proposalPage:
+          $ref: "#/components/schemas/WebAppPageSummary"
+        proposalStatus:
+          $ref: "#/components/schemas/WebAppTopologyState"
+      required:
+        - proposalPage
+        - proposalStatus
+
+    DesignSystemMaterializationPlannedOutputs:
+      type: object
+      properties:
+        folderPath:
+          type: string
+        indexHtmlPath:
+          type: string
+        governanceStubPath:
+          type: string
+      required:
+        - folderPath
+        - indexHtmlPath
+        - governanceStubPath
+
+    DesignSystemMaterializationPreviewItem:
+      type: object
+      properties:
+        webAppPageId:
+          type: string
+          format: uuid
+        pageKey:
+          type: string
+        displayLabel:
+          type: string
+        routePath:
+          type: string
+        templateKey:
+          $ref: "#/components/schemas/DesignSystemPageTemplateKey"
+        plannedOutputs:
+          $ref: "#/components/schemas/DesignSystemMaterializationPlannedOutputs"
+      required:
+        - webAppPageId
+        - pageKey
+        - displayLabel
+        - routePath
+        - templateKey
+        - plannedOutputs
+
+    DesignSystemMaterializationClassification:
+      type: string
+      enum: [additive, compatibility-sensitive, blocked, invalid]
+
+    DesignSystemMaterializationPreviewResult:
+      type: object
+      properties:
+        classification:
+          $ref: "#/components/schemas/DesignSystemMaterializationClassification"
+        previewHash:
+          type: string
+        proposalCount:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DesignSystemMaterializationPreviewItem"
+      required:
+        - classification
+        - previewHash
+        - proposalCount
+        - items
+
+    DesignSystemMaterializationApplyResult:
+      type: object
+      properties:
+        classification:
+          type: string
+          enum: [additive]
+        previewHash:
+          type: string
+        appliedPageCount:
+          type: integer
+          minimum: 0
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DesignSystemMaterializationPreviewItem"
+        tree:
+          $ref: "#/components/schemas/WebAppHierarchyTree"
+      required:
+        - classification
+        - previewHash
+        - appliedPageCount
+        - items
+        - tree
+
+    PlannerSelectableHierarchyNode:
+      type: object
+      properties:
+        nodeType:
+          type: string
+          enum: [module, page]
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        webAppModuleId:
+          type: string
+          format: uuid
+        webAppPageId:
+          type: [string, "null"]
+          format: uuid
+        parentPageId:
+          type: [string, "null"]
+          format: uuid
+        moduleKey:
+          type: string
+        pageKey:
+          type: [string, "null"]
+        displayLabel:
+          type: string
+        resolvedFullRoutePath:
+          type: [string, "null"]
+        status:
+          $ref: "#/components/schemas/WebAppHierarchyStatus"
+        placementType:
+          oneOf:
+            - $ref: "#/components/schemas/WebAppPagePlacementType"
+            - type: "null"
+      required:
+        - nodeType
+        - rootFamilyId
+        - webAppModuleId
+        - webAppPageId
+        - parentPageId
+        - moduleKey
+        - pageKey
+        - displayLabel
+        - resolvedFullRoutePath
+        - status
+        - placementType
+
+    WebAppHierarchyDiscoverySyncBlockedSurface:
+      type: object
+      properties:
+        discoveredWebAppSurfaceId:
+          type: string
+          format: uuid
+        canonicalLocator:
+          type: string
+        reason:
+          type: string
+          enum:
+            - stale_surface
+            - support_only_surface
+            - review_required_surface
+            - non_page_surface
+            - unsupported_locator_type
+            - unsupported_root_path
+            - unsupported_root_index_path
+            - unsupported_multi_segment_path
+            - generated_page_key_conflict
+            - live_route_change_blocked
+      required:
+        - discoveredWebAppSurfaceId
+        - canonicalLocator
+        - reason
+
+    WebAppHierarchyDiscoverySyncRun:
+      type: object
+      properties:
+        webAppDiscoveryRunId:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/WebAppDiscoveryRunStatus"
+        createdCount:
+          type: integer
+        refreshedCount:
+          type: integer
+        unchangedCount:
+          type: integer
+        staleCount:
+          type: integer
+        supportOnlyCount:
+          type: integer
+        reviewRequiredCount:
+          type: integer
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: [string, "null"]
+          format: date-time
+      required:
+        - webAppDiscoveryRunId
+        - status
+        - createdCount
+        - refreshedCount
+        - unchangedCount
+        - staleCount
+        - supportOnlyCount
+        - reviewRequiredCount
+        - startedAt
+        - completedAt
+
+    WebAppHierarchyDiscoverySyncSummary:
+      type: object
+      properties:
+        currentDiscoveredSurfaceCount:
+          type: integer
+        totalStaleDiscoveredSurfaceCount:
+          type: integer
+        importCandidateCount:
+          type: integer
+        createdModuleCount:
+          type: integer
+        createdPageCount:
+          type: integer
+        updatedPageCount:
+          type: integer
+        unchangedMappedSurfaceCount:
+          type: integer
+        blockedSurfaceCount:
+          type: integer
+        supportOnlySkippedCount:
+          type: integer
+        reviewRequiredSkippedCount:
+          type: integer
+        nonPageSurfaceSkippedCount:
+          type: integer
+      required:
+        - currentDiscoveredSurfaceCount
+        - totalStaleDiscoveredSurfaceCount
+        - importCandidateCount
+        - createdModuleCount
+        - createdPageCount
+        - updatedPageCount
+        - unchangedMappedSurfaceCount
+        - blockedSurfaceCount
+        - supportOnlySkippedCount
+        - reviewRequiredSkippedCount
+        - nonPageSurfaceSkippedCount
+
+    WebAppHierarchyDiscoverySyncResult:
+      type: object
+      properties:
+        discoveryRun:
+          $ref: "#/components/schemas/WebAppHierarchyDiscoverySyncRun"
+        syncSummary:
+          $ref: "#/components/schemas/WebAppHierarchyDiscoverySyncSummary"
+        blockedSurfaces:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppHierarchyDiscoverySyncBlockedSurface"
+        tree:
+          $ref: "#/components/schemas/WebAppHierarchyTree"
+      required:
+        - discoveryRun
+        - syncSummary
+        - blockedSurfaces
+        - tree
+
+    WebAppPageLocator:
+      type: object
+      properties:
+        webAppPageLocatorId:
+          type: string
+          format: uuid
+        webAppPageId:
+          type: string
+          format: uuid
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        locatorType:
+          type: string
+          enum: [path, hash-state]
+        canonicalLocator:
+          type: string
+        routePath:
+          type: string
+        routeHash:
+          type: [string, "null"]
+        normalizedLocatorKey:
+          type: string
+        isActive:
+          type: boolean
+        createdByRootAdminUserId:
+          type: [string, "null"]
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - webAppPageLocatorId
+        - webAppPageId
+        - rootFamilyId
+        - locatorType
+        - canonicalLocator
+        - routePath
+        - routeHash
+        - normalizedLocatorKey
+        - isActive
+        - createdByRootAdminUserId
+        - createdAt
+        - updatedAt
+
+    WebAppHierarchyDiscoveryPreviewSummary:
+      type: object
+      properties:
+        matchedModuleCount: { type: integer }
+        createdModuleCount: { type: integer }
+        matchedPageCount: { type: integer }
+        createdPageCount: { type: integer }
+        blockedItemCount: { type: integer }
+        staleDiscoveredItemCount: { type: integer }
+      required:
+        - matchedModuleCount
+        - createdModuleCount
+        - matchedPageCount
+        - createdPageCount
+        - blockedItemCount
+        - staleDiscoveredItemCount
+
+    WebAppHierarchyDiscoveryPreviewItem:
+      type: object
+      properties:
+        itemType:
+          type: string
+          enum: [module, page]
+        discoveredWebAppStructureNodeId:
+          type: string
+          format: uuid
+        discoveredWebAppSurfaceId:
+          type: [string, "null"]
+          format: uuid
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        pageDepth:
+          type: integer
+        discoveredStructureKey:
+          type: string
+        displayLabel:
+          type: string
+        plannedAction:
+          type: string
+          enum: [create, match, blocked]
+        blockedReason:
+          type: [string, "null"]
+        curatedTargetType:
+          type: string
+          enum: [module, page]
+        curatedWebAppModuleId:
+          type: [string, "null"]
+          format: uuid
+        curatedWebAppPageId:
+          type: [string, "null"]
+          format: uuid
+        pageKey:
+          type: [string, "null"]
+        moduleKey:
+          type: [string, "null"]
+        placementType:
+          oneOf:
+            - $ref: "#/components/schemas/WebAppPagePlacementType"
+            - type: "null"
+        proposedLocatorType:
+          type: [string, "null"]
+          enum: [path, hash-state]
+        canonicalLocator:
+          type: [string, "null"]
+        driftStatus:
+          type: string
+      required:
+        - itemType
+        - discoveredWebAppStructureNodeId
+        - discoveredWebAppSurfaceId
+        - rootFamilyId
+        - pageDepth
+        - discoveredStructureKey
+        - displayLabel
+        - plannedAction
+        - blockedReason
+        - curatedTargetType
+        - curatedWebAppModuleId
+        - curatedWebAppPageId
+        - pageKey
+        - moduleKey
+        - placementType
+        - proposedLocatorType
+        - canonicalLocator
+        - driftStatus
+
+    WebAppHierarchyDiscoveryPreviewResult:
+      type: object
+      properties:
+        previewSummary:
+          $ref: "#/components/schemas/WebAppHierarchyDiscoveryPreviewSummary"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppHierarchyDiscoveryPreviewItem"
+      required: [previewSummary, items]
+
+    WebAppHierarchyDiscoveryApplyResult:
+      type: object
+      properties:
+        previewSummary:
+          $ref: "#/components/schemas/WebAppHierarchyDiscoveryPreviewSummary"
+        applySummary:
+          type: object
+          properties:
+            createdModuleCount: { type: integer }
+            createdPageCount: { type: integer }
+            refreshedLocatorCount: { type: integer }
+            refreshedLinkCount: { type: integer }
+            blockedItemCount: { type: integer }
+          required:
+            - createdModuleCount
+            - createdPageCount
+            - refreshedLocatorCount
+            - refreshedLinkCount
+            - blockedItemCount
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppHierarchyDiscoveryPreviewItem"
+        tree:
+          $ref: "#/components/schemas/WebAppHierarchyTree"
+      required: [previewSummary, applySummary, items, tree]
+
+    WebAppHierarchyDiscoveryLink:
+      type: object
+      properties:
+        webAppDiscoveryLinkId:
+          type: string
+          format: uuid
+        discoveredWebAppStructureNodeId:
+          type: string
+          format: uuid
+        discoveredWebAppSurfaceId:
+          type: [string, "null"]
+          format: uuid
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        curatedTargetType:
+          type: string
+          enum: [module, page]
+        curatedWebAppModuleId:
+          type: [string, "null"]
+          format: uuid
+        curatedWebAppPageId:
+          type: [string, "null"]
+          format: uuid
+        linkStatus:
+          type: string
+        driftStatus:
+          type: string
+        driftSummary:
+          type: [string, "null"]
+        lastComparedWebAppDiscoveryRunId:
+          type: [string, "null"]
+          format: uuid
+        lastMatchedWebAppDiscoveryRunId:
+          type: [string, "null"]
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - webAppDiscoveryLinkId
+        - discoveredWebAppStructureNodeId
+        - discoveredWebAppSurfaceId
+        - rootFamilyId
+        - curatedTargetType
+        - curatedWebAppModuleId
+        - curatedWebAppPageId
+        - linkStatus
+        - driftStatus
+        - driftSummary
+        - lastComparedWebAppDiscoveryRunId
+        - lastMatchedWebAppDiscoveryRunId
+        - createdAt
+        - updatedAt
+
+    WebAppHierarchyDiscoveryLinkList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppHierarchyDiscoveryLink"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalMatchingRecords:
+          type: integer
+      required: [items, page, pageSize, totalPages, totalMatchingRecords]
+
+    DiscoveredSurfaceKind:
+      type: string
+      enum: [page-route, shell-state, support-route, review-required]
+
+    DiscoveredSurfaceLocatorType:
+      type: string
+      enum: [path, path-with-query-template, hash-state]
+
+    DiscoveredSurfaceDisposition:
+      type: string
+      enum: [user-facing, support-only, review-required]
+
+    DiscoveredStructureNodeKind:
+      type: string
+      enum:
+        [
+          root,
+          group,
+          page-surface,
+          shell-state-surface,
+          support-surface,
+          review-required-surface,
+        ]
+
+    WebAppDiscoveryRunStatus:
+      type: string
+      enum: [running, succeeded, failed, partial]
+
+    WebAppDiscoveryTriggerKind:
+      type: string
+      enum: [manual, scheduled, bootstrap, startup-sync, topic-event]
+
+    RunWebAppSurfaceDiscoveryBody:
+      type: object
+      additionalProperties: false
+      properties:
+        scopeKey:
+          type: string
+          enum: [current-approved-root-families]
+          default: current-approved-root-families
+        triggerKind:
+          type: string
+          enum: [manual]
+          default: manual
+      required:
+        - scopeKey
+        - triggerKind
+
+    WebAppDiscoveryRun:
+      type: object
+      properties:
+        webAppDiscoveryRunId:
+          type: string
+          format: uuid
+        scopeKey:
+          type: string
+        status:
+          $ref: "#/components/schemas/WebAppDiscoveryRunStatus"
+        triggerKind:
+          $ref: "#/components/schemas/WebAppDiscoveryTriggerKind"
+        providerVersion:
+          type: string
+        createdByRootAdminUserId:
+          type: [string, "null"]
+          format: uuid
+        startedAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: [string, "null"]
+          format: date-time
+        failureSummary:
+          type: [string, "null"]
+        createdCount:
+          type: integer
+        refreshedCount:
+          type: integer
+        unchangedCount:
+          type: integer
+        staleCount:
+          type: integer
+        supportOnlyCount:
+          type: integer
+        reviewRequiredCount:
+          type: integer
+        structureCreatedCount:
+          type: integer
+        structureRefreshedCount:
+          type: integer
+        structureUnchangedCount:
+          type: integer
+        structureStaleCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - webAppDiscoveryRunId
+        - scopeKey
+        - status
+        - triggerKind
+        - providerVersion
+        - createdByRootAdminUserId
+        - startedAt
+        - completedAt
+        - failureSummary
+        - createdCount
+        - refreshedCount
+        - unchangedCount
+        - staleCount
+        - supportOnlyCount
+        - reviewRequiredCount
+        - structureCreatedCount
+        - structureRefreshedCount
+        - structureUnchangedCount
+        - structureStaleCount
+        - createdAt
+        - updatedAt
+
+    PaginatedWebAppDiscoveryRuns:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppDiscoveryRun"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalMatchingRecords
+
+    DiscoveredWebAppSurface:
+      type: object
+      properties:
+        discoveredWebAppSurfaceId:
+          type: string
+          format: uuid
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        discoveryKey:
+          type: string
+        surfaceKind:
+          $ref: "#/components/schemas/DiscoveredSurfaceKind"
+        locatorType:
+          $ref: "#/components/schemas/DiscoveredSurfaceLocatorType"
+        routePath:
+          type: [string, "null"]
+        routeHash:
+          type: [string, "null"]
+        canonicalLocator:
+          type: string
+        displayLabel:
+          type: [string, "null"]
+        userFacingDisposition:
+          $ref: "#/components/schemas/DiscoveredSurfaceDisposition"
+        providerKey:
+          type: string
+        implementationSourcePath:
+          type: [string, "null"]
+        firstDiscoveredRunId:
+          type: string
+          format: uuid
+        lastDiscoveredRunId:
+          type: string
+          format: uuid
+        firstDiscoveredAt:
+          type: string
+          format: date-time
+        lastDiscoveredAt:
+          type: string
+          format: date-time
+        staleAt:
+          type: [string, "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - discoveredWebAppSurfaceId
+        - rootFamilyId
+        - discoveryKey
+        - surfaceKind
+        - locatorType
+        - routePath
+        - routeHash
+        - canonicalLocator
+        - displayLabel
+        - userFacingDisposition
+        - providerKey
+        - implementationSourcePath
+        - firstDiscoveredRunId
+        - lastDiscoveredRunId
+        - firstDiscoveredAt
+        - lastDiscoveredAt
+        - staleAt
+        - createdAt
+        - updatedAt
+
+    PaginatedDiscoveredWebAppSurfaces:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiscoveredWebAppSurface"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
+        - page
+        - pageSize
+        - totalPages
+        - totalMatchingRecords
+
+    DiscoveredWebAppStructureNode:
+      type: object
+      properties:
+        discoveredWebAppStructureNodeId:
+          type: string
+          format: uuid
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        structureKey:
+          type: string
+        parentStructureKey:
+          type: [string, "null"]
+        parentDiscoveredWebAppStructureNodeId:
+          type: [string, "null"]
+          format: uuid
+        nodeKey:
+          type: string
+        nodeKind:
+          $ref: "#/components/schemas/DiscoveredStructureNodeKind"
+        displayLabel:
+          type: [string, "null"]
+        depth:
+          type: integer
+        linkedDiscoveredWebAppSurfaceId:
+          type: [string, "null"]
+          format: uuid
+        providerKey:
+          type: string
+        implementationSourcePath:
+          type: [string, "null"]
+        firstDiscoveredRunId:
+          type: string
+          format: uuid
+        lastDiscoveredRunId:
+          type: string
+          format: uuid
+        firstDiscoveredAt:
+          type: string
+          format: date-time
+        lastDiscoveredAt:
+          type: string
+          format: date-time
+        staleAt:
+          type: [string, "null"]
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - discoveredWebAppStructureNodeId
+        - rootFamilyId
+        - structureKey
+        - parentStructureKey
+        - parentDiscoveredWebAppStructureNodeId
+        - nodeKey
+        - nodeKind
+        - displayLabel
+        - depth
+        - linkedDiscoveredWebAppSurfaceId
+        - providerKey
+        - implementationSourcePath
+        - firstDiscoveredRunId
+        - lastDiscoveredRunId
+        - firstDiscoveredAt
+        - lastDiscoveredAt
+        - staleAt
+        - createdAt
+        - updatedAt
+
+    DiscoveredWebAppStructureTreeNode:
+      allOf:
+        - $ref: "#/components/schemas/DiscoveredWebAppStructureNode"
+        - type: object
+          properties:
+            children:
+              type: array
+              items:
+                $ref: "#/components/schemas/DiscoveredWebAppStructureTreeNode"
+          required:
+            - children
+
+    DiscoveredWebAppStructureTree:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DiscoveredWebAppStructureTreeNode"
+        totalMatchingRecords:
+          $ref: "#/components/schemas/CountValue"
+      required:
+        - items
         - totalMatchingRecords
 
     TenantAdminEmailVerificationStatus:
@@ -3691,6 +6045,331 @@ components:
           $ref: "#/components/schemas/TenantCategory"
         status:
           $ref: "#/components/schemas/TenantStatus"
+
+    CreateWebAppModuleBody:
+      type: object
+      additionalProperties: false
+      properties:
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        moduleKey:
+          type: string
+          minLength: 1
+        displayLabel:
+          type: string
+          minLength: 1
+        status:
+          $ref: "#/components/schemas/WebAppHierarchyStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+      required: [rootFamilyId, moduleKey, displayLabel]
+
+    UpdateWebAppModuleBody:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        displayLabel:
+          type: string
+          minLength: 1
+        status:
+          $ref: "#/components/schemas/WebAppHierarchyStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+
+    UpdateWebAppModuleLandingPageBody:
+      type: object
+      additionalProperties: false
+      properties:
+        landingPageWebAppPageId:
+          type: [string, "null"]
+          format: uuid
+      required: [landingPageWebAppPageId]
+
+    CreateWebAppPageBody:
+      type: object
+      additionalProperties: false
+      properties:
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        webAppModuleId:
+          type: string
+          format: uuid
+        parentPageId:
+          type: [string, "null"]
+          format: uuid
+        placementType:
+          $ref: "#/components/schemas/WebAppPagePlacementType"
+        pageKey:
+          type: string
+          minLength: 1
+        displayLabel:
+          type: string
+          minLength: 1
+        routeSegment:
+          type: string
+          minLength: 1
+        status:
+          $ref: "#/components/schemas/WebAppHierarchyStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+      required:
+        - rootFamilyId
+        - webAppModuleId
+        - pageKey
+        - displayLabel
+        - routeSegment
+
+    CreateDesignSystemPageBody:
+      type: object
+      additionalProperties: false
+      properties:
+        webAppModuleId:
+          type: string
+          format: uuid
+        displayLabel:
+          type: string
+          minLength: 1
+        routeSegment:
+          type: string
+          minLength: 1
+        templateKey:
+          $ref: "#/components/schemas/DesignSystemPageTemplateKey"
+        sortOrder:
+          type: integer
+          minimum: 0
+      required:
+        - webAppModuleId
+        - displayLabel
+        - routeSegment
+        - templateKey
+
+    CreateDesignSystemSubpageBody:
+      type: object
+      additionalProperties: false
+      properties:
+        parentPageId:
+          type: string
+          format: uuid
+        displayLabel:
+          type: string
+          minLength: 1
+        routeSegment:
+          type: string
+          minLength: 1
+        templateKey:
+          $ref: "#/components/schemas/DesignSystemPageTemplateKey"
+        sortOrder:
+          type: integer
+          minimum: 0
+      required:
+        - parentPageId
+        - displayLabel
+        - routeSegment
+        - templateKey
+
+    PreviewDesignSystemMaterializationBody:
+      type: object
+      additionalProperties: false
+      properties:
+        proposalPageIds:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: uuid
+      required:
+        - proposalPageIds
+
+    ApplyDesignSystemMaterializationBody:
+      type: object
+      additionalProperties: false
+      properties:
+        proposalPageIds:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            format: uuid
+        previewHash:
+          type: string
+          minLength: 1
+      required:
+        - proposalPageIds
+        - previewHash
+
+    UpdateWebAppPageBody:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        displayLabel:
+          type: string
+          minLength: 1
+        routeSegment:
+          type: string
+          minLength: 1
+        status:
+          $ref: "#/components/schemas/WebAppHierarchyStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+
+    UpdateWebAppPageSettingsBody:
+      type: object
+      additionalProperties: false
+      minProperties: 1
+      properties:
+        iconKey:
+          type: [string, "null"]
+          minLength: 1
+        showInTopNav:
+          type: boolean
+        topNavOrder:
+          type: [integer, "null"]
+          minimum: 0
+        pageTemplateKey:
+          type: [string, "null"]
+          minLength: 1
+        contextNavTargetPageIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    SyncWebAppHierarchyFromDiscoveryBody:
+      type: object
+      additionalProperties: false
+      properties:
+        includeInactive:
+          type: boolean
+          default: false
+        includeOrphaned:
+          type: boolean
+          default: false
+
+    PreviewStructureAwareWebAppHierarchySyncBody:
+      type: object
+      properties:
+        rootFamilyIds:
+          type: array
+          items:
+            $ref: "#/components/schemas/WebAppRootFamilyId"
+        selectedDiscoveredWebAppStructureNodeIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        includeBlocked:
+          type: boolean
+          default: true
+        includeStaleDiscovered:
+          type: boolean
+          default: false
+        includeMetadataDrift:
+          type: boolean
+          default: true
+
+    ApplyStructureAwareWebAppHierarchySyncBody:
+      allOf:
+        - $ref: "#/components/schemas/PreviewStructureAwareWebAppHierarchySyncBody"
+        - type: object
+          properties:
+            includeInactive:
+              type: boolean
+              default: false
+            includeOrphaned:
+              type: boolean
+              default: false
+
+    MoveWebAppPageBody:
+      type: object
+      additionalProperties: false
+      properties:
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        webAppModuleId:
+          type: string
+          format: uuid
+        targetParentPageId:
+          type: [string, "null"]
+          format: uuid
+        placementType:
+          $ref: "#/components/schemas/WebAppPagePlacementType"
+        sortOrder:
+          type: integer
+          minimum: 0
+      required: [rootFamilyId, webAppModuleId, placementType]
+
+    BootstrapObservedWebAppPage:
+      type: object
+      additionalProperties: false
+      properties:
+        pageKey:
+          type: string
+          minLength: 1
+        displayLabel:
+          type: string
+          minLength: 1
+        routeSegment:
+          type: string
+          minLength: 1
+        status:
+          $ref: "#/components/schemas/WebAppHierarchyStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/BootstrapObservedWebAppPage"
+      required: [pageKey, displayLabel, routeSegment]
+
+    BootstrapObservedWebAppModule:
+      type: object
+      additionalProperties: false
+      properties:
+        moduleKey:
+          type: string
+          minLength: 1
+        displayLabel:
+          type: string
+          minLength: 1
+        status:
+          $ref: "#/components/schemas/WebAppHierarchyStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+        pages:
+          type: array
+          items:
+            $ref: "#/components/schemas/BootstrapObservedWebAppPage"
+      required: [moduleKey, displayLabel, pages]
+
+    BootstrapObservedWebAppRootFamily:
+      type: object
+      additionalProperties: false
+      properties:
+        rootFamilyId:
+          $ref: "#/components/schemas/WebAppRootFamilyId"
+        modules:
+          type: array
+          items:
+            $ref: "#/components/schemas/BootstrapObservedWebAppModule"
+      required: [rootFamilyId, modules]
+
+    BootstrapWebAppHierarchyBody:
+      type: object
+      additionalProperties: false
+      properties:
+        observedRootFamilies:
+          type: array
+          items:
+            $ref: "#/components/schemas/BootstrapObservedWebAppRootFamily"
+      required: [observedRootFamilies]
 
     CreateTenantAdminBody:
       type: object

@@ -56,7 +56,7 @@
   pages now normalize the outer shell path through one central pre-binding
   seam instead of relying on page-by-page shell forks.
 - Added a shared Playwright regression in
-  `tests/visual/designSystem/canonicalShell.spec.ts` that checks both launcher
+  `tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts` that checks both launcher
   and render routes against the expected canonical-shell navigation path,
   including current `Pages` labeling and full preview breadcrumb trails on the
   affected render surfaces.

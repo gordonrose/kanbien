@@ -61,7 +61,7 @@
 - Screenshot or rendered evidence reference:
   `docs/workspace/design-system/reference-packs/breadcrumb-reference-pack.md`
   shared and direct evidence at
-  `tests/visual/__snapshots__/designSystem/subNav.spec.ts/`
+  `tests/visual/__snapshots__/designSystem/canonicals/navigation/subNav.spec.ts/`
 
 ## Accessibility Verification
 
@@ -119,8 +119,8 @@
 - Design-system route update required:
   yes
 - Frontend gate manifest update required:
-  yes, `tests/visual/designSystem/subNav.first-batch.manifest.json` and
-  `tests/visual/designSystem/subNav.canonical.manifest.json` now track the
+  yes, `tests/visual/designSystem/canonicals/manifests/subNav.first-batch.manifest.json` and
+  `tests/visual/designSystem/canonicals/manifests/subNav.canonical.manifest.json` now track the
   governed breadcrumb overlap states
 - Architecture-map update required:
   not yet

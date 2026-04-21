@@ -70,7 +70,7 @@
   desktop overlay and mobile lane attachment covered in direct browser checks
 - Screenshot or rendered evidence reference:
   executable browser checks now live in
-  `tests/visual/designSystem/contextNavCanonicalFrame.spec.ts` for
+  `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts` for
   `CDR-001` through `CDR-006`
 
 ## Accessibility Verification

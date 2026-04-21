@@ -137,7 +137,7 @@
   including RTL and truncation states
 - Required executable tests:
   existing `subNav.spec.ts` canonicals remain green; root-admin visual parity
-  now begins in `tests/visual/rootAdminShell/rootAdminShellSubNav.spec.ts`
+  now begins in `tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts`
 - Required manual sign-off steps:
   review root-admin desktop, reduced, RTL, mobile, and long-label states
   against the design-system canonicals

@@ -29,8 +29,8 @@ review loop must preserve.
 - Related canonical render surface:
   `/design-system/components/date-picker`
 - Existing executable verification:
-  `tests/visual/designSystem/datePicker.spec.ts`
-  `tests/visual/designSystem/datePickerCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/datePicker.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/datePickerCanonical.spec.ts`
 
 ## Signed-Off Rule Source
 

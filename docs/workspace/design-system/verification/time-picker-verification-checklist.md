@@ -82,9 +82,9 @@
 - Attachment / shell-framing checks:
   parent-owned and intentionally excluded from this child seam
 - Screenshot or rendered evidence reference:
-  `tests/visual/designSystem/formTemplate.spec.ts`
-  `tests/visual/designSystem/timePickerCanonical.spec.ts`
-  `tests/visual/designSystem/canonicalShell.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/timePickerCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts`
 
 ## Accessibility Verification
 

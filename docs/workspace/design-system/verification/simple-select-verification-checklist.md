@@ -44,8 +44,8 @@
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/app.mjs`
   `src/frontend/designSystem/assets/styles.css`
-  `tests/visual/designSystem/simpleSelect.spec.ts`
-  `tests/visual/designSystem/simpleSelectCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/simpleSelect.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/simpleSelectCanonical.spec.ts`
 - Implementation updated:
   yes
   the current pass now aligns the seam to the locked keyboard model by moving
@@ -75,8 +75,8 @@
   child seam verified as an anchored listbox only; scrim, drawer, and modal
   layering remain intentionally out of scope
 - Screenshot or rendered evidence reference:
-  `tests/visual/designSystem/simpleSelect.spec.ts`
-  `tests/visual/designSystem/simpleSelectCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/simpleSelect.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/simpleSelectCanonical.spec.ts`
 
 ## Accessibility Verification
 

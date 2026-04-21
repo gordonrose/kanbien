@@ -1,0 +1,141 @@
+{
+  "info": {
+    "_postman_id": "8d8564f7-0d16-41b0-a378-8d1ef1b4c5d4",
+    "name": "Kanbien Web App Page Settings",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the protected webAppPageSettings feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises exact options reads, exact settings writes, and exact settings reads for one curated page."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "signerUrl", "value": "http://127.0.0.1:8787" },
+    { "key": "email", "value": "elvis.presley@example.com" },
+    { "key": "password", "value": "Test1234!" },
+    { "key": "rootSessionId", "value": "sess_replace_me" },
+    { "key": "challengeId", "value": "chal_replace_me" },
+    { "key": "challengeText", "value": "challenge_text_replace_me" },
+    { "key": "publicKeyFingerprint", "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY" },
+    { "key": "sshSignatureJson", "value": "base64_signature_over_challenge_text" },
+    { "key": "webAppPageId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "rootFamilyId", "value": "root-admin" },
+    { "key": "pageKey", "value": "web-app-hierarchy" },
+    { "key": "contextNavTargetPageId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "iconKey", "value": "page-home" },
+    { "key": "pageTemplateKey", "value": "static-html-page" }
+  ],
+  "item": [
+    {
+      "name": "Root Auth - Login Password",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/root-auth/login/password", "host": ["{{baseUrl}}"], "path": ["v1", "root-auth", "login", "password"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
+          "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
+        ] }
+      }]
+    },
+    {
+      "name": "Root Auth - Sign Challenge",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"challengeText\": \"{{challengeText}}\"\n}" },
+        "url": { "raw": "{{signerUrl}}/sign", "host": ["{{signerUrl}}"], "path": ["sign"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.signature) pm.collectionVariables.set(\"sshSignatureJson\", JSON.stringify(json.signature).slice(1, -1));",
+          "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
+        ] }
+      }]
+    },
+    {
+      "name": "Root Auth - Login SSH",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignatureJson}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}" },
+        "url": { "raw": "{{baseUrl}}/v1/root-auth/login/ssh", "host": ["{{baseUrl}}"], "path": ["v1", "root-auth", "login", "ssh"] }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const json = pm.response.json();",
+          "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
+        ] }
+      }]
+    },
+    {
+      "name": "Get Page Settings Options",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-page-settings/options?webAppPageId={{webAppPageId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "web-app-page-settings", "options"],
+          "query": [{ "key": "webAppPageId", "value": "{{webAppPageId}}" }]
+        }
+      }
+    },
+    {
+      "name": "Update Page Settings",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"iconKey\": \"{{iconKey}}\",\n  \"showInTopNav\": true,\n  \"topNavOrder\": 1,\n  \"pageTemplateKey\": \"{{pageTemplateKey}}\",\n  \"contextNavTargetPageIds\": [\"{{webAppPageId}}\", \"{{contextNavTargetPageId}}\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-page-settings/pages/{{webAppPageId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "web-app-page-settings", "pages", "{{webAppPageId}}"]
+        }
+      }
+    },
+    {
+      "name": "Get Page Settings",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-page-settings/pages/{{webAppPageId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "web-app-page-settings", "pages", "{{webAppPageId}}"]
+        }
+      }
+    },
+    {
+      "name": "Get Context Nav Projection",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/web-app-page-settings/root-families/{{rootFamilyId}}/pages/{{pageKey}}/context-nav",
+          "host": ["{{baseUrl}}"],
+          "path": [
+            "v1",
+            "web-app-page-settings",
+            "root-families",
+            "{{rootFamilyId}}",
+            "pages",
+            "{{pageKey}}",
+            "context-nav"
+          ]
+        }
+      }
+    }
+  ]
+}

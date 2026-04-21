@@ -27,10 +27,10 @@ preserve.
 - Related canonical launcher:
   `/design-system/canonicals/form-template`
 - Existing executable verification:
-  `tests/visual/designSystem/formTemplate.spec.ts`
-  `tests/visual/designSystem/formTemplateCanonical.spec.ts`
-  `tests/visual/designSystem/datePicker.spec.ts`
-  `tests/visual/designSystem/choiceGroupCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplateCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/datePicker.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/choiceGroupCanonical.spec.ts`
 
 ## Signed-Off Rule Source
 
@@ -100,11 +100,11 @@ This pack turns them into named reference targets for the next loop.
 | Ref ID | Route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `FTR-001` | `/design-system/templates/form` | Desktop default baseline with one self-contained editor card and no companion sidebar | Preserves the signed-off parent page shape before child extractions begin | source-inspected | Current route source now reflects the approved no-sidebar posture |
-| `FTR-002` | `/design-system/templates/form` | Display-settings drawer open, then text-field focus handoff back into the form | Preserves the recently fixed focus rule for interactive outside clicks | covered-by-test | `tests/visual/designSystem/formTemplate.spec.ts` now targets the actual textbox surface |
+| `FTR-002` | `/design-system/templates/form` | Display-settings drawer open, then text-field focus handoff back into the form | Preserves the recently fixed focus rule for interactive outside clicks | covered-by-test | `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts` now targets the actual textbox surface |
 | `FTR-003` | `/design-system/templates/form` | Error review mode with inline field and group errors visible | Preserves the review-state contract for inline validation posture | runtime-probed | Current route exposes an error-mode toggle through the shared display-settings payload |
 | `FTR-004` | `/design-system/templates/form` | Disabled review mode with controls remaining readable but not interactive | Preserves disabled posture without losing hierarchy or helper text | runtime-probed | Current route exposes a disabled-mode toggle through the shared display-settings payload |
 | `FTR-005` | `/design-system/templates/form` | Mobile review mode with the page stacked into one column | Preserves the parent mobile fallback before future app adoption begins | covered-by-test | Parent route proof now exercises mobile stacking, long-copy pressure, and footer-action readability under magnification |
-| `FTR-006` | `/design-system/templates/form` | Resting picker state with date and time surfaces closed | Preserves the invariant that hidden picker panels remain hidden by default | covered-by-test | Also grounded by the 2026-04-18 mobile hidden-state reconciliation note and `tests/visual/designSystem/datePicker.spec.ts` |
+| `FTR-006` | `/design-system/templates/form` | Resting picker state with date and time surfaces closed | Preserves the invariant that hidden picker panels remain hidden by default | covered-by-test | Also grounded by the 2026-04-18 mobile hidden-state reconciliation note and `tests/visual/designSystem/canonicals/forms/datePicker.spec.ts` |
 | `FTR-007` | `/design-system/templates/form` | Single date or range picker open state anchored to the active field | Preserves the richer scheduling interaction inside the parent template | covered-by-test | Route-level child-seam proof now covers quick single-date close, staged range selection, and mobile overlay posture |
 | `FTR-008` | `/design-system/templates/form` | Drawer-select default resting state with selected summary visible in the trigger | Preserves the closed summary posture for the likely first child seam | covered-by-test | Parent route proof now verifies trigger summary synchronization for both drawer variants |
 | `FTR-009` | `/design-system/templates/form` | Drawer-select open state with search plus visible `Selected` and `Available` stacks | Preserves the repeated drawer-selection chassis inside the parent template | covered-by-test | Parent route proof now verifies dual-stack anatomy, focus-to-search, on-screen overlay geometry, and `RTL + magnification` layering stress |

@@ -102,8 +102,8 @@
   quick-action toolbar, no local list-page CSS fork, no fake broad search
   semantics, and no capability contract changes hidden inside the UI adoption
 - Required parity evidence:
-  `tests/visual/rootAdminShell/rootAdminRootUsersList.spec.ts`
-  `tests/visual/rootAdminShell/rootAdminShellSubNav.spec.ts`
+  `tests/visual/app/rootAdminShell/rootAdminRootUsersList.spec.ts`
+  `tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts`
 
 ## Intentional Differences And Gaps
 
@@ -142,7 +142,7 @@
   invalidation, clear-search recovery, mobile overlay placement, and scoped
   initial-load retry
 - Required executable tests:
-  `tests/visual/rootAdminShell/rootAdminRootUsersList.spec.ts`
+  `tests/visual/app/rootAdminShell/rootAdminRootUsersList.spec.ts`
 - Required manual sign-off steps:
   compare desktop, mobile, RTL, and magnified root-admin rendering against the
   signed-off list-page canonicals before treating parity as closed

@@ -26,6 +26,9 @@ Current maintained collections live under `docs/postman/collections/`:
 - `tenantAuth.postman_collection.json`
 - `tenantConfiguration.postman_collection.json`
 - `notificationDelivery.postman_collection.json`
+- `webAppHierarchyBuilder.postman_collection.json`
+- `webAppPageSettings.postman_collection.json`
+- `webAppSurfaceDiscovery.postman_collection.json`
 
 These are source-independent manual verification assets for route families and
 feature workflows.
@@ -66,6 +69,14 @@ Supporting launchers:
 The default helper URL used by collections is:
 
 - `http://127.0.0.1:8787/sign`
+
+The matching package script is:
+
+- `npm run postman:signer`
+
+which currently runs:
+
+- `node docs/postman/helpers/rootAuthSigner.mjs`
 
 ## Dummy Data Utility
 

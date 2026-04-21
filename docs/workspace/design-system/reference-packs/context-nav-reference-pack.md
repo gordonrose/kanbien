@@ -123,7 +123,7 @@ first comparison points in any real consumer review.
 
 - browser-reviewed human sign-off is complete across the `CNR-*` set
 - Playwright geometry and interaction coverage exists in
-  `tests/visual/designSystem/contextNavCanonicalFrame.spec.ts`
+  `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts`
 - deterministic URL reopening exists for the signed-off canonical states
 - first-consumer parity must cite this signed-off chain before app adoption is
   considered approved; app implementation and tests alone are not sign-off

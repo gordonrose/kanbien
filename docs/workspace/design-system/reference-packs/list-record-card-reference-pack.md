@@ -27,8 +27,8 @@ set must preserve.
 - Related component artifact:
   `docs/workspace/design-system/components/list-record-card-component.md`
 - Existing executable verification:
-  `tests/visual/designSystem/listPage.spec.ts`
-  `tests/visual/designSystem/listRecordCard.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listPage.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listRecordCard.spec.ts`
 
 ## Signed-Off Rule Source
 

@@ -52,7 +52,7 @@ selected and active compact cards.
 - promoted selected labels, active labels, and remove affordances to
   `var(--accent-text)` on the bright compact dark-theme card surfaces
 - added an executable dark-theme foreground-color assertion to
-  `tests/visual/designSystem/drawerSelectCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts`
 
 ## Prevention Lesson
 
@@ -64,7 +64,7 @@ highest-risk dark-theme state rather than only confirming that the route opens.
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/drawerSelectCanonical.spec.ts`
+- `npx playwright test tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts`
 
 ## Resolution Status
 

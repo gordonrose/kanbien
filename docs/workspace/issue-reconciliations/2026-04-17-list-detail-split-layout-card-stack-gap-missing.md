@@ -29,7 +29,7 @@ so adjacent cards visually collapsed together.
 ## Prevention Added
 
 - The preview item wrapper now has an explicit grid stack with a governed gap.
-- `tests/visual/designSystem/listDetailSplitLayout.spec.ts` now includes a
+- `tests/visual/designSystem/canonicals/data-display/listDetailSplitLayout.spec.ts` now includes a
   regression that measures the vertical gap between the first two list cards
   and fails if the spacing collapses.
 

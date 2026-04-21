@@ -47,7 +47,7 @@ Classification:
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/contextNavCanonicalFrame.spec.ts -g "CDR-001 desktop drawer stays below the rendered sub-nav after host-page scroll|CDR-005 dark theme with magnification" --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts -g "CDR-001 desktop drawer stays below the rendered sub-nav after host-page scroll|CDR-005 dark theme with magnification" --workers=1`
 
 Live geometry after the fix:
 

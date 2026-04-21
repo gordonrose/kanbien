@@ -75,7 +75,7 @@
   and the descriptive, compact, dark compact, and mobile open canonicals now
   compare overlay relationship back to the approved `form-template` host seam
 - Screenshot or rendered evidence reference:
-  `tests/visual/designSystem/drawerSelectCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts`
   `docs/workspace/design-system/reference-packs/drawer-select-reference-pack.md`
   `src/frontend/designSystem/canonicals/drawer-select/index.html`
   `src/frontend/designSystem/components/drawer-select.html`

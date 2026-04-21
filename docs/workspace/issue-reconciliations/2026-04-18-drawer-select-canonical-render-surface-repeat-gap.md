@@ -77,9 +77,9 @@ route.
   now targets `/design-system/components/drawer-select`
 - removed the old parent-route `DSR-*` bootstrap from
   `src/frontend/designSystem/assets/app.mjs`
-- strengthened `tests/visual/designSystem/drawerSelectCanonical.spec.ts` so it
+- strengthened `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts` so it
   now asserts launcher `href` truth and verifies the dedicated child route
-- extended `tests/visual/designSystem/canonicalShell.spec.ts` with `Drawer
+- extended `tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts` with `Drawer
   Select` launcher and render-shell coverage
 
 ## Prevention Lesson
@@ -104,7 +104,7 @@ review only and must be labeled that way.
   - `docs/workspace/design-system/reference-packs/drawer-select-reference-pack.md`
   - `docs/workspace/design-system/verification/drawer-select-verification-checklist.md`
 - executable verification:
-  - `npx playwright test tests/visual/designSystem/drawerSelectCanonical.spec.ts tests/visual/designSystem/canonicalShell.spec.ts --grep "drawer-select|Drawer Select"`
+  - `npx playwright test tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts tests/visual/designSystem/canonicals/shell/canonicalShell.spec.ts --grep "drawer-select|Drawer Select"`
 
 ## Resolution Status
 

@@ -96,6 +96,37 @@
   - future advanced reconcile and bridge-record visualization beyond the
     approved builder seams
 
+## Governed Adoption Preflight
+
+- Exact signed-off source route or render surface:
+  `src/frontend/designSystem/patterns/hierarchy-tree/index.html`
+- Exact reference pack or canonical source:
+  `docs/workspace/design-system/reference-packs/hierarchy-tree-reference-pack.md`
+- Shared CSS seam:
+  `/design-system/assets/hierarchy-tree-shared.css`
+- Shared render seam:
+  not yet complete for the drawer host; the current route still owns the outer
+  hierarchy drawer shell markup
+- Shared controller seam:
+  `/design-system/assets/hierarchyTree.mjs`
+  through `mountRootAdminHierarchyTree(...)`
+- Family-owned visible regions:
+  hierarchy row grammar, inline actions, rename and move posture, resize
+  behavior, mobile drawer posture, and drawer-hosted tree reading model
+- Host-owned visible regions:
+  root-admin shell chrome, route title and status, route-level preview/apply
+  actions, and page-body editing surface outside the tree family
+- Approved intentional deviations before implementation:
+  root-admin business copy, permission-driven action visibility, and route-level
+  operator actions outside the tree rows
+- Shared-entrypoint parity expectation:
+  the route should preserve the signed-off tree posture while consuming the
+  shared app-entrypoint; route-specific business content may differ outside the
+  tree family
+- Stop condition if a required seam is missing:
+  do not claim full governed adoption of the hierarchy drawer host while the
+  route still owns the host markup locally
+
 ## Consumer Contract
 
 - Primary destinations:
@@ -145,6 +176,23 @@
   tooltip reveal, focus rings, drag affordance, dialogs, and drawer controls
   must continue to behave according to the signed-off pattern family
 
+## Shared Consumption Requirement
+
+- The real app consumer must use an approved shared design-system asset seam
+  rather than local route CSS.
+- This route should follow the same governed app-consumption model already
+  proven by the root-admin `Users` route through
+  `/design-system/assets/list-page-shared.css`.
+- The approved app-consumption seam for the tree family is now:
+  `/design-system/assets/hierarchy-tree-shared.css`.
+- Tree adoption on this route should use that shared seam rather than local
+  route CSS or direct copying from the design-system route.
+- Shared CSS alone is not sufficient for honest governed adoption.
+- The first consumer should also prefer a design-system-owned drawer render seam
+  and tree-controller seam rather than app-local drawer-shell reconstruction.
+- If that render or behavior seam is not yet consumable, stop and raise the
+  blocker instead of copying the drawer host markup into the app.
+
 ## Parity Rules
 
 - Must match reference pack:
@@ -178,6 +226,10 @@
   prove that the adopted tree still anchors correctly inside the governed
   root-admin shell with context-nav, drawer attachment, breadcrumb behavior,
   and display-settings co-presence unaffected
+- Required human-visible regression guards:
+  preserve the bottom-stack hierarchy launcher, keep the drawer attached to the
+  shell rather than reading as a floating takeover, and protect resize-handle
+  edge placement on the real route
 
 ## Adoption Boundary
 
@@ -244,10 +296,10 @@
 ## Promotion Decision
 
 - Adoption result:
-  candidate
-- Follow-up work required before adoption starts:
-  agree the first root-admin hierarchy page will consume the signed-off
-  `hierarchy-tree` source directly rather than building a local variant
+  active partial governed adoption
+- Follow-up work required before adoption is called fully governed:
+  extract a DS-owned hierarchy drawer host render seam or explicitly approve
+  the remaining host-owned markup as an intentional boundary
 - Follow-up work required before wider reuse:
   complete first-consumer parity proof in the real root-admin page and keep the
   contract in sync with any approved backend or shell-boundary changes

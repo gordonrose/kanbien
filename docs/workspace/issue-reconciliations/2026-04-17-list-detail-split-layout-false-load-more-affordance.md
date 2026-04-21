@@ -29,7 +29,7 @@ That left a visible affordance whose behavior contract was false.
 
 - The split-layout preview now hides the load-more status action unless a
   future canonical explicitly models real additional list growth.
-- `tests/visual/designSystem/listDetailSplitLayout.spec.ts` now includes a
+- `tests/visual/designSystem/canonicals/data-display/listDetailSplitLayout.spec.ts` now includes a
   regression that fails if the baseline split preview advertises load-more
   behavior without implementing it.
 

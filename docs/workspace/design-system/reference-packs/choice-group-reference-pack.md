@@ -168,9 +168,9 @@ now child-locked expectations without direct child-owned render states yet.
 - the child seam candidate now has a dedicated behavior lock and verification
   checklist
 - parent-hosted Playwright proof exists in
-  `tests/visual/designSystem/formTemplate.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
 - parent-hosted Playwright proof still exists in
-  `tests/visual/designSystem/formTemplate.spec.ts` for the remaining non-child
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts` for the remaining non-child
   route states
 - a provisional child canonical launcher now exists at
   `/design-system/canonicals/choice-group`

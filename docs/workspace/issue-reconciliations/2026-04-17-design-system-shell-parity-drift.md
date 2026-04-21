@@ -36,10 +36,10 @@ The result was a mixed review experience:
 
 Coverage existed for nearby truths, but at the wrong seams:
 
-- `tests/visual/designSystem/contextNavScrollAttachment.spec.ts` covered the
+- `tests/visual/designSystem/canonicals/shell/contextNavScrollAttachment.spec.ts` covered the
   top-level `/design-system/canonicals/context-nav` route, not the actual
   component canonical renderer route carrying `CDR-*` states
-- `tests/visual/designSystem/contextNavCanonicalFrame.spec.ts` covered
+- `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts` covered
   rendered geometry and drawer states, but it did not yet prove that the
   rendered shell used the same scroll contract as the governed host shell
 
@@ -77,7 +77,7 @@ same family contract.
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/contextNavCanonicalFrame.spec.ts -g "host shell on the component canonical route|rendered shell lets the sub-nav scroll away|CDR-001 desktop canonical|CDR-002 desktop canonical|CDR-003 mobile canonical|outside-click close returns focus" --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts -g "host shell on the component canonical route|rendered shell lets the sub-nav scroll away|CDR-001 desktop canonical|CDR-002 desktop canonical|CDR-003 mobile canonical|outside-click close returns focus" --workers=1`
 
 ## Resolution Status
 

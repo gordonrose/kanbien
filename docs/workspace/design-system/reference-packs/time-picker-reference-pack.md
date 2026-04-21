@@ -29,8 +29,8 @@ signed-off seam must preserve.
 - Related canonical render surface:
   `/design-system/components/time-picker`
 - Existing executable verification:
-  `tests/visual/designSystem/formTemplate.spec.ts`
-  `tests/visual/designSystem/timePickerCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/timePickerCanonical.spec.ts`
 
 ## Signed-Off Rule Source
 

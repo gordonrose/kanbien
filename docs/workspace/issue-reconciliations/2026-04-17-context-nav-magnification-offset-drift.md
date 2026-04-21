@@ -63,8 +63,8 @@ Classification:
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/contextNavCanonicalFrame.spec.ts -g "CDR-005 dark theme with magnification" --workers=1`
-- `npx playwright test tests/visual/designSystem/contextNavCanonicalFrame.spec.ts -g "CDR-004|CDR-005|CDR-006" --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts -g "CDR-005 dark theme with magnification" --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts -g "CDR-004|CDR-005|CDR-006" --workers=1`
 
 Live geometry after the fix:
 

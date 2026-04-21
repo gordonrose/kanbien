@@ -65,7 +65,7 @@
 - Screenshot or rendered evidence reference:
   human sign-off completed through `/design-system/canonicals/top-nav`; the
   full canonical snapshot set is stored under
-  `tests/visual/__snapshots__/designSystem/topNav.spec.ts/`
+  `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/`
   and now comes from the dedicated canonical render page rather than the
   interactive exploration page
   with the broader host/surface posture tracked in

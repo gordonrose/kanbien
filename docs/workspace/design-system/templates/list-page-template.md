@@ -147,7 +147,7 @@
 - Parent interaction controller:
   `src/frontend/designSystem/assets/listPage.mjs`
 - Parent regression coverage:
-  `tests/visual/designSystem/listPage.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/listPage.spec.ts`
 - Current composition note:
   the parent route now recomposes the signed-off `ListRecordCard`,
   `ListDetailPanel`, and `ListDetailSplitLayout` seam shapes while keeping

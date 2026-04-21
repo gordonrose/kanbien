@@ -16,7 +16,7 @@
 - Related adoption contract:
   `docs/workspace/design-system/adoption/root-admin-web-app-hierarchy-tree-adoption-contract.md`
 - Existing executable verification:
-  `tests/visual/designSystem/hierarchyTree.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/hierarchyTree.spec.ts`
 - Related canonical launcher:
   `/design-system/canonicals/hierarchy-tree`
 - Related canonical render surface:
@@ -49,7 +49,7 @@
   `src/frontend/designSystem/assets/hierarchyTree.css`
   `src/frontend/designSystem/assets/hierarchyTree.mjs`
   `src/frontend/designSystem/patterns/index.html`
-  `tests/visual/designSystem/hierarchyTree.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/hierarchyTree.spec.ts`
 - Implementation updated:
   yes
   this loop created the governed route framing, the signed-off behavior lock,
@@ -79,7 +79,9 @@
   dedicated executable proof
 - Real interactive states checked:
   desktop drag-and-drop
+  desktop hover and focus-within row navigation icons when valid locators exist
   menu-only mobile structural actions
+  menu-based `Open` and `Open in new tab` navigation fallbacks
   inline rename on double click
   add child and add sibling
   explicit delete decision handling
@@ -93,7 +95,7 @@
   display-settings side-by-side desktop posture, mobile full-screen drawers,
   and RTL adjacency corrections
 - Screenshot or rendered evidence reference:
-  `tests/visual/designSystem/hierarchyTree.spec.ts`
+  `tests/visual/designSystem/canonicals/data-display/hierarchyTree.spec.ts`
   `docs/workspace/design-system/reference-packs/hierarchy-tree-reference-pack.md`
 
 ## Accessibility Verification

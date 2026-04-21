@@ -29,8 +29,8 @@ set must preserve.
 - Related canonical render surface:
   `/design-system/components/simple-select`
 - Existing executable verification:
-  `tests/visual/designSystem/simpleSelect.spec.ts`
-  `tests/visual/designSystem/simpleSelectCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/simpleSelect.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/simpleSelectCanonical.spec.ts`
 
 ## Signed-Off Rule Source
 

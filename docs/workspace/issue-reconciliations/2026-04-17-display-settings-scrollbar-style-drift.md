@@ -37,10 +37,10 @@ contract, so the drift could survive even with otherwise-correct layout.
 
 ## Added Prevention
 
-- `tests/visual/designSystem/contextNavCanonicalFrame.spec.ts`
+- `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts`
   now includes:
   `context-nav display-settings drawer uses the signed-off context-nav scrollbar styling`
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/contextNavCanonicalFrame.spec.ts -g "scrollbar styling|display-settings controls do not close the drawer" --workers=1`
+- `npx playwright test tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts -g "scrollbar styling|display-settings controls do not close the drawer" --workers=1`

@@ -32,7 +32,7 @@ button, leaving the drawer permanently hidden at runtime.
   external same-origin asset allowed by the active CSP.
 - Updated `src/frontend/designSystem/templates/list-page/index.html` to load the
   new external module instead of relying on inline script execution.
-- Added `tests/visual/designSystem/listPage.spec.ts` to verify:
+- Added `tests/visual/designSystem/canonicals/data-display/listPage.spec.ts` to verify:
   - the drawer starts closed
   - clicking a list item opens the split drawer
   - clicking the drawer close button hides it again

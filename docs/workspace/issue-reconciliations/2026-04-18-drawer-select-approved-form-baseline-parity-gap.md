@@ -60,7 +60,7 @@ canonical renderer gradually became its own variant.
 - narrowed an over-broad canonical-stage heading reset so it no longer changed
   drawer header title spacing inside the child seam
 - added approved-form baseline parity checks to
-  `tests/visual/designSystem/drawerSelectCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts`
 - those new checks now use the signed-off `form-template` page as the live
   source of truth for:
   - descriptive open desktop drawer
@@ -79,7 +79,7 @@ surface so the child renderer cannot quietly become a different visual answer.
 
 ## Verification
 
-- `npx playwright test tests/visual/designSystem/drawerSelectCanonical.spec.ts`
+- `npx playwright test tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts`
 
 ## Resolution Status
 

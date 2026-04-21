@@ -37,7 +37,7 @@ direction-aware anchoring for rail-attached overlays as well.
   [design-system-table-page.json](/home/gordon/kanbien/docs/standards/frontend-gates/design-system-table-page.json:66)
   now includes a `large-rtl-desert-100-accessibility-open` scenario
 - explicit visual assertion:
-  [tests/visual/rootAdminShell/rootAdminShell.visual.spec.ts](/home/gordon/kanbien/tests/visual/rootAdminShell/rootAdminShell.visual.spec.ts:98)
+  [rootAdminShellSubNav.spec.ts](/home/gordon/kanbien/tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts)
   now checks that the opened accessibility menu anchors to the correct side for
   the active direction instead of only asserting visibility
 

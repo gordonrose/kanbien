@@ -34,7 +34,7 @@ were short and the baseline state should have stayed on one row.
   aligned.
 - The override is scoped to that specific split preview state so the long-content
   scroll-pressure canonical still preserves its own honest geometry.
-- `tests/visual/designSystem/listDetailSplitLayout.spec.ts` now includes a
+- `tests/visual/designSystem/canonicals/data-display/listDetailSplitLayout.spec.ts` now includes a
   regression that measures the header geometry and fails if the controls drop
   to a lower row in the short baseline split state.
 

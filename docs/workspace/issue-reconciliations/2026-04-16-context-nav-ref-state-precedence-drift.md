@@ -21,7 +21,7 @@ That meant the page loader could silently override the visible runtime state req
 ## Prevention Added
 
 - Updated `getContextNavPreviewStateFromUrl()` so the canonical `ref` provides the baseline state, but explicit URL parameters still override it.
-- Added a Playwright regression in `tests/visual/designSystem/contextNavCanonicalFrame.spec.ts` that:
+- Added a Playwright regression in `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts` that:
   - loads the short-height collapse state with `ref=CNR-004` and `open=closed`
   - clicks the `More sections` trigger
   - proves the menu becomes visible

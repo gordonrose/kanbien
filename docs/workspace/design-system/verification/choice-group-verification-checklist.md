@@ -17,8 +17,8 @@
 - Related parent reference pack:
   `docs/workspace/design-system/reference-packs/form-template-reference-pack.md`
 - Current executable verification:
-  `tests/visual/designSystem/formTemplate.spec.ts`
-  `tests/visual/designSystem/choiceGroupCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/choiceGroupCanonical.spec.ts`
 
 ## Visual Contract
 
@@ -47,8 +47,8 @@
   `src/frontend/designSystem/assets/choiceGroupCanonical.mjs`
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/styles.css`
-  `tests/visual/designSystem/formTemplate.spec.ts`
-  `tests/visual/designSystem/choiceGroupCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/choiceGroupCanonical.spec.ts`
 - Implementation updated:
   yes
   this pass adds a dedicated child launcher/render surface while keeping the
@@ -80,7 +80,7 @@
   not applicable
   this seam does not currently own an overlay, popover, drawer, or sheet
 - Screenshot or rendered evidence reference:
-  `tests/visual/designSystem/formTemplate.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
   `docs/workspace/design-system/reference-packs/choice-group-reference-pack.md`
 
 ## Accessibility Verification

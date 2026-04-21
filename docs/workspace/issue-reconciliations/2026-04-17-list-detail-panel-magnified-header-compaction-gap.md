@@ -40,7 +40,7 @@ highest-pressure reading state.
   - reducing title scale slightly
 - The full header remains visible again near the top because compaction is tied
   to body scroll position rather than being permanent.
-- `tests/visual/designSystem/listDetailPanel.spec.ts` now includes a dedicated
+- `tests/visual/designSystem/canonicals/data-display/listDetailPanel.spec.ts` now includes a dedicated
   regression check for `LDP-008` that proves:
   - the header is recognized as oversized before scrolling
   - the panel enters a condensed state after body scrolling begins

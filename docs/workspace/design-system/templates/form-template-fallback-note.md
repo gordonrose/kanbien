@@ -42,8 +42,8 @@
 - Restore parent reference states from:
   `docs/workspace/design-system/reference-packs/form-template-reference-pack.md`
 - Re-check parent proof through:
-  `tests/visual/designSystem/formTemplate.spec.ts`
-  `tests/visual/designSystem/formTemplateCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
+  `tests/visual/designSystem/canonicals/forms/formTemplateCanonical.spec.ts`
 - Use the governed launcher at `/design-system/canonicals/form-template` as
   the human review surface before treating the fallback as complete.
 
@@ -63,7 +63,7 @@
 
 - Confirm the parent `FTR-*` states still map honestly to the live route.
 - Re-run:
-  `npx playwright test tests/visual/designSystem/formTemplate.spec.ts`
+  `npx playwright test tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
 - Re-check the parent canonical launcher and confirm:
   default, error, disabled, mobile, RTL, magnification, and overlay-heavy
   states still read as one coherent form page rather than a pile of unrelated

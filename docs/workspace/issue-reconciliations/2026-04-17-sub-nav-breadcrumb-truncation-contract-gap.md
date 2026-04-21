@@ -25,7 +25,7 @@ That meant the preview could:
 
 The nearest executable coverage proved the wrong layer of truth.
 
-`tests/visual/designSystem/subNav.spec.ts` checked that:
+`tests/visual/designSystem/canonicals/navigation/subNav.spec.ts` checked that:
 
 - the shared tooltip could still appear
 - the overlay layer stayed visible
@@ -40,7 +40,7 @@ label, so it missed the fact that `Page -1` had already yielded out of the row.
   `button-truncation` canonicals in
   `src/frontend/designSystem/assets/app.mjs`
 - added a focused regression in
-  `tests/visual/designSystem/subNav.spec.ts` that verifies:
+  `tests/visual/designSystem/canonicals/navigation/subNav.spec.ts` that verifies:
   - `Page -1` stays visible in `BCR-011` and `BCR-012`
   - both `Page -1` and current breadcrumb nodes retain tooltip data
   - hovering `Page -1` still reveals the shared tooltip
