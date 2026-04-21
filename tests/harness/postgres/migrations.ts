@@ -30,7 +30,7 @@ const MIGRATIONS_TABLE = "schema_migrations";
 const FEATURES_ROOT = path.resolve(process.cwd(), "src", "features");
 const DEFAULT_BOOTSTRAP_PASSWORD = "@Nima2or1!";
 const DEFAULT_BOOTSTRAP_SSH_PUBLIC_KEY =
-  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEZeNv6aKKHqLJQQoqsHUhYyFMFFbE8WWvgDSFH0WJiq gordon@<machine-name>";
+  "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+fWomSs6CBXFwaDSUYCy2FHG5UtnFJF7RE/O1hoozG fixture-root-auth.test";
 
 const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = [
   {

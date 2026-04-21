@@ -284,7 +284,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"label\": \"personal-laptop\",\n  \"publicKey\": \"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEZeNv6aKKHqLJQQoqsHUhYyFMFFbE8WWvgDSFH0WJiq gordon@<machine-name>\"\n}"
+          "raw": "{\n  \"label\": \"personal-laptop\",\n  \"publicKey\": \"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+fWomSs6CBXFwaDSUYCy2FHG5UtnFJF7RE/O1hoozG fixture-root-auth@example.test\"\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/v1/root-auth/ssh-keys",
