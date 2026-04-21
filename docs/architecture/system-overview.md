@@ -114,6 +114,12 @@ Each feature follows the same internal structure:
 - `index.ts`
   exported public surface for the feature bundle, including any approved
   cross-feature seams.
+- the repo maintains generated feature dependency artifacts under
+  `docs/architecture/generated/` so humans and automation can inspect current
+  cross-feature coupling and private-seam drift quickly.
+- each feature also maintains `feature.manifest.json` as the declared record of
+  public seams, current downstream dependencies, and feature-specific
+  breaking-change risks.
 
 ### Feature Anatomy And Naming Discipline
 
@@ -166,8 +172,13 @@ The current feature convention is:
 - `index.ts`
   Re-exports the feature's public entry point and any approved narrow
   cross-feature seams.
+- `feature.manifest.json`
+  Declares the feature's public seams, current cross-feature dependencies, and
+  breaking-change review notes.
 - Cross-feature reads should happen through exported feature seams, not by
   importing another feature's private persistence adapter or DB record types.
+- Current repo automation checks cross-feature imports against that rule and
+  generates a dependency graph for the active feature catalog.
 
 This structure is intended to keep feature internals replaceable while making
 feature creation repeatable.

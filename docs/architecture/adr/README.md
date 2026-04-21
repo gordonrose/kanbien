@@ -41,3 +41,6 @@ evolves.
 - `0027-use-approved-design-system-shared-asset-entrypoints-for-governed-app-page-adoption.md`
 - `0028-require-design-system-owned-render-and-controller-seams-for-governed-app-adoption.md`
 - `0029-adopt-design-system-owned-page-shells-for-governed-app-route-families.md`
+- `0030-enforce-feature-public-seams-with-a-generated-dependency-graph.md`
+- `0031-add-feature-manifests-for-declared-seams-and-dependencies.md`
+- `0032-promote-selected-root-admin-suites-from-hash-aliases-to-path-backed-canonical-routes.md`

@@ -1,7 +1,7 @@
 import type { Pool } from "pg";
 import type { RootCapabilityChecker } from "../../lib/authz/middleware";
 import type { PlatformSecurityRepository } from "../../lib/security/repository";
-import { createPostgresTenantAuthRepository } from "../tenantAuth/persistence/postgresRepository";
+import { createTenantAuthSessionLookupRepository } from "../tenantAuth";
 import { createVisibleTenantsReader } from "../tenants";
 import { createTenantConfigurationService } from "./domain/service";
 import { createPostgresTenantConfigurationRepository } from "./persistence/postgresRepository";
@@ -29,7 +29,7 @@ export function createTenantConfigurationFeature(
       platformSecurityRepository,
     ),
     tenantTenantConfigurationRouter: createTenantConfigurationTenantRouter(
-      createPostgresTenantAuthRepository(dbPool),
+      createTenantAuthSessionLookupRepository(dbPool),
       service,
     ),
     policyResolver: service.policyResolver,

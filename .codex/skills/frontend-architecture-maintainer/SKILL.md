@@ -20,6 +20,9 @@ Maintain frontend architecture clarity by:
 - checking whether `docs/architecture/system-overview.md` should also change
 - deciding whether a frontend change requires a new ADR or an ADR refresh
 - keeping frontend architecture docs aligned with the actual implementation
+- keeping affected feature manifests and generated dependency artifacts aligned
+  when frontend-owning features change public seams or cross-feature
+  dependencies
 
 ## Authority Order
 
@@ -58,6 +61,13 @@ Also use this skill when a change affects any of these:
 - shell-state versus file-route behavior
 - frontend discovery or curated frontend-topology seams
 - repo rules about frontend ownership boundaries
+
+Current repo posture to preserve unless the task changes it explicitly:
+
+- `rootAdminShell` now uses path-backed canonical suite routes for selected
+  durable root-admin destinations
+- legacy `#` root-admin URLs remain compatibility aliases during migration and
+  should not be described as canonical current-state route truth
 
 Do not use this skill for:
 
@@ -129,7 +139,14 @@ Use `docs/architecture/change-control.md` as the tie-breaker.
    Prefer a new ADR over silently stretching old ADRs beyond their actual
    decision boundary.
 
-6. Call out follow-up drift.
+6. Update feature manifests and dependency artifacts when needed.
+   If frontend-owning features such as `webAppSurfaceDiscovery`,
+   `webAppHierarchyBuilder`, or `webAppPageSettings` gained, lost, or changed
+   public seams or cross-feature dependencies:
+   - update the relevant `feature.manifest.json`
+   - regenerate `docs/architecture/generated/feature-dependency-graph.*`
+
+7. Call out follow-up drift.
    Mention if feature docs, helper docs, or script docs also need refresh.
 
 ## Guardrails
@@ -142,6 +159,8 @@ Use `docs/architecture/change-control.md` as the tie-breaker.
   backend feature internals.
 - Do not skip `frontend-overview.md` when the current frontend shape changed.
 - Do not skip ADR review when the frontend seam or browser model changed.
+- Do not leave feature manifests or generated dependency artifacts stale when a
+  frontend-owning feature changed its declared seams or dependencies.
 
 ## Expected Outputs
 

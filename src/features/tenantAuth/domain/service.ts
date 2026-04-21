@@ -13,8 +13,8 @@ import {
   SESSION_TTL_SECONDS_HARD_FLOOR,
   SYSTEM_DEFAULT_PASSWORD_POLICY,
   SYSTEM_DEFAULT_SESSION_POLICY,
-} from "../../tenantConfiguration/domain/policy";
-import type { TenantAuthPolicyResolver } from "../../tenantConfiguration";
+  type TenantAuthPolicyResolver,
+} from "../../tenantConfiguration";
 import {
   TenantAuthInvalidNewPasswordError,
   TenantAuthInvalidCredentialsError,

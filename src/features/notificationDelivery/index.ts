@@ -3,3 +3,4 @@ export {
   createNotificationEmailWriter,
   type NotificationEmailWriter,
 } from "./emailWriter";
+export { NotificationDeliveryError } from "./contract/errors";

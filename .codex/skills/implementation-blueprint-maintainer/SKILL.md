@@ -107,6 +107,7 @@ It should make these things explicit:
 - which feature owns the work
 - which files or modules are expected to change or be created
 - which cross-feature seams must be used instead of private imports
+- which `feature.manifest.json` files will need refresh
 - which persistence objects and migrations are needed
 - which authz capability rows and default role grants must be seeded or updated
   when the capability matrix introduces protected backend behavior
@@ -159,6 +160,7 @@ Determine:
 - default role-grant migrations needed so protected roles receive the intended
   capabilities in live environments
 - cross-feature seams
+- feature-manifest updates needed for new or changed seams and dependencies
 - shared middleware or platform wiring
 - test folders and layers
 - docs updates required by the change class
@@ -179,6 +181,8 @@ such as:
 - `docs/postman/` when a maintained collection exists
 - `docs/featureDocs/`
 - `docs/data-dictionary/`
+- `src/features/<featureName>/feature.manifest.json`
+- `docs/architecture/generated/feature-dependency-graph.*`
 - `docs/standards/platform-status/`
 - rebuild-readiness docs when runtime or helper assumptions changed
 - `docs/workspace/architecture-map/` when platform-layer status has moved

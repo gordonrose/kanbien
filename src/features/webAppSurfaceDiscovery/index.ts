@@ -10,4 +10,9 @@ export type {
   WebAppDiscoveryRunListResponse,
   WebAppDiscoveryRunResponse,
 } from "./contract/types";
+export type {
+  DiscoveredWebAppSurfaceData,
+  DiscoveredWebAppStructureNodeData,
+  WebAppDiscoveryRunData,
+} from "./domain/types";
 export type { WebAppSurfaceDiscoveryIntegrationSeam } from "./integration";

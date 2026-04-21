@@ -23,6 +23,8 @@ Maintain frontend-topology clarity by:
   changes
 - keeping repo structure and routing ownership boundaries explicit
 - updating architecture docs and ADRs when enduring topology rules change
+- updating affected feature manifests and generated dependency artifacts when
+  topology-owning features change public seams or cross-feature dependencies
 
 ## Authority Order
 
@@ -110,6 +112,9 @@ approved decisions:
   migration, not a normal rename.
 - Materialization safety must be implementable as deterministic code rather
   than relying on LLM judgment.
+- Current repo posture: selected `root-admin` suites now use path-backed
+  canonical routes, while legacy `#` URLs are compatibility aliases during the
+  migration window rather than enduring canonical truth.
 
 ## Promotion Rule
 
@@ -154,9 +159,12 @@ are true:
    - what remains hand-authored
    - what drift is allowed versus blocked
 
-6. Update docs and decisions when needed.
-   Refresh ADRs, architecture docs, or planning artifacts when the enduring
-   topology rules changed.
+6. Update docs, manifests, and decisions when needed.
+   Refresh ADRs, architecture docs, planning artifacts, and affected
+   `feature.manifest.json` files when the enduring topology rules or feature
+   seams changed.
+   Regenerate `docs/architecture/generated/feature-dependency-graph.*` when
+   cross-feature topology dependencies changed.
 
 7. Call out follow-up work.
    Mention when the repo still needs:
@@ -190,6 +198,8 @@ approved topology rules.
   deterministic.
 - Do not define topology solely from docs; confirm it from code and current
   feature seams.
+- Do not leave topology-owning feature manifests stale when route-topology or
+  cross-feature topology seams changed.
 
 ## Expected Outputs
 

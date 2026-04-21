@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "featureName": "notificationDelivery",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createNotificationDeliveryFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for notification delivery routing."
+    },
+    {
+      "seamId": "notification-email-writer",
+      "symbol": "createNotificationEmailWriter | NotificationEmailWriter",
+      "path": "index.ts",
+      "kind": "writer-seam",
+      "stability": "stable",
+      "description": "Cross-feature seam for durable outbound email creation and resend flows."
+    },
+    {
+      "seamId": "notification-delivery-error",
+      "symbol": "NotificationDeliveryError",
+      "path": "index.ts",
+      "kind": "error-type",
+      "stability": "stable",
+      "description": "Shared notification-delivery error base for transport-layer handling."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing the notification email writer contract can break features that delegate onboarding or verification email delivery through this seam.",
+    "Changing outbound email persistence or resend semantics can affect auditability and historical correctness for feature-owned workflows."
+  ]
+}

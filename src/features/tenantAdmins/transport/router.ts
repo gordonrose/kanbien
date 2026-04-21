@@ -9,7 +9,7 @@ import {
 import { env } from "../../../config/env";
 import { createRateLimitMiddleware } from "../../../lib/security/rateLimit";
 import type { PlatformSecurityRepository } from "../../../lib/security/repository";
-import { NotificationDeliveryError } from "../../notificationDelivery/contract/errors";
+import { NotificationDeliveryError } from "../../notificationDelivery";
 import {
   createTenantAdminBodySchema,
   listTenantAdminsQuerySchema,

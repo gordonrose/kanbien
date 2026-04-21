@@ -36,6 +36,7 @@ plan without losing architecture, tests, docs, or standards coverage.
 - Request/response/error contract:
 - Feature-local files expected:
 - Cross-feature seams:
+- Feature manifests to update:
 - Authorization enforcement point:
 
 ## Persistence Plan
@@ -76,6 +77,8 @@ plan without losing architecture, tests, docs, or standards coverage.
 - OpenAPI:
 - Postman:
 - Data dictionary:
+- Feature manifests:
+- Dependency graph artifacts:
 - Architecture map:
 - Standards platform-status snapshots:
   list which files under `docs/standards/platform-status/` must be reviewed

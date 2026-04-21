@@ -29,6 +29,9 @@ Before a feature loop or release gate is considered complete, confirm:
 
 - required test layers for the change class were identified
 - required tests passed in the intended environment
+- required static architecture and seam checks passed, including
+  `npm run check:feature-dependencies` when feature seams or cross-feature
+  dependencies changed
 - no blocking defects remain open
 - no blocking flaky tests remain unresolved
 - no required coverage class was silently omitted
@@ -175,6 +178,8 @@ A blocking feature-loop or release summary should record:
 
 - change scope
 - required test layers
+- static seam-check outcome, including feature-manifest and dependency-graph
+  validation when relevant
 - executed commands or suites
 - pass/fail outcome by layer
 - open defects by severity

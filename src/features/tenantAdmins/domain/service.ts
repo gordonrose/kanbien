@@ -22,7 +22,7 @@ import {
 } from "./presenters";
 import type { TenantAdminListResult } from "./types";
 import type { TenantAdminsRepository } from "../persistence/repository";
-import type { TenantAuthOnboardingProvisioner } from "../../tenantAuth/domain/types";
+import type { TenantAuthOnboardingProvisioner } from "../../tenantAuth";
 
 const VERIFICATION_TTL_SECONDS = 60 * 60 * 24;
 

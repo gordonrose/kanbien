@@ -54,6 +54,11 @@ Feature bundles should follow a repeatable internal structure and naming style.
 - `index.ts` exposes the feature's public integration surface.
 - Cross-feature reads must use exported feature seams rather than importing
   another feature's private persistence adapter or DB-shaped record types.
+- Cross-feature imports should be machine-checkable so private reach-through is
+  caught early during local development and CI, not only during review.
+- Feature manifests should declare current public seams and intended
+  cross-feature dependencies so semantic blast radius is inspectable without
+  re-deriving intent from source every time.
 - Query schemas must be first-class exports, not hidden inside route handlers.
 - Exact lookup schemas must be separate from list or search schemas.
 - Exact route params must never be optional.

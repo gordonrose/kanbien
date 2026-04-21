@@ -3,7 +3,7 @@ import type {
   DiscoveredWebAppSurfaceData,
   DiscoveredWebAppStructureNodeData,
   WebAppDiscoveryRunData,
-} from "../../webAppSurfaceDiscovery/domain/types";
+} from "../../webAppSurfaceDiscovery";
 import type { WebAppHierarchyRepository } from "../persistence/repository";
 import { DiscoveryLinkConflictError, PageLocatorConflictError } from "../contract/errors";
 import { createWebAppHierarchyId, normalizeKey, requireRootFamily } from "./helpers";

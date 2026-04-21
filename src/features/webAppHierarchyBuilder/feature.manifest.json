@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "featureName": "webAppHierarchyBuilder",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createWebAppHierarchyBuilderFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for curated web-app hierarchy routes."
+    },
+    {
+      "seamId": "hierarchy-integration-seam-factory",
+      "symbol": "createWebAppHierarchyIntegrationSeam",
+      "path": "index.ts",
+      "kind": "integration-seam-factory",
+      "stability": "stable",
+      "description": "Cross-feature factory for querying curated page and module selection state."
+    },
+    {
+      "seamId": "hierarchy-integration-seam",
+      "symbol": "WebAppHierarchyIntegrationSeam | WebAppHierarchySettingsSelectablePage",
+      "path": "index.ts",
+      "kind": "integration-seam",
+      "stability": "stable",
+      "description": "Cross-feature seam for reading curated hierarchy state needed by page settings."
+    },
+    {
+      "seamId": "hierarchy-contract-types",
+      "symbol": "PlannerSelectableHierarchyNode | ResolvedWebAppHierarchyTree | WebAppModule | WebAppPage | WebAppPageLocator | WebAppRootFamily",
+      "path": "index.ts",
+      "kind": "contract-types",
+      "stability": "stable",
+      "description": "Exported hierarchy contract types used by downstream readers and settings surfaces."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "webAppSurfaceDiscovery",
+      "seamIds": [
+        "surface-discovery-integration-seam-factory",
+        "surface-discovery-integration-seam",
+        "discovery-data-types"
+      ],
+      "description": "Reconciles curated hierarchy changes against discovered surface structure through surface discovery public seams."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing hierarchy integration seam behavior can break webAppPageSettings and any future feature that reads curated page topology through this seam.",
+    "Changing curated hierarchy persistence or locator semantics can break governed route compatibility and discovery reconciliation."
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "featureName": "tenantConfiguration",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createTenantConfigurationFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for tenant-scoped configuration routes."
+    },
+    {
+      "seamId": "tenant-auth-policy-resolver",
+      "symbol": "TenantAuthPolicyResolver",
+      "path": "index.ts",
+      "kind": "policy-seam",
+      "stability": "stable",
+      "description": "Shared resolver for effective tenant auth policy and aggregate password/session rules."
+    },
+    {
+      "seamId": "effective-tenant-auth-policy-type",
+      "symbol": "EffectiveTenantAuthPolicy",
+      "path": "index.ts",
+      "kind": "contract-type",
+      "stability": "stable",
+      "description": "Shared type describing the effective tenant auth policy response shape."
+    },
+    {
+      "seamId": "effective-tenant-password-policy-type",
+      "symbol": "EffectiveTenantPasswordPolicy",
+      "path": "index.ts",
+      "kind": "contract-type",
+      "stability": "stable",
+      "description": "Shared type for effective tenant password policy evaluation."
+    },
+    {
+      "seamId": "effective-tenant-session-policy-type",
+      "symbol": "EffectiveTenantSessionPolicy",
+      "path": "index.ts",
+      "kind": "contract-type",
+      "stability": "stable",
+      "description": "Shared type for effective tenant session policy evaluation."
+    },
+    {
+      "seamId": "password-policy-floor-constants",
+      "symbol": "HARD_PASSWORD_POLICY_FLOORS",
+      "path": "index.ts",
+      "kind": "constants",
+      "stability": "stable",
+      "description": "Shared hard floor constants for tenant password policy enforcement."
+    },
+    {
+      "seamId": "session-ttl-limit-constants",
+      "symbol": "SESSION_TTL_SECONDS_HARD_FLOOR | SESSION_TTL_SECONDS_HARD_CEILING",
+      "path": "index.ts",
+      "kind": "constants",
+      "stability": "stable",
+      "description": "Shared hard limits for tenant session TTL enforcement."
+    },
+    {
+      "seamId": "system-default-policy-constants",
+      "symbol": "SYSTEM_DEFAULT_PASSWORD_POLICY | SYSTEM_DEFAULT_SESSION_POLICY",
+      "path": "index.ts",
+      "kind": "constants",
+      "stability": "stable",
+      "description": "Shared default policy constants used when no tenant override is present."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "description": "Validates active tenant sessions through the tenantAuth session lookup public seam."
+    },
+    {
+      "featureName": "tenants",
+      "seamIds": [
+        "visible-tenants-reader"
+      ],
+      "description": "Validates visible tenant context before reading or updating tenant-scoped policy."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing tenant auth policy response or resolver semantics can break tenantAuth policy evaluation and remediation flows.",
+    "Changing tenant policy persistence or normalization rules can break durable configuration behavior across tenant-scoped authentication."
+  ]
+}

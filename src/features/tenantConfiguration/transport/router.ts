@@ -5,7 +5,7 @@ import { getRequiredRootSessionContext } from "../../../lib/auth/requestContext"
 import { createRequireRootCapability, type RootCapabilityChecker } from "../../../lib/authz/middleware";
 import { createRequireTenantSession } from "../../../lib/auth/middleware";
 import type { PlatformSecurityRepository } from "../../../lib/security/repository";
-import type { TenantAuthSessionLookupRepository } from "../../tenantAuth/persistence/repository";
+import type { TenantAuthSessionLookupRepository } from "../../tenantAuth";
 import { InvalidRequestError, TenantConfigurationError } from "../contract/errors";
 import { tenantIdParamsSchema, updateTenantAuthPolicyBodySchema } from "../contract/schemas";
 import type { TenantConfigurationService } from "../domain/types";

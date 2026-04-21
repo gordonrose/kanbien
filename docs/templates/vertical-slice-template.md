@@ -55,6 +55,7 @@ frontend and backend notes that drift apart.
 - Validation rules:
 - Aggregation or response-shaping strategy:
 - Cross-feature seams:
+- Feature manifests to update:
 
 ## Permission And Tenant Boundary
 
@@ -120,6 +121,8 @@ frontend and backend notes that drift apart.
 - Backend feature docs:
 - API contract docs:
 - Data dictionary:
+- Feature manifests:
+- Dependency graph artifacts:
 - Permission mapping:
 - Architecture guides or ADRs:
 - Standards gate review:

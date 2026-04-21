@@ -33,6 +33,8 @@ Required:
 - source-independent doc and status sync for affected API contracts, data
   dictionary entries, feature docs, OpenAPI, architecture summaries, and
   platform-status snapshots where the implemented slice changed their truth
+- feature manifest and dependency-graph sync when the slice adds, removes, or
+  changes a feature public seam or cross-feature dependency
 - maintained-artifacts sweep covering status snapshots, registry or index docs,
   and earlier planning artifacts whose wording became stale because the slice
   now exists or materially changed current platform posture
@@ -83,6 +85,8 @@ Required:
 - ADR
 - system-overview update
 - principles update if guardrails change
+- affected `src/features/<featureName>/feature.manifest.json` updates
+- regenerated `docs/architecture/generated/feature-dependency-graph.*`
 - PRD or design record if the change is feature-driven
 - standards gate review
 
@@ -254,6 +258,8 @@ When a change lands, update the affected combination of:
 - QA checklist, exploratory note, waiver/quarantine record, and curated test
   summary when required by the QA release gate or coverage matrix
 - relevant feature docs
+- affected feature manifests and generated dependency graph artifacts when
+  feature seams or cross-feature dependencies changed
 - architecture guides or ADRs
 - runbook
 - privacy note
@@ -326,6 +332,10 @@ At minimum, check:
   slice materially changed the implemented control posture for authentication,
   authorization, session management, auditability, privacy handling, or other
   standards-gated behavior even when the headline status remains the same
+- affected `src/features/<featureName>/feature.manifest.json` entries for
+  changed seams or cross-feature dependencies
+- `docs/architecture/generated/feature-dependency-graph.json`
+- `docs/architecture/generated/feature-dependency-graph.md`
 - README, index, inventory, and registry docs that summarize current platform
   capabilities, artifact sets, or entity inventories
 

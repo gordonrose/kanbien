@@ -52,3 +52,7 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
 - `vertical-slice-template.md`
   Combined frontend/backend slice template for one user-facing workflow across
   contracts, permissions, persistence, verification, and operations.
+
+For backend and cross-feature work, treat `src/features/<featureName>/feature.manifest.json`
+and `docs/architecture/generated/feature-dependency-graph.*` as normal
+maintained artifacts alongside the templates above.

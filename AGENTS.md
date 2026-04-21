@@ -178,6 +178,7 @@ Follow the established feature structure:
 - `transport/`
 - `integration.ts`
 - `index.ts`
+- `feature.manifest.json`
 
 For multi-capability features, follow the repo's capability-per-file domain
 shape by default:
@@ -199,6 +200,17 @@ Keep platform seams explicit:
 A feature is not fully integrated until it is explicitly mounted in
 `src/routes/v1/index.ts`.
 
+Each feature must maintain `src/features/<featureName>/feature.manifest.json`
+as the declared source of truth for:
+
+- the feature's public seams exported through `index.ts`
+- the feature's current cross-feature dependencies
+- feature-specific breaking-change risk notes
+
+Treat `docs/architecture/generated/feature-dependency-graph.json` and
+`docs/architecture/generated/feature-dependency-graph.md` as maintained repo
+artifacts, not optional local diagnostics.
+
 ## Anti-Drift Seams
 
 Do not introduce cross-feature or platform/feature coupling casually.
@@ -207,6 +219,8 @@ Default rules:
 
 - features must not import another feature's `persistence/*` files directly
 - cross-feature reads must go through the owning feature's exported public seam
+- cross-feature dependencies must be declared in each affected
+  `feature.manifest.json`
 - `integration.ts` owns feature wiring; `transport/*` must not compose
   repositories, DB adapters, or platform infrastructure
 - `domain/*` must not depend on DB-shaped persistence record types when a
@@ -218,7 +232,9 @@ If a change needs a new cross-feature seam:
 
 1. expose a narrow public interface from the owning feature
 2. keep the seam capability-specific rather than broad
-3. update the architecture docs or ADRs in the same change if the seam is
+3. update the owning feature's `feature.manifest.json`
+4. regenerate `docs/architecture/generated/feature-dependency-graph.*`
+5. update the architecture docs or ADRs in the same change if the seam is
    enduring
 
 ## Migration Safety
@@ -267,6 +283,12 @@ change as complete:
 - determine the required artifact set from
   `docs/standards/change-artifact-requirements.md`
 - complete the required maintained-artifacts sweep
+- update affected `feature.manifest.json` files when a feature gained, lost, or
+  changed a public seam, a cross-feature dependency, or a breaking-change-risk
+  note
+- regenerate and verify
+  `docs/architecture/generated/feature-dependency-graph.*` when feature
+  manifests or cross-feature dependencies changed
 - update source-independent docs whose truth changed
 - update permission-mapping artifacts when new authz capability keys or grants
   were introduced
@@ -397,6 +419,21 @@ Defaults:
 - support-only and technical routes must remain explicitly classified and must
   not be silently treated as normal user-facing pages
 
+Current root-admin migration posture:
+
+- selected root-admin suites now use path-backed canonical routes:
+  - `/root-admin`
+  - `/root-admin/web-app-hierarchy`
+  - `/root-admin/users`
+  - `/root-admin/tenants`
+  - `/root-admin/tenant-admins`
+  - `/root-admin/roles`
+- legacy hash URLs such as `/root-admin#users` and
+  `/root-admin#web-app-hierarchy` are compatibility aliases during migration,
+  not canonical route truth
+- do not introduce new hash-backed root-admin suite destinations when the
+  surface is intended to be a durable product place
+
 Materialization and safety rules:
 
 - curated frontend topology may be the primary source of truth for governed app
@@ -484,6 +521,42 @@ Defaults:
 - when approved to commit, prefer one or more scoped commits rather than one
   large mixed commit
 - do not push by default after committing unless the user asks for a push or PR
+
+## Multi-Chat Parallel Work
+
+When multiple chats are active against the same repo, treat them like separate
+engineers working concurrently rather than like one shared scratchpad.
+
+Defaults:
+
+- each material chat should have one scoped task branch of its own; do not use
+  one branch for multiple unrelated chats
+- do not silently continue a chat on a branch that already contains unrelated
+  work from another chat; pause, surface the overlap, and ask how to proceed
+  when separation is non-obvious
+- prefer parallel chats only when their intended write sets are disjoint or
+  overlap only in an explicitly planned integration seam
+- if two chats need to edit the same files or the same durable seam, either:
+  - designate one chat as the integration owner
+  - or serialize the work instead of pretending the changes are independent
+- shared-seam work must be called out early when multiple chats are active
+- treat the following as shared seams by default:
+  - platform routing and feature registration
+  - shared auth, authz, and security middleware
+  - migrations and persistence harnesses
+  - exported feature public seams in `src/features/<feature>/index.ts`
+  - governed generated or materialized outputs
+  - architecture docs, ADRs, and maintained source-independent contracts
+- before merging or handing work off, each chat should state its blast radius:
+  changed features, changed shared seams, changed maintained artifacts, and any
+  known downstream dependents
+- when a change depends on another in-flight chat, record that dependency
+  explicitly in the handoff or PR summary rather than assuming merge order will
+  be obvious later
+
+Do not treat multi-chat concurrency as justification for weakening the repo's
+normal expectations around branch isolation, narrow public seams, compatibility
+planning, or artifact honesty.
 
 ## Escalate Before Changing
 

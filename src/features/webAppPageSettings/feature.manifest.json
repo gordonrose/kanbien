@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "featureName": "webAppPageSettings",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createWebAppPageSettingsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for durable web-app page settings routes."
+    },
+    {
+      "seamId": "page-settings-contract-types",
+      "symbol": "ApprovedIconCatalogEntryResponse | ApprovedPageTemplateCatalogEntryResponse | SelectablePageOptionResponse | WebAppPageContextNavProjectionResponse | WebAppPageSettingsResponse",
+      "path": "index.ts",
+      "kind": "contract-types",
+      "stability": "stable",
+      "description": "Exported page-settings response types for downstream API consumers."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "webAppHierarchyBuilder",
+      "seamIds": [
+        "hierarchy-integration-seam-factory",
+        "hierarchy-integration-seam",
+        "hierarchy-contract-types"
+      ],
+      "description": "Reads curated hierarchy and selectable page context through webAppHierarchyBuilder public seams."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing page settings response shape or context-nav projection semantics can break governed app surfaces that consume these durable settings.",
+    "Changing page settings behavior without compatibility planning can break curated hierarchy adoption flows that rely on stable page identifiers and relationships."
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "featureName": "webAppSurfaceDiscovery",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createWebAppSurfaceDiscoveryFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for web-app surface discovery routes."
+    },
+    {
+      "seamId": "surface-discovery-integration-seam-factory",
+      "symbol": "createWebAppSurfaceDiscoveryIntegrationSeam",
+      "path": "index.ts",
+      "kind": "integration-seam-factory",
+      "stability": "stable",
+      "description": "Cross-feature factory for reading and triggering approved web-app discovery results."
+    },
+    {
+      "seamId": "surface-discovery-integration-seam",
+      "symbol": "WebAppSurfaceDiscoveryIntegrationSeam",
+      "path": "index.ts",
+      "kind": "integration-seam",
+      "stability": "stable",
+      "description": "Cross-feature seam for current approved discovery runs, surfaces, and structure nodes."
+    },
+    {
+      "seamId": "discovery-contract-types",
+      "symbol": "DiscoveredWebAppStructureNodeResponse | DiscoveredWebAppSurfaceResponse | WebAppDiscoveryRunResponse",
+      "path": "index.ts",
+      "kind": "contract-types",
+      "stability": "stable",
+      "description": "Exported API response types for discovery routes."
+    },
+    {
+      "seamId": "discovery-data-types",
+      "symbol": "DiscoveredWebAppSurfaceData | DiscoveredWebAppStructureNodeData | WebAppDiscoveryRunData",
+      "path": "index.ts",
+      "kind": "domain-types",
+      "stability": "stable",
+      "description": "Exported discovered surface and structure data types for cross-feature planning and reconciliation."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing discovery structure or discovered-surface data semantics can break webAppHierarchyBuilder reconciliation and preview logic.",
+    "Changing approved discovery run behavior can break operator workflows that depend on stable discovery scope and output shape."
+  ]
+}
