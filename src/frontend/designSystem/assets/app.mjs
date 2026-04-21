@@ -13,6 +13,23 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
+async function fetchJson(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    headers: {
+      Accept: "application/json",
+      ...(options.headers ?? {}),
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+
+  return response.json();
+}
+
 const formTimeHourOptions = Array.from({ length: 24 }, (_, hour) => String(hour).padStart(2, "0"));
 const formTimeMinuteOptions = Array.from({ length: 12 }, (_, index) => String(index * 5).padStart(2, "0"));
 
@@ -152,6 +169,10 @@ const designSystemPrimaryNavItems = [
   { href: "/design-system/patterns", label: "Patterns" },
   { href: "/design-system/templates", label: "Templates" },
 ];
+
+const designSystemPrimaryNavOrderIndex = new Map(
+  designSystemPrimaryNavItems.map((item, index) => [item.href, index]),
+);
 
 const designSystemBreadcrumbChains = new Map([
   ["/design-system", [
@@ -517,8 +538,8 @@ function resolvePrimaryNavHomeHref(pathname) {
   return chain[0]?.href ?? "/design-system";
 }
 
-function getAllowedPrimaryNavHref(href) {
-  return designSystemPrimaryNavItems.some((item) => item.href === href) ? href : null;
+function getAllowedPrimaryNavHref(href, items = designSystemPrimaryNavItems) {
+  return items.some((item) => item.href === href) ? href : null;
 }
 
 function getPrimaryNavHrefFromLink(link) {
@@ -530,14 +551,28 @@ function getPrimaryNavHrefFromLink(link) {
   return getAllowedPrimaryNavHref(href);
 }
 
+function resolvePrimaryNavActiveHref(pathname, items, fallbackHref) {
+  const normalizedPath = normalizePathname(pathname);
+  const exactHref = getAllowedPrimaryNavHref(normalizedPath, items);
+  if (exactHref) {
+    return exactHref;
+  }
+
+  const prefixMatch = [...items]
+    .filter((item) => normalizedPath.startsWith(`${item.href}/`))
+    .sort((left, right) => right.href.length - left.href.length)[0];
+
+  return prefixMatch?.href ?? fallbackHref;
+}
+
 function getPreferredPrimaryNavHref(container, fallbackHref) {
   const activeLink = container.querySelector('a.nav-link[aria-current="page"], a.nav-link.active');
   const activeHref = getPrimaryNavHrefFromLink(activeLink);
-  return activeHref ?? fallbackHref;
+  return activeHref ?? resolvePrimaryNavActiveHref(window.location.pathname, designSystemPrimaryNavItems, fallbackHref);
 }
 
-function buildPrimaryNavLinkMarkup(activeHref, { tooltipAnchors = false } = {}) {
-  return designSystemPrimaryNavItems.map((item) => {
+function buildPrimaryNavLinkMarkupFromItems(items, activeHref, { tooltipAnchors = false } = {}) {
+  return items.map((item) => {
     const active = item.href === activeHref;
     const current = active ? ' aria-current="page"' : "";
     const activeClass = active ? " active" : "";
@@ -547,14 +582,22 @@ function buildPrimaryNavLinkMarkup(activeHref, { tooltipAnchors = false } = {}) 
   }).join("");
 }
 
-function buildPrimaryNavMenuMarkup(activeHref) {
-  return designSystemPrimaryNavItems.map((item) => {
+function buildPrimaryNavLinkMarkup(activeHref, { tooltipAnchors = false } = {}) {
+  return buildPrimaryNavLinkMarkupFromItems(designSystemPrimaryNavItems, activeHref, { tooltipAnchors });
+}
+
+function buildPrimaryNavMenuMarkupFromItems(items, activeHref) {
+  return items.map((item) => {
     const active = item.href === activeHref;
     if (active) {
       return `<span class="menu-item breadcrumb-structure-current" aria-current="page">${escapeHtml(item.label)}</span>`;
     }
     return `<a class="menu-item" href="${escapeHtml(item.href)}" role="menuitem">${escapeHtml(item.label)}</a>`;
   }).join("");
+}
+
+function buildPrimaryNavMenuMarkup(activeHref) {
+  return buildPrimaryNavMenuMarkupFromItems(designSystemPrimaryNavItems, activeHref);
 }
 
 function normalizePrimaryNav(root = document) {
@@ -1265,6 +1308,189 @@ if (breadcrumbPageMinusOneLink) {
     ? fullLabel
     : "Previous";
 }
+
+function flattenHierarchyPages(pages) {
+  return pages.flatMap((page) => [page, ...flattenHierarchyPages(page.children ?? [])]);
+}
+
+function buildGovernedDesignSystemTopNavCandidates(tree) {
+  const rootFamily = tree?.rootFamilies?.find((family) => family.rootFamilyId === "design-system");
+  if (!rootFamily || !Array.isArray(rootFamily.modules)) {
+    return [];
+  }
+
+  let fallbackOrder = 0;
+
+  return rootFamily.modules.flatMap((module) =>
+    flattenHierarchyPages(module.pages ?? [])
+      .filter((page) => page?.parentPageId === null && typeof page?.resolvedFullRoutePath === "string")
+      .map((page) => ({
+        webAppPageId: page.webAppPageId,
+        displayLabel: page.displayLabel,
+        href: page.resolvedFullRoutePath,
+        fallbackOrder: fallbackOrder++,
+      })),
+  );
+}
+
+function sortGovernedDesignSystemTopNavItems(items) {
+  return [...items].sort((left, right) => {
+    if (left.href === "/design-system" && right.href !== "/design-system") {
+      return -1;
+    }
+
+    if (right.href === "/design-system" && left.href !== "/design-system") {
+      return 1;
+    }
+
+    const leftOrder = typeof left.topNavOrder === "number" ? left.topNavOrder : Number.POSITIVE_INFINITY;
+    const rightOrder = typeof right.topNavOrder === "number" ? right.topNavOrder : Number.POSITIVE_INFINITY;
+    if (leftOrder !== rightOrder) {
+      return leftOrder - rightOrder;
+    }
+
+    const leftIndex = designSystemPrimaryNavOrderIndex.get(left.href) ?? Number.POSITIVE_INFINITY;
+    const rightIndex = designSystemPrimaryNavOrderIndex.get(right.href) ?? Number.POSITIVE_INFINITY;
+    if (leftIndex !== rightIndex) {
+      return leftIndex - rightIndex;
+    }
+
+    if (left.fallbackOrder !== right.fallbackOrder) {
+      return left.fallbackOrder - right.fallbackOrder;
+    }
+
+    return left.displayLabel.localeCompare(right.displayLabel);
+  });
+}
+
+function setHostPrimaryNavCollections(items) {
+  const fallbackHref = resolvePrimaryNavHomeHref(window.location.pathname);
+  const activeHref = resolvePrimaryNavActiveHref(window.location.pathname, items, fallbackHref);
+  const hostPrimaryNavLinksContainer = designSystemShell?.querySelector(":scope > .top-nav .primary-nav-links");
+  const hostPrimaryNavOverflowMenu = designSystemShell?.querySelector(":scope > .top-nav .primary-nav-overflow-menu");
+  const hostMobileNavMenu = designSystemShell?.querySelector(":scope > .mobile-nav-menu");
+
+  if (hostPrimaryNavLinksContainer instanceof HTMLElement) {
+    const tooltipAnchors = Boolean(hostPrimaryNavLinksContainer.querySelector(".tooltip-anchor"));
+    hostPrimaryNavLinksContainer.innerHTML = buildPrimaryNavLinkMarkupFromItems(items, activeHref, { tooltipAnchors });
+
+    if (hostPrimaryNavLinksContainer === primaryNavLinksContainer) {
+      primaryNavLinks.splice(
+        0,
+        primaryNavLinks.length,
+        ...Array.from(hostPrimaryNavLinksContainer.querySelectorAll(".nav-link")),
+      );
+    }
+  }
+
+  if (hostPrimaryNavOverflowMenu instanceof HTMLElement) {
+    hostPrimaryNavOverflowMenu.innerHTML = buildPrimaryNavMenuMarkupFromItems(items, activeHref);
+  }
+
+  if (hostMobileNavMenu instanceof HTMLElement) {
+    const tooltipAnchors = Boolean(hostMobileNavMenu.querySelector(".tooltip-anchor"));
+    const mobileProfileGroup = hostMobileNavMenu.querySelector(".mobile-profile-group");
+    hostMobileNavMenu.querySelectorAll(":scope > a.nav-link").forEach((node) => node.remove());
+    hostMobileNavMenu.insertAdjacentHTML(
+      "afterbegin",
+      buildPrimaryNavLinkMarkupFromItems(items, activeHref, { tooltipAnchors }),
+    );
+    if (mobileProfileGroup) {
+      hostMobileNavMenu.append(mobileProfileGroup);
+    }
+
+    if (hostMobileNavMenu === mobileNavMenu) {
+      mobileNavLinks.splice(
+        0,
+        mobileNavLinks.length,
+        ...Array.from(hostMobileNavMenu.querySelectorAll(":scope > a.nav-link")),
+      );
+    }
+  }
+}
+
+let governedTopNavRequestId = 0;
+
+async function refreshGovernedPrimaryNav() {
+  const requestId = ++governedTopNavRequestId;
+
+  try {
+    const tree = await fetchJson("/v1/web-app-hierarchy/design-system/applied-tree");
+    const candidates = buildGovernedDesignSystemTopNavCandidates(tree);
+
+    const settingsItems = await Promise.all(
+      candidates.map(async (candidate) => {
+        try {
+          const settings = await fetchJson(
+            `/v1/web-app-page-settings/pages/${encodeURIComponent(candidate.webAppPageId)}`,
+          );
+          return {
+            ...candidate,
+            displayLabel: settings?.displayLabel ?? candidate.displayLabel,
+            hasStoredSettings: settings?.hasStoredSettings === true,
+            showInTopNav: settings?.showInTopNav === true,
+            topNavOrder: settings?.topNavOrder ?? null,
+          };
+        } catch (_error) {
+          return {
+            ...candidate,
+            hasStoredSettings: false,
+            showInTopNav: false,
+            topNavOrder: null,
+          };
+        }
+      }),
+    );
+
+    if (requestId !== governedTopNavRequestId) {
+      return;
+    }
+
+    const itemsByHref = new Map();
+    for (const item of settingsItems) {
+      const includeByDefault = item.href === "/design-system" && item.hasStoredSettings !== true;
+      if (item.showInTopNav || includeByDefault) {
+        itemsByHref.set(item.href, item);
+      }
+    }
+
+    const overviewCandidate = settingsItems.find((item) => item.href === "/design-system");
+
+    if (
+      !itemsByHref.has("/design-system")
+      && (!overviewCandidate || overviewCandidate.hasStoredSettings !== true)
+    ) {
+      const overviewItem = designSystemPrimaryNavItems.find((item) => item.href === "/design-system");
+      if (overviewItem) {
+        itemsByHref.set("/design-system", {
+          webAppPageId: null,
+          displayLabel: overviewItem.label,
+          href: overviewItem.href,
+          fallbackOrder: -1,
+          showInTopNav: true,
+          topNavOrder: -1,
+        });
+      }
+    }
+
+    const nextItems = sortGovernedDesignSystemTopNavItems([...itemsByHref.values()]).map((item) => ({
+      href: item.href,
+      label: item.displayLabel,
+    }));
+
+    if (nextItems.length === 0) {
+      return;
+    }
+
+    setHostPrimaryNavCollections(nextItems);
+    updatePrimaryNavOverflow();
+  } catch (_error) {
+    if (requestId !== governedTopNavRequestId) {
+      return;
+    }
+  }
+}
+
 
 function clampNumber(value, min, max, fallback) {
   const parsed = Number(value);
@@ -5494,6 +5720,7 @@ if (shouldTrackHostContextNavOffset()) {
 }
 applyTopNavPreviewFixture(initialTopNavPreviewState.fixture);
 setPreviewWidth(initialTopNavPreviewState.width);
+refreshGovernedPrimaryNav();
 window.requestAnimationFrame(() => {
   updatePrimaryNavOverflow();
   applyTopNavPreviewOpenState(initialTopNavPreviewState.open);
