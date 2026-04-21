@@ -34,6 +34,10 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   Preflight template for first-consumer or materially changed governed app
   adoption so seam readiness, ownership boundaries, literal parity targets,
   and stop conditions are recorded before implementation starts.
+- `chat-branch-bootstrap-template.md`
+  Operational template for capturing a chat's explicit base commit, branch,
+  worktree path, intended write scope, and shared seams before material work
+  begins in parallel.
 - `design-system-component-poc-checklist.md`
   First-consumer checklist for moving a signed-off family into a real app POC
   with parity and verification gates.

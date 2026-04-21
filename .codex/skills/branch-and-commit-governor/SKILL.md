@@ -20,6 +20,9 @@ Keep implementation work isolated and easier to review by defaulting to:
 
 ## Default Workflow
 
+Before the normal branch/commit loop, use a chat bootstrap when the task is
+material and there is any realistic chance of parallel chat activity.
+
 ### 1. Classify the task
 
 Decide whether the current task is:
@@ -29,6 +32,11 @@ Decide whether the current task is:
 - a material change across code, tests, docs, migrations, or artifacts
 
 Only the material class should trigger automatic branch creation by default.
+
+If the task is material, also decide whether:
+
+- a dedicated worktree is required immediately
+- an explicit base commit must be captured before any branch is created
 
 ### 2. Inspect git state before editing
 
@@ -41,6 +49,37 @@ Check:
 If the worktree already has unrelated changes, do not silently continue into a
 new mixed branch. Surface the state and ask how to proceed when separation is
 not obvious.
+
+Also check whether the branch is merely "related" versus truly dedicated. If
+the current branch has moved because of another chat's commits, treat it as an
+unsafe ambient base until proven otherwise.
+
+### 2A. Capture a chat bootstrap
+
+For material work that may overlap with other chats:
+
+1. capture the explicit base commit
+2. prefer a dedicated worktree
+3. create the dedicated branch from that base commit, not ambient `HEAD`
+4. record the result in a short artifact
+
+Preferred record path:
+
+- `docs/workspace/chat-bootstraps/<date>-<slug>.md`
+
+Preferred template:
+
+- `docs/templates/chat-branch-bootstrap-template.md`
+
+Minimum fields to record:
+
+- scope
+- base commit
+- source branch at bootstrap time
+- dedicated branch
+- worktree path
+- intended write set
+- known shared seams
 
 ### 3. Create a task branch when appropriate
 
@@ -57,6 +96,14 @@ Examples:
 - `codex/tenant-auth-policy-harness-fix`
 
 Keep names short, descriptive, and task-scoped.
+
+When parallel chats are active, prefer:
+
+- one dedicated worktree per material chat
+- one dedicated branch per worktree
+
+Do not create the new branch from ambient `HEAD` unless the bootstrap explicitly
+records that choice.
 
 ### 4. Do the work without auto-committing
 
@@ -115,6 +162,10 @@ If the current worktree already contains unrelated changes, prefer a brief
 state report and a recommendation rather than silently branching and risking
 mixed history.
 
+If the repo is under active parallel chat development, escalate from
+"recommendation" to "bootstrap gate": stop, capture a base commit, and isolate
+the chat before implementation.
+
 ### Keep commit authority with the user
 
 This workflow is meant to reduce cleanup pain, not to hide git decisions from
@@ -124,9 +175,11 @@ the user. Explicit approval still gates commits.
 
 1. inspect `git status --short`
 2. inspect `git branch --show-current`
-3. decide whether the task is material
-4. create a task branch if needed
-5. implement and verify
-6. wait for approval
-7. create scoped commit(s)
-8. push only if asked
+3. inspect the explicit base commit to use
+4. decide whether the task is material
+5. create a bootstrap record if the task is material
+6. create a dedicated worktree/branch if needed
+7. implement and verify
+8. wait for approval
+9. create scoped commit(s)
+10. push only if asked

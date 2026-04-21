@@ -522,6 +522,47 @@ Defaults:
   large mixed commit
 - do not push by default after committing unless the user asks for a push or PR
 
+### Chat Bootstrap Gate
+
+For any material multi-file chat, branch-per-task is no longer sufficient on
+its own. Use an explicit chat bootstrap before editing.
+
+Required bootstrap outputs:
+
+- an explicit base commit, not just the current checked-out branch name
+- a dedicated worktree for the chat when parallel chats are active or likely
+- a dedicated task branch created from that explicit base commit
+- a short bootstrap record capturing the branch, worktree path, and intended
+  write scope
+
+Default bootstrap rules:
+
+- do not start a new material chat from ambient `HEAD` when other chats may
+  still be in flight
+- do not assume the currently checked-out branch is a safe starting point just
+  because its name looks related
+- if another chat may commit while this chat is in progress, prefer a separate
+  worktree rather than only a separate branch
+- if the bootstrap record is missing, treat the chat as not yet isolated
+
+Preferred bootstrap artifact:
+
+- create a short record under `docs/workspace/chat-bootstraps/` using
+  `docs/templates/chat-branch-bootstrap-template.md`
+
+Minimum record fields:
+
+- chat scope or slug
+- base commit
+- source branch at bootstrap time
+- dedicated branch name
+- worktree path
+- intended write set
+- known shared seams
+
+Do not treat this record as optional process garnish. Its purpose is to stop a
+later commit in one chat from silently becoming the effective base for another.
+
 ## Multi-Chat Parallel Work
 
 When multiple chats are active against the same repo, treat them like separate
@@ -547,6 +588,11 @@ Defaults:
   - exported feature public seams in `src/features/<feature>/index.ts`
   - governed generated or materialized outputs
   - architecture docs, ADRs, and maintained source-independent contracts
+- when starting a new material chat while another is active, create the new
+  branch from an explicit recorded base commit rather than from whatever `HEAD`
+  currently points to
+- if a chat needs to be rebased onto a newer commit from another chat, record
+  that rebase decision explicitly in the bootstrap artifact or handoff
 - before merging or handing work off, each chat should state its blast radius:
   changed features, changed shared seams, changed maintained artifacts, and any
   known downstream dependents
