@@ -26,7 +26,7 @@ export default defineConfig({
   },
   snapshotPathTemplate: "{testDir}/__snapshots__/{testFilePath}/{arg}{ext}",
   webServer: {
-    command: `node --import tsx tests/visual/designSystem/previewServer.ts`,
+    command: `node --import tsx tests/visual/designSystem/support/servers/previewServer.ts`,
     url: `http://127.0.0.1:${port}/design-system/canonicals/top-nav`,
     reuseExistingServer: !process.env.CI,
     timeout: 30_000,

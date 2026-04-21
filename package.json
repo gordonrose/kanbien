@@ -24,8 +24,8 @@
     "test:lifecycle:report": "node --import tsx src/scripts/reportTestCaseLifecycle.ts",
     "test:cleanup": "node --import tsx src/scripts/cleanupTestData.ts",
     "test:cleanup:dry": "node --import tsx src/scripts/cleanupTestData.ts --dry-run",
-    "test:visual:design-system": "playwright test tests/visual/designSystem/topNav.spec.ts --config=playwright.config.ts",
-    "test:visual:design-system:update": "playwright test tests/visual/designSystem/topNav.spec.ts --config=playwright.config.ts --update-snapshots",
+    "test:visual:design-system": "playwright test tests/visual/designSystem/canonicals/navigation/topNav.spec.ts --config=playwright.config.ts",
+    "test:visual:design-system:update": "playwright test tests/visual/designSystem/canonicals/navigation/topNav.spec.ts --config=playwright.config.ts --update-snapshots",
     "test:all": "npm run test && npm run test:traceability"
   },
   "dependencies": {

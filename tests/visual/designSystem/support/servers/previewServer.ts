@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { createApp } from "../../../src/app";
+import { createApp } from "../../../../../src/app";
 
 const port = Number(process.env.PLAYWRIGHT_PREVIEW_PORT ?? "4317");
 const app = createApp();

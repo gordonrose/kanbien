@@ -38,5 +38,5 @@ test("debug context-nav bottom stack alignment", async ({ page }) => {
   });
 
   console.log(JSON.stringify(info, null, 2));
-  await page.screenshot({ path: "tests/visual/designSystem/context-nav-bottom-stack-alignment-debug.png", fullPage: true });
+  await page.screenshot({ path: "tests/visual/designSystem/debug/contextNav/context-nav-bottom-stack-alignment-debug.png", fullPage: true });
 });

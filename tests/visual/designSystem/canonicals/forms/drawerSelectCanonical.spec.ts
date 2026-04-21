@@ -3,7 +3,27 @@ import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import {
   expectComputedColor,
   withHumanReviewGuard,
-} from "./humanReviewGuards";
+} from "../../support/helpers/humanReviewGuards";
+
+type ScreenshotDiffResult =
+  | {
+      comparable: false;
+      reason: "canvas-unavailable";
+    }
+  | {
+      comparable: false;
+      reason: "size-mismatch";
+      baselineWidth: number;
+      baselineHeight: number;
+      actualWidth: number;
+      actualHeight: number;
+    }
+  | {
+      comparable: true;
+      diffPixels: number;
+      width: number;
+      height: number;
+    };
 
 const drawerSelectCanonicalStates = [
   {
@@ -402,8 +422,11 @@ async function expectApprovedScreenshotParity(
   const maxDiffRatio = options?.maxDiffRatio ?? null;
   const sizeTolerancePixels = options?.sizeTolerancePixels ?? 0;
 
-  const diffResult = await page.evaluate(async ({ baseline, actual, sizeTolerance }) => {
-    const loadImageData = async (data) => {
+  const diffResult = await page.evaluate<
+    ScreenshotDiffResult,
+    { baseline: string; actual: string; sizeTolerance: number }
+  >(async ({ baseline, actual, sizeTolerance }) => {
+    const loadImageData = async (data: string): Promise<ImageData | null> => {
       const image = new Image();
       image.src = `data:image/png;base64,${data}`;
       await image.decode();

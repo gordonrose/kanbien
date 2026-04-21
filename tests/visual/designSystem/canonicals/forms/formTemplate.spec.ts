@@ -993,4 +993,57 @@ test.describe("design-system form template", () => {
       previousRight = right;
     }
   });
+
+  test("icon grid modal searches the governed icon library and syncs the selected trigger state", async ({ page }) => {
+    await page.goto("/design-system/templates/form");
+
+    const trigger = page.locator("#form-campaign-icon-trigger");
+    await trigger.click();
+
+    const dialog = page.getByRole("dialog", { name: "Choose campaign icon" });
+    const search = dialog.getByPlaceholder("Search icons");
+
+    await expect(dialog).toBeVisible();
+    await expect(search).toBeFocused();
+    await expect(dialog.locator("[data-form-icon-grid-option]")).toHaveCount(60);
+
+    await search.fill("clock");
+    await expect(dialog.locator("[data-form-icon-grid-option]")).toHaveCount(1);
+    await dialog.getByRole("button", { name: "Choose Clock icon" }).click();
+
+    await expect(dialog).toBeHidden();
+    await expect(page.locator('[data-form-icon-grid-value]')).toHaveValue("clock");
+    await expect(page.locator("[data-form-icon-grid-current-label]")).toHaveText("Clock");
+    await expect(trigger).toBeFocused();
+  });
+
+  test("icon grid uses tooltip labels so dense tiles stay compact", async ({ page }) => {
+    await page.goto("/design-system/templates/form");
+
+    await page.locator("#form-campaign-icon-trigger").click();
+
+    const clockOption = page.locator('[data-form-icon-grid-option="clock"]');
+    await expect(clockOption).toHaveAttribute("data-tooltip", "Clock");
+
+    await clockOption.hover();
+    await expect(page.locator("#shared-floating-tooltip")).toHaveText("Clock");
+  });
+
+  test("icon grid opening closes other lightweight form overlays and escape returns focus to the trigger", async ({ page }) => {
+    await page.goto("/design-system/templates/form");
+
+    const dropdownTrigger = page.getByRole("button", { name: "Dropdown All active tenants" });
+    await dropdownTrigger.click();
+    await expect(page.locator("[data-form-select-listbox]")).toBeVisible();
+
+    const iconTrigger = page.locator("#form-campaign-icon-trigger");
+    await iconTrigger.click();
+
+    await expect(page.locator("[data-form-select-listbox]")).toBeHidden();
+    await expect(page.getByRole("dialog", { name: "Choose campaign icon" })).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog", { name: "Choose campaign icon" })).toBeHidden();
+    await expect(iconTrigger).toBeFocused();
+  });
 });

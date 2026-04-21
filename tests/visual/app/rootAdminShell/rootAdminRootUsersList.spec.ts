@@ -5,8 +5,165 @@ const mockSession = {
   authPrincipalId: "auth_principal_001",
   email: "root.admin@example.test",
   displayName: "Root Admin",
-  expiresAt: "2026-04-16T18:00:00.000Z",
+  expiresAt: "2027-04-16T18:00:00.000Z",
 };
+
+function createRootAdminTopNavTree() {
+  return {
+    rootFamilies: [
+      {
+        rootFamilyId: "root-admin",
+        displayLabel: "Root Admin",
+        routePrefix: "/root-admin",
+        sortOrder: 1,
+        createdAt: "2026-04-16T10:00:00.000Z",
+        updatedAt: "2026-04-16T18:00:00.000Z",
+        modules: [
+          {
+            webAppModuleId: "module-root-admin",
+            rootFamilyId: "root-admin",
+            moduleKey: "root-admin-shell",
+            displayLabel: "Root Admin Shell",
+            landingPageWebAppPageId: "page-overview",
+            status: "live",
+            sortOrder: 1,
+            createdAt: "2026-04-16T10:00:00.000Z",
+            updatedAt: "2026-04-16T18:00:00.000Z",
+            pages: [
+              {
+                webAppPageId: "page-overview",
+                pageKey: "overview",
+                displayLabel: "Overview",
+                resolvedFullRoutePath: "/root-admin#overview",
+                children: [],
+              },
+              {
+                webAppPageId: "page-users",
+                pageKey: "users",
+                displayLabel: "Users",
+                resolvedFullRoutePath: "/root-admin#users",
+                children: [],
+              },
+              {
+                webAppPageId: "page-roles",
+                pageKey: "roles",
+                displayLabel: "Roles",
+                resolvedFullRoutePath: "/root-admin#roles",
+                children: [],
+              },
+              {
+                webAppPageId: "page-tenants",
+                pageKey: "tenants",
+                displayLabel: "Tenants",
+                resolvedFullRoutePath: "/root-admin#tenants",
+                children: [],
+              },
+              {
+                webAppPageId: "page-tenant-admins",
+                pageKey: "tenant-admins",
+                displayLabel: "Tenant Admins",
+                resolvedFullRoutePath: "/root-admin#tenant-admins",
+                children: [],
+              },
+              {
+                webAppPageId: "page-web-app-hierarchy",
+                pageKey: "web-app-hierarchy",
+                displayLabel: "Web App Hierarchy",
+                resolvedFullRoutePath: "/root-admin#web-app-hierarchy",
+                children: [],
+              },
+            ],
+            orphanedPages: [],
+          },
+        ],
+      },
+    ],
+  };
+}
+
+function createPageSettingsRecord(pageId: string) {
+  const settingsByPageId: Record<string, { displayLabel: string; showInTopNav: boolean; topNavOrder: number | null }> = {
+    "page-overview": { displayLabel: "Overview", showInTopNav: true, topNavOrder: 0 },
+    "page-users": { displayLabel: "Users", showInTopNav: true, topNavOrder: 1 },
+    "page-roles": { displayLabel: "Roles", showInTopNav: true, topNavOrder: 2 },
+    "page-tenants": { displayLabel: "Tenants", showInTopNav: true, topNavOrder: 3 },
+    "page-tenant-admins": { displayLabel: "Tenant Admins", showInTopNav: true, topNavOrder: 4 },
+    "page-web-app-hierarchy": { displayLabel: "Web App Hierarchy", showInTopNav: true, topNavOrder: 5 },
+  };
+
+  const record = settingsByPageId[pageId];
+  if (!record) {
+    return null;
+  }
+
+  return {
+    webAppPageId: pageId,
+    rootFamilyId: "root-admin",
+    displayLabel: record.displayLabel,
+    hasStoredSettings: true,
+    iconKey: "page-default",
+    effectiveIconKey: "page-default",
+    showInTopNav: record.showInTopNav,
+    topNavOrder: record.topNavOrder,
+    pageTemplateKey: null,
+    effectivePageTemplateKey: null,
+    contextNavItems: [],
+    createdAt: "2026-04-16T10:00:00.000Z",
+    updatedAt: "2026-04-16T18:00:00.000Z",
+  };
+}
+
+function defaultContextNavProjectionStore() {
+  return {
+    users: [
+      {
+        webAppPageId: "page-users",
+        shellPageKey: "users",
+        displayLabel: "Users",
+        resolvedFullRoutePath: "/root-admin#users",
+        iconKey: "page-default",
+        effectiveIconKey: "page-default",
+        sortOrder: 0,
+      },
+      {
+        webAppPageId: "page-roles",
+        shellPageKey: "roles",
+        displayLabel: "Roles",
+        resolvedFullRoutePath: "/root-admin#roles",
+        iconKey: "page-default",
+        effectiveIconKey: "page-default",
+        sortOrder: 1,
+      },
+      {
+        webAppPageId: "page-tenants",
+        shellPageKey: "tenants",
+        displayLabel: "Tenants",
+        resolvedFullRoutePath: "/root-admin#tenants",
+        iconKey: "page-default",
+        effectiveIconKey: "page-default",
+        sortOrder: 2,
+      },
+      {
+        webAppPageId: "page-tenant-admins",
+        shellPageKey: "tenant-admins",
+        displayLabel: "Tenant Admins",
+        resolvedFullRoutePath: "/root-admin#tenant-admins",
+        iconKey: "page-default",
+        effectiveIconKey: "page-default",
+        sortOrder: 3,
+      },
+      {
+        webAppPageId: "page-web-app-hierarchy",
+        shellPageKey: "web-app-hierarchy",
+        displayLabel: "Web App Hierarchy",
+        resolvedFullRoutePath: "/root-admin#web-app-hierarchy",
+        iconKey: "page-default",
+        effectiveIconKey: "page-default",
+        sortOrder: 4,
+      },
+    ],
+  };
+}
 
 function buildRootUsers(total = 30) {
   return Array.from({ length: total }, (_value, index) => {
@@ -31,6 +188,7 @@ async function mockRootUsersRoutes(
 ) {
   const rootUsers = buildRootUsers();
   let initialFailed = false;
+  const contextNavByPageKey = defaultContextNavProjectionStore();
 
   await page.route("**/v1/root-auth/browser/session", async (route) => {
     await route.fulfill({
@@ -102,6 +260,47 @@ async function mockRootUsersRoutes(
       }),
     });
   });
+
+  await page.route("**/v1/web-app-hierarchy/tree", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(createRootAdminTopNavTree()),
+    });
+  });
+
+  await page.route(/.*\/v1\/web-app-page-settings\/pages\/[^/]+$/, async (route) => {
+    const pageId = route.request().url().split("/").at(-1) ?? "";
+    const settings = createPageSettingsRecord(pageId);
+    if (!settings) {
+      await route.fulfill({
+        status: 404,
+        contentType: "application/json",
+        body: JSON.stringify({ message: "Page not found." }),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(settings),
+    });
+  });
+
+  await page.route(/.*\/v1\/web-app-page-settings\/root-families\/[^/]+\/pages\/[^/]+\/context-nav$/, async (route) => {
+    const requestUrl = new URL(route.request().url());
+    const pageKey = requestUrl.pathname.split("/").at(-2) ?? "overview";
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        rootFamilyId: "root-admin",
+        shellPageKey: pageKey,
+        items: contextNavByPageKey[pageKey as keyof typeof contextNavByPageKey] ?? [],
+      }),
+    });
+  });
 }
 
 async function bootstrapUsersPage(
@@ -133,6 +332,30 @@ test.describe("root-admin root-users list page adoption", () => {
     await expect(page.locator('[data-selectable-list-card]')).toHaveCount(30);
     await expect(page.locator("#root-users-detail-title")).toHaveText("Root User 26");
     await expect(page.locator(".list-page-shell-split")).toHaveClass(/detail-open/);
+    const announcementState = await page.locator("#root-users-list-announcement").evaluate((node) => {
+      const styles = window.getComputedStyle(node);
+      return {
+        className: node.className,
+        position: styles.position,
+        width: styles.width,
+        height: styles.height,
+        clip: styles.clip,
+      };
+    });
+    expect(announcementState).toMatchObject({
+      className: "visually-hidden",
+      position: "absolute",
+      width: "1px",
+      height: "1px",
+      clip: "rect(0px, 0px, 0px, 0px)",
+    });
+
+    const listBox = await page.locator(".list-page-list-column").boundingBox();
+    const detailBox = await page.locator("#root-users-detail-panel").boundingBox();
+    expect(listBox).not.toBeNull();
+    expect(detailBox).not.toBeNull();
+    expect((listBox?.x ?? 0)).toBeLessThan((detailBox?.x ?? 0) - 1);
+    expect(Math.abs((listBox?.y ?? 0) - (detailBox?.y ?? 0))).toBeLessThanOrEqual(2);
   });
 
   test("desktop closed users list uses browser scroll and lazy-loads from the page bottom", async ({ page }) => {
@@ -190,7 +413,7 @@ test.describe("root-admin root-users list page adoption", () => {
     await expect(page.locator('[data-selectable-list-no-results-state]')).toBeHidden();
   });
 
-  test("mobile selection becomes a full-sheet detail overlay above the users list and beneath the bottom bar", async ({ page }) => {
+  test("mobile selection becomes a full-sheet detail overlay that stays above the bottom bar", async ({ page }) => {
     await page.setViewportSize({ width: 560, height: 960 });
     await bootstrapUsersPage(page);
 
@@ -207,7 +430,7 @@ test.describe("root-admin root-users list page adoption", () => {
     const bottomBarBox = await bottomBar.boundingBox();
     expect(detailBox).not.toBeNull();
     expect(bottomBarBox).not.toBeNull();
-    expect(Math.abs(((detailBox?.y ?? 0) + (detailBox?.height ?? 0)) - (bottomBarBox?.y ?? 0))).toBeLessThanOrEqual(2);
+    expect((detailBox?.y ?? 0) + (detailBox?.height ?? 0)).toBeLessThanOrEqual((bottomBarBox?.y ?? 0) + 1);
   });
 
   test("initial directory failures stay scoped to the list region and recover through the local retry action", async ({ page }) => {

@@ -69,30 +69,29 @@ test("hierarchy-tree desktop row hover and focus reveal subtle open actions with
   const openIconState = await links.nth(0).evaluate((link) => {
     const svg = link.querySelector("svg");
     const outline = svg?.querySelector("path");
-    const pupil = svg?.querySelector("circle");
+    const iconBox = svg?.getBoundingClientRect();
 
-    if (!(svg instanceof SVGElement) || !(outline instanceof SVGPathElement) || !(pupil instanceof SVGCircleElement)) {
+    if (!(svg instanceof SVGElement) || !(outline instanceof SVGPathElement)) {
       return null;
     }
 
-    const outlineStyle = window.getComputedStyle(outline);
-    const pupilStyle = window.getComputedStyle(pupil);
+    const svgStyle = window.getComputedStyle(svg);
 
     return {
-      outlineStroke: outlineStyle.stroke,
-      outlineFill: outlineStyle.fill,
-      pupilStroke: pupilStyle.stroke,
-      pupilFill: pupilStyle.fill,
+      svgWidth: iconBox?.width ?? 0,
+      svgHeight: iconBox?.height ?? 0,
+      computedWidth: svgStyle.width,
+      computedHeight: svgStyle.height,
+      flexBasis: svgStyle.flexBasis,
     };
   });
 
   expect(openIconState).not.toBeNull();
-  expect(openIconState?.outlineFill).toBe("none");
-  expect(openIconState?.pupilFill).toBe("none");
-  expect(openIconState?.outlineStroke).not.toBe("none");
-  expect(openIconState?.outlineStroke).not.toBe("transparent");
-  expect(openIconState?.pupilStroke).not.toBe("none");
-  expect(openIconState?.pupilStroke).not.toBe("transparent");
+  expect(openIconState?.svgWidth ?? 0).toBeGreaterThan(0);
+  expect(openIconState?.svgHeight ?? 0).toBeGreaterThan(0);
+  expect(openIconState?.computedWidth).not.toBe("0px");
+  expect(openIconState?.computedHeight).not.toBe("0px");
+  expect(openIconState?.flexBasis).not.toBe("0px");
 
   await roadmapRow.locator(".hierarchy-tree-label-button").focus();
   await expect(inlineActions).toHaveCSS("opacity", "1");

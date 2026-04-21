@@ -38,6 +38,15 @@ const canonicalShellRoutes = [
     activePrimaryHref: "/design-system/patterns",
   },
   {
+    label: "page-shell-banner canonical launcher",
+    route: "/design-system/canonicals/page-shell-banner",
+    current: "Page-Shell Banner",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/patterns",
+    activePrimary: "Patterns",
+    activePrimaryHref: "/design-system/patterns",
+  },
+  {
     label: "list-record-card canonical launcher",
     route: "/design-system/canonicals/list-record-card",
     current: "List Record Card",
@@ -123,6 +132,15 @@ const canonicalShellRoutes = [
     homeHref: "/design-system/components",
     activePrimary: "Patterns",
     activePrimaryHref: "/design-system/patterns",
+  },
+  {
+    label: "page-shell-banner canonical render",
+    route: "/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0",
+    current: "Page-Shell Banner Canonicals",
+    expectCanonicalLink: true,
+    homeHref: "/design-system/components",
+    activePrimary: "Components",
+    activePrimaryHref: "/design-system/components",
   },
   {
     label: "list-record-card canonical render",
@@ -220,4 +238,31 @@ test.describe("design-system canonical shell navigation", () => {
       }
     });
   }
+
+  test("legacy design-system detail routes mount the shared top-nav scaffold before shell binding", async ({ page }) => {
+    for (const route of [
+      "/design-system/patterns/list-detail-panel",
+      "/design-system/patterns/list-record-card",
+    ]) {
+      await gotoRoute(page, route);
+
+      const shellTopNav = page.locator(".design-system-shell > .top-nav");
+      await expect(shellTopNav.locator("#primary-nav-links")).toHaveCount(1);
+      await expect(shellTopNav.locator("#primary-nav-overflow")).toHaveCount(1);
+      await expect(shellTopNav.locator("#primary-nav-overflow-button")).toHaveCount(1);
+      await expect(shellTopNav.locator("#primary-nav-overflow-menu")).toHaveCount(1);
+      await expect(page.locator(".design-system-shell > #mobile-nav-menu")).toHaveCount(1);
+      await expect(page.locator(".design-system-shell > #mobile-nav-menu #mobile-profile-button")).toHaveCount(1);
+      await expect(page.locator(".design-system-shell > #mobile-nav-menu #mobile-profile-menu")).toHaveCount(1);
+      await expect(
+        shellTopNav.locator(".primary-nav").getByRole("link", { name: "Foundations" }),
+      ).toHaveCount(0);
+      await expect(
+        shellTopNav.locator(".primary-nav").getByRole("link", { name: "Resources" }),
+      ).toHaveCount(0);
+      await expect(
+        shellTopNav.locator(".primary-nav").getByRole("link", { name: "Templates" }),
+      ).toHaveAttribute("href", "/design-system/templates");
+    }
+  });
 });

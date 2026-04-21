@@ -37,5 +37,5 @@ test("debug context-nav scroll alignment", async ({ page }) => {
   });
 
   console.log(JSON.stringify(info, null, 2));
-  await page.screenshot({ path: "tests/visual/designSystem/context-nav-scroll-alignment-debug.png", fullPage: true });
+  await page.screenshot({ path: "tests/visual/designSystem/debug/contextNav/context-nav-scroll-alignment-debug.png", fullPage: true });
 });
