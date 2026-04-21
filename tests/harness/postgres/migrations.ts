@@ -9,6 +9,9 @@ type MigrationGroup =
   | "rootAuth"
   | "rootRoles"
   | "tenants"
+  | "webAppHierarchyBuilder"
+  | "webAppPageSettings"
+  | "webAppSurfaceDiscovery"
   | "notificationDelivery"
   | "tenantAdmins"
   | "tenantAuth"
@@ -60,6 +63,86 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
   {
     group: "tenants",
     relativePath: "tenants/persistence/migrations/0006_create_tenants.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0013_create_web_app_hierarchy.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0018_add_web_app_hierarchy_sync_discovery_capability.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0021_create_web_app_hierarchy_reconcile_extension.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0022_seed_web_app_hierarchy_reconcile_capabilities.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0023_add_design_system_topology_materialization_v1.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0024_seed_design_system_topology_materialization_capabilities.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0025_add_module_landing_page.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0026_seed_module_landing_page_capability.sql",
+  },
+  {
+    group: "webAppPageSettings",
+    relativePath:
+      "webAppPageSettings/persistence/migrations/0027_create_web_app_page_settings.sql",
+  },
+  {
+    group: "webAppPageSettings",
+    relativePath:
+      "webAppPageSettings/persistence/migrations/0028_seed_web_app_page_settings_capabilities.sql",
+  },
+  {
+    group: "webAppPageSettings",
+    relativePath:
+      "webAppPageSettings/persistence/migrations/0029_add_parent_page_to_web_app_page_settings.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0016_create_web_app_surface_discovery.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0017_seed_web_app_surface_discovery_root_capabilities.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0019_create_web_app_surface_discovery_structure.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0020_seed_web_app_surface_discovery_structure_root_capabilities.sql",
+  },
+  {
+    group: "webAppSurfaceDiscovery",
+    relativePath:
+      "webAppSurfaceDiscovery/persistence/migrations/0021_relax_group_linked_surface_constraint.sql",
   },
   {
     group: "notificationDelivery",
@@ -185,6 +268,9 @@ export async function applyPostgresTestMigrations(
     "rootAuth",
     "rootRoles",
     "tenants",
+    "webAppHierarchyBuilder",
+    "webAppPageSettings",
+    "webAppSurfaceDiscovery",
     "notificationDelivery",
     "tenantAdmins",
     "tenantAuth",

@@ -7,6 +7,9 @@ import { createNotificationDeliveryFeature } from "../../features/notificationDe
 import { createTenantAdminsFeature } from "../../features/tenantAdmins";
 import { createTenantAuthFeature } from "../../features/tenantAuth";
 import { createTenantConfigurationFeature } from "../../features/tenantConfiguration";
+import { createWebAppHierarchyBuilderFeature } from "../../features/webAppHierarchyBuilder";
+import { createWebAppPageSettingsFeature } from "../../features/webAppPageSettings";
+import { createWebAppSurfaceDiscoveryFeature } from "../../features/webAppSurfaceDiscovery";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -119,6 +122,36 @@ v1Router.use(
   requireRootSession,
   authenticatedGeneralRateLimit,
   createTenantsFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/web-app-hierarchy",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createWebAppHierarchyBuilderFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/web-app-page-settings",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createWebAppPageSettingsFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/web-app-surface-discovery",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createWebAppSurfaceDiscoveryFeature(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,
