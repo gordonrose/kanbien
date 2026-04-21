@@ -688,7 +688,7 @@ export function createRootUsersListController({
     try {
       await loadDirectory();
     } catch (_error) {
-      setShellMessage("Could not load the root-user directory.", "danger");
+      setShellMessage("Could not load the root-user directory.", "error");
     }
   }
 
@@ -703,7 +703,7 @@ export function createRootUsersListController({
       searchModelForQuery(normalizedQuery);
     } catch (error) {
       if (error instanceof RootUsersSearchValidationError) {
-        setShellMessage(error.message, "danger");
+        setShellMessage(error.message, "error");
         return true;
       }
       throw error;
@@ -714,15 +714,11 @@ export function createRootUsersListController({
 
     try {
       await loadDirectory();
-      if (!currentQuery) {
-        setShellMessage("Showing the visible root-user directory.", "success");
-      } else if (currentListState === "no-results") {
-        setShellMessage(`No visible root users matched "${currentQuery}".`, "danger");
-      } else {
-        setShellMessage(`Updated the root-user directory for "${currentQuery}".`, "success");
+      if (currentListState === "no-results") {
+        setShellMessage(`No visible root users matched "${currentQuery}".`, "error");
       }
     } catch (_error) {
-      setShellMessage("Could not update the root-user directory.", "danger");
+      setShellMessage("Could not update the root-user directory.", "error");
     }
 
     return true;
@@ -736,7 +732,7 @@ export function createRootUsersListController({
     try {
       await loadDirectory({ append: true });
     } catch (_error) {
-      setShellMessage("Could not load more root users.", "danger");
+      setShellMessage("Could not load more root users.", "error");
     }
   }
 
@@ -850,13 +846,13 @@ export function createRootUsersListController({
 
   initialRetry?.addEventListener("click", () => {
     void loadDirectory().catch(() => {
-      setShellMessage("Could not load the root-user directory.", "danger");
+      setShellMessage("Could not load the root-user directory.", "error");
     });
   });
 
   emptyReset?.addEventListener("click", () => {
     void loadDirectory().catch(() => {
-      setShellMessage("Could not refresh the root-user directory.", "danger");
+      setShellMessage("Could not refresh the root-user directory.", "error");
     });
   });
 
@@ -866,9 +862,8 @@ export function createRootUsersListController({
     updateUrlSearchParam("");
     void loadDirectory().then(() => {
       searchInput.focus();
-      setShellMessage("Showing the visible root-user directory.", "success");
     }).catch(() => {
-      setShellMessage("Could not reset the root-user directory search.", "danger");
+      setShellMessage("Could not reset the root-user directory search.", "error");
     });
   });
 
