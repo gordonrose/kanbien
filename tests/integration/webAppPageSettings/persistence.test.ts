@@ -79,7 +79,9 @@ describeIfPostgres("webAppPageSettings postgres repository", () => {
       sortOrder: 0,
       createdByRootAdminUserId: actorRootUserId,
       bootstrapSource: null,
+      topologyState: "applied",
       templateKey: "static-html-page",
+      materializedAt: null,
     });
     await hierarchyRepository.createPage({
       webAppPageId: childPageId,
@@ -94,7 +96,9 @@ describeIfPostgres("webAppPageSettings postgres repository", () => {
       sortOrder: 1,
       createdByRootAdminUserId: actorRootUserId,
       bootstrapSource: null,
+      topologyState: "applied",
       templateKey: "static-html-page",
+      materializedAt: null,
     });
     await hierarchyRepository.createPage({
       webAppPageId: siblingPageId,
@@ -109,7 +113,9 @@ describeIfPostgres("webAppPageSettings postgres repository", () => {
       sortOrder: 2,
       createdByRootAdminUserId: actorRootUserId,
       bootstrapSource: null,
+      topologyState: "applied",
       templateKey: "static-html-page",
+      materializedAt: null,
     });
   });
 

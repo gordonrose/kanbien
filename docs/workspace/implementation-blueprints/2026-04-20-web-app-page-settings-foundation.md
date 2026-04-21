@@ -39,7 +39,9 @@
 ## Frontend Plan
 
 - Route / surface:
-  keep the existing `/root-admin/web-app-hierarchy` route and add:
+  keep `/root-admin/web-app-hierarchy` as the suite workspace route and allow
+  durable selected-page subroutes under
+  `/root-admin/web-app-hierarchy/pages/:pageKey`, then add:
   - selected-page `Page Settings` section
   - selected-module landing-page control inside `Hierarchy`
 - UI states:

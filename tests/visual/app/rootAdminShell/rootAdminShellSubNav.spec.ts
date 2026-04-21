@@ -34,42 +34,42 @@ function createRootAdminTopNavTree() {
                 webAppPageId: "page-overview",
                 pageKey: "overview",
                 displayLabel: "Overview",
-                resolvedFullRoutePath: "/root-admin#overview",
+                resolvedFullRoutePath: "/root-admin",
                 children: [],
               },
               {
                 webAppPageId: "page-users",
                 pageKey: "users",
                 displayLabel: "Users",
-                resolvedFullRoutePath: "/root-admin#users",
+                resolvedFullRoutePath: "/root-admin/users",
                 children: [],
               },
               {
                 webAppPageId: "page-roles",
                 pageKey: "roles",
                 displayLabel: "Roles",
-                resolvedFullRoutePath: "/root-admin#roles",
+                resolvedFullRoutePath: "/root-admin/roles",
                 children: [],
               },
               {
                 webAppPageId: "page-tenants",
                 pageKey: "tenants",
                 displayLabel: "Tenants",
-                resolvedFullRoutePath: "/root-admin#tenants",
+                resolvedFullRoutePath: "/root-admin/tenants",
                 children: [],
               },
               {
                 webAppPageId: "page-tenant-admins",
                 pageKey: "tenant-admins",
                 displayLabel: "Tenant Admins",
-                resolvedFullRoutePath: "/root-admin#tenant-admins",
+                resolvedFullRoutePath: "/root-admin/tenant-admins",
                 children: [],
               },
               {
                 webAppPageId: "page-web-app-hierarchy",
                 pageKey: "web-app-hierarchy",
                 displayLabel: "Web App Hierarchy",
-                resolvedFullRoutePath: "/root-admin#web-app-hierarchy",
+                resolvedFullRoutePath: "/root-admin/web-app-hierarchy",
                 children: [],
               },
             ],
@@ -121,7 +121,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-users",
         shellPageKey: "users",
         displayLabel: "Users",
-        resolvedFullRoutePath: "/root-admin#users",
+        resolvedFullRoutePath: "/root-admin/users",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 0,
@@ -130,7 +130,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-roles",
         shellPageKey: "roles",
         displayLabel: "Roles",
-        resolvedFullRoutePath: "/root-admin#roles",
+        resolvedFullRoutePath: "/root-admin/roles",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 1,
@@ -139,7 +139,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-tenants",
         shellPageKey: "tenants",
         displayLabel: "Tenants",
-        resolvedFullRoutePath: "/root-admin#tenants",
+        resolvedFullRoutePath: "/root-admin/tenants",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 2,
@@ -150,7 +150,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-users",
         shellPageKey: "users",
         displayLabel: "Users",
-        resolvedFullRoutePath: "/root-admin#users",
+        resolvedFullRoutePath: "/root-admin/users",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 0,
@@ -159,7 +159,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-roles",
         shellPageKey: "roles",
         displayLabel: "Roles",
-        resolvedFullRoutePath: "/root-admin#roles",
+        resolvedFullRoutePath: "/root-admin/roles",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 1,
@@ -170,7 +170,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-users",
         shellPageKey: "users",
         displayLabel: "Users",
-        resolvedFullRoutePath: "/root-admin#users",
+        resolvedFullRoutePath: "/root-admin/users",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 0,
@@ -179,7 +179,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-tenants",
         shellPageKey: "tenants",
         displayLabel: "Tenants",
-        resolvedFullRoutePath: "/root-admin#tenants",
+        resolvedFullRoutePath: "/root-admin/tenants",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 1,
@@ -188,7 +188,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-tenant-admins",
         shellPageKey: "tenant-admins",
         displayLabel: "Tenant Admins",
-        resolvedFullRoutePath: "/root-admin#tenant-admins",
+        resolvedFullRoutePath: "/root-admin/tenant-admins",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 2,
@@ -199,7 +199,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-users",
         shellPageKey: "users",
         displayLabel: "Users",
-        resolvedFullRoutePath: "/root-admin#users",
+        resolvedFullRoutePath: "/root-admin/users",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 0,
@@ -208,7 +208,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-roles",
         shellPageKey: "roles",
         displayLabel: "Roles",
-        resolvedFullRoutePath: "/root-admin#roles",
+        resolvedFullRoutePath: "/root-admin/roles",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 1,
@@ -217,7 +217,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-tenants",
         shellPageKey: "tenants",
         displayLabel: "Tenants",
-        resolvedFullRoutePath: "/root-admin#tenants",
+        resolvedFullRoutePath: "/root-admin/tenants",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 2,
@@ -226,7 +226,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-tenant-admins",
         shellPageKey: "tenant-admins",
         displayLabel: "Tenant Admins",
-        resolvedFullRoutePath: "/root-admin#tenant-admins",
+        resolvedFullRoutePath: "/root-admin/tenant-admins",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 3,
@@ -235,7 +235,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-web-app-hierarchy",
         shellPageKey: "web-app-hierarchy",
         displayLabel: "Web App Hierarchy",
-        resolvedFullRoutePath: "/root-admin#web-app-hierarchy",
+        resolvedFullRoutePath: "/root-admin/web-app-hierarchy",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 4,
@@ -244,9 +244,11 @@ function defaultContextNavProjectionStore() {
   };
 }
 
+type RootAdminContextNavStore = ReturnType<typeof defaultContextNavProjectionStore>;
+
 async function bootstrapAuthenticatedShell(
   page: Page,
-  hash = "#overview",
+  route = "/root-admin",
   search = "",
   options: {
     contextNavByPageKey?: Record<string, unknown[]>;
@@ -301,7 +303,8 @@ async function bootstrapAuthenticatedShell(
   });
 
   await page.route(/.*\/v1\/web-app-page-settings\/pages\/[^/]+$/, async (route) => {
-    const pageId = route.request().url().split("/").at(-1) ?? "";
+    const pathSegments = route.request().url().split("/");
+    const pageId = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] ?? "" : "";
     const settings = createPageSettingsRecord(pageId);
     if (!settings) {
       await route.fulfill({
@@ -321,19 +324,20 @@ async function bootstrapAuthenticatedShell(
 
   await page.route(/.*\/v1\/web-app-page-settings\/root-families\/[^/]+\/pages\/[^/]+\/context-nav$/, async (route) => {
     const requestUrl = new URL(route.request().url());
-    const pageKey = requestUrl.pathname.split("/").at(-2) ?? "overview";
+    const pathSegments = requestUrl.pathname.split("/");
+    const pageKey = pathSegments.length > 1 ? pathSegments[pathSegments.length - 2] ?? "overview" : "overview";
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
         rootFamilyId: "root-admin",
         shellPageKey: pageKey,
-        items: contextNavByPageKey[pageKey] ?? [],
+        items: contextNavByPageKey[pageKey as keyof RootAdminContextNavStore] ?? [],
       }),
     });
   });
 
-  await page.goto(`/root-admin${search}${hash}`);
+  await page.goto(`${route}${search}`);
   await page.locator("#shell-view").waitFor({ state: "visible" });
   await page.locator(".sub-nav").waitFor({ state: "visible" });
   await page.locator(".context-nav").waitFor({ state: "visible" });
@@ -342,7 +346,7 @@ async function bootstrapAuthenticatedShell(
 test.describe("root-admin shell sub-nav and context-nav adoption", () => {
   test("overview keeps the shallow breadcrumb while exposing the governed section rail", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#overview");
+    await bootstrapAuthenticatedShell(page, "/root-admin");
 
     await expect(page.locator("#breadcrumb-home-link")).toHaveAttribute("aria-current", "page");
     await expect(page.locator("#breadcrumb-current-item")).toBeHidden();
@@ -352,7 +356,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("users uses the adopted breadcrumb and active context-nav state", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#users");
+    await bootstrapAuthenticatedShell(page, "/root-admin/users");
 
     await expect(page.locator("#breadcrumb-current-label")).toHaveText("Users");
     await expect(page.locator("#shell-search-input")).toHaveAttribute(
@@ -370,7 +374,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("desktop breadcrumb pressure truncates or collapses before chips overlap the search lane", async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#users");
+    await bootstrapAuthenticatedShell(page, "/root-admin/users");
 
     const compactVisible = await page.locator("#breadcrumb-compact").isVisible();
     const homeIconOnly = await page.locator("#breadcrumb-home-link").evaluate((node) =>
@@ -390,7 +394,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("legacy root-user hashes still land on the users section", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#root-users");
+    await bootstrapAuthenticatedShell(page, "/root-admin#root-users");
 
     await expect(page.locator("#breadcrumb-current-label")).toHaveText("Users");
     await expect(page.locator('.context-nav .context-nav-item[aria-current="page"] .context-nav-label')).toHaveText("Users");
@@ -398,7 +402,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("desktop context-nav hover uses the shared floating tooltip layer", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#users");
+    await bootstrapAuthenticatedShell(page, "/root-admin/users");
 
     const rolesItem = page.locator('.context-nav .context-nav-item[data-page-link="roles"]');
     await rolesItem.hover();
@@ -418,14 +422,14 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
     await page.setViewportSize({ width: 1560, height: 1400 });
     await page.goto("about:blank");
     await page.mouse.move(96, 170);
-    await bootstrapAuthenticatedShell(page, "#tenants");
+    await bootstrapAuthenticatedShell(page, "/root-admin/tenants");
 
     await expect(page.locator("#shared-floating-tooltip")).toBeHidden();
   });
 
   test("mobile fallback converts the context-nav into a bottom bar with visible labels", async ({ page }) => {
     await page.setViewportSize({ width: 560, height: 960 });
-    await bootstrapAuthenticatedShell(page, "#tenant-admins");
+    await bootstrapAuthenticatedShell(page, "/root-admin/tenant-admins");
 
     await expect(page.locator(".breadcrumb-nav")).toBeHidden();
     await expect(page.locator("#display-settings-button")).toBeHidden();
@@ -447,7 +451,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("rtl mirrors the rail to the right edge while keeping users active", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#users", "?lang=ar");
+    await bootstrapAuthenticatedShell(page, "/root-admin/users", "?lang=ar");
 
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(page.locator("#breadcrumb-current-label")).toHaveText("Users");
@@ -461,7 +465,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("shell search can route into the new tenant section", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#overview");
+    await bootstrapAuthenticatedShell(page, "/root-admin");
 
     const searchInput = page.locator("#shell-search-input");
     await searchInput.fill("tenants");
@@ -474,7 +478,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("real shell banners preserve spacing and clear on navigation by default", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#tenant-admins");
+    await bootstrapAuthenticatedShell(page, "/root-admin/tenant-admins");
 
     const searchInput = page.locator("#shell-search-input");
     await searchInput.fill("search");
@@ -505,7 +509,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("desktop display settings opens from the context-nav utility and keeps the approved app subset", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#overview");
+    await bootstrapAuthenticatedShell(page, "/root-admin");
 
     await page.locator("#display-settings-button").click();
 
@@ -526,7 +530,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("display settings controls stay open while applying app theme and magnification", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#overview");
+    await bootstrapAuthenticatedShell(page, "/root-admin");
 
     await page.locator("#display-settings-button").click();
     await page.locator('[data-theme-option="dark"]').click();
@@ -541,7 +545,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("escape and outside click close display settings and return focus to the launcher", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#overview");
+    await bootstrapAuthenticatedShell(page, "/root-admin");
 
     const launcher = page.locator("#display-settings-button");
     await launcher.click();
@@ -559,7 +563,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("mobile launches display settings through More and attaches the sheet above the bottom bar", async ({ page }) => {
     await page.setViewportSize({ width: 560, height: 960 });
-    await bootstrapAuthenticatedShell(page, "#overview");
+    await bootstrapAuthenticatedShell(page, "/root-admin");
 
     await page.locator("#context-nav-more-button").click();
     await expect(page.locator("#context-nav-more-menu")).toBeVisible();
@@ -578,7 +582,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
 
   test("rtl mirrors the display settings drawer and localizes the payload for Arabic readers", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
-    await bootstrapAuthenticatedShell(page, "#overview", "?lang=ar");
+    await bootstrapAuthenticatedShell(page, "/root-admin", "?lang=ar");
 
     await page.locator("#display-settings-button").click();
 

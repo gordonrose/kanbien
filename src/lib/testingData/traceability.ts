@@ -4,6 +4,7 @@ export type TestCaseType =
   | "SEC"
   | "AUD"
   | "EDGE"
+  | "FRONTEND"
   | "E2E"
   | "CONC"
   | "PERF"
@@ -24,6 +25,7 @@ const knownTypes = new Set<TestCaseType>([
   "SEC",
   "AUD",
   "EDGE",
+  "FRONTEND",
   "E2E",
   "CONC",
   "PERF",

@@ -63,7 +63,7 @@ function deriveShellPageKey(
     return normalizeRootAdminShellPageKey(segments[1]) ?? normalizedRootAdminPageKey ?? fallback;
   }
 
-  return segments.at(-1) ?? fallback;
+  return segments.length > 0 ? segments[segments.length - 1] : fallback;
 }
 
 export async function getWebAppPageContextNavProjection(

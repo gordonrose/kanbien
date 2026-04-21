@@ -17,16 +17,14 @@
   - `/root-admin/roles`
   - existing path-backed `/design-system`
 - Phase:
-  pre-implementation blueprint from settled topology direction; PRD,
-  capability matrix, and test-case docs still need to be written before the
-  migration is implemented
+  implemented foundation slice with follow-on route-promotion work still open
 
 ## Inputs
 
 - Capability matrix reference:
-  none yet; required before implementation
+  [2026-04-21-root-admin-path-topology-foundation-capability-matrix-first-draft.csv](/home/gordon/kanbien/docs/workspace/capability-matrices/2026-04-21-root-admin-path-topology-foundation-capability-matrix-first-draft.csv)
 - PRD:
-  none yet; required before implementation
+  [2026-04-21-0019-root-admin-path-topology-foundation.md](/home/gordon/kanbien/docs/prd/2026-04-21-0019-root-admin-path-topology-foundation.md)
 - ADR(s):
   - [0023-maintain-frontend-architecture-with-a-dedicated-overview-and-adr-guard.md](/home/gordon/kanbien/docs/architecture/adr/0023-maintain-frontend-architecture-with-a-dedicated-overview-and-adr-guard.md)
   - [0024-adopt-a-durable-frontend-topology-model-with-deterministic-repo-materialization.md](/home/gordon/kanbien/docs/architecture/adr/0024-adopt-a-durable-frontend-topology-model-with-deterministic-repo-materialization.md)
@@ -34,10 +32,9 @@
   - [0026-separate-durable-page-settings-from-curated-frontend-topology.md](/home/gordon/kanbien/docs/architecture/adr/0026-separate-durable-page-settings-from-curated-frontend-topology.md)
   - [0028-require-design-system-owned-render-and-controller-seams-for-governed-app-adoption.md](/home/gordon/kanbien/docs/architecture/adr/0028-require-design-system-owned-render-and-controller-seams-for-governed-app-adoption.md)
 - PRD test-case doc:
-  none yet; required before implementation
+  [2026-04-21-0019-root-admin-path-topology-foundation-test-cases.md](/home/gordon/kanbien/docs/prd/test_cases/2026-04-21-0019-root-admin-path-topology-foundation-test-cases.md)
 - Journey inventory:
-  none yet; create one because this migration changes meaningful operator entry,
-  support, QA, and compatibility flows
+  [2026-04-21-0019-root-admin-path-topology-foundation-journey-inventory.md](/home/gordon/kanbien/docs/prd/journey_inventories/2026-04-21-0019-root-admin-path-topology-foundation-journey-inventory.md)
 - QA coverage matrix classification:
   shared platform or cross-feature seam change plus privileged real-app route
   migration

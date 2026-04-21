@@ -1855,10 +1855,9 @@ export function mountRootAdminHierarchyTree({
       }
       saveExpandedStateForConsumer(expandedState);
       const flat = getFlatTree();
-      const validIds = new Set(flat.map((entry) => entry.node.id));
       const firstVisibleId = flat[1]?.node.id ?? flat[0]?.node.id ?? null;
-      state.currentId = currentId && validIds.has(currentId) ? currentId : firstVisibleId;
-      state.selectedId = selectedId && validIds.has(selectedId) ? selectedId : state.currentId;
+      state.currentId = currentId && getNodeRecordById(currentId) ? currentId : firstVisibleId;
+      state.selectedId = selectedId && getNodeRecordById(selectedId) ? selectedId : state.currentId;
       if (state.currentId) {
         expandAncestors(state.currentId);
       }

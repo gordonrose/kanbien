@@ -9,6 +9,7 @@ import {
   RouteSegmentAlreadyExistsError,
   UnsupportedDesignSystemTemplateError,
 } from "../contract/errors";
+import type { DesignSystemMaterializationPreviewItem } from "../contract/types";
 import { buildResolvedWebAppHierarchyTree, toWebAppPage } from "./presenters";
 import type { WebAppHierarchyRepository } from "../persistence/repository";
 import type {
@@ -16,7 +17,6 @@ import type {
   CreateDesignSystemPageProposalInput,
   CreateDesignSystemSubpageProposalInput,
   DesignSystemMaterializationApplyResult,
-  DesignSystemMaterializationPreviewItem,
   DesignSystemMaterializationPreviewResult,
   DesignSystemProposalCreateResult,
   DesignSystemMaterializer,

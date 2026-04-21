@@ -1,4 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
+import type {
+  ResolvedWebAppHierarchyTree,
+  ResolvedWebAppModuleTreeNode,
+  ResolvedWebAppPageTreeNode,
+} from "../../../../src/features/webAppHierarchyBuilder/contract/types";
 
 const mockSession = {
   rootUserId: "root_user_001",
@@ -22,7 +27,17 @@ const PAGE_ROOT_ADMIN_TENANT_ADMINS_ID = "99999999-9999-4999-8999-999999999993";
 const PAGE_ROOT_ADMIN_TENANTS_ID = "99999999-9999-4999-8999-999999999994";
 const PAGE_ROOT_ADMIN_USERS_ID = "99999999-9999-4999-8999-999999999995";
 
-const baseHierarchyTree = {
+interface PageSettingsFixture {
+  iconKey: string | null;
+  showInTopNav: boolean;
+  topNavOrder: number | null;
+  pageTemplateKey: string | null;
+  contextNavTargetPageIds: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+const baseHierarchyTree: ResolvedWebAppHierarchyTree = {
   rootFamilies: [
     {
       rootFamilyId: "design-system",
@@ -86,15 +101,15 @@ const baseHierarchyTree = {
   ],
 };
 
-function clone(value) {
-  return JSON.parse(JSON.stringify(value));
+function clone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
 }
 
-function createMockHierarchyTree() {
+function createMockHierarchyTree(): ResolvedWebAppHierarchyTree {
   return clone(baseHierarchyTree);
 }
 
-function createRefreshReconciledHierarchyTree() {
+function createRefreshReconciledHierarchyTree(): ResolvedWebAppHierarchyTree {
   const tree = createMockHierarchyTree();
   tree.rootFamilies.unshift({
     rootFamilyId: "root-admin",
@@ -159,7 +174,7 @@ function createRefreshReconciledHierarchyTree() {
   return tree;
 }
 
-function createRootAdminCurrentPageSelectionTree() {
+function createRootAdminCurrentPageSelectionTree(): ResolvedWebAppHierarchyTree {
   return {
     rootFamilies: [
       {
@@ -239,7 +254,7 @@ function createRootAdminCurrentPageSelectionTree() {
                 pageKey: "root-admin-web-app-hierarchy",
                 displayLabel: "Web App Hierarchy",
                 routeSegment: "web-app-hierarchy",
-                resolvedFullRoutePath: "/root-admin#web-app-hierarchy",
+                resolvedFullRoutePath: "/root-admin/web-app-hierarchy",
                 status: "review",
                 sortOrder: 1,
                 createdByRootAdminUserId: "root_user_001",
@@ -253,11 +268,11 @@ function createRootAdminCurrentPageSelectionTree() {
                   webAppPageLocatorId: "locator-root-admin-web-app-hierarchy",
                   webAppPageId: PAGE_ROOT_ADMIN_WEB_APP_HIERARCHY_ID,
                   rootFamilyId: "root-admin",
-                  locatorType: "hash-state",
-                  canonicalLocator: "/root-admin#web-app-hierarchy",
-                  routePath: "/root-admin",
-                  routeHash: "web-app-hierarchy",
-                  normalizedLocatorKey: "/root-admin#web-app-hierarchy",
+                  locatorType: "path",
+                  canonicalLocator: "/root-admin/web-app-hierarchy",
+                  routePath: "/root-admin/web-app-hierarchy",
+                  routeHash: null,
+                  normalizedLocatorKey: "/root-admin/web-app-hierarchy",
                   isActive: true,
                   createdByRootAdminUserId: "root_user_001",
                   createdAt: "2026-04-20T11:00:00.000Z",
@@ -274,7 +289,7 @@ function createRootAdminCurrentPageSelectionTree() {
   };
 }
 
-function createRootAdminVisibleContextNavTree() {
+function createRootAdminVisibleContextNavTree(): ResolvedWebAppHierarchyTree {
   const tree = createRootAdminCurrentPageSelectionTree();
   const discoveredModule = tree.rootFamilies[0]?.modules?.find((module) => module.moduleKey === "root-admin-discovered-routes");
   if (!discoveredModule) {
@@ -291,7 +306,7 @@ function createRootAdminVisibleContextNavTree() {
       pageKey: "overview",
       displayLabel: "Overview",
       routeSegment: "overview",
-      resolvedFullRoutePath: "/root-admin#overview",
+      resolvedFullRoutePath: "/root-admin",
       status: "review",
       sortOrder: 1,
       createdByRootAdminUserId: "root_user_001",
@@ -305,11 +320,11 @@ function createRootAdminVisibleContextNavTree() {
         webAppPageLocatorId: "locator-root-admin-overview",
         webAppPageId: PAGE_ROOT_ADMIN_OVERVIEW_ID,
         rootFamilyId: "root-admin",
-        locatorType: "hash-state",
-        canonicalLocator: "/root-admin#overview",
+        locatorType: "path",
+        canonicalLocator: "/root-admin",
         routePath: "/root-admin",
-        routeHash: "overview",
-        normalizedLocatorKey: "/root-admin#overview",
+        routeHash: null,
+        normalizedLocatorKey: "/root-admin",
         isActive: true,
         createdByRootAdminUserId: "root_user_001",
         createdAt: "2026-04-20T11:00:00.000Z",
@@ -463,7 +478,7 @@ function createRootAdminVisibleContextNavTree() {
   return tree;
 }
 
-function defaultPageSettings() {
+function defaultPageSettings(): PageSettingsFixture {
   return {
     iconKey: "hierarchy",
     showInTopNav: false,
@@ -475,7 +490,7 @@ function defaultPageSettings() {
   };
 }
 
-function createNestedMockHierarchyTree() {
+function createNestedMockHierarchyTree(): ResolvedWebAppHierarchyTree {
   const tree = createMockHierarchyTree();
   const module = tree.rootFamilies[0]?.modules?.[0];
   if (!module) {
@@ -560,7 +575,10 @@ function createNestedMockHierarchyTree() {
   return tree;
 }
 
-function findModule(tree, moduleId) {
+function findModule(
+  tree: ResolvedWebAppHierarchyTree,
+  moduleId: string,
+): { rootFamily: ResolvedWebAppHierarchyTree["rootFamilies"][number]; module: ResolvedWebAppModuleTreeNode } | null {
   for (const rootFamily of tree.rootFamilies) {
     for (const module of rootFamily.modules ?? []) {
       if (module.webAppModuleId === moduleId) {
@@ -571,7 +589,10 @@ function findModule(tree, moduleId) {
   return null;
 }
 
-function findPageInNodes(nodes, pageId) {
+function findPageInNodes(
+  nodes: ResolvedWebAppPageTreeNode[],
+  pageId: string,
+): ResolvedWebAppPageTreeNode | null {
   for (const page of nodes) {
     if (page.webAppPageId === pageId) {
       return page;
@@ -584,7 +605,14 @@ function findPageInNodes(nodes, pageId) {
   return null;
 }
 
-function findPage(tree, pageId) {
+function findPage(
+  tree: ResolvedWebAppHierarchyTree,
+  pageId: string,
+): {
+  rootFamily: ResolvedWebAppHierarchyTree["rootFamilies"][number];
+  module: ResolvedWebAppModuleTreeNode;
+  page: ResolvedWebAppPageTreeNode;
+} | null {
   for (const rootFamily of tree.rootFamilies) {
     for (const module of rootFamily.modules ?? []) {
       const page = findPageInNodes(module.pages ?? [], pageId);
@@ -596,10 +624,10 @@ function findPage(tree, pageId) {
   return null;
 }
 
-function listPages(tree) {
-  const items = [];
+function listPages(tree: ResolvedWebAppHierarchyTree): ResolvedWebAppPageTreeNode[] {
+  const items: ResolvedWebAppPageTreeNode[] = [];
 
-  function walk(nodes) {
+  function walk(nodes: ResolvedWebAppPageTreeNode[]) {
     for (const page of nodes ?? []) {
       items.push(page);
       walk(page.children);
@@ -630,7 +658,8 @@ function deriveShellPageKey(resolvedFullRoutePath: string | null) {
     return "overview";
   }
 
-  return normalizedPath.split("/").filter(Boolean).at(-1) ?? "overview";
+  const pathSegments = normalizedPath.split("/").filter(Boolean);
+  return pathSegments[pathSegments.length - 1] ?? "overview";
 }
 
 function normalizeRootAdminShellPageKey(pageKey: string | null | undefined) {
@@ -678,13 +707,15 @@ function deriveShellPageKeyFromRecord(pageRecord: { pageKey: string; resolvedFul
     return normalizedPageKey ?? "overview";
   }
 
-  return normalizedPath.split("/").filter(Boolean).at(-1) ?? "overview";
+  const pathSegments = normalizedPath.split("/").filter(Boolean);
+  return pathSegments[pathSegments.length - 1] ?? "overview";
 }
 
 async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hierarchy", search = "", options: {
-  tree?: typeof baseHierarchyTree;
-  reconciledTree?: typeof baseHierarchyTree;
+  tree?: ResolvedWebAppHierarchyTree;
+  reconciledTree?: ResolvedWebAppHierarchyTree;
   pageSettingsOverrides?: Record<string, Partial<ReturnType<typeof defaultPageSettings>>>;
+  path?: string;
 } = {}) {
   let currentHierarchyTree = clone(options.tree ?? createMockHierarchyTree());
   let proposalCounter = 0;
@@ -700,7 +731,7 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
     });
   }
 
-  function ensurePageSettingsRecords(tree) {
+  function ensurePageSettingsRecords(tree: ResolvedWebAppHierarchyTree) {
     for (const pageRecord of listPages(tree)) {
       if (!pageSettingsStore.has(pageRecord.webAppPageId)) {
         pageSettingsStore.set(pageRecord.webAppPageId, defaultPageSettings());
@@ -797,7 +828,8 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
   });
 
   await page.route(/.*\/v1\/web-app-hierarchy\/modules\/[^/]+\/landing-page$/, async (route) => {
-    const moduleId = route.request().url().split("/").at(-2);
+    const pathSegments = route.request().url().split("/");
+    const moduleId = pathSegments[pathSegments.length - 2];
     const payload = JSON.parse(route.request().postData() ?? "{}");
     const record = findModule(currentHierarchyTree, moduleId ?? "");
 
@@ -816,7 +848,8 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
   });
 
   await page.route("**/v1/web-app-hierarchy/modules/*", async (route) => {
-    const moduleId = route.request().url().split("/").at(-1);
+    const pathSegments = route.request().url().split("/");
+    const moduleId = pathSegments[pathSegments.length - 1];
     const payload = JSON.parse(route.request().postData() ?? "{}");
     const record = findModule(currentHierarchyTree, moduleId ?? "");
 
@@ -837,7 +870,8 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
   });
 
   await page.route(/.*\/v1\/web-app-page-settings\/pages\/[^/]+$/, async (route) => {
-    const pageId = route.request().url().split("/").at(-1) ?? "";
+    const pathSegments = route.request().url().split("/");
+    const pageId = pathSegments[pathSegments.length - 1] ?? "";
     const record = findPage(currentHierarchyTree, pageId);
     const stored = pageSettingsStore.get(pageId);
 
@@ -894,7 +928,8 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
 
   await page.route(/.*\/v1\/web-app-page-settings\/root-families\/[^/]+\/pages\/[^/]+\/context-nav$/, async (route) => {
     const requestUrl = new URL(route.request().url());
-    const shellPageKey = requestUrl.pathname.split("/").at(-2) ?? "";
+    const pathSegments = requestUrl.pathname.split("/");
+    const shellPageKey = pathSegments[pathSegments.length - 2] ?? "";
     const ownerPage = listPages(currentHierarchyTree).find((pageRecord) =>
       deriveShellPageKeyFromRecord(pageRecord) === shellPageKey,
     );
@@ -976,7 +1011,8 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
   });
 
   await page.route(/.*\/v1\/web-app-hierarchy\/pages\/[^/]+$/, async (route) => {
-    const pageId = route.request().url().split("/").at(-1);
+    const pathSegments = route.request().url().split("/");
+    const pageId = pathSegments[pathSegments.length - 1];
     const payload = JSON.parse(route.request().postData() ?? "{}");
     const record = findPage(currentHierarchyTree, pageId ?? "");
 
@@ -998,7 +1034,8 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
 
   await page.route(/.*\/v1\/web-app-hierarchy\/pages\/[^/]+\/move$/, async (route) => {
     const payload = JSON.parse(route.request().postData() ?? "{}");
-    const pageId = route.request().url().split("/").at(-2);
+    const pathSegments = route.request().url().split("/");
+    const pageId = pathSegments[pathSegments.length - 2];
     const record = findPage(currentHierarchyTree, pageId ?? "");
 
     if (!record) {
@@ -1222,9 +1259,11 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
     });
   });
 
-  await page.goto(`/root-admin${search}${hash}`);
+  await page.goto(options.path ?? `/root-admin${search}${hash}`);
   await page.locator("#shell-view").waitFor({ state: "visible" });
-  await page.locator("#page-web-app-hierarchy").waitFor({ state: "visible" });
+  if (!options.path) {
+    await page.locator("#page-web-app-hierarchy").waitFor({ state: "visible" });
+  }
 }
 
 test("root-admin hierarchy page renders the applied design-system hierarchy inside the signed-off hierarchy-tree posture", async ({ page }) => {
@@ -1407,6 +1446,47 @@ test("root-admin hierarchy page uses the eye action for open selected and extern
   await openButton.click();
   await expect(page.locator("#root-admin-web-app-hierarchy-detail-title")).toHaveText("Hierarchy Tree");
   await expect(page.locator("#shell-message")).toBeHidden();
+});
+
+test("root-admin hierarchy page direct-loads a durable selected-page subroute", async ({ page }) => {
+  // TC-ROOT-PATH-FRONTEND-001
+  await page.setViewportSize({ width: 1560, height: 1400 });
+  await bootstrapAuthenticatedHierarchy(page, "", "", {
+    tree: createNestedMockHierarchyTree(),
+    path: "/root-admin/web-app-hierarchy/pages/choice-group-builder",
+  });
+
+  await expect(page).toHaveURL(/\/root-admin\/web-app-hierarchy\/pages\/choice-group-builder$/);
+  await expect(page.locator("#root-admin-web-app-hierarchy-detail-title")).toHaveText("Choice Group Builder");
+  await expect(page.locator("#web-app-page-settings-display-label")).toHaveValue("Choice Group Builder");
+});
+
+test("root-admin hierarchy page syncs workspace selection from durable page subroutes", async ({ page }) => {
+  // TC-ROOT-PATH-FRONTEND-002
+  await page.setViewportSize({ width: 1560, height: 1400 });
+  await bootstrapAuthenticatedHierarchy(page, "", "", {
+    tree: createNestedMockHierarchyTree(),
+    path: "/root-admin/web-app-hierarchy",
+  });
+
+  await expect(page).toHaveURL(/\/root-admin\/web-app-hierarchy$/);
+  await expect(page.locator("#root-admin-web-app-hierarchy-detail-title")).toHaveText("Choice Group");
+
+  await page.evaluate(() => {
+    window.history.pushState(null, "", "/root-admin/web-app-hierarchy/pages/hierarchy-tree");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+
+  await expect(page).toHaveURL(/\/root-admin\/web-app-hierarchy\/pages\/hierarchy-tree$/);
+  await expect(page.locator("#root-admin-web-app-hierarchy-detail-title")).toHaveText("Hierarchy Tree");
+
+  await page.evaluate(() => {
+    window.history.pushState(null, "", "/root-admin/web-app-hierarchy");
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  });
+
+  await expect(page).toHaveURL(/\/root-admin\/web-app-hierarchy$/);
+  await expect(page.locator("#root-admin-web-app-hierarchy-detail-title")).toHaveText("Choice Group");
 });
 
 test("root-admin hierarchy page keeps one governed form host while the hierarchy launcher stays in the context-nav bottom stack", async ({ page }) => {

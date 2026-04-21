@@ -170,7 +170,9 @@ However:
 
 ### Unified workspace labels
 
-`/root-admin/web-app-hierarchy` remains one operator workspace route.
+`/root-admin/web-app-hierarchy` remains the operator workspace suite route.
+Selected curated pages may also be addressed through durable subroutes such as
+`/root-admin/web-app-hierarchy/pages/:pageKey`.
 
 The operator-facing section names are:
 

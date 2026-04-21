@@ -157,7 +157,8 @@ async function mockGovernedTopNav(page: Page) {
 
   await page.route(/.*\/v1\/web-app-page-settings\/pages\/[^/]+$/, async (route) => {
     const url = new URL(route.request().url());
-    const pageId = decodeURIComponent(url.pathname.split("/").at(-1) ?? "");
+    const pathSegments = url.pathname.split("/");
+    const pageId = decodeURIComponent(pathSegments[pathSegments.length - 1] ?? "");
     const settings = settingsByPageId[pageId as keyof typeof settingsByPageId];
 
     if (!settings) {
@@ -235,7 +236,8 @@ test.describe("design-system governed top nav", () => {
 
     await page.route(/.*\/v1\/web-app-page-settings\/pages\/[^/]+$/, async (route) => {
       const url = new URL(route.request().url());
-      const pageId = decodeURIComponent(url.pathname.split("/").at(-1) ?? "");
+      const pathSegments = url.pathname.split("/");
+      const pageId = decodeURIComponent(pathSegments[pathSegments.length - 1] ?? "");
       const settings = settingsByPageId[pageId as keyof typeof settingsByPageId];
 
       if (!settings) {

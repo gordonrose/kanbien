@@ -3,7 +3,7 @@
 ## Implementation Status
 
 - Status:
-  planned topology foundation as of 2026-04-21
+  implemented foundation slice as of 2026-04-21
 - Implemented already in related foundations:
   - same-origin `rootAdminShell` served at `/root-admin`
   - hash-backed root-admin shell states such as `/root-admin#users` and
@@ -11,12 +11,17 @@
   - durable curated hierarchy truth in `webAppHierarchyBuilder`
   - durable discovered route and structure truth in `webAppSurfaceDiscovery`
   - governed path-backed `design-system` family
-- Not yet implemented in this slice:
+- Implemented in this slice:
   - path-backed durable suite routes for selected root-admin operator surfaces
   - explicit compatibility alias handling from legacy hash entry points to new
     path-backed canonical routes
-  - durable route grammar for future root-admin suites
+  - initial durable selected-page subroute support under
+    `/root-admin/web-app-hierarchy/pages/:pageKey`
   - maintained-artifact alignment around path-backed root-admin topology
+- Still deferred beyond this slice:
+  - broader durable child-route promotion for additional root-admin suites
+  - template and analytics subroutes under selected hierarchy pages
+  - future alias-retirement decision and migration
 
 ## Purpose
 

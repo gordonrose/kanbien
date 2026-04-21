@@ -71,6 +71,82 @@ function findNodeIdForCurrentPage(nodes, currentPageKey) {
   return null;
 }
 
+function findNodeIdForPageKey(nodes, pageKey) {
+  if (typeof pageKey !== "string" || pageKey.length === 0) {
+    return null;
+  }
+
+  for (const node of nodes) {
+    if (node?.kind === "page" && node.meta?.pageKey === pageKey) {
+      return node.id;
+    }
+
+    const nested = findNodeIdForPageKey(node.children ?? [], pageKey);
+    if (nested) {
+      return nested;
+    }
+  }
+
+  return null;
+}
+
+function findNodeById(nodes, nodeId) {
+  if (typeof nodeId !== "string" || nodeId.length === 0) {
+    return null;
+  }
+
+  for (const node of nodes) {
+    if (node?.id === nodeId) {
+      return node;
+    }
+
+    const nested = findNodeById(node.children ?? [], nodeId);
+    if (nested) {
+      return nested;
+    }
+  }
+
+  return null;
+}
+
+function normalizePathname(pathname) {
+  if (typeof pathname !== "string" || pathname.trim().length === 0) {
+    return "/";
+  }
+
+  const normalized = pathname.replace(/\/+$/, "");
+  return normalized.length > 0 ? normalized : "/";
+}
+
+function buildWebAppHierarchyBasePath() {
+  return "/root-admin/web-app-hierarchy";
+}
+
+function buildWebAppHierarchyPagePath(pageKey) {
+  if (typeof pageKey !== "string" || pageKey.trim().length === 0) {
+    return buildWebAppHierarchyBasePath();
+  }
+
+  return `${buildWebAppHierarchyBasePath()}/pages/${encodeURIComponent(pageKey.trim())}`;
+}
+
+function deriveRoutePageKeyFromPathname(pathname) {
+  const normalizedPath = normalizePathname(pathname);
+  const segments = normalizedPath.split("/").filter(Boolean);
+
+  if (
+    segments[0] !== "root-admin"
+    || segments[1] !== "web-app-hierarchy"
+    || segments[2] !== "pages"
+    || typeof segments[3] !== "string"
+    || segments[3].length === 0
+  ) {
+    return null;
+  }
+
+  return decodeURIComponent(segments[3]);
+}
+
 function findPageNodeByPageId(nodes, pageId) {
   if (typeof pageId !== "string" || pageId.length === 0) {
     return null;
@@ -172,14 +248,38 @@ function adaptHierarchyTree(response) {
   }));
 }
 
-function mountHierarchyResponse(mount, response, { currentId = null, selectedId = null, currentPageKey = null } = {}) {
-  const tree = adaptHierarchyTree(response);
+function resolveHierarchyRouteSelection(tree, { currentPageKey = null, currentPathname = null } = {}) {
   const firstNodeId = firstPageNode(tree);
   const currentPageNodeId = currentPageKey ? findNodeIdForCurrentPage(tree, currentPageKey) : null;
+  const routePageKey = deriveRoutePageKeyFromPathname(currentPathname);
+  const routePageNodeId = routePageKey ? findNodeIdForPageKey(tree, routePageKey) : null;
+
+  if (routePageNodeId) {
+    return {
+      currentId: routePageNodeId,
+      selectedId: routePageNodeId,
+      routePageKey,
+    };
+  }
+
+  return {
+    currentId: currentPageNodeId ?? firstNodeId,
+    selectedId: currentPageNodeId ?? firstNodeId,
+    routePageKey,
+  };
+}
+
+function mountHierarchyResponse(
+  mount,
+  response,
+  { currentId = null, selectedId = null, currentPageKey = null, currentPathname = null } = {},
+) {
+  const tree = adaptHierarchyTree(response);
+  const routeSelection = resolveHierarchyRouteSelection(tree, { currentPageKey, currentPathname });
   mount.setData({
     tree,
-    currentId: currentId ?? currentPageNodeId ?? firstNodeId,
-    selectedId: selectedId ?? currentPageNodeId ?? firstNodeId,
+    currentId: currentId ?? routeSelection.currentId,
+    selectedId: selectedId ?? routeSelection.selectedId,
   });
   return tree;
 }
@@ -300,6 +400,8 @@ function encodeBackendIconKey(iconKey, pageKey) {
 export function createWebAppHierarchyWorkspaceController({
   root,
   getCurrentPage,
+  getCurrentPathname = () => window.location.pathname,
+  setCurrentPathname = () => {},
   setShellMessage,
   setPageLinkIcon = () => {},
   refreshTopNav = async () => {},
@@ -405,6 +507,25 @@ export function createWebAppHierarchyWorkspaceController({
   let activePageSettingsBackendIconKey = null;
   let activePageSettingsDisplayIconKey = null;
   let pageSettingsRequestId = 0;
+  let syncingSelectionFromRoute = false;
+
+  function syncRouteForSelectedNode(node, historyMode = "replace") {
+    const currentRoutePageKey = deriveRoutePageKeyFromPathname(getCurrentPathname());
+    if (!loadedOnce && !currentRoutePageKey && node?.kind === "page") {
+      return;
+    }
+
+    const targetPath =
+      node?.kind === "page"
+        ? buildWebAppHierarchyPagePath(node.meta?.pageKey)
+        : buildWebAppHierarchyBasePath();
+
+    if (normalizePathname(getCurrentPathname()) === normalizePathname(targetPath)) {
+      return;
+    }
+
+    setCurrentPathname(targetPath, { historyMode });
+  }
 
   const mount = mountRootAdminHierarchyTree({
     treeRoot: root.querySelector("#hierarchy-tree-tree"),
@@ -811,6 +932,7 @@ export function createWebAppHierarchyWorkspaceController({
     }
 
     if (!selectedNode) {
+      syncRouteForSelectedNode(null);
       renderSelectionSummary("Select a module or page from the hierarchy tree to begin.");
       renderStructureState("Select a node from the hierarchy tree to review structure-owned fields.");
       renderObservedState("Select a page to review its current route, locator, and observed-app posture.");
@@ -818,6 +940,9 @@ export function createWebAppHierarchyWorkspaceController({
       return;
     }
 
+    if (!syncingSelectionFromRoute) {
+      syncRouteForSelectedNode(selectedNode);
+    }
     renderSelectionSummary(`Selected ${selectedNode.kind.replace("-", " ")} ${selectedNode.title}.`);
 
     if (selectedNode.kind === "module") {
@@ -846,11 +971,14 @@ export function createWebAppHierarchyWorkspaceController({
 
     try {
       const response = await fetchHierarchyTree();
+      syncingSelectionFromRoute = true;
       latestHierarchyTree = mountHierarchyResponse(mount, response, {
         currentId,
         selectedId,
         currentPageKey: getCurrentPage(),
+        currentPathname: getCurrentPathname(),
       });
+      syncingSelectionFromRoute = false;
       loadedOnce = true;
       refreshWorkflowSummary();
     } catch (error) {
@@ -875,7 +1003,9 @@ export function createWebAppHierarchyWorkspaceController({
 
     try {
       const response = await syncDiscoveryIntoHierarchy();
+      syncingSelectionFromRoute = true;
       latestHierarchyTree = mountHierarchyResponse(mount, response.tree, mount.getViewState());
+      syncingSelectionFromRoute = false;
       loadedOnce = true;
       refreshWorkflowSummary();
       setShellMessage("Reconciled discovery and refreshed curated hierarchy.", "mutation-success");
@@ -1297,7 +1427,26 @@ export function createWebAppHierarchyWorkspaceController({
       }
       if (!loadedOnce) {
         void loadHierarchy();
+        return;
       }
+
+      const routeSelection = resolveHierarchyRouteSelection(latestHierarchyTree, {
+        currentPageKey: getCurrentPage(),
+        currentPathname: getCurrentPathname(),
+      });
+      const viewState = mount.getViewState();
+      if (viewState.currentId !== routeSelection.currentId || viewState.selectedId !== routeSelection.selectedId) {
+        syncingSelectionFromRoute = true;
+        mount.setData({
+          tree: latestHierarchyTree,
+          currentId: routeSelection.currentId,
+          selectedId: routeSelection.selectedId,
+        });
+        syncingSelectionFromRoute = false;
+        return;
+      }
+
+      syncRouteForSelectedNode(findNodeById(latestHierarchyTree, viewState.selectedId));
     },
     reset() {
       loadedOnce = false;

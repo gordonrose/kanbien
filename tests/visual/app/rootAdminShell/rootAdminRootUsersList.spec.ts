@@ -34,42 +34,42 @@ function createRootAdminTopNavTree() {
                 webAppPageId: "page-overview",
                 pageKey: "overview",
                 displayLabel: "Overview",
-                resolvedFullRoutePath: "/root-admin#overview",
+                resolvedFullRoutePath: "/root-admin",
                 children: [],
               },
               {
                 webAppPageId: "page-users",
                 pageKey: "users",
                 displayLabel: "Users",
-                resolvedFullRoutePath: "/root-admin#users",
+                resolvedFullRoutePath: "/root-admin/users",
                 children: [],
               },
               {
                 webAppPageId: "page-roles",
                 pageKey: "roles",
                 displayLabel: "Roles",
-                resolvedFullRoutePath: "/root-admin#roles",
+                resolvedFullRoutePath: "/root-admin/roles",
                 children: [],
               },
               {
                 webAppPageId: "page-tenants",
                 pageKey: "tenants",
                 displayLabel: "Tenants",
-                resolvedFullRoutePath: "/root-admin#tenants",
+                resolvedFullRoutePath: "/root-admin/tenants",
                 children: [],
               },
               {
                 webAppPageId: "page-tenant-admins",
                 pageKey: "tenant-admins",
                 displayLabel: "Tenant Admins",
-                resolvedFullRoutePath: "/root-admin#tenant-admins",
+                resolvedFullRoutePath: "/root-admin/tenant-admins",
                 children: [],
               },
               {
                 webAppPageId: "page-web-app-hierarchy",
                 pageKey: "web-app-hierarchy",
                 displayLabel: "Web App Hierarchy",
-                resolvedFullRoutePath: "/root-admin#web-app-hierarchy",
+                resolvedFullRoutePath: "/root-admin/web-app-hierarchy",
                 children: [],
               },
             ],
@@ -120,7 +120,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-users",
         shellPageKey: "users",
         displayLabel: "Users",
-        resolvedFullRoutePath: "/root-admin#users",
+        resolvedFullRoutePath: "/root-admin/users",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 0,
@@ -129,7 +129,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-roles",
         shellPageKey: "roles",
         displayLabel: "Roles",
-        resolvedFullRoutePath: "/root-admin#roles",
+        resolvedFullRoutePath: "/root-admin/roles",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 1,
@@ -138,7 +138,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-tenants",
         shellPageKey: "tenants",
         displayLabel: "Tenants",
-        resolvedFullRoutePath: "/root-admin#tenants",
+        resolvedFullRoutePath: "/root-admin/tenants",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 2,
@@ -147,7 +147,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-tenant-admins",
         shellPageKey: "tenant-admins",
         displayLabel: "Tenant Admins",
-        resolvedFullRoutePath: "/root-admin#tenant-admins",
+        resolvedFullRoutePath: "/root-admin/tenant-admins",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 3,
@@ -156,7 +156,7 @@ function defaultContextNavProjectionStore() {
         webAppPageId: "page-web-app-hierarchy",
         shellPageKey: "web-app-hierarchy",
         displayLabel: "Web App Hierarchy",
-        resolvedFullRoutePath: "/root-admin#web-app-hierarchy",
+        resolvedFullRoutePath: "/root-admin/web-app-hierarchy",
         iconKey: "page-default",
         effectiveIconKey: "page-default",
         sortOrder: 4,
@@ -270,7 +270,8 @@ async function mockRootUsersRoutes(
   });
 
   await page.route(/.*\/v1\/web-app-page-settings\/pages\/[^/]+$/, async (route) => {
-    const pageId = route.request().url().split("/").at(-1) ?? "";
+    const pathSegments = route.request().url().split("/");
+    const pageId = pathSegments.length > 0 ? pathSegments[pathSegments.length - 1] ?? "" : "";
     const settings = createPageSettingsRecord(pageId);
     if (!settings) {
       await route.fulfill({
@@ -290,7 +291,8 @@ async function mockRootUsersRoutes(
 
   await page.route(/.*\/v1\/web-app-page-settings\/root-families\/[^/]+\/pages\/[^/]+\/context-nav$/, async (route) => {
     const requestUrl = new URL(route.request().url());
-    const pageKey = requestUrl.pathname.split("/").at(-2) ?? "overview";
+    const pathSegments = requestUrl.pathname.split("/");
+    const pageKey = pathSegments.length > 1 ? pathSegments[pathSegments.length - 2] ?? "overview" : "overview";
     await route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -309,7 +311,7 @@ async function bootstrapUsersPage(
 ) {
   await mockRootUsersRoutes(page, options);
   const search = options.search ?? "";
-  await page.goto(`/root-admin${search}#users`);
+  await page.goto(`/root-admin/users${search}`);
   await page.locator("#shell-view").waitFor({ state: "visible" });
   await page.locator("#page-users").waitFor({ state: "visible" });
   await page.locator('[data-selectable-list-card]').first().waitFor({ state: "visible" });
@@ -437,7 +439,7 @@ test.describe("root-admin root-users list page adoption", () => {
     await page.setViewportSize({ width: 1560, height: 1400 });
     await mockRootUsersRoutes(page, { failInitialOnce: true });
 
-    await page.goto("/root-admin#users");
+    await page.goto("/root-admin/users");
     await page.locator("#shell-view").waitFor({ state: "visible" });
     await expect(page.locator('[data-selectable-list-initial-error-state]')).toBeVisible();
 

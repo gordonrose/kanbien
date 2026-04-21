@@ -11,9 +11,9 @@ type LockedFile = {
 const lockedRootAdminUiFiles: LockedFile[] = [
   {
     path: "src/frontend/rootAdminShell/index.html",
-    sha256: "1ac642387783d502e736bad5fd742bb8290a64b87cee24f63af9e01a9a2c0c5e",
+    sha256: "618623534f12b2c70ea56159d7b53644cd5a06be78417ef0ed050acf550310be",
     rationale:
-      "Authenticated root-admin shell markup is still locally owned and must stay frozen until it is replaced by a design-system-owned page-shell seam.",
+      "Authenticated root-admin shell markup remains locally hosted, but approved topology migrations may update canonical route entry and shell link targets while shared design-system seams still own the governed page-shell structure.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/login.css",
@@ -23,9 +23,9 @@ const lockedRootAdminUiFiles: LockedFile[] = [
   },
   {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "700da68494f66742a4f880d4ebc262dcbf871fb8a8f191bb21f20c7824776b12",
+    sha256: "d1a8c33f753efc506ad3dd1908e056a376b7d55cf1ed6c59722e2387d98e8e14",
     rationale:
-      "Root-admin authenticated shell behavior is still locally owned and must be migrated into shared design-system seams rather than changed in-place.",
+      "Root-admin authenticated shell behavior remains locally composed, but approved route-topology migrations may update path resolution and canonical-location syncing as long as shared design-system shell behavior does not regress back into app-local ownership.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/rootUsersList.mjs",
@@ -35,9 +35,9 @@ const lockedRootAdminUiFiles: LockedFile[] = [
   },
   {
     path: "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
-    sha256: "5b69ff4c9c75862568de72efe1e43833777d712f108104ae4bebf1e70117425f",
+    sha256: "6598929c9d403dcc315bc7ac537eafcc855be1d1ec8b4807d4deea3a0855b59a",
     rationale:
-      "Non-login root-admin page UI behavior must stop changing locally; hierarchy UI work belongs in shared design-system-owned seams.",
+      "Non-login root-admin hierarchy composition still routes through a local adapter, but approved route-topology and transport seam changes may land here while the shared design-system hierarchy workspace continues to own the actual governed hierarchy UI behavior.",
   },
 ];
 

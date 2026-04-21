@@ -29,17 +29,17 @@
 ## Current Status
 
 - Overall traceability status:
-  - planned
+  - partially implemented
 - Overall execution status:
-  - not yet implemented
+  - implementation-backed for current route foundation and browser parity
 - Layer summary:
-  - `UNIT`: planned
-  - `INT`: planned
+  - `UNIT`: partially implemented
+  - `INT`: partially implemented
   - `SEC`: planned
   - `AUD`: planned
-  - `EDGE`: planned
-  - `FRONTEND`: planned
-  - `COMPAT`: planned
+  - `EDGE`: partially implemented
+  - `FRONTEND`: implemented for current route foundation and selected-page subroute support
+  - `COMPAT`: partially implemented
 
 ## QA Coverage Classification
 

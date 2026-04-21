@@ -39,8 +39,9 @@ Source artifacts:
   workspace, but it remains topology-owned in `webAppHierarchyBuilder`
 - module landing-page selection may target only a direct child page of the
   module
-- `/root-admin/web-app-hierarchy` remains one operator workspace route for
-  now, with sections:
+- `/root-admin/web-app-hierarchy` remains the operator workspace suite route,
+  with durable selected-page subroutes available under
+  `/root-admin/web-app-hierarchy/pages/:pageKey` and sections:
   - `Hierarchy`
   - `Page Settings`
   - `Observed App`

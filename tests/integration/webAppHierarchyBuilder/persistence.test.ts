@@ -82,6 +82,9 @@ describeIfPostgres("web app hierarchy postgres repository", () => {
       sortOrder: 0,
       createdByRootAdminUserId: actorRootUserId,
       bootstrapSource: null,
+      topologyState: "applied",
+      templateKey: null,
+      materializedAt: null,
     });
     await repository.updateResolvedFullRoutePaths([
       {

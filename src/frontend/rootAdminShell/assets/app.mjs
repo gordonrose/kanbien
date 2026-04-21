@@ -372,6 +372,10 @@ const webAppHierarchyPageController = createWebAppHierarchyPageController({
   fetchJson,
   setShellMessage,
   getCurrentPage: () => state.navigation.currentPage,
+  getCurrentPathname: () => window.location.pathname,
+  setCurrentPathname: (pathname, { historyMode = "replace" } = {}) => {
+    syncBrowserLocationForPathname(pathname, historyMode);
+  },
   setPageLinkIcon,
   refreshTopNav,
   refreshContextNav: refreshContextNavForCurrentPage,
@@ -451,6 +455,34 @@ function buildCanonicalRootAdminPath(pageKey) {
   return rootAdminCanonicalPaths[normalizePage(pageKey)] ?? rootAdminCanonicalPaths.overview;
 }
 
+function normalizePathname(pathname) {
+  if (typeof pathname !== "string" || pathname.trim().length === 0) {
+    return "/";
+  }
+
+  const normalizedPath = pathname.replace(/\/+$/, "");
+  return normalizedPath.length > 0 ? normalizedPath : "/";
+}
+
+function syncBrowserLocationForPathname(pathname, historyMode = "replace") {
+  if (typeof pathname !== "string" || pathname.trim().length === 0) {
+    return;
+  }
+
+  const nextUrl = new URL(window.location.href);
+  nextUrl.pathname = pathname;
+  nextUrl.hash = "";
+
+  const nextLocation = `${nextUrl.pathname}${nextUrl.search}`;
+  const currentLocation = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (nextLocation === currentLocation) {
+    return;
+  }
+
+  const historyMethod = historyMode === "push" ? "pushState" : "replaceState";
+  window.history[historyMethod](null, "", nextLocation);
+}
+
 function deriveShellPageKeyFromPathname(pathname, fallbackPageKey = "overview") {
   if (typeof pathname !== "string" || pathname.trim().length === 0) {
     return fallbackPageKey;
@@ -488,18 +520,14 @@ function resolvePageLocationFromWindow() {
 }
 
 function syncBrowserLocationForPage(page, historyMode = "replace") {
-  const nextUrl = new URL(window.location.href);
-  nextUrl.pathname = buildCanonicalRootAdminPath(page);
-  nextUrl.hash = "";
+  const canonicalPath = buildCanonicalRootAdminPath(page);
+  const currentPathname = normalizePathname(window.location.pathname);
+  const nextPathname =
+    currentPathname === canonicalPath || currentPathname.startsWith(`${canonicalPath}/`)
+      ? currentPathname
+      : canonicalPath;
 
-  const nextLocation = `${nextUrl.pathname}${nextUrl.search}`;
-  const currentLocation = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-  if (nextLocation === currentLocation) {
-    return;
-  }
-
-  const historyMethod = historyMode === "push" ? "pushState" : "replaceState";
-  window.history[historyMethod](null, "", nextLocation);
+  syncBrowserLocationForPathname(nextPathname, historyMode);
 }
 
 function flattenHierarchyPages(pages) {
