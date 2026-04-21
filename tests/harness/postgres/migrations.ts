@@ -171,6 +171,10 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
   },
   {
     group: "tenantConfiguration",
+    relativePath: "tenantConfiguration/persistence/migrations/0011_seed_tenant_auth_policy_root_capabilities.sql",
+  },
+  {
+    group: "tenantConfiguration",
     relativePath: "tenantConfiguration/persistence/migrations/0012_add_session_ttl_to_tenant_auth_policy.sql",
   },
 ];
