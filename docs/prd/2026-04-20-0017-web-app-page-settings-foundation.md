@@ -9,7 +9,7 @@
   - durable discovered route and structure truth in `webAppSurfaceDiscovery`
   - deterministic `design-system` preview/apply topology materialization
   - browser-wired root-admin hierarchy workspace under
-    `/root-admin#web-app-hierarchy`
+    `/root-admin/web-app-hierarchy`
   - architecture rules for separating topology truth from settings truth
 - Not yet implemented in this slice:
   - a sibling `webAppPageSettings` feature
@@ -76,7 +76,7 @@ This phase includes:
 - a narrow `webAppHierarchyBuilder` extension for module landing-page
   selection
 - a selected-page `Page Settings` section inside
-  `/root-admin#web-app-hierarchy`
+  `/root-admin/web-app-hierarchy`
 - a selected-module landing-page affordance inside the `Hierarchy` section
 
 This phase does **not** include:
@@ -170,7 +170,7 @@ However:
 
 ### Unified workspace labels
 
-`/root-admin#web-app-hierarchy` remains one operator workspace route.
+`/root-admin/web-app-hierarchy` remains one operator workspace route.
 
 The operator-facing section names are:
 
@@ -363,7 +363,7 @@ The first implementation must not silently break that coexistence.
 
 An authorized root operator can:
 
-1. open `/root-admin#web-app-hierarchy`
+1. open `/root-admin/web-app-hierarchy`
 2. select a page in the hierarchy tree
 3. open or focus the `Page Settings` section
 4. review current settings and approved options

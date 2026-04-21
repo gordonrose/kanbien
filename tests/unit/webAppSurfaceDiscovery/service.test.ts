@@ -8,17 +8,17 @@ import {
 } from "../../helpers/webAppSurfaceDiscoveryHarness";
 
 describe("webAppSurfaceDiscovery service", () => {
-  it("TC-WEB-APP-SURF-DISC-UNIT-001 persists support-only and hash-backed discovered truth during a manual run", async () => {
+  it("TC-WEB-APP-SURF-DISC-UNIT-001 persists support-only and path-backed discovered truth during a manual run", async () => {
     const repository = createInMemoryWebAppSurfaceDiscoveryRepository();
     const service = createWebAppSurfaceDiscoveryService(repository, [
       createStaticDiscoveryProvider("root-admin-shell", "root-admin", [
         {
           rootFamilyId: "root-admin",
-          surfaceKind: "shell-state",
-          locatorType: "hash-state",
-          routePath: "/root-admin",
-          routeHash: "users",
-          canonicalLocator: "/root-admin#users",
+          surfaceKind: "page-route",
+          locatorType: "path",
+          routePath: "/root-admin/users",
+          routeHash: null,
+          canonicalLocator: "/root-admin/users",
           displayLabel: "Users",
           userFacingDisposition: "user-facing",
           providerKey: "root-admin-shell",
@@ -59,8 +59,8 @@ describe("webAppSurfaceDiscovery service", () => {
     expect(surfaces.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          canonicalLocator: "/root-admin#users",
-          locatorType: "hash-state",
+          canonicalLocator: "/root-admin/users",
+          locatorType: "path",
           userFacingDisposition: "user-facing",
         }),
         expect.objectContaining({

@@ -34,6 +34,7 @@ Primary architecture decisions behind this shape live in:
 - `docs/architecture/adr/0014-use-a-local-ssh-signing-helper-for-root-user-browser-auth.md`
 - `docs/architecture/adr/0022-add-a-web-app-surface-discovery-foundation-with-explicit-provider-seams-and-reconcile-links.md`
 - `docs/architecture/adr/0023-maintain-frontend-architecture-with-a-dedicated-overview-and-adr-guard.md`
+- `docs/architecture/adr/0032-promote-selected-root-admin-suites-from-hash-aliases-to-path-backed-canonical-routes.md`
 
 ## Runtime Shape
 
@@ -96,15 +97,17 @@ Current role:
 
 - root-user authentication and browser bootstrap
 - authenticated operator shell chrome
-- hash-based page-state navigation inside one browser shell
+- path-backed durable suite navigation inside one browser shell
 - page-specific controllers mounted into the shell for concrete operator tasks
 
 Current route model:
 
 - one same-origin HTML shell served at `/root-admin`
 - static assets served from `/root-admin/assets`
-- user-facing shell states represented as hash routes such as
-  `/root-admin#overview` and `/root-admin#users`
+- canonical user-facing suite routes represented as path-backed pages such as
+  `/root-admin`, `/root-admin/users`, and `/root-admin/web-app-hierarchy`
+- legacy hash URLs such as `/root-admin#users` remain temporary compatibility
+  aliases during the current migration window
 - support-only helper download routes served alongside the shell
 
 Current implementation model:
@@ -274,8 +277,10 @@ implemented frontend topology is also cataloged as durable discovered truth.
 Current discovery posture:
 
 - `/design-system` routes are discovered from HTML files
-- `/root-admin` user-facing shell states are discovered as hash-backed shell
-  surfaces
+- selected `/root-admin` user-facing suite routes are discovered as canonical
+  path-backed page surfaces
+- legacy `/root-admin#...` links remain compatibility aliases during the
+  migration window rather than canonical discovered route truth
 - root-admin helper downloads are discovered as support-only routes
 - discovered frontend truth is persisted through the
   `webAppSurfaceDiscovery` feature

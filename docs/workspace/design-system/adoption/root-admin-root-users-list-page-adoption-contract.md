@@ -12,7 +12,7 @@
 - First consumer surface:
   `rootAdminShell` `Users` route
 - Route or shell owner:
-  `/root-admin#users`
+  `/root-admin/users`
 - Source template artifact:
   `docs/workspace/design-system/templates/list-page-template.md`
 - Source reference pack:
@@ -66,7 +66,7 @@
   current list payload fields reused directly for the selected detail panel
 - Search source:
   the adopted sub-nav `search-shell` becomes route-owned page search on
-  `#users`
+  `/root-admin/users`
 - Search semantics:
   exact email lookup when the query is email-shaped, otherwise visible-list
   filtering by supported `emailPrefix`

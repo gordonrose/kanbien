@@ -14,7 +14,7 @@
 ## Intent
 
 Define the first reviewed end-to-end journey inventory for the selected-page
-settings workflow inside `/root-admin#web-app-hierarchy`.
+settings workflow inside `/root-admin/web-app-hierarchy`.
 
 This inventory exists because the slice is not only a backend foundation.
 It is a meaningful privileged operator workflow spanning:
@@ -101,7 +101,7 @@ Focused pitfalls reviewed for this slice:
 - Primary Actor:
   `RootUserAdmin`
 - Trigger:
-  actor selects a page in `/root-admin#web-app-hierarchy` and opens
+  actor selects a page in `/root-admin/web-app-hierarchy` and opens
   `Page Settings`
 - Expected Outcome:
   settings/options load truthfully, edits save successfully, reread reflects

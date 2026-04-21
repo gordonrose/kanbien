@@ -131,6 +131,15 @@ const pageMetadata = {
   },
 };
 
+const rootAdminCanonicalPaths = {
+  overview: "/root-admin",
+  users: "/root-admin/users",
+  roles: "/root-admin/roles",
+  tenants: "/root-admin/tenants",
+  "tenant-admins": "/root-admin/tenant-admins",
+  "web-app-hierarchy": "/root-admin/web-app-hierarchy",
+};
+
 const state = createInitialState();
 state.navigation.currentPage = "overview";
 
@@ -177,7 +186,7 @@ const mobileLogoutButton = document.getElementById("mobile-logout-button");
 const breadcrumbNav = document.querySelector(".breadcrumb-nav");
 if (breadcrumbNav instanceof HTMLElement) {
   breadcrumbNav.innerHTML = buildPageShellBreadcrumbMarkup([
-    { href: "/root-admin#overview", label: "Root Admin" },
+    { href: "/root-admin", label: "Root Admin" },
   ]);
 }
 const breadcrumbHomeItem = document.getElementById("breadcrumb-home-item");
@@ -438,6 +447,61 @@ function deriveShellPageKeyFromRoutePath(routePath, fallbackPageKey = "overview"
   return normalizePage(segments.at(-1) ?? fallbackPageKey);
 }
 
+function buildCanonicalRootAdminPath(pageKey) {
+  return rootAdminCanonicalPaths[normalizePage(pageKey)] ?? rootAdminCanonicalPaths.overview;
+}
+
+function deriveShellPageKeyFromPathname(pathname, fallbackPageKey = "overview") {
+  if (typeof pathname !== "string" || pathname.trim().length === 0) {
+    return fallbackPageKey;
+  }
+
+  const normalizedPath = pathname.replace(/\/+$/, "");
+  if (normalizedPath === "/root-admin" || normalizedPath === "") {
+    return "overview";
+  }
+
+  const segments = normalizedPath.split("/").filter(Boolean);
+  if (segments[0] !== "root-admin") {
+    return fallbackPageKey;
+  }
+
+  if (segments.length === 1) {
+    return "overview";
+  }
+
+  return normalizePage(segments[1] ?? fallbackPageKey);
+}
+
+function resolvePageLocationFromWindow() {
+  const pathnamePage = deriveShellPageKeyFromPathname(window.location.pathname, null);
+  if (pathnamePage && pathnamePage !== "overview") {
+    return pathnamePage;
+  }
+
+  const hashPage = normalizeRootAdminShellPageKey(window.location.hash.replace(/^#/, ""));
+  if (hashPage) {
+    return hashPage;
+  }
+
+  return pathnamePage ?? "overview";
+}
+
+function syncBrowserLocationForPage(page, historyMode = "replace") {
+  const nextUrl = new URL(window.location.href);
+  nextUrl.pathname = buildCanonicalRootAdminPath(page);
+  nextUrl.hash = "";
+
+  const nextLocation = `${nextUrl.pathname}${nextUrl.search}`;
+  const currentLocation = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (nextLocation === currentLocation) {
+    return;
+  }
+
+  const historyMethod = historyMode === "push" ? "pushState" : "replaceState";
+  window.history[historyMethod](null, "", nextLocation);
+}
+
 function flattenHierarchyPages(pages) {
   if (!Array.isArray(pages)) {
     return [];
@@ -450,7 +514,7 @@ function flattenHierarchyPages(pages) {
 }
 
 function buildRootAdminTopNavHref(pageKey) {
-  return `/root-admin#${pageKey}`;
+  return buildCanonicalRootAdminPath(pageKey);
 }
 
 function createPrimaryNavLink(pageKey, label) {
@@ -687,7 +751,7 @@ function renderContextNavItems(items) {
   contextNavMainItems.innerHTML = items
     .map((item) => {
       const iconKey = decodePageSettingsIconKey(item.effectiveIconKey ?? item.iconKey ?? null, item.shellPageKey);
-      const href = item.resolvedFullRoutePath ?? `/root-admin#${item.shellPageKey}`;
+      const href = item.resolvedFullRoutePath ?? buildCanonicalRootAdminPath(item.shellPageKey);
       return `
         <a
           class="context-nav-item"
@@ -860,19 +924,16 @@ async function fetchJson(path, options = {}) {
 }
 
 function resolvePageFromLocation() {
-  return normalizePage(window.location.hash.replace(/^#/, ""));
+  return resolvePageLocationFromWindow();
 }
 
-function setCurrentPage(page, { syncHash = true } = {}) {
+function setCurrentPage(page, { syncLocation = true, historyMode = "replace" } = {}) {
   const normalizedPage = normalizePage(page);
   clearShellMessage();
   state.navigation.currentPage = normalizedPage;
 
-  if (syncHash) {
-    const targetHash = `#${normalizedPage}`;
-    if (window.location.hash !== targetHash) {
-      window.history.replaceState(null, "", targetHash);
-    }
+  if (syncLocation) {
+    syncBrowserLocationForPage(normalizedPage, historyMode);
   }
 
   closeTransientShellSurfaces({ includeDisplaySettings: true, returnFocus: false });
@@ -914,10 +975,10 @@ function syncSubNavState() {
   const meta = pageMetaFor(currentPage);
   const isOverview = currentPage === "overview";
   const breadcrumbChain = isOverview
-    ? [{ href: "/root-admin#overview", label: "Root Admin" }]
+    ? [{ href: buildCanonicalRootAdminPath("overview"), label: "Root Admin" }]
     : [
-        { href: "/root-admin#overview", label: "Root Admin" },
-        { href: `/root-admin#${currentPage}`, label: meta.breadcrumbCurrent ?? meta.title },
+        { href: buildCanonicalRootAdminPath("overview"), label: "Root Admin" },
+        { href: buildCanonicalRootAdminPath(currentPage), label: meta.breadcrumbCurrent ?? meta.title },
       ];
 
   if (breadcrumbHomeItem) {
@@ -1025,6 +1086,7 @@ async function bootstrapSession() {
     state.session = session;
     state.phase = "authenticated";
     state.navigation.currentPage = resolvePageFromLocation();
+    syncBrowserLocationForPage(state.navigation.currentPage, "replace");
     render();
     await refreshTopNav();
     await refreshContextNavForCurrentPage();
@@ -1111,7 +1173,7 @@ async function handleLogout() {
     // Session may already be expired. Reset locally either way.
   }
 
-  window.history.replaceState(null, "", "/root-admin#overview");
+  window.history.replaceState(null, "", buildCanonicalRootAdminPath("overview"));
   Object.assign(state, resetToLoginState(state));
   clearShellMessage();
   rootUsersListController.reset();
@@ -1155,13 +1217,13 @@ async function handleShellSearchSubmit(event) {
     return;
   }
 
-  setCurrentPage(matchedPage);
+  setCurrentPage(matchedPage, { historyMode: "push" });
 }
 
 loginForm?.addEventListener("submit", handlePasswordSubmit);
 signSubmit?.addEventListener("click", handleSshSubmit);
 returnToLogin?.addEventListener("click", () => {
-  window.history.replaceState(null, "", "/root-admin#overview");
+  window.history.replaceState(null, "", buildCanonicalRootAdminPath("overview"));
   Object.assign(state, resetToLoginState(state));
   clearShellMessage();
   rootUsersListController.reset();
@@ -1275,7 +1337,7 @@ document.addEventListener("click", (event) => {
     const page = pageLink.dataset.pageLink;
     if (page) {
       event.preventDefault();
-      setCurrentPage(page);
+      setCurrentPage(page, { historyMode: "push" });
     }
   }
 
@@ -1326,6 +1388,15 @@ window.addEventListener("resize", () => {
 });
 
 window.addEventListener("hashchange", () => {
+  suspendSharedTooltipUntilPointerMove();
+  clearShellMessage();
+  state.navigation.currentPage = resolvePageFromLocation();
+  syncBrowserLocationForPage(state.navigation.currentPage, "replace");
+  render();
+  void refreshContextNavForCurrentPage();
+});
+
+window.addEventListener("popstate", () => {
   suspendSharedTooltipUntilPointerMove();
   clearShellMessage();
   state.navigation.currentPage = resolvePageFromLocation();

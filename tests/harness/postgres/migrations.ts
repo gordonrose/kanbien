@@ -76,36 +76,6 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
       "webAppHierarchyBuilder/persistence/migrations/0018_add_web_app_hierarchy_sync_discovery_capability.sql",
   },
   {
-    group: "webAppHierarchyBuilder",
-    relativePath:
-      "webAppHierarchyBuilder/persistence/migrations/0021_create_web_app_hierarchy_reconcile_extension.sql",
-  },
-  {
-    group: "webAppHierarchyBuilder",
-    relativePath:
-      "webAppHierarchyBuilder/persistence/migrations/0022_seed_web_app_hierarchy_reconcile_capabilities.sql",
-  },
-  {
-    group: "webAppHierarchyBuilder",
-    relativePath:
-      "webAppHierarchyBuilder/persistence/migrations/0023_add_design_system_topology_materialization_v1.sql",
-  },
-  {
-    group: "webAppHierarchyBuilder",
-    relativePath:
-      "webAppHierarchyBuilder/persistence/migrations/0024_seed_design_system_topology_materialization_capabilities.sql",
-  },
-  {
-    group: "webAppHierarchyBuilder",
-    relativePath:
-      "webAppHierarchyBuilder/persistence/migrations/0025_add_module_landing_page.sql",
-  },
-  {
-    group: "webAppHierarchyBuilder",
-    relativePath:
-      "webAppHierarchyBuilder/persistence/migrations/0026_seed_module_landing_page_capability.sql",
-  },
-  {
     group: "webAppPageSettings",
     relativePath:
       "webAppPageSettings/persistence/migrations/0027_create_web_app_page_settings.sql",
@@ -152,6 +122,36 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     group: "webAppSurfaceDiscovery",
     relativePath:
       "webAppSurfaceDiscovery/persistence/migrations/0021_relax_group_linked_surface_constraint.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0021_create_web_app_hierarchy_reconcile_extension.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0022_seed_web_app_hierarchy_reconcile_capabilities.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0023_add_design_system_topology_materialization_v1.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0024_seed_design_system_topology_materialization_capabilities.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0025_add_module_landing_page.sql",
+  },
+  {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0026_seed_module_landing_page_capability.sql",
   },
   {
     group: "notificationDelivery",
@@ -294,6 +294,9 @@ export async function applyPostgresTestMigrations(
   await ensureMigrationsTable(pool);
 
   const allowedGroups = new Set(groups);
+  if (allowedGroups.has("webAppHierarchyBuilder") || allowedGroups.has("webAppPageSettings")) {
+    allowedGroups.add("webAppSurfaceDiscovery");
+  }
   const migrations = (await loadOrderedMigrations()).filter((migration) =>
     allowedGroups.has(migration.group),
   );

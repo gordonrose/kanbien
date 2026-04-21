@@ -49,6 +49,9 @@ This feature still does not ship automated event-driven reconcile.
   the refreshed applied design-system tree
 - `POST /sync-discovery` remains as a compatibility wrapper that runs
   discovery and then applies the structure-aware reconcile rules
+- the current root-admin hierarchy browser workflow performs that same refresh
+  chain through `POST /v1/web-app-surface-discovery/runs` followed by
+  `POST /v1/web-app-hierarchy/discovery-sync/apply`
 - `webAppPageLocator` owns curated locator truth for path and hash-state pages
 - `webAppDiscoveryLink` owns durable discovered-to-curated match and drift
   posture
@@ -90,8 +93,10 @@ Routes:
 - discovered `group` nodes map to curated modules by default
 - deeper discovered groups under the first module group become child pages in
   the curated tree
-- hash-backed shell states such as `/root-admin#users` can now become real
-  curated pages through `hash-state` active locators
+- path-backed discovered root-admin suite routes such as `/root-admin/users`
+  can now become real curated pages through `path` active locators
+- legacy root-admin hash URLs remain compatibility aliases during the current
+  migration window rather than canonical route truth
 - support-only and review-required discovered leaves remain blocked from
   silent import
 - metadata drift is surfaced through discovery-link status rather than being

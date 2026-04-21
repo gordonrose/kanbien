@@ -59,6 +59,10 @@ function deriveShellPageKey(
   }
 
   const segments = normalizedPath.split("/").filter(Boolean);
+  if (page.rootFamilyId === "root-admin" && segments[0] === "root-admin") {
+    return normalizeRootAdminShellPageKey(segments[1]) ?? normalizedRootAdminPageKey ?? fallback;
+  }
+
   return segments.at(-1) ?? fallback;
 }
 

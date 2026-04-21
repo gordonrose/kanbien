@@ -24,7 +24,8 @@
 - Notes:
   - this file covers PRD-derived verification intent, not executable test
     implementation
-  - this slice is a privileged backend-plus-frontend operator workflow
+  - this slice is a privileged backend-plus-frontend operator workflow on the
+    canonical `/root-admin/web-app-hierarchy` workspace route
   - traceability enforcement should be treated as active from the start for
     this slice because the workflow is user-facing and permission-sensitive
 

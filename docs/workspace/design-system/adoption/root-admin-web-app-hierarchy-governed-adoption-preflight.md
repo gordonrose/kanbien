@@ -10,7 +10,7 @@
 - Consumer surface:
   `rootAdminShell` `web-app-hierarchy`
 - Route or shell owner:
-  `/root-admin#web-app-hierarchy`
+  `/root-admin/web-app-hierarchy`
 - Date:
   `2026-04-20`
 - Status:
@@ -19,7 +19,7 @@
 ## Purpose
 
 - What app change is being attempted?
-  Keep `/root-admin#web-app-hierarchy` honest under the stronger governed
+  Keep `/root-admin/web-app-hierarchy` honest under the stronger governed
   adoption rule so the route is reviewed as a composition of approved
   design-system families instead of as a page-local approximation.
 - Why is this the right consumer and the right time?

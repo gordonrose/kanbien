@@ -21,6 +21,10 @@ function normalizeKey(value: string): string {
   return value.trim().toLowerCase();
 }
 
+function normalizeTopologyState(value: string | null | undefined): string {
+  return value ?? "applied";
+}
+
 function toRootFamilyData(record: WebAppRootFamilyRecord): WebAppRootFamilyRecord {
   return {
     ...record,
@@ -178,7 +182,7 @@ export function createPostgresWebAppHierarchyRepository(dbPool: Pool): WebAppHie
         input.sortOrder,
         input.createdByRootAdminUserId,
         input.bootstrapSource,
-        input.topologyState,
+        normalizeTopologyState(input.topologyState),
         input.templateKey,
         input.materializedAt,
       ],

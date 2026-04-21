@@ -65,7 +65,7 @@
 - `canonical_locator`
   Type / Shape: `TEXT`
   Description: Canonical human-readable locator such as
-  `/design-system/components/top-nav` or `/root-admin#users`.
+  `/design-system/components/top-nav` or `/root-admin/users`.
   Constraints / Notes: Required and unique.
 - `display_label`
   Type / Shape: `TEXT | NULL`

@@ -212,8 +212,10 @@
   now lives in `webAppPageLocator`
 - `topologyState` now distinguishes broader curated proposal rows from applied
   rows for the governed `design-system` materialization slice
-- `resolvedFullRoutePath` is still server-managed; for hash-state pages it
-  resolves to the active locator canonical form such as `/root-admin#users`
+- `resolvedFullRoutePath` is still server-managed; for migrated root-admin
+  suite pages it now resolves to the active canonical path such as
+  `/root-admin/users`, while intentional hash-state pages still resolve to
+  their active canonical locator form
 - `GET /tree` remains the broader curated read, while
   `GET /design-system/applied-tree` is the workflow-specific applied-only read
 - route-affecting changes for live branches are blocked in the current slice
@@ -225,9 +227,15 @@
 - sync-discovery is the explicit root-driven compatibility chain that runs
   discovery and then applies the same structure-aware reconcile rules
 - sync-discovery does not make `GET /tree` merge live discovery on read
+- the current root-admin hierarchy browser workflow now performs that chain as
+  two explicit calls:
+  `POST /v1/web-app-surface-discovery/runs` followed by
+  `POST /v1/web-app-hierarchy/discovery-sync/apply`
 - multi-segment discovered paths are now mapped through modules plus child
   pages rather than being blocked by default
-- hash-state discovered pages are represented honestly through `hash-state`
-  locators instead of fake path conversion
+- discovered pages are represented through their honest active locator model;
+  migrated root-admin suites now use canonical `path` locators while
+  intentional hash-state pages remain explicit where that posture is still
+  approved
 - planner reads exclude orphaned pages by default and exclude inactive pages
   unless explicitly requested

@@ -92,7 +92,7 @@ describe("web app hierarchy builder service", () => {
     ).rejects.toBeInstanceOf(PageKeyAlreadyExistsError);
   });
 
-  it("TC-WEB-APP-HIER-UNIT-010 previews structure-aware reconcile for multi-segment paths and hash-state pages", async () => {
+  it("TC-WEB-APP-HIER-UNIT-010 previews structure-aware reconcile for multi-segment paths and migrated root-admin path pages", async () => {
     const repository = createInMemoryWebAppHierarchyRepository();
     const service = createWebAppHierarchyBuilderService(
       repository,
@@ -112,12 +112,12 @@ describe("web app hierarchy builder service", () => {
             createDiscoveredSurfaceRecord({
               discoveredWebAppSurfaceId: "55555555-5555-4555-8555-555555555555",
               rootFamilyId: "root-admin",
-              routePath: "/root-admin",
-              routeHash: "users",
-              canonicalLocator: "/root-admin#users",
+              routePath: "/root-admin/users",
+              routeHash: null,
+              canonicalLocator: "/root-admin/users",
               displayLabel: "Users",
-              surfaceKind: "shell-state",
-              locatorType: "hash-state",
+              surfaceKind: "page-route",
+              locatorType: "path",
               userFacingDisposition: "user-facing",
             }),
           ];
@@ -149,14 +149,14 @@ describe("web app hierarchy builder service", () => {
         expect.objectContaining({
           itemType: "page",
           pageKey: "root-admin-users",
-          canonicalLocator: "/root-admin#users",
-          proposedLocatorType: "hash-state",
+          canonicalLocator: "/root-admin/users",
+          proposedLocatorType: "path",
         }),
       ]),
     );
   });
 
-  it("TC-WEB-APP-HIER-UNIT-011 applies structure-aware sync and keeps hash-state pages honest through active locators", async () => {
+  it("TC-WEB-APP-HIER-UNIT-011 applies structure-aware sync and keeps migrated root-admin pages honest through active path locators", async () => {
     const repository = createInMemoryWebAppHierarchyRepository();
     const service = createWebAppHierarchyBuilderService(
       repository,
@@ -176,12 +176,12 @@ describe("web app hierarchy builder service", () => {
             createDiscoveredSurfaceRecord({
               discoveredWebAppSurfaceId: "55555555-5555-4555-8555-555555555555",
               rootFamilyId: "root-admin",
-              routePath: "/root-admin",
-              routeHash: "users",
-              canonicalLocator: "/root-admin#users",
+              routePath: "/root-admin/users",
+              routeHash: null,
+              canonicalLocator: "/root-admin/users",
               displayLabel: "Users",
-              surfaceKind: "shell-state",
-              locatorType: "hash-state",
+              surfaceKind: "page-route",
+              locatorType: "path",
               userFacingDisposition: "user-facing",
             }),
           ];
@@ -228,11 +228,11 @@ describe("web app hierarchy builder service", () => {
               pages: expect.arrayContaining([
                 expect.objectContaining({
                   pageKey: "root-admin-users",
-                  resolvedFullRoutePath: "/root-admin#users",
+                  resolvedFullRoutePath: "/root-admin/users",
                   activeLocator: expect.objectContaining({
-                    locatorType: "hash-state",
-                    routePath: "/root-admin",
-                    routeHash: "users",
+                    locatorType: "path",
+                    routePath: "/root-admin/users",
+                    routeHash: null,
                   }),
                 }),
               ]),

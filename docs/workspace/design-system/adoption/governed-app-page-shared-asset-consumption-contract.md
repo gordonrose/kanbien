@@ -63,7 +63,7 @@ not the full adoption contract.
 
 ## Required Contract For `web-app-hierarchy`
 
-`/root-admin#web-app-hierarchy` should adopt the same seam model, but it needs
+`/root-admin/web-app-hierarchy` should adopt the same seam model, but it needs
 multiple approved families:
 
 - `hierarchy-tree`

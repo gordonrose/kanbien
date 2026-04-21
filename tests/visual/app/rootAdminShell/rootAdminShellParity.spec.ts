@@ -44,7 +44,7 @@ async function bootstrapAuthenticatedOverview(page: Page) {
     });
   });
 
-  await page.goto("/root-admin#overview");
+  await page.goto("/root-admin");
   await page.locator("#shell-view").waitFor({ state: "visible" });
   await page.locator(".sub-nav").waitFor({ state: "visible" });
   await page.locator(".context-nav").waitFor({ state: "visible" });

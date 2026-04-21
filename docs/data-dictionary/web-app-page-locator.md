@@ -50,7 +50,7 @@
 - `canonical_locator`
   Type / Shape: `TEXT`
   Description: Canonical resolved locator string such as
-  `/design-system/components/top-nav` or `/root-admin#users`.
+  `/design-system/components/top-nav` or `/root-admin/users`.
   Constraints / Notes: Required and uniquely normalized.
 - `route_path`
   Type / Shape: `TEXT`

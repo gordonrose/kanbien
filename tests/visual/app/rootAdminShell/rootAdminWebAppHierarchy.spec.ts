@@ -124,7 +124,7 @@ function createRefreshReconciledHierarchyTree() {
             pageKey: "root-admin-web-app-hierarchy",
             displayLabel: "Web App Hierarchy",
             routeSegment: "web-app-hierarchy",
-            resolvedFullRoutePath: "/root-admin#web-app-hierarchy",
+            resolvedFullRoutePath: "/root-admin/web-app-hierarchy",
             status: "review",
             sortOrder: 1,
             createdByRootAdminUserId: "root_user_001",
@@ -138,11 +138,11 @@ function createRefreshReconciledHierarchyTree() {
               webAppPageLocatorId: "locator-root-admin-web-app-hierarchy",
               webAppPageId: PAGE_ROOT_ADMIN_WEB_APP_HIERARCHY_ID,
               rootFamilyId: "root-admin",
-              locatorType: "hash-state",
-              canonicalLocator: "/root-admin#web-app-hierarchy",
-              routePath: "/root-admin",
-              routeHash: "web-app-hierarchy",
-              normalizedLocatorKey: "/root-admin#web-app-hierarchy",
+              locatorType: "path",
+              canonicalLocator: "/root-admin/web-app-hierarchy",
+              routePath: "/root-admin/web-app-hierarchy",
+              routeHash: null,
+              normalizedLocatorKey: "/root-admin/web-app-hierarchy",
               isActive: true,
               createdByRootAdminUserId: "root_user_001",
               createdAt: "2026-04-20T11:00:00.000Z",
@@ -741,7 +741,24 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
     });
   });
 
-  await page.route("**/v1/web-app-hierarchy/sync-discovery", async (route) => {
+  await page.route("**/v1/web-app-surface-discovery/runs", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        webAppDiscoveryRunId: "99999999-9999-4999-8999-999999999999",
+        scopeKey: "current-approved-root-families",
+        status: "succeeded",
+        triggerKind: "manual",
+        providerVersion: "test",
+        createdByRootAdminUserId: null,
+        startedAt: "2026-04-20T11:00:00.000Z",
+        completedAt: "2026-04-20T11:00:01.000Z",
+      }),
+    });
+  });
+
+  await page.route("**/v1/web-app-hierarchy/discovery-sync/apply", async (route) => {
     currentHierarchyTree = clone(reconciledTree);
     ensurePageSettingsRecords(currentHierarchyTree);
     await route.fulfill({

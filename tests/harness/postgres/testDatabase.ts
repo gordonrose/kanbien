@@ -90,6 +90,16 @@ export function createPostgresTestDatabasePool(): Pool {
 
 export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
   await pool.query(`
+    DROP TABLE IF EXISTS web_app_page_context_nav_items CASCADE;
+    DROP TABLE IF EXISTS web_app_page_settings CASCADE;
+    DROP TABLE IF EXISTS web_app_discovery_links CASCADE;
+    DROP TABLE IF EXISTS web_app_page_locators CASCADE;
+    DROP TABLE IF EXISTS discovered_web_app_structure_nodes CASCADE;
+    DROP TABLE IF EXISTS discovered_web_app_surfaces CASCADE;
+    DROP TABLE IF EXISTS web_app_discovery_runs CASCADE;
+    DROP TABLE IF EXISTS web_app_pages CASCADE;
+    DROP TABLE IF EXISTS web_app_modules CASCADE;
+    DROP TABLE IF EXISTS web_app_root_families CASCADE;
     DROP TABLE IF EXISTS entity_definition_attribute_source_link CASCADE;
     DROP TABLE IF EXISTS entity_definition_attribute_option CASCADE;
     DROP TABLE IF EXISTS entity_definition_attribute_validation_rule CASCADE;

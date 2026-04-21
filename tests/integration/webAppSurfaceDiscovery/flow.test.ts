@@ -19,11 +19,11 @@ describe("webAppSurfaceDiscovery integration flows", () => {
         createStaticDiscoveryProvider("root-admin-shell", "root-admin", [
           {
             rootFamilyId: "root-admin",
-            surfaceKind: "shell-state",
-            locatorType: "hash-state",
-            routePath: "/root-admin",
-            routeHash: "users",
-            canonicalLocator: "/root-admin#users",
+            surfaceKind: "page-route",
+            locatorType: "path",
+            routePath: "/root-admin/users",
+            routeHash: null,
+            canonicalLocator: "/root-admin/users",
             displayLabel: "Users",
             userFacingDisposition: "user-facing",
             providerKey: "root-admin-shell",
@@ -61,8 +61,8 @@ describe("webAppSurfaceDiscovery integration flows", () => {
     expect(surfaces.body.items).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          canonicalLocator: "/root-admin#users",
-          locatorType: "hash-state",
+          canonicalLocator: "/root-admin/users",
+          locatorType: "path",
           userFacingDisposition: "user-facing",
         }),
       ]),

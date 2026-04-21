@@ -39,7 +39,7 @@
 ## Frontend Plan
 
 - Route / surface:
-  keep the existing `/root-admin#web-app-hierarchy` route and add:
+  keep the existing `/root-admin/web-app-hierarchy` route and add:
   - selected-page `Page Settings` section
   - selected-module landing-page control inside `Hierarchy`
 - UI states:
@@ -75,9 +75,10 @@ Expected frontend files to change:
 - `src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs`
   - extend selected-node detail handling into selected-page settings and
     selected-module landing-page controls
-- `src/frontend/rootAdminShell/assets/styles.css`
-  - add page-level composition only; do not fork shared design-system family
-    styling
+
+Do not add app-page CSS for this slice.
+The route must consume the existing governed design-system shared seams
+instead of extending `src/frontend/rootAdminShell/assets/styles.css`.
 
 ### Design-System Constraint
 

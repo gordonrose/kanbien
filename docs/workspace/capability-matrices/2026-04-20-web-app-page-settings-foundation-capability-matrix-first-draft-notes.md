@@ -39,7 +39,7 @@ Source artifacts:
   workspace, but it remains topology-owned in `webAppHierarchyBuilder`
 - module landing-page selection may target only a direct child page of the
   module
-- `/root-admin#web-app-hierarchy` remains one operator workspace route for
+- `/root-admin/web-app-hierarchy` remains one operator workspace route for
   now, with sections:
   - `Hierarchy`
   - `Page Settings`
@@ -84,7 +84,7 @@ The first slice should cover these capabilities:
 - save page settings for one selected curated page
 - read approved settings options needed by the UI
 - set or clear a module landing page through `webAppHierarchyBuilder`
-- drive the selected-page settings panel inside `/root-admin#web-app-hierarchy`
+- drive the selected-page settings panel inside `/root-admin/web-app-hierarchy`
 
 Exact new write capability keys should be:
 

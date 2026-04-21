@@ -148,8 +148,10 @@ Rules:
   `root-admin`, `login`, and `design-system`
 - support-only routes are persisted as discovered truth and must not be
   flattened into importable page truth
-- hash-backed shell states remain hash-backed discovered truth; the feature
-  does not reinterpret them as path-backed pages
+- selected durable `root-admin` suites now resolve as canonical path-backed
+  discovered pages such as `/root-admin/users`
+- intentional shell-local hash states still remain hash-backed discovered
+  truth; the feature does not reinterpret those as path-backed pages
 - multi-segment route families can now be persisted as discovered tree truth
   without inventing curated hierarchy nodes
 - successful runs mark previously discovered but newly unseen surfaces stale

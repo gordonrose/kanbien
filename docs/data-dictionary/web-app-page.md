@@ -93,7 +93,9 @@
   Description: Server-managed resolved locator string for the page.
   Constraints / Notes: Derived truth. For path-backed pages this remains a
   full path. For hash-state pages it resolves to the active canonical locator
-  such as `/root-admin#users`.
+  such as `/root-admin/users` for migrated root-admin suites or another
+  approved hash-backed canonical locator where hash-state posture still
+  remains intentional.
 - `status`
   Type / Shape: `'draft' | 'review' | 'live' | 'inactive'`
   Description: Durable lifecycle state of the page record.

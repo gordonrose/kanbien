@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This checklist is the literal parity gate for `/root-admin#web-app-hierarchy`
+This checklist is the literal parity gate for `/root-admin/web-app-hierarchy`
 as a governed app composition of:
 
 - `hierarchy-tree` as the shell-attached drawer host
