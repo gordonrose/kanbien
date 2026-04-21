@@ -371,6 +371,42 @@ export const ROOT_AUTHZ_CAPABILITY_CATALOG: RootAuthzCapabilityCatalogEntry[] = 
     protectedForRootUserAdmin: true,
   },
   {
+    capabilityKey: "entity-builder.create",
+    description: "Create an entity-definition lineage or replacement version.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "entity-builder.update",
+    description: "Update a draft entity-definition version.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "entity-builder.read",
+    description: "Read current and exact entity-definition versions.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "entity-builder.catalog.read",
+    description: "Read approved entity-builder catalogs.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "entity-builder.validate",
+    description: "Validate entity-definition versions for activation and export.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "entity-builder.export",
+    description: "Export derived entity-definition snapshots.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
     capabilityKey: "tenant-admin.delete",
     description: "Soft-delete a tenant-admin actor record.",
     mandatoryForRootUserAdmin: false,

@@ -12,6 +12,7 @@ type MigrationGroup =
   | "webAppHierarchyBuilder"
   | "webAppPageSettings"
   | "webAppSurfaceDiscovery"
+  | "entityBuilder"
   | "notificationDelivery"
   | "tenantAdmins"
   | "tenantAuth"
@@ -118,6 +119,14 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     group: "webAppPageSettings",
     relativePath:
       "webAppPageSettings/persistence/migrations/0029_add_parent_page_to_web_app_page_settings.sql",
+  },
+  {
+    group: "entityBuilder",
+    relativePath: "entityBuilder/persistence/migrations/0014_create_entity_builder_foundation.sql",
+  },
+  {
+    group: "entityBuilder",
+    relativePath: "entityBuilder/persistence/migrations/0015_seed_entity_builder_root_capabilities.sql",
   },
   {
     group: "webAppSurfaceDiscovery",
@@ -271,6 +280,7 @@ export async function applyPostgresTestMigrations(
     "webAppHierarchyBuilder",
     "webAppPageSettings",
     "webAppSurfaceDiscovery",
+    "entityBuilder",
     "notificationDelivery",
     "tenantAdmins",
     "tenantAuth",

@@ -90,6 +90,12 @@ export function createPostgresTestDatabasePool(): Pool {
 
 export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
   await pool.query(`
+    DROP TABLE IF EXISTS entity_definition_attribute_source_link CASCADE;
+    DROP TABLE IF EXISTS entity_definition_attribute_option CASCADE;
+    DROP TABLE IF EXISTS entity_definition_attribute_validation_rule CASCADE;
+    DROP TABLE IF EXISTS entity_definition_attribute CASCADE;
+    DROP TABLE IF EXISTS entity_definition_version CASCADE;
+    DROP TABLE IF EXISTS entity_definition CASCADE;
     DROP TABLE IF EXISTS outbound_email_attempt CASCADE;
     DROP TABLE IF EXISTS outbound_email_content CASCADE;
     DROP TABLE IF EXISTS outbound_email CASCADE;

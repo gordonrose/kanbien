@@ -9,6 +9,7 @@ import { createTenantAuthFeature } from "../../features/tenantAuth";
 import { createTenantConfigurationFeature } from "../../features/tenantConfiguration";
 import { createWebAppHierarchyBuilderFeature } from "../../features/webAppHierarchyBuilder";
 import { createWebAppPageSettingsFeature } from "../../features/webAppPageSettings";
+import { createEntityBuilderFeature } from "../../features/entityBuilder";
 import { createWebAppSurfaceDiscoveryFeature } from "../../features/webAppSurfaceDiscovery";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
@@ -142,6 +143,16 @@ v1Router.use(
   requireRootSession,
   authenticatedGeneralRateLimit,
   createWebAppPageSettingsFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/entity-definitions",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createEntityBuilderFeature(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,
