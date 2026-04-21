@@ -7,16 +7,54 @@ const initialTree = [
     status: "exported",
     changed: false,
     protectedNode: true,
+    meta: {
+      openHref: "/design-system/patterns/hierarchy-tree",
+      externalHref: "/company-handbook",
+    },
     children: [
-      { id: "space-company-overview", title: "Overview", status: "exported", changed: false, children: [] },
+      {
+        id: "space-company-overview",
+        title: "Overview",
+        status: "exported",
+        changed: false,
+        meta: {
+          openHref: "/design-system/patterns/hierarchy-tree/render?ref=HTR-001&state=baseline&width=1220&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+          externalHref: "/company-handbook/overview",
+        },
+        children: [],
+      },
       {
         id: "space-company-policies",
         title: "Policies",
         status: "ready_for_export",
         changed: true,
+        meta: {
+          openHref: "/design-system/canonicals/hierarchy-tree",
+          externalHref: "/company-handbook/policies",
+        },
         children: [
-          { id: "space-company-security", title: "Security", status: "draft", changed: true, children: [] },
-          { id: "space-company-remote", title: "Remote Work", status: "exported", changed: false, children: [] },
+          {
+            id: "space-company-security",
+            title: "Security",
+            status: "draft",
+            changed: true,
+            meta: {
+              openHref: "/design-system/patterns/hierarchy-tree/render?ref=HTR-028&state=focus-visible&width=1220&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+              externalHref: "/company-handbook/policies/security",
+            },
+            children: [],
+          },
+          {
+            id: "space-company-remote",
+            title: "Remote Work",
+            status: "exported",
+            changed: false,
+            meta: {
+              openHref: "/design-system/patterns/hierarchy-tree/render?ref=HTR-030&state=long-title-overflow&width=1220&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+              externalHref: "/company-handbook/policies/remote-work",
+            },
+            children: [],
+          },
         ],
       },
     ],
@@ -27,18 +65,56 @@ const initialTree = [
     status: "exported",
     changed: false,
     protectedNode: true,
+    meta: {
+      openHref: "/design-system/canonicals/hierarchy-tree",
+      externalHref: "/product",
+    },
     children: [
       {
         id: "space-product-roadmap",
         title: "Roadmap",
         status: "ready_for_export",
         changed: true,
+        meta: {
+          openHref: "/design-system/patterns/hierarchy-tree/render?ref=HTR-010&state=row-menu-open&width=1220&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+          externalHref: "/product/roadmap",
+        },
         children: [
-          { id: "space-product-q3", title: "Q3 Launch", status: "draft", changed: true, children: [] },
-          { id: "space-product-archive", title: "Archived Concepts", status: "superseded", changed: true, children: [] },
+          {
+            id: "space-product-q3",
+            title: "Q3 Launch",
+            status: "draft",
+            changed: true,
+            meta: {
+              openHref: "/design-system/patterns/hierarchy-tree/render?ref=HTR-011&state=drag-target&width=1220&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+              externalHref: "/product/roadmap/q3-launch",
+            },
+            children: [],
+          },
+          {
+            id: "space-product-archive",
+            title: "Archived Concepts",
+            status: "superseded",
+            changed: true,
+            meta: {
+              openHref: "/design-system/patterns/hierarchy-tree/render?ref=HTR-012&state=menu-move&width=1220&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+              externalHref: "/product/roadmap/archived-concepts",
+            },
+            children: [],
+          },
         ],
       },
-      { id: "space-product-research", title: "Research", status: "draft", changed: true, children: [] },
+      {
+        id: "space-product-research",
+        title: "Research",
+        status: "draft",
+        changed: true,
+        meta: {
+          openHref: "/design-system/patterns/hierarchy-tree/render?ref=HTR-019&state=resized-wide&width=1440&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+          externalHref: "/product/research",
+        },
+        children: [],
+      },
     ],
   },
 ];
@@ -164,25 +240,12 @@ function createHierarchyActionIcon(kind) {
     const path = document.createElementNS(svgNS, "path");
     path.setAttribute(
       "d",
-      "M1.75 8s2.5-4.25 6.25-4.25S14.25 8 14.25 8 11.75 12.25 8 12.25 1.75 8 1.75 8Z",
+      "M8 3.5C4.84 3.5 2.39 5.35 1.08 8c1.31 2.65 3.76 4.5 6.92 4.5s5.61-1.85 6.92-4.5C13.61 5.35 11.16 3.5 8 3.5Zm0 1.5c2.36 0 4.25 1.27 5.43 3-1.18 1.73-3.07 3-5.43 3S3.75 9.73 2.57 8C3.75 6.27 5.64 5 8 5Zm0 1.25a1.75 1.75 0 1 0 0 3.5 1.75 1.75 0 0 0 0-3.5Z",
     );
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", "currentColor");
-    path.setAttribute("stroke-width", "1.5");
-    path.setAttribute("stroke-linecap", "round");
-    path.setAttribute("stroke-linejoin", "round");
+    path.setAttribute("fill", "currentColor");
+    path.setAttribute("fill-rule", "evenodd");
+    path.setAttribute("clip-rule", "evenodd");
     svg.append(path);
-
-    const pupil = document.createElementNS(svgNS, "circle");
-    pupil.setAttribute("cx", "8");
-    pupil.setAttribute("cy", "8");
-    pupil.setAttribute("r", "2");
-    pupil.setAttribute("fill", "none");
-    pupil.setAttribute("stroke", "currentColor");
-    pupil.setAttribute("stroke-width", "1.5");
-    pupil.setAttribute("stroke-linecap", "round");
-    pupil.setAttribute("stroke-linejoin", "round");
-    svg.append(pupil);
     return svg;
   }
 
@@ -729,15 +792,23 @@ export function mountRootAdminHierarchyTree({
   drawerScrim,
   drawerNavButton,
   drawerClose,
+  secondaryDrawer = null,
   resizeHandle,
   rootMenuButton,
   rootMenu,
+  persistentOpenRegions = [],
   previewSummary,
   onRenameNode = null,
   onMoveNode = null,
   onOpenNode = null,
+  onAddNode = null,
+  onAddSiblingNode = null,
+  onReparentNode = null,
+  onRootAction = null,
+  onSelectionChange = null,
   storageKey = "root-admin-web-app-hierarchy-expanded",
   initialDrawerWidth = 448,
+  initialDrawerOpen = true,
 } = {}) {
   if (
     !(treeRoot instanceof HTMLElement) ||
@@ -761,7 +832,7 @@ export function mountRootAdminHierarchyTree({
     currentId: null,
     selectedId: null,
     activeMenuId: null,
-    drawerOpen: true,
+    drawerOpen: initialDrawerOpen,
     rootMenuOpen: false,
     drawerWidth: initialDrawerWidth,
     loading: true,
@@ -769,6 +840,8 @@ export function mountRootAdminHierarchyTree({
     editingId: null,
     editingValue: "",
     mutatingId: null,
+    dragState: null,
+    lastSelectionSignature: null,
   };
 
   function loadExpandedStateForConsumer(defaultIds = []) {
@@ -922,6 +995,24 @@ export function mountRootAdminHierarchyTree({
     return typeof onRenameNode === "function" && (node.kind === "page" || node.kind === "module");
   }
 
+  function addActionLabel(node) {
+    if (node.kind === "module") {
+      return "Add child page";
+    }
+    if (node.kind === "page") {
+      return "Add child page";
+    }
+    return null;
+  }
+
+  function canAddNode(node) {
+    return Boolean(typeof onAddNode === "function" && (node.kind === "module" || node.kind === "page"));
+  }
+
+  function canAddSibling(record) {
+    return Boolean(typeof onAddSiblingNode === "function" && record?.node.kind === "page");
+  }
+
   function beginRename(id) {
     const record = getNodeRecordById(id);
     if (!record || !canRename(record.node)) {
@@ -971,7 +1062,12 @@ export function mountRootAdminHierarchyTree({
   }
 
   function canOutdent(record) {
-    return Boolean(typeof onMoveNode === "function" && record?.node.kind === "page" && record.parentId);
+    const parentRecord = record?.parentId ? getNodeRecordById(record.parentId) : null;
+    return Boolean(
+      typeof onMoveNode === "function" &&
+      record?.node.kind === "page" &&
+      parentRecord?.node.kind === "page",
+    );
   }
 
   function canOrphan(record) {
@@ -979,6 +1075,17 @@ export function mountRootAdminHierarchyTree({
       typeof onMoveNode === "function" &&
       record?.node.kind === "page" &&
       record.node.meta?.placementType !== "orphaned",
+    );
+  }
+
+  function canDrag(record) {
+    return Boolean(typeof onReparentNode === "function" && record?.node.kind === "page");
+  }
+
+  function canDrop(record) {
+    return Boolean(
+      typeof onReparentNode === "function" &&
+      (record?.node.kind === "page" || record?.node.kind === "module"),
     );
   }
 
@@ -1003,6 +1110,142 @@ export function mountRootAdminHierarchyTree({
         node: record.node,
         parentNode: parentRecord?.node ?? null,
         grandParentNode: grandParentRecord?.node ?? null,
+      });
+    } finally {
+      state.mutatingId = null;
+      render();
+    }
+  }
+
+  async function reparentNode(sourceId, targetId, position = "inside") {
+    const sourceRecord = getNodeRecordById(sourceId);
+    const targetRecord = getNodeRecordById(targetId);
+    if (
+      !sourceRecord ||
+      !targetRecord ||
+      typeof onReparentNode !== "function" ||
+      !canDrag(sourceRecord) ||
+      !canDrop(targetRecord)
+    ) {
+      return;
+    }
+
+    const sourceParentRecord = sourceRecord.parentId ? getNodeRecordById(sourceRecord.parentId) : null;
+    const targetParentRecord = targetRecord.parentId ? getNodeRecordById(targetRecord.parentId) : null;
+
+    state.selectedId = sourceId;
+    state.activeMenuId = null;
+    state.mutatingId = sourceId;
+    render();
+
+    try {
+      await onReparentNode({
+        sourceId,
+        targetId,
+        position,
+        sourceNode: sourceRecord.node,
+        targetNode: targetRecord.node,
+        sourceParentNode: sourceParentRecord?.node ?? null,
+        targetParentNode: targetParentRecord?.node ?? null,
+      });
+    } finally {
+      state.mutatingId = null;
+      state.dragState = null;
+      render();
+    }
+  }
+
+  function onDragStart(event, id) {
+    const record = getNodeRecordById(id);
+    if (!record || !canDrag(record) || isMobileView()) {
+      event.preventDefault();
+      return;
+    }
+    state.selectedId = id;
+    state.dragState = { sourceId: id, targetId: null, position: "inside" };
+    if (event.dataTransfer) {
+      event.dataTransfer.setData("text/plain", id);
+      event.dataTransfer.effectAllowed = "move";
+    }
+  }
+
+  function onDragOver(event, id) {
+    if (!state.dragState || isMobileView() || state.dragState.sourceId === id) {
+      return;
+    }
+    const targetRecord = getNodeRecordById(id);
+    if (!targetRecord || !canDrop(targetRecord)) {
+      return;
+    }
+    event.preventDefault();
+    const row = event.currentTarget;
+    if (!(row instanceof HTMLElement)) {
+      return;
+    }
+
+    let position = "inside";
+    if (targetRecord.node.kind === "page") {
+      const bounds = row.getBoundingClientRect();
+      const ratio = (event.clientY - bounds.top) / bounds.height;
+      position = ratio < 0.25 ? "before" : ratio > 0.75 ? "after" : "inside";
+    }
+
+    state.dragState = { ...state.dragState, targetId: id, position };
+    render();
+  }
+
+  function onDrop(event, id) {
+    if (!state.dragState || isMobileView()) {
+      return;
+    }
+    event.preventDefault();
+    const { sourceId, position } = state.dragState;
+    if (!sourceId || sourceId === id) {
+      return;
+    }
+    void reparentNode(sourceId, id, position);
+  }
+
+  async function addNode(id) {
+    const record = getNodeRecordById(id);
+    if (!record || typeof onAddNode !== "function") {
+      return;
+    }
+
+    state.selectedId = id;
+    state.activeMenuId = null;
+    state.mutatingId = id;
+    render();
+
+    try {
+      await onAddNode({
+        id,
+        node: record.node,
+      });
+    } finally {
+      state.mutatingId = null;
+      render();
+    }
+  }
+
+  async function addSiblingNode(id) {
+    const record = getNodeRecordById(id);
+    if (!record || typeof onAddSiblingNode !== "function") {
+      return;
+    }
+
+    const parentRecord = record.parentId ? getNodeRecordById(record.parentId) : null;
+
+    state.selectedId = id;
+    state.activeMenuId = null;
+    state.mutatingId = id;
+    render();
+
+    try {
+      await onAddSiblingNode({
+        id,
+        node: record.node,
+        parentNode: parentRecord?.node ?? null,
       });
     } finally {
       state.mutatingId = null;
@@ -1204,6 +1447,7 @@ export function mountRootAdminHierarchyTree({
       const openHref = getNodeOpenHref(node);
       const openInNewTabHref = getNodeOpenInNewTabHref(node);
       const hasInlineLinks = hasPrimaryOpenAction || isNonEmptyHref(openInNewTabHref);
+      const record = getNodeRecordById(node.id);
 
       if (hasInlineLinks) {
         const inlineActions = document.createElement("div");
@@ -1261,7 +1505,6 @@ export function mountRootAdminHierarchyTree({
         const menu = document.createElement("div");
         menu.className = "hierarchy-tree-row-menu";
         menu.role = "menu";
-        const record = getNodeRecordById(node.id);
         menu.append(
           rowActionButton("Select row", () => {
             state.selectedId = node.id;
@@ -1302,6 +1545,22 @@ export function mountRootAdminHierarchyTree({
           );
         }
 
+        if (canAddNode(node)) {
+          menu.append(
+            rowActionButton(addActionLabel(node) ?? "Add page", async () => {
+              await addNode(node.id);
+            }),
+          );
+        }
+
+        if (record && canAddSibling(record)) {
+          menu.append(
+            rowActionButton("Add sibling page", async () => {
+              await addSiblingNode(node.id);
+            }),
+          );
+        }
+
         if (hasChildren) {
           menu.append(
             rowActionButton(isExpanded(node) ? "Collapse branch" : "Expand branch", () => {
@@ -1329,7 +1588,20 @@ export function mountRootAdminHierarchyTree({
         rowActions.append(menu);
       }
 
+      row.draggable = !isMobileView() && Boolean(record && canDrag(record));
       row.append(rowActions);
+      row.addEventListener("dragstart", (event) => onDragStart(event, node.id));
+      row.addEventListener("dragover", (event) => onDragOver(event, node.id));
+      row.addEventListener("drop", (event) => onDrop(event, node.id));
+      row.addEventListener("dragend", () => {
+        state.dragState = null;
+        render();
+      });
+
+      if (state.dragState?.targetId === node.id) {
+        row.dataset.dropTarget = state.dragState.position;
+      }
+
       item.append(row);
 
       if (hasChildren && isExpanded(node)) {
@@ -1347,12 +1619,31 @@ export function mountRootAdminHierarchyTree({
     rootMenuButton.setAttribute("aria-expanded", String(state.rootMenuOpen));
   }
 
+  function closeDrawer({ returnFocus = false } = {}) {
+    state.drawerOpen = false;
+    state.rootMenuOpen = false;
+    render();
+    if (returnFocus) {
+      drawerNavButton.focus();
+    }
+  }
+
   function render() {
+    const clampedDrawerWidth = clampDrawerWidth(state.drawerWidth);
     drawer.classList.toggle("hidden", !state.drawerOpen);
     drawer.setAttribute("aria-hidden", String(!state.drawerOpen));
     drawerNavButton.setAttribute("aria-expanded", String(state.drawerOpen));
     drawerScrim.classList.toggle("hidden", !isMobileView() || !state.drawerOpen);
-    drawer.style.setProperty("--hierarchy-drawer-width", `${clampDrawerWidth(state.drawerWidth)}px`);
+    drawer.style.setProperty("--hierarchy-drawer-width", `${clampedDrawerWidth}px`);
+    if (secondaryDrawer instanceof HTMLElement) {
+      const useSecondaryDrawerPosture = state.drawerOpen && !isMobileView();
+      secondaryDrawer.classList.toggle("side-panel-secondary", useSecondaryDrawerPosture);
+      if (useSecondaryDrawerPosture) {
+        secondaryDrawer.style.setProperty("--hierarchy-drawer-width", `${clampedDrawerWidth}px`);
+      } else {
+        secondaryDrawer.style.removeProperty("--hierarchy-drawer-width");
+      }
+    }
 
     if (previewSummary instanceof HTMLElement) {
       if (state.loading) {
@@ -1369,7 +1660,9 @@ export function mountRootAdminHierarchyTree({
     } else if (state.error) {
       liveNote.textContent = "Hierarchy read failed.";
     } else {
-      liveNote.textContent = "Rename and structural move actions are active.";
+      liveNote.textContent = isMobileView()
+        ? "Rename, create, and menu-based structural actions are active."
+        : "Rename, create, drag-and-drop, and structural move actions are active.";
     }
 
     renderRootMenu();
@@ -1395,6 +1688,25 @@ export function mountRootAdminHierarchyTree({
     }
 
     renderDetail();
+    const selectionSignature = JSON.stringify({
+      selectedId: state.selectedId,
+      currentId: state.currentId,
+      loading: state.loading,
+      error: state.error,
+    });
+
+    if (selectionSignature !== state.lastSelectionSignature) {
+      state.lastSelectionSignature = selectionSignature;
+      if (typeof onSelectionChange === "function") {
+        onSelectionChange({
+          selectedNode: state.selectedId ? getNodeRecordById(state.selectedId)?.node ?? null : null,
+          currentNode: state.currentId ? getNodeRecordById(state.currentId)?.node ?? null : null,
+          loading: state.loading,
+          error: state.error,
+        });
+      }
+    }
+
     requestAnimationFrame(() => syncHierarchyTitleOverflowTooltips(treeRoot));
   }
 
@@ -1405,6 +1717,17 @@ export function mountRootAdminHierarchyTree({
     }
     const action = target.dataset.rootAction;
     if (!action) {
+      return;
+    }
+
+    if (action === "add-root" && typeof onRootAction === "function") {
+      void onRootAction({
+        action,
+        selectedNode: state.selectedId ? getNodeRecordById(state.selectedId)?.node ?? null : null,
+        currentNode: state.currentId ? getNodeRecordById(state.currentId)?.node ?? null : null,
+      });
+      state.rootMenuOpen = false;
+      render();
       return;
     }
 
@@ -1450,15 +1773,11 @@ export function mountRootAdminHierarchyTree({
   });
 
   drawerClose.addEventListener("click", () => {
-    state.drawerOpen = false;
-    state.rootMenuOpen = false;
-    render();
+    closeDrawer({ returnFocus: true });
   });
 
   drawerScrim.addEventListener("click", () => {
-    state.drawerOpen = false;
-    state.rootMenuOpen = false;
-    render();
+    closeDrawer({ returnFocus: true });
   });
 
   resizeHandle.addEventListener("pointerdown", (event) => {
@@ -1488,6 +1807,44 @@ export function mountRootAdminHierarchyTree({
   });
 
   window.addEventListener("resize", render);
+
+  document.addEventListener("click", (event) => {
+    if (!state.drawerOpen) {
+      return;
+    }
+
+    const path = typeof event.composedPath === "function" ? event.composedPath() : [];
+    const clickedInsideManagedSurface = path.includes(drawer)
+      || path.includes(drawerNavButton)
+      || path.includes(rootMenu)
+      || path.includes(rootMenuButton)
+      || persistentOpenRegions.some((region) => region instanceof EventTarget && path.includes(region));
+
+    if (clickedInsideManagedSurface) {
+      return;
+    }
+
+    closeDrawer();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") {
+      return;
+    }
+
+    if (state.rootMenuOpen) {
+      state.rootMenuOpen = false;
+      renderRootMenu();
+      rootMenuButton.focus();
+      return;
+    }
+
+    if (!state.drawerOpen) {
+      return;
+    }
+
+    closeDrawer({ returnFocus: true });
+  });
 
   return {
     setData({ tree, currentId = null, selectedId = null } = {}) {

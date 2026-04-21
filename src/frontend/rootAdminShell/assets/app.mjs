@@ -7,6 +7,16 @@ import {
 } from "./state.mjs";
 import { signLoginChallenge } from "./helperClient.mjs";
 import { createRootUsersListController } from "./rootUsersList.mjs";
+import { createWebAppHierarchyPageController } from "./webAppHierarchyPage.mjs";
+import { renderDesignSystemIconSvg } from "/design-system/assets/formControls.mjs";
+import { createPageShellBannerRuntimeController } from "/design-system/assets/pageShellBanner.mjs";
+import {
+  buildPageShellBreadcrumbMarkup,
+  createPageShellBreadcrumbController,
+  createPageShellChromeController,
+  createPageShellLanguageController,
+  createPageShellTooltipController,
+} from "/design-system/assets/pageShellController.mjs";
 
 class ApiError extends Error {
   constructor(status, code, message, details) {
@@ -69,6 +79,19 @@ const pageAliases = {
   "root-roles": "roles",
 };
 
+const rootAdminTopNavPageOrder = [
+  "overview",
+  "users",
+  "roles",
+  "tenants",
+  "tenant-admins",
+  "web-app-hierarchy",
+];
+
+const rootAdminTopNavPageOrderIndex = new Map(
+  rootAdminTopNavPageOrder.map((pageKey, index) => [pageKey, index]),
+);
+
 const pageMetadata = {
   overview: {
     title: "Overview",
@@ -100,14 +123,18 @@ const pageMetadata = {
     searchPlaceholder: "Search tenant admins, routes, or shell guidance",
     searchKeywords: ["tenant admins", "tenant admin", "admins", "administrators"],
   },
+  "web-app-hierarchy": {
+    title: "Web App Hierarchy",
+    breadcrumbCurrent: "Web App Hierarchy",
+    searchPlaceholder: "Search hierarchy routes, modules, or shell guidance",
+    searchKeywords: ["hierarchy", "web app hierarchy", "tree", "modules", "pages", "routes"],
+  },
 };
 
 const state = createInitialState();
 state.navigation.currentPage = "overview";
 
 let activeLanguageCode = resolveInitialLanguageCode();
-let languageModalReturnFocusTarget = null;
-let displaySettingsReturnFocusTarget = null;
 
 const authView = document.getElementById("auth-view");
 const shellView = document.getElementById("shell-view");
@@ -134,7 +161,7 @@ const primaryNavLinks = Array.from(document.querySelectorAll("#primary-nav-links
 const mobileNavButton = document.getElementById("mobile-nav-button");
 const mobileNavMenu = document.getElementById("mobile-nav-menu");
 const mobileNavLinks = Array.from(document.querySelectorAll("#mobile-nav-menu > .nav-link"));
-const contextNavLinks = Array.from(document.querySelectorAll(".context-nav .context-nav-item[data-page-link]"));
+const contextNavMainItems = document.querySelector(".context-nav-main");
 const profileButton = document.getElementById("profile-menu-button");
 const profileMenu = document.getElementById("profile-menu");
 const profileLabel = document.getElementById("profile-label");
@@ -147,14 +174,30 @@ const profileLanguageButton = document.getElementById("profile-language-button")
 const profileLogoutButton = document.getElementById("profile-logout-button");
 const mobileLanguageButton = document.getElementById("mobile-language-button");
 const mobileLogoutButton = document.getElementById("mobile-logout-button");
+const breadcrumbNav = document.querySelector(".breadcrumb-nav");
+if (breadcrumbNav instanceof HTMLElement) {
+  breadcrumbNav.innerHTML = buildPageShellBreadcrumbMarkup([
+    { href: "/root-admin#overview", label: "Root Admin" },
+  ]);
+}
 const breadcrumbHomeItem = document.getElementById("breadcrumb-home-item");
 const breadcrumbHomeLink = document.getElementById("breadcrumb-home-link");
-const breadcrumbHomeSeparatorItem = document.getElementById("breadcrumb-home-separator-item");
+const breadcrumbCompact = document.getElementById("breadcrumb-compact");
+const breadcrumbCompactButton = document.getElementById("breadcrumb-compact-button");
+const breadcrumbCompactMenu = document.getElementById("breadcrumb-compact-menu");
+const breadcrumbCollapseButton = document.getElementById("breadcrumb-collapse-button");
+const breadcrumbCollapseMenu = document.getElementById("breadcrumb-collapse-menu");
+const breadcrumbCollapsedItem = document.getElementById("breadcrumb-collapsed-item");
+const breadcrumbSeparatorBeforeCollapsed = document.getElementById("breadcrumb-separator-before-collapsed");
+const breadcrumbPageMinusOneItem = document.getElementById("breadcrumb-page-minus-one-item");
+const breadcrumbSeparatorBeforePageMinusOne = document.getElementById("breadcrumb-separator-before-page-minus-one");
+const breadcrumbPageMinusOneLink = document.getElementById("breadcrumb-page-minus-one-link");
 const breadcrumbCurrentItem = document.getElementById("breadcrumb-current-item");
 const breadcrumbCurrentLabel = document.getElementById("breadcrumb-current-label");
 const shellSearchForm = document.getElementById("shell-search-form");
 const shellSearchInput = document.getElementById("shell-search-input");
-const shellSubNav = document.querySelector(".sub-nav-row");
+const shellSubNav = document.querySelector(".sub-nav");
+const hierarchyTreeNavButton = document.getElementById("hierarchy-tree-nav-button");
 const displaySettingsButton = document.getElementById("display-settings-button");
 const displaySettingsLabel = document.getElementById("display-settings-label");
 const contextNavMoreButton = document.getElementById("context-nav-more-button");
@@ -182,7 +225,130 @@ const pageSections = {
   roles: document.getElementById("page-roles"),
   tenants: document.getElementById("page-tenants"),
   "tenant-admins": document.getElementById("page-tenant-admins"),
+  "web-app-hierarchy": document.getElementById("page-web-app-hierarchy"),
 };
+
+const shellChromeController = createPageShellChromeController({
+  topNav,
+  primaryNav,
+  primaryNavOverflow,
+  primaryNavOverflowButton,
+  primaryNavOverflowMenu,
+  primaryNavLinks,
+  mobileNavButton,
+  mobileNavMenu,
+  profileButton,
+  profileMenu,
+  navUtilities,
+  mobileProfileButton,
+  mobileProfileMenu,
+  contextNavMoreButton,
+  contextNavMoreMenu,
+  displaySettingsDrawer,
+  displaySettingsButton,
+  displaySettingsCloseButton,
+  displaySettingsPersistentRegions: [
+    document.getElementById("hierarchy-tree-drawer"),
+    document.getElementById("hierarchy-tree-drawer-scrim"),
+    document.getElementById("hierarchy-tree-nav-button"),
+  ],
+  shellSubNav,
+  contextNav: document.querySelector(".context-nav"),
+});
+
+const {
+  closeTransientShellSurfaces,
+  isContextNavMoreOpen,
+  isDisplaySettingsDrawerOpen,
+  isMenuOpen,
+  isMobileNavOpen,
+  isMobileProfileOpen,
+  isPrimaryNavOverflowOpen,
+  scheduleContextNavOffsetUpdate,
+  setContextNavMoreOpen,
+  setDisplaySettingsDrawerOpen,
+  setMenuOpen,
+  setMobileNavOpen,
+  setMobileProfileOpen,
+  setPrimaryNavOverflowOpen,
+  shouldKeepDisplaySettingsOpenForTarget,
+  updatePrimaryNavOverflow,
+} = shellChromeController;
+
+const shellBreadcrumbController = createPageShellBreadcrumbController({
+  row: shellSubNav,
+  breadcrumbNav,
+  breadcrumbList: document.getElementById("breadcrumb-list"),
+  breadcrumbHomeLink,
+  breadcrumbCompact,
+  breadcrumbCompactButton,
+  breadcrumbCompactMenu,
+  breadcrumbCollapseButton,
+  breadcrumbCollapseMenu,
+  breadcrumbCollapsedItem,
+  breadcrumbSeparatorBeforeCollapsed,
+  breadcrumbPageMinusOneItem,
+  breadcrumbSeparatorBeforePageMinusOne,
+  breadcrumbPageMinusOneLink,
+  breadcrumbCurrentItem,
+  breadcrumbCurrentLabel,
+});
+
+const {
+  closeBreadcrumbMenus,
+  renderBreadcrumbs,
+  scheduleBreadcrumbPresentation,
+} = shellBreadcrumbController;
+
+const shellLanguageController = createPageShellLanguageController({
+  displaySettingsButton,
+  displaySettingsCloseButton,
+  displaySettingsCopy,
+  displaySettingsEyebrow,
+  displaySettingsLabel,
+  displaySettingsMagnificationLabel,
+  displaySettingsThemeLabel,
+  displaySettingsTitle,
+  contextNavMoreButton,
+  contextNavMoreDisplaySettingsButton,
+  getActiveLanguageCode: () => activeLanguageCode,
+  languageModal,
+  languageModalCloseButton,
+  languageOptionList,
+  languageOptions,
+  magnificationButtons,
+  mobileLanguageButton,
+  onShellGeometryChange: () => {
+    updatePrimaryNavOverflow();
+    scheduleBreadcrumbPresentation();
+    syncNavState();
+    scheduleContextNavOffsetUpdate();
+  },
+  profileLanguageButton,
+  setActiveLanguageCode: (languageCode) => {
+    activeLanguageCode = languageCode;
+  },
+  themeButtons,
+});
+
+const {
+  applyMagnification,
+  applyTheme,
+  isLanguageModalOpen,
+  renderLanguageOptions,
+  selectLanguage,
+  setLanguageModalOpen,
+  syncDisplaySettingsCopy,
+  syncDocumentLanguageDirection,
+  syncLanguageTriggers,
+} = shellLanguageController;
+
+const shellTooltipController = createPageShellTooltipController();
+const { hideSharedTooltip, suspendSharedTooltipUntilPointerMove, wireSharedTooltipSystem } = shellTooltipController;
+const shellBannerController = createPageShellBannerRuntimeController(shellMessage, {
+  ariaLabel: "Root-admin shell feedback",
+});
+const rootAdminShellBannerPolicyNames = new Set(["error", "blocked-action", "mutation-success"]);
 
 const rootUsersListController = createRootUsersListController({
   root: document.getElementById("root-users-list-page"),
@@ -192,12 +358,383 @@ const rootUsersListController = createRootUsersListController({
   getCurrentPage: () => state.navigation.currentPage,
 });
 
-function normalizePage(page) {
-  const normalizedPage = pageAliases[page] ?? page;
-  return Object.hasOwn(pageMetadata, normalizedPage) ? normalizedPage : "overview";
+const webAppHierarchyPageController = createWebAppHierarchyPageController({
+  root: document.getElementById("page-web-app-hierarchy"),
+  fetchJson,
+  setShellMessage,
+  getCurrentPage: () => state.navigation.currentPage,
+  setPageLinkIcon,
+  refreshTopNav,
+  refreshContextNav: refreshContextNavForCurrentPage,
+});
+
+function renderPageLinkIcon(iconHost, iconKey) {
+  if (!(iconHost instanceof HTMLElement)) {
+    return;
+  }
+
+  iconHost.innerHTML = renderDesignSystemIconSvg(iconKey);
 }
 
-let activeSharedTooltipTarget = null;
+function defaultDisplayIconKeyForPage(pageKey) {
+  switch (pageKey) {
+    case "overview":
+    case "root-admin-overview":
+      return "home";
+    case "users":
+    case "root-admin-users":
+      return "user";
+    case "roles":
+    case "root-admin-roles":
+      return "admin";
+    case "tenants":
+    case "root-admin-tenants":
+      return "workspace";
+    case "tenant-admins":
+    case "root-admin-tenant-admins":
+      return "tenant";
+    case "web-app-hierarchy":
+    case "root-admin-web-app-hierarchy":
+      return "hierarchy";
+    default:
+      return "grid";
+  }
+}
+
+function normalizeRootAdminShellPageKey(pageKey) {
+  if (typeof pageKey !== "string" || pageKey.trim().length === 0) {
+    return null;
+  }
+
+  const trimmed = pageAliases[pageKey.trim()] ?? pageKey.trim();
+  if (Object.hasOwn(pageMetadata, trimmed)) {
+    return trimmed;
+  }
+
+  if (trimmed.startsWith("root-admin-")) {
+    const stripped = trimmed.slice("root-admin-".length);
+    return Object.hasOwn(pageMetadata, stripped) ? stripped : null;
+  }
+
+  return null;
+}
+
+function deriveShellPageKeyFromRoutePath(routePath, fallbackPageKey = "overview") {
+  if (typeof routePath !== "string" || routePath.trim().length === 0) {
+    return fallbackPageKey;
+  }
+
+  const [pathname, hash = ""] = routePath.split("#", 2);
+  if (hash.trim().length > 0) {
+    return normalizePage(hash.trim());
+  }
+
+  const normalizedPath = pathname.replace(/\/+$/, "");
+  if (normalizedPath === "/root-admin") {
+    return fallbackPageKey;
+  }
+
+  const segments = normalizedPath.split("/").filter(Boolean);
+  return normalizePage(segments.at(-1) ?? fallbackPageKey);
+}
+
+function flattenHierarchyPages(pages) {
+  if (!Array.isArray(pages)) {
+    return [];
+  }
+
+  return pages.flatMap((page) => [
+    page,
+    ...flattenHierarchyPages(page.children),
+  ]);
+}
+
+function buildRootAdminTopNavHref(pageKey) {
+  return `/root-admin#${pageKey}`;
+}
+
+function createPrimaryNavLink(pageKey, label) {
+  const link = document.createElement("a");
+  link.className = "nav-link";
+  link.href = buildRootAdminTopNavHref(pageKey);
+  link.dataset.pageLink = pageKey;
+  link.title = label;
+  link.textContent = label;
+  return link;
+}
+
+function createMobileNavLink(pageKey, label) {
+  const link = document.createElement("a");
+  link.className = "nav-link";
+  link.href = buildRootAdminTopNavHref(pageKey);
+  link.dataset.pageLink = pageKey;
+  link.title = label;
+  link.textContent = label;
+  return link;
+}
+
+function setTopNavLinkCollections(nextItems) {
+  const primaryNavLinksHost = document.getElementById("primary-nav-links");
+  if (primaryNavLinksHost instanceof HTMLElement) {
+    primaryNavLinksHost.replaceChildren(
+      ...nextItems.map((item) => createPrimaryNavLink(item.shellPageKey, item.displayLabel)),
+    );
+    primaryNavLinks.splice(
+      0,
+      primaryNavLinks.length,
+      ...Array.from(primaryNavLinksHost.querySelectorAll(".nav-link")),
+    );
+  }
+
+  if (mobileNavMenu instanceof HTMLElement) {
+    for (const link of mobileNavLinks) {
+      link.remove();
+    }
+
+    const mobileProfileGroup = mobileNavMenu.querySelector(".mobile-profile-group");
+    const nextMobileLinks = nextItems.map((item) => createMobileNavLink(item.shellPageKey, item.displayLabel));
+    for (const link of nextMobileLinks) {
+      mobileNavMenu.insertBefore(link, mobileProfileGroup);
+    }
+    mobileNavLinks.splice(0, mobileNavLinks.length, ...nextMobileLinks);
+  }
+}
+
+function buildFallbackTopNavItems() {
+  return [
+    {
+      webAppPageId: null,
+      shellPageKey: "overview",
+      displayLabel: pageMetaFor("overview").title,
+      topNavOrder: -1,
+    },
+  ];
+}
+
+function buildRootAdminTopNavItemsFromTree(tree) {
+  const rootFamily = tree?.rootFamilies?.find((family) => family.rootFamilyId === "root-admin");
+  if (!rootFamily || !Array.isArray(rootFamily.modules)) {
+    return [];
+  }
+
+  const itemsByPageKey = new Map();
+
+  for (const module of rootFamily.modules) {
+    for (const page of flattenHierarchyPages(module.pages)) {
+      const normalizedPageKey =
+        normalizeRootAdminShellPageKey(page?.pageKey)
+        ?? deriveShellPageKeyFromRoutePath(page?.resolvedFullRoutePath, "overview");
+
+      if (!normalizedPageKey || !Object.hasOwn(pageMetadata, normalizedPageKey)) {
+        continue;
+      }
+
+      itemsByPageKey.set(normalizedPageKey, {
+        webAppPageId: page.webAppPageId,
+        shellPageKey: normalizedPageKey,
+        displayLabel: page.displayLabel ?? pageMetaFor(normalizedPageKey).title,
+      });
+    }
+  }
+
+  return [...itemsByPageKey.values()];
+}
+
+function sortTopNavItems(items) {
+  return [...items].sort((left, right) => {
+    if (left.shellPageKey === "overview" && right.shellPageKey !== "overview") {
+      return -1;
+    }
+
+    if (right.shellPageKey === "overview" && left.shellPageKey !== "overview") {
+      return 1;
+    }
+
+    const leftOrder = typeof left.topNavOrder === "number" ? left.topNavOrder : Number.POSITIVE_INFINITY;
+    const rightOrder = typeof right.topNavOrder === "number" ? right.topNavOrder : Number.POSITIVE_INFINITY;
+    if (leftOrder !== rightOrder) {
+      return leftOrder - rightOrder;
+    }
+
+    const leftIndex = rootAdminTopNavPageOrderIndex.get(left.shellPageKey) ?? Number.POSITIVE_INFINITY;
+    const rightIndex = rootAdminTopNavPageOrderIndex.get(right.shellPageKey) ?? Number.POSITIVE_INFINITY;
+    if (leftIndex !== rightIndex) {
+      return leftIndex - rightIndex;
+    }
+
+    return left.displayLabel.localeCompare(right.displayLabel);
+  });
+}
+
+let topNavRequestId = 0;
+
+async function refreshTopNav() {
+  if (state.phase !== "authenticated") {
+    setTopNavLinkCollections(buildFallbackTopNavItems());
+    syncNavState();
+    updatePrimaryNavOverflow();
+    return;
+  }
+
+  const requestId = ++topNavRequestId;
+
+  try {
+    const tree = await fetchJson("/v1/web-app-hierarchy/tree", { method: "GET" });
+    const candidates = buildRootAdminTopNavItemsFromTree(tree);
+    const settingsItems = await Promise.all(
+      candidates.map(async (candidate) => {
+        try {
+          const settings = await fetchJson(
+            `/v1/web-app-page-settings/pages/${encodeURIComponent(candidate.webAppPageId)}`,
+            { method: "GET" },
+          );
+          return {
+            ...candidate,
+            displayLabel: settings?.displayLabel ?? candidate.displayLabel,
+            showInTopNav: settings?.showInTopNav === true,
+            topNavOrder: settings?.topNavOrder ?? null,
+          };
+        } catch (_error) {
+          return {
+            ...candidate,
+            showInTopNav: false,
+            topNavOrder: null,
+          };
+        }
+      }),
+    );
+
+    if (requestId !== topNavRequestId || state.phase !== "authenticated") {
+      return;
+    }
+
+    const itemsByPageKey = new Map();
+    for (const item of settingsItems) {
+      if (item.showInTopNav || item.shellPageKey === "overview") {
+        itemsByPageKey.set(item.shellPageKey, item);
+      }
+    }
+
+    if (!itemsByPageKey.has("overview")) {
+      itemsByPageKey.set("overview", buildFallbackTopNavItems()[0]);
+    }
+
+    setTopNavLinkCollections(sortTopNavItems([...itemsByPageKey.values()]));
+  } catch (_error) {
+    if (requestId !== topNavRequestId) {
+      return;
+    }
+
+    setTopNavLinkCollections(buildFallbackTopNavItems());
+  }
+
+  syncNavState();
+  updatePrimaryNavOverflow();
+}
+
+function decodePageSettingsIconKey(iconKey, pageKey) {
+  switch (iconKey) {
+    case null:
+    case undefined:
+    case "":
+    case "page-default":
+      return defaultDisplayIconKeyForPage(pageKey);
+    case "page-home":
+      return "home";
+    case "page-grid":
+      return "grid";
+    case "page-list":
+      return "list";
+    case "page-settings":
+      return "settings";
+    case "page-folder":
+      return "doc";
+    default:
+      return iconKey;
+  }
+}
+
+function getContextNavLinks() {
+  return Array.from(contextNavMainItems?.querySelectorAll(".context-nav-item[data-page-link]") ?? []);
+}
+
+function setPageLinkIcon(pageKey, iconKey) {
+  if (typeof pageKey !== "string" || typeof iconKey !== "string") {
+    return;
+  }
+
+  getContextNavLinks()
+    .filter((link) => link.dataset.pageLink === pageKey)
+    .forEach((link) => renderPageLinkIcon(link.querySelector(".context-nav-icon"), iconKey));
+
+  if (pageKey === "web-app-hierarchy") {
+    renderPageLinkIcon(hierarchyTreeNavButton?.querySelector(".context-nav-icon"), iconKey);
+  }
+}
+
+function normalizePage(page) {
+  const normalizedPage = normalizeRootAdminShellPageKey(page);
+  return normalizedPage ?? "overview";
+}
+
+let contextNavRequestId = 0;
+
+function renderContextNavItems(items) {
+  if (!(contextNavMainItems instanceof HTMLElement)) {
+    return;
+  }
+
+  contextNavMainItems.innerHTML = items
+    .map((item) => {
+      const iconKey = decodePageSettingsIconKey(item.effectiveIconKey ?? item.iconKey ?? null, item.shellPageKey);
+      const href = item.resolvedFullRoutePath ?? `/root-admin#${item.shellPageKey}`;
+      return `
+        <a
+          class="context-nav-item"
+          href="${escapeHtml(href)}"
+          data-page-link="${escapeHtml(item.shellPageKey)}"
+          data-tooltip="${escapeHtml(item.displayLabel)}"
+        >
+          <span class="context-nav-icon" aria-hidden="true">${renderDesignSystemIconSvg(iconKey)}</span>
+          <span class="context-nav-label">${escapeHtml(item.displayLabel)}</span>
+        </a>
+      `;
+    })
+    .join("");
+
+  syncNavState();
+  scheduleContextNavOffsetUpdate();
+}
+
+async function refreshContextNav(pageKey) {
+  if (state.phase !== "authenticated") {
+    renderContextNavItems([]);
+    return;
+  }
+
+  const requestId = ++contextNavRequestId;
+  renderContextNavItems([]);
+
+  try {
+    const response = await fetchJson(
+      `/v1/web-app-page-settings/root-families/root-admin/pages/${encodeURIComponent(pageKey)}/context-nav`,
+      { method: "GET" },
+    );
+    if (requestId !== contextNavRequestId || state.navigation.currentPage !== pageKey) {
+      return;
+    }
+    renderContextNavItems(Array.isArray(response?.items) ? response.items : []);
+  } catch (_error) {
+    if (requestId !== contextNavRequestId || state.navigation.currentPage !== pageKey) {
+      return;
+    }
+    renderContextNavItems([]);
+  }
+}
+
+function refreshContextNavForCurrentPage() {
+  return refreshContextNav(state.navigation.currentPage);
+}
 
 function resolveInitialLanguageCode() {
   const params = new URLSearchParams(window.location.search);
@@ -253,9 +790,22 @@ function setMessage(node, message, tone = "info") {
   node.classList.toggle("hidden", !message);
 }
 
-function setShellMessage(message, tone = "info") {
+function clearShellMessage() {
+  state.shellMessage = "";
+  shellBannerController?.clear();
+}
+
+function setShellMessage(message, policyName = "error") {
   state.shellMessage = message;
-  setMessage(shellMessage, message, tone);
+  if (!message) {
+    clearShellMessage();
+    return;
+  }
+
+  const resolvedPolicyName = rootAdminShellBannerPolicyNames.has(policyName) ? policyName : "error";
+  shellBannerController?.showForPolicy(resolvedPolicyName, {
+    message,
+  });
 }
 
 function renderSessionSummary(session) {
@@ -265,395 +815,16 @@ function renderSessionSummary(session) {
   }
 
   sessionSummary.innerHTML = `
-    <div><strong>User</strong><span>${escapeHtml(displayNameForSession(session))}</span></div>
-    <div><strong>Email</strong><span>${escapeHtml(session.email)}</span></div>
-    <div><strong>Root User ID</strong><span><code>${escapeHtml(session.rootUserId)}</code></span></div>
-    <div><strong>Principal ID</strong><span><code>${escapeHtml(session.authPrincipalId)}</code></span></div>
-    <div><strong>Session Expires</strong><span>${escapeHtml(formatTimestamp(session.expiresAt))}</span></div>
+    <div class="canonical-render-meta-row"><dt>User</dt><dd>${escapeHtml(displayNameForSession(session))}</dd></div>
+    <div class="canonical-render-meta-row"><dt>Email</dt><dd>${escapeHtml(session.email)}</dd></div>
+    <div class="canonical-render-meta-row"><dt>Root User ID</dt><dd><code>${escapeHtml(session.rootUserId)}</code></dd></div>
+    <div class="canonical-render-meta-row"><dt>Principal ID</dt><dd><code>${escapeHtml(session.authPrincipalId)}</code></dd></div>
+    <div class="canonical-render-meta-row"><dt>Session Expires</dt><dd>${escapeHtml(formatTimestamp(session.expiresAt))}</dd></div>
   `;
-}
-
-function setMenuOpen(open) {
-  profileButton?.setAttribute("aria-expanded", String(open));
-  profileMenu?.classList.toggle("hidden", !open);
-}
-
-function isMenuOpen() {
-  return profileButton?.getAttribute("aria-expanded") === "true";
-}
-
-function setPrimaryNavOverflowOpen(open) {
-  primaryNavOverflowButton?.setAttribute("aria-expanded", String(open));
-  primaryNavOverflowMenu?.classList.toggle("hidden", !open);
-}
-
-function isPrimaryNavOverflowOpen() {
-  return primaryNavOverflowButton?.getAttribute("aria-expanded") === "true";
-}
-
-function setMobileNavOpen(open) {
-  mobileNavButton?.setAttribute("aria-expanded", String(open));
-  mobileNavMenu?.classList.toggle("hidden", !open);
-}
-
-function isMobileNavOpen() {
-  return mobileNavButton?.getAttribute("aria-expanded") === "true";
-}
-
-function setMobileProfileOpen(open) {
-  mobileProfileButton?.setAttribute("aria-expanded", String(open));
-  mobileProfileMenu?.classList.toggle("hidden", !open);
-}
-
-function isMobileProfileOpen() {
-  return mobileProfileButton?.getAttribute("aria-expanded") === "true";
-}
-
-function setContextNavMoreOpen(open) {
-  contextNavMoreButton?.setAttribute("aria-expanded", String(open));
-  contextNavMoreMenu?.classList.toggle("hidden", !open);
-}
-
-function isContextNavMoreOpen() {
-  return contextNavMoreButton?.getAttribute("aria-expanded") === "true";
-}
-
-function setDisplaySettingsDrawerOpen(open, { trigger = null, returnFocus = true } = {}) {
-  displaySettingsDrawer?.classList.toggle("hidden", !open);
-  displaySettingsDrawer?.setAttribute("aria-hidden", String(!open));
-  displaySettingsButton?.setAttribute("aria-expanded", String(open));
-
-  if (open) {
-    displaySettingsReturnFocusTarget = trigger ?? document.activeElement;
-    setContextNavMoreOpen(false);
-    window.requestAnimationFrame(() => {
-      displaySettingsCloseButton?.focus();
-    });
-    return;
-  }
-
-  if (returnFocus && displaySettingsReturnFocusTarget instanceof HTMLElement) {
-    displaySettingsReturnFocusTarget.focus();
-  }
-  displaySettingsReturnFocusTarget = null;
-}
-
-function isDisplaySettingsDrawerOpen() {
-  return !displaySettingsDrawer?.classList.contains("hidden");
-}
-
-function closeTransientShellSurfaces({ includeDisplaySettings = false, returnFocus = false } = {}) {
-  setMenuOpen(false);
-  setPrimaryNavOverflowOpen(false);
-  setMobileNavOpen(false);
-  setMobileProfileOpen(false);
-  if (includeDisplaySettings) {
-    setContextNavMoreOpen(false);
-    setDisplaySettingsDrawerOpen(false, { returnFocus });
-  }
-}
-
-function setPrimaryNavLinkHidden(node, hidden) {
-  node.classList.toggle("hidden", hidden);
-}
-
-function renderPrimaryNavOverflowMenu(links) {
-  if (!primaryNavOverflowMenu) {
-    return;
-  }
-
-  primaryNavOverflowMenu.innerHTML = links
-    .map((link) => {
-      const href = link.getAttribute("href") ?? "/root-admin#overview";
-      const label = link.textContent?.trim() ?? "";
-      const isCurrent = link.getAttribute("aria-current") === "page";
-      const currentAttr = isCurrent ? ' aria-current="page"' : "";
-      const title = link.getAttribute("title") ?? label;
-      return `<a class="menu-item" href="${href}" data-page-link="${escapeHtml(link.dataset.pageLink ?? "")}" role="menuitem" title="${escapeHtml(title)}"${currentAttr}>${escapeHtml(label)}</a>`;
-    })
-    .join("");
-}
-
-function getVisiblePrimaryNavLinks() {
-  return primaryNavLinks.filter((link) => !link.classList.contains("hidden"));
-}
-
-function primaryNavFits() {
-  return primaryNav ? primaryNav.scrollWidth <= primaryNav.clientWidth : true;
-}
-
-function horizontalRectsOverlap(rectA, rectB) {
-  return rectA.left < rectB.right && rectA.right > rectB.left;
-}
-
-function primaryNavOverlapsUtilities() {
-  if (!navUtilities) {
-    return false;
-  }
-
-  const navUtilitiesRect = navUtilities.getBoundingClientRect();
-  for (const link of getVisiblePrimaryNavLinks()) {
-    if (horizontalRectsOverlap(link.getBoundingClientRect(), navUtilitiesRect)) {
-      return true;
-    }
-  }
-
-  if (primaryNavOverflowButton && !primaryNavOverflow.classList.contains("hidden")) {
-    const overflowRect = primaryNavOverflowButton.getBoundingClientRect();
-    if (horizontalRectsOverlap(overflowRect, navUtilitiesRect)) {
-      return true;
-    }
-  }
-
-  const primaryNavRect = primaryNav?.getBoundingClientRect();
-  return primaryNavRect ? horizontalRectsOverlap(primaryNavRect, navUtilitiesRect) : false;
-}
-
-function primaryNavOverflowOverlapsVisibleLinks() {
-  if (!primaryNavOverflowButton || primaryNavOverflow.classList.contains("hidden")) {
-    return false;
-  }
-
-  const overflowRect = primaryNavOverflowButton.getBoundingClientRect();
-  return getVisiblePrimaryNavLinks().some((link) => horizontalRectsOverlap(link.getBoundingClientRect(), overflowRect));
-}
-
-function updatePrimaryNavOverflow() {
-  if (!primaryNav || !topNav || primaryNavLinks.length === 0 || !primaryNavOverflow || !primaryNavOverflowButton) {
-    return;
-  }
-
-  topNav.classList.remove("force-mobile-nav");
-  primaryNavOverflow.classList.add("hidden");
-  setPrimaryNavOverflowOpen(false);
-  renderPrimaryNavOverflowMenu([]);
-
-  for (const link of primaryNavLinks) {
-    setPrimaryNavLinkHidden(link, false);
-  }
-
-  if (primaryNavFits() && !primaryNavOverlapsUtilities()) {
-    return;
-  }
-
-  primaryNavOverflow.classList.remove("hidden");
-
-  while (
-    getVisiblePrimaryNavLinks().length > 2
-    && (!primaryNavFits() || primaryNavOverlapsUtilities() || primaryNavOverflowOverlapsVisibleLinks())
-  ) {
-    const lastVisibleLink = getVisiblePrimaryNavLinks().at(-1);
-    if (!lastVisibleLink) {
-      break;
-    }
-    setPrimaryNavLinkHidden(lastVisibleLink, true);
-  }
-
-  if (primaryNavFits() && !primaryNavOverlapsUtilities() && !primaryNavOverflowOverlapsVisibleLinks()) {
-    renderPrimaryNavOverflowMenu(primaryNavLinks.filter((link) => link.classList.contains("hidden")));
-    return;
-  }
-
-  primaryNavOverflow.classList.add("hidden");
-  topNav.classList.add("force-mobile-nav");
-  setPrimaryNavOverflowOpen(false);
 }
 
 function getActiveLanguage() {
   return languageMetaFor(activeLanguageCode);
-}
-
-function syncDocumentLanguageDirection() {
-  const isRtl = activeLanguageCode === "ar";
-  const html = document.documentElement;
-  const body = document.body;
-  const activeLanguage = getActiveLanguage();
-
-  html.setAttribute("lang", activeLanguage.code);
-  html.setAttribute("dir", isRtl ? "rtl" : "ltr");
-  body?.setAttribute("dir", isRtl ? "rtl" : "ltr");
-}
-
-function syncLanguageTriggers() {
-  const activeLanguage = getActiveLanguage();
-  const label = `Language: ${activeLanguage.name}`;
-
-  if (profileLanguageButton) {
-    profileLanguageButton.textContent = label;
-    profileLanguageButton.setAttribute("title", label);
-  }
-
-  if (mobileLanguageButton) {
-    mobileLanguageButton.textContent = label;
-    mobileLanguageButton.setAttribute("title", label);
-  }
-}
-
-function getDisplaySettingsLocale() {
-  return activeLanguageCode === "ar" ? displaySettingsCopy.rtl : displaySettingsCopy.ltr;
-}
-
-function syncDisplaySettingsCopy() {
-  const copy = getDisplaySettingsLocale();
-
-  if (displaySettingsLabel) {
-    displaySettingsLabel.textContent = copy.launcher;
-  }
-
-  if (displaySettingsButton) {
-    displaySettingsButton.dataset.tooltip = copy.launcherTooltip;
-    displaySettingsButton.setAttribute("title", copy.launcherTooltip);
-  }
-
-  if (contextNavMoreButton) {
-    contextNavMoreButton.setAttribute("title", copy.more);
-    const moreLabel = contextNavMoreButton.querySelector(".context-nav-label");
-    if (moreLabel) {
-      moreLabel.textContent = copy.more;
-    }
-  }
-
-  if (contextNavMoreDisplaySettingsButton) {
-    contextNavMoreDisplaySettingsButton.textContent = copy.menuItem;
-    contextNavMoreDisplaySettingsButton.setAttribute("title", copy.menuItem);
-  }
-
-  if (displaySettingsEyebrow) {
-    displaySettingsEyebrow.textContent = copy.eyebrow;
-  }
-
-  if (displaySettingsTitle) {
-    displaySettingsTitle.textContent = copy.title;
-  }
-
-  if (displaySettingsCloseButton) {
-    displaySettingsCloseButton.setAttribute("aria-label", copy.close);
-    displaySettingsCloseButton.setAttribute("title", copy.close);
-  }
-
-  if (displaySettingsThemeLabel) {
-    displaySettingsThemeLabel.textContent = copy.themeGroup;
-  }
-
-  if (displaySettingsMagnificationLabel) {
-    displaySettingsMagnificationLabel.textContent = copy.magnificationGroup;
-  }
-
-  for (const button of themeButtons) {
-    const key = button.dataset.themeOption;
-    if (key === "normal") {
-      button.textContent = copy.themeNormal;
-    }
-    if (key === "dark") {
-      button.textContent = copy.themeDark;
-    }
-    if (key === "desert") {
-      button.textContent = copy.themeDesert;
-    }
-  }
-}
-
-function applyTheme(theme) {
-  const nextTheme = ["dark", "desert"].includes(theme) ? theme : "normal";
-  if (nextTheme === "normal") {
-    document.documentElement.removeAttribute("data-theme");
-  } else {
-    document.documentElement.dataset.theme = nextTheme;
-  }
-
-  for (const button of themeButtons) {
-    const isActive = button.dataset.themeOption === nextTheme;
-    button.classList.toggle("active", isActive);
-    button.setAttribute("aria-pressed", String(isActive));
-  }
-}
-
-function applyMagnification(value) {
-  const amount = Number(value);
-  const scale = 1 + amount / 200;
-
-  if (amount === 0) {
-    document.documentElement.style.removeProperty("--ui-scale");
-  } else {
-    document.documentElement.style.setProperty("--ui-scale", String(scale));
-  }
-
-  for (const button of magnificationButtons) {
-    const isActive = button.dataset.magnificationOption === String(amount);
-    button.classList.toggle("active", isActive);
-    button.setAttribute("aria-pressed", String(isActive));
-  }
-
-  window.requestAnimationFrame(() => {
-    updatePrimaryNavOverflow();
-    syncNavState();
-    scheduleContextNavOffsetUpdate();
-  });
-}
-
-function renderLanguageOptions() {
-  if (!languageOptionList) {
-    return;
-  }
-
-  languageOptionList.innerHTML = languageOptions
-    .map((language) => {
-      const isActive = language.code === activeLanguageCode;
-      const activeClass = isActive ? " active" : "";
-      const check = isActive ? '<span class="language-option-check" aria-hidden="true">Selected</span>' : "";
-
-      return `
-        <button
-          class="language-option${activeClass}"
-          type="button"
-          role="option"
-          data-language-code="${language.code}"
-          aria-selected="${String(isActive)}"
-        >
-          <span class="language-option-label">
-            <span class="language-option-name">${escapeHtml(language.name)}</span>
-            <span class="language-option-detail">${escapeHtml(language.detail)}</span>
-          </span>
-          ${check}
-        </button>
-      `;
-    })
-    .join("");
-}
-
-function setLanguageModalOpen(open, trigger = null) {
-  languageModal?.classList.toggle("hidden", !open);
-  languageModal?.setAttribute("aria-hidden", String(!open));
-
-  if (open) {
-    languageModalReturnFocusTarget = trigger ?? document.activeElement;
-    renderLanguageOptions();
-    window.requestAnimationFrame(() => {
-      const selectedButton = languageOptionList?.querySelector(`[data-language-code="${activeLanguageCode}"]`);
-      if (selectedButton instanceof HTMLElement) {
-        selectedButton.focus();
-        return;
-      }
-      languageModalCloseButton?.focus();
-    });
-    return;
-  }
-
-  if (languageModalReturnFocusTarget instanceof HTMLElement) {
-    languageModalReturnFocusTarget.focus();
-  }
-  languageModalReturnFocusTarget = null;
-}
-
-function isLanguageModalOpen() {
-  return !languageModal?.classList.contains("hidden");
-}
-
-function selectLanguage(languageCode) {
-  activeLanguageCode = languageCode;
-  syncDocumentLanguageDirection();
-  syncLanguageTriggers();
-  renderLanguageOptions();
 }
 
 async function fetchJson(path, options = {}) {
@@ -671,6 +842,7 @@ async function fetchJson(path, options = {}) {
 
   if (response.status === 401) {
     Object.assign(state, markSessionExpired(state));
+    clearShellMessage();
     render();
     throw new ApiError(response.status, body?.code ?? "UNAUTHORIZED", body?.message ?? "Your session has expired.");
   }
@@ -693,6 +865,7 @@ function resolvePageFromLocation() {
 
 function setCurrentPage(page, { syncHash = true } = {}) {
   const normalizedPage = normalizePage(page);
+  clearShellMessage();
   state.navigation.currentPage = normalizedPage;
 
   if (syncHash) {
@@ -704,6 +877,7 @@ function setCurrentPage(page, { syncHash = true } = {}) {
 
   closeTransientShellSurfaces({ includeDisplaySettings: true, returnFocus: false });
   render();
+  void refreshContextNav(normalizedPage);
 }
 
 function syncNavState() {
@@ -722,14 +896,16 @@ function syncNavState() {
 
   syncLinkCollection(primaryNavLinks);
   syncLinkCollection(mobileNavLinks);
-  syncLinkCollection(contextNavLinks);
+  syncLinkCollection(getContextNavLinks());
   syncLinkCollection(Array.from(primaryNavOverflowMenu?.querySelectorAll("[data-page-link]") ?? []));
 
   for (const [page, section] of Object.entries(pageSections)) {
     section?.classList.toggle("hidden", page !== currentPage);
   }
 
-  rootAdminMain?.classList.toggle("root-admin-main-canonical-page", currentPage === "users");
+  if (hierarchyTreeNavButton instanceof HTMLElement) {
+    hierarchyTreeNavButton.classList.toggle("hidden", currentPage !== "web-app-hierarchy");
+  }
 
 }
 
@@ -737,37 +913,18 @@ function syncSubNavState() {
   const currentPage = state.navigation.currentPage;
   const meta = pageMetaFor(currentPage);
   const isOverview = currentPage === "overview";
+  const breadcrumbChain = isOverview
+    ? [{ href: "/root-admin#overview", label: "Root Admin" }]
+    : [
+        { href: "/root-admin#overview", label: "Root Admin" },
+        { href: `/root-admin#${currentPage}`, label: meta.breadcrumbCurrent ?? meta.title },
+      ];
 
   if (breadcrumbHomeItem) {
     breadcrumbHomeItem.classList.remove("hidden");
   }
 
-  if (breadcrumbHomeLink) {
-    breadcrumbHomeLink.textContent = "Root Admin";
-    breadcrumbHomeLink.setAttribute("title", "Root Admin");
-    breadcrumbHomeLink.setAttribute("href", "/root-admin#overview");
-
-    if (isOverview) {
-      breadcrumbHomeLink.setAttribute("aria-current", "page");
-      breadcrumbHomeLink.classList.add("breadcrumb-current");
-    } else {
-      breadcrumbHomeLink.removeAttribute("aria-current");
-      breadcrumbHomeLink.classList.remove("breadcrumb-current");
-    }
-  }
-
-  if (breadcrumbHomeSeparatorItem) {
-    breadcrumbHomeSeparatorItem.classList.toggle("hidden", isOverview);
-  }
-
-  if (breadcrumbCurrentItem) {
-    breadcrumbCurrentItem.classList.toggle("hidden", isOverview);
-  }
-
-  if (breadcrumbCurrentLabel) {
-    breadcrumbCurrentLabel.textContent = meta.breadcrumbCurrent ?? meta.title;
-    breadcrumbCurrentLabel.setAttribute("title", meta.breadcrumbCurrent ?? meta.title);
-  }
+  renderBreadcrumbs(breadcrumbChain);
 
   if (shellSearchInput) {
     shellSearchInput.setAttribute("placeholder", meta.searchPlaceholder);
@@ -812,155 +969,6 @@ function matchPageFromSearch(query) {
   )?.[0] ?? null;
 }
 
-function updateContextNavOffset() {
-  if (!topNav && !shellSubNav) {
-    return;
-  }
-
-  const headerBottom = Math.max(
-    topNav?.getBoundingClientRect().bottom ?? 0,
-    shellSubNav?.getBoundingClientRect().bottom ?? 0,
-  );
-
-  document.documentElement.style.setProperty("--context-nav-top", `${Math.ceil(headerBottom)}px`);
-}
-
-let shellOffsetFrame = 0;
-
-function scheduleContextNavOffsetUpdate() {
-  if (shellOffsetFrame) {
-    return;
-  }
-
-  shellOffsetFrame = window.requestAnimationFrame(() => {
-    shellOffsetFrame = 0;
-    updateContextNavOffset();
-  });
-}
-
-function getSharedTooltipElement() {
-  let tooltip = document.getElementById("shared-floating-tooltip");
-  if (tooltip instanceof HTMLElement) {
-    return tooltip;
-  }
-
-  tooltip = document.createElement("div");
-  tooltip.id = "shared-floating-tooltip";
-  tooltip.className = "shared-floating-tooltip hidden";
-  tooltip.setAttribute("role", "tooltip");
-  tooltip.setAttribute("aria-hidden", "true");
-  document.body.append(tooltip);
-  return tooltip;
-}
-
-function hideSharedTooltip() {
-  const tooltip = getSharedTooltipElement();
-  tooltip.classList.add("hidden");
-  tooltip.setAttribute("aria-hidden", "true");
-  tooltip.textContent = "";
-  tooltip.style.removeProperty("left");
-  tooltip.style.removeProperty("top");
-  tooltip.style.removeProperty("transform");
-  activeSharedTooltipTarget = null;
-}
-
-function positionSharedTooltip(target) {
-  if (!(target instanceof HTMLElement)) {
-    hideSharedTooltip();
-    return;
-  }
-
-  const label = target.dataset.tooltip?.trim();
-  if (!label) {
-    hideSharedTooltip();
-    return;
-  }
-
-  const tooltip = getSharedTooltipElement();
-  tooltip.textContent = label;
-  tooltip.classList.remove("hidden");
-  tooltip.setAttribute("aria-hidden", "false");
-
-  const rect = target.getBoundingClientRect();
-  const direction = document.documentElement.getAttribute("dir") === "rtl" ? "rtl" : "ltr";
-  const isContextNavItem = target.matches(".context-nav-item");
-
-  if (isContextNavItem && direction === "rtl") {
-    tooltip.style.left = `${rect.left - 12}px`;
-    tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
-    tooltip.style.transform = "translate(-100%, -50%)";
-  } else if (isContextNavItem) {
-    tooltip.style.left = `${rect.right + 12}px`;
-    tooltip.style.top = `${rect.top + (rect.height / 2)}px`;
-    tooltip.style.transform = "translateY(-50%)";
-  } else {
-    tooltip.style.left = `${rect.left + (rect.width / 2)}px`;
-    tooltip.style.top = `${Math.max(rect.top - 10, 12)}px`;
-    tooltip.style.transform = "translate(-50%, -100%)";
-  }
-
-  activeSharedTooltipTarget = target;
-}
-
-function getTooltipTargetFromNode(node) {
-  if (!(node instanceof Element)) {
-    return null;
-  }
-
-  return node.closest(".context-nav-item[data-tooltip], .tooltip-anchor[data-tooltip]");
-}
-
-function getTooltipTargetFromEvent(event) {
-  if (!event || typeof event.composedPath !== "function") {
-    return getTooltipTargetFromNode(event?.target);
-  }
-
-  for (const node of event.composedPath()) {
-    const target = getTooltipTargetFromNode(node);
-    if (target) {
-      return target;
-    }
-  }
-
-  return null;
-}
-
-function wireSharedTooltipSystem() {
-  document.addEventListener("mouseover", (event) => {
-    const target = getTooltipTargetFromEvent(event);
-    if (!(target instanceof HTMLElement)) {
-      return;
-    }
-
-    positionSharedTooltip(target);
-  });
-
-  document.addEventListener("mouseout", (event) => {
-    const target = getTooltipTargetFromEvent(event);
-    if (!(target instanceof HTMLElement) || target !== activeSharedTooltipTarget) {
-      return;
-    }
-
-    const nextTarget = getTooltipTargetFromNode(event.relatedTarget);
-    if (nextTarget === target) {
-      return;
-    }
-
-    hideSharedTooltip();
-  });
-
-  window.addEventListener("scroll", () => {
-    if (activeSharedTooltipTarget instanceof HTMLElement) {
-      positionSharedTooltip(activeSharedTooltipTarget);
-    }
-  }, true);
-
-  window.addEventListener("resize", () => {
-    if (activeSharedTooltipTarget instanceof HTMLElement) {
-      positionSharedTooltip(activeSharedTooltipTarget);
-    }
-  });
-}
 
 function render() {
   const flags = deriveViewFlags(state);
@@ -970,7 +978,7 @@ function render() {
   expiryOverlay?.classList.toggle("hidden", !flags.showExpiryOverlay);
 
   setMessage(authMessage, state.authMessage, "danger");
-  setMessage(shellMessage, state.shellMessage);
+  suspendSharedTooltipUntilPointerMove();
   renderSessionSummary(state.session);
   syncDocumentLanguageDirection();
   syncProfileIdentity();
@@ -981,11 +989,13 @@ function render() {
 
   if (flags.showShellView) {
     rootUsersListController.syncPageState();
+    webAppHierarchyPageController.syncPageState();
   }
 
   if (flags.showShellView) {
     window.requestAnimationFrame(() => {
       updatePrimaryNavOverflow();
+      scheduleBreadcrumbPresentation();
       syncNavState();
       scheduleContextNavOffsetUpdate();
     });
@@ -1016,16 +1026,22 @@ async function bootstrapSession() {
     state.phase = "authenticated";
     state.navigation.currentPage = resolvePageFromLocation();
     render();
+    await refreshTopNav();
+    await refreshContextNavForCurrentPage();
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       Object.assign(state, resetToLoginState(state));
+      clearShellMessage();
       rootUsersListController.reset();
+      webAppHierarchyPageController.reset();
+      renderContextNavItems([]);
       state.phase = "login";
       render();
       return;
     }
     state.phase = "login";
     state.authMessage = "Could not restore the browser session. Please sign in again.";
+    clearShellMessage();
     render();
   }
 }
@@ -1044,6 +1060,7 @@ async function handlePasswordSubmit(event) {
     });
     state.challenge = response;
     state.phase = "ssh-challenge";
+    clearShellMessage();
     renderKeyOptions(response.availableSshKeys);
     sshInstructions.textContent = "Choose one of your registered SSH keys and complete the signed challenge.";
     render();
@@ -1096,19 +1113,21 @@ async function handleLogout() {
 
   window.history.replaceState(null, "", "/root-admin#overview");
   Object.assign(state, resetToLoginState(state));
+  clearShellMessage();
   rootUsersListController.reset();
+  webAppHierarchyPageController.reset();
+  setTopNavLinkCollections(buildFallbackTopNavItems());
+  renderContextNavItems([]);
   render();
 }
 
 async function handleRefreshSession() {
   try {
-    setShellMessage("Refreshing browser session...");
     const session = await fetchJson("/v1/root-auth/browser/session", { method: "GET" });
     state.session = session;
     render();
-    setShellMessage("Browser session refreshed.", "success");
   } catch (error) {
-    setShellMessage(messageForError(error, "Could not refresh the browser session."), "danger");
+    setShellMessage(messageForError(error, "Could not refresh the browser session."), "error");
   }
 }
 
@@ -1126,18 +1145,17 @@ async function handleShellSearchSubmit(event) {
   }
 
   if (!query) {
-    setShellMessage("Type a route, users, or roles term to navigate the shell.");
+    setShellMessage("Type a route, users, or roles term to navigate the shell.", "blocked-action");
     return;
   }
 
   const matchedPage = matchPageFromSearch(query);
   if (!matchedPage) {
-    setShellMessage(`No root-admin destination matched “${query}”.`, "danger");
+    setShellMessage(`No root-admin destination matched “${query}”.`, "error");
     return;
   }
 
   setCurrentPage(matchedPage);
-  setShellMessage(`Opened ${pageMetaFor(matchedPage).title}.`, "success");
 }
 
 loginForm?.addEventListener("submit", handlePasswordSubmit);
@@ -1145,7 +1163,11 @@ signSubmit?.addEventListener("click", handleSshSubmit);
 returnToLogin?.addEventListener("click", () => {
   window.history.replaceState(null, "", "/root-admin#overview");
   Object.assign(state, resetToLoginState(state));
+  clearShellMessage();
   rootUsersListController.reset();
+  webAppHierarchyPageController.reset();
+  setTopNavLinkCollections(buildFallbackTopNavItems());
+  renderContextNavItems([]);
   render();
 });
 refreshSessionButton?.addEventListener("click", handleRefreshSession);
@@ -1162,14 +1184,17 @@ profileButton?.addEventListener("click", () => {
   setPrimaryNavOverflowOpen(false);
   setMobileNavOpen(false);
   setMobileProfileOpen(false);
+  closeBreadcrumbMenus();
   setMenuOpen(nextState);
 });
 
 displaySettingsButton?.addEventListener("click", () => {
+  closeBreadcrumbMenus();
   setDisplaySettingsDrawerOpen(!isDisplaySettingsDrawerOpen(), { trigger: displaySettingsButton });
 });
 
 contextNavMoreButton?.addEventListener("click", () => {
+  closeBreadcrumbMenus();
   setContextNavMoreOpen(!isContextNavMoreOpen());
 });
 
@@ -1185,6 +1210,7 @@ displaySettingsCloseButton?.addEventListener("click", () => {
 primaryNavOverflowButton?.addEventListener("click", () => {
   const nextState = !isPrimaryNavOverflowOpen();
   setMenuOpen(false);
+  closeBreadcrumbMenus();
   setMobileNavOpen(false);
   setMobileProfileOpen(false);
   setPrimaryNavOverflowOpen(nextState);
@@ -1193,6 +1219,7 @@ primaryNavOverflowButton?.addEventListener("click", () => {
 mobileNavButton?.addEventListener("click", () => {
   const nextState = !isMobileNavOpen();
   setMenuOpen(false);
+  closeBreadcrumbMenus();
   setPrimaryNavOverflowOpen(false);
   setMobileNavOpen(nextState);
   if (!nextState) {
@@ -1201,6 +1228,7 @@ mobileNavButton?.addEventListener("click", () => {
 });
 
 mobileProfileButton?.addEventListener("click", () => {
+  closeBreadcrumbMenus();
   setMobileProfileOpen(!isMobileProfileOpen());
 });
 
@@ -1235,11 +1263,7 @@ document.addEventListener("click", (event) => {
     setMobileProfileOpen(false);
   }
 
-  if (
-    !target.closest(".context-nav-more")
-    && !target.closest("#display-settings-drawer")
-    && !target.closest("#display-settings-button")
-  ) {
+  if (!shouldKeepDisplaySettingsOpenForTarget(target)) {
     setContextNavMoreOpen(false);
     if (isDisplaySettingsDrawerOpen()) {
       setDisplaySettingsDrawerOpen(false, { returnFocus: true });
@@ -1290,18 +1314,23 @@ document.addEventListener("keydown", (event) => {
   }
 
   closeTransientShellSurfaces();
+  closeBreadcrumbMenus();
   hideSharedTooltip();
 });
 
 window.addEventListener("resize", () => {
   updatePrimaryNavOverflow();
+  scheduleBreadcrumbPresentation();
   syncNavState();
   scheduleContextNavOffsetUpdate();
 });
 
 window.addEventListener("hashchange", () => {
+  suspendSharedTooltipUntilPointerMove();
+  clearShellMessage();
   state.navigation.currentPage = resolvePageFromLocation();
   render();
+  void refreshContextNavForCurrentPage();
 });
 
 window.addEventListener("scroll", scheduleContextNavOffsetUpdate, { passive: true });
@@ -1311,5 +1340,6 @@ state.navigation.currentPage = resolvePageFromLocation();
 wireSharedTooltipSystem();
 applyTheme("normal");
 applyMagnification(0);
+setTopNavLinkCollections(buildFallbackTopNavItems());
 render();
 bootstrapSession();

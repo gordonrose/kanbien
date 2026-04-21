@@ -4,13 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kanbien Root Admin</title>
-    <link rel="stylesheet" href="/root-admin/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/assets/list-page-shared.css" />
+    <link rel="stylesheet" href="/design-system/assets/hierarchy-tree-shared.css" />
+    <link rel="stylesheet" href="/design-system/assets/form-template-shared.css" />
+    <link rel="stylesheet" href="/design-system/assets/hierarchyTree.css" />
+    <link rel="stylesheet" href="/root-admin/assets/login.css" />
   </head>
   <body>
-    <div id="app" class="root-admin-app">
+    <div id="app">
       <section id="auth-view" class="auth-shell">
         <div class="auth-panel">
-          <div class="eyebrow">Root Admin</div>
+          <div class="auth-eyebrow">Root Admin</div>
           <h1>Authenticate</h1>
           <p class="auth-copy">
             Password verification happens first. SSH proof is required before a browser session is created.
@@ -40,13 +45,13 @@
                 </p>
                 <div class="helper-actions">
                   <a
-                    class="secondary-button helper-link"
+                    class="auth-secondary-button helper-link"
                     href="/root-admin/helper/download/start-root-auth-signer-helper.ps1"
                   >
                     Launch Helper
                   </a>
                   <a
-                    class="secondary-button helper-link"
+                    class="auth-secondary-button helper-link"
                     href="/root-admin/helper/download/root-auth-signer-helper.mjs"
                   >
                     Download Helper Source
@@ -63,11 +68,11 @@
             </div>
           </section>
 
-          <div id="auth-message" class="message hidden" role="status" aria-live="polite"></div>
+          <div id="auth-message" class="auth-status-message hidden" role="status" aria-live="polite"></div>
         </div>
       </section>
 
-      <section id="shell-view" class="shell-view hidden">
+      <div id="shell-view" class="design-system-shell hidden">
         <header class="top-nav">
           <a class="brand-lockup" href="/root-admin#overview" aria-label="Kanbien root admin home">
             <span class="brand-mark" aria-hidden="true">K</span>
@@ -207,35 +212,11 @@
           </div>
         </nav>
 
-        <section class="sub-nav-row" aria-label="Root admin page chrome">
-          <div class="sub-nav">
-            <nav class="breadcrumb-nav" aria-label="Current page breadcrumb">
-              <ol id="sub-nav-breadcrumb-list" class="breadcrumb-list">
-                <li id="breadcrumb-home-item">
-                  <a
-                    id="breadcrumb-home-link"
-                    class="breadcrumb-button"
-                    href="/root-admin#overview"
-                    data-page-link="overview"
-                    title="Root Admin"
-                  >
-                    Root Admin
-                  </a>
-                </li>
-                <li id="breadcrumb-home-separator-item">
-                  <span class="breadcrumb-separator" aria-hidden="true">/</span>
-                </li>
-                <li id="breadcrumb-current-item">
-                  <span id="breadcrumb-current-label" class="breadcrumb-button breadcrumb-current" aria-current="page">
-                    Overview
-                  </span>
-                </li>
-              </ol>
-            </nav>
+        <section class="sub-nav" aria-label="Root admin page chrome">
+            <nav class="breadcrumb-nav" aria-label="Current page breadcrumb"></nav>
 
-            <div class="search-shell">
-              <form id="shell-search-form" class="search-form" role="search">
-                <label class="sr-only" for="shell-search-input">Search root admin shell destinations</label>
+            <form id="shell-search-form" class="search-shell" role="search">
+              <label class="search-shell-field">
                 <input
                   id="shell-search-input"
                   class="search-input"
@@ -244,53 +225,30 @@
                   placeholder="Search root admin sections"
                   autocomplete="off"
                 />
-                <span class="search-shell-hint" aria-hidden="true">
-                  <span class="search-shell-hint-copy">Press</span>
-                  <kbd class="search-shell-key">Enter</kbd>
+                <span class="search-submit-hint" aria-hidden="true">
+                  <span class="search-submit-hint-copy">Press</span>
+                  <span class="search-submit-hint-key">Enter</span>
                 </span>
-              </form>
-            </div>
-          </div>
+              </label>
+            </form>
         </section>
 
         <nav class="context-nav" aria-label="Root admin section navigation">
-          <div class="context-nav-main">
-            <div class="context-nav-main-items">
-              <a class="context-nav-item active" href="/root-admin#users" data-page-link="users" data-tooltip="Users" aria-current="page">
-                <span class="context-nav-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" focusable="false">
-                    <path d="M12 4.5a3.5 3.5 0 1 1-3.5 3.5A3.5 3.5 0 0 1 12 4.5zm0 9c3.2 0 5.9 1.78 6.75 4.25A1.75 1.75 0 0 1 17.1 20H6.9a1.75 1.75 0 0 1-1.65-2.25C6.1 15.28 8.8 13.5 12 13.5z" />
-                  </svg>
-                </span>
-                <span class="context-nav-label">Users</span>
-              </a>
-              <a class="context-nav-item" href="/root-admin#roles" data-page-link="roles" data-tooltip="Roles">
-                <span class="context-nav-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" focusable="false">
-                    <path d="M12 2.75 5.5 5v6.15c0 4.34 2.76 8.39 6.5 10.1 3.74-1.71 6.5-5.76 6.5-10.1V5zm0 4.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 6.85zm3.55 8.92a5.04 5.04 0 0 1-7.1 0 4.2 4.2 0 0 1 7.1 0z" />
-                  </svg>
-                </span>
-                <span class="context-nav-label">Roles</span>
-              </a>
-              <a class="context-nav-item" href="/root-admin#tenants" data-page-link="tenants" data-tooltip="Tenants">
-                <span class="context-nav-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" focusable="false">
-                    <path d="M4 20.25V6.75a1.5 1.5 0 0 1 1.5-1.5h7a1.5 1.5 0 0 1 1.5 1.5v13.5h2V3.75a1.5 1.5 0 0 1 1.5-1.5h1A1.5 1.5 0 0 1 20 3.75v16.5h.75a.75.75 0 0 1 0 1.5H3.25a.75.75 0 0 1 0-1.5zm3-11.5v2h2v-2zm0 4.5v2h2v-2zm4-4.5v2h2v-2zm0 4.5v2h2v-2z" />
-                  </svg>
-                </span>
-                <span class="context-nav-label">Tenants</span>
-              </a>
-              <a class="context-nav-item" href="/root-admin#tenant-admins" data-page-link="tenant-admins" data-tooltip="Tenant Admins">
-                <span class="context-nav-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" focusable="false">
-                    <path d="M12 3.25a4 4 0 1 1-4 4 4 4 0 0 1 4-4zm-4.9 16.5a5.45 5.45 0 0 1 9.8-3.31V20H7.95A1.5 1.5 0 0 1 7.1 19.75zm11.65-7 1.05 2.13 2.35.34-1.7 1.66.4 2.34-2.1-1.11-2.1 1.11.4-2.34-1.7-1.66 2.35-.34z" />
-                  </svg>
-                </span>
-                <span class="context-nav-label">Tenant Admins</span>
-              </a>
-            </div>
-          </div>
+          <div class="context-nav-main"></div>
           <div class="context-nav-bottom-group">
+            <button
+              id="hierarchy-tree-nav-button"
+              class="context-nav-item context-nav-item-button context-nav-item-bottom hidden"
+              type="button"
+              data-tooltip="Hierarchy"
+              aria-expanded="false"
+              aria-controls="hierarchy-tree-drawer"
+            >
+              <span class="context-nav-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6h8v4H4zm0 8h8v4H4zm10-4h6v4h-6zm-2-2h2v8h-2z" /></svg>
+              </span>
+              <span class="context-nav-label">Hierarchy</span>
+            </button>
             <button
               id="display-settings-button"
               class="context-nav-item context-nav-item-button context-nav-mobile-overflow-target"
@@ -404,45 +362,47 @@
           </div>
         </aside>
 
-        <main id="root-admin-main" class="root-admin-main">
-          <div id="shell-message" class="message hidden" role="status" aria-live="polite"></div>
+        <main id="root-admin-main" class="design-system-page-main">
+          <div id="shell-message" class="page-shell-banner-demo hidden" aria-label="Root-admin shell feedback"></div>
 
-          <section id="page-overview" class="page-panel">
-            <div class="page-heading">
+          <section id="page-overview" class="component-catalog-section">
+            <div class="component-catalog-section-header">
               <div>
-                <div class="eyebrow">Shell POC</div>
-                <h1>Root Admin Shell POC</h1>
-                <p class="page-copy">
+                <div class="top-nav-preview-eyebrow">Shell POC</div>
+                <h1 class="component-catalog-section-title">Root Admin Shell POC</h1>
+                <p class="component-catalog-meta">
                   This replaces the old authenticated root-admin frontend with the signed-off top-nav and sub-nav
                   patterns while preserving the real browser-auth journey.
                 </p>
               </div>
-              <div class="page-actions">
-                <button id="refresh-session-button" class="secondary-button" type="button">Refresh Session</button>
+              <div class="component-catalog-section-actions">
+                <button id="refresh-session-button" class="accessibility-chip" type="button">Refresh Session</button>
               </div>
             </div>
 
-            <div class="content-grid">
-              <section class="content-card">
-                <div class="eyebrow">Authenticated Session</div>
-                <h2>My Session</h2>
-                <div id="session-summary" class="summary-grid"></div>
+            <div class="component-catalog-grid">
+              <section class="component-catalog-card">
+                <div class="component-catalog-card-header">
+                  <div class="top-nav-preview-eyebrow">Authenticated Session</div>
+                  <h2 class="component-catalog-card-title">My Session</h2>
+                </div>
+                <dl id="session-summary" class="canonical-render-meta" aria-label="Current session"></dl>
               </section>
 
-              <section class="content-card">
-                <div class="eyebrow">Adoption Notes</div>
-                <h2>What This Proves</h2>
-                <ul class="content-list">
-                  <li>`/root-admin` can adopt the governed top-nav without replacing the browser-auth seam.</li>
-                  <li>The signed-off sub-nav row stays truthful while section pages change underneath it.</li>
-                  <li>The signed-off context-nav can own real root-admin section routing instead of local one-off shell chrome.</li>
-                  <li>New root-admin functions can be added in a controlled way before deeper page UIs are rebuilt later.</li>
-                </ul>
+              <section class="component-catalog-card">
+                <div class="component-catalog-card-header">
+                  <div class="top-nav-preview-eyebrow">Adoption Notes</div>
+                  <h2 class="component-catalog-card-title">What This Proves</h2>
+                </div>
+                <p class="component-catalog-card-copy">`/root-admin` can adopt the governed top-nav without replacing the browser-auth seam.</p>
+                <p class="component-catalog-card-copy">The signed-off sub-nav row stays truthful while section pages change underneath it.</p>
+                <p class="component-catalog-card-copy">The signed-off context-nav can own real root-admin section routing instead of local one-off shell chrome.</p>
+                <p class="component-catalog-card-copy">New root-admin functions can be added in a controlled way before deeper page UIs are rebuilt later.</p>
               </section>
             </div>
           </section>
 
-          <section id="page-users" class="page-panel-users hidden">
+          <section id="page-users" class="hidden">
             <section
               id="root-users-list-page"
               class="list-page-shell list-page-shell-split"
@@ -452,7 +412,7 @@
             >
               <p
                 id="root-users-list-announcement"
-                class="sr-only"
+                class="visually-hidden"
                 role="status"
                 aria-live="polite"
                 aria-atomic="true"
@@ -477,7 +437,7 @@
                 data-list-detail-split-layout-slot="list"
               >
                 <div>
-                  <div class="eyebrow">Root Admin Directory</div>
+                  <div class="top-nav-preview-eyebrow">Root Admin Directory</div>
                   <h1>Root Users</h1>
                 </div>
 
@@ -694,31 +654,33 @@
             </section>
           </section>
 
-          <section id="page-roles" class="page-panel hidden">
-            <div class="page-heading">
+          <section id="page-roles" class="component-catalog-section hidden">
+            <div class="component-catalog-section-header">
               <div>
-                <div class="eyebrow">Reserved Destination</div>
-                <h1>Roles</h1>
-                <p class="page-copy">
+                <div class="top-nav-preview-eyebrow">Reserved Destination</div>
+                <h1 class="component-catalog-section-title">Roles</h1>
+                <p class="component-catalog-meta">
                   This placeholder keeps roles visible as a real root-admin section while the role-management surface is
                   rebuilt against the adopted shell chrome.
                 </p>
               </div>
             </div>
 
-            <div class="content-grid">
-              <section class="content-card">
-                <h2>Route Intent</h2>
-                <ul class="content-list">
-                  <li>This section will hold root-level role and permission management.</li>
-                  <li>The route already participates in the same governed breadcrumb and shell search behavior as the other sections.</li>
-                  <li>The deeper list and editor surfaces can be added later without changing the shell framing.</li>
-                </ul>
+            <div class="component-catalog-grid">
+              <section class="component-catalog-card">
+                <div class="component-catalog-card-header">
+                  <h2 class="component-catalog-card-title">Route Intent</h2>
+                </div>
+                <p class="component-catalog-card-copy">This section will hold root-level role and permission management.</p>
+                <p class="component-catalog-card-copy">The route already participates in the same governed breadcrumb and shell search behavior as the other sections.</p>
+                <p class="component-catalog-card-copy">The deeper list and editor surfaces can be added later without changing the shell framing.</p>
               </section>
 
-              <section class="content-card">
-                <h2>Current Boundary</h2>
-                <p class="page-copy">
+              <section class="component-catalog-card">
+                <div class="component-catalog-card-header">
+                  <h2 class="component-catalog-card-title">Current Boundary</h2>
+                </div>
+                <p class="component-catalog-card-copy">
                   This page intentionally stops at route and shell proof so the navigation contract can be validated
                   first in the real consumer.
                 </p>
@@ -726,31 +688,33 @@
             </div>
           </section>
 
-          <section id="page-tenants" class="page-panel hidden">
-            <div class="page-heading">
+          <section id="page-tenants" class="component-catalog-section hidden">
+            <div class="component-catalog-section-header">
               <div>
-                <div class="eyebrow">Reserved Destination</div>
-                <h1>Tenants</h1>
-                <p class="page-copy">
+                <div class="top-nav-preview-eyebrow">Reserved Destination</div>
+                <h1 class="component-catalog-section-title">Tenants</h1>
+                <p class="component-catalog-meta">
                   This placeholder proves that tenant-oriented root functions can be added as first-class shell
                   sections without inventing one-off local navigation.
                 </p>
               </div>
             </div>
 
-            <div class="content-grid">
-              <section class="content-card">
-                <h2>Route Intent</h2>
-                <ul class="content-list">
-                  <li>This section will become the root-admin shell destination for tenant lifecycle and oversight work.</li>
-                  <li>The shell already provides the governed breadcrumb and context-nav orientation for that future workflow.</li>
-                  <li>Adding real tenant pages later should not require new shell chrome or local styling inventions.</li>
-                </ul>
+            <div class="component-catalog-grid">
+              <section class="component-catalog-card">
+                <div class="component-catalog-card-header">
+                  <h2 class="component-catalog-card-title">Route Intent</h2>
+                </div>
+                <p class="component-catalog-card-copy">This section will become the root-admin shell destination for tenant lifecycle and oversight work.</p>
+                <p class="component-catalog-card-copy">The shell already provides the governed breadcrumb and context-nav orientation for that future workflow.</p>
+                <p class="component-catalog-card-copy">Adding real tenant pages later should not require new shell chrome or local styling inventions.</p>
               </section>
 
-              <section class="content-card">
-                <h2>Current Boundary</h2>
-                <p class="page-copy">
+              <section class="component-catalog-card">
+                <div class="component-catalog-card-header">
+                  <h2 class="component-catalog-card-title">Current Boundary</h2>
+                </div>
+                <p class="component-catalog-card-copy">
                   This page exists to prove the route slot and the shell behavior only. No tenant feature UI is being
                   invented yet.
                 </p>
@@ -758,35 +722,232 @@
             </div>
           </section>
 
-          <section id="page-tenant-admins" class="page-panel hidden">
-            <div class="page-heading">
+          <section id="page-tenant-admins" class="component-catalog-section hidden">
+            <div class="component-catalog-section-header">
               <div>
-                <div class="eyebrow">Reserved Destination</div>
-                <h1>Tenant Admins</h1>
-                <p class="page-copy">
+                <div class="top-nav-preview-eyebrow">Reserved Destination</div>
+                <h1 class="component-catalog-section-title">Tenant Admins</h1>
+                <p class="component-catalog-meta">
                   This placeholder holds the future tenant-admin management route while the shell navigation contract is
                   proven in the real root-admin consumer.
                 </p>
               </div>
             </div>
 
-            <div class="content-grid">
-              <section class="content-card">
-                <h2>Route Intent</h2>
-                <ul class="content-list">
-                  <li>This section will become the root-admin destination for tenant-admin assignment and oversight work.</li>
-                  <li>The section already inherits truthful current-page state in both the sub-nav and context-nav.</li>
-                  <li>The eventual feature loop can focus on the page UI itself rather than re-solving shell navigation.</li>
-                </ul>
+            <div class="component-catalog-grid">
+              <section class="component-catalog-card">
+                <div class="component-catalog-card-header">
+                  <h2 class="component-catalog-card-title">Route Intent</h2>
+                </div>
+                <p class="component-catalog-card-copy">This section will become the root-admin destination for tenant-admin assignment and oversight work.</p>
+                <p class="component-catalog-card-copy">The section already inherits truthful current-page state in both the sub-nav and context-nav.</p>
+                <p class="component-catalog-card-copy">The eventual feature loop can focus on the page UI itself rather than re-solving shell navigation.</p>
               </section>
 
-              <section class="content-card">
-                <h2>Current Boundary</h2>
-                <p class="page-copy">
+              <section class="component-catalog-card">
+                <div class="component-catalog-card-header">
+                  <h2 class="component-catalog-card-title">Current Boundary</h2>
+                </div>
+                <p class="component-catalog-card-copy">
                   This page is intentionally empty beyond route proof so we can validate the shared shell first.
                 </p>
               </section>
             </div>
+          </section>
+
+          <section id="page-web-app-hierarchy" class="hidden">
+              <p id="root-admin-web-app-hierarchy-summary" class="visually-hidden" aria-live="polite">Waiting for curated hierarchy truth.</p>
+              <p id="root-admin-web-app-hierarchy-selection-summary" class="visually-hidden">
+                Choose a module or page from the tree to edit topology-owned details or page settings.
+              </p>
+              <div id="web-app-hierarchy-observed-state" class="visually-hidden">Select a page to review its current route, locator, and observed-app posture.</div>
+              <div id="web-app-hierarchy-preview-state" class="visually-hidden">No pending design-system proposal preview is loaded yet.</div>
+
+              <h2 id="root-admin-web-app-hierarchy-detail-title" class="visually-hidden">Loading hierarchy</h2>
+              <p id="root-admin-web-app-hierarchy-detail-copy" class="visually-hidden"></p>
+              <dl id="root-admin-web-app-hierarchy-detail-meta" class="visually-hidden"></dl>
+              <section class="component-catalog-section" aria-labelledby="web-app-hierarchy-page-title">
+                <div class="component-catalog-section-header">
+                  <p class="top-nav-preview-eyebrow">Baseline Reference</p>
+                  <h1 id="web-app-hierarchy-page-title" class="component-catalog-section-title">Web App Hierarchy</h1>
+                  <p class="component-catalog-meta">
+                    Configure curated hierarchy truth and page settings from one governed editing surface while the hierarchy tree stays in the shell-attached drawer.
+                  </p>
+                  <div class="component-catalog-section-actions">
+                    <span id="web-app-hierarchy-page-status" class="form-page-status">Waiting for curated hierarchy truth.</span>
+                    <button id="web-app-hierarchy-refresh-button" class="accessibility-chip" type="button">Refresh hierarchy</button>
+                    <button id="web-app-hierarchy-preview-button" class="accessibility-chip" type="button">Preview proposals</button>
+                    <button id="web-app-hierarchy-apply-button" class="accessibility-chip active" type="button">Apply preview</button>
+                  </div>
+                </div>
+
+                <section
+                  class="form-page-shell"
+                  aria-labelledby="web-app-hierarchy-page-title"
+                  data-form-error-mode="false"
+                  data-form-disabled-mode="false"
+                  data-form-mobile-view="false"
+                >
+                  <div class="form-page-layout">
+                    <form id="web-app-page-settings-form" class="form-page-card" novalidate>
+                    <section id="web-app-hierarchy-structure-state" class="form-page-section">
+                      <div class="form-page-section-header form-page-intro">
+                        <div>
+                          <p class="top-nav-preview-eyebrow">Editor</p>
+                          <h2 id="web-app-hierarchy-structure-shell-title" class="form-page-title">Edit selected app surface</h2>
+                          <p class="component-catalog-meta">
+                            Keep hierarchy-owned structure facts and page settings in one governed form while the hierarchy tree remains the shell-attached context-nav drawer.
+                          </p>
+                        </div>
+                      </div>
+                      <div id="web-app-hierarchy-structure-content">
+                        <p class="form-page-section-copy">Select a node from the hierarchy tree to review structure-owned fields.</p>
+                      </div>
+                      <div id="web-app-module-landing-form" class="form-page-grid hidden">
+                        <label class="form-field form-field-span-2">
+                          <span class="form-field-label">Landing page</span>
+                          <select id="web-app-module-landing-select" class="form-field-input" name="landingPageWebAppPageId"></select>
+                          <span class="form-field-help">
+                            Save this when the selected module should resolve `/route/module` directly into one of its top-level pages.
+                          </span>
+                        </label>
+                      </div>
+                    </section>
+
+                    <section
+                      id="web-app-page-settings-shell"
+                      class="form-page-section"
+                      aria-labelledby="web-app-page-settings-section-title"
+                    >
+                      <div class="form-page-section-header">
+                        <div>
+                          <p class="top-nav-preview-eyebrow">Section 02</p>
+                          <h3 id="web-app-page-settings-section-title" class="form-page-section-title">Page settings</h3>
+                        </div>
+                        <p class="form-page-section-copy">
+                          Configure the selected page's governed shell behavior without changing topology-owned placement or naming truth.
+                        </p>
+                      </div>
+
+                      <div id="web-app-page-settings-empty">
+                        Select a page from the hierarchy tree to edit icon, context navigation, top-nav presence, and page template.
+                      </div>
+
+                      <div id="web-app-page-settings-fields" class="form-page-grid hidden">
+                                <label class="form-field form-field-span-2">
+                                  <span class="form-field-label">Page name</span>
+                                  <input id="web-app-page-settings-display-label" class="form-field-input" type="text" readonly />
+                                  <span class="form-field-help">
+                                    Page naming still belongs to hierarchy truth. Rename the selected page from the tree.
+                                  </span>
+                                </label>
+
+                                <div class="form-field">
+                                  <span class="form-field-label" id="web-app-page-settings-icon-label">Icon</span>
+                                  <div id="web-app-page-settings-icon-grid-host"></div>
+                                  <span class="form-field-help">Choose a governed icon from the shared design-system icon library.</span>
+                                </div>
+
+                                <label class="form-toggle-row form-field-span-2">
+                                  <span class="form-toggle-copy">
+                                    <strong>Show in top nav</strong>
+                                    <span>If enabled, the page can appear as a top-nav button.</span>
+                                  </span>
+                                  <span class="form-toggle-control">
+                                    <input
+                                      id="web-app-page-settings-show-in-top-nav"
+                                      class="form-toggle-input"
+                                      type="checkbox"
+                                      name="showInTopNav"
+                                    />
+                                    <span class="form-toggle-track" aria-hidden="true"></span>
+                                  </span>
+                                </label>
+
+                                <label class="form-field">
+                                  <span class="form-field-label">Page template</span>
+                                  <select id="web-app-page-settings-template" class="form-field-input" name="pageTemplateKey"></select>
+                                  <span class="form-field-help">
+                                    Template intent lives with page settings so shell behavior and topology stay decoupled.
+                                  </span>
+                                </label>
+
+                                <div class="form-field form-field-span-2">
+                                  <span class="form-field-label" id="web-app-page-settings-context-nav-label">Context navigation</span>
+                                  <div id="web-app-page-settings-context-nav-host"></div>
+                                  <span class="form-field-help">
+                                    If nothing is selected, the selected page becomes the default single-item context-nav destination.
+                                  </span>
+                                </div>
+                      </div>
+                    </section>
+
+                      <div id="web-app-page-settings-actions" class="form-page-footer hidden">
+                        <button id="web-app-module-landing-save" class="accessibility-chip hidden" type="button">Save landing page</button>
+                        <button id="web-app-page-settings-save" type="button" class="accessibility-chip active hidden">Save page settings</button>
+                      </div>
+                    </form>
+                  </div>
+                </section>
+              </section>
+
+            <div id="hierarchy-tree-drawer-scrim" class="hierarchy-tree-drawer-scrim hidden"></div>
+
+            <aside
+              id="hierarchy-tree-drawer"
+              class="side-panel accessibility-drawer"
+              aria-labelledby="hierarchy-tree-drawer-title"
+              aria-hidden="false"
+            >
+              <div id="hierarchy-tree-drawer-resize" class="hierarchy-tree-drawer-resize" aria-hidden="true"></div>
+              <div class="side-panel-header accessibility-drawer-header">
+                <div>
+                  <p class="drawer-eyebrow">Hierarchy</p>
+                  <h2 id="hierarchy-tree-drawer-title">Content hierarchy</h2>
+                  <p id="hierarchy-tree-live-note" class="hierarchy-tree-display-copy">
+                    Loading curated hierarchy truth from GetTree.
+                  </p>
+                </div>
+                <div class="hierarchy-tree-drawer-header-actions">
+                  <button
+                    id="hierarchy-tree-root-menu-button"
+                    class="icon-button"
+                    type="button"
+                    aria-label="Open root options"
+                    aria-expanded="false"
+                    aria-controls="hierarchy-tree-root-menu"
+                  >
+                    <span class="icon-button-glyph" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false"><path d="M12 6.75a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5z" /></svg>
+                    </span>
+                  </button>
+                  <div
+                    id="hierarchy-tree-root-menu"
+                    class="hierarchy-tree-root-menu hidden"
+                    role="menu"
+                    aria-labelledby="hierarchy-tree-root-menu-button"
+                  >
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="add-root">Add top-level page</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="expand-all">Expand all</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="collapse-all">Collapse all</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="reset-open">Reset open state</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="open-selected">Open selected</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="select-current">Select current</div>
+                  </div>
+                  <button
+                    id="hierarchy-tree-drawer-close"
+                    class="icon-button"
+                    type="button"
+                    aria-label="Close hierarchy drawer"
+                  >
+                    <span class="icon-button-glyph" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false"><path d="M6 6 18 18M18 6 6 18" /></svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div id="hierarchy-tree-tree" class="hierarchy-tree-tree"></div>
+            </aside>
           </section>
         </main>
 
@@ -817,13 +978,13 @@
         <div id="expiry-overlay" class="expiry-overlay hidden" aria-hidden="true">
           <div class="expiry-backdrop"></div>
           <div class="expiry-modal" role="dialog" aria-modal="true" aria-labelledby="expiry-title">
-            <div class="eyebrow">Session Expired</div>
+            <div class="auth-eyebrow">Session Expired</div>
             <h2 id="expiry-title">Your root-admin session has expired</h2>
             <p>The authenticated shell has been locked. Return to login to continue.</p>
             <button id="return-to-login" type="button">Return To Login</button>
           </div>
         </div>
-      </section>
+      </div>
     </div>
 
     <script type="module" src="/root-admin/assets/app.mjs"></script>

@@ -527,7 +527,7 @@
     position: fixed;
     top: var(--context-nav-top, 0);
     right: 0;
-    bottom: calc(4.125rem + env(safe-area-inset-bottom, 0));
+    bottom: var(--context-nav-mobile-bar-offset, calc(4.125rem + env(safe-area-inset-bottom, 0)));
     left: 0;
     z-index: 1;
     height: auto;

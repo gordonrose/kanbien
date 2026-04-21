@@ -150,7 +150,18 @@
   max-width: calc(100vw - 4.25rem - var(--hierarchy-drawer-width));
 }
 
+#display-settings-drawer.side-panel-secondary {
+  left: calc(4.25rem + var(--hierarchy-drawer-width));
+  width: clamp(22rem, 24vw, var(--hierarchy-display-drawer-width));
+  max-width: calc(100vw - 4.25rem - var(--hierarchy-drawer-width));
+}
+
 html[dir="rtl"] #hierarchy-tree-display-drawer.side-panel-secondary {
+  left: auto;
+  right: calc(4.25rem + var(--hierarchy-drawer-width));
+}
+
+html[dir="rtl"] #display-settings-drawer.side-panel-secondary {
   left: auto;
   right: calc(4.25rem + var(--hierarchy-drawer-width));
 }
@@ -413,11 +424,61 @@ html[dir="rtl"] .hierarchy-tree-row-sub {
 .hierarchy-tree-row-actions {
   position: relative;
   display: flex;
+  align-items: center;
+  gap: 0.3rem;
   justify-content: end;
 }
 
 html[dir="rtl"] .hierarchy-tree-row-actions {
   justify-content: start;
+}
+
+.hierarchy-tree-inline-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.18rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(0.0625rem);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.hierarchy-tree-row:hover .hierarchy-tree-inline-actions,
+.hierarchy-tree-row:focus-within .hierarchy-tree-inline-actions,
+.hierarchy-tree-row-actions:focus-within .hierarchy-tree-inline-actions {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.hierarchy-tree-inline-action {
+  inline-size: 1.7rem;
+  block-size: 1.7rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0.0625rem solid transparent;
+  border-radius: 0.5rem;
+  color: color-mix(in srgb, var(--ink-soft) 84%, var(--line-strong));
+  text-decoration: none;
+  background: color-mix(in srgb, var(--surface-1) 72%, transparent);
+}
+
+.hierarchy-tree-inline-action:hover,
+.hierarchy-tree-inline-action:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 16%, var(--line));
+  background: var(--surface-1);
+  color: var(--ink);
+  outline: none;
+}
+
+.hierarchy-tree-inline-action-icon {
+  display: block;
+  inline-size: 0.92rem;
+  block-size: 0.92rem;
+  width: 0.92rem;
+  height: 0.92rem;
+  flex: 0 0 0.92rem;
 }
 
 .hierarchy-tree-menu-button {
@@ -553,6 +614,10 @@ html[dir="rtl"] .hierarchy-tree-row-actions {
     display: none;
   }
 
+  .hierarchy-tree-inline-actions {
+    display: none;
+  }
+
   #hierarchy-tree-drawer.side-panel,
   #hierarchy-tree-display-drawer.side-panel-secondary {
     top: var(--context-nav-top, 0);
@@ -588,6 +653,18 @@ html[data-theme="dark"] .hierarchy-tree-menu-button,
 html[data-theme="dark"] .hierarchy-tree-action-button {
   background: color-mix(in srgb, var(--surface-1) 94%, #0f1524);
   border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .hierarchy-tree-inline-action {
+  background: color-mix(in srgb, var(--surface-1) 82%, transparent);
+  color: color-mix(in srgb, var(--ink-soft) 84%, var(--line-strong));
+}
+
+html[data-theme="dark"] .hierarchy-tree-inline-action:hover,
+html[data-theme="dark"] .hierarchy-tree-inline-action:focus-visible {
+  background: color-mix(in srgb, var(--surface-1) 94%, #0f1524);
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line-strong));
   color: var(--ink);
 }
 
