@@ -345,7 +345,10 @@ function renderCanonicalState(resolvedGeneratedState = null) {
 
   if (renderLayout instanceof HTMLElement) {
     renderLayout.style.setProperty("--canonical-render-layout-width", `${Math.max(width + 360, 760)}px`);
-    renderLayout.dataset.themeScope = theme;
+  }
+
+  if (previewFrame instanceof HTMLElement) {
+    previewFrame.dataset.themeScope = theme;
   }
 
   setSelectedValue(selectedValue);

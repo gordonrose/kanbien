@@ -166,7 +166,7 @@ test.describe("design-system time picker canonical states", () => {
       { width: 1600, height: 1400 },
     );
 
-    await expect(page.locator(".canonical-render-layout")).toHaveAttribute("data-theme-scope", "dark");
+    await expect(page.locator("#time-picker-preview-frame")).toHaveAttribute("data-theme-scope", "dark");
     await expect(standalonePanel).toBeVisible();
     await expect(standaloneRoot.locator('[data-form-time-hour="09"]')).toBeVisible();
     await expect(standaloneRoot.locator('[data-form-time-minute="30"]')).toBeVisible();
@@ -200,15 +200,15 @@ test.describe("design-system time picker canonical states", () => {
     );
 
     const darkThemeState = await page.evaluate(() => {
-      const layout = document.querySelector(".canonical-render-layout");
+      const frame = document.querySelector("#time-picker-preview-frame");
       return {
         documentTheme: document.documentElement.dataset.theme ?? "",
-        layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
+        frameTheme: frame instanceof HTMLElement ? frame.dataset.themeScope ?? "" : "",
       };
     });
 
     expect(darkThemeState.documentTheme).toBe("");
-    expect(darkThemeState.layoutTheme).toBe("dark");
+    expect(darkThemeState.frameTheme).toBe("dark");
 
     await gotoCanonicalState(
       page,

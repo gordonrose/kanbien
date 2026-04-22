@@ -7,11 +7,18 @@ This artifact exists because route-level success is not enough. A rendering is
 only complete when the specimen is isolated, browser-verifiable, and proven not
 to fall back to overview content or leak stress state into surrounding chrome.
 
+Architectural-first intake is also mandatory before patching escaped issues.
+Use:
+
+- `docs/workspace/design-system/verification/architectural-first-fix-gate.md`
+
 ## Hard Gate
 
 Do not use "done", "complete", or equivalent language for a canonical-rendering
 slice unless all of the following are true:
 
+- the architectural-first decision has been recorded for any escaped issue or
+  follow-up fix in the slice
 - the user can verify the changed surface in the workspace they are actually
   inspecting
 - browser proof has run against the same origin the user is using when that
@@ -166,6 +173,19 @@ For every family batch, ask these questions explicitly:
 
 If the answer is uncertain, the batch is not complete.
 
+## Architectural-First Triage
+
+Before fixing a rendering defect, answer:
+
+1. is this a specimen issue or a render-surface contract issue?
+2. is the root cause width, overflow, theme scope, mobile posture,
+   magnification, or route topology?
+3. does another governed family already solve this correctly?
+4. if yes, why is that pattern not being adopted here?
+5. what shared audit will fail if this regresses again?
+
+Do not skip to a family-local patch until this triage is recorded.
+
 ## Minimum Family Signoff Set
 
 Before treating a new canonical-rendering family as shippable, confirm:
@@ -193,6 +213,9 @@ Current recurring classes:
 - canonical route resolving to fallback overview content
 - mobile overlay escaping the review frame
 - specimen scope leaking RTL, theme, or magnification to the whole page
+- render lane clipping or resizing from the wrong width model
+- desktop inner layouts surviving inside mobile render lanes
+- magnified canonical states lacking an honest fit or overflow mode
 
 If a new family can plausibly fail in one of those ways, add an executable
 check for it before calling the batch complete.

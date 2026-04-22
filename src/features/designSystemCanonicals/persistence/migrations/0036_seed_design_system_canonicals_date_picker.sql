@@ -1,0 +1,158 @@
+INSERT INTO design_system_canonical_families (
+  design_system_canonical_family_id,
+  family_key,
+  normalized_family_key,
+  display_label,
+  family_kind,
+  launcher_title,
+  launcher_description,
+  launcher_category,
+  generated_launcher_route_path,
+  generated_root_route_path,
+  legacy_launcher_route_path,
+  source_surface_route_path,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+VALUES (
+  '0807448b-53a0-4cbf-b29c-2d6f45c8d0da',
+  'date-picker',
+  'date-picker',
+  'Date Picker',
+  'component',
+  'Date Picker Canonical Renderings',
+  'Persistence-backed launcher for the signed-off date-picker canonical renderings.',
+  'forms',
+  '/design-system/canonical-renderings/date-picker',
+  '/design-system/canonical-renderings',
+  '/design-system/canonicals/date-picker',
+  '/design-system/components/date-picker',
+  'live',
+  60,
+  FALSE,
+  NOW(),
+  NOW()
+)
+ON CONFLICT (normalized_family_key)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  family_kind = EXCLUDED.family_kind,
+  launcher_title = EXCLUDED.launcher_title,
+  launcher_description = EXCLUDED.launcher_description,
+  launcher_category = EXCLUDED.launcher_category,
+  generated_launcher_route_path = EXCLUDED.generated_launcher_route_path,
+  generated_root_route_path = EXCLUDED.generated_root_route_path,
+  legacy_launcher_route_path = EXCLUDED.legacy_launcher_route_path,
+  source_surface_route_path = EXCLUDED.source_surface_route_path,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();
+
+WITH date_picker_family AS (
+  SELECT design_system_canonical_family_id
+  FROM design_system_canonical_families
+  WHERE normalized_family_key = 'date-picker'
+),
+reference_rows (
+  reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  theme,
+  direction,
+  zoom,
+  state_variant_key,
+  specimen_payload,
+  sort_order,
+  featured
+) AS (
+  VALUES
+    ('DTPR-001', 'Single-date resting trigger and anchored one-month panel', 'Single-date stays quick while still exposing the anchored one-month calendar surface directly.', '/design-system/canonical-renderings/date-picker/DTPR-001', '/design-system/components/date-picker?ref=DTPR-001&width=520&state=single-open&theme=normal&dir=ltr&zoom=0', 'Component field lane', 520, 'normal', 'ltr', 0, 'single-open', '{"state":"single-open"}'::jsonb, 10, FALSE),
+    ('DTPR-002', 'Date-range staged start-selection state with Done disabled', 'Shows the staged range state after a start date has been chosen and before completion.', '/design-system/canonical-renderings/date-picker/DTPR-002', '/design-system/components/date-picker?ref=DTPR-002&width=980&state=range-staged&theme=normal&dir=ltr&zoom=0', 'Three-month range lane', 980, 'normal', 'ltr', 0, 'range-staged', '{"state":"range-staged"}'::jsonb, 20, TRUE),
+    ('DTPR-003', 'Date-range completed state after reverse-order normalization', 'Shows the forgiving reverse-selection normalization after an earlier end date is chosen second.', '/design-system/canonical-renderings/date-picker/DTPR-003', '/design-system/components/date-picker?ref=DTPR-003&width=980&state=range-normalized&theme=normal&dir=ltr&zoom=0', 'Three-month range lane', 980, 'normal', 'ltr', 0, 'range-normalized', '{"state":"range-normalized"}'::jsonb, 30, TRUE),
+    ('DTPR-004', 'Range-with-time open state with nested time-picker overlap', 'Shows the only approved nested overlap: time-picker inside an already open range-with-time picker.', '/design-system/canonical-renderings/date-picker/DTPR-004', '/design-system/components/date-picker?ref=DTPR-004&width=980&state=range-time-nested-open&theme=normal&dir=ltr&zoom=0', 'Three-month range-with-time lane', 980, 'normal', 'ltr', 0, 'range-time-nested-open', '{"state":"range-time-nested-open"}'::jsonb, 40, TRUE),
+    ('DTPR-005', 'Range-with-time outer label after nested time edits', 'Shows the composed outer label after nested start-time edits have already been applied.', '/design-system/canonical-renderings/date-picker/DTPR-005', '/design-system/components/date-picker?ref=DTPR-005&width=980&state=range-time-label-sync&theme=normal&dir=ltr&zoom=0', 'Three-month range-with-time lane', 980, 'normal', 'ltr', 0, 'range-time-label-sync', '{"state":"range-time-label-sync"}'::jsonb, 50, TRUE),
+    ('DTPR-006', 'Multi-month range navigation with anchored month and year jumps', 'Shows the multi-month review after start and end anchored month jumps have reanchored the window.', '/design-system/canonical-renderings/date-picker/DTPR-006', '/design-system/components/date-picker?ref=DTPR-006&width=980&state=range-jump-review&theme=normal&dir=ltr&zoom=0', 'Three-month range lane', 980, 'normal', 'ltr', 0, 'range-jump-review', '{"state":"range-jump-review"}'::jsonb, 60, TRUE),
+    ('DTPR-007', 'Mobile full-screen date-range overlay with sticky header and footer', 'Shows the child-owned mobile full-screen overlay posture with sticky top and bottom regions.', '/design-system/canonical-renderings/date-picker/DTPR-007', '/design-system/components/date-picker?ref=DTPR-007&width=430&state=range-mobile-open&theme=normal&dir=ltr&zoom=0', 'Mobile overlay lane', 430, 'normal', 'ltr', 0, 'range-mobile-open', '{"state":"range-mobile-open"}'::jsonb, 70, TRUE),
+    ('DTPR-008', 'RTL mobile overlay with mirrored previous and next glyphs', 'Shows RTL mobile overlay posture with mirrored navigation glyphs and preserved overlay structure.', '/design-system/canonical-renderings/date-picker/DTPR-008', '/design-system/components/date-picker?ref=DTPR-008&width=430&state=range-mobile-open&theme=normal&dir=rtl&zoom=0', 'Mobile overlay lane', 430, 'normal', 'rtl', 0, 'range-mobile-open', '{"state":"range-mobile-open"}'::jsonb, 80, TRUE),
+    ('DTPR-009', 'Hidden closed-state guarantee under mobile overlay rules', 'Shows the mobile review shell with every picker panel still closed and hidden.', '/design-system/canonical-renderings/date-picker/DTPR-009', '/design-system/components/date-picker?ref=DTPR-009&width=430&state=mobile-hidden&theme=normal&dir=rtl&zoom=0', 'Mobile overlay lane', 430, 'normal', 'rtl', 0, 'mobile-hidden', '{"state":"mobile-hidden"}'::jsonb, 90, TRUE),
+    ('DTPR-010', 'Dark-theme and magnified range review', 'Shows the dark-theme magnified range state with summary, jumps, and footer visible together.', '/design-system/canonical-renderings/date-picker/DTPR-010', '/design-system/components/date-picker?ref=DTPR-010&width=980&state=range-stress-open&theme=dark&dir=ltr&zoom=100', 'Three-month range lane', 980, 'dark', 'ltr', 100, 'range-stress-open', '{"state":"range-stress-open"}'::jsonb, 100, TRUE)
+)
+INSERT INTO design_system_canonical_references (
+  design_system_canonical_reference_id,
+  design_system_canonical_family_id,
+  reference_id,
+  normalized_reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  height,
+  theme,
+  direction,
+  zoom,
+  locale_fixture,
+  label_density_fixture,
+  state_variant_key,
+  specimen_payload,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+SELECT
+  gen_random_uuid(),
+  date_picker_family.design_system_canonical_family_id,
+  reference_rows.reference_id,
+  lower(reference_rows.reference_id),
+  reference_rows.display_label,
+  reference_rows.description,
+  reference_rows.render_route_path,
+  reference_rows.legacy_render_route_path,
+  reference_rows.viewport,
+  reference_rows.width,
+  NULL,
+  reference_rows.theme,
+  reference_rows.direction,
+  reference_rows.zoom,
+  NULL,
+  NULL,
+  reference_rows.state_variant_key,
+  reference_rows.specimen_payload,
+  'live',
+  reference_rows.sort_order,
+  reference_rows.featured,
+  NOW(),
+  NOW()
+FROM reference_rows
+CROSS JOIN date_picker_family
+ON CONFLICT (design_system_canonical_family_id, normalized_reference_id)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  description = EXCLUDED.description,
+  render_route_path = EXCLUDED.render_route_path,
+  legacy_render_route_path = EXCLUDED.legacy_render_route_path,
+  viewport = EXCLUDED.viewport,
+  width = EXCLUDED.width,
+  height = EXCLUDED.height,
+  theme = EXCLUDED.theme,
+  direction = EXCLUDED.direction,
+  zoom = EXCLUDED.zoom,
+  locale_fixture = EXCLUDED.locale_fixture,
+  label_density_fixture = EXCLUDED.label_density_fixture,
+  state_variant_key = EXCLUDED.state_variant_key,
+  specimen_payload = EXCLUDED.specimen_payload,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();

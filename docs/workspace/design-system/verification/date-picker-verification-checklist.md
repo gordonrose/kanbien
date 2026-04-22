@@ -5,8 +5,8 @@
 - Artifact name:
   `Date Picker`
 - Surface:
-  `/design-system/canonicals/date-picker`
-  `/design-system/components/date-picker`
+  `/design-system/canonical-renderings/date-picker`
+  `/design-system/canonical-renderings/date-picker/:ref`
 - Status under review:
   signed-off child reference baseline
 - Related behavior lock:
@@ -14,9 +14,9 @@
 - Related reference pack:
   `docs/workspace/design-system/reference-packs/date-picker-reference-pack.md`
 - Related canonical launcher:
-  `/design-system/canonicals/date-picker`
+  `/design-system/canonical-renderings/date-picker`
 - Related canonical render surface:
-  `/design-system/components/date-picker`
+  `/design-system/canonical-renderings/date-picker/:ref`
 - Related parent behavior lock:
   `docs/workspace/design-system/behavior-locks/form-template-behavior-lock.md`
 - Related parent reference pack:
@@ -33,7 +33,7 @@
   family.
 - What changed since the last review:
   The child seam now has a dedicated behavior lock, child reference pack, and
-  dedicated canonical launcher and dedicated child render surface plus route-level browser proof for staged range
+  persistence-backed generated launcher and generated child render surface plus route-level browser proof for staged range
   selection, reverse normalization, nested range-with-time summary sync,
   mobile RTL overlay behavior, anchored jump controls, and dark-theme
   magnification stress.
@@ -153,8 +153,8 @@
   `docs/workspace/design-system/verification/date-picker-verification-checklist.md`
 - Design-system route update required:
   yes:
-  `/design-system/canonicals/date-picker`
-  `/design-system/components/date-picker`
+  `/design-system/canonical-renderings/date-picker`
+  `/design-system/canonical-renderings/date-picker/:ref`
 - Canonical render-ready / honest-width check required:
   completed for both the launcher and the dedicated child render surface
 - Frontend gate manifest update required:

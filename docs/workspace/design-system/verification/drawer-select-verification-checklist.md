@@ -5,7 +5,7 @@
 - Artifact name:
   `drawer-select`
 - Surface:
-  `/design-system/components/drawer-select`
+  `/design-system/canonical-renderings/drawer-select/:ref`
 - Status under review:
   child-seam baseline started under the signed-off `Form Template` parent
 - Related parent host family:
@@ -15,9 +15,9 @@
 - Related reference pack:
   `docs/workspace/design-system/reference-packs/drawer-select-reference-pack.md`
 - Related canonical launcher:
-  `/design-system/canonicals/drawer-select`
+  `/design-system/canonical-renderings/drawer-select`
 - Related canonical render surface:
-  `/design-system/components/drawer-select`
+  `/design-system/canonical-renderings/drawer-select/:ref`
 
 ## Visual Contract
 
@@ -151,7 +151,9 @@
 - Workspace artifact location:
   `docs/workspace/design-system/verification/drawer-select-verification-checklist.md`
 - Design-system route update required:
-  not yet
+  yes:
+  `/design-system/canonical-renderings/drawer-select`
+  `/design-system/canonical-renderings/drawer-select/:ref`
 - Frontend gate manifest update required:
   not yet
   wait until the expanded child matrix is approved

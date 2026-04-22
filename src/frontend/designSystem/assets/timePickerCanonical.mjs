@@ -405,7 +405,10 @@ function renderCanonicalState(resolvedGeneratedState = null) {
 
   if (renderLayout instanceof HTMLElement) {
     renderLayout.style.setProperty("--canonical-render-layout-width", `${Math.max(width + 360, 820)}px`);
-    renderLayout.dataset.themeScope = theme;
+  }
+
+  if (previewFrame instanceof HTMLElement) {
+    previewFrame.dataset.themeScope = theme;
   }
 
   setTimeValue(standaloneHiddenInput, standaloneCurrentLabel, payload.standaloneValue);

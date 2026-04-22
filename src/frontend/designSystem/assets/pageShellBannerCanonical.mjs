@@ -150,11 +150,8 @@ async function main() {
     })
     : null;
 
-  if (layout instanceof HTMLElement) {
-    layout.dataset.themeScope = theme;
-  }
-
   if (previewShell instanceof HTMLElement) {
+    previewShell.dataset.themeScope = theme;
     previewShell.setAttribute("dir", direction);
     previewShell.style.setProperty("--ui-scale", String(scale));
     previewShell.dataset.magnification = String(normalizedZoom);

@@ -5,7 +5,8 @@
 - Artifact name:
   `Choice Group`
 - Surface:
-  dedicated child render surface at `/design-system/components/choice-group`
+  persistence-backed child render surface at
+  `/design-system/canonical-renderings/choice-group/:ref`
 - Status under review:
   approved exploratory child-seam baseline with first child canonical set
 - Related behavior lock:
@@ -31,9 +32,9 @@
   continue the `Choice Group` child-seam loop after parent-level grouped-choice
   proof was added to the signed-off `Form Template` route
 - What changed since the last review:
-  the seam now has a provisional child canonical launcher and dedicated child
-  render surface for `CGR-001`, `CGR-002`, `CGR-003`, `CGR-004`, `CGR-006`,
-  `CGR-007`, `CGR-010`, and `CGR-011`
+  the seam now has a persistence-backed generated child canonical launcher and
+  dedicated child render surface for `CGR-001`, `CGR-002`, `CGR-003`,
+  `CGR-004`, `CGR-006`, `CGR-007`, `CGR-010`, and `CGR-011`
   the remaining `CGR-005`, `CGR-008`, and `CGR-009` states still rely on
   parent-hosted proof from the signed-off `Form Template` route
   the user has now visually approved the first child canonical batch on the
@@ -51,8 +52,9 @@
   `tests/visual/designSystem/canonicals/forms/choiceGroupCanonical.spec.ts`
 - Implementation updated:
   yes
-  this pass adds a dedicated child launcher/render surface while keeping the
-  live parent grouped-choice implementation unchanged
+  this pass promotes the first child launcher/render slice onto the
+  persistence-backed generated canonical seam while keeping the live parent
+  grouped-choice implementation unchanged
 - Known source-level risks:
   no second governed consumer exists yet
   the shared-statement variant still carries parent-specific release-checklist
@@ -167,8 +169,8 @@
   `docs/workspace/design-system/verification/choice-group-verification-checklist.md`
 - Design-system route update required:
   yes
-  `/design-system/canonicals/choice-group`
-  `/design-system/components/choice-group`
+  `/design-system/canonical-renderings/choice-group`
+  `/design-system/canonical-renderings/choice-group/:ref`
 - Canonical render-ready / honest-width check required:
   completed for the first child review batch
 - Frontend gate manifest update required:

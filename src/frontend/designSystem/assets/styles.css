@@ -1177,6 +1177,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 
 .form-page-title {
   margin: 0;
+  color: var(--ink);
   font-size: clamp(1.35rem, 2vw, 1.7rem);
   letter-spacing: -0.015em;
 }
@@ -1205,6 +1206,8 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   display: grid;
   gap: 0;
   overflow: visible;
+  width: 100%;
+  min-width: 0;
 }
 
 .form-page-shell[data-form-mobile-view="true"] .form-page-card {
@@ -1226,6 +1229,10 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   justify-content: space-between;
   gap: 1rem;
   align-items: start;
+}
+
+.form-page-section-header > * {
+  min-width: 0;
 }
 
 .form-page-intro {
@@ -1261,6 +1268,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 .form-page-section-title,
 .form-choice-legend {
   margin: 0;
+  color: var(--ink);
   font-size: 1.05rem;
 }
 
@@ -1269,6 +1277,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   margin: 0;
   color: var(--ink-soft);
   font-size: 0.94rem;
+  overflow-wrap: anywhere;
 }
 
 .form-page-grid {
@@ -2997,6 +3006,7 @@ html[dir="rtl"] .review-shell-main {
   transition: none;
 }
 
+#date-picker-preview-frame,
 #time-picker-preview-frame {
   display: grid;
   justify-items: center;
@@ -3007,37 +3017,30 @@ html[dir="rtl"] .review-shell-main {
     linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 76%, transparent), var(--surface-1)),
     linear-gradient(180deg, color-mix(in srgb, var(--accent-soft) 18%, transparent), transparent 30%);
   box-shadow: var(--shadow-soft);
-  overflow: clip;
+  position: relative;
+  overflow: hidden;
+}
+
+#date-picker-preview-frame {
+  width: min(calc(var(--date-picker-preview-width, 58.75rem) + 2rem), 100%);
+}
+
+#time-picker-preview-frame {
+  width: min(calc(var(--time-picker-preview-width, 32rem) + 2rem), 100%);
+}
+
+#date-picker-preview-shell,
+#time-picker-preview-shell {
+  position: relative;
+  min-width: 0;
+}
+
+#date-picker-preview-shell {
+  width: min(var(--date-picker-preview-width, 58.75rem), 100%);
 }
 
 #time-picker-preview-shell {
-  position: relative;
-  width: min(var(--time-picker-preview-width, 47.5rem), 100%);
-  zoom: var(--ui-scale, 1);
-  transform-origin: top center;
-}
-
-#time-picker-preview-shell[data-viewport-class="mobile"] {
-  min-height: 46rem;
-}
-
-body[data-time-picker-surface="canonical"] #time-picker-preview-shell[data-form-mobile-view="true"] .form-time-picker {
-  position: static;
-}
-
-body[data-time-picker-surface="canonical"] #time-picker-preview-shell[data-form-mobile-view="true"] .form-time-menu:not(.hidden) {
-  position: absolute !important;
-  top: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  width: auto !important;
-  height: auto !important;
-  min-height: 100% !important;
-  border: 0.0625rem solid var(--line) !important;
-  border-radius: calc(var(--radius) + 0.125rem) !important;
-  box-shadow: var(--shadow) !important;
-  z-index: 8 !important;
+  width: min(var(--time-picker-preview-width, 32rem), 100%);
 }
 
 #drawer-select-preview-frame {
@@ -3055,6 +3058,7 @@ body[data-time-picker-surface="canonical"] #time-picker-preview-shell[data-form-
 #drawer-select-preview-shell {
   position: relative;
   width: min(var(--drawer-select-preview-width, 58.75rem), 100%);
+  color: var(--ink);
   zoom: var(--ui-scale, 1);
   transform-origin: top center;
 }
@@ -3127,6 +3131,76 @@ html[dir="rtl"] #drawer-select-preview-shell .form-drawer-select-panel {
 html[dir="rtl"] #drawer-select-preview-shell[data-viewport-class="mobile"] .form-drawer-select-panel {
   right: auto;
   left: 0.5rem;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"],
+#time-picker-preview-shell[data-form-mobile-view="true"] {
+  min-height: 46rem;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-page-card,
+#time-picker-preview-shell[data-form-mobile-view="true"] .form-page-card {
+  position: relative;
+  overflow: hidden;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-picker,
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-time-picker,
+#time-picker-preview-shell[data-form-mobile-view="true"] .form-time-picker {
+  position: static;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-menu:not(.hidden),
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-time-menu:not(.hidden),
+#time-picker-preview-shell[data-form-mobile-view="true"] .form-time-menu:not(.hidden) {
+  position: absolute !important;
+  inset: 0.75rem !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: calc(100% - 1.5rem) !important;
+  max-height: none !important;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-menu-header,
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-time-menu-header,
+#time-picker-preview-shell[data-form-mobile-view="true"] .form-time-menu-header {
+  padding-top: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 0.9rem;
+  padding-left: 1rem;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-menu-footer,
+#time-picker-preview-shell[data-form-mobile-view="true"] .form-time-menu-footer {
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-range-summary,
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-time-grid,
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-months,
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-time-columns,
+#time-picker-preview-shell[data-form-mobile-view="true"] .form-time-columns {
+  margin-right: 1rem;
+  margin-left: 1rem;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-menu-controls,
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-jump-group {
+  width: 100%;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-jump-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-months,
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-time-grid,
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-time-columns,
+#time-picker-preview-shell[data-form-mobile-view="true"] .form-time-columns {
+  grid-template-columns: 1fr;
 }
 
 .canonical-render-footer {

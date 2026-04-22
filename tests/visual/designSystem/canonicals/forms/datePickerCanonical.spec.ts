@@ -1,4 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
+import { expectContainedWithin } from "../../support/helpers/humanReviewGuards";
 
 const datePickerCanonicalStates = [
   {
@@ -53,43 +55,75 @@ const datePickerCanonicalStates = [
   },
 ] as const;
 
-async function gotoCanonicalState(page: Page, route: string) {
-  const resolvedRoute = new URL(route, "http://localhost");
-  const requestedWidth = Number.parseInt(resolvedRoute.searchParams.get("width") ?? "0", 10);
-  const viewportWidth = Math.max(requestedWidth + 360, 1280);
+function routeForDatePickerRef(referenceId: string) {
+  return `/design-system/canonical-renderings/date-picker/${referenceId}`;
+}
 
-  await page.setViewportSize({ width: viewportWidth, height: 1400 });
+async function gotoCanonicalState(page: Page, route: string) {
+  await page.setViewportSize({ width: 1360, height: 1400 });
   await page.goto(route);
   await page.locator('#date-picker-preview-shell[data-render-status="ready"]').waitFor({ state: "visible" });
 }
 
 test.describe("design-system date picker canonical states", () => {
   test("launcher exposes the full DTPR set on the dedicated render surface", async ({ page }) => {
-    await page.goto("/design-system/canonicals/date-picker");
+    await page.goto("/design-system/canonical-renderings/date-picker");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(10);
-    await expect(launcherButtons.nth(0)).toHaveAttribute("href", /\/design-system\/components\/date-picker\?/);
-    await expect(page.getByRole("link", { name: /DTPR-002 Date-range staged start-selection state with Done disabled/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /DTPR-004 Range-with-time open state with nested time-picker overlap/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /DTPR-007 Mobile full-screen date-range overlay/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /DTPR-010 Dark-theme and magnified range review/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /DTPR-002 Date-range staged start-selection state with Done disabled/i })).toHaveAttribute(
+      "href",
+      routeForDatePickerRef("DTPR-002"),
+    );
+    await expect(page.getByRole("link", { name: /DTPR-004 Range-with-time open state with nested time-picker overlap/i })).toHaveAttribute(
+      "href",
+      routeForDatePickerRef("DTPR-004"),
+    );
+    await expect(page.getByRole("link", { name: /DTPR-007 Mobile full-screen date-range overlay/i })).toHaveAttribute(
+      "href",
+      routeForDatePickerRef("DTPR-007"),
+    );
+    await expect(page.getByRole("link", { name: /DTPR-010 Dark-theme and magnified range review/i })).toHaveAttribute(
+      "href",
+      routeForDatePickerRef("DTPR-010"),
+    );
+  });
+
+  test("launcher cards open the dedicated canonical rendering surface", async ({ page }) => {
+    await page.goto("/design-system/canonical-renderings/date-picker");
+
+    await page.getByRole("link", { name: /DTPR-004 Range-with-time open state with nested time-picker overlap/i }).click();
+
+    await expectRouteSurfaceTruth(page, {
+      expectedPath: routeForDatePickerRef("DTPR-004"),
+      surfaceLocator: "#date-picker-preview-shell",
+      waitForReadyLocator: '#date-picker-preview-shell[data-render-status="ready"]',
+      bodyAttribute: { name: "data-date-picker-surface", value: "canonical" },
+      fallbackHeading: /Design-System Route Families/i,
+    });
+    await expect(page.locator("#date-picker-canonical-current")).toContainText("DTPR-004");
   });
 
   for (const scenario of datePickerCanonicalStates) {
     test(`${scenario.refId} ${scenario.label}`, async ({ page }) => {
-      await gotoCanonicalState(page, scenario.route);
+      const route = routeForDatePickerRef(scenario.refId);
+      await gotoCanonicalState(page, route);
 
-      await expect(page.locator("body")).toHaveAttribute("data-date-picker-surface", "canonical");
+      await expectRouteSurfaceTruth(page, {
+        expectedPath: route,
+        surfaceLocator: "#date-picker-preview-shell",
+        waitForReadyLocator: '#date-picker-preview-shell[data-render-status="ready"]',
+        bodyAttribute: { name: "data-date-picker-surface", value: "canonical" },
+        fallbackHeading: /Design-System Route Families/i,
+      });
       await expect(page.locator("#date-picker-canonical-current")).toContainText(scenario.refId);
-      await expect(page.locator("#date-picker-preview-shell")).toBeVisible();
     });
   }
 
   test("DTPR-004 and DTPR-007 keep nested overlap and mobile overlay truthful on the dedicated surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/date-picker?ref=DTPR-004&width=980&state=range-time-nested-open&theme=normal&dir=ltr&zoom=0",
+      routeForDatePickerRef("DTPR-004"),
     );
 
     await expect(page.locator("#date-picker-range-time-trigger")).toHaveAttribute("aria-expanded", "true");
@@ -99,10 +133,56 @@ test.describe("design-system date picker canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/date-picker?ref=DTPR-007&width=430&state=range-mobile-open&theme=normal&dir=ltr&zoom=0",
+      routeForDatePickerRef("DTPR-007"),
     );
 
     await expect(page.locator("#date-picker-preview-shell")).toHaveAttribute("data-form-mobile-view", "true");
-    await expect(page.locator("#date-picker-range-field [data-form-date-panel]")).toBeVisible();
+    const datePanel = page.locator("#date-picker-range-field [data-form-date-panel]");
+    await expect(datePanel).toBeVisible();
+    await expectContainedWithin(
+      datePanel,
+      page.locator("#date-picker-preview-frame"),
+      {
+        subjectLabel: "DTPR-007 mobile date-picker overlay",
+        containerLabel: "date-picker canonical review frame",
+      },
+    );
+  });
+
+  test("DTPR-008 and DTPR-010 keep direction, theme, and magnification scoped to the render surface", async ({ page }) => {
+    await gotoCanonicalState(
+      page,
+      routeForDatePickerRef("DTPR-008"),
+    );
+
+    const rtlState = await page.evaluate(() => ({
+      documentDir: document.documentElement.getAttribute("dir"),
+      surfaceDir: document.querySelector("#date-picker-preview-shell")?.getAttribute("dir"),
+    }));
+
+    expect(rtlState.documentDir).not.toBe("rtl");
+    expect(rtlState.surfaceDir).toBe("rtl");
+
+    await gotoCanonicalState(
+      page,
+      routeForDatePickerRef("DTPR-010"),
+    );
+
+    const themeState = await page.evaluate(() => {
+      const frame = document.querySelector("#date-picker-preview-frame");
+      const shell = document.querySelector("#date-picker-preview-shell");
+
+      return {
+        documentTheme: document.documentElement.dataset.theme ?? "",
+        frameTheme: frame instanceof HTMLElement ? frame.dataset.themeScope ?? "" : "",
+        documentScale: document.documentElement.style.getPropertyValue("--ui-scale"),
+        shellScale: shell instanceof HTMLElement ? shell.style.getPropertyValue("--ui-scale") : "",
+      };
+    });
+
+    expect(themeState.documentTheme).toBe("");
+    expect(themeState.frameTheme).toBe("dark");
+    expect(themeState.documentScale).toBe("");
+    expect(themeState.shellScale).toBe("1.5");
   });
 });

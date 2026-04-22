@@ -25,9 +25,12 @@ parent framing from `form-template`.
 - Related verification checklist:
   `docs/workspace/design-system/verification/drawer-select-verification-checklist.md`
 - Recommended first canonical launcher:
-  `/design-system/canonicals/drawer-select`
+  `/design-system/canonical-renderings/drawer-select`
 - Current render-surface posture:
-  dedicated child render surface exists at
+  persistence-backed child render surface exists at
+  `/design-system/canonical-renderings/drawer-select/:ref`
+- Legacy compatibility routes:
+  `/design-system/canonicals/drawer-select`
   `/design-system/components/drawer-select`
 
 ## Signed-Off Rule Source
@@ -83,8 +86,8 @@ This table is the current child-seam render truth for direct review.
 
 | Ref ID | Target canonical route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `DSR-001` | `/design-system/components/drawer-select?ref=DSR-001&width=940&state=collections-resting-threeplus&theme=normal&dir=ltr&zoom=0` | Descriptive resting trigger with compressed three-plus summary | Preserves the closed trigger posture plus the approved three-plus summary compression | canonical-created | Core resting baseline |
-| `DSR-002` | `/design-system/components/drawer-select?ref=DSR-002&width=940&state=collections-open&theme=normal&dir=ltr&zoom=0` | Descriptive variant open drawer with search plus visible `Selected` and `Available` stacks | Preserves the baseline drawer chassis for the child seam | canonical-created | Highest-priority open state |
+| `DSR-001` | `/design-system/canonical-renderings/drawer-select/DSR-001` | Descriptive resting trigger with compressed three-plus summary | Preserves the closed trigger posture plus the approved three-plus summary compression | canonical-created | Core resting baseline |
+| `DSR-002` | `/design-system/canonical-renderings/drawer-select/DSR-002` | Descriptive variant open drawer with search plus visible `Selected` and `Available` stacks | Preserves the baseline drawer chassis for the child seam | canonical-created | Highest-priority open state |
 | `DSR-003` | `/design-system/components/drawer-select?ref=DSR-003&width=940&state=collections-no-match&theme=normal&dir=ltr&zoom=0` | Descriptive variant open drawer with no search matches while selections still exist | Preserves the search-empty contract without losing the selected stack | canonical-created | Needed so search-empty truth is not left implicit |
 | `DSR-004` | `/design-system/components/drawer-select?ref=DSR-004&width=940&state=collections-empty-open&theme=normal&dir=ltr&zoom=0` | Descriptive variant open drawer with no selected items | Preserves the selected-empty state and empty trigger-summary fallback path | canonical-created | Important because it exercises the empty fallback noun |
 | `DSR-005` | `/design-system/components/drawer-select?ref=DSR-005&width=820&state=segments-open&theme=normal&dir=ltr&zoom=0` | Compact attribute-card variant open drawer | Preserves the approved compact density variant instead of treating the descriptive drawer as the only child reference | canonical-created | Prevents variant flattening |
@@ -109,7 +112,7 @@ This table is the current child-seam render truth for direct review.
 | `DSR-024` | `/design-system/components/drawer-select?ref=DSR-024&width=820&state=segments-resting-disabled&theme=normal&dir=ltr&zoom=0` | Disabled compact resting review | Preserves inherited disabled hosting on the compact trigger | canonical-created | Disabled compact inheritance |
 | `DSR-025` | `/design-system/components/drawer-select?ref=DSR-025&width=820&state=segments-open-dark&theme=dark&dir=ltr&zoom=0` | Dark compact open review | Preserves dark-theme compact readability without conflating theme stress with magnification | canonical-created | Clean dark-theme parity state |
 | `DSR-026` | `/design-system/components/drawer-select?ref=DSR-026&width=390&state=collections-open-mobile-dark&theme=dark&dir=ltr&zoom=0` | Dark mobile descriptive open drawer review | Preserves the narrow descriptive overlay posture under dark theme | canonical-created | Dark mobile descriptive stress |
-| `DSR-027` | `/design-system/components/drawer-select?ref=DSR-027&width=390&state=segments-open-mobile-dark&theme=dark&dir=ltr&zoom=0` | Dark mobile compact open drawer review | Preserves the narrow compact overlay posture under dark theme | canonical-created | Dark mobile compact stress |
+| `DSR-027` | `/design-system/canonical-renderings/drawer-select/DSR-027` | Dark mobile compact open drawer review | Preserves the narrow compact overlay posture under dark theme | canonical-created | Dark mobile compact stress |
 
 ## High-Risk Review Batch
 
@@ -142,10 +145,13 @@ contract.
 - the child seam now has a dedicated behavior lock and verification checklist
 - the seam has route-level browser proof for focus containment plus
   search/toggle/remove synchronization
-- a dedicated `drawer-select` canonical launcher now exists at
-  `/design-system/canonicals/drawer-select`
+- a persistence-backed generated `drawer-select` canonical launcher now exists at
+  `/design-system/canonical-renderings/drawer-select`
 - the `DSR-001` through `DSR-027` core plus stress batch now renders on the dedicated
-  `/design-system/components/drawer-select` route
+  `/design-system/canonical-renderings/drawer-select/:ref` route
+- legacy compatibility routes remain available at
+  `/design-system/canonicals/drawer-select`
+  and `/design-system/components/drawer-select`
 - launcher and shell coverage now assert the child route directly rather than
   reopening states on the parent template
 - approved-host screenshot parity now covers desktop descriptive, desktop compact,

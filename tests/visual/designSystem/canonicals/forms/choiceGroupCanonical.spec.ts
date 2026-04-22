@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
 
 const choiceGroupCanonicalStates = [
   {
@@ -44,12 +45,8 @@ const choiceGroupCanonicalStates = [
 ] as const;
 
 async function gotoCanonicalState(page: Page, route: string) {
-  const resolvedRoute = new URL(route, "http://localhost");
-  const requestedWidth = Number.parseInt(resolvedRoute.searchParams.get("width") ?? "0", 10);
-  const viewportWidth = Math.max(requestedWidth + 360, 1280);
-
   await page.setViewportSize({
-    width: viewportWidth,
+    width: 1360,
     height: 1400,
   });
   await page.goto(route);
@@ -58,31 +55,63 @@ async function gotoCanonicalState(page: Page, route: string) {
 
 test.describe("design-system choice group canonical states", () => {
   test("launcher exposes the first CGR review set on the dedicated render surface", async ({ page }) => {
-    await page.goto("/design-system/canonicals/choice-group");
+    await page.goto("/design-system/canonical-renderings/choice-group");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(8);
-    await expect(launcherButtons.nth(0)).toHaveAttribute("href", /\/design-system\/components\/choice-group\?/);
-    await expect(page.getByRole("link", { name: /CGR-003 Shared-statement checkbox baseline/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /CGR-004 Inline group-error review for all variants/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /CGR-010 Narrow mobile long-copy wrapping review/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /CGR-011 Localized Arabic RTL grouped-choice review/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /CGR-003 Shared-statement checkbox baseline/i })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/choice-group/CGR-003",
+    );
+    await expect(page.getByRole("link", { name: /CGR-004 Inline group-error review for all grouped-choice variants/i })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/choice-group/CGR-004",
+    );
+    await expect(page.getByRole("link", { name: /CGR-010 Narrow mobile long-copy wrapping review/i })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/choice-group/CGR-010",
+    );
+    await expect(page.getByRole("link", { name: /CGR-011 Localized Arabic RTL grouped-choice review/i })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/choice-group/CGR-011",
+    );
+  });
+
+  test("launcher cards open the dedicated canonical rendering surface", async ({ page }) => {
+    await page.goto("/design-system/canonical-renderings/choice-group");
+
+    await page.getByRole("link", { name: /CGR-004 Inline group-error review for all grouped-choice variants/i }).click();
+
+    await expectRouteSurfaceTruth(page, {
+      expectedPath: "/design-system/canonical-renderings/choice-group/CGR-004",
+      surfaceLocator: "#choice-group-preview-shell",
+      waitForReadyLocator: '#choice-group-preview-shell[data-render-status="ready"]',
+      bodyAttribute: { name: "data-choice-group-surface", value: "canonical" },
+      fallbackHeading: /Design-System Route Families/i,
+    });
+    await expect(page.locator("#choice-group-canonical-current")).toContainText("CGR-004");
   });
 
   for (const scenario of choiceGroupCanonicalStates) {
     test(`${scenario.refId} ${scenario.label}`, async ({ page }) => {
-      await gotoCanonicalState(page, scenario.route);
+      const route = `/design-system/canonical-renderings/choice-group/${scenario.refId}`;
+      await gotoCanonicalState(page, route);
 
-      await expect(page.locator("body")).toHaveAttribute("data-choice-group-surface", "canonical");
+      await expectRouteSurfaceTruth(page, {
+        expectedPath: route,
+        surfaceLocator: "#choice-group-preview-shell",
+        waitForReadyLocator: '#choice-group-preview-shell[data-render-status="ready"]',
+        bodyAttribute: { name: "data-choice-group-surface", value: "canonical" },
+        fallbackHeading: /Design-System Route Families/i,
+      });
       await expect(page.locator("#choice-group-canonical-current")).toContainText(scenario.refId);
-      await expect(page.locator("#choice-group-preview-shell")).toBeVisible();
     });
   }
 
   test("CGR-001 through CGR-003 isolate the intended grouped-choice variants on the child surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/choice-group?ref=CGR-001&width=520&state=radio-baseline&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/choice-group/CGR-001",
     );
 
     await expect(page.locator("#choice-group-preview-shell")).toHaveAttribute("data-visible-group-count", "1");
@@ -98,7 +127,7 @@ test.describe("design-system choice group canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/choice-group?ref=CGR-002&width=520&state=checkbox-baseline&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/choice-group/CGR-002",
     );
 
     await expect(page.locator("#choice-group-preview-shell")).toHaveAttribute("data-visible-group-count", "1");
@@ -108,7 +137,7 @@ test.describe("design-system choice group canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/choice-group?ref=CGR-003&width=720&state=shared-statement&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/choice-group/CGR-003",
     );
 
     const sharedGroup = page.getByRole("group", { name: "Checkboxes with shared statement", exact: true });
@@ -121,7 +150,7 @@ test.describe("design-system choice group canonical states", () => {
   test("CGR-004 and CGR-006 keep error review and dark-theme readability truthful on the child surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/choice-group?ref=CGR-004&width=940&state=error-review&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/choice-group/CGR-004",
     );
 
     await expect(page.locator("#choice-group-preview-shell")).toHaveAttribute("data-form-error-mode", "true");
@@ -132,19 +161,19 @@ test.describe("design-system choice group canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/choice-group?ref=CGR-006&width=940&state=dark-errors&theme=dark&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/choice-group/CGR-006",
     );
 
     const themeState = await page.evaluate(() => {
-      const layout = document.querySelector("#choice-group-preview-frame")?.closest(".canonical-render-layout");
+      const frame = document.querySelector("#choice-group-preview-frame");
       return {
         documentTheme: document.documentElement.dataset.theme ?? "",
-        layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
+        frameTheme: frame instanceof HTMLElement ? frame.dataset.themeScope ?? "" : "",
       };
     });
 
     expect(themeState.documentTheme).toBe("");
-    expect(themeState.layoutTheme).toBe("dark");
+    expect(themeState.frameTheme).toBe("dark");
 
     const legibilityState = await page.evaluate(() => {
       const shell = document.querySelector("#choice-group-preview-shell");
@@ -175,7 +204,7 @@ test.describe("design-system choice group canonical states", () => {
   test("CGR-007, CGR-010, and CGR-011 keep direction, long-copy wrapping, and localized copy scoped to the child surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/choice-group?ref=CGR-007&width=940&state=rtl-review&theme=normal&dir=rtl&zoom=0",
+      "/design-system/canonical-renderings/choice-group/CGR-007",
     );
 
     const rtlState = await page.evaluate(() => ({
@@ -188,7 +217,7 @@ test.describe("design-system choice group canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/choice-group?ref=CGR-010&width=390&state=long-copy-mobile&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/choice-group/CGR-010",
     );
 
     await expect(page.locator("#choice-group-preview-shell")).toHaveAttribute("data-form-mobile-view", "true");
@@ -197,7 +226,7 @@ test.describe("design-system choice group canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/choice-group?ref=CGR-011&width=390&state=localized-rtl-mobile&theme=normal&dir=rtl&zoom=0",
+      "/design-system/canonical-renderings/choice-group/CGR-011",
     );
 
     await expect(page.locator("#choice-group-preview-shell")).toHaveAttribute("dir", "rtl");

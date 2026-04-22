@@ -25,8 +25,11 @@ review loop must preserve.
 - Related verification checklist:
   `docs/workspace/design-system/verification/date-picker-verification-checklist.md`
 - Related canonical launcher:
-  `/design-system/canonicals/date-picker`
+  `/design-system/canonical-renderings/date-picker`
 - Related canonical render surface:
+  `/design-system/canonical-renderings/date-picker/:ref`
+- Legacy compatibility routes:
+  `/design-system/canonicals/date-picker`
   `/design-system/components/date-picker`
 - Existing executable verification:
   `tests/visual/designSystem/canonicals/forms/datePicker.spec.ts`
@@ -70,10 +73,13 @@ active `Time Picker` chain.
   - surrounding field labels and helper copy
   - page chrome and action rails
   - shared display-settings review toggles
-- the child seam now has a dedicated canonical launcher at
+- the child seam now has a persistence-backed generated canonical launcher at
+  `/design-system/canonical-renderings/date-picker`
+- the child seam now also has a persistence-backed generated canonical render
+  surface at `/design-system/canonical-renderings/date-picker/:ref`
+- legacy compatibility routes remain available at
   `/design-system/canonicals/date-picker`
-- the child seam now also has a dedicated canonical render surface at
-  `/design-system/components/date-picker`
+  and `/design-system/components/date-picker`
 - the dedicated render surface keeps parent-owned label/help/error framing
   visible while rendering child-owned picker states directly
 
@@ -81,16 +87,16 @@ active `Time Picker` chain.
 
 | Ref ID | Route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `DTPR-001` | `/design-system/components/date-picker?ref=DTPR-001&width=520&state=single-open&theme=normal&dir=ltr&zoom=0` | Single-date resting trigger and anchored one-month panel | Preserves the quick single-date variant and its compact child posture | covered-by-test | Dedicated child render surface now opens directly into the single-date review state |
-| `DTPR-002` | `/design-system/components/date-picker?ref=DTPR-002&width=980&state=range-staged&theme=normal&dir=ltr&zoom=0` | Date-range staged start-selection state with `Done` disabled | Preserves the explicit range state machine before completion | covered-by-test | Dedicated child render surface now shows the staged state directly |
-| `DTPR-003` | `/design-system/components/date-picker?ref=DTPR-003&width=980&state=range-normalized&theme=normal&dir=ltr&zoom=0` | Date-range completed state after reverse-order normalization | Preserves the forgiving backwards-selection rule and completed summary state | covered-by-test | Dedicated child render surface now shows the normalized result directly |
-| `DTPR-004` | `/design-system/components/date-picker?ref=DTPR-004&width=980&state=range-time-nested-open&theme=normal&dir=ltr&zoom=0` | Date-range-with-time open state with nested time-picker overlap | Preserves the one allowed nested overlap inside the child seam | covered-by-test | Dedicated child render surface now opens directly into the nested overlap state |
-| `DTPR-005` | `/design-system/components/date-picker?ref=DTPR-005&width=980&state=range-time-label-sync&theme=normal&dir=ltr&zoom=0` | Date-range-with-time outer label after nested time edits | Preserves date-picker ownership of the composed collapsed summary | covered-by-test | Dedicated child render surface now shows the synchronized outer label directly |
-| `DTPR-006` | `/design-system/components/date-picker?ref=DTPR-006&width=980&state=range-jump-review&theme=normal&dir=ltr&zoom=0` | Multi-month range navigation with anchored month/year jump controls | Preserves long-range navigation without repeated-only stepping | covered-by-test | Dedicated child render surface now shows the reanchored month window directly |
-| `DTPR-007` | `/design-system/components/date-picker?ref=DTPR-007&width=430&state=range-mobile-open&theme=normal&dir=ltr&zoom=0` | Mobile full-screen date-range overlay with sticky header and sticky footer | Preserves the child-owned mobile overlay posture | covered-by-test | Dedicated child render surface now opens directly into the mobile overlay state |
-| `DTPR-008` | `/design-system/components/date-picker?ref=DTPR-008&width=430&state=range-mobile-open&theme=normal&dir=rtl&zoom=0` | RTL mobile overlay with mirrored previous and next glyphs | Preserves native-feeling mirrored navigation in the constrained overlay state | covered-by-test | Dedicated child render surface now scopes RTL to the canonical review |
-| `DTPR-009` | `/design-system/components/date-picker?ref=DTPR-009&width=430&state=mobile-hidden&theme=normal&dir=rtl&zoom=0` | Hidden closed-state guarantee under mobile overlay rules | Preserves the invariant that only the active panel surfaces | covered-by-test | Dedicated child render surface now shows the closed mobile review state directly |
-| `DTPR-010` | `/design-system/components/date-picker?ref=DTPR-010&width=980&state=range-stress-open&theme=dark&dir=ltr&zoom=100` | Dark-theme and magnified range review | Preserves jump-control, summary, and sticky-region readability under shared stress states | covered-by-test | Dedicated child render surface now shows the stress state directly |
+| `DTPR-001` | `/design-system/canonical-renderings/date-picker/DTPR-001` | Single-date resting trigger and anchored one-month panel | Preserves the quick single-date variant and its compact child posture | covered-by-test | Generated child render surface now opens directly into the single-date review state |
+| `DTPR-002` | `/design-system/canonical-renderings/date-picker/DTPR-002` | Date-range staged start-selection state with `Done` disabled | Preserves the explicit range state machine before completion | covered-by-test | Generated child render surface now shows the staged state directly |
+| `DTPR-003` | `/design-system/canonical-renderings/date-picker/DTPR-003` | Date-range completed state after reverse-order normalization | Preserves the forgiving backwards-selection rule and completed summary state | covered-by-test | Generated child render surface now shows the normalized result directly |
+| `DTPR-004` | `/design-system/canonical-renderings/date-picker/DTPR-004` | Date-range-with-time open state with nested time-picker overlap | Preserves the one allowed nested overlap inside the child seam | covered-by-test | Generated child render surface now opens directly into the nested overlap state |
+| `DTPR-005` | `/design-system/canonical-renderings/date-picker/DTPR-005` | Date-range-with-time outer label after nested time edits | Preserves date-picker ownership of the composed collapsed summary | covered-by-test | Generated child render surface now shows the synchronized outer label directly |
+| `DTPR-006` | `/design-system/canonical-renderings/date-picker/DTPR-006` | Multi-month range navigation with anchored month/year jump controls | Preserves long-range navigation without repeated-only stepping | covered-by-test | Generated child render surface now shows the reanchored month window directly |
+| `DTPR-007` | `/design-system/canonical-renderings/date-picker/DTPR-007` | Mobile full-screen date-range overlay with sticky header and sticky footer | Preserves the child-owned mobile overlay posture | covered-by-test | Generated child render surface now opens directly into the mobile overlay state |
+| `DTPR-008` | `/design-system/canonical-renderings/date-picker/DTPR-008` | RTL mobile overlay with mirrored previous and next glyphs | Preserves native-feeling mirrored navigation in the constrained overlay state | covered-by-test | Generated child render surface now scopes RTL to the canonical review |
+| `DTPR-009` | `/design-system/canonical-renderings/date-picker/DTPR-009` | Hidden closed-state guarantee under mobile overlay rules | Preserves the invariant that only the active panel surfaces | covered-by-test | Generated child render surface now shows the closed mobile review state directly |
+| `DTPR-010` | `/design-system/canonical-renderings/date-picker/DTPR-010` | Dark-theme and magnified range review | Preserves jump-control, summary, and sticky-region readability under shared stress states | covered-by-test | Generated child render surface now shows the stress state directly |
 
 ## Proposed Canonical Review Batch
 
@@ -136,7 +142,9 @@ pack only when:
 
 ## Exit Condition
 
-This child reference pack is now operational through the dedicated launcher at
-`/design-system/canonicals/date-picker` and the dedicated render surface at
-`/design-system/components/date-picker`.
+This child reference pack is now operational through the generated launcher at
+`/design-system/canonical-renderings/date-picker` and the generated render
+surface at `/design-system/canonical-renderings/date-picker/:ref`, with the
+legacy launcher and legacy render route retained for compatibility during the
+migration.
 Later sign-off should review this pack before child canonical sign-off.

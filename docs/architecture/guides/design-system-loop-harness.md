@@ -33,6 +33,13 @@ design-system loop must become the blocker, not a follow-up cleanup step.
 Implementation on the app surface is not the place to discover the missing
 behavior lock, canonical truth, or verification chain.
 
+Architectural-first repair is the blocker for escaped issues too. When a bug is
+raised against a governed `/design-system` surface, do not start by patching
+the affected family in isolation. First decide whether the defect belongs to a
+shared contract, shared controller seam, shared CSS rule, or family-local
+adapter. The loop is not honest if symptom patches are allowed to outrun
+architectural triage.
+
 ## Design System Loop Inputs
 
 Every loop should start from a concrete trigger:
@@ -46,6 +53,14 @@ Every loop should start from a concrete trigger:
 
 Record the trigger before creating tokens or components so the repo preserves
 why the system is changing.
+
+When the trigger is an escaped bug or regression, also record whether the
+problem appears to come from:
+
+- a shared architecture seam
+- a governed contract seam
+- a family adapter seam
+- or a justified local exception
 
 ## Required Artifact Chain
 
@@ -258,6 +273,29 @@ Pause and surface trade-offs before changing:
 - color semantics tied to risk, status, or accessibility
 - motion defaults
 - component APIs already used by governed surfaces
+
+## Architectural-First Repair Rule
+
+For escaped issues on governed design-system surfaces, the default repair order
+is:
+
+1. shared architecture
+2. shared contract
+3. family adapter
+4. family-local exception
+
+Do not skip directly to step 4 just because the symptom is visible in one
+family first.
+
+Before fixing the issue, inspect:
+
+- shared CSS
+- shared controller seams
+- existing governed families that already solve the same class of problem
+- current integration audits
+
+If the same issue class could recur in another family, the loop must add or
+update a shared audit in the same change.
 - shared frontend quality-gate expectations
 
 If the change would invalidate multiple existing surfaces, record a migration or

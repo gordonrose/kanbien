@@ -1,0 +1,156 @@
+INSERT INTO design_system_canonical_families (
+  design_system_canonical_family_id,
+  family_key,
+  normalized_family_key,
+  display_label,
+  family_kind,
+  launcher_title,
+  launcher_description,
+  launcher_category,
+  generated_launcher_route_path,
+  generated_root_route_path,
+  legacy_launcher_route_path,
+  source_surface_route_path,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+VALUES (
+  'c14fd8d7-f8fe-4d03-8e0e-a58d65704fb6',
+  'choice-group',
+  'choice-group',
+  'Choice Group',
+  'component',
+  'Choice Group Canonical Renderings',
+  'Persistence-backed launcher for the exploratory choice-group canonical renderings.',
+  'forms',
+  '/design-system/canonical-renderings/choice-group',
+  '/design-system/canonical-renderings',
+  '/design-system/canonicals/choice-group',
+  '/design-system/components/choice-group',
+  'live',
+  50,
+  FALSE,
+  NOW(),
+  NOW()
+)
+ON CONFLICT (normalized_family_key)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  family_kind = EXCLUDED.family_kind,
+  launcher_title = EXCLUDED.launcher_title,
+  launcher_description = EXCLUDED.launcher_description,
+  launcher_category = EXCLUDED.launcher_category,
+  generated_launcher_route_path = EXCLUDED.generated_launcher_route_path,
+  generated_root_route_path = EXCLUDED.generated_root_route_path,
+  legacy_launcher_route_path = EXCLUDED.legacy_launcher_route_path,
+  source_surface_route_path = EXCLUDED.source_surface_route_path,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();
+
+WITH choice_group_family AS (
+  SELECT design_system_canonical_family_id
+  FROM design_system_canonical_families
+  WHERE normalized_family_key = 'choice-group'
+),
+reference_rows (
+  reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  theme,
+  direction,
+  zoom,
+  state_variant_key,
+  specimen_payload,
+  sort_order,
+  featured
+) AS (
+  VALUES
+    ('CGR-001', 'Radio-group baseline', 'Single-select grouped-choice review isolates the fieldset shell, legend, and row anatomy without the rest of the parent page.', '/design-system/canonical-renderings/choice-group/CGR-001', '/design-system/components/choice-group?ref=CGR-001&width=520&state=radio-baseline&theme=normal&dir=ltr&zoom=0', 'Single-field review lane', 520, 'normal', 'ltr', 0, 'radio-baseline', '{"state":"radio-baseline"}'::jsonb, 10, FALSE),
+    ('CGR-002', 'Standard checkbox-group baseline', 'Multi-select grouped-choice review keeps the same child shell without flattening it into unrelated standalone boxes.', '/design-system/canonical-renderings/choice-group/CGR-002', '/design-system/components/choice-group?ref=CGR-002&width=520&state=checkbox-baseline&theme=normal&dir=ltr&zoom=0', 'Single-field review lane', 520, 'normal', 'ltr', 0, 'checkbox-baseline', '{"state":"checkbox-baseline"}'::jsonb, 20, FALSE),
+    ('CGR-003', 'Shared-statement checkbox baseline', 'The lead statement remains distinct from the row stack while the child seam avoids treating host-wide grid span as its API.', '/design-system/canonical-renderings/choice-group/CGR-003', '/design-system/components/choice-group?ref=CGR-003&width=720&state=shared-statement&theme=normal&dir=ltr&zoom=0', 'Expanded field lane', 720, 'normal', 'ltr', 0, 'shared-statement', '{"state":"shared-statement"}'::jsonb, 30, TRUE),
+    ('CGR-004', 'Inline group-error review for all grouped-choice variants', 'All grouped-choice variants surface local inline errors at the fieldset boundary rather than shifting validation elsewhere.', '/design-system/canonical-renderings/choice-group/CGR-004', '/design-system/components/choice-group?ref=CGR-004&width=940&state=error-review&theme=normal&dir=ltr&zoom=0', 'Three-group review lane', 940, 'normal', 'ltr', 0, 'error-review', '{"state":"error-review"}'::jsonb, 40, TRUE),
+    ('CGR-006', 'Dark-theme grouped-choice readability review', 'Dark theme keeps legend, statement, row, and error surfaces distinct while the child seam remains reviewable in one place.', '/design-system/canonical-renderings/choice-group/CGR-006', '/design-system/components/choice-group?ref=CGR-006&width=940&state=dark-errors&theme=dark&dir=ltr&zoom=0', 'Three-group review lane', 940, 'dark', 'ltr', 0, 'dark-errors', '{"state":"dark-errors"}'::jsonb, 50, TRUE),
+    ('CGR-007', 'RTL grouped-choice row mirroring review', 'Directionality is scoped to the child render so control placement and row scanning can be reviewed without flipping the entire shell.', '/design-system/canonical-renderings/choice-group/CGR-007', '/design-system/components/choice-group?ref=CGR-007&width=940&state=rtl-review&theme=normal&dir=rtl&zoom=0', 'Three-group review lane', 940, 'normal', 'rtl', 0, 'rtl-review', '{"state":"rtl-review"}'::jsonb, 60, TRUE),
+    ('CGR-010', 'Narrow mobile long-copy wrapping review', 'Long labels and descriptions deliberately stress the row structure on narrow mobile review to catch overlap or clipping before sign-off.', '/design-system/canonical-renderings/choice-group/CGR-010', '/design-system/components/choice-group?ref=CGR-010&width=390&state=long-copy-mobile&theme=normal&dir=ltr&zoom=0', 'Mobile stress lane', 390, 'normal', 'ltr', 0, 'long-copy-mobile', '{"state":"long-copy-mobile"}'::jsonb, 70, TRUE),
+    ('CGR-011', 'Localized Arabic RTL grouped-choice review', 'Localized Arabic copy and RTL placement are reviewed directly on the child surface rather than inferred from the parent route.', '/design-system/canonical-renderings/choice-group/CGR-011', '/design-system/components/choice-group?ref=CGR-011&width=390&state=localized-rtl-mobile&theme=normal&dir=rtl&zoom=0', 'Mobile RTL stress lane', 390, 'normal', 'rtl', 0, 'localized-rtl-mobile', '{"state":"localized-rtl-mobile"}'::jsonb, 80, TRUE)
+)
+INSERT INTO design_system_canonical_references (
+  design_system_canonical_reference_id,
+  design_system_canonical_family_id,
+  reference_id,
+  normalized_reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  height,
+  theme,
+  direction,
+  zoom,
+  locale_fixture,
+  label_density_fixture,
+  state_variant_key,
+  specimen_payload,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+SELECT
+  gen_random_uuid(),
+  choice_group_family.design_system_canonical_family_id,
+  reference_rows.reference_id,
+  lower(reference_rows.reference_id),
+  reference_rows.display_label,
+  reference_rows.description,
+  reference_rows.render_route_path,
+  reference_rows.legacy_render_route_path,
+  reference_rows.viewport,
+  reference_rows.width,
+  NULL,
+  reference_rows.theme,
+  reference_rows.direction,
+  reference_rows.zoom,
+  NULL,
+  NULL,
+  reference_rows.state_variant_key,
+  reference_rows.specimen_payload,
+  'live',
+  reference_rows.sort_order,
+  reference_rows.featured,
+  NOW(),
+  NOW()
+FROM reference_rows
+CROSS JOIN choice_group_family
+ON CONFLICT (design_system_canonical_family_id, normalized_reference_id)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  description = EXCLUDED.description,
+  render_route_path = EXCLUDED.render_route_path,
+  legacy_render_route_path = EXCLUDED.legacy_render_route_path,
+  viewport = EXCLUDED.viewport,
+  width = EXCLUDED.width,
+  height = EXCLUDED.height,
+  theme = EXCLUDED.theme,
+  direction = EXCLUDED.direction,
+  zoom = EXCLUDED.zoom,
+  locale_fixture = EXCLUDED.locale_fixture,
+  label_density_fixture = EXCLUDED.label_density_fixture,
+  state_variant_key = EXCLUDED.state_variant_key,
+  specimen_payload = EXCLUDED.specimen_payload,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();

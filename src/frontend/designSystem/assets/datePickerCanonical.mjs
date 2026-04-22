@@ -12,6 +12,8 @@ const canonicalNext = document.getElementById("date-picker-canonical-next");
 const canonicalMetaState = document.getElementById("date-picker-meta-state");
 const canonicalMetaViewport = document.getElementById("date-picker-meta-viewport");
 const canonicalMetaNotes = document.getElementById("date-picker-meta-notes");
+const renderLayout = previewFrame?.closest(".canonical-render-layout");
+const launcherLink = document.querySelector('a[href="/design-system/canonicals/date-picker"]');
 
 const canonicalStates = [
   {
@@ -138,6 +140,15 @@ const canonicalStates = [
 
 const canonicalStateMap = new Map(canonicalStates.map((state) => [state.refId, state]));
 
+function getGeneratedDatePickerReferenceId() {
+  const match = window.location.pathname.match(/^\/design-system\/canonical-renderings\/date-picker\/([^/]+)$/);
+  return match?.[1] ?? null;
+}
+
+function isGeneratedDatePickerRoute() {
+  return getGeneratedDatePickerReferenceId() !== null;
+}
+
 function normalizeWidth(value, fallback) {
   const parsed = Number.parseInt(value ?? "", 10);
   if (!Number.isFinite(parsed)) {
@@ -191,9 +202,18 @@ function resetSurface() {
 }
 
 function setGlobalAppearance({ dir, theme, zoom }) {
-  document.documentElement.setAttribute("dir", dir);
-  document.documentElement.dataset.theme = theme;
-  document.documentElement.style.setProperty("--ui-scale", zoom === 100 ? "1.5" : "1");
+  if (previewShell instanceof HTMLElement) {
+    previewShell.setAttribute("dir", dir);
+    if (zoom === 100) {
+      previewShell.style.setProperty("--ui-scale", "1.5");
+    } else {
+      previewShell.style.removeProperty("--ui-scale");
+    }
+  }
+
+  if (previewFrame instanceof HTMLElement) {
+    previewFrame.dataset.themeScope = theme;
+  }
 }
 
 function updateStepper(currentIndex) {
@@ -334,27 +354,91 @@ async function applyScenario(state) {
   }
 }
 
-async function renderCanonicalState() {
+function getLegacyRouteForState(state) {
+  return `/design-system/components/date-picker?ref=${encodeURIComponent(state.refId)}&width=${encodeURIComponent(String(state.width))}&state=${encodeURIComponent(state.state)}&theme=${encodeURIComponent(state.theme)}&dir=${encodeURIComponent(state.dir)}&zoom=${encodeURIComponent(String(state.zoom))}`;
+}
+
+function getStateRoute(state) {
+  if (isGeneratedDatePickerRoute()) {
+    return `/design-system/canonical-renderings/date-picker/${encodeURIComponent(state.refId)}`;
+  }
+
+  return getLegacyRouteForState(state);
+}
+
+async function resolveGeneratedCanonicalState() {
+  const referenceId = getGeneratedDatePickerReferenceId();
+  if (!referenceId) {
+    return null;
+  }
+
+  const response = await fetch(
+    `/v1/design-system-canonicals/public/families/date-picker/references/${encodeURIComponent(referenceId)}`,
+    {
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to load generated date-picker canonical with status ${response.status}`);
+  }
+
+  const payload = await response.json();
+  const matchedCanonical = canonicalStateMap.get(payload.reference.referenceId) ?? canonicalStates[0];
+  return {
+    family: payload.family,
+    activeRefId: payload.reference.referenceId,
+    width: payload.reference.width ?? matchedCanonical.width,
+    state: typeof payload.reference.specimenPayload?.state === "string"
+      ? payload.reference.specimenPayload.state
+      : matchedCanonical.state,
+    dir: payload.reference.direction ?? matchedCanonical.dir,
+    zoom: payload.reference.zoom ?? matchedCanonical.zoom,
+    theme: payload.reference.theme ?? matchedCanonical.theme,
+    viewportLabel: payload.reference.viewport ?? matchedCanonical.viewportLabel,
+    note: payload.reference.description,
+  };
+}
+
+async function renderCanonicalState(resolvedGeneratedState = null) {
   if (!(previewFrame instanceof HTMLElement) || !(previewShell instanceof HTMLElement)) {
     return;
   }
 
   const params = new URLSearchParams(window.location.search);
   const fallbackState = canonicalStates[0];
-  const requestedRef = params.get("ref") ?? fallbackState.refId;
+  const requestedRef = resolvedGeneratedState?.activeRefId
+    ?? params.get("ref")
+    ?? fallbackState.refId;
   const resolvedCanonical = canonicalStateMap.get(requestedRef) ?? fallbackState;
-  const width = normalizeWidth(params.get("width"), resolvedCanonical.width);
-  const dir = normalizeDir(params.get("dir") ?? resolvedCanonical.dir);
-  const zoom = normalizeZoom(params.get("zoom") ?? String(resolvedCanonical.zoom));
-  const theme = normalizeTheme(params.get("theme") ?? resolvedCanonical.theme);
-  const state = params.get("state") ?? resolvedCanonical.state;
+  const width = normalizeWidth(
+    resolvedGeneratedState?.width !== undefined
+      ? String(resolvedGeneratedState.width)
+      : params.get("width"),
+    resolvedCanonical.width,
+  );
+  const dir = normalizeDir(resolvedGeneratedState?.dir ?? params.get("dir") ?? resolvedCanonical.dir);
+  const zoom = normalizeZoom(
+    resolvedGeneratedState?.zoom !== undefined
+      ? String(resolvedGeneratedState.zoom)
+      : (params.get("zoom") ?? String(resolvedCanonical.zoom)),
+  );
+  const theme = normalizeTheme(resolvedGeneratedState?.theme ?? params.get("theme") ?? resolvedCanonical.theme);
+  const state = resolvedGeneratedState?.state ?? params.get("state") ?? resolvedCanonical.state;
   const currentIndex = canonicalStates.findIndex((candidate) => candidate.refId === resolvedCanonical.refId);
 
+  document.documentElement.removeAttribute("dir");
+  document.documentElement.style.removeProperty("--ui-scale");
+  delete document.documentElement.dataset.theme;
+
   setGlobalAppearance({ dir, theme, zoom });
-  previewFrame.style.width = `${width}px`;
-  previewShell.style.width = `${width}px`;
-  previewShell.setAttribute("dir", dir);
+  previewFrame.style.setProperty("--date-picker-preview-width", `${width}px`);
+  previewShell.dataset.magnification = String(zoom);
   previewShell.dataset.renderStatus = "settling";
+  previewShell.dataset.viewportClass = width <= 430 ? "mobile" : "desktop";
   document.body.dataset.renderStatus = "settling";
 
   await applyScenario(state);
@@ -368,7 +452,7 @@ async function renderCanonicalState() {
   }
 
   if (canonicalSummary instanceof HTMLElement) {
-    canonicalSummary.textContent = resolvedCanonical.note;
+    canonicalSummary.textContent = resolvedGeneratedState?.note ?? resolvedCanonical.note;
   }
 
   if (canonicalMetaState instanceof HTMLElement) {
@@ -376,11 +460,15 @@ async function renderCanonicalState() {
   }
 
   if (canonicalMetaViewport instanceof HTMLElement) {
-    canonicalMetaViewport.textContent = resolvedCanonical.viewportLabel;
+    canonicalMetaViewport.textContent = resolvedGeneratedState?.viewportLabel ?? resolvedCanonical.viewportLabel;
   }
 
   if (canonicalMetaNotes instanceof HTMLElement) {
-    canonicalMetaNotes.textContent = resolvedCanonical.note;
+    canonicalMetaNotes.textContent = resolvedGeneratedState?.note ?? resolvedCanonical.note;
+  }
+
+  if (launcherLink instanceof HTMLAnchorElement) {
+    launcherLink.href = resolvedGeneratedState?.family?.generatedLauncherRoutePath ?? "/design-system/canonicals/date-picker";
   }
 
   updateStepper(currentIndex);
@@ -388,4 +476,16 @@ async function renderCanonicalState() {
   document.body.dataset.renderStatus = "ready";
 }
 
-renderCanonicalState();
+async function main() {
+  const resolvedGeneratedState = await resolveGeneratedCanonicalState();
+
+  for (const state of canonicalStates) {
+    state.route = getStateRoute(state);
+  }
+
+  await renderCanonicalState(resolvedGeneratedState);
+}
+
+void main().catch((error) => {
+  console.error("Failed to render date-picker canonical", error);
+});

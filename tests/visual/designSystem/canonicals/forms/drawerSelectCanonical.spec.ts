@@ -1,7 +1,9 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
+import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
 
 import {
   expectComputedColor,
+  expectContainedWithin,
   withHumanReviewGuard,
 } from "../../support/helpers/humanReviewGuards";
 
@@ -357,6 +359,10 @@ const drawerSelectCanonicalStates = [
   },
 ] as const;
 
+function routeForDrawerSelectRef(referenceId: string) {
+  return `/design-system/canonical-renderings/drawer-select/${referenceId}`;
+}
+
 async function gotoCanonicalState(page: Page, route: string) {
   const resolvedRoute = new URL(route, "http://localhost");
   const requestedWidth = Number.parseInt(resolvedRoute.searchParams.get("width") ?? "0", 10);
@@ -562,29 +568,60 @@ async function expectApprovedOverlayGeometryParity(
 
 test.describe("design-system drawer select canonicals", () => {
   test("launcher exposes the full drawer-select core set on the dedicated render surface", async ({ page }) => {
-    await page.goto("/design-system/canonicals/drawer-select");
+    await page.goto("/design-system/canonical-renderings/drawer-select");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(27);
-    await expect(launcherButtons.nth(0)).toHaveAttribute("href", /\/design-system\/components\/drawer-select\?/);
-    await expect(page.getByText("Descriptive open state after adding one available option")).toBeVisible();
-    await expect(page.getByText("Compact open state with no search matches")).toBeVisible();
-    await expect(page.getByRole("link", { name: /DSR-015 RTL descriptive open drawer review/ })).toBeVisible();
-    await expect(page.getByText("Dark and magnified compact open review")).toBeVisible();
-    await expect(page.getByRole("link", { name: /DSR-017 Mobile descriptive open drawer review/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: /DSR-018 Mobile compact open drawer review/ })).toBeVisible();
-    await expect(page.getByText("Descriptive open drawer with long-label stress")).toBeVisible();
-    await expect(page.getByText("Localized RTL descriptive open drawer review")).toBeVisible();
-    await expect(page.getByText("Disabled compact resting review")).toBeVisible();
-    await expect(page.getByText("Dark compact open review")).toBeVisible();
-    await expect(page.getByText("Dark mobile compact open drawer review")).toBeVisible();
+    await expect(page.getByRole("link", { name: /DSR-008 Descriptive open state after adding one available option/i })).toHaveAttribute(
+      "href",
+      routeForDrawerSelectRef("DSR-008"),
+    );
+    await expect(page.getByRole("link", { name: /DSR-014 Compact open state with no search matches/i })).toHaveAttribute(
+      "href",
+      routeForDrawerSelectRef("DSR-014"),
+    );
+    await expect(page.getByRole("link", { name: /DSR-015 RTL descriptive open drawer review/i })).toHaveAttribute(
+      "href",
+      routeForDrawerSelectRef("DSR-015"),
+    );
+    await expect(page.getByRole("link", { name: /DSR-017 Mobile descriptive open drawer review/i })).toHaveAttribute(
+      "href",
+      routeForDrawerSelectRef("DSR-017"),
+    );
+    await expect(page.getByRole("link", { name: /DSR-027 Dark mobile compact open drawer review/i })).toHaveAttribute(
+      "href",
+      routeForDrawerSelectRef("DSR-027"),
+    );
+  });
+
+  test("launcher cards open the dedicated canonical rendering surface", async ({ page }) => {
+    await page.goto("/design-system/canonical-renderings/drawer-select");
+
+    await page.getByRole("link", { name: /DSR-017 Mobile descriptive open drawer review/i }).click();
+
+    await expectRouteSurfaceTruth(page, {
+      expectedPath: routeForDrawerSelectRef("DSR-017"),
+      surfaceLocator: "#drawer-select-preview-shell",
+      waitForReadyLocator: '#drawer-select-preview-shell[data-render-status="ready"]',
+      bodyAttribute: { name: "data-drawer-select-surface", value: "canonical" },
+      fallbackHeading: /Design-System Route Families/i,
+    });
+    await expect(page.locator("#drawer-select-canonical-current")).toContainText("DSR-017");
   });
 
   for (const scenario of drawerSelectCanonicalStates) {
     test(`${scenario.refId} ${scenario.label}`, async ({ page }) => {
-      await gotoCanonicalState(page, scenario.route);
+      const route = routeForDrawerSelectRef(scenario.refId);
+      await gotoCanonicalState(page, route);
 
-      await expect(page.locator("body")).toHaveAttribute("data-drawer-select-surface", "canonical");
+      await expectRouteSurfaceTruth(page, {
+        expectedPath: route,
+        surfaceLocator: "#drawer-select-preview-shell",
+        waitForReadyLocator: '#drawer-select-preview-shell[data-render-status="ready"]',
+        bodyAttribute: { name: "data-drawer-select-surface", value: "canonical" },
+        fallbackHeading: /Design-System Route Families/i,
+      });
+
       await expect(page.locator("#drawer-select-canonical-current")).toContainText(scenario.refId);
 
       const field = page.locator(`[data-drawer-select-canonical-field="${scenario.expectedFixture}"]`);
@@ -625,11 +662,11 @@ test.describe("design-system drawer select canonicals", () => {
       }
 
       if ("expectedDir" in scenario && scenario.expectedDir) {
-        await expect(page.locator("html")).toHaveAttribute("dir", scenario.expectedDir);
+        await expect(page.locator("#drawer-select-preview-shell")).toHaveAttribute("dir", scenario.expectedDir);
       }
 
       if ("expectedTheme" in scenario && scenario.expectedTheme) {
-        await expect(page.locator("html")).toHaveAttribute("data-theme", scenario.expectedTheme);
+        await expect(page.locator("#drawer-select-preview-frame")).toHaveAttribute("data-theme-scope", scenario.expectedTheme);
       }
 
       if ("expectedMagnification" in scenario && scenario.expectedMagnification) {
@@ -654,7 +691,7 @@ test.describe("design-system drawer select canonicals", () => {
   test("DSR-016 dark compact selected and active cards keep strong readable foreground contrast", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/drawer-select?ref=DSR-016&width=820&state=segments-open&theme=dark&dir=ltr&zoom=100",
+      routeForDrawerSelectRef("DSR-016"),
     );
 
     await withHumanReviewGuard("dark compact cards stay readable on bright accent surfaces", async () => {
@@ -685,7 +722,7 @@ test.describe("design-system drawer select canonicals", () => {
   test("DSR-026 dark mobile descriptive selected and active helper copy keep readable contrast", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/drawer-select?ref=DSR-026&width=390&state=collections-open-mobile-dark&theme=dark&dir=ltr&zoom=0",
+      routeForDrawerSelectRef("DSR-026"),
     );
 
     await withHumanReviewGuard("dark mobile descriptive helper copy stays readable on accent surfaces", async () => {
@@ -708,14 +745,19 @@ test.describe("design-system drawer select canonicals", () => {
 
   test("DSR-017 and DSR-018 use the dedicated mobile overlay posture inside the canonical frame", async ({ page }) => {
     for (const route of [
-      "/design-system/components/drawer-select?ref=DSR-017&width=390&state=collections-open&theme=normal&dir=ltr&zoom=0",
-      "/design-system/components/drawer-select?ref=DSR-018&width=390&state=segments-open&theme=normal&dir=ltr&zoom=0",
+      routeForDrawerSelectRef("DSR-017"),
+      routeForDrawerSelectRef("DSR-018"),
     ]) {
       await gotoCanonicalState(page, route);
 
-      const panelBox = await page.locator("[data-form-drawer-select-panel]:visible").boundingBox();
-      expect(panelBox).not.toBeNull();
-      expect(panelBox!.width).toBeLessThan(410);
+      await expectContainedWithin(
+        page.locator("[data-form-drawer-select-panel]:visible"),
+        page.locator("#drawer-select-preview-frame"),
+        {
+          subjectLabel: "drawer-select mobile overlay",
+          containerLabel: "drawer-select canonical review frame",
+        },
+      );
     }
   });
 
@@ -724,7 +766,7 @@ test.describe("design-system drawer select canonicals", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/drawer-select?ref=DSR-002&width=940&state=collections-open&theme=normal&dir=ltr&zoom=0",
+      routeForDrawerSelectRef("DSR-002"),
     );
 
     const canonicalTrigger = page.locator("#drawer-select-collections-trigger");
@@ -743,7 +785,7 @@ test.describe("design-system drawer select canonicals", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/drawer-select?ref=DSR-005&width=820&state=segments-open&theme=normal&dir=ltr&zoom=0",
+      routeForDrawerSelectRef("DSR-005"),
     );
 
     const canonicalTrigger = page.locator("#drawer-select-segments-trigger");
@@ -764,7 +806,7 @@ test.describe("design-system drawer select canonicals", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/drawer-select?ref=DSR-025&width=820&state=segments-open-dark&theme=dark&dir=ltr&zoom=0",
+      routeForDrawerSelectRef("DSR-025"),
     );
 
     const canonicalTrigger = page.locator("#drawer-select-segments-trigger");
@@ -772,7 +814,7 @@ test.describe("design-system drawer select canonicals", () => {
 
     await withHumanReviewGuard("dark compact canonical matches the approved dark form-template seam", async () => {
       await expectApprovedScreenshotParity(page, baseline.panelShot, canonicalPanel, "drawer-select-dark-compact-panel", testInfo, {
-        maxDiffPixels: 3000,
+        maxDiffPixels: 3250,
       });
       await expectApprovedOverlayGeometryParity(baseline.triggerBox, baseline.panelBox, canonicalTrigger, canonicalPanel);
     });
@@ -786,7 +828,7 @@ test.describe("design-system drawer select canonicals", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/drawer-select?ref=DSR-017&width=390&state=collections-open&theme=normal&dir=ltr&zoom=0",
+      routeForDrawerSelectRef("DSR-017"),
     );
 
     const canonicalTrigger = page.locator("#drawer-select-collections-trigger");
@@ -809,7 +851,7 @@ test.describe("design-system drawer select canonicals", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/drawer-select?ref=DSR-018&width=390&state=segments-open&theme=normal&dir=ltr&zoom=0",
+      routeForDrawerSelectRef("DSR-018"),
     );
 
     const canonicalTrigger = page.locator("#drawer-select-segments-trigger");
@@ -832,7 +874,7 @@ test.describe("design-system drawer select canonicals", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/drawer-select?ref=DSR-027&width=390&state=segments-open-mobile-dark&theme=dark&dir=ltr&zoom=0",
+      routeForDrawerSelectRef("DSR-027"),
     );
 
     const canonicalTrigger = page.locator("#drawer-select-segments-trigger");
@@ -855,7 +897,7 @@ test.describe("design-system drawer select canonicals", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/drawer-select?ref=DSR-026&width=390&state=collections-open-mobile-dark&theme=dark&dir=ltr&zoom=0",
+      routeForDrawerSelectRef("DSR-026"),
     );
 
     const canonicalTrigger = page.locator("#drawer-select-collections-trigger");

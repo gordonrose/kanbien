@@ -415,6 +415,15 @@ function syncFormPickerOverlayState() {
     '.form-page-shell[data-form-mobile-view="true"] .form-date-menu:not(.hidden), .form-page-shell[data-form-mobile-view="true"] .form-time-menu:not(.hidden)',
   );
 
+  const canonicalRenderSurface = activePicker instanceof HTMLElement
+    ? activePicker.closest('body[data-date-picker-surface="canonical"], body[data-time-picker-surface="canonical"]')
+    : null;
+
+  if (canonicalRenderSurface) {
+    delete document.documentElement.dataset.formPickerOverlayOpen;
+    return;
+  }
+
   if (activePicker) {
     document.documentElement.dataset.formPickerOverlayOpen = "true";
     return;

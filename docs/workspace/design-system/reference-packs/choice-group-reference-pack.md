@@ -25,8 +25,13 @@ about what still remains parent-owned.
 - Related verification checklist:
   `docs/workspace/design-system/verification/choice-group-verification-checklist.md`
 - Current canonical posture:
-  provisional child canonical launcher at `/design-system/canonicals/choice-group`
-  and dedicated child render surface at `/design-system/components/choice-group`
+  persistence-backed generated child canonical launcher at
+  `/design-system/canonical-renderings/choice-group`
+  and generated child render surface at
+  `/design-system/canonical-renderings/choice-group/:ref`
+  with legacy compatibility routes retained at
+  `/design-system/canonicals/choice-group`
+  and `/design-system/components/choice-group`
 
 ## Signed-Off Rule Source
 
@@ -67,9 +72,9 @@ Those remain governed upstream by the parent `Form Template` chain.
   - a copy stack per row with primary and secondary text
   - focus-visible row emphasis when keyboard focus enters a control
   - an inline group-error slot
-- current child-seam theme, RTL, and combined-state expectations are now
-  explicit in the behavior lock, but they are still proved only through the
-  parent-hosted route rather than a dedicated child render surface
+- current child-seam theme and RTL expectations are now proved on the
+  persistence-backed child render surface, while the remaining focus and
+  combined-state stress proof still stays parent-hosted
 - the shared-statement variant currently adds:
   - one lead statement block above the row stack
   - full-width host placement through the parent grid
@@ -100,26 +105,32 @@ Those remain governed upstream by the parent `Form Template` chain.
 ## Required Reference States
 
 These are the current exploratory child reference states.
-The first canonical review batch now has a dedicated child launcher and render
-surface, while the remaining states still rely on parent-hosted proof.
+The first canonical review batch now has a persistence-backed generated child
+launcher and render surface, while the remaining states still rely on
+parent-hosted proof.
 
 | Ref ID | Current route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `CGR-001` | `/design-system/components/choice-group?ref=CGR-001&width=520&state=radio-baseline&theme=normal&dir=ltr&zoom=0` | Radio-group baseline | Preserves the child seam’s single-select grouped-choice shell | canonical-created | First child-owned baseline render |
-| `CGR-002` | `/design-system/components/choice-group?ref=CGR-002&width=520&state=checkbox-baseline&theme=normal&dir=ltr&zoom=0` | Standard checkbox-group baseline | Preserves the child seam’s multi-select grouped-choice shell without the shared-statement variant | canonical-created | First child-owned checkbox baseline |
-| `CGR-003` | `/design-system/components/choice-group?ref=CGR-003&width=720&state=shared-statement&theme=normal&dir=ltr&zoom=0` | Shared-statement checkbox baseline | Preserves the lead-statement variant without flattening it into a generic checkbox stack | canonical-created | Child render intentionally avoids freezing host-wide grid span |
-| `CGR-004` | `/design-system/components/choice-group?ref=CGR-004&width=940&state=error-review&theme=normal&dir=ltr&zoom=0` | Inline group-error review for all grouped-choice variants | Preserves local error visibility at the fieldset seam | canonical-created | Dedicated child render now shows all three variants together |
+| `CGR-001` | `/design-system/canonical-renderings/choice-group/CGR-001` | Radio-group baseline | Preserves the child seam’s single-select grouped-choice shell | canonical-created | Generated child render now shows the baseline directly from persisted canonical truth |
+| `CGR-002` | `/design-system/canonical-renderings/choice-group/CGR-002` | Standard checkbox-group baseline | Preserves the child seam’s multi-select grouped-choice shell without the shared-statement variant | canonical-created | Generated child render now shows the checkbox baseline directly |
+| `CGR-003` | `/design-system/canonical-renderings/choice-group/CGR-003` | Shared-statement checkbox baseline | Preserves the lead-statement variant without flattening it into a generic checkbox stack | canonical-created | Generated child render intentionally avoids freezing host-wide grid span |
+| `CGR-004` | `/design-system/canonical-renderings/choice-group/CGR-004` | Inline group-error review for all grouped-choice variants | Preserves local error visibility at the fieldset seam | canonical-created | Generated child render now shows all three variants together |
 | `CGR-005` | `/design-system/templates/form?disabled=true&mobile=true&dir=rtl` | Disabled mobile RTL grouped-choice review | Preserves inherited stress-state readability and non-interactive truthfulness | covered-by-test | Still parent-owned review framing |
-| `CGR-006` | `/design-system/components/choice-group?ref=CGR-006&width=940&state=dark-errors&theme=dark&dir=ltr&zoom=0` | Dark-theme grouped-choice readability review | Preserves readable separation between legend, statement, row, and error surfaces under inherited dark theme stress | canonical-created | Theme scope is isolated to the child render surface |
-| `CGR-007` | `/design-system/components/choice-group?ref=CGR-007&width=940&state=rtl-review&theme=normal&dir=rtl&zoom=0` | RTL grouped-choice row mirroring review | Preserves the mirrored control-to-copy relationship instead of only mirrored text alignment | canonical-created | Directionality is scoped to the child render surface |
+| `CGR-006` | `/design-system/canonical-renderings/choice-group/CGR-006` | Dark-theme grouped-choice readability review | Preserves readable separation between legend, statement, row, and error surfaces under inherited dark theme stress | canonical-created | Theme scope is isolated to the generated child render surface |
+| `CGR-007` | `/design-system/canonical-renderings/choice-group/CGR-007` | RTL grouped-choice row mirroring review | Preserves the mirrored control-to-copy relationship instead of only mirrored text alignment | canonical-created | Directionality is scoped to the generated child render surface |
 | `CGR-008` | `/design-system/templates/form?errors=true&disabled=true` | Combined error and disabled grouped-choice review | Preserves local error readability while rows still clearly read as unavailable | covered-by-test | Parent-hosted combined-state proof |
 | `CGR-009` | `/design-system/templates/form` | Grouped-choice row focus-visible review | Preserves row-level focus emphasis for keyboard users without geometry shift or attribution loss | covered-by-test | Parent-hosted proof focuses the first radio row directly |
-| `CGR-010` | `/design-system/components/choice-group?ref=CGR-010&width=390&state=long-copy-mobile&theme=normal&dir=ltr&zoom=0` | Narrow mobile long-copy wrapping review | Preserves readable stacked row structure when grouped-choice labels and descriptions grow beyond baseline copy length | canonical-created | Child render mutates grouped-copy directly for narrow-width stress |
-| `CGR-011` | `/design-system/components/choice-group?ref=CGR-011&width=390&state=localized-rtl-mobile&theme=normal&dir=rtl&zoom=0` | Localized Arabic RTL grouped-choice review | Preserves readable localized row copy and mirrored control placement under inherited RTL mobile stress | canonical-created | Child render mutates localized copy directly for RTL mobile review |
+| `CGR-010` | `/design-system/canonical-renderings/choice-group/CGR-010` | Narrow mobile long-copy wrapping review | Preserves readable stacked row structure when grouped-choice labels and descriptions grow beyond baseline copy length | canonical-created | Generated child render mutates grouped-copy directly for narrow-width stress |
+| `CGR-011` | `/design-system/canonical-renderings/choice-group/CGR-011` | Localized Arabic RTL grouped-choice review | Preserves readable localized row copy and mirrored control placement under inherited RTL mobile stress | canonical-created | Generated child render mutates localized copy directly for RTL mobile review |
 
 ## First Canonical Review Set
 
 The first direct child review batch now lives on:
+
+- `/design-system/canonical-renderings/choice-group`
+- `/design-system/canonical-renderings/choice-group/:ref`
+
+Legacy compatibility routes remain available at:
 
 - `/design-system/canonicals/choice-group`
 - `/design-system/components/choice-group`
@@ -172,10 +183,13 @@ now child-locked expectations without direct child-owned render states yet.
 - parent-hosted Playwright proof still exists in
   `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts` for the remaining non-child
   route states
-- a provisional child canonical launcher now exists at
+- a persistence-backed generated child canonical launcher now exists at
+  `/design-system/canonical-renderings/choice-group`
+- a persistence-backed generated child render surface now exists at
+  `/design-system/canonical-renderings/choice-group/:ref`
+- legacy compatibility routes remain available at
   `/design-system/canonicals/choice-group`
-- a dedicated child render surface now exists at
-  `/design-system/components/choice-group`
+  and `/design-system/components/choice-group`
 - no second governed consumer exists yet in the repo
 - `CGR-005`, `CGR-008`, and `CGR-009` still remain parent-hosted proof rather
   than dedicated child-route proof
@@ -204,9 +218,11 @@ pack only when:
 
 ## Exit Condition
 
-This reference pack is now operational through the provisional child launcher
-at `/design-system/canonicals/choice-group` and the dedicated render surface
-at `/design-system/components/choice-group`.
+This reference pack is now operational through the generated child launcher at
+`/design-system/canonical-renderings/choice-group` and the generated render
+surface at `/design-system/canonical-renderings/choice-group/:ref`, with the
+legacy launcher and legacy render route retained for compatibility during the
+migration.
 
 The first child canonical batch is visually approved, but do not treat this as
 a signed-off extracted family baseline until the remaining parent-hosted states

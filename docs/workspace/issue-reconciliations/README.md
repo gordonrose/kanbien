@@ -10,6 +10,8 @@ Each note should capture:
 - the user-visible symptom
 - the concrete root cause
 - why the feature loop missed it
+- the architectural-first decision:
+  shared contract, shared contract not possible, or justified local exception
 - the code, test, doc, or process changes added afterward
 - any follow-up gap that still remains open
 
@@ -29,3 +31,5 @@ Repo workflow:
 - the skill should identify the root cause, explain why the current suite
   missed it, and add or repair the most honest tests needed to reduce
   recurrence
+- the skill should decide whether the fix belongs in shared architecture first
+  before allowing a family-local patch to stand

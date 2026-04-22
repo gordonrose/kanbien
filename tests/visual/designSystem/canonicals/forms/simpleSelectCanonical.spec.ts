@@ -162,14 +162,14 @@ test.describe("design-system simple select canonical states", () => {
     );
 
     const themeState = await page.evaluate(() => {
-      const layout = document.querySelector("#simple-select-preview-frame")?.closest(".canonical-render-layout");
+      const frame = document.querySelector("#simple-select-preview-frame");
       return {
         documentTheme: document.documentElement.dataset.theme ?? "",
-        layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
+        frameTheme: frame instanceof HTMLElement ? frame.dataset.themeScope ?? "" : "",
       };
     });
 
     expect(themeState.documentTheme).toBe("");
-    expect(themeState.layoutTheme).toBe("dark");
+    expect(themeState.frameTheme).toBe("dark");
   });
 });

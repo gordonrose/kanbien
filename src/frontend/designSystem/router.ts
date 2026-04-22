@@ -53,6 +53,9 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string {
 
     if (pathSegments.length === 3) {
       const familyRenderPageByKey: Record<string, string> = {
+        "choice-group": "choice-group.html",
+        "date-picker": "date-picker.html",
+        "drawer-select": "drawer-select.html",
         "page-shell-banner": "page-shell-banner.html",
         "simple-select": "simple-select.html",
         "time-picker": "time-picker.html",

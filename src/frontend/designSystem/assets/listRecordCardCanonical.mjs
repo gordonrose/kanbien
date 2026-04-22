@@ -348,7 +348,10 @@ function renderCanonicalState() {
 
   if (renderLayout instanceof HTMLElement) {
     renderLayout.style.setProperty("--canonical-render-layout-width", `${Math.max(width + 220, 720)}px`);
-    renderLayout.dataset.themeScope = theme;
+  }
+
+  if (previewFrame instanceof HTMLElement) {
+    previewFrame.dataset.themeScope = theme;
   }
 
   cardTitle.textContent = payload.title;
