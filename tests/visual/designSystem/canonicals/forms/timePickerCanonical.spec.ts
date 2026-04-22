@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
+import { expectContainedWithin, withHumanReviewGuard } from "../../support/helpers/humanReviewGuards";
 
 const timePickerCanonicalStates = [
   {
@@ -117,7 +118,10 @@ test.describe("design-system time picker canonical states", () => {
         bodyAttribute: { name: "data-time-picker-surface", value: "canonical" },
         fallbackHeading: /Design-System Route Families/i,
       });
-      await expect(page.locator("html")).toHaveAttribute("dir", scenario.refId === "TPR-007" || scenario.refId === "TPR-009" ? "rtl" : "ltr");
+      await expect(page.locator("#time-picker-preview-shell")).toHaveAttribute(
+        "dir",
+        scenario.refId === "TPR-007" || scenario.refId === "TPR-009" ? "rtl" : "ltr",
+      );
     });
   }
 
@@ -145,12 +149,16 @@ test.describe("design-system time picker canonical states", () => {
     );
 
     await expect(standalonePanel).toBeVisible();
-    const overlayState = await standalonePanel.evaluate((node) => {
-      const style = window.getComputedStyle(node);
-      return { position: style.position, top: style.top };
+    await withHumanReviewGuard("mobile standalone overlay stays inside the canonical review frame", async () => {
+      await expectContainedWithin(
+        standalonePanel,
+        page.locator("#time-picker-preview-frame"),
+        {
+          subjectLabel: "TPR-006 mobile time-picker overlay",
+          containerLabel: "time-picker canonical review frame",
+        },
+      );
     });
-    expect(overlayState.position).toBe("fixed");
-    expect(overlayState.top).toBe("0px");
 
     await gotoCanonicalState(
       page,
@@ -162,5 +170,68 @@ test.describe("design-system time picker canonical states", () => {
     await expect(standalonePanel).toBeVisible();
     await expect(standaloneRoot.locator('[data-form-time-hour="09"]')).toBeVisible();
     await expect(standaloneRoot.locator('[data-form-time-minute="30"]')).toBeVisible();
+  });
+
+  test("TPR-006 and TPR-007 keep the mobile overlay local to the dedicated canonical frame", async ({ page }) => {
+    for (const route of [
+      "/design-system/canonical-renderings/time-picker/TPR-006",
+      "/design-system/canonical-renderings/time-picker/TPR-007",
+    ]) {
+      await gotoCanonicalState(page, route, { width: 430, height: 1400 });
+
+      await withHumanReviewGuard("mobile time-picker overlay remains contained within the review frame", async () => {
+        await expectContainedWithin(
+          page.locator("#time-picker-standalone-root [data-form-time-panel]"),
+          page.locator("#time-picker-preview-frame"),
+          {
+            subjectLabel: "visible mobile time-picker panel",
+            containerLabel: "time-picker canonical review frame",
+          },
+        );
+      });
+    }
+  });
+
+  test("TPR-008 and TPR-009 scope theme, direction, and magnification to the render surface", async ({ page }) => {
+    await gotoCanonicalState(
+      page,
+      "/design-system/canonical-renderings/time-picker/TPR-008",
+      { width: 1600, height: 1400 },
+    );
+
+    const darkThemeState = await page.evaluate(() => {
+      const layout = document.querySelector(".canonical-render-layout");
+      return {
+        documentTheme: document.documentElement.dataset.theme ?? "",
+        layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
+      };
+    });
+
+    expect(darkThemeState.documentTheme).toBe("");
+    expect(darkThemeState.layoutTheme).toBe("dark");
+
+    await gotoCanonicalState(
+      page,
+      "/design-system/canonical-renderings/time-picker/TPR-009",
+      { width: 1600, height: 1400 },
+    );
+
+    const scopedReviewState = await page.evaluate(() => {
+      const shell = document.querySelector("#time-picker-preview-shell");
+      const searchInput = document.querySelector(".search-input");
+      return {
+        documentDir: document.documentElement.getAttribute("dir"),
+        shellDir: shell instanceof HTMLElement ? shell.getAttribute("dir") : null,
+        documentScale: document.documentElement.style.getPropertyValue("--ui-scale"),
+        shellScale: shell instanceof HTMLElement ? shell.style.getPropertyValue("--ui-scale") : "",
+        searchInputFontSize: searchInput ? window.getComputedStyle(searchInput).fontSize : null,
+      };
+    });
+
+    expect(scopedReviewState.documentDir).not.toBe("rtl");
+    expect(scopedReviewState.shellDir).toBe("rtl");
+    expect(scopedReviewState.documentScale).toBe("");
+    expect(scopedReviewState.shellScale).toBe("1.5");
+    expect(scopedReviewState.searchInputFontSize).toBe("16px");
   });
 });

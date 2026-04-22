@@ -383,21 +383,25 @@ function renderCanonicalState(resolvedGeneratedState = null) {
   const theme = normalizeTheme(resolvedGeneratedState?.theme ?? params.get("theme") ?? resolvedCanonical.theme);
   const scale = zoomScaleMap[zoom] ?? "1";
   const currentIndex = canonicalStates.findIndex((state) => state.refId === resolvedCanonical.refId);
+  const useLocalSurfaceScopes = isGeneratedTimePickerRoute();
 
   document.documentElement.removeAttribute("dir");
   document.documentElement.style.removeProperty("--ui-scale");
   delete document.documentElement.dataset.theme;
 
   previewFrame.style.setProperty("--time-picker-preview-width", `${width}px`);
-  document.documentElement.setAttribute("dir", dir);
-  document.documentElement.style.setProperty("--ui-scale", scale);
-  document.documentElement.dataset.theme = theme;
   previewShell.style.setProperty("--ui-scale", scale);
   previewShell.dataset.magnification = String(zoom);
   previewShell.dataset.renderStatus = "ready";
   previewShell.setAttribute("dir", dir);
   previewShell.dataset.formMobileView = String(payload.mobile);
   previewShell.dataset.viewportClass = width <= 420 ? "mobile" : "desktop";
+
+  if (!useLocalSurfaceScopes) {
+    document.documentElement.setAttribute("dir", dir);
+    document.documentElement.style.setProperty("--ui-scale", scale);
+    document.documentElement.dataset.theme = theme;
+  }
 
   if (renderLayout instanceof HTMLElement) {
     renderLayout.style.setProperty("--canonical-render-layout-width", `${Math.max(width + 360, 820)}px`);
