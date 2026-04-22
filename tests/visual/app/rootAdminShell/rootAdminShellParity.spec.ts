@@ -131,3 +131,45 @@ test("root-admin authenticated shell uses the same shell stylesheet entrypoints 
 
   await designSystemPage.close();
 });
+
+test("root-admin users page keeps the same governed list-page header posture as the signed-off list-page route", async ({ page, context }) => {
+  await page.setViewportSize({ width: 1560, height: 1400 });
+  await bootstrapAuthenticatedOverview(page);
+  await page.goto("/root-admin/users");
+  await page.locator("#page-users").waitFor({ state: "visible" });
+
+  const designSystemPage = await context.newPage();
+  await designSystemPage.setViewportSize({ width: 1560, height: 1400 });
+  await designSystemPage.goto("/design-system/templates/list-page");
+  await designSystemPage.locator("#list-page-canvas-title").waitFor({ state: "visible" });
+
+  await expect(page.locator("#page-users .component-catalog-section-header")).toHaveCount(1);
+  await expect(page.locator("#root-users-page-title.component-catalog-section-title")).toHaveCount(1);
+  await expect(page.locator("#page-users .component-catalog-meta")).toHaveCount(1);
+
+  const comparisons = [
+    {
+      appSelector: "#page-users .component-catalog-section-header",
+      designSelector: ".list-page-list-column .component-catalog-section-header",
+      properties: ["display", "gap"],
+    },
+    {
+      appSelector: "#root-users-page-title",
+      designSelector: "#list-page-canvas-title",
+      properties: ["font-size", "font-weight", "line-height", "letter-spacing", "color"],
+    },
+    {
+      appSelector: "#page-users .component-catalog-meta",
+      designSelector: ".list-page-list-column .component-catalog-meta",
+      properties: ["font-size", "line-height", "color", "margin-top", "margin-bottom"],
+    },
+  ] as const;
+
+  for (const comparison of comparisons) {
+    const appStyles = await collectStyles(page, comparison.appSelector, [...comparison.properties]);
+    const designStyles = await collectStyles(designSystemPage, comparison.designSelector, [...comparison.properties]);
+    expect(appStyles).toEqual(designStyles);
+  }
+
+  await designSystemPage.close();
+});

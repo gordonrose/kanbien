@@ -337,7 +337,260 @@
             </div>
           </section>
 
-          <section id="page-users" class="hidden"></section>
+          <section id="page-users" class="component-catalog-section hidden" aria-labelledby="root-users-page-title">
+            <section
+              id="root-users-list-page"
+              class="list-page-shell list-page-shell-split"
+              data-root-users-list
+              data-selectable-list
+              data-selectable-list-layout
+            >
+              <p
+                id="root-users-list-announcement"
+                class="visually-hidden"
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                data-selectable-list-announcement
+              ></p>
+
+              <template id="root-users-record-card-template">
+                <span class="list-page-card-header" data-list-record-card-slot="header">
+                  <span class="list-page-card-copy" data-list-record-card-slot="copy">
+                    <span class="list-page-card-title tooltip-anchor" data-overflow-tooltip-source data-list-record-card-slot="title"></span>
+                    <span class="list-page-card-subtitle tooltip-anchor" data-overflow-tooltip-source data-list-record-card-slot="subtitle"></span>
+                  </span>
+                </span>
+                <span class="list-page-card-description" data-list-record-card-slot="description"></span>
+                <span class="list-page-card-tags" aria-label="Root user flags" data-list-record-card-slot="tags"></span>
+              </template>
+
+              <div
+                class="list-page-list-column"
+                aria-label="Root users"
+                data-selectable-list-column
+                data-list-detail-split-layout-slot="list"
+              >
+                <div class="component-catalog-section-header">
+                  <div class="top-nav-preview-eyebrow">Root Admin Directory</div>
+                  <h1 id="root-users-page-title" class="component-catalog-section-title">Root Users</h1>
+                  <p class="component-catalog-meta">
+                    Review visible root users and select a record to inspect the current directory detail.
+                  </p>
+                </div>
+
+                <div
+                  class="list-page-loading-group hidden"
+                  aria-live="polite"
+                  aria-hidden="true"
+                  data-selectable-list-loading
+                >
+                  <p class="list-page-loading-label" data-selectable-list-loading-label>Loading root users...</p>
+                  <div class="list-page-loading-card" aria-hidden="true">
+                    <span class="list-page-loading-line list-page-loading-line-title"></span>
+                    <span class="list-page-loading-line list-page-loading-line-subtitle"></span>
+                    <span class="list-page-loading-line list-page-loading-line-body"></span>
+                    <span class="list-page-loading-line list-page-loading-line-body list-page-loading-line-body-short"></span>
+                    <span class="list-page-loading-chip-row">
+                      <span class="list-page-loading-chip"></span>
+                      <span class="list-page-loading-chip"></span>
+                    </span>
+                  </div>
+                  <div class="list-page-loading-card" aria-hidden="true">
+                    <span class="list-page-loading-line list-page-loading-line-title"></span>
+                    <span class="list-page-loading-line list-page-loading-line-subtitle"></span>
+                    <span class="list-page-loading-line list-page-loading-line-body"></span>
+                    <span class="list-page-loading-line list-page-loading-line-body list-page-loading-line-body-short"></span>
+                    <span class="list-page-loading-chip-row">
+                      <span class="list-page-loading-chip"></span>
+                      <span class="list-page-loading-chip"></span>
+                    </span>
+                  </div>
+                </div>
+
+                <div
+                  class="list-page-state-card hidden"
+                  aria-live="polite"
+                  aria-hidden="true"
+                  data-selectable-list-empty-state
+                >
+                  <p class="list-page-state-eyebrow">No visible root users</p>
+                  <h2 class="list-page-state-title">There are no visible root-user records yet</h2>
+                  <p class="list-page-state-description">
+                    The current capability returned an empty visible directory. Create a root user or clear any active
+                    query to retry this view.
+                  </p>
+                  <div class="list-page-state-actions">
+                    <button class="list-page-state-button" type="button" data-selectable-list-empty-reset>
+                      Refresh visible users
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  class="list-page-state-card hidden"
+                  aria-live="polite"
+                  aria-hidden="true"
+                  data-selectable-list-no-results-state
+                >
+                  <p class="list-page-state-eyebrow">No matching results</p>
+                  <h2 class="list-page-state-title">No visible root users match this search</h2>
+                  <p class="list-page-state-description">
+                    No visible root users matched
+                    <span class="list-page-state-query" data-selectable-list-query-copy>this query</span>.
+                    Clear the current search to return to the full directory.
+                  </p>
+                  <div class="list-page-state-actions">
+                    <button class="list-page-state-button" type="button" data-selectable-list-clear-search>
+                      Clear search
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  class="list-page-state-card hidden"
+                  aria-live="polite"
+                  aria-hidden="true"
+                  data-selectable-list-initial-error-state
+                >
+                  <p class="list-page-state-eyebrow">Directory unavailable</p>
+                  <h2 class="list-page-state-title">Root users could not load</h2>
+                  <p class="list-page-state-description">
+                    The protected directory request failed without collapsing the shell. Retry to request the current
+                    visible root-user list again.
+                  </p>
+                  <div class="list-page-state-actions">
+                    <button class="list-page-state-button" type="button" data-selectable-list-initial-retry>
+                      Retry directory load
+                    </button>
+                  </div>
+                </div>
+
+                <div data-selectable-list-items></div>
+
+                <div class="list-page-lazy-load-status" aria-live="polite" data-selectable-list-status>
+                  <button class="list-page-lazy-load-status-button" type="button" data-selectable-list-status-action>
+                    Load more visible root users
+                  </button>
+                </div>
+
+                <div
+                  class="list-page-append-error hidden"
+                  aria-live="polite"
+                  aria-hidden="true"
+                  data-selectable-list-append-error
+                >
+                  <p class="list-page-append-error-copy">More root users could not load right now.</p>
+                  <button
+                    class="list-page-state-button list-page-append-error-button"
+                    type="button"
+                    data-selectable-list-append-retry
+                  >
+                    Retry load more
+                  </button>
+                </div>
+
+                <div class="list-page-lazy-load-sentinel" aria-hidden="true" data-selectable-list-sentinel></div>
+              </div>
+
+              <aside
+                id="root-users-detail-panel"
+                class="list-page-detail-panel hidden"
+                aria-labelledby="root-users-detail-title"
+                aria-hidden="true"
+                data-selectable-list-detail-panel
+                data-list-detail-split-layout-slot="detail"
+              >
+                <div class="list-page-detail-header">
+                  <div class="list-page-detail-copy">
+                    <p
+                      id="root-users-detail-meta"
+                      class="list-page-detail-meta tooltip-anchor"
+                      data-selectable-list-detail-field="meta"
+                      data-overflow-tooltip-source
+                    ></p>
+                    <h2
+                      id="root-users-detail-title"
+                      class="list-page-detail-title"
+                      data-selectable-list-detail-field="title"
+                      tabindex="-1"
+                    ></h2>
+                    <p
+                      id="root-users-detail-subtitle"
+                      class="list-page-detail-subtitle"
+                      data-selectable-list-detail-field="subtitle"
+                    ></p>
+                  </div>
+                  <div class="list-page-detail-controls">
+                    <div class="list-page-detail-action-row">
+                      <button
+                        id="root-users-detail-close"
+                        class="drawer-close-button"
+                        type="button"
+                        aria-label="Close root user details"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="list-page-detail-body">
+                  <div
+                    class="list-page-detail-error hidden"
+                    aria-live="polite"
+                    aria-hidden="true"
+                    data-selectable-list-detail-error
+                  >
+                    <p class="list-page-state-eyebrow">Detail unavailable</p>
+                    <h3 class="list-page-state-title">Root-user detail could not load</h3>
+                    <p class="list-page-state-description">
+                      The detail surface stayed local to this panel. Retry to restore the selected root-user summary.
+                    </p>
+                    <div class="list-page-state-actions">
+                      <button class="list-page-state-button" type="button" data-selectable-list-detail-retry>
+                        Retry detail load
+                      </button>
+                    </div>
+                  </div>
+                  <p
+                    id="root-users-detail-description"
+                    class="list-page-detail-description"
+                    data-selectable-list-detail-field="description"
+                  ></p>
+                  <div
+                    id="root-users-detail-tags"
+                    class="list-page-detail-tags"
+                    aria-label="Selected root user fields"
+                    data-selectable-list-detail-field="tags"
+                  ></div>
+                </div>
+
+                <div class="list-page-detail-footer">
+                  <div class="list-page-detail-nav-row">
+                    <button
+                      id="root-users-detail-prev"
+                      class="list-page-detail-nav-button"
+                      type="button"
+                      aria-label="Show previous root user"
+                    >
+                      Previous
+                    </button>
+                    <span id="root-users-detail-next-anchor" class="tooltip-anchor list-page-detail-nav-anchor">
+                      <button
+                        id="root-users-detail-next"
+                        class="list-page-detail-nav-button"
+                        type="button"
+                        aria-label="Show next root user"
+                      >
+                        Next
+                      </button>
+                    </span>
+                  </div>
+                </div>
+              </aside>
+            </section>
+          </section>
 
           <section id="page-roles" class="component-catalog-section hidden">
             <div class="component-catalog-section-header">
@@ -440,7 +693,200 @@
             </div>
           </section>
 
-          <section id="page-web-app-hierarchy" class="hidden"></section>
+          <section id="page-web-app-hierarchy" class="component-catalog-section hidden">
+              <p id="root-admin-web-app-hierarchy-summary" class="visually-hidden" aria-live="polite">Waiting for curated hierarchy truth.</p>
+              <p id="root-admin-web-app-hierarchy-selection-summary" class="visually-hidden">
+                Choose a module or page from the tree to edit topology-owned details or page settings.
+              </p>
+              <div id="web-app-hierarchy-observed-state" class="visually-hidden">Select a page to review its current route, locator, and observed-app posture.</div>
+              <div id="web-app-hierarchy-preview-state" class="visually-hidden">No pending design-system proposal preview is loaded yet.</div>
+
+              <h2 id="root-admin-web-app-hierarchy-detail-title" class="visually-hidden">Loading hierarchy</h2>
+              <p id="root-admin-web-app-hierarchy-detail-copy" class="visually-hidden"></p>
+              <dl id="root-admin-web-app-hierarchy-detail-meta" class="visually-hidden"></dl>
+              <section class="component-catalog-section" aria-labelledby="web-app-hierarchy-page-title">
+                <div class="component-catalog-section-header">
+                  <p class="top-nav-preview-eyebrow">Baseline Reference</p>
+                  <h1 id="web-app-hierarchy-page-title" class="component-catalog-section-title">Web App Hierarchy</h1>
+                  <p class="component-catalog-meta">
+                    Configure curated hierarchy truth and page settings from one governed editing surface while the hierarchy tree stays in the shell-attached drawer.
+                  </p>
+                  <div class="component-catalog-section-actions">
+                    <span id="web-app-hierarchy-page-status" class="form-page-status">Waiting for curated hierarchy truth.</span>
+                    <button id="web-app-hierarchy-refresh-button" class="accessibility-chip" type="button">Refresh hierarchy</button>
+                    <button id="web-app-hierarchy-preview-button" class="accessibility-chip" type="button">Preview proposals</button>
+                    <button id="web-app-hierarchy-apply-button" class="accessibility-chip active" type="button">Apply preview</button>
+                  </div>
+                </div>
+
+                <section
+                  class="form-page-shell"
+                  aria-labelledby="web-app-hierarchy-page-title"
+                  data-form-error-mode="false"
+                  data-form-disabled-mode="false"
+                  data-form-mobile-view="false"
+                >
+                  <div class="form-page-layout">
+                    <form id="web-app-page-settings-form" class="form-page-card" novalidate>
+                    <section id="web-app-hierarchy-structure-state" class="form-page-section">
+                      <div class="form-page-section-header form-page-intro">
+                        <div>
+                          <p class="top-nav-preview-eyebrow">Editor</p>
+                          <h2 id="web-app-hierarchy-structure-shell-title" class="form-page-title">Edit selected app surface</h2>
+                          <p class="component-catalog-meta">
+                            Keep hierarchy-owned structure facts and page settings in one governed form while the hierarchy tree remains the shell-attached context-nav drawer.
+                          </p>
+                        </div>
+                      </div>
+                      <div id="web-app-hierarchy-structure-content">
+                        <p class="form-page-section-copy">Select a node from the hierarchy tree to review structure-owned fields.</p>
+                      </div>
+                      <div id="web-app-module-landing-form" class="form-page-grid hidden">
+                        <label class="form-field form-field-span-2">
+                          <span class="form-field-label">Landing page</span>
+                          <select id="web-app-module-landing-select" class="form-field-input" name="landingPageWebAppPageId"></select>
+                          <span class="form-field-help">
+                            Save this when the selected module should resolve `/route/module` directly into one of its top-level pages.
+                          </span>
+                        </label>
+                      </div>
+                    </section>
+
+                    <section
+                      id="web-app-page-settings-shell"
+                      class="form-page-section"
+                      aria-labelledby="web-app-page-settings-section-title"
+                    >
+                      <div class="form-page-section-header">
+                        <div>
+                          <p class="top-nav-preview-eyebrow">Section 02</p>
+                          <h3 id="web-app-page-settings-section-title" class="form-page-section-title">Page settings</h3>
+                        </div>
+                        <p class="form-page-section-copy">
+                          Configure the selected page's governed shell behavior without changing topology-owned placement or naming truth.
+                        </p>
+                      </div>
+
+                      <div id="web-app-page-settings-empty">
+                        Select a page from the hierarchy tree to edit icon, context navigation, top-nav presence, and page template.
+                      </div>
+
+                      <div id="web-app-page-settings-fields" class="form-page-grid hidden">
+                                <label class="form-field form-field-span-2">
+                                  <span class="form-field-label">Page name</span>
+                                  <input id="web-app-page-settings-display-label" class="form-field-input" type="text" readonly />
+                                  <span class="form-field-help">
+                                    Page naming still belongs to hierarchy truth. Rename the selected page from the tree.
+                                  </span>
+                                </label>
+
+                                <div class="form-field">
+                                  <span class="form-field-label" id="web-app-page-settings-icon-label">Icon</span>
+                                  <div id="web-app-page-settings-icon-grid-host"></div>
+                                  <span class="form-field-help">Choose a governed icon from the shared design-system icon library.</span>
+                                </div>
+
+                                <label class="form-toggle-row form-field-span-2">
+                                  <span class="form-toggle-copy">
+                                    <strong>Show in top nav</strong>
+                                    <span>If enabled, the page can appear as a top-nav button.</span>
+                                  </span>
+                                  <span class="form-toggle-control">
+                                    <input
+                                      id="web-app-page-settings-show-in-top-nav"
+                                      class="form-toggle-input"
+                                      type="checkbox"
+                                      name="showInTopNav"
+                                    />
+                                    <span class="form-toggle-track" aria-hidden="true"></span>
+                                  </span>
+                                </label>
+
+                                <label class="form-field">
+                                  <span class="form-field-label">Page template</span>
+                                  <select id="web-app-page-settings-template" class="form-field-input" name="pageTemplateKey"></select>
+                                  <span class="form-field-help">
+                                    Template intent lives with page settings so shell behavior and topology stay decoupled.
+                                  </span>
+                                </label>
+
+                                <div class="form-field form-field-span-2">
+                                  <span class="form-field-label" id="web-app-page-settings-context-nav-label">Context navigation</span>
+                                  <div id="web-app-page-settings-context-nav-host"></div>
+                                  <span class="form-field-help">
+                                    If nothing is selected, the selected page becomes the default single-item context-nav destination.
+                                  </span>
+                                </div>
+                      </div>
+                    </section>
+
+                      <div id="web-app-page-settings-actions" class="form-page-footer hidden">
+                        <button id="web-app-module-landing-save" class="accessibility-chip hidden" type="button">Save landing page</button>
+                        <button id="web-app-page-settings-save" type="button" class="accessibility-chip active hidden">Save page settings</button>
+                      </div>
+                    </form>
+                  </div>
+                </section>
+              </section>
+
+            <div id="hierarchy-tree-drawer-scrim" class="hierarchy-tree-drawer-scrim hidden"></div>
+
+            <aside
+              id="hierarchy-tree-drawer"
+              class="side-panel accessibility-drawer"
+              aria-labelledby="hierarchy-tree-drawer-title"
+              aria-hidden="false"
+            >
+              <div id="hierarchy-tree-drawer-resize" class="hierarchy-tree-drawer-resize" aria-hidden="true"></div>
+              <div class="side-panel-header accessibility-drawer-header">
+                <div>
+                  <p class="drawer-eyebrow">Hierarchy</p>
+                  <h2 id="hierarchy-tree-drawer-title">Content hierarchy</h2>
+                  <p id="hierarchy-tree-live-note" class="hierarchy-tree-display-copy">
+                    Loading curated hierarchy truth from GetTree.
+                  </p>
+                </div>
+                <div class="hierarchy-tree-drawer-header-actions">
+                  <button
+                    id="hierarchy-tree-root-menu-button"
+                    class="icon-button"
+                    type="button"
+                    aria-label="Open root options"
+                    aria-expanded="false"
+                    aria-controls="hierarchy-tree-root-menu"
+                  >
+                    <span class="icon-button-glyph" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false"><path d="M12 6.75a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5z" /></svg>
+                    </span>
+                  </button>
+                  <div
+                    id="hierarchy-tree-root-menu"
+                    class="hierarchy-tree-root-menu hidden"
+                    role="menu"
+                    aria-labelledby="hierarchy-tree-root-menu-button"
+                  >
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="add-root">Add top-level page</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="expand-all">Expand all</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="collapse-all">Collapse all</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="reset-open">Reset open state</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="open-selected">Open selected</div>
+                    <div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="select-current">Select current</div>
+                  </div>
+                  <button
+                    id="hierarchy-tree-drawer-close"
+                    class="icon-button"
+                    type="button"
+                    aria-label="Close hierarchy drawer"
+                  >
+                    <span class="icon-button-glyph" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false"><path d="M6 6 18 18M18 6 6 18" /></svg>
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div id="hierarchy-tree-tree" class="hierarchy-tree-tree"></div>
+            </aside>
+          </section>
         </main>
 
         <div id="language-modal" class="language-modal hidden" aria-hidden="true">

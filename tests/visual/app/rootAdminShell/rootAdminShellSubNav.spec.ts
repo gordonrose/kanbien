@@ -387,6 +387,28 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
     }
   });
 
+  test("every post-login routed surface keeps the governed page-shell section posture", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+
+    const cases = [
+      { route: "/root-admin", pageSelector: "#page-overview" },
+      { route: "/root-admin/users", pageSelector: "#page-users" },
+      { route: "/root-admin/roles", pageSelector: "#page-roles" },
+      { route: "/root-admin/tenants", pageSelector: "#page-tenants" },
+      { route: "/root-admin/tenant-admins", pageSelector: "#page-tenant-admins" },
+      { route: "/root-admin/web-app-hierarchy", pageSelector: "#page-web-app-hierarchy" },
+    ];
+
+    for (const testCase of cases) {
+      await bootstrapAuthenticatedShell(page, testCase.route);
+
+      const pageSection = page.locator(testCase.pageSelector);
+      await expect(pageSection).toBeVisible();
+      await expect(pageSection).toHaveClass(/component-catalog-section/);
+      await expect(pageSection.locator(".component-catalog-section-header").first()).toBeVisible();
+    }
+  });
+
   test("overview keeps the shallow breadcrumb while exposing the governed section rail", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
     await bootstrapAuthenticatedShell(page, "/root-admin");
