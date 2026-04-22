@@ -1,4 +1,5 @@
 export {
+  createPublicWebAppHierarchyBuilderFeature,
   createWebAppHierarchyBuilderFeature,
   createWebAppHierarchyIntegrationSeam,
 } from "./integration";

@@ -7,10 +7,17 @@ import { createNotificationDeliveryFeature } from "../../features/notificationDe
 import { createTenantAdminsFeature } from "../../features/tenantAdmins";
 import { createTenantAuthFeature } from "../../features/tenantAuth";
 import { createTenantConfigurationFeature } from "../../features/tenantConfiguration";
-import { createWebAppHierarchyBuilderFeature } from "../../features/webAppHierarchyBuilder";
-import { createWebAppPageSettingsFeature } from "../../features/webAppPageSettings";
+import {
+  createPublicWebAppHierarchyBuilderFeature,
+  createWebAppHierarchyBuilderFeature,
+} from "../../features/webAppHierarchyBuilder";
+import {
+  createPublicWebAppPageSettingsFeature,
+  createWebAppPageSettingsFeature,
+} from "../../features/webAppPageSettings";
 import { createEntityBuilderFeature } from "../../features/entityBuilder";
 import { createWebAppSurfaceDiscoveryFeature } from "../../features/webAppSurfaceDiscovery";
+import { createDesignSystemCanonicalsFeature } from "../../features/designSystemCanonicals";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -129,6 +136,13 @@ v1Router.use(
   ),
 );
 v1Router.use(
+  "/web-app-hierarchy/public",
+  publicReadRateLimit,
+  createPublicWebAppHierarchyBuilderFeature(
+    dbPool,
+  ),
+);
+v1Router.use(
   "/web-app-hierarchy",
   requireRootSession,
   authenticatedGeneralRateLimit,
@@ -136,6 +150,13 @@ v1Router.use(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/web-app-page-settings/public",
+  publicReadRateLimit,
+  createPublicWebAppPageSettingsFeature(
+    dbPool,
   ),
 );
 v1Router.use(
@@ -163,6 +184,14 @@ v1Router.use(
   requireRootSession,
   authenticatedGeneralRateLimit,
   createWebAppSurfaceDiscoveryFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/design-system-canonicals",
+  createDesignSystemCanonicalsFeature(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,

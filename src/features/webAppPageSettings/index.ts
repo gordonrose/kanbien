@@ -1,4 +1,7 @@
-export { createWebAppPageSettingsFeature } from "./integration";
+export {
+  createPublicWebAppPageSettingsFeature,
+  createWebAppPageSettingsFeature,
+} from "./integration";
 export type {
   ApprovedIconCatalogEntryResponse,
   ApprovedPageTemplateCatalogEntryResponse,

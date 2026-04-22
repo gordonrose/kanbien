@@ -105,6 +105,11 @@
               <dd id="top-nav-canonical-circumstances">Loading URL-driven viewing circumstances...</dd>
             </div>
           </dl>
+          <nav class="canonical-stepper" aria-label="Canonical navigation">
+            <span id="top-nav-canonical-current" class="canonical-stepper-current">Resolving current canonical...</span>
+            <a id="top-nav-canonical-prev" class="canonical-stepper-link" href="#" aria-disabled="true">Previous</a>
+            <a id="top-nav-canonical-next" class="canonical-stepper-link" href="#" aria-disabled="true">Next</a>
+          </nav>
         </section>
 
         <section class="top-nav-preview-stage-section" aria-labelledby="top-nav-preview-stage-title">
@@ -129,7 +134,7 @@
                 </a>
 
                 <nav class="primary-nav" aria-label="Primary">
-                  <div id="primary-nav-links" class="primary-nav-links">
+                  <div id="preview-primary-nav-links" class="primary-nav-links">
                     <a class="nav-link tooltip-anchor active" href="/design-system" aria-current="page" data-tooltip="Overview">Overview</a>
                     <a class="nav-link tooltip-anchor" href="/design-system/foundations" data-tooltip="Foundations">Foundations</a>
                     <a class="nav-link tooltip-anchor" href="/design-system/components" data-tooltip="Components">Components</a>
@@ -137,31 +142,31 @@
                     <a class="nav-link tooltip-anchor" href="/design-system/templates" data-tooltip="Pages">Pages</a>
                     <a class="nav-link tooltip-anchor" href="/design-system/resources" data-tooltip="Resources">Resources</a>
                   </div>
-                  <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+                  <div id="preview-primary-nav-overflow" class="primary-nav-overflow hidden">
                     <button
-                      id="primary-nav-overflow-button"
+                      id="preview-primary-nav-overflow-button"
                       class="nav-link primary-nav-overflow-button"
                       type="button"
                       aria-expanded="false"
-                      aria-controls="primary-nav-overflow-menu"
+                      aria-controls="preview-primary-nav-overflow-menu"
                     >
                       More
                     </button>
                     <div
-                      id="primary-nav-overflow-menu"
+                      id="preview-primary-nav-overflow-menu"
                       class="primary-nav-overflow-menu hidden"
                       role="menu"
-                      aria-labelledby="primary-nav-overflow-button"
+                      aria-labelledby="preview-primary-nav-overflow-button"
                     ></div>
                   </div>
                 </nav>
 
                 <button
-                  id="mobile-nav-button"
+                  id="preview-mobile-nav-button"
                   class="mobile-nav-button"
                   type="button"
                   aria-expanded="false"
-                  aria-controls="mobile-nav-menu"
+                  aria-controls="preview-mobile-nav-menu"
                   aria-label="Open navigation menu"
                 >
                   <span class="burger-icon" aria-hidden="true">
@@ -173,11 +178,11 @@
 
                 <div class="nav-utilities">
                   <button
-                    id="profile-menu-button"
+                    id="preview-profile-menu-button"
                     class="profile-button tooltip-anchor"
                     type="button"
                     aria-expanded="false"
-                    aria-controls="profile-menu"
+                    aria-controls="preview-profile-menu"
                     data-tooltip="Profile"
                   >
                     <span class="profile-avatar" aria-hidden="true">GP</span>
@@ -187,13 +192,13 @@
                   </button>
 
                   <div
-                    id="profile-menu"
+                    id="preview-profile-menu"
                     class="profile-menu hidden"
                     role="menu"
-                    aria-labelledby="profile-menu-button"
+                    aria-labelledby="preview-profile-menu-button"
                   >
                     <button
-                      id="profile-language-button"
+                      id="preview-profile-language-button"
                       class="menu-item menu-item-button tooltip-anchor"
                       type="button"
                       role="menuitem"
@@ -202,7 +207,7 @@
                       Language
                     </button>
                     <button
-                      id="close-profile-menu"
+                      id="preview-close-profile-menu"
                       class="menu-item menu-item-button tooltip-anchor"
                       type="button"
                       role="menuitem"
@@ -214,7 +219,7 @@
                 </div>
               </header>
 
-              <nav id="mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile primary">
+              <nav id="preview-mobile-nav-menu" class="mobile-nav-menu hidden" aria-label="Mobile primary">
                 <a class="nav-link tooltip-anchor active" href="/design-system" aria-current="page" data-tooltip="Overview">Overview</a>
                 <a class="nav-link tooltip-anchor" href="/design-system/foundations" data-tooltip="Foundations">Foundations</a>
                 <a class="nav-link tooltip-anchor" href="/design-system/components" data-tooltip="Components">Components</a>
@@ -223,19 +228,19 @@
                 <a class="nav-link tooltip-anchor" href="/design-system/resources" data-tooltip="Resources">Resources</a>
                 <div class="mobile-profile-group">
                   <button
-                    id="mobile-profile-button"
+                    id="preview-mobile-profile-button"
                     class="mobile-profile-item"
                     type="button"
                     aria-expanded="false"
-                    aria-controls="mobile-profile-menu"
+                    aria-controls="preview-mobile-profile-menu"
                   >
                     Profile
                   </button>
-                  <div id="mobile-profile-menu" class="mobile-profile-menu hidden">
+                  <div id="preview-mobile-profile-menu" class="mobile-profile-menu hidden">
                     <a class="mobile-subnav-link tooltip-anchor" href="/design-system/profile" data-tooltip="My Profile">My Profile</a>
                     <a class="mobile-subnav-link tooltip-anchor" href="/design-system/profile/preferences" data-tooltip="Preferences">Preferences</a>
                     <button
-                      id="mobile-language-button"
+                      id="preview-mobile-language-button"
                       class="mobile-subnav-link mobile-subnav-button tooltip-anchor"
                       type="button"
                       data-tooltip="Language"
@@ -320,13 +325,6 @@
                 </div>
               </section>
               </div>
-            </div>
-            <div class="canonical-render-footer">
-              <nav class="canonical-stepper" aria-label="Canonical navigation">
-                <span id="top-nav-canonical-current" class="canonical-stepper-current">Resolving current canonical...</span>
-                <a id="top-nav-canonical-prev" class="canonical-stepper-link" href="#" aria-disabled="true">Previous</a>
-                <a id="top-nav-canonical-next" class="canonical-stepper-link" href="#" aria-disabled="true">Next</a>
-              </nav>
             </div>
           </section>
         </div>

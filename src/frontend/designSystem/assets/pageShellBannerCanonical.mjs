@@ -36,13 +36,73 @@ const refs = [
 const refMap = new Map(refs.map((entry) => [entry.ref, entry]));
 
 const params = new URLSearchParams(window.location.search);
-const requestedRef = params.get("ref") ?? "PSBR-001";
-const theme = params.get("theme") ?? "normal";
-const direction = params.get("dir") ?? "ltr";
-const zoom = Number.parseInt(params.get("zoom") ?? "0", 10);
+const canonicalRenderingsPathMatch = window.location.pathname.match(
+  /^\/design-system\/canonical-renderings\/([^/]+)\/([^/]+)$/,
+);
 
-const activeRef = refMap.get(requestedRef) ?? refs[0];
-const activeIndex = refs.findIndex((entry) => entry.ref === activeRef.ref);
+async function resolveGeneratedCanonicalState() {
+  if (!canonicalRenderingsPathMatch || canonicalRenderingsPathMatch[1] !== "page-shell-banner") {
+    return null;
+  }
+
+  const response = await fetch(
+    `/v1/design-system-canonicals/public/families/${encodeURIComponent(canonicalRenderingsPathMatch[1])}/references/${encodeURIComponent(canonicalRenderingsPathMatch[2])}`,
+    {
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to load generated page-shell-banner canonical with status ${response.status}`);
+  }
+
+  const payload = await response.json();
+  return {
+    family: payload.family,
+    references: refs.map((entry) => ({
+      ...entry,
+      route: `/design-system/canonical-renderings/page-shell-banner/${encodeURIComponent(entry.ref)}`,
+    })),
+    activeRef: {
+      ref: payload.reference.referenceId,
+      title: payload.reference.displayLabel,
+      banners: Array.isArray(payload.reference.specimenPayload?.banners)
+        ? payload.reference.specimenPayload.banners
+        : [],
+      note: payload.reference.description,
+      route: payload.reference.renderRoutePath,
+      theme: payload.reference.theme,
+      direction: payload.reference.direction,
+      zoom: payload.reference.zoom,
+      viewport: payload.reference.viewport,
+    },
+    launchHref: payload.family.generatedLauncherRoutePath,
+  };
+}
+
+function resolveLegacyCanonicalState() {
+  const requestedRef = params.get("ref") ?? "PSBR-001";
+  const theme = params.get("theme") ?? "normal";
+  const direction = params.get("dir") ?? "ltr";
+  const zoom = Number.parseInt(params.get("zoom") ?? "0", 10);
+  const activeRef = refMap.get(requestedRef) ?? refs[0];
+  return {
+    family: null,
+    references: refs.map((entry) => ({ ...entry, route: routeFor(entry.ref, theme, direction, zoom) })),
+    activeRef: {
+      ...activeRef,
+      route: routeFor(activeRef.ref, theme, direction, zoom),
+      theme,
+      direction,
+      zoom,
+      viewport: "Template-hosted shell banner reviewed on a dedicated canonical render surface.",
+    },
+    launchHref: "/design-system/canonicals/page-shell-banner",
+  };
+}
 
 const layout = document.querySelector(".canonical-render-layout");
 const previewShell = document.getElementById("page-shell-banner-preview-shell");
@@ -56,15 +116,9 @@ const metaNotes = document.getElementById("page-shell-banner-meta-notes");
 const current = document.getElementById("page-shell-banner-canonical-current");
 const prev = document.getElementById("page-shell-banner-canonical-prev");
 const next = document.getElementById("page-shell-banner-canonical-next");
-const pageShellBannerController = previewBannerDemo instanceof HTMLElement
-  ? createPageShellBannerController(previewBannerDemo, {
-    visible: true,
-    visibleIds: activeRef.banners,
-    ariaLabel: previewBannerDemo.getAttribute("aria-label") ?? "Page-shell banner canonical demo",
-  })
-  : null;
+const launcherLink = document.querySelector('a[href="/design-system/canonicals/page-shell-banner"]');
 
-function routeFor(ref) {
+function routeFor(ref, theme, direction, zoom) {
   return `/design-system/components/page-shell-banner?ref=${encodeURIComponent(ref)}&theme=${encodeURIComponent(theme)}&dir=${encodeURIComponent(direction)}&zoom=${encodeURIComponent(String(Number.isFinite(zoom) ? zoom : 0))}`;
 }
 
@@ -75,71 +129,96 @@ function normalizeZoom(value) {
   return Math.max(-100, Math.min(100, value));
 }
 
-const normalizedZoom = normalizeZoom(zoom);
-const scale = 1 + (normalizedZoom / 100) * 0.5;
+async function main() {
+  const resolvedState = await resolveGeneratedCanonicalState() ?? resolveLegacyCanonicalState();
+  const activeRef = resolvedState.activeRef;
+  const theme = activeRef.theme ?? "normal";
+  const direction = activeRef.direction ?? "ltr";
+  const normalizedZoom = normalizeZoom(activeRef.zoom ?? 0);
+  const scale = 1 + (normalizedZoom / 100) * 0.5;
+  const activeIndex = resolvedState.references.findIndex((entry) => entry.ref === activeRef.ref);
+  const prevRef = activeIndex > 0 ? resolvedState.references[activeIndex - 1] : null;
+  const nextRef =
+    activeIndex >= 0 && activeIndex < resolvedState.references.length - 1
+      ? resolvedState.references[activeIndex + 1]
+      : null;
+  const pageShellBannerController = previewBannerDemo instanceof HTMLElement
+    ? createPageShellBannerController(previewBannerDemo, {
+      visible: true,
+      visibleIds: activeRef.banners,
+      ariaLabel: previewBannerDemo.getAttribute("aria-label") ?? "Page-shell banner canonical demo",
+    })
+    : null;
 
-if (layout instanceof HTMLElement) {
-  layout.dataset.themeScope = theme;
-}
+  if (layout instanceof HTMLElement) {
+    layout.dataset.themeScope = theme;
+  }
 
-if (previewShell instanceof HTMLElement) {
-  previewShell.setAttribute("dir", direction);
-  previewShell.style.setProperty("--ui-scale", String(scale));
-  previewShell.dataset.magnification = String(normalizedZoom);
-  previewShell.dataset.renderStatus = "ready";
-}
+  if (previewShell instanceof HTMLElement) {
+    previewShell.setAttribute("dir", direction);
+    previewShell.style.setProperty("--ui-scale", String(scale));
+    previewShell.dataset.magnification = String(normalizedZoom);
+    previewShell.dataset.renderStatus = "ready";
+  }
 
-if (pageShellBannerController) {
-  pageShellBannerController.setVisibleIds(activeRef.banners);
-}
+  if (pageShellBannerController) {
+    pageShellBannerController.setVisibleIds(activeRef.banners);
+  }
 
-if (matchList instanceof HTMLElement) {
-  matchList.textContent = activeRef.ref;
-}
+  if (launcherLink instanceof HTMLAnchorElement) {
+    launcherLink.href = resolvedState.launchHref;
+  }
 
-if (circumstances instanceof HTMLElement) {
-  circumstances.textContent = `${theme} theme, ${direction.toUpperCase()} direction, ${normalizedZoom}% magnification.`;
-}
+  if (matchList instanceof HTMLElement) {
+    matchList.textContent = activeRef.ref;
+  }
 
-if (metaState instanceof HTMLElement) {
-  metaState.textContent = activeRef.title;
-}
+  if (circumstances instanceof HTMLElement) {
+    circumstances.textContent = `${theme} theme, ${direction.toUpperCase()} direction, ${normalizedZoom}% magnification.`;
+  }
 
-if (metaViewport instanceof HTMLElement) {
-  metaViewport.textContent = "Template-hosted shell banner reviewed on a dedicated canonical render surface.";
-}
+  if (metaState instanceof HTMLElement) {
+    metaState.textContent = activeRef.title;
+  }
 
-if (metaNotes instanceof HTMLElement) {
-  metaNotes.textContent = activeRef.note;
-}
+  if (metaViewport instanceof HTMLElement) {
+    metaViewport.textContent =
+      activeRef.viewport ?? "Template-hosted shell banner reviewed on a dedicated canonical render surface.";
+  }
 
-if (previewSummary instanceof HTMLElement) {
-  previewSummary.textContent = `${activeRef.ref} loaded on the dedicated page-shell-banner canonical surface.`;
-}
+  if (metaNotes instanceof HTMLElement) {
+    metaNotes.textContent = activeRef.note;
+  }
 
-if (current instanceof HTMLElement) {
-  current.textContent = `${activeRef.ref} ${activeRef.title}`;
-}
+  if (previewSummary instanceof HTMLElement) {
+    previewSummary.textContent = `${activeRef.ref} loaded on the dedicated page-shell-banner canonical surface.`;
+  }
 
-const prevRef = activeIndex > 0 ? refs[activeIndex - 1] : null;
-const nextRef = activeIndex >= 0 && activeIndex < refs.length - 1 ? refs[activeIndex + 1] : null;
+  if (current instanceof HTMLElement) {
+    current.textContent = `${activeRef.ref} ${activeRef.title}`;
+  }
 
-if (prev instanceof HTMLAnchorElement) {
-  if (prevRef) {
-    prev.href = routeFor(prevRef.ref);
-    prev.removeAttribute("aria-disabled");
-  } else {
-    prev.href = "#";
-    prev.setAttribute("aria-disabled", "true");
+  if (prev instanceof HTMLAnchorElement) {
+    if (prevRef) {
+      prev.href = prevRef.route;
+      prev.removeAttribute("aria-disabled");
+    } else {
+      prev.href = "#";
+      prev.setAttribute("aria-disabled", "true");
+    }
+  }
+
+  if (next instanceof HTMLAnchorElement) {
+    if (nextRef) {
+      next.href = nextRef.route;
+      next.removeAttribute("aria-disabled");
+    } else {
+      next.href = "#";
+      next.setAttribute("aria-disabled", "true");
+    }
   }
 }
 
-if (next instanceof HTMLAnchorElement) {
-  if (nextRef) {
-    next.href = routeFor(nextRef.ref);
-    next.removeAttribute("aria-disabled");
-  } else {
-    next.href = "#";
-    next.setAttribute("aria-disabled", "true");
-  }
-}
+void main().catch((error) => {
+  console.error("Failed to render page-shell-banner canonical", error);
+});

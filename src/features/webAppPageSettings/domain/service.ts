@@ -1,4 +1,5 @@
 import { getWebAppPageContextNavProjection } from "./getWebAppPageContextNavProjection";
+import { getPublicDesignSystemPageSettings } from "./getPublicDesignSystemPageSettings";
 import { getWebAppPageSettings } from "./getWebAppPageSettings";
 import { getWebAppPageSettingsOptions } from "./getWebAppPageSettingsOptions";
 import { updateWebAppPageSettings } from "./updateWebAppPageSettings";
@@ -15,6 +16,9 @@ import type { WebAppPageSettingsRepository } from "../persistence/repository";
 import type { WebAppHierarchyIntegrationSeam } from "../../webAppHierarchyBuilder";
 
 export interface WebAppPageSettingsService {
+  getPublicDesignSystemPageSettings(
+    input: GetWebAppPageSettingsInput,
+  ): Promise<WebAppPageSettingsResponse>;
   getWebAppPageContextNavProjection(
     input: GetWebAppPageContextNavProjectionInput,
   ): Promise<WebAppPageContextNavProjectionResponse>;
@@ -32,6 +36,8 @@ export function createWebAppPageSettingsService(
   hierarchySeam: WebAppHierarchyIntegrationSeam,
 ): WebAppPageSettingsService {
   return {
+    getPublicDesignSystemPageSettings: (input) =>
+      getPublicDesignSystemPageSettings(repository, hierarchySeam, input),
     getWebAppPageContextNavProjection: (input) =>
       getWebAppPageContextNavProjection(repository, hierarchySeam, input),
     getWebAppPageSettings: (input) => getWebAppPageSettings(repository, hierarchySeam, input),

@@ -825,8 +825,57 @@ const designSystemBreadcrumbChains = new Map([
 
 function resolveBreadcrumbChain(pathname) {
   const normalizedPath = normalizePathname(pathname);
+  const generatedCanonicalRenderingChain = resolveGeneratedCanonicalRenderingBreadcrumbChain(normalizedPath);
+  if (generatedCanonicalRenderingChain) {
+    return generatedCanonicalRenderingChain;
+  }
+
   return designSystemBreadcrumbChains.get(normalizedPath)
     ?? designSystemBreadcrumbChains.get("/design-system");
+}
+
+function humanizeGeneratedCanonicalFamilyKey(familyKey) {
+  return familyKey
+    .split("-")
+    .filter(Boolean)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+    .join(" ");
+}
+
+function resolveGeneratedCanonicalRenderingBreadcrumbChain(pathname) {
+  if (!pathname.startsWith("/design-system/canonical-renderings")) {
+    return null;
+  }
+
+  const segments = pathname
+    .replace(/^\/design-system\/canonical-renderings\/?/, "")
+    .split("/")
+    .filter(Boolean);
+
+  const chain = [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/canonical-renderings", label: "Canonical Renderings" },
+  ];
+
+  if (segments.length === 0) {
+    return chain;
+  }
+
+  const [familyKey, referenceId] = segments;
+  const familyHref = `/design-system/canonical-renderings/${familyKey}`;
+  chain.push({
+    href: familyHref,
+    label: humanizeGeneratedCanonicalFamilyKey(familyKey),
+  });
+
+  if (referenceId) {
+    chain.push({
+      href: `${familyHref}/${referenceId}`,
+      label: referenceId,
+    });
+  }
+
+  return chain;
 }
 
 function renderBreadcrumbMenuItems(items, currentLabel) {
@@ -1218,6 +1267,10 @@ function normalizePrimaryNav(root = document) {
       continue;
     }
 
+    if (primaryNavLinksContainer.closest("#top-nav-preview-frame, .context-nav-preview-shell")) {
+      continue;
+    }
+
     const tooltipAnchors = Boolean(primaryNavLinksContainer.querySelector(".tooltip-anchor"));
     const activeHref = getPreferredPrimaryNavHref(primaryNavLinksContainer, fallbackHref);
     primaryNavLinksContainer.innerHTML = buildPrimaryNavLinkMarkup(activeHref, { tooltipAnchors });
@@ -1225,6 +1278,10 @@ function normalizePrimaryNav(root = document) {
 
   for (const primaryNavOverflowMenu of root.querySelectorAll(".primary-nav-overflow-menu")) {
     if (!(primaryNavOverflowMenu instanceof HTMLElement)) {
+      continue;
+    }
+
+    if (primaryNavOverflowMenu.closest("#top-nav-preview-frame, .context-nav-preview-shell")) {
       continue;
     }
 
@@ -1238,6 +1295,10 @@ function normalizePrimaryNav(root = document) {
 
   for (const mobileNavMenu of root.querySelectorAll(".mobile-nav-menu")) {
     if (!(mobileNavMenu instanceof HTMLElement)) {
+      continue;
+    }
+
+    if (mobileNavMenu.closest("#top-nav-preview-frame, .context-nav-preview-shell")) {
       continue;
     }
 
@@ -1358,14 +1419,14 @@ async function refreshGovernedPrimaryNav() {
   const requestId = ++governedTopNavRequestId;
 
   try {
-    const tree = await fetchJson("/v1/web-app-hierarchy/design-system/applied-tree");
+    const tree = await fetchJson("/v1/web-app-hierarchy/public/design-system/applied-tree");
     const candidates = buildGovernedDesignSystemTopNavCandidates(tree);
 
     const settingsItems = await Promise.all(
       candidates.map(async (candidate) => {
         try {
           const settings = await fetchJson(
-            `/v1/web-app-page-settings/pages/${encodeURIComponent(candidate.webAppPageId)}`,
+            `/v1/web-app-page-settings/public/pages/${encodeURIComponent(candidate.webAppPageId)}`,
           );
           return {
             ...candidate,
@@ -1451,6 +1512,7 @@ function normalizeDesignSystemShellBeforeBinding() {
 
   const preserveCanonicalFullTrail =
     normalizedPath.startsWith("/design-system/canonicals/")
+    || normalizedPath.startsWith("/design-system/canonical-renderings/")
     || normalizedPath.startsWith("/design-system/patterns/hierarchy-tree/render")
     || (
       normalizedPath.startsWith("/design-system/components/")
@@ -1466,24 +1528,24 @@ function normalizeDesignSystemShellBeforeBinding() {
 
 normalizeDesignSystemShellBeforeBinding();
 
-const profileButton = document.getElementById("profile-menu-button");
-const profileMenu = document.getElementById("profile-menu");
-const profileLanguageButton = document.getElementById("profile-language-button");
-const closeProfileMenuButton = document.getElementById("close-profile-menu");
-const brandLockup = document.querySelector(".brand-lockup");
-const primaryNav = document.querySelector(".primary-nav");
-const primaryNavLinksContainer = document.getElementById("primary-nav-links");
+const profileButton = document.getElementById("preview-profile-menu-button") ?? document.getElementById("profile-menu-button");
+const profileMenu = document.getElementById("preview-profile-menu") ?? document.getElementById("profile-menu");
+const profileLanguageButton = document.getElementById("preview-profile-language-button") ?? document.getElementById("profile-language-button");
+const closeProfileMenuButton = document.getElementById("preview-close-profile-menu") ?? document.getElementById("close-profile-menu");
+const brandLockup = document.querySelector("#top-nav-preview-frame .brand-lockup") ?? document.querySelector(".brand-lockup");
+const primaryNav = document.querySelector("#top-nav-preview-frame .primary-nav") ?? document.querySelector(".primary-nav");
+const primaryNavLinksContainer = document.getElementById("preview-primary-nav-links") ?? document.getElementById("primary-nav-links");
 const primaryNavLinks = Array.from(primaryNavLinksContainer?.querySelectorAll(".nav-link") ?? []);
-const primaryNavOverflow = document.getElementById("primary-nav-overflow");
-const primaryNavOverflowButton = document.getElementById("primary-nav-overflow-button");
-const primaryNavOverflowMenu = document.getElementById("primary-nav-overflow-menu");
-const navUtilities = document.querySelector(".nav-utilities");
-const mobileNavButton = document.getElementById("mobile-nav-button");
-const mobileNavMenu = document.getElementById("mobile-nav-menu");
+const primaryNavOverflow = document.getElementById("preview-primary-nav-overflow") ?? document.getElementById("primary-nav-overflow");
+const primaryNavOverflowButton = document.getElementById("preview-primary-nav-overflow-button") ?? document.getElementById("primary-nav-overflow-button");
+const primaryNavOverflowMenu = document.getElementById("preview-primary-nav-overflow-menu") ?? document.getElementById("primary-nav-overflow-menu");
+const navUtilities = document.querySelector("#top-nav-preview-frame .nav-utilities") ?? document.querySelector(".nav-utilities");
+const mobileNavButton = document.getElementById("preview-mobile-nav-button") ?? document.getElementById("mobile-nav-button");
+const mobileNavMenu = document.getElementById("preview-mobile-nav-menu") ?? document.getElementById("mobile-nav-menu");
 const mobileNavLinks = Array.from(mobileNavMenu?.querySelectorAll(".nav-link") ?? []);
-const mobileProfileButton = document.getElementById("mobile-profile-button");
-const mobileProfileMenu = document.getElementById("mobile-profile-menu");
-const mobileLanguageButton = document.getElementById("mobile-language-button");
+const mobileProfileButton = document.getElementById("preview-mobile-profile-button") ?? document.getElementById("mobile-profile-button");
+const mobileProfileMenu = document.getElementById("preview-mobile-profile-menu") ?? document.getElementById("mobile-profile-menu");
+const mobileLanguageButton = document.getElementById("preview-mobile-language-button") ?? document.getElementById("mobile-language-button");
 const breadcrumbNav = document.querySelector(".breadcrumb-nav");
 const breadcrumbList = document.getElementById("breadcrumb-list");
 const breadcrumbHomeLink = document.getElementById("breadcrumb-home-link");
@@ -1521,7 +1583,7 @@ const accentButtons = Array.from(document.querySelectorAll("[data-accent]"));
 const magnificationButtons = Array.from(document.querySelectorAll("[data-magnification-option]"));
 const pageShellBannerDemoRoot = document.querySelector("[data-page-shell-banner-demo]");
 const pageShellBannerVisibilityButtons = Array.from(document.querySelectorAll("[data-page-shell-banner-visibility]"));
-const topNav = document.querySelector(".top-nav");
+const topNav = document.querySelector("#top-nav-preview-frame .top-nav") ?? document.querySelector(".top-nav");
 const subNav = document.querySelector(".sub-nav");
 const designSystemShell = document.querySelector(".design-system-shell");
 const shellTopNav = document.querySelector(".design-system-shell > .top-nav");
@@ -1685,7 +1747,7 @@ const languageOptions = [
 const topNavPreviewFixtures = {
   standard: {
     brand: "Kanbien",
-    primary: ["Overview", "Components", "Patterns", "Templates"],
+    primary: ["Overview", "Foundations", "Components", "Patterns", "Pages", "Resources"],
     profile: "Profile",
     mobileProfile: "Profile",
     menu: ["Language", "Close menu"],
@@ -1695,9 +1757,11 @@ const topNavPreviewFixtures = {
     brand: "Kanbien Internationalization Operations Console",
     primary: [
       "Overview and Platform Signals",
+      "Foundations and System Governance Library",
       "Components and Interaction Contracts",
       "Patterns and Localization Guidance",
       "Templates and Reusable Shell Guidance",
+      "Resources and Operational Readiness Notes",
     ],
     profile: "Profile and Personalization Preferences",
     mobileProfile: "Profile and Personalization Preferences",
@@ -1737,7 +1801,13 @@ function usesLocalCanonicalAppearanceScope() {
 }
 
 function getLocalCanonicalAppearanceScope() {
-  return topNavCanonicalRenderLayout ?? subNavCanonicalRenderLayout ?? contextNavCanonicalRenderLayout ?? null;
+  return topNavPreviewCanvas
+    ?? subNavPreviewShell
+    ?? contextNavPreviewShell
+    ?? topNavCanonicalRenderLayout
+    ?? subNavCanonicalRenderLayout
+    ?? contextNavCanonicalRenderLayout
+    ?? null;
 }
 
 function getAppearanceScopeNode() {
@@ -1902,24 +1972,24 @@ const displaySettingsAccentLabels = {
   },
 };
 const topNavCanonicalReferenceStates = [
-  { ref: "TRP-001", label: "Desktop default", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Desktop baseline with full primary navigation visible, profile controls closed, and no overflow pressure." },
-  { ref: "TRP-002", label: "Desktop overflow", fixture: "standard", width: 880, open: "closed", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Desktop shell under width pressure where overflow activates before overlap or utility collision." },
-  { ref: "TRP-003", label: "Desktop threshold before mobile", fixture: "standard", width: 760, open: "closed", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Desktop threshold state that must not degrade into the disallowed `1 item + More` layout." },
-  { ref: "TRP-004", label: "Mobile shell closed", fixture: "standard", width: 560, open: "closed", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Mobile shell with the collapsed navigation chrome closed." },
-  { ref: "TRP-005", label: "Mobile shell open", fixture: "standard", width: 560, open: "mobile", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Mobile shell with the primary navigation exposed as the full open mobile menu." },
-  { ref: "TRP-006", label: "Profile menu open", fixture: "standard", width: 1120, open: "profile", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Desktop shell with the profile menu open and anchored to the utility region." },
-  { ref: "TRP-007", label: "Overflow menu open", fixture: "standard", width: 880, open: "overflow", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Desktop overflow state with the `More` menu open and derived from the hidden primary destinations." },
-  { ref: "TRP-008", label: "RTL desktop", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "rtl", magnification: 0, circumstance: "RTL desktop shell with native-feeling mirrored alignment and preserved utility separation." },
-  { ref: "TRP-009", label: "RTL mobile", fixture: "standard", width: 560, open: "mobile", theme: "normal", direction: "rtl", magnification: 0, circumstance: "RTL mobile shell with the open mobile navigation and mirrored utility grammar." },
-  { ref: "TRP-010", label: "Magnified desktop", fixture: "long-labels", width: 880, open: "closed", theme: "normal", direction: "ltr", magnification: 100, circumstance: "Magnified desktop shell with long labels, requiring overflow or mobile fallback before crowding." },
-  { ref: "TRP-011", label: "Long brand label", fixture: "long-labels", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Desktop shell with an intentionally long brand label that must yield without distorting the brand mark." },
-  { ref: "TRP-012", label: "Long primary label", fixture: "long-labels", width: 880, open: "overflow", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Desktop overflow state with long primary destination labels preserved through overflow rather than overlap." },
-  { ref: "TRP-013", label: "Long profile label", fixture: "long-labels", width: 1120, open: "profile", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Desktop shell with long profile and menu labels open in the utility menu." },
-  { ref: "TRP-014A", label: "Theme normal", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Normal theme baseline for top-nav readability and contrast." },
-  { ref: "TRP-014B", label: "Theme dark", fixture: "standard", width: 1120, open: "closed", theme: "dark", direction: "ltr", magnification: 0, circumstance: "Dark theme top-nav state used for cross-theme readability review." },
-  { ref: "TRP-014C", label: "Theme desert", fixture: "standard", width: 1120, open: "closed", theme: "desert", direction: "ltr", magnification: 0, circumstance: "Desert theme top-nav state used for cross-theme readability review." },
-  { ref: "TRP-015A", label: "Accent indigo", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Default indigo accent inheritance for the shell." },
-  { ref: "TRP-015B", label: "Accent violet", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, circumstance: "Alternate violet accent inheritance for the shell." },
+  { ref: "TRP-001", label: "Desktop default", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", circumstance: "Desktop baseline with full primary navigation visible, profile controls closed, and no overflow pressure." },
+  { ref: "TRP-002", label: "Desktop overflow", fixture: "standard", width: 880, open: "closed", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", maxVisiblePrimaryItems: 3, circumstance: "Desktop shell under width pressure where overflow activates before overlap or utility collision." },
+  { ref: "TRP-003", label: "Desktop threshold before mobile", fixture: "standard", width: 760, open: "closed", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", maxVisiblePrimaryItems: 2, circumstance: "Desktop threshold state that must not degrade into the disallowed `1 item + More` layout." },
+  { ref: "TRP-004", label: "Mobile shell closed", fixture: "standard", width: 560, open: "closed", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", forceMobileShell: true, circumstance: "Mobile shell with the collapsed navigation chrome closed." },
+  { ref: "TRP-005", label: "Mobile shell open", fixture: "standard", width: 560, open: "mobile", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", forceMobileShell: true, circumstance: "Mobile shell with the primary navigation exposed as the full open mobile menu." },
+  { ref: "TRP-006", label: "Profile menu open", fixture: "standard", width: 1120, open: "profile", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", circumstance: "Desktop shell with the profile menu open and anchored to the utility region." },
+  { ref: "TRP-007", label: "Overflow menu open", fixture: "standard", width: 880, open: "overflow", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", maxVisiblePrimaryItems: 3, circumstance: "Desktop overflow state with the `More` menu open and derived from the hidden primary destinations." },
+  { ref: "TRP-008", label: "RTL desktop", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "rtl", magnification: 0, accent: "#635bff", circumstance: "RTL desktop shell with native-feeling mirrored alignment and preserved utility separation." },
+  { ref: "TRP-009", label: "RTL mobile", fixture: "standard", width: 560, open: "mobile", theme: "normal", direction: "rtl", magnification: 0, accent: "#635bff", forceMobileShell: true, circumstance: "RTL mobile shell with the open mobile navigation and mirrored utility grammar." },
+  { ref: "TRP-010", label: "Magnified desktop", fixture: "long-labels", width: 880, open: "closed", theme: "normal", direction: "ltr", magnification: 100, accent: "#635bff", circumstance: "Magnified desktop shell with long labels, requiring overflow or mobile fallback before crowding." },
+  { ref: "TRP-011", label: "Long brand label", fixture: "long-labels", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", circumstance: "Desktop shell with an intentionally long brand label that must yield without distorting the brand mark." },
+  { ref: "TRP-012", label: "Long primary label", fixture: "long-labels", width: 880, open: "overflow", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", maxVisiblePrimaryItems: 2, circumstance: "Desktop overflow state with long primary destination labels preserved through overflow rather than overlap." },
+  { ref: "TRP-013", label: "Long profile label", fixture: "long-labels", width: 1120, open: "profile", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", circumstance: "Desktop shell with long profile and menu labels open in the utility menu." },
+  { ref: "TRP-014A", label: "Theme normal", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", circumstance: "Normal theme baseline for top-nav readability and contrast." },
+  { ref: "TRP-014B", label: "Theme dark", fixture: "standard", width: 1120, open: "closed", theme: "dark", direction: "ltr", magnification: 0, accent: "#635bff", circumstance: "Dark theme top-nav state used for cross-theme readability review." },
+  { ref: "TRP-014C", label: "Theme desert", fixture: "standard", width: 1120, open: "closed", theme: "desert", direction: "ltr", magnification: 0, accent: "#635bff", circumstance: "Desert theme top-nav state used for cross-theme readability review." },
+  { ref: "TRP-015A", label: "Accent indigo", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", circumstance: "Default indigo accent inheritance for the shell." },
+  { ref: "TRP-015B", label: "Accent violet", fixture: "standard", width: 1120, open: "closed", theme: "normal", direction: "ltr", magnification: 0, accent: "#7c3aed", circumstance: "Alternate violet accent inheritance for the shell." },
 ];
 const subNavPreviewDefaults = {
   width: 1560,
@@ -2684,6 +2754,19 @@ function describeContextNavCanonicalCircumstances(state, matches) {
 
 function getTopNavPreviewStateFromUrl() {
   const params = new URLSearchParams(window.location.search);
+  const requestedReference = getTopNavCanonicalReferenceByRef(getRequestedTopNavCanonicalRef());
+
+  if (requestedReference) {
+    return normalizePreviewState({
+      width: requestedReference.width,
+      fixture: requestedReference.fixture,
+      open: requestedReference.open,
+      theme: requestedReference.theme,
+      direction: requestedReference.direction,
+      magnification: requestedReference.magnification,
+      accent: requestedReference.accent ?? params.get("accent") ?? topNavPreviewDefaults.accent,
+    });
+  }
 
   return normalizePreviewState({
     width: params.get("width") ?? topNavPreviewDefaults.width,
@@ -2764,8 +2847,17 @@ function getTopNavCanonicalReferenceByRef(ref) {
   return topNavCanonicalReferenceStates.find((reference) => reference.ref === ref) ?? null;
 }
 
+function getGeneratedTopNavCanonicalPathReferenceId() {
+  const match = window.location.pathname.match(/^\/design-system\/canonical-renderings\/top-nav\/([^/]+)$/);
+  return match?.[1] ?? null;
+}
+
 function getRequestedTopNavCanonicalRef() {
-  return new URLSearchParams(window.location.search).get("ref");
+  return new URLSearchParams(window.location.search).get("ref") ?? getGeneratedTopNavCanonicalPathReferenceId();
+}
+
+function getRequestedTopNavCanonicalReference() {
+  return getTopNavCanonicalReferenceByRef(getRequestedTopNavCanonicalRef());
 }
 
 function getTopNavCanonicalMatches(state) {
@@ -2792,6 +2884,10 @@ function getActiveTopNavCanonicalReference(matches) {
 }
 
 function buildTopNavCanonicalHref(reference, accent = topNavPreviewDefaults.accent) {
+  if (getGeneratedTopNavCanonicalPathReferenceId()) {
+    return `/design-system/canonical-renderings/top-nav/${encodeURIComponent(reference.ref)}`;
+  }
+
   const params = new URLSearchParams();
   params.set("width", String(reference.width));
   params.set("fixture", reference.fixture);
@@ -2805,23 +2901,31 @@ function buildTopNavCanonicalHref(reference, accent = topNavPreviewDefaults.acce
 }
 
 function getCurrentTopNavPreviewState(overrides = {}) {
+  const requestedReference = getRequestedTopNavCanonicalReference();
   const currentWidth = previewWidthInput?.value
     ?? previewFrame?.style.getPropertyValue("--top-nav-preview-width").replace("px", "").trim()
+    ?? requestedReference?.width
     ?? topNavPreviewDefaults.width;
-  const currentTheme = getCurrentSurfaceTheme();
-  const currentDirection = getTopNavSurfaceDirection();
+  const currentTheme = topNavSurfaceMode === "canonical"
+    ? requestedReference?.theme ?? getCurrentSurfaceTheme()
+    : getCurrentSurfaceTheme();
+  const currentDirection = topNavSurfaceMode === "canonical"
+    ? requestedReference?.direction ?? getTopNavSurfaceDirection()
+    : getTopNavSurfaceDirection();
   const currentMagnification = Array.from(magnificationButtons).find((button) => button.classList.contains("active"))
     ?.dataset.magnificationOption
     ?? new URLSearchParams(window.location.search).get("zoom")
+    ?? requestedReference?.magnification
     ?? String(topNavPreviewDefaults.magnification);
   const currentAccent = Array.from(accentButtons).find((button) => button.classList.contains("active"))?.dataset.accent
     ?? new URLSearchParams(window.location.search).get("accent")
+    ?? requestedReference?.accent
     ?? topNavPreviewDefaults.accent;
 
   return normalizePreviewState({
     width: overrides.width ?? currentWidth,
-    fixture: overrides.fixture ?? activeTopNavPreviewFixture,
-    open: overrides.open ?? activeTopNavPreviewOpenState,
+    fixture: overrides.fixture ?? requestedReference?.fixture ?? activeTopNavPreviewFixture,
+    open: overrides.open ?? requestedReference?.open ?? activeTopNavPreviewOpenState,
     theme: overrides.theme ?? currentTheme,
     direction: overrides.direction ?? currentDirection,
     magnification: overrides.magnification ?? currentMagnification,
@@ -3536,28 +3640,20 @@ function primaryNavOverlapsUtilities() {
 
   const navUtilitiesRect = previewNavUtilities.getBoundingClientRect();
   const visibleLinks = getVisiblePrimaryNavLinks();
-  const lastVisibleLink = visibleLinks.at(-1);
 
-  if (lastVisibleLink) {
-    const lastVisibleLinkRect = lastVisibleLink.getBoundingClientRect();
-    if (lastVisibleLinkRect.right > navUtilitiesRect.left) {
+  for (const link of visibleLinks) {
+    if (horizontalRectsOverlap(link.getBoundingClientRect(), navUtilitiesRect)) {
       return true;
     }
   }
 
   if (primaryNavOverflowButton && !primaryNavOverflow.classList.contains("hidden")) {
     const overflowRect = primaryNavOverflowButton.getBoundingClientRect();
-    if (overflowRect.right > navUtilitiesRect.left) {
+    if (horizontalRectsOverlap(overflowRect, navUtilitiesRect)) {
       return true;
     }
   }
-
-  if (!previewPrimaryNav) {
-    return false;
-  }
-
-  const primaryNavRect = previewPrimaryNav.getBoundingClientRect();
-  return primaryNavRect.right > navUtilitiesRect.left;
+  return false;
 }
 
 function primaryNavOverflowOverlapsVisibleLinks() {
@@ -3565,23 +3661,20 @@ function primaryNavOverflowOverlapsVisibleLinks() {
     return false;
   }
 
-  const visibleLinks = getVisiblePrimaryNavLinks();
-  const lastVisibleLink = visibleLinks.at(-1);
-
-  if (!lastVisibleLink) {
-    return false;
-  }
-
-  const lastLinkRect = lastVisibleLink.getBoundingClientRect();
   const overflowRect = primaryNavOverflowButton.getBoundingClientRect();
-
-  return lastLinkRect.right > overflowRect.left;
+  return getVisiblePrimaryNavLinks().some((link) => horizontalRectsOverlap(link.getBoundingClientRect(), overflowRect));
 }
 
 function updatePrimaryNavOverflow() {
   if (!previewPrimaryNav || !previewTopNav || primaryNavLinks.length === 0 || !primaryNavOverflow || !primaryNavOverflowButton) {
     return;
   }
+
+  const requestedReference = getRequestedTopNavCanonicalReference();
+  const maxVisiblePrimaryItems = typeof requestedReference?.maxVisiblePrimaryItems === "number"
+    ? requestedReference.maxVisiblePrimaryItems
+    : null;
+  const forceMobileShell = requestedReference?.forceMobileShell === true;
 
   previewTopNav.classList.remove("force-mobile-nav");
   primaryNavOverflow.classList.add("hidden");
@@ -3593,7 +3686,16 @@ function updatePrimaryNavOverflow() {
     setPrimaryNavLinkHidden(link, false);
   }
 
-  if (primaryNavFits() && !primaryNavOverlapsUtilities()) {
+  if (forceMobileShell) {
+    previewTopNav.classList.add("force-mobile-nav");
+    return;
+  }
+
+  if (
+    primaryNavFits()
+    && !primaryNavOverlapsUtilities()
+    && !(typeof maxVisiblePrimaryItems === "number" && getVisiblePrimaryNavLinks().length > maxVisiblePrimaryItems)
+  ) {
     return;
   }
 
@@ -3602,7 +3704,12 @@ function updatePrimaryNavOverflow() {
 
   while (
     getVisiblePrimaryNavLinks().length > 2
-    && (!primaryNavFits() || primaryNavOverlapsUtilities() || primaryNavOverflowOverlapsVisibleLinks())
+    && (
+      !primaryNavFits()
+      || primaryNavOverlapsUtilities()
+      || primaryNavOverflowOverlapsVisibleLinks()
+      || (typeof maxVisiblePrimaryItems === "number" && getVisiblePrimaryNavLinks().length > maxVisiblePrimaryItems)
+    )
   ) {
     const visibleLinks = getVisiblePrimaryNavLinks();
     const lastVisibleLink = visibleLinks.at(-1);
@@ -3612,7 +3719,12 @@ function updatePrimaryNavOverflow() {
     setPrimaryNavLinkHidden(lastVisibleLink, true);
   }
 
-  if (primaryNavFits() && !primaryNavOverlapsUtilities() && !primaryNavOverflowOverlapsVisibleLinks()) {
+  if (
+    primaryNavFits()
+    && !primaryNavOverlapsUtilities()
+    && !primaryNavOverflowOverlapsVisibleLinks()
+    && !(typeof maxVisiblePrimaryItems === "number" && getVisiblePrimaryNavLinks().length > maxVisiblePrimaryItems)
+  ) {
     renderPrimaryNavOverflowMenu(primaryNavLinks.filter((link) => link.classList.contains("hidden")));
     return;
   }
@@ -4408,6 +4520,9 @@ function applyTopNavPreviewFixture(fixtureName) {
 
   setLabelText(previewBrandLabel, fixture.brand);
   setLabelText(previewProfileLabel, fixture.profile);
+  if (profileButton instanceof HTMLElement) {
+    profileButton.dataset.tooltip = fixture.profile;
+  }
   setLabelText(mobileProfileButton, fixture.mobileProfile);
   setLabelText(profileLanguageButton, fixture.menu[0]);
   setLabelText(closeProfileMenuButton, fixture.menu[1]);
@@ -4581,10 +4696,28 @@ function applyAccent(hex) {
 function applyTheme(theme) {
   const scopeNode = getAppearanceScopeNode();
   if (scopeNode instanceof HTMLElement && scopeNode !== document.documentElement) {
+    topNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
+    subNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
+    contextNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
     scopeNode.dataset.themeScope = theme;
+    if (topNavSurfaceMode === "canonical" && topNavPreviewCanvas instanceof HTMLElement) {
+      topNavPreviewCanvas.dataset.themeScope = theme;
+    }
+    if (subNavSurfaceMode === "canonical" && subNavPreviewShell instanceof HTMLElement) {
+      subNavPreviewShell.dataset.themeScope = theme;
+    }
+    if (contextNavSurfaceMode === "canonical" && contextNavPreviewShell instanceof HTMLElement) {
+      contextNavPreviewShell.dataset.themeScope = theme;
+    }
     document.documentElement.removeAttribute("data-theme");
   } else {
     document.documentElement.dataset.theme = theme;
+    topNavPreviewCanvas?.removeAttribute("data-theme-scope");
+    subNavPreviewShell?.removeAttribute("data-theme-scope");
+    contextNavPreviewShell?.removeAttribute("data-theme-scope");
+    topNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
+    subNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
+    contextNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
   }
   for (const button of themeButtons) {
     const isActive = button.dataset.themeOption === theme;

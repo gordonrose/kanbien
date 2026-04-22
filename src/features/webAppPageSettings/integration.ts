@@ -4,6 +4,7 @@ import type { PlatformSecurityRepository } from "../../lib/security/repository";
 import { createWebAppHierarchyIntegrationSeam } from "../webAppHierarchyBuilder";
 import { createWebAppPageSettingsService } from "./domain/service";
 import { createPostgresWebAppPageSettingsRepository } from "./persistence/postgresRepository";
+import { createPublicWebAppPageSettingsRouter } from "./transport/publicRouter";
 import { createWebAppPageSettingsRouter } from "./transport/router";
 
 export function createWebAppPageSettingsFeature(
@@ -22,4 +23,16 @@ export function createWebAppPageSettingsFeature(
     capabilityChecker,
     platformSecurityRepository,
   );
+}
+
+export function createPublicWebAppPageSettingsFeature(
+  dbPool: Pool,
+) {
+  const repository = createPostgresWebAppPageSettingsRepository(dbPool);
+  const service = createWebAppPageSettingsService(
+    repository,
+    createWebAppHierarchyIntegrationSeam(dbPool),
+  );
+
+  return createPublicWebAppPageSettingsRouter(service);
 }

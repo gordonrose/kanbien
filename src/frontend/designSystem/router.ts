@@ -42,6 +42,28 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string {
     return indexCandidate;
   }
 
+  if (pathSegments[0] === "canonical-renderings") {
+    if (pathSegments.length === 1) {
+      return join(frontendRoot, "canonical-renderings", "index.html");
+    }
+
+    if (pathSegments.length === 2) {
+      return join(frontendRoot, "canonical-renderings", "family", "index.html");
+    }
+
+    if (pathSegments.length === 3) {
+      const familyRenderPageByKey: Record<string, string> = {
+        "page-shell-banner": "page-shell-banner.html",
+        "top-nav": "top-nav.html",
+      };
+
+      const renderPage = familyRenderPageByKey[pathSegments[1]];
+      if (renderPage) {
+        return join(frontendRoot, "components", renderPage);
+      }
+    }
+  }
+
   return join(frontendRoot, "index.html");
 }
 

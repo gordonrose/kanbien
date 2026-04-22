@@ -8,6 +8,7 @@ import { createFilesystemDesignSystemMaterializer } from "./domain/designSystemM
 import { createWebAppHierarchyBuilderService } from "./domain/service";
 import type { WebAppPageStatus, WebAppRootFamilyId, WebAppTopologyState } from "./domain/types";
 import { createPostgresWebAppHierarchyRepository } from "./persistence/postgresRepository";
+import { createPublicWebAppHierarchyBuilderRouter } from "./transport/publicRouter";
 import { createWebAppHierarchyBuilderRouter } from "./transport/router";
 
 export interface WebAppHierarchySettingsSelectablePage {
@@ -103,4 +104,17 @@ export function createWebAppHierarchyBuilderFeature(
     capabilityChecker,
     platformSecurityRepository,
   );
+}
+
+export function createPublicWebAppHierarchyBuilderFeature(
+  dbPool: Pool,
+) {
+  const repository = createPostgresWebAppHierarchyRepository(dbPool);
+  const service = createWebAppHierarchyBuilderService(
+    repository,
+    createWebAppSurfaceDiscoveryIntegrationSeam(dbPool),
+    createFilesystemDesignSystemMaterializer(process.cwd()),
+  );
+
+  return createPublicWebAppHierarchyBuilderRouter(service);
 }

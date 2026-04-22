@@ -74,4 +74,6 @@ export const APPROVED_ICON_CATALOG: ApprovedIconCatalogEntryResponse[] = [
 
 export const APPROVED_PAGE_TEMPLATE_CATALOG: ApprovedPageTemplateCatalogEntryResponse[] = [
   { pageTemplateKey: "static-html-page", label: "Static HTML Page", status: "approved" },
+  { pageTemplateKey: "launcher", label: "Launcher", status: "approved" },
+  { pageTemplateKey: "canonical-rendering", label: "Canonical Rendering", status: "approved" },
 ];
