@@ -219,6 +219,12 @@ adoption, also require:
 - explicit review of whether app-consumption entrypoints and canonical
   `/design-system` entrypoints are expected to stay visually identical or are
   intentionally scoped differently
+- a governed page implementation audit for each touched durable app page that
+  records:
+  - whether the page still owns local render or controller behavior
+  - which design-system seams are actually being consumed today
+  - the required remediation path before further page work if local
+    implementation still remains
 
 For public route or signed-off route-shell work, also require:
 
@@ -242,6 +248,9 @@ Treat the frontend loop as incomplete when:
   artifact, adoption boundary declaration, or consumer-parity proof
 - the real app route still owns governed markup or interaction behavior locally
   even though the family is being presented as governed adoption
+- a durable governed app page changed without refreshing the implementation
+  audit that says whether the page is still locally implemented and what fix is
+  required before more page work
 - the only proof for governed adoption is canonical or design-system coverage
   with no consumer-level executable evidence
 - the frontend gate failed, was not run, or was treated as optional

@@ -6,11 +6,16 @@ import {
   resetToLoginState,
 } from "./state.mjs";
 import { signLoginChallenge } from "./helperClient.mjs";
-import { createRootUsersListController } from "./rootUsersList.mjs";
 import { createWebAppHierarchyPageController } from "./webAppHierarchyPage.mjs";
-import { partitionContextNavItems, renderContextNavMenuItems } from "/design-system/assets/contextNav.mjs";
+import {
+  partitionContextNavItems,
+  renderContextNavItems as renderSharedContextNavItems,
+  renderContextNavMenuItems,
+  renderRootAdminContextNavShell,
+} from "/design-system/assets/contextNav.mjs";
 import { renderDesignSystemIconSvg } from "/design-system/assets/formControls.mjs";
 import { createPageShellBannerRuntimeController } from "/design-system/assets/pageShellBanner.mjs";
+import { createRootUsersListWorkspaceController } from "/design-system/assets/rootUsersListWorkspace.mjs";
 import {
   buildPageShellBreadcrumbMarkup,
   createPageShellBreadcrumbController,
@@ -161,6 +166,11 @@ const loginForm = document.getElementById("login-form");
 const signSubmit = document.getElementById("sign-submit");
 const returnToLogin = document.getElementById("return-to-login");
 const refreshSessionButton = document.getElementById("refresh-session-button");
+
+const rootAdminContextNavMount = document.getElementById("root-admin-context-nav-mount");
+if (rootAdminContextNavMount instanceof HTMLElement) {
+  rootAdminContextNavMount.innerHTML = renderRootAdminContextNavShell();
+}
 
 const topNav = document.querySelector(".top-nav");
 const primaryNav = document.querySelector(".primary-nav");
@@ -361,8 +371,8 @@ const shellBannerController = createPageShellBannerRuntimeController(shellMessag
 });
 const rootAdminShellBannerPolicyNames = new Set(["error", "blocked-action", "mutation-success"]);
 
-const rootUsersListController = createRootUsersListController({
-  root: document.getElementById("root-users-list-page"),
+const rootUsersListController = createRootUsersListWorkspaceController({
+  root: document.getElementById("page-users"),
   searchInput: shellSearchInput,
   fetchJson,
   setShellMessage,
@@ -809,22 +819,18 @@ function renderContextNavItems(items) {
   });
 
   contextNavMainItems.innerHTML = visibleItems
-    .map((item) => {
-      const iconKey = decodePageSettingsIconKey(item.effectiveIconKey ?? item.iconKey ?? null, item.shellPageKey);
-      const href = item.resolvedFullRoutePath ?? buildCanonicalRootAdminPath(item.shellPageKey);
-      return `
-        <a
-          class="context-nav-item"
-          href="${escapeHtml(href)}"
-          data-page-link="${escapeHtml(item.shellPageKey)}"
-          data-tooltip="${escapeHtml(item.displayLabel)}"
-        >
-          <span class="context-nav-icon" aria-hidden="true">${renderDesignSystemIconSvg(iconKey)}</span>
-          <span class="context-nav-label">${escapeHtml(item.displayLabel)}</span>
-        </a>
-      `;
+    ? renderSharedContextNavItems(visibleItems, {
+      getHref: (item) => item.resolvedFullRoutePath ?? buildCanonicalRootAdminPath(item.shellPageKey),
+      getLabel: (item) => item.displayLabel,
+      getCurrent: (item) => item.shellPageKey === state.navigation.currentPage,
+      getItemKey: (item) => item.shellPageKey,
+      getTooltip: (item) => item.displayLabel,
+      getIconSvg: (item) => {
+        const iconKey = decodePageSettingsIconKey(item.effectiveIconKey ?? item.iconKey ?? null, item.shellPageKey);
+        return renderDesignSystemIconSvg(iconKey);
+      },
     })
-    .join("");
+    : "";
 
   renderContextNavOverflowLinks(overflowItems);
   syncNavState();

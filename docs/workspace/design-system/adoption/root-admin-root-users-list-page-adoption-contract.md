@@ -110,6 +110,10 @@
 - The adopted search shell is real on `#users`, but it is intentionally
   narrower than the generic design-system placeholder search:
   exact email or supported `emailPrefix` only.
+- The route now consumes the DS-owned workspace seam at
+  `/design-system/assets/rootUsersListWorkspace.mjs` for both render
+  structure and controller behavior instead of recreating the list-page shell
+  or interaction grammar locally in `rootAdminShell`.
 - The route consumes the shared canonical list-page stylesheet from
   `/design-system/assets/list-page-shared.css` rather than carrying any
   root-admin-only copy of the list-page styling contract.

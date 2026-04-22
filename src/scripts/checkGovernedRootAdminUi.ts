@@ -11,7 +11,7 @@ type LockedFile = {
 const lockedRootAdminUiFiles: LockedFile[] = [
   {
     path: "src/frontend/rootAdminShell/index.html",
-    sha256: "a01177e96544211affe04ed1635e5618a20186f41d3298f98b1cb594e1f8706e",
+    sha256: "8eb43bcf0f6354d720f6e4de067a0954f100e5c8dbcee7a9632172e022e3d2a7",
     rationale:
       "Authenticated root-admin shell markup remains locally hosted, but governed route families such as web-app-hierarchy must no longer duplicate their workspace host markup in this file once a shared design-system render seam exists.",
   },
@@ -23,15 +23,9 @@ const lockedRootAdminUiFiles: LockedFile[] = [
   },
   {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "e20317fe0c099f66f53c953a5cb4818d784afa3597bb4bf27244d5e4edc01765",
+    sha256: "4e5304201c42edef461d3752c446ad2db5993bb784abef49208a148c8655127f",
     rationale:
       "Root-admin authenticated shell behavior remains locally composed, but approved route-topology migrations may update path resolution and canonical-location syncing as long as shared design-system shell behavior does not regress back into app-local ownership.",
-  },
-  {
-    path: "src/frontend/rootAdminShell/assets/rootUsersList.mjs",
-    sha256: "0451a6dd90d5ee88aeb6e0993354115bdd0085764389603817d0e4e80ff82d64",
-    rationale:
-      "Non-login root-admin page UI behavior must stop changing locally; route UI behavior should move into shared design-system-owned seams.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
@@ -43,6 +37,7 @@ const lockedRootAdminUiFiles: LockedFile[] = [
 
 const requiredRootAdminShellImports = [
   "/design-system/assets/pageShellController.mjs",
+  "/design-system/assets/rootUsersListWorkspace.mjs",
 ];
 
 const requiredRootAdminShellStylesheets = [
@@ -224,6 +219,30 @@ const forbiddenRootAdminIndexPatterns: Array<{ pattern: RegExp; rationale: strin
   {
     pattern: /\bid="web-app-hierarchy-page-title"\b/,
     rationale: "The governed web-app-hierarchy workspace shell must not be reconstructed directly in root-admin HTML once the shared render seam exists.",
+  },
+  {
+    pattern: /\bid="root-users-list-page"\b/,
+    rationale: "The governed root-users list-page shell must render through the shared design-system workspace seam instead of being hardcoded in root-admin HTML.",
+  },
+  {
+    pattern: /\bid="root-users-detail-panel"\b/,
+    rationale: "The governed root-users detail-panel host must render through the shared design-system workspace seam instead of being hardcoded in root-admin HTML.",
+  },
+  {
+    pattern: /\bid="root-users-record-card-template"\b/,
+    rationale: "The governed root-users record-card template must render through the shared design-system workspace seam instead of being hardcoded in root-admin HTML.",
+  },
+  {
+    pattern: /\bid="context-nav-more-button"\b/,
+    rationale: "The governed root-admin context-nav host must render through the shared design-system context-nav seam instead of being hardcoded in root-admin HTML.",
+  },
+  {
+    pattern: /\bid="display-settings-button"\b/,
+    rationale: "The governed root-admin context-nav utility host must render through the shared design-system context-nav seam instead of being hardcoded in root-admin HTML.",
+  },
+  {
+    pattern: /\bid="hierarchy-tree-nav-button"\b/,
+    rationale: "The governed root-admin context-nav launcher host must render through the shared design-system context-nav seam instead of being hardcoded in root-admin HTML.",
   },
 ];
 

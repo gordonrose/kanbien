@@ -71,6 +71,10 @@
 
 - Primary destinations:
   `users`, `roles`, `tenants`, and `tenant-admins`
+- Shared seam ownership:
+  `rootAdminShell` now consumes the DS-owned context-nav host and item-render
+  seams from `/design-system/assets/contextNav.mjs` instead of recreating the
+  shell structure in `index.html` or building destination-link markup locally
 - Utility actions:
   `context-nav drawer` shell only; the display-settings payload remains
   a separate follow-on loop, and future governed shell utilities still

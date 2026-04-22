@@ -354,6 +354,12 @@ For first-consumer app adoption of a signed-off governed family:
   explicit exception is approved
 - do not treat "close to the canonical" as sufficient parity when the rendered
   browser result still differs from the signed-off design-system truth
+- before doing further material work on an existing governed durable app page,
+  refresh a page implementation audit that states:
+  - whether the page still owns local render or controller behavior
+  - which design-system seams it actually consumes today
+  - the remediation path before more page work if local implementation still
+    remains
 
 If a governed family does not yet expose a consumable shared render or
 behavior seam:

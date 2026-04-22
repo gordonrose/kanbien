@@ -1,4 +1,275 @@
-import { displayNameForRootUser } from "./state.mjs";
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+export function renderRootUsersListWorkspaceShell(copy = {}) {
+  const {
+    eyebrow = "Root Admin Directory",
+    title = "Root Users",
+    description = "Review visible root users and select a record to inspect the current directory detail.",
+    listAriaLabel = "Root users",
+    cardTagsAriaLabel = "Root user flags",
+    detailTagsAriaLabel = "Selected root user fields",
+  } = copy;
+
+  return `
+    <section
+      id="root-users-list-page"
+      class="list-page-shell list-page-shell-split"
+      data-root-users-list
+      data-selectable-list
+      data-selectable-list-layout
+    >
+      <p
+        id="root-users-list-announcement"
+        class="visually-hidden"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-selectable-list-announcement
+      ></p>
+
+      <template id="root-users-record-card-template">
+        <span class="list-page-card-header" data-list-record-card-slot="header">
+          <span class="list-page-card-copy" data-list-record-card-slot="copy">
+            <span class="list-page-card-title tooltip-anchor" data-overflow-tooltip-source data-list-record-card-slot="title"></span>
+            <span class="list-page-card-subtitle tooltip-anchor" data-overflow-tooltip-source data-list-record-card-slot="subtitle"></span>
+          </span>
+        </span>
+        <span class="list-page-card-description" data-list-record-card-slot="description"></span>
+        <span class="list-page-card-tags" aria-label="${escapeHtml(cardTagsAriaLabel)}" data-list-record-card-slot="tags"></span>
+      </template>
+
+      <div
+        class="list-page-list-column"
+        aria-label="${escapeHtml(listAriaLabel)}"
+        data-selectable-list-column
+        data-list-detail-split-layout-slot="list"
+      >
+        <div class="component-catalog-section-header">
+          <p class="top-nav-preview-eyebrow">${escapeHtml(eyebrow)}</p>
+          <h1 id="root-users-list-title" class="component-catalog-section-title">${escapeHtml(title)}</h1>
+          <p class="component-catalog-meta">${escapeHtml(description)}</p>
+        </div>
+
+        <div
+          class="list-page-loading-group hidden"
+          aria-live="polite"
+          aria-hidden="true"
+          data-selectable-list-loading
+        >
+          <p class="list-page-loading-label" data-selectable-list-loading-label>Loading root users...</p>
+          <div class="list-page-loading-card" aria-hidden="true">
+            <span class="list-page-loading-line list-page-loading-line-title"></span>
+            <span class="list-page-loading-line list-page-loading-line-subtitle"></span>
+            <span class="list-page-loading-line list-page-loading-line-body"></span>
+            <span class="list-page-loading-line list-page-loading-line-body list-page-loading-line-body-short"></span>
+            <span class="list-page-loading-chip-row">
+              <span class="list-page-loading-chip"></span>
+              <span class="list-page-loading-chip"></span>
+            </span>
+          </div>
+          <div class="list-page-loading-card" aria-hidden="true">
+            <span class="list-page-loading-line list-page-loading-line-title"></span>
+            <span class="list-page-loading-line list-page-loading-line-subtitle"></span>
+            <span class="list-page-loading-line list-page-loading-line-body"></span>
+            <span class="list-page-loading-line list-page-loading-line-body list-page-loading-line-body-short"></span>
+            <span class="list-page-loading-chip-row">
+              <span class="list-page-loading-chip"></span>
+              <span class="list-page-loading-chip"></span>
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="list-page-state-card hidden"
+          aria-live="polite"
+          aria-hidden="true"
+          data-selectable-list-empty-state
+        >
+          <p class="list-page-state-eyebrow">No visible root users</p>
+          <h2 class="list-page-state-title">There are no visible root-user records yet</h2>
+          <p class="list-page-state-description">
+            The current capability returned an empty visible directory. Create a root user or clear any active
+            query to retry this view.
+          </p>
+          <div class="list-page-state-actions">
+            <button class="list-page-state-button" type="button" data-selectable-list-empty-reset>
+              Refresh visible users
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="list-page-state-card hidden"
+          aria-live="polite"
+          aria-hidden="true"
+          data-selectable-list-no-results-state
+        >
+          <p class="list-page-state-eyebrow">No matching results</p>
+          <h2 class="list-page-state-title">No visible root users match this search</h2>
+          <p class="list-page-state-description">
+            No visible root users matched
+            <span class="list-page-state-query" data-selectable-list-query-copy>this query</span>.
+            Clear the current search to return to the full directory.
+          </p>
+          <div class="list-page-state-actions">
+            <button class="list-page-state-button" type="button" data-selectable-list-clear-search>
+              Clear search
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="list-page-state-card hidden"
+          aria-live="polite"
+          aria-hidden="true"
+          data-selectable-list-initial-error-state
+        >
+          <p class="list-page-state-eyebrow">Directory unavailable</p>
+          <h2 class="list-page-state-title">Root users could not load</h2>
+          <p class="list-page-state-description">
+            The protected directory request failed without collapsing the shell. Retry to request the current
+            visible root-user list again.
+          </p>
+          <div class="list-page-state-actions">
+            <button class="list-page-state-button" type="button" data-selectable-list-initial-retry>
+              Retry directory load
+            </button>
+          </div>
+        </div>
+
+        <div data-selectable-list-items></div>
+
+        <div class="list-page-lazy-load-status" aria-live="polite" data-selectable-list-status>
+          <button class="list-page-lazy-load-status-button" type="button" data-selectable-list-status-action>
+            Load more visible root users
+          </button>
+        </div>
+
+        <div
+          class="list-page-append-error hidden"
+          aria-live="polite"
+          aria-hidden="true"
+          data-selectable-list-append-error
+        >
+          <p class="list-page-append-error-copy">More root users could not load right now.</p>
+          <button
+            class="list-page-state-button list-page-append-error-button"
+            type="button"
+            data-selectable-list-append-retry
+          >
+            Retry load more
+          </button>
+        </div>
+
+        <div class="list-page-lazy-load-sentinel" aria-hidden="true" data-selectable-list-sentinel></div>
+      </div>
+
+      <aside
+        id="root-users-detail-panel"
+        class="list-page-detail-panel hidden"
+        aria-labelledby="root-users-detail-title"
+        aria-hidden="true"
+        data-selectable-list-detail-panel
+        data-list-detail-split-layout-slot="detail"
+      >
+        <div class="list-page-detail-header">
+          <div class="list-page-detail-copy">
+            <p
+              id="root-users-detail-meta"
+              class="list-page-detail-meta tooltip-anchor"
+              data-selectable-list-detail-field="meta"
+              data-overflow-tooltip-source
+            ></p>
+            <h2
+              id="root-users-detail-title"
+              class="list-page-detail-title"
+              data-selectable-list-detail-field="title"
+              tabindex="-1"
+            ></h2>
+            <p
+              id="root-users-detail-subtitle"
+              class="list-page-detail-subtitle"
+              data-selectable-list-detail-field="subtitle"
+            ></p>
+          </div>
+          <div class="list-page-detail-controls">
+            <div class="list-page-detail-action-row">
+              <button
+                id="root-users-detail-close"
+                class="drawer-close-button"
+                type="button"
+                aria-label="Close root user details"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-page-detail-body">
+          <div
+            class="list-page-detail-error hidden"
+            aria-live="polite"
+            aria-hidden="true"
+            data-selectable-list-detail-error
+          >
+            <p class="list-page-state-eyebrow">Detail unavailable</p>
+            <h3 class="list-page-state-title">Root-user detail could not load</h3>
+            <p class="list-page-state-description">
+              The detail surface stayed local to this panel. Retry to restore the selected root-user summary.
+            </p>
+            <div class="list-page-state-actions">
+              <button class="list-page-state-button" type="button" data-selectable-list-detail-retry>
+                Retry detail load
+              </button>
+            </div>
+          </div>
+          <p
+            id="root-users-detail-description"
+            class="list-page-detail-description"
+            data-selectable-list-detail-field="description"
+          ></p>
+          <div
+            id="root-users-detail-tags"
+            class="list-page-detail-tags"
+            aria-label="${escapeHtml(detailTagsAriaLabel)}"
+            data-selectable-list-detail-field="tags"
+          ></div>
+        </div>
+
+        <div class="list-page-detail-footer">
+          <div class="list-page-detail-nav-row">
+            <button
+              id="root-users-detail-prev"
+              class="list-page-detail-nav-button"
+              type="button"
+              aria-label="Show previous root user"
+            >
+              Previous
+            </button>
+            <span id="root-users-detail-next-anchor" class="tooltip-anchor list-page-detail-nav-anchor">
+              <button
+                id="root-users-detail-next"
+                class="list-page-detail-nav-button"
+                type="button"
+                aria-label="Show next root user"
+              >
+                Next
+              </button>
+            </span>
+          </div>
+        </div>
+      </aside>
+    </section>
+  `;
+}
 
 class RootUsersSearchValidationError extends Error {
   constructor(message) {
@@ -15,21 +286,21 @@ function normalizeText(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
 function formatTimestamp(value) {
   if (!value) {
     return "Not recorded";
   }
 
   return new Date(value).toLocaleString();
+}
+
+function displayNameForRootUser(rootUser) {
+  if (!rootUser) {
+    return untitledRecordFallback;
+  }
+
+  const name = [rootUser.firstName, rootUser.lastName].filter(Boolean).join(" ").trim();
+  return name || rootUser.email || untitledRecordFallback;
 }
 
 function statusLabelForUser(rootUser) {
@@ -175,17 +446,17 @@ function getFocusableElements(container) {
 function isDesktopSplitOpen(splitLayout) {
   return splitLayout instanceof HTMLElement
     && splitLayout.classList.contains("detail-open")
-    && !isMobileDetailMode();
+    && !window.matchMedia(mobileDetailBreakpoint).matches;
 }
 
-export function createRootUsersListController({
+export function createRootUsersListWorkspaceController({
   root,
   searchInput,
   fetchJson,
   setShellMessage,
   getCurrentPage,
 }) {
-  if (!(root instanceof HTMLElement) || !(searchInput instanceof HTMLInputElement)) {
+  if (!(root instanceof HTMLElement)) {
     return {
       async handleShellSearchSubmit() {
         return false;
@@ -195,8 +466,23 @@ export function createRootUsersListController({
     };
   }
 
-  const recordCardTemplate = document.getElementById("root-users-record-card-template");
-  const splitLayout = root;
+  if (!root.querySelector("#root-users-list-page")) {
+    root.innerHTML = renderRootUsersListWorkspaceShell();
+  }
+
+  if (!(searchInput instanceof HTMLInputElement)) {
+    return {
+      async handleShellSearchSubmit() {
+        return false;
+      },
+      syncPageState() {},
+      reset() {},
+    };
+  }
+
+  const workspaceRoot = root.querySelector("#root-users-list-page");
+  const recordCardTemplate = root.querySelector("#root-users-record-card-template");
+  const splitLayout = workspaceRoot;
   const listColumn = root.querySelector("[data-selectable-list-column]");
   const detailPanel = root.querySelector("[data-selectable-list-detail-panel]");
   const detailTitle = root.querySelector('[data-selectable-list-detail-field="title"]');
@@ -230,8 +516,6 @@ export function createRootUsersListController({
   let items = [];
   let currentPage = 0;
   let totalPages = 1;
-  let totalMatchingRecords = 0;
-  let totalSearchableRecords = 0;
   let selectedRootUserId = null;
   let lastDetailTrigger = null;
   let loadedOnce = false;
@@ -358,7 +642,6 @@ export function createRootUsersListController({
     if (nextState === "initial-error") {
       announce("Visible root users could not load.");
     }
-
   }
 
   function setOverflowTooltip(element, value) {
@@ -428,7 +711,7 @@ export function createRootUsersListController({
     }
 
     selectedRootUserId = null;
-    splitLayout.classList.remove("detail-open");
+    splitLayout?.classList.remove("detail-open");
     detailPanel.classList.add("hidden");
     detailPanel.setAttribute("aria-hidden", "true");
     setDetailErrorVisible(false);
@@ -487,7 +770,7 @@ export function createRootUsersListController({
 
   function renderCardButton(rootUser) {
     const button = document.createElement("button");
-    const title = displayNameForRootUser(rootUser) || untitledRecordFallback;
+    const title = displayNameForRootUser(rootUser);
     const subtitle = normalizeText(rootUser.email);
     const description = summaryCopyForUser(rootUser);
     const tags = tagsForUser(rootUser);
@@ -553,7 +836,7 @@ export function createRootUsersListController({
     setDetailErrorVisible(false);
     setOptionalText(detailMeta, `${statusLabelForUser(rootUser)} root user`);
     if (detailTitle instanceof HTMLElement) {
-      detailTitle.textContent = displayNameForRootUser(rootUser) || untitledRecordFallback;
+      detailTitle.textContent = displayNameForRootUser(rootUser);
     }
     setOptionalText(detailSubtitle, normalizeText(rootUser.email));
     setOptionalText(detailDescription, detailBodyForUser(rootUser));
@@ -564,13 +847,13 @@ export function createRootUsersListController({
       ...(rootUser.deletedAt ? [`Deleted ${formatTimestamp(rootUser.deletedAt)}`] : []),
     ]);
 
-    splitLayout.classList.add("detail-open");
+    splitLayout?.classList.add("detail-open");
     detailPanel.classList.remove("hidden");
     detailPanel.setAttribute("aria-hidden", "false");
     syncDetailPanelAccessibility();
     updateDetailNavigation();
     scheduleOverflowTooltipUpdate();
-    announce(`Opened details for ${displayNameForRootUser(rootUser) || untitledRecordFallback}.`);
+    announce(`Opened details for ${displayNameForRootUser(rootUser)}.`);
     focusDetailEntryPoint();
   }
 
@@ -633,8 +916,6 @@ export function createRootUsersListController({
 
       currentPage = response.page;
       totalPages = response.totalPages;
-      totalMatchingRecords = response.totalMatchingRecords ?? 0;
-      totalSearchableRecords = response.totalSearchableRecords ?? totalMatchingRecords;
       loadedOnce = true;
 
       renderList();
@@ -790,8 +1071,6 @@ export function createRootUsersListController({
     items = [];
     currentPage = 0;
     totalPages = 1;
-    totalMatchingRecords = 0;
-    totalSearchableRecords = 0;
     selectedRootUserId = null;
     lastDetailTrigger = null;
     loadedOnce = false;

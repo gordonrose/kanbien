@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "featureName": "designSystemCanonicals",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createDesignSystemCanonicalsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for design-system canonical family and rendering routes."
+    },
+    {
+      "seamId": "canonicals-integration-seam-factory",
+      "symbol": "createDesignSystemCanonicalsIntegrationSeam",
+      "path": "index.ts",
+      "kind": "integration-seam-factory",
+      "stability": "stable",
+      "description": "Cross-feature factory for reading live canonical launcher, rendering, and hierarchy data."
+    },
+    {
+      "seamId": "canonicals-integration-seam",
+      "symbol": "DesignSystemCanonicalsPublicSeam",
+      "path": "index.ts",
+      "kind": "integration-seam",
+      "stability": "stable",
+      "description": "Shared seam for listing live canonical families and reading public launcher and rendering payloads."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing the public canonical launcher or rendering seam can break generated design-system routes and any feature that reads canonical family truth through this integration seam.",
+    "Changing canonical family persistence or lifecycle semantics can break public design-system route resolution and hierarchy projection."
+  ]
+}

@@ -88,7 +88,7 @@
   controller
 - Runtime producers in scope:
   `handleRefreshSession(...)`, `handleShellSearchSubmit(...)`,
-  `createRootUsersListController(...)`, and
+  `createRootUsersListWorkspaceController(...)`, and
   `createWebAppHierarchyWorkspaceController(...)`
 - Required first-pass lifecycle posture:
   page-scoped by default, clear on navigation by default, every rendered
@@ -137,7 +137,7 @@
 - What existing app-local writers must migrate?
   shell search and session refresh in
   `src/frontend/rootAdminShell/assets/app.mjs`, root-user directory feedback in
-  `src/frontend/rootAdminShell/assets/rootUsersList.mjs`, and governed
+  `src/frontend/designSystem/assets/rootUsersListWorkspace.mjs`, and governed
   workspace feedback that currently flows through
   `src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs`
 - What backend seams or APIs must remain untouched?

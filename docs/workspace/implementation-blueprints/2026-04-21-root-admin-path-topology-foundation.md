@@ -175,7 +175,7 @@ Likely files to change or split:
 - `src/frontend/rootAdminShell/router.ts`
 - `src/frontend/rootAdminShell/assets/app.mjs`
 - `src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs`
-- `src/frontend/rootAdminShell/assets/rootUsersList.mjs`
+- `src/frontend/designSystem/assets/rootUsersListWorkspace.mjs`
 - `src/frontend/rootAdminShell/discovery.ts`
 - `src/frontend/designSystem/router.ts`
 

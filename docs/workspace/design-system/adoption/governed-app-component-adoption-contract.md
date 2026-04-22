@@ -59,7 +59,10 @@ behavior, or page-local controller logic into the app.
 
 - `context-nav`
   `/design-system/assets/contextNav.mjs`
-  exports `partitionContextNavItems(...)` and `renderContextNavMenuItems(...)`
+  exports `partitionContextNavItems(...)`,
+  `renderContextNavItems(...)`,
+  `renderContextNavMenuItems(...)`, and
+  `renderRootAdminContextNavShell(...)`
 - `hierarchy-tree`
   `/design-system/assets/hierarchyTree.mjs`
   exports `mountRootAdminHierarchyTree(...)`
@@ -67,6 +70,10 @@ behavior, or page-local controller logic into the app.
   `/design-system/assets/webAppHierarchyWorkspace.mjs`
   exports `renderWebAppHierarchyWorkspaceShell(...)` and
   `createWebAppHierarchyWorkspaceController(...)`
+- `root-users workspace`
+  `/design-system/assets/rootUsersListWorkspace.mjs`
+  exports `renderRootUsersListWorkspaceShell(...)` and
+  `createRootUsersListWorkspaceController(...)`
 - `icon-grid`
   `/design-system/assets/formControls.mjs`
   exports `renderFormIconGrid(...)`, plus initialization and refresh helpers
@@ -80,14 +87,16 @@ behavior, or page-local controller logic into the app.
 
 - `rootAdminShell` `Users`
   - imports shared list-page CSS
-  - still duplicates list-page shell markup in `rootAdminShell/index.html`
-  - still owns route-local list-page controller behavior in
-    `rootAdminShell/assets/rootUsersList.mjs`
+  - now consumes the DS-owned root-users workspace render/controller seam from
+    `rootUsersListWorkspace.mjs`
+  - no longer duplicates list-page shell markup in `rootAdminShell/index.html`
+  - no longer owns route-local list-page controller behavior inside
+    `rootAdminShell`
 - `rootAdminShell` `context-nav`
-  - now consumes the shared DS-owned mobile overflow partition and menu-render
-    behavior from `contextNav.mjs`
-  - still duplicates the broader context-nav host markup and destination-link
-    render structure in `rootAdminShell/index.html` and `rootAdminShell/assets/app.mjs`
+  - now consumes the shared DS-owned host render, mobile overflow partition,
+    destination-link render, and menu-render behavior from `contextNav.mjs`
+  - keeps route-specific page-settings fetch and current-page wiring in
+    `rootAdminShell/assets/app.mjs`
 - `rootAdminShell` `web-app-hierarchy`
   - imports shared hierarchy-tree and form-template CSS
   - imports the DS-owned workspace render/controller seam from

@@ -4,7 +4,7 @@
 
 - Features analyzed: 14
 - Cross-feature edges: 12
-- Validation violations: 1
+- Validation violations: 0
 
 Rule: Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.
 
@@ -33,7 +33,12 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Private seam violations: 0
 - Depended on by: none
 - Public seams:
+  - `feature-factory` via `createDesignSystemCanonicalsFeature` in `index.ts` (feature-factory, stable)
+  - `canonicals-integration-seam-factory` via `createDesignSystemCanonicalsIntegrationSeam` in `index.ts` (integration-seam-factory, stable)
+  - `canonicals-integration-seam` via `DesignSystemCanonicalsPublicSeam` in `index.ts` (integration-seam, stable)
 - Breaking-change risks:
+  - Changing the public canonical launcher or rendering seam can break generated design-system routes and any feature that reads canonical family truth through this integration seam.
+  - Changing canonical family persistence or lifecycle semantics can break public design-system route resolution and hierarchy projection.
 
 ### entityBuilder
 
@@ -370,5 +375,5 @@ Rule: Cross-feature imports in src/features must go through target feature index
 
 ## Violations
 
-- `src/features/designSystemCanonicals/feature.manifest.json` (missing-manifest): Missing feature.manifest.json.
+- None.
 

@@ -3,7 +3,7 @@
   "ruleSummary": "Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.",
   "featureCount": 14,
   "edgeCount": 12,
-  "violationCount": 1,
+  "violationCount": 0,
   "features": [
     {
       "featureName": "capabilityContractCatalog",
@@ -31,12 +31,37 @@
       "featureName": "designSystemCanonicals",
       "manifestPath": "src/features/designSystemCanonicals/feature.manifest.json",
       "fileCount": 16,
-      "publicSeams": [],
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createDesignSystemCanonicalsFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "canonicals-integration-seam-factory",
+          "symbol": "createDesignSystemCanonicalsIntegrationSeam",
+          "kind": "integration-seam-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "canonicals-integration-seam",
+          "symbol": "DesignSystemCanonicalsPublicSeam",
+          "kind": "integration-seam",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
       "declaredDependencies": [],
       "publicDependencies": [],
       "privateDependencyCount": 0,
       "dependedOnBy": [],
-      "breakingChangeRisks": []
+      "breakingChangeRisks": [
+        "Changing the public canonical launcher or rendering seam can break generated design-system routes and any feature that reads canonical family truth through this integration seam.",
+        "Changing canonical family persistence or lifecycle semantics can break public design-system route resolution and hierarchy projection."
+      ]
     },
     {
       "featureName": "entityBuilder",
@@ -989,12 +1014,5 @@
       ]
     }
   ],
-  "violations": [
-    {
-      "category": "missing-manifest",
-      "featureName": "designSystemCanonicals",
-      "filePath": "src/features/designSystemCanonicals/feature.manifest.json",
-      "reason": "Missing feature.manifest.json."
-    }
-  ]
+  "violations": []
 }

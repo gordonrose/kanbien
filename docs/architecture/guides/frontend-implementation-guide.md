@@ -86,6 +86,12 @@ note or equivalent artifact naming:
 - the parity evidence the real app route will need before the work is treated
   as complete
 
+Before doing further material work on an existing governed durable app page,
+refresh the page implementation audit first. That audit must say whether the
+page still owns local render or controller behavior, which DS seams it
+actually consumes today, and what remediation is required before more page
+work if local implementation still remains.
+
 Do not rely on "we imported the shared CSS" or "the classes match" as proof
 that the adoption is safe.
 
