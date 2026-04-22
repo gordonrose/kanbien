@@ -1,0 +1,212 @@
+{
+  "info": {
+    "_postman_id": "f4c1bc77-f725-4b13-82cc-7f03bdce6fb7",
+    "name": "Kanbien Capability Contract Catalog",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the protected capabilityContractCatalog feature. It includes the root-auth bootstrap needed to obtain a bearer session, then exercises list, exact read, export, materialize, and drift-audit routes. Successful root login writes a shared root session into the active Postman environment so other root-protected collections can reuse it."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "signerUrl", "value": "http://127.0.0.1:8787" },
+    { "key": "email", "value": "elvis.presley@example.com" },
+    { "key": "password", "value": "Test1234!" },
+    { "key": "challengeId", "value": "chal_replace_me" },
+    { "key": "challengeText", "value": "challenge_text_replace_me" },
+    { "key": "publicKeyFingerprint", "value": "SHA256:3+JFhM6YBmP0GsrDfni2fMcmFLVqSJQNEXUICGlK+CY" },
+    { "key": "sshSignature", "value": "base64_signature_over_challenge_text" },
+    { "key": "sshSignatureJson", "value": "base64_signature_over_challenge_text" },
+    { "key": "rootSessionId", "value": "sess_replace_me" },
+    { "key": "capabilityId", "value": "notificationDelivery.resendEmail" },
+    { "key": "featureName", "value": "notificationDelivery" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/v1/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "health"]
+        }
+      }
+    },
+    {
+      "name": "Root Auth - Login Password",
+      "description": "Stage one of root login. On success it stores challenge variables.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/password",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "root-auth", "login", "password"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.challengeId) pm.collectionVariables.unset(\"challengeId\");",
+              "if (!json.challengeText) pm.collectionVariables.unset(\"challengeText\");",
+              "if (json.challengeId) pm.collectionVariables.set(\"challengeId\", json.challengeId);",
+              "if (json.challengeText) pm.collectionVariables.set(\"challengeText\", json.challengeText);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Sign Challenge",
+      "description": "Local helper request that signs the stored challenge text with your configured SSH private key.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeText\": \"{{challengeText}}\"\n}"
+        },
+        "url": {
+          "raw": "{{signerUrl}}/sign",
+          "host": ["{{signerUrl}}"],
+          "path": ["sign"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignature\", json.signature);",
+              "if (json.signature) pm.collectionVariables.set(\"sshSignatureJson\", JSON.stringify(json.signature).slice(1, -1));",
+              "if (json.publicKeyFingerprint) pm.collectionVariables.set(\"publicKeyFingerprint\", json.publicKeyFingerprint);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Root Auth - Login SSH",
+      "description": "Stage two of root login. On success it stores the bearer session token.",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"challengeId\": \"{{challengeId}}\",\n  \"signature\": \"{{sshSignatureJson}}\",\n  \"publicKeyFingerprint\": \"{{publicKeyFingerprint}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/root-auth/login/ssh",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "root-auth", "login", "ssh"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (!json.sessionId) pm.environment.unset(\"rootSessionId\");",
+              "if (json.sessionId) pm.environment.set(\"rootSessionId\", json.sessionId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Capability Contract Catalog - List",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/capability-contract-catalog/capabilities?page=1&pageSize=25&orderDirection=asc&featureName={{featureName}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "capability-contract-catalog", "capabilities"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "pageSize", "value": "25" },
+            { "key": "orderDirection", "value": "asc" },
+            { "key": "featureName", "value": "{{featureName}}" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Capability Contract Catalog - Exact Read",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/capability-contract-catalog/capabilities/{{capabilityId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "capability-contract-catalog", "capabilities", "{{capabilityId}}"]
+        }
+      }
+    },
+    {
+      "name": "Capability Contract Catalog - Export",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"includeFeatures\": [\"{{featureName}}\"],\n  \"formatVersion\": \"v1\",\n  \"allowStale\": false\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/capability-contract-catalog/export",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "capability-contract-catalog", "export"]
+        }
+      }
+    },
+    {
+      "name": "Capability Contract Catalog - Materialize",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"includeFeatures\": [\"{{featureName}}\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/capability-contract-catalog/materialize",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "capability-contract-catalog", "materialize"]
+        }
+      }
+    },
+    {
+      "name": "Capability Contract Catalog - Drift Audit",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/capability-contract-catalog/drift?includeFeatures={{featureName}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "capability-contract-catalog", "drift"],
+          "query": [
+            { "key": "includeFeatures", "value": "{{featureName}}" }
+          ]
+        }
+      }
+    }
+  ]
+}

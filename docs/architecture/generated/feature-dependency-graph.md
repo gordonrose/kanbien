@@ -2,13 +2,38 @@
 
 ## Summary
 
-- Features analyzed: 12
+- Features analyzed: 14
 - Cross-feature edges: 12
-- Validation violations: 0
+- Validation violations: 1
 
 Rule: Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.
 
 ## By Feature
+
+### capabilityContractCatalog
+
+- Manifest: `src/features/capabilityContractCatalog/feature.manifest.json`
+- Source files: 14
+- Declared dependencies: none
+- Current public dependencies: none
+- Private seam violations: 0
+- Depended on by: none
+- Public seams:
+  - `feature-factory` via `createCapabilityContractCatalogFeature` in `index.ts` (feature-factory, stable)
+- Breaking-change risks:
+  - Changing capability ids or normalized field-path semantics can break downstream builder tooling that binds against catalog records.
+  - Changing generated-artifact or persisted catalog truth semantics can break materialization and drift-audit trust posture for later frontend composition flows.
+
+### designSystemCanonicals
+
+- Manifest: `src/features/designSystemCanonicals/feature.manifest.json`
+- Source files: 16
+- Declared dependencies: none
+- Current public dependencies: none
+- Private seam violations: 0
+- Depended on by: none
+- Public seams:
+- Breaking-change risks:
 
 ### entityBuilder
 
@@ -160,7 +185,7 @@ Rule: Cross-feature imports in src/features must go through target feature index
 ### webAppHierarchyBuilder
 
 - Manifest: `src/features/webAppHierarchyBuilder/feature.manifest.json`
-- Source files: 27
+- Source files: 28
 - Declared dependencies: webAppSurfaceDiscovery
 - Current public dependencies: webAppSurfaceDiscovery
 - Private seam violations: 0
@@ -177,7 +202,7 @@ Rule: Cross-feature imports in src/features must go through target feature index
 ### webAppPageSettings
 
 - Manifest: `src/features/webAppPageSettings/feature.manifest.json`
-- Source files: 18
+- Source files: 20
 - Declared dependencies: webAppHierarchyBuilder
 - Current public dependencies: webAppHierarchyBuilder
 - Private seam violations: 0
@@ -331,18 +356,19 @@ Rule: Cross-feature imports in src/features must go through target feature index
 
 - Declared in manifest: yes
 - Declared seam ids: hierarchy-integration-seam-factory, hierarchy-integration-seam, hierarchy-contract-types
-- Public imports: 7
+- Public imports: 8
 - Private imports: 0
 
+- `src/features/webAppPageSettings/domain/getPublicDesignSystemPageSettings.ts:5` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/getWebAppPageContextNavProjection.ts:4` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/getWebAppPageSettings.ts:5` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/getWebAppPageSettingsOptions.ts:5` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/presenters.ts:12` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
-- `src/features/webAppPageSettings/domain/service.ts:15` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
+- `src/features/webAppPageSettings/domain/service.ts:16` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/updateWebAppPageSettings.ts:12` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/integration.ts:4` imports `../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 
 ## Violations
 
-- None.
+- `src/features/designSystemCanonicals/feature.manifest.json` (missing-manifest): Missing feature.manifest.json.
 

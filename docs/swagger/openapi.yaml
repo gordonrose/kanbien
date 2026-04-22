@@ -7,9 +7,10 @@ info:
     health route, root-user authentication, root-role authorization
     administration, the protected rootUsers feature, the protected tenants
     feature, the protected tenantAdmins feature, the protected
-    notificationDelivery feature, the protected web-app-hierarchy feature,
-    the protected web-app-page-settings feature, the protected
-    web-app-surface-discovery feature, and the shared tenant-auth foundation.
+    notificationDelivery feature, the protected capability-contract-catalog
+    feature, the protected web-app-hierarchy feature, the protected
+    web-app-page-settings feature, the protected web-app-surface-discovery
+    feature, and the shared tenant-auth foundation.
 
 servers:
   - url: http://localhost:3000
@@ -23,6 +24,7 @@ tags:
   - name: Tenants
   - name: Tenant Admins
   - name: Notification Delivery
+  - name: Capability Contract Catalog
   - name: Web App Hierarchy
   - name: Web App Page Settings
   - name: Web App Surface Discovery
@@ -1614,6 +1616,175 @@ paths:
           $ref: "#/components/responses/Forbidden"
         "404":
           $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/capability-contract-catalog/capabilities:
+    get:
+      tags:
+        - Capability Contract Catalog
+      summary: List persisted capability catalog picker summaries
+      operationId: listCapabilityContractCatalogEntries
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - $ref: "#/components/parameters/OrderDirection"
+        - $ref: "#/components/parameters/CapabilityCatalogFeatureName"
+        - $ref: "#/components/parameters/CapabilityCatalogRouteFamily"
+        - $ref: "#/components/parameters/CapabilityCatalogSeamType"
+        - $ref: "#/components/parameters/CapabilityCatalogBoundary"
+        - $ref: "#/components/parameters/CapabilityCatalogGoverningAuthzCapability"
+        - $ref: "#/components/parameters/CapabilityCatalogAllowedRole"
+        - $ref: "#/components/parameters/CapabilityCatalogIdQuery"
+        - $ref: "#/components/parameters/CapabilityCatalogDisplayLabel"
+        - $ref: "#/components/parameters/CapabilityCatalogFeatureNamePrefix"
+        - $ref: "#/components/parameters/CapabilityCatalogSupportsRequestBody"
+        - $ref: "#/components/parameters/CapabilityCatalogSupportsResponseFields"
+        - $ref: "#/components/parameters/CapabilityCatalogSupportsFilters"
+        - $ref: "#/components/parameters/CapabilityCatalogFreshnessStatus"
+      responses:
+        "200":
+          description: Paginated capability picker summaries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaginatedCapabilityPickerSummaries"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/capability-contract-catalog/capabilities/{capabilityId}:
+    get:
+      tags:
+        - Capability Contract Catalog
+      summary: Read one exact persisted capability catalog record
+      operationId: getCapabilityContractCatalogEntry
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CapabilityCatalogId"
+      responses:
+        "200":
+          description: Exact capability contract record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapabilityExactRecord"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/capability-contract-catalog/export:
+    post:
+      tags:
+        - Capability Contract Catalog
+      summary: Export a deterministic capability catalog snapshot
+      operationId: exportCapabilityContractCatalogSnapshot
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExportCapabilityCatalogBody"
+      responses:
+        "200":
+          description: Deterministic capability catalog snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapabilityCatalogExportResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/capability-contract-catalog/materialize:
+    post:
+      tags:
+        - Capability Contract Catalog
+      summary: Materialize persisted capability catalog rows from approved source truth
+      operationId: materializeCapabilityContractCatalog
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MaterializeCapabilityCatalogBody"
+      responses:
+        "200":
+          description: Materialization completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapabilityCatalogMaterializeResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/capability-contract-catalog/drift:
+    get:
+      tags:
+        - Capability Contract Catalog
+      summary: Audit drift between persisted capability rows and current source truth
+      operationId: auditCapabilityContractCatalogDrift
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CapabilityCatalogIncludeFeaturesQuery"
+      responses:
+        "200":
+          description: Drift audit result rows
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CapabilityCatalogDriftResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
         "429":
           $ref: "#/components/responses/TooManyRequests"
         "500":
@@ -3831,6 +4002,125 @@ components:
       schema:
         $ref: "#/components/schemas/WebAppDiscoveryTriggerKind"
 
+    CapabilityCatalogId:
+      name: capabilityId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+
+    CapabilityCatalogFeatureName:
+      name: featureName
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    CapabilityCatalogRouteFamily:
+      name: routeFamily
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    CapabilityCatalogSeamType:
+      name: seamType
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    CapabilityCatalogBoundary:
+      name: capabilityBoundary
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/CapabilityBoundary"
+
+    CapabilityCatalogGoverningAuthzCapability:
+      name: governingAuthzCapability
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    CapabilityCatalogAllowedRole:
+      name: allowedRole
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    CapabilityCatalogIdQuery:
+      name: capabilityId
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    CapabilityCatalogDisplayLabel:
+      name: displayLabel
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    CapabilityCatalogFeatureNamePrefix:
+      name: featureNamePrefix
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+
+    CapabilityCatalogSupportsRequestBody:
+      name: supportsRequestBody
+      in: query
+      required: false
+      schema:
+        type: boolean
+
+    CapabilityCatalogSupportsResponseFields:
+      name: supportsResponseFields
+      in: query
+      required: false
+      schema:
+        type: boolean
+
+    CapabilityCatalogSupportsFilters:
+      name: supportsFilters
+      in: query
+      required: false
+      schema:
+        type: boolean
+
+    CapabilityCatalogFreshnessStatus:
+      name: freshnessStatus
+      in: query
+      required: false
+      schema:
+        $ref: "#/components/schemas/CapabilityFreshnessStatus"
+
+    CapabilityCatalogIncludeFeaturesQuery:
+      name: includeFeatures
+      in: query
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
+          minLength: 1
+
   responses:
     BadRequest:
       description: Invalid request
@@ -3882,6 +4172,453 @@ components:
             $ref: "#/components/schemas/ErrorResponse"
 
   schemas:
+    CapabilityBoundary:
+      type: string
+      enum: [root, tenant, shared]
+
+    CapabilityFreshnessStatus:
+      type: string
+      enum: [fresh, stale, drifted, blocked]
+
+    CapabilityLifecycleStatus:
+      type: string
+      enum: [active, deprecated, planned]
+
+    CapabilityRoute:
+      type: object
+      properties:
+        method:
+          type: string
+        path:
+          type: string
+      required: [method, path]
+
+    CapabilityFieldValidation:
+      type: object
+      properties:
+        minLength:
+          type: integer
+        maxLength:
+          type: integer
+        minimum:
+          type: number
+        maximum:
+          type: number
+        pattern:
+          type: string
+        format:
+          type: string
+        enumValues:
+          type: array
+          items:
+            type: string
+        normalizedAs:
+          type: string
+
+    CapabilityField:
+      type: object
+      properties:
+        fieldId:
+          type: string
+          format: uuid
+        capabilityId:
+          type: string
+        contractSide:
+          type: string
+          enum: [request-param, request-query, request-body, response-body]
+        path:
+          type: string
+        displayLabel:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        fieldType:
+          type: string
+        required:
+          type: boolean
+        nullable:
+          type: boolean
+        repeated:
+          type: boolean
+        format:
+          type: string
+          nullable: true
+        enumValues:
+          type: array
+          items:
+            type: string
+        systemManaged:
+          type: boolean
+        normalizationSteps:
+          type: array
+          items:
+            type: string
+        bindingHints:
+          type: array
+          items:
+            type: string
+        validation:
+          allOf:
+            - $ref: "#/components/schemas/CapabilityFieldValidation"
+          nullable: true
+        displayOrder:
+          type: integer
+      required:
+        - fieldId
+        - capabilityId
+        - contractSide
+        - path
+        - fieldType
+        - required
+        - nullable
+        - repeated
+        - enumValues
+        - systemManaged
+        - normalizationSteps
+        - bindingHints
+        - displayOrder
+
+    CapabilityConstraint:
+      type: object
+      properties:
+        constraintId:
+          type: string
+          format: uuid
+        capabilityId:
+          type: string
+        constraintKind:
+          type: string
+        fields:
+          type: array
+          items:
+            type: string
+        message:
+          type: string
+        displayOrder:
+          type: integer
+      required: [constraintId, capabilityId, constraintKind, fields, message, displayOrder]
+
+    CapabilitySourceReference:
+      type: object
+      properties:
+        sourceReferenceId:
+          type: string
+          format: uuid
+        capabilityId:
+          type: string
+        sourceType:
+          type: string
+        sourcePath:
+          type: string
+        sourceCoverage:
+          type: string
+          nullable: true
+      required: [sourceReferenceId, capabilityId, sourceType, sourcePath]
+
+    CapabilityPickerSummary:
+      type: object
+      properties:
+        capabilityId:
+          type: string
+        displayLabel:
+          type: string
+        shortDescription:
+          type: string
+        featureName:
+          type: string
+        routeFamily:
+          type: string
+        seamType:
+          type: string
+        capabilityBoundary:
+          $ref: "#/components/schemas/CapabilityBoundary"
+        selectionGroup:
+          type: string
+        route:
+          allOf:
+            - $ref: "#/components/schemas/CapabilityRoute"
+          nullable: true
+        governingAuthzCapabilities:
+          type: array
+          items:
+            type: string
+        allowedRoles:
+          type: array
+          items:
+            type: string
+        supportsRequestBody:
+          type: boolean
+        supportsResponseFields:
+          type: boolean
+        supportsFilters:
+          type: boolean
+        freshnessStatus:
+          $ref: "#/components/schemas/CapabilityFreshnessStatus"
+        lifecycleStatus:
+          $ref: "#/components/schemas/CapabilityLifecycleStatus"
+      required:
+        - capabilityId
+        - displayLabel
+        - shortDescription
+        - featureName
+        - routeFamily
+        - seamType
+        - capabilityBoundary
+        - selectionGroup
+        - governingAuthzCapabilities
+        - allowedRoles
+        - supportsRequestBody
+        - supportsResponseFields
+        - supportsFilters
+        - freshnessStatus
+        - lifecycleStatus
+
+    PaginatedCapabilityPickerSummaries:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityPickerSummary"
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+        totalMatchingRecords:
+          type: integer
+      required: [items, page, pageSize, totalPages, totalMatchingRecords]
+
+    CapabilityExactRecordAccess:
+      type: object
+      properties:
+        governingAuthzCapabilities:
+          type: array
+          items:
+            type: string
+        allowedRoles:
+          type: array
+          items:
+            type: string
+        deniedByDefault:
+          type: boolean
+        runtimeContextRequirements:
+          type: array
+          items:
+            type: string
+      required: [governingAuthzCapabilities, allowedRoles, deniedByDefault, runtimeContextRequirements]
+
+    CapabilityExactRecordRequest:
+      type: object
+      properties:
+        params:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityField"
+        query:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityField"
+        body:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityField"
+        constraints:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityConstraint"
+      required: [params, query, body, constraints]
+
+    CapabilityExactRecordResponse:
+      type: object
+      properties:
+        body:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityField"
+      required: [body]
+
+    CapabilityExactRecordFreshness:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/CapabilityFreshnessStatus"
+        lastMaterializedAt:
+          type: string
+          format: date-time
+        lastAuditedAt:
+          type: string
+          format: date-time
+          nullable: true
+      required: [status, lastMaterializedAt]
+
+    CapabilityExactRecord:
+      type: object
+      properties:
+        capabilityId:
+          type: string
+        displayLabel:
+          type: string
+        shortDescription:
+          type: string
+        fullDescription:
+          type: string
+          nullable: true
+        userFacingOutcome:
+          type: string
+          nullable: true
+        featureName:
+          type: string
+        routeFamily:
+          type: string
+        seamType:
+          type: string
+        capabilityBoundary:
+          $ref: "#/components/schemas/CapabilityBoundary"
+        route:
+          allOf:
+            - $ref: "#/components/schemas/CapabilityRoute"
+          nullable: true
+        access:
+          $ref: "#/components/schemas/CapabilityExactRecordAccess"
+        request:
+          $ref: "#/components/schemas/CapabilityExactRecordRequest"
+        response:
+          $ref: "#/components/schemas/CapabilityExactRecordResponse"
+        sourceReferences:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilitySourceReference"
+        freshness:
+          $ref: "#/components/schemas/CapabilityExactRecordFreshness"
+      required:
+        - capabilityId
+        - displayLabel
+        - shortDescription
+        - featureName
+        - routeFamily
+        - seamType
+        - capabilityBoundary
+        - access
+        - request
+        - response
+        - sourceReferences
+        - freshness
+
+    ExportCapabilityCatalogBody:
+      type: object
+      properties:
+        includeFeatures:
+          type: array
+          items:
+            type: string
+        formatVersion:
+          type: string
+          default: v1
+        allowStale:
+          type: boolean
+      required: [formatVersion]
+      additionalProperties: false
+
+    MaterializeCapabilityCatalogBody:
+      type: object
+      properties:
+        includeFeatures:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+
+    CapabilityCatalogExportResult:
+      type: object
+      properties:
+        formatVersion:
+          type: string
+        exportedAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityExactRecord"
+      required: [formatVersion, exportedAt, items]
+
+    CapabilityCatalogMaterializeResult:
+      type: object
+      properties:
+        insertedCount:
+          type: integer
+        updatedCount:
+          type: integer
+        generatedArtifactPath:
+          type: string
+        generatedCapabilityCount:
+          type: integer
+        materializedAt:
+          type: string
+          format: date-time
+      required:
+        - insertedCount
+        - updatedCount
+        - generatedArtifactPath
+        - generatedCapabilityCount
+        - materializedAt
+
+    CapabilityRegistryStatusSourceCoverage:
+      type: object
+      properties:
+        featureContract:
+          type: boolean
+        apiContractDoc:
+          type: boolean
+        permissionMapping:
+          type: boolean
+        featureManifest:
+          type: boolean
+      required: [featureContract, apiContractDoc, permissionMapping, featureManifest]
+
+    CapabilityRegistryStatus:
+      type: object
+      properties:
+        capabilityId:
+          type: string
+        freshnessStatus:
+          $ref: "#/components/schemas/CapabilityFreshnessStatus"
+        lastMaterializedAt:
+          type: string
+          format: date-time
+          nullable: true
+        lastAuditedAt:
+          type: string
+          format: date-time
+          nullable: true
+        driftReasons:
+          type: array
+          items:
+            type: string
+        sourceCoverage:
+          $ref: "#/components/schemas/CapabilityRegistryStatusSourceCoverage"
+        rematerializationRequired:
+          type: boolean
+      required:
+        - capabilityId
+        - freshnessStatus
+        - driftReasons
+        - sourceCoverage
+        - rematerializationRequired
+
+    CapabilityCatalogDriftResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CapabilityRegistryStatus"
+      required: [items]
+
     HealthResponse:
       type: object
       properties:

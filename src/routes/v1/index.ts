@@ -18,6 +18,7 @@ import {
 import { createEntityBuilderFeature } from "../../features/entityBuilder";
 import { createWebAppSurfaceDiscoveryFeature } from "../../features/webAppSurfaceDiscovery";
 import { createDesignSystemCanonicalsFeature } from "../../features/designSystemCanonicals";
+import { createCapabilityContractCatalogFeature } from "../../features/capabilityContractCatalog";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -202,6 +203,16 @@ v1Router.use(
   requireRootSession,
   authenticatedGeneralRateLimit,
   createNotificationDeliveryFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/capability-contract-catalog",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createCapabilityContractCatalogFeature(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,

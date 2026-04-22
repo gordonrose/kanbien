@@ -1,0 +1,1404 @@
+{
+  "generatedAt": "2026-04-22T20:38:19.535Z",
+  "items": [
+    {
+      "capabilityId": "notificationDelivery.sendEmail",
+      "featureName": "notificationDelivery",
+      "displayLabel": "Send Test Email",
+      "shortDescription": "Send one outbound email through the shared notification delivery feature.",
+      "fullDescription": "Creates one logical outbound email, one sanitized content snapshot, and one attempt through the root-only notification delivery operator API.",
+      "userFacingOutcome": "An operator can verify outbound delivery and inspect the resulting email metadata.",
+      "routeFamily": "notification-delivery",
+      "seamType": "http-route",
+      "capabilityBoundary": "root",
+      "selectionGroup": "notification-delivery",
+      "httpMethod": "POST",
+      "routePath": "/v1/notification-delivery/emails/test",
+      "governingAuthzCapabilities": [
+        "notification.email.send"
+      ],
+      "allowedRoles": [
+        "RootUserAdmin"
+      ],
+      "supportsRequestBody": true,
+      "supportsResponseFields": true,
+      "supportsFilters": false,
+      "lifecycleStatus": "active",
+      "normalizedHash": "f2faf83fc2178b1c0c16e57136de5c0f39505b7a9ff883ac884df4804a8fcf3c",
+      "lastMaterializedAt": "2026-04-22T20:38:19.503Z",
+      "fields": [
+        {
+          "contractSide": "request-body",
+          "path": "body.recipientEmail",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": "email",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim",
+            "lowercase"
+          ],
+          "bindingHints": [
+            "input"
+          ],
+          "validation": {
+            "format": "email",
+            "minLength": 1,
+            "normalizedAs": "trim-lowercase"
+          },
+          "displayOrder": 0
+        },
+        {
+          "contractSide": "request-body",
+          "path": "body.subject",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "input"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 1
+        },
+        {
+          "contractSide": "request-body",
+          "path": "body.bodyText",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "input"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 2
+        },
+        {
+          "contractSide": "request-body",
+          "path": "body.notificationType",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "input"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 3
+        },
+        {
+          "contractSide": "request-body",
+          "path": "body.tenantId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": "uuid",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "input",
+            "identifier"
+          ],
+          "validation": {
+            "format": "uuid"
+          },
+          "displayOrder": 4
+        },
+        {
+          "contractSide": "request-body",
+          "path": "body.relatedEntityType",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "input"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 5
+        },
+        {
+          "contractSide": "request-body",
+          "path": "body.relatedEntityId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "input",
+            "identifier"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 6
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.emailId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": "uuid",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display",
+            "identifier"
+          ],
+          "validation": null,
+          "displayOrder": 0
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.recipientEmail",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 1
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.subject",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 2
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.status",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "enum",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [
+            "pending",
+            "sent",
+            "failed"
+          ],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 3
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.latestAttempt.status",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "enum",
+          "required": false,
+          "nullable": true,
+          "repeated": false,
+          "format": null,
+          "enumValues": [
+            "sent",
+            "failed"
+          ],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 4
+        }
+      ],
+      "constraints": [],
+      "sourceReferences": [
+        {
+          "sourceType": "feature-contract",
+          "sourcePath": "src/features/notificationDelivery/contract/schemas.ts",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "feature-contract",
+          "sourcePath": "src/features/notificationDelivery/contract/types.ts",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "feature-manifest",
+          "sourcePath": "src/features/notificationDelivery/feature.manifest.json",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "api-contract-doc",
+          "sourcePath": "docs/api-contracts/notification-delivery.md",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "permission-mapping",
+          "sourcePath": "docs/architecture/permission-mappings/backend-to-authz-capability-mapping.md",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "permission-mapping",
+          "sourcePath": "docs/architecture/permission-mappings/role-to-authz-capability-mapping.md",
+          "sourceCoverage": null
+        }
+      ]
+    },
+    {
+      "capabilityId": "notificationDelivery.listOutboundEmails",
+      "featureName": "notificationDelivery",
+      "displayLabel": "List Outbound Emails",
+      "shortDescription": "List outbound email metadata with explicit filters.",
+      "fullDescription": "Returns paginated logical outbound email summaries with latest-attempt metadata and approved root-only filter support.",
+      "userFacingOutcome": "An operator can browse and filter outbound email metadata without opening one exact email record first.",
+      "routeFamily": "notification-delivery",
+      "seamType": "http-route",
+      "capabilityBoundary": "root",
+      "selectionGroup": "notification-delivery",
+      "httpMethod": "GET",
+      "routePath": "/v1/notification-delivery/emails",
+      "governingAuthzCapabilities": [
+        "notification.email.read"
+      ],
+      "allowedRoles": [
+        "RootUserAdmin"
+      ],
+      "supportsRequestBody": false,
+      "supportsResponseFields": true,
+      "supportsFilters": true,
+      "lifecycleStatus": "active",
+      "normalizedHash": "527265a4981b4358d6dc460db07849a43010a5c7d6c89880dff41fbf0110fc1d",
+      "lastMaterializedAt": "2026-04-22T20:38:19.519Z",
+      "fields": [
+        {
+          "contractSide": "request-query",
+          "path": "query.page",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "number",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "minimum": 1
+          },
+          "displayOrder": 0
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.pageSize",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "number",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "minimum": 1,
+            "maximum": 100
+          },
+          "displayOrder": 1
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.orderBy",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "enum",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [
+            "requestedAt",
+            "sentAt",
+            "subject",
+            "recipientEmail",
+            "status"
+          ],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": null,
+          "displayOrder": 2
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.orderDirection",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "enum",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [
+            "asc",
+            "desc"
+          ],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": null,
+          "displayOrder": 3
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.tenantId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": "uuid",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter",
+            "identifier"
+          ],
+          "validation": {
+            "format": "uuid"
+          },
+          "displayOrder": 4
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.notificationType",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim",
+            "lowercase"
+          ],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim-lowercase"
+          },
+          "displayOrder": 5
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.recipientEmail",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": "email",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim",
+            "lowercase"
+          ],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "minLength": 1,
+            "format": "email",
+            "normalizedAs": "trim-lowercase"
+          },
+          "displayOrder": 6
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.relatedEntityType",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim",
+            "lowercase"
+          ],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim-lowercase"
+          },
+          "displayOrder": 7
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.relatedEntityId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "filter",
+            "identifier"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 8
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.subject",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim",
+            "lowercase"
+          ],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim-lowercase"
+          },
+          "displayOrder": 9
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.status",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "enum",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [
+            "pending",
+            "sent",
+            "failed"
+          ],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": null,
+          "displayOrder": 10
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.provider",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim",
+            "lowercase"
+          ],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim-lowercase"
+          },
+          "displayOrder": 11
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.createdByActorType",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim",
+            "lowercase"
+          ],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim-lowercase"
+          },
+          "displayOrder": 12
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.createdByActorId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "filter",
+            "identifier"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 13
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.requestedAtFrom",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": "date-time",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "format": "date-time"
+          },
+          "displayOrder": 14
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.requestedAtTo",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": "date-time",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "format": "date-time"
+          },
+          "displayOrder": 15
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.sentAtFrom",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": "date-time",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "format": "date-time"
+          },
+          "displayOrder": 16
+        },
+        {
+          "contractSide": "request-query",
+          "path": "query.sentAtTo",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": "date-time",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "filter"
+          ],
+          "validation": {
+            "format": "date-time"
+          },
+          "displayOrder": 17
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.items[]",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "object",
+          "required": true,
+          "nullable": false,
+          "repeated": true,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 0
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.items[].emailId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": "uuid",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display",
+            "identifier"
+          ],
+          "validation": null,
+          "displayOrder": 1
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.items[].recipientEmail",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 2
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.items[].subject",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 3
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.items[].status",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "enum",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [
+            "pending",
+            "sent",
+            "failed"
+          ],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 4
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.page",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "number",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 5
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.pageSize",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "number",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 6
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.totalPages",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "number",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 7
+        }
+      ],
+      "constraints": [],
+      "sourceReferences": [
+        {
+          "sourceType": "feature-contract",
+          "sourcePath": "src/features/notificationDelivery/contract/schemas.ts",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "feature-contract",
+          "sourcePath": "src/features/notificationDelivery/contract/types.ts",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "feature-manifest",
+          "sourcePath": "src/features/notificationDelivery/feature.manifest.json",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "api-contract-doc",
+          "sourcePath": "docs/api-contracts/notification-delivery.md",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "permission-mapping",
+          "sourcePath": "docs/architecture/permission-mappings/backend-to-authz-capability-mapping.md",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "permission-mapping",
+          "sourcePath": "docs/architecture/permission-mappings/role-to-authz-capability-mapping.md",
+          "sourceCoverage": null
+        }
+      ]
+    },
+    {
+      "capabilityId": "notificationDelivery.getOutboundEmail",
+      "featureName": "notificationDelivery",
+      "displayLabel": "Get Outbound Email",
+      "shortDescription": "Read one logical outbound email and its delivery history.",
+      "fullDescription": "Returns one logical outbound email, sanitized content snapshots, and ordered attempt history through the root-only notification delivery API.",
+      "userFacingOutcome": "An operator can inspect one outbound email in detail, including content-version and attempt history.",
+      "routeFamily": "notification-delivery",
+      "seamType": "http-route",
+      "capabilityBoundary": "root",
+      "selectionGroup": "notification-delivery",
+      "httpMethod": "GET",
+      "routePath": "/v1/notification-delivery/emails/:emailId",
+      "governingAuthzCapabilities": [
+        "notification.email.read"
+      ],
+      "allowedRoles": [
+        "RootUserAdmin"
+      ],
+      "supportsRequestBody": false,
+      "supportsResponseFields": true,
+      "supportsFilters": false,
+      "lifecycleStatus": "active",
+      "normalizedHash": "8c80255bf56144da9ed279f4e50491ea7cf215468ad0892e815d248c66373406",
+      "lastMaterializedAt": "2026-04-22T20:38:19.520Z",
+      "fields": [
+        {
+          "contractSide": "request-param",
+          "path": "params.emailId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": "uuid",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "identifier"
+          ],
+          "validation": {
+            "format": "uuid"
+          },
+          "displayOrder": 0
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.emailId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": "uuid",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display",
+            "identifier"
+          ],
+          "validation": null,
+          "displayOrder": 0
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.subject",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 1
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.status",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "enum",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [
+            "pending",
+            "sent",
+            "failed"
+          ],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 2
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.contentVersions[]",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "object",
+          "required": true,
+          "nullable": false,
+          "repeated": true,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 3
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.attempts[]",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "object",
+          "required": true,
+          "nullable": false,
+          "repeated": true,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 4
+        }
+      ],
+      "constraints": [],
+      "sourceReferences": [
+        {
+          "sourceType": "feature-contract",
+          "sourcePath": "src/features/notificationDelivery/contract/schemas.ts",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "feature-contract",
+          "sourcePath": "src/features/notificationDelivery/contract/types.ts",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "feature-manifest",
+          "sourcePath": "src/features/notificationDelivery/feature.manifest.json",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "api-contract-doc",
+          "sourcePath": "docs/api-contracts/notification-delivery.md",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "permission-mapping",
+          "sourcePath": "docs/architecture/permission-mappings/backend-to-authz-capability-mapping.md",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "permission-mapping",
+          "sourcePath": "docs/architecture/permission-mappings/role-to-authz-capability-mapping.md",
+          "sourceCoverage": null
+        }
+      ]
+    },
+    {
+      "capabilityId": "notificationDelivery.resendEmail",
+      "featureName": "notificationDelivery",
+      "displayLabel": "Resend Outbound Email",
+      "shortDescription": "Resend one previously created outbound email.",
+      "fullDescription": "Creates a new delivery attempt for an existing logical outbound email and may reuse or replace the sanitized content snapshot when updated subject or body text is supplied.",
+      "userFacingOutcome": "An operator can trigger another delivery attempt for a previously created outbound email.",
+      "routeFamily": "notification-delivery",
+      "seamType": "http-route",
+      "capabilityBoundary": "root",
+      "selectionGroup": "notification-delivery",
+      "httpMethod": "POST",
+      "routePath": "/v1/notification-delivery/emails/:emailId/resend",
+      "governingAuthzCapabilities": [
+        "notification.email.resend"
+      ],
+      "allowedRoles": [
+        "RootUserAdmin"
+      ],
+      "supportsRequestBody": true,
+      "supportsResponseFields": true,
+      "supportsFilters": false,
+      "lifecycleStatus": "active",
+      "normalizedHash": "8fd238e2dc45799a9cc93c7bad54112853baf3cceb1a9579dc49910a53a396dc",
+      "lastMaterializedAt": "2026-04-22T20:38:19.520Z",
+      "fields": [
+        {
+          "contractSide": "request-param",
+          "path": "params.emailId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": "uuid",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "identifier"
+          ],
+          "validation": {
+            "format": "uuid"
+          },
+          "displayOrder": 0
+        },
+        {
+          "contractSide": "request-body",
+          "path": "body.resendReason",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "input"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 0
+        },
+        {
+          "contractSide": "request-body",
+          "path": "body.subject",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "input"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 1
+        },
+        {
+          "contractSide": "request-body",
+          "path": "body.bodyText",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [
+            "trim"
+          ],
+          "bindingHints": [
+            "input"
+          ],
+          "validation": {
+            "minLength": 1,
+            "normalizedAs": "trim"
+          },
+          "displayOrder": 2
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.emailId",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": "uuid",
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display",
+            "identifier"
+          ],
+          "validation": null,
+          "displayOrder": 0
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.subject",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 1
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.status",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "enum",
+          "required": true,
+          "nullable": false,
+          "repeated": false,
+          "format": null,
+          "enumValues": [
+            "pending",
+            "sent",
+            "failed"
+          ],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 2
+        },
+        {
+          "contractSide": "response-body",
+          "path": "response.latestAttempt.resendReason",
+          "displayLabel": null,
+          "description": null,
+          "fieldType": "string",
+          "required": false,
+          "nullable": true,
+          "repeated": false,
+          "format": null,
+          "enumValues": [],
+          "systemManaged": false,
+          "normalizationSteps": [],
+          "bindingHints": [
+            "display"
+          ],
+          "validation": null,
+          "displayOrder": 3
+        }
+      ],
+      "constraints": [
+        {
+          "constraintKind": "at-least-one",
+          "fields": [
+            "body.resendReason",
+            "body.subject",
+            "body.bodyText"
+          ],
+          "message": "At least one field must be supplied.",
+          "displayOrder": 0
+        }
+      ],
+      "sourceReferences": [
+        {
+          "sourceType": "feature-contract",
+          "sourcePath": "src/features/notificationDelivery/contract/schemas.ts",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "feature-contract",
+          "sourcePath": "src/features/notificationDelivery/contract/types.ts",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "feature-manifest",
+          "sourcePath": "src/features/notificationDelivery/feature.manifest.json",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "api-contract-doc",
+          "sourcePath": "docs/api-contracts/notification-delivery.md",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "permission-mapping",
+          "sourcePath": "docs/architecture/permission-mappings/backend-to-authz-capability-mapping.md",
+          "sourceCoverage": null
+        },
+        {
+          "sourceType": "permission-mapping",
+          "sourcePath": "docs/architecture/permission-mappings/role-to-authz-capability-mapping.md",
+          "sourceCoverage": null
+        }
+      ]
+    }
+  ]
+}
