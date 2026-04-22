@@ -479,24 +479,90 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
     await expect(page.locator("#shared-floating-tooltip")).toBeHidden();
   });
 
-  test("mobile fallback converts the context-nav into a bottom bar, preserves current-page visibility, and routes overflow through More", async ({ page }) => {
+  test("mobile web-app-hierarchy keeps the bottom bar to five visible controls by moving extra destinations into More", async ({ page }) => {
     await page.setViewportSize({ width: 560, height: 960 });
-    await bootstrapAuthenticatedShell(page, "/root-admin/tenant-admins");
+    await bootstrapAuthenticatedShell(page, "/root-admin/web-app-hierarchy", "", {
+      contextNavByPageKey: {
+        "web-app-hierarchy": [
+          {
+            webAppPageId: "page-roles",
+            shellPageKey: "roles",
+            displayLabel: "Roles",
+            resolvedFullRoutePath: "/root-admin/roles",
+            iconKey: "page-default",
+            effectiveIconKey: "page-default",
+            sortOrder: 0,
+          },
+          {
+            webAppPageId: "page-tenant-admins",
+            shellPageKey: "tenant-admins",
+            displayLabel: "Tenant Admins",
+            resolvedFullRoutePath: "/root-admin/tenant-admins",
+            iconKey: "page-default",
+            effectiveIconKey: "page-default",
+            sortOrder: 1,
+          },
+          {
+            webAppPageId: "page-tenants",
+            shellPageKey: "tenants",
+            displayLabel: "Tenants",
+            resolvedFullRoutePath: "/root-admin/tenants",
+            iconKey: "page-default",
+            effectiveIconKey: "page-default",
+            sortOrder: 2,
+          },
+          {
+            webAppPageId: "page-web-app-hierarchy",
+            shellPageKey: "web-app-hierarchy",
+            displayLabel: "Web App Hierarchy",
+            resolvedFullRoutePath: "/root-admin/web-app-hierarchy",
+            iconKey: "page-default",
+            effectiveIconKey: "page-default",
+            sortOrder: 3,
+          },
+          {
+            webAppPageId: "page-overview",
+            shellPageKey: "overview",
+            displayLabel: "Overview",
+            resolvedFullRoutePath: "/root-admin",
+            iconKey: "page-default",
+            effectiveIconKey: "page-default",
+            sortOrder: 4,
+          },
+          {
+            webAppPageId: "page-users",
+            shellPageKey: "users",
+            displayLabel: "Users",
+            resolvedFullRoutePath: "/root-admin/users",
+            iconKey: "page-default",
+            effectiveIconKey: "page-default",
+            sortOrder: 5,
+          },
+        ],
+      },
+    });
 
     await expect(page.locator(".breadcrumb-nav")).toBeHidden();
     await expect(page.locator("#display-settings-button")).toBeHidden();
     await expect(page.locator(".context-nav .context-nav-item:visible .context-nav-label")).toHaveText([
-      "Users",
       "Roles",
-      "Tenants",
       "Tenant Admins",
+      "Web App Hierarchy",
+      "Hierarchy",
       "More",
     ]);
-    await expect(page.locator('.context-nav .context-nav-item[aria-current="page"] .context-nav-label')).toHaveText("Tenant Admins");
+    await expect(page.locator('.context-nav .context-nav-item[aria-current="page"] .context-nav-label')).toHaveText("Web App Hierarchy");
+    await expect(page.locator(".context-nav .context-nav-item:visible")).toHaveCount(5);
 
-    await page.locator("#context-nav-more-button").click();
+    await page.locator("#context-nav-more-button").evaluate((button) => {
+      if (button instanceof HTMLButtonElement) {
+        button.click();
+      }
+    });
     await expect(page.locator("#context-nav-more-menu")).toBeVisible();
-    await expect(page.locator('#context-nav-more-menu [data-page-link="web-app-hierarchy"]')).toHaveText("Web App Hierarchy");
+    await expect(page.locator('#context-nav-more-menu [data-page-link="overview"]')).toHaveText("Overview");
+    await expect(page.locator('#context-nav-more-menu [data-page-link="users"]')).toHaveText("Users");
+    await expect(page.locator('#context-nav-more-menu [data-page-link="tenants"]')).toHaveText("Tenants");
 
     const contextNavBox = await page.locator(".context-nav").boundingBox();
     expect(contextNavBox).not.toBeNull();

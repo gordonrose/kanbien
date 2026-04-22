@@ -63,6 +63,10 @@ behavior, or page-local controller logic into the app.
 - `hierarchy-tree`
   `/design-system/assets/hierarchyTree.mjs`
   exports `mountRootAdminHierarchyTree(...)`
+- `web-app-hierarchy workspace`
+  `/design-system/assets/webAppHierarchyWorkspace.mjs`
+  exports `renderWebAppHierarchyWorkspaceShell(...)` and
+  `createWebAppHierarchyWorkspaceController(...)`
 - `icon-grid`
   `/design-system/assets/formControls.mjs`
   exports `renderFormIconGrid(...)`, plus initialization and refresh helpers
@@ -86,14 +90,17 @@ behavior, or page-local controller logic into the app.
     render structure in `rootAdminShell/index.html` and `rootAdminShell/assets/app.mjs`
 - `rootAdminShell` `web-app-hierarchy`
   - imports shared hierarchy-tree and form-template CSS
-  - imports shared hierarchy-tree and form-controls behavior helpers
+  - imports the DS-owned workspace render/controller seam from
+    `webAppHierarchyWorkspace.mjs`
   - now mounts `icon-grid` through the DS-owned `renderFormIconGrid(...)`
     seam instead of hardcoding the field and modal markup locally
   - now mounts `drawer-select` through the DS-owned
     `renderFormDrawerSelect(...)` seam instead of hardcoding the trigger and
     drawer shell markup locally
-  - still duplicates hierarchy drawer host markup in
+  - no longer duplicates the workspace form host or hierarchy drawer host in
     `rootAdminShell/index.html`
+  - still depends on the broader root-admin shell for the context-nav launcher
+    and surrounding shell host composition
 
 ## Target Seam Shape
 
@@ -155,44 +162,32 @@ The app must not own:
   maintain `renderFormDrawerSelect(...)` as the shared hosted render seam and
   keep the allowed consumer-input contract narrow
 
-### 3. `hierarchy-tree drawer`
+### 3. `web-app-hierarchy workspace host`
 
 - Why third:
-  design-system already owns the tree controller, but the app still owns the
-  drawer host shell and control markup
+  the hierarchy route was the highest-risk governed adopter because the app was
+  still carrying the host render structure even after child controls and
+  controller behavior moved upstream
 - Current posture:
-  partial behavior sharing with duplicated host structure
+  migrated to DS-owned workspace render and controller seams through
+  `webAppHierarchyWorkspace.mjs`
 - Needed seam:
-  design-system-owned drawer render seam that includes the approved host shell
-  around the mounted tree
-
-### 4. `form-template hosted sections`
-
-- Why fourth:
-  highest composition risk because it is the parent host family for child
-  fields and page cadence
-- Current posture:
-  shared CSS exists, but the app still authors the page-settings section
-  structure locally
-- Needed seam:
-  design-system-owned render seam for the hosted section and explicit slot or
-  input rules for business-owned content
+  keep the workspace render/controller contract narrow and explicit as route
+  business callbacks evolve
 
 ## Recommended Implementation Order
 
-1. Extract `hierarchy-tree` drawer-host render seam.
-2. Re-evaluate whether `form-template` needs a hosted-section render seam or a
-   narrower slot-based host contract after the child families land.
+1. Extend DS-owned render/controller seams for the next governed app family
+   instead of repeating app-local route host markup.
+2. Re-evaluate whether `users` should publish a DS-owned list-page render seam
+   rather than remaining a shared-CSS plus app-local markup consumer.
 
 ## Trade-Offs To Surface Before Migration
 
-- the next meaningful migration is now the `hierarchy-tree` drawer host,
-  because the lower-risk child form controls already share DS-owned render and
-  behavior seams
-- `hierarchy-tree drawer` is medium risk because the host shell and tree
-  lifecycle need to move together
-- `form-template hosted sections` is higher risk because it can affect page
-  composition rules, slot ownership, and section-level copy boundaries
+- the next meaningful migration is now the `users` list-page family, because
+  `web-app-hierarchy` now consumes a DS-owned workspace render/controller seam
+- list-page migration remains medium-to-high risk because it combines render
+  structure, detail behavior, and responsive overlay posture
 
 Do not silently migrate all four in one pass.
 Pick one family at a time and confirm the ownership boundary before code moves.

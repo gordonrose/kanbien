@@ -26,6 +26,8 @@ Source references:
   `docs/workspace/design-system/reference-packs/form-template-reference-pack.md`
 - current consumer:
   `src/frontend/rootAdminShell/index.html`
+  plus the DS-owned route workspace seam in
+  `src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs`
 - related reconciliation note:
   `docs/workspace/issue-reconciliations/2026-04-20-root-admin-page-settings-form-template-adoption-drift.md`
 
@@ -46,9 +48,9 @@ wins until a human explicitly changes the adoption contract or preflight.
 
 Remaining honesty constraint:
 
-- this route is still only a partial governed adoption at the host level
-  because the hierarchy drawer host markup and the form-template hosted section
-  composition are still authored in `rootAdminShell/index.html`
+- the broader root-admin shell host is still locally composed, but the route
+  body and hierarchy drawer host now render through the shared
+  `webAppHierarchyWorkspace.mjs` seam instead of `rootAdminShell/index.html`
 
 ## Required Host Truth
 
@@ -86,21 +88,19 @@ Remaining honesty constraint:
 - The child controls for icon and context-nav selection mount through
   DS-owned seams instead of route-local reconstruction.
 
-### Remaining Structural Gap
+### Current Structural Status
 
-- The route still composes the hosted hierarchy drawer shell and the
+- The route no longer composes the hosted hierarchy drawer shell or the
   form-template hosted sections locally in `rootAdminShell/index.html`.
-
-Why this still matters:
-
-- the visible parity is much better than the earlier broken state, but the
-  route has not yet reached the stronger endpoint where those host seams are
-  also DS-owned render seams
+- Those governed host regions now render through the shared
+  `renderWebAppHierarchyWorkspaceShell()` seam in
+  `src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs`.
 
 Required honesty:
 
-- do not describe this route as fully governed adoption of those host seams
-- do describe it as active partial adoption with parity guards in place
+- describe the page body and hierarchy drawer host as DS-owned render adoption
+- still distinguish that from the broader root-admin shell, which remains a
+  separate local host composition
 
 ## Required Verification Guards
 
@@ -135,11 +135,11 @@ Minimum route-level parity proof should cover:
 ## Status
 
 - Current state:
-  parity materially improved and guarded, but still only partial governed host
-  adoption because the route owns some host markup locally
+  parity materially improved and the governed route host now renders through
+  the shared DS workspace seam
 - Allowed next step:
-  maintain the current parity guards and only claim fuller governed adoption if
-  the remaining host seams are extracted into DS-owned render seams
+  maintain the current parity guards and extend the shared workspace seam if
+  future route-host changes are needed
 - Not allowed:
   reintroducing extra host shells, extra primary cards, ad hoc page controls,
   or copied child-control markup while presenting the route as governed

@@ -1,4 +1,7 @@
-import { createWebAppHierarchyWorkspaceController } from "/design-system/assets/webAppHierarchyWorkspace.mjs";
+import {
+  createWebAppHierarchyWorkspaceController,
+  renderWebAppHierarchyWorkspaceShell,
+} from "/design-system/assets/webAppHierarchyWorkspace.mjs";
 
 export function createWebAppHierarchyPageController({
   root,
@@ -11,6 +14,10 @@ export function createWebAppHierarchyPageController({
   refreshTopNav = async () => {},
   refreshContextNav = async () => {},
 }) {
+  if (root instanceof HTMLElement && !root.querySelector("#web-app-hierarchy-page-title")) {
+    root.innerHTML = renderWebAppHierarchyWorkspaceShell();
+  }
+
   return createWebAppHierarchyWorkspaceController({
     root,
     setShellMessage,

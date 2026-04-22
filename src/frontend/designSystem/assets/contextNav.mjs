@@ -19,11 +19,16 @@ export function partitionContextNavItems(items, {
   isMobile = false,
   currentItemKey = null,
   maxVisibleItems = 4,
+  reservedMobileSlots = 0,
+  mobileLaneCapacity = 5,
   getItemKey = defaultGetItemKey,
 } = {}) {
   const normalizedItems = Array.isArray(items) ? items : [];
+  const effectiveMaxVisibleItems = isMobile
+    ? Math.max(1, Math.min(maxVisibleItems, mobileLaneCapacity - 1 - Math.max(0, reservedMobileSlots)))
+    : maxVisibleItems;
 
-  if (!isMobile || normalizedItems.length <= maxVisibleItems) {
+  if (!isMobile || normalizedItems.length <= effectiveMaxVisibleItems) {
     return {
       visibleItems: normalizedItems,
       overflowItems: [],
@@ -31,18 +36,18 @@ export function partitionContextNavItems(items, {
   }
 
   const currentIndex = normalizedItems.findIndex((item) => getItemKey(item) === currentItemKey);
-  const initialVisibleItems = normalizedItems.slice(0, maxVisibleItems);
+  const initialVisibleItems = normalizedItems.slice(0, effectiveMaxVisibleItems);
 
-  if (currentIndex < 0 || currentIndex < maxVisibleItems) {
+  if (currentIndex < 0 || currentIndex < effectiveMaxVisibleItems) {
     return {
       visibleItems: initialVisibleItems,
-      overflowItems: normalizedItems.slice(maxVisibleItems),
+      overflowItems: normalizedItems.slice(effectiveMaxVisibleItems),
     };
   }
 
   const currentItem = normalizedItems[currentIndex];
   const visibleItems = [
-    ...normalizedItems.slice(0, Math.max(0, maxVisibleItems - 1)),
+    ...normalizedItems.slice(0, Math.max(0, effectiveMaxVisibleItems - 1)),
     currentItem,
   ];
   const visibleKeys = new Set(visibleItems.map((item) => getItemKey(item)));

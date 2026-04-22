@@ -56,26 +56,23 @@
   `/design-system/assets/hierarchy-tree-shared.css`
   `/design-system/assets/form-template-shared.css`
 - Shared render seam:
-  partial
-  `icon-grid` and `drawer-select` already mount through DS-owned render seams,
-  but `hierarchy-tree drawer host` and `form-template hosted section` render
-  seams are not yet fully DS-owned
+  present through:
+  `/design-system/assets/webAppHierarchyWorkspace.mjs`
+  which now owns the governed route workspace shell, hosted form surface, and
+  hierarchy drawer host markup
 - Shared controller seam:
-  partial
-  `mountRootAdminHierarchyTree(...)` exists for tree behavior and
-  `formControls.mjs` owns child-control behavior
+  present through:
+  `createWebAppHierarchyWorkspaceController(...)` in
+  `/design-system/assets/webAppHierarchyWorkspace.mjs`
 - Explicit allowed consumer inputs:
   hierarchy tree data, capability-driven action visibility, selected-node
   structure data, page-settings values, approved callbacks for route-owned
   business actions
 - Which required seams are still missing?
-  - DS-owned hierarchy drawer host render seam
-  - DS-owned form-template hosted-section render seam or equivalent narrower
-    slot contract
+  - no route-body host seam blocker remains for this route
 - If a seam is missing, what is the stop condition?
-  do not present the route as fully governed adoption of that family; record
-  the route as partial adoption and do not copy additional governed markup or
-  interaction logic locally to bridge the missing seam
+  if future work would require new app-local reconstruction of the workspace
+  host, stop and extend the shared design-system workspace seam instead
 
 ## Ownership Boundary
 
@@ -113,8 +110,7 @@
   primary form card, no nested visible form shells, honest desktop form
   posture, real child-control rendering, and saved action footer presence
 - Which states are intentionally deferred?
-  full DS-owned hierarchy drawer-host render seam and full DS-owned
-  form-template hosted-section render seam remain future extraction work
+  broader root-admin shell host render adoption beyond the workspace seam
 - Which visible differences are approved in advance?
   route-specific copy, route-level action labels, backend-driven field values,
   and page-specific business submission actions
@@ -179,9 +175,9 @@
 ## Outcome
 
 - Proceed now / blocked on missing seam / needs signoff clarification:
-  proceed with route-level parity guards and honest partial-adoption
-  documentation; do not claim full DS-owned render adoption for the missing
-  host seams yet
+  proceed; the route now consumes a DS-owned workspace render/controller seam
+  and should be treated as governed adoption for the page body and hierarchy
+  drawer host
 - Follow-up artifacts required:
   refresh the hierarchy adoption contract, refresh the form parity checklist,
   and keep the route-level browser suite aligned with these parity rules

@@ -11,9 +11,9 @@ type LockedFile = {
 const lockedRootAdminUiFiles: LockedFile[] = [
   {
     path: "src/frontend/rootAdminShell/index.html",
-    sha256: "618623534f12b2c70ea56159d7b53644cd5a06be78417ef0ed050acf550310be",
+    sha256: "a01177e96544211affe04ed1635e5618a20186f41d3298f98b1cb594e1f8706e",
     rationale:
-      "Authenticated root-admin shell markup remains locally hosted, but approved topology migrations may update canonical route entry and shell link targets while shared design-system seams still own the governed page-shell structure.",
+      "Authenticated root-admin shell markup remains locally hosted, but governed route families such as web-app-hierarchy must no longer duplicate their workspace host markup in this file once a shared design-system render seam exists.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/login.css",
@@ -23,7 +23,7 @@ const lockedRootAdminUiFiles: LockedFile[] = [
   },
   {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "d1a8c33f753efc506ad3dd1908e056a376b7d55cf1ed6c59722e2387d98e8e14",
+    sha256: "e20317fe0c099f66f53c953a5cb4818d784afa3597bb4bf27244d5e4edc01765",
     rationale:
       "Root-admin authenticated shell behavior remains locally composed, but approved route-topology migrations may update path resolution and canonical-location syncing as long as shared design-system shell behavior does not regress back into app-local ownership.",
   },
@@ -35,9 +35,9 @@ const lockedRootAdminUiFiles: LockedFile[] = [
   },
   {
     path: "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
-    sha256: "6598929c9d403dcc315bc7ac537eafcc855be1d1ec8b4807d4deea3a0855b59a",
+    sha256: "2767cab3d1d185b081afb64b191ec1d918869b2fce651b4700017e310387445b",
     rationale:
-      "Non-login root-admin hierarchy composition still routes through a local adapter, but approved route-topology and transport seam changes may land here while the shared design-system hierarchy workspace continues to own the actual governed hierarchy UI behavior.",
+      "Non-login root-admin hierarchy composition still routes through a local adapter, but that adapter must stay thin and render the shared design-system workspace shell instead of reconstructing governed host markup locally.",
   },
 ];
 
@@ -212,6 +212,18 @@ const forbiddenRootAdminIndexPatterns: Array<{ pattern: RegExp; rationale: strin
   {
     pattern: /\bbreadcrumb-home-separator-item\b/,
     rationale: "Root-admin must not reintroduce local breadcrumb separator ownership instead of the shared design-system breadcrumb host structure.",
+  },
+  {
+    pattern: /\bid="web-app-page-settings-form"\b/,
+    rationale: "The governed web-app-hierarchy form host must render through the shared design-system workspace seam instead of being hardcoded in root-admin HTML.",
+  },
+  {
+    pattern: /\bid="hierarchy-tree-drawer"\b/,
+    rationale: "The governed hierarchy drawer host must render through the shared design-system workspace seam instead of being hardcoded in root-admin HTML.",
+  },
+  {
+    pattern: /\bid="web-app-hierarchy-page-title"\b/,
+    rationale: "The governed web-app-hierarchy workspace shell must not be reconstructed directly in root-admin HTML once the shared render seam exists.",
   },
 ];
 

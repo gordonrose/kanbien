@@ -797,10 +797,14 @@ function renderContextNavItems(items) {
   }
 
   renderedContextNavItems = Array.isArray(items) ? items : [];
+  const reservedMobileSlots = isMobileContextNavLayout() && hierarchyTreeNavButton instanceof HTMLElement && !hierarchyTreeNavButton.classList.contains("hidden")
+    ? 1
+    : 0;
   const { visibleItems, overflowItems } = partitionContextNavItems(renderedContextNavItems, {
     isMobile: isMobileContextNavLayout(),
     currentItemKey: state.navigation.currentPage,
     maxVisibleItems: 4,
+    reservedMobileSlots,
     getItemKey: (item) => item.shellPageKey,
   });
 
