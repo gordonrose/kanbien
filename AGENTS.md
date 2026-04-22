@@ -15,6 +15,7 @@ For procedural change-loop requirements such as artifact completeness,
 documentation sync, QA evidence, and maintained-artifact sweeps, use:
 
 - `docs/standards/change-artifact-requirements.md`
+- `docs/standards/git-workflow-guardrails.md`
 
 ## Default Change Posture
 
@@ -501,6 +502,12 @@ When adding a new feature that depends on existing entities or tables:
 
 Default to a branch-per-task workflow for material repo changes.
 
+Before material work begins, and before any promotion or merge work, use the
+repo's executable git guardrails:
+
+- `npm run git:preflight`
+- `npm run git:promote -- --source <branch-or-commit>`
+
 Defaults:
 
 - for non-trivial code, test, docs, migration, or artifact changes, create a
@@ -521,6 +528,13 @@ Defaults:
 - when approved to commit, prefer one or more scoped commits rather than one
   large mixed commit
 - do not push by default after committing unless the user asks for a push or PR
+- do not treat local `main` as promotion truth when it differs from
+  `origin/main`; promotion decisions must use the GitHub baseline
+- if `npm run git:preflight` reports a blocking state, do not continue with
+  material work until the repo state is repaired
+- if `npm run git:promote` reports `TARGET_STALE_BLOCK`,
+  `CHERRY_PICK_REQUIRED`, or `DIRTY_BLOCK`, do not continue with merge or
+  promotion work until that state is resolved
 
 ### Chat Bootstrap Gate
 

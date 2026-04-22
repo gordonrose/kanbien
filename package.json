@@ -14,6 +14,8 @@
     "check:frontend-architecture": "node --import tsx src/scripts/checkFrontendArchitectureDocs.ts",
     "deps:audit": "npm audit --omit=dev",
     "deps:audit:all": "npm audit",
+    "git:preflight": "node --import tsx src/scripts/gitPreflight.ts",
+    "git:promote": "node --import tsx src/scripts/gitPromote.ts",
     "check:governed-root-admin-ui": "node --import tsx src/scripts/checkGovernedRootAdminUi.ts",
     "check:static": "npm run check:feature-dependencies && npm run check:governed-root-admin-ui && npm run typecheck",
     "check:repo": "npm run check:static && npm run deps:audit",

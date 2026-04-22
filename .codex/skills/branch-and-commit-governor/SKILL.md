@@ -23,6 +23,11 @@ Keep implementation work isolated and easier to review by defaulting to:
 Before the normal branch/commit loop, use a chat bootstrap when the task is
 material and there is any realistic chance of parallel chat activity.
 
+For this repo, the workflow must run the executable guardrails first:
+
+- `npm run git:preflight`
+- `npm run git:promote -- --source <branch-or-commit>` before promotion work
+
 ### 1. Classify the task
 
 Decide whether the current task is:
@@ -45,6 +50,7 @@ Check:
 - current branch
 - whether the worktree is clean
 - whether the existing branch is already a dedicated scoped task branch
+- whether local `main` matches `origin/main`
 
 If the worktree already has unrelated changes, do not silently continue into a
 new mixed branch. Surface the state and ask how to proceed when separation is
@@ -53,6 +59,9 @@ not obvious.
 Also check whether the branch is merely "related" versus truly dedicated. If
 the current branch has moved because of another chat's commits, treat it as an
 unsafe ambient base until proven otherwise.
+
+If `npm run git:preflight` returns a blocking state, do not continue with
+material edits until the repo state is repaired.
 
 ### 2A. Capture a chat bootstrap
 
@@ -104,6 +113,8 @@ When parallel chats are active, prefer:
 
 Do not create the new branch from ambient `HEAD` unless the bootstrap explicitly
 records that choice.
+
+Do not continue material implementation directly on `main`.
 
 ### 4. Do the work without auto-committing
 
@@ -166,6 +177,9 @@ If the repo is under active parallel chat development, escalate from
 "recommendation" to "bootstrap gate": stop, capture a base commit, and isolate
 the chat before implementation.
 
+If local `main` is stale relative to `origin/main`, treat that as a blocking
+state for promotion work and a warning state for new material work.
+
 ### Keep commit authority with the user
 
 This workflow is meant to reduce cleanup pain, not to hide git decisions from
@@ -183,3 +197,23 @@ the user. Explicit approval still gates commits.
 8. wait for approval
 9. create scoped commit(s)
 10. push only if asked
+
+## Promotion Guardrail
+
+Before anything is described as "merge to main", run:
+
+```bash
+npm run git:promote -- --source <branch-or-commit>
+```
+
+Interpretation:
+
+- `SAFE_FAST_FORWARD`
+  promotion can happen on top of the current `origin/main` baseline
+- `CHERRY_PICK_REQUIRED`
+  the branch is not based on the true mainline and must be promoted by
+  cherry-picking scoped commits onto a clean `origin/main` branch
+- `TARGET_STALE_BLOCK`
+  local `main` is stale and must be realigned before promotion work continues
+- `DIRTY_BLOCK`
+  promotion worktree is not clean enough to proceed honestly
