@@ -85,6 +85,16 @@ At minimum, verify:
 2. family launcher to dedicated render route
 3. dedicated render route loads the expected ref state
 
+Current shell-level guard:
+
+- `tests/visual/designSystem/canonicals/shell/generatedCanonicalRenderingsIndex.spec.ts`
+
+Required future-family rule:
+
+- when a new generated family is added, extend the generated-index shell spec in
+  the same change so the top-level launcher seam proves that family from the
+  visible workspace
+
 ## Scope Classification
 
 For each reference family, explicitly classify whether these are:

@@ -623,17 +623,17 @@ const designSystemBreadcrumbChains = new Map([
   ]],
   ["/design-system/components/simple-select", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/canonicals/simple-select", label: "Simple Select" },
+    { href: "/design-system/canonical-renderings/simple-select", label: "Simple Select" },
     { href: "/design-system/components/simple-select", label: "Render" },
   ]],
   ["/design-system/components/date-picker", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/canonicals/date-picker", label: "Date Picker" },
+    { href: "/design-system/canonical-renderings/date-picker", label: "Date Picker" },
     { href: "/design-system/components/date-picker", label: "Render" },
   ]],
   ["/design-system/components/time-picker", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/canonicals/time-picker", label: "Time Picker" },
+    { href: "/design-system/canonical-renderings/time-picker", label: "Time Picker" },
     { href: "/design-system/components/time-picker", label: "Render" },
   ]],
   ["/design-system/canonicals/top-nav", [
@@ -723,8 +723,8 @@ const designSystemBreadcrumbChains = new Map([
   ]],
   ["/design-system/components/drawer-select", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/canonicals", label: "Canonicals" },
-    { href: "/design-system/canonicals/drawer-select", label: "Drawer Select" },
+    { href: "/design-system/canonical-renderings", label: "Canonical Renderings" },
+    { href: "/design-system/canonical-renderings/drawer-select", label: "Drawer Select" },
     { href: "/design-system/components/drawer-select", label: "Canonical Render" },
   ]],
   ["/design-system/components/icon-grid", [
@@ -735,8 +735,8 @@ const designSystemBreadcrumbChains = new Map([
   ]],
   ["/design-system/components/choice-group", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/canonicals", label: "Canonicals" },
-    { href: "/design-system/canonicals/choice-group", label: "Choice Group" },
+    { href: "/design-system/canonical-renderings", label: "Canonical Renderings" },
+    { href: "/design-system/canonical-renderings/choice-group", label: "Choice Group" },
     { href: "/design-system/components/choice-group", label: "Canonical Render" },
   ]],
   ["/design-system/exploration/top-nav", [
