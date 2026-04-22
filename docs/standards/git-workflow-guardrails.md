@@ -37,8 +37,23 @@ Before promotion or merge planning, run:
 npm run git:promote -- --source <branch-or-commit>
 ```
 
-These scripts are not optional advisory helpers. They are the required first
-check when the task is material.
+These scripts are not optional advisory helpers. They are required start gates.
+
+Material work means any non-trivial add, remove, or change to code, tests,
+docs, migrations, maintained artifacts, workflow files, or committed repo
+configuration.
+
+Do not postpone `npm run git:preflight` until commit time. The point is to stop
+bad repo state before the first material edit happens.
+
+For repo-local Codex sessions, prefer launching through:
+
+```bash
+/home/gordon/kanbien/src/scripts/launchGuardedCodex.sh
+```
+
+That launcher runs `npm run git:preflight` before Codex starts, so blocked repo
+states fail earlier instead of becoming mid-task surprises.
 
 ## Material-Work Start Gate
 
@@ -54,6 +69,11 @@ Material work must not begin until all of the following are true:
 
 If `npm run git:preflight` returns a blocking status, stop and fix the repo
 state before implementation continues.
+
+For Codex or other agent sessions, treat this as a pre-edit guard, not just a
+pre-commit guard. Skills and agent workflows that modify the repo should assume
+this check has already happened or should run it before the first material
+edit.
 
 ## Bootstrap Requirement
 

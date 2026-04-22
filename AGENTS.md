@@ -502,11 +502,32 @@ When adding a new feature that depends on existing entities or tables:
 
 Default to a branch-per-task workflow for material repo changes.
 
-Before material work begins, and before any promotion or merge work, use the
-repo's executable git guardrails:
+Before any material repo edit begins, and before any promotion or merge work,
+use the repo's executable git guardrails.
+
+Material repo edit means any non-trivial add, remove, or change to code,
+tests, docs, migrations, maintained artifacts, workflow files, or committed
+repo configuration.
+
+For this repo, the guardrail order is:
 
 - `npm run git:preflight`
 - `npm run git:promote -- --source <branch-or-commit>`
+
+This is a start gate, not a later cleanup step.
+
+If `npm run git:preflight` reports a blocking state:
+
+- do not begin the edit
+- do not defer the check until commit time
+- repair or isolate the repo state first
+
+For repo-local Codex sessions, prefer launching through:
+
+- `/home/gordon/kanbien/src/scripts/launchGuardedCodex.sh`
+
+That launcher runs `npm run git:preflight` before Codex starts so blocked repo
+states fail before any edit loop begins.
 
 Defaults:
 

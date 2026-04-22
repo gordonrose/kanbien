@@ -28,6 +28,10 @@ For this repo, the workflow must run the executable guardrails first:
 - `npm run git:preflight`
 - `npm run git:promote -- --source <branch-or-commit>` before promotion work
 
+Treat `npm run git:preflight` as a pre-edit gate, not a later hygiene pass.
+If it blocks, do not start material edits and do not assume the state can be
+cleaned up afterward.
+
 ### 1. Classify the task
 
 Decide whether the current task is:
@@ -62,6 +66,13 @@ unsafe ambient base until proven otherwise.
 
 If `npm run git:preflight` returns a blocking state, do not continue with
 material edits until the repo state is repaired.
+
+When Codex is being launched for repo-local work, prefer the guarded launcher:
+
+- `/home/gordon/kanbien/src/scripts/launchGuardedCodex.sh`
+
+That makes the preflight happen before the session starts instead of relying on
+the skill to catch it after work has already begun.
 
 ### 2A. Capture a chat bootstrap
 

@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+current_branch="$(git branch --show-current)"
+
+if [[ "${current_branch}" == "main" ]]; then
+  echo "pre-commit blocked: do not commit material work directly on main." >&2
+  echo "Create or switch to a dedicated task branch first." >&2
+  exit 1
+fi
+
 node --import tsx src/scripts/checkFrontendArchitectureDocs.ts --staged
