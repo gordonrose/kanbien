@@ -8,6 +8,7 @@ import {
 import { signLoginChallenge } from "./helperClient.mjs";
 import { createRootUsersListController } from "./rootUsersList.mjs";
 import { createWebAppHierarchyPageController } from "./webAppHierarchyPage.mjs";
+import { partitionContextNavItems, renderContextNavMenuItems } from "/design-system/assets/contextNav.mjs";
 import { renderDesignSystemIconSvg } from "/design-system/assets/formControls.mjs";
 import { createPageShellBannerRuntimeController } from "/design-system/assets/pageShellBanner.mjs";
 import {
@@ -211,6 +212,7 @@ const displaySettingsButton = document.getElementById("display-settings-button")
 const displaySettingsLabel = document.getElementById("display-settings-label");
 const contextNavMoreButton = document.getElementById("context-nav-more-button");
 const contextNavMoreMenu = document.getElementById("context-nav-more-menu");
+const contextNavMoreLinks = document.getElementById("context-nav-more-links");
 const contextNavMoreDisplaySettingsButton = document.getElementById("context-nav-more-display-settings");
 const displaySettingsDrawer = document.getElementById("display-settings-drawer");
 const displaySettingsEyebrow = document.getElementById("display-settings-eyebrow");
@@ -770,13 +772,39 @@ function normalizePage(page) {
 }
 
 let contextNavRequestId = 0;
+let renderedContextNavItems = [];
+
+function isMobileContextNavLayout() {
+  return window.matchMedia("(max-width: 61.25rem)").matches;
+}
+
+function renderContextNavOverflowLinks(items) {
+  if (!(contextNavMoreLinks instanceof HTMLElement)) {
+    return;
+  }
+
+  contextNavMoreLinks.innerHTML = renderContextNavMenuItems(items, {
+    getHref: (item) => item.resolvedFullRoutePath ?? buildCanonicalRootAdminPath(item.shellPageKey),
+    getLabel: (item) => item.displayLabel,
+    getCurrent: (item) => item.shellPageKey === state.navigation.currentPage,
+    getItemKey: (item) => item.shellPageKey,
+  });
+}
 
 function renderContextNavItems(items) {
   if (!(contextNavMainItems instanceof HTMLElement)) {
     return;
   }
 
-  contextNavMainItems.innerHTML = items
+  renderedContextNavItems = Array.isArray(items) ? items : [];
+  const { visibleItems, overflowItems } = partitionContextNavItems(renderedContextNavItems, {
+    isMobile: isMobileContextNavLayout(),
+    currentItemKey: state.navigation.currentPage,
+    maxVisibleItems: 4,
+    getItemKey: (item) => item.shellPageKey,
+  });
+
+  contextNavMainItems.innerHTML = visibleItems
     .map((item) => {
       const iconKey = decodePageSettingsIconKey(item.effectiveIconKey ?? item.iconKey ?? null, item.shellPageKey);
       const href = item.resolvedFullRoutePath ?? buildCanonicalRootAdminPath(item.shellPageKey);
@@ -794,6 +822,7 @@ function renderContextNavItems(items) {
     })
     .join("");
 
+  renderContextNavOverflowLinks(overflowItems);
   syncNavState();
   scheduleContextNavOffsetUpdate();
 }
@@ -986,6 +1015,7 @@ function syncNavState() {
   syncLinkCollection(primaryNavLinks);
   syncLinkCollection(mobileNavLinks);
   syncLinkCollection(getContextNavLinks());
+  syncLinkCollection(Array.from(contextNavMoreMenu?.querySelectorAll("[data-page-link]") ?? []));
   syncLinkCollection(Array.from(primaryNavOverflowMenu?.querySelectorAll("[data-page-link]") ?? []));
 
   for (const [page, section] of Object.entries(pageSections)) {
@@ -1409,6 +1439,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 window.addEventListener("resize", () => {
+  renderContextNavItems(renderedContextNavItems);
   updatePrimaryNavOverflow();
   scheduleBreadcrumbPresentation();
   syncNavState();

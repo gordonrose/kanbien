@@ -1,4 +1,5 @@
 import { createPageShellBannerController } from "./pageShellBanner.mjs";
+import { partitionContextNavItems, renderContextNavMenuItems } from "./contextNav.mjs";
 
 function setTextContent(node, text) {
   if (node instanceof HTMLElement) {
@@ -3349,13 +3350,6 @@ function getCurrentSubNavPreviewState(overrides = {}) {
   });
 }
 
-function renderContextNavMenuItems(items) {
-  return items.map((item) => {
-    const currentAttr = item.active ? ' aria-current="page"' : "";
-    return `<a class="menu-item" href="${item.href}" role="menuitem"${currentAttr}>${item.label}</a>`;
-  }).join("");
-}
-
 function renderContextNavPreviewNav(state) {
   if (!contextNavPreviewMainItems || !contextNavMoreMenu || !contextNavPreviewShell) {
     return;
@@ -3365,8 +3359,12 @@ function renderContextNavPreviewNav(state) {
   const primaryItems = contextNavPrimaryFixtures[state.stack].map((item) => ({ ...item, label: item[labelKey] }));
   const isMobile = state.width <= 980;
   const shouldScrollTop = !isMobile && state.stack === "tall";
-  const visiblePrimaryItems = isMobile ? primaryItems.slice(0, 4) : primaryItems;
-  const overflowPrimaryItems = isMobile ? primaryItems.slice(4) : [];
+  const { visibleItems: visiblePrimaryItems, overflowItems: overflowPrimaryItems } = partitionContextNavItems(primaryItems, {
+    isMobile,
+    currentItemKey: primaryItems.find((item) => item.active)?.href ?? null,
+    maxVisibleItems: 4,
+    getItemKey: (item) => item.href,
+  });
   const filterLabel = contextNavBottomFixtures.filter[labelKey];
   const accessLabel = contextNavBottomFixtures.accessibility[labelKey];
   const moreLabel = contextNavBottomFixtures.more[labelKey];

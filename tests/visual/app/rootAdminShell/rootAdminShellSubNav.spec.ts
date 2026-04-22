@@ -479,7 +479,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
     await expect(page.locator("#shared-floating-tooltip")).toBeHidden();
   });
 
-  test("mobile fallback converts the context-nav into a bottom bar with visible labels", async ({ page }) => {
+  test("mobile fallback converts the context-nav into a bottom bar, preserves current-page visibility, and routes overflow through More", async ({ page }) => {
     await page.setViewportSize({ width: 560, height: 960 });
     await bootstrapAuthenticatedShell(page, "/root-admin/tenant-admins");
 
@@ -490,10 +490,13 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
       "Roles",
       "Tenants",
       "Tenant Admins",
-      "Web App Hierarchy",
       "More",
     ]);
     await expect(page.locator('.context-nav .context-nav-item[aria-current="page"] .context-nav-label')).toHaveText("Tenant Admins");
+
+    await page.locator("#context-nav-more-button").click();
+    await expect(page.locator("#context-nav-more-menu")).toBeVisible();
+    await expect(page.locator('#context-nav-more-menu [data-page-link="web-app-hierarchy"]')).toHaveText("Web App Hierarchy");
 
     const contextNavBox = await page.locator(".context-nav").boundingBox();
     expect(contextNavBox).not.toBeNull();

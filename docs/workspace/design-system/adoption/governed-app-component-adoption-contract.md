@@ -57,6 +57,9 @@ behavior, or page-local controller logic into the app.
 
 ### Current Design-System-Owned JS Or Interaction Seams
 
+- `context-nav`
+  `/design-system/assets/contextNav.mjs`
+  exports `partitionContextNavItems(...)` and `renderContextNavMenuItems(...)`
 - `hierarchy-tree`
   `/design-system/assets/hierarchyTree.mjs`
   exports `mountRootAdminHierarchyTree(...)`
@@ -76,6 +79,11 @@ behavior, or page-local controller logic into the app.
   - still duplicates list-page shell markup in `rootAdminShell/index.html`
   - still owns route-local list-page controller behavior in
     `rootAdminShell/assets/rootUsersList.mjs`
+- `rootAdminShell` `context-nav`
+  - now consumes the shared DS-owned mobile overflow partition and menu-render
+    behavior from `contextNav.mjs`
+  - still duplicates the broader context-nav host markup and destination-link
+    render structure in `rootAdminShell/index.html` and `rootAdminShell/assets/app.mjs`
 - `rootAdminShell` `web-app-hierarchy`
   - imports shared hierarchy-tree and form-template CSS
   - imports shared hierarchy-tree and form-controls behavior helpers
