@@ -6,3 +6,4 @@ dist/
 !.env.test.example
 coverage/
 .test-artifacts/
+test-results/
