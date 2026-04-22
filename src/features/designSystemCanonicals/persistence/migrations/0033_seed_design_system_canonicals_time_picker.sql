@@ -1,0 +1,157 @@
+INSERT INTO design_system_canonical_families (
+  design_system_canonical_family_id,
+  family_key,
+  normalized_family_key,
+  display_label,
+  family_kind,
+  launcher_title,
+  launcher_description,
+  launcher_category,
+  generated_launcher_route_path,
+  generated_root_route_path,
+  legacy_launcher_route_path,
+  source_surface_route_path,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+VALUES (
+  '5a72489d-9d72-4bb2-b2af-04f8fd7b3ea6',
+  'time-picker',
+  'time-picker',
+  'Time Picker',
+  'component',
+  'Time Picker Canonical Renderings',
+  'Persistence-backed launcher for the approved time-picker canonical renderings.',
+  'forms',
+  '/design-system/canonical-renderings/time-picker',
+  '/design-system/canonical-renderings',
+  '/design-system/canonicals/time-picker',
+  '/design-system/components/time-picker',
+  'live',
+  30,
+  FALSE,
+  NOW(),
+  NOW()
+)
+ON CONFLICT (normalized_family_key)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  family_kind = EXCLUDED.family_kind,
+  launcher_title = EXCLUDED.launcher_title,
+  launcher_description = EXCLUDED.launcher_description,
+  launcher_category = EXCLUDED.launcher_category,
+  generated_launcher_route_path = EXCLUDED.generated_launcher_route_path,
+  generated_root_route_path = EXCLUDED.generated_root_route_path,
+  legacy_launcher_route_path = EXCLUDED.legacy_launcher_route_path,
+  source_surface_route_path = EXCLUDED.source_surface_route_path,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();
+
+WITH time_picker_family AS (
+  SELECT design_system_canonical_family_id
+  FROM design_system_canonical_families
+  WHERE normalized_family_key = 'time-picker'
+),
+reference_rows (
+  reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  theme,
+  direction,
+  zoom,
+  state_variant_key,
+  specimen_payload,
+  sort_order,
+  featured
+) AS (
+  VALUES
+    ('TPR-001', 'Standalone resting trigger with closed panel', 'Resting child seam keeps the quick-pick panel closed while parent-owned framing stays visible.', '/design-system/canonical-renderings/time-picker/TPR-001', '/design-system/components/time-picker?ref=TPR-001&width=420&state=baseline&theme=normal&dir=ltr&zoom=0', 'Component field lane', 420, 'normal', 'ltr', 0, 'baseline', '{"state":"baseline"}'::jsonb, 10, FALSE),
+    ('TPR-002', 'Standalone picker open with hour and minute columns', 'Primary child seam open state with quick hour and minute columns visible.', '/design-system/canonical-renderings/time-picker/TPR-002', '/design-system/components/time-picker?ref=TPR-002&width=420&state=open&theme=normal&dir=ltr&zoom=0', 'Component field lane', 420, 'normal', 'ltr', 0, 'open', '{"state":"open"}'::jsonb, 20, TRUE),
+    ('TPR-003', 'Standalone quick-pick completion with close and focus return', 'Completed value reflects the minute-choice result while the panel returns to its resting closed state.', '/design-system/canonical-renderings/time-picker/TPR-003', '/design-system/components/time-picker?ref=TPR-003&width=420&state=completed&theme=normal&dir=ltr&zoom=0', 'Component field lane', 420, 'normal', 'ltr', 0, 'completed', '{"state":"completed"}'::jsonb, 30, FALSE),
+    ('TPR-004', 'Nested time picker open inside date range with time', 'The parent host panel remains visible while the nested child seam opens inside it.', '/design-system/canonical-renderings/time-picker/TPR-004', '/design-system/components/time-picker?ref=TPR-004&width=760&state=nested-open&theme=normal&dir=ltr&zoom=0', 'Composed nested host lane', 760, 'normal', 'ltr', 0, 'nested-open', '{"state":"nested-open"}'::jsonb, 40, TRUE),
+    ('TPR-005', 'Nested minute completion with composed outer-label sync', 'Nested time editing updates the parent-owned outer summary without turning the child seam into the range owner.', '/design-system/canonical-renderings/time-picker/TPR-005', '/design-system/components/time-picker?ref=TPR-005&width=760&state=nested-sync&theme=normal&dir=ltr&zoom=0', 'Composed nested host lane', 760, 'normal', 'ltr', 0, 'nested-sync', '{"state":"nested-sync"}'::jsonb, 50, FALSE),
+    ('TPR-006', 'Mobile standalone open overlay', 'In mobile review mode the open child seam becomes a full-viewport overlay while the closed nested host stays out of the way.', '/design-system/canonical-renderings/time-picker/TPR-006', '/design-system/components/time-picker?ref=TPR-006&width=390&state=mobile-open&theme=normal&dir=ltr&zoom=0', 'Mobile component lane', 390, 'normal', 'ltr', 0, 'mobile-open', '{"state":"mobile-open"}'::jsonb, 60, TRUE),
+    ('TPR-007', 'RTL mobile open overlay', 'In mobile review mode the open child seam becomes a full-viewport overlay while the closed nested host stays out of the way.', '/design-system/canonical-renderings/time-picker/TPR-007', '/design-system/components/time-picker?ref=TPR-007&width=390&state=mobile-open&theme=normal&dir=rtl&zoom=0', 'Mobile component lane', 390, 'normal', 'rtl', 0, 'mobile-open-rtl', '{"state":"mobile-open"}'::jsonb, 70, FALSE),
+    ('TPR-008', 'Dark-theme standalone open-state review', 'Primary child seam open state with quick hour and minute columns visible.', '/design-system/canonical-renderings/time-picker/TPR-008', '/design-system/components/time-picker?ref=TPR-008&width=420&state=open&theme=dark&dir=ltr&zoom=0', 'Component field lane', 420, 'dark', 'ltr', 0, 'open-dark', '{"state":"open"}'::jsonb, 80, TRUE),
+    ('TPR-009', 'RTL and magnified open-state review', 'Primary child seam open state with quick hour and minute columns visible.', '/design-system/canonical-renderings/time-picker/TPR-009', '/design-system/components/time-picker?ref=TPR-009&width=420&state=open&theme=normal&dir=rtl&zoom=100', 'Magnified component lane', 420, 'normal', 'rtl', 100, 'open-rtl-magnified', '{"state":"open"}'::jsonb, 90, FALSE)
+)
+INSERT INTO design_system_canonical_references (
+  design_system_canonical_reference_id,
+  design_system_canonical_family_id,
+  reference_id,
+  normalized_reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  height,
+  theme,
+  direction,
+  zoom,
+  locale_fixture,
+  label_density_fixture,
+  state_variant_key,
+  specimen_payload,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+SELECT
+  gen_random_uuid(),
+  time_picker_family.design_system_canonical_family_id,
+  reference_rows.reference_id,
+  lower(reference_rows.reference_id),
+  reference_rows.display_label,
+  reference_rows.description,
+  reference_rows.render_route_path,
+  reference_rows.legacy_render_route_path,
+  reference_rows.viewport,
+  reference_rows.width,
+  NULL,
+  reference_rows.theme,
+  reference_rows.direction,
+  reference_rows.zoom,
+  NULL,
+  NULL,
+  reference_rows.state_variant_key,
+  reference_rows.specimen_payload,
+  'live',
+  reference_rows.sort_order,
+  reference_rows.featured,
+  NOW(),
+  NOW()
+FROM reference_rows
+CROSS JOIN time_picker_family
+ON CONFLICT (design_system_canonical_family_id, normalized_reference_id)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  description = EXCLUDED.description,
+  render_route_path = EXCLUDED.render_route_path,
+  legacy_render_route_path = EXCLUDED.legacy_render_route_path,
+  viewport = EXCLUDED.viewport,
+  width = EXCLUDED.width,
+  height = EXCLUDED.height,
+  theme = EXCLUDED.theme,
+  direction = EXCLUDED.direction,
+  zoom = EXCLUDED.zoom,
+  locale_fixture = EXCLUDED.locale_fixture,
+  label_density_fixture = EXCLUDED.label_density_fixture,
+  state_variant_key = EXCLUDED.state_variant_key,
+  specimen_payload = EXCLUDED.specimen_payload,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();

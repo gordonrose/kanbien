@@ -1,41 +1,41 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
 
 const simpleSelectCanonicalStates = [
   {
     refId: "SSR-001",
     label: "default closed baseline",
-    route: "/design-system/components/simple-select?ref=SSR-001&width=420&state=baseline&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/simple-select/SSR-001",
   },
   {
     refId: "SSR-002",
     label: "open anchored listbox with option-focus handoff",
-    route: "/design-system/components/simple-select?ref=SSR-002&width=420&state=open&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/simple-select/SSR-002",
   },
   {
     refId: "SSR-003",
     label: "selected-option reflection after choice",
-    route: "/design-system/components/simple-select?ref=SSR-003&width=420&state=selected&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/simple-select/SSR-003",
   },
   {
     refId: "SSR-004",
     label: "disabled inherited state",
-    route: "/design-system/components/simple-select?ref=SSR-004&width=420&state=disabled&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/simple-select/SSR-004",
   },
   {
     refId: "SSR-005",
     label: "rtl open state",
-    route: "/design-system/components/simple-select?ref=SSR-005&width=420&state=open&theme=normal&dir=rtl&zoom=0",
+    route: "/design-system/canonical-renderings/simple-select/SSR-005",
   },
   {
     refId: "SSR-006",
     label: "theme-stress open state",
-    route: "/design-system/components/simple-select?ref=SSR-006&width=420&state=open&theme=dark&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/simple-select/SSR-006",
   },
 ] as const;
 
 async function gotoCanonicalState(page: Page, route: string) {
-  const resolvedRoute = new URL(route, "http://localhost");
-  const requestedWidth = Number.parseInt(resolvedRoute.searchParams.get("width") ?? "0", 10);
+  const requestedWidth = 420;
   const viewportWidth = Math.max(requestedWidth + 360, 1280);
 
   await page.setViewportSize({
@@ -48,30 +48,63 @@ async function gotoCanonicalState(page: Page, route: string) {
 
 test.describe("design-system simple select canonical states", () => {
   test("launcher exposes the full SSR set", async ({ page }) => {
-    await page.goto("/design-system/canonicals/simple-select");
+    await page.goto("/design-system/canonical-renderings/simple-select");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(6);
-    await expect(page.getByRole("link", { name: /SSR-002 Open anchored listbox with option-focus handoff/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /SSR-003 Selected-option reflection after choice/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /SSR-004 Disabled inherited state/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /SSR-006 Theme-stress open state/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /SSR-002 Open anchored listbox with option-focus handoff/i })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/simple-select/SSR-002",
+    );
+    await expect(page.getByRole("link", { name: /SSR-003 Selected-option reflection after choice/i })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/simple-select/SSR-003",
+    );
+    await expect(page.getByRole("link", { name: /SSR-004 Disabled inherited state/i })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/simple-select/SSR-004",
+    );
+    await expect(page.getByRole("link", { name: /SSR-006 Theme-stress open state/i })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/simple-select/SSR-006",
+    );
+  });
+
+  test("launcher cards open the dedicated canonical rendering surface", async ({ page }) => {
+    await page.goto("/design-system/canonical-renderings/simple-select");
+
+    await page.getByRole("link", { name: /SSR-002 Open anchored listbox with option-focus handoff/i }).click();
+
+    await expectRouteSurfaceTruth(page, {
+      expectedPath: "/design-system/canonical-renderings/simple-select/SSR-002",
+      surfaceLocator: "#simple-select-preview-shell",
+      waitForReadyLocator: '#simple-select-preview-shell[data-render-status="ready"]',
+      bodyAttribute: { name: "data-simple-select-surface", value: "canonical" },
+      fallbackHeading: /Design-System Route Families/i,
+    });
+    await expect(page.locator("#simple-select-canonical-current")).toContainText("SSR-002");
+    await expect(page.locator("[data-form-select-listbox]")).toBeVisible();
   });
 
   for (const scenario of simpleSelectCanonicalStates) {
     test(`${scenario.refId} ${scenario.label}`, async ({ page }) => {
       await gotoCanonicalState(page, scenario.route);
 
-      await expect(page.locator("body")).toHaveAttribute("data-simple-select-surface", "canonical");
+      await expectRouteSurfaceTruth(page, {
+        expectedPath: scenario.route,
+        surfaceLocator: "#simple-select-preview-trigger",
+        waitForReadyLocator: '#simple-select-preview-shell[data-render-status="ready"]',
+        bodyAttribute: { name: "data-simple-select-surface", value: "canonical" },
+        fallbackHeading: /Design-System Route Families/i,
+      });
       await expect(page.locator("#simple-select-canonical-current")).toContainText(scenario.refId);
-      await expect(page.locator("#simple-select-preview-trigger")).toBeVisible();
     });
   }
 
   test("SSR-002 opens on the dedicated canonical surface with focus inside the option list", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/simple-select?ref=SSR-002&width=420&state=open&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/simple-select/SSR-002",
     );
 
     await expect(page.locator("[data-form-select-listbox]")).toBeVisible();
@@ -81,7 +114,7 @@ test.describe("design-system simple select canonical states", () => {
   test("SSR-003 and SSR-004 keep selected and disabled states truthful on the dedicated surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/simple-select?ref=SSR-003&width=420&state=selected&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/simple-select/SSR-003",
     );
 
     await expect(page.locator("#simple-select-preview-trigger")).toContainText("Trial tenants");
@@ -90,7 +123,7 @@ test.describe("design-system simple select canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/simple-select?ref=SSR-004&width=420&state=disabled&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/simple-select/SSR-004",
     );
 
     await expect(page.locator("#simple-select-preview-trigger")).toBeDisabled();
@@ -100,7 +133,7 @@ test.describe("design-system simple select canonical states", () => {
   test("SSR-005 and SSR-006 scope direction and theme to the local canonical surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/simple-select?ref=SSR-005&width=420&state=open&theme=normal&dir=rtl&zoom=0",
+      "/design-system/canonical-renderings/simple-select/SSR-005",
     );
 
     const directionState = await page.evaluate(() => ({
@@ -125,7 +158,7 @@ test.describe("design-system simple select canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/simple-select?ref=SSR-006&width=420&state=open&theme=dark&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/simple-select/SSR-006",
     );
 
     const themeState = await page.evaluate(() => {

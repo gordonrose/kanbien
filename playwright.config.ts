@@ -1,6 +1,8 @@
 import { defineConfig } from "@playwright/test";
 
 const port = Number(process.env.PLAYWRIGHT_PREVIEW_PORT ?? "4317");
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${port}`;
+const usePreviewServer = !process.env.PLAYWRIGHT_BASE_URL;
 
 export default defineConfig({
   testDir: "./tests/visual",
@@ -17,7 +19,7 @@ export default defineConfig({
   retries: 0,
   reporter: [["list"]],
   use: {
-    baseURL: `http://127.0.0.1:${port}`,
+    baseURL,
     browserName: "chromium",
     headless: true,
     viewport: { width: 1440, height: 1400 },
@@ -25,10 +27,14 @@ export default defineConfig({
     locale: "en-US",
   },
   snapshotPathTemplate: "{testDir}/__snapshots__/{testFilePath}/{arg}{ext}",
-  webServer: {
-    command: `node --import tsx tests/visual/designSystem/support/servers/previewServer.ts`,
-    url: `http://127.0.0.1:${port}/design-system/canonicals/top-nav`,
-    reuseExistingServer: !process.env.CI,
-    timeout: 30_000,
-  },
+  ...(usePreviewServer
+    ? {
+        webServer: {
+          command: `node --import tsx tests/visual/designSystem/support/servers/previewServer.ts`,
+          url: `http://127.0.0.1:${port}/design-system/canonicals/top-nav`,
+          reuseExistingServer: !process.env.CI,
+          timeout: 30_000,
+        },
+      }
+    : {}),
 });

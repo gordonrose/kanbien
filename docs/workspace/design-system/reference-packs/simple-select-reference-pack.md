@@ -25,9 +25,9 @@ set must preserve.
 - Related verification checklist:
   `docs/workspace/design-system/verification/simple-select-verification-checklist.md`
 - Related canonical launcher:
-  `/design-system/canonicals/simple-select`
+  `/design-system/canonical-renderings/simple-select`
 - Related canonical render surface:
-  `/design-system/components/simple-select`
+  `/design-system/canonical-renderings/simple-select/:ref`
 - Existing executable verification:
   `tests/visual/designSystem/canonicals/forms/simpleSelect.spec.ts`
   `tests/visual/designSystem/canonicals/forms/simpleSelectCanonical.spec.ts`
@@ -71,11 +71,14 @@ Those remain governed upstream by the parent `Form Template` chain.
   - `Enterprise tenants`
 - the listbox currently opens beneath the trigger and matches the field width
   rather than introducing side-panel or modal chrome
-- the child seam now has a dedicated canonical launcher at
+- the child seam now has a persistence-backed generated canonical launcher at
+  `/design-system/canonical-renderings/simple-select`
+- the generated launcher opens the dedicated child render surface at
+  `/design-system/canonical-renderings/simple-select/:ref`
+- the legacy compatibility launcher remains available at
   `/design-system/canonicals/simple-select`
-- the current launcher still opens the signed-off parent route because the
-  child seam is governed honestly through parent-hosted reference states rather
-  than through a standalone component surface
+  and the legacy compatibility render surface remains available at
+  `/design-system/components/simple-select`
 - the current seam already supports:
   - trigger toggle open/close
   - focus handoff from trigger into the option list on open
@@ -95,12 +98,12 @@ Those remain governed upstream by the parent `Form Template` chain.
 
 | Ref ID | Route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `SSR-001` | `/design-system/components/simple-select?ref=SSR-001&width=420&state=baseline&theme=normal&dir=ltr&zoom=0` | Default closed baseline | Preserves the calm resting trigger and parent-owned framing before interaction | canonical-created | Dedicated child render surface now shows the closed baseline directly |
-| `SSR-002` | `/design-system/components/simple-select?ref=SSR-002&width=420&state=open&theme=normal&dir=ltr&zoom=0` | Open anchored listbox with focus moved into the option stack | Preserves the lightweight beneath-trigger opening posture and the seam-owned keyboard entry model | covered-by-test | Dedicated child render surface now opens directly into the focused list state |
-| `SSR-003` | `/design-system/components/simple-select?ref=SSR-003&width=420&state=selected&theme=normal&dir=ltr&zoom=0` | Selected-option reflection after choosing a new option | Preserves single-selection sync between hidden value, active option, and trigger label | covered-by-test | Dedicated child render surface now shows the reflected selected state directly |
-| `SSR-004` | `/design-system/components/simple-select?ref=SSR-004&width=420&state=disabled&theme=normal&dir=ltr&zoom=0` | Disabled inherited state | Preserves the child seam’s non-interactive posture under parent disabled review without inventing a child-specific disabled API | covered-by-test | Dedicated child render surface now shows the disabled inherited state directly |
-| `SSR-005` | `/design-system/components/simple-select?ref=SSR-005&width=420&state=open&theme=normal&dir=rtl&zoom=0` | RTL open state | Preserves mirrored text/direction posture while keeping the same anchored-listbox grammar | covered-by-test | Dedicated child render surface scopes RTL to the local seam review |
-| `SSR-006` | `/design-system/components/simple-select?ref=SSR-006&width=420&state=open&theme=dark&dir=ltr&zoom=0` | Theme-stress open state | Preserves the same lightweight listbox behavior against a non-default parent theme | covered-by-test | Dedicated child render surface scopes dark theme to the local seam review |
+| `SSR-001` | `/design-system/canonical-renderings/simple-select/SSR-001` | Default closed baseline | Preserves the calm resting trigger and parent-owned framing before interaction | canonical-created | Generated child render surface now shows the closed baseline directly |
+| `SSR-002` | `/design-system/canonical-renderings/simple-select/SSR-002` | Open anchored listbox with focus moved into the option stack | Preserves the lightweight beneath-trigger opening posture and the seam-owned keyboard entry model | covered-by-test | Generated child render surface now opens directly into the focused list state |
+| `SSR-003` | `/design-system/canonical-renderings/simple-select/SSR-003` | Selected-option reflection after choosing a new option | Preserves single-selection sync between hidden value, active option, and trigger label | covered-by-test | Generated child render surface now shows the reflected selected state directly |
+| `SSR-004` | `/design-system/canonical-renderings/simple-select/SSR-004` | Disabled inherited state | Preserves the child seam’s non-interactive posture under parent disabled review without inventing a child-specific disabled API | covered-by-test | Generated child render surface now shows the disabled inherited state directly |
+| `SSR-005` | `/design-system/canonical-renderings/simple-select/SSR-005` | RTL open state | Preserves mirrored text/direction posture while keeping the same anchored-listbox grammar | covered-by-test | Generated child render surface scopes RTL to the local seam review |
+| `SSR-006` | `/design-system/canonical-renderings/simple-select/SSR-006` | Theme-stress open state | Preserves the same lightweight listbox behavior against a non-default parent theme | covered-by-test | Generated child render surface scopes dark theme to the local seam review |
 
 ## High-Risk Review Batch
 
@@ -135,6 +138,7 @@ This child reference pack becomes operational when:
 - the verification checklist points at this child pack explicitly
 - later sign-off asks for this pack review before child canonical sign-off
 
-This child reference pack is now operational through the dedicated launcher at
-`/design-system/canonicals/simple-select` and the dedicated render surface at
-`/design-system/components/simple-select`.
+This child reference pack is now operational through the generated launcher at
+`/design-system/canonical-renderings/simple-select` and the generated render
+surface at `/design-system/canonical-renderings/simple-select/:ref`, with the
+legacy launcher and render routes retained as compatibility paths.

@@ -5,7 +5,8 @@
 - Artifact name:
   `Simple Select`
 - Surface:
-  `/design-system/components/simple-select`
+  `/design-system/canonical-renderings/simple-select`
+  `/design-system/canonical-renderings/simple-select/:ref`
 - Status under review:
   signed-off child baseline
 - Related behavior lock:
@@ -13,9 +14,9 @@
 - Related reference pack:
   `docs/workspace/design-system/reference-packs/simple-select-reference-pack.md`
 - Related canonical launcher:
-  `/design-system/canonicals/simple-select`
+  `/design-system/canonical-renderings/simple-select`
 - Related canonical render surface:
-  `/design-system/components/simple-select`
+  `/design-system/canonical-renderings/simple-select/:ref`
 - Related parent behavior lock:
   `docs/workspace/design-system/behavior-locks/form-template-behavior-lock.md`
 - Related parent reference pack:
@@ -33,8 +34,9 @@
   signed-off `Form Template` parent family
 - What changed since the last review:
   the parent form-template docs no longer carry this seam only implicitly;
-  the child seam now has its own behavior lock, reference pack, dedicated
-  canonical launcher, and focused Playwright proof against the live host route
+  the child seam now has its own behavior lock, reference pack, persistence-backed
+  generated canonical launcher, and focused Playwright proof against the dedicated
+  child render route
 
 ## Source Verification
 
@@ -150,9 +152,9 @@
   `docs/workspace/design-system/verification/simple-select-verification-checklist.md`
 - Design-system route update required:
   no
-  `/design-system/canonicals/simple-select` and
-  `/design-system/components/simple-select` now exist and target deterministic
-  child states honestly
+  `/design-system/canonical-renderings/simple-select` and
+  `/design-system/canonical-renderings/simple-select/:ref` now exist and target
+  deterministic child states honestly
 - Canonical render-ready / honest-width check required:
   completed for the dedicated child render surface
 - Frontend gate manifest update required:

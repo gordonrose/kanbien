@@ -54,6 +54,8 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string {
     if (pathSegments.length === 3) {
       const familyRenderPageByKey: Record<string, string> = {
         "page-shell-banner": "page-shell-banner.html",
+        "simple-select": "simple-select.html",
+        "time-picker": "time-picker.html",
         "top-nav": "top-nav.html",
       };
 

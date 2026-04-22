@@ -25,9 +25,9 @@ signed-off seam must preserve.
 - Related verification checklist:
   `docs/workspace/design-system/verification/time-picker-verification-checklist.md`
 - Related canonical launcher:
-  `/design-system/canonicals/time-picker`
+  `/design-system/canonical-renderings/time-picker`
 - Related canonical render surface:
-  `/design-system/components/time-picker`
+  `/design-system/canonical-renderings/time-picker/:ref`
 - Existing executable verification:
   `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
   `tests/visual/designSystem/canonicals/forms/timePickerCanonical.spec.ts`
@@ -70,23 +70,28 @@ existing `Date Picker` chain.
   - surrounding field labels and helper/error copy
   - page chrome and action rails
   - shared display-settings review toggles
-- the dedicated child launcher now exists at `/design-system/canonicals/time-picker`
+- the persistence-backed generated launcher now exists at
+  `/design-system/canonical-renderings/time-picker`
   and opens the first `TPR-*` batch on the dedicated child render surface at
+  `/design-system/canonical-renderings/time-picker/:ref`
+- the legacy compatibility launcher remains available at
+  `/design-system/canonicals/time-picker`
+  and the legacy compatibility render route remains available at
   `/design-system/components/time-picker`
 
 ## Required Reference States
 
 | Ref ID | Route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `TPR-001` | `/design-system/components/time-picker?ref=TPR-001&width=420&state=baseline&theme=normal&dir=ltr&zoom=0` | Standalone resting trigger with closed panel and visible current value | Preserves the default child seam before open-state or responsive stress is applied | canonical-created | The dedicated child render surface now owns this resting state directly |
-| `TPR-002` | `/design-system/components/time-picker?ref=TPR-002&width=420&state=open&theme=normal&dir=ltr&zoom=0` | Standalone picker open with hour and minute columns visible | Freezes the primary child-seam shape that must not collapse into a generic dropdown | canonical-created | The dedicated child launcher now opens this state directly |
-| `TPR-003` | `/design-system/components/time-picker?ref=TPR-003&width=420&state=completed&theme=normal&dir=ltr&zoom=0` | Standalone quick-pick completion where hour stays open and minute completes, closes, and returns focus | Preserves the core signed-off interaction rather than only the open appearance | covered-by-test | The render route now exposes the completed state directly, while route-level Playwright still covers minute-completion behavior |
-| `TPR-004` | `/design-system/components/time-picker?ref=TPR-004&width=760&state=nested-open&theme=normal&dir=ltr&zoom=0` | Nested time picker open inside an already open `date range with time` host | Records the allowed overlap exception and the child seam’s behavior inside the composed host flow | canonical-created | The dedicated child render surface now isolates the nested overlap case instead of routing through the full form page |
-| `TPR-005` | `/design-system/components/time-picker?ref=TPR-005&width=760&state=nested-sync&theme=normal&dir=ltr&zoom=0` | Nested minute completion updates the composed range label without collapsing the parent host | Proves the child emits truthful changes while staying inside the host workflow | canonical-created | This render state now isolates outer-label sync on the child surface |
-| `TPR-006` | `/design-system/components/time-picker?ref=TPR-006&width=390&state=mobile-open&theme=normal&dir=ltr&zoom=0` | Mobile standalone picker open as a full-viewport overlay | Captures the responsive posture that materially changes layout and layering | canonical-created | Also guards the hidden-state regression class by proving mobile-open posture on the dedicated child surface |
-| `TPR-007` | `/design-system/components/time-picker?ref=TPR-007&width=390&state=mobile-open&theme=normal&dir=rtl&zoom=0` | RTL mobile picker open with inherited mirrored shell context | Identifies the highest-value directional child stress state | canonical-created | The dedicated child launcher now opens this RTL mobile state directly |
-| `TPR-008` | `/design-system/components/time-picker?ref=TPR-008&width=420&state=open&theme=dark&dir=ltr&zoom=0` | Dark-theme standalone picker open | Identifies the highest-value theme stress state for panel contrast and option legibility | canonical-created | The first canonical batch now includes this dark-theme open-state review on the child render surface |
-| `TPR-009` | `/design-system/components/time-picker?ref=TPR-009&width=420&state=open&theme=normal&dir=rtl&zoom=100` | RTL and magnified open-state review | Preserves seam readability under the highest-risk combined host stress state | canonical-created | This remains outside the priority batch but now has a deterministic child render URL |
+| `TPR-001` | `/design-system/canonical-renderings/time-picker/TPR-001` | Standalone resting trigger with closed panel and visible current value | Preserves the default child seam before open-state or responsive stress is applied | canonical-created | The persistence-backed child render surface now owns this resting state directly |
+| `TPR-002` | `/design-system/canonical-renderings/time-picker/TPR-002` | Standalone picker open with hour and minute columns visible | Freezes the primary child-seam shape that must not collapse into a generic dropdown | canonical-created | The generated launcher now opens this state directly from persisted canonical truth |
+| `TPR-003` | `/design-system/canonical-renderings/time-picker/TPR-003` | Standalone quick-pick completion where hour stays open and minute completes, closes, and returns focus | Preserves the core signed-off interaction rather than only the open appearance | covered-by-test | The generated render route now exposes the completed state directly, while route-level Playwright still covers minute-completion behavior |
+| `TPR-004` | `/design-system/canonical-renderings/time-picker/TPR-004` | Nested time picker open inside an already open `date range with time` host | Records the allowed overlap exception and the child seam’s behavior inside the composed host flow | canonical-created | The generated child render surface isolates the nested overlap case instead of routing through the full form page |
+| `TPR-005` | `/design-system/canonical-renderings/time-picker/TPR-005` | Nested minute completion updates the composed range label without collapsing the parent host | Proves the child emits truthful changes while staying inside the host workflow | canonical-created | This generated render state isolates outer-label sync on the child surface |
+| `TPR-006` | `/design-system/canonical-renderings/time-picker/TPR-006` | Mobile standalone picker open as a full-viewport overlay | Captures the responsive posture that materially changes layout and layering | canonical-created | Also guards the hidden-state regression class by proving mobile-open posture on the generated child surface |
+| `TPR-007` | `/design-system/canonical-renderings/time-picker/TPR-007` | RTL mobile picker open with inherited mirrored shell context | Identifies the highest-value directional child stress state | canonical-created | The generated launcher now opens this RTL mobile state directly |
+| `TPR-008` | `/design-system/canonical-renderings/time-picker/TPR-008` | Dark-theme standalone picker open | Identifies the highest-value theme stress state for panel contrast and option legibility | canonical-created | The first generated canonical batch includes this dark-theme open-state review on the child render surface |
+| `TPR-009` | `/design-system/canonical-renderings/time-picker/TPR-009` | RTL and magnified open-state review | Preserves seam readability under the highest-risk combined host stress state | canonical-created | This remains outside the priority batch but now has a persistence-backed deterministic child render URL |
 
 ## Signed-Off Canonical Review Batch
 
@@ -130,8 +135,9 @@ pack only when:
 
 This child reference pack is now the operational signed-off baseline because:
 
-- the `TPR-*` states now have a dedicated child canonical launcher at
-  `/design-system/canonicals/time-picker`
+- the `TPR-*` states now have a persistence-backed generated child canonical
+  launcher at `/design-system/canonical-renderings/time-picker`
 - the verification checklist points at this child pack explicitly
 - the canonical render surface and executable proof now support direct future
-  parity review without routing back through the parent form page
+  parity review through persistence-backed generated routes without routing
+  back through the parent form page

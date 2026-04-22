@@ -5,8 +5,8 @@
 - Artifact name:
   `Time Picker`
 - Surface:
-  `/design-system/canonicals/time-picker`
-  `/design-system/components/time-picker`
+  `/design-system/canonical-renderings/time-picker`
+  `/design-system/canonical-renderings/time-picker/:ref`
 - Status under review:
   signed-off child baseline
 - Related behavior lock:
@@ -14,9 +14,9 @@
 - Related reference pack:
   `docs/workspace/design-system/reference-packs/time-picker-reference-pack.md`
 - Related canonical launcher:
-  `/design-system/canonicals/time-picker`
+  `/design-system/canonical-renderings/time-picker`
 - Related canonical render surface:
-  `/design-system/components/time-picker`
+  `/design-system/canonical-renderings/time-picker/:ref`
 - Related parent behavior lock:
   `docs/workspace/design-system/behavior-locks/form-template-behavior-lock.md`
 - Related parent reference pack:
@@ -150,8 +150,8 @@
   `docs/workspace/design-system/verification/time-picker-verification-checklist.md`
 - Design-system route update required:
   no
-  `/design-system/canonicals/time-picker` now exists and targets deterministic
-  dedicated child render states honestly
+  `/design-system/canonical-renderings/time-picker` now exists and targets
+  deterministic dedicated child render states honestly
 - Canonical render-ready / honest-width check required:
   completed for the dedicated child launcher and render surface
 - Frontend gate manifest update required:

@@ -22,6 +22,7 @@ const canonicalMetaState = document.getElementById("time-picker-meta-state");
 const canonicalMetaViewport = document.getElementById("time-picker-meta-viewport");
 const canonicalMetaNotes = document.getElementById("time-picker-meta-notes");
 const renderLayout = previewFrame?.closest(".canonical-render-layout");
+const launcherLink = document.querySelector('a[href="/design-system/canonicals/time-picker"]');
 
 const zoomScaleMap = {
   0: "1",
@@ -197,6 +198,15 @@ const canonicalStates = [
 
 const canonicalStateMap = new Map(canonicalStates.map((state) => [state.refId, state]));
 
+function getGeneratedTimePickerReferenceId() {
+  const match = window.location.pathname.match(/^\/design-system\/canonical-renderings\/time-picker\/([^/]+)$/);
+  return match?.[1] ?? null;
+}
+
+function isGeneratedTimePickerRoute() {
+  return getGeneratedTimePickerReferenceId() !== null;
+}
+
 function normalizeWidth(value, fallback) {
   const parsed = Number.parseInt(value ?? "", 10);
   if (!Number.isFinite(parsed)) {
@@ -296,20 +306,81 @@ function updateStepper(currentIndex) {
   }
 }
 
-function renderCanonicalState() {
+function getLegacyRouteForState(state) {
+  return `/design-system/components/time-picker?ref=${encodeURIComponent(state.refId)}&width=${encodeURIComponent(String(state.width))}&state=${encodeURIComponent(state.state)}&theme=${encodeURIComponent(state.theme)}&dir=${encodeURIComponent(state.dir)}&zoom=${encodeURIComponent(String(state.zoom))}`;
+}
+
+function getStateRoute(state) {
+  if (isGeneratedTimePickerRoute()) {
+    return `/design-system/canonical-renderings/time-picker/${encodeURIComponent(state.refId)}`;
+  }
+
+  return getLegacyRouteForState(state);
+}
+
+async function resolveGeneratedCanonicalState() {
+  const referenceId = getGeneratedTimePickerReferenceId();
+  if (!referenceId) {
+    return null;
+  }
+
+  const response = await fetch(
+    `/v1/design-system-canonicals/public/families/time-picker/references/${encodeURIComponent(referenceId)}`,
+    {
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to load generated time-picker canonical with status ${response.status}`);
+  }
+
+  const payload = await response.json();
+  const matchedCanonical = canonicalStateMap.get(payload.reference.referenceId) ?? canonicalStates[0];
+  return {
+    family: payload.family,
+    activeRefId: payload.reference.referenceId,
+    width: payload.reference.width ?? matchedCanonical.width,
+    state: typeof payload.reference.specimenPayload?.state === "string"
+      ? payload.reference.specimenPayload.state
+      : matchedCanonical.state,
+    dir: payload.reference.direction ?? matchedCanonical.dir,
+    zoom: payload.reference.zoom ?? matchedCanonical.zoom,
+    theme: payload.reference.theme ?? matchedCanonical.theme,
+    viewportLabel: payload.reference.viewport ?? matchedCanonical.viewportLabel,
+    note: payload.reference.description,
+  };
+}
+
+function renderCanonicalState(resolvedGeneratedState = null) {
   if (!(previewFrame instanceof HTMLElement) || !(previewShell instanceof HTMLElement)) {
     return;
   }
 
   const params = new URLSearchParams(window.location.search);
   const fallbackState = canonicalStates[0];
-  const requestedRef = params.get("ref") ?? fallbackState.refId;
+  const requestedRef = resolvedGeneratedState?.activeRefId
+    ?? params.get("ref")
+    ?? fallbackState.refId;
   const resolvedCanonical = canonicalStateMap.get(requestedRef) ?? fallbackState;
-  const payload = statePayloads[params.get("state") ?? resolvedCanonical.state] ?? statePayloads[resolvedCanonical.state];
-  const width = normalizeWidth(params.get("width"), resolvedCanonical.width);
-  const dir = normalizeDir(params.get("dir") ?? resolvedCanonical.dir);
-  const zoom = normalizeZoom(params.get("zoom") ?? String(resolvedCanonical.zoom));
-  const theme = normalizeTheme(params.get("theme") ?? resolvedCanonical.theme);
+  const payload = statePayloads[resolvedGeneratedState?.state ?? params.get("state") ?? resolvedCanonical.state]
+    ?? statePayloads[resolvedCanonical.state];
+  const width = normalizeWidth(
+    resolvedGeneratedState?.width !== undefined
+      ? String(resolvedGeneratedState.width)
+      : params.get("width"),
+    resolvedCanonical.width,
+  );
+  const dir = normalizeDir(resolvedGeneratedState?.dir ?? params.get("dir") ?? resolvedCanonical.dir);
+  const zoom = normalizeZoom(
+    resolvedGeneratedState?.zoom !== undefined
+      ? String(resolvedGeneratedState.zoom)
+      : (params.get("zoom") ?? String(resolvedCanonical.zoom)),
+  );
+  const theme = normalizeTheme(resolvedGeneratedState?.theme ?? params.get("theme") ?? resolvedCanonical.theme);
   const scale = zoomScaleMap[zoom] ?? "1";
   const currentIndex = canonicalStates.findIndex((state) => state.refId === resolvedCanonical.refId);
 
@@ -369,11 +440,15 @@ function renderCanonicalState() {
   }
 
   if (canonicalMetaViewport instanceof HTMLElement) {
-    canonicalMetaViewport.textContent = resolvedCanonical.viewportLabel;
+    canonicalMetaViewport.textContent = resolvedGeneratedState?.viewportLabel ?? resolvedCanonical.viewportLabel;
   }
 
   if (canonicalMetaNotes instanceof HTMLElement) {
-    canonicalMetaNotes.textContent = payload.note;
+    canonicalMetaNotes.textContent = resolvedGeneratedState?.note ?? payload.note;
+  }
+
+  if (launcherLink instanceof HTMLAnchorElement) {
+    launcherLink.href = resolvedGeneratedState?.family?.generatedLauncherRoutePath ?? "/design-system/canonicals/time-picker";
   }
 
   updateStepper(currentIndex >= 0 ? currentIndex : 0);
@@ -386,4 +461,16 @@ if (nestedRoot instanceof HTMLElement) {
   });
 }
 
-renderCanonicalState();
+async function main() {
+  const resolvedGeneratedState = await resolveGeneratedCanonicalState();
+
+  for (const state of canonicalStates) {
+    state.route = getStateRoute(state);
+  }
+
+  renderCanonicalState(resolvedGeneratedState);
+}
+
+void main().catch((error) => {
+  console.error("Failed to render time-picker canonical", error);
+});
