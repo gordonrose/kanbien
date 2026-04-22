@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "featureName": "capabilityContractCatalog",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createCapabilityContractCatalogFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for capability contract catalog routes."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing capability ids or normalized field-path semantics can break downstream builder tooling that binds against catalog records.",
+    "Changing generated-artifact or persisted catalog truth semantics can break materialization and drift-audit trust posture for later frontend composition flows."
+  ]
+}

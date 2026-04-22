@@ -162,6 +162,16 @@ boundary implemented by the repo.
 | entity definitions | `entityBuilder` | `listApprovedFormPatterns` | `current` | `entity-builder.catalog.read` | `scope(...) and can(...)` | `RootUserAdmin` | bounded approved form-pattern catalog read |
 | entity definitions | `entityBuilder` | `validateEntityDefinitionVersion` | `current` | `entity-builder.validate` | `can(...)` | `RootUserAdmin` | exact validation read for activation and export readiness |
 | entity definitions | `entityBuilder` | `exportEntityDefinitionSnapshot` | `current` | `entity-builder.export` | `can(...)` | `RootUserAdmin` | canonical derived export generated on demand |
+| capability contract catalog | `capabilityContractCatalog` | `listCapabilityCatalogEntries` | `current` | `capability-contract-catalog.read` | `scope(...) and can(...)` | `RootUserAdmin` | browse persisted capability-picker summaries |
+| capability contract catalog | `capabilityContractCatalog` | `getCapabilityCatalogEntry` | `current` | `capability-contract-catalog.read` | `can(...)` | `RootUserAdmin` | exact read of one persisted capability record |
+| capability contract catalog | `capabilityContractCatalog` | `exportCapabilityCatalogSnapshot` | `current` | `capability-contract-catalog.export` | `can(...)` | `RootUserAdmin` | export deterministic catalog snapshots from persisted truth |
+| capability contract catalog | `capabilityContractCatalog` | `materializeCapabilityCatalog` | `current` | `capability-contract-catalog.materialize` | `can(...)` | `RootUserAdmin` | normalize approved source truth into persisted catalog records |
+| capability contract catalog | `capabilityContractCatalog` | `auditCapabilityCatalogDrift` | `current` | `capability-contract-catalog.audit-drift` | `scope(...) and can(...)` | `RootUserAdmin` | inspect drift between persisted catalog truth and current approved sources |
+| capability contract catalog | `capabilityContractCatalog` | `listCapabilityCatalogEntries` | `current` | `capability-contract-catalog.read` | `scope(...) and can(...)` | `RootUserAdmin` | browse persisted capability-picker summaries |
+| capability contract catalog | `capabilityContractCatalog` | `getCapabilityCatalogEntry` | `current` | `capability-contract-catalog.read` | `can(...)` | `RootUserAdmin` | exact read of one persisted capability record |
+| capability contract catalog | `capabilityContractCatalog` | `exportCapabilityCatalogSnapshot` | `current` | `capability-contract-catalog.export` | `can(...)` | `RootUserAdmin` | export deterministic catalog snapshots from persisted truth |
+| capability contract catalog | `capabilityContractCatalog` | `materializeCapabilityCatalog` | `current` | `capability-contract-catalog.materialize` | `can(...)` | `RootUserAdmin` | normalize approved source truth into persisted catalog records |
+| capability contract catalog | `capabilityContractCatalog` | `auditCapabilityCatalogDrift` | `current` | `capability-contract-catalog.audit-drift` | `scope(...) and can(...)` | `RootUserAdmin` | inspect drift between persisted catalog truth and current approved sources |
 
 ## Deterministic Method For Future Roles
 

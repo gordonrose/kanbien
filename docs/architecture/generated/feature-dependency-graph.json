@@ -1,10 +1,43 @@
 {
   "ruleVersion": 2,
   "ruleSummary": "Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.",
-  "featureCount": 12,
+  "featureCount": 14,
   "edgeCount": 12,
-  "violationCount": 0,
+  "violationCount": 1,
   "features": [
+    {
+      "featureName": "capabilityContractCatalog",
+      "manifestPath": "src/features/capabilityContractCatalog/feature.manifest.json",
+      "fileCount": 14,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createCapabilityContractCatalogFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [],
+      "publicDependencies": [],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": [
+        "Changing capability ids or normalized field-path semantics can break downstream builder tooling that binds against catalog records.",
+        "Changing generated-artifact or persisted catalog truth semantics can break materialization and drift-audit trust posture for later frontend composition flows."
+      ]
+    },
+    {
+      "featureName": "designSystemCanonicals",
+      "manifestPath": "src/features/designSystemCanonicals/feature.manifest.json",
+      "fileCount": 16,
+      "publicSeams": [],
+      "declaredDependencies": [],
+      "publicDependencies": [],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": []
+    },
     {
       "featureName": "entityBuilder",
       "manifestPath": "src/features/entityBuilder/feature.manifest.json",
@@ -399,7 +432,7 @@
     {
       "featureName": "webAppHierarchyBuilder",
       "manifestPath": "src/features/webAppHierarchyBuilder/feature.manifest.json",
-      "fileCount": 27,
+      "fileCount": 28,
       "publicSeams": [
         {
           "seamId": "feature-factory",
@@ -448,7 +481,7 @@
     {
       "featureName": "webAppPageSettings",
       "manifestPath": "src/features/webAppPageSettings/feature.manifest.json",
-      "fileCount": 18,
+      "fileCount": 20,
       "publicSeams": [
         {
           "seamId": "feature-factory",
@@ -894,9 +927,16 @@
         "hierarchy-integration-seam",
         "hierarchy-contract-types"
       ],
-      "publicImportCount": 7,
+      "publicImportCount": 8,
       "privateImportCount": 0,
       "imports": [
+        {
+          "sourceFile": "src/features/webAppPageSettings/domain/getPublicDesignSystemPageSettings.ts",
+          "importPath": "../../webAppHierarchyBuilder",
+          "line": 5,
+          "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
+          "visibility": "public"
+        },
         {
           "sourceFile": "src/features/webAppPageSettings/domain/getWebAppPageContextNavProjection.ts",
           "importPath": "../../webAppHierarchyBuilder",
@@ -928,7 +968,7 @@
         {
           "sourceFile": "src/features/webAppPageSettings/domain/service.ts",
           "importPath": "../../webAppHierarchyBuilder",
-          "line": 15,
+          "line": 16,
           "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
           "visibility": "public"
         },
@@ -949,5 +989,12 @@
       ]
     }
   ],
-  "violations": []
+  "violations": [
+    {
+      "category": "missing-manifest",
+      "featureName": "designSystemCanonicals",
+      "filePath": "src/features/designSystemCanonicals/feature.manifest.json",
+      "reason": "Missing feature.manifest.json."
+    }
+  ]
 }

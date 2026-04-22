@@ -90,6 +90,10 @@ export function createPostgresTestDatabasePool(): Pool {
 
 export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
   await pool.query(`
+    DROP TABLE IF EXISTS capability_catalog_source_references CASCADE;
+    DROP TABLE IF EXISTS capability_catalog_constraints CASCADE;
+    DROP TABLE IF EXISTS capability_catalog_fields CASCADE;
+    DROP TABLE IF EXISTS capability_catalog_records CASCADE;
     DROP TABLE IF EXISTS web_app_page_context_nav_items CASCADE;
     DROP TABLE IF EXISTS web_app_page_settings CASCADE;
     DROP TABLE IF EXISTS web_app_discovery_links CASCADE;

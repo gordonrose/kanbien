@@ -8,6 +8,7 @@ type MigrationGroup =
   | "platformSecurity"
   | "rootAuth"
   | "rootRoles"
+  | "capabilityContractCatalog"
   | "tenants"
   | "webAppHierarchyBuilder"
   | "webAppPageSettings"
@@ -60,6 +61,11 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
   {
     group: "rootRoles",
     relativePath: "rootRoles/persistence/migrations/0005_create_root_roles.sql",
+  },
+  {
+    group: "capabilityContractCatalog",
+    relativePath:
+      "capabilityContractCatalog/persistence/migrations/0035_create_capability_contract_catalog.sql",
   },
   {
     group: "tenants",

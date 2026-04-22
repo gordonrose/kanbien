@@ -191,6 +191,30 @@ export const ROOT_AUTHZ_CAPABILITY_CATALOG: RootAuthzCapabilityCatalogEntry[] = 
     protectedForRootUserAdmin: true,
   },
   {
+    capabilityKey: "capability-contract-catalog.read",
+    description: "Read persisted capability contract catalog records.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "capability-contract-catalog.export",
+    description: "Export deterministic capability contract catalog snapshots.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "capability-contract-catalog.materialize",
+    description: "Materialize persisted capability contract catalog records from approved source truth.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "capability-contract-catalog.audit-drift",
+    description: "Audit drift between persisted capability contract catalog truth and current approved sources.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
     capabilityKey: "tenant-admin.create",
     description: "Create a tenant-admin actor record within a tenant.",
     mandatoryForRootUserAdmin: true,

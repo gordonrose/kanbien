@@ -126,6 +126,14 @@ are not a role.
 | `RootUserAdmin` | `entity-builder.catalog.read` | `current` | current root operator grant | yes | yes | approved attribute and form-pattern catalog reads |
 | `RootUserAdmin` | `entity-builder.validate` | `current` | current root operator grant | yes | yes | validation readiness reads for activation and export |
 | `RootUserAdmin` | `entity-builder.export` | `current` | current root operator grant | yes | yes | canonical derived export generation |
+| `RootUserAdmin` | `capability-contract-catalog.read` | `current` | current root operator grant | no | yes | browse and inspect persisted capability catalog records |
+| `RootUserAdmin` | `capability-contract-catalog.export` | `current` | current root operator grant | no | yes | export deterministic capability catalog snapshots |
+| `RootUserAdmin` | `capability-contract-catalog.materialize` | `current` | current root operator grant | no | yes | materialize persisted capability catalog records from approved source truth |
+| `RootUserAdmin` | `capability-contract-catalog.audit-drift` | `current` | current root operator grant | no | yes | inspect drift between persisted capability catalog truth and current approved sources |
+| `RootUserAdmin` | `capability-contract-catalog.read` | `current` | current root operator grant | no | yes | browse and inspect persisted capability catalog records |
+| `RootUserAdmin` | `capability-contract-catalog.export` | `current` | current root operator grant | no | yes | export deterministic capability catalog snapshots |
+| `RootUserAdmin` | `capability-contract-catalog.materialize` | `current` | current root operator grant | no | yes | materialize persisted capability catalog records from approved source truth |
+| `RootUserAdmin` | `capability-contract-catalog.audit-drift` | `current` | current root operator grant | no | yes | inspect drift between persisted capability catalog truth and current approved sources |
 
 ## Deterministic Method For Future Roles
 
