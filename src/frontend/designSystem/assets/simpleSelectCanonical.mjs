@@ -1,3 +1,5 @@
+import { syncCanonicalOwnerReserve } from "./canonicalOwnerReserve.mjs";
+
 const previewFrame = document.getElementById("simple-select-preview-frame");
 const previewShell = document.getElementById("simple-select-preview-shell");
 const previewTrigger = document.getElementById("simple-select-preview-trigger");
@@ -158,6 +160,33 @@ function normalizeZoom(value) {
 
 function normalizeTheme(value) {
   return value === "dark" || value === "desert" ? value : "normal";
+}
+
+function clearCanonicalPickerReserve() {
+  if (!(previewShell instanceof HTMLElement)) {
+    return;
+  }
+
+  for (const field of previewShell.querySelectorAll(".form-field")) {
+    if (field instanceof HTMLElement) {
+      field.style.removeProperty("--canonical-field-reserve");
+    }
+  }
+}
+
+function updateCanonicalPickerReserve() {
+  if (!(previewShell instanceof HTMLElement)) {
+    return;
+  }
+
+  syncCanonicalOwnerReserve(previewShell, [
+    {
+      ownerSelector: ".form-field",
+      rootSelector: ".form-select",
+      panelSelector: "[data-form-select-listbox]",
+      variable: "--canonical-field-reserve",
+    },
+  ]);
 }
 
 function setSelectedValue(value) {
@@ -354,6 +383,9 @@ function renderCanonicalState(resolvedGeneratedState = null) {
   setSelectedValue(selectedValue);
   setDisabledState(disabled);
   setOpenState(payload.open && !disabled);
+  window.requestAnimationFrame(() => {
+    updateCanonicalPickerReserve();
+  });
 
   if (canonicalMatchList instanceof HTMLElement) {
     canonicalMatchList.textContent = `${resolvedCanonical.refId} - ${resolvedCanonical.label}`;

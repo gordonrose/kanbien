@@ -172,6 +172,28 @@ test.describe("design-system time picker canonical states", () => {
     await expect(standaloneRoot.locator('[data-form-time-minute="30"]')).toBeVisible();
   });
 
+  test("desktop and nested open time-picker states reserve enough field space for visible panels", async ({ page }) => {
+    for (const referenceId of ["TPR-002", "TPR-004", "TPR-008", "TPR-009"] as const) {
+      await gotoCanonicalState(page, `/design-system/canonical-renderings/time-picker/${referenceId}`, { width: 1600, height: 1400 });
+
+      const reserve = await page.evaluate(() => {
+        return Array.from(document.querySelectorAll("#time-picker-preview-shell .form-field"))
+          .map((field) => field instanceof HTMLElement ? field.style.getPropertyValue("--canonical-field-reserve") : "")
+          .find((value) => value !== "") ?? "";
+      });
+
+      expect(reserve, `${referenceId} should reserve field space for its visible time panel`).not.toBe("");
+      await expectContainedWithin(
+        page.locator("[data-form-time-panel]:not(.hidden)").first(),
+        page.locator("#time-picker-preview-frame"),
+        {
+          subjectLabel: `${referenceId} visible time-picker panel`,
+          containerLabel: "time-picker canonical review frame",
+        },
+      );
+    }
+  });
+
   test("TPR-006 and TPR-007 keep the mobile overlay local to the dedicated canonical frame", async ({ page }) => {
     for (const route of [
       "/design-system/canonical-renderings/time-picker/TPR-006",

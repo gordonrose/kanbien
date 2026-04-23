@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
+import { expectContainedWithin } from "../../support/helpers/humanReviewGuards";
 
 const simpleSelectCanonicalStates = [
   {
@@ -109,6 +110,27 @@ test.describe("design-system simple select canonical states", () => {
 
     await expect(page.locator("[data-form-select-listbox]")).toBeVisible();
     await expect(page.locator("[data-form-select-option][aria-selected='true']").first()).toBeFocused();
+  });
+
+  test("open anchored listboxes reserve field space and stay inside the canonical frame", async ({ page }) => {
+    for (const referenceId of ["SSR-002", "SSR-005", "SSR-006"] as const) {
+      await gotoCanonicalState(page, `/design-system/canonical-renderings/simple-select/${referenceId}`);
+
+      const reserve = await page.evaluate(() => {
+        const field = document.querySelector(".simple-select-preview-field");
+        return field instanceof HTMLElement ? field.style.getPropertyValue("--canonical-field-reserve") : null;
+      });
+
+      expect(reserve, `${referenceId} should reserve vertical space for the open listbox`).not.toBe("");
+      await expectContainedWithin(
+        page.locator("[data-form-select-listbox]"),
+        page.locator("#simple-select-preview-frame"),
+        {
+          subjectLabel: `${referenceId} open simple-select listbox`,
+          containerLabel: "simple-select canonical review frame",
+        },
+      );
+    }
   });
 
   test("SSR-003 and SSR-004 keep selected and disabled states truthful on the dedicated surface", async ({ page }) => {

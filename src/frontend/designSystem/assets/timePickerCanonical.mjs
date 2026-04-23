@@ -1,3 +1,5 @@
+import { syncCanonicalOwnerReserve } from "./canonicalOwnerReserve.mjs";
+
 const previewFrame = document.getElementById("time-picker-preview-frame");
 const previewShell = document.getElementById("time-picker-preview-shell");
 const standaloneRoot = document.getElementById("time-picker-standalone-root");
@@ -228,6 +230,38 @@ function normalizeTheme(value) {
   return value === "dark" || value === "desert" ? value : "normal";
 }
 
+function clearCanonicalPickerReserve() {
+  if (!(previewShell instanceof HTMLElement)) {
+    return;
+  }
+
+  for (const field of previewShell.querySelectorAll(".form-field")) {
+    if (field instanceof HTMLElement) {
+      field.style.removeProperty("--canonical-field-reserve");
+    }
+  }
+}
+
+function updateCanonicalPickerReserve() {
+  if (!(previewShell instanceof HTMLElement)) {
+    return;
+  }
+
+  if (previewShell.dataset.formMobileView === "true") {
+    clearCanonicalPickerReserve();
+    return;
+  }
+
+  syncCanonicalOwnerReserve(previewShell, [
+    {
+      ownerSelector: ".form-field",
+      rootSelector: ".form-time-picker",
+      panelSelector: "[data-form-time-panel]",
+      variable: "--canonical-field-reserve",
+    },
+  ]);
+}
+
 function normalizeTimeValue(value) {
   const [hours = "00", minutes = "00"] = String(value ?? "").split(":");
   const safeHour = String(Math.min(23, Math.max(0, Number(hours) || 0))).padStart(2, "0");
@@ -429,6 +463,10 @@ function renderCanonicalState(resolvedGeneratedState = null) {
   if (payload.nestedOpen) {
     openTimePanel(nestedTrigger, nestedPanel);
   }
+
+  window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+    updateCanonicalPickerReserve();
+  }));
 
   if (canonicalMatchList instanceof HTMLElement) {
     canonicalMatchList.textContent = `${resolvedCanonical.refId} - ${resolvedCanonical.label}`;

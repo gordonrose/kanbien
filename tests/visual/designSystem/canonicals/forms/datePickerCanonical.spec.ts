@@ -149,6 +149,40 @@ test.describe("design-system date picker canonical states", () => {
     );
   });
 
+  test("date-picker canonical hosts reserve desktop overlap space and keep mobile overlays scroll-contained", async ({ page }) => {
+    for (const referenceId of ["DTPR-004", "DTPR-005"] as const) {
+      await gotoCanonicalState(page, routeForDatePickerRef(referenceId));
+
+      const reserve = await page.evaluate(() => {
+        const field = document.querySelector("#date-picker-range-time-field");
+        return field instanceof HTMLElement ? field.style.getPropertyValue("--canonical-field-reserve") : null;
+      });
+
+      expect(reserve, `${referenceId} should reserve vertical space for the composed open overlap`).not.toBe("");
+      await expectContainedWithin(
+        page.locator("#date-picker-range-time-field [data-form-date-panel]"),
+        page.locator("#date-picker-preview-frame"),
+        {
+          subjectLabel: `${referenceId} visible date-picker panel`,
+          containerLabel: "date-picker canonical review frame",
+        },
+      );
+    }
+
+    for (const referenceId of ["DTPR-007", "DTPR-008"] as const) {
+      await gotoCanonicalState(page, routeForDatePickerRef(referenceId));
+
+      await expectContainedWithin(
+        page.locator("#date-picker-range-field [data-form-date-panel]"),
+        page.locator("#date-picker-preview-frame"),
+        {
+          subjectLabel: `${referenceId} mobile date-picker overlay`,
+          containerLabel: "date-picker canonical review frame",
+        },
+      );
+    }
+  });
+
   test("DTPR-008 and DTPR-010 keep direction, theme, and magnification scoped to the render surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
@@ -184,5 +218,46 @@ test.describe("design-system date picker canonical states", () => {
     expect(themeState.frameTheme).toBe("dark");
     expect(themeState.documentScale).toBe("");
     expect(themeState.shellScale).toBe("1.5");
+  });
+
+  test("desktop anchored date panels reserve field space without drifting away from the trigger", async ({ page }) => {
+    for (const referenceId of ["DTPR-002", "DTPR-010"] as const) {
+      await gotoCanonicalState(page, routeForDatePickerRef(referenceId));
+
+      const geometry = await page.evaluate(() => {
+        const trigger = document.querySelector("#date-picker-range-trigger");
+        const panel = document.querySelector("#date-picker-range-field [data-form-date-panel]:not(.hidden)");
+        const field = document.querySelector("#date-picker-range-field");
+
+        if (!(trigger instanceof HTMLElement) || !(panel instanceof HTMLElement) || !(field instanceof HTMLElement)) {
+          return null;
+        }
+
+        const triggerRect = trigger.getBoundingClientRect();
+        const panelRect = panel.getBoundingClientRect();
+
+        return {
+          topGap: Math.round(panelRect.top - triggerRect.bottom),
+          reserve: field.style.getPropertyValue("--canonical-field-reserve"),
+        };
+      });
+
+      expect(geometry, `${referenceId} should expose trigger and anchored panel geometry`).not.toBeNull();
+      expect(geometry?.topGap, `${referenceId} anchored panel should stay directly below the trigger`).toBeLessThanOrEqual(12);
+      expect(geometry?.reserve, `${referenceId} owning field should reserve enough vertical space for the anchored panel`).not.toBe("");
+    }
+  });
+
+  test("mobile and closed canonical states do not inherit the desktop field reserve contract", async ({ page }) => {
+    for (const referenceId of ["DTPR-008", "DTPR-009"] as const) {
+      await gotoCanonicalState(page, routeForDatePickerRef(referenceId));
+
+      const reserve = await page.evaluate(() => {
+        const field = document.querySelector("#date-picker-range-field");
+        return field instanceof HTMLElement ? field.style.getPropertyValue("--canonical-field-reserve") : null;
+      });
+
+      expect(reserve, `${referenceId} should not rely on the desktop anchored-panel reserve`).toBe("");
+    }
   });
 });

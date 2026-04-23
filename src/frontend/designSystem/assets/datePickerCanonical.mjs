@@ -1,3 +1,5 @@
+import { syncCanonicalOwnerReserve } from "./canonicalOwnerReserve.mjs";
+
 const previewFrame = document.getElementById("date-picker-preview-frame");
 const previewShell = document.getElementById("date-picker-preview-shell");
 const singleField = document.getElementById("date-picker-single-field");
@@ -175,6 +177,38 @@ function getDatePickerRoot(selector) {
   return root instanceof HTMLElement ? root : null;
 }
 
+function clearCanonicalPickerReserve() {
+  if (!(previewShell instanceof HTMLElement)) {
+    return;
+  }
+
+  for (const field of previewShell.querySelectorAll(".form-field")) {
+    if (field instanceof HTMLElement) {
+      field.style.removeProperty("--canonical-field-reserve");
+    }
+  }
+}
+
+function updateCanonicalPickerReserve() {
+  if (!(previewShell instanceof HTMLElement)) {
+    return;
+  }
+
+  if (previewShell.dataset.formMobileView === "true") {
+    clearCanonicalPickerReserve();
+    return;
+  }
+
+  syncCanonicalOwnerReserve(previewShell, [
+    {
+      ownerSelector: ".form-field",
+      rootSelector: ".form-date-picker, .form-time-picker",
+      panelSelector: "[data-form-date-panel], [data-form-time-panel]",
+      variable: "--canonical-field-reserve",
+    },
+  ]);
+}
+
 function setFieldVisibility({ single = false, range = false, rangeTime = false } = {}) {
   singleField?.classList.toggle("hidden", !single);
   rangeField?.classList.toggle("hidden", !range);
@@ -187,6 +221,7 @@ function resetSurface() {
   }
 
   previewShell.dataset.formMobileView = "false";
+  clearCanonicalPickerReserve();
 
   for (const panel of previewShell.querySelectorAll("[data-form-date-panel], [data-form-time-panel]")) {
     if (panel instanceof HTMLElement) {
@@ -474,6 +509,10 @@ async function renderCanonicalState(resolvedGeneratedState = null) {
   updateStepper(currentIndex);
   previewShell.dataset.renderStatus = "ready";
   document.body.dataset.renderStatus = "ready";
+
+  await new Promise((resolve) => window.requestAnimationFrame(resolve));
+  await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
+  updateCanonicalPickerReserve();
 }
 
 async function main() {

@@ -3039,6 +3039,13 @@ html[dir="rtl"] .review-shell-main {
   width: min(var(--date-picker-preview-width, 58.75rem), 100%);
 }
 
+#date-picker-preview-shell:not([data-form-mobile-view="true"]) .form-field,
+#time-picker-preview-shell:not([data-form-mobile-view="true"]) .form-field,
+#simple-select-preview-shell .form-field {
+  --canonical-field-reserve: 0px;
+  padding-bottom: var(--canonical-field-reserve);
+}
+
 #time-picker-preview-shell {
   width: min(var(--time-picker-preview-width, 32rem), 100%);
 }
@@ -3159,6 +3166,17 @@ html[dir="rtl"] #drawer-select-preview-shell[data-viewport-class="mobile"] .form
   height: auto !important;
   min-height: calc(100% - 1.5rem) !important;
   max-height: none !important;
+  overflow: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-date-menu:not(.hidden)::-webkit-scrollbar,
+#date-picker-preview-shell[data-form-mobile-view="true"] .form-time-menu:not(.hidden)::-webkit-scrollbar,
+#time-picker-preview-shell[data-form-mobile-view="true"] .form-time-menu:not(.hidden)::-webkit-scrollbar {
+  width: 0;
+  height: 0;
 }
 
 #date-picker-preview-shell[data-form-mobile-view="true"] .form-date-menu-header,
