@@ -129,6 +129,19 @@ describe("design system route", () => {
     expect(response.text).not.toContain("/design-system/templates/page-shell?ref=PSBR-");
   });
 
+  it("serves the generated canonical-renderings family launcher page shell", async () => {
+    const response = await request(createApp())
+      .get("/design-system/canonical-renderings/page-shell-banner")
+      .set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain('data-canonical-renderings-surface="family"');
+    expect(response.text).toContain("Canonical Family");
+    expect(response.text).toContain("Available Canonical Renderings");
+    expect(response.text).toContain("/design-system/canonical-renderings");
+  });
+
   it("serves the launcher canonical page with named launcher template refs", async () => {
     const response = await request(createApp()).get("/design-system/canonicals/launcher").set("host", "admin.example.test");
 
