@@ -33,6 +33,7 @@ describe("design system route", () => {
       "/design-system/canonicals/context-nav",
       "/design-system/canonicals/context-nav-drawer",
       "/design-system/canonicals/page-shell-banner",
+      "/design-system/canonical-renderings/top-nav/TRP-001",
       "/design-system/components/top-nav",
       "/design-system/components/sub-nav",
       "/design-system/components/context-nav",
@@ -155,6 +156,18 @@ describe("design system route", () => {
     expect(response.text).toContain("page-shell-banner-preview-frame");
     expect(response.text).toContain("href=\"/design-system/canonicals/page-shell-banner\"");
     expect(response.text).toContain("data-page-shell-banner-surface=\"canonical\"");
+  });
+
+  it("serves the generated top-nav canonical rendering route", async () => {
+    const response = await request(createApp())
+      .get("/design-system/canonical-renderings/top-nav/TRP-001")
+      .set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("top-nav-canonical-match-list");
+    expect(response.text).toContain("top-nav-preview-frame");
+    expect(response.text).toContain("data-top-nav-surface=\"canonical\"");
   });
 
   it("serves the top-nav canonical launcher page for signed-off states", async () => {
