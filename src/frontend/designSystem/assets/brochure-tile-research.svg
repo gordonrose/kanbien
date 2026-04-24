@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520" role="img" aria-labelledby="title desc">
+  <title id="title">Research tile image</title>
+  <desc id="desc">A research board with sticky notes and connected evidence lines.</desc>
+  <rect width="720" height="520" fill="#e9f5f1"/>
+  <rect x="76" y="78" width="568" height="364" rx="24" fill="#fffdf7"/>
+  <path d="M138 168h102v78H138zM276 126h112v90H276zM426 182h118v86H426zM208 294h126v82H208zM398 306h144v70H398z" fill="#f7c986"/>
+  <path d="M240 206l74-35 112 54M334 335l64 6M388 171l56 44" stroke="#315f61" stroke-width="10" stroke-linecap="round" opacity=".55"/>
+  <circle cx="240" cy="206" r="18" fill="#315f61"/>
+  <circle cx="314" cy="171" r="18" fill="#315f61"/>
+  <circle cx="426" cy="225" r="18" fill="#315f61"/>
+  <circle cx="334" cy="335" r="18" fill="#315f61"/>
+  <circle cx="398" cy="341" r="18" fill="#315f61"/>
+</svg>

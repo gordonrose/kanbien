@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520" role="img" aria-labelledby="title desc">
+  <title id="title">Trust tile image</title>
+  <desc id="desc">A trust and compliance shield with verified evidence cards.</desc>
+  <rect width="720" height="520" fill="#edf1fa"/>
+  <path d="M360 84l182 68v122c0 96-64 146-182 184-118-38-182-88-182-184V152z" fill="#244b5a"/>
+  <path d="M282 262l52 52 112-130" fill="none" stroke="#f8d889" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="104" y="122" width="154" height="94" rx="22" fill="#ffffff" opacity=".94"/>
+  <rect x="462" y="320" width="154" height="94" rx="22" fill="#ffffff" opacity=".94"/>
+  <rect x="134" y="154" width="90" height="14" rx="7" fill="#94a89e"/>
+  <rect x="134" y="184" width="58" height="14" rx="7" fill="#c4d1cb"/>
+  <rect x="492" y="352" width="90" height="14" rx="7" fill="#94a89e"/>
+  <rect x="492" y="382" width="58" height="14" rx="7" fill="#c4d1cb"/>
+</svg>
