@@ -299,6 +299,24 @@ describe("design system route", () => {
     expect(response.text).toContain(">Canonicals<");
   });
 
+  it("serves the brochure page pattern preview route", async () => {
+    const response = await request(createApp()).get("/design-system/patterns/brochure-page").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("data-brochure-preview");
+    expect(response.text).toContain("brochure-display-settings-drawer");
+    expect(response.text).toContain("data-brochure-density");
+    expect(response.text).toContain("data-brochure-media-balance");
+    expect(response.text).toContain("data-brochure-mosaic-copy");
+    expect(response.text).toContain("data-brochure-color=\"background\"");
+    expect(response.text).toContain("data-brochure-color=\"font\"");
+    expect(response.text).toContain("data-brochure-font-family");
+    expect(response.text).toContain("data-brochure-font-weight");
+    expect(response.text).toContain("data-brochure-font-size");
+    expect(response.text).not.toContain("INTERNAL_ERROR");
+  });
+
   it("serves the launcher template detail page", async () => {
     const response = await request(createApp()).get("/design-system/templates/launcher").set("host", "admin.example.test");
 

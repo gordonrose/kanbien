@@ -138,6 +138,14 @@ test.describe("design-system brochure page pattern", () => {
     await expect(drawer.getByRole("group", { name: "Magnification" })).toBeVisible();
     await expect(drawer.getByRole("group", { name: "Primary colour" })).toBeVisible();
     await expect(drawer.getByRole("group", { name: "Direction" })).toBeVisible();
+    await expect(drawer.getByRole("group", { name: "Brochure section rhythm" })).toBeVisible();
+    await expect(drawer.getByRole("group", { name: "Brochure media emphasis" })).toBeVisible();
+    await expect(drawer.getByRole("group", { name: "Brochure mosaic copy" })).toBeVisible();
+    await expect(drawer.getByRole("group", { name: "Brochure font type" })).toBeVisible();
+    await expect(drawer.getByRole("group", { name: "Brochure font weight" })).toBeVisible();
+    await expect(drawer.getByLabel("Background colour")).toBeVisible();
+    await expect(drawer.getByLabel("Font colour")).toBeVisible();
+    await expect(drawer.getByLabel("Font size")).toBeVisible();
 
     await drawer.getByRole("button", { name: "Dark" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
@@ -152,6 +160,56 @@ test.describe("design-system brochure page pattern", () => {
     await drawer.getByRole("button", { name: "Right to left" }).click();
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(drawer.locator("[data-direction-option='rtl']")).toHaveAttribute("aria-pressed", "true");
+
+    const preview = page.locator("[data-brochure-preview]");
+    await drawer.getByRole("button", { name: "Spacious" }).click();
+    await expect(preview).toHaveAttribute("data-brochure-density", "spacious");
+    await expect(drawer.locator("[data-brochure-density='spacious']")).toHaveAttribute("aria-pressed", "true");
+    await expect
+      .poll(async () => preview.evaluate((node) => getComputedStyle(node).getPropertyValue("--brochure-zone-gap").trim()))
+      .not.toBe("");
+
+    await drawer.getByRole("button", { name: "Image" }).click();
+    await expect(preview).toHaveAttribute("data-brochure-media-balance", "image");
+    await expect
+      .poll(async () => preview.evaluate((node) => getComputedStyle(node).getPropertyValue("--brochure-media-column").trim()))
+      .toContain("1.2fr");
+
+    await drawer.getByRole("button", { name: "Visible" }).click();
+    await expect(preview).toHaveAttribute("data-brochure-mosaic-copy", "visible");
+    await expect(page.locator(".brochure-mosaic-copy").first()).toHaveCSS("opacity", "1");
+
+    await drawer.getByLabel("Background colour").fill("#112233");
+    await expect
+      .poll(async () => preview.evaluate((node) => getComputedStyle(node).getPropertyValue("--brochure-background-color").trim()))
+      .toBe("#112233");
+    await expect(page.locator(".brochure-preview")).toHaveCSS("background-color", "rgb(17, 34, 51)");
+    await expect(page.locator(".brochure-media-band")).toHaveCSS("background-color", "rgb(17, 34, 51)");
+    await expect(page.locator(".brochure-mosaic")).toHaveCSS("background-color", "rgb(17, 34, 51)");
+
+    await drawer.getByLabel("Font colour").fill("#ffeeaa");
+    await expect
+      .poll(async () => preview.evaluate((node) => getComputedStyle(node).getPropertyValue("--brochure-font-color").trim()))
+      .toBe("#ffeeaa");
+
+    await drawer.getByRole("button", { name: "Space Grotesk" }).click();
+    await expect(preview).toHaveAttribute("data-brochure-font-family", "space-grotesk");
+    await expect
+      .poll(async () => preview.evaluate((node) => getComputedStyle(node).fontFamily))
+      .toContain("Space Grotesk");
+
+    await drawer.getByRole("button", { name: "Bold" }).click();
+    await expect(preview).toHaveAttribute("data-brochure-font-weight", "700");
+    await expect(drawer.locator("[data-brochure-font-weight='700']")).toHaveAttribute("aria-pressed", "true");
+
+    await drawer.getByLabel("Font size").evaluate((node) => {
+      if (node instanceof HTMLInputElement) {
+        node.value = "20";
+        node.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+    });
+    await expect(preview).toHaveAttribute("data-brochure-font-size", "20");
+    await expect(drawer.locator("[data-brochure-font-size-readout]")).toHaveText("20px");
 
     await page.locator("#accessibility-close").click();
     await expect(drawer).toBeHidden();

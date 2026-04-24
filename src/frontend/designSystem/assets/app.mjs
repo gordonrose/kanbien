@@ -1591,6 +1591,15 @@ const themeButtons = Array.from(document.querySelectorAll("[data-theme-option]")
 const directionButtons = Array.from(document.querySelectorAll("[data-direction-option]"));
 const accentButtons = Array.from(document.querySelectorAll("[data-accent]"));
 const magnificationButtons = Array.from(document.querySelectorAll("[data-magnification-option]"));
+const brochurePreview = document.querySelector("[data-brochure-preview]");
+const brochureDensityButtons = Array.from(document.querySelectorAll("[data-brochure-density]"));
+const brochureMediaBalanceButtons = Array.from(document.querySelectorAll("[data-brochure-media-balance]"));
+const brochureMosaicCopyButtons = Array.from(document.querySelectorAll("[data-brochure-mosaic-copy]"));
+const brochureColorInputs = Array.from(document.querySelectorAll("[data-brochure-color]"));
+const brochureFontFamilyButtons = Array.from(document.querySelectorAll("[data-brochure-font-family]"));
+const brochureFontWeightButtons = Array.from(document.querySelectorAll("[data-brochure-font-weight]"));
+const brochureFontSizeInput = document.querySelector("[data-brochure-font-size]");
+const brochureFontSizeReadout = document.querySelector("[data-brochure-font-size-readout]");
 const pageShellBannerDemoRoot = document.querySelector("[data-page-shell-banner-demo]");
 const pageShellBannerVisibilityButtons = Array.from(document.querySelectorAll("[data-page-shell-banner-visibility]"));
 const topNav = document.querySelector("#top-nav-preview-frame .top-nav") ?? document.querySelector(".top-nav");
@@ -4849,6 +4858,175 @@ function applyMagnification(value) {
   }
 }
 
+const brochureDisplayDefaults = {
+  density: "standard",
+  mediaBalance: "balanced",
+  mosaicCopy: "reveal",
+  backgroundColor: "#f6fbf8",
+  fontColor: "#202946",
+  fontFamily: "sora",
+  fontWeight: "600",
+  fontSize: "16",
+};
+
+const brochureDensitySettings = {
+  compact: {
+    "--brochure-section-padding": "clamp(0.75rem, 2vw, 1.35rem)",
+    "--brochure-hero-padding": "clamp(1rem, 2.25vw, 1.6rem)",
+    "--brochure-zone-gap": "clamp(0.75rem, 2vw, 1.25rem)",
+    "--brochure-value-padding": "0.8rem",
+  },
+  standard: {},
+  spacious: {
+    "--brochure-section-padding": "clamp(1.25rem, 3.6vw, 2.75rem)",
+    "--brochure-hero-padding": "clamp(1.6rem, 4vw, 3rem)",
+    "--brochure-zone-gap": "clamp(1.25rem, 3.5vw, 2.8rem)",
+    "--brochure-value-padding": "1.25rem",
+  },
+};
+
+const brochureMediaBalanceSettings = {
+  copy: {
+    "--brochure-copy-column": "minmax(0, 1.2fr)",
+    "--brochure-media-column": "minmax(16rem, 0.8fr)",
+  },
+  balanced: {},
+  image: {
+    "--brochure-copy-column": "minmax(0, 0.8fr)",
+    "--brochure-media-column": "minmax(20rem, 1.2fr)",
+  },
+};
+
+const brochureMosaicCopySettings = {
+  reveal: {},
+  visible: {
+    "--brochure-mosaic-copy-rest-opacity": "1",
+    "--brochure-mosaic-copy-rest-transform": "translateY(0)",
+  },
+};
+
+const brochureFontFamilySettings = {
+  sora: '"Sora", "Avenir Next", "Segoe UI", sans-serif',
+  "space-grotesk": '"Space Grotesk", "Avenir Next", "Segoe UI", sans-serif',
+  "general-sans": '"General Sans", "Avenir Next", "Segoe UI", sans-serif',
+  montserrat: '"Montserrat", "Avenir Next", "Segoe UI", sans-serif',
+};
+
+function normalizeHexColor(value) {
+  const trimmed = String(value ?? "").trim();
+  const match = trimmed.match(/^#?([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$/);
+  if (!match) {
+    return null;
+  }
+
+  return `#${match[1].toLowerCase()}`;
+}
+
+function getBrochureColorValue(kind) {
+  const input = brochureColorInputs.find((node) => node instanceof HTMLInputElement && node.dataset.brochureColor === kind);
+  if (input instanceof HTMLInputElement) {
+    const normalized = normalizeHexColor(input.value);
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  return kind === "background" ? brochureDisplayDefaults.backgroundColor : brochureDisplayDefaults.fontColor;
+}
+
+function getCurrentBrochureDisplayState(overrides = {}) {
+  return {
+    density: brochurePreview?.dataset.brochureDensity ?? brochureDisplayDefaults.density,
+    mediaBalance: brochurePreview?.dataset.brochureMediaBalance ?? brochureDisplayDefaults.mediaBalance,
+    mosaicCopy: brochurePreview?.dataset.brochureMosaicCopy ?? brochureDisplayDefaults.mosaicCopy,
+    backgroundColor: getBrochureColorValue("background"),
+    fontColor: getBrochureColorValue("font"),
+    fontFamily: brochurePreview?.dataset.brochureFontFamily ?? brochureDisplayDefaults.fontFamily,
+    fontWeight: brochurePreview?.dataset.brochureFontWeight ?? brochureDisplayDefaults.fontWeight,
+    fontSize: brochurePreview?.dataset.brochureFontSize ?? brochureDisplayDefaults.fontSize,
+    ...overrides,
+  };
+}
+
+function setBrochureActiveButton(buttons, value, dataKey) {
+  for (const button of buttons) {
+    const isActive = button.dataset[dataKey] === value;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", isActive ? "true" : "false");
+  }
+}
+
+function applyBrochureVariables(settings) {
+  if (!(brochurePreview instanceof HTMLElement)) {
+    return;
+  }
+
+  for (const property of [
+    "--brochure-section-padding",
+    "--brochure-hero-padding",
+    "--brochure-zone-gap",
+    "--brochure-value-padding",
+    "--brochure-copy-column",
+    "--brochure-media-column",
+    "--brochure-mosaic-copy-rest-opacity",
+    "--brochure-mosaic-copy-rest-transform",
+    "--brochure-background-color",
+    "--brochure-contrast-surface",
+    "--brochure-soft-surface",
+    "--brochure-chip-surface",
+    "--brochure-line-color",
+    "--brochure-font-color",
+    "--brochure-font-family",
+    "--brochure-font-weight",
+    "--brochure-font-size",
+  ]) {
+    if (settings[property]) {
+      brochurePreview.style.setProperty(property, settings[property]);
+    } else {
+      brochurePreview.style.removeProperty(property);
+    }
+  }
+}
+
+function applyBrochureDisplayControls(overrides = {}) {
+  if (!(brochurePreview instanceof HTMLElement)) {
+    return;
+  }
+
+  const state = getCurrentBrochureDisplayState(overrides);
+
+  const settings = {
+    ...(brochureDensitySettings[state.density] ?? brochureDensitySettings[brochureDisplayDefaults.density]),
+    ...(brochureMediaBalanceSettings[state.mediaBalance] ?? brochureMediaBalanceSettings[brochureDisplayDefaults.mediaBalance]),
+    ...(brochureMosaicCopySettings[state.mosaicCopy] ?? brochureMosaicCopySettings[brochureDisplayDefaults.mosaicCopy]),
+    "--brochure-background-color": state.backgroundColor,
+    "--brochure-font-color": state.fontColor,
+    "--brochure-font-family": brochureFontFamilySettings[state.fontFamily] ?? brochureFontFamilySettings[brochureDisplayDefaults.fontFamily],
+    "--brochure-font-weight": state.fontWeight,
+    "--brochure-font-size": `${state.fontSize}px`,
+  };
+
+  brochurePreview.dataset.brochureDensity = state.density;
+  brochurePreview.dataset.brochureMediaBalance = state.mediaBalance;
+  brochurePreview.dataset.brochureMosaicCopy = state.mosaicCopy;
+  brochurePreview.dataset.brochureFontFamily = state.fontFamily;
+  brochurePreview.dataset.brochureFontWeight = state.fontWeight;
+  brochurePreview.dataset.brochureFontSize = state.fontSize;
+  applyBrochureVariables(settings);
+  setBrochureActiveButton(brochureDensityButtons, state.density, "brochureDensity");
+  setBrochureActiveButton(brochureMediaBalanceButtons, state.mediaBalance, "brochureMediaBalance");
+  setBrochureActiveButton(brochureMosaicCopyButtons, state.mosaicCopy, "brochureMosaicCopy");
+  setBrochureActiveButton(brochureFontFamilyButtons, state.fontFamily, "brochureFontFamily");
+  setBrochureActiveButton(brochureFontWeightButtons, state.fontWeight, "brochureFontWeight");
+
+  if (brochureFontSizeInput instanceof HTMLInputElement) {
+    brochureFontSizeInput.value = state.fontSize;
+  }
+  if (brochureFontSizeReadout instanceof HTMLElement) {
+    brochureFontSizeReadout.textContent = `${state.fontSize}px`;
+  }
+}
+
 function initializeFormSelects() {
   if (formSelectRoots.length === 0) {
     return;
@@ -6801,6 +6979,61 @@ for (const button of magnificationButtons) {
   });
 }
 
+for (const button of brochureDensityButtons) {
+  button.addEventListener("click", () => {
+    applyBrochureDisplayControls({ density: button.dataset.brochureDensity ?? brochureDisplayDefaults.density });
+  });
+}
+
+for (const button of brochureMediaBalanceButtons) {
+  button.addEventListener("click", () => {
+    applyBrochureDisplayControls({ mediaBalance: button.dataset.brochureMediaBalance ?? brochureDisplayDefaults.mediaBalance });
+  });
+}
+
+for (const button of brochureMosaicCopyButtons) {
+  button.addEventListener("click", () => {
+    applyBrochureDisplayControls({ mosaicCopy: button.dataset.brochureMosaicCopy ?? brochureDisplayDefaults.mosaicCopy });
+  });
+}
+
+for (const input of brochureColorInputs) {
+  input.addEventListener("input", () => {
+    if (!(input instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const normalized = normalizeHexColor(input.value);
+    input.setAttribute("aria-invalid", String(!normalized));
+    if (!normalized) {
+      return;
+    }
+
+    const key = input.dataset.brochureColor === "background" ? "backgroundColor" : "fontColor";
+    applyBrochureDisplayControls({ [key]: normalized });
+  });
+}
+
+for (const button of brochureFontFamilyButtons) {
+  button.addEventListener("click", () => {
+    applyBrochureDisplayControls({ fontFamily: button.dataset.brochureFontFamily ?? brochureDisplayDefaults.fontFamily });
+  });
+}
+
+for (const button of brochureFontWeightButtons) {
+  button.addEventListener("click", () => {
+    applyBrochureDisplayControls({ fontWeight: button.dataset.brochureFontWeight ?? brochureDisplayDefaults.fontWeight });
+  });
+}
+
+brochureFontSizeInput?.addEventListener("input", () => {
+  if (!(brochureFontSizeInput instanceof HTMLInputElement)) {
+    return;
+  }
+
+  applyBrochureDisplayControls({ fontSize: brochureFontSizeInput.value });
+});
+
 for (const button of pageShellBannerVisibilityButtons) {
   button.addEventListener("click", () => {
     setPageShellBannerDemoVisible((button.dataset.pageShellBannerVisibility ?? "hide") === "show");
@@ -6818,6 +7051,7 @@ updateBreadcrumbOverflow();
 updateBreadcrumbOverflowTooltips();
 updateContextNavReviewFrameOffset();
 updateContextNavPreviewShellLayout();
+applyBrochureDisplayControls();
 const initialTheme = previewFrame
   ? initialTopNavPreviewState.theme
   : (subNavPreviewFrame ? initialSubNavPreviewState.theme : initialContextNavPreviewState.theme);

@@ -41,6 +41,10 @@ memory.
 - The pattern page hosts the existing display-settings drawer launcher in the
   context-nav bottom group and uses the governed grouped payload for theme,
   magnification, accent, and direction.
+- The same existing drawer also hosts brochure-only display controls for
+  section rhythm, media emphasis, mosaic-copy behavior, background colour,
+  font colour, font family, font weight, and font size. Those controls write
+  scoped CSS variables and state data attributes onto `[data-brochure-preview]`.
 - The page is a design-system proving surface only and has no real-app
   consumer in this change.
 
@@ -53,17 +57,18 @@ memory.
 | `BPR-003` | `/design-system/patterns/brochure-page` | Mobile narrow route | Proves the two-column, four-column, logo, and footer zones collapse without horizontal page overflow. | covered-by-test | Test uses a `390px` viewport and checks scroll width. |
 | `BPR-004` | `/design-system/patterns/brochure-page` | RTL route | Proves the route remains renderable under document RTL. | covered-by-test | Test applies `dir="rtl"` and checks section containment. |
 | `BPR-005` | `/design-system/patterns/brochure-page` | Display-settings drawer open and controls applied | Proves the pattern page consumes the existing design-system drawer and payload hooks. | covered-by-test | Test opens the drawer, verifies grouped controls, applies dark theme, magnification, and RTL direction. |
+| `BPR-006` | `/design-system/patterns/brochure-page` | Brochure-specific display controls applied | Proves brochure-only drawer controls are real runtime controls scoped to the preview. | covered-by-test | Test applies spacious rhythm, image media emphasis, visible mosaic copy, custom background and font hex values, Space Grotesk, bold weight, and larger font size, then checks preview data attributes, CSS variables, and rendered copy opacity. |
 
 ## Cross-Cutting Review Dimensions
 
 - RTL:
   governed by `BP-009` and `BPR-004`.
 - Theme support:
-  not applicable for this first pass because the route does not introduce
-  theme-specific controls; it inherits the current design-system shell tokens.
+  inherited from the existing display-settings payload and covered through
+  `BPR-005`.
 - Primary-colour or accent inheritance:
-  not applicable for this first pass because the route demonstrates a brochure
-  composition, not a shared accent-control family.
+  inherited from the existing display-settings payload; brochure-specific
+  controls remain separate from global accent configuration.
 - Accessibility and WCAG 2.2 AA:
   governed by `BP-004`, `BP-010`, `BPR-002`, and `BPR-003`.
 

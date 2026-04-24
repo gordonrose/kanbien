@@ -156,6 +156,67 @@
             <button class="accessibility-chip" type="button" data-direction-option="rtl" data-display-settings-copy="direction-rtl">Right to left</button>
           </div>
         </div>
+
+        <div class="accessibility-group brochure-display-controls" aria-labelledby="brochure-display-controls-title">
+          <p id="brochure-display-controls-title" class="accessibility-label">Brochure Display</p>
+          <div class="brochure-display-control-stack">
+            <div>
+              <p class="accessibility-label brochure-display-control-label">Section rhythm</p>
+              <div class="chip-row" role="group" aria-label="Brochure section rhythm">
+                <button class="accessibility-chip" type="button" data-brochure-density="compact">Compact</button>
+                <button class="accessibility-chip active" type="button" data-brochure-density="standard">Standard</button>
+                <button class="accessibility-chip" type="button" data-brochure-density="spacious">Spacious</button>
+              </div>
+            </div>
+            <div>
+              <p class="accessibility-label brochure-display-control-label">Media emphasis</p>
+              <div class="chip-row" role="group" aria-label="Brochure media emphasis">
+                <button class="accessibility-chip" type="button" data-brochure-media-balance="copy">Copy</button>
+                <button class="accessibility-chip active" type="button" data-brochure-media-balance="balanced">Balanced</button>
+                <button class="accessibility-chip" type="button" data-brochure-media-balance="image">Image</button>
+              </div>
+            </div>
+            <div>
+              <p class="accessibility-label brochure-display-control-label">Mosaic copy</p>
+              <div class="chip-row" role="group" aria-label="Brochure mosaic copy">
+                <button class="accessibility-chip active" type="button" data-brochure-mosaic-copy="reveal">Reveal</button>
+                <button class="accessibility-chip" type="button" data-brochure-mosaic-copy="visible">Visible</button>
+              </div>
+            </div>
+            <div>
+              <label class="accessibility-label brochure-display-control-label" for="brochure-background-color">Background colour</label>
+              <input id="brochure-background-color" class="brochure-display-text-input" type="text" inputmode="text" value="#f6fbf8" data-brochure-color="background" aria-describedby="brochure-background-color-help" />
+              <p id="brochure-background-color-help" class="brochure-display-control-help">Hex value</p>
+            </div>
+            <div>
+              <label class="accessibility-label brochure-display-control-label" for="brochure-font-color">Font colour</label>
+              <input id="brochure-font-color" class="brochure-display-text-input" type="text" inputmode="text" value="#202946" data-brochure-color="font" aria-describedby="brochure-font-color-help" />
+              <p id="brochure-font-color-help" class="brochure-display-control-help">Hex value</p>
+            </div>
+            <div>
+              <p class="accessibility-label brochure-display-control-label">Font type</p>
+              <div class="chip-row" role="group" aria-label="Brochure font type">
+                <button class="accessibility-chip active" type="button" data-brochure-font-family="sora">Sora</button>
+                <button class="accessibility-chip" type="button" data-brochure-font-family="space-grotesk">Space Grotesk</button>
+                <button class="accessibility-chip" type="button" data-brochure-font-family="general-sans">General Sans</button>
+                <button class="accessibility-chip" type="button" data-brochure-font-family="montserrat">Montserrat</button>
+              </div>
+            </div>
+            <div>
+              <p class="accessibility-label brochure-display-control-label">Font weight</p>
+              <div class="chip-row" role="group" aria-label="Brochure font weight">
+                <button class="accessibility-chip" type="button" data-brochure-font-weight="400">Regular</button>
+                <button class="accessibility-chip active" type="button" data-brochure-font-weight="600">Medium</button>
+                <button class="accessibility-chip" type="button" data-brochure-font-weight="700">Bold</button>
+              </div>
+            </div>
+            <div>
+              <label class="accessibility-label brochure-display-control-label" for="brochure-font-size">Font size</label>
+              <input id="brochure-font-size" class="top-nav-preview-slider" type="range" min="14" max="22" step="1" value="16" data-brochure-font-size aria-describedby="brochure-font-size-readout" />
+              <p id="brochure-font-size-readout" class="brochure-display-control-help" data-brochure-font-size-readout>16px</p>
+            </div>
+          </div>
+        </div>
       </aside>
 
       <main class="design-system-page-main brochure-pattern-page">
