@@ -40,7 +40,10 @@
   split to fall back to an overlay or single-lane posture if both lanes become
   too squashed under stronger width or magnification pressure, and the
   canonical set now includes a dedicated non-mobile fallback proof for that
-  rule.
+  rule. The generated route chain has also been hardened so launcher cards open
+  dedicated render pages, render-page chrome points back to
+  `/design-system/canonical-renderings/list-detail-split-layout`, and ready
+  state is published only after the fit-frame geometry pass has settled.
 
 ## Source Verification
 
@@ -72,12 +75,16 @@
   closed desktop state, open desktop split, mobile overlay state
 - Overflow or clipping checks:
   independent list-lane and detail-lane scroll review added in the dedicated
-  scroll-pressure canonical; dedicated squashed-split fallback proof now added
+  scroll-pressure canonical; dedicated squashed-split fallback proof now added;
+  mobile and squashed fallback overlays now use the shared canonical overlay
+  containment helper against the render frame and host surface
 - Layering or anchoring checks:
   mobile overlay layering beneath shell chrome reviewed in a dedicated child
   canonical
 - Attachment / shell-framing checks:
-  child seam inherits shell offset context but does not own full shell logic
+  child seam inherits shell offset context but does not own full shell logic;
+  generated render routes now use the shared route-surface truth helper to
+  guard against overview fallback and stale route chrome
 - Alignment or shared-gutter checks:
   desktop and RTL lane placement reviewed directly
 - Screenshot or rendered evidence reference:
@@ -125,11 +132,11 @@
 ## Quality Gate Outcome
 
 - Implementation status:
-  changed
+  candidate fix awaiting visual approval
 - Rendered status:
-  verified for signed-off child canonicals
+  focused visual rerun passed for the hardened generated render surface
 - Human sign-off status:
-  signed-off
+  pending visual approval for this hardening pass
 - Promotion decision:
   promote to signed-off
 - Open follow-ups:
@@ -145,7 +152,8 @@
   `/design-system/canonical-renderings/list-detail-split-layout/:ref`
   `/design-system/components/list-detail-split-layout`
 - Canonical render-ready / honest-width check required:
-  completed for the signed-off canonical set
+  completed for this hardening pass with ready-after-settle and frame-padding
+  containment coverage
 - Frontend gate manifest update required:
   not yet
 - Architecture-map update required:

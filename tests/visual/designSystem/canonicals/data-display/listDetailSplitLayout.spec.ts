@@ -1,4 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
+import {
+  expectGeneratedCanonicalShellContract,
+  readDesignSystemTopNavContract,
+} from "../../support/helpers/generatedCanonicalGuards";
+import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
+import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
 
 const canonicalStates = [
   {
@@ -72,17 +78,60 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(10);
-    await expect(page.getByRole("link", { name: /LDSL-001 Desktop closed baseline/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: /LDSL-004 Mobile full-sheet overlay/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: /LDSL-007 Magnified half-page split review/ })).toBeVisible();
-    await expect(page.getByRole("link", { name: /LDSL-010 Squashed split fallback review/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /LDSL-001 Desktop closed baseline/ })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-001",
+    );
+    await expect(page.getByRole("link", { name: /LDSL-004 Mobile full-sheet overlay/ })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-004",
+    );
+    await expect(page.getByRole("link", { name: /LDSL-007 Magnified half-page split review/ })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-007",
+    );
+    await expect(page.getByRole("link", { name: /LDSL-010 Squashed split fallback review/ })).toHaveAttribute(
+      "href",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-010",
+    );
+  });
+
+  test("launcher cards open the dedicated canonical rendering surface", async ({ page }) => {
+    await page.goto("/design-system/canonical-renderings/list-detail-split-layout");
+
+    await page.getByRole("link", { name: /LDSL-004 Mobile full-sheet overlay/i }).click();
+
+    await expectRouteSurfaceTruth(page, {
+      expectedPath: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-004",
+      surfaceLocator: "#list-detail-split-layout-preview-shell",
+      waitForReadyLocator: '#list-detail-split-layout-preview-shell[data-render-status="ready"]',
+      bodyAttribute: { name: "data-list-detail-split-layout-surface", value: "canonical" },
+      fallbackHeading: /Design-System Route Families/i,
+    });
+    await expect(page.locator("#list-detail-split-layout-canonical-current")).toContainText("LDSL-004");
+  });
+
+  test("dedicated render page uses the normalized design-system top nav shell", async ({ page }) => {
+    const designSystemTopNavContract = await readDesignSystemTopNavContract(page);
+
+    await expectGeneratedCanonicalShellContract(
+      page,
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-002",
+      designSystemTopNavContract,
+    );
   });
 
   for (const scenario of canonicalStates) {
     test(`${scenario.refId} ${scenario.label}`, async ({ page }) => {
       await gotoCanonicalState(page, scenario.route);
 
-      await expect(page.locator("body")).toHaveAttribute("data-list-detail-split-layout-surface", "canonical");
+      await expectRouteSurfaceTruth(page, {
+        expectedPath: scenario.route,
+        surfaceLocator: "#list-detail-split-layout-preview-shell",
+        waitForReadyLocator: '#list-detail-split-layout-preview-shell[data-render-status="ready"]',
+        bodyAttribute: { name: "data-list-detail-split-layout-surface", value: "canonical" },
+        fallbackHeading: /Design-System Route Families/i,
+      });
       await expect(page.locator("#list-detail-split-layout-canonical-current")).toContainText(scenario.refId);
       await expect(page.locator("#list-detail-split-layout-preview-layout")).toBeVisible();
     });
@@ -380,6 +429,15 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
     expect(mobileOverlayState.viewportClass).toBe("mobile");
     expect(mobileOverlayState.detailOpen).toBe(true);
     expect(mobileOverlayState.panelPosition).toBe("absolute");
+    await expectCanonicalOverlayContainedInRenderSurface(page, {
+      label: "LDSL-004 mobile detail sheet",
+      overlay: "#list-detail-split-layout-preview-panel",
+      panel: "#list-detail-split-layout-preview-panel",
+      hostSurface: "#list-detail-split-layout-preview-shell",
+      renderFrame: "#list-detail-split-layout-preview-frame",
+      below: ".list-detail-split-layout-preview-topbar",
+      requirePanelWidthWithinHost: true,
+    });
 
     await gotoCanonicalState(
       page,
@@ -405,6 +463,15 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
     expect(Number(layeringState.panelZIndex)).toBeLessThan(Number(layeringState.drawerZIndex));
     expect(Number(layeringState.panelZIndex)).toBeLessThan(Number(layeringState.topbarZIndex));
     expect(Number(layeringState.panelZIndex)).toBeLessThan(Number(layeringState.subbarZIndex));
+    await expectCanonicalOverlayContainedInRenderSurface(page, {
+      label: "LDSL-005 layered mobile detail sheet",
+      overlay: "#list-detail-split-layout-preview-panel",
+      panel: "#list-detail-split-layout-preview-panel",
+      hostSurface: "#list-detail-split-layout-preview-shell",
+      renderFrame: "#list-detail-split-layout-preview-frame",
+      below: ".list-detail-split-layout-preview-topbar",
+      requirePanelWidthWithinHost: true,
+    });
   });
 
   test("LDSL-004 keeps the close affordance top-right while header actions drop below the copy block", async ({ page }) => {
@@ -526,6 +593,14 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
     expect(fallbackState.detailOpen).toBe(true);
     expect(fallbackState.panelPosition).toBe("absolute");
     expect(fallbackState.layoutColumns).not.toContain("  ");
+    await expectCanonicalOverlayContainedInRenderSurface(page, {
+      label: "LDSL-010 squashed split fallback overlay",
+      overlay: "#list-detail-split-layout-preview-panel",
+      panel: "#list-detail-split-layout-preview-panel",
+      hostSurface: "#list-detail-split-layout-preview-shell",
+      renderFrame: "#list-detail-split-layout-preview-frame",
+      requirePanelWidthWithinHost: true,
+    });
   });
 
   test("LDSL-008 and LDSL-009 keep theme scope local to the canonical surface", async ({ page }) => {

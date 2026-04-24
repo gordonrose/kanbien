@@ -354,6 +354,10 @@ const canonicalStates = [
 
 const canonicalStateMap = new Map(canonicalStates.map((state) => [state.refId, state]));
 
+function waitForAnimationFrame() {
+  return new Promise((resolve) => window.requestAnimationFrame(resolve));
+}
+
 function getGeneratedListDetailSplitLayoutReferenceId() {
   const match = window.location.pathname.match(/^\/design-system\/canonical-renderings\/list-detail-split-layout\/([^/]+)$/);
   return match ? decodeURIComponent(match[1]) : null;
@@ -536,7 +540,14 @@ function updateCanonicalFitScale() {
   const desiredWidth = Number.parseFloat(
     getComputedStyle(previewFrame).getPropertyValue("--list-detail-split-layout-preview-width"),
   );
+  const frameStyle = getComputedStyle(previewFrame);
   const uiScale = Number.parseFloat(getComputedStyle(previewShell).getPropertyValue("--ui-scale")) || 1;
+  const framePaddingInline =
+    Number.parseFloat(frameStyle.paddingLeft)
+    + Number.parseFloat(frameStyle.paddingRight);
+  const framePaddingBlock =
+    Number.parseFloat(frameStyle.paddingTop)
+    + Number.parseFloat(frameStyle.paddingBottom);
 
   if (!Number.isFinite(desiredWidth) || desiredWidth <= 0) {
     return;
@@ -544,12 +555,14 @@ function updateCanonicalFitScale() {
 
   const desiredVisibleWidth = desiredWidth * uiScale;
   const desiredVisibleHeight = previewShell.offsetHeight * uiScale;
+  const desiredFrameWidth = desiredVisibleWidth + framePaddingInline;
+  const desiredFrameHeight = desiredVisibleHeight + framePaddingBlock;
   const availableWidth = renderScroller.clientWidth;
-  const widthContainScale = availableWidth > 0 ? Math.min(1, availableWidth / desiredVisibleWidth) : 1;
+  const widthContainScale = availableWidth > 0 ? Math.min(1, availableWidth / desiredFrameWidth) : 1;
   const viewportCompensationScale = window.innerWidth > 0 ? Math.min(1, availableWidth / window.innerWidth) : 1;
   const scale = Math.min(widthContainScale, viewportCompensationScale);
-  const fittedWidth = Math.ceil(desiredVisibleWidth * scale);
-  const fittedHeight = Math.ceil(desiredVisibleHeight * scale);
+  const fittedWidth = Math.ceil(desiredFrameWidth * scale);
+  const fittedHeight = Math.ceil(desiredFrameHeight * scale);
 
   previewFrame.style.setProperty("--list-detail-split-layout-canonical-fit-scale", String(scale));
   previewFrame.style.setProperty("--list-detail-split-layout-preview-fitted-width", `${fittedWidth}px`);
@@ -616,7 +629,7 @@ async function resolveGeneratedCanonicalState() {
   };
 }
 
-function renderCanonicalState(resolvedGeneratedState = null) {
+async function renderCanonicalState(resolvedGeneratedState = null) {
   if (
     !(previewFrame instanceof HTMLElement)
     || !(previewShell instanceof HTMLElement)
@@ -670,9 +683,10 @@ function renderCanonicalState(resolvedGeneratedState = null) {
   previewShell.dataset.viewportClass = isMobile ? "mobile" : width <= 900 ? "half-page" : "desktop";
   previewShell.dataset.layoutMode = layoutMode;
   previewShell.dataset.previewState = payload.open ? resolvedCanonical.state : "closed";
-  previewShell.dataset.renderStatus = "ready";
+  previewShell.dataset.renderStatus = "settling";
   previewShell.dataset.panelOpen = String(payload.open);
   previewShell.dataset.mobileLayering = String(payload.showShellDrawer);
+  document.body.dataset.renderStatus = "settling";
 
   if (renderLayout instanceof HTMLElement) {
     renderLayout.style.setProperty("--canonical-render-layout-width", `${Math.max(width + 220, 760)}px`);
@@ -709,11 +723,6 @@ function renderCanonicalState(resolvedGeneratedState = null) {
     previewBody.scrollTop = 0;
   }
 
-  window.requestAnimationFrame(() => {
-    setOverflowTooltip(previewMeta, payload.meta);
-    scheduleCanonicalFitScaleUpdate();
-  });
-
   if (canonicalMatchList instanceof HTMLElement) {
     canonicalMatchList.textContent = `${resolvedCanonical.refId} - ${resolvedCanonical.label}`;
   }
@@ -742,7 +751,14 @@ function renderCanonicalState(resolvedGeneratedState = null) {
         : "Desktop review keeps the shell relationship scoped locally instead of claiming the full parent page.";
   }
 
-  updateStepper(currentIndex);
+  updateStepper(currentIndex >= 0 ? currentIndex : 0);
+  await waitForAnimationFrame();
+  setOverflowTooltip(previewMeta, payload.meta);
+  updateCanonicalFitScale();
+  await waitForAnimationFrame();
+  await waitForAnimationFrame();
+  updateCanonicalFitScale();
+  previewShell.dataset.renderStatus = "ready";
   document.body.dataset.renderStatus = "ready";
 }
 
@@ -753,7 +769,7 @@ async function main() {
     state.route = getStateRoute(state);
   }
 
-  renderCanonicalState(resolvedGeneratedState);
+  await renderCanonicalState(resolvedGeneratedState);
 }
 
 void main().catch((error) => {

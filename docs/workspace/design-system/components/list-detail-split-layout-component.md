@@ -12,7 +12,8 @@
   `docs/workspace/design-system/patterns/list-detail-split-layout-pattern.md`
 - Consuming surfaces:
   `/design-system/templates/list-page`
-  `/design-system/canonicals/list-detail-split-layout`
+  `/design-system/canonical-renderings/list-detail-split-layout`
+  `/design-system/canonical-renderings/list-detail-split-layout/:ref`
   `/design-system/components/list-detail-split-layout`
 
 ## Purpose
@@ -135,7 +136,8 @@
   `docs/workspace/design-system/components/list-detail-split-layout-component.md`
 - Design-system route update required:
   yes:
-  `/design-system/canonicals/list-detail-split-layout`
+  `/design-system/canonical-renderings/list-detail-split-layout`
+  `/design-system/canonical-renderings/list-detail-split-layout/:ref`
   `/design-system/components/list-detail-split-layout`
 - Frontend docs update required:
   yes, when the child seam gets shared application code
