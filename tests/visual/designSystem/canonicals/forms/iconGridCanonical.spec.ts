@@ -111,6 +111,8 @@ test.describe("design-system icon-grid canonical states", () => {
       const optionListRect = optionList.getBoundingClientRect();
       const firstRowTop = Math.round(options[0].getBoundingClientRect().top);
       const firstRowCount = options.filter((option) => Math.abs(Math.round(option.getBoundingClientRect().top) - firstRowTop) <= 1).length;
+      const panelStyles = window.getComputedStyle(panel);
+      const optionListStyles = window.getComputedStyle(optionList);
 
       return {
         headerBottom: headerRect.bottom,
@@ -118,9 +120,15 @@ test.describe("design-system icon-grid canonical states", () => {
         searchLeftInset: Math.round(searchRect.left - panelRect.left),
         searchRightInset: Math.round(panelRect.right - searchRect.right),
         optionListTop: optionListRect.top,
+        optionListBottom: optionListRect.bottom,
+        panelBottom: panelRect.bottom,
         optionListLeftInset: Math.round(optionListRect.left - panelRect.left),
         optionListRightInset: Math.round(panelRect.right - optionListRect.right),
         firstRowCount,
+        panelOverflowY: panelStyles.overflowY,
+        optionListOverflowY: optionListStyles.overflowY,
+        optionListClientHeight: optionList.clientHeight,
+        optionListScrollHeight: optionList.scrollHeight,
       };
     });
 
@@ -132,6 +140,10 @@ test.describe("design-system icon-grid canonical states", () => {
     expect(layoutState?.optionListLeftInset ?? 999).toBeLessThanOrEqual(20);
     expect(layoutState?.optionListRightInset ?? 999).toBeLessThanOrEqual(20);
     expect(layoutState?.firstRowCount ?? 0).toBeGreaterThanOrEqual(5);
+    expect(layoutState?.panelOverflowY).toBe("hidden");
+    expect(layoutState?.optionListOverflowY).toBe("auto");
+    expect(layoutState?.optionListScrollHeight ?? 0).toBeGreaterThanOrEqual(layoutState?.optionListClientHeight ?? 0);
+    expect((layoutState?.panelBottom ?? 0) - (layoutState?.optionListBottom ?? 0)).toBeGreaterThanOrEqual(0);
   });
 
   test("IGR-003 and IGR-004 keep filtering and selected-trigger sync truthful", async ({ page }) => {
@@ -155,6 +167,50 @@ test.describe("design-system icon-grid canonical states", () => {
     await expect(page.locator("[data-form-icon-grid-current-label]")).toHaveText("Administrator");
   });
 
+  test("IGR-003 keeps the modal overlay inside the canonical render area", async ({ page }) => {
+    await gotoCanonicalState(
+      page,
+      "/design-system/canonical-renderings/icon-grid/IGR-003",
+    );
+
+    const containmentState = await page.evaluate(() => {
+      const intro = document.querySelector<HTMLElement>(".canonical-render-intro");
+      const frame = document.querySelector<HTMLElement>("#icon-grid-preview-frame");
+      const shell = document.querySelector<HTMLElement>("#icon-grid-preview-shell");
+      const modal = document.querySelector<HTMLElement>(".form-icon-grid-modal:not(.hidden)");
+      const panel = document.querySelector<HTMLElement>(".form-icon-grid-panel");
+
+      if (!intro || !frame || !shell || !modal || !panel) {
+        return null;
+      }
+
+      const introRect = intro.getBoundingClientRect();
+      const frameRect = frame.getBoundingClientRect();
+      const shellRect = shell.getBoundingClientRect();
+      const modalRect = modal.getBoundingClientRect();
+      const panelRect = panel.getBoundingClientRect();
+
+      return {
+        introBottom: introRect.bottom,
+        frameTop: frameRect.top,
+        frameBottom: frameRect.bottom,
+        shellTop: shellRect.top,
+        shellBottom: shellRect.bottom,
+        modalTop: modalRect.top,
+        modalBottom: modalRect.bottom,
+        panelTop: panelRect.top,
+        panelBottom: panelRect.bottom,
+      };
+    });
+
+    expect(containmentState).not.toBeNull();
+    expect(containmentState?.modalTop ?? 0).toBeGreaterThanOrEqual((containmentState?.shellTop ?? 0) - 1);
+    expect(containmentState?.modalBottom ?? 0).toBeLessThanOrEqual((containmentState?.shellBottom ?? 0) + 1);
+    expect(containmentState?.panelTop ?? 0).toBeGreaterThanOrEqual((containmentState?.frameTop ?? 0) - 1);
+    expect(containmentState?.panelBottom ?? 0).toBeLessThanOrEqual((containmentState?.frameBottom ?? 0) + 1);
+    expect(containmentState?.panelTop ?? 0).toBeGreaterThan(containmentState?.introBottom ?? 0);
+  });
+
   test("IGR-005 and IGR-006 scope rtl and compact dark stress to the child route", async ({ page }) => {
     await gotoCanonicalState(
       page,
@@ -173,6 +229,7 @@ test.describe("design-system icon-grid canonical states", () => {
     await expect(page.locator("#icon-grid-preview-frame")).toHaveAttribute("data-theme-scope", "dark");
     await expect(page.locator("#icon-grid-preview-shell")).toHaveAttribute("data-form-mobile-view", "true");
     await expect(page.locator("[data-form-icon-grid-panel]")).toBeVisible();
+    await expect(page.locator(".form-icon-grid-panel h2")).toHaveCSS("color", "rgb(236, 240, 255)");
     await expect(page.locator("[data-form-icon-grid-search]")).toHaveValue("user");
     await expect(page.locator("[data-form-icon-grid-option]")).toHaveCount(6);
   });

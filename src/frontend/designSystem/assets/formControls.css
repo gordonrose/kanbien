@@ -1,5 +1,5 @@
 .form-icon-grid {
-  position: relative;
+  position: static;
 }
 
 .form-icon-grid-trigger {
@@ -83,9 +83,13 @@
 }
 
 .form-icon-grid-modal {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 10;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding: 1rem;
 }
 
 .form-icon-grid-backdrop {
@@ -99,15 +103,17 @@
   position: relative;
   z-index: 1;
   display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
   gap: 0.9rem;
   width: min(32rem, calc(100vw - 1.5rem));
-  max-height: min(34rem, calc(100vh - 2rem));
-  margin: 5.5rem auto 0;
+  max-height: min(42rem, calc(100vh - 2rem));
+  margin: 0 auto;
   padding: 1rem;
-  overflow: auto;
+  overflow: hidden;
   border: 0.0625rem solid var(--line);
   border-radius: calc(var(--radius-lg, 1rem) + 0.15rem);
   background: color-mix(in srgb, var(--surface-1) 98%, white);
+  color: var(--ink);
   box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.18);
 }
 
@@ -133,8 +139,15 @@
   padding-bottom: 0;
 }
 
-.form-icon-grid-search-shell,
+.form-icon-grid-panel h2,
+.form-icon-grid-panel h4 {
+  margin: 0;
+  color: var(--ink);
+}
+
+.form-icon-grid-panel > .form-icon-grid-search-shell.search-shell,
 .form-drawer-select-search-shell {
+  grid-column: 1;
   width: 100%;
   max-width: none;
 }
@@ -152,6 +165,11 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(3.65rem, 1fr));
   gap: 0.55rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent, #635bff) 38%, transparent) transparent;
 }
 
 .form-icon-grid-option {

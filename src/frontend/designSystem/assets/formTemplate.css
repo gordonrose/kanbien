@@ -27,8 +27,13 @@
 }
 
 .form-page-shell {
+  position: relative;
   display: grid;
   gap: 1.25rem;
+}
+
+.form-page-shell:has(.form-icon-grid-trigger[aria-expanded="true"]) {
+  min-height: min(44rem, calc(100vh - 2rem));
 }
 
 .form-page-shell[data-form-mobile-view="true"] .form-page-layout {

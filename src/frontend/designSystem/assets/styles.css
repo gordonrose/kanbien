@@ -1167,8 +1167,13 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 }
 
 .form-page-shell {
+  position: relative;
   display: grid;
   gap: 1.25rem;
+}
+
+.form-page-shell:has(.form-icon-grid-trigger[aria-expanded="true"]) {
+  min-height: min(44rem, calc(100vh - 2rem));
 }
 
 .form-page-shell[data-form-mobile-view="true"] .form-page-layout {
@@ -1430,7 +1435,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 }
 
 .form-icon-grid {
-  position: relative;
+  position: static;
 }
 
 .form-icon-grid-trigger {
@@ -1510,9 +1515,13 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 }
 
 .form-icon-grid-modal {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 10;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding: 1rem;
 }
 
 .form-icon-grid-backdrop {
@@ -1525,18 +1534,18 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 .form-icon-grid-panel {
   position: relative;
   z-index: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
   gap: 0.9rem;
   width: min(40rem, calc(100vw - 1.5rem));
-  max-height: min(34rem, calc(100vh - 2rem));
-  margin: 5.5rem auto 0;
+  max-height: min(42rem, calc(100vh - 2rem));
+  margin: 0 auto;
   padding: 1rem;
-  overflow: auto;
+  overflow: hidden;
   border: 0.0625rem solid var(--line);
   border-radius: calc(var(--radius-lg) + 0.15rem);
   background: color-mix(in srgb, var(--surface-1) 98%, white);
+  color: var(--ink);
   box-shadow: 0 1.5rem 3rem rgba(15, 23, 42, 0.18);
 }
 
@@ -1544,12 +1553,19 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   padding-bottom: 0;
 }
 
-.form-icon-grid-search-shell {
+.form-icon-grid-panel h2,
+.form-icon-grid-panel h4 {
+  margin: 0;
+  color: var(--ink);
+}
+
+.form-icon-grid-panel > .form-icon-grid-search-shell.search-shell {
+  grid-column: 1;
   width: 100%;
   max-width: none;
 }
 
-.form-icon-grid-search-shell .search-input {
+.form-icon-grid-panel > .form-icon-grid-search-shell.search-shell .search-input {
   padding-right: 2.75rem;
 }
 
@@ -1565,6 +1581,11 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   grid-template-columns: repeat(auto-fit, minmax(3.65rem, 3.65rem));
   justify-content: start;
   gap: 0.55rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--accent) 38%, transparent) transparent;
 }
 
 .form-icon-grid-option {
