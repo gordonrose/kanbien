@@ -36,6 +36,9 @@ function printDashboard(report: InventoryReport): void {
     if (record.bootstrapPaths.length > 0) {
       console.log(`- bootstrap: ${record.bootstrapPaths.join(", ")}`);
     }
+    if (record.parentTaskId) {
+      console.log(`- parent task: ${record.parentTaskId}`);
+    }
     if (record.plannedWriteSet.length > 0) {
       console.log("- planned write set:");
       for (const entry of record.plannedWriteSet) {

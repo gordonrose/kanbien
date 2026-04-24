@@ -97,3 +97,38 @@ Current phase-3 recommendations:
   reasonable
 - `INPUT_BLOCK`
   the request did not provide enough information, currently a missing slug
+
+## Tangent Split
+
+Phase 4 adds an explicit tangent-splitting helper:
+
+```bash
+npm run codex:split -- --from <task-id> --slug <child-slug> --scope "Child scope"
+npm run codex:split -- --from <task-id> --slug <child-slug> --reason "Why the tangent deserves its own line" --apply
+```
+
+Current phase-4 statuses:
+
+- `READY_TO_SPLIT`
+  the parent task resolved, the baseline is clean, and a child task can be
+  created safely
+- `SPLIT_CREATED`
+  the child branch/worktree/bootstrap note were created
+- `APPLY_FAILED`
+  the split was valid in principle, but git or filesystem creation failed
+- `INPUT_BLOCK`
+  the request is missing `--from` or `--slug`
+- `SOURCE_TASK_NOT_FOUND`
+  the requested parent task was not found in the current inventory
+- `SOURCE_TASK_BLOCK`
+  the requested parent was invalid for splitting, currently the integration
+  home
+- `BASELINE_BLOCK`
+  local `main` is not clean and synced with `origin/main`
+- `CHILD_TASK_EXISTS_BLOCK`
+  the requested child branch already exists
+- `WORKTREE_PATH_BLOCK`
+  the requested child worktree path already exists
+
+`--apply` only creates the child task when the status is already
+`READY_TO_SPLIT`.

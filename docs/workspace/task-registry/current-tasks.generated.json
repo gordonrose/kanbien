@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-04-24T09:50:31.195Z",
-  "repoRoot": "/tmp/kanbien-task-lifecycle-phase-3",
-  "targetMain": "1a55c1d",
+  "generatedAt": "2026-04-24T10:03:57.811Z",
+  "repoRoot": "/tmp/kanbien-task-lifecycle-phase-4",
+  "targetMain": "075e239",
   "records": [
     {
       "taskId": "blog-feature-dependency-manifests-outline",
@@ -11,11 +11,12 @@
       "headCommit": "c53656f",
       "upstream": null,
       "aheadOfMain": 37,
-      "behindMain": 23,
+      "behindMain": 24,
       "uniquePatchCommitCount": 34,
       "dirty": false,
       "dirtyEntries": [],
       "bootstrapPaths": [],
+      "parentTaskId": null,
       "plannedWriteSet": [],
       "knownSharedSeams": [],
       "state": "active",
@@ -29,7 +30,7 @@
       "headCommit": "0d11aee",
       "upstream": "origin/main",
       "aheadOfMain": 0,
-      "behindMain": 16,
+      "behindMain": 17,
       "uniquePatchCommitCount": 0,
       "dirty": true,
       "dirtyEntries": [
@@ -43,6 +44,7 @@
         "?? src/scripts/launchIsolatedCodex.sh"
       ],
       "bootstrapPaths": [],
+      "parentTaskId": null,
       "plannedWriteSet": [],
       "knownSharedSeams": [],
       "state": "inspect",
@@ -53,7 +55,7 @@
       "kind": "integration_home",
       "branch": "main",
       "worktreePath": "/home/gordon/kanbien",
-      "headCommit": "1a55c1d",
+      "headCommit": "075e239",
       "upstream": "origin/main",
       "aheadOfMain": 0,
       "behindMain": 0,
@@ -61,17 +63,18 @@
       "dirty": false,
       "dirtyEntries": [],
       "bootstrapPaths": [],
+      "parentTaskId": null,
       "plannedWriteSet": [],
       "knownSharedSeams": [],
       "state": "integration_home",
       "recommendation": "Keep /home/gordon/kanbien clean and synced; use it as the local integration home."
     },
     {
-      "taskId": "task-lifecycle-phase-3",
+      "taskId": "task-lifecycle-phase-4",
       "kind": "attached_worktree",
-      "branch": "codex/task-lifecycle-phase-3",
-      "worktreePath": "/tmp/kanbien-task-lifecycle-phase-3",
-      "headCommit": "1a55c1d",
+      "branch": "codex/task-lifecycle-phase-4",
+      "worktreePath": "/tmp/kanbien-task-lifecycle-phase-4",
+      "headCommit": "075e239",
       "upstream": null,
       "aheadOfMain": 0,
       "behindMain": 0,
@@ -80,25 +83,27 @@
       "dirtyEntries": [
         "M docs/workspace/task-registry/README.md",
         " M package.json",
+        " M src/scripts/codexTask.ts",
         " M src/scripts/codexTasks.ts",
         " M src/scripts/lib/codexTaskRegistry.ts",
-        "?? docs/workspace/chat-bootstraps/2026-04-24-task-lifecycle-phase-3.md",
-        "?? src/scripts/codexTask.ts"
+        "?? docs/workspace/chat-bootstraps/2026-04-24-task-lifecycle-phase-4.md",
+        "?? src/scripts/codexSplit.ts"
       ],
       "bootstrapPaths": [
-        "docs/workspace/chat-bootstraps/2026-04-24-task-lifecycle-phase-3.md"
+        "docs/workspace/chat-bootstraps/2026-04-24-task-lifecycle-phase-4.md"
       ],
+      "parentTaskId": null,
       "plannedWriteSet": [
         "`package.json`",
-        "`src/scripts/codexTask.ts`",
+        "`src/scripts/codexSplit.ts`",
         "`src/scripts/lib/codexTaskRegistry.ts`",
-        "`src/scripts/lib/*` helper seams needed for task creation/reuse decisions",
+        "`src/scripts/lib/*` helper seams needed to create and document split child tasks",
         "`docs/workspace/task-registry/README.md`"
       ],
       "knownSharedSeams": [
         "task/worktree inventory classification",
-        "retirement flow states",
-        "git bootstrap and worktree creation guardrails"
+        "bootstrap note parsing and lifecycle metadata",
+        "worktree creation guardrails"
       ],
       "state": "inspect",
       "recommendation": "This task has no unique patch content, but it still has local changes; inspect and either integrate the keepers or discard and retire it."
@@ -111,7 +116,7 @@
       "headCommit": "b48652f",
       "upstream": null,
       "aheadOfMain": 35,
-      "behindMain": 23,
+      "behindMain": 24,
       "uniquePatchCommitCount": 33,
       "dirty": true,
       "dirtyEntries": [
@@ -145,6 +150,7 @@
       "bootstrapPaths": [
         "docs/workspace/chat-bootstraps/2026-04-21-traceability-governance.md"
       ],
+      "parentTaskId": null,
       "plannedWriteSet": [
         "`src/lib/testingData/*`",
         "`src/scripts/checkTestCaseCoverage.ts`",

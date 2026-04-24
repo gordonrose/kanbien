@@ -1,5 +1,14 @@
 import path from "node:path";
-import { buildInventoryReport, repoRoot, TaskRecord } from "./lib/codexTaskRegistry";
+import {
+  buildInventoryReport,
+  deriveBranchName,
+  deriveBootstrapPath,
+  deriveWorktreePath,
+  repoRoot,
+  sharedSeamsOverlap,
+  TaskRecord,
+  writeSetOverlaps,
+} from "./lib/codexTaskRegistry";
 
 type Recommendation =
   | "REUSE_EXISTING_TASK"
@@ -79,61 +88,10 @@ function parseArgs(argv: string[]): Options {
   };
 }
 
-function normalizeForMatch(value: string): string {
-  return value
-    .trim()
-    .toLowerCase()
-    .replace(/`/g, "")
-    .replace(/\/\*\*$/u, "")
-    .replace(/\/\*$/u, "")
-    .replace(/\*$/u, "")
-    .replace(/\/$/u, "");
-}
-
-function writeSetOverlaps(left: string[], right: string[]): boolean {
-  const normalizedLeft = left.map(normalizeForMatch);
-  const normalizedRight = right.map(normalizeForMatch);
-
-  return normalizedLeft.some((leftEntry) =>
-    normalizedRight.some(
-      (rightEntry) =>
-        leftEntry === rightEntry ||
-        leftEntry.startsWith(`${rightEntry}/`) ||
-        rightEntry.startsWith(`${leftEntry}/`),
-    ),
-  );
-}
-
-function sharedSeamsOverlap(left: string[], right: string[]): boolean {
-  const normalizedRight = new Set(right.map(normalizeForMatch));
-  return left.map(normalizeForMatch).some((entry) => normalizedRight.has(entry));
-}
-
-function deriveRequestedBranch(slug: string | null): string | null {
-  if (!slug) {
-    return null;
-  }
-  return slug.startsWith("codex/") ? slug : `codex/${slug}`;
-}
-
-function deriveBootstrapPath(repoPath: string, slug: string | null): string | null {
-  if (!slug) {
-    return null;
-  }
-  return path.join(repoPath, "docs/workspace/chat-bootstraps", `${new Date().toISOString().slice(0, 10)}-${slug}.md`);
-}
-
-function deriveWorktreePath(slug: string | null): string | null {
-  if (!slug) {
-    return null;
-  }
-  return `/tmp/kanbien-${slug}`;
-}
-
 function buildDecisionReport(options: Options): TaskDecisionReport {
   const currentRepoRoot = repoRoot();
   const report = buildInventoryReport(currentRepoRoot);
-  const requestedBranch = deriveRequestedBranch(options.slug);
+  const requestedBranch = options.slug ? deriveBranchName(options.slug) : null;
 
   if (!options.slug) {
     return {

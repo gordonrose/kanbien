@@ -18,6 +18,7 @@ export type TaskRecord = {
   dirty: boolean;
   dirtyEntries: string[];
   bootstrapPaths: string[];
+  parentTaskId: string | null;
   plannedWriteSet: string[];
   knownSharedSeams: string[];
   state: InventoryState;
@@ -41,6 +42,7 @@ export const GENERATED_JSON_PATH = "docs/workspace/task-registry/current-tasks.g
 
 type BootstrapMetadata = {
   bootstrapPaths: string[];
+  parentTaskId: string | null;
   plannedWriteSet: string[];
   knownSharedSeams: string[];
 };
@@ -67,6 +69,53 @@ export function repoRoot(): string {
 
 export function shortCommit(ref: string, cwd?: string): string | null {
   return tryRunGit(["rev-parse", "--verify", "--short", ref], cwd);
+}
+
+export function integrationHomePath(repoPath: string): string {
+  const worktrees = parseWorktreeList(repoPath);
+  return worktrees.find((entry) => entry.branch === "main")?.path ?? repoPath;
+}
+
+export function normalizeForMatch(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/`/g, "")
+    .replace(/\/\*\*$/u, "")
+    .replace(/\/\*$/u, "")
+    .replace(/\*$/u, "")
+    .replace(/\/$/u, "");
+}
+
+export function writeSetOverlaps(left: string[], right: string[]): boolean {
+  const normalizedLeft = left.map(normalizeForMatch);
+  const normalizedRight = right.map(normalizeForMatch);
+
+  return normalizedLeft.some((leftEntry) =>
+    normalizedRight.some(
+      (rightEntry) =>
+        leftEntry === rightEntry ||
+        leftEntry.startsWith(`${rightEntry}/`) ||
+        rightEntry.startsWith(`${leftEntry}/`),
+    ),
+  );
+}
+
+export function sharedSeamsOverlap(left: string[], right: string[]): boolean {
+  const normalizedRight = new Set(right.map(normalizeForMatch));
+  return left.map(normalizeForMatch).some((entry) => normalizedRight.has(entry));
+}
+
+export function deriveBranchName(slug: string): string {
+  return slug.startsWith("codex/") ? slug : `codex/${slug}`;
+}
+
+export function deriveBootstrapPath(repoPath: string, slug: string): string {
+  return path.join(repoPath, "docs/workspace/chat-bootstraps", `${new Date().toISOString().slice(0, 10)}-${slug}.md`);
+}
+
+export function deriveWorktreePath(slug: string): string {
+  return `/tmp/kanbien-${slug}`;
 }
 
 function parseWorktreeList(repoPath: string): WorktreeEntry[] {
@@ -188,6 +237,7 @@ function bootstrapIndex(repoPath: string): Map<string, BootstrapMetadata> {
     const fullPath = path.join(bootstrapDir, fileName);
     const content = readFileSync(fullPath, "utf8");
     const branches = new Set<string>();
+    const parentTaskMatch = content.match(/(?:^|\n)- Parent Task:\s*`?([A-Za-z0-9._/-]+)`?/);
     const plannedWriteSet = parseBootstrapNestedList(content, "Planned Write Set");
     const knownSharedSeams = parseBootstrapNestedList(content, "Known Shared Seams");
     const dedicatedBranchMatch = content.match(/(?:^|\n)- Dedicated Branch:\s*`?([A-Za-z0-9._/-]+)`?/);
@@ -203,10 +253,14 @@ function bootstrapIndex(repoPath: string): Map<string, BootstrapMetadata> {
     for (const branch of branches) {
       const existing = index.get(branch) ?? {
         bootstrapPaths: [],
+        parentTaskId: null,
         plannedWriteSet: [],
         knownSharedSeams: [],
       };
       existing.bootstrapPaths.push(path.relative(repoPath, fullPath));
+      if (parentTaskMatch?.[1]) {
+        existing.parentTaskId = parentTaskMatch[1];
+      }
       for (const entry of plannedWriteSet) {
         if (!existing.plannedWriteSet.includes(entry)) {
           existing.plannedWriteSet.push(entry);
@@ -297,6 +351,7 @@ function buildRecord(
     dirty,
     dirtyEntries: normalizedDirtyEntries,
     bootstrapPaths: bootstrapMetadata.bootstrapPaths,
+    parentTaskId: bootstrapMetadata.parentTaskId,
     plannedWriteSet: bootstrapMetadata.plannedWriteSet,
     knownSharedSeams: bootstrapMetadata.knownSharedSeams,
   };
@@ -321,6 +376,7 @@ export function buildInventoryReport(repoPath: string): InventoryReport {
         worktree.path,
         bootstrapPathsByBranch.get(worktree.branch) ?? {
           bootstrapPaths: [],
+          parentTaskId: null,
           plannedWriteSet: [],
           knownSharedSeams: [],
         },
@@ -344,6 +400,7 @@ export function buildInventoryReport(repoPath: string): InventoryReport {
         null,
         bootstrapPathsByBranch.get(branch) ?? {
           bootstrapPaths: [],
+          parentTaskId: null,
           plannedWriteSet: [],
           knownSharedSeams: [],
         },
