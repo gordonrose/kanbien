@@ -14,7 +14,8 @@
 - Related reference pack:
   `docs/workspace/design-system/reference-packs/display-settings-reference-pack.md`
 - Related canonical launcher:
-  `/design-system/canonicals/display-settings`
+  `/design-system/canonical-renderings/display-settings`
+  legacy index card forwards from `/design-system/canonicals/display-settings`
 
 ## Visual Contract
 
@@ -39,9 +40,12 @@
   `src/frontend/designSystem/assets/app.mjs`
   `src/frontend/designSystem/assets/styles.css`
   `src/frontend/designSystem/canonicals/display-settings/index.html`
+  `src/features/designSystemCanonicals/persistence/migrations/0039_seed_design_system_canonicals_form_settings.sql`
 - Implementation updated:
-  yes, to move the real grouped payload into the governed drawer surface and
-  register `DSR-001` through `DSR-005` as first-class canonical refs
+  yes, to move the real grouped payload into the governed drawer surface,
+  register `DSR-001` through `DSR-005` as first-class generated canonical
+  refs, and route generated render paths through the approved context-nav
+  render surface
 - Known source-level risks:
   persistence is still intentionally absent; the app subset is still narrower
   than the design-system review payload
@@ -66,6 +70,8 @@
   executable browser checks now live in
   `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts` for the
   `DSR-*` states
+  `tests/visual/designSystem/canonicals/shell/generatedCanonicalRenderingsIndex.spec.ts`
+  covers the generated launcher/render route chain
 
 ## Accessibility Verification
 

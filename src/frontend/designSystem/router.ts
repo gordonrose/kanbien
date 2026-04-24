@@ -3,6 +3,66 @@ import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { env } from "../../config/env";
 
+type GeneratedCanonicalRenderRouteDefinition = {
+  htmlPath: readonly string[];
+  surfaceSignature: string;
+};
+
+export const generatedCanonicalRenderRouteRegistry = {
+  "choice-group": {
+    htmlPath: ["components", "choice-group.html"],
+    surfaceSignature: 'id="choice-group-preview-shell"',
+  },
+  "date-picker": {
+    htmlPath: ["components", "date-picker.html"],
+    surfaceSignature: 'id="date-picker-preview-shell"',
+  },
+  "display-settings": {
+    htmlPath: ["components", "context-nav.html"],
+    surfaceSignature: 'id="context-nav-preview-shell"',
+  },
+  "drawer-select": {
+    htmlPath: ["components", "drawer-select.html"],
+    surfaceSignature: 'id="drawer-select-preview-shell"',
+  },
+  "form-template": {
+    htmlPath: ["templates", "form", "index.html"],
+    surfaceSignature: 'class="form-page-shell',
+  },
+  "icon-grid": {
+    htmlPath: ["components", "icon-grid.html"],
+    surfaceSignature: 'id="icon-grid-preview-shell"',
+  },
+  "list-detail-panel": {
+    htmlPath: ["components", "list-detail-panel.html"],
+    surfaceSignature: 'id="list-detail-panel-preview-shell"',
+  },
+  "list-detail-split-layout": {
+    htmlPath: ["components", "list-detail-split-layout.html"],
+    surfaceSignature: 'id="list-detail-split-layout-preview-shell"',
+  },
+  "list-record-card": {
+    htmlPath: ["components", "list-record-card.html"],
+    surfaceSignature: 'id="list-record-card-preview-shell"',
+  },
+  "page-shell-banner": {
+    htmlPath: ["components", "page-shell-banner.html"],
+    surfaceSignature: 'id="page-shell-banner-preview-shell"',
+  },
+  "simple-select": {
+    htmlPath: ["components", "simple-select.html"],
+    surfaceSignature: 'id="simple-select-preview-shell"',
+  },
+  "time-picker": {
+    htmlPath: ["components", "time-picker.html"],
+    surfaceSignature: 'id="time-picker-preview-shell"',
+  },
+  "top-nav": {
+    htmlPath: ["components", "top-nav.html"],
+    surfaceSignature: 'id="top-nav-preview-frame"',
+  },
+} as const satisfies Record<string, GeneratedCanonicalRenderRouteDefinition>;
+
 function resolveFrontendRoot(): string {
   const candidates =
     env.nodeEnv === "production"
@@ -24,7 +84,17 @@ function resolveFrontendRoot(): string {
   return candidates[1];
 }
 
-function resolveHtmlPage(frontendRoot: string, requestPath: string): string {
+function resolveGeneratedCanonicalRenderHtmlPage(frontendRoot: string, familyKey: string): string | null {
+  const routeDefinition = generatedCanonicalRenderRouteRegistry[familyKey];
+  if (!routeDefinition) {
+    return null;
+  }
+
+  const htmlPage = join(frontendRoot, ...routeDefinition.htmlPath);
+  return existsSync(htmlPage) ? htmlPage : null;
+}
+
+function resolveHtmlPage(frontendRoot: string, requestPath: string): string | null {
   if (requestPath === "/" || requestPath === "") {
     return join(frontendRoot, "index.html");
   }
@@ -52,24 +122,10 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string {
     }
 
     if (pathSegments.length === 3) {
-      const familyRenderPageByKey: Record<string, string> = {
-        "choice-group": "choice-group.html",
-        "date-picker": "date-picker.html",
-        "drawer-select": "drawer-select.html",
-        "list-detail-panel": "list-detail-panel.html",
-        "list-detail-split-layout": "list-detail-split-layout.html",
-        "list-record-card": "list-record-card.html",
-        "page-shell-banner": "page-shell-banner.html",
-        "simple-select": "simple-select.html",
-        "time-picker": "time-picker.html",
-        "top-nav": "top-nav.html",
-      };
-
-      const renderPage = familyRenderPageByKey[pathSegments[1]];
-      if (renderPage) {
-        return join(frontendRoot, "components", renderPage);
-      }
+      return resolveGeneratedCanonicalRenderHtmlPage(frontendRoot, pathSegments[1]);
     }
+
+    return null;
   }
 
   return join(frontendRoot, "index.html");
@@ -87,7 +143,13 @@ export function createDesignSystemRouter(): Router {
   );
 
   router.get("*", (request, response) => {
-    response.sendFile(resolveHtmlPage(frontendRoot, request.path));
+    const resolvedPage = resolveHtmlPage(frontendRoot, request.path);
+    if (!resolvedPage) {
+      response.status(404).send("Design-system route not found");
+      return;
+    }
+
+    response.sendFile(resolvedPage);
   });
 
   return router;

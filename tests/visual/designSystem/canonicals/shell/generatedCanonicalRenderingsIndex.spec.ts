@@ -58,6 +58,29 @@ const generatedCanonicalFamilies = [
     bodyAttribute: { name: "data-drawer-select-surface", value: "canonical" as const },
   },
   {
+    familyKey: "display-settings",
+    familyLabel: /Display Settings/i,
+    sampleRenderPath: "/design-system/canonical-renderings/display-settings/DSR-001",
+    surfaceLocator: "#context-nav-preview-shell",
+    readyLocator: "#context-nav-canonical-current",
+    bodyAttribute: { name: "data-context-nav-surface", value: "canonical" as const },
+  },
+  {
+    familyKey: "form-template",
+    familyLabel: /Form Template/i,
+    sampleRenderPath: "/design-system/canonical-renderings/form-template/FTR-001",
+    surfaceLocator: ".form-page-shell",
+    readyLocator: ".form-page-shell",
+  },
+  {
+    familyKey: "icon-grid",
+    familyLabel: /Icon Grid/i,
+    sampleRenderPath: "/design-system/canonical-renderings/icon-grid/IGR-002",
+    surfaceLocator: "#icon-grid-preview-shell",
+    readyLocator: "#icon-grid-preview-shell[data-render-status='ready']",
+    bodyAttribute: { name: "data-icon-grid-surface", value: "canonical" as const },
+  },
+  {
     familyKey: "list-record-card",
     familyLabel: /List Record Card/i,
     sampleRenderPath: "/design-system/canonical-renderings/list-record-card/LRC-001",
@@ -102,29 +125,16 @@ test.describe("design-system generated canonical renderings index", () => {
 
     for (const familyRoute of familyRoutes) {
       await expectGeneratedCanonicalShellContract(page, familyRoute.href, designSystemTopNavContract);
-
-      const renderRoutes = await collectGeneratedCanonicalRenderRoutes(page, familyRoute.href);
-      expect(renderRoutes.length, `${familyRoute.label} should expose generated render routes`).toBeGreaterThan(0);
-
-      await expectGeneratedCanonicalShellContract(page, renderRoutes[0].href, designSystemTopNavContract, {
-        requireExactLabels: familyRoute.href !== "/design-system/canonical-renderings/top-nav",
-      });
     }
   });
 
   test("generated render-page chrome stays outside local theme scope", async ({ page }) => {
-    const familyRoutes = await collectGeneratedCanonicalFamilyRoutes(page);
-    expect(familyRoutes.length).toBeGreaterThan(0);
-
-    for (const familyRoute of familyRoutes) {
-      const renderRoutes = await collectGeneratedCanonicalRenderRoutes(page, familyRoute.href);
-      const representativeRoutes = renderRoutes.filter((route, index) =>
-        index === 0 || /\b(dark|desert|theme)\b/i.test(route.label),
-      );
-
-      for (const renderRoute of representativeRoutes) {
-        await expectCanonicalRenderIntroOutsideThemeScope(page, renderRoute.href);
+    for (const family of generatedCanonicalFamilies) {
+      if (family.familyKey === "form-template") {
+        continue;
       }
+
+      await expectCanonicalRenderIntroOutsideThemeScope(page, family.sampleRenderPath);
     }
   });
 

@@ -4,32 +4,32 @@ const iconGridCanonicalStates = [
   {
     refId: "IGR-001",
     label: "resting trigger with default governed selection",
-    route: "/design-system/components/icon-grid?ref=IGR-001&width=720&state=resting-default&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/icon-grid/IGR-001",
   },
   {
     refId: "IGR-002",
     label: "open modal with the full approved icon catalog",
-    route: "/design-system/components/icon-grid?ref=IGR-002&width=720&state=open-full&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/icon-grid/IGR-002",
   },
   {
     refId: "IGR-003",
     label: "open modal narrowed to one search match",
-    route: "/design-system/components/icon-grid?ref=IGR-003&width=720&state=open-filtered&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/icon-grid/IGR-003",
   },
   {
     refId: "IGR-004",
     label: "trigger after choosing a different icon",
-    route: "/design-system/components/icon-grid?ref=IGR-004&width=720&state=selected-administrator&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/icon-grid/IGR-004",
   },
   {
     refId: "IGR-005",
     label: "rtl open review with the same dense tooltip-first catalog",
-    route: "/design-system/components/icon-grid?ref=IGR-005&width=720&state=open-full&theme=normal&dir=rtl&zoom=0",
+    route: "/design-system/canonical-renderings/icon-grid/IGR-005",
   },
   {
     refId: "IGR-006",
     label: "dark mobile open review with user-role search narrowing",
-    route: "/design-system/components/icon-grid?ref=IGR-006&width=390&state=open-user-search&theme=dark&dir=ltr&zoom=100",
+    route: "/design-system/canonical-renderings/icon-grid/IGR-006",
   },
 ] as const;
 
@@ -48,7 +48,7 @@ async function gotoCanonicalState(page: Page, route: string) {
 
 test.describe("design-system icon-grid canonical states", () => {
   test("launcher exposes the full IGR set on the dedicated child family", async ({ page }) => {
-    await page.goto("/design-system/canonicals/icon-grid");
+    await page.goto("/design-system/canonical-renderings/icon-grid");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(6);
@@ -58,7 +58,7 @@ test.describe("design-system icon-grid canonical states", () => {
     );
 
     for (const href of launcherHrefs) {
-      expect(href).toContain("/design-system/components/icon-grid?");
+      expect(href).toContain("/design-system/canonical-renderings/icon-grid/");
     }
 
     await expect(page.getByRole("link", { name: /IGR-002 Open modal with the full approved icon catalog/i })).toBeVisible();
@@ -79,7 +79,7 @@ test.describe("design-system icon-grid canonical states", () => {
   test("IGR-002 opens the full icon catalog on the dedicated child route", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/icon-grid?ref=IGR-002&width=720&state=open-full&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/icon-grid/IGR-002",
     );
 
     await expect(page.locator("[data-form-icon-grid-panel]")).toBeVisible();
@@ -91,7 +91,7 @@ test.describe("design-system icon-grid canonical states", () => {
   test("IGR-002 keeps the search field and icon matrix stacked as one readable modal layout", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/icon-grid?ref=IGR-002&width=720&state=open-full&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/icon-grid/IGR-002",
     );
 
     const layoutState = await page.evaluate(() => {
@@ -137,7 +137,7 @@ test.describe("design-system icon-grid canonical states", () => {
   test("IGR-003 and IGR-004 keep filtering and selected-trigger sync truthful", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/icon-grid?ref=IGR-003&width=720&state=open-filtered&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/icon-grid/IGR-003",
     );
 
     await expect(page.locator("[data-form-icon-grid-panel]")).toBeVisible();
@@ -147,7 +147,7 @@ test.describe("design-system icon-grid canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/icon-grid?ref=IGR-004&width=720&state=selected-administrator&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/icon-grid/IGR-004",
     );
 
     await expect(page.locator("[data-form-icon-grid-panel]")).toBeHidden();
@@ -158,18 +158,19 @@ test.describe("design-system icon-grid canonical states", () => {
   test("IGR-005 and IGR-006 scope rtl and compact dark stress to the child route", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/icon-grid?ref=IGR-005&width=720&state=open-full&theme=normal&dir=rtl&zoom=0",
+      "/design-system/canonical-renderings/icon-grid/IGR-005",
     );
 
-    await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+    await expect(page.locator("#icon-grid-preview-shell")).toHaveAttribute("dir", "rtl");
     await expect(page.locator("[data-form-icon-grid-panel]")).toBeVisible();
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/icon-grid?ref=IGR-006&width=390&state=open-user-search&theme=dark&dir=ltr&zoom=100",
+      "/design-system/canonical-renderings/icon-grid/IGR-006",
     );
 
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
+    await expect(page.locator("#icon-grid-preview-frame")).toHaveAttribute("data-theme-scope", "dark");
     await expect(page.locator("#icon-grid-preview-shell")).toHaveAttribute("data-form-mobile-view", "true");
     await expect(page.locator("[data-form-icon-grid-panel]")).toBeVisible();
     await expect(page.locator("[data-form-icon-grid-search]")).toHaveValue("user");

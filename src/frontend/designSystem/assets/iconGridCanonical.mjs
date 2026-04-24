@@ -9,6 +9,8 @@ const canonicalNext = document.getElementById("icon-grid-canonical-next");
 const canonicalMetaState = document.getElementById("icon-grid-meta-state");
 const canonicalMetaViewport = document.getElementById("icon-grid-meta-viewport");
 const canonicalMetaNotes = document.getElementById("icon-grid-meta-notes");
+const renderLayout = previewFrame?.closest(".canonical-render-layout");
+const launcherLink = document.querySelector('a[href="/design-system/canonicals/icon-grid"]');
 
 const canonicalStates = [
   {
@@ -87,6 +89,15 @@ const canonicalStates = [
 
 const canonicalStateMap = new Map(canonicalStates.map((state) => [state.refId, state]));
 
+function getGeneratedIconGridReferenceId() {
+  const match = window.location.pathname.match(/^\/design-system\/canonical-renderings\/icon-grid\/([^/]+)$/);
+  return match?.[1] ?? null;
+}
+
+function isGeneratedIconGridRoute() {
+  return getGeneratedIconGridReferenceId() !== null;
+}
+
 function normalizeWidth(value, fallback) {
   const parsed = Number.parseInt(value ?? "", 10);
   if (!Number.isFinite(parsed)) {
@@ -133,14 +144,24 @@ function getValueInput(root) {
   return input instanceof HTMLInputElement ? input : null;
 }
 
-function setGlobalAppearance({ dir, theme, zoom }) {
-  document.documentElement.setAttribute("dir", dir);
-  if (theme === "normal") {
-    delete document.documentElement.dataset.theme;
-  } else {
-    document.documentElement.dataset.theme = theme;
+function setLocalAppearance({ dir, theme, zoom }) {
+  document.documentElement.removeAttribute("dir");
+  delete document.documentElement.dataset.theme;
+  document.documentElement.style.removeProperty("--ui-scale");
+
+  if (previewShell instanceof HTMLElement) {
+    previewShell.setAttribute("dir", dir);
+    previewShell.style.setProperty("--ui-scale", zoom === 100 ? "1.5" : "1");
+    previewShell.dataset.magnification = String(zoom);
   }
-  document.documentElement.style.setProperty("--ui-scale", zoom === 100 ? "1.5" : "1");
+
+  if (previewFrame instanceof HTMLElement) {
+    previewFrame.dataset.themeScope = theme;
+  }
+
+  if (renderLayout instanceof HTMLElement) {
+    delete renderLayout.dataset.themeScope;
+  }
 }
 
 async function nextFrame() {
@@ -252,7 +273,7 @@ function updateStepper(currentIndex) {
   canonicalCurrent.textContent = `${currentState.refId} - ${currentState.label}`;
 
   if (previousState) {
-    canonicalPrev.href = previousState.route;
+    canonicalPrev.href = getStateRoute(previousState);
     canonicalPrev.setAttribute("aria-disabled", "false");
   } else {
     canonicalPrev.href = "#";
@@ -260,7 +281,7 @@ function updateStepper(currentIndex) {
   }
 
   if (nextState) {
-    canonicalNext.href = nextState.route;
+    canonicalNext.href = getStateRoute(nextState);
     canonicalNext.setAttribute("aria-disabled", "false");
   } else {
     canonicalNext.href = "#";
@@ -268,24 +289,87 @@ function updateStepper(currentIndex) {
   }
 }
 
-async function initializeCanonicalSurface() {
+function getLegacyRouteForState(state) {
+  return `/design-system/components/icon-grid?ref=${encodeURIComponent(state.refId)}&width=${encodeURIComponent(String(state.width))}&state=${encodeURIComponent(state.state)}&theme=${encodeURIComponent(state.theme)}&dir=${encodeURIComponent(state.dir)}&zoom=${encodeURIComponent(String(state.zoom))}`;
+}
+
+function getStateRoute(state) {
+  if (isGeneratedIconGridRoute()) {
+    return `/design-system/canonical-renderings/icon-grid/${encodeURIComponent(state.refId)}`;
+  }
+
+  return getLegacyRouteForState(state);
+}
+
+async function resolveGeneratedCanonicalState() {
+  const referenceId = getGeneratedIconGridReferenceId();
+  if (!referenceId) {
+    return null;
+  }
+
+  const response = await fetch(
+    `/v1/design-system-canonicals/public/families/icon-grid/references/${encodeURIComponent(referenceId)}`,
+    {
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to load generated icon-grid canonical with status ${response.status}`);
+  }
+
+  const payload = await response.json();
+  const matchedCanonical = canonicalStateMap.get(payload.reference.referenceId) ?? canonicalStates[0];
+  return {
+    family: payload.family,
+    activeRefId: payload.reference.referenceId,
+    width: payload.reference.width ?? matchedCanonical.width,
+    state: typeof payload.reference.specimenPayload?.state === "string"
+      ? payload.reference.specimenPayload.state
+      : matchedCanonical.state,
+    dir: payload.reference.direction ?? matchedCanonical.dir,
+    zoom: payload.reference.zoom ?? matchedCanonical.zoom,
+    theme: payload.reference.theme ?? matchedCanonical.theme,
+    viewportLabel: payload.reference.viewport ?? matchedCanonical.viewportLabel,
+    note: payload.reference.description,
+  };
+}
+
+async function initializeCanonicalSurface(resolvedGeneratedState = null) {
   const params = new URLSearchParams(window.location.search);
   const fallbackState = canonicalStates[0];
-  const requestedRef = params.get("ref");
+  const requestedRef = resolvedGeneratedState?.activeRefId ?? params.get("ref");
   const resolvedCanonical = canonicalStateMap.get(requestedRef ?? "") ?? fallbackState;
-  const width = normalizeWidth(params.get("width"), resolvedCanonical.width);
-  const dir = normalizeDir(params.get("dir") ?? resolvedCanonical.dir);
-  const zoom = normalizeZoom(params.get("zoom") ?? String(resolvedCanonical.zoom));
-  const theme = normalizeTheme(params.get("theme") ?? resolvedCanonical.theme);
+  const width = normalizeWidth(
+    resolvedGeneratedState?.width !== undefined
+      ? String(resolvedGeneratedState.width)
+      : params.get("width"),
+    resolvedCanonical.width,
+  );
+  const dir = normalizeDir(resolvedGeneratedState?.dir ?? params.get("dir") ?? resolvedCanonical.dir);
+  const zoom = normalizeZoom(
+    resolvedGeneratedState?.zoom !== undefined
+      ? String(resolvedGeneratedState.zoom)
+      : (params.get("zoom") ?? String(resolvedCanonical.zoom)),
+  );
+  const theme = normalizeTheme(resolvedGeneratedState?.theme ?? params.get("theme") ?? resolvedCanonical.theme);
+  const stateVariant = resolvedGeneratedState?.state ?? params.get("state") ?? resolvedCanonical.state;
   const currentIndex = canonicalStates.findIndex((state) => state.refId === resolvedCanonical.refId);
 
-  setGlobalAppearance({ dir, theme, zoom });
+  for (const state of canonicalStates) {
+    state.route = getStateRoute(state);
+  }
+
+  setLocalAppearance({ dir, theme, zoom });
 
   if (previewFrame instanceof HTMLElement) {
     previewFrame.style.maxWidth = `${width}px`;
   }
 
-  await applyScenario({ ...resolvedCanonical, width, dir, zoom, theme });
+  await applyScenario({ ...resolvedCanonical, state: stateVariant, width, dir, zoom, theme });
 
   if (canonicalMatchList instanceof HTMLElement) {
     canonicalMatchList.textContent = `${resolvedCanonical.refId} - ${resolvedCanonical.label}`;
@@ -294,16 +378,20 @@ async function initializeCanonicalSurface() {
     canonicalCircumstances.textContent = `${width}px wide, ${dir.toUpperCase()} direction, ${theme} theme, ${zoom}% magnification.`;
   }
   if (canonicalSummary instanceof HTMLElement) {
-    canonicalSummary.textContent = resolvedCanonical.note;
+    canonicalSummary.textContent = resolvedGeneratedState?.note ?? resolvedCanonical.note;
   }
   if (canonicalMetaState instanceof HTMLElement) {
     canonicalMetaState.textContent = resolvedCanonical.label;
   }
   if (canonicalMetaViewport instanceof HTMLElement) {
-    canonicalMetaViewport.textContent = resolvedCanonical.viewportLabel;
+    canonicalMetaViewport.textContent = resolvedGeneratedState?.viewportLabel ?? resolvedCanonical.viewportLabel;
   }
   if (canonicalMetaNotes instanceof HTMLElement) {
-    canonicalMetaNotes.textContent = resolvedCanonical.note;
+    canonicalMetaNotes.textContent = resolvedGeneratedState?.note ?? resolvedCanonical.note;
+  }
+
+  if (launcherLink instanceof HTMLAnchorElement) {
+    launcherLink.href = resolvedGeneratedState?.family?.generatedLauncherRoutePath ?? "/design-system/canonicals/icon-grid";
   }
 
   updateStepper(currentIndex);
@@ -311,4 +399,11 @@ async function initializeCanonicalSurface() {
   document.body.setAttribute("data-render-status", "ready");
 }
 
-void initializeCanonicalSurface();
+async function main() {
+  const resolvedGeneratedState = await resolveGeneratedCanonicalState();
+  await initializeCanonicalSurface(resolvedGeneratedState);
+}
+
+void main().catch((error) => {
+  console.error("Failed to render icon-grid canonical", error);
+});

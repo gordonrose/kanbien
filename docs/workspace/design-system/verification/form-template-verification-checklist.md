@@ -15,7 +15,8 @@
 - Related reference pack:
   `docs/workspace/design-system/reference-packs/form-template-reference-pack.md`
 - Related canonical launcher:
-  `/design-system/canonicals/form-template`
+  `/design-system/canonical-renderings/form-template`
+  legacy index card forwards from `/design-system/canonicals/form-template`
 - Related adoption note:
   none yet
 - Related fallback note:
@@ -49,10 +50,13 @@
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/app.mjs`
   `src/frontend/designSystem/assets/styles.css`
+  `src/features/designSystemCanonicals/persistence/migrations/0039_seed_design_system_canonicals_form_settings.sql`
 - Implementation updated:
   yes
   the stale supporting sidebar was removed so repo source now matches the
-  approved parent surface more closely
+  approved parent surface more closely; the generated canonical launcher now
+  sources `FTR-*` refs from persisted governance and generated render routes
+  serve the approved form-template route with the same state semantics
 - Known source-level risks:
   the parent chain still needs a cleaner statement of which composition checks
   stay parent-owned now that open-state proof is split between parent and
@@ -98,7 +102,8 @@
   `RTL + magnification` stress
 - Screenshot or rendered evidence reference:
   `docs/workspace/design-system/reference-packs/form-template-reference-pack.md`
-  `src/frontend/designSystem/canonicals/form-template/index.html`
+  `/design-system/canonical-renderings/form-template`
+  `tests/visual/designSystem/canonicals/shell/generatedCanonicalRenderingsIndex.spec.ts`
   current runtime proof includes route-level Playwright verification for the
   governed combination canonicals
 

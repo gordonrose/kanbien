@@ -18,6 +18,18 @@ const migratedFamilyCards = [
     href: "/design-system/canonical-renderings/drawer-select",
   },
   {
+    label: /Display Settings Canonicals/i,
+    href: "/design-system/canonical-renderings/display-settings",
+  },
+  {
+    label: /Form Template Canonicals/i,
+    href: "/design-system/canonical-renderings/form-template",
+  },
+  {
+    label: /Icon Grid Canonicals/i,
+    href: "/design-system/canonical-renderings/icon-grid",
+  },
+  {
     label: /Choice Group Canonicals/i,
     href: "/design-system/canonical-renderings/choice-group",
   },

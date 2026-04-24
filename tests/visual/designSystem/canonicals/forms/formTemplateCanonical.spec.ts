@@ -4,7 +4,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-001",
     label: "desktop no-sidebar baseline",
-    route: "/design-system/templates/form?ref=FTR-001&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/form-template/FTR-001",
     viewport: { width: 1600, height: 1400 },
     expectedTheme: "normal",
     expectedDir: "ltr",
@@ -16,7 +16,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-010",
     label: "normal-theme error review",
-    route: "/design-system/templates/form?ref=FTR-010&theme=normal&dir=ltr&zoom=0&errors=true",
+    route: "/design-system/canonical-renderings/form-template/FTR-010",
     viewport: { width: 1600, height: 1400 },
     expectedTheme: "normal",
     expectedDir: "ltr",
@@ -28,7 +28,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-011",
     label: "dark-theme error review",
-    route: "/design-system/templates/form?ref=FTR-011&theme=dark&dir=ltr&zoom=0&errors=true",
+    route: "/design-system/canonical-renderings/form-template/FTR-011",
     viewport: { width: 1600, height: 1400 },
     expectedTheme: "dark",
     expectedDir: "ltr",
@@ -40,7 +40,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-012",
     label: "normal-theme disabled review",
-    route: "/design-system/templates/form?ref=FTR-012&theme=normal&dir=ltr&zoom=0&disabled=true",
+    route: "/design-system/canonical-renderings/form-template/FTR-012",
     viewport: { width: 1600, height: 1400 },
     expectedTheme: "normal",
     expectedDir: "ltr",
@@ -52,7 +52,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-013",
     label: "dark-theme disabled review",
-    route: "/design-system/templates/form?ref=FTR-013&theme=dark&dir=ltr&zoom=0&disabled=true",
+    route: "/design-system/canonical-renderings/form-template/FTR-013",
     viewport: { width: 1600, height: 1400 },
     expectedTheme: "dark",
     expectedDir: "ltr",
@@ -64,7 +64,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-014",
     label: "error plus disabled review",
-    route: "/design-system/templates/form?ref=FTR-014&theme=normal&dir=ltr&zoom=0&errors=true&disabled=true",
+    route: "/design-system/canonical-renderings/form-template/FTR-014",
     viewport: { width: 1600, height: 1400 },
     expectedTheme: "normal",
     expectedDir: "ltr",
@@ -76,7 +76,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-015",
     label: "mobile error review",
-    route: "/design-system/templates/form?ref=FTR-015&theme=normal&dir=ltr&zoom=0&errors=true&mobile=true",
+    route: "/design-system/canonical-renderings/form-template/FTR-015",
     viewport: { width: 430, height: 1400 },
     expectedTheme: "normal",
     expectedDir: "ltr",
@@ -88,7 +88,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-016",
     label: "mobile disabled review",
-    route: "/design-system/templates/form?ref=FTR-016&theme=normal&dir=ltr&zoom=0&disabled=true&mobile=true",
+    route: "/design-system/canonical-renderings/form-template/FTR-016",
     viewport: { width: 430, height: 1400 },
     expectedTheme: "normal",
     expectedDir: "ltr",
@@ -100,7 +100,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-017",
     label: "rtl desktop review",
-    route: "/design-system/templates/form?ref=FTR-017&theme=normal&dir=rtl&zoom=0",
+    route: "/design-system/canonical-renderings/form-template/FTR-017",
     viewport: { width: 1600, height: 1400 },
     expectedTheme: "normal",
     expectedDir: "rtl",
@@ -112,7 +112,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-018",
     label: "rtl mobile review",
-    route: "/design-system/templates/form?ref=FTR-018&theme=normal&dir=rtl&zoom=0&mobile=true",
+    route: "/design-system/canonical-renderings/form-template/FTR-018",
     viewport: { width: 430, height: 1400 },
     expectedTheme: "normal",
     expectedDir: "rtl",
@@ -124,7 +124,7 @@ const formTemplateCanonicalStates = [
   {
     refId: "FTR-019",
     label: "rtl magnified review",
-    route: "/design-system/templates/form?ref=FTR-019&theme=normal&dir=rtl&zoom=100",
+    route: "/design-system/canonical-renderings/form-template/FTR-019",
     viewport: { width: 1600, height: 1400 },
     expectedTheme: "normal",
     expectedDir: "rtl",
@@ -143,7 +143,7 @@ async function gotoCanonicalState(page: Page, route: string, viewport: { width: 
 
 test.describe("design-system form template canonicals", () => {
   test("launcher exposes the governed combination refs", async ({ page }) => {
-    await page.goto("/design-system/canonicals/form-template");
+    await page.goto("/design-system/canonical-renderings/form-template");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(11);
@@ -187,7 +187,7 @@ test.describe("design-system form template canonicals", () => {
   test("disabled canonical states keep fields non-interactive on first render", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/templates/form?ref=FTR-013&theme=dark&dir=ltr&zoom=0&disabled=true",
+      "/design-system/canonical-renderings/form-template/FTR-013",
       { width: 1600, height: 1400 },
     );
 
@@ -201,7 +201,7 @@ test.describe("design-system form template canonicals", () => {
   test("mobile canonical states stack the page into one column on first render", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/templates/form?ref=FTR-018&theme=normal&dir=rtl&zoom=0&mobile=true",
+      "/design-system/canonical-renderings/form-template/FTR-018",
       { width: 430, height: 1400 },
     );
 

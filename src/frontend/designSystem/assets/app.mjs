@@ -2074,6 +2074,19 @@ const contextNavCanonicalReferenceStates = [
   { ref: "DSR-004", label: "Mobile bottom-sheet payload", width: 560, height: 760, stack: "standard", labels: "standard", open: "accessibility", theme: "normal", direction: "ltr", magnification: 0, accent: "#635bff", circumstance: "Mobile display-settings review where the full grouped payload remains usable inside the bottom-attached sheet without clipping or losing the bottom-bar relationship." },
   { ref: "DSR-005", label: "Reduced magnification and accent sweep", width: 1120, height: 760, stack: "standard", labels: "standard", open: "accessibility", theme: "normal", direction: "ltr", magnification: -100, accent: "#2563eb", circumstance: "Display-settings range review where the low-end magnification state and non-default accent remain real, reload-safe, and visually legible inside the payload." },
 ];
+const formTemplateCanonicalReferenceStates = [
+  { ref: "FTR-001", label: "Desktop no-sidebar baseline", theme: "normal", direction: "ltr", magnification: 0, errors: false, disabled: false, mobile: false },
+  { ref: "FTR-010", label: "Normal-theme error review", theme: "normal", direction: "ltr", magnification: 0, errors: true, disabled: false, mobile: false },
+  { ref: "FTR-011", label: "Dark-theme error review", theme: "dark", direction: "ltr", magnification: 0, errors: true, disabled: false, mobile: false },
+  { ref: "FTR-012", label: "Normal-theme disabled review", theme: "normal", direction: "ltr", magnification: 0, errors: false, disabled: true, mobile: false },
+  { ref: "FTR-013", label: "Dark-theme disabled review", theme: "dark", direction: "ltr", magnification: 0, errors: false, disabled: true, mobile: false },
+  { ref: "FTR-014", label: "Error plus disabled review", theme: "normal", direction: "ltr", magnification: 0, errors: true, disabled: true, mobile: false },
+  { ref: "FTR-015", label: "Mobile error review", theme: "normal", direction: "ltr", magnification: 0, errors: true, disabled: false, mobile: true },
+  { ref: "FTR-016", label: "Mobile disabled review", theme: "normal", direction: "ltr", magnification: 0, errors: false, disabled: true, mobile: true },
+  { ref: "FTR-017", label: "RTL desktop review", theme: "normal", direction: "rtl", magnification: 0, errors: false, disabled: false, mobile: false },
+  { ref: "FTR-018", label: "RTL mobile review", theme: "normal", direction: "rtl", magnification: 0, errors: false, disabled: false, mobile: true },
+  { ref: "FTR-019", label: "RTL magnified review", theme: "normal", direction: "rtl", magnification: 100, errors: false, disabled: false, mobile: false },
+];
 const validSubNavLocales = new Set(["standard", "long-latin", "long-latin-truncation", "rtl", "rtl-long", "rtl-long-truncation", "cjk", "symbols"]);
 const subNavPreviewLocales = {
   standard: {
@@ -2637,6 +2650,19 @@ function getContextNavCanonicalReferenceByRef(ref) {
   return contextNavCanonicalReferenceStates.find((reference) => reference.ref === ref) ?? null;
 }
 
+function getGeneratedCanonicalPathReferenceId(familyKey) {
+  const match = window.location.pathname.match(/^\/design-system\/canonical-renderings\/([^/]+)\/([^/]+)$/);
+  return match?.[1] === familyKey ? decodeURIComponent(match[2]) : null;
+}
+
+function getFormTemplateCanonicalReferenceByRef(ref) {
+  if (!ref) {
+    return null;
+  }
+
+  return formTemplateCanonicalReferenceStates.find((reference) => reference.ref === ref) ?? null;
+}
+
 function getContextNavCanonicalMatches(state) {
   const matches = contextNavCanonicalReferenceStates.filter((reference) => (
     reference.width === state.width &&
@@ -2660,7 +2686,8 @@ function getContextNavCanonicalMatches(state) {
 }
 
 function getRequestedContextNavCanonicalRef() {
-  return new URLSearchParams(window.location.search).get("ref");
+  return new URLSearchParams(window.location.search).get("ref")
+    ?? getGeneratedCanonicalPathReferenceId("display-settings");
 }
 
 function buildContextNavCanonicalHref(reference, accent = contextNavPreviewDefaults.accent) {
@@ -2675,6 +2702,13 @@ function buildContextNavCanonicalHref(reference, accent = contextNavPreviewDefau
   params.set("zoom", String(Number(reference.magnification)));
   params.set("accent", accent);
   params.set("ref", reference.ref);
+  if (
+    window.location.pathname.startsWith("/design-system/canonical-renderings/display-settings/")
+    && reference.ref.startsWith("DSR-")
+  ) {
+    return `/design-system/canonical-renderings/display-settings/${encodeURIComponent(reference.ref)}`;
+  }
+
   return `/design-system/components/context-nav?${params.toString()}`;
 }
 
@@ -2820,7 +2854,24 @@ function getSubNavPreviewStateFromUrl() {
 
 function getContextNavPreviewStateFromUrl() {
   const params = new URLSearchParams(window.location.search);
-  const requestedReference = getContextNavCanonicalReferenceByRef(params.get("ref"));
+  const requestedReference = getContextNavCanonicalReferenceByRef(getRequestedContextNavCanonicalRef());
+  const requestedFormTemplateReference = getFormTemplateCanonicalReferenceByRef(
+    getGeneratedCanonicalPathReferenceId("form-template"),
+  );
+
+  if (requestedFormTemplateReference) {
+    return normalizeContextNavPreviewState({
+      width: contextNavPreviewDefaults.width,
+      height: contextNavPreviewDefaults.height,
+      stack: contextNavPreviewDefaults.stack,
+      labels: contextNavPreviewDefaults.labels,
+      open: contextNavPreviewDefaults.open,
+      theme: requestedFormTemplateReference.theme,
+      direction: requestedFormTemplateReference.direction,
+      magnification: requestedFormTemplateReference.magnification,
+      accent: contextNavPreviewDefaults.accent,
+    });
+  }
 
   if (requestedReference) {
     return normalizeContextNavPreviewState({
@@ -5796,6 +5847,17 @@ function initializeFormErrorModeToggles() {
 
   function getFormReviewStateFromUrl() {
     const params = new URLSearchParams(window.location.search);
+    const generatedReference = getFormTemplateCanonicalReferenceByRef(
+      getGeneratedCanonicalPathReferenceId("form-template"),
+    );
+
+    if (generatedReference) {
+      return {
+        errors: generatedReference.errors,
+        disabled: generatedReference.disabled,
+        mobile: generatedReference.mobile,
+      };
+    }
 
     return {
       errors: parseFormReviewFlag(params.get("errors")),

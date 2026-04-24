@@ -9,7 +9,8 @@
 - Status under review:
   promoted child seam with dedicated canonical launcher and child render route
 - Related canonical launcher:
-  `/design-system/canonicals/icon-grid`
+  `/design-system/canonical-renderings/icon-grid`
+  legacy index card forwards from `/design-system/canonicals/icon-grid`
 - Related parent host family:
   `docs/workspace/design-system/reference-packs/form-template-reference-pack.md`
 - Related behavior lock:
@@ -38,6 +39,7 @@
 - Source files inspected:
   `src/frontend/designSystem/components/icon-grid.html`
   `src/frontend/designSystem/canonicals/icon-grid/index.html`
+  `src/features/designSystemCanonicals/persistence/migrations/0039_seed_design_system_canonicals_form_settings.sql`
   `src/frontend/designSystem/assets/iconGridCanonical.mjs`
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/app.mjs`
@@ -45,8 +47,9 @@
 - Implementation updated:
   yes
   the runtime now owns a shared icon definition list plus icon-grid modal
-  behavior, the direct child render route owns canonical state review, and the
-  parent form continues to host the adoption shell
+  behavior, the generated canonical launcher now sources `IGR-*` refs from
+  persisted canonical governance, the generated render path serves the direct
+  child render route, and the parent form continues to host the adoption shell
 - Known source-level risks:
   the direct child route still reuses the shared form runtime, so future host
   changes should keep the child route and parent route in sync
@@ -68,6 +71,7 @@
   drawer
 - Screenshot or rendered evidence reference:
   `tests/visual/designSystem/canonicals/forms/iconGridCanonical.spec.ts`
+  `tests/visual/designSystem/canonicals/shell/generatedCanonicalRenderingsIndex.spec.ts`
   `tests/visual/designSystem/canonicals/forms/formTemplate.spec.ts`
 
 ## Accessibility Verification
