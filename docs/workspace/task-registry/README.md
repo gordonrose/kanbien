@@ -163,3 +163,46 @@ Current phase-5 statuses:
 
 `--apply` only performs the local promotion when the task is already
 `READY_TO_PROMOTE`.
+
+## Local Review And Push
+
+Phase 6 adds explicit post-promotion helpers:
+
+```bash
+npm run codex:review-promotion -- --task <task-id>
+npm run codex:push-reviewed -- --task <task-id>
+npm run codex:push-reviewed -- --task <task-id> --apply
+```
+
+Current phase-6 review statuses:
+
+- `READY_FOR_REVIEW`
+  the task appears on local `main` ahead of `origin/main`, so the changed files
+  and commits can be reviewed
+- `NO_LOCAL_PROMOTION`
+  the task is not currently represented by a local-only promotion on `main`
+- `TASK_NOT_FOUND`
+  the requested task id or branch did not resolve
+- `TASK_BLOCK`
+  the requested task is invalid for this command, currently the integration
+  home
+
+Current phase-6 push statuses:
+
+- `READY_TO_PUSH`
+  the task appears as a reviewed local-only promotion on `main`
+- `PUSHED`
+  local `main` was pushed to `origin/main`
+- `APPLY_FAILED`
+  the reviewed push failed during execution
+- `TASK_NOT_FOUND`
+  the requested task id or branch did not resolve
+- `TASK_BLOCK`
+  the requested task is invalid for this command, currently the integration
+  home
+- `REVIEW_BLOCK`
+  the task does not currently appear as a reviewed local-only promotion on
+  `main`
+
+`codex:push-reviewed --apply` only pushes when the status is already
+`READY_TO_PUSH`.
