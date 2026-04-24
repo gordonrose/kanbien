@@ -389,7 +389,7 @@ async function resolveGeneratedCanonicalState() {
   };
 }
 
-function renderCanonicalState(resolvedGeneratedState = null) {
+async function renderCanonicalState(resolvedGeneratedState = null) {
   if (!(previewFrame instanceof HTMLElement) || !(previewShell instanceof HTMLElement)) {
     return;
   }
@@ -426,10 +426,11 @@ function renderCanonicalState(resolvedGeneratedState = null) {
   previewFrame.style.setProperty("--time-picker-preview-width", `${width}px`);
   previewShell.style.setProperty("--ui-scale", scale);
   previewShell.dataset.magnification = String(zoom);
-  previewShell.dataset.renderStatus = "ready";
+  previewShell.dataset.renderStatus = "settling";
   previewShell.setAttribute("dir", dir);
   previewShell.dataset.formMobileView = String(payload.mobile);
   previewShell.dataset.viewportClass = width <= 420 ? "mobile" : "desktop";
+  document.body.dataset.renderStatus = "settling";
 
   if (!useLocalSurfaceScopes) {
     document.documentElement.setAttribute("dir", dir);
@@ -464,10 +465,6 @@ function renderCanonicalState(resolvedGeneratedState = null) {
     openTimePanel(nestedTrigger, nestedPanel);
   }
 
-  window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
-    updateCanonicalPickerReserve();
-  }));
-
   if (canonicalMatchList instanceof HTMLElement) {
     canonicalMatchList.textContent = `${resolvedCanonical.refId} - ${resolvedCanonical.label}`;
   }
@@ -497,6 +494,10 @@ function renderCanonicalState(resolvedGeneratedState = null) {
   }
 
   updateStepper(currentIndex >= 0 ? currentIndex : 0);
+  await new Promise((resolve) => window.requestAnimationFrame(resolve));
+  await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
+  updateCanonicalPickerReserve();
+  previewShell.dataset.renderStatus = "ready";
   document.body.dataset.renderStatus = "ready";
 }
 
@@ -513,7 +514,7 @@ async function main() {
     state.route = getStateRoute(state);
   }
 
-  renderCanonicalState(resolvedGeneratedState);
+  await renderCanonicalState(resolvedGeneratedState);
 }
 
 void main().catch((error) => {

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
-import { expectContainedWithin } from "../../support/helpers/humanReviewGuards";
+import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
 
 const datePickerCanonicalStates = [
   {
@@ -138,15 +138,14 @@ test.describe("design-system date picker canonical states", () => {
 
     await expect(page.locator("#date-picker-preview-shell")).toHaveAttribute("data-form-mobile-view", "true");
     const datePanel = page.locator("#date-picker-range-field [data-form-date-panel]");
-    await expect(datePanel).toBeVisible();
-    await expectContainedWithin(
-      datePanel,
-      page.locator("#date-picker-preview-frame"),
-      {
-        subjectLabel: "DTPR-007 mobile date-picker overlay",
-        containerLabel: "date-picker canonical review frame",
-      },
-    );
+    await expectCanonicalOverlayContainedInRenderSurface(page, {
+      label: "DTPR-007 mobile date-picker overlay",
+      overlay: datePanel,
+      panel: datePanel,
+      hostSurface: "#date-picker-preview-shell",
+      renderFrame: "#date-picker-preview-frame",
+      requirePanelWidthWithinHost: true,
+    });
   });
 
   test("date-picker canonical hosts reserve desktop overlap space and keep mobile overlays scroll-contained", async ({ page }) => {
@@ -159,27 +158,28 @@ test.describe("design-system date picker canonical states", () => {
       });
 
       expect(reserve, `${referenceId} should reserve vertical space for the composed open overlap`).not.toBe("");
-      await expectContainedWithin(
-        page.locator("#date-picker-range-time-field [data-form-date-panel]"),
-        page.locator("#date-picker-preview-frame"),
-        {
-          subjectLabel: `${referenceId} visible date-picker panel`,
-          containerLabel: "date-picker canonical review frame",
-        },
-      );
+      const datePanel = page.locator("#date-picker-range-time-field [data-form-date-panel]");
+      await expectCanonicalOverlayContainedInRenderSurface(page, {
+        label: `${referenceId} visible date-picker panel`,
+        overlay: datePanel,
+        panel: datePanel,
+        hostSurface: "#date-picker-preview-shell",
+        renderFrame: "#date-picker-preview-frame",
+      });
     }
 
     for (const referenceId of ["DTPR-007", "DTPR-008"] as const) {
       await gotoCanonicalState(page, routeForDatePickerRef(referenceId));
 
-      await expectContainedWithin(
-        page.locator("#date-picker-range-field [data-form-date-panel]"),
-        page.locator("#date-picker-preview-frame"),
-        {
-          subjectLabel: `${referenceId} mobile date-picker overlay`,
-          containerLabel: "date-picker canonical review frame",
-        },
-      );
+      const datePanel = page.locator("#date-picker-range-field [data-form-date-panel]");
+      await expectCanonicalOverlayContainedInRenderSurface(page, {
+        label: `${referenceId} mobile date-picker overlay`,
+        overlay: datePanel,
+        panel: datePanel,
+        hostSurface: "#date-picker-preview-shell",
+        renderFrame: "#date-picker-preview-frame",
+        requirePanelWidthWithinHost: true,
+      });
     }
   });
 

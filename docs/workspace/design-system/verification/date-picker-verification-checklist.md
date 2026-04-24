@@ -43,15 +43,18 @@
 - Source files inspected:
   `src/frontend/designSystem/components/date-picker.html`
   `src/frontend/designSystem/assets/datePickerCanonical.mjs`
+  `src/frontend/designSystem/assets/canonicalOwnerReserve.mjs`
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/app.mjs`
   `src/frontend/designSystem/assets/styles.css`
+  `tests/visual/designSystem/support/helpers/canonicalOverlayGuards.ts`
 - Implementation updated:
   yes
   the child seam now has a dedicated canonical render surface, and the shared
   form runtime now passively closes unrelated open form surfaces so the locked
   overlay exclusivity rule is enforced by code rather than only by
-  documentation
+  documentation; the generated render surface now publishes ready only after
+  settled owner-reserve geometry has been synced
 - Known source-level risks:
   the dedicated render surface still depends on copied hosted framing and will
   need careful sync if the parent field shell evolves materially
@@ -78,7 +81,9 @@
   cross-family passive closure of unrelated open form surfaces
 - Overflow or clipping checks:
   mobile full-screen overlay geometry covered; jump controls, summary, and
-  `Done` footer now have dark/magnified route-level visibility proof
+  `Done` footer now have dark/magnified route-level visibility proof; mobile
+  and desktop open panels now use the shared canonical overlay containment
+  guard against the render host and frame
 - Layering or anchoring checks:
   nested time-picker overlap inside range-with-time covered; anchored month and
   year jump controls now have direct route-level proof on the dedicated child
@@ -156,7 +161,8 @@
   `/design-system/canonical-renderings/date-picker`
   `/design-system/canonical-renderings/date-picker/:ref`
 - Canonical render-ready / honest-width check required:
-  completed for both the launcher and the dedicated child render surface
+  completed for both the launcher and the dedicated child render surface;
+  readiness now waits for owner-reserve synchronization before assertions run
 - Frontend gate manifest update required:
   not yet
 - Architecture-map update required:

@@ -506,13 +506,13 @@ async function renderCanonicalState(resolvedGeneratedState = null) {
     launcherLink.href = resolvedGeneratedState?.family?.generatedLauncherRoutePath ?? "/design-system/canonicals/date-picker";
   }
 
-  updateStepper(currentIndex);
-  previewShell.dataset.renderStatus = "ready";
-  document.body.dataset.renderStatus = "ready";
-
   await new Promise((resolve) => window.requestAnimationFrame(resolve));
   await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
   updateCanonicalPickerReserve();
+
+  updateStepper(currentIndex);
+  previewShell.dataset.renderStatus = "ready";
+  document.body.dataset.renderStatus = "ready";
 }
 
 async function main() {

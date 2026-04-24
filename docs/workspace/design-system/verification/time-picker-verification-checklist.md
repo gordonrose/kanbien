@@ -44,11 +44,15 @@
 - Source files inspected:
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/app.mjs`
+  `src/frontend/designSystem/assets/timePickerCanonical.mjs`
+  `src/frontend/designSystem/assets/canonicalOwnerReserve.mjs`
   `src/frontend/designSystem/assets/styles.css`
+  `tests/visual/designSystem/support/helpers/canonicalOverlayGuards.ts`
 - Implementation updated:
-  no
-  this pass codifies the child seam boundary and adds proof against the
-  existing signed-off live surface
+  yes
+  this pass codifies the child seam boundary, adds proof against the existing
+  signed-off live surface, and updates the generated render surface so ready
+  is published only after settled owner-reserve geometry has been synced
 - Known source-level risks:
   explicit close-button dismissal is source-inspected but not yet covered by a
   dedicated child browser test
@@ -75,7 +79,9 @@
   hidden closed-state guarantee before mobile open
 - Overflow or clipping checks:
   mobile full-screen overlay geometry covered; dark-theme and magnified open
-  panel stress now have dedicated child-route proof
+  panel stress now have dedicated child-route proof; mobile and desktop open
+  panels now use the shared canonical overlay containment guard against the
+  render host and frame
 - Layering or anchoring checks:
   nested time-picker overlap inside range-with-time covered; top-level peer
   overlay exclusivity remains parent-owned
@@ -153,7 +159,8 @@
   `/design-system/canonical-renderings/time-picker` now exists and targets
   deterministic dedicated child render states honestly
 - Canonical render-ready / honest-width check required:
-  completed for the dedicated child launcher and render surface
+  completed for the dedicated child launcher and render surface; readiness now
+  waits for owner-reserve synchronization before assertions run
 - Frontend gate manifest update required:
   not yet
 - Architecture-map update required:

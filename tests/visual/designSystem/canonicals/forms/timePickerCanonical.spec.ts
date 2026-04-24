@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
-import { expectContainedWithin, withHumanReviewGuard } from "../../support/helpers/humanReviewGuards";
+import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
 
 const timePickerCanonicalStates = [
   {
@@ -62,7 +62,7 @@ const timePickerCanonicalStates = [
 async function gotoCanonicalState(page: Page, route: string, viewport: { width: number; height: number }) {
   await page.setViewportSize(viewport);
   await page.goto(route);
-  await page.locator("#time-picker-preview-shell").waitFor({ state: "visible" });
+  await page.locator('#time-picker-preview-shell[data-render-status="ready"]').waitFor({ state: "visible" });
 }
 
 test.describe("design-system time picker canonical states", () => {
@@ -98,7 +98,7 @@ test.describe("design-system time picker canonical states", () => {
     await expectRouteSurfaceTruth(page, {
       expectedPath: "/design-system/canonical-renderings/time-picker/TPR-004",
       surfaceLocator: "#time-picker-preview-shell",
-      waitForReadyLocator: "#time-picker-preview-shell",
+      waitForReadyLocator: '#time-picker-preview-shell[data-render-status="ready"]',
       bodyAttribute: { name: "data-time-picker-surface", value: "canonical" },
       fallbackHeading: /Design-System Route Families/i,
     });
@@ -114,7 +114,7 @@ test.describe("design-system time picker canonical states", () => {
       await expectRouteSurfaceTruth(page, {
         expectedPath: scenario.route,
         surfaceLocator: "#time-picker-preview-shell",
-        waitForReadyLocator: "#time-picker-preview-shell",
+        waitForReadyLocator: '#time-picker-preview-shell[data-render-status="ready"]',
         bodyAttribute: { name: "data-time-picker-surface", value: "canonical" },
         fallbackHeading: /Design-System Route Families/i,
       });
@@ -149,15 +149,13 @@ test.describe("design-system time picker canonical states", () => {
     );
 
     await expect(standalonePanel).toBeVisible();
-    await withHumanReviewGuard("mobile standalone overlay stays inside the canonical review frame", async () => {
-      await expectContainedWithin(
-        standalonePanel,
-        page.locator("#time-picker-preview-frame"),
-        {
-          subjectLabel: "TPR-006 mobile time-picker overlay",
-          containerLabel: "time-picker canonical review frame",
-        },
-      );
+    await expectCanonicalOverlayContainedInRenderSurface(page, {
+      label: "TPR-006 mobile time-picker overlay",
+      overlay: standalonePanel,
+      panel: standalonePanel,
+      hostSurface: "#time-picker-preview-shell",
+      renderFrame: "#time-picker-preview-frame",
+      requirePanelWidthWithinHost: true,
     });
 
     await gotoCanonicalState(
@@ -183,14 +181,14 @@ test.describe("design-system time picker canonical states", () => {
       });
 
       expect(reserve, `${referenceId} should reserve field space for its visible time panel`).not.toBe("");
-      await expectContainedWithin(
-        page.locator("[data-form-time-panel]:not(.hidden)").first(),
-        page.locator("#time-picker-preview-frame"),
-        {
-          subjectLabel: `${referenceId} visible time-picker panel`,
-          containerLabel: "time-picker canonical review frame",
-        },
-      );
+      const visiblePanel = page.locator("[data-form-time-panel]:not(.hidden)").first();
+      await expectCanonicalOverlayContainedInRenderSurface(page, {
+        label: `${referenceId} visible time-picker panel`,
+        overlay: visiblePanel,
+        panel: visiblePanel,
+        hostSurface: "#time-picker-preview-shell",
+        renderFrame: "#time-picker-preview-frame",
+      });
     }
   });
 
@@ -201,15 +199,14 @@ test.describe("design-system time picker canonical states", () => {
     ]) {
       await gotoCanonicalState(page, route, { width: 430, height: 1400 });
 
-      await withHumanReviewGuard("mobile time-picker overlay remains contained within the review frame", async () => {
-        await expectContainedWithin(
-          page.locator("#time-picker-standalone-root [data-form-time-panel]"),
-          page.locator("#time-picker-preview-frame"),
-          {
-            subjectLabel: "visible mobile time-picker panel",
-            containerLabel: "time-picker canonical review frame",
-          },
-        );
+      const visiblePanel = page.locator("#time-picker-standalone-root [data-form-time-panel]");
+      await expectCanonicalOverlayContainedInRenderSurface(page, {
+        label: "visible mobile time-picker panel",
+        overlay: visiblePanel,
+        panel: visiblePanel,
+        hostSurface: "#time-picker-preview-shell",
+        renderFrame: "#time-picker-preview-frame",
+        requirePanelWidthWithinHost: true,
       });
     }
   });
