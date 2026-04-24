@@ -18,6 +18,8 @@ export type TaskRecord = {
   dirty: boolean;
   dirtyEntries: string[];
   bootstrapPaths: string[];
+  plannedWriteSet: string[];
+  knownSharedSeams: string[];
   state: InventoryState;
   recommendation: string;
 };
@@ -36,6 +38,12 @@ type WorktreeEntry = {
 };
 
 export const GENERATED_JSON_PATH = "docs/workspace/task-registry/current-tasks.generated.json";
+
+type BootstrapMetadata = {
+  bootstrapPaths: string[];
+  plannedWriteSet: string[];
+  knownSharedSeams: string[];
+};
 
 export function runGit(args: string[], cwd?: string): string {
   return execFileSync("git", args, {
@@ -137,9 +145,38 @@ function uniquePatchCommitCount(repoPath: string, branch: string): number | null
     .length;
 }
 
-function bootstrapIndex(repoPath: string): Map<string, string[]> {
+function parseBootstrapNestedList(content: string, label: string): string[] {
+  const lines = content.split("\n");
+  const labelPrefix = `- ${label}:`;
+  const startIndex = lines.findIndex((line) => line.trim() === labelPrefix);
+  if (startIndex === -1) {
+    return [];
+  }
+
+  const values: string[] = [];
+  for (let index = startIndex + 1; index < lines.length; index += 1) {
+    const line = lines[index];
+    if (/^## /.test(line)) {
+      break;
+    }
+    if (/^- /.test(line)) {
+      break;
+    }
+    const trimmed = line.trim();
+    if (trimmed.startsWith("- ")) {
+      const value = trimmed.slice(2).trim();
+      if (value) {
+        values.push(value);
+      }
+    }
+  }
+
+  return values;
+}
+
+function bootstrapIndex(repoPath: string): Map<string, BootstrapMetadata> {
   const bootstrapDir = path.join(repoPath, "docs/workspace/chat-bootstraps");
-  const index = new Map<string, string[]>();
+  const index = new Map<string, BootstrapMetadata>();
   if (!existsSync(bootstrapDir)) {
     return index;
   }
@@ -151,6 +188,8 @@ function bootstrapIndex(repoPath: string): Map<string, string[]> {
     const fullPath = path.join(bootstrapDir, fileName);
     const content = readFileSync(fullPath, "utf8");
     const branches = new Set<string>();
+    const plannedWriteSet = parseBootstrapNestedList(content, "Planned Write Set");
+    const knownSharedSeams = parseBootstrapNestedList(content, "Known Shared Seams");
     const dedicatedBranchMatch = content.match(/(?:^|\n)- Dedicated Branch:\s*`?([A-Za-z0-9._/-]+)`?/);
     const finalBranchMatch = content.match(/(?:^|\n)- Final Branch Used:\s*`?([A-Za-z0-9._/-]+)`?/);
 
@@ -162,8 +201,22 @@ function bootstrapIndex(repoPath: string): Map<string, string[]> {
     }
 
     for (const branch of branches) {
-      const existing = index.get(branch) ?? [];
-      existing.push(path.relative(repoPath, fullPath));
+      const existing = index.get(branch) ?? {
+        bootstrapPaths: [],
+        plannedWriteSet: [],
+        knownSharedSeams: [],
+      };
+      existing.bootstrapPaths.push(path.relative(repoPath, fullPath));
+      for (const entry of plannedWriteSet) {
+        if (!existing.plannedWriteSet.includes(entry)) {
+          existing.plannedWriteSet.push(entry);
+        }
+      }
+      for (const entry of knownSharedSeams) {
+        if (!existing.knownSharedSeams.includes(entry)) {
+          existing.knownSharedSeams.push(entry);
+        }
+      }
       index.set(branch, existing);
     }
   }
@@ -216,7 +269,7 @@ function buildRecord(
   repoPath: string,
   branch: string,
   worktreePath: string | null,
-  bootstrapPaths: string[],
+  bootstrapMetadata: BootstrapMetadata,
   kind: InventoryKind,
 ): TaskRecord {
   const dirtyEntries = worktreePath ? parseStatusEntries(worktreePath) : [];
@@ -243,7 +296,9 @@ function buildRecord(
     uniquePatchCommitCount: uniquePatchCount,
     dirty,
     dirtyEntries: normalizedDirtyEntries,
-    bootstrapPaths,
+    bootstrapPaths: bootstrapMetadata.bootstrapPaths,
+    plannedWriteSet: bootstrapMetadata.plannedWriteSet,
+    knownSharedSeams: bootstrapMetadata.knownSharedSeams,
   };
 
   return {
@@ -264,7 +319,11 @@ export function buildInventoryReport(repoPath: string): InventoryReport {
         repoPath,
         worktree.branch,
         worktree.path,
-        bootstrapPathsByBranch.get(worktree.branch) ?? [],
+        bootstrapPathsByBranch.get(worktree.branch) ?? {
+          bootstrapPaths: [],
+          plannedWriteSet: [],
+          knownSharedSeams: [],
+        },
         worktree.branch === "main" ? "integration_home" : "attached_worktree",
       ),
     );
@@ -279,7 +338,17 @@ export function buildInventoryReport(repoPath: string): InventoryReport {
 
   for (const branch of codexBranches) {
     records.push(
-      buildRecord(repoPath, branch, null, bootstrapPathsByBranch.get(branch) ?? [], "unattached_branch"),
+      buildRecord(
+        repoPath,
+        branch,
+        null,
+        bootstrapPathsByBranch.get(branch) ?? {
+          bootstrapPaths: [],
+          plannedWriteSet: [],
+          knownSharedSeams: [],
+        },
+        "unattached_branch",
+      ),
     );
   }
 

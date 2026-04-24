@@ -36,6 +36,18 @@ function printDashboard(report: InventoryReport): void {
     if (record.bootstrapPaths.length > 0) {
       console.log(`- bootstrap: ${record.bootstrapPaths.join(", ")}`);
     }
+    if (record.plannedWriteSet.length > 0) {
+      console.log("- planned write set:");
+      for (const entry of record.plannedWriteSet) {
+        console.log(`  - ${entry}`);
+      }
+    }
+    if (record.knownSharedSeams.length > 0) {
+      console.log("- shared seams:");
+      for (const entry of record.knownSharedSeams) {
+        console.log(`  - ${entry}`);
+      }
+    }
     if (record.dirtyEntries.length > 0) {
       console.log("- dirty entries:");
       for (const entry of record.dirtyEntries) {

@@ -70,3 +70,30 @@ Current phase-2 retirement statuses:
 
 `--apply` only performs the retirement when the task is already classified as
 `SAFE_TO_RETIRE`.
+
+## Task Start Recommendation
+
+Phase 3 adds a conservative task-entry helper:
+
+```bash
+npm run codex:task -- --slug <task-slug> --scope "Short scope"
+npm run codex:task -- --slug <task-slug> --write-set "src/scripts/**,docs/workspace/**"
+npm run codex:task -- --slug <task-slug> --shared-seam "git workflow guardrails"
+```
+
+Current phase-3 recommendations:
+
+- `REUSE_EXISTING_TASK`
+  an attached task already exists for the same slug or overlapping seam
+- `RESUME_EXISTING_TASK`
+  an unattached branch already exists for the same slug or overlapping seam
+- `INSPECT_OVERLAPPING_TASKS`
+  multiple existing tasks overlap the requested seam, so a human decision is
+  needed before creating anything new
+- `RETIRE_STALE_FIRST`
+  one or more finished task lines should be retired before creating another
+- `CREATE_NEW_TASK`
+  no exact or overlapping task was found, so a new isolated task would be
+  reasonable
+- `INPUT_BLOCK`
+  the request did not provide enough information, currently a missing slug
