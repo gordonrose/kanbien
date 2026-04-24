@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-04-24T10:03:57.811Z",
-  "repoRoot": "/tmp/kanbien-task-lifecycle-phase-4",
-  "targetMain": "075e239",
+  "generatedAt": "2026-04-24T10:51:40.583Z",
+  "repoRoot": "/tmp/kanbien-chat-bootstrap-lifecycle-redesign",
+  "targetMain": "aa8217f",
   "records": [
     {
       "taskId": "blog-feature-dependency-manifests-outline",
@@ -11,7 +11,7 @@
       "headCommit": "c53656f",
       "upstream": null,
       "aheadOfMain": 37,
-      "behindMain": 24,
+      "behindMain": 28,
       "uniquePatchCommitCount": 34,
       "dirty": false,
       "dirtyEntries": [],
@@ -23,30 +23,33 @@
       "recommendation": "This task still carries unique patch content but is behind main; review whether it should be integrated by cherry-pick or intentionally parked."
     },
     {
-      "taskId": "chat-bootstrap-automation",
+      "taskId": "chat-bootstrap-lifecycle-redesign",
       "kind": "attached_worktree",
-      "branch": "codex/chat-bootstrap-automation",
-      "worktreePath": "/home/gordon/kanbien-chat-bootstrap-automation",
-      "headCommit": "0d11aee",
-      "upstream": "origin/main",
+      "branch": "codex/chat-bootstrap-lifecycle-redesign",
+      "worktreePath": "/tmp/kanbien-chat-bootstrap-lifecycle-redesign",
+      "headCommit": "aa8217f",
+      "upstream": null,
       "aheadOfMain": 0,
-      "behindMain": 17,
+      "behindMain": 0,
       "uniquePatchCommitCount": 0,
       "dirty": true,
       "dirtyEntries": [
-        "M AGENTS.md",
-        " M docs/architecture/guides/platform-bootstrap-and-local-helpers-guide.md",
-        " M docs/standards/git-workflow-guardrails.md",
-        " M package.json",
-        " M src/scripts/launchGuardedCodex.sh",
-        "?? docs/workspace/chat-bootstraps/2026-04-22-chat-bootstrap-automation.md",
-        "?? src/scripts/bootstrapCodexChat.ts",
-        "?? src/scripts/launchIsolatedCodex.sh"
+        "M docs/workspace/task-registry/README.md",
+        " M src/scripts/codexTask.ts",
+        "?? docs/workspace/chat-bootstraps/2026-04-24-chat-bootstrap-lifecycle-redesign.md"
       ],
-      "bootstrapPaths": [],
-      "parentTaskId": null,
-      "plannedWriteSet": [],
-      "knownSharedSeams": [],
+      "bootstrapPaths": [
+        "docs/workspace/chat-bootstraps/2026-04-24-chat-bootstrap-lifecycle-redesign.md"
+      ],
+      "parentTaskId": "chat-bootstrap-automation",
+      "plannedWriteSet": [
+        "src/scripts/codexTask.ts",
+        "docs/workspace/task-registry/README.md"
+      ],
+      "knownSharedSeams": [
+        "task lifecycle workflow",
+        "task bootstrap creation"
+      ],
       "state": "inspect",
       "recommendation": "This task has no unique patch content, but it still has local changes; inspect and either integrate the keepers or discard and retire it."
     },
@@ -55,7 +58,7 @@
       "kind": "integration_home",
       "branch": "main",
       "worktreePath": "/home/gordon/kanbien",
-      "headCommit": "075e239",
+      "headCommit": "aa8217f",
       "upstream": "origin/main",
       "aheadOfMain": 0,
       "behindMain": 0,
@@ -70,45 +73,6 @@
       "recommendation": "Keep /home/gordon/kanbien clean and synced; use it as the local integration home."
     },
     {
-      "taskId": "task-lifecycle-phase-4",
-      "kind": "attached_worktree",
-      "branch": "codex/task-lifecycle-phase-4",
-      "worktreePath": "/tmp/kanbien-task-lifecycle-phase-4",
-      "headCommit": "075e239",
-      "upstream": null,
-      "aheadOfMain": 0,
-      "behindMain": 0,
-      "uniquePatchCommitCount": 0,
-      "dirty": true,
-      "dirtyEntries": [
-        "M docs/workspace/task-registry/README.md",
-        " M package.json",
-        " M src/scripts/codexTask.ts",
-        " M src/scripts/codexTasks.ts",
-        " M src/scripts/lib/codexTaskRegistry.ts",
-        "?? docs/workspace/chat-bootstraps/2026-04-24-task-lifecycle-phase-4.md",
-        "?? src/scripts/codexSplit.ts"
-      ],
-      "bootstrapPaths": [
-        "docs/workspace/chat-bootstraps/2026-04-24-task-lifecycle-phase-4.md"
-      ],
-      "parentTaskId": null,
-      "plannedWriteSet": [
-        "`package.json`",
-        "`src/scripts/codexSplit.ts`",
-        "`src/scripts/lib/codexTaskRegistry.ts`",
-        "`src/scripts/lib/*` helper seams needed to create and document split child tasks",
-        "`docs/workspace/task-registry/README.md`"
-      ],
-      "knownSharedSeams": [
-        "task/worktree inventory classification",
-        "bootstrap note parsing and lifecycle metadata",
-        "worktree creation guardrails"
-      ],
-      "state": "inspect",
-      "recommendation": "This task has no unique patch content, but it still has local changes; inspect and either integrate the keepers or discard and retire it."
-    },
-    {
       "taskId": "traceability-governance",
       "kind": "attached_worktree",
       "branch": "codex/traceability-governance",
@@ -116,7 +80,7 @@
       "headCommit": "b48652f",
       "upstream": null,
       "aheadOfMain": 35,
-      "behindMain": 24,
+      "behindMain": 28,
       "uniquePatchCommitCount": 33,
       "dirty": true,
       "dirtyEntries": [

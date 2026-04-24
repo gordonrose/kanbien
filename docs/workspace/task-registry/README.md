@@ -79,6 +79,7 @@ Phase 3 adds a conservative task-entry helper:
 npm run codex:task -- --slug <task-slug> --scope "Short scope"
 npm run codex:task -- --slug <task-slug> --write-set "src/scripts/**,docs/workspace/**"
 npm run codex:task -- --slug <task-slug> --shared-seam "git workflow guardrails"
+npm run codex:task -- --slug <task-slug> --scope "Short scope" --apply
 ```
 
 Current phase-3 recommendations:
@@ -97,6 +98,11 @@ Current phase-3 recommendations:
   reasonable
 - `INPUT_BLOCK`
   the request did not provide enough information, currently a missing slug
+
+`--apply` creates the branch, dedicated worktree, and bootstrap artifact only
+when the recommendation is already `CREATE_NEW_TASK`. Reuse, resume,
+overlap-inspection, and retire-first recommendations remain advisory and do not
+create another task line.
 
 ## Tangent Split
 
