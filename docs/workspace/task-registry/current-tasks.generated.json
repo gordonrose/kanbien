@@ -1,64 +1,14 @@
 {
-  "generatedAt": "2026-04-24T10:51:40.583Z",
-  "repoRoot": "/tmp/kanbien-chat-bootstrap-lifecycle-redesign",
-  "targetMain": "aa8217f",
+  "generatedAt": "2026-04-24T11:07:59.991Z",
+  "repoRoot": "/home/gordon/kanbien",
+  "targetMain": "d5e31a8",
   "records": [
-    {
-      "taskId": "blog-feature-dependency-manifests-outline",
-      "kind": "unattached_branch",
-      "branch": "codex/blog-feature-dependency-manifests-outline",
-      "worktreePath": null,
-      "headCommit": "c53656f",
-      "upstream": null,
-      "aheadOfMain": 37,
-      "behindMain": 28,
-      "uniquePatchCommitCount": 34,
-      "dirty": false,
-      "dirtyEntries": [],
-      "bootstrapPaths": [],
-      "parentTaskId": null,
-      "plannedWriteSet": [],
-      "knownSharedSeams": [],
-      "state": "active",
-      "recommendation": "This task still carries unique patch content but is behind main; review whether it should be integrated by cherry-pick or intentionally parked."
-    },
-    {
-      "taskId": "chat-bootstrap-lifecycle-redesign",
-      "kind": "attached_worktree",
-      "branch": "codex/chat-bootstrap-lifecycle-redesign",
-      "worktreePath": "/tmp/kanbien-chat-bootstrap-lifecycle-redesign",
-      "headCommit": "aa8217f",
-      "upstream": null,
-      "aheadOfMain": 0,
-      "behindMain": 0,
-      "uniquePatchCommitCount": 0,
-      "dirty": true,
-      "dirtyEntries": [
-        "M docs/workspace/task-registry/README.md",
-        " M src/scripts/codexTask.ts",
-        "?? docs/workspace/chat-bootstraps/2026-04-24-chat-bootstrap-lifecycle-redesign.md"
-      ],
-      "bootstrapPaths": [
-        "docs/workspace/chat-bootstraps/2026-04-24-chat-bootstrap-lifecycle-redesign.md"
-      ],
-      "parentTaskId": "chat-bootstrap-automation",
-      "plannedWriteSet": [
-        "src/scripts/codexTask.ts",
-        "docs/workspace/task-registry/README.md"
-      ],
-      "knownSharedSeams": [
-        "task lifecycle workflow",
-        "task bootstrap creation"
-      ],
-      "state": "inspect",
-      "recommendation": "This task has no unique patch content, but it still has local changes; inspect and either integrate the keepers or discard and retire it."
-    },
     {
       "taskId": "main",
       "kind": "integration_home",
       "branch": "main",
       "worktreePath": "/home/gordon/kanbien",
-      "headCommit": "aa8217f",
+      "headCommit": "d5e31a8",
       "upstream": "origin/main",
       "aheadOfMain": 0,
       "behindMain": 0,
@@ -71,65 +21,6 @@
       "knownSharedSeams": [],
       "state": "integration_home",
       "recommendation": "Keep /home/gordon/kanbien clean and synced; use it as the local integration home."
-    },
-    {
-      "taskId": "traceability-governance",
-      "kind": "attached_worktree",
-      "branch": "codex/traceability-governance",
-      "worktreePath": "/home/gordon/kanbien-traceability",
-      "headCommit": "b48652f",
-      "upstream": null,
-      "aheadOfMain": 35,
-      "behindMain": 28,
-      "uniquePatchCommitCount": 33,
-      "dirty": true,
-      "dirtyEntries": [
-        "M docs/prd/test_cases/2026-03-27-0001-root-admin-auth-shell-test-cases.md",
-        " M docs/prd/test_cases/2026-04-09-0009-tenant-auth-foundation-test-cases.md",
-        " M docs/prd/test_cases/2026-04-19-0014-web-app-surface-discovery-structure-aware-extension-test-cases.md",
-        " M src/lib/testingData/testCaseLifecycle.ts",
-        " M src/lib/testingData/traceabilityReport.ts",
-        " M src/scripts/checkTestCaseCoverage.ts",
-        " M tests/audit/webAppHierarchyBuilder/audit.test.ts",
-        " M tests/audit/webAppPageSettings/audit.test.ts",
-        " M tests/integration/rootRoles/flow.test.ts",
-        " M tests/integration/tenantAuth/persistence.test.ts",
-        " M tests/integration/traceability/report.test.ts",
-        " M tests/integration/webAppHierarchyBuilder/persistence.test.ts",
-        " M tests/integration/webAppPageSettings/flow.test.ts",
-        " M tests/integration/webAppPageSettings/persistence.test.ts",
-        " M tests/security/webAppHierarchyBuilder/security.test.ts",
-        " M tests/security/webAppPageSettings/security.test.ts",
-        " M tests/unit/traceability/traceability.test.ts",
-        " M tests/unit/webAppHierarchyBuilder/service.test.ts",
-        " M tests/unit/webAppPageSettings/service.test.ts",
-        " M tests/unit/webAppSurfaceDiscovery/service.test.ts",
-        " M tests/visual/app/rootAdminShell/rootAdminShellSubNav.spec.ts",
-        "?? docs/workspace/2026-04-21-root-path-traceability-triage.md",
-        "?? docs/workspace/2026-04-21-test-traceability-orphan-triage.md",
-        "?? docs/workspace/blogs/2026-04-21-feature-dependency-manifests-outline.md",
-        "?? docs/workspace/implementation-blueprints/2026-04-21-test-traceability-governance.md",
-        "?? tests/unit/traceability/testCaseLifecycle.test.ts"
-      ],
-      "bootstrapPaths": [
-        "docs/workspace/chat-bootstraps/2026-04-21-traceability-governance.md"
-      ],
-      "parentTaskId": null,
-      "plannedWriteSet": [
-        "`src/lib/testingData/*`",
-        "`src/scripts/checkTestCaseCoverage.ts`",
-        "traceability tests",
-        "PRD test-case docs touched only for executable traceability alignment",
-        "workspace notes for orphan and `ROOT-PATH` traceability triage"
-      ],
-      "knownSharedSeams": [
-        "`webAppHierarchyBuilder` tests",
-        "`webAppPageSettings` tests",
-        "`webAppSurfaceDiscovery` tests",
-        "`rootAdminShell` visual coverage"
-      ],
-      "state": "active",
-      "recommendation": "This task still carries unique patch content but is behind main; review whether it should be integrated by cherry-pick or intentionally parked."
     }
   ]
 }
