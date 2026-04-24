@@ -4,57 +4,57 @@ const listRecordCardCanonicalStates = [
   {
     refId: "LRC-001",
     label: "desktop baseline full width",
-    route: "/design-system/components/list-record-card?ref=LRC-001&width=760&state=baseline&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-001",
   },
   {
     refId: "LRC-002",
     label: "desktop selected full width",
-    route: "/design-system/components/list-record-card?ref=LRC-002&width=760&state=selected&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-002",
   },
   {
     refId: "LRC-003",
     label: "field-mapping placeholder",
-    route: "/design-system/components/list-record-card?ref=LRC-003&width=760&state=mapping&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-003",
   },
   {
     refId: "LRC-004",
     label: "missing-attribute fallback",
-    route: "/design-system/components/list-record-card?ref=LRC-004&width=760&state=missing&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-004",
   },
   {
     refId: "LRC-005",
     label: "half-page long-content review",
-    route: "/design-system/components/list-record-card?ref=LRC-005&width=520&state=long&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-005",
   },
   {
     refId: "LRC-006",
     label: "mobile narrow review",
-    route: "/design-system/components/list-record-card?ref=LRC-006&width=360&state=mobile&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-006",
   },
   {
     refId: "LRC-007",
     label: "rtl half-page review",
-    route: "/design-system/components/list-record-card?ref=LRC-007&width=520&state=long&theme=normal&dir=rtl&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-007",
   },
   {
     refId: "LRC-008",
     label: "magnified half-page review",
-    route: "/design-system/components/list-record-card?ref=LRC-008&width=520&state=long&theme=normal&dir=ltr&zoom=100",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-008",
   },
   {
     refId: "LRC-009",
     label: "theme baseline normal",
-    route: "/design-system/components/list-record-card?ref=LRC-009&width=760&state=baseline&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-009",
   },
   {
     refId: "LRC-010",
     label: "theme baseline dark",
-    route: "/design-system/components/list-record-card?ref=LRC-010&width=760&state=baseline&theme=dark&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-010",
   },
   {
     refId: "LRC-011",
     label: "theme baseline desert",
-    route: "/design-system/components/list-record-card?ref=LRC-011&width=760&state=baseline&theme=desert&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-record-card/LRC-011",
   },
 ] as const;
 
@@ -73,7 +73,7 @@ async function gotoCanonicalState(page: Page, route: string) {
 
 test.describe("design-system list-record-card canonical states", () => {
   test("launcher exposes desktop, half-page, and mobile review refs", async ({ page }) => {
-    await page.goto("/design-system/canonicals/list-record-card");
+    await page.goto("/design-system/canonical-renderings/list-record-card");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(11);
@@ -96,7 +96,7 @@ test.describe("design-system list-record-card canonical states", () => {
   test("LRC-004 uses the missing-attribute fallback without empty secondary chrome", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-record-card?ref=LRC-004&width=760&state=missing&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-record-card/LRC-004",
     );
 
     await expect(page.locator("#list-record-card-preview-title")).toHaveText("Untitled record");
@@ -107,7 +107,7 @@ test.describe("design-system list-record-card canonical states", () => {
   test("LRC-005 and LRC-006 keep half-page and mobile widths honest", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-record-card?ref=LRC-005&width=520&state=long&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-record-card/LRC-005",
     );
 
     const halfPageState = await page.evaluate(() => {
@@ -126,7 +126,7 @@ test.describe("design-system list-record-card canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-record-card?ref=LRC-006&width=360&state=mobile&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-record-card/LRC-006",
     );
 
     const mobileState = await page.evaluate(() => {
@@ -144,7 +144,7 @@ test.describe("design-system list-record-card canonical states", () => {
   test("LRC-007 keeps rtl direction scoped to the local canonical surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-record-card?ref=LRC-007&width=520&state=long&theme=normal&dir=rtl&zoom=0",
+      "/design-system/canonical-renderings/list-record-card/LRC-007",
     );
 
     const directionState = await page.evaluate(() => ({
@@ -159,7 +159,7 @@ test.describe("design-system list-record-card canonical states", () => {
   test("LRC-008 keeps magnification scoped to the local canonical surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-record-card?ref=LRC-008&width=520&state=long&theme=normal&dir=ltr&zoom=100",
+      "/design-system/canonical-renderings/list-record-card/LRC-008",
     );
 
     const magnificationState = await page.evaluate(() => {
@@ -183,45 +183,35 @@ test.describe("design-system list-record-card canonical states", () => {
       await gotoCanonicalState(page, scenario.route);
 
       const themeState = await page.evaluate(() => {
-        const layout = document.querySelector("#list-record-card-preview-frame")?.closest(".canonical-render-layout");
+        const frame = document.querySelector("#list-record-card-preview-frame");
+        const layout = frame?.closest(".canonical-render-layout");
         return {
           documentTheme: document.documentElement.dataset.theme ?? "",
+          frameTheme: frame instanceof HTMLElement ? frame.dataset.themeScope ?? "" : "",
           layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
         };
       });
 
       expect(themeState.documentTheme).toBe("");
-      expect(themeState.layoutTheme).toBe(
+      expect(themeState.layoutTheme).toBe("");
+      expect(themeState.frameTheme).toBe(
         scenario.refId === "LRC-010" ? "dark" : scenario.refId === "LRC-011" ? "desert" : "normal",
       );
     }
   });
 
-  test("LRC-010 applies dark-theme ink to the canonical stage heading", async ({ page }) => {
+  test("LRC-010 keeps dark-theme ink out of the render-page intro chrome", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-record-card?ref=LRC-010&width=760&state=baseline&theme=dark&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-record-card/LRC-010",
     );
 
-    const headingThemeState = await page.evaluate(() => {
-      const heading = document.getElementById("list-record-card-stage-title");
-      const layout = document.querySelector(".canonical-render-layout");
-      let resolvedInk = "";
+    const chromeThemeState = await page.evaluate(() => ({
+      introTheme: document.querySelector(".canonical-render-intro")?.closest("[data-theme-scope]")?.getAttribute("data-theme-scope") ?? "",
+      frameTheme: document.getElementById("list-record-card-preview-frame")?.getAttribute("data-theme-scope") ?? "",
+    }));
 
-      if (layout instanceof HTMLElement) {
-        const probe = document.createElement("span");
-        probe.style.color = "var(--ink)";
-        layout.append(probe);
-        resolvedInk = window.getComputedStyle(probe).color;
-        probe.remove();
-      }
-
-      return {
-        headingColor: heading ? window.getComputedStyle(heading).color : "",
-        layoutInk: resolvedInk,
-      };
-    });
-
-    expect(headingThemeState.headingColor).toBe(headingThemeState.layoutInk);
+    expect(chromeThemeState.introTheme).toBe("");
+    expect(chromeThemeState.frameTheme).toBe("dark");
   });
 });

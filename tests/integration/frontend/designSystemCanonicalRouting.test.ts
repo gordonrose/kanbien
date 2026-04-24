@@ -11,7 +11,7 @@ function createSubject() {
 }
 
 describe("design-system canonical render routing", () => {
-  it("exposes the batch-3 families through the public canonical launcher API", async () => {
+  it("exposes the seeded generated families through the public canonical launcher API", async () => {
     const response = await request(createApp()).get(
       "/v1/design-system-canonicals/public/families",
     );
@@ -22,6 +22,9 @@ describe("design-system canonical render routing", () => {
         expect.objectContaining({ familyKey: "choice-group" }),
         expect.objectContaining({ familyKey: "date-picker" }),
         expect.objectContaining({ familyKey: "drawer-select" }),
+        expect.objectContaining({ familyKey: "list-record-card" }),
+        expect.objectContaining({ familyKey: "list-detail-panel" }),
+        expect.objectContaining({ familyKey: "list-detail-split-layout" }),
       ]),
     );
   });
@@ -56,6 +59,39 @@ describe("design-system canonical render routing", () => {
     expect(response.status).toBe(200);
     expect(response.text).toContain('id="drawer-select-preview-shell"');
     expect(response.text).toContain('id="drawer-select-canonical-current"');
+    expect(response.text).not.toContain("Design-System Route Families");
+  });
+
+  it("serves the dedicated list-record-card render page instead of the overview shell", async () => {
+    const response = await request(createSubject()).get(
+      "/design-system/canonical-renderings/list-record-card/LRC-001",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain('id="list-record-card-preview-shell"');
+    expect(response.text).toContain('id="list-record-card-canonical-current"');
+    expect(response.text).not.toContain("Design-System Route Families");
+  });
+
+  it("serves the dedicated list-detail-panel render page instead of the overview shell", async () => {
+    const response = await request(createSubject()).get(
+      "/design-system/canonical-renderings/list-detail-panel/LDP-001",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain('id="list-detail-panel-preview-shell"');
+    expect(response.text).toContain('id="list-detail-panel-canonical-current"');
+    expect(response.text).not.toContain("Design-System Route Families");
+  });
+
+  it("serves the dedicated list-detail-split-layout render page instead of the overview shell", async () => {
+    const response = await request(createSubject()).get(
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-002",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain('id="list-detail-split-layout-preview-shell"');
+    expect(response.text).toContain('id="list-detail-split-layout-canonical-current"');
     expect(response.text).not.toContain("Design-System Route Families");
   });
 

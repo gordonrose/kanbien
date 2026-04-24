@@ -4,52 +4,52 @@ const canonicalStates = [
   {
     refId: "LDSL-001",
     label: "desktop closed baseline",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-001&width=1080&state=closed&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-001",
   },
   {
     refId: "LDSL-002",
     label: "desktop open split baseline",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-002&width=1080&state=open&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-002",
   },
   {
     refId: "LDSL-003",
     label: "independent scroll-lane pressure",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-003&width=1080&state=scroll&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-003",
   },
   {
     refId: "LDSL-004",
     label: "mobile full-sheet overlay",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-004&width=390&state=mobile&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-004",
   },
   {
     refId: "LDSL-005",
     label: "mobile overlay beneath shell chrome",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-005&width=390&state=mobile-layering&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-005",
   },
   {
     refId: "LDSL-006",
     label: "rtl desktop split review",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-006&width=1080&state=open&theme=normal&dir=rtl&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-006",
   },
   {
     refId: "LDSL-007",
     label: "magnified half-page split review",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-007&width=820&state=zoom&theme=normal&dir=ltr&zoom=100",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-007",
   },
   {
     refId: "LDSL-008",
     label: "theme baseline dark",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-008&width=1080&state=open&theme=dark&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-008",
   },
   {
     refId: "LDSL-009",
     label: "theme baseline desert",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-009&width=1080&state=open&theme=desert&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-009",
   },
   {
     refId: "LDSL-010",
     label: "squashed split fallback review",
-    route: "/design-system/components/list-detail-split-layout?ref=LDSL-010&width=720&state=squashed&theme=normal&dir=ltr&zoom=100",
+    route: "/design-system/canonical-renderings/list-detail-split-layout/LDSL-010",
   },
 ] as const;
 
@@ -68,7 +68,7 @@ async function gotoCanonicalState(page: Page, route: string) {
 
 test.describe("design-system list-detail-split-layout canonical states", () => {
   test("launcher exposes the priority split-layout refs", async ({ page }) => {
-    await page.goto("/design-system/canonicals/list-detail-split-layout");
+    await page.goto("/design-system/canonical-renderings/list-detail-split-layout");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(10);
@@ -91,7 +91,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-001 keeps the closed state as a single list lane", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-001&width=1080&state=closed&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-001",
     );
 
     const closedState = await page.evaluate(() => {
@@ -112,7 +112,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-002 opens a pushed two-lane desktop split", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-002&width=1080&state=open&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-002",
     );
 
     const openState = await page.evaluate(() => {
@@ -149,7 +149,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
       width: 960,
       height: 1400,
     });
-    await page.goto("/design-system/components/list-detail-split-layout?ref=LDSL-002&width=1080&state=open&theme=normal&dir=ltr&zoom=0");
+    await page.goto("/design-system/canonical-renderings/list-detail-split-layout/LDSL-002");
     await page.locator('#list-detail-split-layout-preview-shell[data-render-status="ready"]').waitFor({ state: "visible" });
 
     const renderHonestyState = await page.evaluate(() => {
@@ -188,7 +188,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-002 keeps visible spacing between stacked list cards", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-002&width=1080&state=open&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-002",
     );
 
     const cardSpacing = await page.evaluate(() => {
@@ -218,7 +218,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-002 does not advertise load-more behavior when the preview does not implement it", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-002&width=1080&state=open&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-002",
     );
 
     await expect(page.locator("#list-detail-split-layout-preview-status")).toBeHidden();
@@ -227,7 +227,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-002 keeps the header action row aligned with the copy block when the content is short", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-002&width=1080&state=open&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-002",
     );
 
     const headerState = await page.evaluate(() => {
@@ -258,7 +258,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-002 keeps previous and next vertically aligned in the footer", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-002&width=1080&state=open&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-002",
     );
 
     const footerState = await page.evaluate(() => {
@@ -287,7 +287,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-002 keeps the footer nav row vertically balanced inside the footer band", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-002&width=1080&state=open&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-002",
     );
 
     const footerBandState = await page.evaluate(() => {
@@ -324,7 +324,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-003 keeps list and detail lanes independently scrollable", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-003&width=1080&state=scroll&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-003",
     );
 
     const scrollState = await page.evaluate(() => {
@@ -362,7 +362,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-004 and LDSL-005 keep the mobile overlay inside the seam and beneath shell overlays", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-004&width=390&state=mobile&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-004",
     );
 
     const mobileOverlayState = await page.evaluate(() => {
@@ -383,7 +383,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-005&width=390&state=mobile-layering&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-005",
     );
 
     const layeringState = await page.evaluate(() => {
@@ -410,7 +410,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-004 keeps the close affordance top-right while header actions drop below the copy block", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-004&width=390&state=mobile&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-004",
     );
 
     const mobileHeaderState = await page.evaluate(() => {
@@ -447,7 +447,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-006 mirrors the split relationship in RTL", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-006&width=1080&state=open&theme=normal&dir=rtl&zoom=0",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-006",
     );
 
     const rtlState = await page.evaluate(() => {
@@ -477,7 +477,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-007 keeps magnification scoped to the local split-layout preview", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-007&width=820&state=zoom&theme=normal&dir=ltr&zoom=100",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-007",
     );
 
     const magnificationState = await page.evaluate(() => {
@@ -504,7 +504,7 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
   test("LDSL-010 falls back to overlay when a split-capable width becomes too squashed under zoom", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-split-layout?ref=LDSL-010&width=720&state=squashed&theme=normal&dir=ltr&zoom=100",
+      "/design-system/canonical-renderings/list-detail-split-layout/LDSL-010",
     );
 
     const fallbackState = await page.evaluate(() => {
@@ -535,15 +535,18 @@ test.describe("design-system list-detail-split-layout canonical states", () => {
       await gotoCanonicalState(page, scenario.route);
 
       const themeState = await page.evaluate(() => {
-        const layout = document.querySelector("#list-detail-split-layout-preview-frame")?.closest(".canonical-render-layout");
+        const frame = document.querySelector("#list-detail-split-layout-preview-frame");
+        const layout = frame?.closest(".canonical-render-layout");
         return {
           documentTheme: document.documentElement.dataset.theme ?? "",
+          frameTheme: frame instanceof HTMLElement ? frame.dataset.themeScope ?? "" : "",
           layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
         };
       });
 
       expect(themeState.documentTheme).toBe("");
-      expect(themeState.layoutTheme).toBe(
+      expect(themeState.layoutTheme).toBe("");
+      expect(themeState.frameTheme).toBe(
         scenario.refId === "LDSL-008" ? "dark" : "desert",
       );
     }

@@ -5,7 +5,8 @@
 - Artifact name:
   `ListDetailPanel`
 - Surface:
-  `/design-system/canonicals/list-detail-panel`
+  `/design-system/canonical-renderings/list-detail-panel`
+  `/design-system/canonical-renderings/list-detail-panel/:ref`
   `/design-system/components/list-detail-panel`
 - Status under review:
   signed-off
@@ -32,9 +33,10 @@
   Start the second child extraction from the governed `List Page` parent
   pattern after `ListRecordCard` sign-off.
 - What changed since the last review:
-  The detail surface now has a dedicated canonical launcher and render surface
-  so baseline, boundary, long-content, and error states can be reviewed
-  directly outside the full parent page. The long-content compaction logic was
+  The detail surface now has a generated persistence-backed canonical launcher
+  and dedicated render surface so baseline, boundary, long-content, and error
+  states can be reviewed directly outside the full parent page. The
+  long-content compaction logic was
   also stabilized after `LDP-005` exposed scroll flicker caused by the header
   state machine oscillating during body scroll. The child behavior lock and
   child reference pack have now both been signed off, leaving the canonical
@@ -46,6 +48,7 @@
   `src/frontend/designSystem/components/list-detail-panel.html`
   `src/frontend/designSystem/canonicals/list-detail-panel/index.html`
   `src/frontend/designSystem/assets/listDetailPanelCanonical.mjs`
+  `src/features/designSystemCanonicals/persistence/migrations/0038_seed_design_system_canonicals_list_page_children.sql`
   `tests/visual/designSystem/canonicals/data-display/listDetailPanel.spec.ts`
 - Implementation updated:
   yes
@@ -141,7 +144,8 @@
   `docs/workspace/design-system/verification/list-detail-panel-verification-checklist.md`
 - Design-system route update required:
   yes:
-  `/design-system/canonicals/list-detail-panel`
+  `/design-system/canonical-renderings/list-detail-panel`
+  `/design-system/canonical-renderings/list-detail-panel/:ref`
   `/design-system/components/list-detail-panel`
 - Canonical render-ready / honest-width check required:
   completed for the signed-off canonical set

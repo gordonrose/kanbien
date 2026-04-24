@@ -618,17 +618,17 @@ const designSystemBreadcrumbChains = new Map([
   ]],
   ["/design-system/components/list-record-card", [
     { href: "/design-system/patterns", label: "Home" },
-    { href: "/design-system/canonicals/list-record-card", label: "List Record Card" },
+    { href: "/design-system/canonical-renderings/list-record-card", label: "List Record Card" },
     { href: "/design-system/components/list-record-card", label: "Render" },
   ]],
   ["/design-system/components/list-detail-panel", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/canonicals/list-detail-panel", label: "List Detail Panel" },
+    { href: "/design-system/canonical-renderings/list-detail-panel", label: "List Detail Panel" },
     { href: "/design-system/components/list-detail-panel", label: "Render" },
   ]],
   ["/design-system/components/list-detail-split-layout", [
     { href: "/design-system/components", label: "Home" },
-    { href: "/design-system/canonicals/list-detail-split-layout", label: "List Detail Split Layout" },
+    { href: "/design-system/canonical-renderings/list-detail-split-layout", label: "List Detail Split Layout" },
     { href: "/design-system/components/list-detail-split-layout", label: "Render" },
   ]],
   ["/design-system/components/simple-select", [
@@ -684,17 +684,17 @@ const designSystemBreadcrumbChains = new Map([
   ["/design-system/canonicals/list-record-card", [
     { href: "/design-system/patterns", label: "Home" },
     { href: "/design-system/canonicals", label: "Canonicals" },
-    { href: "/design-system/canonicals/list-record-card", label: "List Record Card" },
+    { href: "/design-system/canonical-renderings/list-record-card", label: "List Record Card" },
   ]],
   ["/design-system/canonicals/list-detail-panel", [
     { href: "/design-system/components", label: "Home" },
     { href: "/design-system/canonicals", label: "Canonicals" },
-    { href: "/design-system/canonicals/list-detail-panel", label: "List Detail Panel" },
+    { href: "/design-system/canonical-renderings/list-detail-panel", label: "List Detail Panel" },
   ]],
   ["/design-system/canonicals/list-detail-split-layout", [
     { href: "/design-system/components", label: "Home" },
     { href: "/design-system/canonicals", label: "Canonicals" },
-    { href: "/design-system/canonicals/list-detail-split-layout", label: "List Detail Split Layout" },
+    { href: "/design-system/canonical-renderings/list-detail-split-layout", label: "List Detail Split Layout" },
   ]],
   ["/design-system/canonicals/form-template", [
     { href: "/design-system/templates", label: "Home" },

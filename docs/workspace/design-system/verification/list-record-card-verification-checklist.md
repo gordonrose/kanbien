@@ -5,7 +5,8 @@
 - Artifact name:
   `ListRecordCard`
 - Surface:
-  `/design-system/canonicals/list-record-card`
+  `/design-system/canonical-renderings/list-record-card`
+  `/design-system/canonical-renderings/list-record-card/:ref`
   `/design-system/components/list-record-card`
 - Status under review:
   signed-off
@@ -31,7 +32,8 @@
 - Trigger for this review:
   Start the governed child extraction from the new `List Page` parent pattern.
 - What changed since the last review:
-  The child seam now has a dedicated canonical launcher and render surface so
+  The child seam now has a generated persistence-backed canonical launcher and
+  dedicated render surface so
   full-width, half-page, and mobile card states can be reviewed directly
   instead of only through the parent page template.
 
@@ -41,6 +43,7 @@
   `src/frontend/designSystem/components/list-record-card.html`
   `src/frontend/designSystem/canonicals/list-record-card/index.html`
   `src/frontend/designSystem/assets/listRecordCardCanonical.mjs`
+  `src/features/designSystemCanonicals/persistence/migrations/0038_seed_design_system_canonicals_list_page_children.sql`
   `tests/visual/designSystem/canonicals/data-display/listRecordCard.spec.ts`
 - Implementation updated:
   yes
@@ -138,7 +141,8 @@
   `docs/workspace/design-system/verification/list-record-card-verification-checklist.md`
 - Design-system route update required:
   yes:
-  `/design-system/canonicals/list-record-card`
+  `/design-system/canonical-renderings/list-record-card`
+  `/design-system/canonical-renderings/list-record-card/:ref`
   `/design-system/components/list-record-card`
 - Canonical render-ready / honest-width check required:
   completed for the signed-off canonical set

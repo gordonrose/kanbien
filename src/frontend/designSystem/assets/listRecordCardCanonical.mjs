@@ -225,6 +225,15 @@ const canonicalStates = [
 
 const canonicalStateMap = new Map(canonicalStates.map((state) => [state.refId, state]));
 
+function getGeneratedListRecordCardReferenceId() {
+  const match = window.location.pathname.match(/^\/design-system\/canonical-renderings\/list-record-card\/([^/]+)$/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function isGeneratedListRecordCardRoute() {
+  return getGeneratedListRecordCardReferenceId() !== null;
+}
+
 function normalizeDir(value) {
   return value === "rtl" ? "rtl" : "ltr";
 }
@@ -309,7 +318,56 @@ function updateStepper(currentIndex) {
   }
 }
 
-function renderCanonicalState() {
+function getLegacyRouteForState(state) {
+  return `/design-system/components/list-record-card?ref=${encodeURIComponent(state.refId)}&width=${encodeURIComponent(String(state.width))}&state=${encodeURIComponent(state.state)}&theme=${encodeURIComponent(state.theme)}&dir=${encodeURIComponent(state.dir)}&zoom=${encodeURIComponent(String(state.zoom))}`;
+}
+
+function getStateRoute(state) {
+  if (isGeneratedListRecordCardRoute()) {
+    return `/design-system/canonical-renderings/list-record-card/${encodeURIComponent(state.refId)}`;
+  }
+
+  return getLegacyRouteForState(state);
+}
+
+async function resolveGeneratedCanonicalState() {
+  const referenceId = getGeneratedListRecordCardReferenceId();
+  if (!referenceId) {
+    return null;
+  }
+
+  const response = await fetch(
+    `/v1/design-system-canonicals/public/families/list-record-card/references/${encodeURIComponent(referenceId)}`,
+    {
+      credentials: "same-origin",
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to load generated list-record-card canonical with status ${response.status}`);
+  }
+
+  const payload = await response.json();
+  const matchedCanonical = canonicalStateMap.get(payload.reference.referenceId) ?? canonicalStates[0];
+  return {
+    family: payload.family,
+    activeRefId: payload.reference.referenceId,
+    width: payload.reference.width ?? matchedCanonical.width,
+    state: typeof payload.reference.specimenPayload?.state === "string"
+      ? payload.reference.specimenPayload.state
+      : matchedCanonical.state,
+    dir: payload.reference.direction ?? matchedCanonical.dir,
+    zoom: payload.reference.zoom ?? matchedCanonical.zoom,
+    theme: payload.reference.theme ?? matchedCanonical.theme,
+    viewportLabel: payload.reference.viewport ?? matchedCanonical.viewportLabel,
+    note: payload.reference.description,
+  };
+}
+
+function renderCanonicalState(resolvedGeneratedState = null) {
   if (
     !(previewFrame instanceof HTMLElement)
     || !(previewShell instanceof HTMLElement)
@@ -322,13 +380,21 @@ function renderCanonicalState() {
 
   const params = new URLSearchParams(window.location.search);
   const fallbackState = canonicalStates[0];
-  const requestedRef = params.get("ref") ?? fallbackState.refId;
+  const requestedRef = resolvedGeneratedState?.activeRefId ?? params.get("ref") ?? fallbackState.refId;
   const resolvedCanonical = canonicalStateMap.get(requestedRef) ?? fallbackState;
-  const payload = statePayloads[params.get("state") ?? resolvedCanonical.state] ?? statePayloads[resolvedCanonical.state];
-  const width = normalizeWidth(params.get("width"), resolvedCanonical.width);
-  const dir = normalizeDir(params.get("dir") ?? resolvedCanonical.dir);
-  const zoom = normalizeZoom(params.get("zoom") ?? String(resolvedCanonical.zoom));
-  const theme = normalizeTheme(params.get("theme") ?? resolvedCanonical.theme);
+  const payload = statePayloads[resolvedGeneratedState?.state ?? params.get("state") ?? resolvedCanonical.state]
+    ?? statePayloads[resolvedCanonical.state];
+  const width = normalizeWidth(
+    resolvedGeneratedState?.width !== undefined ? String(resolvedGeneratedState.width) : params.get("width"),
+    resolvedCanonical.width,
+  );
+  const dir = normalizeDir(resolvedGeneratedState?.dir ?? params.get("dir") ?? resolvedCanonical.dir);
+  const zoom = normalizeZoom(
+    resolvedGeneratedState?.zoom !== undefined
+      ? String(resolvedGeneratedState.zoom)
+      : (params.get("zoom") ?? String(resolvedCanonical.zoom)),
+  );
+  const theme = normalizeTheme(resolvedGeneratedState?.theme ?? params.get("theme") ?? resolvedCanonical.theme);
   const scale = zoomScaleMap[zoom] ?? "1";
   const currentIndex = canonicalStates.findIndex((state) => state.refId === resolvedCanonical.refId);
 
@@ -348,6 +414,7 @@ function renderCanonicalState() {
 
   if (renderLayout instanceof HTMLElement) {
     renderLayout.style.setProperty("--canonical-render-layout-width", `${Math.max(width + 220, 720)}px`);
+    delete renderLayout.dataset.themeScope;
   }
 
   if (previewFrame instanceof HTMLElement) {
@@ -369,7 +436,7 @@ function renderCanonicalState() {
   }
 
   if (canonicalSummary instanceof HTMLElement) {
-    canonicalSummary.textContent = payload.note;
+    canonicalSummary.textContent = resolvedGeneratedState?.note ?? payload.note;
   }
 
   if (canonicalMetaState instanceof HTMLElement) {
@@ -377,17 +444,29 @@ function renderCanonicalState() {
   }
 
   if (canonicalMetaViewport instanceof HTMLElement) {
-    canonicalMetaViewport.textContent = resolvedCanonical.viewportLabel;
+    canonicalMetaViewport.textContent = resolvedGeneratedState?.viewportLabel ?? resolvedCanonical.viewportLabel;
   }
 
   if (canonicalMetaNotes instanceof HTMLElement) {
     canonicalMetaNotes.textContent = payload.selected
       ? "Selected state remains geometry-safe while preserving full-width card anatomy."
-      : payload.note;
+      : resolvedGeneratedState?.note ?? payload.note;
   }
 
   updateStepper(currentIndex >= 0 ? currentIndex : 0);
   document.body.dataset.renderStatus = "ready";
 }
 
-renderCanonicalState();
+async function main() {
+  const resolvedGeneratedState = await resolveGeneratedCanonicalState();
+
+  for (const state of canonicalStates) {
+    state.route = getStateRoute(state);
+  }
+
+  renderCanonicalState(resolvedGeneratedState);
+}
+
+void main().catch((error) => {
+  console.error("Failed to render list-record-card canonical", error);
+});

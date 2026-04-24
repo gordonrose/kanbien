@@ -21,10 +21,22 @@ const migratedFamilyCards = [
     label: /Choice Group Canonicals/i,
     href: "/design-system/canonical-renderings/choice-group",
   },
+  {
+    label: /List Record Card Canonicals/i,
+    href: "/design-system/canonical-renderings/list-record-card",
+  },
+  {
+    label: /List Detail Panel Canonicals/i,
+    href: "/design-system/canonical-renderings/list-detail-panel",
+  },
+  {
+    label: /List Detail Split Layout Canonicals/i,
+    href: "/design-system/canonical-renderings/list-detail-split-layout",
+  },
 ] as const;
 
 test.describe("design-system legacy canonical launcher index", () => {
-  test("migrated form-control family cards now point to generated canonical-renderings launchers", async ({ page }) => {
+  test("migrated family cards now point to generated canonical-renderings launchers", async ({ page }) => {
     await page.goto("/design-system/canonicals");
 
     for (const card of migratedFamilyCards) {

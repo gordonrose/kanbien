@@ -4,57 +4,57 @@ const listDetailPanelCanonicalStates = [
   {
     refId: "LDP-001",
     label: "desktop baseline populated panel",
-    route: "/design-system/components/list-detail-panel?ref=LDP-001&width=760&state=baseline&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-001",
   },
   {
     refId: "LDP-002",
     label: "missing secondary fields",
-    route: "/design-system/components/list-detail-panel?ref=LDP-002&width=760&state=missing&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-002",
   },
   {
     refId: "LDP-003",
     label: "local detail error state",
-    route: "/design-system/components/list-detail-panel?ref=LDP-003&width=760&state=error&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-003",
   },
   {
     refId: "LDP-004",
     label: "terminal footer boundary",
-    route: "/design-system/components/list-detail-panel?ref=LDP-004&width=760&state=boundary&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-004",
   },
   {
     refId: "LDP-005",
     label: "half-page long-content review",
-    route: "/design-system/components/list-detail-panel?ref=LDP-005&width=520&state=long&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-005",
   },
   {
     refId: "LDP-006",
     label: "mobile narrow stack review",
-    route: "/design-system/components/list-detail-panel?ref=LDP-006&width=360&state=mobile&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-006",
   },
   {
     refId: "LDP-007",
     label: "rtl half-page review",
-    route: "/design-system/components/list-detail-panel?ref=LDP-007&width=520&state=long&theme=normal&dir=rtl&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-007",
   },
   {
     refId: "LDP-008",
     label: "magnified half-page review",
-    route: "/design-system/components/list-detail-panel?ref=LDP-008&width=520&state=long&theme=normal&dir=ltr&zoom=100",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-008",
   },
   {
     refId: "LDP-009",
     label: "focus-entry close control review",
-    route: "/design-system/components/list-detail-panel?ref=LDP-009&width=760&state=focus-close&theme=normal&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-009",
   },
   {
     refId: "LDP-010",
     label: "theme baseline dark",
-    route: "/design-system/components/list-detail-panel?ref=LDP-010&width=760&state=baseline&theme=dark&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-010",
   },
   {
     refId: "LDP-011",
     label: "theme baseline desert",
-    route: "/design-system/components/list-detail-panel?ref=LDP-011&width=760&state=baseline&theme=desert&dir=ltr&zoom=0",
+    route: "/design-system/canonical-renderings/list-detail-panel/LDP-011",
   },
 ] as const;
 
@@ -73,7 +73,7 @@ async function gotoCanonicalState(page: Page, route: string) {
 
 test.describe("design-system list-detail-panel canonical states", () => {
   test("launcher exposes baseline, long-content, mobile, and focus-entry refs", async ({ page }) => {
-    await page.goto("/design-system/canonicals/list-detail-panel");
+    await page.goto("/design-system/canonical-renderings/list-detail-panel");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(11);
@@ -95,7 +95,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-002 omits missing secondary fields without empty chrome", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-002&width=760&state=missing&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-002",
     );
 
     await expect(page.locator("#list-detail-panel-preview-meta")).toBeHidden();
@@ -107,7 +107,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-003 keeps the local error state inside the panel body", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-003&width=760&state=error&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-003",
     );
 
     await expect(page.locator("#list-detail-panel-preview-error")).toBeVisible();
@@ -120,7 +120,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-004 exposes an honest terminal next hint", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-004&width=760&state=boundary&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-004",
     );
 
     await expect(page.locator("#list-detail-panel-preview-prev")).toBeEnabled();
@@ -131,7 +131,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-005 and LDP-006 keep half-page and mobile widths honest", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-005&width=520&state=long&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-005",
     );
 
     const halfPageState = await page.evaluate(() => {
@@ -164,7 +164,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
 
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-006&width=360&state=mobile&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-006",
     );
 
     const mobileState = await page.evaluate(() => {
@@ -192,7 +192,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-006 keeps the mobile preview header compact instead of leaving a large dead zone", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-006&width=360&state=mobile&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-006",
     );
 
     const compactHeaderState = await page.evaluate(() => {
@@ -229,7 +229,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-007 keeps rtl direction scoped to the local canonical surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-007&width=520&state=long&theme=normal&dir=rtl&zoom=0",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-007",
     );
 
     const directionState = await page.evaluate(() => {
@@ -255,7 +255,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-008 keeps magnification scoped to the local canonical surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-008&width=520&state=long&theme=normal&dir=ltr&zoom=100",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-008",
     );
 
     const magnificationState = await page.evaluate(() => {
@@ -275,7 +275,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-008 condenses an oversized header after the body starts scrolling", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-008&width=520&state=long&theme=normal&dir=ltr&zoom=100",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-008",
     );
 
     const beforeScroll = await page.evaluate(() => {
@@ -327,7 +327,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-005 keeps header compaction stable while scrolling through long content", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-005&width=520&state=long&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-005",
     );
 
     const scrollStates = await page.evaluate(async () => {
@@ -367,7 +367,7 @@ test.describe("design-system list-detail-panel canonical states", () => {
   test("LDP-009 focuses the close control for direct focus-entry review", async ({ page }) => {
     await gotoCanonicalState(
       page,
-      "/design-system/components/list-detail-panel?ref=LDP-009&width=760&state=focus-close&theme=normal&dir=ltr&zoom=0",
+      "/design-system/canonical-renderings/list-detail-panel/LDP-009",
     );
 
     await expect(page.locator("#list-detail-panel-preview-close")).toBeFocused();
@@ -380,15 +380,18 @@ test.describe("design-system list-detail-panel canonical states", () => {
       await gotoCanonicalState(page, scenario.route);
 
       const themeState = await page.evaluate(() => {
-        const layout = document.querySelector("#list-detail-panel-preview-frame")?.closest(".canonical-render-layout");
+        const frame = document.querySelector("#list-detail-panel-preview-frame");
+        const layout = frame?.closest(".canonical-render-layout");
         return {
           documentTheme: document.documentElement.dataset.theme ?? "",
+          frameTheme: frame instanceof HTMLElement ? frame.dataset.themeScope ?? "" : "",
           layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
         };
       });
 
       expect(themeState.documentTheme).toBe("");
-      expect(themeState.layoutTheme).toBe(
+      expect(themeState.layoutTheme).toBe("");
+      expect(themeState.frameTheme).toBe(
         scenario.refId === "LDP-010" ? "dark" : "desert",
       );
     }

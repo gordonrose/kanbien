@@ -5,7 +5,8 @@
 - Artifact name:
   `ListDetailSplitLayout`
 - Surface:
-  `/design-system/canonicals/list-detail-split-layout`
+  `/design-system/canonical-renderings/list-detail-split-layout`
+  `/design-system/canonical-renderings/list-detail-split-layout/:ref`
   `/design-system/components/list-detail-split-layout`
 - Status under review:
   signed-off
@@ -32,13 +33,14 @@
   Start the third child extraction from the governed `List Page` parent
   pattern after `ListRecordCard` and `ListDetailPanel` sign-off.
 - What changed since the last review:
-  The split relationship now has a dedicated canonical launcher and render
-  surface so the open/closed shell states, mobile overlay behavior, and RTL
-  mirroring can be reviewed directly outside the full parent page. The behavior
-  lock now also explicitly requires the split to fall back to an overlay or
-  single-lane posture if both lanes become too squashed under stronger width
-  or magnification pressure, and the canonical set now includes a dedicated
-  non-mobile fallback proof for that rule.
+  The split relationship now has a generated persistence-backed canonical
+  launcher and dedicated render surface so the open/closed shell states,
+  mobile overlay behavior, and RTL mirroring can be reviewed directly outside
+  the full parent page. The behavior lock now also explicitly requires the
+  split to fall back to an overlay or single-lane posture if both lanes become
+  too squashed under stronger width or magnification pressure, and the
+  canonical set now includes a dedicated non-mobile fallback proof for that
+  rule.
 
 ## Source Verification
 
@@ -46,6 +48,7 @@
   `src/frontend/designSystem/components/list-detail-split-layout.html`
   `src/frontend/designSystem/canonicals/list-detail-split-layout/index.html`
   `src/frontend/designSystem/assets/listDetailSplitLayoutCanonical.mjs`
+  `src/features/designSystemCanonicals/persistence/migrations/0038_seed_design_system_canonicals_list_page_children.sql`
   `tests/visual/designSystem/canonicals/data-display/listDetailSplitLayout.spec.ts`
 - Implementation updated:
   yes
@@ -138,7 +141,8 @@
   `docs/workspace/design-system/verification/list-detail-split-layout-verification-checklist.md`
 - Design-system route update required:
   yes:
-  `/design-system/canonicals/list-detail-split-layout`
+  `/design-system/canonical-renderings/list-detail-split-layout`
+  `/design-system/canonical-renderings/list-detail-split-layout/:ref`
   `/design-system/components/list-detail-split-layout`
 - Canonical render-ready / honest-width check required:
   completed for the signed-off canonical set
