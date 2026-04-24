@@ -149,6 +149,13 @@ Required proof:
 
 Preferred shared helper:
 
+- `expectCanonicalOverlayContainedInRenderSurface(...)` from
+  `tests/visual/designSystem/support/helpers/canonicalOverlayGuards.ts`
+- use it for canonical overlays that must remain inside a render host and
+  review frame
+
+Lower-level geometry helper:
+
 - `expectContainedWithin(...)` from
   `tests/visual/designSystem/support/helpers/humanReviewGuards.ts`
 

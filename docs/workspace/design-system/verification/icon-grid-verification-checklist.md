@@ -68,7 +68,10 @@
   parent-host overlay arbitration on the form template route
 - Layering or anchoring checks:
   modal visually overlays the form as a compact centered panel rather than a
-  drawer
+  drawer; generated canonicals now use
+  `expectCanonicalOverlayContainedInRenderSurface(...)` to prove the overlay
+  remains inside the canonical render host/frame on both desktop filtered and
+  dark compact mobile states
 - Screenshot or rendered evidence reference:
   `tests/visual/designSystem/canonicals/forms/iconGridCanonical.spec.ts`
   `tests/visual/designSystem/canonicals/shell/generatedCanonicalRenderingsIndex.spec.ts`

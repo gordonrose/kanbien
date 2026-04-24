@@ -90,6 +90,7 @@
   align-items: start;
   justify-items: center;
   padding: 1rem;
+  box-sizing: border-box;
 }
 
 .form-icon-grid-backdrop {
@@ -105,7 +106,8 @@
   display: grid;
   grid-template-rows: auto auto auto minmax(0, 1fr);
   gap: 0.9rem;
-  width: min(32rem, calc(100vw - 1.5rem));
+  width: min(32rem, 100%);
+  box-sizing: border-box;
   max-height: min(42rem, calc(100vh - 2rem));
   margin: 0 auto;
   padding: 1rem;

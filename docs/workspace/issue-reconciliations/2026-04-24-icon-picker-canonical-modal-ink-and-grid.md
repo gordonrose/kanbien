@@ -45,12 +45,17 @@ Classification: missing visual assertions for theme-scoped ink and shared search
   - matrix containment inside the panel
   - matrix overflow behavior without relying on panel-level scrolling
   - modal overlay containment inside the canonical render area
+- `tests/visual/designSystem/support/helpers/canonicalOverlayGuards.ts` now
+  exposes `expectCanonicalOverlayContainedInRenderSurface(...)` so future
+  canonical render pages can reuse the same overlay containment contract.
 
 ## Coverage Lesson
 
 When a governed control reuses global shell primitives inside a local modal, visual coverage must verify the inherited layout contract, not only the component's own state data. Theme-scoped child surfaces also need direct ink assertions for headings and high-priority copy.
 
 Child-seam modals in canonical render pages must be checked against their intended host surface. A correct modal can still be architecturally wrong if its backdrop anchors to the full browser page instead of the review frame.
+
+This is now a reusable harness rule, not an icon-grid-only test pattern.
 
 ## Follow-Up Watch Items
 

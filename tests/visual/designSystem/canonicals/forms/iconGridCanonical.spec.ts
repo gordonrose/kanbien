@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
 
 const iconGridCanonicalStates = [
   {
@@ -173,42 +174,30 @@ test.describe("design-system icon-grid canonical states", () => {
       "/design-system/canonical-renderings/icon-grid/IGR-003",
     );
 
-    const containmentState = await page.evaluate(() => {
-      const intro = document.querySelector<HTMLElement>(".canonical-render-intro");
-      const frame = document.querySelector<HTMLElement>("#icon-grid-preview-frame");
-      const shell = document.querySelector<HTMLElement>("#icon-grid-preview-shell");
-      const modal = document.querySelector<HTMLElement>(".form-icon-grid-modal:not(.hidden)");
-      const panel = document.querySelector<HTMLElement>(".form-icon-grid-panel");
-
-      if (!intro || !frame || !shell || !modal || !panel) {
-        return null;
-      }
-
-      const introRect = intro.getBoundingClientRect();
-      const frameRect = frame.getBoundingClientRect();
-      const shellRect = shell.getBoundingClientRect();
-      const modalRect = modal.getBoundingClientRect();
-      const panelRect = panel.getBoundingClientRect();
-
-      return {
-        introBottom: introRect.bottom,
-        frameTop: frameRect.top,
-        frameBottom: frameRect.bottom,
-        shellTop: shellRect.top,
-        shellBottom: shellRect.bottom,
-        modalTop: modalRect.top,
-        modalBottom: modalRect.bottom,
-        panelTop: panelRect.top,
-        panelBottom: panelRect.bottom,
-      };
+    await expectCanonicalOverlayContainedInRenderSurface(page, {
+      label: "IGR-003 icon picker",
+      overlay: ".form-icon-grid-modal:not(.hidden)",
+      panel: ".form-icon-grid-panel",
+      hostSurface: "#icon-grid-preview-shell",
+      renderFrame: "#icon-grid-preview-frame",
+      below: ".canonical-render-intro",
     });
+  });
 
-    expect(containmentState).not.toBeNull();
-    expect(containmentState?.modalTop ?? 0).toBeGreaterThanOrEqual((containmentState?.shellTop ?? 0) - 1);
-    expect(containmentState?.modalBottom ?? 0).toBeLessThanOrEqual((containmentState?.shellBottom ?? 0) + 1);
-    expect(containmentState?.panelTop ?? 0).toBeGreaterThanOrEqual((containmentState?.frameTop ?? 0) - 1);
-    expect(containmentState?.panelBottom ?? 0).toBeLessThanOrEqual((containmentState?.frameBottom ?? 0) + 1);
-    expect(containmentState?.panelTop ?? 0).toBeGreaterThan(containmentState?.introBottom ?? 0);
+  test("IGR-006 keeps the dark mobile modal inside the compact render lane", async ({ page }) => {
+    await gotoCanonicalState(
+      page,
+      "/design-system/canonical-renderings/icon-grid/IGR-006",
+    );
+
+    await expectCanonicalOverlayContainedInRenderSurface(page, {
+      label: "IGR-006 dark mobile icon picker",
+      overlay: ".form-icon-grid-modal:not(.hidden)",
+      panel: ".form-icon-grid-panel",
+      hostSurface: "#icon-grid-preview-shell",
+      renderFrame: "#icon-grid-preview-frame",
+      requirePanelWidthWithinHost: true,
+    });
   });
 
   test("IGR-005 and IGR-006 scope rtl and compact dark stress to the child route", async ({ page }) => {
