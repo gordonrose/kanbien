@@ -52,6 +52,8 @@
   `tests/visual/designSystem/canonicals/data-display/listDetailPanel.spec.ts`
 - Implementation updated:
   yes
+  the generated render surface now publishes ready only after tooltip recovery,
+  focus-entry, and header-compaction sync have completed
 - Known source-level risks:
   parent-owned mobile dialog semantics and shell stacking intentionally remain
   outside this child seam
@@ -73,7 +75,8 @@
 - Overflow or clipping checks:
   metadata truncation and wrapped title/body reviewed in the long-content
   canonical; header compaction under long-content pressure now remains stable
-  while scrolling
+  while scrolling; representative panels now have direct render-frame
+  containment proof
 - Layering or anchoring checks:
   parent-owned and already covered through the `list-page` route
 - Attachment / shell-framing checks:
@@ -148,7 +151,8 @@
   `/design-system/canonical-renderings/list-detail-panel/:ref`
   `/design-system/components/list-detail-panel`
 - Canonical render-ready / honest-width check required:
-  completed for the signed-off canonical set
+  completed for the signed-off canonical set; readiness now waits for settled
+  browser geometry and header-compaction sync before assertions run
 - Frontend gate manifest update required:
   not yet
 - Architecture-map update required:

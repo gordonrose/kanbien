@@ -1,4 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectContainedWithin } from "../../support/helpers/humanReviewGuards";
+import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
 
 const listDetailPanelCanonicalStates = [
   {
@@ -86,11 +88,33 @@ test.describe("design-system list-detail-panel canonical states", () => {
     test(`${scenario.refId} ${scenario.label}`, async ({ page }) => {
       await gotoCanonicalState(page, scenario.route);
 
-      await expect(page.locator("body")).toHaveAttribute("data-list-detail-panel-surface", "canonical");
+      await expectRouteSurfaceTruth(page, {
+        expectedPath: scenario.route,
+        surfaceLocator: "#list-detail-panel-preview-shell",
+        waitForReadyLocator: '#list-detail-panel-preview-shell[data-render-status="ready"]',
+        bodyAttribute: { name: "data-list-detail-panel-surface", value: "canonical" },
+        fallbackHeading: /Design-System Route Families/i,
+      });
       await expect(page.locator("#list-detail-panel-canonical-current")).toContainText(scenario.refId);
       await expect(page.locator("#list-detail-panel-preview-panel")).toBeVisible();
     });
   }
+
+  test("open detail panels stay contained by the dedicated render frame", async ({ page }) => {
+    for (const scenario of ["LDP-001", "LDP-005", "LDP-006", "LDP-008", "LDP-010"] as const) {
+      await gotoCanonicalState(page, `/design-system/canonical-renderings/list-detail-panel/${scenario}`);
+
+      await expectContainedWithin(
+        page.locator("#list-detail-panel-preview-panel"),
+        page.locator("#list-detail-panel-preview-frame"),
+        {
+          subjectLabel: `${scenario} list-detail panel`,
+          containerLabel: "list-detail-panel canonical review frame",
+          epsilon: 1,
+        },
+      );
+    }
+  });
 
   test("LDP-002 omits missing secondary fields without empty chrome", async ({ page }) => {
     await gotoCanonicalState(

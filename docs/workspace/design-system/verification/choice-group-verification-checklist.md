@@ -54,7 +54,8 @@
   yes
   this pass promotes the first child launcher/render slice onto the
   persistence-backed generated canonical seam while keeping the live parent
-  grouped-choice implementation unchanged
+  grouped-choice implementation unchanged; the generated render surface now
+  publishes ready only after a settled-frame boundary
 - Known source-level risks:
   no second governed consumer exists yet
   the shared-statement variant still carries parent-specific release-checklist
@@ -172,7 +173,8 @@
   `/design-system/canonical-renderings/choice-group`
   `/design-system/canonical-renderings/choice-group/:ref`
 - Canonical render-ready / honest-width check required:
-  completed for the first child review batch
+  completed for the first child review batch; readiness now waits for settled
+  browser geometry before assertions run
 - Frontend gate manifest update required:
   no
 - Architecture-map update required:

@@ -515,7 +515,7 @@ async function resolveGeneratedCanonicalState() {
   };
 }
 
-function renderCanonicalState(resolvedGeneratedState = null) {
+async function renderCanonicalState(resolvedGeneratedState = null) {
   if (!(previewFrame instanceof HTMLElement) || !(previewShell instanceof HTMLElement)) {
     return;
   }
@@ -550,12 +550,13 @@ function renderCanonicalState(resolvedGeneratedState = null) {
   previewFrame.style.setProperty("--choice-group-preview-width", `${width}px`);
   previewShell.style.setProperty("--ui-scale", zoom === 100 ? "1.5" : "1");
   previewShell.dataset.magnification = String(zoom);
-  previewShell.dataset.renderStatus = "ready";
+  previewShell.dataset.renderStatus = "settling";
   previewShell.dataset.formErrorMode = String(payload.errorMode);
   previewShell.dataset.formDisabledMode = "false";
   previewShell.dataset.formMobileView = String(payload.mobile);
   previewShell.dataset.viewportClass = width <= 420 ? "mobile" : "desktop";
   previewShell.setAttribute("dir", dir);
+  document.body.dataset.renderStatus = "settling";
 
   if (renderLayout instanceof HTMLElement) {
     renderLayout.style.setProperty("--canonical-render-layout-width", `${Math.max(width + 360, 820)}px`);
@@ -597,6 +598,9 @@ function renderCanonicalState(resolvedGeneratedState = null) {
   }
 
   updateStepper(currentIndex >= 0 ? currentIndex : 0);
+  await new Promise((resolve) => window.requestAnimationFrame(resolve));
+  await new Promise((resolve) => window.requestAnimationFrame(() => window.requestAnimationFrame(resolve)));
+  previewShell.dataset.renderStatus = "ready";
   document.body.dataset.renderStatus = "ready";
 }
 
@@ -607,7 +611,7 @@ async function main() {
     state.route = getStateRoute(state);
   }
 
-  renderCanonicalState(resolvedGeneratedState);
+  await renderCanonicalState(resolvedGeneratedState);
 }
 
 void main().catch((error) => {
