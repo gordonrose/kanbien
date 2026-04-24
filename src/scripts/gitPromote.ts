@@ -1,20 +1,20 @@
 import { execFileSync } from "node:child_process";
 
-type PromoteStatus =
+export type PromoteStatus =
   | "SAFE_FAST_FORWARD"
   | "CHERRY_PICK_REQUIRED"
   | "DIRTY_BLOCK"
   | "TARGET_STALE_BLOCK"
   | "SOURCE_MISSING_BLOCK";
 
-type Options = {
+export type Options = {
   baseRef: string;
   json: boolean;
   sourceRef: string;
   targetBranch: string;
 };
 
-type Report = {
+export type Report = {
   status: PromoteStatus;
   sourceRef: string;
   sourceCommit: string | null;
@@ -29,7 +29,7 @@ type Report = {
   recommendations: string[];
 };
 
-function parseArgs(argv: string[]): Options {
+export function parseArgs(argv: string[]): Options {
   let baseRef = "origin/main";
   let json = false;
   let sourceRef: string | null = null;
@@ -77,14 +77,14 @@ function parseArgs(argv: string[]): Options {
   };
 }
 
-function runGit(args: string[]): string {
+export function runGit(args: string[]): string {
   return execFileSync("git", args, {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
   }).trim();
 }
 
-function tryRunGit(args: string[]): string | null {
+export function tryRunGit(args: string[]): string | null {
   try {
     return runGit(args);
   } catch {
@@ -92,11 +92,11 @@ function tryRunGit(args: string[]): string | null {
   }
 }
 
-function currentBranch(): string {
+export function currentBranch(): string {
   return runGit(["branch", "--show-current"]) || "HEAD";
 }
 
-function exitsAsAncestor(ancestor: string, descendant: string): boolean | null {
+export function exitsAsAncestor(ancestor: string, descendant: string): boolean | null {
   try {
     execFileSync("git", ["merge-base", "--is-ancestor", ancestor, descendant], {
       stdio: "ignore",
@@ -117,7 +117,7 @@ function exitsAsAncestor(ancestor: string, descendant: string): boolean | null {
   }
 }
 
-function buildReport(options: Options): Report {
+export function buildReport(options: Options): Report {
   const sourceCommit = tryRunGit(["rev-parse", "--verify", "--short", options.sourceRef]);
   const targetCommit = tryRunGit([
     "rev-parse",
@@ -193,7 +193,7 @@ function buildReport(options: Options): Report {
   };
 }
 
-function printReport(report: Report): void {
+export function printReport(report: Report): void {
   console.log("Git Promote");
   console.log(`- status: ${report.status}`);
   console.log(`- source: ${report.sourceRef} (${report.sourceCommit ?? "missing"})`);
@@ -222,15 +222,17 @@ function printReport(report: Report): void {
   }
 }
 
-const options = parseArgs(process.argv.slice(2));
-const report = buildReport(options);
+if (require.main === module) {
+  const options = parseArgs(process.argv.slice(2));
+  const report = buildReport(options);
 
-if (options.json) {
-  console.log(JSON.stringify(report, null, 2));
-} else {
-  printReport(report);
-}
+  if (options.json) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    printReport(report);
+  }
 
-if (report.status !== "SAFE_FAST_FORWARD") {
-  process.exitCode = 1;
+  if (report.status !== "SAFE_FAST_FORWARD") {
+    process.exitCode = 1;
+  }
 }

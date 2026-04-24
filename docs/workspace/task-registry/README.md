@@ -132,3 +132,32 @@ Current phase-4 statuses:
 
 `--apply` only creates the child task when the status is already
 `READY_TO_SPLIT`.
+
+## Task-Aware Promotion
+
+Phase 5 adds a task-aware promotion helper:
+
+```bash
+npm run codex:promote-task -- --task <task-id>
+npm run codex:promote-task -- --task <task-id> --apply
+```
+
+Current phase-5 statuses:
+
+- `READY_TO_PROMOTE`
+  the task resolved and the existing git promotion guardrail says it can be
+  fast-forwarded onto local `main`
+- `PROMOTED_LOCALLY`
+  local `main` was fast-forwarded and the command reports the changed files and
+  diff stat for review
+- `TASK_NOT_FOUND`
+  the requested task id or branch did not resolve
+- `TASK_BLOCK`
+  the requested task is invalid for task-aware promotion, currently the
+  integration home
+- `PROMOTE_GUARDRAIL_BLOCK`
+  the underlying git promotion guardrail blocked the promotion and its
+  recommendations should be followed
+
+`--apply` only performs the local promotion when the task is already
+`READY_TO_PROMOTE`.
