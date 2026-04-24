@@ -20,6 +20,7 @@ The inventory is produced by:
 ```bash
 npm run codex:tasks
 npm run codex:tasks:write
+npm run codex:retire -- --task <task-id>
 ```
 
 Current phase-1 state values are intentionally narrow:
@@ -40,3 +41,32 @@ This directory is expected to expand in later phases to include:
 - parked / blocked / promoted / retired lifecycle states
 - task parent-child links for tangent splitting
 - review-local-promotion state and metadata
+
+## Retirement
+
+Phase 2 adds a conservative retirement helper:
+
+```bash
+npm run codex:retire -- --task <task-id>
+npm run codex:retire -- --task <task-id> --apply
+```
+
+Current phase-2 retirement statuses:
+
+- `SAFE_TO_RETIRE`
+  no unique patch content and no local dirty state remain
+- `INSPECT_REQUIRED`
+  no unique committed patch content remains, but local worktree changes still
+  need a human decision
+- `UNIQUE_CONTENT_BLOCK`
+  the task still carries unique patch content and should not be retired yet
+- `INTEGRATION_HOME_BLOCK`
+  the integration home cannot be retired
+- `CURRENT_WORKTREE_BLOCK`
+  the requested task resolves to the current worktree, so retirement must be
+  run from another checkout
+- `TASK_NOT_FOUND`
+  the requested task id or branch did not resolve
+
+`--apply` only performs the retirement when the task is already classified as
+`SAFE_TO_RETIRE`.

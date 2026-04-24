@@ -16,6 +16,7 @@
     "deps:audit:all": "npm audit",
     "codex:tasks": "node --import tsx src/scripts/codexTasks.ts",
     "codex:tasks:write": "node --import tsx src/scripts/codexTasks.ts --write",
+    "codex:retire": "node --import tsx src/scripts/codexRetire.ts",
     "git:preflight": "node --import tsx src/scripts/gitPreflight.ts",
     "git:promote": "node --import tsx src/scripts/gitPromote.ts",
     "check:governed-root-admin-page-audit": "node --import tsx src/scripts/checkGovernedRootAdminPageAudit.ts",
