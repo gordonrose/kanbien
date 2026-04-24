@@ -4,6 +4,7 @@ import { buildReport as buildGitPromoteReport, Report as GitPromoteReport } from
 type PromoteTaskStatus =
   | "READY_TO_PROMOTE"
   | "PROMOTED_LOCALLY"
+  | "APPLY_FAILED"
   | "TASK_NOT_FOUND"
   | "TASK_BLOCK"
   | "PROMOTE_GUARDRAIL_BLOCK";
@@ -157,19 +158,28 @@ function applyPromotion(report: PromoteTaskReport): PromoteTaskReport {
     return report;
   }
 
-  runGit(["merge", "--ff-only", report.sourceTask.branch], report.integrationHome);
+  try {
+    runGit(["merge", "--ff-only", report.sourceTask.branch], report.integrationHome);
 
-  return {
-    ...report,
-    changedFiles: diffNameOnly(report.integrationHome),
-    diffStat: diffStat(report.integrationHome),
-    localHead: shortHead(report.integrationHome),
-    recommendations: [
-      "Task promoted locally to main.",
-      "Review the changed files on local main before pushing.",
-    ],
-    status: "PROMOTED_LOCALLY",
-  };
+    return {
+      ...report,
+      changedFiles: diffNameOnly(report.integrationHome),
+      diffStat: diffStat(report.integrationHome),
+      localHead: shortHead(report.integrationHome),
+      recommendations: [
+        "Task promoted locally to main.",
+        "Review the changed files on local main before pushing.",
+      ],
+      status: "PROMOTED_LOCALLY",
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown local promotion failure.";
+    return {
+      ...report,
+      recommendations: [...report.recommendations, `Local promotion failed: ${message}`],
+      status: "APPLY_FAILED",
+    };
+  }
 }
 
 function printReport(report: PromoteTaskReport): void {

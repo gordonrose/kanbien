@@ -150,6 +150,8 @@ Current phase-5 statuses:
 - `PROMOTED_LOCALLY`
   local `main` was fast-forwarded and the command reports the changed files and
   diff stat for review
+- `APPLY_FAILED`
+  the task was promotable in principle, but the local fast-forward failed
 - `TASK_NOT_FOUND`
   the requested task id or branch did not resolve
 - `TASK_BLOCK`
