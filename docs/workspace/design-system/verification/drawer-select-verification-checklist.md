@@ -42,11 +42,15 @@
 - Source files inspected:
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/app.mjs`
+  `src/frontend/designSystem/assets/drawerSelectCanonical.mjs`
   `src/frontend/designSystem/assets/styles.css`
+  `tests/visual/designSystem/support/helpers/canonicalOverlayGuards.ts`
 - Implementation updated:
   yes
   the child runtime now reads an instance-specific empty-summary fallback so
-  the segment variant no longer falls back to `Choose collections`
+  the segment variant no longer falls back to `Choose collections`; the
+  generated canonical suite now uses the shared overlay containment guard for
+  representative desktop, RTL, dark/magnified, and mobile drawer postures
 - Known source-level risks:
   no dedicated child-route drift found in this pass
   dark magnified parity remains intentionally separate from clean dark-only
@@ -68,12 +72,16 @@
   selected-empty state, search-empty state, trigger-summary synchronization,
   and search reset on reopen
 - Overlay or layout-competition checks:
-  drawer-select-to-drawer-select mutual exclusion is source-inspected; broader
-  cross-overlay policy remains parent-owned
+  representative open drawer overlays now use the shared canonical overlay
+  containment guard against the render host and frame; drawer-select-to-drawer-
+  select mutual exclusion is source-inspected; broader cross-overlay policy
+  remains parent-owned
 - Layering or anchoring checks:
   dedicated child drawer open states reviewed on the direct render surface,
   and the descriptive, compact, dark compact, and mobile open canonicals now
-  compare overlay relationship back to the approved `form-template` host seam
+  compare overlay relationship back to the approved `form-template` host seam;
+  direct render-frame containment now covers desktop, RTL, dark/magnified, and
+  mobile drawer states through the shared helper
 - Screenshot or rendered evidence reference:
   `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts`
   `docs/workspace/design-system/reference-packs/drawer-select-reference-pack.md`

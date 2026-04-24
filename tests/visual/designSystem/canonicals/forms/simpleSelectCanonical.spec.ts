@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
-import { expectContainedWithin } from "../../support/helpers/humanReviewGuards";
+import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
 
 const simpleSelectCanonicalStates = [
   {
@@ -122,14 +122,14 @@ test.describe("design-system simple select canonical states", () => {
       });
 
       expect(reserve, `${referenceId} should reserve vertical space for the open listbox`).not.toBe("");
-      await expectContainedWithin(
-        page.locator("[data-form-select-listbox]"),
-        page.locator("#simple-select-preview-frame"),
-        {
-          subjectLabel: `${referenceId} open simple-select listbox`,
-          containerLabel: "simple-select canonical review frame",
-        },
-      );
+      const listbox = page.locator("[data-form-select-listbox]");
+      await expectCanonicalOverlayContainedInRenderSurface(page, {
+        label: `${referenceId} open simple-select listbox`,
+        overlay: listbox,
+        panel: listbox,
+        hostSurface: "#simple-select-preview-shell",
+        renderFrame: "#simple-select-preview-frame",
+      });
     }
   });
 

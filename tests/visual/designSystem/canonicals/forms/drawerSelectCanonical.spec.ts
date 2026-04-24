@@ -1,9 +1,9 @@
 import { expect, test, type Page, type TestInfo } from "@playwright/test";
 import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
+import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
 
 import {
   expectComputedColor,
-  expectContainedWithin,
   withHumanReviewGuard,
 } from "../../support/helpers/humanReviewGuards";
 
@@ -743,21 +743,28 @@ test.describe("design-system drawer select canonicals", () => {
     });
   });
 
-  test("DSR-017 and DSR-018 use the dedicated mobile overlay posture inside the canonical frame", async ({ page }) => {
-    for (const route of [
-      routeForDrawerSelectRef("DSR-017"),
-      routeForDrawerSelectRef("DSR-018"),
-    ]) {
-      await gotoCanonicalState(page, route);
+  test("open drawer overlays stay local to the dedicated canonical frame", async ({ page }) => {
+    for (const scenario of [
+      { refId: "DSR-002", label: "descriptive desktop drawer overlay" },
+      { refId: "DSR-005", label: "compact desktop drawer overlay" },
+      { refId: "DSR-015", label: "rtl desktop drawer overlay" },
+      { refId: "DSR-016", label: "dark magnified desktop drawer overlay" },
+      { refId: "DSR-017", label: "descriptive mobile drawer overlay" },
+      { refId: "DSR-018", label: "compact mobile drawer overlay" },
+      { refId: "DSR-026", label: "dark descriptive mobile drawer overlay" },
+      { refId: "DSR-027", label: "dark compact mobile drawer overlay" },
+    ] as const) {
+      await gotoCanonicalState(page, routeForDrawerSelectRef(scenario.refId));
 
-      await expectContainedWithin(
-        page.locator("[data-form-drawer-select-panel]:visible"),
-        page.locator("#drawer-select-preview-frame"),
-        {
-          subjectLabel: "drawer-select mobile overlay",
-          containerLabel: "drawer-select canonical review frame",
-        },
-      );
+      const panel = page.locator("[data-form-drawer-select-panel]:visible");
+      await expectCanonicalOverlayContainedInRenderSurface(page, {
+        label: scenario.label,
+        overlay: panel,
+        panel,
+        hostSurface: "#drawer-select-preview-shell",
+        renderFrame: "#drawer-select-preview-frame",
+        requirePanelWidthWithinHost: true,
+      });
     }
   });
 

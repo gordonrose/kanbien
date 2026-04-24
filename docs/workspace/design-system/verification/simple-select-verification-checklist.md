@@ -46,12 +46,16 @@
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/app.mjs`
   `src/frontend/designSystem/assets/styles.css`
+  `src/frontend/designSystem/assets/canonicalOwnerReserve.mjs`
   `tests/visual/designSystem/canonicals/forms/simpleSelect.spec.ts`
   `tests/visual/designSystem/canonicals/forms/simpleSelectCanonical.spec.ts`
+  `tests/visual/designSystem/support/helpers/canonicalOverlayGuards.ts`
 - Implementation updated:
   yes
   the current pass now aligns the seam to the locked keyboard model by moving
-  focus into the open option list and supporting up/down arrow traversal
+  focus into the open option list and supporting up/down arrow traversal; the
+  generated render surface now publishes ready only after settled owner-reserve
+  geometry has been synced
 - Known source-level risks:
   the child seam now has a dedicated launcher and render surface; host-route
   parity still matters because the canonical render inherits behavior from the
@@ -72,7 +76,8 @@
   the parent field row, so this remains parent-owned for now
 - Overflow or clipping checks:
   anchored open-state geometry is now checked against the live trigger/listbox
-  boxes on the host route
+  boxes on the host route; dedicated `SSR-*` open listboxes now use the shared
+  canonical overlay containment guard against the render host and frame
 - Layering or anchoring checks:
   child seam verified as an anchored listbox only; scrim, drawer, and modal
   layering remain intentionally out of scope
@@ -156,7 +161,8 @@
   `/design-system/canonical-renderings/simple-select/:ref` now exist and target
   deterministic child states honestly
 - Canonical render-ready / honest-width check required:
-  completed for the dedicated child render surface
+  completed for the dedicated child render surface; readiness now waits for
+  owner-reserve synchronization before assertions run
 - Frontend gate manifest update required:
   no
 - Architecture-map update required:
