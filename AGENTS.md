@@ -656,7 +656,16 @@ Defaults:
   equivalent before creating commits
 - when approved to commit, prefer one or more scoped commits rather than one
   large mixed commit
-- do not push by default after committing unless the user asks for a push or PR
+- do not push by default after committing unless the user asks for a push
+- in this repo, after a scoped task branch is committed and
+  `npm run git:promote -- --source <branch-or-commit>` reports
+  `SAFE_FAST_FORWARD`, user requests such as "promote and push", "push",
+  "ship", or equivalent mean fast-forward/promote the task to `main` and push
+  the promoted `main` to `origin/main`
+- do not stop at branch-only publishing after a successful promotion guardrail
+  unless the user explicitly asks to publish only the task branch
+- treat GitHub or remote-host suggestions to open a pull request as generic
+  output, not as this repo's workflow, unless the user explicitly asks for a PR
 - do not treat local `main` as promotion truth when it differs from
   `origin/main`; promotion decisions must use the GitHub baseline
 - if `npm run git:preflight` reports a blocking state, do not continue with

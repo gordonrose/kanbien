@@ -16,7 +16,7 @@ Keep implementation work isolated and easier to review by defaulting to:
 1. dedicated task branches for material work
 2. explicit approval before commits
 3. scoped commits instead of mixed dump commits
-4. push only when asked
+4. push promoted remote `main` only when asked
 
 ## Default Workflow
 
@@ -154,11 +154,22 @@ If the user approves a commit but not a push, commit only.
 
 Do not push by default after committing.
 
-Push when the user explicitly asks to:
+In this repo, when a scoped task branch has been committed and
+`npm run git:promote -- --source <branch-or-commit>` reports
+`SAFE_FAST_FORWARD`, user phrases such as:
 
 - push
-- open a PR
-- publish the branch
+- promote and push
+- ship
+- merge
+
+mean fast-forward/promote the task to `main` and push the promoted `main` to
+`origin/main`.
+
+Do not stop at branch-only publishing after a successful promotion guardrail
+unless the user explicitly asks to publish only the task branch. Treat remote
+host suggestions to open a pull request as generic output, not workflow
+direction, unless the user explicitly asks for a PR.
 
 ## Decision Rules
 
@@ -207,7 +218,8 @@ the user. Explicit approval still gates commits.
 7. implement and verify
 8. wait for approval
 9. create scoped commit(s)
-10. push only if asked
+10. if asked to push, fast-forward/promote to `main` after a safe promotion
+    guardrail and push `origin/main`
 
 ## Promotion Guardrail
 

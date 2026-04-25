@@ -171,6 +171,15 @@ If `npm run git:promote` returns:
 - `DIRTY_BLOCK`
   clean or isolate the current worktree first
 
+After `npm run git:promote -- --source <branch-or-commit>` reports
+`SAFE_FAST_FORWARD`, repo-local requests such as "promote and push", "push",
+"ship", or equivalent mean fast-forward/promote the scoped task to `main` and
+push the promoted `main` to `origin/main`.
+
+Do not substitute branch-only publishing or a pull-request flow for that direct
+remote-main workflow unless the user explicitly asks for branch-only publishing
+or a PR.
+
 ## Human-Friendly Repo Check
 
 When the repo feels confusing, stop and confirm:
