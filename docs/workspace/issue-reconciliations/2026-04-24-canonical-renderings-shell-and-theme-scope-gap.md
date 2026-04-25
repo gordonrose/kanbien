@@ -71,3 +71,10 @@ top-nav contract, not only that a `.top-nav` element exists.
 - Normalized stale outer top-nav fallback labels on the affected generated
   render pages while leaving inner top-nav/context-nav specimen fixtures
   unchanged.
+- Migrated preferred canonical launcher links for already-generated families
+  to `/design-system/canonical-renderings/<family>/<ref>` while preserving the
+  older `/design-system/components/<family>?ref=...` routes as compatibility
+  render endpoints.
+- Added a source and route audit so migrated launcher pages cannot reintroduce
+  preferred legacy component-query links and every emitted generated-rendering
+  link must serve the governed shell.

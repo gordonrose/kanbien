@@ -125,7 +125,7 @@ describe("design system route", () => {
     expect(response.text).toContain(">Patterns<");
     expect(response.text).toContain(">Canonicals<");
     expect(response.text).toContain(">Page-Shell Banner<");
-    expect(response.text).toContain("/design-system/components/page-shell-banner?ref=PSBR-001&theme=normal&dir=ltr&zoom=0");
+    expect(response.text).toContain("/design-system/canonical-renderings/page-shell-banner/PSBR-001");
     expect(response.text).not.toContain("/design-system/templates/page-shell?ref=PSBR-");
   });
 
@@ -202,7 +202,7 @@ describe("design system route", () => {
     expect(response.text).toContain("All Canonical Reference States");
     expect(response.text).toContain("canonical-launcher-button-priority");
     expect(response.text).toContain("TRP-001");
-    expect(response.text).toContain("/design-system/components/top-nav?width=1120&fixture=standard&open=closed");
+    expect(response.text).toContain("/design-system/canonical-renderings/top-nav/TRP-001");
   });
 
   it("serves the time-picker canonical launcher page for child seam states", async () => {
@@ -218,7 +218,7 @@ describe("design system route", () => {
     expect(response.text).toContain(">Canonicals<");
     expect(response.text).toContain("TPR-002");
     expect(response.text).toContain("canonical-launcher-button-priority");
-    expect(response.text).toContain("/design-system/components/time-picker?ref=TPR-006&width=390&state=mobile-open&theme=normal&dir=ltr&zoom=0");
+    expect(response.text).toContain("/design-system/canonical-renderings/time-picker/TPR-006");
   });
 
   it("serves the date-picker canonical launcher page with dedicated child render links", async () => {
@@ -234,7 +234,7 @@ describe("design system route", () => {
     expect(response.text).toContain("context-nav");
     expect(response.text).toContain("DTPR-004");
     expect(response.text).toContain("canonical-launcher-button-priority");
-    expect(response.text).toContain("/design-system/components/date-picker?ref=DTPR-007&width=430&state=range-mobile-open&theme=normal&dir=ltr&zoom=0");
+    expect(response.text).toContain("/design-system/canonical-renderings/date-picker/DTPR-007");
     expect(response.text).not.toContain("/design-system/templates/form?ref=DTPR-");
   });
 
