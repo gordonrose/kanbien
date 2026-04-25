@@ -170,3 +170,13 @@ test("hierarchy-tree canonical launcher and render routes populate breadcrumb st
   await expect(renderBreadcrumb).toContainText("Canonicals");
   await expect(page.locator("#breadcrumb-current-item .breadcrumb-current")).toHaveText(/HTR-010/);
 });
+
+test("hierarchy-tree generated canonical-rendering route preserves the signed-off specimen surface", async ({ page }) => {
+  await page.goto("/design-system/canonical-renderings/hierarchy-tree/HTR-022");
+
+  await expect(page.locator("#hierarchy-tree-tree .hierarchy-tree-row")).not.toHaveCount(0);
+  await expect(page.locator("body")).toHaveAttribute("data-hierarchy-tree-surface", "canonical");
+  await expect(page.locator(".hierarchy-tree-row-menu")).toContainText("Open in new tab");
+  await expect(page.locator("#breadcrumb-current-item .breadcrumb-current")).toHaveText(/HTR-022/);
+  await expect(page.getByRole("heading", { name: /Design-System Route Families/i })).toHaveCount(0);
+});

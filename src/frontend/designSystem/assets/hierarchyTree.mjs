@@ -176,6 +176,13 @@ const canonicalHrefByRef = Object.fromEntries(
   }),
 );
 
+const generatedCanonicalHrefByRef = Object.fromEntries(
+  canonicalStateDefinitions.map((definition) => [
+    definition.ref,
+    `/design-system/canonical-renderings/hierarchy-tree/${encodeURIComponent(definition.ref)}`,
+  ]),
+);
+
 function cloneTree(value) {
   return JSON.parse(JSON.stringify(value));
 }
@@ -477,14 +484,21 @@ function markAllChanged(nodes) {
 
 function getCanonicalRequest() {
   const params = new URLSearchParams(window.location.search);
+  const generatedMatch = window.location.pathname.match(
+    /^\/design-system\/canonical-renderings\/hierarchy-tree\/([^/]+)$/,
+  );
+  const generatedRef = generatedMatch ? decodeURIComponent(generatedMatch[1]) : "";
+  const generatedDefinition = canonicalStateDefinitions.find((definition) => definition.ref === generatedRef);
+
   return {
-    ref: params.get("ref") ?? "",
-    state: params.get("state") ?? "baseline",
-    width: params.get("width") ?? "",
-    theme: params.get("theme") ?? "normal",
-    dir: params.get("dir") ?? "ltr",
-    zoom: params.get("zoom") ?? "0",
-    accent: params.get("accent") ?? "#635bff",
+    ref: generatedDefinition?.ref ?? params.get("ref") ?? "",
+    state: generatedDefinition?.state ?? params.get("state") ?? "baseline",
+    width: String(generatedDefinition?.width ?? params.get("width") ?? ""),
+    theme: generatedDefinition?.theme ?? params.get("theme") ?? "normal",
+    dir: generatedDefinition?.dir ?? params.get("dir") ?? "ltr",
+    zoom: String(generatedDefinition?.zoom ?? params.get("zoom") ?? "0"),
+    accent: generatedDefinition?.accent ?? params.get("accent") ?? "#635bff",
+    generated: Boolean(generatedDefinition),
   };
 }
 
@@ -1902,6 +1916,9 @@ export function mountRootAdminHierarchyTree({
 
 export function mountHierarchyTreeDemo() {
   const request = getCanonicalRequest();
+  if (request.ref) {
+    document.body.dataset.hierarchyTreeSurface = "canonical";
+  }
   setDocumentEnvironment(request);
 
   const treeRoot = document.getElementById("hierarchy-tree-tree");
@@ -2728,9 +2745,10 @@ export function mountHierarchyTreeDemo() {
       const index = canonicalSequence.indexOf(refLabel);
       const prevRef = index > 0 ? canonicalSequence[index - 1] : null;
       const nextRef = index >= 0 && index < canonicalSequence.length - 1 ? canonicalSequence[index + 1] : null;
+      const stepperHrefByRef = request.generated ? generatedCanonicalHrefByRef : canonicalHrefByRef;
 
       if (prevRef) {
-        canonicalPrev.href = canonicalHrefByRef[prevRef];
+        canonicalPrev.href = stepperHrefByRef[prevRef];
         canonicalPrev.removeAttribute("aria-disabled");
       } else {
         canonicalPrev.href = "#";
@@ -2738,7 +2756,7 @@ export function mountHierarchyTreeDemo() {
       }
 
       if (nextRef) {
-        canonicalNext.href = canonicalHrefByRef[nextRef];
+        canonicalNext.href = stepperHrefByRef[nextRef];
         canonicalNext.removeAttribute("aria-disabled");
       } else {
         canonicalNext.href = "#";

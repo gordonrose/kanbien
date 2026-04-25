@@ -7,8 +7,8 @@
 - Surface:
   `/design-system/patterns/hierarchy-tree`
 - Status under review:
-  signed-off family reference baseline with first dedicated canonical launcher
-  and pattern-owned render surface created
+  signed-off family reference baseline with generated canonical-rendering
+  launcher and render routes populated
 - Related behavior lock:
   `docs/workspace/design-system/behavior-locks/hierarchy-tree-behavior-lock.md`
 - Related reference pack:
@@ -21,6 +21,10 @@
   `/design-system/canonicals/hierarchy-tree`
 - Related canonical render surface:
   `/design-system/patterns/hierarchy-tree/render`
+- Related generated launcher:
+  `/design-system/canonical-renderings/hierarchy-tree`
+- Related generated render surface:
+  `/design-system/canonical-renderings/hierarchy-tree/:ref`
 - Related host families:
   `docs/workspace/design-system/behavior-locks/context-nav-behavior-lock.md`
   `docs/workspace/design-system/behavior-locks/context-nav-drawer-behavior-lock.md`
@@ -39,8 +43,10 @@
 - What changed since the last review:
   the family now has a dedicated behavior lock, a reference pack expanded to a
   realistic `HTR-*` state matrix, signed-off route framing as a reference page
-  instead of a prototype page, explicit WCAG-shaped behavior rules, and
-  explicit long-title overflow coverage for both resting rows and inline rename
+  instead of a prototype page, explicit WCAG-shaped behavior rules, explicit
+  long-title overflow coverage for both resting rows and inline rename, and
+  persistence-backed generated canonical-rendering routes for `HTR-001`
+  through `HTR-034`
 
 ## Source Verification
 
@@ -48,14 +54,19 @@
   `src/frontend/designSystem/patterns/hierarchy-tree/index.html`
   `src/frontend/designSystem/assets/hierarchyTree.css`
   `src/frontend/designSystem/assets/hierarchyTree.mjs`
+  `src/frontend/designSystem/router.ts`
+  `src/features/designSystemCanonicals/persistence/migrations/0044_seed_hierarchy_tree_canonicals.sql`
   `src/frontend/designSystem/patterns/index.html`
   `tests/visual/designSystem/canonicals/data-display/hierarchyTree.spec.ts`
+  `tests/visual/designSystem/canonicals/shell/generatedCanonicalRenderingsIndex.spec.ts`
 - Implementation updated:
   yes
   this loop created the governed route framing, the signed-off behavior lock,
   the expanded reference pack, and the current hierarchy-tree runtime surface
   including desktop resize, mobile full-screen posture, RTL mirroring, and
-  display-settings co-presence
+  display-settings co-presence; the 2026-04-25 continuation added the
+  persistence-backed generated launcher and generated render route family for
+  all `HTR-*` references
 - Known source-level risks:
   most deep interactive states still depend on the signed-off live route and
   manual review rather than direct executable proof
@@ -96,6 +107,7 @@
   and RTL adjacency corrections
 - Screenshot or rendered evidence reference:
   `tests/visual/designSystem/canonicals/data-display/hierarchyTree.spec.ts`
+  `tests/visual/designSystem/canonicals/shell/generatedCanonicalRenderingsIndex.spec.ts`
   `docs/workspace/design-system/reference-packs/hierarchy-tree-reference-pack.md`
 
 ## Accessibility Verification
@@ -166,19 +178,22 @@
 ## Quality Gate Outcome
 
 - Implementation status:
-  signed-off live family route exists and is governed by the new artifact chain
+  signed-off live family route exists, the generated canonical-rendering route
+  family is populated, and both are governed by the artifact chain
 - Rendered status:
   partially verified
-  the signed-off route has been interactively reviewed, but executable proof
-  still covers only the baseline mount and initial row state
+  focused executable proof now covers the generated launcher chain, direct
+  generated route surface truth, baseline mount, row actions, mobile row-menu
+  posture, RTL docking, and breadcrumb truth; full human review of every
+  `HTR-*` stress state remains pending
 - Human sign-off status:
   the live route itself is signed off as the family reference baseline
 - Promotion decision:
   keep the family at `signed-off reference baseline`, not yet full downstream
   proof-complete
 - Open follow-ups:
-  promote the first `HTR-*` canonical batch out of live-route memory and into
-  durable reopenable states
+  complete human review of the generated `HTR-*` canonical batch now that the
+  routes are durable and reopenable
   extend executable proof to cover keyboard navigation, delete outcomes, RTL,
   dark theme, mobile full-screen posture, resize behavior, and long-title
   overflow
@@ -188,12 +203,14 @@
 - Workspace artifact location:
   `docs/workspace/design-system/verification/hierarchy-tree-verification-checklist.md`
 - Design-system route update required:
-  yes
-  the new launcher and render routes exist and now need their first direct
-  review batch kept in sync with the pack
+  no for this slice
+  the generated launcher and render routes now exist and need their first
+  direct human review batch kept in sync with the pack
 - Canonical render-ready / honest-width check required:
+  partially complete
+  route truth, surface truth, and generated launcher chain are covered by
+  focused Playwright proof; exhaustive stress-state honest-width proof remains
   pending
-  required on the new pattern-owned canonical render route
 - Frontend gate manifest update required:
   not yet
   wait until the first dedicated canonical batch and stronger executable proof

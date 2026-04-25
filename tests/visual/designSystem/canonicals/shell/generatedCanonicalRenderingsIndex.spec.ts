@@ -101,6 +101,14 @@ const generatedCanonicalFamilies: readonly GeneratedCanonicalFamily[] = [
     bodyAttribute: { name: "data-icon-grid-surface", value: "canonical" as const },
   },
   {
+    familyKey: "hierarchy-tree",
+    familyLabel: /Hierarchy Tree/i,
+    sampleRenderPath: "/design-system/canonical-renderings/hierarchy-tree/HTR-001",
+    surfaceLocator: "#hierarchy-tree-tree",
+    readyLocator: "#hierarchy-tree-tree",
+    bodyAttribute: { name: "data-hierarchy-tree-surface", value: "canonical" as const },
+  },
+  {
     familyKey: "list-record-card",
     familyLabel: /List Record Card/i,
     sampleRenderPath: "/design-system/canonical-renderings/list-record-card/LRC-001",
