@@ -128,9 +128,9 @@ advance, what proof was required and where that proof had to live.
 - `docs/architecture/guides/qa-operating-cadence-guide.md`
 - `docs/workspace/qa/*`
 - `docs/workspace/test-run-summaries/*`
-- `.codex/skills/change-loop-orchestrator/SKILL.md`
-- `.codex/skills/prd-test-case-planner/SKILL.md`
-- `.codex/skills/prd-test-case-implementer/SKILL.md`
+- `.codex/skills/00-orchestration/change-loop-orchestrator/SKILL.md`
+- `.codex/skills/30-testing-and-reconciliation/prd-test-case-planner/SKILL.md`
+- `.codex/skills/30-testing-and-reconciliation/prd-test-case-implementer/SKILL.md`
 
 ## Suggested Tone
 

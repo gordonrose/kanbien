@@ -173,8 +173,8 @@ Key lesson:
 
 Repo anchors:
 
-- `.codex/skills/issue-reconciliation-maintainer/SKILL.md`
-- `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`
+- `.codex/skills/30-testing-and-reconciliation/issue-reconciliation-maintainer/SKILL.md`
+- `.codex/skills/40-frontend/frontend-design-system-loop-maintainer/SKILL.md`
 
 #### Discovery 5. A Signed-Off Component Still Is Not App-Ready Without A Mapping Layer
 
@@ -312,8 +312,8 @@ by honest guardrails.
 - `docs/workspace/issue-reconciliations/2026-04-15-design-system-top-nav-layering-regression.md`
 - `docs/workspace/issue-reconciliations/2026-04-15-root-admin-browser-helper-guidance-regression.md`
 - `docs/workspace/issue-reconciliations/2026-04-15-root-admin-browser-signer-windows-key-permissions-regression.md`
-- `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`
-- `.codex/skills/issue-reconciliation-maintainer/SKILL.md`
+- `.codex/skills/40-frontend/frontend-design-system-loop-maintainer/SKILL.md`
+- `.codex/skills/30-testing-and-reconciliation/issue-reconciliation-maintainer/SKILL.md`
 - `docs/templates/design-system-adoption-contract-template.md`
 - `docs/templates/design-system-component-poc-checklist.md`
 - `docs/workspace/design-system/canonical-and-parity-conventions.md`

@@ -816,6 +816,10 @@ skipped.
 
 This section is routing guidance, not additional repo policy.
 
+Repo-local skills are organized by category under `.codex/skills/`; see
+`.codex/skills/README.md` for the current map. Use the stable skill names
+below for routing rather than depending on the category folder path.
+
 Use repo-local skills when the task clearly matches one of these workflows:
 
 - docs drift or docs-vs-code comparison:

@@ -46,7 +46,7 @@ Use this authority order unless the user explicitly says otherwise:
 2. `docs/architecture/`
 3. `docs/standards/change-artifact-requirements.md`
 4. repo-local skills under `.codex/skills/`
-5. repo-local templates and references under `.codex/skills/*/references/` and
+5. repo-local templates and references under `.codex/skills/**/references/` and
    `docs/templates/`
 6. maintained source-independent docs that act as process or architecture
    sources of truth
@@ -59,8 +59,9 @@ call out the disagreement explicitly.
 Load only the files needed for the current audit. Common targets:
 
 - `AGENTS.md`
-- `.codex/skills/*/SKILL.md`
-- `.codex/skills/*/references/*`
+- `.codex/skills/**/SKILL.md`
+- `.codex/skills/**/references/*`
+- `.codex/skills/README.md`
 - `docs/standards/change-artifact-requirements.md`
 - `docs/architecture/change-control.md`
 - `docs/architecture/system-overview.md`

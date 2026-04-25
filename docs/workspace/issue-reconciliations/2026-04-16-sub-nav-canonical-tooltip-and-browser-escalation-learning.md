@@ -93,7 +93,7 @@ those classes of defects once the first attempted fix misses.
 # Verification Added
 
 - updated design-system skill guidance:
-  `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`
+  `.codex/skills/40-frontend/frontend-design-system-loop-maintainer/SKILL.md`
 - updated durable loop guidance:
   `docs/architecture/guides/design-system-loop-harness.md`
 - updated breadcrumb, sub-nav, and search-shell reference artifacts to capture

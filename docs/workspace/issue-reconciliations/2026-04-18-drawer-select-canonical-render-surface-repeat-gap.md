@@ -98,7 +98,7 @@ review only and must be labeled that way.
 ## Verification
 
 - source inspection of:
-  - `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`
+  - `.codex/skills/40-frontend/frontend-design-system-loop-maintainer/SKILL.md`
   - `docs/architecture/guides/design-system-loop-harness.md`
   - `docs/workspace/design-system/verification/canonical-launcher-checklist.md`
   - `docs/workspace/design-system/reference-packs/drawer-select-reference-pack.md`

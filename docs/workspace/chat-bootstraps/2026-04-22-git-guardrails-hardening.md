@@ -32,7 +32,7 @@
   - `src/scripts/gitPreflight.ts`
   - `src/scripts/gitPromote.ts`
   - `package.json`
-  - `.codex/skills/branch-and-commit-governor/SKILL.md`
+  - `.codex/skills/10-repo-governance/branch-and-commit-governor/SKILL.md`
   - `AGENTS.md`
   - `docs/standards/git-workflow-guardrails.md`
   - this bootstrap artifact

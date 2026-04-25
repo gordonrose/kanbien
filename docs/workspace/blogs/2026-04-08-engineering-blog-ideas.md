@@ -87,7 +87,7 @@
 - supporting repo areas:
   `docs/standards/AI-ASSISTED-DEVELOPMENT-GATE.md`,
   `docs/workspace/reviews/*`,
-  `.codex/skills/ai-change-reviewer/*`
+  `.codex/skills/10-repo-governance/ai-change-reviewer/*`
 
 ### 7. How To Start A SaaS Platform Without Building The Whole Company On Day One
 
@@ -212,9 +212,9 @@
   `docs/architecture/guides/qa-operating-cadence-guide.md`,
   `docs/workspace/qa/*`,
   `docs/workspace/test-run-summaries/*`,
-  `.codex/skills/change-loop-orchestrator/SKILL.md`,
-  `.codex/skills/prd-test-case-planner/SKILL.md`,
-  `.codex/skills/prd-test-case-implementer/SKILL.md`
+  `.codex/skills/00-orchestration/change-loop-orchestrator/SKILL.md`,
+  `.codex/skills/30-testing-and-reconciliation/prd-test-case-planner/SKILL.md`,
+  `.codex/skills/30-testing-and-reconciliation/prd-test-case-implementer/SKILL.md`
 
 ### 13. Frontend Design Systems Are Really About Discovering The Real Contract
 
@@ -233,8 +233,8 @@
 - supporting repo areas:
   `docs/workspace/issue-reconciliations/2026-04-14-*.md`,
   `docs/workspace/issue-reconciliations/2026-04-15-design-system-*.md`,
-  `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md`,
-  `.codex/skills/issue-reconciliation-maintainer/SKILL.md`,
+  `.codex/skills/40-frontend/frontend-design-system-loop-maintainer/SKILL.md`,
+  `.codex/skills/30-testing-and-reconciliation/issue-reconciliation-maintainer/SKILL.md`,
   `src/frontend/designSystem/*`
 - current maturity:
   active outline drafted in

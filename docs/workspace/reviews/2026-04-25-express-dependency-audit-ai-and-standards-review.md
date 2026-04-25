@@ -35,7 +35,7 @@
 - `docs/standards/AI-ASSISTED-DEVELOPMENT-GATE.md`
 - `package.json`
 - `package-lock.json`
-- `.codex/skills/express-upgrade-maintainer/SKILL.md`
+- `.codex/skills/10-repo-governance/express-upgrade-maintainer/SKILL.md`
 - npm registry metadata for `express@4.22.1`, `body-parser@1.20.x`,
   `path-to-regexp@0.1.x`, and `qs@6.14.x`
 - npm audit advisory output for the production dependency graph
@@ -127,5 +127,5 @@
   remediate the dev-only Vite/PostCSS/Picomatch audit findings in a separate
   scoped dependency task, and resolve the unrelated typecheck/test blockers in
   their owning frontend/tenant-auth workstreams. Use
-  `.codex/skills/express-upgrade-maintainer/SKILL.md` for future Express 4
+  `.codex/skills/10-repo-governance/express-upgrade-maintainer/SKILL.md` for future Express 4
   audit remediation or Express 5 migration planning.

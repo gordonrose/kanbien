@@ -69,7 +69,7 @@ recoverable, reviewable, and safe to evolve.
 - `docs/standards/change-artifact-requirements.md`
 - `docs/architecture/recoverability-and-build-from-spec.md`
 - `docs/workspace/implementation-blueprints/*`
-- `.codex/skills/change-loop-orchestrator/SKILL.md`
+- `.codex/skills/00-orchestration/change-loop-orchestrator/SKILL.md`
 
 ## Suggested Call To Action
 

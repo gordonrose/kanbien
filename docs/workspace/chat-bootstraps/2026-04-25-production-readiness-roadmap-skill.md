@@ -22,7 +22,7 @@
 ## Intended Scope
 
 - Planned Write Set:
-  - `.codex/skills/production-readiness-roadmap-auditor/`
+  - `.codex/skills/10-repo-governance/production-readiness-roadmap-auditor/`
   - `docs/workspace/chat-bootstraps/2026-04-25-production-readiness-roadmap-skill.md`
 - Expected Maintained Artifacts: New repo-local skill metadata and bootstrap record.
 - Known Shared Seams: Repo-local Codex skill registry surface under `.codex/skills/`.

@@ -23,7 +23,7 @@
 
 ## Intended Scope
 
-- Planned Write Set: AGENTS.md; .codex/skills/branch-and-commit-governor/SKILL.md; docs/standards/git-workflow-guardrails.md; this bootstrap record.
+- Planned Write Set: AGENTS.md; .codex/skills/10-repo-governance/branch-and-commit-governor/SKILL.md; docs/standards/git-workflow-guardrails.md; this bootstrap record.
 - Expected Maintained Artifacts: Git workflow guardrail documentation and this bootstrap record.
 - Known Shared Seams: Git workflow guardrails and Codex branch/commit skill instructions.
 - Explicit Non-Goals: Code, tests, runtime behavior, existing unrelated dirty files.

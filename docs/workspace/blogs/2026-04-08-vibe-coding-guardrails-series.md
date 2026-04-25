@@ -107,7 +107,7 @@ and started becoming a force multiplier.
 - `docs/standards/change-artifact-requirements.md`
 - `docs/workspace/reviews/*`
 - `docs/architecture/recoverability-and-build-from-spec.md`
-- `.codex/skills/change-loop-orchestrator/SKILL.md`
+- `.codex/skills/00-orchestration/change-loop-orchestrator/SKILL.md`
 - `docs/standards/git-workflow-guardrails.md`
 - `src/scripts/gitPreflight.ts`
 - `src/scripts/gitWorktreeAudit.ts`

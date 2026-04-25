@@ -62,10 +62,10 @@ without proving the actual reviewer complaint:
   foreground-color assertions
 - refactored `tests/visual/designSystem/canonicals/forms/drawerSelectCanonical.spec.ts` to use
   the shared hook for the escaped `Drawer Select` layout and contrast failures
-- updated `.codex/skills/frontend-design-system-loop-maintainer/SKILL.md` to
+- updated `.codex/skills/40-frontend/frontend-design-system-loop-maintainer/SKILL.md` to
   require at least one direct human-visible regression guard after escaped
   visual issues
-- updated `.codex/skills/issue-reconciliation-maintainer/SKILL.md` to require
+- updated `.codex/skills/30-testing-and-reconciliation/issue-reconciliation-maintainer/SKILL.md` to require
   the same prevention step during reconciliation work
 
 ## Prevention Lesson
