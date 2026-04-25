@@ -27,13 +27,13 @@
   Promote the signed-off `/design-system` top-nav family toward governed app
   adoption.
 - What changed since the last review:
-  The full canonical `top-nav` state set now renders through the dedicated
-  canonical page at `/design-system/components/top-nav`, while exploration
+  The full canonical `top-nav` state set now has generated render routes under
+  `/design-system/canonical-renderings/top-nav/:ref`, while exploration
   controls remain on `/design-system/exploration/top-nav`. The canonical
-  `TRP-*` set has been refreshed and Playwright-locked against that dedicated
-  render surface, and the canonical hardening pass now keeps theme,
-  magnification, and RTL direction local to the rendered shell instead of the
-  host document.
+  `TRP-*` set remains Playwright-locked against the legacy component capture
+  route for screenshot stability, and generated-route tests now prove the
+  launcher chain, render surface ownership, scoped theme/magnification/RTL
+  behavior, and optional mobile-menu/profile absence variants.
 
 ## Source Verification
 
@@ -66,8 +66,8 @@
   human sign-off completed through `/design-system/canonicals/top-nav`; the
   full canonical snapshot set is stored under
   `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/`
-  and now comes from the dedicated canonical render page rather than the
-  interactive exploration page
+  and continues to use the stable component capture route. Generated canonical
+  render proof now runs against `/design-system/canonical-renderings/top-nav/:ref`,
   with the broader host/surface posture tracked in
   `docs/workspace/design-system/verification/canonical-host-surface-isolation-audit.md`
 

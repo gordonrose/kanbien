@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
 
 const topNavCanonicalStates = [
   {
@@ -129,10 +130,44 @@ const topNavCanonicalStates = [
   },
 ] as const;
 
+function topNavCanonicalRenderRoute(refId: string) {
+  return `/design-system/canonical-renderings/top-nav/${encodeURIComponent(refId)}`;
+}
+
 async function gotoCanonicalState(page: Page, route: string) {
   await page.goto(route);
   await page.locator("#top-nav-preview-frame").waitFor({ state: "visible" });
   await page.locator("#top-nav-canonical-current").waitFor({ state: "visible" });
+}
+
+async function settleGeneratedTopNavRender(page: Page) {
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => resolve());
+        });
+      }),
+  );
+}
+
+async function gotoGeneratedCanonicalState(page: Page, refId: string) {
+  await gotoCanonicalState(page, topNavCanonicalRenderRoute(refId));
+  await settleGeneratedTopNavRender(page);
+}
+
+async function fulfillTopNavRenderWithMarkup(
+  page: Page,
+  refId: string,
+  transform: (html: string) => string,
+) {
+  await page.route(`**${topNavCanonicalRenderRoute(refId)}`, async (route) => {
+    const response = await route.fetch();
+    await route.fulfill({
+      response,
+      body: transform(await response.text()),
+    });
+  });
 }
 
 test.describe("design-system top-nav canonical states", () => {
@@ -148,10 +183,7 @@ test.describe("design-system top-nav canonical states", () => {
   }
 
   test("TRP-003 keeps desktop mode out of the 1 item plus More state", async ({ page }) => {
-    await gotoCanonicalState(
-      page,
-      "/design-system/components/top-nav?width=760&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-003",
-    );
+    await gotoGeneratedCanonicalState(page, "TRP-003");
 
     const topNav = page.locator("#top-nav-preview-frame .top-nav");
     const visiblePrimaryLinks = page.locator("#top-nav-preview-frame #primary-nav-links .nav-link:not(.hidden)");
@@ -165,10 +197,7 @@ test.describe("design-system top-nav canonical states", () => {
   });
 
   test("TRP-010 reroutes pressure into overflow or mobile collapse before crowding", async ({ page }) => {
-    await gotoCanonicalState(
-      page,
-      "/design-system/components/top-nav?width=880&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=100&accent=%23635bff&ref=TRP-010",
-    );
+    await gotoGeneratedCanonicalState(page, "TRP-010");
 
     const topNav = page.locator("#top-nav-preview-frame .top-nav");
     const overflow = page.locator("#top-nav-preview-frame #primary-nav-overflow");
@@ -181,22 +210,58 @@ test.describe("design-system top-nav canonical states", () => {
     expect(overflowVisible || forcedMobile).toBe(true);
   });
 
+  test("TRP-007 generated route opens the overflow menu", async ({ page }) => {
+    await gotoGeneratedCanonicalState(page, "TRP-007");
+
+    const overflowButton = page.locator("#top-nav-preview-frame #preview-primary-nav-overflow-button");
+    const overflowMenu = page.locator("#top-nav-preview-frame #preview-primary-nav-overflow-menu");
+
+    await page.waitForTimeout(1500);
+
+    await expect(overflowButton).toHaveAttribute("aria-expanded", "true");
+    await expect(overflowMenu).toBeVisible();
+    await expect(overflowMenu.getByRole("menuitem", { name: "Patterns" })).toBeVisible();
+  });
+
   test("top-nav canonicals render on the dedicated canonical page without preview controls", async ({ page }) => {
-    await gotoCanonicalState(
-      page,
-      "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-001",
-    );
+    await gotoGeneratedCanonicalState(page, "TRP-001");
 
     await expect(page.locator("body")).toHaveAttribute("data-top-nav-surface", "canonical");
     await expect(page.locator("#top-nav-canonical-current")).toHaveText("TRP-001 - Desktop default");
     await expect(page.locator("#top-nav-preview-controls-title")).toHaveCount(0);
   });
 
+  test("top-nav generated launcher links every reference to the dedicated render route", async ({ page }) => {
+    await page.goto("/design-system/canonical-renderings/top-nav");
+
+    await expect(page.locator(".canonical-launcher-button")).toHaveCount(topNavCanonicalStates.length);
+
+    for (const scenario of topNavCanonicalStates) {
+      await expect(
+        page.locator(`.canonical-launcher-button[href="${topNavCanonicalRenderRoute(scenario.refId)}"]`),
+        `${scenario.refId} should target its generated render route`,
+      ).toHaveCount(1);
+    }
+  });
+
+  test("top-nav generated route owns the canonical render surface", async ({ page }) => {
+    await page.goto(topNavCanonicalRenderRoute("TRP-001"));
+
+    await expectRouteSurfaceTruth(page, {
+      expectedPath: topNavCanonicalRenderRoute("TRP-001"),
+      surfaceLocator: "#top-nav-preview-frame",
+      waitForReadyLocator: "#top-nav-preview-frame .top-nav",
+      bodyAttribute: {
+        name: "data-top-nav-surface",
+        value: "canonical",
+      },
+      fallbackHeading: /Design-System Route Families/i,
+    });
+    await expect(page.locator("#top-nav-canonical-current")).toHaveText("TRP-001 - Desktop default");
+  });
+
   test("top-nav canonical theme and magnification stay scoped to the local render layout", async ({ page }) => {
-    await gotoCanonicalState(
-      page,
-      "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=dark&dir=ltr&zoom=0&accent=%23635bff&ref=TRP-014B",
-    );
+    await gotoGeneratedCanonicalState(page, "TRP-014B");
 
     const themeState = await page.evaluate(() => {
       const layout = document.querySelector("#top-nav-preview-frame")?.closest(".canonical-render-layout");
@@ -209,10 +274,7 @@ test.describe("design-system top-nav canonical states", () => {
     expect(themeState.documentTheme).toBe("");
     expect(themeState.layoutTheme).toBe("dark");
 
-    await gotoCanonicalState(
-      page,
-      "/design-system/components/top-nav?width=880&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=100&accent=%23635bff&ref=TRP-010",
-    );
+    await gotoGeneratedCanonicalState(page, "TRP-010");
 
     const magnificationState = await page.evaluate(() => {
       const canvas = document.querySelector("#top-nav-preview-frame .top-nav-preview-canvas");
@@ -229,10 +291,7 @@ test.describe("design-system top-nav canonical states", () => {
   });
 
   test("top-nav canonical RTL direction is owned by the local render surface", async ({ page }) => {
-    await gotoCanonicalState(
-      page,
-      "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=rtl&zoom=0&accent=%23635bff&ref=TRP-008",
-    );
+    await gotoGeneratedCanonicalState(page, "TRP-008");
 
     const directionState = await page.evaluate(() => ({
       documentDir: document.documentElement.getAttribute("dir"),
@@ -241,5 +300,38 @@ test.describe("design-system top-nav canonical states", () => {
 
     expect(directionState.documentDir).not.toBe("rtl");
     expect(directionState.canvasDir).toBe("rtl");
+  });
+
+  test("generated top-nav render tolerates an intentionally absent mobile nav menu", async ({ page }) => {
+    await fulfillTopNavRenderWithMarkup(page, "TRP-005", (html) =>
+      html
+        .replace(/<button\s+id="preview-mobile-nav-button"[\s\S]*?<\/button>\s*/u, "")
+        .replace(/<nav id="preview-mobile-nav-menu"[\s\S]*?<\/nav>\s*/u, ""),
+    );
+
+    await gotoGeneratedCanonicalState(page, "TRP-005");
+
+    await expect(page.locator("#top-nav-preview-frame .top-nav")).toBeVisible();
+    await expect(page.locator("#preview-mobile-nav-button")).toHaveCount(0);
+    await expect(page.locator("#preview-mobile-nav-menu")).toHaveCount(0);
+    await expect(page.locator("#top-nav-canonical-current")).toHaveText("TRP-005 - Mobile shell open");
+  });
+
+  test("generated top-nav render tolerates intentionally absent profile controls", async ({ page }) => {
+    await fulfillTopNavRenderWithMarkup(page, "TRP-006", (html) =>
+      html
+        .replace(/<button\s+id="preview-profile-menu-button"[\s\S]*?<\/button>\s*/u, "")
+        .replace(/<div\s+id="preview-profile-menu"[\s\S]*?<\/div>\s*/u, "")
+        .replace(/<button\s+id="preview-mobile-profile-button"[\s\S]*?<\/button>\s*/u, "")
+        .replace(/<div id="preview-mobile-profile-menu"[\s\S]*?<\/div>\s*/u, ""),
+    );
+
+    await gotoGeneratedCanonicalState(page, "TRP-006");
+
+    await expect(page.locator("#top-nav-preview-frame .top-nav")).toBeVisible();
+    await expect(page.locator("#preview-profile-menu-button")).toHaveCount(0);
+    await expect(page.locator("#preview-profile-menu")).toHaveCount(0);
+    await expect(page.locator("#preview-mobile-profile-button")).toHaveCount(0);
+    await expect(page.locator("#top-nav-canonical-current")).toHaveText("TRP-006 - Profile menu open");
   });
 });

@@ -4018,6 +4018,9 @@ function updatePrimaryNavOverflow() {
     && !(typeof maxVisiblePrimaryItems === "number" && getVisiblePrimaryNavLinks().length > maxVisiblePrimaryItems)
   ) {
     renderPrimaryNavOverflowMenu(primaryNavLinks.filter((link) => link.classList.contains("hidden")));
+    if (activeTopNavPreviewOpenState === "overflow") {
+      setPrimaryNavOverflowOpen(true);
+    }
     return;
   }
 
