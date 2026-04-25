@@ -10,10 +10,11 @@ Today the system has:
 
 - one Express application
 - one versioned API router under `/v1`
-- twelve mounted API features: `rootAuth`, `rootRoles`, `rootUsers`,
-  `tenants`, `notificationDelivery`, `tenantAdmins`, `tenantAuth`,
-  `tenantConfiguration`, `webAppHierarchyBuilder`, `webAppPageSettings`,
-  `entityBuilder`, and `webAppSurfaceDiscovery`
+- fifteen mounted API features: `rootAuth`, `rootRoles`, `rootUsers`,
+  `tenantAdmins`, `tenantAuth`, `tenantConfiguration`, `tenants`,
+  `webAppHierarchyBuilder`, `webAppPageSettings`, `entityBuilder`,
+  `webAppSurfaceDiscovery`, `designSystemCanonicals`,
+  `notificationDelivery`, `capabilityContractCatalog`, and `assets`
 - one unmounted backend foundation feature: `jobProcessing`
 - two mounted browser/frontend route families:
   `/design-system` and `/root-admin`
@@ -94,13 +95,16 @@ route-family, and browser-boundary definition.
 
 Each feature lives under `src/features/<featureName>`.
 
-The active examples are `src/features/rootAuth`, `src/features/rootRoles`,
-`src/features/rootUsers`, `src/features/tenants`,
-`src/features/notificationDelivery`, `src/features/tenantAdmins`,
-`src/features/tenantAuth`, `src/features/tenantConfiguration`,
+The active mounted API examples are `src/features/rootAuth`,
+`src/features/rootRoles`, `src/features/rootUsers`,
+`src/features/tenantAdmins`, `src/features/tenantAuth`,
+`src/features/tenantConfiguration`, `src/features/tenants`,
 `src/features/webAppHierarchyBuilder`, `src/features/webAppPageSettings`,
-`src/features/entityBuilder`, `src/features/webAppSurfaceDiscovery`, and the
-unmounted backend foundation `src/features/jobProcessing`.
+`src/features/entityBuilder`, `src/features/webAppSurfaceDiscovery`,
+`src/features/designSystemCanonicals`, `src/features/notificationDelivery`,
+`src/features/capabilityContractCatalog`, and `src/features/assets`.
+The active unmounted backend foundation example is
+`src/features/jobProcessing`.
 Each feature follows the same internal structure:
 
 - `contract/`
