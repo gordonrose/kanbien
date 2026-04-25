@@ -2,13 +2,29 @@
 
 ## Summary
 
-- Features analyzed: 15
+- Features analyzed: 16
 - Cross-feature edges: 13
 - Validation violations: 0
 
 Rule: Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.
 
 ## By Feature
+
+### assets
+
+- Manifest: `src/features/assets/feature.manifest.json`
+- Source files: 12
+- Declared dependencies: none
+- Current public dependencies: none
+- Private seam violations: 0
+- Depended on by: none
+- Public seams:
+  - `feature-factory` via `createAssetsFeature` in `index.ts` (feature-factory, stable)
+  - `service` via `AssetsService` in `index.ts` (domain-service, stable)
+- Breaking-change risks:
+  - Changing asset lifecycle, upload-intent binding, or storage-key immutability semantics can make uploaded bytes usable without the approved verification path.
+  - Changing same-origin private content-read behavior can leak storage authority or bypass asset-native authorization.
+  - Changing validation seam semantics can let consuming features replace entity authorization with generic asset ownership.
 
 ### capabilityContractCatalog
 

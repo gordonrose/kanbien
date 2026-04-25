@@ -11,7 +11,8 @@
   Backend foundation and storage adapter. No frontend UI and no processing
   worker implementation in v1.
 - Phase:
-  Planned v1 foundation.
+  Implemented v1 foundation branch, pending human review and environment-backed
+  persistence proof.
 
 ## Inputs
 
@@ -22,7 +23,7 @@
 - ADR(s):
   [ADR-0034](../../architecture/adr/0034-adopt-object-storage-backed-asset-foundation.md)
 - PRD test-case doc:
-  Required before implementation begins.
+  [Asset foundation PRD test cases](../../prd/test_cases/2026-04-25-0021-asset-foundation-test-cases.md)
 - Asset consumer decision record:
   [Tenant branding logo decision record](../asset-consumer-decisions/2026-04-25-tenant-branding-logo.md)
 - Journey inventory:
@@ -34,6 +35,12 @@
 - QA release-gate expectation:
   Required for implementation because this slice introduces storage,
   authorization, persistence, and privacy-sensitive file access behavior.
+- Implementation evidence:
+  The branch implements the `assets` feature, local filesystem object-storage
+  adapter, root-operated v1 routes, migration, focused executable coverage,
+  source-independent API/data/permission artifacts, and feature dependency
+  graph refresh. Live production-provider proof remains deferred until provider
+  selection.
 
 ## Frontend Plan
 

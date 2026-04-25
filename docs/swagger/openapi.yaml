@@ -8,7 +8,7 @@ info:
     administration, the protected rootUsers feature, the protected tenants
     feature, the protected tenantAdmins feature, the protected
     notificationDelivery feature, the protected capability-contract-catalog
-    feature, the protected web-app-hierarchy feature, the protected
+    feature, the protected assets feature, the protected web-app-hierarchy feature, the protected
     web-app-page-settings feature, the protected web-app-surface-discovery
     feature, and the shared tenant-auth foundation.
 
@@ -25,6 +25,7 @@ tags:
   - name: Tenant Admins
   - name: Notification Delivery
   - name: Capability Contract Catalog
+  - name: Assets
   - name: Web App Hierarchy
   - name: Web App Page Settings
   - name: Web App Surface Discovery
@@ -46,6 +47,217 @@ paths:
                 $ref: "#/components/schemas/HealthResponse"
         "429":
           $ref: "#/components/responses/TooManyRequests"
+
+  /v1/assets/upload-intents:
+    post:
+      tags:
+        - Assets
+      summary: Create an asset upload intent
+      operationId: createAssetUploadIntent
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAssetUploadIntentBody"
+      responses:
+        "201":
+          description: Upload intent created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateAssetUploadIntentResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/assets/{assetId}/complete:
+    post:
+      tags:
+        - Assets
+      summary: Complete an asset upload after storage verification
+      operationId: completeAssetUpload
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AssetIdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CompleteAssetUploadBody"
+      responses:
+        "200":
+          description: Asset upload completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Asset"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/assets/{assetId}:
+    get:
+      tags:
+        - Assets
+      summary: Read ready asset metadata
+      operationId: readAssetMetadata
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AssetIdPath"
+      responses:
+        "200":
+          description: Asset metadata
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Asset"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/assets/{assetId}/content:
+    get:
+      tags:
+        - Assets
+      summary: Stream ready private asset content same-origin
+      operationId: readAssetContent
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AssetIdPath"
+      responses:
+        "200":
+          description: Asset content stream
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+            image/webp:
+              schema:
+                type: string
+                format: binary
+            image/svg+xml:
+              schema:
+                type: string
+                format: binary
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/assets/{assetId}/delete:
+    post:
+      tags:
+        - Assets
+      summary: Soft-delete an asset
+      operationId: deleteAsset
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AssetIdPath"
+      responses:
+        "200":
+          description: Asset soft-deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Asset"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/assets/internal/cleanup-expired-uploads:
+    post:
+      tags:
+        - Assets
+      summary: Clean up expired asset upload intents
+      operationId: cleanupExpiredAssetUploads
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CleanupExpiredAssetUploadsBody"
+      responses:
+        "200":
+          description: Cleanup run summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CleanupExpiredAssetUploadsResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
 
   /v1/root-auth/login/password:
     post:
@@ -4121,6 +4333,14 @@ components:
           type: string
           minLength: 1
 
+    AssetIdPath:
+      name: assetId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
   responses:
     BadRequest:
       description: Invalid request
@@ -4157,6 +4377,13 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
 
+    UnprocessableEntity:
+      description: Storage or content verification failed
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+
     TooManyRequests:
       description: Request was throttled or temporarily locked due to too many attempts
       content:
@@ -4172,6 +4399,218 @@ components:
             $ref: "#/components/schemas/ErrorResponse"
 
   schemas:
+    CreateAssetUploadIntentBody:
+      type: object
+      additionalProperties: false
+      properties:
+        scopeType:
+          type: string
+          enum: [root, tenant]
+        tenantId:
+          type: string
+          format: uuid
+        kind:
+          type: string
+          enum: [image, video, audio, document, other]
+        contentType:
+          type: string
+          enum: [image/png, image/jpeg, image/webp, image/svg+xml]
+        byteSize:
+          type: integer
+          minimum: 1
+          maximum: 5242880
+        visibility:
+          type: string
+          enum: [private, public]
+          default: private
+        originalFilename:
+          type: string
+          minLength: 1
+          maxLength: 255
+        expectedChecksumSha256:
+          type: string
+          pattern: "^[a-fA-F0-9]{64}$"
+        piiPosture:
+          type: string
+          enum: [unknown, none, possible, contains]
+      required: [scopeType, kind, contentType, byteSize, visibility]
+
+    CompleteAssetUploadBody:
+      type: object
+      additionalProperties: false
+      properties:
+        uploadIntentId:
+          type: string
+          format: uuid
+        checksumSha256:
+          type: string
+          pattern: "^[a-fA-F0-9]{64}$"
+      required: [uploadIntentId]
+
+    CleanupExpiredAssetUploadsBody:
+      type: object
+      additionalProperties: false
+      properties:
+        batchSize:
+          type: integer
+          minimum: 1
+          maximum: 500
+          default: 100
+        retryFailedOnly:
+          type: boolean
+          default: false
+        dryRun:
+          type: boolean
+          default: false
+
+    CleanupExpiredAssetUploadsResponse:
+      type: object
+      properties:
+        expiredIntents:
+          type: integer
+        rejectedAssets:
+          type: integer
+        deletedObjects:
+          type: integer
+        missingObjects:
+          type: integer
+        failedDeletes:
+          type: integer
+      required: [expiredIntents, rejectedAssets, deletedObjects, missingObjects, failedDeletes]
+
+    AssetUploadTarget:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [local-filesystem]
+        storageKey:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+      required: [mode, storageKey, expiresAt]
+
+    AssetUploadIntent:
+      type: object
+      properties:
+        uploadIntentId:
+          type: string
+          format: uuid
+        assetId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [pending, completed, expired, rejected]
+        actorType:
+          type: string
+        actorId:
+          type: string
+        scopeType:
+          type: string
+          enum: [root, tenant]
+        tenantId:
+          type: [string, "null"]
+          format: uuid
+        storageKey:
+          type: string
+        expectedContentType:
+          type: string
+        maxByteSize:
+          type: integer
+        expectedChecksumSha256:
+          type: [string, "null"]
+        expiresAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: [string, "null"]
+          format: date-time
+      required: [uploadIntentId, assetId, status, actorType, actorId, scopeType, tenantId, storageKey, expectedContentType, maxByteSize, expectedChecksumSha256, expiresAt, completedAt]
+
+    Asset:
+      type: object
+      properties:
+        assetId:
+          type: string
+          format: uuid
+        scopeType:
+          type: string
+          enum: [root, tenant]
+        tenantId:
+          type: [string, "null"]
+          format: uuid
+        kind:
+          type: string
+          enum: [image, video, audio, document, other]
+        visibility:
+          type: string
+          enum: [private, public]
+        originalFilename:
+          type: [string, "null"]
+        storageProvider:
+          type: string
+        storageKey:
+          type: string
+        claimedContentType:
+          type: string
+        verifiedContentType:
+          type: [string, "null"]
+        byteSize:
+          type: integer
+        expectedChecksumSha256:
+          type: [string, "null"]
+        observedChecksumSha256:
+          type: [string, "null"]
+        checksumVerificationStatus:
+          type: string
+          enum: [not_provided, provider_verified, backend_verified, unavailable, mismatched]
+        contentVerificationStatus:
+          type: string
+          enum: [claimed_only, metadata_verified, svg_sanitized, failed]
+        lifecycleStatus:
+          type: string
+          enum: [pending_upload, uploaded, ready, rejected, deleted]
+        processingStatus:
+          type: string
+          enum: [not_required, pending, processing, ready, failed, rejected]
+        piiPosture:
+          type: string
+          enum: [unknown, none, possible, contains]
+        cleanupStatus:
+          type: string
+          enum: [not_required, pending, deleted, object_missing, failed_retryable]
+        cleanupFailureReason:
+          type: [string, "null"]
+        rejectionReason:
+          type: [string, "null"]
+        createdByActorType:
+          type: string
+        createdByActorId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: [string, "null"]
+          format: date-time
+      required: [assetId, scopeType, tenantId, kind, visibility, storageProvider, storageKey, claimedContentType, byteSize, checksumVerificationStatus, contentVerificationStatus, lifecycleStatus, processingStatus, piiPosture, cleanupStatus, createdByActorType, createdByActorId, createdAt, updatedAt, deletedAt]
+
+    CreateAssetUploadIntentResponse:
+      type: object
+      properties:
+        asset:
+          $ref: "#/components/schemas/Asset"
+        uploadIntent:
+          $ref: "#/components/schemas/AssetUploadIntent"
+        uploadTarget:
+          $ref: "#/components/schemas/AssetUploadTarget"
+      required: [asset, uploadIntent, uploadTarget]
+
     CapabilityBoundary:
       type: string
       enum: [root, tenant, shared]

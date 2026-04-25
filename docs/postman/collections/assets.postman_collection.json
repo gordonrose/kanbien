@@ -1,0 +1,123 @@
+{
+  "info": {
+    "_postman_id": "f41bb89a-a122-4e8a-a9df-45c9e7f6b001",
+    "name": "Kanbien Assets",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for the protected assets foundation. Successful root login writes a shared root session into the active Postman environment. The local filesystem adapter returns upload-target metadata; object placement is environment-specific and completion verifies storage state before readiness."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "rootSessionId", "value": "sess_replace_me" },
+    { "key": "tenantId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "assetId", "value": "00000000-0000-0000-0000-000000000000" },
+    { "key": "uploadIntentId", "value": "00000000-0000-0000-0000-000000000000" }
+  ],
+  "item": [
+    {
+      "name": "Assets - Create Upload Intent",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scopeType\": \"tenant\",\n  \"tenantId\": \"{{tenantId}}\",\n  \"kind\": \"image\",\n  \"contentType\": \"image/png\",\n  \"byteSize\": 128,\n  \"visibility\": \"private\",\n  \"originalFilename\": \"logo.png\",\n  \"piiPosture\": \"possible\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/assets/upload-intents",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "assets", "upload-intents"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const json = pm.response.json();",
+              "if (json.asset && json.asset.assetId) pm.collectionVariables.set(\"assetId\", json.asset.assetId);",
+              "if (json.uploadIntent && json.uploadIntent.uploadIntentId) pm.collectionVariables.set(\"uploadIntentId\", json.uploadIntent.uploadIntentId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assets - Complete Upload",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"uploadIntentId\": \"{{uploadIntentId}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/assets/{{assetId}}/complete",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "assets", "{{assetId}}", "complete"]
+        }
+      }
+    },
+    {
+      "name": "Assets - Read Metadata",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/assets/{{assetId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "assets", "{{assetId}}"]
+        }
+      }
+    },
+    {
+      "name": "Assets - Read Content",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/assets/{{assetId}}/content",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "assets", "{{assetId}}", "content"]
+        }
+      }
+    },
+    {
+      "name": "Assets - Delete",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{rootSessionId}}" }],
+        "url": {
+          "raw": "{{baseUrl}}/v1/assets/{{assetId}}/delete",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "assets", "{{assetId}}", "delete"]
+        }
+      }
+    },
+    {
+      "name": "Assets - Cleanup Expired Uploads",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"batchSize\": 100,\n  \"retryFailedOnly\": false,\n  \"dryRun\": false\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/assets/internal/cleanup-expired-uploads",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "assets", "internal", "cleanup-expired-uploads"]
+        }
+      }
+    }
+  ]
+}

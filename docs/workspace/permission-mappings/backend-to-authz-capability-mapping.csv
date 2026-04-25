@@ -36,3 +36,10 @@ root roles,rootRoles,unassignSystemRootRoleFromRootUser,target,root-role.assignm
 root roles,rootRoles,listRootUserAssignedSystemRootRoles,target,root-role.assignment.list,scope(...) and can(...),RootUserAdmin,approved PRD target for assignment inspection
 root roles,rootRoles,replaceRootUserSystemRootRole,target,root-role.assignment.replace,can(...),RootUserAdmin,approved PRD target for atomic role replacement
 root roles,rootRoles,getEffectiveRootUserPermissions,target,root-role.effective-permissions.read,scope(...) and can(...),RootUserAdmin,approved PRD target for effective-permission inspection with source attribution
+assets,assets,createAssetUploadIntent,current,asset.create,can(...),RootUserAdmin,create constrained asset upload intents and allocate generated storage keys
+assets,assets,completeAssetUpload,current,asset.create,can(...),RootUserAdmin,complete a pending upload after storage verification
+assets,assets,readAssetMetadata,current,asset.read,can(...),RootUserAdmin,read safe ready asset metadata without storage credentials
+assets,assets,readAssetContent,current,asset.content.read,can(...),RootUserAdmin,stream ready private asset bytes through same-origin policy
+assets,assets,deleteAsset,current,asset.delete,can(...),RootUserAdmin,soft-delete assets while preserving durable metadata
+assets,assets,validateAssetForSubject,current,asset.link,feature seam,Consuming feature service,internal seam after consuming-feature entity authorization
+assets,assets,cleanupExpiredUploads,current,asset.cleanup,can(...),RootUserAdmin,run internal cleanup for expired pending uploads and abandoned objects

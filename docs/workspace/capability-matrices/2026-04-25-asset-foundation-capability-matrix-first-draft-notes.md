@@ -11,7 +11,9 @@ This is an early planning artifact for the `assets` foundation.
 
 At the time of writing:
 
-- the PRD exists as a planned foundation specification
+- the PRD exists as a foundation specification and now has an implementation
+  branch for v1 asset upload, completion, read, content streaming, delete, and
+  cleanup support
 - the ADR exists as a proposed architecture decision
 - the implementation blueprint exists as a v1 plan
 - no asset feature code, migrations, API routes, or storage adapter have been

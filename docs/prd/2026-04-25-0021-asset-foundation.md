@@ -3,19 +3,31 @@
 ## Implementation Status
 
 - Status:
-  planned platform foundation slice as of 2026-04-25
+  implementation branch active as of 2026-04-25
 - Implemented:
   - first-pass architecture direction
   - first-pass capability matrix
   - object-storage-backed asset foundation ADR
   - v1 implementation blueprint
-- Not yet implemented:
   - `assets` backend feature
   - object-storage adapter
   - upload-intent and completion routes
   - durable asset metadata persistence
-  - tenant-scoped asset authorization
-  - asset relationship seams for consuming features
+  - root-operated v1 route integration for upload intent, completion,
+    metadata read, same-origin content read, soft delete, and expired-upload
+    cleanup support
+  - repo-local SVG sanitizer readiness gate for the narrow tenant-logo image
+    baseline
+  - asset relationship validation seam for future consuming features
+- Partially implemented or pending follow-up:
+  - tenant actor support exists in the asset domain scope model, but a real
+    tenant-session route/evaluator remains future work because the current v1
+    route stack is root-operated
+  - production S3-compatible provider proof remains deferred until provider
+    selection
+  - live Postgres verification depends on the repository's Postgres test
+    harness being configured in the execution environment
+- Not yet implemented:
   - derived renditions, scanning, transcoding, or document extraction
   - background job platform integration
 

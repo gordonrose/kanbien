@@ -45,10 +45,12 @@
   Yes, for this logo use case only.
 - If SVG is allowed, what sanitizer/validator and disallowed SVG features
   apply?
-  Implementation must choose a maintained SVG sanitizer/validator before code
-  starts. Sanitization must reject scripts, event-handler attributes,
-  `foreignObject`, external references, remote fonts/imports, embedded HTML,
-  and unsafe URL schemes.
+  V1 uses the conservative repo-local sanitizer in
+  `src/features/assets/domain/svgSanitizer.ts`. Sanitization rejects scripts,
+  event-handler attributes, `foreignObject`, external references, remote
+  fonts/imports, embedded HTML, unsafe URL schemes, doctype/entity constructs,
+  and CSS import/font constructs. Expert security review remains required
+  before broad SVG rollout.
 - Inline browser rendering allowed?
   Logo display through an image resource is allowed after asset readiness.
   Direct DOM injection of uploaded SVG markup is prohibited.

@@ -134,6 +134,12 @@ are not a role.
 | `RootUserAdmin` | `capability-contract-catalog.export` | `current` | current root operator grant | no | yes | export deterministic capability catalog snapshots |
 | `RootUserAdmin` | `capability-contract-catalog.materialize` | `current` | current root operator grant | no | yes | materialize persisted capability catalog records from approved source truth |
 | `RootUserAdmin` | `capability-contract-catalog.audit-drift` | `current` | current root operator grant | no | yes | inspect drift between persisted capability catalog truth and current approved sources |
+| `RootUserAdmin` | `asset.create` | `current` | current root operator grant | yes | yes | create upload intents and complete verified uploads |
+| `RootUserAdmin` | `asset.read` | `current` | current root operator grant | no | yes | read ready asset metadata |
+| `RootUserAdmin` | `asset.content.read` | `current` | current root operator grant | no | yes | stream ready private asset content |
+| `RootUserAdmin` | `asset.delete` | `current` | current root operator grant | yes | yes | soft-delete assets |
+| `RootUserAdmin` | `asset.link` | `current` | current root operator or feature-service grant | no | yes | validate assets for consuming feature relationships after entity authorization |
+| `RootUserAdmin` | `asset.cleanup` | `current` | current root operator grant | yes | yes | run expired upload cleanup support seam |
 
 ## Deterministic Method For Future Roles
 

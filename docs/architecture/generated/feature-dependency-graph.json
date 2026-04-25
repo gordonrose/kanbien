@@ -1,10 +1,40 @@
 {
   "ruleVersion": 2,
   "ruleSummary": "Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.",
-  "featureCount": 15,
+  "featureCount": 16,
   "edgeCount": 13,
   "violationCount": 0,
   "features": [
+    {
+      "featureName": "assets",
+      "manifestPath": "src/features/assets/feature.manifest.json",
+      "fileCount": 12,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createAssetsFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "service",
+          "symbol": "AssetsService",
+          "kind": "domain-service",
+          "stability": "stable",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [],
+      "publicDependencies": [],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": [
+        "Changing asset lifecycle, upload-intent binding, or storage-key immutability semantics can make uploaded bytes usable without the approved verification path.",
+        "Changing same-origin private content-read behavior can leak storage authority or bypass asset-native authorization.",
+        "Changing validation seam semantics can let consuming features replace entity authorization with generic asset ownership."
+      ]
+    },
     {
       "featureName": "capabilityContractCatalog",
       "manifestPath": "src/features/capabilityContractCatalog/feature.manifest.json",

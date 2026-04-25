@@ -18,7 +18,8 @@ type MigrationGroup =
   | "jobProcessing"
   | "tenantAdmins"
   | "tenantAuth"
-  | "tenantConfiguration";
+  | "tenantConfiguration"
+  | "assets";
 
 interface TestMigrationFile {
   filename: string;
@@ -187,6 +188,10 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
   {
     group: "tenantConfiguration",
     relativePath: "tenantConfiguration/persistence/migrations/0012_add_session_ttl_to_tenant_auth_policy.sql",
+  },
+  {
+    group: "assets",
+    relativePath: "assets/persistence/migrations/0040_create_assets.sql",
   },
 ];
 

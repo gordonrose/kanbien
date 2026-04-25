@@ -133,10 +133,16 @@ If a section is not yet implemented, mark it explicitly as:
 ## 9. Object Storage, Files, And Exports
 
 - object or blob storage provider:
+- local asset storage root:
+  `ASSETS_LOCAL_STORAGE_ROOT` or default `.local-assets` under the app working
+  directory for the v1 local filesystem adapter
 - local file handling assumptions:
+  asset object keys are server-generated; raw filenames are metadata only;
+  local object bytes and sidecar metadata are not committed repo assets
 - export or artifact storage location:
 - current repo posture:
-  `Not Implemented`, `Planned`, or describe the chosen tool
+  asset foundation v1 uses local filesystem storage for local/dev/test and
+  keeps production S3-compatible provider selection as a follow-up
 
 ## 10. Secret And Config Delivery
 

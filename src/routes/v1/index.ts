@@ -19,6 +19,7 @@ import { createEntityBuilderFeature } from "../../features/entityBuilder";
 import { createWebAppSurfaceDiscoveryFeature } from "../../features/webAppSurfaceDiscovery";
 import { createDesignSystemCanonicalsFeature } from "../../features/designSystemCanonicals";
 import { createCapabilityContractCatalogFeature } from "../../features/capabilityContractCatalog";
+import { createAssetsFeature } from "../../features/assets";
 import { createPostgresRootAuthRepository } from "../../features/rootAuth/persistence/postgresRepository";
 import { createPostgresPlatformSecurityRepository } from "../../lib/security/postgresRepository";
 import { dbPool } from "../../lib/db";
@@ -48,6 +49,11 @@ const tenantAdminsFeature = createTenantAdminsFeature(
   rootRolesFeature.capabilityChecker,
   platformSecurityRepository,
   tenantAuthFeature.onboardingProvisioner,
+);
+const assetsFeature = createAssetsFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  platformSecurityRepository,
 );
 const publicReadRateLimit = createRateLimitMiddleware({
   enabled: env.platformSecurity.enabled,
@@ -217,4 +223,10 @@ v1Router.use(
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,
   ),
+);
+v1Router.use(
+  "/assets",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  assetsFeature.assetsRouter,
 );

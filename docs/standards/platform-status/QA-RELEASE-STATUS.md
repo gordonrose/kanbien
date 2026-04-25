@@ -102,6 +102,11 @@ Source gate: [`QA-RELEASE-GATE.md`](/home/gordon/kanbien/docs/standards/QA-RELEA
   Redis-backed BullMQ adapter coverage remains intentionally deferred until the
   concrete provider adapter is integrated, and Postgres-backed verification
   still needs a configured persistence-test run.
+- `Partial` Asset foundation v1 now has PRD-derived test cases with `ASSETS:
+  43/43` traceability plus unit, route integration, security, audit, contract,
+  sanitizer, and local-storage coverage. Environment-backed Postgres proof,
+  production-provider compatibility, and expert SVG review remain explicit
+  caveats rather than release-complete proof.
 
 ## Main Gaps To Close
 

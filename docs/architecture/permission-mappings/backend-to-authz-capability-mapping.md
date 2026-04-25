@@ -172,6 +172,13 @@ boundary implemented by the repo.
 | capability contract catalog | `capabilityContractCatalog` | `exportCapabilityCatalogSnapshot` | `current` | `capability-contract-catalog.export` | `can(...)` | `RootUserAdmin` | export deterministic catalog snapshots from persisted truth |
 | capability contract catalog | `capabilityContractCatalog` | `materializeCapabilityCatalog` | `current` | `capability-contract-catalog.materialize` | `can(...)` | `RootUserAdmin` | normalize approved source truth into persisted catalog records |
 | capability contract catalog | `capabilityContractCatalog` | `auditCapabilityCatalogDrift` | `current` | `capability-contract-catalog.audit-drift` | `scope(...) and can(...)` | `RootUserAdmin` | inspect drift between persisted catalog truth and current approved sources |
+| assets | `assets` | `createAssetUploadIntent` | `current` | `asset.create` | `can(...)` | `RootUserAdmin` | create constrained upload intents and allocate generated storage keys |
+| assets | `assets` | `completeAssetUpload` | `current` | `asset.create` | `can(...)` | `RootUserAdmin` | complete pending uploads after storage metadata and sanitizer verification |
+| assets | `assets` | `readAssetMetadata` | `current` | `asset.read` | `can(...)` | `RootUserAdmin` | read safe ready asset metadata without exposing storage credentials |
+| assets | `assets` | `readAssetContent` | `current` | `asset.content.read` | `can(...)` | `RootUserAdmin` | stream ready private asset bytes through same-origin policy |
+| assets | `assets` | `deleteAsset` | `current` | `asset.delete` | `can(...)` | `RootUserAdmin` | soft-delete assets while preserving durable metadata |
+| assets | `assets` | `validateAssetForSubject` | `current` | `asset.link` | `feature seam` | consuming feature service | validate asset invariants after consuming-feature entity authorization |
+| assets | `assets` | `cleanupExpiredUploads` | `current` | `asset.cleanup` | `can(...)` | `RootUserAdmin` | run expired upload cleanup support seam |
 
 ## Deterministic Method For Future Roles
 

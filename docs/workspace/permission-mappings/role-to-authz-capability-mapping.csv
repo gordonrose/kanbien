@@ -33,3 +33,9 @@ RootUserAdmin,root-role.assignment.unassign,target,approved PRD target root oper
 RootUserAdmin,root-role.assignment.list,target,approved PRD target root operator grant,no,yes,root-user assignment inspection
 RootUserAdmin,root-role.assignment.replace,target,approved PRD target root operator grant,yes,yes,atomic replacement workflow for evolving roles
 RootUserAdmin,root-role.effective-permissions.read,target,approved PRD target root operator grant,no,yes,effective-permission inspection with source attribution
+RootUserAdmin,asset.create,current,current root operator grant,yes,yes,create upload intents and complete verified uploads
+RootUserAdmin,asset.read,current,current root operator grant,no,yes,read ready asset metadata
+RootUserAdmin,asset.content.read,current,current root operator grant,no,yes,stream ready private asset content
+RootUserAdmin,asset.delete,current,current root operator grant,yes,yes,soft-delete assets
+RootUserAdmin,asset.link,current,current root operator or feature-service grant,no,yes,validate assets for consuming feature relationships after entity authorization
+RootUserAdmin,asset.cleanup,current,current root operator grant,yes,yes,run expired upload cleanup support seam

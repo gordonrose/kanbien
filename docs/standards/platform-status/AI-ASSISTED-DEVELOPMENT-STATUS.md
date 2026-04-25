@@ -16,6 +16,9 @@ Source gate: [`AI-ASSISTED-DEVELOPMENT-GATE.md`](/home/gordon/kanbien/docs/stand
   materially AI-assisted changes are independently verified once adopted.
   Provenance logging, prompt-handling evidence, and repeatable exact-model
   traceability are still immature.
+  Asset foundation v1 adds another high-risk AI-assisted review note with
+  explicit residual gaps for exact model metadata, expert SVG/security review,
+  and incomplete persistence/security coverage.
 
 ## 1. Human Accountability
 

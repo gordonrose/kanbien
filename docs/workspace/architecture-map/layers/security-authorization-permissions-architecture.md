@@ -18,9 +18,13 @@
   root-platform boundary
 - docs and standards now explicitly distinguish current root-platform authz
   from future tenant/entity-scoped authz
+- asset foundation v1 adds root-operated `asset.*` capability keys and keeps
+  entity-relationship authorization outside the generic asset ownership model
 
 ## Still Missing / Next Steps
 
 - extend the model from root-platform authz into tenant-scoped authorization
 - add entity-scope and inherited-scope rules
 - add broader role families beyond `RootUserAdmin`
+- attach tenant actor asset routes to a real tenant capability evaluator before
+  exposing tenant self-service uploads

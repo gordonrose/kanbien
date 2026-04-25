@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "featureName": "assets",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createAssetsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Platform integration entry point for asset metadata, upload-intent, completion, content-read, delete, and cleanup routes."
+    },
+    {
+      "seamId": "service",
+      "symbol": "AssetsService",
+      "path": "index.ts",
+      "kind": "domain-service",
+      "stability": "stable",
+      "description": "Public asset seam for future consuming features to validate, read, and link assets without importing storage or persistence internals."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing asset lifecycle, upload-intent binding, or storage-key immutability semantics can make uploaded bytes usable without the approved verification path.",
+    "Changing same-origin private content-read behavior can leak storage authority or bypass asset-native authorization.",
+    "Changing validation seam semantics can let consuming features replace entity authorization with generic asset ownership."
+  ]
+}
