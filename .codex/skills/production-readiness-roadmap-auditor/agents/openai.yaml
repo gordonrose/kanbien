@@ -1,0 +1,5 @@
+display_name: Production Readiness Roadmap Auditor
+short_description: Prioritized launch-readiness roadmap from repo evidence
+default_prompt: >-
+  Use $production-readiness-roadmap-auditor to inspect src, ADRs, PRDs, tests,
+  and maintained docs, then create a prioritized production-readiness todo list.
