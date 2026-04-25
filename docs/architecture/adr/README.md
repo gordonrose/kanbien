@@ -45,3 +45,4 @@ evolves.
 - `0031-add-feature-manifests-for-declared-seams-and-dependencies.md`
 - `0032-promote-selected-root-admin-suites-from-hash-aliases-to-path-backed-canonical-routes.md`
 - `0033-add-a-capability-contract-catalog-foundation-with-hybrid-materialization-and-drift-audit.md`
+- `0034-add-a-bullmq-backed-job-processing-foundation-with-transactional-outbox.md`
