@@ -1,0 +1,156 @@
+INSERT INTO design_system_canonical_families (
+  design_system_canonical_family_id,
+  family_key,
+  normalized_family_key,
+  display_label,
+  family_kind,
+  launcher_title,
+  launcher_description,
+  launcher_category,
+  generated_launcher_route_path,
+  generated_root_route_path,
+  legacy_launcher_route_path,
+  source_surface_route_path,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+VALUES (
+  '8a2090ad-71b2-4d18-a9d4-42eb9ea9c7df',
+  'upload-file',
+  'upload-file',
+  'Upload File',
+  'component',
+  'Upload File Canonical Renderings',
+  'Persistence-backed launcher for the approved upload-file canonical renderings.',
+  'forms',
+  '/design-system/canonical-renderings/upload-file',
+  '/design-system/canonical-renderings',
+  '/design-system/canonicals/upload-file',
+  '/design-system/components/upload-file',
+  'live',
+  55,
+  FALSE,
+  NOW(),
+  NOW()
+)
+ON CONFLICT (normalized_family_key)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  family_kind = EXCLUDED.family_kind,
+  launcher_title = EXCLUDED.launcher_title,
+  launcher_description = EXCLUDED.launcher_description,
+  launcher_category = EXCLUDED.launcher_category,
+  generated_launcher_route_path = EXCLUDED.generated_launcher_route_path,
+  generated_root_route_path = EXCLUDED.generated_root_route_path,
+  legacy_launcher_route_path = EXCLUDED.legacy_launcher_route_path,
+  source_surface_route_path = EXCLUDED.source_surface_route_path,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();
+
+WITH upload_file_family AS (
+  SELECT design_system_canonical_family_id
+  FROM design_system_canonical_families
+  WHERE normalized_family_key = 'upload-file'
+),
+reference_rows (
+  reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  theme,
+  direction,
+  zoom,
+  state_variant_key,
+  specimen_payload,
+  sort_order,
+  featured
+) AS (
+  VALUES
+    ('UFR-001', 'Idle dropzone baseline', 'Resting upload field with parent-owned label, helper copy, and empty status visible.', '/design-system/canonical-renderings/upload-file/UFR-001', '/design-system/components/upload-file?ref=UFR-001&width=560&state=idle&theme=normal&dir=ltr&zoom=0', 'Single-field upload lane', 560, 'normal', 'ltr', 0, 'idle', '{"state":"idle"}'::jsonb, 10, FALSE),
+    ('UFR-002', 'Upload in-progress status', 'The selected filename, progress affordance, and polite status copy stay local to the field.', '/design-system/canonical-renderings/upload-file/UFR-002', '/design-system/components/upload-file?ref=UFR-002&width=560&state=uploading&theme=normal&dir=ltr&zoom=0', 'Single-field upload lane', 560, 'normal', 'ltr', 0, 'uploading', '{"state":"uploading"}'::jsonb, 20, TRUE),
+    ('UFR-003', 'Upload complete status', 'The completion state keeps the same field structure while reflecting successful attachment readiness.', '/design-system/canonical-renderings/upload-file/UFR-003', '/design-system/components/upload-file?ref=UFR-003&width=560&state=complete&theme=normal&dir=ltr&zoom=0', 'Single-field upload lane', 560, 'normal', 'ltr', 0, 'complete', '{"state":"complete"}'::jsonb, 30, TRUE),
+    ('UFR-004', 'Upload error review', 'The failed-upload state remains attributable to the upload field without taking over the parent form error model.', '/design-system/canonical-renderings/upload-file/UFR-004', '/design-system/components/upload-file?ref=UFR-004&width=560&state=error&theme=normal&dir=ltr&zoom=0', 'Single-field upload lane', 560, 'normal', 'ltr', 0, 'error', '{"state":"error"}'::jsonb, 40, TRUE),
+    ('UFR-005', 'Disabled inherited state', 'Disabled posture is inherited from the parent form and prevents drag/drop or browse activation.', '/design-system/canonical-renderings/upload-file/UFR-005', '/design-system/components/upload-file?ref=UFR-005&width=560&state=disabled&theme=normal&dir=ltr&zoom=0', 'Single-field upload lane', 560, 'normal', 'ltr', 0, 'disabled', '{"state":"disabled"}'::jsonb, 50, TRUE),
+    ('UFR-006', 'RTL upload error review', 'RTL direction keeps the failed-upload state readable while preserving the same field anatomy.', '/design-system/canonical-renderings/upload-file/UFR-006', '/design-system/components/upload-file?ref=UFR-006&width=560&state=error&theme=normal&dir=rtl&zoom=0', 'RTL upload lane', 560, 'normal', 'rtl', 0, 'error-rtl', '{"state":"error"}'::jsonb, 60, TRUE),
+    ('UFR-007', 'Mobile upload progress review', 'The upload progress state remains readable and tappable in the narrow mobile lane.', '/design-system/canonical-renderings/upload-file/UFR-007', '/design-system/components/upload-file?ref=UFR-007&width=390&state=uploading&theme=normal&dir=ltr&zoom=0', 'Mobile upload lane', 390, 'normal', 'ltr', 0, 'uploading-mobile', '{"state":"uploading"}'::jsonb, 70, TRUE),
+    ('UFR-008', 'Dark theme upload error review', 'Dark theme keeps dropzone, status, progress, and error surfaces distinct in the failed state.', '/design-system/canonical-renderings/upload-file/UFR-008', '/design-system/components/upload-file?ref=UFR-008&width=560&state=error&theme=dark&dir=ltr&zoom=0', 'Theme-stress upload lane', 560, 'dark', 'ltr', 0, 'error-dark', '{"state":"error"}'::jsonb, 80, TRUE)
+)
+INSERT INTO design_system_canonical_references (
+  design_system_canonical_reference_id,
+  design_system_canonical_family_id,
+  reference_id,
+  normalized_reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  height,
+  theme,
+  direction,
+  zoom,
+  locale_fixture,
+  label_density_fixture,
+  state_variant_key,
+  specimen_payload,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+SELECT
+  gen_random_uuid(),
+  upload_file_family.design_system_canonical_family_id,
+  reference_rows.reference_id,
+  lower(reference_rows.reference_id),
+  reference_rows.display_label,
+  reference_rows.description,
+  reference_rows.render_route_path,
+  reference_rows.legacy_render_route_path,
+  reference_rows.viewport,
+  reference_rows.width,
+  NULL,
+  reference_rows.theme,
+  reference_rows.direction,
+  reference_rows.zoom,
+  NULL,
+  NULL,
+  reference_rows.state_variant_key,
+  reference_rows.specimen_payload,
+  'live',
+  reference_rows.sort_order,
+  reference_rows.featured,
+  NOW(),
+  NOW()
+FROM reference_rows
+CROSS JOIN upload_file_family
+ON CONFLICT (design_system_canonical_family_id, normalized_reference_id)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  description = EXCLUDED.description,
+  render_route_path = EXCLUDED.render_route_path,
+  legacy_render_route_path = EXCLUDED.legacy_render_route_path,
+  viewport = EXCLUDED.viewport,
+  width = EXCLUDED.width,
+  height = EXCLUDED.height,
+  theme = EXCLUDED.theme,
+  direction = EXCLUDED.direction,
+  zoom = EXCLUDED.zoom,
+  locale_fixture = EXCLUDED.locale_fixture,
+  label_density_fixture = EXCLUDED.label_density_fixture,
+  state_variant_key = EXCLUDED.state_variant_key,
+  specimen_payload = EXCLUDED.specimen_payload,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();

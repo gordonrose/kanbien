@@ -42,15 +42,25 @@
   seam now has its own lock, reference-pack, verification, and route-level
   browser proof, and `Choice Group` now has an approved exploratory child
   artifact chain with a dedicated child launcher/render surface while still
-  remaining parent-owned for governed adoption
+  remaining parent-owned for governed adoption; the parent template now also
+  hosts an upload field with drop/click entry, deterministic uploading status,
+  and local upload-error treatment; `UploadFile` now exposes a shared
+  `formControls.mjs` render/controller seam and component catalog page for
+  feature adoption, plus a standalone generated canonical family at
+  `/design-system/canonical-renderings/upload-file`
 
 ## Source Verification
 
 - Source files inspected:
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/app.mjs`
+  `src/frontend/designSystem/assets/formControls.mjs`
+  `src/frontend/designSystem/components/upload-file.html`
+  `src/frontend/designSystem/assets/uploadFileCanonical.mjs`
+  `src/features/designSystemCanonicals/persistence/migrations/0041_seed_upload_file_canonicals.sql`
   `src/frontend/designSystem/assets/styles.css`
   `src/features/designSystemCanonicals/persistence/migrations/0039_seed_design_system_canonicals_form_settings.sql`
+  `src/features/designSystemCanonicals/persistence/migrations/0040_seed_form_template_upload_canonicals.sql`
 - Implementation updated:
   yes
   the stale supporting sidebar was removed so repo source now matches the
@@ -152,13 +162,15 @@
   canonical-created and route-verified for normal, dark, and mobile
   combinations
 - Loading:
-  not yet defined for this family
+  route-verified for the upload field through the deterministic
+  `uploading` state and `FTR-020`
 - Empty:
   not yet defined for this family
 - Error:
   canonical-created and route-verified for normal, dark, and mobile
   combinations; parent route proof now also confirms inline group-error
-  visibility for radio, checkbox, and shared-statement grouped choices
+  visibility for radio, checkbox, shared-statement grouped choices, and the
+  upload error state through `FTR-021`
 - Denied / restricted:
   not applicable
 - Destructive:

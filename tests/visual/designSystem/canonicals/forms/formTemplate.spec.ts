@@ -69,6 +69,59 @@ async function expectInlineEndAligned(trigger: ReturnType<Page["locator"]>, over
 }
 
 test.describe("design-system form template", () => {
+  test("upload field exposes drag target, local file picker, status, and progress affordance", async ({ page }) => {
+    await page.goto("/design-system/templates/form");
+
+    const uploadField = page.locator("[data-form-upload-field]");
+    const uploadInput = page.locator("[data-form-upload-input]");
+    const dropzone = page.locator("[data-form-upload-dropzone]");
+
+    await expect(uploadField).toBeVisible();
+    await expect(dropzone).toBeVisible();
+    await expect(uploadField).toHaveAttribute("data-form-upload-state", "idle");
+    await expect(page.getByText("No file selected")).toBeVisible();
+
+    await uploadInput.setInputFiles({
+      name: "launch-audience.csv",
+      mimeType: "text/csv",
+      buffer: Buffer.from("tenant_id,email\n001,owner@example.test\n"),
+    });
+
+    await expect(uploadField).toHaveAttribute("data-form-upload-state", "uploading");
+    await expect(page.getByText("launch-audience.csv")).toBeVisible();
+    await expect(page.getByText("Uploading 64%")).toBeVisible();
+
+    const progressWidth = await uploadField.locator("[data-form-upload-progress-bar]").evaluate((node) => {
+      return window.getComputedStyle(node).width;
+    });
+
+    expect(progressWidth).not.toBe("0px");
+  });
+
+  test("upload error review keeps failed state local and attributable", async ({ page }) => {
+    await page.goto("/design-system/templates/form?errors=true&upload=error");
+
+    const uploadField = page.locator("[data-form-upload-field]");
+
+    await expect(page.locator(".form-page-shell")).toHaveAttribute("data-form-error-mode", "true");
+    await expect(uploadField).toHaveAttribute("data-form-upload-state", "error");
+    await expect(uploadField.locator("[data-form-upload-status-copy]")).toHaveText("Upload failed");
+    await expect(page.getByText("Upload failed. Check the file type and try again.")).toBeVisible();
+
+    const errorState = await uploadField.evaluate((field) => {
+      const dropzone = field.querySelector<HTMLElement>(".form-upload-dropzone");
+      const status = field.querySelector<HTMLElement>(".form-upload-status");
+      return {
+        dropzoneBorderColor: dropzone ? window.getComputedStyle(dropzone).borderColor : "",
+        statusColor: status ? window.getComputedStyle(status).color : "",
+      };
+    });
+
+    expect(errorState.dropzoneBorderColor).not.toBe("");
+    expect(errorState.statusColor).not.toBe("");
+    expect(errorState.dropzoneBorderColor).not.toBe(errorState.statusColor);
+  });
+
   test("grouped-choice variants stay distinct in the default parent baseline", async ({ page }) => {
     await page.goto("/design-system/templates/form");
 

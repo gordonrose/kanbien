@@ -252,6 +252,30 @@ let activeFormIconGrid = null;
 let activeFormDrawerSelect = null;
 let sharedListenersBound = false;
 
+const formUploadStateCopy = {
+  idle: {
+    title: "Drop a campaign asset here",
+    summary: "or choose a local file from this device",
+    status: "No file selected",
+    progress: 0,
+  },
+  uploading: {
+    summary: "Upload in progress",
+    status: "Uploading 64%",
+    progress: 64,
+  },
+  complete: {
+    summary: "Upload complete",
+    status: "Ready to attach",
+    progress: 100,
+  },
+  error: {
+    summary: "Upload needs attention",
+    status: "Upload failed",
+    progress: 0,
+  },
+};
+
 export function getDesignSystemIconRecord(iconKey) {
   return designSystemIconDefinitions.find((icon) => icon.key === iconKey) ?? designSystemIconDefinitions[0];
 }
@@ -505,12 +529,80 @@ export function renderFormDrawerSelectOptions(optionRecords = []) {
   }).join("");
 }
 
+export function renderFormUploadField({
+  rootId = "",
+  inputId = "",
+  inputName = "asset",
+  labelId = "",
+  helpId = "",
+  statusId = "",
+  errorId = "",
+  accept = "",
+  multiple = false,
+  disabled = false,
+  defaultFileName = "renewal-audience.csv",
+  state = "idle",
+  title = "Drop a campaign asset here",
+  summary = "or choose a local file from this device",
+  actionLabel = "Browse",
+  status = "No file selected",
+} = {}) {
+  const ariaDescribedBy = [helpId, statusId, errorId].filter(Boolean).join(" ");
+  const normalizedState = state in formUploadStateCopy ? state : "idle";
+
+  return `
+    <div
+      ${rootId ? `id="${escapeHtml(rootId)}"` : ""}
+      class="form-upload-field"
+      data-form-upload-field
+      data-form-upload-state="${escapeHtml(normalizedState)}"
+      data-form-upload-default-file="${escapeHtml(defaultFileName)}"
+    >
+      <input
+        ${inputId ? `id="${escapeHtml(inputId)}"` : ""}
+        class="form-upload-input"
+        type="file"
+        name="${escapeHtml(inputName)}"
+        ${accept ? `accept="${escapeHtml(accept)}"` : ""}
+        ${multiple ? "multiple" : ""}
+        ${disabled ? "disabled" : ""}
+        ${labelId ? `aria-labelledby="${escapeHtml(labelId)}"` : ""}
+        ${ariaDescribedBy ? `aria-describedby="${escapeHtml(ariaDescribedBy)}"` : ""}
+        data-form-upload-input
+      />
+      <label class="form-upload-dropzone" ${inputId ? `for="${escapeHtml(inputId)}"` : ""} data-form-upload-dropzone>
+        <span class="form-upload-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 4v10m0-10 4 4m-4-4-4 4M5 14v3.5A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5V14" />
+          </svg>
+        </span>
+        <span class="form-upload-copy">
+          <strong data-form-upload-title>${escapeHtml(title)}</strong>
+          <span data-form-upload-summary>${escapeHtml(summary)}</span>
+        </span>
+        <span class="form-upload-action">${escapeHtml(actionLabel)}</span>
+      </label>
+      <div class="form-upload-status" ${statusId ? `id="${escapeHtml(statusId)}"` : ""} aria-live="polite">
+        <span class="form-upload-status-dot" aria-hidden="true"></span>
+        <span data-form-upload-status-copy>${escapeHtml(status)}</span>
+      </div>
+      <div class="form-upload-progress" aria-hidden="true">
+        <span data-form-upload-progress-bar></span>
+      </div>
+    </div>
+  `;
+}
+
 function getFormIconGridRoots(scope = document) {
   return Array.from(scope.querySelectorAll("[data-form-icon-grid]")).filter((root) => root instanceof HTMLElement);
 }
 
 function getFormDrawerSelectRoots(scope = document) {
   return Array.from(scope.querySelectorAll("[data-form-drawer-select]")).filter((root) => root instanceof HTMLElement);
+}
+
+function getFormUploadRoots(scope = document) {
+  return Array.from(scope.querySelectorAll("[data-form-upload-field]")).filter((root) => root instanceof HTMLElement);
 }
 
 function getFocusableElements(panel, selector) {
@@ -736,6 +828,85 @@ export function refreshFormDrawerSelect(root) {
   }
 
   emptyNode.classList.toggle("hidden", visibleOptions > 0);
+}
+
+export function setFormUploadState(root, {
+  state = "idle",
+  fileName = "",
+  progress,
+  title,
+  summary,
+  status,
+} = {}) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const titleNode = root.querySelector("[data-form-upload-title]");
+  const summaryNode = root.querySelector("[data-form-upload-summary]");
+  const statusNode = root.querySelector("[data-form-upload-status-copy]");
+  const progressBar = root.querySelector("[data-form-upload-progress-bar]");
+  const normalizedState = state in formUploadStateCopy ? state : "idle";
+  const stateCopy = formUploadStateCopy[normalizedState];
+  const effectiveFileName = fileName || root.dataset.formUploadFileName || root.dataset.formUploadDefaultFile || "selected file";
+  const effectiveProgress = Number.isFinite(progress) ? Math.max(0, Math.min(100, progress)) : stateCopy.progress;
+
+  root.dataset.formUploadState = normalizedState;
+
+  if (normalizedState === "idle") {
+    delete root.dataset.formUploadFileName;
+    delete root.dataset.formUploadUserSelected;
+  } else {
+    root.dataset.formUploadFileName = effectiveFileName;
+  }
+
+  if (titleNode instanceof HTMLElement) {
+    titleNode.textContent = title ?? (normalizedState === "idle" ? stateCopy.title : effectiveFileName);
+  }
+
+  if (summaryNode instanceof HTMLElement) {
+    summaryNode.textContent = summary ?? stateCopy.summary;
+  }
+
+  if (statusNode instanceof HTMLElement) {
+    statusNode.textContent = status ?? stateCopy.status;
+  }
+
+  if (progressBar instanceof HTMLElement) {
+    progressBar.style.width = `${effectiveProgress}%`;
+  }
+}
+
+export function refreshFormUploadField(root) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  setFormUploadState(root, {
+    state: root.dataset.formUploadState ?? "idle",
+    fileName: root.dataset.formUploadFileName,
+  });
+}
+
+export function syncFormUploadFieldsForShell(shell) {
+  if (!(shell instanceof HTMLElement)) {
+    return;
+  }
+
+  const isErrorMode = shell.dataset.formErrorMode === "true";
+
+  for (const root of getFormUploadRoots(shell)) {
+    if (isErrorMode) {
+      setFormUploadState(root, { state: "error" });
+      continue;
+    }
+
+    if (root.dataset.formUploadState === "error") {
+      setFormUploadState(root, {
+        state: root.dataset.formUploadUserSelected === "true" ? "uploading" : "idle",
+      });
+    }
+  }
 }
 
 function bindSharedListenersOnce() {
@@ -1022,6 +1193,82 @@ export function initializeFormDrawerSelects({ scope = document } = {}) {
         hiddenInput.value = currentValues.join(",");
         refreshFormDrawerSelect(root);
       }
+    });
+  }
+}
+
+export function initializeFormUploadFields({
+  scope = document,
+  initialState = "idle",
+  initialFileName = "",
+  onFileSelected,
+} = {}) {
+  for (const root of getFormUploadRoots(scope)) {
+    if (root.dataset.formUploadInitialized === "true") {
+      refreshFormUploadField(root);
+      continue;
+    }
+
+    root.dataset.formUploadInitialized = "true";
+    const input = root.querySelector("[data-form-upload-input]");
+    const dropzone = root.querySelector("[data-form-upload-dropzone]");
+
+    if (!(input instanceof HTMLInputElement) || !(dropzone instanceof HTMLElement)) {
+      continue;
+    }
+
+    const applySelectedFile = (file) => {
+      const shell = root.closest(".form-page-shell");
+      if ((shell instanceof HTMLElement && shell.dataset.formDisabledMode === "true") || input.disabled) {
+        return;
+      }
+
+      root.dataset.formUploadUserSelected = "true";
+      const fileName = file?.name ?? root.dataset.formUploadDefaultFile;
+      setFormUploadState(root, { state: "uploading", fileName });
+
+      root.dispatchEvent(new CustomEvent("form-upload:file-selected", {
+        bubbles: true,
+        detail: { file, fileName, root },
+      }));
+
+      if (typeof onFileSelected === "function") {
+        onFileSelected({ file, fileName, root });
+      }
+    };
+
+    setFormUploadState(root, {
+      state: initialState,
+      fileName: initialFileName || root.dataset.formUploadDefaultFile,
+    });
+    if (initialState === "uploading" || initialState === "complete" || initialState === "error") {
+      root.dataset.formUploadUserSelected = "true";
+    }
+
+    input.addEventListener("change", () => {
+      applySelectedFile(input.files?.[0] ?? null);
+    });
+
+    for (const eventName of ["dragenter", "dragover"]) {
+      dropzone.addEventListener(eventName, (event) => {
+        event.preventDefault();
+        const shell = root.closest(".form-page-shell");
+        if ((shell instanceof HTMLElement && shell.dataset.formDisabledMode === "true") || input.disabled) {
+          return;
+        }
+        root.dataset.formUploadDragging = "true";
+      });
+    }
+
+    for (const eventName of ["dragleave", "drop"]) {
+      dropzone.addEventListener(eventName, () => {
+        delete root.dataset.formUploadDragging;
+      });
+    }
+
+    dropzone.addEventListener("drop", (event) => {
+      event.preventDefault();
+      applySelectedFile(event.dataTransfer?.files?.[0] ?? null);
     });
   }
 }

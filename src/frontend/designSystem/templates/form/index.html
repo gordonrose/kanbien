@@ -1208,6 +1208,47 @@
                       <span class="form-field-error">Choose an icon before publishing.</span>
                     </div>
 
+                    <div class="form-field form-field-span-2">
+                      <span class="form-field-label" id="form-upload-label">Upload file</span>
+                      <div
+                        class="form-upload-field"
+                        data-form-upload-field
+                        data-form-upload-state="idle"
+                        data-form-upload-default-file="renewal-audience.csv"
+                      >
+                        <input
+                          id="form-upload-input"
+                          class="form-upload-input"
+                          type="file"
+                          name="campaignAsset"
+                          aria-labelledby="form-upload-label"
+                          aria-describedby="form-upload-help form-upload-status form-upload-error"
+                          data-form-upload-input
+                        />
+                        <label class="form-upload-dropzone" for="form-upload-input" data-form-upload-dropzone>
+                          <span class="form-upload-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" focusable="false">
+                              <path d="M12 3.75v10.5m0-10.5-3.5 3.5M12 3.75l3.5 3.5M5.5 13.25v4.5A2.25 2.25 0 0 0 7.75 20h8.5a2.25 2.25 0 0 0 2.25-2.25v-4.5" />
+                            </svg>
+                          </span>
+                          <span class="form-upload-copy">
+                            <strong data-form-upload-title>Drop a campaign asset here</strong>
+                            <span data-form-upload-summary>or choose a local file from this device</span>
+                          </span>
+                          <span class="form-upload-action">Browse</span>
+                        </label>
+                        <div class="form-upload-status" id="form-upload-status" aria-live="polite">
+                          <span class="form-upload-status-dot" aria-hidden="true"></span>
+                          <span data-form-upload-status-copy>No file selected</span>
+                        </div>
+                        <div class="form-upload-progress" aria-hidden="true">
+                          <span data-form-upload-progress-bar></span>
+                        </div>
+                      </div>
+                      <span class="form-field-help" id="form-upload-help">CSV, PNG, or PDF assets can be attached before publishing.</span>
+                      <span class="form-field-error" id="form-upload-error">Upload failed. Check the file type and try again.</span>
+                    </div>
+
                     <fieldset class="form-choice-group form-choice-group-statement form-field-span-2">
                       <legend class="form-choice-legend">Checkboxes with shared statement</legend>
                       <div class="form-choice-statement">

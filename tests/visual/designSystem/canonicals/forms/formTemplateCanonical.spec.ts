@@ -133,6 +133,32 @@ const formTemplateCanonicalStates = [
     disabled: false,
     mobile: false,
   },
+  {
+    refId: "FTR-020",
+    label: "upload in-progress review",
+    route: "/design-system/canonical-renderings/form-template/FTR-020",
+    viewport: { width: 1600, height: 1400 },
+    expectedTheme: "normal",
+    expectedDir: "ltr",
+    expectedZoom: "",
+    errors: false,
+    disabled: false,
+    mobile: false,
+    uploadState: "uploading",
+  },
+  {
+    refId: "FTR-021",
+    label: "upload error review",
+    route: "/design-system/canonical-renderings/form-template/FTR-021",
+    viewport: { width: 1600, height: 1400 },
+    expectedTheme: "normal",
+    expectedDir: "ltr",
+    expectedZoom: "",
+    errors: true,
+    disabled: false,
+    mobile: false,
+    uploadState: "error",
+  },
 ] as const;
 
 async function gotoCanonicalState(page: Page, route: string, viewport: { width: number; height: number }) {
@@ -146,11 +172,13 @@ test.describe("design-system form template canonicals", () => {
     await page.goto("/design-system/canonical-renderings/form-template");
 
     const launcherButtons = page.locator(".canonical-launcher-button");
-    await expect(launcherButtons).toHaveCount(11);
+    await expect(launcherButtons).toHaveCount(13);
     await expect(page.getByText("Dark-theme error review")).toBeVisible();
     await expect(page.getByText("Dark-theme disabled review")).toBeVisible();
     await expect(page.getByText("RTL mobile review")).toBeVisible();
     await expect(page.getByText("RTL magnified review")).toBeVisible();
+    await expect(page.getByText("Upload in-progress review")).toBeVisible();
+    await expect(page.getByText("Upload error review")).toBeVisible();
   });
 
   for (const scenario of formTemplateCanonicalStates) {
@@ -168,6 +196,10 @@ test.describe("design-system form template canonicals", () => {
       await expect(page.locator("html")).toHaveAttribute("data-theme", scenario.expectedTheme);
 
       await expect(formPageLayout).toBeVisible();
+
+      if ("uploadState" in scenario) {
+        await expect(page.locator("[data-form-upload-field]")).toHaveAttribute("data-form-upload-state", scenario.uploadState);
+      }
 
       const magnificationState = await page.evaluate(() => ({
         documentScale: document.documentElement.style.getPropertyValue("--ui-scale"),

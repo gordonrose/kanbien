@@ -61,6 +61,9 @@ This pack turns them into named reference targets for the next loop.
   - single-date, single-time, date-range, and date-range-with-time picker
     variants
   - two drawer-select variants with search, selected, and available stacks
+  - one upload field with drag/drop entry, native local-file picker entry,
+    deterministic in-progress status, progress indication, and local upload
+    error state
   - review-state toggles for error, disabled, and mobile review posture inside
     the shared display-settings drawer
   - footer completion controls that mirror the header-level action posture
@@ -118,6 +121,8 @@ This pack turns them into named reference targets for the next loop.
 | `FTR-017` | `/design-system/templates/form?ref=FTR-017&theme=normal&dir=rtl&zoom=0` | RTL desktop review posture | Preserves mirrored page-level directionality beyond superficial text alignment | canonical-created | This now has a direct canonical URL under the form-template launcher |
 | `FTR-018` | `/design-system/templates/form?ref=FTR-018&theme=normal&dir=rtl&zoom=0&mobile=true` | RTL plus mobile review posture | Preserves mirrored mobile overlays, navigation glyphs, and action placement in the constrained layout | canonical-created | This now has explicit route-driven canonical proof instead of a placeholder follow-up |
 | `FTR-019` | `/design-system/templates/form?ref=FTR-019&theme=normal&dir=rtl&zoom=100` | RTL and magnified review posture | Preserves the expectation that this parent template will be reviewable under localization and magnification stress | covered-by-test | Route-level parent proof now covers drawer-select overlay geometry plus broader composition stress under magnified review |
+| `FTR-020` | `/design-system/templates/form?ref=FTR-020&theme=normal&dir=ltr&zoom=0&upload=uploading` | Upload in-progress review posture | Preserves the upload field's deterministic status and progress affordance without needing a backend upload pipeline | canonical-created | Added with the upload-field parent seam; direct route verification checks the `uploading` state |
+| `FTR-021` | `/design-system/templates/form?ref=FTR-021&theme=normal&dir=ltr&zoom=0&errors=true&upload=error` | Upload error review posture | Preserves local failed-upload feedback near the field while the broader error-review mode remains readable | canonical-created | Added with the upload-field parent seam; direct route verification checks the `error` state |
 
 ## Ownership Boundary
 
@@ -125,9 +130,16 @@ This pack turns them into named reference targets for the next loop.
   section cadence, grouped-field composition, and top/footer action zoning.
 - The same parent artifact chain is now the explicit rollback baseline if a
   later replacement or app adoption drifts from the approved composition.
-- Future child seams such as select, date-picker, time-picker, and
+- Child seams such as select, date-picker, time-picker, upload, and
   drawer-select own their internal trigger, overlay, option, search, selection,
-  focus, and empty/error-state contracts once extracted.
+  focus, status, and empty/error-state contracts as applicable once extracted.
+- `UploadFile` is now exposed for feature adoption through
+  `/design-system/assets/formControls.mjs`; it owns local drop/browse/status
+  behavior while feature code owns upload transport, persistence, malware
+  scanning, accepted file policy, and durable asset-domain decisions. Its
+  standalone canonical family now lives at
+  `/design-system/canonical-renderings/upload-file`; the parent `FTR-020` and
+  `FTR-021` states remain composition proof inside `Form Template`.
 - Child seam artifacts must inherit this parent framing rather than redefining
   the page shell or section rhythm as part of their own contract.
 

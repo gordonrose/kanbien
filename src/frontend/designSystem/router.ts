@@ -61,6 +61,10 @@ export const generatedCanonicalRenderRouteRegistry = {
     htmlPath: ["components", "top-nav.html"],
     surfaceSignature: 'id="top-nav-preview-frame"',
   },
+  "upload-file": {
+    htmlPath: ["components", "upload-file.html"],
+    surfaceSignature: 'id="upload-file-preview-shell"',
+  },
 } as const satisfies Record<string, GeneratedCanonicalRenderRouteDefinition>;
 
 function resolveFrontendRoot(): string {

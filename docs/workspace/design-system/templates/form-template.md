@@ -63,6 +63,11 @@
 - Drawer-select open:
   larger selectable sets open a dedicated side drawer with search,
   `Selected`, and `Available` stacks inside the same parent form flow
+- Upload review:
+  the parent may host a file-upload field with drag/drop and native local-file
+  picker entry paths, deterministic status copy, progress affordance, and a
+  local upload-error state; backend file storage and asset policy remain out
+  of scope for the parent template
 - Magnified or direction-adjusted review:
   display-settings controls can change magnification, accent, theme, and
   document direction so the parent template can be inspected under stress
@@ -94,6 +99,14 @@
    This seam now has an exploratory child artifact chain, but it remains
    deferred from child canonical extraction until grouped-choice behavior is
    proven beyond this one parent route or gains stronger child-owned proof.
+7. `Upload Field`
+   This seam is now extractable as the `UploadFile` child control through
+   `/design-system/assets/formControls.mjs` and has its own generated
+   canonical family at `/design-system/canonical-renderings/upload-file`.
+   The child control owns local drop/browse/status/error behavior;
+   upload-specific policy, accepted file
+   categories, backend status sources, and asset-domain ownership remain
+   feature-owned until separately approved.
 
 ## First Child Decision
 
@@ -178,7 +191,8 @@
 - Current composition note:
   the parent route currently proves grouped text fields, select-like controls,
   date and time pickers, drawer-based multi-select variants, choice groups,
-  toggle posture, icon-grid selection, and self-contained form guidance inside one reusable
+  toggle posture, icon-grid selection, upload-field status/error treatment,
+  and self-contained form guidance inside one reusable
   form-page canvas
 
 ## Fallback Posture

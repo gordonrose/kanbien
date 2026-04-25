@@ -2428,6 +2428,170 @@ html[data-theme="dark"] .form-drawer-select-option.active .form-drawer-select-op
   color: var(--accent-text);
 }
 
+.form-upload-field {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.form-upload-input {
+  position: absolute;
+  width: 0.0625rem;
+  height: 0.0625rem;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.form-upload-dropzone {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.85rem;
+  align-items: center;
+  min-height: 6.4rem;
+  padding: 1rem;
+  border: 0.075rem dashed color-mix(in srgb, var(--line-strong) 72%, var(--accent) 28%);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-2) 78%, white);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.form-upload-dropzone:hover,
+.form-upload-input:focus-visible + .form-upload-dropzone,
+.form-upload-field[data-form-upload-dragging="true"] .form-upload-dropzone {
+  border-color: rgba(99, 91, 255, 0.38);
+  background: color-mix(in srgb, var(--accent-soft, #eef0ff) 58%, var(--surface-1));
+  box-shadow: 0 0 0 0.125rem rgba(99, 91, 255, 0.1);
+}
+
+.form-upload-icon,
+.form-upload-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.form-upload-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0.0625rem solid rgba(99, 91, 255, 0.16);
+  border-radius: 0.95rem;
+  background: var(--surface-1);
+  color: var(--accent-text, var(--ink));
+  box-shadow: 0 0.35rem 0.9rem rgba(15, 23, 42, 0.06);
+}
+
+.form-upload-icon svg {
+  width: 1.35rem;
+  height: 1.35rem;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+html[data-theme="dark"] .form-upload-icon,
+[data-theme-scope="dark"] .form-upload-icon {
+  border-color: color-mix(in srgb, var(--line-strong) 58%, var(--ink) 12%);
+  background: color-mix(in srgb, var(--surface-1) 72%, var(--ink) 8%);
+  color: var(--ink);
+  box-shadow: 0 0.45rem 1.1rem rgba(0, 0, 0, 0.22);
+}
+
+.form-upload-copy {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.form-upload-copy strong {
+  overflow-wrap: anywhere;
+}
+
+.form-upload-copy span,
+.form-upload-status {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.form-upload-action {
+  min-height: 2rem;
+  padding: 0.35rem 0.7rem;
+  border: 0.0625rem solid rgba(99, 91, 255, 0.18);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-soft, #eef0ff) 68%, var(--surface-1));
+  color: var(--accent-text, var(--ink));
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.form-upload-status {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.form-upload-status-dot {
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 999px;
+  background: var(--line-strong);
+}
+
+.form-upload-progress {
+  height: 0.42rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-2) 86%, var(--line));
+}
+
+.form-upload-progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--accent) 72%, white);
+  transition: width 160ms ease;
+}
+
+.form-upload-field[data-form-upload-state="uploading"] .form-upload-status-dot {
+  background: var(--accent);
+}
+
+.form-upload-field[data-form-upload-state="uploading"] .form-upload-progress span {
+  width: 64%;
+}
+
+.form-upload-field[data-form-upload-state="error"] .form-upload-dropzone {
+  border-color: var(--error-border);
+  background: var(--error-surface);
+}
+
+.form-upload-field[data-form-upload-state="error"] .form-upload-status,
+.form-upload-field[data-form-upload-state="error"] .form-upload-copy strong {
+  color: var(--error-ink-strong);
+}
+
+.form-upload-field[data-form-upload-state="error"] .form-upload-status-dot {
+  background: var(--error-ink-strong);
+}
+
+@media (max-width: 40rem) {
+  .form-upload-dropzone {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .form-upload-action {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+
 .form-drawer-select-panel > .search-shell,
 .form-drawer-select-panel > .form-drawer-select-selected-panel,
 .form-drawer-select-panel > .form-drawer-select-catalog {
@@ -3180,6 +3344,7 @@ html[dir="rtl"] .form-page-shell[data-form-mobile-view="true"] .form-date-nav-bu
 .form-page-shell[data-form-error-mode="true"] .form-select-trigger,
 .form-page-shell[data-form-error-mode="true"] .form-icon-grid-trigger,
 .form-page-shell[data-form-error-mode="true"] .form-drawer-select-trigger,
+.form-page-shell[data-form-error-mode="true"] .form-upload-dropzone,
 .form-page-shell[data-form-error-mode="true"] .form-date-trigger,
 .form-page-shell[data-form-error-mode="true"] .form-time-trigger,
 .form-page-shell[data-form-error-mode="true"] .form-choice-group,
@@ -3205,6 +3370,7 @@ html[dir="rtl"] .form-page-shell[data-form-mobile-view="true"] .form-date-nav-bu
 .form-page-shell[data-form-disabled-mode="true"] .form-select-trigger,
 .form-page-shell[data-form-disabled-mode="true"] .form-icon-grid-trigger,
 .form-page-shell[data-form-disabled-mode="true"] .form-drawer-select-trigger,
+.form-page-shell[data-form-disabled-mode="true"] .form-upload-dropzone,
 .form-page-shell[data-form-disabled-mode="true"] .form-date-trigger,
 .form-page-shell[data-form-disabled-mode="true"] .form-time-trigger,
 .form-page-shell[data-form-disabled-mode="true"] .form-choice-group,
@@ -3224,6 +3390,7 @@ html[dir="rtl"] .form-page-shell[data-form-mobile-view="true"] .form-date-nav-bu
 .form-page-shell[data-form-disabled-mode="true"] .form-select-trigger,
 .form-page-shell[data-form-disabled-mode="true"] .form-icon-grid-trigger,
 .form-page-shell[data-form-disabled-mode="true"] .form-drawer-select-trigger,
+.form-page-shell[data-form-disabled-mode="true"] .form-upload-dropzone,
 .form-page-shell[data-form-disabled-mode="true"] .form-date-trigger,
 .form-page-shell[data-form-disabled-mode="true"] .form-time-trigger {
   background:
@@ -3253,6 +3420,8 @@ html[dir="rtl"] .form-page-shell[data-form-mobile-view="true"] .form-date-nav-bu
 .form-page-shell[data-form-disabled-mode="true"] .form-select-trigger-icon,
 .form-page-shell[data-form-disabled-mode="true"] .form-icon-grid-trigger-icon,
 .form-page-shell[data-form-disabled-mode="true"] .form-icon-grid-trigger-glyph,
+.form-page-shell[data-form-disabled-mode="true"] .form-upload-icon,
+.form-page-shell[data-form-disabled-mode="true"] .form-upload-action,
 .form-page-shell[data-form-disabled-mode="true"] .form-date-trigger-icon,
 .form-page-shell[data-form-disabled-mode="true"] .form-time-trigger-icon,
 .form-page-shell[data-form-disabled-mode="true"] .form-drawer-select-meta,

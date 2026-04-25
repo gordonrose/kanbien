@@ -1,5 +1,9 @@
 import { createPageShellBannerController } from "./pageShellBanner.mjs";
 import { partitionContextNavItems, renderContextNavMenuItems } from "./contextNav.mjs";
+import {
+  initializeFormUploadFields as initializeSharedFormUploadFields,
+  syncFormUploadFieldsForShell,
+} from "./formControls.mjs";
 
 function setTextContent(node, text) {
   if (node instanceof HTMLElement) {
@@ -2095,6 +2099,8 @@ const formTemplateCanonicalReferenceStates = [
   { ref: "FTR-017", label: "RTL desktop review", theme: "normal", direction: "rtl", magnification: 0, errors: false, disabled: false, mobile: false },
   { ref: "FTR-018", label: "RTL mobile review", theme: "normal", direction: "rtl", magnification: 0, errors: false, disabled: false, mobile: true },
   { ref: "FTR-019", label: "RTL magnified review", theme: "normal", direction: "rtl", magnification: 100, errors: false, disabled: false, mobile: false },
+  { ref: "FTR-020", label: "Upload in-progress review", theme: "normal", direction: "ltr", magnification: 0, errors: false, disabled: false, mobile: false, upload: "uploading" },
+  { ref: "FTR-021", label: "Upload error review", theme: "normal", direction: "ltr", magnification: 0, errors: true, disabled: false, mobile: false, upload: "error" },
 ];
 const validSubNavLocales = new Set(["standard", "long-latin", "long-latin-truncation", "rtl", "rtl-long", "rtl-long-truncation", "cjk", "symbols"]);
 const subNavPreviewLocales = {
@@ -6010,6 +6016,30 @@ function initializeFormTimePickers() {
   });
 }
 
+function getFormUploadInitialState() {
+  const params = new URLSearchParams(window.location.search);
+  const generatedReference = getFormTemplateCanonicalReferenceByRef(
+    getGeneratedCanonicalPathReferenceId("form-template"),
+  );
+  if (generatedReference?.upload === "uploading" || generatedReference?.upload === "error") {
+    return generatedReference.upload;
+  }
+
+  const requestedState = params.get("upload");
+
+  if (requestedState === "uploading" || requestedState === "error") {
+    return requestedState;
+  }
+
+  return "idle";
+}
+
+function initializeFormUploadFields() {
+  initializeSharedFormUploadFields({
+    initialState: getFormUploadInitialState(),
+  });
+}
+
 function initializeFormErrorModeToggles() {
   if (formErrorToggleButtons.length === 0 && formDrawerSettingButtons.length === 0) {
     return;
@@ -6051,6 +6081,7 @@ function initializeFormErrorModeToggles() {
 
     if (key === "errors") {
       shell.dataset.formErrorMode = String(enabled);
+      syncFormUploadFieldsForShell(shell);
     }
 
     if (key === "disabled") {
@@ -6740,6 +6771,7 @@ initializeFormDrawerSelects();
 initializeFormTimePickers();
 initializeFormSelects();
 initializeFormIconGrids();
+initializeFormUploadFields();
 initializeFormDatePickers();
 initializeFormErrorModeToggles();
 
