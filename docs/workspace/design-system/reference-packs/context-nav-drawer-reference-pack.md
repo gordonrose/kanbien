@@ -66,7 +66,8 @@ This pack turns them into concrete review targets.
 - dedicated context-nav drawer canonicals now exist and now represent the
   signed-off shell-family set for this chassis
 - the page-shell template now uses the same chassis for an async activity
-  drawer that can list multiple background jobs without blocking navigation
+  drawer that can list multiple background jobs, error/retry states, completed
+  result counts, and CSV result download actions without blocking navigation
 
 ## Reference Contract
 
@@ -80,9 +81,10 @@ This pack turns them into concrete review targets.
   shell chrome
 - The drawer must close on outside click and `Escape`, returning focus to the
   launching control
-- Async activity payloads may show multiple in-progress jobs with live summary
-  copy and progress indicators, but must keep the same shell attachment and
-  close behavior as the host drawer family
+- Async activity payloads may show multiple in-progress jobs, waiting jobs,
+  retryable error states, completed successful/failed record counts, and CSV
+  download actions, but must keep the same shell attachment and close behavior
+  as the host drawer family
 - The launcher, close control, and in-drawer controls must remain fully
   keyboard-operable with visible focus indicators
 - The drawer must preserve WCAG 2.2 AA-readable contrast and non-text contrast

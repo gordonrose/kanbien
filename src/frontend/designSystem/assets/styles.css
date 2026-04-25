@@ -5141,6 +5141,10 @@ html[dir="rtl"] .canonical-render-template-panel-list,
   backdrop-filter: blur(1.125rem);
 }
 
+.top-nav.top-nav-no-utilities {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
 .design-system-shell > .top-nav {
   position: sticky;
   top: 0;
@@ -6209,25 +6213,24 @@ html[data-theme="dark"] .search-input,
   margin-bottom: 1rem;
 }
 
-.async-activity-summary,
-.async-job-copy,
 .async-job-kicker {
   margin: 0;
   color: var(--ink-soft);
 }
 
-.async-activity-summary {
-  margin-bottom: 1rem;
-  line-height: 1.5;
-}
-
 .async-job-card {
+  position: relative;
   display: grid;
   gap: 0.75rem;
   padding: 0.9rem;
   border: 0.0625rem solid var(--line);
   border-radius: var(--radius-sm);
   background: color-mix(in srgb, var(--surface-2) 62%, var(--surface-1));
+}
+
+.async-job-card-error {
+  border-color: color-mix(in srgb, #b42318 26%, var(--line));
+  background: color-mix(in srgb, #b42318 4%, var(--surface-1));
 }
 
 .async-job-card-header {
@@ -6251,25 +6254,46 @@ html[data-theme="dark"] .search-input,
   text-transform: uppercase;
 }
 
-.async-job-copy {
-  line-height: 1.45;
-}
-
 .async-job-status {
   flex: 0 0 auto;
-  padding: 0.28rem 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
   border: 0.0625rem solid color-mix(in srgb, var(--accent) 28%, var(--line));
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--accent-soft);
   color: var(--accent-text);
-  font-size: 0.72rem;
-  font-weight: 700;
+}
+
+.async-job-status svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
 }
 
 .async-job-status-waiting {
   border-color: var(--line);
   background: var(--surface-1);
   color: var(--ink-soft);
+}
+
+.async-job-status-complete {
+  border-color: color-mix(in srgb, #0f766e 32%, var(--line));
+  background: color-mix(in srgb, #0f766e 12%, var(--surface-1));
+  color: #0f766e;
+}
+
+.async-job-status-error {
+  border-color: color-mix(in srgb, #b42318 32%, var(--line));
+  background: color-mix(in srgb, #b42318 9%, var(--surface-1));
+  color: #b42318;
 }
 
 .async-job-progress {
@@ -6284,6 +6308,131 @@ html[data-theme="dark"] .search-input,
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 62%, #0f766e));
+}
+
+.async-job-progress-error span {
+  background: linear-gradient(90deg, #b42318, color-mix(in srgb, #b42318 58%, #f59e0b));
+}
+
+.async-job-result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  align-items: stretch;
+}
+
+.async-job-card-complete .async-job-result-grid {
+  padding-inline-end: 2.75rem;
+}
+
+.async-job-result {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  min-width: 0;
+  min-height: 2.25rem;
+  box-sizing: border-box;
+  padding: 0.35rem 0.5rem;
+  border: 0.0625rem solid color-mix(in srgb, #0f766e 26%, var(--line));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, #0f766e 4%, var(--surface-1));
+}
+
+.async-job-result-failed {
+  border-color: color-mix(in srgb, #b42318 18%, var(--line));
+  background: color-mix(in srgb, #b42318 3%, var(--surface-1));
+}
+
+.async-job-result-value {
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 750;
+  line-height: 1;
+}
+
+.async-job-result-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
+  color: #0f766e;
+}
+
+.async-job-result-icon-failed {
+  color: #b42318;
+}
+
+.async-job-error-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.45rem;
+  min-width: 0;
+  min-height: 2.25rem;
+  margin-inline-end: 2.85rem;
+  padding: 0.35rem 0.5rem;
+  border: 0.0625rem solid color-mix(in srgb, #b42318 18%, var(--line));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, #b42318 3%, var(--surface-1));
+}
+
+.async-job-error-detail {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.async-job-result-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.async-job-download,
+.async-job-retry {
+  position: absolute;
+  right: 0.85rem;
+  bottom: 0.85rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  color: var(--ink);
+}
+
+.async-job-download:hover,
+.async-job-download:focus-visible,
+.async-job-retry:hover,
+.async-job-retry:focus-visible {
+  border-color: var(--line-strong);
+  color: var(--accent-text);
+  background: var(--accent-soft);
+}
+
+.async-job-download svg,
+.async-job-retry svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
 }
 
 .filter-menu-item,

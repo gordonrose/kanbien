@@ -1020,6 +1020,17 @@ function normalizeShellProfileLabels(root = document) {
   }
 }
 
+function normalizeTopNavUtilityPresence(root = document) {
+  for (const topNav of root.querySelectorAll(".design-system-shell > .top-nav")) {
+    if (!(topNav instanceof HTMLElement)) {
+      continue;
+    }
+
+    const hasUtilities = topNav.querySelector(":scope > .nav-utilities") instanceof HTMLElement;
+    topNav.classList.toggle("top-nav-no-utilities", !hasUtilities);
+  }
+}
+
 function resolvePrimaryNavHomeHref(pathname) {
   const chain = resolveBreadcrumbChain(pathname);
   return chain[0]?.href ?? "/design-system";
@@ -1093,6 +1104,117 @@ function ensureElementId(element, id) {
   }
 }
 
+function normalizePrimaryNavOverflowStructure(primaryNav) {
+  if (!(primaryNav instanceof HTMLElement)) {
+    return;
+  }
+
+  if (primaryNav.closest("#top-nav-preview-frame, .context-nav-preview-shell")) {
+    return;
+  }
+
+  let overflow = primaryNav.querySelector(":scope > .primary-nav-overflow");
+  if (!(overflow instanceof HTMLElement)) {
+    primaryNav.insertAdjacentHTML(
+      "beforeend",
+      `
+        <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+          <button
+            id="primary-nav-overflow-button"
+            class="nav-link primary-nav-overflow-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="primary-nav-overflow-menu"
+          >
+            More
+          </button>
+          <div
+            id="primary-nav-overflow-menu"
+            class="primary-nav-overflow-menu hidden"
+            role="menu"
+            aria-labelledby="primary-nav-overflow-button"
+          ></div>
+        </div>
+      `,
+    );
+    overflow = primaryNav.querySelector(":scope > .primary-nav-overflow");
+  }
+
+  if (!(overflow instanceof HTMLElement)) {
+    return;
+  }
+
+  ensureElementId(overflow, "primary-nav-overflow");
+
+  let button = overflow.querySelector(":scope > .primary-nav-overflow-button");
+  if (!(button instanceof HTMLElement)) {
+    button = overflow.querySelector(".primary-nav-overflow-button");
+  }
+
+  if (!(button instanceof HTMLElement)) {
+    overflow.insertAdjacentHTML(
+      "afterbegin",
+      `
+        <button
+          id="primary-nav-overflow-button"
+          class="nav-link primary-nav-overflow-button"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav-overflow-menu"
+        >
+          More
+        </button>
+      `,
+    );
+    button = overflow.querySelector(":scope > .primary-nav-overflow-button");
+  }
+
+  let menu = overflow.querySelector(":scope > .primary-nav-overflow-menu");
+  if (!(menu instanceof HTMLElement)) {
+    menu = overflow.querySelector(".primary-nav-overflow-menu");
+  }
+
+  if (!(menu instanceof HTMLElement)) {
+    overflow.insertAdjacentHTML(
+      "beforeend",
+      `
+        <div
+          id="primary-nav-overflow-menu"
+          class="primary-nav-overflow-menu hidden"
+          role="menu"
+          aria-labelledby="primary-nav-overflow-button"
+        ></div>
+      `,
+    );
+    menu = overflow.querySelector(":scope > .primary-nav-overflow-menu");
+  }
+
+  if (!(menu instanceof HTMLElement)) {
+    return;
+  }
+
+  ensureElementId(button, "primary-nav-overflow-button");
+  ensureElementId(menu, "primary-nav-overflow-menu");
+
+  if (button?.parentElement !== overflow) {
+    overflow.prepend(button);
+  }
+
+  if (menu.parentElement !== overflow) {
+    overflow.append(menu);
+  }
+
+  const orphanMenuItems = Array.from(overflow.children).filter((child) => (
+    child !== button
+    && child !== menu
+    && child.matches(".menu-item, [role='menuitem'], [aria-current='page']")
+  ));
+
+  for (const orphan of orphanMenuItems) {
+    menu.append(orphan);
+  }
+}
+
 function ensureDesignSystemShellScaffold(root = document) {
   const shell = root.querySelector(".design-system-shell");
   if (!(shell instanceof HTMLElement)) {
@@ -1115,47 +1237,12 @@ function ensureDesignSystemShellScaffold(root = document) {
 
   const primaryNav = topNav.querySelector(":scope > .primary-nav");
   if (primaryNav instanceof HTMLElement) {
+    normalizePrimaryNavOverflowStructure(primaryNav);
+
     const primaryNavLinks = primaryNav.querySelector(":scope > .primary-nav-links");
     ensureElementId(primaryNavLinks, "primary-nav-links");
 
-    let primaryNavOverflow = primaryNav.querySelector(":scope > .primary-nav-overflow");
-    if (!(primaryNavOverflow instanceof HTMLElement)) {
-      primaryNav.insertAdjacentHTML(
-        "beforeend",
-        `
-          <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
-            <button
-              id="primary-nav-overflow-button"
-              class="nav-link primary-nav-overflow-button"
-              type="button"
-              aria-expanded="false"
-              aria-controls="primary-nav-overflow-menu"
-            >
-              More
-            </button>
-            <div
-              id="primary-nav-overflow-menu"
-              class="primary-nav-overflow-menu hidden"
-              role="menu"
-              aria-labelledby="primary-nav-overflow-button"
-            ></div>
-          </div>
-        `,
-      );
-      primaryNavOverflow = primaryNav.querySelector(":scope > .primary-nav-overflow");
-    }
-
-    if (primaryNavOverflow instanceof HTMLElement) {
-      ensureElementId(primaryNavOverflow, "primary-nav-overflow");
-      ensureElementId(
-        primaryNavOverflow.querySelector(".primary-nav-overflow-button"),
-        "primary-nav-overflow-button",
-      );
-      ensureElementId(
-        primaryNavOverflow.querySelector(".primary-nav-overflow-menu"),
-        "primary-nav-overflow-menu",
-      );
-    }
+    normalizePrimaryNavOverflowStructure(primaryNav);
   }
 
   const mobileNavButton = topNav.querySelector(":scope > .mobile-nav-button");
@@ -1278,6 +1365,10 @@ function ensureDesignSystemShellScaffold(root = document) {
 
 function normalizePrimaryNav(root = document) {
   const fallbackHref = resolvePrimaryNavHomeHref(window.location.pathname);
+
+  for (const primaryNav of root.querySelectorAll(".primary-nav")) {
+    normalizePrimaryNavOverflowStructure(primaryNav);
+  }
 
   for (const primaryNavLinksContainer of root.querySelectorAll(".primary-nav-links")) {
     if (!(primaryNavLinksContainer instanceof HTMLElement)) {
@@ -1520,6 +1611,7 @@ function normalizeDesignSystemShellBeforeBinding() {
   ensureDesignSystemShellScaffold();
   normalizeTemplatesRouteLabels();
   normalizeShellProfileLabels();
+  normalizeTopNavUtilityPresence();
   normalizePrimaryNav();
 
   const breadcrumbNav = document.querySelector(".breadcrumb-nav");
@@ -1619,6 +1711,9 @@ const brochureEditDrawerTitle = document.querySelector("[data-brochure-edit-draw
 const brochureEditDrawerCopy = document.querySelector("[data-brochure-edit-drawer-copy]");
 const pageShellBannerDemoRoot = document.querySelector("[data-page-shell-banner-demo]");
 const pageShellBannerVisibilityButtons = Array.from(document.querySelectorAll("[data-page-shell-banner-visibility]"));
+const pageShellTopNavVisibilityButtons = Array.from(document.querySelectorAll("[data-page-shell-top-nav-visibility]"));
+const pageShellProfileVisibilityButtons = Array.from(document.querySelectorAll("[data-page-shell-profile-visibility]"));
+const pageShellProfileMenuStateButtons = Array.from(document.querySelectorAll("[data-page-shell-profile-menu-state]"));
 const topNav = document.querySelector("#top-nav-preview-frame .top-nav") ?? document.querySelector(".top-nav");
 const subNav = document.querySelector(".sub-nav");
 const designSystemShell = document.querySelector(".design-system-shell");
@@ -1819,6 +1914,9 @@ let asyncActivityDrawerReturnFocusTarget = null;
 let activeTopNavPreviewFixture = "standard";
 let activeTopNavPreviewOpenState = "closed";
 let pageShellBannerDemoVisible = false;
+let pageShellTopNavMenuVisible = true;
+let pageShellProfileVisible = false;
+let pageShellProfileMenuOpen = false;
 const topNavSurfaceMode = document.body.dataset.topNavSurface ?? "exploration";
 const contextNavSurfaceMode = document.body.dataset.contextNavSurface ?? "inactive";
 const subNavSurfaceMode = document.body.dataset.subNavSurface ?? "exploration";
@@ -2790,6 +2888,14 @@ function syncPageShellBannerDemo() {
   }
 }
 
+function syncPageShellVisibilityButtons(buttons, activeValue, datasetKey) {
+  for (const button of buttons) {
+    const isActive = button.dataset[datasetKey] === activeValue;
+    button.classList.toggle("active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  }
+}
+
 function setPageShellBannerDemoVisible(visible) {
   pageShellBannerDemoVisible = visible;
   if (pageShellBannerDemoController) {
@@ -2800,6 +2906,144 @@ function setPageShellBannerDemoVisible(visible) {
     }
   }
   syncPageShellBannerDemo();
+}
+
+function setPageShellTopNavMenuVisible(visible) {
+  pageShellTopNavMenuVisible = visible;
+  const shellPrimaryNav = shellTopNav?.querySelector(":scope > .primary-nav");
+  shellPrimaryNav?.classList.toggle("hidden", !visible);
+
+  if (!visible) {
+    setPrimaryNavOverflowOpen(false);
+    setMobileNavOpen(false);
+  }
+
+  syncPageShellVisibilityButtons(
+    pageShellTopNavVisibilityButtons,
+    visible ? "show" : "hide",
+    "pageShellTopNavVisibility",
+  );
+  scheduleContextNavOffsetUpdate();
+  window.requestAnimationFrame(() => {
+    updatePrimaryNavOverflow();
+    updateBreadcrumbOverflow();
+  });
+}
+
+function ensurePageShellDemoProfile() {
+  if (!(shellTopNav instanceof HTMLElement)) {
+    return null;
+  }
+
+  let navUtilities = shellTopNav.querySelector(":scope > .nav-utilities");
+  if (!(navUtilities instanceof HTMLElement)) {
+    shellTopNav.insertAdjacentHTML("beforeend", '<div class="nav-utilities" data-page-shell-demo-profile></div>');
+    navUtilities = shellTopNav.querySelector(":scope > .nav-utilities");
+  }
+
+  if (!(navUtilities instanceof HTMLElement)) {
+    return null;
+  }
+
+  if (!navUtilities.querySelector(".profile-button")) {
+    navUtilities.insertAdjacentHTML(
+      "afterbegin",
+      `
+      <button
+        id="profile-menu-button"
+        class="profile-button"
+        type="button"
+        aria-expanded="false"
+        aria-controls="profile-menu"
+        data-page-shell-demo-profile-button
+      >
+        <span class="profile-avatar" aria-hidden="true">PR</span>
+        <span class="profile-meta"><strong>Profile</strong></span>
+      </button>
+    `,
+    );
+  }
+
+  if (!navUtilities.querySelector(".profile-menu")) {
+    navUtilities.insertAdjacentHTML(
+      "beforeend",
+      `
+      <div
+        id="profile-menu"
+        class="profile-menu hidden"
+        role="menu"
+        aria-labelledby="profile-menu-button"
+        data-page-shell-demo-profile-menu
+      >
+        <button id="profile-language-button" class="menu-item menu-item-button" type="button" role="menuitem">
+          Language settings
+        </button>
+        <a class="menu-item" href="#profile-settings-preview" role="menuitem">Profile settings</a>
+        <button id="close-profile-menu" class="menu-item menu-item-button" type="button" role="menuitem">
+          Logout
+        </button>
+      </div>
+    `,
+    );
+  }
+
+  const demoProfileButton = navUtilities.querySelector("[data-page-shell-demo-profile-button]");
+  if (demoProfileButton instanceof HTMLButtonElement && demoProfileButton.dataset.pageShellDemoProfileBound !== "true") {
+    demoProfileButton.dataset.pageShellDemoProfileBound = "true";
+    demoProfileButton.addEventListener("click", () => {
+      setPageShellProfileMenuOpen(!pageShellProfileMenuOpen);
+    });
+  }
+
+  return navUtilities;
+}
+
+function setPageShellProfileMenuOpen(open) {
+  pageShellProfileMenuOpen = open;
+  if (open && !pageShellProfileVisible) {
+    setPageShellProfileVisible(true);
+  }
+
+  const demoProfileButton = shellTopNav?.querySelector("[data-page-shell-demo-profile-button]");
+  const demoProfileMenu = shellTopNav?.querySelector("[data-page-shell-demo-profile-menu]");
+  demoProfileButton?.setAttribute("aria-expanded", String(open));
+  demoProfileMenu?.classList.toggle("hidden", !open);
+
+  syncPageShellVisibilityButtons(
+    pageShellProfileMenuStateButtons,
+    open ? "open" : "collapsed",
+    "pageShellProfileMenuState",
+  );
+}
+
+function setPageShellProfileVisible(visible) {
+  pageShellProfileVisible = visible;
+
+  if (visible) {
+    ensurePageShellDemoProfile();
+    setPageShellProfileMenuOpen(pageShellProfileMenuOpen);
+  } else if (shellTopNav instanceof HTMLElement) {
+    pageShellProfileMenuOpen = false;
+    shellTopNav.querySelector("[data-page-shell-demo-profile-button]")?.remove();
+    shellTopNav.querySelector("[data-page-shell-demo-profile-menu]")?.remove();
+    const demoUtilities = shellTopNav.querySelector("[data-page-shell-demo-profile]");
+    if (demoUtilities instanceof HTMLElement && demoUtilities.children.length === 0) {
+      demoUtilities.remove();
+    }
+  }
+
+  normalizeTopNavUtilityPresence();
+  syncPageShellVisibilityButtons(
+    pageShellProfileVisibilityButtons,
+    visible ? "show" : "hide",
+    "pageShellProfileVisibility",
+  );
+  syncPageShellVisibilityButtons(
+    pageShellProfileMenuStateButtons,
+    pageShellProfileMenuOpen ? "open" : "collapsed",
+    "pageShellProfileMenuState",
+  );
+  window.requestAnimationFrame(() => updatePrimaryNavOverflow());
 }
 
 function getActiveContextNavCanonicalReference(matches) {
@@ -3721,11 +3965,12 @@ function primaryNavFits() {
 }
 
 function primaryNavOverlapsUtilities() {
-  if (!previewNavUtilities) {
+  const currentNavUtilities = previewFrame?.querySelector(".nav-utilities") ?? document.querySelector(".nav-utilities");
+  if (!currentNavUtilities) {
     return false;
   }
 
-  const navUtilitiesRect = previewNavUtilities.getBoundingClientRect();
+  const navUtilitiesRect = currentNavUtilities.getBoundingClientRect();
   const visibleLinks = getVisiblePrimaryNavLinks();
 
   for (const link of visibleLinks) {
@@ -7321,11 +7566,44 @@ for (const button of pageShellBannerVisibilityButtons) {
   });
 }
 
+for (const button of pageShellTopNavVisibilityButtons) {
+  button.addEventListener("click", () => {
+    setPageShellTopNavMenuVisible((button.dataset.pageShellTopNavVisibility ?? "show") === "show");
+  });
+}
+
+for (const button of pageShellProfileVisibilityButtons) {
+  button.addEventListener("click", () => {
+    setPageShellProfileVisible((button.dataset.pageShellProfileVisibility ?? "hide") === "show");
+  });
+}
+
+for (const button of pageShellProfileMenuStateButtons) {
+  button.addEventListener("click", () => {
+    setPageShellProfileMenuOpen((button.dataset.pageShellProfileMenuState ?? "collapsed") === "open");
+  });
+}
+
 const initialTopNavPreviewState = getTopNavPreviewStateFromUrl();
 const initialSubNavPreviewState = getSubNavPreviewStateFromUrl();
 const initialContextNavPreviewState = getContextNavPreviewStateFromUrl();
 
 syncPageShellBannerDemo();
+syncPageShellVisibilityButtons(
+  pageShellTopNavVisibilityButtons,
+  pageShellTopNavMenuVisible ? "show" : "hide",
+  "pageShellTopNavVisibility",
+);
+syncPageShellVisibilityButtons(
+  pageShellProfileVisibilityButtons,
+  pageShellProfileVisible ? "show" : "hide",
+  "pageShellProfileVisibility",
+);
+syncPageShellVisibilityButtons(
+  pageShellProfileMenuStateButtons,
+  pageShellProfileMenuOpen ? "open" : "collapsed",
+  "pageShellProfileMenuState",
+);
 updateContextNavOffset();
 updatePrimaryNavOverflow();
 updateBreadcrumbOverflow();
