@@ -290,6 +290,22 @@ test.describe("design-system top-nav canonical states", () => {
     expect(magnificationState.canvasMagnification).toBe("100");
   });
 
+  test("TRP-014B dark theme applies readable local ink to visible top-nav strings", async ({ page }) => {
+    await gotoGeneratedCanonicalState(page, "TRP-014B");
+
+    const topNav = page.locator("#top-nav-preview-frame .top-nav");
+    const brandName = topNav.locator(".brand-copy strong");
+    const inactiveLink = topNav.getByRole("link", { name: "Foundations" });
+    const activeLink = topNav.getByRole("link", { name: "Overview" });
+    const profileName = topNav.locator(".profile-meta strong");
+
+    await expect(topNav).toHaveCSS("color", "rgb(236, 240, 255)");
+    await expect(brandName).toHaveCSS("color", "rgb(236, 240, 255)");
+    await expect(inactiveLink).toHaveCSS("color", "rgb(180, 190, 216)");
+    await expect(activeLink).toHaveCSS("color", "rgb(22, 27, 38)");
+    await expect(profileName).toHaveCSS("color", "rgb(236, 240, 255)");
+  });
+
   test("top-nav canonical RTL direction is owned by the local render surface", async ({ page }) => {
     await gotoGeneratedCanonicalState(page, "TRP-008");
 

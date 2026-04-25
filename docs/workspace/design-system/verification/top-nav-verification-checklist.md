@@ -104,7 +104,8 @@
   the full value through tooltips or equivalent lightweight reveal
 - Theme compatibility preserved:
   must verify the shell remains visually correct and readable across the
-  approved theme set
+  approved theme set, including visible string colors resolving from the local
+  scoped theme rather than ambient page inheritance
 - Primary-colour inheritance preserved:
   must verify accent-driven shell states stay in sync with the shared primary
   colour selection

@@ -5191,6 +5191,7 @@ html[dir="rtl"] .canonical-render-template-panel-list,
   border: 0.0625rem solid var(--line);
   border-top: 0;
   background: var(--surface-3);
+  color: var(--ink);
   backdrop-filter: blur(1.125rem);
 }
 
@@ -5710,14 +5711,6 @@ html[dir="rtl"] .sub-nav-preview-shell[data-breadcrumb-canonical-mode="button-tr
 .profile-meta strong {
   display: block;
   max-width: 9rem;
-}
-
-#top-nav-preview-frame .top-nav-preview-canvas[data-theme-scope="dark"] .profile-button,
-#top-nav-preview-frame .top-nav-preview-canvas[data-theme-scope="dark"] .profile-button .profile-meta,
-#top-nav-preview-frame .top-nav-preview-canvas[data-theme-scope="dark"] .profile-button .profile-meta strong,
-#top-nav-preview-frame .top-nav-preview-canvas[data-theme-scope="dark"] .profile-button .profile-meta span {
-  color: #f5f7ff !important;
-  opacity: 1;
 }
 
 .profile-avatar {

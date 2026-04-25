@@ -134,6 +134,8 @@ consistently.
 
 That means:
 
+- the top-nav root must establish its own text color from the local theme ink
+  token rather than relying on ambient page inheritance
 - theme changes may alter surfaces, contrast, and emphasis styling
 - theme changes must not alter the locked shell behaviors
 - accent-derived states such as active, hover, focus, and selected treatments
