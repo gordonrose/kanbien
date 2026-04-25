@@ -139,13 +139,14 @@ test.describe("design-system brochure page pattern", () => {
     await expect(drawer.getByRole("group", { name: "Primary colour" })).toBeVisible();
     await expect(drawer.getByRole("group", { name: "Direction" })).toBeVisible();
     await expect(drawer.getByRole("group", { name: "Brochure section rhythm" })).toBeVisible();
-    await expect(drawer.getByRole("group", { name: "Brochure media emphasis" })).toBeVisible();
-    await expect(drawer.getByRole("group", { name: "Brochure mosaic copy" })).toBeVisible();
-    await expect(drawer.getByRole("group", { name: "Brochure font type" })).toBeVisible();
-    await expect(drawer.getByRole("group", { name: "Brochure font weight" })).toBeVisible();
+    await expect(drawer.getByRole("group", { name: "Brochure media emphasis" })).toHaveCount(0);
+    await expect(drawer.getByRole("group", { name: "Brochure mosaic copy" })).toHaveCount(0);
+    await expect(drawer.getByRole("group", { name: "Brochure font type" })).toHaveCount(0);
+    await expect(drawer.getByRole("group", { name: "Brochure font weight" })).toHaveCount(0);
     await expect(drawer.getByLabel("Background colour")).toBeVisible();
     await expect(drawer.getByLabel("Font colour")).toBeVisible();
-    await expect(drawer.getByLabel("Font size")).toBeVisible();
+    await expect(drawer.getByLabel("Font size")).toHaveCount(0);
+    await expect(drawer.getByLabel("Editable state")).toBeVisible();
 
     await drawer.getByRole("button", { name: "Dark" }).click();
     await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
@@ -169,16 +170,6 @@ test.describe("design-system brochure page pattern", () => {
       .poll(async () => preview.evaluate((node) => getComputedStyle(node).getPropertyValue("--brochure-zone-gap").trim()))
       .not.toBe("");
 
-    await drawer.getByRole("button", { name: "Image" }).click();
-    await expect(preview).toHaveAttribute("data-brochure-media-balance", "image");
-    await expect
-      .poll(async () => preview.evaluate((node) => getComputedStyle(node).getPropertyValue("--brochure-media-column").trim()))
-      .toContain("1.2fr");
-
-    await drawer.getByRole("button", { name: "Visible" }).click();
-    await expect(preview).toHaveAttribute("data-brochure-mosaic-copy", "visible");
-    await expect(page.locator(".brochure-mosaic-copy").first()).toHaveCSS("opacity", "1");
-
     await drawer.getByLabel("Background colour").fill("#112233");
     await expect
       .poll(async () => preview.evaluate((node) => getComputedStyle(node).getPropertyValue("--brochure-background-color").trim()))
@@ -192,28 +183,153 @@ test.describe("design-system brochure page pattern", () => {
       .poll(async () => preview.evaluate((node) => getComputedStyle(node).getPropertyValue("--brochure-font-color").trim()))
       .toBe("#ffeeaa");
 
-    await drawer.getByRole("button", { name: "Space Grotesk" }).click();
-    await expect(preview).toHaveAttribute("data-brochure-font-family", "space-grotesk");
-    await expect
-      .poll(async () => preview.evaluate((node) => getComputedStyle(node).fontFamily))
-      .toContain("Space Grotesk");
-
-    await drawer.getByRole("button", { name: "Bold" }).click();
-    await expect(preview).toHaveAttribute("data-brochure-font-weight", "700");
-    await expect(drawer.locator("[data-brochure-font-weight='700']")).toHaveAttribute("aria-pressed", "true");
-
-    await drawer.getByLabel("Font size").evaluate((node) => {
-      if (node instanceof HTMLInputElement) {
-        node.value = "20";
-        node.dispatchEvent(new Event("input", { bubbles: true }));
-      }
-    });
-    await expect(preview).toHaveAttribute("data-brochure-font-size", "20");
-    await expect(drawer.locator("[data-brochure-font-size-readout]")).toHaveText("20px");
-
     await page.locator("#accessibility-close").click();
     await expect(drawer).toBeHidden();
     await expect(drawerButton).toBeFocused();
+  });
+
+  test("toggles editable state and opens the edit drawer from container and boundary handles", async ({ page }) => {
+    await gotoBrochurePage(page);
+
+    const displayDrawerButton = page.locator("#accessibility-button");
+    const displayDrawer = page.locator("#accessibility-drawer");
+    const preview = page.locator("[data-brochure-preview]");
+    const hero = page.locator("[data-brochure-section='hero']");
+    const heroEditButton = page.getByRole("button", { name: "Edit hero container" });
+    const boundaryEditButton = page.getByRole("button", { name: "Edit boundary between hero and value highlights" });
+    const editDrawer = page.locator("#brochure-edit-drawer");
+
+    await expect(preview).toHaveAttribute("data-brochure-editable", "false");
+    await expect(heroEditButton).toBeHidden();
+    await expect(boundaryEditButton).toBeHidden();
+    await expect(editDrawer).toHaveAttribute("aria-hidden", "true");
+
+    await displayDrawerButton.click();
+    await displayDrawer.getByLabel("Editable state").check();
+    await expect(preview).toHaveAttribute("data-brochure-editable", "true");
+
+    await hero.hover();
+    await expect(heroEditButton).toBeVisible();
+    await heroEditButton.click();
+    await expect(displayDrawer).toBeHidden();
+    await expect(editDrawer).toBeVisible();
+    await expect(editDrawer).toHaveAttribute("aria-hidden", "false");
+    await expect(page.locator(".brochure-pattern-page")).toHaveAttribute("data-brochure-edit-drawer-open", "true");
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-eyebrow]")).toHaveText("Brochure container");
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-title]")).toHaveText("Edit Hero");
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-copy]")).toContainText("Field-specific controls will be defined");
+
+    const splitState = await page.evaluate(() => {
+      const preview = document.querySelector("[data-brochure-preview]");
+      const drawer = document.querySelector("#brochure-edit-drawer");
+      const contextNav = document.querySelector(".design-system-shell > .context-nav");
+      const topNav = document.querySelector(".design-system-shell > .top-nav");
+      const subNav = document.querySelector(".design-system-shell > .sub-nav");
+      if (!(preview instanceof HTMLElement) || !(drawer instanceof HTMLElement) || !(contextNav instanceof HTMLElement)) {
+        return null;
+      }
+
+      const previewRect = preview.getBoundingClientRect();
+      const drawerRect = drawer.getBoundingClientRect();
+      const contextNavRect = contextNav.getBoundingClientRect();
+      const shellHeaderBottom = Math.ceil(Math.max(
+        topNav instanceof HTMLElement ? topNav.getBoundingClientRect().bottom : 0,
+        subNav instanceof HTMLElement ? subNav.getBoundingClientRect().bottom : 0,
+      ));
+      return {
+        previewLeft: Math.round(previewRect.left),
+        drawerTop: Math.round(drawerRect.top),
+        previewRight: Math.round(previewRect.right),
+        drawerLeft: Math.round(drawerRect.left),
+        drawerRight: Math.round(drawerRect.right),
+        previewWidth: Math.round(previewRect.width),
+        drawerWidth: Math.round(drawerRect.width),
+        contextNavRight: Math.round(contextNavRect.right),
+        shellHeaderBottom,
+        viewportWidth: document.documentElement.clientWidth,
+      };
+    });
+
+    expect(splitState).not.toBeNull();
+    expect(splitState?.previewLeft ?? 0).toBeGreaterThanOrEqual((splitState?.contextNavRight ?? 0) - 1);
+    expect(splitState?.drawerTop ?? 0).toBeGreaterThanOrEqual((splitState?.shellHeaderBottom ?? 0) - 1);
+    expect(splitState?.drawerLeft ?? 0).toBeGreaterThan(splitState?.previewRight ?? 0);
+    expect(Math.abs((splitState?.drawerRight ?? 0) - (splitState?.viewportWidth ?? 0))).toBeLessThanOrEqual(1);
+    expect(Math.abs((splitState?.drawerWidth ?? 0) - (splitState?.previewWidth ?? 0))).toBeLessThanOrEqual(90);
+
+    await page.locator("#brochure-edit-drawer-close").click();
+    await expect(editDrawer).toBeHidden();
+    await expect(page.locator(".brochure-pattern-page")).toHaveAttribute("data-brochure-edit-drawer-open", "false");
+
+    await boundaryEditButton.focus();
+    await expect(boundaryEditButton).toBeVisible();
+    await boundaryEditButton.click();
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-eyebrow]")).toHaveText("Brochure boundary");
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-title]")).toHaveText("Edit Hero / value highlights boundary");
+  });
+
+  test("opens the edit drawer from text and image edit affordances", async ({ page }) => {
+    await gotoBrochurePage(page);
+
+    const displayDrawer = page.locator("#accessibility-drawer");
+    const editDrawer = page.locator("#brochure-edit-drawer");
+    const heroHeadline = page.locator(".brochure-hero-copy h2");
+    const heroImage = page.locator(".brochure-hero-media img");
+
+    await page.locator("#accessibility-button").click();
+    await displayDrawer.getByLabel("Editable state").check();
+    await page.locator("#accessibility-close").click();
+
+    await heroHeadline.hover();
+    await page.getByRole("button", { name: /Edit Hero headline text/ }).click();
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-eyebrow]")).toHaveText("Brochure text");
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-title]")).toContainText("Edit Hero headline text");
+    await page.locator("#brochure-edit-drawer-close").click();
+
+    await heroImage.hover();
+    await page.getByRole("button", { name: "Edit Hero image" }).click();
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-eyebrow]")).toHaveText("Brochure image");
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-title]")).toHaveText("Edit Hero image");
+  });
+
+  test("opens the edit drawer from value bar icon affordances", async ({ page }) => {
+    await gotoBrochurePage(page);
+
+    const displayDrawer = page.locator("#accessibility-drawer");
+    const editDrawer = page.locator("#brochure-edit-drawer");
+    const firstValueIcon = page.locator(".brochure-value-icon").first();
+
+    await page.locator("#accessibility-button").click();
+    await displayDrawer.getByLabel("Editable state").check();
+    await page.locator("#accessibility-close").click();
+
+    await firstValueIcon.hover();
+    await page.getByRole("button", { name: "Edit Value highlights icon" }).click();
+
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-eyebrow]")).toHaveText("Brochure icon");
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-title]")).toHaveText("Edit Value highlights icon");
+  });
+
+  test("opens the edit drawer from a tile-level edit affordance", async ({ page }) => {
+    await gotoBrochurePage(page);
+
+    const displayDrawer = page.locator("#accessibility-drawer");
+    const editDrawer = page.locator("#brochure-edit-drawer");
+    const firstTile = page.locator(".brochure-mosaic-tile").first();
+    const tileEditButton = page.getByRole("button", { name: "Edit research tile" });
+
+    await page.locator("#accessibility-button").click();
+    await displayDrawer.getByLabel("Editable state").check();
+    await page.locator("#accessibility-close").click();
+
+    await firstTile.hover();
+    await expect(tileEditButton).toBeVisible();
+    await tileEditButton.hover();
+    await expect(tileEditButton).toHaveCSS("background-color", "rgb(99, 91, 255)");
+    await tileEditButton.click();
+
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-eyebrow]")).toHaveText("Brochure tile");
+    await expect(editDrawer.locator("[data-brochure-edit-drawer-title]")).toHaveText("Edit Research tile");
   });
 
   test("reveals mosaic paragraph content on keyboard focus", async ({ page }) => {

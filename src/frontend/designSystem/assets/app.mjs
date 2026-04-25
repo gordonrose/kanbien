@@ -1596,14 +1596,17 @@ const directionButtons = Array.from(document.querySelectorAll("[data-direction-o
 const accentButtons = Array.from(document.querySelectorAll("[data-accent]"));
 const magnificationButtons = Array.from(document.querySelectorAll("[data-magnification-option]"));
 const brochurePreview = document.querySelector("[data-brochure-preview]");
+const brochurePatternPage = document.querySelector(".brochure-pattern-page");
 const brochureDensityButtons = Array.from(document.querySelectorAll("[data-brochure-density]"));
-const brochureMediaBalanceButtons = Array.from(document.querySelectorAll("[data-brochure-media-balance]"));
-const brochureMosaicCopyButtons = Array.from(document.querySelectorAll("[data-brochure-mosaic-copy]"));
 const brochureColorInputs = Array.from(document.querySelectorAll("[data-brochure-color]"));
-const brochureFontFamilyButtons = Array.from(document.querySelectorAll("[data-brochure-font-family]"));
-const brochureFontWeightButtons = Array.from(document.querySelectorAll("[data-brochure-font-weight]"));
-const brochureFontSizeInput = document.querySelector("[data-brochure-font-size]");
-const brochureFontSizeReadout = document.querySelector("[data-brochure-font-size-readout]");
+const brochureEditableToggle = document.querySelector("[data-brochure-editable-toggle]");
+const brochureEditButtons = Array.from(document.querySelectorAll("[data-brochure-edit-target]"));
+const brochureEditFloatingButton = document.querySelector("[data-brochure-edit-floating]");
+const brochureEditDrawer = document.getElementById("brochure-edit-drawer");
+const brochureEditDrawerCloseButton = document.getElementById("brochure-edit-drawer-close");
+const brochureEditDrawerEyebrow = document.querySelector("[data-brochure-edit-drawer-eyebrow]");
+const brochureEditDrawerTitle = document.querySelector("[data-brochure-edit-drawer-title]");
+const brochureEditDrawerCopy = document.querySelector("[data-brochure-edit-drawer-copy]");
 const pageShellBannerDemoRoot = document.querySelector("[data-page-shell-banner-demo]");
 const pageShellBannerVisibilityButtons = Array.from(document.querySelectorAll("[data-page-shell-banner-visibility]"));
 const topNav = document.querySelector("#top-nav-preview-frame .top-nav") ?? document.querySelector(".top-nav");
@@ -4256,6 +4259,32 @@ function isAccessibilityDrawerOpen() {
   return accessibilityButton?.getAttribute("aria-expanded") === "true";
 }
 
+function setBrochureEditDrawerOpen(open, { restoreFocus = true } = {}) {
+  brochureEditDrawer?.classList.toggle("hidden", !open);
+  brochureEditDrawer?.setAttribute("aria-hidden", String(!open));
+  if (brochurePatternPage instanceof HTMLElement) {
+    brochurePatternPage.dataset.brochureEditDrawerOpen = open ? "true" : "false";
+  }
+
+  if (open) {
+    setAccessibilityDrawerOpen(false, { restoreFocus: false });
+    setFilterPanelOpen(false);
+    setFilterOptionsPanelOpen(false);
+    window.requestAnimationFrame(() => {
+      brochureEditDrawerCloseButton?.focus();
+    });
+    return;
+  }
+
+  if (restoreFocus && brochureEditDrawerCloseButton instanceof HTMLElement) {
+    brochureEditDrawerCloseButton.blur();
+  }
+}
+
+function isBrochureEditDrawerOpen() {
+  return brochureEditDrawer?.getAttribute("aria-hidden") === "false";
+}
+
 function setFilterPanelOpen(open) {
   filterPanelButton?.setAttribute("aria-expanded", String(open));
   filterPanel?.classList.toggle("hidden", !open);
@@ -4866,13 +4895,8 @@ function applyMagnification(value) {
 
 const brochureDisplayDefaults = {
   density: "standard",
-  mediaBalance: "balanced",
-  mosaicCopy: "reveal",
   backgroundColor: "#f6fbf8",
   fontColor: "#202946",
-  fontFamily: "sora",
-  fontWeight: "600",
-  fontSize: "16",
 };
 
 const brochureDensitySettings = {
@@ -4891,32 +4915,51 @@ const brochureDensitySettings = {
   },
 };
 
-const brochureMediaBalanceSettings = {
-  copy: {
-    "--brochure-copy-column": "minmax(0, 1.2fr)",
-    "--brochure-media-column": "minmax(16rem, 0.8fr)",
-  },
-  balanced: {},
-  image: {
-    "--brochure-copy-column": "minmax(0, 0.8fr)",
-    "--brochure-media-column": "minmax(20rem, 1.2fr)",
-  },
+const brochureEditTargetLabels = {
+  "top-nav": "Top navigation",
+  hero: "Hero",
+  "value-strip": "Value highlights",
+  "tile-mosaic": "Tile mosaic",
+  "media-band": "Media band",
+  "logo-bar": "Logo bar",
+  footer: "Footer",
+  "tile-research": "Research tile",
+  "tile-platform": "Platform tile",
+  "tile-trust": "Trust tile",
+  "tile-growth": "Growth tile",
+  "tile-campaign": "Campaign tile",
+  "top-nav-hero": "Top navigation / hero boundary",
+  "hero-value-strip": "Hero / value highlights boundary",
+  "value-strip-tile-mosaic": "Value highlights / tile mosaic boundary",
+  "tile-mosaic-media-band": "Tile mosaic / media band boundary",
+  "media-band-logo-bar": "Media band / logo bar boundary",
+  "logo-bar-footer": "Logo bar / footer boundary",
 };
 
-const brochureMosaicCopySettings = {
-  reveal: {},
-  visible: {
-    "--brochure-mosaic-copy-rest-opacity": "1",
-    "--brochure-mosaic-copy-rest-transform": "translateY(0)",
-  },
-};
-
-const brochureFontFamilySettings = {
-  sora: '"Sora", "Avenir Next", "Segoe UI", sans-serif',
-  "space-grotesk": '"Space Grotesk", "Avenir Next", "Segoe UI", sans-serif',
-  "general-sans": '"General Sans", "Avenir Next", "Segoe UI", sans-serif',
-  montserrat: '"Montserrat", "Avenir Next", "Segoe UI", sans-serif',
-};
+const brochureEditablePieceSelector = [
+  ".brochure-site-nav .brand-copy strong",
+  ".brochure-site-nav .nav-link",
+  ".brochure-hero-copy .brochure-kicker",
+  ".brochure-hero-copy h2",
+  ".brochure-hero-copy p",
+  ".brochure-button",
+  ".brochure-hero-media img",
+  ".brochure-value-icon",
+  ".brochure-value-item p",
+  ".brochure-section-heading .brochure-kicker",
+  ".brochure-section-heading h2",
+  ".brochure-mosaic-tile img",
+  ".brochure-mosaic-copy h3",
+  ".brochure-mosaic-copy p",
+  ".brochure-media-band-graphic img",
+  ".brochure-media-band-copy .brochure-kicker",
+  ".brochure-media-band-copy h2",
+  ".brochure-media-band-copy p",
+  ".brochure-logo-bar span",
+  ".brochure-footer h2",
+  ".brochure-footer p",
+  ".brochure-footer img",
+].join(", ");
 
 function normalizeHexColor(value) {
   const trimmed = String(value ?? "").trim();
@@ -4943,13 +4986,8 @@ function getBrochureColorValue(kind) {
 function getCurrentBrochureDisplayState(overrides = {}) {
   return {
     density: brochurePreview?.dataset.brochureDensity ?? brochureDisplayDefaults.density,
-    mediaBalance: brochurePreview?.dataset.brochureMediaBalance ?? brochureDisplayDefaults.mediaBalance,
-    mosaicCopy: brochurePreview?.dataset.brochureMosaicCopy ?? brochureDisplayDefaults.mosaicCopy,
     backgroundColor: getBrochureColorValue("background"),
     fontColor: getBrochureColorValue("font"),
-    fontFamily: brochurePreview?.dataset.brochureFontFamily ?? brochureDisplayDefaults.fontFamily,
-    fontWeight: brochurePreview?.dataset.brochureFontWeight ?? brochureDisplayDefaults.fontWeight,
-    fontSize: brochurePreview?.dataset.brochureFontSize ?? brochureDisplayDefaults.fontSize,
     ...overrides,
   };
 }
@@ -4972,19 +5010,12 @@ function applyBrochureVariables(settings) {
     "--brochure-hero-padding",
     "--brochure-zone-gap",
     "--brochure-value-padding",
-    "--brochure-copy-column",
-    "--brochure-media-column",
-    "--brochure-mosaic-copy-rest-opacity",
-    "--brochure-mosaic-copy-rest-transform",
     "--brochure-background-color",
     "--brochure-contrast-surface",
     "--brochure-soft-surface",
     "--brochure-chip-surface",
     "--brochure-line-color",
     "--brochure-font-color",
-    "--brochure-font-family",
-    "--brochure-font-weight",
-    "--brochure-font-size",
   ]) {
     if (settings[property]) {
       brochurePreview.style.setProperty(property, settings[property]);
@@ -5003,34 +5034,172 @@ function applyBrochureDisplayControls(overrides = {}) {
 
   const settings = {
     ...(brochureDensitySettings[state.density] ?? brochureDensitySettings[brochureDisplayDefaults.density]),
-    ...(brochureMediaBalanceSettings[state.mediaBalance] ?? brochureMediaBalanceSettings[brochureDisplayDefaults.mediaBalance]),
-    ...(brochureMosaicCopySettings[state.mosaicCopy] ?? brochureMosaicCopySettings[brochureDisplayDefaults.mosaicCopy]),
     "--brochure-background-color": state.backgroundColor,
     "--brochure-font-color": state.fontColor,
-    "--brochure-font-family": brochureFontFamilySettings[state.fontFamily] ?? brochureFontFamilySettings[brochureDisplayDefaults.fontFamily],
-    "--brochure-font-weight": state.fontWeight,
-    "--brochure-font-size": `${state.fontSize}px`,
   };
 
   brochurePreview.dataset.brochureDensity = state.density;
-  brochurePreview.dataset.brochureMediaBalance = state.mediaBalance;
-  brochurePreview.dataset.brochureMosaicCopy = state.mosaicCopy;
-  brochurePreview.dataset.brochureFontFamily = state.fontFamily;
-  brochurePreview.dataset.brochureFontWeight = state.fontWeight;
-  brochurePreview.dataset.brochureFontSize = state.fontSize;
   applyBrochureVariables(settings);
   setBrochureActiveButton(brochureDensityButtons, state.density, "brochureDensity");
-  setBrochureActiveButton(brochureMediaBalanceButtons, state.mediaBalance, "brochureMediaBalance");
-  setBrochureActiveButton(brochureMosaicCopyButtons, state.mosaicCopy, "brochureMosaicCopy");
-  setBrochureActiveButton(brochureFontFamilyButtons, state.fontFamily, "brochureFontFamily");
-  setBrochureActiveButton(brochureFontWeightButtons, state.fontWeight, "brochureFontWeight");
+}
 
-  if (brochureFontSizeInput instanceof HTMLInputElement) {
-    brochureFontSizeInput.value = state.fontSize;
+function setBrochureEditableState(enabled) {
+  if (brochurePreview instanceof HTMLElement) {
+    brochurePreview.dataset.brochureEditable = enabled ? "true" : "false";
   }
-  if (brochureFontSizeReadout instanceof HTMLElement) {
-    brochureFontSizeReadout.textContent = `${state.fontSize}px`;
+
+  if (brochureEditableToggle instanceof HTMLInputElement) {
+    brochureEditableToggle.checked = enabled;
   }
+
+  for (const button of brochureEditButtons) {
+    if (button instanceof HTMLElement) {
+      button.tabIndex = enabled ? 0 : -1;
+      button.setAttribute("aria-hidden", enabled ? "false" : "true");
+    }
+  }
+
+  for (const piece of getBrochureEditablePieces()) {
+    piece.dataset.brochureEditablePiece = "true";
+    piece.tabIndex = enabled ? 0 : -1;
+    piece.setAttribute("aria-hidden", "false");
+  }
+
+  if (!enabled) {
+    hideBrochureFloatingEditButton();
+    setBrochureEditDrawerOpen(false, { restoreFocus: false });
+  }
+}
+
+function setBrochureEditDrawerContent({ type = "container", target = "", label: explicitLabel = "" } = {}) {
+  const label = explicitLabel || brochureEditTargetLabels[target] || target;
+  const typeLabel = type === "boundary" ? "Boundary" : (type === "image" ? "Image" : (type === "icon" ? "Icon" : (type === "text" ? "Text" : (type === "tile" ? "Tile" : "Container"))));
+
+  if (brochureEditDrawerEyebrow instanceof HTMLElement) {
+    brochureEditDrawerEyebrow.textContent = `Brochure ${typeLabel.toLowerCase()}`;
+  }
+
+  if (brochureEditDrawerTitle instanceof HTMLElement) {
+    brochureEditDrawerTitle.textContent = label ? `Edit ${label}` : "Select a container";
+  }
+
+  if (brochureEditDrawerCopy instanceof HTMLElement) {
+    brochureEditDrawerCopy.textContent = label
+      ? `The ${typeLabel.toLowerCase()} drawer is ready for ${label}. Field-specific controls will be defined in the next step.`
+      : "Use the editable-state affordances to choose a brochure section or boundary.";
+  }
+}
+
+function getBrochureEditablePieces() {
+  if (!(brochurePreview instanceof HTMLElement)) {
+    return [];
+  }
+
+  return Array.from(brochurePreview.querySelectorAll(brochureEditablePieceSelector)).filter(
+    (piece) => piece instanceof HTMLElement && !piece.closest(".brochure-edit-affordance"),
+  );
+}
+
+function getBrochurePieceSectionLabel(piece) {
+  const section = piece.closest("[data-brochure-edit-label]");
+  if (section instanceof HTMLElement && section.dataset.brochureEditLabel) {
+    return section.dataset.brochureEditLabel;
+  }
+
+  return "Brochure";
+}
+
+function getBrochurePieceKind(piece) {
+  if (piece.matches(".brochure-value-icon")) {
+    return "icon";
+  }
+
+  if (piece instanceof HTMLImageElement) {
+    return "image";
+  }
+
+  if (piece.matches(".brochure-kicker")) {
+    return "kicker text";
+  }
+
+  if (piece.matches("h1, h2, h3")) {
+    return "headline text";
+  }
+
+  if (piece.matches(".nav-link")) {
+    return "navigation text";
+  }
+
+  if (piece.matches(".brochure-button")) {
+    return "button text";
+  }
+
+  if (piece.matches(".brochure-logo-bar span")) {
+    return "badge text";
+  }
+
+  return "copy text";
+}
+
+function getBrochurePieceLabel(piece) {
+  const sectionLabel = getBrochurePieceSectionLabel(piece);
+  const pieceKind = getBrochurePieceKind(piece);
+  const visibleText = piece instanceof HTMLImageElement ? piece.alt : piece.textContent;
+  const snippet = String(visibleText ?? "").replace(/\s+/g, " ").trim();
+
+  if (snippet && pieceKind.includes("text")) {
+    return `${sectionLabel} ${pieceKind}: ${snippet.slice(0, 56)}`;
+  }
+
+  return `${sectionLabel} ${pieceKind}`;
+}
+
+function hideBrochureFloatingEditButton() {
+  if (!(brochureEditFloatingButton instanceof HTMLElement)) {
+    return;
+  }
+
+  brochureEditFloatingButton.classList.remove("active");
+  brochureEditFloatingButton.removeAttribute("data-brochure-edit-target");
+  brochureEditFloatingButton.removeAttribute("data-brochure-edit-label");
+  brochureEditFloatingButton.removeAttribute("data-brochure-edit-type");
+  brochureEditFloatingButton.setAttribute("aria-label", "Edit selected brochure piece");
+
+  for (const piece of getBrochureEditablePieces()) {
+    piece.classList.remove("brochure-edit-piece-active");
+  }
+}
+
+function showBrochureFloatingEditButton(piece) {
+  if (!(brochurePreview instanceof HTMLElement) || !(brochureEditFloatingButton instanceof HTMLElement)) {
+    return;
+  }
+
+  if (brochurePreview.dataset.brochureEditable !== "true" || !(piece instanceof HTMLElement)) {
+    hideBrochureFloatingEditButton();
+    return;
+  }
+
+  const previewRect = brochurePreview.getBoundingClientRect();
+  const pieceRect = piece.getBoundingClientRect();
+  const label = getBrochurePieceLabel(piece);
+  const type = piece instanceof HTMLImageElement ? "image" : (piece.matches(".brochure-value-icon") ? "icon" : "text");
+  const target = `piece-${type}`;
+  const top = pieceRect.top - previewRect.top + Math.min(14, Math.max(8, pieceRect.height * 0.2));
+  const edgeOffset = piece.matches(".brochure-value-icon") ? 24 : 16;
+  const left = Math.min(previewRect.width - 16, pieceRect.right - previewRect.left + edgeOffset);
+
+  for (const item of getBrochureEditablePieces()) {
+    item.classList.toggle("brochure-edit-piece-active", item === piece);
+  }
+
+  brochureEditFloatingButton.style.top = `${top}px`;
+  brochureEditFloatingButton.style.left = `${left}px`;
+  brochureEditFloatingButton.dataset.brochureEditTarget = target;
+  brochureEditFloatingButton.dataset.brochureEditLabel = label;
+  brochureEditFloatingButton.dataset.brochureEditType = type;
+  brochureEditFloatingButton.setAttribute("aria-label", `Edit ${label}`);
+  brochureEditFloatingButton.classList.add("active");
 }
 
 function initializeFormSelects() {
@@ -6709,12 +6878,14 @@ subNavPreviewBreadcrumbCompactButton?.addEventListener("click", () => {
 });
 
 accessibilityButton?.addEventListener("click", () => {
+  setBrochureEditDrawerOpen(false, { restoreFocus: false });
   setFilterPanelOpen(false);
   setFilterOptionsPanelOpen(false);
   setAccessibilityDrawerOpen(!isAccessibilityDrawerOpen());
 });
 
 filterPanelButton?.addEventListener("click", () => {
+  setBrochureEditDrawerOpen(false, { restoreFocus: false });
   setAccessibilityDrawerOpen(false);
   setFilterOptionsPanelOpen(false);
   setFilterPanelOpen(!isFilterPanelOpen());
@@ -7017,18 +7188,6 @@ for (const button of brochureDensityButtons) {
   });
 }
 
-for (const button of brochureMediaBalanceButtons) {
-  button.addEventListener("click", () => {
-    applyBrochureDisplayControls({ mediaBalance: button.dataset.brochureMediaBalance ?? brochureDisplayDefaults.mediaBalance });
-  });
-}
-
-for (const button of brochureMosaicCopyButtons) {
-  button.addEventListener("click", () => {
-    applyBrochureDisplayControls({ mosaicCopy: button.dataset.brochureMosaicCopy ?? brochureDisplayDefaults.mosaicCopy });
-  });
-}
-
 for (const input of brochureColorInputs) {
   input.addEventListener("input", () => {
     if (!(input instanceof HTMLInputElement)) {
@@ -7046,24 +7205,63 @@ for (const input of brochureColorInputs) {
   });
 }
 
-for (const button of brochureFontFamilyButtons) {
-  button.addEventListener("click", () => {
-    applyBrochureDisplayControls({ fontFamily: button.dataset.brochureFontFamily ?? brochureDisplayDefaults.fontFamily });
-  });
-}
-
-for (const button of brochureFontWeightButtons) {
-  button.addEventListener("click", () => {
-    applyBrochureDisplayControls({ fontWeight: button.dataset.brochureFontWeight ?? brochureDisplayDefaults.fontWeight });
-  });
-}
-
-brochureFontSizeInput?.addEventListener("input", () => {
-  if (!(brochureFontSizeInput instanceof HTMLInputElement)) {
+brochureEditableToggle?.addEventListener("change", () => {
+  if (!(brochureEditableToggle instanceof HTMLInputElement)) {
     return;
   }
 
-  applyBrochureDisplayControls({ fontSize: brochureFontSizeInput.value });
+  setBrochureEditableState(brochureEditableToggle.checked);
+});
+
+for (const button of brochureEditButtons) {
+  button.addEventListener("click", () => {
+    const type = button.dataset.brochureEditType ?? "container";
+    const target = button.dataset.brochureEditTarget ?? "";
+    setBrochureEditDrawerContent({ type, target });
+    setBrochureEditDrawerOpen(true);
+  });
+}
+
+brochurePreview?.addEventListener("mouseover", (event) => {
+  const target = event.target instanceof Element ? event.target.closest(brochureEditablePieceSelector) : null;
+  if (target instanceof HTMLElement && brochurePreview.contains(target)) {
+    showBrochureFloatingEditButton(target);
+  }
+});
+
+brochurePreview?.addEventListener("focusin", (event) => {
+  const target = event.target instanceof Element ? event.target.closest(brochureEditablePieceSelector) : null;
+  if (target instanceof HTMLElement && brochurePreview.contains(target)) {
+    showBrochureFloatingEditButton(target);
+  }
+});
+
+brochurePreview?.addEventListener("mouseleave", (event) => {
+  if (brochureEditFloatingButton instanceof HTMLElement && event.relatedTarget instanceof Node && brochureEditFloatingButton.contains(event.relatedTarget)) {
+    return;
+  }
+
+  if (document.activeElement instanceof HTMLElement && document.activeElement.matches(brochureEditablePieceSelector)) {
+    return;
+  }
+
+  hideBrochureFloatingEditButton();
+});
+
+brochureEditFloatingButton?.addEventListener("click", () => {
+  if (!(brochureEditFloatingButton instanceof HTMLElement)) {
+    return;
+  }
+
+  const type = brochureEditFloatingButton.dataset.brochureEditType ?? "text";
+  const target = brochureEditFloatingButton.dataset.brochureEditTarget ?? "";
+  const label = brochureEditFloatingButton.dataset.brochureEditLabel ?? "";
+  setBrochureEditDrawerContent({ type, target, label });
+  setBrochureEditDrawerOpen(true);
+});
+
+brochureEditDrawerCloseButton?.addEventListener("click", () => {
+  setBrochureEditDrawerOpen(false);
 });
 
 for (const button of pageShellBannerVisibilityButtons) {
@@ -7083,6 +7281,10 @@ updateBreadcrumbOverflow();
 updateBreadcrumbOverflowTooltips();
 updateContextNavReviewFrameOffset();
 updateContextNavPreviewShellLayout();
+if (brochurePatternPage instanceof HTMLElement) {
+  brochurePatternPage.dataset.brochureEditDrawerOpen = "false";
+}
+setBrochureEditableState(false);
 applyBrochureDisplayControls();
 const initialTheme = previewFrame
   ? initialTopNavPreviewState.theme
@@ -7271,7 +7473,12 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  if (accessibilityButton?.contains(target) || accessibilityDrawer?.contains(target)) {
+  if (
+    accessibilityButton?.contains(target) ||
+    accessibilityDrawer?.contains(target) ||
+    brochureEditDrawer?.contains(target) ||
+    brochurePreview?.contains(target)
+  ) {
     return;
   }
 
@@ -7290,6 +7497,7 @@ document.addEventListener("click", (event) => {
   setFilterPanelOpen(false);
   setFilterOptionsPanelOpen(false);
   setAccessibilityDrawerOpen(false, { restoreFocus: !isFocusableOutsideTarget(target) });
+  setBrochureEditDrawerOpen(false, { restoreFocus: !isFocusableOutsideTarget(target) });
   setContextNavMoreOpen(false);
   setLanguageModalOpen(false);
 });
@@ -7346,6 +7554,10 @@ document.addEventListener("keydown", (event) => {
   if (isAccessibilityDrawerOpen()) {
     setAccessibilityDrawerOpen(false);
     accessibilityButton?.focus();
+  }
+
+  if (isBrochureEditDrawerOpen()) {
+    setBrochureEditDrawerOpen(false);
   }
 
   if (isFilterPanelOpen()) {

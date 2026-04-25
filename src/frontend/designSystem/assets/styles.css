@@ -1008,6 +1008,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
   --brochure-soft-surface: color-mix(in srgb, var(--brochure-background-color) 82%, var(--surface-1));
   --brochure-chip-surface: color-mix(in srgb, var(--brochure-background-color) 68%, var(--surface-1));
   --brochure-line-color: color-mix(in srgb, var(--brochure-font-color) 18%, var(--line));
+  position: relative;
   display: grid;
   gap: 1rem;
   overflow: hidden;
@@ -1097,6 +1098,153 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 .brochure-display-text-input[aria-invalid="true"] {
   border-color: var(--error-ink);
   box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--error-ink) 14%, transparent);
+}
+
+.brochure-editable-toggle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.brochure-editable-toggle input {
+  width: 2.75rem;
+  height: 1.5rem;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
+.side-panel.brochure-edit-drawer {
+  z-index: 8;
+}
+
+.brochure-edit-drawer-copy {
+  margin: 0.4rem 0 0;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
+
+[data-brochure-editable-container] {
+  position: relative;
+}
+
+[data-brochure-editable-piece] {
+  position: relative;
+}
+
+.brochure-edit-affordance {
+  position: absolute;
+  z-index: 3;
+  display: none;
+  place-items: center;
+  width: 2rem;
+  aspect-ratio: 1 / 1;
+  border: 0.0625rem solid color-mix(in srgb, var(--accent) 42%, var(--line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface-1) 92%, var(--accent-soft));
+  color: var(--accent);
+  box-shadow: 0 0.5rem 1.25rem rgb(15 23 42 / 18%);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.brochure-edit-affordance svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+.brochure-edit-container-button {
+  inset-block-start: 0.65rem;
+  inset-inline-end: 0.65rem;
+}
+
+.brochure-edit-tile-button {
+  inset-block-start: 0.65rem;
+  inset-inline-start: 0.65rem;
+}
+
+.brochure-edit-boundary {
+  position: relative;
+  display: none;
+  min-height: 1rem;
+}
+
+.brochure-edit-boundary::before {
+  position: absolute;
+  inset: calc(50% - 0.0625rem) 1rem auto;
+  height: 0.125rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 42%, transparent);
+  content: "";
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.brochure-edit-boundary-button {
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.brochure-edit-piece-button {
+  inset: auto;
+  transform: translate(-50%, -50%);
+}
+
+[data-brochure-editable="true"] .brochure-edit-boundary {
+  display: block;
+}
+
+[data-brochure-editable="true"] .brochure-edit-affordance {
+  display: grid;
+}
+
+[data-brochure-editable="true"] [data-brochure-editable-container]:hover,
+[data-brochure-editable="true"] [data-brochure-editable-container]:focus-within,
+[data-brochure-editable="true"] .brochure-edit-piece-active {
+  outline: 0.125rem solid color-mix(in srgb, var(--accent) 46%, transparent);
+  outline-offset: -0.125rem;
+}
+
+[data-brochure-editable="true"] [data-brochure-editable-container]:hover > .brochure-edit-container-button,
+[data-brochure-editable="true"] [data-brochure-editable-container]:focus-within > .brochure-edit-container-button,
+[data-brochure-editable="true"] .brochure-edit-boundary:hover > .brochure-edit-boundary-button,
+[data-brochure-editable="true"] .brochure-edit-boundary:focus-within > .brochure-edit-boundary-button,
+[data-brochure-editable="true"] .brochure-mosaic-tile:hover > .brochure-edit-tile-button,
+[data-brochure-editable="true"] .brochure-mosaic-tile:focus-within > .brochure-edit-tile-button {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+[data-brochure-editable="true"] .brochure-edit-piece-button.active,
+[data-brochure-editable="true"] .brochure-edit-piece-button:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+[data-brochure-editable="true"] .brochure-edit-affordance:hover {
+  opacity: 1;
+  pointer-events: auto;
+  background: var(--accent);
+  color: var(--surface-1);
+  box-shadow: 0 0.7rem 1.4rem rgb(15 23 42 / 24%);
+}
+
+[data-brochure-editable="true"] .brochure-edit-boundary:hover::before,
+[data-brochure-editable="true"] .brochure-edit-boundary:focus-within::before {
+  opacity: 1;
+}
+
+.brochure-edit-affordance:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  outline: 0.15rem solid color-mix(in srgb, var(--accent) 70%, white);
+  outline-offset: 0.12rem;
 }
 
 .brochure-hero,
@@ -6891,6 +7039,38 @@ html[dir="rtl"] .language-option {
     left: 0;
     border-left: 0;
   }
+}
+
+.brochure-pattern-page[data-brochure-edit-drawer-open="true"] {
+  width: calc((100vw - 4.25rem) / 2);
+  max-width: calc((100vw - 4.25rem) / 2);
+  margin-inline-end: auto;
+  padding-inline-end: 1rem;
+}
+
+.brochure-pattern-page[data-brochure-edit-drawer-open="true"] .brochure-pattern-intro,
+.brochure-pattern-page[data-brochure-edit-drawer-open="true"] .brochure-preview {
+  width: 100%;
+}
+
+.side-panel.brochure-edit-drawer {
+  top: var(--context-nav-top, 8rem);
+  right: 0;
+  left: auto;
+  bottom: 0;
+  width: calc((100vw - 4.25rem) / 2);
+  min-width: 0;
+  z-index: 9;
+  border-right: 0;
+  border-left: 0.0625rem solid var(--line);
+  box-shadow: -1rem 0 2rem color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+html[dir="rtl"] .side-panel.brochure-edit-drawer {
+  right: 0;
+  left: auto;
+  border-right: 0;
+  border-left: 0.0625rem solid var(--line);
 }
 
 @media (max-width: 40rem) {

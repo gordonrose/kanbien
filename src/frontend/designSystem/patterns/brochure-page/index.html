@@ -169,21 +169,6 @@
               </div>
             </div>
             <div>
-              <p class="accessibility-label brochure-display-control-label">Media emphasis</p>
-              <div class="chip-row" role="group" aria-label="Brochure media emphasis">
-                <button class="accessibility-chip" type="button" data-brochure-media-balance="copy">Copy</button>
-                <button class="accessibility-chip active" type="button" data-brochure-media-balance="balanced">Balanced</button>
-                <button class="accessibility-chip" type="button" data-brochure-media-balance="image">Image</button>
-              </div>
-            </div>
-            <div>
-              <p class="accessibility-label brochure-display-control-label">Mosaic copy</p>
-              <div class="chip-row" role="group" aria-label="Brochure mosaic copy">
-                <button class="accessibility-chip active" type="button" data-brochure-mosaic-copy="reveal">Reveal</button>
-                <button class="accessibility-chip" type="button" data-brochure-mosaic-copy="visible">Visible</button>
-              </div>
-            </div>
-            <div>
               <label class="accessibility-label brochure-display-control-label" for="brochure-background-color">Background colour</label>
               <input id="brochure-background-color" class="brochure-display-text-input" type="text" inputmode="text" value="#f6fbf8" data-brochure-color="background" aria-describedby="brochure-background-color-help" />
               <p id="brochure-background-color-help" class="brochure-display-control-help">Hex value</p>
@@ -194,28 +179,43 @@
               <p id="brochure-font-color-help" class="brochure-display-control-help">Hex value</p>
             </div>
             <div>
-              <p class="accessibility-label brochure-display-control-label">Font type</p>
-              <div class="chip-row" role="group" aria-label="Brochure font type">
-                <button class="accessibility-chip active" type="button" data-brochure-font-family="sora">Sora</button>
-                <button class="accessibility-chip" type="button" data-brochure-font-family="space-grotesk">Space Grotesk</button>
-                <button class="accessibility-chip" type="button" data-brochure-font-family="general-sans">General Sans</button>
-                <button class="accessibility-chip" type="button" data-brochure-font-family="montserrat">Montserrat</button>
-              </div>
-            </div>
-            <div>
-              <p class="accessibility-label brochure-display-control-label">Font weight</p>
-              <div class="chip-row" role="group" aria-label="Brochure font weight">
-                <button class="accessibility-chip" type="button" data-brochure-font-weight="400">Regular</button>
-                <button class="accessibility-chip active" type="button" data-brochure-font-weight="600">Medium</button>
-                <button class="accessibility-chip" type="button" data-brochure-font-weight="700">Bold</button>
-              </div>
-            </div>
-            <div>
-              <label class="accessibility-label brochure-display-control-label" for="brochure-font-size">Font size</label>
-              <input id="brochure-font-size" class="top-nav-preview-slider" type="range" min="14" max="22" step="1" value="16" data-brochure-font-size aria-describedby="brochure-font-size-readout" />
-              <p id="brochure-font-size-readout" class="brochure-display-control-help" data-brochure-font-size-readout>16px</p>
+              <label class="brochure-editable-toggle">
+                <span>
+                  <span class="accessibility-label brochure-display-control-label">Editable state</span>
+                  <span class="brochure-display-control-help">Reveal container and boundary edit affordances.</span>
+                </span>
+                <input type="checkbox" data-brochure-editable-toggle aria-label="Editable state" />
+              </label>
             </div>
           </div>
+        </div>
+      </aside>
+
+      <aside
+        id="brochure-edit-drawer"
+        class="side-panel accessibility-drawer brochure-edit-drawer hidden"
+        aria-labelledby="brochure-edit-drawer-title"
+        aria-hidden="true"
+      >
+        <div class="side-panel-header accessibility-drawer-header">
+          <div>
+            <p class="drawer-eyebrow" data-brochure-edit-drawer-eyebrow>Brochure edit</p>
+            <h2 id="brochure-edit-drawer-title" data-brochure-edit-drawer-title>Select a container</h2>
+          </div>
+          <button
+            id="brochure-edit-drawer-close"
+            class="drawer-close-button"
+            type="button"
+            aria-label="Close brochure edit drawer"
+          >
+            ×
+          </button>
+        </div>
+        <div class="accessibility-group">
+          <p class="accessibility-label">Editing target</p>
+          <p class="brochure-edit-drawer-copy" data-brochure-edit-drawer-copy>
+            Use the editable-state affordances to choose a brochure section or boundary.
+          </p>
         </div>
       </aside>
 
@@ -229,8 +229,14 @@
           </p>
         </section>
 
-        <section class="brochure-preview" aria-label="Brochure page preview" data-brochure-preview>
-          <header class="top-nav brochure-site-nav" data-brochure-section="top-nav">
+        <section class="brochure-preview" aria-label="Brochure page preview" data-brochure-preview data-brochure-editable="false">
+          <button class="brochure-edit-affordance brochure-edit-piece-button" type="button" data-brochure-edit-floating aria-label="Edit selected brochure piece">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+          </button>
+          <header class="top-nav brochure-site-nav" data-brochure-section="top-nav" data-brochure-editable-container data-brochure-edit-label="Top navigation">
+            <button class="brochure-edit-affordance brochure-edit-container-button" type="button" data-brochure-edit-target="top-nav" data-brochure-edit-type="container" aria-label="Edit top navigation container">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
             <a class="brand-lockup" href="/design-system/patterns/brochure-page" aria-label="Kanbien brochure home">
               <span class="brand-mark" aria-hidden="true">K</span>
               <span class="brand-copy"><strong>Kanbien</strong></span>
@@ -245,7 +251,16 @@
             </nav>
           </header>
 
-          <div class="brochure-hero" data-brochure-section="hero">
+          <div class="brochure-edit-boundary" data-brochure-editable-boundary>
+            <button class="brochure-edit-affordance brochure-edit-boundary-button" type="button" data-brochure-edit-target="top-nav-hero" data-brochure-edit-type="boundary" aria-label="Edit boundary between top navigation and hero">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
+          </div>
+
+          <div class="brochure-hero" data-brochure-section="hero" data-brochure-editable-container data-brochure-edit-label="Hero">
+            <button class="brochure-edit-affordance brochure-edit-container-button" type="button" data-brochure-edit-target="hero" data-brochure-edit-type="container" aria-label="Edit hero container">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
             <div class="brochure-hero-copy">
               <p class="brochure-kicker">Enterprise workflow platform</p>
               <h2>Launch credible public pages without losing governed structure.</h2>
@@ -263,7 +278,16 @@
             </figure>
           </div>
 
-          <section id="brochure-values" class="brochure-value-strip" aria-label="Value highlights" data-brochure-section="value-strip">
+          <div class="brochure-edit-boundary" data-brochure-editable-boundary>
+            <button class="brochure-edit-affordance brochure-edit-boundary-button" type="button" data-brochure-edit-target="hero-value-strip" data-brochure-edit-type="boundary" aria-label="Edit boundary between hero and value highlights">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
+          </div>
+
+          <section id="brochure-values" class="brochure-value-strip" aria-label="Value highlights" data-brochure-section="value-strip" data-brochure-editable-container data-brochure-edit-label="Value highlights">
+            <button class="brochure-edit-affordance brochure-edit-container-button" type="button" data-brochure-edit-target="value-strip" data-brochure-edit-type="container" aria-label="Edit value highlights container">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
             <article class="brochure-value-item">
               <span class="brochure-value-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v4H4zm0 6h7v8H4zm9 0h7v8h-7z" /></svg>
@@ -290,13 +314,25 @@
             </article>
           </section>
 
-          <section class="brochure-mosaic" aria-labelledby="brochure-mosaic-title" data-brochure-section="tile-mosaic">
+          <div class="brochure-edit-boundary" data-brochure-editable-boundary>
+            <button class="brochure-edit-affordance brochure-edit-boundary-button" type="button" data-brochure-edit-target="value-strip-tile-mosaic" data-brochure-edit-type="boundary" aria-label="Edit boundary between value highlights and tile mosaic">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
+          </div>
+
+          <section class="brochure-mosaic" aria-labelledby="brochure-mosaic-title" data-brochure-section="tile-mosaic" data-brochure-editable-container data-brochure-edit-label="Tile mosaic">
+            <button class="brochure-edit-affordance brochure-edit-container-button" type="button" data-brochure-edit-target="tile-mosaic" data-brochure-edit-type="container" aria-label="Edit tile mosaic container">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
             <div class="brochure-section-heading">
               <p class="brochure-kicker">Tile mosaic</p>
               <h2 id="brochure-mosaic-title">Image-first tiles reveal their paragraph on hover and focus.</h2>
             </div>
             <div class="brochure-mosaic-grid" data-brochure-mosaic-layout="featured-plus-four">
               <article class="brochure-mosaic-tile brochure-mosaic-tile-featured" tabindex="0" data-brochure-mosaic-tile="featured">
+                <button class="brochure-edit-affordance brochure-edit-tile-button" type="button" data-brochure-edit-target="tile-research" data-brochure-edit-type="tile" aria-label="Edit research tile">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+                </button>
                 <img src="/design-system/assets/brochure-tile-research.svg" alt="Research evidence board" />
                 <div class="brochure-mosaic-copy">
                   <h3>Research</h3>
@@ -304,6 +340,9 @@
                 </div>
               </article>
               <article class="brochure-mosaic-tile" tabindex="0" data-brochure-mosaic-tile="standard">
+                <button class="brochure-edit-affordance brochure-edit-tile-button" type="button" data-brochure-edit-target="tile-platform" data-brochure-edit-type="tile" aria-label="Edit platform tile">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+                </button>
                 <img src="/design-system/assets/brochure-tile-platform.svg" alt="Platform interface preview" />
                 <div class="brochure-mosaic-copy">
                   <h3>Platform</h3>
@@ -311,6 +350,9 @@
                 </div>
               </article>
               <article class="brochure-mosaic-tile" tabindex="0" data-brochure-mosaic-tile="standard">
+                <button class="brochure-edit-affordance brochure-edit-tile-button" type="button" data-brochure-edit-target="tile-trust" data-brochure-edit-type="tile" aria-label="Edit trust tile">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+                </button>
                 <img src="/design-system/assets/brochure-tile-trust.svg" alt="Compliance shield and evidence cards" />
                 <div class="brochure-mosaic-copy">
                   <h3>Trust</h3>
@@ -318,6 +360,9 @@
                 </div>
               </article>
               <article class="brochure-mosaic-tile" tabindex="0" data-brochure-mosaic-tile="standard">
+                <button class="brochure-edit-affordance brochure-edit-tile-button" type="button" data-brochure-edit-target="tile-growth" data-brochure-edit-type="tile" aria-label="Edit growth tile">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+                </button>
                 <img src="/design-system/assets/brochure-tile-growth.svg" alt="Growth dashboard chart" />
                 <div class="brochure-mosaic-copy">
                   <h3>Growth</h3>
@@ -325,6 +370,9 @@
                 </div>
               </article>
               <article class="brochure-mosaic-tile" tabindex="0" data-brochure-mosaic-tile="standard">
+                <button class="brochure-edit-affordance brochure-edit-tile-button" type="button" data-brochure-edit-target="tile-campaign" data-brochure-edit-type="tile" aria-label="Edit campaign tile">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+                </button>
                 <img src="/design-system/assets/brochure-tile-campaign.svg" alt="Campaign page composition preview" />
                 <div class="brochure-mosaic-copy">
                   <h3>Campaign</h3>
@@ -334,7 +382,16 @@
             </div>
           </section>
 
-          <section class="brochure-media-band" aria-labelledby="brochure-media-band-title" data-brochure-section="media-band">
+          <div class="brochure-edit-boundary" data-brochure-editable-boundary>
+            <button class="brochure-edit-affordance brochure-edit-boundary-button" type="button" data-brochure-edit-target="tile-mosaic-media-band" data-brochure-edit-type="boundary" aria-label="Edit boundary between tile mosaic and media band">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
+          </div>
+
+          <section class="brochure-media-band" aria-labelledby="brochure-media-band-title" data-brochure-section="media-band" data-brochure-editable-container data-brochure-edit-label="Media band">
+            <button class="brochure-edit-affordance brochure-edit-container-button" type="button" data-brochure-edit-target="media-band" data-brochure-edit-type="container" aria-label="Edit media band container">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
             <figure class="brochure-media-band-graphic">
               <img src="/design-system/assets/brochure-tile-platform.svg" alt="Wide platform story graphic" />
             </figure>
@@ -348,7 +405,16 @@
             </div>
           </section>
 
-          <section class="brochure-logo-bar" aria-label="Client and compliance badges" data-brochure-section="logo-bar">
+          <div class="brochure-edit-boundary" data-brochure-editable-boundary>
+            <button class="brochure-edit-affordance brochure-edit-boundary-button" type="button" data-brochure-edit-target="media-band-logo-bar" data-brochure-edit-type="boundary" aria-label="Edit boundary between media band and logo bar">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
+          </div>
+
+          <section class="brochure-logo-bar" aria-label="Client and compliance badges" data-brochure-section="logo-bar" data-brochure-editable-container data-brochure-edit-label="Logo bar">
+            <button class="brochure-edit-affordance brochure-edit-container-button" type="button" data-brochure-edit-target="logo-bar" data-brochure-edit-type="container" aria-label="Edit logo bar container">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
             <span>Northstar</span>
             <span>Atlas Cloud</span>
             <span>SOC 2</span>
@@ -356,7 +422,16 @@
             <span>GDPR Ready</span>
           </section>
 
-          <footer id="brochure-footer" class="brochure-footer" aria-label="Brochure footer" data-brochure-section="footer">
+          <div class="brochure-edit-boundary" data-brochure-editable-boundary>
+            <button class="brochure-edit-affordance brochure-edit-boundary-button" type="button" data-brochure-edit-target="logo-bar-footer" data-brochure-edit-type="boundary" aria-label="Edit boundary between logo bar and footer">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
+          </div>
+
+          <footer id="brochure-footer" class="brochure-footer" aria-label="Brochure footer" data-brochure-section="footer" data-brochure-editable-container data-brochure-edit-label="Footer">
+            <button class="brochure-edit-affordance brochure-edit-container-button" type="button" data-brochure-edit-target="footer" data-brochure-edit-type="container" aria-label="Edit footer container">
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 16.6 15.6 6 18 8.4 7.4 19H5zm12.1-12 1-1a1.7 1.7 0 0 1 2.4 2.4l-1 1zM4 21h16v-2H4z" /></svg>
+            </button>
             <section>
               <h2>Product</h2>
               <p>Public pages, conversion paths, and proof sections shaped by governed design-system rules.</p>
