@@ -31,6 +31,7 @@ const statePayloads = {
     errorMode: false,
     disabled: false,
     fileName: "",
+    previewKind: "none",
     stateLabel: "Idle dropzone baseline",
     note: "Resting upload field with parent-owned label, helper copy, and empty status visible.",
   },
@@ -39,6 +40,7 @@ const statePayloads = {
     errorMode: false,
     disabled: false,
     fileName: "launch-audience.csv",
+    previewKind: "document",
     stateLabel: "Upload in-progress status",
     note: "The selected filename, progress affordance, and polite status copy stay local to the field.",
   },
@@ -47,6 +49,7 @@ const statePayloads = {
     errorMode: false,
     disabled: false,
     fileName: "launch-audience.csv",
+    previewKind: "document",
     stateLabel: "Upload complete status",
     note: "The completion state keeps the same field structure while reflecting successful attachment readiness.",
   },
@@ -55,6 +58,7 @@ const statePayloads = {
     errorMode: true,
     disabled: false,
     fileName: "launch-audience.csv",
+    previewKind: "document",
     stateLabel: "Upload error review",
     note: "The failed-upload state remains attributable to the upload field without taking over the parent form error model.",
   },
@@ -63,6 +67,7 @@ const statePayloads = {
     errorMode: false,
     disabled: true,
     fileName: "",
+    previewKind: "none",
     stateLabel: "Disabled inherited state",
     note: "Disabled posture is inherited from the parent form and prevents drag/drop or browse activation.",
   },
@@ -157,6 +162,62 @@ const canonicalStates = [
     theme: "dark",
     viewportLabel: "Theme-stress upload lane",
   },
+  {
+    refId: "UFR-009",
+    label: "Image preview thumbnail",
+    route: "/design-system/components/upload-file?ref=UFR-009&width=560&state=complete&preview=image&file=venue-hero.png&theme=normal&dir=ltr&zoom=0",
+    width: 560,
+    state: "complete",
+    dir: "ltr",
+    zoom: 0,
+    theme: "normal",
+    viewportLabel: "Image preview lane",
+    previewKind: "image",
+    fileName: "venue-hero.png",
+    note: "Selected raster images replace the generic upload glyph with a thumbnail preview inside the dropzone.",
+  },
+  {
+    refId: "UFR-010",
+    label: "Document type thumbnail",
+    route: "/design-system/components/upload-file?ref=UFR-010&width=560&state=complete&preview=document&file=campaign-brief.pdf&theme=normal&dir=ltr&zoom=0",
+    width: 560,
+    state: "complete",
+    dir: "ltr",
+    zoom: 0,
+    theme: "normal",
+    viewportLabel: "Document preview lane",
+    previewKind: "document",
+    fileName: "campaign-brief.pdf",
+    note: "Selected documents use a compact document-type thumbnail instead of pretending a live page preview exists.",
+  },
+  {
+    refId: "UFR-011",
+    label: "Video preview thumbnail",
+    route: "/design-system/components/upload-file?ref=UFR-011&width=560&state=complete&preview=video&file=launch-cut.mp4&theme=normal&dir=ltr&zoom=0",
+    width: 560,
+    state: "complete",
+    dir: "ltr",
+    zoom: 0,
+    theme: "normal",
+    viewportLabel: "Video preview lane",
+    previewKind: "video",
+    fileName: "launch-cut.mp4",
+    note: "Selected videos use the same preview slot as images, with a video thumbnail posture when a browser object URL is available.",
+  },
+  {
+    refId: "UFR-012",
+    label: "Audio preview icon",
+    route: "/design-system/components/upload-file?ref=UFR-012&width=560&state=complete&preview=audio&file=voiceover.mp3&theme=normal&dir=ltr&zoom=0",
+    width: 560,
+    state: "complete",
+    dir: "ltr",
+    zoom: 0,
+    theme: "normal",
+    viewportLabel: "Audio preview lane",
+    previewKind: "audio",
+    fileName: "voiceover.mp3",
+    note: "Selected audio uses the preview slot for a clear audio icon while keeping transport and playback behavior feature-owned.",
+  },
 ];
 
 const canonicalStateMap = new Map(canonicalStates.map((state) => [state.refId, state]));
@@ -188,7 +249,24 @@ function normalizeTheme(value) {
 }
 
 function getLegacyRouteForState(state) {
-  return `/design-system/components/upload-file?ref=${encodeURIComponent(state.refId)}&width=${encodeURIComponent(String(state.width))}&state=${encodeURIComponent(state.state)}&theme=${encodeURIComponent(state.theme)}&dir=${encodeURIComponent(state.dir)}&zoom=${encodeURIComponent(String(state.zoom))}`;
+  const params = new URLSearchParams({
+    ref: state.refId,
+    width: String(state.width),
+    state: state.state,
+    theme: state.theme,
+    dir: state.dir,
+    zoom: String(state.zoom),
+  });
+
+  if (state.previewKind) {
+    params.set("preview", state.previewKind);
+  }
+
+  if (state.fileName) {
+    params.set("file", state.fileName);
+  }
+
+  return `/design-system/components/upload-file?${params.toString()}`;
 }
 
 function getStateRoute(state) {
@@ -235,13 +313,22 @@ async function resolveGeneratedCanonicalState() {
 
   const payload = await response.json();
   const matchedCanonical = canonicalStateMap.get(payload.reference.referenceId) ?? canonicalStates[0];
+  const specimenPayload = payload.reference.specimenPayload && typeof payload.reference.specimenPayload === "object"
+    ? payload.reference.specimenPayload
+    : {};
   return {
     family: payload.family,
     activeRefId: payload.reference.referenceId,
     width: payload.reference.width ?? matchedCanonical.width,
-    state: typeof payload.reference.specimenPayload?.state === "string"
-      ? payload.reference.specimenPayload.state
+    state: typeof specimenPayload.state === "string"
+      ? specimenPayload.state
       : matchedCanonical.state,
+    previewKind: typeof specimenPayload.previewKind === "string"
+      ? specimenPayload.previewKind
+      : matchedCanonical.previewKind,
+    fileName: typeof specimenPayload.fileName === "string"
+      ? specimenPayload.fileName
+      : matchedCanonical.fileName,
     dir: payload.reference.direction ?? matchedCanonical.dir,
     zoom: payload.reference.zoom ?? matchedCanonical.zoom,
     theme: payload.reference.theme ?? matchedCanonical.theme,
@@ -278,8 +365,14 @@ async function renderCanonicalState(resolvedGeneratedState = null) {
   const fallbackState = canonicalStates[0];
   const requestedRef = resolvedGeneratedState?.activeRefId ?? params.get("ref") ?? fallbackState.refId;
   const resolvedCanonical = canonicalStateMap.get(requestedRef) ?? fallbackState;
-  const payload = statePayloads[resolvedGeneratedState?.state ?? params.get("state") ?? resolvedCanonical.state]
+  const basePayload = statePayloads[resolvedGeneratedState?.state ?? params.get("state") ?? resolvedCanonical.state]
     ?? statePayloads[resolvedCanonical.state];
+  const payload = {
+    ...basePayload,
+    fileName: resolvedGeneratedState?.fileName ?? params.get("file") ?? resolvedCanonical.fileName ?? basePayload.fileName,
+    previewKind: resolvedGeneratedState?.previewKind ?? params.get("preview") ?? resolvedCanonical.previewKind ?? basePayload.previewKind,
+    note: resolvedGeneratedState?.note ?? resolvedCanonical.note ?? basePayload.note,
+  };
   const width = normalizeWidth(
     resolvedGeneratedState?.width !== undefined ? String(resolvedGeneratedState.width) : params.get("width"),
     resolvedCanonical.width,
@@ -319,14 +412,18 @@ async function renderCanonicalState(resolvedGeneratedState = null) {
     helpId: "upload-file-help",
     statusId: "upload-file-status",
     errorId: "upload-file-error",
-    accept: ".csv,image/png,application/pdf",
+    accept: ".csv,image/png,image/jpeg,application/pdf,video/mp4,audio/mpeg",
     state: payload.uploadState,
+    previewKind: payload.previewKind,
+    previewLabel: payload.fileName,
   });
 
   initializeFormUploadFields({ scope: previewShell, initialState: payload.uploadState, initialFileName: payload.fileName });
   setFormUploadState(document.getElementById("upload-file-preview"), {
     state: payload.uploadState,
     fileName: payload.fileName,
+    previewKind: payload.previewKind,
+    previewLabel: payload.fileName,
   });
   setDisabledState(payload.disabled);
 

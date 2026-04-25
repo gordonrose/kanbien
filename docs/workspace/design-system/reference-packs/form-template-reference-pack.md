@@ -135,8 +135,9 @@ This pack turns them into named reference targets for the next loop.
   focus, status, and empty/error-state contracts as applicable once extracted.
 - `UploadFile` is now exposed for feature adoption through
   `/design-system/assets/formControls.mjs`; it owns local drop/browse/status
-  behavior while feature code owns upload transport, persistence, malware
-  scanning, accepted file policy, and durable asset-domain decisions. Its
+  behavior and selected-file preview affordances while feature code owns upload
+  transport, persistence, malware scanning, accepted file policy, and durable
+  asset-domain decisions. Its
   standalone canonical family now lives at
   `/design-system/canonical-renderings/upload-file`; the parent `FTR-020` and
   `FTR-021` states remain composition proof inside `Form Template`.

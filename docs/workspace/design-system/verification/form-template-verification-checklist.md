@@ -44,7 +44,8 @@
   artifact chain with a dedicated child launcher/render surface while still
   remaining parent-owned for governed adoption; the parent template now also
   hosts an upload field with drop/click entry, deterministic uploading status,
-  and local upload-error treatment; `UploadFile` now exposes a shared
+  local upload-error treatment, and media-aware selected-file preview
+  affordances; `UploadFile` now exposes a shared
   `formControls.mjs` render/controller seam and component catalog page for
   feature adoption, plus a standalone generated canonical family at
   `/design-system/canonical-renderings/upload-file`
@@ -58,6 +59,7 @@
   `src/frontend/designSystem/components/upload-file.html`
   `src/frontend/designSystem/assets/uploadFileCanonical.mjs`
   `src/features/designSystemCanonicals/persistence/migrations/0041_seed_upload_file_canonicals.sql`
+  `src/features/designSystemCanonicals/persistence/migrations/0042_seed_upload_file_preview_canonicals.sql`
   `src/frontend/designSystem/assets/styles.css`
   `src/features/designSystemCanonicals/persistence/migrations/0039_seed_design_system_canonicals_form_settings.sql`
   `src/features/designSystemCanonicals/persistence/migrations/0040_seed_form_template_upload_canonicals.sql`

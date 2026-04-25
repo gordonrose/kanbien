@@ -2466,11 +2466,100 @@ html[data-theme="dark"] .form-drawer-select-option.active .form-drawer-select-op
 }
 
 .form-upload-icon,
+.form-upload-preview,
 .form-upload-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
+}
+
+.form-upload-preview {
+  position: relative;
+  width: 4.5rem;
+  height: 4.5rem;
+  overflow: hidden;
+  border: 0.0625rem solid color-mix(in srgb, var(--line-strong) 52%, white);
+  border-radius: 0.8rem;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-1) 78%, white), color-mix(in srgb, var(--accent-soft, #eef0ff) 54%, var(--surface-1))),
+    var(--surface-1);
+  color: var(--accent-text, var(--ink));
+  box-shadow: 0 0.45rem 1rem rgba(15, 23, 42, 0.08);
+}
+
+.form-upload-preview.hidden {
+  display: none;
+}
+
+.form-upload-preview:not(.hidden) + .form-upload-icon {
+  display: none;
+}
+
+.form-upload-preview img,
+.form-upload-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: color-mix(in srgb, var(--surface-2) 88%, var(--line));
+}
+
+.form-upload-preview svg {
+  width: 1.55rem;
+  height: 1.55rem;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.form-upload-preview-art {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.form-upload-preview-art-image {
+  align-items: end;
+  justify-content: start;
+  padding: 0.52rem;
+  background:
+    radial-gradient(circle at 72% 24%, rgba(255, 255, 255, 0.94) 0 0.32rem, transparent 0.34rem),
+    linear-gradient(145deg, #7dd3fc 0 46%, #bae6fd 46% 100%);
+}
+
+.form-upload-preview-art-image span {
+  display: block;
+  width: 100%;
+  height: 42%;
+  clip-path: polygon(0 100%, 32% 28%, 54% 68%, 72% 38%, 100% 100%);
+  background: color-mix(in srgb, var(--accent) 62%, #16a34a);
+}
+
+.form-upload-preview-art-document {
+  display: grid;
+  gap: 0.2rem;
+  place-items: center;
+}
+
+.form-upload-preview-art-document strong {
+  max-width: 3.4rem;
+  overflow: hidden;
+  color: currentColor;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.form-upload-preview-art-audio {
+  background:
+    radial-gradient(circle at center, color-mix(in srgb, var(--accent-soft, #eef0ff) 78%, white) 0 36%, transparent 37%),
+    color-mix(in srgb, var(--surface-1) 80%, var(--accent-soft, #eef0ff));
 }
 
 .form-upload-icon {
@@ -2499,6 +2588,16 @@ html[data-theme="dark"] .form-upload-icon,
   background: color-mix(in srgb, var(--surface-1) 72%, var(--ink) 8%);
   color: var(--ink);
   box-shadow: 0 0.45rem 1.1rem rgba(0, 0, 0, 0.22);
+}
+
+html[data-theme="dark"] .form-upload-preview,
+[data-theme-scope="dark"] .form-upload-preview {
+  border-color: color-mix(in srgb, var(--line-strong) 58%, var(--ink) 12%);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-1) 72%, var(--ink) 8%), color-mix(in srgb, var(--accent-soft, #eef0ff) 30%, var(--surface-1))),
+    var(--surface-1);
+  color: var(--ink);
+  box-shadow: 0 0.45rem 1.1rem rgba(0, 0, 0, 0.24);
 }
 
 .form-upload-copy {
@@ -3421,6 +3520,7 @@ html[dir="rtl"] .form-page-shell[data-form-mobile-view="true"] .form-date-nav-bu
 .form-page-shell[data-form-disabled-mode="true"] .form-icon-grid-trigger-icon,
 .form-page-shell[data-form-disabled-mode="true"] .form-icon-grid-trigger-glyph,
 .form-page-shell[data-form-disabled-mode="true"] .form-upload-icon,
+.form-page-shell[data-form-disabled-mode="true"] .form-upload-preview,
 .form-page-shell[data-form-disabled-mode="true"] .form-upload-action,
 .form-page-shell[data-form-disabled-mode="true"] .form-date-trigger-icon,
 .form-page-shell[data-form-disabled-mode="true"] .form-time-trigger-icon,

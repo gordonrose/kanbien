@@ -546,9 +546,13 @@ export function renderFormUploadField({
   summary = "or choose a local file from this device",
   actionLabel = "Browse",
   status = "No file selected",
+  previewKind = "none",
+  previewUrl = "",
+  previewLabel = "",
 } = {}) {
   const ariaDescribedBy = [helpId, statusId, errorId].filter(Boolean).join(" ");
   const normalizedState = state in formUploadStateCopy ? state : "idle";
+  const normalizedPreviewKind = normalizeFormUploadPreviewKind(previewKind);
 
   return `
     <div
@@ -557,6 +561,7 @@ export function renderFormUploadField({
       data-form-upload-field
       data-form-upload-state="${escapeHtml(normalizedState)}"
       data-form-upload-default-file="${escapeHtml(defaultFileName)}"
+      data-form-upload-preview-kind="${escapeHtml(normalizedPreviewKind)}"
     >
       <input
         ${inputId ? `id="${escapeHtml(inputId)}"` : ""}
@@ -571,6 +576,14 @@ export function renderFormUploadField({
         data-form-upload-input
       />
       <label class="form-upload-dropzone" ${inputId ? `for="${escapeHtml(inputId)}"` : ""} data-form-upload-dropzone>
+        <span
+          class="form-upload-preview${normalizedPreviewKind === "none" ? " hidden" : ""}"
+          aria-hidden="true"
+          data-form-upload-preview
+          data-form-upload-preview-kind="${escapeHtml(normalizedPreviewKind)}"
+          ${previewUrl ? `data-form-upload-preview-url="${escapeHtml(previewUrl)}"` : ""}
+          ${previewLabel ? `data-form-upload-preview-label="${escapeHtml(previewLabel)}"` : ""}
+        ></span>
         <span class="form-upload-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false">
             <path d="M12 4v10m0-10 4 4m-4-4-4 4M5 14v3.5A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5V14" />
@@ -590,6 +603,132 @@ export function renderFormUploadField({
         <span data-form-upload-progress-bar></span>
       </div>
     </div>
+  `;
+}
+
+function normalizeFormUploadPreviewKind(kind) {
+  return ["image", "document", "video", "audio"].includes(kind) ? kind : "none";
+}
+
+function inferFormUploadPreviewKind(file, fileName = "") {
+  const mimeType = typeof file?.type === "string" ? file.type.toLowerCase() : "";
+  const normalizedName = String(fileName || file?.name || "").toLowerCase();
+
+  if (mimeType.startsWith("image/") && mimeType !== "image/svg+xml") {
+    return "image";
+  }
+
+  if (mimeType.startsWith("video/")) {
+    return "video";
+  }
+
+  if (mimeType.startsWith("audio/")) {
+    return "audio";
+  }
+
+  if (
+    mimeType === "application/pdf"
+    || mimeType.includes("document")
+    || mimeType.includes("spreadsheet")
+    || mimeType.includes("presentation")
+    || mimeType.startsWith("text/")
+    || /\.(csv|docx?|pdf|pptx?|txt|xlsx?)$/.test(normalizedName)
+  ) {
+    return "document";
+  }
+
+  return "document";
+}
+
+function getFormUploadFileExtension(fileName = "") {
+  const extension = String(fileName).split(".").pop() ?? "";
+  return extension && extension !== fileName ? extension.slice(0, 5).toUpperCase() : "FILE";
+}
+
+function getFormUploadPreviewIconMarkup(kind) {
+  if (kind === "audio") {
+    return `
+      <svg viewBox="0 0 24 24" focusable="false">
+        <path d="M5 10v4h3l4 3.5v-11L8 10zm11.5-2.5a5.8 5.8 0 0 1 0 9M18.7 5a9 9 0 0 1 0 14" />
+      </svg>
+    `;
+  }
+
+  if (kind === "video") {
+    return `
+      <svg viewBox="0 0 24 24" focusable="false">
+        <path d="M5.5 6.5h9a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zm11 3 4-2.2v9.4l-4-2.2z" />
+      </svg>
+    `;
+  }
+
+  return `
+    <svg viewBox="0 0 24 24" focusable="false">
+      <path d="M7 4h7.5L19 8.5V20H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm7 1.25V9h3.75M8 13h8M8 16h5" />
+    </svg>
+  `;
+}
+
+function releaseFormUploadObjectUrl(root) {
+  const objectUrl = root.dataset.formUploadPreviewObjectUrl;
+  if (objectUrl) {
+    URL.revokeObjectURL(objectUrl);
+    delete root.dataset.formUploadPreviewObjectUrl;
+  }
+}
+
+function renderFormUploadPreview(root, {
+  kind = "none",
+  previewUrl = "",
+  previewLabel = "",
+  fileName = "",
+} = {}) {
+  const previewNode = root.querySelector("[data-form-upload-preview]");
+  if (!(previewNode instanceof HTMLElement)) {
+    return;
+  }
+
+  const normalizedKind = normalizeFormUploadPreviewKind(kind);
+  root.dataset.formUploadPreviewKind = normalizedKind;
+  previewNode.dataset.formUploadPreviewKind = normalizedKind;
+  previewNode.classList.toggle("hidden", normalizedKind === "none");
+  previewNode.innerHTML = "";
+
+  if (normalizedKind === "none") {
+    return;
+  }
+
+  if ((normalizedKind === "image" || normalizedKind === "video") && previewUrl) {
+    const mediaLabel = previewLabel || fileName || `${normalizedKind} preview`;
+    previewNode.innerHTML = normalizedKind === "image"
+      ? `<img src="${escapeHtml(previewUrl)}" alt="${escapeHtml(mediaLabel)}" data-form-upload-preview-image />`
+      : `<video src="${escapeHtml(previewUrl)}" muted playsinline preload="metadata" data-form-upload-preview-video></video>`;
+    return;
+  }
+
+  if (normalizedKind === "image") {
+    previewNode.innerHTML = `
+      <span class="form-upload-preview-art form-upload-preview-art-image" data-form-upload-preview-art>
+        <span></span>
+      </span>
+    `;
+    return;
+  }
+
+  if (normalizedKind === "document") {
+    previewNode.innerHTML = `
+      <span class="form-upload-preview-art form-upload-preview-art-document" data-form-upload-preview-art>
+        ${getFormUploadPreviewIconMarkup("document")}
+        <strong>${escapeHtml(getFormUploadFileExtension(fileName || previewLabel))}</strong>
+      </span>
+    `;
+    return;
+  }
+
+  previewNode.innerHTML = `
+    <span class="form-upload-preview-art form-upload-preview-art-${escapeHtml(normalizedKind)}" data-form-upload-preview-art>
+      ${getFormUploadPreviewIconMarkup(normalizedKind)}
+    </span>
   `;
 }
 
@@ -833,10 +972,14 @@ export function refreshFormDrawerSelect(root) {
 export function setFormUploadState(root, {
   state = "idle",
   fileName = "",
+  file = null,
   progress,
   title,
   summary,
   status,
+  previewKind,
+  previewUrl = "",
+  previewLabel = "",
 } = {}) {
   if (!(root instanceof HTMLElement)) {
     return;
@@ -850,14 +993,41 @@ export function setFormUploadState(root, {
   const stateCopy = formUploadStateCopy[normalizedState];
   const effectiveFileName = fileName || root.dataset.formUploadFileName || root.dataset.formUploadDefaultFile || "selected file";
   const effectiveProgress = Number.isFinite(progress) ? Math.max(0, Math.min(100, progress)) : stateCopy.progress;
+  let effectivePreviewKind = previewKind ?? root.dataset.formUploadPreviewKind ?? "none";
+  let effectivePreviewUrl = previewUrl || root.dataset.formUploadPreviewUrl || "";
 
   root.dataset.formUploadState = normalizedState;
 
   if (normalizedState === "idle") {
+    releaseFormUploadObjectUrl(root);
     delete root.dataset.formUploadFileName;
     delete root.dataset.formUploadUserSelected;
+    delete root.dataset.formUploadPreviewUrl;
+    delete root.dataset.formUploadPreviewKind;
+    effectivePreviewKind = "none";
+    effectivePreviewUrl = "";
   } else {
     root.dataset.formUploadFileName = effectiveFileName;
+
+    if (typeof File !== "undefined" && file instanceof File) {
+      effectivePreviewKind = inferFormUploadPreviewKind(file, effectiveFileName);
+      releaseFormUploadObjectUrl(root);
+
+      if (effectivePreviewKind === "image" || effectivePreviewKind === "video") {
+        effectivePreviewUrl = URL.createObjectURL(file);
+        root.dataset.formUploadPreviewObjectUrl = effectivePreviewUrl;
+      } else {
+        effectivePreviewUrl = "";
+      }
+    }
+
+    root.dataset.formUploadPreviewKind = normalizeFormUploadPreviewKind(effectivePreviewKind);
+
+    if (effectivePreviewUrl) {
+      root.dataset.formUploadPreviewUrl = effectivePreviewUrl;
+    } else {
+      delete root.dataset.formUploadPreviewUrl;
+    }
   }
 
   if (titleNode instanceof HTMLElement) {
@@ -875,6 +1045,13 @@ export function setFormUploadState(root, {
   if (progressBar instanceof HTMLElement) {
     progressBar.style.width = `${effectiveProgress}%`;
   }
+
+  renderFormUploadPreview(root, {
+    kind: effectivePreviewKind,
+    previewUrl: effectivePreviewUrl,
+    previewLabel,
+    fileName: effectiveFileName,
+  });
 }
 
 export function refreshFormUploadField(root) {
@@ -1225,7 +1402,7 @@ export function initializeFormUploadFields({
 
       root.dataset.formUploadUserSelected = "true";
       const fileName = file?.name ?? root.dataset.formUploadDefaultFile;
-      setFormUploadState(root, { state: "uploading", fileName });
+      setFormUploadState(root, { state: "uploading", file, fileName });
 
       root.dispatchEvent(new CustomEvent("form-upload:file-selected", {
         bubbles: true,
@@ -1240,6 +1417,9 @@ export function initializeFormUploadFields({
     setFormUploadState(root, {
       state: initialState,
       fileName: initialFileName || root.dataset.formUploadDefaultFile,
+      previewKind: root.dataset.formUploadPreviewKind,
+      previewUrl: root.dataset.formUploadPreviewUrl,
+      previewLabel: root.dataset.formUploadPreviewLabel,
     });
     if (initialState === "uploading" || initialState === "complete" || initialState === "error") {
       root.dataset.formUploadUserSelected = "true";
