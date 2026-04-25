@@ -5031,12 +5031,15 @@ function applyTheme(theme) {
     contextNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
     scopeNode.dataset.themeScope = theme;
     if (topNavSurfaceMode === "canonical" && topNavPreviewCanvas instanceof HTMLElement) {
+      topNavCanonicalRenderLayout?.setAttribute("data-theme-scope", theme);
       topNavPreviewCanvas.dataset.themeScope = theme;
     }
     if (subNavSurfaceMode === "canonical" && subNavPreviewShell instanceof HTMLElement) {
+      subNavCanonicalRenderLayout?.setAttribute("data-theme-scope", theme);
       subNavPreviewShell.dataset.themeScope = theme;
     }
     if (contextNavSurfaceMode === "canonical" && contextNavPreviewShell instanceof HTMLElement) {
+      contextNavCanonicalRenderLayout?.setAttribute("data-theme-scope", theme);
       contextNavPreviewShell.dataset.themeScope = theme;
     }
     document.documentElement.removeAttribute("data-theme");

@@ -360,6 +360,10 @@ button {
   transition: width 120ms ease, height 120ms ease;
 }
 
+body[data-context-nav-surface="canonical"] .context-nav-preview-frame {
+  transition: none;
+}
+
 .context-nav-preview-shell {
   position: relative;
   height: 100%;
@@ -645,6 +649,11 @@ button {
 
 .context-nav-preview-body {
   padding: 1rem 1rem 1rem calc(4.25rem + 1rem);
+}
+
+.context-nav-preview-shell[dir="rtl"].context-nav-preview-desktop .context-nav-preview-body {
+  margin-right: 4.25rem;
+  padding: 1rem 1rem 1rem 1rem;
 }
 
 .context-nav-preview-shell.context-nav-preview-mobile .context-nav-preview-content {
