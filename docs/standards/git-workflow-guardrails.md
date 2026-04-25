@@ -31,6 +31,25 @@ Before material work begins, run:
 npm run git:preflight
 ```
 
+For material work with a bootstrap record, run preflight against the record:
+
+```bash
+npm run git:preflight -- --bootstrap docs/workspace/chat-bootstraps/<date>-<slug>.md --require-base
+```
+
+This validates that the bootstrap file exists, names the current branch,
+names the current worktree path, includes a planned write set, and that the
+branch descends from the baseline used for the check.
+
+When multiple chats or worktrees are active, also run:
+
+```bash
+npm run git:worktree-audit
+```
+
+This checks sibling worktrees for dirty stale-base states and suspicious
+branch/topic mismatches.
+
 Before promotion or merge planning, run:
 
 ```bash
@@ -89,11 +108,17 @@ Minimum bootstrap fields:
 
 - task scope
 - explicit base commit
+- base ref used for the start gate, normally `origin/main`
 - source branch at bootstrap time
 - dedicated branch
 - worktree path
 - intended write set
 - known shared seams
+
+The bootstrap file is not just a note. When passed to `npm run git:preflight`
+with `--bootstrap`, it is validated against the current branch and worktree.
+If it points at a different branch or path, the worktree is not considered
+isolated.
 
 ## Dirty Worktree Rule
 
@@ -109,6 +134,15 @@ Allowed next actions:
 - stop and ask for direction
 
 Do not treat a dirty worktree as harmless background noise.
+
+If a worktree is dirty and its `HEAD` does not descend from the current
+`origin/main`, treat it as a red-alert state. That usually means the task was
+started from an old or unrelated ambient branch, and promotion will likely
+require recovery instead of a normal merge.
+
+Use `npm run git:worktree-audit` before starting a new material chat when other
+worktrees are present. The audit blocks on dirty stale-base worktrees and warns
+when a dirty branch name does not appear to match its top commit subject.
 
 ## Main Branch Rule
 
@@ -147,6 +181,8 @@ When the repo feels confusing, stop and confirm:
 - whether the current branch is really dedicated to the task
 - whether the task’s bootstrap names the same intended write set you are
   actually editing
+- whether `npm run git:worktree-audit` reports dirty stale-base sibling
+  worktrees or branch/topic mismatches
 
 The fix for confusion is not more guessing. The fix is re-establishing the
 baseline truth explicitly.

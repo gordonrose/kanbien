@@ -613,6 +613,15 @@ For this repo, the guardrail order is:
 - `npm run git:preflight`
 - `npm run git:promote -- --source <branch-or-commit>`
 
+When parallel chats or sibling worktrees are active, also run:
+
+- `npm run git:worktree-audit`
+
+For material chats with a bootstrap artifact, run preflight against that
+artifact:
+
+- `npm run git:preflight -- --bootstrap <bootstrap-path> --require-base`
+
 This is a start gate, not a later cleanup step.
 
 If `npm run git:preflight` reports a blocking state:
@@ -664,6 +673,7 @@ its own. Use an explicit chat bootstrap before editing.
 Required bootstrap outputs:
 
 - an explicit base commit, not just the current checked-out branch name
+- an explicit base ref, normally `origin/main`
 - a dedicated worktree for the chat when parallel chats are active or likely
 - a dedicated task branch created from that explicit base commit
 - a short bootstrap record capturing the branch, worktree path, and intended
@@ -689,10 +699,14 @@ Minimum record fields:
 - chat scope or slug
 - base commit
 - source branch at bootstrap time
+- base ref used for the start gate
 - dedicated branch name
 - worktree path
 - intended write set
 - known shared seams
+
+When the bootstrap exists, it must match the current branch and worktree path.
+Treat a bootstrap mismatch as an isolation failure, not as harmless paperwork.
 
 Do not treat this record as optional process garnish. Its purpose is to stop a
 later commit in one chat from silently becoming the effective base for another.
@@ -727,6 +741,9 @@ Defaults:
   currently points to
 - if a chat needs to be rebased onto a newer commit from another chat, record
   that rebase decision explicitly in the bootstrap artifact or handoff
+- if `npm run git:worktree-audit` reports a dirty worktree whose `HEAD` does
+  not descend from `origin/main`, pause new material work until that worktree is
+  promoted, rebased, or explicitly preserved as a recovery case
 - before merging or handing work off, each chat should state its blast radius:
   changed features, changed shared seams, changed maintained artifacts, and any
   known downstream dependents

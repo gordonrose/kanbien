@@ -1,25 +1,34 @@
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
 
 type PreflightStatus =
   | "SAFE"
   | "DIRTY_BLOCK"
   | "STALE_MAIN_BLOCK"
   | "MAIN_BRANCH_BLOCK"
-  | "BOOTSTRAP_MISSING_BLOCK";
+  | "BOOTSTRAP_MISSING_BLOCK"
+  | "BOOTSTRAP_MISMATCH_BLOCK"
+  | "BASE_MISMATCH_BLOCK";
 
 type Options = {
   allowDirty: boolean;
   allowMain: boolean;
+  allowStaleBase: boolean;
   allowStaleMain: boolean;
+  baseRef: string;
   bootstrapPath: string | null;
   json: boolean;
+  requireBase: boolean;
 };
 
 type Report = {
   status: PreflightStatus;
   branch: string;
   headCommit: string;
+  baseRef: string;
+  baseCommit: string | null;
+  headDescendsFromBase: boolean | null;
   localMainCommit: string | null;
   originMainCommit: string | null;
   localMainMatchesOriginMain: boolean;
@@ -27,16 +36,28 @@ type Report = {
   worktreeChanges: string[];
   bootstrapPath: string | null;
   bootstrapExists: boolean | null;
+  bootstrap: BootstrapRecord | null;
+  bootstrapMismatches: string[];
   upstream: string | null;
   recommendations: string[];
+};
+
+export type BootstrapRecord = {
+  baseCommit: string | null;
+  dedicatedBranch: string | null;
+  dedicatedWorktreePath: string | null;
+  plannedWriteSet: string | null;
 };
 
 function parseArgs(argv: string[]): Options {
   let allowDirty = false;
   let allowMain = false;
+  let allowStaleBase = false;
   let allowStaleMain = false;
+  let baseRef = "origin/main";
   let bootstrapPath: string | null = null;
   let json = false;
+  let requireBase = false;
 
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
@@ -48,12 +69,29 @@ function parseArgs(argv: string[]): Options {
       allowMain = true;
       continue;
     }
+    if (value === "--allow-stale-base") {
+      allowStaleBase = true;
+      continue;
+    }
     if (value === "--allow-stale-main") {
       allowStaleMain = true;
       continue;
     }
+    if (value === "--base") {
+      baseRef = argv[index + 1] ?? baseRef;
+      index += 1;
+      continue;
+    }
+    if (value.startsWith("--base=")) {
+      baseRef = value.slice("--base=".length);
+      continue;
+    }
     if (value === "--json") {
       json = true;
+      continue;
+    }
+    if (value === "--require-base") {
+      requireBase = true;
       continue;
     }
     if (value === "--bootstrap") {
@@ -69,9 +107,12 @@ function parseArgs(argv: string[]): Options {
   return {
     allowDirty,
     allowMain,
+    allowStaleBase,
     allowStaleMain,
+    baseRef,
     bootstrapPath,
     json,
+    requireBase,
   };
 }
 
@@ -90,9 +131,125 @@ function tryRunGit(args: string[]): string | null {
   }
 }
 
+function exitsAsAncestor(ancestor: string, descendant: string): boolean | null {
+  try {
+    execFileSync("git", ["merge-base", "--is-ancestor", ancestor, descendant], {
+      stdio: "ignore",
+    });
+    return true;
+  } catch (error) {
+    const exitCode =
+      typeof error === "object" &&
+      error !== null &&
+      "status" in error &&
+      typeof error.status === "number"
+        ? error.status
+        : null;
+    if (exitCode === 1) {
+      return false;
+    }
+    return null;
+  }
+}
+
+function normalizeCommit(value: string | null): string | null {
+  return value?.trim().toLowerCase() || null;
+}
+
+function normalizePathForCompare(value: string): string {
+  return path.resolve(value).replace(/\/+$/, "");
+}
+
+function stripInlineComment(value: string): string {
+  return value.replace(/\s+#.*$/, "").trim();
+}
+
+export function parseBootstrapRecord(content: string): BootstrapRecord {
+  const record: BootstrapRecord = {
+    baseCommit: null,
+    dedicatedBranch: null,
+    dedicatedWorktreePath: null,
+    plannedWriteSet: null,
+  };
+
+  for (const rawLine of content.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line.startsWith("- ")) {
+      continue;
+    }
+    const match = /^- ([^:]+):\s*(.*)$/.exec(line);
+    if (!match) {
+      continue;
+    }
+    const key = match[1].trim().toLowerCase();
+    const value = stripInlineComment(match[2]);
+    if (!value || value.toLowerCase() === "n/a" || value.toLowerCase() === "none") {
+      continue;
+    }
+    if (key === "base commit") {
+      record.baseCommit = value;
+    } else if (key === "dedicated branch") {
+      record.dedicatedBranch = value;
+    } else if (key === "dedicated worktree path") {
+      record.dedicatedWorktreePath = value;
+    } else if (key === "planned write set") {
+      record.plannedWriteSet = value;
+    }
+  }
+
+  return record;
+}
+
+export function validateBootstrapRecord(input: {
+  bootstrap: BootstrapRecord;
+  branch: string;
+  cwd: string;
+  headCommit: string;
+}): string[] {
+  const mismatches: string[] = [];
+  if (!input.bootstrap.baseCommit) {
+    mismatches.push("bootstrap is missing Base Commit");
+  }
+  if (!input.bootstrap.dedicatedBranch) {
+    mismatches.push("bootstrap is missing Dedicated Branch");
+  } else if (input.bootstrap.dedicatedBranch !== input.branch) {
+    mismatches.push(
+      `bootstrap branch ${input.bootstrap.dedicatedBranch} does not match current branch ${input.branch}`,
+    );
+  }
+  if (!input.bootstrap.dedicatedWorktreePath) {
+    mismatches.push("bootstrap is missing Dedicated Worktree Path");
+  } else if (
+    normalizePathForCompare(input.bootstrap.dedicatedWorktreePath) !==
+    normalizePathForCompare(input.cwd)
+  ) {
+    mismatches.push(
+      `bootstrap worktree ${input.bootstrap.dedicatedWorktreePath} does not match current worktree ${input.cwd}`,
+    );
+  }
+  if (!input.bootstrap.plannedWriteSet) {
+    mismatches.push("bootstrap is missing Planned Write Set");
+  }
+  const normalizedHeadCommit = normalizeCommit(input.headCommit);
+  const normalizedBootstrapBase = normalizeCommit(input.bootstrap.baseCommit);
+  if (
+    normalizedHeadCommit !== null &&
+    normalizedBootstrapBase !== null &&
+    !normalizedHeadCommit.startsWith(normalizedBootstrapBase)
+  ) {
+    // The ancestry check in buildReport is authoritative; this message gives a
+    // quick clue when a chat starts from an obviously different commit.
+    mismatches.push(
+      `current HEAD ${input.headCommit} is not the bootstrap base ${input.bootstrap.baseCommit}; verify the branch was created from that base`,
+    );
+  }
+  return mismatches;
+}
+
 function buildReport(options: Options): Report {
   const branch = runGit(["branch", "--show-current"]) || "(detached)";
-  const headCommit = runGit(["rev-parse", "--short", "HEAD"]);
+  const headCommit = runGit(["rev-parse", "HEAD"]);
+  const baseCommit = tryRunGit(["rev-parse", "--verify", options.baseRef]);
   const localMainCommit = tryRunGit(["rev-parse", "--verify", "--short", "refs/heads/main"]);
   const originMainCommit = tryRunGit(["rev-parse", "--verify", "--short", "refs/remotes/origin/main"]);
   const statusOutput = runGit(["status", "--short"]);
@@ -105,6 +262,15 @@ function buildReport(options: Options): Report {
   const worktreeClean = worktreeChanges.length === 0;
   const bootstrapExists =
     options.bootstrapPath === null ? null : existsSync(options.bootstrapPath);
+  const bootstrap =
+    options.bootstrapPath !== null && bootstrapExists
+      ? parseBootstrapRecord(readFileSync(options.bootstrapPath, "utf8"))
+      : null;
+  const bootstrapBaseCommit = bootstrap?.baseCommit ?? null;
+  const bootstrapBaseDescends =
+    bootstrapBaseCommit !== null ? exitsAsAncestor(bootstrapBaseCommit, "HEAD") : null;
+  const headDescendsFromBase =
+    baseCommit !== null ? exitsAsAncestor(options.baseRef, "HEAD") : null;
   const upstream = tryRunGit([
     "rev-parse",
     "--abbrev-ref",
@@ -115,6 +281,19 @@ function buildReport(options: Options): Report {
     localMainCommit !== null &&
     originMainCommit !== null &&
     localMainCommit === originMainCommit;
+  const bootstrapMismatches =
+    bootstrap === null
+      ? []
+      : validateBootstrapRecord({
+          bootstrap,
+          branch,
+          cwd: process.cwd(),
+          headCommit,
+        }).filter(
+          (mismatch) =>
+            bootstrapBaseDescends !== true ||
+            !mismatch.includes("current HEAD"),
+        );
 
   let status: PreflightStatus = "SAFE";
   if (!options.allowDirty && !worktreeClean) {
@@ -125,6 +304,14 @@ function buildReport(options: Options): Report {
     status = "MAIN_BRANCH_BLOCK";
   } else if (options.bootstrapPath !== null && !bootstrapExists) {
     status = "BOOTSTRAP_MISSING_BLOCK";
+  } else if (bootstrapMismatches.length > 0) {
+    status = "BOOTSTRAP_MISMATCH_BLOCK";
+  } else if (
+    !options.allowStaleBase &&
+    (options.requireBase || !worktreeClean) &&
+    headDescendsFromBase === false
+  ) {
+    status = "BASE_MISMATCH_BLOCK";
   }
 
   const recommendations: string[] = [];
@@ -148,6 +335,17 @@ function buildReport(options: Options): Report {
       `Create the chat bootstrap at ${options.bootstrapPath} before continuing material work.`,
     );
   }
+  for (const mismatch of bootstrapMismatches) {
+    recommendations.push(`Fix bootstrap mismatch: ${mismatch}.`);
+  }
+  if (
+    (options.requireBase || !worktreeClean) &&
+    headDescendsFromBase === false
+  ) {
+    recommendations.push(
+      `Rebase or recreate this task branch from ${options.baseRef}; dirty work on a branch that does not descend from the current baseline is a high-risk mixed-worktree state.`,
+    );
+  }
   if (recommendations.length === 0) {
     recommendations.push(
       "Current repo state is safe for scoped work. Keep the task isolated and commit only the intended write set.",
@@ -157,7 +355,10 @@ function buildReport(options: Options): Report {
   return {
     status,
     branch,
-    headCommit,
+    headCommit: headCommit.slice(0, 7),
+    baseRef: options.baseRef,
+    baseCommit: baseCommit?.slice(0, 7) ?? null,
+    headDescendsFromBase,
     localMainCommit,
     originMainCommit,
     localMainMatchesOriginMain,
@@ -165,6 +366,8 @@ function buildReport(options: Options): Report {
     worktreeChanges,
     bootstrapPath: options.bootstrapPath,
     bootstrapExists,
+    bootstrap,
+    bootstrapMismatches,
     upstream,
     recommendations,
   };
@@ -175,6 +378,16 @@ function printReport(report: Report): void {
   console.log(`- status: ${report.status}`);
   console.log(`- branch: ${report.branch}`);
   console.log(`- head: ${report.headCommit}`);
+  console.log(`- base: ${report.baseRef} (${report.baseCommit ?? "missing"})`);
+  console.log(
+    `- head descends from base: ${
+      report.headDescendsFromBase === null
+        ? "unknown"
+        : report.headDescendsFromBase
+          ? "yes"
+          : "no"
+    }`,
+  );
   console.log(`- upstream: ${report.upstream ?? "(none)"}`);
   console.log(`- local main: ${report.localMainCommit ?? "(missing)"}`);
   console.log(`- origin/main: ${report.originMainCommit ?? "(missing)"}`);
@@ -186,6 +399,17 @@ function printReport(report: Report): void {
     console.log(
       `- bootstrap: ${report.bootstrapExists ? "present" : "missing"} (${report.bootstrapPath})`,
     );
+    if (report.bootstrap !== null) {
+      console.log(`- bootstrap base commit: ${report.bootstrap.baseCommit ?? "(missing)"}`);
+      console.log(`- bootstrap branch: ${report.bootstrap.dedicatedBranch ?? "(missing)"}`);
+      console.log(`- bootstrap worktree: ${report.bootstrap.dedicatedWorktreePath ?? "(missing)"}`);
+    }
+  }
+  if (report.bootstrapMismatches.length > 0) {
+    console.log("- bootstrap mismatches:");
+    for (const mismatch of report.bootstrapMismatches) {
+      console.log(`  ${mismatch}`);
+    }
   }
   if (report.worktreeChanges.length > 0) {
     console.log("- worktree changes:");
@@ -199,15 +423,17 @@ function printReport(report: Report): void {
   }
 }
 
-const options = parseArgs(process.argv.slice(2));
-const report = buildReport(options);
+if (require.main === module) {
+  const options = parseArgs(process.argv.slice(2));
+  const report = buildReport(options);
 
-if (options.json) {
-  console.log(JSON.stringify(report, null, 2));
-} else {
-  printReport(report);
-}
+  if (options.json) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    printReport(report);
+  }
 
-if (report.status !== "SAFE") {
-  process.exitCode = 1;
+  if (report.status !== "SAFE") {
+    process.exitCode = 1;
+  }
 }

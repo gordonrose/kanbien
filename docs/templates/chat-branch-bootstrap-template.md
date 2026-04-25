@@ -13,6 +13,7 @@ time with other repo work.
 ## Git Start Point
 
 - Base Commit:
+- Base Ref:
 - Source Branch At Bootstrap Time:
 - Bootstrap Command Or Method:
 
@@ -20,6 +21,7 @@ time with other repo work.
 
 - Dedicated Branch:
 - Dedicated Worktree Path:
+- Preflight Command:
 - Parallel Chats Known At Bootstrap Time:
 
 ## Intended Scope
@@ -32,6 +34,7 @@ time with other repo work.
 ## Coordination Notes
 
 - Rebase Policy For This Chat:
+- Worktree Audit Result:
 - Commit Approval Posture:
 - Push Or PR Posture:
 - Handoff Notes:
