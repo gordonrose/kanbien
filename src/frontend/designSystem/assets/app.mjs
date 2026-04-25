@@ -1598,6 +1598,9 @@ const contextNavMoreButton = document.getElementById("context-nav-more-button");
 const contextNavMoreMenu = document.getElementById("context-nav-more-menu");
 const contextNavMoreFilterButton = document.getElementById("context-nav-more-filter");
 const contextNavMoreAccessibilityButton = document.getElementById("context-nav-more-accessibility");
+const asyncActivityButton = document.getElementById("async-activity-button");
+const asyncActivityDrawer = document.getElementById("async-activity-drawer");
+const asyncActivityCloseButton = document.getElementById("async-activity-close");
 const themeButtons = Array.from(document.querySelectorAll("[data-theme-option]"));
 const directionButtons = Array.from(document.querySelectorAll("[data-direction-option]"));
 const accentButtons = Array.from(document.querySelectorAll("[data-accent]"));
@@ -1812,6 +1815,7 @@ let activeFilterCategory = "status";
 let activeLanguageCode = "en";
 let languageModalReturnFocusTarget = null;
 let accessibilityDrawerReturnFocusTarget = null;
+let asyncActivityDrawerReturnFocusTarget = null;
 let activeTopNavPreviewFixture = "standard";
 let activeTopNavPreviewOpenState = "closed";
 let pageShellBannerDemoVisible = false;
@@ -4264,6 +4268,28 @@ function setAccessibilityDrawerOpen(open, { restoreFocus = true } = {}) {
 
 function isAccessibilityDrawerOpen() {
   return accessibilityButton?.getAttribute("aria-expanded") === "true";
+}
+
+function setAsyncActivityDrawerOpen(open, { restoreFocus = true } = {}) {
+  asyncActivityButton?.setAttribute("aria-expanded", String(open));
+  asyncActivityDrawer?.classList.toggle("hidden", !open);
+  asyncActivityDrawer?.setAttribute("aria-hidden", String(!open));
+
+  if (open) {
+    asyncActivityDrawerReturnFocusTarget = asyncActivityButton;
+    window.requestAnimationFrame(() => {
+      asyncActivityCloseButton?.focus();
+    });
+    return;
+  }
+
+  if (restoreFocus && asyncActivityDrawerReturnFocusTarget instanceof HTMLElement) {
+    asyncActivityDrawerReturnFocusTarget.focus();
+  }
+}
+
+function isAsyncActivityDrawerOpen() {
+  return asyncActivityButton?.getAttribute("aria-expanded") === "true";
 }
 
 function setBrochureEditDrawerOpen(open, { restoreFocus = true } = {}) {
@@ -6890,13 +6916,23 @@ subNavPreviewBreadcrumbCompactButton?.addEventListener("click", () => {
 
 accessibilityButton?.addEventListener("click", () => {
   setBrochureEditDrawerOpen(false, { restoreFocus: false });
+  setAsyncActivityDrawerOpen(false, { restoreFocus: false });
   setFilterPanelOpen(false);
   setFilterOptionsPanelOpen(false);
   setAccessibilityDrawerOpen(!isAccessibilityDrawerOpen());
 });
 
+asyncActivityButton?.addEventListener("click", () => {
+  setBrochureEditDrawerOpen(false, { restoreFocus: false });
+  setAccessibilityDrawerOpen(false, { restoreFocus: false });
+  setFilterPanelOpen(false);
+  setFilterOptionsPanelOpen(false);
+  setAsyncActivityDrawerOpen(!isAsyncActivityDrawerOpen());
+});
+
 filterPanelButton?.addEventListener("click", () => {
   setBrochureEditDrawerOpen(false, { restoreFocus: false });
+  setAsyncActivityDrawerOpen(false, { restoreFocus: false });
   setAccessibilityDrawerOpen(false);
   setFilterOptionsPanelOpen(false);
   setFilterPanelOpen(!isFilterPanelOpen());
@@ -7129,6 +7165,10 @@ primaryNavOverflowButton?.addEventListener("click", () => {
 
 accessibilityCloseButton?.addEventListener("click", () => {
   setAccessibilityDrawerOpen(false);
+});
+
+asyncActivityCloseButton?.addEventListener("click", () => {
+  setAsyncActivityDrawerOpen(false);
 });
 
 filterPanelCloseButton?.addEventListener("click", () => {
@@ -7422,6 +7462,7 @@ document.addEventListener("click", (event) => {
 
   if (target.closest("#context-nav-more-filter")) {
     setContextNavMoreOpen(false);
+    setAsyncActivityDrawerOpen(false, { restoreFocus: false });
     setAccessibilityDrawerOpen(false);
     setFilterOptionsPanelOpen(false);
     setFilterPanelOpen(true);
@@ -7430,6 +7471,7 @@ document.addEventListener("click", (event) => {
 
   if (target.closest("#context-nav-more-accessibility")) {
     setContextNavMoreOpen(false);
+    setAsyncActivityDrawerOpen(false, { restoreFocus: false });
     setFilterPanelOpen(false);
     setFilterOptionsPanelOpen(false);
     setAccessibilityDrawerOpen(true);
@@ -7487,6 +7529,8 @@ document.addEventListener("click", (event) => {
   if (
     accessibilityButton?.contains(target) ||
     accessibilityDrawer?.contains(target) ||
+    asyncActivityButton?.contains(target) ||
+    asyncActivityDrawer?.contains(target) ||
     brochureEditDrawer?.contains(target) ||
     brochurePreview?.contains(target)
   ) {
@@ -7508,6 +7552,7 @@ document.addEventListener("click", (event) => {
   setFilterPanelOpen(false);
   setFilterOptionsPanelOpen(false);
   setAccessibilityDrawerOpen(false, { restoreFocus: !isFocusableOutsideTarget(target) });
+  setAsyncActivityDrawerOpen(false, { restoreFocus: !isFocusableOutsideTarget(target) });
   setBrochureEditDrawerOpen(false, { restoreFocus: !isFocusableOutsideTarget(target) });
   setContextNavMoreOpen(false);
   setLanguageModalOpen(false);
@@ -7565,6 +7610,11 @@ document.addEventListener("keydown", (event) => {
   if (isAccessibilityDrawerOpen()) {
     setAccessibilityDrawerOpen(false);
     accessibilityButton?.focus();
+  }
+
+  if (isAsyncActivityDrawerOpen()) {
+    setAsyncActivityDrawerOpen(false);
+    asyncActivityButton?.focus();
   }
 
   if (isBrochureEditDrawerOpen()) {

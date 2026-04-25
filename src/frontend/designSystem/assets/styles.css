@@ -6054,6 +6054,24 @@ html[data-theme="dark"] .search-input,
   fill: currentColor;
 }
 
+.context-nav-activity-badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.2rem;
+  display: grid;
+  place-items: center;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.25rem;
+  border: 0.0625rem solid var(--surface-1);
+  border-radius: 999px;
+  background: #b42318;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .tooltip-anchor[data-tooltip]::before,
 .tooltip-anchor[data-tooltip]::after,
 .context-nav-item[data-tooltip]::before,
@@ -6144,6 +6162,7 @@ html[data-theme="dark"] .search-input,
 }
 
 .accessibility-drawer h2,
+.async-activity-drawer h2,
 #filter-panel-title,
 #filter-options-title {
   margin: 0;
@@ -6182,11 +6201,89 @@ html[data-theme="dark"] .search-input,
 }
 
 .accessibility-group,
+.async-job-list,
 .filter-menu,
 .filter-options-list {
   display: grid;
   gap: 0.65rem;
   margin-bottom: 1rem;
+}
+
+.async-activity-summary,
+.async-job-copy,
+.async-job-kicker {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.async-activity-summary {
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.async-job-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface-2) 62%, var(--surface-1));
+}
+
+.async-job-card-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.async-job-card h3 {
+  margin: 0.15rem 0 0;
+  color: var(--ink);
+  font-size: 0.98rem;
+  line-height: 1.25;
+}
+
+.async-job-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.async-job-copy {
+  line-height: 1.45;
+}
+
+.async-job-status {
+  flex: 0 0 auto;
+  padding: 0.28rem 0.5rem;
+  border: 0.0625rem solid color-mix(in srgb, var(--accent) 28%, var(--line));
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.async-job-status-waiting {
+  border-color: var(--line);
+  background: var(--surface-1);
+  color: var(--ink-soft);
+}
+
+.async-job-progress {
+  overflow: hidden;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--line) 70%, transparent);
+}
+
+.async-job-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 62%, #0f766e));
 }
 
 .filter-menu-item,

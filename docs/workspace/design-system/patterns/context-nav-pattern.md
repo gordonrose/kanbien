@@ -27,6 +27,8 @@ utility actions.
   primary destinations that build downward from the top edge of the rail
 - Bottom region:
   persistent utility actions that remain pinned to the bottom edge of the rail
+  and may include shell-level tools such as display settings or async activity
+  status
 - Mobile conversion:
   bottom navigation bar with visible labels and a governed `More` sheet for
   overflowed utility actions
@@ -50,6 +52,9 @@ utility actions.
   the trigger
 - Drawer close controls use the same square button grammar as the family and a
   centered diagonal close glyph
+- Async activity drawers in the bottom utility zone may list multiple
+  background jobs so job progress remains visible while the user keeps working
+  across page navigation
 
 ## Signed-Off Alternate-Mode Rules
 

@@ -33,6 +33,9 @@
 - Content expectations:
   keep content scoped to the launcher’s governed workflow; do not treat the
   drawer as a catch-all page or settings destination
+- Async activity content:
+  may show one or many background jobs, status labels, and progress indicators
+  when launched as a persistent shell utility from the context-nav bottom stack
 - Layout structure:
   desktop uses a shell-attached side panel adjacent to the launching rail;
   mobile uses a bottom-attached sheet that fills the lane down to the top edge
@@ -63,7 +66,7 @@
 
 - Approved variants:
   shell-attached desktop drawer, mobile bottom-attached sheet, sibling
-  secondary drawer, context-nav drawer, filter drawer
+  secondary drawer, context-nav drawer, filter drawer, async activity drawer
 - Variant purpose:
   support richer transient workflows while keeping attachment and close rules
   consistent
