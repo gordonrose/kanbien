@@ -47,6 +47,31 @@ export function createPostgresWebAppPageSettingsRepository(
       );
       return result.rows[0] ? toSettingsData(result.rows[0]) : null;
     },
+    async listSettingsByPageIds(webAppPageIds) {
+      if (webAppPageIds.length === 0) {
+        return [];
+      }
+
+      const result = await dbPool.query<WebAppPageSettingsRecord>(
+        `
+          SELECT
+            web_app_page_settings_id AS "webAppPageSettingsId",
+            web_app_page_id AS "webAppPageId",
+            parent_page_id AS "parentPageId",
+            icon_key AS "iconKey",
+            show_in_top_nav AS "showInTopNav",
+            top_nav_order AS "topNavOrder",
+            page_template_key AS "pageTemplateKey",
+            created_at AS "createdAt",
+            updated_at AS "updatedAt"
+          FROM web_app_page_settings
+          WHERE web_app_page_id = ANY($1::uuid[])
+        `,
+        [webAppPageIds],
+      );
+
+      return result.rows.map(toSettingsData);
+    },
     async upsertSettings(input) {
       const result = await dbPool.query<WebAppPageSettingsRecord>(
         `

@@ -11,8 +11,16 @@
       "description": "Platform integration entry point for durable web-app page settings routes."
     },
     {
+      "seamId": "public-feature-factory",
+      "symbol": "createPublicWebAppPageSettingsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "stable",
+      "description": "Public read integration entry point for design-system page settings projections."
+    },
+    {
       "seamId": "page-settings-contract-types",
-      "symbol": "ApprovedIconCatalogEntryResponse | ApprovedPageTemplateCatalogEntryResponse | SelectablePageOptionResponse | WebAppPageContextNavProjectionResponse | WebAppPageSettingsResponse",
+      "symbol": "ApprovedIconCatalogEntryResponse | ApprovedPageTemplateCatalogEntryResponse | PublicDesignSystemTopNavResponse | SelectablePageOptionResponse | WebAppPageContextNavProjectionResponse | WebAppPageSettingsResponse",
       "path": "index.ts",
       "kind": "contract-types",
       "stability": "stable",

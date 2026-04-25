@@ -587,7 +587,7 @@
     {
       "featureName": "webAppPageSettings",
       "manifestPath": "src/features/webAppPageSettings/feature.manifest.json",
-      "fileCount": 20,
+      "fileCount": 21,
       "publicSeams": [
         {
           "seamId": "feature-factory",
@@ -597,8 +597,15 @@
           "path": "index.ts"
         },
         {
+          "seamId": "public-feature-factory",
+          "symbol": "createPublicWebAppPageSettingsFeature",
+          "kind": "feature-factory",
+          "stability": "stable",
+          "path": "index.ts"
+        },
+        {
           "seamId": "page-settings-contract-types",
-          "symbol": "ApprovedIconCatalogEntryResponse | ApprovedPageTemplateCatalogEntryResponse | SelectablePageOptionResponse | WebAppPageContextNavProjectionResponse | WebAppPageSettingsResponse",
+          "symbol": "ApprovedIconCatalogEntryResponse | ApprovedPageTemplateCatalogEntryResponse | PublicDesignSystemTopNavResponse | SelectablePageOptionResponse | WebAppPageContextNavProjectionResponse | WebAppPageSettingsResponse",
           "kind": "contract-types",
           "stability": "stable",
           "path": "index.ts"
@@ -1060,13 +1067,20 @@
         "hierarchy-integration-seam",
         "hierarchy-contract-types"
       ],
-      "publicImportCount": 8,
+      "publicImportCount": 9,
       "privateImportCount": 0,
       "imports": [
         {
           "sourceFile": "src/features/webAppPageSettings/domain/getPublicDesignSystemPageSettings.ts",
           "importPath": "../../webAppHierarchyBuilder",
           "line": 5,
+          "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppPageSettings/domain/getPublicDesignSystemTopNav.ts",
+          "importPath": "../../webAppHierarchyBuilder",
+          "line": 3,
           "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
           "visibility": "public"
         },
@@ -1101,7 +1115,7 @@
         {
           "sourceFile": "src/features/webAppPageSettings/domain/service.ts",
           "importPath": "../../webAppHierarchyBuilder",
-          "line": 16,
+          "line": 18,
           "resolvedPath": "src/features/webAppHierarchyBuilder/index.ts",
           "visibility": "public"
         },

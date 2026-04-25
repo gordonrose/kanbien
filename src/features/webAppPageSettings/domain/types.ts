@@ -1,4 +1,5 @@
 import type {
+  PublicDesignSystemTopNavResponse,
   WebAppPageContextNavProjectionResponse,
   WebAppPageSettingsOptionsResponse,
   WebAppPageSettingsResponse,
@@ -48,6 +49,7 @@ export interface GetWebAppPageContextNavProjectionInput {
 }
 
 export type {
+  PublicDesignSystemTopNavResponse,
   WebAppPageContextNavProjectionResponse,
   WebAppPageSettingsOptionsResponse,
   WebAppPageSettingsResponse,

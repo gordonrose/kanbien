@@ -99,6 +99,12 @@ export function createInMemoryWebAppPageSettingsRepository(seed?: {
       const record = settings.get(webAppPageId) ?? null;
       return record ? cloneSettings(record) : null;
     },
+    async listSettingsByPageIds(webAppPageIds) {
+      return webAppPageIds
+        .map((webAppPageId) => settings.get(webAppPageId) ?? null)
+        .filter((record): record is WebAppPageSettingsData => record !== null)
+        .map(cloneSettings);
+    },
     async upsertSettings(input) {
       const current = settings.get(input.webAppPageId) ?? null;
       const next: WebAppPageSettingsData = {

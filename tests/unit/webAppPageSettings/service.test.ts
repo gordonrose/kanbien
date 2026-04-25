@@ -15,6 +15,91 @@ import {
 } from "../../helpers/webAppPageSettingsHarness";
 
 describe("web app page settings service", () => {
+  it("returns public design-system top-nav projection in one service call", async () => {
+    const now = new Date("2026-04-25T00:00:00.000Z");
+    const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
+      modules: [
+        createModuleRecord({
+          rootFamilyId: "design-system",
+          moduleKey: "design-system",
+          displayLabel: "Design System",
+        }),
+      ],
+      pages: [
+        createPageRecord({
+          webAppPageId: "22222222-2222-4222-8222-222222222222",
+          rootFamilyId: "design-system",
+          pageKey: "design-system",
+          displayLabel: "Overview",
+          routeSegment: "",
+          normalizedRouteSegment: "",
+          resolvedFullRoutePath: "/design-system",
+          status: "live",
+        }),
+        createPageRecord({
+          webAppPageId: "33333333-3333-4333-8333-333333333333",
+          rootFamilyId: "design-system",
+          pageKey: "design-system-components",
+          displayLabel: "Components",
+          routeSegment: "components",
+          normalizedRouteSegment: "components",
+          resolvedFullRoutePath: "/design-system/components",
+          status: "live",
+          sortOrder: 1,
+        }),
+        createPageRecord({
+          webAppPageId: "44444444-4444-4444-8444-444444444444",
+          rootFamilyId: "design-system",
+          pageKey: "design-system-canonicals",
+          displayLabel: "Canonicals",
+          routeSegment: "canonicals",
+          normalizedRouteSegment: "canonicals",
+          resolvedFullRoutePath: "/design-system/canonicals",
+          status: "live",
+          sortOrder: 2,
+        }),
+      ],
+    });
+    const repository = createInMemoryWebAppPageSettingsRepository({
+      settings: [
+        {
+          webAppPageSettingsId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
+          webAppPageId: "33333333-3333-4333-8333-333333333333",
+          parentPageId: null,
+          iconKey: null,
+          showInTopNav: true,
+          topNavOrder: 2,
+          pageTemplateKey: "static-html-page",
+          createdAt: now,
+          updatedAt: now,
+        },
+        {
+          webAppPageSettingsId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+          webAppPageId: "44444444-4444-4444-8444-444444444444",
+          parentPageId: null,
+          iconKey: null,
+          showInTopNav: true,
+          topNavOrder: 1,
+          pageTemplateKey: "static-html-page",
+          createdAt: now,
+          updatedAt: now,
+        },
+      ],
+    });
+    const service = createWebAppPageSettingsService(
+      repository,
+      createStubWebAppHierarchySettingsSeam(hierarchyRepository),
+    );
+
+    await expect(service.getPublicDesignSystemTopNav()).resolves.toEqual({
+      items: [
+        { href: "/design-system", label: "Overview" },
+        { href: "/design-system/canonicals", label: "Canonicals" },
+        { href: "/design-system/components", label: "Components" },
+      ],
+    });
+  });
+
   it("TC-WEB-PAGE-SET-UNIT-001 returns fallback self navigation and topology template when no stored settings exist", async () => {
     const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
       modules: [createModuleRecord()],

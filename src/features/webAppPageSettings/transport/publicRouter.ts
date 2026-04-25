@@ -31,9 +31,17 @@ function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknow
 }
 
 export function createPublicWebAppPageSettingsRouter(
-  service: Pick<WebAppPageSettingsService, "getPublicDesignSystemPageSettings">,
+  service: Pick<WebAppPageSettingsService, "getPublicDesignSystemPageSettings" | "getPublicDesignSystemTopNav">,
 ): Router {
   const router = Router();
+
+  router.get("/design-system/top-nav", async (_request, response, next) => {
+    try {
+      response.status(200).json(await service.getPublicDesignSystemTopNav());
+    } catch (error) {
+      next(error);
+    }
+  });
 
   router.get("/pages/:webAppPageId", async (request, response, next) => {
     try {

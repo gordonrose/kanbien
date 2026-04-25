@@ -5,6 +5,7 @@ import type {
 
 export interface WebAppPageSettingsRepository {
   findSettingsByPageId(webAppPageId: string): Promise<WebAppPageSettingsData | null>;
+  listSettingsByPageIds(webAppPageIds: string[]): Promise<WebAppPageSettingsData[]>;
   upsertSettings(input: {
     webAppPageSettingsId: string;
     webAppPageId: string;

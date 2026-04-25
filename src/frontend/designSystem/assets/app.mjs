@@ -1527,77 +1527,19 @@ async function refreshGovernedPrimaryNav() {
   const requestId = ++governedTopNavRequestId;
 
   try {
-    const tree = await fetchJson("/v1/web-app-hierarchy/public/design-system/applied-tree");
-    const candidates = buildGovernedDesignSystemTopNavCandidates(tree);
-
-    const settingsItems = await Promise.all(
-      candidates.map(async (candidate) => {
-        try {
-          const settings = await fetchJson(
-            `/v1/web-app-page-settings/public/pages/${encodeURIComponent(candidate.webAppPageId)}`,
-          );
-          const hasStoredSettings = settings?.hasStoredSettings === true;
-          return {
-            ...candidate,
-            displayLabel: hasStoredSettings
-              ? settings?.displayLabel ?? candidate.displayLabel
-              : designSystemPrimaryNavItemByHref.get(candidate.href)?.label ?? candidate.displayLabel,
-            hasStoredSettings,
-            showInTopNav: settings?.showInTopNav === true,
-            topNavOrder: settings?.topNavOrder ?? null,
-          };
-        } catch (_error) {
-          return {
-            ...candidate,
-            displayLabel: designSystemPrimaryNavItemByHref.get(candidate.href)?.label ?? candidate.displayLabel,
-            hasStoredSettings: false,
-            showInTopNav: false,
-            topNavOrder: null,
-          };
-        }
-      }),
-    );
+    const response = await fetchJson("/v1/web-app-page-settings/public/design-system/top-nav");
 
     if (requestId !== governedTopNavRequestId) {
       return;
     }
 
-    const itemsByHref = new Map();
-    for (const item of settingsItems) {
-      const includeByDefault = item.href === "/design-system" && item.hasStoredSettings !== true;
-      if (item.showInTopNav || includeByDefault) {
-        itemsByHref.set(item.href, item);
-      }
-    }
-
-    const overviewCandidate = settingsItems.find((item) => item.href === "/design-system");
-
-    if (
-      !itemsByHref.has("/design-system")
-      && (!overviewCandidate || overviewCandidate.hasStoredSettings !== true)
-    ) {
-      const overviewItem = designSystemPrimaryNavItems.find((item) => item.href === "/design-system");
-      if (overviewItem) {
-        itemsByHref.set("/design-system", {
-          webAppPageId: null,
-          displayLabel: overviewItem.label,
-          href: overviewItem.href,
-          fallbackOrder: -1,
-          showInTopNav: true,
-          topNavOrder: -1,
-        });
-      }
-    }
-
-    const nextItems = sortGovernedDesignSystemTopNavItems([...itemsByHref.values()]).map((item) => ({
-      href: item.href,
-      label: item.displayLabel,
-    }));
+    const nextItems = Array.isArray(response?.items)
+      ? response.items.filter((item) => typeof item?.href === "string" && typeof item?.label === "string")
+      : [];
 
     if (nextItems.length === 0) {
       return;
     }
-
     setHostPrimaryNavCollections(nextItems);
     updatePrimaryNavOverflow();
   } catch (_error) {

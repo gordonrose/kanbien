@@ -1,5 +1,6 @@
 import { getWebAppPageContextNavProjection } from "./getWebAppPageContextNavProjection";
 import { getPublicDesignSystemPageSettings } from "./getPublicDesignSystemPageSettings";
+import { getPublicDesignSystemTopNav } from "./getPublicDesignSystemTopNav";
 import { getWebAppPageSettings } from "./getWebAppPageSettings";
 import { getWebAppPageSettingsOptions } from "./getWebAppPageSettingsOptions";
 import { updateWebAppPageSettings } from "./updateWebAppPageSettings";
@@ -7,6 +8,7 @@ import type {
   GetWebAppPageContextNavProjectionInput,
   GetWebAppPageSettingsInput,
   GetWebAppPageSettingsOptionsInput,
+  PublicDesignSystemTopNavResponse,
   UpdateWebAppPageSettingsInput,
   WebAppPageContextNavProjectionResponse,
   WebAppPageSettingsOptionsResponse,
@@ -19,6 +21,7 @@ export interface WebAppPageSettingsService {
   getPublicDesignSystemPageSettings(
     input: GetWebAppPageSettingsInput,
   ): Promise<WebAppPageSettingsResponse>;
+  getPublicDesignSystemTopNav(): Promise<PublicDesignSystemTopNavResponse>;
   getWebAppPageContextNavProjection(
     input: GetWebAppPageContextNavProjectionInput,
   ): Promise<WebAppPageContextNavProjectionResponse>;
@@ -38,6 +41,8 @@ export function createWebAppPageSettingsService(
   return {
     getPublicDesignSystemPageSettings: (input) =>
       getPublicDesignSystemPageSettings(repository, hierarchySeam, input),
+    getPublicDesignSystemTopNav: () =>
+      getPublicDesignSystemTopNav(repository, hierarchySeam),
     getWebAppPageContextNavProjection: (input) =>
       getWebAppPageContextNavProjection(repository, hierarchySeam, input),
     getWebAppPageSettings: (input) => getWebAppPageSettings(repository, hierarchySeam, input),

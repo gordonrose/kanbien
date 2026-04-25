@@ -147,47 +147,23 @@ const settingsByPageId = {
 } as const;
 
 async function mockGovernedTopNav(page: Page) {
-  await page.route("**/v1/web-app-hierarchy/design-system/applied-tree", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify(appliedTreeResponse),
-    });
-  });
-
-  await page.route(/.*\/v1\/web-app-page-settings\/pages\/[^/]+$/, async (route) => {
-    const url = new URL(route.request().url());
-    const pathSegments = url.pathname.split("/");
-    const pageId = decodeURIComponent(pathSegments[pathSegments.length - 1] ?? "");
-    const settings = settingsByPageId[pageId as keyof typeof settingsByPageId];
-
-    if (!settings) {
-      await route.fulfill({
-        status: 404,
-        contentType: "application/json",
-        body: JSON.stringify({ code: "not_found", message: "Missing settings fixture." }),
-      });
-      return;
-    }
-
+  await page.route("**/v1/web-app-page-settings/public/design-system/top-nav", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
-        webAppPageId: pageId,
-        parentPageId: null,
-        rootFamilyId: "design-system",
-        displayLabel: settings.displayLabel,
-        hasStoredSettings: true,
-        iconKey: null,
-        effectiveIconKey: "page-default",
-        showInTopNav: settings.showInTopNav,
-        topNavOrder: settings.topNavOrder,
-        pageTemplateKey: "static-html-page",
-        effectivePageTemplateKey: "static-html-page",
-        contextNavItems: [],
-        createdAt: "2026-04-21T00:00:00.000Z",
-        updatedAt: "2026-04-21T00:00:00.000Z",
+        items: Object.entries(settingsByPageId)
+          .filter(([, settings]) => settings.showInTopNav)
+          .sort((left, right) => (left[1].topNavOrder ?? 0) - (right[1].topNavOrder ?? 0))
+          .map(([pageId, settings]) => {
+            const page = appliedTreeResponse.rootFamilies[0].modules[0].pages.find(
+              (candidate) => candidate.webAppPageId === pageId,
+            );
+            return {
+              href: page?.resolvedFullRoutePath ?? "/design-system",
+              label: settings.displayLabel,
+            };
+          }),
       }),
     });
   });
@@ -226,49 +202,23 @@ test.describe("design-system governed top nav", () => {
   });
 
   test("explicitly disabling overview removes it from the governed host shell", async ({ page }) => {
-    await page.route("**/v1/web-app-hierarchy/design-system/applied-tree", async (route) => {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify(appliedTreeResponse),
-      });
-    });
-
-    await page.route(/.*\/v1\/web-app-page-settings\/pages\/[^/]+$/, async (route) => {
-      const url = new URL(route.request().url());
-      const pathSegments = url.pathname.split("/");
-      const pageId = decodeURIComponent(pathSegments[pathSegments.length - 1] ?? "");
-      const settings = settingsByPageId[pageId as keyof typeof settingsByPageId];
-
-      if (!settings) {
-        await route.fulfill({
-          status: 404,
-          contentType: "application/json",
-          body: JSON.stringify({ code: "not_found", message: "Missing settings fixture." }),
-        });
-        return;
-      }
-
-      const showInTopNav = pageId === "page-overview" ? false : settings.showInTopNav;
-
+    await page.route("**/v1/web-app-page-settings/public/design-system/top-nav", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
         body: JSON.stringify({
-          webAppPageId: pageId,
-          parentPageId: null,
-          rootFamilyId: "design-system",
-          displayLabel: settings.displayLabel,
-          hasStoredSettings: true,
-          iconKey: null,
-          effectiveIconKey: "page-default",
-          showInTopNav,
-          topNavOrder: settings.topNavOrder,
-          pageTemplateKey: "static-html-page",
-          effectivePageTemplateKey: "static-html-page",
-          contextNavItems: [],
-          createdAt: "2026-04-21T00:00:00.000Z",
-          updatedAt: "2026-04-21T00:00:00.000Z",
+          items: Object.entries(settingsByPageId)
+            .filter(([pageId, settings]) => pageId !== "page-overview" && settings.showInTopNav)
+            .sort((left, right) => (left[1].topNavOrder ?? 0) - (right[1].topNavOrder ?? 0))
+            .map(([pageId, settings]) => {
+              const page = appliedTreeResponse.rootFamilies[0].modules[0].pages.find(
+                (candidate) => candidate.webAppPageId === pageId,
+              );
+              return {
+                href: page?.resolvedFullRoutePath ?? "/design-system",
+                label: settings.displayLabel,
+              };
+            }),
         }),
       });
     });

@@ -5,6 +5,8 @@ export {
 export type {
   ApprovedIconCatalogEntryResponse,
   ApprovedPageTemplateCatalogEntryResponse,
+  PublicDesignSystemTopNavItemResponse,
+  PublicDesignSystemTopNavResponse,
   SelectablePageOptionResponse,
   WebAppPageContextNavProjectionItemResponse,
   WebAppPageContextNavProjectionResponse,

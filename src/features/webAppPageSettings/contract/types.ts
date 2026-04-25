@@ -23,6 +23,15 @@ export interface WebAppPageSettingsResponse {
   updatedAt: string | null;
 }
 
+export interface PublicDesignSystemTopNavItemResponse {
+  href: string;
+  label: string;
+}
+
+export interface PublicDesignSystemTopNavResponse {
+  items: PublicDesignSystemTopNavItemResponse[];
+}
+
 export interface ApprovedIconCatalogEntryResponse {
   iconKey: string;
   label: string;

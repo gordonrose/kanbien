@@ -242,14 +242,15 @@ Rule: Cross-feature imports in src/features must go through target feature index
 ### webAppPageSettings
 
 - Manifest: `src/features/webAppPageSettings/feature.manifest.json`
-- Source files: 20
+- Source files: 21
 - Declared dependencies: webAppHierarchyBuilder
 - Current public dependencies: webAppHierarchyBuilder
 - Private seam violations: 0
 - Depended on by: none
 - Public seams:
   - `feature-factory` via `createWebAppPageSettingsFeature` in `index.ts` (feature-factory, stable)
-  - `page-settings-contract-types` via `ApprovedIconCatalogEntryResponse | ApprovedPageTemplateCatalogEntryResponse | SelectablePageOptionResponse | WebAppPageContextNavProjectionResponse | WebAppPageSettingsResponse` in `index.ts` (contract-types, stable)
+  - `public-feature-factory` via `createPublicWebAppPageSettingsFeature` in `index.ts` (feature-factory, stable)
+  - `page-settings-contract-types` via `ApprovedIconCatalogEntryResponse | ApprovedPageTemplateCatalogEntryResponse | PublicDesignSystemTopNavResponse | SelectablePageOptionResponse | WebAppPageContextNavProjectionResponse | WebAppPageSettingsResponse` in `index.ts` (contract-types, stable)
 - Breaking-change risks:
   - Changing page settings response shape or context-nav projection semantics can break governed app surfaces that consume these durable settings.
   - Changing page settings behavior without compatibility planning can break curated hierarchy adoption flows that rely on stable page identifiers and relationships.
@@ -406,15 +407,16 @@ Rule: Cross-feature imports in src/features must go through target feature index
 
 - Declared in manifest: yes
 - Declared seam ids: hierarchy-integration-seam-factory, hierarchy-integration-seam, hierarchy-contract-types
-- Public imports: 8
+- Public imports: 9
 - Private imports: 0
 
 - `src/features/webAppPageSettings/domain/getPublicDesignSystemPageSettings.ts:5` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
+- `src/features/webAppPageSettings/domain/getPublicDesignSystemTopNav.ts:3` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/getWebAppPageContextNavProjection.ts:4` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/getWebAppPageSettings.ts:5` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/getWebAppPageSettingsOptions.ts:5` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/presenters.ts:12` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
-- `src/features/webAppPageSettings/domain/service.ts:16` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
+- `src/features/webAppPageSettings/domain/service.ts:18` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/domain/updateWebAppPageSettings.ts:12` imports `../../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 - `src/features/webAppPageSettings/integration.ts:4` imports `../webAppHierarchyBuilder` -> `src/features/webAppHierarchyBuilder/index.ts` (public)
 
