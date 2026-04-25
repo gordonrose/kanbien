@@ -3,31 +3,22 @@
 ## Implementation Status
 
 - Status:
-  first backend/platform foundation slice implemented with concrete BullMQ
-  provider adapter as of 2026-04-25
+  planned backend/platform foundation slice as of 2026-04-25
 - Implemented:
   - first-pass capability matrix for `jobProcessing`
   - first-pass capability matrix notes
   - ADR for BullMQ/Redis and the transactional outbox decision
-  - PRD-derived test-case document
+- Not yet implemented:
+  - PRD-derived test cases
   - implementation blueprint
   - `jobProcessing` feature/foundation
-  - provider-neutral enqueue, registry, dispatcher, worker, retry, payload
-    safety, and tenant-scope seams
+  - Redis/BullMQ configuration
+  - worker runtime
+  - dispatcher runtime
   - job persistence migrations
-  - `REDIS_URL` parsing
-  - dispatcher and worker runtime entrypoints
-  - concrete BullMQ-backed `QueueProviderAdapter`
-  - dispatcher and worker entrypoint wiring to BullMQ through `REDIS_URL`
-  - fake-provider executable tests mapped to `TC-JOB-PROC-*`
-  - opt-in Redis-backed BullMQ provider tests guarded by
-    `RUN_REDIS_JOB_PROVIDER_TESTS=true`
-  - first consumer job registration for `notificationDelivery` provider-safe
-    stored email delivery
-- Not yet implemented:
+  - executable tests
   - operator APIs/UI
-  - security-sensitive notification-delivery async content regeneration
-  - recurring scheduling
+  - notification-delivery retry adoption
 
 ## Purpose
 
@@ -51,15 +42,17 @@ It establishes:
 - durable metadata for future operator troubleshooting
 
 The first slice is intentionally a foundation. It should make asynchronous work
-safe and repeatable without becoming a full workflow engine, scheduling product,
-or operator console.
+safe and repeatable without becoming a full workflow engine, scheduling
+product, or operator console.
+
+---
 
 ## Scope
 
 This phase includes:
 
 - a new job-processing foundation, expected under `src/features/jobProcessing`
-  unless the implementation blueprint selects a different repo-local placement
+  unless the ADR selects a different platform location
 - BullMQ with Redis as the first queue provider
 - a provider boundary that prevents features from importing BullMQ directly
 - durable PostgreSQL job and outbox persistence
@@ -72,7 +65,7 @@ This phase includes:
 - at-least-once execution semantics
 - default exponential backoff with jitter
 - dead-letter state for exhausted jobs
-- initial queues:
+- initial queue names:
   - `critical`
   - `default`
   - `bulk`
@@ -98,24 +91,53 @@ This phase does **not** include:
 - notification-delivery automatic retry implementation
 - feature-specific batch progress APIs
 
+Those later concerns should build on this foundation rather than be collapsed
+into the first implementation.
+
+---
+
 ## Core Concepts
 
 ### Job-processing foundation
 
-`jobProcessing` owns generic asynchronous mechanics: durable job request,
-dispatch, provider adapter, worker execution, attempts, retry, dead-letter
-state, and future operator metadata.
+`jobProcessing` is the shared asynchronous processing foundation.
+
+It owns generic mechanics:
+
+- durable job request
+- dispatch
+- provider adapter
+- worker execution
+- attempts
+- retry
+- dead-letter state
+- future operator metadata
 
 It does not own feature business meaning.
 
+For example, jobProcessing may know that a job failed after five attempts. The
+campaign feature owns whether a campaign recipient is marked `dead`, whether a
+campaign is still eligible to continue, and what progress UI should show.
+
 ### Queue provider
 
-The first provider is BullMQ backed by Redis. Local development uses:
+The first provider is BullMQ backed by Redis.
 
-`REDIS_URL=redis://localhost:6379`
+BullMQ should remain behind a platform provider adapter.
 
-BullMQ should remain behind a provider adapter. Feature code must not import
-BullMQ, Redis, or provider-specific job objects.
+Feature code must not import BullMQ, Redis, or provider-specific job objects.
+
+The platform contract is the behavior the repo depends on:
+
+- at-least-once execution
+- versioned payloads
+- retry and dead-letter semantics
+- queue and priority defaults
+- durable attempt metadata
+- delayed one-off execution
+
+Provider-specific behavior may exist inside the adapter, but should not leak
+into feature contracts unless a later ADR explicitly promotes it.
 
 ### Transactional outbox
 
@@ -123,29 +145,56 @@ When queued work is part of a durable domain change, feature code should write a
 job request through the job-processing seam in the same PostgreSQL transaction
 as the domain records.
 
-The platform dispatches that durable request to BullMQ after commit.
+The platform then dispatches that durable request to BullMQ after commit.
+
+This avoids the failure mode:
+
+1. domain record commits
+2. process crashes before Redis enqueue
+3. required background job is lost
 
 ### Registered job type
 
-A registered job type declares job type identifier, owner feature, supported
-payload versions, payload validation schemas, execution scope, default queue,
-default priority, retry policy, concurrency/rate-limit hints where applicable,
-and handler.
+A registered job type declares:
+
+- job type identifier
+- owner feature
+- supported payload versions
+- payload validation schemas
+- execution scope
+- default queue
+- default priority
+- retry policy
+- concurrency/rate-limit hints where applicable
+- handler
 
 Only registered job types may be enqueued or executed.
 
+Registration should be explicit at platform/worker composition time. Hidden
+runtime discovery is out of scope for v1.
+
 ### Job payload
 
-Job payloads are JSON and versioned. Payloads should contain stable references
-and minimal execution metadata by default.
+Job payloads are JSON and versioned.
 
-Payloads must not contain secrets, bearer tokens, session IDs, credentials,
-passwords, private keys, live role claims, live permission lists, or broad
-authority grants.
+Payloads should contain stable references and minimal execution metadata by
+default.
+
+Payloads must not contain:
+
+- secrets
+- bearer tokens
+- session IDs
+- credentials
+- passwords
+- private keys
+- live role claims
+- live permission lists
+- broad authority grants
 
 If a job requires historically exact facts, those facts should be persisted in
 the owning feature's durable domain records or in an approved durable snapshot
-before enqueueing. The payload should reference that durable record.
+before enqueueing. The job payload should then reference that durable record.
 
 ### Job scope
 
@@ -161,9 +210,16 @@ Every job type declares one execution scope:
 Tenant-scoped jobs must carry exactly one tenant context and handlers must
 verify object ownership through tenant-scoped feature seams.
 
+Jobs may carry requester actor IDs for audit attribution, but they must not
+replay the original session or token.
+
 ### Worker
 
 A worker is a process separate from the HTTP server.
+
+The HTTP server handles requests.
+
+The worker handles background jobs.
 
 Worker concurrency should be configurable by queue in v1. Job-type concurrency
 limits and runtime overrides are designed-for but deferred.
@@ -185,11 +241,31 @@ Default retry policy:
 - exhausted state:
   `dead`
 
+Job types may declare approved overrides.
+
+Dead jobs remain durable and inspectable. Manual retry is deferred, but the
+model must preserve enough state for future root-authorized retry APIs.
+
+---
+
 ## Capability Set
 
 ### `enqueueTransactionalJobRequest`
 
 Persist a durable job request as part of a feature-owned domain transaction.
+
+Inputs include:
+
+- `jobType`
+- `queueName` or default selector
+- `payloadVersion`
+- `payload`
+- `idempotencyKey`
+- optional `runAt`
+- optional priority constrained by job-type policy
+- execution scope metadata
+- tenant ID when scope requires it
+- requester audit attribution when available
 
 Rules:
 
@@ -211,58 +287,192 @@ Rules:
 - claims/leases rows safely
 - publishes idempotently where possible
 - records provider job ID and dispatch metadata
+- records safe dispatch failure summaries
 - leaves failed dispatch requests durable and retryable
 
 ### `registerJobTypeAndHandler`
 
 Register supported job types and their handlers.
 
+Rules:
+
+- registration is explicit
+- duplicate job types are rejected
+- unsupported payload versions are rejected
+- missing schemas or handlers fail startup/configuration validation
+- feature handlers stay behind exported feature seams
+
 ### `executeRegisteredJob`
 
-Run registered job handlers from BullMQ workers with durable attempt recording.
+Run registered job handlers from BullMQ workers.
+
+Rules:
+
+- validates job type and payload before handler execution
+- records attempt start and finish
+- records worker identity
+- stores safe error summary
+- updates durable job status
+- expects handlers to be idempotent
+- treats at-least-once execution as the platform guarantee
 
 ### `applyRetryBackoffAndDeadLetterPolicy`
 
-Apply retry policy with exponential backoff, jitter, and dead-letter terminal
-state.
+Apply retry policy consistently.
+
+Rules:
+
+- retryable errors use exponential backoff with jitter
+- non-retryable errors do not churn through all attempts unless policy says so
+- exhausted jobs move to dead-letter state
+- attempt history is never erased by terminal state
 
 ### `validateVersionedJobPayload`
 
-Validate payload shape, version, and safety.
+Validate payload shape and safety.
+
+Rules:
+
+- every payload has a supported version
+- every payload is schema-validated
+- payloads are small by default
+- payloads carry stable references by default
+- durable snapshots require an explicit feature-design exception
+- secrets, tokens, credentials, and authority claims are rejected
 
 ### `preserveExecutionScopeAndTenantBoundary`
 
 Keep async execution aligned with root and tenant boundary rules.
 
+Rules:
+
+- every job type declares execution scope
+- tenant jobs carry exactly one tenant ID
+- tenant handlers verify object ownership
+- jobs do not carry authority
+- requester attribution is audit metadata only
+- shared-cross-tenant work requires explicit approval
+
 ### `configureQueuesPriorityAndConcurrency`
 
 Provide operational isolation for workload classes.
+
+Initial queues:
+
+- `critical`
+- `default`
+- `bulk`
+- `maintenance`
+
+Rules:
+
+- queue-level concurrency is supported in v1
+- job types declare default queue and priority
+- priority sorts inside a queue
+- separate queues isolate workload classes
+- long work must be chunked where practical
+- bulk work should not block critical or default work
 
 ### `recordJobMetadataForFutureOperatorVisibility`
 
 Persist metadata needed for later operator APIs/UI.
 
+Required preserved data includes:
+
+- job ID
+- queue name
+- job type
+- payload version
+- redacted/safe payload metadata
+- status
+- priority
+- run/delay timestamp
+- attempt count
+- max attempts
+- created/updated/completed timestamps
+- worker ID for attempts
+- last error code and summary
+- related domain entity references where appropriate
+- idempotency key
+- dead-letter state
+- future operator audit hooks
+
 ### `supportManualRetryAndCancelLater`
 
-Preserve future root-operator control semantics while deferring APIs.
+Preserve future root-operator control semantics.
+
+Deferred future capabilities include:
+
+- retry one dead job
+- retry filtered dead jobs
+- cancel a queued or delayed job
+- pause/resume queue
+- pause/resume job type
+- adjust runtime priority or concurrency
+
+Future mutation controls must be root-authorized and audited.
 
 ### `supportDomainBatchProgressPattern`
 
 Define the batch-progress pattern without implementing a generic batch engine.
 
+Rules:
+
+- generic queue state is for operations
+- user-facing progress belongs to the owning feature
+- batch-capable features persist item-level progress
+- workers can resume from durable item state
+- progress UI should read feature-owned progress APIs
+
+Example durable item states:
+
+- `pending`
+- `queued`
+- `processing`
+- `succeeded`
+- `failed`
+- `dead`
+- `canceled`
+
 ### `gracefulWorkerShutdownAndIdentity`
 
 Ensure worker processes are operable.
 
+Rules:
+
+- workers record stable identity on attempts
+- workers handle `SIGTERM` and `SIGINT`
+- workers stop accepting new jobs during shutdown
+- workers allow bounded in-flight drain
+- unfinished work remains retryable through provider/lease mechanics
+
 ### `deferSchedulingToolkit`
 
-Support simple delayed jobs while deferring recurring scheduling.
+Support simple delayed jobs while deferring scheduling as a product/toolkit.
 
-### `adoptNotificationDeliveryRetry`
+Rules:
 
-Register notification-delivery as the first job-processing consumer while
-preserving the rule that redacted security-sensitive email snapshots must not
-be sent from durable placeholder content.
+- one-off `runAt` delayed jobs are in scope
+- recurring jobs are out of scope
+- cron expressions are out of scope
+- schedule-management APIs/UI are out of scope
+
+### `adoptNotificationDeliveryRetryLater`
+
+Preserve a clean adoption path for notification-delivery retry.
+
+Expected future shape:
+
+- job type:
+  `notification.email.send`
+- payload:
+  `outboundEmailId`
+- handler:
+  loads durable notification-delivery state and creates/records attempts
+
+This adoption is deferred to a later implementation loop.
+
+---
 
 ## Requirements
 
@@ -302,7 +512,8 @@ be sent from durable placeholder content.
 2. Handlers must be idempotent.
 3. Durable domain changes and required job requests must not drift apart.
 4. Dispatcher failures must leave requests durable and retryable.
-5. Worker crashes must leave jobs eligible for retry.
+5. Worker crashes must leave jobs eligible for retry through provider lock or
+   stalled-job mechanics.
 6. Attempt history must survive retries and terminal failure.
 7. Long-running work should be split into smaller idempotent jobs where
    practical.
@@ -318,7 +529,11 @@ be sent from durable placeholder content.
    handler evolution.
 5. Future operator APIs/UI should not require redesigning the job state model.
 
+---
+
 ## Deferred Operator APIs/UI
+
+The initial implementation may not expose operator APIs or UI.
 
 Future API candidates:
 
@@ -336,11 +551,40 @@ Future capability candidates:
 - `jobProcessing.job.cancel`
 - `jobProcessing.queue.manage`
 
+Rules for future APIs:
+
+- root-authenticated only
+- root-authorized by explicit capabilities
+- audit mutation actions
+- expose redacted payload metadata only by default
+- keep generic job operations separate from feature-owned business progress
+
+---
+
 ## Batch Progress Guidance
 
 The queue foundation should not be the only source of truth for feature
-progress. For large workflows, features should persist durable item-level
-progress and expose feature-owned progress APIs.
+progress.
+
+For large workflows, features should persist durable item-level progress.
+
+Example: a campaign email send should persist campaign-recipient rows and use
+their statuses to answer:
+
+- total recipients
+- pending recipients
+- queued recipients
+- sending recipients
+- sent recipients
+- failed recipients
+- dead recipients
+- recent throughput
+- approximate ETA
+
+The generic job system can support operational troubleshooting, but the feature
+owns business progress.
+
+---
 
 ## Acceptance Criteria
 
@@ -363,16 +607,7 @@ The first implementation is acceptable when:
 12. PRD-derived tests cover enqueue, dispatch, execution, retry, payload
     safety, tenant-boundary, idempotency, and worker failure behavior.
 
-Current implementation note:
-
-- The provider-neutral foundation meets the fake-provider contract-test portion
-  of this acceptance set.
-- BullMQ/Redis adapter integration and Redis-backed provider tests are present;
-  Redis-backed tests remain explicitly opt-in.
-- `notificationDelivery` now registers `notification.email.send` for
-  provider-safe stored email delivery. Redacted verification/reset content
-  remains deferred pending an approved owner-regenerated async content model.
-- Operator APIs/UI and recurring scheduling remain deferred.
+---
 
 ## Related Artifacts
 
@@ -382,14 +617,19 @@ Current implementation note:
   [docs/workspace/capability-matrices/2026-04-25-job-processing-foundation-capability-matrix-first-draft.csv](/home/gordon/kanbien/docs/workspace/capability-matrices/2026-04-25-job-processing-foundation-capability-matrix-first-draft.csv)
 - Capability matrix notes:
   [docs/workspace/capability-matrices/2026-04-25-job-processing-foundation-capability-matrix-first-draft-notes.md](/home/gordon/kanbien/docs/workspace/capability-matrices/2026-04-25-job-processing-foundation-capability-matrix-first-draft-notes.md)
-- PRD-derived test cases:
-  [docs/prd/test_cases/2026-04-25-0021-job-processing-foundation-test-cases.md](/home/gordon/kanbien/docs/prd/test_cases/2026-04-25-0021-job-processing-foundation-test-cases.md)
+
+---
 
 ## Open Questions
 
-1. Should registered job-type metadata be persisted in v1?
-2. Should v1 include any read-only debug route?
-3. Should workers run as one generic worker script or separate scripts per
+1. Should the first implementation persist registered job-type metadata, or is
+   code-defined registry metadata enough until operator APIs exist?
+2. Should the first implementation include any read-only debug route, or keep
+   operator APIs fully deferred?
+3. What Redis deployment model should local development, CI, and production use?
+4. Should workers run as one generic worker script or separate scripts per
    workload class?
-4. Which concrete job type should prove the foundation after the base layer is
+5. Which concrete job type should prove the foundation after the base layer is
    implemented?
+6. Should notification-delivery automatic retry be the first adoption slice, or
+   should the foundation initially ship with only synthetic/test handlers?

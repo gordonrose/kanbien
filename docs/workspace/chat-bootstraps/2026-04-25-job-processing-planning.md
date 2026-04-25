@@ -33,13 +33,11 @@
 - Planned Write Set:
   - `docs/workspace/capability-matrices/2026-04-25-job-processing-foundation-capability-matrix-first-draft.csv`
   - `docs/workspace/capability-matrices/2026-04-25-job-processing-foundation-capability-matrix-first-draft-notes.md`
-  - `docs/architecture/adr/0034-add-a-bullmq-backed-job-processing-foundation-with-transactional-outbox.md`
   - `docs/prd/2026-04-25-0021-job-processing-foundation.md`
-  - `docs/prd/test_cases/2026-04-25-0021-job-processing-foundation-test-cases.md`
   - this bootstrap record
 - Expected Maintained Artifacts:
-  Capability matrix first draft, matrix notes, ADR, PRD, and PRD-derived test
-  cases for the job-processing foundation.
+  Capability matrix first draft, matrix notes, and PRD for the job-processing
+  foundation.
 - Known Shared Seams:
   - platform worker runtime
   - BullMQ/Redis queue provider boundary
@@ -53,6 +51,7 @@
   - adding migrations
   - adding root-admin UI
   - adding operator job APIs
+  - creating PRD-derived test cases or implementation blueprint in this slice
 
 ## Coordination Notes
 
@@ -64,8 +63,8 @@
 - Push Or PR Posture:
   Do not push or open a PR unless the user asks.
 - Handoff Notes:
-  This planning slice should be followed by an implementation blueprint before
-  any code or dependency changes.
+  This planning slice should be followed by ADR, PRD test-case planning, and
+  implementation blueprint work before code implementation.
 
 ## Outcome
 
@@ -73,5 +72,6 @@
 - Final Base Commit If Changed:
   unchanged from `8905af64a04f9f0c479e69303563d664e8ac2b35`
 - Follow-Up Integration Notes:
-  Planning artifacts cover the capability matrix, ADR, PRD, and PRD-derived
-  test-case pass. The next repo-process step is implementation blueprint.
+  Planning artifacts now cover the first capability matrix and PRD pass. The
+  next repo-process steps are ADR, PRD-derived test cases, and implementation
+  blueprint before any code or dependency changes.
