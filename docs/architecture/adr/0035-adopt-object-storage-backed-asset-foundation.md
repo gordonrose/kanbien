@@ -1,4 +1,4 @@
-# ADR-0034: Adopt Object-Storage Backed Asset Foundation
+# ADR-0035: Adopt Object-Storage Backed Asset Foundation
 
 - Status: Proposed
 - Date: 2026-04-25
