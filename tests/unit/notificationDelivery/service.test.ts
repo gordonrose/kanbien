@@ -2,9 +2,12 @@ import { describe, expect, it } from "vitest";
 import { createNotificationDeliveryService } from "../../../src/features/notificationDelivery/domain/service";
 import {
   DuplicateEmailRequestError,
+  InvalidRequestError,
   NotificationProviderUnavailableError,
   NotificationSendFailedError,
 } from "../../../src/features/notificationDelivery/contract/errors";
+import { createPendingEmail } from "../../../src/features/notificationDelivery/domain/createPendingEmail";
+import { createNotificationDeliveryJobTypes } from "../../../src/features/notificationDelivery/domain/jobTypes";
 import {
   createInMemoryNotificationDeliveryRepository,
   FakeNotificationEmailProvider,
@@ -240,5 +243,72 @@ describe("notificationDelivery service", () => {
         createdByActorId: "11111111-1111-1111-1111-111111111111",
       }),
     ).rejects.toBeInstanceOf(NotificationProviderUnavailableError);
+  });
+
+  it("TC-NOTIFICATION-DELIVERY-UNIT-006 delivers a pending provider-safe email through the job-processing handler", async () => {
+    const repository = createInMemoryNotificationDeliveryRepository();
+    const provider = new FakeNotificationEmailProvider();
+    const [jobType] = createNotificationDeliveryJobTypes({ repository, provider });
+    const pending = await createPendingEmail(repository, provider.providerName, {
+      recipientEmail: "async@example.com",
+      subject: "Async",
+      bodyText: "This body is safe to persist and send later",
+      notificationType: "proof",
+      createdByActorType: "system",
+      createdByActorId: "job-processing",
+    });
+
+    await jobType!.handler({ outboundEmailId: pending.emailId }, {
+      jobId: "job-1",
+      jobType: "notification.email.send",
+      payloadVersion: 1,
+      tenantId: null,
+      executionScope: "platform-internal",
+      workerId: "worker-1",
+      attemptNumber: 1,
+      idempotencyKey: `notification-email-send:${pending.emailId}`,
+    });
+
+    const stored = repository.records.get(pending.emailId)!;
+    expect(provider.sentInputs).toHaveLength(1);
+    expect(provider.sentInputs[0]).toMatchObject({
+      recipientEmail: "async@example.com",
+      subject: "Async",
+      bodyText: "This body is safe to persist and send later",
+    });
+    expect(stored.status).toBe("sent");
+    expect(stored.attemptCount).toBe(1);
+  });
+
+  it("TC-NOTIFICATION-DELIVERY-SEC-006 refuses async delivery when the durable content snapshot is redacted", async () => {
+    const repository = createInMemoryNotificationDeliveryRepository();
+    const provider = new FakeNotificationEmailProvider();
+    const [jobType] = createNotificationDeliveryJobTypes({ repository, provider });
+    const secretLink = "https://example.com/verify?token=secret";
+    const pending = await createPendingEmail(repository, provider.providerName, {
+      recipientEmail: "redacted@example.com",
+      subject: "Verify",
+      bodyText: `Use ${secretLink}`,
+      notificationType: "email_verification",
+      createdByActorType: "system",
+      createdByActorId: "job-processing",
+      redactions: [{ rawValue: secretLink, placeholder: "[VERIFICATION LINK]" }],
+    });
+
+    await expect(
+      jobType!.handler({ outboundEmailId: pending.emailId }, {
+        jobId: "job-1",
+        jobType: "notification.email.send",
+        payloadVersion: 1,
+        tenantId: null,
+        executionScope: "platform-internal",
+        workerId: "worker-1",
+        attemptNumber: 1,
+        idempotencyKey: `notification-email-send:${pending.emailId}`,
+      }),
+    ).rejects.toBeInstanceOf(InvalidRequestError);
+
+    expect(provider.sentInputs).toHaveLength(0);
+    expect(repository.records.get(pending.emailId)?.attemptCount).toBe(0);
   });
 });

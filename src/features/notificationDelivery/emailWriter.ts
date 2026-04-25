@@ -1,14 +1,18 @@
 import type { Pool } from "pg";
 import { env } from "../../config/env";
+import type { EnqueueJobRequest } from "../jobProcessing";
 import { createNotificationDeliveryService } from "./domain/service";
 import type { NotificationDeliveryService } from "./domain/service";
-import type {
-  ResendEmailInput,
-  SendEmailInput,
-} from "./domain/types";
+import { createPendingEmail } from "./domain/createPendingEmail";
+import {
+  NOTIFICATION_EMAIL_SEND_JOB_TYPE,
+  NOTIFICATION_EMAIL_SEND_PAYLOAD_VERSION,
+  createNotificationDeliveryJobTypes,
+} from "./domain/jobTypes";
+import type { SendEmailInput } from "./domain/types";
 import { createPostgresNotificationDeliveryRepository } from "./persistence/postgresRepository";
 
-class ResendEmailProvider {
+export class ResendEmailProvider {
   public readonly providerName = "resend";
 
   constructor(
@@ -80,12 +84,61 @@ export type NotificationEmailWriter = Pick<
   "sendEmail" | "resendEmail"
 >;
 
-export function createNotificationEmailWriter(dbPool: Pool): NotificationDeliveryService {
-  const repository = createPostgresNotificationDeliveryRepository(dbPool);
-  const provider = new ResendEmailProvider({
+export interface NotificationEmailJobEnqueuer {
+  enqueueTransactionalJobRequest(request: EnqueueJobRequest): Promise<unknown>;
+}
+
+function normalizeJobActorType(value: string): EnqueueJobRequest["requestedByActorType"] {
+  if (value === "root_user" || value === "tenant_user" || value === "system") {
+    return value;
+  }
+  return null;
+}
+
+export function createNotificationEmailProvider(): ResendEmailProvider {
+  return new ResendEmailProvider({
     apiKey: env.notificationDelivery.providers.resend.apiKey,
     fromEmail: env.notificationDelivery.providers.resend.fromEmail,
   });
+}
+
+export function createNotificationEmailWriter(dbPool: Pool): NotificationDeliveryService {
+  const repository = createPostgresNotificationDeliveryRepository(dbPool);
+  const provider = createNotificationEmailProvider();
 
   return createNotificationDeliveryService(repository, provider);
+}
+
+export function createQueuedNotificationEmailWriter(
+  dbPool: Pool,
+  jobEnqueuer: NotificationEmailJobEnqueuer,
+): NotificationDeliveryService {
+  const repository = createPostgresNotificationDeliveryRepository(dbPool);
+  const provider = createNotificationEmailProvider();
+  const syncService = createNotificationDeliveryService(repository, provider);
+
+  return {
+    ...syncService,
+    sendEmail: async (input: SendEmailInput) => {
+      const pending = await createPendingEmail(repository, provider.providerName, input);
+      await jobEnqueuer.enqueueTransactionalJobRequest({
+        jobType: NOTIFICATION_EMAIL_SEND_JOB_TYPE,
+        payloadVersion: NOTIFICATION_EMAIL_SEND_PAYLOAD_VERSION,
+        payload: { outboundEmailId: pending.emailId },
+        executionScope: "platform-internal",
+        idempotencyKey: `notification-email-send:${pending.emailId}`,
+        requestedByActorType: normalizeJobActorType(input.createdByActorType),
+        requestedByActorId: input.createdByActorId,
+        relatedEntityType: input.relatedEntityType,
+        relatedEntityId: input.relatedEntityId,
+      });
+      return pending;
+    },
+  };
+}
+
+export function createNotificationDeliveryJobTypesForRuntime(dbPool: Pool) {
+  const repository = createPostgresNotificationDeliveryRepository(dbPool);
+  const provider = createNotificationEmailProvider();
+  return createNotificationDeliveryJobTypes({ repository, provider });
 }

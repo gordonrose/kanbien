@@ -3,8 +3,8 @@
 ## Implementation Status
 
 - Status:
-  first backend/platform foundation slice partially implemented as of
-  2026-04-25
+  first backend/platform foundation slice implemented with concrete BullMQ
+  provider adapter as of 2026-04-25
 - Implemented:
   - first-pass capability matrix for `jobProcessing`
   - first-pass capability matrix notes
@@ -17,12 +17,16 @@
   - job persistence migrations
   - `REDIS_URL` parsing
   - dispatcher and worker runtime entrypoints
+  - concrete BullMQ-backed `QueueProviderAdapter`
+  - dispatcher and worker entrypoint wiring to BullMQ through `REDIS_URL`
   - fake-provider executable tests mapped to `TC-JOB-PROC-*`
+  - opt-in Redis-backed BullMQ provider tests guarded by
+    `RUN_REDIS_JOB_PROVIDER_TESTS=true`
+  - first consumer job registration for `notificationDelivery` provider-safe
+    stored email delivery
 - Not yet implemented:
-  - concrete BullMQ provider adapter
-  - Redis-backed BullMQ provider tests
   - operator APIs/UI
-  - notification-delivery retry adoption
+  - security-sensitive notification-delivery async content regeneration
   - recurring scheduling
 
 ## Purpose
@@ -254,9 +258,11 @@ Ensure worker processes are operable.
 
 Support simple delayed jobs while deferring recurring scheduling.
 
-### `adoptNotificationDeliveryRetryLater`
+### `adoptNotificationDeliveryRetry`
 
-Preserve a clean adoption path for notification-delivery retry.
+Register notification-delivery as the first job-processing consumer while
+preserving the rule that redacted security-sensitive email snapshots must not
+be sent from durable placeholder content.
 
 ## Requirements
 
@@ -361,10 +367,12 @@ Current implementation note:
 
 - The provider-neutral foundation meets the fake-provider contract-test portion
   of this acceptance set.
-- BullMQ/Redis adapter integration and Redis-backed provider tests remain
-  deferred to the provider adapter slice.
-- Operator APIs/UI, recurring scheduling, and notification-delivery retry
-  adoption remain deferred.
+- BullMQ/Redis adapter integration and Redis-backed provider tests are present;
+  Redis-backed tests remain explicitly opt-in.
+- `notificationDelivery` now registers `notification.email.send` for
+  provider-safe stored email delivery. Redacted verification/reset content
+  remains deferred pending an approved owner-regenerated async content model.
+- Operator APIs/UI and recurring scheduling remain deferred.
 
 ## Related Artifacts
 

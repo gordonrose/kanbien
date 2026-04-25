@@ -19,6 +19,14 @@
       "description": "Cross-feature seam for durable outbound email creation and resend flows."
     },
     {
+      "seamId": "notification-email-async-writer",
+      "symbol": "createQueuedNotificationEmailWriter | createNotificationDeliveryJobTypesForRuntime",
+      "path": "index.ts",
+      "kind": "job-processing-adoption",
+      "stability": "experimental",
+      "description": "Provider-neutral async email delivery seam and job-type registration for jobProcessing workers."
+    },
+    {
       "seamId": "notification-delivery-error",
       "symbol": "NotificationDeliveryError",
       "path": "index.ts",
@@ -27,9 +35,19 @@
       "description": "Shared notification-delivery error base for transport-layer handling."
     }
   ],
-  "dependsOn": [],
+  "dependsOn": [
+    {
+      "featureName": "jobProcessing",
+      "seamIds": [
+        "enqueue-service",
+        "job-registry"
+      ],
+      "description": "Registers notification email jobs and exposes an async queued writer through the provider-neutral job-processing seam."
+    }
+  ],
   "breakingChangeRisks": [
     "Changing the notification email writer contract can break features that delegate onboarding or verification email delivery through this seam.",
-    "Changing outbound email persistence or resend semantics can affect auditability and historical correctness for feature-owned workflows."
+    "Changing outbound email persistence or resend semantics can affect auditability and historical correctness for feature-owned workflows.",
+    "Queued email delivery must not send redacted durable snapshots as provider content; security-sensitive emails require owner-regenerated content or synchronous delivery until a richer async content model is approved."
   ]
 }

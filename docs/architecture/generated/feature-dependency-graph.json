@@ -2,7 +2,7 @@
   "ruleVersion": 2,
   "ruleSummary": "Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.",
   "featureCount": 15,
-  "edgeCount": 12,
+  "edgeCount": 13,
   "violationCount": 0,
   "features": [
     {
@@ -95,7 +95,7 @@
     {
       "featureName": "jobProcessing",
       "manifestPath": "src/features/jobProcessing/feature.manifest.json",
-      "fileCount": 19,
+      "fileCount": 20,
       "publicSeams": [
         {
           "seamId": "enqueue-service",
@@ -122,7 +122,9 @@
       "declaredDependencies": [],
       "publicDependencies": [],
       "privateDependencyCount": 0,
-      "dependedOnBy": [],
+      "dependedOnBy": [
+        "notificationDelivery"
+      ],
       "breakingChangeRisks": [
         "Changing job status, outbox, attempt, retry, or idempotency semantics can strand queued historical jobs or break at-least-once execution guarantees.",
         "Changing payload safety, execution-scope, or tenant-context validation can weaken async authorization boundaries or make historical payload versions unexecutable.",
@@ -132,7 +134,7 @@
     {
       "featureName": "notificationDelivery",
       "manifestPath": "src/features/notificationDelivery/feature.manifest.json",
-      "fileCount": 19,
+      "fileCount": 22,
       "publicSeams": [
         {
           "seamId": "feature-factory",
@@ -149,6 +151,13 @@
           "path": "index.ts"
         },
         {
+          "seamId": "notification-email-async-writer",
+          "symbol": "createQueuedNotificationEmailWriter | createNotificationDeliveryJobTypesForRuntime",
+          "kind": "job-processing-adoption",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
           "seamId": "notification-delivery-error",
           "symbol": "NotificationDeliveryError",
           "kind": "error-type",
@@ -156,15 +165,20 @@
           "path": "index.ts"
         }
       ],
-      "declaredDependencies": [],
-      "publicDependencies": [],
+      "declaredDependencies": [
+        "jobProcessing"
+      ],
+      "publicDependencies": [
+        "jobProcessing"
+      ],
       "privateDependencyCount": 0,
       "dependedOnBy": [
         "tenantAdmins"
       ],
       "breakingChangeRisks": [
         "Changing the notification email writer contract can break features that delegate onboarding or verification email delivery through this seam.",
-        "Changing outbound email persistence or resend semantics can affect auditability and historical correctness for feature-owned workflows."
+        "Changing outbound email persistence or resend semantics can affect auditability and historical correctness for feature-owned workflows.",
+        "Queued email delivery must not send redacted durable snapshots as provider content; security-sensitive emails require owner-regenerated content or synchronous delivery until a richer async content model is approved."
       ]
     },
     {
@@ -627,6 +641,33 @@
     }
   ],
   "dependencies": [
+    {
+      "sourceFeature": "notificationDelivery",
+      "targetFeature": "jobProcessing",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "enqueue-service",
+        "job-registry"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/notificationDelivery/domain/jobTypes.ts",
+          "importPath": "../../jobProcessing",
+          "line": 1,
+          "resolvedPath": "src/features/jobProcessing/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/notificationDelivery/emailWriter.ts",
+          "importPath": "../jobProcessing",
+          "line": 3,
+          "resolvedPath": "src/features/jobProcessing/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
     {
       "sourceFeature": "rootAuth",
       "targetFeature": "rootUsers",

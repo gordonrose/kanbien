@@ -38,6 +38,14 @@ Required:
 - maintained-artifacts sweep covering status snapshots, registry or index docs,
   and earlier planning artifacts whose wording became stale because the slice
   now exists or materially changed current platform posture
+- async job-processing decision gate recorded in the PRD, capability matrix,
+  implementation blueprint, or equivalent planning artifact for every backend
+  or backend-adjacent slice. If the slice does not need background work, record
+  why synchronous execution is acceptable. If it does, define the durable
+  owning entity, job type, payload version, smallest safe payload, retry and
+  dead-letter posture, idempotency rule, tenant/root context revalidation,
+  progress/audit metadata, cleanup semantics, feature-manifest dependency, and
+  executable coverage for enqueue and handler behavior.
 
 Consider:
 
@@ -185,6 +193,11 @@ To make a capability reconstructable from docs and templates, document:
 - persistence impact
 - lifecycle and cleanup rules for expired, abandoned, orphaned, failed, or
   externally stored resources
+- async/background job posture, including the owning durable entity, safe
+  payload shape, enqueue seam, handler seam, retry/dead-letter model,
+  idempotency model, tenant/root execution context, progress/audit metadata,
+  and cleanup behavior when the capability involves background work, bulk
+  actions, external calls, delayed execution, or retryable processing
 - security, privacy, and audit expectations
 - performance expectations and degraded-state behavior when a frontend surface
   exists

@@ -48,9 +48,11 @@
     "test:all": "npm run test && npm run test:traceability"
   },
   "dependencies": {
+    "bullmq": "^5.76.2",
     "dotenv": "^17.3.1",
     "express": "4.21.2",
     "helmet": "^8.1.0",
+    "ioredis": "^5.10.1",
     "pg": "^8.20.0",
     "zod": "^4.1.12"
   },

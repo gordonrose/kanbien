@@ -5,6 +5,7 @@ export type {
   EnqueueJobRequest,
   EnqueuedJob,
   JobAttemptStatus,
+  JobActorType,
   JobExecutionScope,
   JobHandler,
   JobHandlerContext,

@@ -78,6 +78,22 @@ When a row is not a normal role-granted capability, fill the fields explicitly:
 - Session / auth dependency
 - Compatibility / migration notes
 
+When a capability may involve background work, bulk operations, retryable
+external calls, delayed execution, imports/exports, cleanup, or long-running
+processing, use these fields to record the async decision instead of leaving it
+implicit:
+
+- `Persistence impact` names the durable owning entity or says async work is
+  not needed.
+- `Lifecycle / cleanup rules` covers retry, dead-letter, cancellation,
+  partial-failure, expiration, and abandonment semantics.
+- `Scheduled maintenance or job dependency` names the job type, payload
+  version, queue, priority, enqueue seam, worker handler seam, and whether
+  provider/infrastructure tests are opt-in.
+- `Compatibility / migration notes` names idempotency keys, safe payload shape,
+  forbidden payload data, tenant/root context revalidation, and durable progress
+  or operator metadata.
+
 ## Security / Privacy / Audit
 
 - Authentication requirement

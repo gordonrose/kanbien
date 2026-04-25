@@ -64,3 +64,10 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
 For backend and cross-feature work, treat `src/features/<featureName>/feature.manifest.json`
 and `docs/architecture/generated/feature-dependency-graph.*` as normal
 maintained artifacts alongside the templates above.
+
+For backend or backend-adjacent feature work, the implementation blueprint and
+capability matrix must also answer the async job-processing decision gate. That
+gate applies even when the decision is "no background work needed"; record why
+synchronous execution is acceptable or define the durable work entity, safe
+payload, job type, retry/dead-letter model, idempotency, tenant/root context,
+cleanup, operator metadata, and verification plan.

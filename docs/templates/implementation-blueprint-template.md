@@ -39,6 +39,41 @@ plan without losing architecture, tests, docs, or standards coverage.
 - Feature manifests to update:
 - Authorization enforcement point:
 
+## Async Job Processing Decision Gate
+
+Use this section for every backend or backend-adjacent slice, even when the
+answer is "not needed".
+
+- Does the feature need background work, bulk actions, retryable external
+  calls, cleanup, delayed execution, long-running processing, imports/exports,
+  asset processing, or operator-triggered batch workflows?
+- If async work is not needed, what makes synchronous execution acceptable for
+  latency, reliability, retries, and user/operator experience?
+- If async work is needed, which feature-owned durable entity represents the
+  work request or business fact?
+- What facts must be persisted before enqueue so the queue payload is only a
+  trigger/reference and not the source of truth?
+- What job type name, owner feature, payload version, default queue, priority,
+  and retry policy are approved?
+- What is the smallest safe job payload, such as `{ entityId }` or
+  `{ bulkActionId }`, and which raw request data, secrets, permissions, tenant
+  authority, or mutable live claims are forbidden from the payload?
+- What idempotency key or durable state prevents duplicate side effects across
+  enqueue retries, worker retries, and repeated operator actions?
+- What tenant context, root/operator context, object-level rule, and
+  cross-tenant deny rule must be revalidated when the worker runs?
+- What outcomes are retryable, non-retryable, terminal/dead-letter, canceled,
+  or ignored as already complete?
+- What durable progress, counters, attempt history, safe error summaries,
+  audit events, and operator metadata must exist?
+- What cleanup, cancellation, expiration, abandoned-state, partial-failure, or
+  orphaned-resource behavior applies?
+- What job-processing public seams, owning-feature public seams, and feature
+  manifest dependency entries must be added or updated?
+- Which tests prove enqueue, handler execution, idempotency, retry/dead-letter,
+  tenant boundary, provider neutrality, and opt-in provider integration where
+  external infrastructure is required?
+
 ## Persistence Plan
 
 - Entities / rows affected:

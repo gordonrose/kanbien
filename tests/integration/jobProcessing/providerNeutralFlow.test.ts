@@ -183,7 +183,7 @@ describe("jobProcessing provider-neutral foundation flows", () => {
     expect(called).toBe(0);
   });
 
-  it("TC-JOB-PROC-INT-007 keeps notificationDelivery retry adoption deferred but seam-compatible", async () => {
+  it("TC-JOB-PROC-INT-007 keeps notificationDelivery adoption provider-neutral and payload-small", async () => {
     const repository = new InMemoryJobProcessingRepository();
     const registry = registryWithHandler();
     const enqueued = await enqueueTransactionalJobRequest({

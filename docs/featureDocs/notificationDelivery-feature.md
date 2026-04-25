@@ -12,6 +12,8 @@ Today it provides:
 - explicit resend for existing logical outbound emails
 - durable logical-email, content-version, and attempt history persistence
 - a provider-agnostic delivery seam with `Resend` as the first live adapter
+- `notification.email.send` job registration for the job-processing worker
+- an async queued writer for provider-safe stored email content
 
 ## Where It Lives
 
@@ -45,6 +47,17 @@ Current governing authz capabilities:
 - `notification.email.send`
 - `notification.email.resend`
 - `notification.email.read`
+
+Runtime job integration:
+
+- `createNotificationDeliveryJobTypesForRuntime`
+- job type: `notification.email.send`
+- payload version: `1`
+- payload shape: `{ outboundEmailId: string }`
+
+The job handler loads the durable outbound-email record through
+`notificationDelivery`, sends the latest provider-safe content snapshot, and
+records a normal outbound-email attempt.
 
 ## Runtime Contracts
 
@@ -125,13 +138,18 @@ The feature deliberately stores sanitized content snapshots only.
 Secret-bearing verification or reset links must be redacted before durable
 storage.
 
+Queued async delivery is therefore allowed only for stored content that is safe
+to send as-is. If a content snapshot contains a redacted verification or reset
+link, the async job handler rejects it instead of sending a placeholder. Those
+security-sensitive flows must keep using owner-regenerated provider content
+until a later async content model is approved.
+
 ## Current Limits
 
 This is not yet the full enterprise-grade email platform.
 
 Still deferred:
 
-- automatic retry and background jobs
 - bounce and complaint webhooks
 - suppression handling
 - scheduled sending

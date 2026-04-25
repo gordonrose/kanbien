@@ -11,8 +11,8 @@
 - Scope:
   backend/platform foundation slice only
 - Phase:
-  first foundation slice implemented with provider-neutral seams; BullMQ
-  adapter integration remains deferred
+  first foundation slice implemented with provider-neutral seams and concrete
+  BullMQ adapter wiring
 
 ## Inputs
 
@@ -44,6 +44,8 @@ This blueprint covers the first job-processing foundation only:
 - add the `jobProcessing` feature/foundation
 - add provider-neutral adapter seams with BullMQ/Redis still the selected
   first-provider direction
+- add the concrete BullMQ-backed provider adapter while keeping BullMQ/Redis
+  types out of feature-facing public seams
 - add PostgreSQL-backed durable job/outbox/attempt persistence
 - add transactional enqueue service seam
 - add dispatcher runtime
@@ -60,7 +62,7 @@ This blueprint does **not** implement:
 - manual retry/cancel APIs
 - recurring scheduling toolkit
 - generic workflow/event bus
-- notification-delivery automatic retry adoption
+- security-sensitive notification-delivery async content regeneration
 - SQS/RabbitMQ adapters
 
 ## Frontend Plan
@@ -107,6 +109,7 @@ This blueprint does **not** implement:
   - `src/features/jobProcessing/domain/queueConfig.ts`
   - `src/features/jobProcessing/domain/workerRuntime.ts`
   - `src/features/jobProcessing/domain/provider.ts`
+  - `src/features/jobProcessing/domain/bullmqQueueProviderAdapter.ts`
   - `src/features/jobProcessing/persistence/types.ts`
   - `src/features/jobProcessing/persistence/repository.ts`
   - `src/features/jobProcessing/persistence/postgresRepository.ts`
@@ -118,6 +121,7 @@ This blueprint does **not** implement:
     - worker entrypoint separate from HTTP server
   - `src/jobDispatcher.ts`
   - `src/jobWorker.ts`
+    - wire runtime processes to the BullMQ provider adapter via `REDIS_URL`
   - `package.json`
     - add scripts such as `worker:jobs` and possibly `dispatcher:jobs`
   - `src/routes/v1/index.ts`
@@ -248,13 +252,13 @@ This blueprint does **not** implement:
   - web server should not become a worker
   - worker/dispatcher process should fail fast when Redis is required and
     unavailable
-  - decide during implementation whether dispatch and execution are one process
-    or two scripts
+  - dispatch and execution are separate scripts:
+    `src/jobDispatcher.ts` and `src/jobWorker.ts`
 - Test harness:
   - normal unit/integration tests should be able to use fake provider adapters
-  - Redis-backed BullMQ tests should be added when the provider adapter is
-    selected and integrated, and should be explicit so the normal suite does
-    not silently require a local daemon unless that is intentionally approved
+  - Redis-backed BullMQ tests are explicit provider-integration tests gated by
+    `RUN_REDIS_JOB_PROVIDER_TESTS=true`, so the normal suite does not silently
+    require a local daemon
 
 ## Verification Plan
 
@@ -297,8 +301,8 @@ This blueprint does **not** implement:
 - Curated test-run summary:
   required once executable tests exist
 - Waiver / quarantine expectation:
-  required if the BullMQ adapter is shipped without Redis-backed provider
-  integration tests after provider integration is in scope
+  not required for this adapter slice because Redis-backed provider tests are
+  present and explicitly opt-in
 
 ## Documentation Plan
 
@@ -355,9 +359,8 @@ This blueprint does **not** implement:
   - [system-overview.md](/home/gordon/kanbien/docs/architecture/system-overview.md)
   - [priniciples.md](/home/gordon/kanbien/docs/architecture/priniciples.md) only
     if implementation introduces new guardrails beyond ADR-0034
-  - `docs/prd/2026-04-08-0008-notification-delivery-foundation.md` only if
-    notification-delivery retry adoption is implemented in the same or a later
-    slice
+  - `docs/prd/2026-04-08-0008-notification-delivery-foundation.md` because
+    notification-delivery now registers its first job-processing handler
   - this blueprint after implementation decisions settle
 - Runbook:
   add a lightweight local operations note for:
@@ -407,10 +410,9 @@ This blueprint does **not** implement:
     no production SLA declared; light local performance proof is enough
   - operator API security tests:
     no operator APIs in v1
-  - Redis-backed provider integration tests:
-    deferred only until the BullMQ provider adapter is selected and integrated;
-    fake-provider contract tests should still cover the foundation seam before
-    provider integration
+  - Redis-backed provider integration tests in the normal suite:
+    present but skipped unless `RUN_REDIS_JOB_PROVIDER_TESTS=true`, preserving
+    normal fake-provider contract coverage without requiring Redis
 - Expected release-gate residual risk statement:
   v1 introduces async processing infrastructure and a local Redis dependency,
   but no external operator control surface. Remaining risk should be framed

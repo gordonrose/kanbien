@@ -10,6 +10,8 @@
     direct workflow owner in this slice
 - Cross-feature seams:
   - provider-agnostic email delivery seam inside `notificationDelivery`
+  - `notificationDelivery` registers `notification.email.send` with
+    `jobProcessing` for provider-safe stored email delivery
   - future consuming features such as tenant auth, invite delivery, and
     recovery flows must call `notificationDelivery` rather than bypassing it
   - `notificationDelivery` may consume platform env/config and root authz
@@ -39,6 +41,11 @@
   no current blocker is obvious; future updates should treat the existing
   `notificationDelivery` executable suite as the baseline rather than assuming
   the feature is still pre-implementation
+
+- Job-processing adoption impact:
+  additive. Existing synchronous route and resend tests remain the baseline,
+  while provider-safe async delivery is covered with unit-level job handler
+  tests.
 
 ## Unit Tests For Individual Capabilities
 
@@ -296,17 +303,40 @@
   Notes:
   - this is likely persistence-backed once the feature exists
 
+- Scenario: async job handler delivers provider-safe stored email content
+  Test Case ID: `TC-NOTIFICATION-DELIVERY-UNIT-006`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/notificationDelivery/`
+  Requires Shared Test Helper: yes; fake provider and in-memory repository
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Coverage:
+  - creates a pending durable outbound email
+  - invokes the `notification.email.send` job handler with
+    `{ outboundEmailId }`
+  - sends the stored provider-safe content through the provider seam
+  - records a normal outbound-email attempt
+
+- Scenario: async job handler refuses redacted security-sensitive snapshots
+  Test Case ID: `TC-NOTIFICATION-DELIVERY-SEC-006`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/notificationDelivery/`
+  Requires Shared Test Helper: yes; fake provider and in-memory repository
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Coverage:
+  - creates a pending durable outbound email whose stored content contains a
+    redacted verification or reset marker
+  - verifies the async job handler rejects the record before provider send
+  - preserves the rule that durable placeholders are not sent as email content
+
 ## Coverage Gaps Or Open Questions
 
 - Item:
-  the PRD preserves room for content snapshots and attempt-level
-  content-version references, but the first implementation still needs a
-  concrete decision on whether it starts with a dedicated content-snapshot
-  record or a lighter first-step model
-- Item:
-  bounce/complaint webhooks, suppression handling, automatic retry, and
-  scheduled sending are intentionally out of scope here and will need their own
-  later PRD/test inventory rather than being smuggled into v1 tests
+  bounce/complaint webhooks, suppression handling, scheduled sending, and
+  async owner-regenerated security-sensitive content remain out of scope here
+  and will need their own later PRD/test inventory rather than being smuggled
+  into v1 tests
 - Item:
   a later real-provider proof may need a dedicated manually run integration
   path or operator checklist if the normal automated suite should not depend on

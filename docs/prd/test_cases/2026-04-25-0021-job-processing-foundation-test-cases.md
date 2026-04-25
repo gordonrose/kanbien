@@ -13,8 +13,8 @@
     job-processing public seam
   - registered job handlers may call owning feature public seams, but must not
     import private feature persistence
-  - `notificationDelivery` is the likely later first consumer for automatic
-    email retry, but adoption is deferred from this foundation slice
+  - `notificationDelivery` is the first consumer for provider-safe stored email
+    delivery through `notification.email.send`
   - shared PostgreSQL persistence backs durable job, outbox, and attempt state
   - BullMQ/Redis is hidden behind a provider adapter
 - QA coverage-matrix classification:
@@ -33,8 +33,9 @@
   - Traceability Enforcement: partially executable
   - executable `TC-JOB-PROC-*` coverage exists for the provider-neutral
     foundation seam
-  - Redis-backed BullMQ coverage is intentionally deferred until the BullMQ
-    provider adapter is integrated
+  - Redis-backed BullMQ coverage exists behind the explicit opt-in
+    `RUN_REDIS_JOB_PROVIDER_TESTS=true` flag so normal local and CI runs do not
+    require Redis
   - Lifecycle metadata defaults currently apply:
     - `Version: v1`
     - `Lifecycle Status: active`
@@ -42,15 +43,18 @@
 ## Current Status
 
 - Overall traceability status:
-  - executable provider-neutral coverage added for the first foundation slice;
-    Redis-backed BullMQ coverage remains deferred until provider adapter
-    integration
+  - executable provider-neutral coverage added for the first foundation slice
+  - executable Redis-backed BullMQ coverage added for the provider adapter and
+    gated by `RUN_REDIS_JOB_PROVIDER_TESTS=true`
 - Overall execution status:
   - fake-provider unit and integration coverage implemented
+  - Redis-backed BullMQ integration coverage implemented but skipped unless
+    explicitly enabled
 - Layer summary:
   - `UNIT`: implemented for provider-neutral foundation
   - `INT`: implemented for fake-provider foundation flows; Postgres-backed
-    persistence test is gated by `RUN_POSTGRES_TESTS`
+    persistence test is gated by `RUN_POSTGRES_TESTS`; BullMQ provider test is
+    gated by `RUN_REDIS_JOB_PROVIDER_TESTS`
   - `SEC`: implemented through provider-neutral payload and tenant-boundary
     assertions
   - `AUD`: implemented through attribution, attempt, and dispatch-failure
@@ -66,9 +70,9 @@
 ## Existing Test Impact
 
 - Existing executable tests likely affected:
-  - none directly at planning time
-  - future implementation may add Redis-backed or adapter-backed test harness
-    setup
+  - provider-neutral job-processing tests should continue to run without Redis
+  - Redis-backed provider tests run only when
+    `RUN_REDIS_JOB_PROVIDER_TESTS=true`
   - future persistence tests may require shared Postgres migration harness
     updates if the job-processing feature adds migrations
 - Nature of impact:
@@ -76,9 +80,8 @@
   - implementation may add new test folders under `tests/unit/jobProcessing/`,
     `tests/integration/jobProcessing/`, `tests/security/jobProcessing/`, and
     `tests/audit/jobProcessing/`
-  - Redis-backed BullMQ integration tests should be added once the provider
-    adapter is selected and integrated; before then, the foundation can use
-    fake-provider contract tests for the provider-neutral seam
+  - Redis-backed BullMQ integration tests now cover the selected provider
+    adapter without changing the normal suite's daemon requirements
 - Discussion needed before changing existing tests:
   - yes if existing global test runners are changed to require Redis
   - yes if persistence harness scripts gain Redis lifecycle responsibilities
@@ -297,7 +300,7 @@
   - gains Redis-backed BullMQ coverage once the BullMQ provider adapter is
     selected and integrated
 
-- Flow: deferred notification-delivery adoption remains seam-compatible
+- Flow: notification-delivery adoption remains seam-compatible
   Test Case ID: `TC-JOB-PROC-INT-007`
   Recommended Test Layer: `contract-integration`
   Suggested Test Folder: `tests/integration/jobProcessing/`
@@ -308,12 +311,13 @@
   - `jobProcessing`
   - `notificationDelivery`
   Coverage:
-  - proves a future `notification.email.send` job can be represented with a
+  - proves the `notification.email.send` job can be represented with a
     small payload such as `outboundEmailId`
   - confirms the job-processing contract does not require raw email content in
     the job payload
   Notes:
-  - actual notification-delivery automatic retry remains deferred
+  - redacted verification/reset email content remains outside async delivery
+    until a richer owner-regenerated content model is approved
 
 ## End-To-End Journey Tests
 
@@ -654,10 +658,9 @@
 ## Coverage Gaps Or Open Questions
 
 - Item:
-  Redis-backed BullMQ tests should be added once the provider adapter is
-  selected and integrated. The implementation loop should then decide whether
-  those tests are mandatory in the normal local suite or explicit
-  provider-integration tests.
+  Redis-backed BullMQ tests are implemented as explicit provider-integration
+  tests. They require Redis and `RUN_REDIS_JOB_PROVIDER_TESTS=true`; the normal
+  local suite continues to use fake-provider contract coverage.
 - Item:
   The implementation blueprint must decide whether registered job-type metadata
   is persisted in v1 or remains code-defined until operator APIs exist.
@@ -680,5 +683,6 @@
 - Curated test-run summary required:
   yes, once executable tests are implemented
 - Waiver or quarantine record expected:
-  only if Redis-backed provider tests are still deferred or made optional after
-  shipping the BullMQ adapter integration
+  no waiver required for the adapter slice because Redis-backed provider tests
+  exist; their opt-in flag is intentional so the normal suite does not require
+  Redis

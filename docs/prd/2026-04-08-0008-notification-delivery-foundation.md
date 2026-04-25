@@ -36,6 +36,8 @@ This phase includes:
 - one root-admin proof-of-working send route so operators can verify that a
   real email can be delivered to a controlled inbox
 - metadata-first storage with safe handling of secret-bearing content
+- first job-processing adoption for provider-safe stored email delivery through
+  `notification.email.send`
 
 This phase does **not** include:
 
@@ -43,7 +45,8 @@ This phase does **not** include:
 - bounce or complaint webhooks
 - multi-provider failover
 - scheduled sending
-- automatic background retry orchestration
+- automatic background retry for redacted or owner-regenerated
+  security-sensitive emails
 - tenant-facing send or retrieval flows
 - generalized notification channels beyond email
 - rich HTML template management
@@ -497,6 +500,8 @@ Current mitigation:
 - resend model is explicitly separated from future caller-owned token
   regeneration rules
 - attempt-level content-version visibility is preserved in the design
+- async job delivery rejects redacted verification/reset snapshots instead of
+  sending placeholder content
 
 Still deferred:
 

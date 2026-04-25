@@ -12,6 +12,8 @@ The first implementation slice provides:
 - durable PostgreSQL job, outbox, and attempt persistence
 - transactional enqueue through a feature-owned service transaction
 - provider-neutral dispatcher and worker execution seams
+- a concrete BullMQ-backed provider adapter used by the dispatcher and worker
+  entrypoints through `REDIS_URL`
 - payload-safety and tenant-boundary validation
 - runtime entrypoint scripts for future dispatcher and worker processes
 
@@ -49,20 +51,26 @@ depending on arbitrary JSON payload search.
 
 ## Provider Boundary
 
-The current slice implements provider-neutral contracts and fake-provider
-contract coverage. BullMQ/Redis remains the ADR-approved first provider
-direction, but the concrete BullMQ adapter and Redis-backed provider tests are
-deferred until that adapter is selected and integrated.
+The current slice keeps feature-facing contracts provider-neutral while adding a
+BullMQ/Redis adapter behind the runtime entrypoints. Redis-backed adapter tests
+are explicit provider-integration tests gated by
+`RUN_REDIS_JOB_PROVIDER_TESTS=true`.
 
 Feature code must not import BullMQ, Redis, or job-processing persistence
 internals.
 
 ## Current Limits
 
+First consumer adoption:
+
+- `notificationDelivery` registers `notification.email.send` with the
+  job-processing worker for provider-safe stored email content.
+- Security-sensitive email snapshots that contain redacted verification or
+  reset links are intentionally rejected by the async email handler until a
+  richer owner-regenerated async content model is approved.
+
 Still deferred:
 
 - public or root-admin HTTP APIs
 - operator UI
 - recurring scheduling
-- notification-delivery retry adoption
-- Redis-backed BullMQ adapter tests

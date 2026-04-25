@@ -10,6 +10,8 @@ The first slice provides:
 - durable PostgreSQL job, outbox, and attempt persistence
 - transactional enqueue through a feature-owned service transaction
 - dispatcher and worker execution seams that accept a queue provider adapter
+- a BullMQ/Redis provider adapter for the runtime dispatcher and worker
+  entrypoints
 - payload-safety and tenant-boundary validation
 
 Deferred in this slice:
@@ -18,7 +20,9 @@ Deferred in this slice:
 - operator UI
 - recurring scheduling
 - notification-delivery retry adoption
-- Redis-backed BullMQ provider tests
+
+Redis-backed BullMQ provider tests are available behind
+`RUN_REDIS_JOB_PROVIDER_TESTS=true` so the normal suite does not require Redis.
 
 Feature code should import only the public seam from `src/features/jobProcessing`
 and must not import queue-provider libraries or job-processing persistence

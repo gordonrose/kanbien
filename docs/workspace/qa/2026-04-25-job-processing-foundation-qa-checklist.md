@@ -31,23 +31,38 @@
 - [x] Provider-neutral fake-adapter integration suite passed.
 - [x] Security and audit assertions are mapped to `TC-JOB-PROC-*` IDs in
   executable tests.
-- [x] Redis-backed BullMQ tests are intentionally deferred because the BullMQ
-  adapter is not integrated in this first slice.
+- [x] Redis-backed BullMQ tests exist behind
+  `RUN_REDIS_JOB_PROVIDER_TESTS=true` so normal verification does not require
+  Redis.
+- [ ] Redis-backed BullMQ tests were not run in this session because no local
+  Redis listener was available on `127.0.0.1:6379`.
 - [ ] Persistence-backed Postgres suite was not run in this session.
 - [ ] Full repo typecheck is blocked by unrelated existing design-system errors.
+- [x] Focused TypeScript verification for the BullMQ adapter, dispatcher,
+  worker, notificationDelivery job handler, and Redis-backed test file passed.
+- [x] notificationDelivery async job-handler unit coverage passed.
+- [x] Feature dependency graph was regenerated and `check:feature-dependencies`
+  passed with zero validation violations.
 
 ## Quality And Risk Checks
 
 - [x] HTTP/operator APIs remain deferred.
 - [x] Recurring scheduling remains deferred.
-- [x] notificationDelivery retry adoption remains deferred.
+- [x] notificationDelivery registers `notification.email.send` as the first
+  feature-owned job handler for provider-safe stored email content.
+- [x] Redacted verification/reset snapshots remain blocked from async delivery
+  until an owner-regenerated content model is approved.
 - [x] Provider-neutral seams avoid BullMQ/Redis public type leakage.
+- [x] Dispatcher and worker entrypoints use the BullMQ adapter through
+  `REDIS_URL`.
 
 ## Final Decision
 
 - QA decision:
   partial
 - Notes:
-  The provider-neutral foundation test slice passed. Full release-gate status
-  remains partial until Postgres-backed verification and future BullMQ adapter
-  verification run successfully.
+  The provider-neutral foundation test slice, notificationDelivery job-handler
+  coverage, feature-dependency check, and focused TypeScript verification
+  passed. Full release-gate status remains partial until Postgres-backed
+  verification and Redis-backed provider tests run against an available local
+  Redis instance.

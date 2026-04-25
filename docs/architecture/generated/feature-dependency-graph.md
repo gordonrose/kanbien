@@ -3,7 +3,7 @@
 ## Summary
 
 - Features analyzed: 15
-- Cross-feature edges: 12
+- Cross-feature edges: 13
 - Validation violations: 0
 
 Rule: Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.
@@ -58,11 +58,11 @@ Rule: Cross-feature imports in src/features must go through target feature index
 ### jobProcessing
 
 - Manifest: `src/features/jobProcessing/feature.manifest.json`
-- Source files: 19
+- Source files: 20
 - Declared dependencies: none
 - Current public dependencies: none
 - Private seam violations: 0
-- Depended on by: none
+- Depended on by: notificationDelivery
 - Public seams:
   - `enqueue-service` via `enqueueTransactionalJobRequest` in `index.ts` (service, experimental)
   - `job-registry` via `createJobTypeRegistry` in `index.ts` (registry, experimental)
@@ -75,18 +75,20 @@ Rule: Cross-feature imports in src/features must go through target feature index
 ### notificationDelivery
 
 - Manifest: `src/features/notificationDelivery/feature.manifest.json`
-- Source files: 19
-- Declared dependencies: none
-- Current public dependencies: none
+- Source files: 22
+- Declared dependencies: jobProcessing
+- Current public dependencies: jobProcessing
 - Private seam violations: 0
 - Depended on by: tenantAdmins
 - Public seams:
   - `feature-factory` via `createNotificationDeliveryFeature` in `index.ts` (feature-factory, stable)
   - `notification-email-writer` via `createNotificationEmailWriter | NotificationEmailWriter` in `index.ts` (writer-seam, stable)
+  - `notification-email-async-writer` via `createQueuedNotificationEmailWriter | createNotificationDeliveryJobTypesForRuntime` in `index.ts` (job-processing-adoption, experimental)
   - `notification-delivery-error` via `NotificationDeliveryError` in `index.ts` (error-type, stable)
 - Breaking-change risks:
   - Changing the notification email writer contract can break features that delegate onboarding or verification email delivery through this seam.
   - Changing outbound email persistence or resend semantics can affect auditability and historical correctness for feature-owned workflows.
+  - Queued email delivery must not send redacted durable snapshots as provider content; security-sensitive emails require owner-regenerated content or synchronous delivery until a richer async content model is approved.
 
 ### rootAuth
 
@@ -255,6 +257,16 @@ Rule: Cross-feature imports in src/features must go through target feature index
   - Changing approved discovery run behavior can break operator workflows that depend on stable discovery scope and output shape.
 
 ## Dependency Edges
+
+### notificationDelivery -> jobProcessing
+
+- Declared in manifest: yes
+- Declared seam ids: enqueue-service, job-registry
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/notificationDelivery/domain/jobTypes.ts:1` imports `../../jobProcessing` -> `src/features/jobProcessing/index.ts` (public)
+- `src/features/notificationDelivery/emailWriter.ts:3` imports `../jobProcessing` -> `src/features/jobProcessing/index.ts` (public)
 
 ### rootAuth -> rootUsers
 

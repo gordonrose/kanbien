@@ -8,7 +8,7 @@ import {
 import { toOutboundEmail } from "./presenters";
 import { sanitizeNotificationContent } from "./sanitizeContent";
 import type { NotificationDeliveryRepository } from "../persistence/repository";
-import type { NotificationEmailProvider } from "./provider";
+import type { NotificationEmailProvider, ProviderSendFailure } from "./provider";
 import type { ResendEmailInput } from "./types";
 
 export async function resendEmail(
@@ -59,28 +59,42 @@ export async function resendEmail(
     bodyText: providerBodyText,
   });
 
-  const details = await repository.recordAttempt({
+  if (providerResult.success) {
+    const details = await repository.recordAttempt({
+      attemptId: randomUUID(),
+      emailId: input.emailId,
+      contentSnapshotId,
+      status: "sent",
+      providerMessageId: providerResult.providerMessageId,
+      providerResponseCode: providerResult.providerResponseCode,
+      providerErrorSummary: null,
+      resentByActorType: input.resentByActorType,
+      resentByActorId: input.resentByActorId,
+      resendReason: input.resendReason ?? null,
+    });
+    return toOutboundEmail(details);
+  }
+
+  const failureResult = providerResult as ProviderSendFailure;
+
+  await repository.recordAttempt({
     attemptId: randomUUID(),
     emailId: input.emailId,
     contentSnapshotId,
-    status: providerResult.success ? "sent" : "failed",
-    providerMessageId: providerResult.success ? providerResult.providerMessageId : null,
-    providerResponseCode: providerResult.providerResponseCode,
-    providerErrorSummary: providerResult.success ? null : providerResult.providerErrorSummary,
+    status: "failed",
+    providerMessageId: null,
+    providerResponseCode: failureResult.providerResponseCode,
+    providerErrorSummary: failureResult.providerErrorSummary,
     resentByActorType: input.resentByActorType,
     resentByActorId: input.resentByActorId,
     resendReason: input.resendReason ?? null,
   });
 
-  if (!providerResult.success) {
-    if (providerResult.failureType === "misconfigured") {
-      throw new NotificationProviderMisconfiguredError();
-    }
-    if (providerResult.failureType === "provider_unavailable") {
-      throw new NotificationProviderUnavailableError();
-    }
-    throw new NotificationSendFailedError();
+  if (failureResult.failureType === "misconfigured") {
+    throw new NotificationProviderMisconfiguredError();
   }
-
-  return toOutboundEmail(details);
+  if (failureResult.failureType === "provider_unavailable") {
+    throw new NotificationProviderUnavailableError();
+  }
+  throw new NotificationSendFailedError();
 }
