@@ -71,6 +71,10 @@ When a row is not a normal role-granted capability, fill the fields explicitly:
 - Migration required?
 - Indexes / uniqueness
 - Search / filter model
+- Lifecycle / cleanup rules
+- Expiry / abandoned-state behavior
+- Orphaned external resource handling
+- Scheduled maintenance or job dependency
 - Session / auth dependency
 - Compatibility / migration notes
 

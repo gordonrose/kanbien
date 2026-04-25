@@ -15,6 +15,10 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   Route and contract template for backend capabilities.
 - `permission-mapping-template.md`
   Role-to-capability mapping template for future authorization architecture.
+- `asset-consumer-decision-record-template.md`
+  Decision gate for any feature, route, job, or UI surface that uploads,
+  reads, links, displays, downloads, replaces, deletes, or publishes
+  user-managed assets.
 - `design-system-principle-template.md`
   Durable-rule template for visual, interaction, and composition principles.
 - `design-system-pattern-template.md`

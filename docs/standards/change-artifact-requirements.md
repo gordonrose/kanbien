@@ -120,6 +120,37 @@ If the permission model itself changes, add:
 - dedicated PRD
 - ADR if the enforcement pattern is enduring
 
+### Asset upload, read, or delivery capability
+
+Required before adding or materially changing any feature, route, job, or UI
+surface that uploads, reads, links, displays, downloads, replaces, deletes, or
+publishes user-managed assets:
+
+- completed asset consumer decision record using
+  `docs/templates/asset-consumer-decision-record-template.md`
+- owning feature and entity-relationship authorization rule
+- `assets` feature capability expectation and consuming-feature capability
+  expectation
+- asset kind, exact MIME allowlist, size limit, count or storage footprint, and
+  delivery mode
+- tenant context rule and cross-tenant deny rule
+- upload-intent expiry, single-use, actor binding, scope binding, and generated
+  storage-key binding
+- checksum, actual-byte verification, processing, and malware-scanning posture
+- accessibility metadata posture, including whether alt text, captions,
+  transcripts, subtitles, audio descriptions, or decorative decisions are
+  asset-level or contextual to the consuming feature
+- public visibility decision, with explicit approval when public delivery is
+  allowed
+- rate limit, quota, cleanup, retention, audit, privacy, and operational alert
+  expectations
+
+Stop for explicit approval before implementation if the change introduces a
+new asset kind, public visibility, documents, audio, video, inline rendering of
+user-uploaded content, generic asset-library behavior, shared-cross-tenant
+asset behavior, or any skipped verification/scanning posture for sensitive or
+customer-shareable files.
+
 ### Materially AI-assisted change
 
 Required:
@@ -152,6 +183,8 @@ To make a capability reconstructable from docs and templates, document:
 - route family and launch surface when a frontend surface exists
 - backend route and contract
 - persistence impact
+- lifecycle and cleanup rules for expired, abandoned, orphaned, failed, or
+  externally stored resources
 - security, privacy, and audit expectations
 - performance expectations and degraded-state behavior when a frontend surface
   exists

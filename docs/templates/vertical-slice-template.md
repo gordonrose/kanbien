@@ -74,6 +74,11 @@ frontend and backend notes that drift apart.
 - Migration implications:
 - Uniqueness / normalization implications:
 - Search / filter implications:
+- Lifecycle / cleanup rules:
+- Expiry / abandoned-state behavior:
+- Orphaned external resource handling:
+- Scheduled maintenance or job dependency:
+- Cleanup retry and failure recording:
 - Compatibility notes:
 
 ## Performance And Degraded UX

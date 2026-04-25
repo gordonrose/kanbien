@@ -70,6 +70,16 @@ not start from the implementation files.
 - Cross-feature reads:
 - Other side effects:
 
+## Lifecycle / Cleanup
+
+- Expiry behavior:
+- Abandoned or partial-state behavior:
+- Orphaned external resource handling:
+- Cleanup trigger:
+  synchronous / support command / scheduler / job queue / storage lifecycle
+- Cleanup retry and failure recording:
+- Quota or cost accounting during pending cleanup:
+
 ## Compatibility / Lifecycle Notes
 
 - Notes:

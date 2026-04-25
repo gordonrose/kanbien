@@ -51,6 +51,31 @@ If a related record can change, merge, disappear, or be reassigned, do not
 replace the durable fact with a live lookup unless the prompt also includes an
 approved migration or compatibility strategy.
 
+## Lifecycle And Cleanup Defaults
+
+Before adding durable state that can expire, be abandoned, fail midway, create
+external resources, or require retryable cleanup, define the cleanup model in
+the relevant PRD, capability matrix, API contract, implementation blueprint, or
+vertical-slice artifact.
+
+The cleanup model must state:
+
+- which feature owns the cleanup semantics
+- which platform scheduler, support command, job queue, storage lifecycle, or
+  manual operational process triggers cleanup
+- what happens to expired, abandoned, partial, orphaned, rejected, or failed
+  states
+- how cleanup failures are recorded and retried
+- whether pending or failed-cleanup records continue to count against quota,
+  cost, or abuse limits
+- which audit, privacy, and runbook notes are required
+
+Default ownership rule:
+
+- platform scheduler or job seams own execution timing and retry mechanics
+- the feature that owns the durable entity owns lifecycle transitions,
+  cleanup decisions, and external-resource deletion semantics
+
 ## API And Entity Behavior Defaults
 
 Unless a prompt explicitly states otherwise and includes an approved
@@ -166,6 +191,74 @@ Defaults:
   use junction tables
 - array or JSONB storage for searchable multi-value attributes requires
   explicit approval based on query patterns and scale
+
+## Asset Upload And Read Decision Gate
+
+Treat asset upload, asset read, asset linking, and user-managed file delivery
+as security, privacy, cost, and business-decision boundaries.
+
+Before adding or materially changing any feature, route, job, or UI surface
+that uploads, reads, links, displays, downloads, replaces, deletes, or
+publishes user-managed assets, create or update an asset consumer decision
+record using:
+
+- `docs/templates/asset-consumer-decision-record-template.md`
+
+The decision record must answer:
+
+- which entity owns the asset relationship
+- whether the asset is root-owned, tenant-scoped, private, customer-shareable,
+  or public
+- who may upload, replace, read, download, delete, or publish it
+- exact allowed asset kinds, MIME types, maximum size, count, and storage
+  footprint
+- whether inline rendering, attachment-only delivery, same-origin streaming,
+  signed URLs, or public CDN delivery is approved
+- which feature owns entity-relationship authorization
+- which `assets` capability and consuming-feature capability govern the action
+- current tenant context and cross-tenant deny rules
+- checksum, actual-byte verification, processing, and malware-scanning
+  requirements
+- accessibility metadata requirements, including whether alt text, captions,
+  transcripts, subtitles, audio descriptions, or decorative posture are
+  intrinsic to the asset or contextual to the consuming entity relationship
+- rate limits, quotas, cleanup rules, audit events, privacy notes, and
+  operational alerts
+- lifecycle and retention behavior, including replacement, soft delete,
+  hard-delete eligibility, and legal-hold or export requirements
+
+Default posture:
+
+- upload intents must be short-lived, single-use, actor-bound, scope-bound, and
+  storage-key-bound
+- raw filenames must not become storage paths or authority
+- client-supplied MIME type is only an allowlist input, not proof of safety
+- SVG is not treated as a normal raster image; uploaded SVG requires approved
+  sanitizer verification before readiness and must not be injected directly
+  into app DOM
+- private assets must not expose permanent raw bucket URLs
+- public asset delivery is denied by default unless explicitly approved
+- generic asset-library or public file-hosting behavior requires explicit
+  approval
+- documents, audio, video, customer-shareable files, and public user-uploaded
+  files require an approved scanning, processing, quota, retention, and
+  operational-alerting posture before production use
+- entity-specific authorization belongs to the consuming feature; the `assets`
+  feature enforces asset invariants and storage-policy rules
+
+Stop and ask for approval before implementation if the change:
+
+- introduces a new asset kind
+- allows public visibility or public delivery
+- allows documents, audio, or video
+- renders user-uploaded content inline
+- skips checksum or actual-byte verification for sensitive assets
+- skips malware scanning for customer-shareable files
+- adds generic asset-library or file-hosting behavior
+- changes object-storage provider assumptions
+- introduces shared-cross-tenant asset behavior
+- makes entity access depend only on asset ownership rather than the owning
+  feature's authorization rule
 
 ## Feature Architecture
 
