@@ -15,6 +15,7 @@ type MigrationGroup =
   | "webAppSurfaceDiscovery"
   | "entityBuilder"
   | "notificationDelivery"
+  | "jobProcessing"
   | "tenantAdmins"
   | "tenantAuth"
   | "tenantConfiguration";
@@ -164,6 +165,10 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     relativePath: "notificationDelivery/persistence/migrations/0007_create_notification_delivery.sql",
   },
   {
+    group: "jobProcessing",
+    relativePath: "jobProcessing/persistence/migrations/0040_create_job_processing.sql",
+  },
+  {
     group: "tenantAdmins",
     relativePath: "tenantAdmins/persistence/migrations/0008_create_tenant_admins.sql",
   },
@@ -292,6 +297,7 @@ export async function applyPostgresTestMigrations(
     "webAppSurfaceDiscovery",
     "entityBuilder",
     "notificationDelivery",
+    "jobProcessing",
     "tenantAdmins",
     "tenantAuth",
     "tenantConfiguration",

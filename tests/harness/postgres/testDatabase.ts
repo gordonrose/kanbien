@@ -113,6 +113,9 @@ export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
     DROP TABLE IF EXISTS outbound_email_attempt CASCADE;
     DROP TABLE IF EXISTS outbound_email_content CASCADE;
     DROP TABLE IF EXISTS outbound_email CASCADE;
+    DROP TABLE IF EXISTS job_processing_attempt CASCADE;
+    DROP TABLE IF EXISTS job_processing_outbox CASCADE;
+    DROP TABLE IF EXISTS job_processing_job CASCADE;
     DROP TABLE IF EXISTS tenant_session CASCADE;
     DROP TABLE IF EXISTS tenant_auth_policy CASCADE;
     DROP TABLE IF EXISTS tenant_password_setup_token CASCADE;

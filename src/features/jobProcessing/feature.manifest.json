@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "featureName": "jobProcessing",
+  "publicSeams": [
+    {
+      "seamId": "enqueue-service",
+      "symbol": "enqueueTransactionalJobRequest",
+      "path": "index.ts",
+      "kind": "service",
+      "stability": "experimental",
+      "description": "Provider-neutral durable enqueue seam for feature-owned domain transactions."
+    },
+    {
+      "seamId": "job-registry",
+      "symbol": "createJobTypeRegistry",
+      "path": "index.ts",
+      "kind": "registry",
+      "stability": "experimental",
+      "description": "Explicit code-defined registry for supported job types, payload versions, scopes, and handlers."
+    },
+    {
+      "seamId": "dispatcher-worker-runtime",
+      "symbol": "createJobProcessingService",
+      "path": "index.ts",
+      "kind": "runtime",
+      "stability": "experimental",
+      "description": "Provider-neutral dispatcher and worker execution service for background processes."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing job status, outbox, attempt, retry, or idempotency semantics can strand queued historical jobs or break at-least-once execution guarantees.",
+    "Changing payload safety, execution-scope, or tenant-context validation can weaken async authorization boundaries or make historical payload versions unexecutable.",
+    "Exposing provider-specific BullMQ or Redis types through public seams would break the planned provider-neutral compatibility boundary."
+  ]
+}

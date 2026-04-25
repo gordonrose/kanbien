@@ -58,12 +58,16 @@ Current repo assumptions:
 - PostgreSQL available for the main app database
 - PostgreSQL available for the dedicated persistence-test database when running
   the persistence-backed suite
+- Redis available when exercising job-processing dispatcher or worker provider
+  integrations
 
 Also required when exercising specific flows:
 
 - an SSH private key that corresponds to the configured root bootstrap public
   key for root-auth login
 - a live outbound email provider key for notification-delivery proof sends
+- a local Redis instance when exercising future BullMQ-backed job-processing
+  provider flows
 
 ## Environment Bootstrap
 
@@ -88,6 +92,7 @@ Current env categories include:
 - root-admin browser/session settings
 - platform-security configuration
 - notification-delivery provider config
+- job-processing Redis provider config
 
 Bootstrap expectation:
 
@@ -95,15 +100,17 @@ Bootstrap expectation:
 2. supply database settings
 3. supply root-auth bootstrap values
 4. supply provider keys only in local ignored env files
+5. set `REDIS_URL` when using a non-default local Redis endpoint
 
 ## Required Startup Order
 
 1. provision or start PostgreSQL
 2. populate local env values
 3. run migrations
-4. start the app server
-5. if needed, start local helper tooling such as the SSH signer helper
-6. authenticate through root-auth before exercising protected routes
+4. start Redis when exercising job-processing provider integrations
+5. start the app server
+6. if needed, start local helper tooling such as the SSH signer helper
+7. authenticate through root-auth before exercising protected routes
 
 ## Database Bootstrap
 
@@ -165,6 +172,31 @@ Current runtime assumptions:
 - env supplies provider credentials and sender identity
 - the current first live provider is `Resend`
 - feature code stays provider-agnostic above the adapter seam
+
+### Job-processing Redis provider
+
+Used for:
+
+- future BullMQ-backed dispatcher and worker execution
+
+Current runtime assumption:
+
+- `REDIS_URL` defaults locally to `redis://localhost:6379`
+
+Local bootstrap example:
+
+```bash
+docker run --name kanbien-redis -p 6379:6379 -d redis:7
+```
+
+Current scripts:
+
+- `npm run dispatcher:jobs`
+- `npm run worker:jobs`
+
+The first foundation slice includes provider-neutral entrypoints and seams. The
+concrete BullMQ adapter remains deferred, so these scripts fail fast with a
+provider-not-configured message until that adapter lands.
 
 ## Optional Local Helpers
 

@@ -98,10 +98,21 @@ If a section is not yet implemented, mark it explicitly as:
 ## 6. Background Jobs And Scheduling
 
 - job runner or queue system:
+  `jobProcessing` provider-neutral foundation with BullMQ/Redis selected by
+  ADR-0034 as the first concrete provider direction; concrete adapter
+  integration is still deferred in the first slice
 - retry orchestration owner:
+  `jobProcessing` owns generic retry/dead-letter mechanics; feature handlers
+  own business idempotency and completion semantics
 - scheduled sending or delayed work system:
+  one-off `runAt` support exists in the foundation; recurring scheduling and
+  cron-style toolkit remain deferred
+- required local env vars:
+  `REDIS_URL` when using a non-default Redis endpoint; local default is
+  `redis://localhost:6379`
 - current repo posture:
-  `Not Implemented`, `Planned`, or describe the chosen tool
+  provider-neutral foundation implemented; BullMQ adapter and operator APIs are
+  planned follow-up work
 
 ## 7. Browser And Local Helper Tooling
 

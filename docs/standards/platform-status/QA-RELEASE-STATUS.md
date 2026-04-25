@@ -97,6 +97,11 @@ Source gate: [`QA-RELEASE-GATE.md`](/home/gordon/kanbien/docs/standards/QA-RELEA
   backend slice with unit, integration, security, and audit coverage.
   The current implemented evidence now includes `webAppPageSettings` exact
   read/update/options coverage plus additive hierarchy landing-page cases.
+- `Partial` The job-processing foundation now has provider-neutral executable
+  coverage mapped to `TC-JOB-PROC-*`.
+  Redis-backed BullMQ adapter coverage remains intentionally deferred until the
+  concrete provider adapter is integrated, and Postgres-backed verification
+  still needs a configured persistence-test run.
 
 ## Main Gaps To Close
 

@@ -3,22 +3,27 @@
 ## Implementation Status
 
 - Status:
-  planned backend/platform foundation slice as of 2026-04-25
+  first backend/platform foundation slice partially implemented as of
+  2026-04-25
 - Implemented:
   - first-pass capability matrix for `jobProcessing`
   - first-pass capability matrix notes
   - ADR for BullMQ/Redis and the transactional outbox decision
   - PRD-derived test-case document
-- Not yet implemented:
   - implementation blueprint
   - `jobProcessing` feature/foundation
-  - Redis/BullMQ configuration
-  - worker runtime
-  - dispatcher runtime
+  - provider-neutral enqueue, registry, dispatcher, worker, retry, payload
+    safety, and tenant-scope seams
   - job persistence migrations
-  - executable tests
+  - `REDIS_URL` parsing
+  - dispatcher and worker runtime entrypoints
+  - fake-provider executable tests mapped to `TC-JOB-PROC-*`
+- Not yet implemented:
+  - concrete BullMQ provider adapter
+  - Redis-backed BullMQ provider tests
   - operator APIs/UI
   - notification-delivery retry adoption
+  - recurring scheduling
 
 ## Purpose
 
@@ -351,6 +356,15 @@ The first implementation is acceptable when:
 11. Operator APIs/UI remain deferred but supported by persisted metadata.
 12. PRD-derived tests cover enqueue, dispatch, execution, retry, payload
     safety, tenant-boundary, idempotency, and worker failure behavior.
+
+Current implementation note:
+
+- The provider-neutral foundation meets the fake-provider contract-test portion
+  of this acceptance set.
+- BullMQ/Redis adapter integration and Redis-backed provider tests remain
+  deferred to the provider adapter slice.
+- Operator APIs/UI, recurring scheduling, and notification-delivery retry
+  adoption remain deferred.
 
 ## Related Artifacts
 

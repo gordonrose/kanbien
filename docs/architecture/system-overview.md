@@ -14,6 +14,7 @@ Today the system has:
   `tenants`, `notificationDelivery`, `tenantAdmins`, `tenantAuth`,
   `tenantConfiguration`, `webAppHierarchyBuilder`, `webAppPageSettings`,
   `entityBuilder`, and `webAppSurfaceDiscovery`
+- one unmounted backend foundation feature: `jobProcessing`
 - two mounted browser/frontend route families:
   `/design-system` and `/root-admin`
 - one shared PostgreSQL connection pool
@@ -98,7 +99,8 @@ The active examples are `src/features/rootAuth`, `src/features/rootRoles`,
 `src/features/notificationDelivery`, `src/features/tenantAdmins`,
 `src/features/tenantAuth`, `src/features/tenantConfiguration`,
 `src/features/webAppHierarchyBuilder`, `src/features/webAppPageSettings`,
-`src/features/entityBuilder`, and `src/features/webAppSurfaceDiscovery`.
+`src/features/entityBuilder`, `src/features/webAppSurfaceDiscovery`, and the
+unmounted backend foundation `src/features/jobProcessing`.
 Each feature follows the same internal structure:
 
 - `contract/`
@@ -199,6 +201,10 @@ Current auth model:
 - `notificationDelivery` owns outbound email delivery, durable outbound-email
   metadata, sanitized content versions, and attempt history for operator and
   future feature-owned workflows
+- `jobProcessing` owns provider-neutral durable asynchronous job request,
+  outbox dispatch, worker execution, retry/dead-letter, payload-safety, and
+  attempt-history seams; concrete BullMQ adapter integration and operator APIs
+  remain deferred
 - `rootUsers` remains authoritative for root-user lifecycle state
 - `rootAuth` reads root-user sign-in eligibility through an exported
   `rootUsers` auth-state reader rather than `rootUsers` private persistence

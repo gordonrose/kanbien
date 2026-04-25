@@ -30,10 +30,11 @@
   tenant-boundary enforcement, transactional outbox correctness, local Redis
   bootstrap instructions, and deferred operator API honesty
 - Notes:
-  - Traceability Enforcement: deferred
-  - this file is a planned source of truth before implementation exists
-  - executable `TC-JOB-PROC-*` coverage should be added during the
-    implementation loop before traceability is changed to enforced
+  - Traceability Enforcement: partially executable
+  - executable `TC-JOB-PROC-*` coverage exists for the provider-neutral
+    foundation seam
+  - Redis-backed BullMQ coverage is intentionally deferred until the BullMQ
+    provider adapter is integrated
   - Lifecycle metadata defaults currently apply:
     - `Version: v1`
     - `Lifecycle Status: active`
@@ -41,18 +42,25 @@
 ## Current Status
 
 - Overall traceability status:
-  - planned only; no executable job-processing suite exists yet
+  - executable provider-neutral coverage added for the first foundation slice;
+    Redis-backed BullMQ coverage remains deferred until provider adapter
+    integration
 - Overall execution status:
-  - not implemented
+  - fake-provider unit and integration coverage implemented
 - Layer summary:
-  - `UNIT`: planned
-  - `INT`: planned
-  - `SEC`: planned
-  - `AUD`: planned
-  - `EDGE`: planned
-  - `CONCURRENCY/IDEMPOTENCY`: planned
-  - `RESILIENCE/COMPATIBILITY`: planned
-  - `PERFORMANCE/STRESS`: planned light
+  - `UNIT`: implemented for provider-neutral foundation
+  - `INT`: implemented for fake-provider foundation flows; Postgres-backed
+    persistence test is gated by `RUN_POSTGRES_TESTS`
+  - `SEC`: implemented through provider-neutral payload and tenant-boundary
+    assertions
+  - `AUD`: implemented through attribution, attempt, and dispatch-failure
+    assertions
+  - `EDGE`: implemented through provider-neutral edge assertions
+  - `CONCURRENCY/IDEMPOTENCY`: implemented with fake repository/provider
+    contract assertions
+  - `RESILIENCE/COMPATIBILITY`: implemented with fake provider contract
+    assertions
+  - `PERFORMANCE/STRESS`: implemented light fake-provider batch proof
   - `E2E`: not required for the first backend foundation slice
 
 ## Existing Test Impact
@@ -521,7 +529,7 @@
 ## NFR Resilience And Compatibility Tests
 
 - Scenario: Redis/BullMQ provider unavailable during dispatch
-  Test Case ID: `TC-JOB-PROC-RES-001`
+  Test Case ID: `TC-JOB-PROC-RESILIENCE-001`
   Recommended Test Layer: `resilience-integration`
   Suggested Test Folder: `tests/integration/jobProcessing/`
   Requires Shared Test Helper: yes
@@ -532,7 +540,7 @@
   - dispatch retry metadata and safe error summary are persisted
 
 - Scenario: worker crash or stalled provider job remains retryable
-  Test Case ID: `TC-JOB-PROC-RES-002`
+  Test Case ID: `TC-JOB-PROC-RESILIENCE-002`
   Recommended Test Layer: `resilience-integration`
   Suggested Test Folder: `tests/integration/jobProcessing/`
   Requires Shared Test Helper: yes
@@ -545,7 +553,7 @@
     platform state
 
 - Scenario: graceful shutdown stops new work and drains in-flight work
-  Test Case ID: `TC-JOB-PROC-RES-003`
+  Test Case ID: `TC-JOB-PROC-RESILIENCE-003`
   Recommended Test Layer: `resilience-unit`
   Suggested Test Folder: `tests/unit/jobProcessing/`
   Requires Shared Test Helper: yes

@@ -11,7 +11,8 @@
 - Scope:
   backend/platform foundation slice only
 - Phase:
-  pre-implementation blueprint
+  first foundation slice implemented with provider-neutral seams; BullMQ
+  adapter integration remains deferred
 
 ## Inputs
 
@@ -41,7 +42,8 @@
 This blueprint covers the first job-processing foundation only:
 
 - add the `jobProcessing` feature/foundation
-- add BullMQ/Redis behind a provider adapter
+- add provider-neutral adapter seams with BullMQ/Redis still the selected
+  first-provider direction
 - add PostgreSQL-backed durable job/outbox/attempt persistence
 - add transactional enqueue service seam
 - add dispatcher runtime
@@ -105,7 +107,6 @@ This blueprint does **not** implement:
   - `src/features/jobProcessing/domain/queueConfig.ts`
   - `src/features/jobProcessing/domain/workerRuntime.ts`
   - `src/features/jobProcessing/domain/provider.ts`
-  - `src/features/jobProcessing/provider/bullmqProvider.ts`
   - `src/features/jobProcessing/persistence/types.ts`
   - `src/features/jobProcessing/persistence/repository.ts`
   - `src/features/jobProcessing/persistence/postgresRepository.ts`
@@ -115,8 +116,8 @@ This blueprint does **not** implement:
     - add Redis/job-processing env parsing, centered on `REDIS_URL`
   - `src/jobWorker.ts`
     - worker entrypoint separate from HTTP server
-  - `src/jobDispatcher.ts` or combined worker entrypoint if blueprint
-    implementation chooses one runtime process
+  - `src/jobDispatcher.ts`
+  - `src/jobWorker.ts`
   - `package.json`
     - add scripts such as `worker:jobs` and possibly `dispatcher:jobs`
   - `src/routes/v1/index.ts`
@@ -232,9 +233,9 @@ This blueprint does **not** implement:
 ## Runtime And Dependency Plan
 
 - Dependencies:
-  - add `bullmq`
-  - add the Redis client dependency required by the selected BullMQ version if
-    not already included transitively in the accepted integration shape
+  - no new provider dependency in the first provider-neutral slice
+  - add `bullmq` and the Redis client dependency required by the selected
+    BullMQ version when the concrete adapter is integrated
 - Environment:
   - add `REDIS_URL`
   - consider optional development default `redis://localhost:6379`

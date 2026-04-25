@@ -137,6 +137,7 @@ const authLockdownDurationSeconds = readNumberEnvOrDefault(
 );
 const resendApiKey = readEnv("RESEND_API_KEY");
 const notificationEmailFrom = readEnvOrDefault("NOTIFICATION_EMAIL_FROM", "onboarding@resend.dev");
+const redisUrl = readEnvOrDefault("REDIS_URL", "redis://localhost:6379");
 
 export const env = {
   nodeEnv,
@@ -206,5 +207,8 @@ export const env = {
         fromEmail: notificationEmailFrom,
       },
     },
+  },
+  jobProcessing: {
+    redisUrl,
   },
 } as const;

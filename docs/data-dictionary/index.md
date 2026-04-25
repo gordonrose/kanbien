@@ -28,6 +28,9 @@ and approved cross-feature read seams.
 | Outbound Email | `notificationDelivery` | Durable logical outbound email record and operator-visible delivery root. | [outbound-email.md](./outbound-email.md) |
 | Outbound Email Content | `notificationDelivery` | Durable sanitized content snapshot for one logical outbound email. | [outbound-email-content.md](./outbound-email-content.md) |
 | Outbound Email Attempt | `notificationDelivery` | Durable per-attempt delivery record for one logical outbound email. | [outbound-email-attempt.md](./outbound-email-attempt.md) |
+| Job Processing Job | `jobProcessing` | Durable asynchronous job request and execution-state root. | [job-processing-job.md](./job-processing-job.md) |
+| Job Processing Outbox | `jobProcessing` | Durable provider-dispatch record for committed job requests. | [job-processing-outbox.md](./job-processing-outbox.md) |
+| Job Processing Attempt | `jobProcessing` | Durable execution-attempt history for one asynchronous job. | [job-processing-attempt.md](./job-processing-attempt.md) |
 | Capability Catalog Record | `capabilityContractCatalog` | Durable normalized registry row for one backend capability. | [capability-catalog-record.md](./capability-catalog-record.md) |
 | Capability Catalog Field | `capabilityContractCatalog` | Durable normalized request or response field row owned by one capability record. | [capability-catalog-field.md](./capability-catalog-field.md) |
 | Capability Catalog Constraint | `capabilityContractCatalog` | Durable normalized cross-field or capability-level constraint row owned by one capability record. | [capability-catalog-constraint.md](./capability-catalog-constraint.md) |

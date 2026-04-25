@@ -2,7 +2,7 @@
 
 ## Summary
 
-- Features analyzed: 14
+- Features analyzed: 15
 - Cross-feature edges: 12
 - Validation violations: 0
 
@@ -54,6 +54,23 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Breaking-change risks:
   - Removing or renaming exported entity definition response types can break downstream consumers that compile against this contract surface.
   - Changing durable entity definition persistence or export semantics can invalidate snapshot tooling and compatibility assumptions.
+
+### jobProcessing
+
+- Manifest: `src/features/jobProcessing/feature.manifest.json`
+- Source files: 19
+- Declared dependencies: none
+- Current public dependencies: none
+- Private seam violations: 0
+- Depended on by: none
+- Public seams:
+  - `enqueue-service` via `enqueueTransactionalJobRequest` in `index.ts` (service, experimental)
+  - `job-registry` via `createJobTypeRegistry` in `index.ts` (registry, experimental)
+  - `dispatcher-worker-runtime` via `createJobProcessingService` in `index.ts` (runtime, experimental)
+- Breaking-change risks:
+  - Changing job status, outbox, attempt, retry, or idempotency semantics can strand queued historical jobs or break at-least-once execution guarantees.
+  - Changing payload safety, execution-scope, or tenant-context validation can weaken async authorization boundaries or make historical payload versions unexecutable.
+  - Exposing provider-specific BullMQ or Redis types through public seams would break the planned provider-neutral compatibility boundary.
 
 ### notificationDelivery
 
