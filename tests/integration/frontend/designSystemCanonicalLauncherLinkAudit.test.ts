@@ -7,6 +7,7 @@ import { createApp } from "../../../src/app";
 const canonicalLauncherRoot = join(process.cwd(), "src/frontend/designSystem/canonicals");
 
 const generatedLauncherFamilies = [
+  "async-activity-drawer",
   "choice-group",
   "date-picker",
   "drawer-select",
@@ -48,6 +49,7 @@ describe("design-system canonical launcher link audit", () => {
   it("keeps generated canonical launcher routes visible for migrated launchers", () => {
     const expectedRoutes = [
       "/design-system/canonical-renderings/page-shell-banner/PSBR-001",
+      "/design-system/canonical-renderings/async-activity-drawer/AADR-001",
       "/design-system/canonical-renderings/top-nav/TRP-001",
       "/design-system/canonical-renderings/simple-select/SSR-002",
       "/design-system/canonical-renderings/choice-group/CGR-003",

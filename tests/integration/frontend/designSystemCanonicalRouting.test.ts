@@ -34,6 +34,7 @@ describe("design-system canonical render routing", () => {
     expect(response.status).toBe(200);
     expect(response.body.items).toEqual(
       expect.arrayContaining([
+        expect.objectContaining({ familyKey: "async-activity-drawer" }),
         expect.objectContaining({ familyKey: "choice-group" }),
         expect.objectContaining({ familyKey: "date-picker" }),
         expect.objectContaining({ familyKey: "display-settings" }),
@@ -111,6 +112,17 @@ describe("design-system canonical render routing", () => {
     expect(response.status).toBe(200);
     expect(response.text).toContain('id="choice-group-preview-shell"');
     expect(response.text).toContain('id="choice-group-canonical-current"');
+    expect(response.text).not.toContain("Design-System Route Families");
+  });
+
+  it("serves the dedicated async-activity-drawer render page instead of the overview shell", async () => {
+    const response = await request(createSubject()).get(
+      "/design-system/canonical-renderings/async-activity-drawer/AADR-001",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain('id="async-activity-drawer-preview-shell"');
+    expect(response.text).toContain('id="async-activity-drawer-canonical-current"');
     expect(response.text).not.toContain("Design-System Route Families");
   });
 

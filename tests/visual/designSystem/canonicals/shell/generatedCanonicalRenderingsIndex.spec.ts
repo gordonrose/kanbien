@@ -22,6 +22,14 @@ type GeneratedCanonicalFamily = {
 
 const generatedCanonicalFamilies: readonly GeneratedCanonicalFamily[] = [
   {
+    familyKey: "async-activity-drawer",
+    familyLabel: /Async Activity Drawer/i,
+    sampleRenderPath: "/design-system/canonical-renderings/async-activity-drawer/AADR-001",
+    surfaceLocator: "#async-activity-drawer-preview-shell",
+    readyLocator: "#async-activity-drawer-preview-shell[data-render-status='ready']",
+    bodyAttribute: { name: "data-async-activity-drawer-surface", value: "canonical" as const },
+  },
+  {
     familyKey: "page-shell-banner",
     familyLabel: /Page-Shell Banner/i,
     sampleRenderPath: "/design-system/canonical-renderings/page-shell-banner/PSBR-001",

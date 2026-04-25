@@ -1,4 +1,8 @@
 import { createPageShellBannerController } from "./pageShellBanner.mjs";
+import {
+  asyncActivityDrawerDemoJobs,
+  createAsyncActivityDrawerController,
+} from "./asyncActivityDrawer.mjs";
 import { partitionContextNavItems, renderContextNavMenuItems } from "./contextNav.mjs";
 import {
   initializeFormUploadFields as initializeSharedFormUploadFields,
@@ -678,6 +682,11 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/canonicals", label: "Canonicals" },
     { href: "/design-system/canonicals/display-settings", label: "Display Settings" },
   ]],
+  ["/design-system/canonicals/async-activity-drawer", [
+    { href: "/design-system/patterns", label: "Home" },
+    { href: "/design-system/canonicals", label: "Canonicals" },
+    { href: "/design-system/canonicals/async-activity-drawer", label: "Async Activity Drawer" },
+  ]],
   ["/design-system/canonicals/page-shell-banner", [
     { href: "/design-system/patterns", label: "Home" },
     { href: "/design-system/canonicals", label: "Canonicals" },
@@ -831,6 +840,11 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/components", label: "Home" },
     { href: "/design-system/canonicals/page-shell-banner", label: "Page-Shell Banner Canonicals" },
     { href: "/design-system/components/page-shell-banner", label: "Canonical Render" },
+  ]],
+  ["/design-system/components/async-activity-drawer", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonicals/async-activity-drawer", label: "Async Activity Drawer Canonicals" },
+    { href: "/design-system/components/async-activity-drawer", label: "Canonical Render" },
   ]],
   ["/design-system/patterns/hierarchy-tree/render", [
     { href: "/design-system/patterns", label: "Home" },
@@ -1634,7 +1648,6 @@ const contextNavMoreFilterButton = document.getElementById("context-nav-more-fil
 const contextNavMoreAccessibilityButton = document.getElementById("context-nav-more-accessibility");
 const asyncActivityButton = document.getElementById("async-activity-button");
 const asyncActivityDrawer = document.getElementById("async-activity-drawer");
-const asyncActivityCloseButton = document.getElementById("async-activity-close");
 const themeButtons = Array.from(document.querySelectorAll("[data-theme-option]"));
 const directionButtons = Array.from(document.querySelectorAll("[data-direction-option]"));
 const accentButtons = Array.from(document.querySelectorAll("[data-accent]"));
@@ -1852,7 +1865,6 @@ let activeFilterCategory = "status";
 let activeLanguageCode = "en";
 let languageModalReturnFocusTarget = null;
 let accessibilityDrawerReturnFocusTarget = null;
-let asyncActivityDrawerReturnFocusTarget = null;
 let activeTopNavPreviewFixture = "standard";
 let activeTopNavPreviewOpenState = "closed";
 let pageShellBannerDemoVisible = false;
@@ -1870,6 +1882,12 @@ const pageShellBannerDemoController = pageShellBannerDemoRoot instanceof HTMLEle
       pageShellBannerDemoVisible = nextVisible;
       syncPageShellBannerDemo();
     },
+  })
+  : null;
+const asyncActivityDrawerController = asyncActivityDrawer instanceof HTMLElement
+  ? createAsyncActivityDrawerController(asyncActivityDrawer, {
+    launcher: asyncActivityButton instanceof HTMLElement ? asyncActivityButton : null,
+    jobs: asyncActivityDrawerDemoJobs,
   })
   : null;
 
@@ -4458,25 +4476,11 @@ function isAccessibilityDrawerOpen() {
 }
 
 function setAsyncActivityDrawerOpen(open, { restoreFocus = true } = {}) {
-  asyncActivityButton?.setAttribute("aria-expanded", String(open));
-  asyncActivityDrawer?.classList.toggle("hidden", !open);
-  asyncActivityDrawer?.setAttribute("aria-hidden", String(!open));
-
-  if (open) {
-    asyncActivityDrawerReturnFocusTarget = asyncActivityButton;
-    window.requestAnimationFrame(() => {
-      asyncActivityCloseButton?.focus();
-    });
-    return;
-  }
-
-  if (restoreFocus && asyncActivityDrawerReturnFocusTarget instanceof HTMLElement) {
-    asyncActivityDrawerReturnFocusTarget.focus();
-  }
+  asyncActivityDrawerController?.setOpen(open, { restoreFocus });
 }
 
 function isAsyncActivityDrawerOpen() {
-  return asyncActivityButton?.getAttribute("aria-expanded") === "true";
+  return asyncActivityDrawerController?.isOpen() ?? false;
 }
 
 function setBrochureEditDrawerOpen(open, { restoreFocus = true } = {}) {
@@ -7352,10 +7356,6 @@ primaryNavOverflowButton?.addEventListener("click", () => {
 
 accessibilityCloseButton?.addEventListener("click", () => {
   setAccessibilityDrawerOpen(false);
-});
-
-asyncActivityCloseButton?.addEventListener("click", () => {
-  setAsyncActivityDrawerOpen(false);
 });
 
 filterPanelCloseButton?.addEventListener("click", () => {

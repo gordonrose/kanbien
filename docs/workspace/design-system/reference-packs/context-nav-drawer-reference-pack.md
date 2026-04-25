@@ -65,9 +65,10 @@ This pack turns them into concrete review targets.
   family’s primary sign-off target now that a dedicated `CDR-*` set exists
 - dedicated context-nav drawer canonicals now exist and now represent the
   signed-off shell-family set for this chassis
-- the page-shell template now uses the same chassis for an async activity
-  drawer that can list multiple background jobs, error/retry states, completed
-  result counts, and CSV result download actions without blocking navigation
+- the page-shell template now consumes the shared `async-activity-drawer` seam
+  on the same chassis for multiple background jobs, error/retry states,
+  completed result counts, and CSV result download actions without blocking
+  navigation
 
 ## Reference Contract
 
@@ -84,7 +85,8 @@ This pack turns them into concrete review targets.
 - Async activity payloads may show multiple in-progress jobs, waiting jobs,
   retryable error states, completed successful/failed record counts, and CSV
   download actions, but must keep the same shell attachment and close behavior
-  as the host drawer family
+  as the host drawer family and follow the dedicated
+  `async-activity-drawer` behavior lock and reference pack
 - The launcher, close control, and in-drawer controls must remain fully
   keyboard-operable with visible focus indicators
 - The drawer must preserve WCAG 2.2 AA-readable contrast and non-text contrast

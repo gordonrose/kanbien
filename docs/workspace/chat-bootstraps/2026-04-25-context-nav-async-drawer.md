@@ -7,9 +7,9 @@
 
 ## Git Start Point
 
-- Base Commit: af0a3dd3d10afb7cc36fd575c3b5b638f3af3512
+- Base Commit: d7cd3e56de56a9d22260c83c29097653c10b164a
 - Base Ref: origin/main
-- Source Branch At Bootstrap Time: codex/canonical-renderings-link-migration
+- Source Branch At Bootstrap Time: codex/context-nav-async-drawer
 - Bootstrap Command Or Method: `git worktree add -b codex/context-nav-async-drawer /tmp/kanbien-context-nav-async-drawer origin/main`
 
 ## Dedicated Isolation
@@ -17,13 +17,13 @@
 - Dedicated Branch: codex/context-nav-async-drawer
 - Dedicated Worktree Path: /tmp/kanbien-context-nav-async-drawer
 - Preflight Command: `npm run git:preflight`
-- Parallel Chats Known At Bootstrap Time: Existing dirty `/home/gordon/kanbien` worktree on `codex/canonical-renderings-link-migration`; other clean worktrees reported by `npm run git:worktree-audit`.
+- Parallel Chats Known At Bootstrap Time: Multiple clean sibling worktrees reported by `npm run git:worktree-audit`; no dirty stale-base blockers.
 
 ## Intended Scope
 
-- Planned Write Set: Context-nav/page-shell template source, governed design-system documentation or tests needed for the new async activity drawer, and this bootstrap record.
-- Expected Maintained Artifacts: Context-nav/page-shell behavior or pattern docs if the visual contract changes; focused frontend/design-system verification artifacts if needed.
-- Known Shared Seams: Context nav bottom stack, display settings drawer, page shell template, design-system canonical/render surfaces.
+- Planned Write Set: Async activity drawer shared design-system seam, page-shell template consumer wiring, dedicated canonical launcher/render surfaces, governed design-system documentation, focused audit/visual tests, and this bootstrap record.
+- Expected Maintained Artifacts: Async activity drawer behavior lock, reference pack, pattern doc, component note, verification checklist, component inventory, context-nav drawer inherited references, and focused frontend/design-system verification artifacts.
+- Known Shared Seams: Context-nav bottom stack, context-nav drawer chassis, display settings drawer, page shell template, design-system canonical/render surfaces.
 - Explicit Non-Goals: Backend async job API, persistence, polling transport, real-app adoption outside the governed template.
 
 ## Coordination Notes
@@ -38,4 +38,7 @@
 
 - Final Branch Used: codex/context-nav-async-drawer
 - Final Base Commit If Changed: unchanged at bootstrap
-- Follow-Up Integration Notes: Implemented in the isolated worktree. Focused audit and browser checks passed; unrelated `contextNavResponsive` audit drift remains outside this slice.
+- Follow-Up Integration Notes: Shared `async-activity-drawer` seam, dedicated
+  canonicals, governed artifacts, and focused audit/browser coverage are
+  implemented in this isolated worktree; changes remain uncommitted pending
+  explicit user approval.

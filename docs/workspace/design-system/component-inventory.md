@@ -51,6 +51,7 @@ surface unless a later review moves them back to `needs-review`.
 | `selection-list` | `patterns` | Filter options secondary panel and searchable option list | `signed-off` | `/design-system` filter options flow | Pattern note plus search/no-results/selection-state verification | Shared collection filtering |
 | `drawer` | `patterns` | Context-nav drawer shell | `signed-off` | `/design-system` signed-off `CDR-*` chassis states and inherited first-consumer drawer path | Prove a second real drawer consumer before shared primitive extraction | Shell-attached utility drawers |
 | `display-settings` | `patterns` | Display settings payload controls | `exploratory` | `/design-system` display settings review payload inside the signed-off context-nav drawer | Complete the payload-specific behavior lock, reference pack, canonicals, verification chain, and app subset sign-off | User preferences surfaces |
+| `async-activity-drawer` | `components` | Persistent shell drawer for background job activity | `exploratory` | Shared render/controller seam in `src/frontend/designSystem/assets/asyncActivityDrawer.mjs`, consumed by `/design-system/templates/page-shell`, with generated `AADR-*` canonicals under `/design-system/canonical-renderings/async-activity-drawer` | Complete human review of the `AADR-*` states before first workspace/app shell adoption | Workspace/app shell background jobs |
 
 ## Recommended Promotion Order
 

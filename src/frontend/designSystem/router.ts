@@ -22,6 +22,10 @@ export const generatedCanonicalRenderRouteRegistry = {
     htmlPath: ["components", "context-nav.html"],
     surfaceSignature: 'id="context-nav-preview-shell"',
   },
+  "async-activity-drawer": {
+    htmlPath: ["components", "async-activity-drawer.html"],
+    surfaceSignature: 'id="async-activity-drawer-preview-shell"',
+  },
   "drawer-select": {
     htmlPath: ["components", "drawer-select.html"],
     surfaceSignature: 'id="drawer-select-preview-shell"',
@@ -227,6 +231,14 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string | nu
   const indexCandidate = join(frontendRoot, ...pathSegments, "index.html");
   if (existsSync(indexCandidate)) {
     return indexCandidate;
+  }
+
+  if (
+    pathSegments[0] === "components" &&
+    pathSegments[1] === "async-activity-drawer" &&
+    pathSegments.length === 3
+  ) {
+    return join(frontendRoot, "components", "async-activity-drawer.html");
   }
 
   if (pathSegments[0] === "canonical-renderings") {
