@@ -67,6 +67,12 @@ export const generatedCanonicalRenderRouteRegistry = {
   },
 } as const satisfies Record<string, GeneratedCanonicalRenderRouteDefinition>;
 
+type GeneratedCanonicalRenderFamilyKey = keyof typeof generatedCanonicalRenderRouteRegistry;
+
+function isGeneratedCanonicalRenderFamilyKey(familyKey: string): familyKey is GeneratedCanonicalRenderFamilyKey {
+  return Object.prototype.hasOwnProperty.call(generatedCanonicalRenderRouteRegistry, familyKey);
+}
+
 function resolveFrontendRoot(): string {
   const candidates =
     env.nodeEnv === "production"
@@ -89,11 +95,11 @@ function resolveFrontendRoot(): string {
 }
 
 function resolveGeneratedCanonicalRenderHtmlPage(frontendRoot: string, familyKey: string): string | null {
-  const routeDefinition = generatedCanonicalRenderRouteRegistry[familyKey];
-  if (!routeDefinition) {
+  if (!isGeneratedCanonicalRenderFamilyKey(familyKey)) {
     return null;
   }
 
+  const routeDefinition = generatedCanonicalRenderRouteRegistry[familyKey];
   const htmlPage = join(frontendRoot, ...routeDefinition.htmlPath);
   return existsSync(htmlPage) ? htmlPage : null;
 }

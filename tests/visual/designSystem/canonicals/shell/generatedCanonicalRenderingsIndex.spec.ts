@@ -8,7 +8,19 @@ import {
 } from "../../support/helpers/generatedCanonicalGuards";
 import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
 
-const generatedCanonicalFamilies = [
+type GeneratedCanonicalFamily = {
+  familyKey: string;
+  familyLabel: RegExp;
+  sampleRenderPath: string;
+  surfaceLocator: string;
+  readyLocator: string;
+  bodyAttribute?: {
+    name: string;
+    value: string;
+  };
+};
+
+const generatedCanonicalFamilies: readonly GeneratedCanonicalFamily[] = [
   {
     familyKey: "page-shell-banner",
     familyLabel: /Page-Shell Banner/i,
@@ -112,7 +124,7 @@ const generatedCanonicalFamilies = [
     readyLocator: "#time-picker-preview-shell",
     bodyAttribute: { name: "data-time-picker-surface", value: "canonical" as const },
   },
-] as const;
+];
 
 test.describe("design-system generated canonical renderings index", () => {
   test("generated launcher and render pages use the normalized design-system top-nav shell", async ({ page }) => {
