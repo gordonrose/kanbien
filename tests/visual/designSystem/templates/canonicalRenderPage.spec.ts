@@ -55,4 +55,28 @@ test.describe("design-system canonical render page template", () => {
     await expect(page.locator("#crt-sub-nav-current-label")).toHaveText("Breadcrumb");
     await expect(page.locator("#canonical-render-template-meta-specimen")).toContainText("Breadcrumb Review");
   });
+
+  test("render theme controls only theme the specimen lane, not the page chrome", async ({ page }) => {
+    await page.goto("/design-system/templates/canonical-render-page");
+    await page.locator("#render-settings-button").click();
+
+    for (const theme of ["dark", "desert"]) {
+      await page.locator(`[data-render-theme-option="${theme}"]`).click();
+
+      const themeState = await page.evaluate(() => {
+        const shell = document.getElementById("canonical-render-template-preview-shell");
+        return {
+          documentTheme: document.documentElement.dataset.theme ?? "",
+          topNavTheme: document.querySelector(".design-system-shell > .top-nav")?.closest("[data-theme-scope]")?.getAttribute("data-theme-scope") ?? "",
+          introTheme: document.querySelector(".canonical-render-intro")?.closest("[data-theme-scope]")?.getAttribute("data-theme-scope") ?? "",
+          shellTheme: shell instanceof HTMLElement ? shell.dataset.themeScope ?? "" : "",
+        };
+      });
+
+      expect(themeState.documentTheme).not.toBe(theme);
+      expect(themeState.topNavTheme).toBe("");
+      expect(themeState.introTheme).toBe("");
+      expect(themeState.shellTheme).toBe(theme);
+    }
+  });
 });

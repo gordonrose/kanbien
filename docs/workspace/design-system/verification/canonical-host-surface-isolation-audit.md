@@ -66,10 +66,10 @@ are decoupled enough for sign-off-grade evidence.
 - Shared runtime seam:
   the canonical host and render surface still share one document
 - Hardening applied:
-  theme now lives on the local `.canonical-render-layout` on canonical pages,
-  magnification now lives on the local `.top-nav-preview-canvas`, and RTL
-  direction now lives on that same local render surface instead of
-  `document.documentElement`
+  theme and magnification now live on the local `.top-nav-preview-canvas`, and
+  RTL direction now lives on that same local render surface instead of
+  `document.documentElement`; `.canonical-render-layout` and the render intro
+  chrome remain unthemed
 - Audit conclusion:
   `top-nav` is no longer the weakest family architecturally, but it still does
   not satisfy the stronger end-state isolation rule
@@ -85,9 +85,9 @@ are decoupled enough for sign-off-grade evidence.
   owned by the local render shell instead of the host document on canonical
   pages, including canonical state resolution in the shared runtime
 - Shared runtime seam:
-  theme and magnification are now localized for canonical pages, but the host
-  page and rendered shell still share one document and some broader runtime
-  paths
+  theme and magnification are now localized to the rendered shell for
+  canonical pages, but the host page and rendered shell still share one
+  document and some broader runtime paths
 - Host/surface coupling:
   the render page and rendered shell still live in the same document rather
   than in an isolated render boundary
@@ -114,8 +114,8 @@ are decoupled enough for sign-off-grade evidence.
   `document.documentElement`, so host-page shell geometry still exists in the
   broader page runtime on non-canonical pages
 - Hardening applied:
-  theme now lives on the local `.canonical-render-layout` on canonical pages,
-  and magnification now lives on the local `.context-nav-preview-shell`
+  theme and magnification now live on the local `.context-nav-preview-shell`;
+  `.canonical-render-layout` and the render intro chrome remain unthemed
 - Runtime proof:
   browser inspection now shows the canonical review frame is `position:
   sticky` on the host page with a host-owned review offset, while canonical

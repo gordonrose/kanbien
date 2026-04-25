@@ -206,7 +206,7 @@ test("context-nav canonical layout width is scoped to the local render container
   expect(layoutState.layoutWidth).toBe("1216px");
 });
 
-test("context-nav canonical theme and magnification stay scoped to the local render layout", async ({ page }) => {
+test("context-nav canonical theme and magnification stay scoped to the local render surface", async ({ page }) => {
   await page.goto(
     "/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=long&open=accessibility&theme=dark&dir=ltr&zoom=100&accent=%237c3aed&ref=CDR-005",
   );
@@ -217,7 +217,9 @@ test("context-nav canonical theme and magnification stay scoped to the local ren
     return {
       documentTheme: document.documentElement.dataset.theme ?? "",
       documentScale: document.documentElement.style.getPropertyValue("--ui-scale"),
+      introTheme: document.querySelector(".canonical-render-intro")?.closest("[data-theme-scope]")?.getAttribute("data-theme-scope") ?? "",
       layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
+      shellTheme: shell instanceof HTMLElement ? shell.dataset.themeScope ?? "" : "",
       shellScale: shell instanceof HTMLElement ? shell.style.getPropertyValue("--ui-scale") : "",
       shellMagnification: shell instanceof HTMLElement ? shell.dataset.magnification ?? "" : "",
     };
@@ -225,7 +227,9 @@ test("context-nav canonical theme and magnification stay scoped to the local ren
 
   expect(appearanceState.documentTheme).toBe("");
   expect(appearanceState.documentScale).toBe("");
-  expect(appearanceState.layoutTheme).toBe("dark");
+  expect(appearanceState.introTheme).toBe("");
+  expect(appearanceState.layoutTheme).toBe("");
+  expect(appearanceState.shellTheme).toBe("dark");
   expect(appearanceState.shellScale).toBe("1.5");
   expect(appearanceState.shellMagnification).toBe("100");
 });
@@ -668,14 +672,21 @@ test("context-nav CDR-006 alternate-theme readability state keeps stable drawer 
   const appearanceState = await page.evaluate(() => {
     const drawerNode = document.getElementById("accessibility-drawer");
     const shell = document.getElementById("context-nav-preview-shell");
+    const layout = document.querySelector("#context-nav-preview-frame")?.closest(".canonical-render-layout");
     const computed = drawerNode ? window.getComputedStyle(drawerNode) : null;
     return {
       backgroundColor: computed?.backgroundColor ?? "",
+      introTheme: document.querySelector(".canonical-render-intro")?.closest("[data-theme-scope]")?.getAttribute("data-theme-scope") ?? "",
+      layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
+      shellTheme: shell instanceof HTMLElement ? shell.dataset.themeScope ?? "" : "",
       shellScale: shell?.style.getPropertyValue("--ui-scale") ?? "",
     };
   });
 
   expect(appearanceState.backgroundColor).toBe("rgb(255, 253, 247)");
+  expect(appearanceState.introTheme).toBe("");
+  expect(appearanceState.layoutTheme).toBe("");
+  expect(appearanceState.shellTheme).toBe("desert");
   expect(appearanceState.shellScale).toBe("1.25");
 
   const drawerBox = await drawer.boundingBox();

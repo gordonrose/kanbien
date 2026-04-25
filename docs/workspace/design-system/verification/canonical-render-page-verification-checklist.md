@@ -50,14 +50,15 @@
   selector plumbing remains compatible with direction controls, but the locked
   proof does not yet split out a dedicated RTL assertion for this template
 - Required theme states checked:
-  selector plumbing remains compatible with theme controls, but the locked
-  proof does not yet split out a dedicated cross-theme assertion for this
-  template
+  dark and desert render theme controls are now checked for containment:
+  theme scope must land on the specimen lane and must not affect the document,
+  top nav, or canonical render intro chrome
 - Required magnification states checked:
   not separately promoted in the current baseline
 - Real interactive states checked:
   render drawer open, pattern dropdown visible, `list-detail-panel` selection,
-  and `breadcrumb` selection with search-shell suppression
+  `breadcrumb` selection with search-shell suppression, and local render theme
+  switching without page-chrome theme leakage
 - Layout or spacing checks:
   required; the render lane must enter the governed pattern directly without a
   redundant outer panel-card wrapper or top specimen header copy
@@ -108,15 +109,15 @@
   template-hosted selector-driven render lane exists and mounts real governed
   pattern surfaces
 - Rendered status:
-  browser-checked for selector visibility and real-surface swapping on the
-  signed-off baseline route
+  browser-checked for selector visibility, real-surface swapping, and dark /
+  desert render-theme containment on the signed-off baseline route
 - Human sign-off status:
   approved
 - Promotion decision:
   signed off as the current canonical-render-page baseline
 - Open follow-ups:
-  expand viewport/theme/direction assertions only if this route becomes a
-  broader sign-off host for more governed families
+  expand viewport and direction assertions only if this route becomes a broader
+  sign-off host for more governed families
 
 ## Traceability And Sync
 

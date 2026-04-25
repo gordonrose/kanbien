@@ -1899,9 +1899,6 @@ function getLocalCanonicalAppearanceScope() {
   return topNavPreviewCanvas
     ?? subNavPreviewShell
     ?? contextNavPreviewShell
-    ?? topNavCanonicalRenderLayout
-    ?? subNavCanonicalRenderLayout
-    ?? contextNavCanonicalRenderLayout
     ?? null;
 }
 
@@ -1911,6 +1908,12 @@ function getAppearanceScopeNode() {
   }
 
   return document.documentElement;
+}
+
+function clearCanonicalRenderLayoutAppearanceScopes() {
+  topNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
+  subNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
+  contextNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
 }
 
 function getCurrentSurfaceTheme() {
@@ -5029,20 +5032,15 @@ function applyAccent(hex) {
 function applyTheme(theme) {
   const scopeNode = getAppearanceScopeNode();
   if (scopeNode instanceof HTMLElement && scopeNode !== document.documentElement) {
-    topNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
-    subNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
-    contextNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
+    clearCanonicalRenderLayoutAppearanceScopes();
     scopeNode.dataset.themeScope = theme;
     if (topNavSurfaceMode === "canonical" && topNavPreviewCanvas instanceof HTMLElement) {
-      topNavCanonicalRenderLayout?.setAttribute("data-theme-scope", theme);
       topNavPreviewCanvas.dataset.themeScope = theme;
     }
     if (subNavSurfaceMode === "canonical" && subNavPreviewShell instanceof HTMLElement) {
-      subNavCanonicalRenderLayout?.setAttribute("data-theme-scope", theme);
       subNavPreviewShell.dataset.themeScope = theme;
     }
     if (contextNavSurfaceMode === "canonical" && contextNavPreviewShell instanceof HTMLElement) {
-      contextNavCanonicalRenderLayout?.setAttribute("data-theme-scope", theme);
       contextNavPreviewShell.dataset.themeScope = theme;
     }
     document.documentElement.removeAttribute("data-theme");
@@ -5051,9 +5049,7 @@ function applyTheme(theme) {
     topNavPreviewCanvas?.removeAttribute("data-theme-scope");
     subNavPreviewShell?.removeAttribute("data-theme-scope");
     contextNavPreviewShell?.removeAttribute("data-theme-scope");
-    topNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
-    subNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
-    contextNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");
+    clearCanonicalRenderLayoutAppearanceScopes();
   }
   for (const button of themeButtons) {
     const isActive = button.dataset.themeOption === theme;

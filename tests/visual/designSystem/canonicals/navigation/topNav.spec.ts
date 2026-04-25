@@ -260,19 +260,42 @@ test.describe("design-system top-nav canonical states", () => {
     await expect(page.locator("#top-nav-canonical-current")).toHaveText("TRP-001 - Desktop default");
   });
 
-  test("top-nav canonical theme and magnification stay scoped to the local render layout", async ({ page }) => {
+  test("top-nav canonical theme and magnification stay scoped to the local render surface", async ({ page }) => {
     await gotoGeneratedCanonicalState(page, "TRP-014B");
 
     const themeState = await page.evaluate(() => {
       const layout = document.querySelector("#top-nav-preview-frame")?.closest(".canonical-render-layout");
+      const canvas = document.querySelector("#top-nav-preview-frame .top-nav-preview-canvas");
       return {
         documentTheme: document.documentElement.dataset.theme ?? "",
+        introTheme: document.querySelector(".canonical-render-intro")?.closest("[data-theme-scope]")?.getAttribute("data-theme-scope") ?? "",
         layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
+        canvasTheme: canvas instanceof HTMLElement ? canvas.dataset.themeScope ?? "" : "",
       };
     });
 
     expect(themeState.documentTheme).toBe("");
-    expect(themeState.layoutTheme).toBe("dark");
+    expect(themeState.introTheme).toBe("");
+    expect(themeState.layoutTheme).toBe("");
+    expect(themeState.canvasTheme).toBe("dark");
+
+    await gotoGeneratedCanonicalState(page, "TRP-014C");
+
+    const desertThemeState = await page.evaluate(() => {
+      const layout = document.querySelector("#top-nav-preview-frame")?.closest(".canonical-render-layout");
+      const canvas = document.querySelector("#top-nav-preview-frame .top-nav-preview-canvas");
+      return {
+        documentTheme: document.documentElement.dataset.theme ?? "",
+        introTheme: document.querySelector(".canonical-render-intro")?.closest("[data-theme-scope]")?.getAttribute("data-theme-scope") ?? "",
+        layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
+        canvasTheme: canvas instanceof HTMLElement ? canvas.dataset.themeScope ?? "" : "",
+      };
+    });
+
+    expect(desertThemeState.documentTheme).toBe("");
+    expect(desertThemeState.introTheme).toBe("");
+    expect(desertThemeState.layoutTheme).toBe("");
+    expect(desertThemeState.canvasTheme).toBe("desert");
 
     await gotoGeneratedCanonicalState(page, "TRP-010");
 

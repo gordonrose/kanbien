@@ -140,6 +140,10 @@
 - Responsive verification:
   stacked mobile posture, readable metadata, and an honest scrollable render
   frame under wide-state pressure
+- Theme containment verification:
+  dark and desert render states must apply only to the specimen lane; the page
+  top nav, canonical render intro, and `.canonical-render-layout` wrapper must
+  remain unthemed review chrome
 
 ## Traceability And Sync
 

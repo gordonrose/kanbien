@@ -45,4 +45,24 @@ describe("design-system canonical theme scope audit", () => {
       );
     }
   });
+
+  it("prevents the shared navigation canonical controller from theming page-level render layouts", () => {
+    const source = readAsset("app.mjs");
+
+    expect(source).toContain("function clearCanonicalRenderLayoutAppearanceScopes()");
+    expect(source).toContain('topNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");');
+    expect(source).toContain('subNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");');
+    expect(source).toContain('contextNavCanonicalRenderLayout?.removeAttribute("data-theme-scope");');
+    expect(source).not.toContain('topNavCanonicalRenderLayout?.setAttribute("data-theme-scope"');
+    expect(source).not.toContain('subNavCanonicalRenderLayout?.setAttribute("data-theme-scope"');
+    expect(source).not.toContain('contextNavCanonicalRenderLayout?.setAttribute("data-theme-scope"');
+  });
+
+  it("keeps canonical-render-page template theme controls scoped to the specimen lane", () => {
+    const source = readAsset("canonicalRenderPageTemplate.mjs");
+
+    expect(source).toContain("previewShell.dataset.themeScope = renderState.theme;");
+    expect(source).not.toMatch(/\bpreviewFrame\.dataset\.themeScope\s*=/);
+    expect(source).not.toMatch(/\b(document\.documentElement|document\.body)\.dataset\.theme/);
+  });
 });

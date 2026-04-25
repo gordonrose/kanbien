@@ -387,7 +387,7 @@ test.describe("design-system sub-nav canonical states", () => {
     expect(layoutState.layoutWidth).toBe("1656px");
   });
 
-  test("sub-nav canonical theme and magnification stay scoped to the local render layout", async ({ page }) => {
+  test("sub-nav canonical theme and magnification stay scoped to the local render surface", async ({ page }) => {
     await gotoCanonicalState(
       page,
       "/design-system/components/sub-nav?width=1560&state=full&search=inactive&theme=dark&dir=ltr&zoom=0&locale=standard&accent=%23635bff&ref=SNR-006",
@@ -395,14 +395,19 @@ test.describe("design-system sub-nav canonical states", () => {
 
     const themeState = await page.evaluate(() => {
       const layout = document.querySelector("#sub-nav-preview-frame")?.closest(".canonical-render-layout");
+      const shell = document.getElementById("sub-nav-preview-shell");
       return {
         documentTheme: document.documentElement.dataset.theme ?? "",
+        introTheme: document.querySelector(".canonical-render-intro")?.closest("[data-theme-scope]")?.getAttribute("data-theme-scope") ?? "",
         layoutTheme: layout instanceof HTMLElement ? layout.dataset.themeScope ?? "" : "",
+        shellTheme: shell instanceof HTMLElement ? shell.dataset.themeScope ?? "" : "",
       };
     });
 
     expect(themeState.documentTheme).toBe("");
-    expect(themeState.layoutTheme).toBe("dark");
+    expect(themeState.introTheme).toBe("");
+    expect(themeState.layoutTheme).toBe("");
+    expect(themeState.shellTheme).toBe("dark");
 
     await gotoCanonicalState(
       page,
