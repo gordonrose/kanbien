@@ -188,18 +188,30 @@ describe("root admin shell browser auth integration", () => {
 
     expect(mountedRootAdminRouter).toBeDefined();
     const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
+    const frontendAppSource = readFileSync("src/frontend/rootAdminShell/assets/app.mjs", "utf8");
+    const hierarchyPageSource = readFileSync("src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs", "utf8");
+
     expect(frontendMarkup).toContain("Root Admin Shell POC");
     expect(frontendMarkup).toContain("Overview");
-    expect(frontendMarkup).toContain("Users");
     expect(frontendMarkup).toContain("Roles");
     expect(frontendMarkup).toContain("Tenants");
     expect(frontendMarkup).toContain("Tenant Admins");
-    expect(frontendMarkup).toContain('aria-label="Root admin section navigation"');
     expect(frontendMarkup).toContain('aria-label="Current page breadcrumb"');
     expect(frontendMarkup).toContain('role="search"');
     expect(frontendMarkup).toContain("Search root admin sections");
     expect(frontendMarkup).toContain("Choose a language");
     expect(frontendMarkup).toContain("Sign Out");
+    expect(frontendMarkup).toContain('id="root-admin-context-nav-mount"');
+    expect(frontendMarkup).toContain('<section id="page-users" class="hidden"></section>');
+    expect(frontendMarkup).toContain('<section id="page-web-app-hierarchy" class="hidden"></section>');
+    expect(frontendMarkup).not.toContain('id="root-users-list-page"');
+    expect(frontendMarkup).not.toContain('id="root-users-detail-panel"');
+    expect(frontendMarkup).not.toContain('id="root-users-record-card-template"');
+    expect(frontendMarkup).not.toContain('id="web-app-page-settings-form"');
+    expect(frontendMarkup).not.toContain('id="web-app-hierarchy-page-title"');
+    expect(frontendAppSource).toContain("/design-system/assets/pageShellController.mjs");
+    expect(frontendAppSource).toContain("/design-system/assets/rootUsersListWorkspace.mjs");
+    expect(hierarchyPageSource).toContain("/design-system/assets/webAppHierarchyWorkspace.mjs");
   });
 
   it("TC-ROOT-ADMIN-SHELL-EDGE-001 and TC-ROOT-ADMIN-SHELL-EDGE-002 expose helper guidance and handle missing browser session cookies cleanly", async () => {
