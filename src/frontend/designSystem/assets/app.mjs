@@ -579,13 +579,16 @@ function normalizePathname(pathname) {
 
 const designSystemPrimaryNavItems = [
   { href: "/design-system", label: "Overview" },
-  { href: "/design-system/components", label: "Components" },
-  { href: "/design-system/patterns", label: "Patterns" },
-  { href: "/design-system/templates", label: "Templates" },
+  { href: "/design-system/canonical-renderings", label: "Canonical Renderings" },
+  { href: "/design-system/canonicals", label: "Canonicals" },
 ];
 
 const designSystemPrimaryNavOrderIndex = new Map(
   designSystemPrimaryNavItems.map((item, index) => [item.href, index]),
+);
+
+const designSystemPrimaryNavItemByHref = new Map(
+  designSystemPrimaryNavItems.map((item) => [item.href, item]),
 );
 
 const designSystemBreadcrumbChains = new Map([
@@ -1442,16 +1445,20 @@ async function refreshGovernedPrimaryNav() {
           const settings = await fetchJson(
             `/v1/web-app-page-settings/public/pages/${encodeURIComponent(candidate.webAppPageId)}`,
           );
+          const hasStoredSettings = settings?.hasStoredSettings === true;
           return {
             ...candidate,
-            displayLabel: settings?.displayLabel ?? candidate.displayLabel,
-            hasStoredSettings: settings?.hasStoredSettings === true,
+            displayLabel: hasStoredSettings
+              ? settings?.displayLabel ?? candidate.displayLabel
+              : designSystemPrimaryNavItemByHref.get(candidate.href)?.label ?? candidate.displayLabel,
+            hasStoredSettings,
             showInTopNav: settings?.showInTopNav === true,
             topNavOrder: settings?.topNavOrder ?? null,
           };
         } catch (_error) {
           return {
             ...candidate,
+            displayLabel: designSystemPrimaryNavItemByHref.get(candidate.href)?.label ?? candidate.displayLabel,
             hasStoredSettings: false,
             showInTopNav: false,
             topNavOrder: null,
@@ -4613,6 +4620,10 @@ function applyResponsiveBreadcrumbPriority({
 }
 
 function applyTopNavPreviewFixture(fixtureName) {
+  if (!(previewFrame instanceof HTMLElement)) {
+    return;
+  }
+
   const fixture = topNavPreviewFixtures[fixtureName];
   if (!fixture) {
     return;

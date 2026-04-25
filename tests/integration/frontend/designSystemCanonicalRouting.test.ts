@@ -1,4 +1,6 @@
 import express from "express";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
 import { createApp } from "../../../src/app";
@@ -11,6 +13,16 @@ function createSubject() {
   const app = express();
   app.use("/design-system", createDesignSystemRouter());
   return app;
+}
+
+function readGeneratedRenderHtml(htmlPath: readonly string[]) {
+  return readFileSync(resolve(process.cwd(), "src/frontend/designSystem", ...htmlPath), "utf8");
+}
+
+function readOuterTopNavLabels(source: string) {
+  const headerMatch = source.match(/<header class="top-nav">[\s\S]*?<\/header>/);
+  const primaryLinksMatch = headerMatch?.[0].match(/<div(?: id="[^"]+")? class="primary-nav-links">([\s\S]*?)<\/div>/);
+  return Array.from(primaryLinksMatch?.[1].matchAll(/<a\b[^>]*>([^<]+)<\/a>/g) ?? []).map((match) => match[1].trim());
 }
 
 describe("design-system canonical render routing", () => {
@@ -76,6 +88,18 @@ describe("design-system canonical render routing", () => {
       expect(response.status, familyKey).toBe(200);
       expect(response.text, familyKey).toContain(routeDefinition.surfaceSignature);
       expect(response.text, familyKey).not.toContain("Design-System Route Families");
+    }
+  });
+
+  it("keeps registered generated render page static shell fallbacks aligned with the normalized top-nav contract", () => {
+    for (const [familyKey, routeDefinition] of Object.entries(generatedCanonicalRenderRouteRegistry)) {
+      const labels = readOuterTopNavLabels(readGeneratedRenderHtml(routeDefinition.htmlPath));
+
+      expect(labels, `${familyKey} should expose static outer shell primary nav labels`).toEqual([
+        "Overview",
+        "Canonical Renderings",
+        "Canonicals",
+      ]);
     }
   });
 

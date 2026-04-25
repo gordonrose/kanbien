@@ -14,6 +14,8 @@ const dedicatedRenderAssets = [
   "datePickerCanonical.mjs",
   "drawerSelectCanonical.mjs",
   "timePickerCanonical.mjs",
+  "iconGridCanonical.mjs",
+  "uploadFileCanonical.mjs",
   "listRecordCardCanonical.mjs",
   "listDetailPanelCanonical.mjs",
   "listDetailSplitLayoutCanonical.mjs",
@@ -24,11 +26,11 @@ describe("design-system canonical theme scope audit", () => {
   it("prevents dedicated render controllers from theming the whole render layout", () => {
     for (const asset of dedicatedRenderAssets) {
       const source = readAsset(asset);
-      expect(source, `${asset} should not assign theme scope to the full canonical render layout`).not.toContain(
-        "renderLayout.dataset.themeScope",
+      expect(source, `${asset} should not assign theme scope to the full canonical render layout`).not.toMatch(
+        /\brenderLayout\.dataset\.themeScope\s*=/,
       );
-      expect(source, `${asset} should not assign theme scope to the full canonical render layout`).not.toContain(
-        "layout.dataset.themeScope",
+      expect(source, `${asset} should not assign theme scope to the full canonical render layout`).not.toMatch(
+        /\blayout\.dataset\.themeScope\s*=/,
       );
     }
   });

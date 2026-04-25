@@ -124,9 +124,48 @@ const generatedCanonicalFamilies: readonly GeneratedCanonicalFamily[] = [
     readyLocator: "#time-picker-preview-shell",
     bodyAttribute: { name: "data-time-picker-surface", value: "canonical" as const },
   },
+  {
+    familyKey: "upload-file",
+    familyLabel: /Upload File/i,
+    sampleRenderPath: "/design-system/canonical-renderings/upload-file/UFR-009",
+    surfaceLocator: "#upload-file-preview-shell",
+    readyLocator: "#upload-file-preview-shell[data-render-status='ready']",
+    bodyAttribute: { name: "data-upload-file-surface", value: "canonical" as const },
+  },
 ];
 
 test.describe("design-system generated canonical renderings index", () => {
+  test("design-system shell fallback shows governed top-nav links while page-tree settings are still loading", async ({ page }) => {
+    await page.route("**/v1/**", async (route) => {
+      await route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ code: "temporarily_unavailable" }),
+      });
+    });
+
+    await page.goto("/design-system");
+
+    const labels = page.locator(".design-system-shell > .top-nav .primary-nav-links .nav-link");
+    await expect(labels).toHaveText(["Overview", "Canonical Renderings", "Canonicals"]);
+    await expect(page.locator(".design-system-shell > .top-nav .brand-copy strong")).toHaveText("Kanbien Design System");
+    await expect(
+      page.locator(".design-system-shell > .top-nav .primary-nav").getByRole("link", { name: "Foundations" }),
+    ).toHaveCount(0);
+    await expect(
+      page.locator(".design-system-shell > .top-nav .primary-nav").getByRole("link", { name: "Components" }),
+    ).toHaveCount(0);
+    await expect(
+      page.locator(".design-system-shell > .top-nav .primary-nav").getByRole("link", { name: "Patterns" }),
+    ).toHaveCount(0);
+    await expect(
+      page.locator(".design-system-shell > .top-nav .primary-nav").getByRole("link", { name: "Templates" }),
+    ).toHaveCount(0);
+    await expect(
+      page.locator(".design-system-shell > .top-nav .primary-nav").getByRole("link", { name: "Resources" }),
+    ).toHaveCount(0);
+  });
+
   test("generated launcher and render pages use the normalized design-system top-nav shell", async ({ page }) => {
     const designSystemTopNavContract = await readDesignSystemTopNavContract(page);
 

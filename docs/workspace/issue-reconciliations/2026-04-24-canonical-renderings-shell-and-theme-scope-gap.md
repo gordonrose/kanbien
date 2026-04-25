@@ -57,3 +57,17 @@ top-nav contract, not only that a `.top-nav` element exists.
   form-control render pages before claiming all canonical renderings are
   shell-parity complete.
 - Keep user confirmation open for the exact localhost visual symptom.
+
+## 2026-04-25 Follow-Up
+
+- Added a registered-render static shell fallback audit so generated render
+  page outer top-nav chrome must stay aligned with the normalized primary nav
+  contract before runtime JavaScript normalization runs.
+- Extended the theme-scope source audit to cover the `IconGrid` and
+  `UploadFile` generated render controllers.
+- Added `UploadFile` to the generated canonical-renderings index
+  click-through browser proof so the persisted family launcher route now proves
+  a dedicated render surface.
+- Normalized stale outer top-nav fallback labels on the affected generated
+  render pages while leaving inner top-nav/context-nav specimen fixtures
+  unchanged.
