@@ -271,7 +271,7 @@ export function createDesignSystemRouter(): Router {
     }),
   );
 
-  router.get("*", (request, response, next) => {
+  router.get(/.*/, (request, response, next) => {
     void (async () => {
       const resolvedPage = resolveHtmlPage(frontendRoot, request.path);
       if (!resolvedPage) {

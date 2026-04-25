@@ -120,7 +120,7 @@ export function createRootAdminShellRouter(): Router {
     }),
   );
 
-  router.get("*", (_request, response) => {
+  router.get(/.*/, (_request, response) => {
     response.sendFile(join(frontendRoot, "index.html"));
   });
 

@@ -9,6 +9,7 @@ export function createApp() {
   const app = express();
 
   app.disable("x-powered-by");
+  app.set("query parser", "extended");
   app.use(
     helmet({
       contentSecurityPolicy: {

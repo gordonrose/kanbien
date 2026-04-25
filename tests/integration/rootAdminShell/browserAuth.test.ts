@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import request from "supertest";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -179,18 +180,15 @@ describe("root admin shell browser auth integration", () => {
   });
 
   it("TC-ROOT-ADMIN-SHELL-INT-005 serves the root-admin shell same-origin under /root-admin", async () => {
-    const app = createApp() as any;
-    const appStack = app._router?.stack ?? [];
-    const mountedRootAdminRouter = appStack.find(
-      (layer: any) =>
-        layer.name === "router" && String(layer.regexp).includes("root-admin"),
-    );
-
-    expect(mountedRootAdminRouter).toBeDefined();
+    const shell = await request(createApp())
+      .get("/root-admin")
+      .set("host", "admin.example.test");
     const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
     const frontendAppSource = readFileSync("src/frontend/rootAdminShell/assets/app.mjs", "utf8");
     const hierarchyPageSource = readFileSync("src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs", "utf8");
 
+    expect(shell.status).toBe(200);
+    expect(shell.text).toContain("Root Admin Shell POC");
     expect(frontendMarkup).toContain("Root Admin Shell POC");
     expect(frontendMarkup).toContain("Overview");
     expect(frontendMarkup).toContain("Roles");

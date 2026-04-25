@@ -22,10 +22,10 @@ function installSafeErrorMiddleware(app: express.Express): void {
   );
 }
 
-describe("Express 4 runtime characterization", () => {
-  it("pins the private Express 4 app stack order for the global middleware and root route mounts", () => {
+describe("Express runtime characterization", () => {
+  it("documents the private Express 5 app stack shape for the global middleware and root route mounts", () => {
     const app = createApp() as unknown as {
-      _router?: {
+      router?: {
         stack: Array<{
           name: string;
           route?: { path: string };
@@ -34,7 +34,7 @@ describe("Express 4 runtime characterization", () => {
       };
     };
 
-    const stack = app._router?.stack ?? [];
+    const stack = app.router?.stack ?? [];
     const layers = stack.map((layer) => ({
       name: layer.name,
       path: layer.route?.path ?? null,
@@ -42,32 +42,21 @@ describe("Express 4 runtime characterization", () => {
     }));
 
     expect(layers).toEqual([
-      expect.objectContaining({ name: "query" }),
-      expect.objectContaining({ name: "expressInit" }),
       expect.objectContaining({ name: "helmetMiddleware" }),
       expect.objectContaining({ name: "jsonParser" }),
-      expect.objectContaining({
-        name: "router",
-        regexp: "/^\\/design-system\\/?(?=\\/|$)/i",
-      }),
-      expect.objectContaining({
-        name: "router",
-        regexp: "/^\\/root-admin\\/?(?=\\/|$)/i",
-      }),
-      expect.objectContaining({
-        name: "router",
-        regexp: "/^\\/v1\\/?(?=\\/|$)/i",
-      }),
+      expect.objectContaining({ name: "router" }),
+      expect.objectContaining({ name: "router" }),
+      expect.objectContaining({ name: "router" }),
       expect.objectContaining({ name: "<anonymous>" }),
     ]);
   });
 
-  it("pins the private Express 4 router internals currently used by smoke tests", () => {
+  it("documents the private Express 5 router internals for frontend catch-all compatibility", () => {
     const rootAdminRouter = createRootAdminShellRouter() as unknown as {
-      stack: Array<{ name: string; route?: { path: string; methods: Record<string, boolean> }; regexp: RegExp }>;
+      stack: Array<{ name: string; route?: { path: string | RegExp; methods: Record<string, boolean> }; regexp: RegExp }>;
     };
     const designSystemRouter = createDesignSystemRouter() as unknown as {
-      stack: Array<{ name: string; route?: { path: string; methods: Record<string, boolean> }; regexp: RegExp }>;
+      stack: Array<{ name: string; route?: { path: string | RegExp; methods: Record<string, boolean> }; regexp: RegExp }>;
     };
 
     expect(rootAdminRouter.stack.map((layer) => ({
@@ -77,24 +66,22 @@ describe("Express 4 runtime characterization", () => {
       regexp: String(layer.regexp),
     }))).toEqual([
       expect.objectContaining({
-        name: "bound dispatch",
+        name: "handle",
         path: "/helper/download/root-auth-signer-helper.mjs",
         methods: { get: true },
       }),
       expect.objectContaining({
-        name: "bound dispatch",
+        name: "handle",
         path: "/helper/download/start-root-auth-signer-helper.ps1",
         methods: { get: true },
       }),
       expect.objectContaining({
         name: "serveStatic",
-        regexp: "/^\\/assets\\/?(?=\\/|$)/i",
       }),
       expect.objectContaining({
-        name: "bound dispatch",
-        path: "*",
+        name: "handle",
+        path: /.*/,
         methods: { get: true },
-        regexp: "/^(.*)\\/?$/i",
       }),
     ]);
 
@@ -106,13 +93,11 @@ describe("Express 4 runtime characterization", () => {
     }))).toEqual([
       expect.objectContaining({
         name: "serveStatic",
-        regexp: "/^\\/assets\\/?(?=\\/|$)/i",
       }),
       expect.objectContaining({
-        name: "bound dispatch",
-        path: "*",
+        name: "handle",
+        path: /.*/,
         methods: { get: true },
-        regexp: "/^(.*)\\/?$/i",
       }),
     ]);
   });
@@ -192,7 +177,7 @@ describe("Express 4 runtime characterization", () => {
     }
   });
 
-  it("pins Express 4 JSON body parsing for valid JSON, malformed JSON, empty JSON bodies, and no-parser routes", async () => {
+  it("pins Express JSON body parsing for valid JSON, malformed JSON, empty JSON bodies, and no-parser routes", async () => {
     const parsedApp = express();
     parsedApp.use(express.json());
     parsedApp.post("/echo", (request, response) => {
@@ -260,8 +245,9 @@ describe("Express 4 runtime characterization", () => {
     }
   });
 
-  it("pins Express 4 default extended query parsing for repeated and bracketed keys", async () => {
+  it("preserves extended app query parsing for repeated and bracketed keys", async () => {
     const app = express();
+    app.set("query parser", "extended");
     app.get("/query", (request, response) => {
       response.json(request.query);
     });
