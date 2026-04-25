@@ -72,14 +72,6 @@
         </div>
       </nav>
 
-      <aside
-        id="async-activity-drawer"
-        class="side-panel async-activity-drawer"
-        aria-labelledby="async-activity-title"
-        aria-hidden="false"
-        data-async-activity-drawer
-      ></aside>
-
       <main class="design-system-page-main canonical-render-page">
         <div class="canonical-render-layout">
           <section class="canonical-render-intro">
@@ -126,7 +118,12 @@
                 Canonical state loading from the URL.
               </p>
             </div>
-            <div id="async-activity-drawer-preview-shell" class="canonical-render-frame" data-render-status="settling">
+            <div
+              id="async-activity-drawer-preview-shell"
+              class="canonical-render-frame"
+              data-canonical-drawer-host="true"
+              data-render-status="settling"
+            >
               <article class="component-catalog-card">
                 <div class="component-catalog-card-header">
                   <p class="top-nav-preview-eyebrow">Host Boundary</p>
@@ -137,6 +134,13 @@
                   drawer structure, cards, status semantics, accessibility, CSS, and controller behavior.
                 </p>
               </article>
+              <aside
+                id="async-activity-drawer"
+                class="side-panel async-activity-drawer"
+                aria-labelledby="async-activity-title"
+                aria-hidden="false"
+                data-async-activity-drawer
+              ></aside>
             </div>
           </section>
         </div>

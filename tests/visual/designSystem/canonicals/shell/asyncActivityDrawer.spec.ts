@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
+
 const states = [
   {
     ref: "AADR-001",
@@ -45,6 +47,15 @@ test.describe("async activity drawer canonicals", () => {
       const drawer = page.locator("#async-activity-drawer");
       await expect(shell).toBeVisible();
       await expect(drawer).toBeVisible();
+      await expectCanonicalOverlayContainedInRenderSurface(page, {
+        label: `${state.ref} async activity drawer`,
+        overlay: "#async-activity-drawer",
+        panel: "#async-activity-drawer",
+        hostSurface: "#async-activity-drawer-preview-shell",
+        renderFrame: "#async-activity-drawer-preview-shell",
+        below: ".canonical-render-intro",
+        requirePanelWidthWithinHost: true,
+      });
       await expect(page.locator("body")).toHaveAttribute("data-async-activity-drawer-surface", "canonical");
       await expect(page.locator("#async-activity-drawer-canonical-current")).toContainText(state.ref);
 

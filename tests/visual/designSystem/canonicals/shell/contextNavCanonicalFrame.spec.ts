@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
+
 test("context-nav canonical frame anchors rail and content below the preview header stack", async ({ page }) => {
   await page.goto(
     "/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=CNR-001",
@@ -416,6 +418,15 @@ test("context-nav CDR-001 desktop canonical opens the context-nav drawer as an o
   await expect(content).toBeVisible();
   await expect(subNav).toBeVisible();
   await expect(currentCanonical).toHaveText("CDR-001 - Desktop attached drawer open");
+  await expectCanonicalOverlayContainedInRenderSurface(page, {
+    label: "CDR-001 context-nav drawer",
+    overlay: "#accessibility-drawer",
+    panel: "#accessibility-drawer",
+    hostSurface: "#context-nav-preview-shell",
+    renderFrame: "#context-nav-preview-frame",
+    below: ".canonical-render-intro",
+    requirePanelWidthWithinHost: true,
+  });
 
   const drawerBox = await drawer.boundingBox();
   const contentBox = await content.boundingBox();
@@ -705,6 +716,25 @@ test("context-nav DSR-001 desktop canonical shows the real grouped display-setti
   await expect(magnificationZero).toHaveAttribute("aria-pressed", "true");
   await expect(accentIndigo).toHaveAttribute("aria-pressed", "true");
   await expect(directionLtr).toHaveAttribute("aria-pressed", "true");
+});
+
+test("generated display-settings canonical keeps its drawer inside the render frame", async ({ page }) => {
+  await page.goto("/design-system/canonical-renderings/display-settings/DSR-001");
+
+  const currentCanonical = page.locator("#context-nav-canonical-current");
+  const drawer = page.locator("#accessibility-drawer");
+
+  await expect(currentCanonical).toHaveText("DSR-001 - Desktop grouped payload baseline");
+  await expect(drawer).toBeVisible();
+  await expectCanonicalOverlayContainedInRenderSurface(page, {
+    label: "DSR-001 generated display-settings drawer",
+    overlay: "#accessibility-drawer",
+    panel: "#accessibility-drawer",
+    hostSurface: "#context-nav-preview-shell",
+    renderFrame: "#context-nav-preview-frame",
+    below: ".canonical-render-intro",
+    requirePanelWidthWithinHost: true,
+  });
 });
 
 test("context-nav DSR-003 RTL canonical mirrors the display-settings payload with Arabic copy", async ({ page }) => {
