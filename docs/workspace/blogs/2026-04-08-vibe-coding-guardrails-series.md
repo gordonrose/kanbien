@@ -96,6 +96,11 @@ and started becoming a force multiplier.
 - standards gates
 - maintained-artifacts sweep
 - rebuild-from-docs discipline
+- Git and worktree guardrails as part of the loop itself:
+  preflight, promotion checks, explicit chat bootstraps, and sibling-worktree
+  audits
+- the moment the repo learned that "branch-per-task" was not enough when
+  multiple chats could move `origin/main` underneath each other
 
 #### Repo Anchors
 
@@ -103,6 +108,18 @@ and started becoming a force multiplier.
 - `docs/workspace/reviews/*`
 - `docs/architecture/recoverability-and-build-from-spec.md`
 - `.codex/skills/change-loop-orchestrator/SKILL.md`
+- `docs/standards/git-workflow-guardrails.md`
+- `src/scripts/gitPreflight.ts`
+- `src/scripts/gitWorktreeAudit.ts`
+
+#### Fresh Example To Include
+
+- asset foundation v1 had to be re-promoted because `origin/main` moved while
+  the branch was in flight
+- cleanup found stale patch-equivalent branches and one dirty job-processing
+  planning worktree based on a brochure/design-system commit
+- the fix was not a better reminder; it was an executable worktree audit and
+  stricter bootstrap validation
 
 #### Good Closing Line
 
@@ -169,4 +186,5 @@ right structure in place early enough that speed compounds instead of leaking.
 - exploration vs commitment
 - design speed vs typing speed
 - guardrails as leverage
+- testing the delivery loop itself
 - platform-building as sequencing, not just shipping

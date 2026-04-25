@@ -242,3 +242,32 @@
 - next step:
   turn the outline into a narrative/guide post centered on the `top-nav`
   family, the codified loop, and the first `/root-admin` POC adoption
+
+### 14. The Git Loop Needed Its Own Guardrails
+
+- angle:
+  how multi-chat AI-assisted work exposed that branch-per-task was necessary
+  but not sufficient; repo state itself needed executable checks
+- audience:
+  technical founders, platform engineers, engineering leads adopting coding
+  agents, senior engineers responsible for delivery hygiene
+- core story:
+  asset foundation v1 proved the promotion guardrail worked, but the cleanup
+  revealed stale worktrees, patch-equivalent branches, and a dirty
+  job-processing planning tree sitting on a brochure commit. The fix was to
+  turn the git loop into something testable: worktree audit, bootstrap
+  validation, and explicit push-means-merge semantics for this repo's loop.
+- supporting repo areas:
+  `src/scripts/gitPreflight.ts`,
+  `src/scripts/gitWorktreeAudit.ts`,
+  `tests/unit/gitGuardrails/`,
+  `docs/standards/git-workflow-guardrails.md`,
+  `docs/templates/chat-branch-bootstrap-template.md`,
+  `AGENTS.md`
+- current maturity:
+  active outline drafted in
+  `docs/workspace/blogs/2026-04-25-git-loop-guardrails-outline.md`
+- next step:
+  turn the outline into a short process post that starts with the concrete
+  cleanup mess and ends with the broader lesson: if the loop matters, test the
+  loop.
