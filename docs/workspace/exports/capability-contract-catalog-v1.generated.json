@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-22T20:38:19.535Z",
+  "generatedAt": "2026-04-25T11:06:36.442Z",
   "items": [
     {
       "capabilityId": "notificationDelivery.sendEmail",
@@ -25,7 +25,7 @@
       "supportsFilters": false,
       "lifecycleStatus": "active",
       "normalizedHash": "f2faf83fc2178b1c0c16e57136de5c0f39505b7a9ff883ac884df4804a8fcf3c",
-      "lastMaterializedAt": "2026-04-22T20:38:19.503Z",
+      "lastMaterializedAt": "2026-04-25T11:06:36.403Z",
       "fields": [
         {
           "contractSide": "request-body",
@@ -358,7 +358,7 @@
       "supportsFilters": true,
       "lifecycleStatus": "active",
       "normalizedHash": "527265a4981b4358d6dc460db07849a43010a5c7d6c89880dff41fbf0110fc1d",
-      "lastMaterializedAt": "2026-04-22T20:38:19.519Z",
+      "lastMaterializedAt": "2026-04-25T11:06:36.421Z",
       "fields": [
         {
           "contractSide": "request-query",
@@ -996,7 +996,7 @@
       "supportsFilters": false,
       "lifecycleStatus": "active",
       "normalizedHash": "8c80255bf56144da9ed279f4e50491ea7cf215468ad0892e815d248c66373406",
-      "lastMaterializedAt": "2026-04-22T20:38:19.520Z",
+      "lastMaterializedAt": "2026-04-25T11:06:36.427Z",
       "fields": [
         {
           "contractSide": "request-param",
@@ -1178,7 +1178,7 @@
       "supportsFilters": false,
       "lifecycleStatus": "active",
       "normalizedHash": "8fd238e2dc45799a9cc93c7bad54112853baf3cceb1a9579dc49910a53a396dc",
-      "lastMaterializedAt": "2026-04-22T20:38:19.520Z",
+      "lastMaterializedAt": "2026-04-25T11:06:36.428Z",
       "fields": [
         {
           "contractSide": "request-param",
