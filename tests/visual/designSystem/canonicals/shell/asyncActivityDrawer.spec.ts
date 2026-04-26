@@ -89,7 +89,18 @@ test.describe("async activity drawer canonicals", () => {
       "aria-label",
       "Import tenant records 62 percent complete",
     );
-    await expect(runningCard.locator(".async-job-progress span")).toHaveAttribute("style", "width: 62%");
+    await expect(runningCard.locator(".async-job-progress-fill")).toHaveAttribute("width", "62");
+    const runningProgressGeometry = await runningCard.locator(".async-job-progress").evaluate((progress) => {
+      const fill = progress.querySelector(".async-job-progress-fill");
+      const progressRect = progress.getBoundingClientRect();
+      const fillRect = fill instanceof SVGGraphicsElement ? fill.getBoundingClientRect() : null;
+      return {
+        fillWidth: fillRect?.width ?? 0,
+        progressWidth: progressRect.width,
+      };
+    });
+    expect(runningProgressGeometry.fillWidth).toBeGreaterThan(runningProgressGeometry.progressWidth * 0.55);
+    expect(runningProgressGeometry.fillWidth).toBeLessThan(runningProgressGeometry.progressWidth * 0.7);
     await expect(drawer.locator(".async-job-retry")).toHaveCount(0);
     await expect(drawer.locator(".async-job-download")).toHaveCount(0);
   });
@@ -104,9 +115,20 @@ test.describe("async activity drawer canonicals", () => {
     await expect(waitingCard.getByRole("img", { name: "Waiting" })).toBeVisible();
     await expect(waitingCard.locator(".async-job-progress")).toHaveAttribute(
       "aria-label",
-      "Generate role matrix 18 percent complete",
+      "Generate role matrix waiting to start",
     );
-    await expect(waitingCard.locator(".async-job-progress span")).toHaveAttribute("style", "width: 18%");
+    await expect(waitingCard.locator(".async-job-progress-fill")).toHaveAttribute("width", "0");
+    const waitingProgressGeometry = await waitingCard.locator(".async-job-progress").evaluate((progress) => {
+      const fill = progress.querySelector(".async-job-progress-fill");
+      const progressRect = progress.getBoundingClientRect();
+      const fillRect = fill instanceof SVGGraphicsElement ? fill.getBoundingClientRect() : null;
+      return {
+        fillWidth: fillRect?.width ?? 0,
+        progressWidth: progressRect.width,
+      };
+    });
+    expect(waitingProgressGeometry.progressWidth).toBeGreaterThan(0);
+    expect(waitingProgressGeometry.fillWidth).toBeLessThanOrEqual(1);
     await expect(drawer.locator('[data-async-activity-state="complete"]')).toHaveCount(0);
     await expect(drawer.locator(".async-job-result-grid")).toHaveCount(0);
   });

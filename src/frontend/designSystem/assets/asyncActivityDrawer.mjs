@@ -136,13 +136,23 @@ function renderSvg(path) {
 }
 
 function renderProgress(job) {
+  const visualProgress = job.state === "waiting" ? 0 : job.progress;
   const label = job.state === "error"
     ? `${job.title} stopped at ${job.progress} percent`
-    : `${job.title} ${job.progress} percent complete`;
-  const className = job.state === "error" ? "async-job-progress async-job-progress-error" : "async-job-progress";
+    : job.state === "waiting"
+      ? `${job.title} waiting to start`
+      : `${job.title} ${job.progress} percent complete`;
+  const className = [
+    "async-job-progress",
+    job.state === "error" ? "async-job-progress-error" : "",
+    job.state === "waiting" ? "async-job-progress-waiting" : "",
+  ].filter(Boolean).join(" ");
   return `
     <div class="${className}" aria-label="${escapeHtml(label)}">
-      <span style="width: ${job.progress}%"></span>
+      <svg viewBox="0 0 100 8" preserveAspectRatio="none" focusable="false" aria-hidden="true">
+        <rect class="async-job-progress-track" x="0" y="0" width="100" height="8" rx="4" />
+        <rect class="async-job-progress-fill" x="0" y="0" width="${visualProgress}" height="8" rx="4" />
+      </svg>
     </div>
   `;
 }

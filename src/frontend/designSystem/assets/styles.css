@@ -6347,18 +6347,24 @@ html[data-theme="dark"] .search-input,
   overflow: hidden;
   height: 0.5rem;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--line) 70%, transparent);
 }
 
-.async-job-progress span {
+.async-job-progress svg {
   display: block;
+  width: 100%;
   height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 62%, #0f766e));
 }
 
-.async-job-progress-error span {
-  background: linear-gradient(90deg, #b42318, color-mix(in srgb, #b42318 58%, #f59e0b));
+.async-job-progress-track {
+  fill: color-mix(in srgb, var(--line) 70%, transparent);
+}
+
+.async-job-progress-fill {
+  fill: var(--accent);
+}
+
+.async-job-progress-error .async-job-progress-fill {
+  fill: #b42318;
 }
 
 .async-job-result-grid {
