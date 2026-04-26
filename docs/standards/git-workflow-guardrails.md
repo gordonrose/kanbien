@@ -144,6 +144,24 @@ Use `npm run git:worktree-audit` before starting a new material chat when other
 worktrees are present. The audit blocks on dirty stale-base worktrees and warns
 when a dirty branch name does not appear to match its top commit subject.
 
+If a dirty stale-base sibling worktree is intentionally parked WIP for a
+different line of work, record that decision under:
+
+```text
+docs/workspace/preserved-worktrees/<slug>.md
+```
+
+The record must name the exact worktree path, branch, expected resolution, and
+`Allowed To Block Unrelated Work: no`. With that explicit marker,
+`npm run git:worktree-audit` classifies the sibling as `preserved-stale-wip`
+instead of `dirty-stale-base`: unrelated clean task branches may proceed, but
+the parked worktree remains visible and must still be rebased, recovered,
+promoted, or discarded before that task continues.
+
+Do not use a preserved-worktree marker to hide unknown dirty state, mixed task
+changes, or work that is about to be promoted. The marker is a temporary
+coordination record for intentionally parked WIP, not a bypass for cleanup.
+
 ## Main Branch Rule
 
 Do not perform material implementation directly on `main`.

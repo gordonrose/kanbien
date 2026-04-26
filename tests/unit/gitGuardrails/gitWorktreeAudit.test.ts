@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  classifyWorktreeRisks,
   hasTopicOverlap,
+  parsePreservedWorktreeRecordMarkdown,
   parseWorktreeListPorcelain,
 } from "../../../src/scripts/gitWorktreeAudit";
 
@@ -45,5 +47,60 @@ branch refs/heads/codex/job-processing-planning-isolated
       ),
     ).toBe(true);
     expect(hasTopicOverlap("main", "Implement asset foundation v1")).toBeNull();
+  });
+
+  it("parses preserved worktree records only when the decision is explicit", () => {
+    expect(
+      parsePreservedWorktreeRecordMarkdown(
+        `
+# Preserved Worktree
+
+- Worktree Path: /tmp/kanbien-admin-profile-logo-assets
+- Branch: codex/admin-profile-logo-assets
+- Allowed To Block Unrelated Work: no
+`,
+        "docs/workspace/preserved-worktrees/admin-profile-logo-assets.md",
+      ),
+    ).toEqual({
+      filePath: "docs/workspace/preserved-worktrees/admin-profile-logo-assets.md",
+      worktreePath: "/tmp/kanbien-admin-profile-logo-assets",
+      branch: "codex/admin-profile-logo-assets",
+      allowedToBlockUnrelatedWork: false,
+    });
+
+    expect(
+      parsePreservedWorktreeRecordMarkdown(
+        `
+- Worktree Path: /tmp/example
+- Branch: codex/example
+`,
+        "docs/workspace/preserved-worktrees/example.md",
+      ),
+    ).toBeNull();
+  });
+
+  it("downgrades explicitly preserved stale WIP without downgrading unknown stale worktrees", () => {
+    expect(
+      classifyWorktreeRisks({
+        clean: false,
+        descendsFromBase: false,
+        topicOverlap: false,
+        preservedWorktreeRecord: null,
+      }),
+    ).toEqual(["dirty", "dirty-stale-base", "topic-mismatch"]);
+
+    expect(
+      classifyWorktreeRisks({
+        clean: false,
+        descendsFromBase: false,
+        topicOverlap: false,
+        preservedWorktreeRecord: {
+          filePath: "docs/workspace/preserved-worktrees/admin-profile-logo-assets.md",
+          worktreePath: "/tmp/kanbien-admin-profile-logo-assets",
+          branch: "codex/admin-profile-logo-assets",
+          allowedToBlockUnrelatedWork: false,
+        },
+      }),
+    ).toEqual(["dirty", "preserved-stale-wip"]);
   });
 });

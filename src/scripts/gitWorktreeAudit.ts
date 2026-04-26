@@ -1,6 +1,15 @@
 import { execFileSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
-export type WorktreeRisk = "clean" | "dirty" | "dirty-stale-base" | "topic-mismatch";
+export type WorktreeRisk = "clean" | "dirty" | "dirty-stale-base" | "preserved-stale-wip" | "topic-mismatch";
+
+export type PreservedWorktreeRecord = {
+  filePath: string;
+  worktreePath: string;
+  branch: string;
+  allowedToBlockUnrelatedWork: boolean;
+};
 
 export type WorktreeAuditEntry = {
   path: string;
@@ -11,6 +20,7 @@ export type WorktreeAuditEntry = {
   changes: string[];
   descendsFromBase: boolean | null;
   topicOverlap: boolean | null;
+  preservedWorktreeRecord: PreservedWorktreeRecord | null;
   risks: WorktreeRisk[];
 };
 
@@ -25,12 +35,14 @@ export type WorktreeAuditReport = {
 type Options = {
   baseRef: string;
   json: boolean;
+  preservedWorktreesDir: string;
   warnTopicMismatch: boolean;
 };
 
 function parseArgs(argv: string[]): Options {
   let baseRef = "origin/main";
   let json = false;
+  let preservedWorktreesDir = "docs/workspace/preserved-worktrees";
   let warnTopicMismatch = true;
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -48,12 +60,21 @@ function parseArgs(argv: string[]): Options {
       json = true;
       continue;
     }
+    if (value === "--preserved-worktrees-dir") {
+      preservedWorktreesDir = argv[index + 1] ?? preservedWorktreesDir;
+      index += 1;
+      continue;
+    }
+    if (value.startsWith("--preserved-worktrees-dir=")) {
+      preservedWorktreesDir = value.slice("--preserved-worktrees-dir=".length);
+      continue;
+    }
     if (value === "--no-topic-warning") {
       warnTopicMismatch = false;
     }
   }
 
-  return { baseRef, json, warnTopicMismatch };
+  return { baseRef, json, preservedWorktreesDir, warnTopicMismatch };
 }
 
 function runGit(args: string[], cwd = process.cwd()): string {
@@ -159,8 +180,89 @@ export function hasTopicOverlap(branch: string | null, subject: string): boolean
   return [...branchTokens].some((token) => subjectTokens.has(token));
 }
 
+function readMarkdownField(content: string, label: string): string | null {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = content.match(new RegExp(`^-\\s*${escaped}:\\s*(.+?)\\s*$`, "im"));
+  return match?.[1]?.trim() ?? null;
+}
+
+export function parsePreservedWorktreeRecordMarkdown(
+  content: string,
+  filePath: string,
+): PreservedWorktreeRecord | null {
+  const worktreePath = readMarkdownField(content, "Worktree Path");
+  const branch = readMarkdownField(content, "Branch");
+  const allowedToBlockValue = readMarkdownField(content, "Allowed To Block Unrelated Work");
+  if (worktreePath === null || branch === null || allowedToBlockValue === null) {
+    return null;
+  }
+  return {
+    filePath,
+    worktreePath,
+    branch,
+    allowedToBlockUnrelatedWork: allowedToBlockValue.toLowerCase() !== "no",
+  };
+}
+
+export function readPreservedWorktreeRecords(directory: string): PreservedWorktreeRecord[] {
+  if (!existsSync(directory)) {
+    return [];
+  }
+  return readdirSync(directory, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+    .map((entry) => {
+      const filePath = join(directory, entry.name);
+      return parsePreservedWorktreeRecordMarkdown(readFileSync(filePath, "utf8"), filePath);
+    })
+    .filter((record): record is PreservedWorktreeRecord => record !== null);
+}
+
+export function findPreservedWorktreeRecord(
+  records: PreservedWorktreeRecord[],
+  worktree: { path: string; branch: string | null },
+): PreservedWorktreeRecord | null {
+  return (
+    records.find(
+      (record) =>
+        record.worktreePath === worktree.path &&
+        record.branch === worktree.branch &&
+        record.allowedToBlockUnrelatedWork === false,
+    ) ?? null
+  );
+}
+
+export function classifyWorktreeRisks(input: {
+  clean: boolean;
+  descendsFromBase: boolean | null;
+  topicOverlap: boolean | null;
+  preservedWorktreeRecord: PreservedWorktreeRecord | null;
+}): WorktreeRisk[] {
+  const risks: WorktreeRisk[] = [];
+  if (input.clean) {
+    risks.push("clean");
+    return risks;
+  }
+  risks.push("dirty");
+  if (input.descendsFromBase === false) {
+    if (input.preservedWorktreeRecord !== null) {
+      risks.push("preserved-stale-wip");
+    } else {
+      risks.push("dirty-stale-base");
+    }
+  }
+  if (
+    input.descendsFromBase === false &&
+    input.topicOverlap === false &&
+    input.preservedWorktreeRecord === null
+  ) {
+    risks.push("topic-mismatch");
+  }
+  return risks;
+}
+
 export function buildReport(options: Options): WorktreeAuditReport {
   const baseCommit = tryRunGit(["rev-parse", "--verify", options.baseRef]);
+  const preservedRecords = readPreservedWorktreeRecords(options.preservedWorktreesDir);
   const parsed = parseWorktreeListPorcelain(runGit(["worktree", "list", "--porcelain"]));
   const entries = parsed.map((worktree) => {
     const statusOutput = runGit(["status", "--short"], worktree.path);
@@ -177,18 +279,13 @@ export function buildReport(options: Options): WorktreeAuditReport {
     const topicOverlap = options.warnTopicMismatch
       ? hasTopicOverlap(worktree.branch, subject)
       : null;
-    const risks: WorktreeRisk[] = [];
-    if (clean) {
-      risks.push("clean");
-    } else {
-      risks.push("dirty");
-    }
-    if (!clean && descendsFromBase === false) {
-      risks.push("dirty-stale-base");
-    }
-    if (!clean && descendsFromBase === false && topicOverlap === false) {
-      risks.push("topic-mismatch");
-    }
+    const preservedWorktreeRecord = findPreservedWorktreeRecord(preservedRecords, worktree);
+    const risks = classifyWorktreeRisks({
+      clean,
+      descendsFromBase,
+      topicOverlap,
+      preservedWorktreeRecord,
+    });
     return {
       path: worktree.path,
       branch: worktree.branch,
@@ -198,6 +295,7 @@ export function buildReport(options: Options): WorktreeAuditReport {
       changes,
       descendsFromBase,
       topicOverlap,
+      preservedWorktreeRecord,
       risks,
     };
   });
@@ -213,6 +311,11 @@ export function buildReport(options: Options): WorktreeAuditReport {
       `Inspect ${entry.path}: dirty branch ${entry.branch ?? "detached HEAD"} has top commit "${entry.subject}", which does not appear to match the branch topic.`,
     );
   }
+  for (const entry of entries.filter((item) => item.risks.includes("preserved-stale-wip"))) {
+    recommendations.push(
+      `Preserved ${entry.path}: dirty stale-base WIP is allowed not to block unrelated work by ${entry.preservedWorktreeRecord?.filePath}. Rebase, promote, or recover it before continuing that task.`,
+    );
+  }
   if (recommendations.length === 0) {
     recommendations.push("No dirty stale-base worktrees found.");
   }
@@ -224,6 +327,11 @@ function printReport(report: WorktreeAuditReport): void {
   console.log(`- base: ${report.baseRef} (${report.baseCommit?.slice(0, 7) ?? "missing"})`);
   console.log(`- worktrees: ${report.entries.length}`);
   console.log(`- blocking dirty stale-base worktrees: ${report.blockingEntries.length}`);
+  console.log(
+    `- preserved stale-base WIP worktrees: ${
+      report.entries.filter((entry) => entry.risks.includes("preserved-stale-wip")).length
+    }`,
+  );
   for (const entry of report.entries) {
     console.log(
       `- ${entry.path}: ${entry.branch ?? "(detached)"} ${entry.head} ${entry.clean ? "clean" : "dirty"} base=${
