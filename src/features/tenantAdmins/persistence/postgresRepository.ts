@@ -29,6 +29,9 @@ function toTenantAdminData(record: TenantAdminRecord): TenantAdminData {
     normalizedEmail: record.normalized_email,
     firstName: record.first_name,
     lastName: record.last_name,
+    profilePictureAssetId: record.profile_picture_asset_id,
+    profilePictureAltText: record.profile_picture_alt_text,
+    profilePictureDecorative: record.profile_picture_decorative,
     emailVerificationStatus: record.email_verification_status,
     emailVerifiedAt: record.email_verified_at,
     lastVerificationEmailRequestedAt: record.last_verification_email_requested_at,
@@ -116,6 +119,9 @@ export function createPostgresTenantAdminsRepository(dbPool: Pool): TenantAdmins
             normalized_email,
             first_name,
             last_name,
+            profile_picture_asset_id,
+            profile_picture_alt_text,
+            profile_picture_decorative,
             email_verification_status,
             email_verified_at,
             last_verification_email_requested_at,
@@ -124,7 +130,7 @@ export function createPostgresTenantAdminsRepository(dbPool: Pool): TenantAdmins
             updated_at,
             deleted_at
           )
-          VALUES ($1, $2, $3, $4, $5, $6, 'pending', NULL, NULL, $7, NOW(), NOW(), NULL)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'pending', NULL, NULL, $10, NOW(), NOW(), NULL)
           RETURNING *
         `,
         [
@@ -134,6 +140,9 @@ export function createPostgresTenantAdminsRepository(dbPool: Pool): TenantAdmins
           normalizeEmail(input.email),
           input.firstName,
           input.lastName,
+          input.profilePictureAssetId ?? null,
+          input.profilePictureAssetId ? input.profilePictureAltText ?? null : null,
+          input.profilePictureAssetId ? input.profilePictureDecorative ?? false : false,
           input.createdByRootAdminUserId,
         ],
       );
@@ -235,6 +244,18 @@ export function createPostgresTenantAdminsRepository(dbPool: Pool): TenantAdmins
       if (input.lastName !== undefined) {
         values.push(input.lastName);
         assignments.push(`last_name = $${values.length}`);
+      }
+      if (input.profilePictureAssetId !== undefined) {
+        values.push(input.profilePictureAssetId);
+        assignments.push(`profile_picture_asset_id = $${values.length}`);
+      }
+      if (input.profilePictureAltText !== undefined) {
+        values.push(input.profilePictureAltText);
+        assignments.push(`profile_picture_alt_text = $${values.length}`);
+      }
+      if (input.profilePictureDecorative !== undefined) {
+        values.push(input.profilePictureDecorative);
+        assignments.push(`profile_picture_decorative = $${values.length}`);
       }
       if (input.resetVerification) {
         assignments.push(`email_verification_status = 'pending'`);

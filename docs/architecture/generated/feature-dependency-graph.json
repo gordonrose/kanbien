@@ -2,7 +2,7 @@
   "ruleVersion": 2,
   "ruleSummary": "Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.",
   "featureCount": 16,
-  "edgeCount": 13,
+  "edgeCount": 15,
   "violationCount": 0,
   "features": [
     {
@@ -23,12 +23,22 @@
           "kind": "domain-service",
           "stability": "stable",
           "path": "index.ts"
+        },
+        {
+          "seamId": "asset-error",
+          "symbol": "AssetError",
+          "kind": "contract-error",
+          "stability": "stable",
+          "path": "index.ts"
         }
       ],
       "declaredDependencies": [],
       "publicDependencies": [],
       "privateDependencyCount": 0,
-      "dependedOnBy": [],
+      "dependedOnBy": [
+        "rootUsers",
+        "tenantAdmins"
+      ],
       "breakingChangeRisks": [
         "Changing asset lifecycle, upload-intent binding, or storage-key immutability semantics can make uploaded bytes usable without the approved verification path.",
         "Changing same-origin private content-read behavior can leak storage authority or bypass asset-native authorization.",
@@ -304,8 +314,12 @@
           "path": "index.ts"
         }
       ],
-      "declaredDependencies": [],
-      "publicDependencies": [],
+      "declaredDependencies": [
+        "assets"
+      ],
+      "publicDependencies": [
+        "assets"
+      ],
       "privateDependencyCount": 0,
       "dependedOnBy": [
         "rootAuth",
@@ -346,9 +360,11 @@
       "declaredDependencies": [
         "notificationDelivery",
         "tenantAuth",
-        "tenants"
+        "tenants",
+        "assets"
       ],
       "publicDependencies": [
+        "assets",
         "notificationDelivery",
         "tenantAuth",
         "tenants"
@@ -762,6 +778,74 @@
           "importPath": "../rootUsers",
           "line": 2,
           "resolvedPath": "src/features/rootUsers/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "rootUsers",
+      "targetFeature": "assets",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "service",
+        "asset-error"
+      ],
+      "publicImportCount": 3,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/rootUsers/domain/service.ts",
+          "importPath": "../../assets",
+          "line": 23,
+          "resolvedPath": "src/features/assets/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/rootUsers/integration.ts",
+          "importPath": "../assets",
+          "line": 5,
+          "resolvedPath": "src/features/assets/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/rootUsers/transport/router.ts",
+          "importPath": "../../assets",
+          "line": 24,
+          "resolvedPath": "src/features/assets/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "tenantAdmins",
+      "targetFeature": "assets",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "service",
+        "asset-error"
+      ],
+      "publicImportCount": 3,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/tenantAdmins/domain/service.ts",
+          "importPath": "../../assets",
+          "line": 26,
+          "resolvedPath": "src/features/assets/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAdmins/integration.ts",
+          "importPath": "../assets",
+          "line": 7,
+          "resolvedPath": "src/features/assets/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/tenantAdmins/transport/router.ts",
+          "importPath": "../../assets",
+          "line": 13,
+          "resolvedPath": "src/features/assets/index.ts",
           "visibility": "public"
         }
       ]

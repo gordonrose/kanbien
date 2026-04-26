@@ -18,6 +18,7 @@
 - Foreign key relationships: Referenced by `auth_principal_root_user_links`,
   `auth_sessions`, and `auth_audit_events` from `rootAuth`; referenced by
   `root_user_role_assignments` and `root_role_audit_events` from `rootRoles`.
+  `profile_picture_asset_id` optionally references `assets.asset_id`.
 
 ## Capabilities That Rely On This Entity
 
@@ -91,6 +92,29 @@
   Constraints / Notes: Nullable. Backfilled in migration `002`.
   Source: `src/features/rootUsers/persistence/migrations/002_align_root_users_normalized_columns.sql`,
   `src/features/rootUsers/persistence/postgresRepository.ts`
+- `profile_picture_asset_id`
+  Type / Shape: `UUID | NULL`
+  Description: Optional ready image asset linked as the root-user profile
+  picture.
+  Constraints / Notes: Nullable foreign key to `assets.asset_id`. The service
+  validates root scope, private visibility, image kind, readiness, and
+  contextual accessibility before linking.
+  Source: `src/features/rootUsers/persistence/migrations/0045_add_root_user_profile_picture_asset.sql`,
+  `src/features/rootUsers/domain/service.ts`
+- `profile_picture_alt_text`
+  Type / Shape: `TEXT | NULL`
+  Description: Contextual alt text for the linked root-user profile picture.
+  Constraints / Notes: Required unless `profile_picture_decorative = true`
+  when a profile picture asset is linked.
+  Source: `src/features/rootUsers/persistence/migrations/0045_add_root_user_profile_picture_asset.sql`,
+  `src/features/rootUsers/domain/service.ts`
+- `profile_picture_decorative`
+  Type / Shape: `BOOLEAN`
+  Description: Explicit decorative posture for the linked root-user profile
+  picture.
+  Constraints / Notes: Defaults to `false`. Used as the accessibility
+  alternative to contextual alt text.
+  Source: `src/features/rootUsers/persistence/migrations/0045_add_root_user_profile_picture_asset.sql`
 - `anonymized`
   Type / Shape: `BOOLEAN`
   Description: Irreversible anonymization marker.
@@ -168,6 +192,13 @@
   fields.
   Why It Matters: Supports paginated list and filtered admin views.
   Source: `src/features/rootUsers/persistence/migrations/001_create_root_users.sql`
+- `idx_root_users_profile_picture_asset_id`
+  Type: `other`
+  Definition / Rule: Partial index on `profile_picture_asset_id` where it is
+  not null.
+  Why It Matters: Supports maintenance and relationship lookups for linked
+  profile-picture assets.
+  Source: `src/features/rootUsers/persistence/migrations/0045_add_root_user_profile_picture_asset.sql`
 
 ## Normalization And Uniqueness Rules
 
@@ -199,7 +230,8 @@
   can be reactivated if not anonymized.
   Source: `src/features/rootUsers/persistence/postgresRepository.ts`
 - State or lifecycle rule: Remove/anonymize sets `anonymized = true`,
-  `status = 'inactive'`, and `deleted_at` to a timestamp.
+  `status = 'inactive'`, clears profile-picture fields, and sets `deleted_at`
+  to a timestamp.
   Meaning: Removal is a stronger lifecycle end state than soft delete and is
   treated as irreversible by the service layer.
   Source: `src/features/rootUsers/persistence/postgresRepository.ts`,

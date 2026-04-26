@@ -11,6 +11,7 @@ The `rootUsers` feature manages privileged platform users. It owns:
 - soft deletion
 - irreversible anonymized removal
 - reactivation of soft-deleted, non-anonymized users
+- optional root-scoped profile-picture asset links and same-origin display URLs
 
 ## Where It Lives
 
@@ -63,7 +64,12 @@ v1Router.use(
   requireRootSession,
   authenticatedGeneralRateLimit,
   rootRolesFeature.rootUserRoleAssignmentsRouter,
-  createRootUserFeature(dbPool, rootRolesFeature.capabilityChecker, platformSecurityRepository),
+  createRootUserFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+    assetsFeature.assetsService,
+  ),
 );
 ```
 
@@ -85,6 +91,10 @@ narrower than a full polished admin product.
 The feature also exports a narrow auth-state reader that other features can use
 when they need root-user sign-in eligibility without reaching into
 `rootUsers/persistence/*`.
+Profile-picture linking uses the public `assets` validation seam. The
+`rootUsers` feature owns entity authorization and stores only the durable asset
+ID plus contextual accessibility metadata; display URLs are derived as
+same-origin `/v1/assets/{assetId}/content` paths.
 
 ## Runtime Contracts
 
@@ -148,6 +158,7 @@ The migration runner already scans:
 That means this feature's migration file is discovered automatically:
 
 - `src/features/rootUsers/persistence/migrations/001_create_root_users.sql`
+- `src/features/rootUsers/persistence/migrations/0045_add_root_user_profile_picture_asset.sql`
 
 The migration manifest key is the file's relative path in `schema_migrations`, so renaming a migration file changes its identity to the runner.
 

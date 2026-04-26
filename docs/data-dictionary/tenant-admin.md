@@ -16,6 +16,7 @@
 - Foreign key relationships:
   - `tenant_id` references `tenant.tenant_id`
   - `created_by_root_admin_user_id` references `root_users.root_user_id`
+  - `profile_picture_asset_id` optionally references `assets.asset_id`
 
 ## Capabilities That Rely On This Entity
 
@@ -68,6 +69,29 @@
   Description: Optional tenant-admin last name.
   Constraints / Notes: Nullable editable profile field.
   Source: `src/features/tenantAdmins/persistence/migrations/0008_create_tenant_admins.sql`
+- `profile_picture_asset_id`
+  Type / Shape: `UUID | NULL`
+  Description: Optional ready image asset linked as the tenant-admin profile
+  picture.
+  Constraints / Notes: Nullable foreign key to `assets.asset_id`. The service
+  validates tenant scope, private visibility, image kind, readiness, and
+  contextual accessibility before linking.
+  Source: `src/features/tenantAdmins/persistence/migrations/0046_add_tenant_admin_profile_picture_asset.sql`,
+  `src/features/tenantAdmins/domain/service.ts`
+- `profile_picture_alt_text`
+  Type / Shape: `TEXT | NULL`
+  Description: Contextual alt text for the linked tenant-admin profile picture.
+  Constraints / Notes: Required unless `profile_picture_decorative = true`
+  when a profile picture asset is linked.
+  Source: `src/features/tenantAdmins/persistence/migrations/0046_add_tenant_admin_profile_picture_asset.sql`,
+  `src/features/tenantAdmins/domain/service.ts`
+- `profile_picture_decorative`
+  Type / Shape: `BOOLEAN`
+  Description: Explicit decorative posture for the linked tenant-admin profile
+  picture.
+  Constraints / Notes: Defaults to `false`. Used as the accessibility
+  alternative to contextual alt text.
+  Source: `src/features/tenantAdmins/persistence/migrations/0046_add_tenant_admin_profile_picture_asset.sql`
 - `email_verification_status`
   Type / Shape: `'pending' | 'verified'`
   Description: Durable verification state for the stored email address.
@@ -124,6 +148,13 @@
   Why It Matters: Prevents duplicate active tenant-admin email ownership within
   a tenant while allowing soft-deleted rows to remain durable.
   Source: `src/features/tenantAdmins/persistence/migrations/0008_create_tenant_admins.sql`
+- `idx_tenant_admin_profile_picture_asset_id`
+  Type: `other`
+  Definition / Rule: Partial index on `profile_picture_asset_id` where it is
+  not null.
+  Why It Matters: Supports maintenance and relationship lookups for linked
+  profile-picture assets.
+  Source: `src/features/tenantAdmins/persistence/migrations/0046_add_tenant_admin_profile_picture_asset.sql`
 
 ## Normalization And Uniqueness Rules
 

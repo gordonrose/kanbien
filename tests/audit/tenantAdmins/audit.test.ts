@@ -1,9 +1,57 @@
 import { describe, expect, it } from "vitest";
+import type { AssetsService } from "../../../src/features/assets";
 import { invokeJson } from "../../harness/http";
 import { createRootAuthIntegrationHarness } from "../../harness/rootAuth/integrationHarness";
 import { loginViaPasswordAndSsh, mountTenantAdminsFeature } from "../../helpers/tenantAdminsHarness";
 
 describe("tenantAdmins audit visibility", () => {
+  it("keeps profile-picture link and clear mutations audit-visible", async () => {
+    const assetsService = {
+      validateAssetForSubject: async () => undefined,
+    } as unknown as AssetsService;
+    const harness = createRootAuthIntegrationHarness();
+    mountTenantAdminsFeature(harness.app, harness, { assetsService });
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const created = await invokeJson<{ tenantAdminId: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        email: "profile-picture.audit@example.com",
+        profilePictureAssetId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        profilePictureAltText: "Profile portrait",
+      },
+    });
+    expect(created.status).toBe(201);
+
+    const cleared = await invokeJson<{ tenantAdminId: string }>(harness.app, {
+      method: "PATCH",
+      path: `/v1/tenants/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/admins/${created.body.tenantAdminId}`,
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        profilePictureAssetId: null,
+      },
+    });
+    expect(cleared.status).toBe(200);
+
+    expect(harness.getSecurityAuditEvents()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          eventType: "tenant_admin_profile_picture_linked",
+          eventOutcome: "success",
+          rootUserId: identity.rootUserId,
+        }),
+        expect.objectContaining({
+          eventType: "tenant_admin_profile_picture_cleared",
+          eventOutcome: "success",
+          rootUserId: identity.rootUserId,
+        }),
+      ]),
+    );
+  });
+
   it("TC-TENANT-ADMINS-AUD-001 keeps successful operator lifecycle and verification actions audit-visible", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountTenantAdminsFeature(harness.app, harness);

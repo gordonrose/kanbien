@@ -500,10 +500,30 @@
   - verification workflows remain compatible with the future shared tenant-auth
     loop rather than pre-empting it
 
+- Scenario: tenant-admin profile-picture links validate asset readiness and tenant scope
+  Test Case ID: `TC-TENANT-ADMINS-ASSET-001`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/tenantAdmins/`
+  Requires Shared Test Helper: no
+  Requires Manifest Tracking: yes
+  Cleanup Expectation:
+  n/a for unit coverage; persistence coverage should register tenant-admin and
+  asset rows if promoted to durable integration tests
+  Coverage:
+  - create/update calls the public `assets.validateAssetForSubject` seam before
+    persisting a linked profile-picture asset
+  - linked asset must be tenant-scoped to the tenant admin's tenant, private,
+    ready image content
+  - response includes `profilePictureAssetId` and same-origin
+    `profilePictureUrl`
+  - link and clear mutations emit explicit profile-picture security audit
+    events through the protected route
+  - tenant-admin self-service profile editing remains out of scope
+
 ## Summary Of Planned Coverage
 
 - Unit:
-  `9`
+  `10`
 - Integration:
   `5`
 - Security:
@@ -513,7 +533,7 @@
 - Edge:
   `5`
 
-Total planned cases: `27`
+Total planned cases: `28`
 
 ## Initial Coverage Gaps To Revisit Later
 

@@ -193,6 +193,16 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     group: "assets",
     relativePath: "assets/persistence/migrations/0040_create_assets.sql",
   },
+  {
+    group: "rootUsers",
+    relativePath:
+      "rootUsers/persistence/migrations/0045_add_root_user_profile_picture_asset.sql",
+  },
+  {
+    group: "tenantAdmins",
+    relativePath:
+      "tenantAdmins/persistence/migrations/0046_add_tenant_admin_profile_picture_asset.sql",
+  },
 ];
 
 function escapeSqlLiteral(value: string): string {

@@ -3,7 +3,7 @@
 ## Summary
 
 - Features analyzed: 16
-- Cross-feature edges: 13
+- Cross-feature edges: 15
 - Validation violations: 0
 
 Rule: Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.
@@ -17,10 +17,11 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Declared dependencies: none
 - Current public dependencies: none
 - Private seam violations: 0
-- Depended on by: none
+- Depended on by: rootUsers, tenantAdmins
 - Public seams:
   - `feature-factory` via `createAssetsFeature` in `index.ts` (feature-factory, stable)
   - `service` via `AssetsService` in `index.ts` (domain-service, stable)
+  - `asset-error` via `AssetError` in `index.ts` (contract-error, stable)
 - Breaking-change risks:
   - Changing asset lifecycle, upload-intent binding, or storage-key immutability semantics can make uploaded bytes usable without the approved verification path.
   - Changing same-origin private content-read behavior can leak storage authority or bypass asset-native authorization.
@@ -139,8 +140,8 @@ Rule: Cross-feature imports in src/features must go through target feature index
 
 - Manifest: `src/features/rootUsers/feature.manifest.json`
 - Source files: 23
-- Declared dependencies: none
-- Current public dependencies: none
+- Declared dependencies: assets
+- Current public dependencies: assets
 - Private seam violations: 0
 - Depended on by: rootAuth, rootRoles
 - Public seams:
@@ -156,8 +157,8 @@ Rule: Cross-feature imports in src/features must go through target feature index
 
 - Manifest: `src/features/tenantAdmins/feature.manifest.json`
 - Source files: 13
-- Declared dependencies: notificationDelivery, tenantAuth, tenants
-- Current public dependencies: notificationDelivery, tenantAuth, tenants
+- Declared dependencies: notificationDelivery, tenantAuth, tenants, assets
+- Current public dependencies: assets, notificationDelivery, tenantAuth, tenants
 - Private seam violations: 0
 - Depended on by: tenantAuth
 - Public seams:
@@ -305,6 +306,28 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Private imports: 0
 
 - `src/features/rootRoles/integration.ts:2` imports `../rootUsers` -> `src/features/rootUsers/index.ts` (public)
+
+### rootUsers -> assets
+
+- Declared in manifest: yes
+- Declared seam ids: service, asset-error
+- Public imports: 3
+- Private imports: 0
+
+- `src/features/rootUsers/domain/service.ts:23` imports `../../assets` -> `src/features/assets/index.ts` (public)
+- `src/features/rootUsers/integration.ts:5` imports `../assets` -> `src/features/assets/index.ts` (public)
+- `src/features/rootUsers/transport/router.ts:24` imports `../../assets` -> `src/features/assets/index.ts` (public)
+
+### tenantAdmins -> assets
+
+- Declared in manifest: yes
+- Declared seam ids: service, asset-error
+- Public imports: 3
+- Private imports: 0
+
+- `src/features/tenantAdmins/domain/service.ts:26` imports `../../assets` -> `src/features/assets/index.ts` (public)
+- `src/features/tenantAdmins/integration.ts:7` imports `../assets` -> `src/features/assets/index.ts` (public)
+- `src/features/tenantAdmins/transport/router.ts:13` imports `../../assets` -> `src/features/assets/index.ts` (public)
 
 ### tenantAdmins -> notificationDelivery
 

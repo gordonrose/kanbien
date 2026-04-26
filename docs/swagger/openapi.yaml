@@ -5297,6 +5297,15 @@ components:
           type: string
         lastName:
           type: string
+        profilePictureAssetId:
+          type: [string, "null"]
+          format: uuid
+        profilePictureUrl:
+          type: [string, "null"]
+        profilePictureAltText:
+          type: [string, "null"]
+        profilePictureDecorative:
+          type: boolean
         anonymized:
           type: boolean
         status:
@@ -5313,6 +5322,10 @@ components:
       required:
         - rootUserId
         - email
+        - profilePictureAssetId
+        - profilePictureUrl
+        - profilePictureAltText
+        - profilePictureDecorative
         - anonymized
         - status
         - createdAt
@@ -6685,6 +6698,15 @@ components:
           type: [string, "null"]
         lastName:
           type: [string, "null"]
+        profilePictureAssetId:
+          type: [string, "null"]
+          format: uuid
+        profilePictureUrl:
+          type: [string, "null"]
+        profilePictureAltText:
+          type: [string, "null"]
+        profilePictureDecorative:
+          type: boolean
         emailVerificationStatus:
           $ref: "#/components/schemas/TenantAdminEmailVerificationStatus"
         emailVerifiedAt:
@@ -6711,6 +6733,10 @@ components:
         - email
         - firstName
         - lastName
+        - profilePictureAssetId
+        - profilePictureUrl
+        - profilePictureAltText
+        - profilePictureDecorative
         - emailVerificationStatus
         - emailVerifiedAt
         - lastVerificationEmailRequestedAt
@@ -7177,6 +7203,14 @@ components:
         lastName:
           type: string
           minLength: 1
+        profilePictureAssetId:
+          type: [string, "null"]
+          format: uuid
+        profilePictureAltText:
+          type: [string, "null"]
+          minLength: 1
+        profilePictureDecorative:
+          type: boolean
       required: [email]
 
     UpdateRootUserBody:
@@ -7192,6 +7226,14 @@ components:
         lastName:
           type: string
           minLength: 1
+        profilePictureAssetId:
+          type: [string, "null"]
+          format: uuid
+        profilePictureAltText:
+          type: [string, "null"]
+          minLength: 1
+        profilePictureDecorative:
+          type: boolean
         status:
           $ref: "#/components/schemas/RootUserStatus"
 
@@ -7560,6 +7602,14 @@ components:
         lastName:
           type: string
           minLength: 1
+        profilePictureAssetId:
+          type: [string, "null"]
+          format: uuid
+        profilePictureAltText:
+          type: [string, "null"]
+          minLength: 1
+        profilePictureDecorative:
+          type: boolean
       required: [email]
 
     UpdateTenantAdminBody:
@@ -7576,6 +7626,14 @@ components:
         lastName:
           type: string
           minLength: 1
+        profilePictureAssetId:
+          type: [string, "null"]
+          format: uuid
+        profilePictureAltText:
+          type: [string, "null"]
+          minLength: 1
+        profilePictureDecorative:
+          type: boolean
 
     ResendTenantAdminVerificationBody:
       type: object

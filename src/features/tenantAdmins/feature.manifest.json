@@ -49,6 +49,14 @@
         "visible-tenants-reader"
       ],
       "description": "Validates tenant visibility before tenant-admin lifecycle changes."
+    },
+    {
+      "featureName": "assets",
+      "seamIds": [
+        "service",
+        "asset-error"
+      ],
+      "description": "Validates optional tenant-admin profile-picture assets through the public asset seam and surfaces asset validation failures through tenant-admin routes."
     }
   ],
   "breakingChangeRisks": [

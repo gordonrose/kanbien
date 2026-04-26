@@ -26,6 +26,7 @@ import type {
 } from "../../../src/features/rootAuth/persistence/types";
 import type { RootUsersRepository } from "../../../src/features/rootUsers/persistence/repository";
 import type { RootUserAuthState, RootUserData } from "../../../src/features/rootUsers/domain/types";
+import type { AssetsService } from "../../../src/features/assets";
 import type { RootRolesRepository } from "../../../src/features/rootRoles/persistence/repository";
 import type {
   RootCapabilityCatalogItem,
@@ -103,6 +104,7 @@ export interface RootAuthIntegrationHarness {
 
 export interface RootAuthIntegrationHarnessOptions {
   platformSecurityEnabled?: boolean;
+  assetsService?: AssetsService;
 }
 
 function normalizeEmail(email: string): string {
@@ -222,6 +224,9 @@ function createRootUserRecord(overrides: Partial<StoredRootUser> = {}): StoredRo
     email: "root@example.test",
     firstName: "Root",
     lastName: "Admin",
+    profilePictureAssetId: null,
+    profilePictureAltText: null,
+    profilePictureDecorative: false,
     anonymized: false,
     status: "active",
     createdAt: now,
@@ -311,6 +316,11 @@ function createInMemoryRootUsersRepository(store: Map<string, StoredRootUser>): 
         email: normalizeEmail(input.email),
         firstName: input.firstName,
         lastName: input.lastName,
+        profilePictureAssetId: input.profilePictureAssetId ?? null,
+        profilePictureAltText: input.profilePictureAssetId ? input.profilePictureAltText ?? null : null,
+        profilePictureDecorative: input.profilePictureAssetId
+          ? input.profilePictureDecorative ?? false
+          : false,
       });
       store.set(record.rootUserId, record);
       return record;
@@ -374,6 +384,18 @@ function createInMemoryRootUsersRepository(store: Map<string, StoredRootUser>): 
         email: input.email ? normalizeEmail(input.email) : current.email,
         firstName: input.firstName ?? current.firstName,
         lastName: input.lastName ?? current.lastName,
+        profilePictureAssetId:
+          input.profilePictureAssetId !== undefined
+            ? input.profilePictureAssetId
+            : current.profilePictureAssetId,
+        profilePictureAltText:
+          input.profilePictureAltText !== undefined
+            ? input.profilePictureAltText
+            : current.profilePictureAltText,
+        profilePictureDecorative:
+          input.profilePictureDecorative !== undefined
+            ? input.profilePictureDecorative
+            : current.profilePictureDecorative,
         status: input.status ?? current.status,
         updatedAt: new Date(),
       };
@@ -400,6 +422,9 @@ function createInMemoryRootUsersRepository(store: Map<string, StoredRootUser>): 
         email: anonymizedEmail,
         firstName: anonymizedFirstName,
         lastName: anonymizedLastName,
+        profilePictureAssetId: null,
+        profilePictureAltText: null,
+        profilePictureDecorative: false,
         anonymized: true,
         status: "inactive" as const,
         deletedAt: new Date(),
@@ -1152,7 +1177,7 @@ export function createRootAuthIntegrationHarness(
       platformSecurityRepository,
     ),
     createRootUsersRouter(
-      createRootUsersService(rootUsersRepository),
+      createRootUsersService(rootUsersRepository, options.assetsService),
       capabilityChecker,
       platformSecurityRepository,
     ),

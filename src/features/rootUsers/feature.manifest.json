@@ -35,7 +35,16 @@
       "description": "Shared type describing root-user auth eligibility state."
     }
   ],
-  "dependsOn": [],
+  "dependsOn": [
+    {
+      "featureName": "assets",
+      "seamIds": [
+        "service",
+        "asset-error"
+      ],
+      "description": "Validates optional root-user profile-picture assets through the public asset seam and surfaces asset validation failures through root-user routes."
+    }
+  ],
   "breakingChangeRisks": [
     "Changing root-user normalization, lifecycle, or soft-delete semantics can break authentication and authorization features that depend on stable operator identity facts.",
     "Changing exported auth-state or browser-summary seams can break rootAuth and rootRoles integration."

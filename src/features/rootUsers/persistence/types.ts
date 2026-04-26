@@ -5,6 +5,9 @@ export interface RootUserRecord {
   email: string;
   first_name: string | null;
   last_name: string | null;
+  profile_picture_asset_id: string | null;
+  profile_picture_alt_text: string | null;
+  profile_picture_decorative: boolean;
   anonymized: boolean;
   status: RootUserRecordStatus;
   created_at: Date;
@@ -25,6 +28,9 @@ export interface CreateRootUserRecordInput {
   email: string;
   firstName?: string;
   lastName?: string;
+  profilePictureAssetId?: string | null;
+  profilePictureAltText?: string | null;
+  profilePictureDecorative?: boolean;
 }
 
 export interface UpdateRootUserRecordInput {
@@ -32,6 +38,9 @@ export interface UpdateRootUserRecordInput {
   email?: string;
   firstName?: string;
   lastName?: string;
+  profilePictureAssetId?: string | null;
+  profilePictureAltText?: string | null;
+  profilePictureDecorative?: boolean;
   status?: RootUserRecordStatus;
 }
 

@@ -7,6 +7,9 @@ export interface TenantAdminRecord {
   normalized_email: string;
   first_name: string | null;
   last_name: string | null;
+  profile_picture_asset_id: string | null;
+  profile_picture_alt_text: string | null;
+  profile_picture_decorative: boolean;
   email_verification_status: TenantAdminEmailVerificationStatus;
   email_verified_at: Date | null;
   last_verification_email_requested_at: Date | null;
@@ -37,6 +40,9 @@ export interface CreateTenantAdminRecordInput {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  profilePictureAssetId?: string | null;
+  profilePictureAltText?: string | null;
+  profilePictureDecorative?: boolean;
   createdByRootAdminUserId: string;
 }
 
@@ -46,6 +52,9 @@ export interface UpdateTenantAdminRecordInput {
   email?: string;
   firstName?: string | null;
   lastName?: string | null;
+  profilePictureAssetId?: string | null;
+  profilePictureAltText?: string | null;
+  profilePictureDecorative?: boolean;
   resetVerification: boolean;
 }
 

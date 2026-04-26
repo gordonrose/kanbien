@@ -433,7 +433,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"{{email}}\",\n  \"firstName\": \"Root\",\n  \"lastName\": \"User\"\n}"
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"firstName\": \"Root\",\n  \"lastName\": \"User\",\n  \"profilePictureAssetId\": null,\n  \"profilePictureAltText\": null,\n  \"profilePictureDecorative\": false\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/v1/root-users",
@@ -640,7 +640,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"firstName\": \"Updated\",\n  \"lastName\": \"User\",\n  \"status\": \"inactive\"\n}"
+          "raw": "{\n  \"firstName\": \"Updated\",\n  \"lastName\": \"User\",\n  \"status\": \"inactive\",\n  \"profilePictureAssetId\": null,\n  \"profilePictureAltText\": null,\n  \"profilePictureDecorative\": false\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/v1/root-users/{{rootUserId}}",

@@ -6,6 +6,10 @@ export interface TenantAdminSummary {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  profilePictureAssetId: string | null;
+  profilePictureUrl: string | null;
+  profilePictureAltText: string | null;
+  profilePictureDecorative: boolean;
   emailVerificationStatus: TenantAdminEmailVerificationStatus;
   emailVerifiedAt: string | null;
   lastVerificationEmailRequestedAt: string | null;

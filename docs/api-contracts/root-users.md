@@ -78,13 +78,23 @@
   - prefix filters require at least 3 trimmed characters
   - date filters must be ISO-8601 date-time strings with offset
 - Body:
-  - create: `{ email, firstName?, lastName? }`
-  - update: at least one of `{ email?, firstName?, lastName?, status? }`
+  - create:
+    `{ email, firstName?, lastName?, profilePictureAssetId?, profilePictureAltText?, profilePictureDecorative? }`
+  - update:
+    at least one of
+    `{ email?, firstName?, lastName?, status?, profilePictureAssetId?, profilePictureAltText?, profilePictureDecorative? }`
   - delete, remove, reactivate: no body
 - Validation rules:
   - request bodies and query objects are strict; unexpected fields are rejected
   - email is trimmed, validated, and normalized to lowercase
   - names must be non-empty when supplied
+  - `profilePictureAssetId`, when supplied as a UUID, must reference a ready,
+    private, root-scoped image asset validated through the public `assets`
+    seam
+  - `profilePictureAssetId: null` clears the profile-picture relationship and
+    clears contextual accessibility metadata
+  - a linked profile picture requires contextual `profilePictureAltText` or
+    `profilePictureDecorative: true`
   - create does not accept system-managed fields or initial `status`
   - update requires at least one supplied field
 
@@ -92,7 +102,9 @@
 
 - Success payload:
   - single-item routes return a `RootUserResponse` shape:
-    `{ rootUserId, email, firstName?, lastName?, anonymized, status, createdAt, updatedAt, deletedAt }`
+    `{ rootUserId, email, firstName?, lastName?, profilePictureAssetId, profilePictureUrl, profilePictureAltText, profilePictureDecorative, anonymized, status, createdAt, updatedAt, deletedAt }`
+  - `profilePictureUrl`, when present, is a same-origin display URL:
+    `/v1/assets/{assetId}/content`
   - list routes return
     `{ items, page, pageSize, totalPages, totalSearchableRecords, totalMatchingRecords }`
   - `GET /v1/root-users` is overloaded:
@@ -115,6 +127,10 @@
   - `INVALID_REQUEST`: "Your request could not be accepted because one or more fields are missing or invalid."
   - `ROOT_USER_EMAIL_ALREADY_EXISTS`: "That email address is already in use by another active root user."
   - `ROOT_USER_ALREADY_ANONYMIZED`: "That root user has already been anonymized and cannot be changed in this way."
+  - asset-link failures may surface `ASSET_NOT_FOUND`, `ASSET_FORBIDDEN`, or
+    `ASSET_CONFLICT` when the supplied asset is missing, cross-scope,
+    incompatible, not ready, or lacks required contextual accessibility
+    posture
 - `details` shape:
   - when present: `{ field?: string, reason?: string }`
   - validation failures may use reasons such as `unexpected_field` or schema
@@ -130,15 +146,21 @@
 - Durable writes:
   - create inserts a `root_users` row
   - update changes editable fields and refreshes `updated_at`
+  - create and update may link or clear a nullable root-scoped
+    `profile_picture_asset_id` plus contextual accessibility metadata after
+    validating the image asset through `assets.validateAssetForSubject`
   - delete sets `status='inactive'`, `deleted_at`, and `updated_at`
-  - remove anonymizes fields in place, marks the row deleted, and prevents
-    future reactivation
+  - remove anonymizes fields in place, clears the profile-picture relationship,
+    marks the row deleted, and prevents future reactivation
   - reactivate clears `deleted_at`, sets `status='active'`, and refreshes
     `updated_at`
 - Audit effects:
   - no feature-local durable audit entity is currently written by `rootUsers`
+  - profile-picture link and clear mutations write shared platform security
+    audit events through the protected route handler
 - Cross-feature reads:
-  - none at route execution time
+  - create/update profile-picture linking uses the public `assets` validation
+    seam
   - this feature separately exports `createRootUsersAuthStateReader` and
     `createRootUsersBrowserSummaryReader` seams for `rootAuth`
 - Other side effects:
@@ -156,6 +178,8 @@
     session transport or the same-origin root-admin browser-session cookie.
   - The persisted lifecycle contract distinguishes soft delete from irreversible
     anonymized remove.
+  - Profile-picture support is root-operated only in this slice; tenant-admin
+    self-service profile editing is out of scope.
 
 ## Traceability
 

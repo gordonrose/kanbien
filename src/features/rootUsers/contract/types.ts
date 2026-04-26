@@ -6,6 +6,10 @@ export interface RootUserResponse {
   email: string;
   firstName?: string;
   lastName?: string;
+  profilePictureAssetId: string | null;
+  profilePictureUrl: string | null;
+  profilePictureAltText: string | null;
+  profilePictureDecorative: boolean;
   anonymized: boolean;
   status: RootUserStatus;
   createdAt: string;
@@ -18,6 +22,9 @@ export interface CreateRootUserRequest {
     email: string;
     firstName?: string;
     lastName?: string;
+    profilePictureAssetId?: string | null;
+    profilePictureAltText?: string | null;
+    profilePictureDecorative?: boolean;
   };
 }
 
@@ -93,6 +100,9 @@ export interface UpdateRootUserRequest {
     email?: string;
     firstName?: string;
     lastName?: string;
+    profilePictureAssetId?: string | null;
+    profilePictureAltText?: string | null;
+    profilePictureDecorative?: boolean;
     status?: RootUserStatus;
   };
 }

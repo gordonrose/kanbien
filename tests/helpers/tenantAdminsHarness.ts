@@ -4,6 +4,7 @@ import { createRateLimitMiddleware } from "../../src/lib/security/rateLimit";
 import { env } from "../../src/config/env";
 import { createNotificationDeliveryService } from "../../src/features/notificationDelivery/domain/service";
 import type { NotificationEmailWriter } from "../../src/features/notificationDelivery";
+import type { AssetsService } from "../../src/features/assets";
 import type { TenantAuthOnboardingProvisioner } from "../../src/features/tenantAuth/domain/types";
 import type { VisibleTenantsReader } from "../../src/features/tenants";
 import { createTenantAdminsService } from "../../src/features/tenantAdmins/domain/service";
@@ -94,6 +95,9 @@ export function createTenantAdminRecord(
     normalizedEmail: "admin@example.com",
     firstName: "Alex",
     lastName: "Admin",
+    profilePictureAssetId: null,
+    profilePictureAltText: null,
+    profilePictureDecorative: false,
     emailVerificationStatus: "pending",
     emailVerifiedAt: null,
     lastVerificationEmailRequestedAt: null,
@@ -140,6 +144,11 @@ export function createInMemoryTenantAdminsRepository(
         normalizedEmail: normalizeEmail(input.email),
         firstName: input.firstName,
         lastName: input.lastName,
+        profilePictureAssetId: input.profilePictureAssetId ?? null,
+        profilePictureAltText: input.profilePictureAssetId ? input.profilePictureAltText ?? null : null,
+        profilePictureDecorative: input.profilePictureAssetId
+          ? input.profilePictureDecorative ?? false
+          : false,
         emailVerificationStatus: "pending",
         emailVerifiedAt: null,
         lastVerificationEmailRequestedAt: null,
@@ -238,6 +247,18 @@ export function createInMemoryTenantAdminsRepository(
           input.email !== undefined ? normalizeEmail(input.email) : current.normalizedEmail,
         firstName: input.firstName !== undefined ? input.firstName : current.firstName,
         lastName: input.lastName !== undefined ? input.lastName : current.lastName,
+        profilePictureAssetId:
+          input.profilePictureAssetId !== undefined
+            ? input.profilePictureAssetId
+            : current.profilePictureAssetId,
+        profilePictureAltText:
+          input.profilePictureAltText !== undefined
+            ? input.profilePictureAltText
+            : current.profilePictureAltText,
+        profilePictureDecorative:
+          input.profilePictureDecorative !== undefined
+            ? input.profilePictureDecorative
+            : current.profilePictureDecorative,
         emailVerificationStatus: input.resetVerification ? "pending" : current.emailVerificationStatus,
         emailVerifiedAt: input.resetVerification ? null : current.emailVerifiedAt,
         lastVerificationEmailRequestedAt: input.resetVerification
@@ -397,6 +418,7 @@ export function mountTenantAdminsFeature(
     notificationEmailWriter?: NotificationEmailWriter;
     visibleTenantsReader?: VisibleTenantsReader;
     onboardingProvisioner?: TenantAuthOnboardingProvisioner;
+    assetsService?: AssetsService;
   },
 ) {
   const repository = options?.repository ?? createInMemoryTenantAdminsRepository();
@@ -412,6 +434,7 @@ export function mountTenantAdminsFeature(
     notificationEmailWriter,
     harness.platformSecurityRepository,
     options?.onboardingProvisioner ?? createNoopTenantAuthOnboardingProvisioner(),
+    options?.assetsService,
   );
   const requireRootSession = createRequireRootSession(harness.authRepository, {
     allowBrowserCookie: true,

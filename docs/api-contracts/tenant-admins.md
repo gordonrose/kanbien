@@ -100,9 +100,10 @@
     `updatedAt`, `createdAt`, `email`, `firstName`, `lastName`
 - Body:
   - create:
-    `{ email, firstName?, lastName? }`
+    `{ email, firstName?, lastName?, profilePictureAssetId?, profilePictureAltText?, profilePictureDecorative? }`
   - update:
-    at least one of `{ email?, firstName?, lastName? }`
+    at least one of
+    `{ email?, firstName?, lastName?, profilePictureAssetId?, profilePictureAltText?, profilePictureDecorative? }`
   - verification send:
     no body
   - verification resend:
@@ -120,6 +121,12 @@
   - `email` is trimmed and stored lowercase before persistence and uniqueness
     checks
   - empty strings are rejected rather than normalized to null
+  - `profilePictureAssetId`, when supplied as a UUID, must reference a ready,
+    private, tenant-scoped image asset whose tenant matches `{tenantId}`
+  - `profilePictureAssetId: null` clears the profile-picture relationship and
+    clears contextual accessibility metadata
+  - a linked profile picture requires contextual `profilePictureAltText` or
+    `profilePictureDecorative: true`
   - clients must not supply system-managed fields such as `tenantAdminId`,
     `tenantId`, `emailVerificationStatus`, `emailVerifiedAt`,
     `lastVerificationEmailRequestedAt`, `createdByRootAdminUserId`,
@@ -133,7 +140,9 @@
 - Success payload:
   - create, exact read, update, send, resend, delete, and reactivate return a
     tenant-admin summary:
-    `{ tenantAdminId, tenantId, email, firstName, lastName, emailVerificationStatus, emailVerifiedAt, lastVerificationEmailRequestedAt, createdByRootAdminUserId, createdAt, updatedAt, deletedAt }`
+    `{ tenantAdminId, tenantId, email, firstName, lastName, profilePictureAssetId, profilePictureUrl, profilePictureAltText, profilePictureDecorative, emailVerificationStatus, emailVerifiedAt, lastVerificationEmailRequestedAt, createdByRootAdminUserId, createdAt, updatedAt, deletedAt }`
+  - `profilePictureUrl`, when present, is a same-origin display URL:
+    `/v1/assets/{assetId}/content`
   - public redeem returns:
     `{ status, tenantAdmin, tenantAuthOnboarding }`
   - onboarding restart returns:
@@ -172,6 +181,10 @@
     - `NOTIFICATION_SEND_FAILED`
     - `NOTIFICATION_PROVIDER_UNAVAILABLE`
     - `NOTIFICATION_PROVIDER_MISCONFIGURED`
+  - shared asset seam on profile-picture linking:
+    - `ASSET_NOT_FOUND`
+    - `ASSET_FORBIDDEN`
+    - `ASSET_CONFLICT`
 - Representative messages:
   - duplicate active tenant-admin email:
     "That email address is already in use by another active tenant admin in this tenant."
@@ -199,6 +212,9 @@
     verification state plus invalidates active tokens when `email` changes; if
     the tenant admin remains pending after the update, the feature also issues
     a fresh verification token and verification email automatically
+  - create and update may link or clear a nullable tenant-scoped
+    `profile_picture_asset_id` plus contextual accessibility metadata after
+    validating the image asset through `assets.validateAssetForSubject`
   - verification send and resend issue feature-owned durable verification-token
     rows and update `lastVerificationEmailRequestedAt`
   - public redeem marks the chosen verification token used, marks the
@@ -216,11 +232,15 @@
 - Audit effects:
   - protected lifecycle and verification actions create success security audit
     events
+  - profile-picture link and clear mutations write explicit success security
+    audit events
   - denied capability-gated requests create shared platform security audit
     events through central authz middleware
   - public token redemption writes success and failure audit events
 - Cross-feature reads:
   - reads visible tenant context through the public `tenants` seam
+  - profile-picture linking validates image assets through the public `assets`
+    seam
 - Other side effects:
   - create, update-for-pending, verification send, and verification resend
     flow through the shared `notificationDelivery` seam with durable email and
@@ -239,6 +259,8 @@
     reusable tenant-auth identity provisioning
   - shared tenant login, password setup, session issuance, and tenant
     selection are intentionally separate and handled by `tenantAuth`
+  - tenant-admin self-service profile editing is intentionally deferred; this
+    slice remains root-operated
   - reactivation is intentionally stricter than a pure visibility restore and
     requires reverification later
 

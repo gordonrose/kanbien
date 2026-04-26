@@ -6,6 +6,8 @@ import type {
   RootUserListInput,
 } from "../../../src/features/rootUsers/domain/types";
 import type { RootUsersRepository } from "../../../src/features/rootUsers/persistence/repository";
+import type { AssetsService } from "../../../src/features/assets";
+import type { ValidateAssetForSubjectInput } from "../../../src/features/assets/domain/types";
 
 function createRootUserRecord(overrides: Partial<RootUserData> = {}): RootUserData {
   const now = new Date("2026-03-29T00:00:00.000Z");
@@ -14,6 +16,9 @@ function createRootUserRecord(overrides: Partial<RootUserData> = {}): RootUserDa
     email: "root@example.test",
     firstName: "Root",
     lastName: "User",
+    profilePictureAssetId: null,
+    profilePictureAltText: null,
+    profilePictureDecorative: false,
     anonymized: false,
     status: "active",
     createdAt: now,
@@ -33,6 +38,11 @@ function createRootUsersRepositoryHarness(initialRecords: RootUserData[] = []) {
         email: input.email,
         firstName: input.firstName,
         lastName: input.lastName,
+        profilePictureAssetId: input.profilePictureAssetId ?? null,
+        profilePictureAltText: input.profilePictureAssetId ? input.profilePictureAltText ?? null : null,
+        profilePictureDecorative: input.profilePictureAssetId
+          ? input.profilePictureDecorative ?? false
+          : false,
       });
       store.set(record.rootUserId, record);
       return record;
@@ -108,6 +118,18 @@ function createRootUsersRepositoryHarness(initialRecords: RootUserData[] = []) {
         email: input.email ?? current.email,
         firstName: input.firstName ?? current.firstName,
         lastName: input.lastName ?? current.lastName,
+        profilePictureAssetId:
+          input.profilePictureAssetId !== undefined
+            ? input.profilePictureAssetId
+            : current.profilePictureAssetId,
+        profilePictureAltText:
+          input.profilePictureAltText !== undefined
+            ? input.profilePictureAltText
+            : current.profilePictureAltText,
+        profilePictureDecorative:
+          input.profilePictureDecorative !== undefined
+            ? input.profilePictureDecorative
+            : current.profilePictureDecorative,
         status: input.status ?? current.status,
         updatedAt: new Date("2026-03-30T00:00:00.000Z"),
       };
@@ -138,6 +160,9 @@ function createRootUsersRepositoryHarness(initialRecords: RootUserData[] = []) {
         email: anonymizedEmail,
         firstName: anonymizedFirstName,
         lastName: anonymizedLastName,
+        profilePictureAssetId: null,
+        profilePictureAltText: null,
+        profilePictureDecorative: false,
         anonymized: true,
         status: "inactive",
         deletedAt: new Date("2026-03-30T00:00:00.000Z"),
@@ -289,6 +314,44 @@ describe("rootUsers service", () => {
     expect(updated.firstName).toBe("Updated");
     expect(updated.status).toBe("inactive");
     expect(updated.updatedAt).toBe("2026-03-30T00:00:00.000Z");
+  });
+
+  it("TC-ROOT-USERS-ASSET-001 links a root-scoped profile picture only after asset validation and returns a display URL", async () => {
+    const validations: ValidateAssetForSubjectInput[] = [];
+    const assetsService = {
+      async validateAssetForSubject(input: ValidateAssetForSubjectInput) {
+        validations.push(input);
+        return {} as Awaited<ReturnType<AssetsService["validateAssetForSubject"]>>;
+      },
+    } as unknown as AssetsService;
+    const harness = createRootUsersRepositoryHarness([createRootUserRecord()]);
+    const service = createRootUsersService(harness.repository, assetsService);
+
+    const updated = await service.updateRootUser({
+      rootUserId: "11111111-1111-1111-1111-111111111111",
+      profilePictureAssetId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      profilePictureAltText: "Root user profile photo",
+      requestedByActorId: "99999999-9999-4999-8999-999999999999",
+    });
+
+    expect(validations).toHaveLength(1);
+    expect(validations[0]).toMatchObject({
+      actor: {
+        actorType: "root",
+        actorId: "99999999-9999-4999-8999-999999999999",
+      },
+      assetId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      scope: {
+        scopeType: "root",
+      },
+      acceptedKinds: ["image"],
+      requiredVisibility: "private",
+      contextualAccessibility: {
+        altText: "Root user profile photo",
+      },
+    });
+    expect(updated.profilePictureAssetId).toBe("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    expect(updated.profilePictureUrl).toBe("/v1/assets/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/content");
   });
 
   it("TC-ROOT-USERS-UNIT-007 soft deletes visible rows and rejects repeat delete or anonymized delete", async () => {

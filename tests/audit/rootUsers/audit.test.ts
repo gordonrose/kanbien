@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { AssetsService } from "../../../src/features/assets";
 import { invokeJson } from "../../harness/http";
 import {
   createRootAuthIntegrationHarness,
@@ -67,6 +68,56 @@ async function loginViaPasswordAndSsh(
 }
 
 describe("rootUsers audit visibility", () => {
+  it("keeps profile-picture link and clear mutations audit-visible", async () => {
+    const assetsService = {
+      validateAssetForSubject: async () => undefined,
+    } as unknown as AssetsService;
+    const harness = createRootAuthIntegrationHarness({ assetsService });
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const created = await invokeJson<RootUserResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        email: "profile-picture.audit.root@example.test",
+        profilePictureAssetId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        profilePictureAltText: "Profile portrait",
+      },
+    });
+    expect(created.status).toBe(201);
+
+    const cleared = await invokeJson<RootUserResponse>(harness.app, {
+      method: "PATCH",
+      path: `/v1/root-users/${created.body.rootUserId}`,
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+      },
+      body: {
+        profilePictureAssetId: null,
+      },
+    });
+    expect(cleared.status).toBe(200);
+
+    expect(harness.getSecurityAuditEvents()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          eventType: "root_user_profile_picture_linked",
+          eventOutcome: "success",
+          rootUserId: identity.rootUserId,
+        }),
+        expect.objectContaining({
+          eventType: "root_user_profile_picture_cleared",
+          eventOutcome: "success",
+          rootUserId: identity.rootUserId,
+        }),
+      ]),
+    );
+  });
+
   it("TC-ROOT-USERS-AUD-001 keeps lifecycle mutations operator-visible through authenticated backend responses", async () => {
     const harness = createRootAuthIntegrationHarness();
     const identity = harness.seedAuthIdentity();

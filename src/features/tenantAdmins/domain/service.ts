@@ -23,6 +23,7 @@ import {
 import type { TenantAdminListResult } from "./types";
 import type { TenantAdminsRepository } from "../persistence/repository";
 import type { TenantAuthOnboardingProvisioner } from "../../tenantAuth";
+import type { AssetsService } from "../../assets";
 
 const VERIFICATION_TTL_SECONDS = 60 * 60 * 24;
 
@@ -82,6 +83,9 @@ export interface TenantAdminsService {
     email: string;
     firstName?: string;
     lastName?: string;
+    profilePictureAssetId?: string | null;
+    profilePictureAltText?: string | null;
+    profilePictureDecorative?: boolean;
     createdByRootAdminUserId: string;
     requestedByActorId: string;
   }): Promise<ReturnType<typeof toTenantAdminSummary>>;
@@ -93,6 +97,9 @@ export interface TenantAdminsService {
     email?: string;
     firstName?: string;
     lastName?: string;
+    profilePictureAssetId?: string | null;
+    profilePictureAltText?: string | null;
+    profilePictureDecorative?: boolean;
     requestedByActorId: string;
   }): Promise<ReturnType<typeof toTenantAdminSummary>>;
   sendTenantAdminVerificationEmail(input: {
@@ -136,6 +143,7 @@ export function createTenantAdminsService(
   notificationEmailWriter: NotificationEmailWriter,
   platformSecurityRepository?: PlatformSecurityRepository,
   tenantAuthOnboardingProvisioner?: TenantAuthOnboardingProvisioner,
+  assetsService?: AssetsService,
 ): TenantAdminsService {
   async function requireVisibleTenant(tenantId: string) {
     const tenant = await visibleTenantsReader.findVisibleTenantById(tenantId);
@@ -163,6 +171,38 @@ export function createTenantAdminsService(
     if (existing && existing.tenantAdminId !== currentTenantAdminId) {
       throw new TenantAdminEmailAlreadyExistsError();
     }
+  }
+
+  async function validateProfilePicture(input: {
+    tenantId: string;
+    assetId: string | null | undefined;
+    altText: string | null | undefined;
+    decorative: boolean | undefined;
+    requestedByActorId: string;
+  }) {
+    if (!input.assetId) {
+      return;
+    }
+    if (!assetsService) {
+      throw new Error("Assets service is required for tenant-admin profile pictures.");
+    }
+    await assetsService.validateAssetForSubject({
+      actor: {
+        actorType: "root",
+        actorId: input.requestedByActorId,
+      },
+      assetId: input.assetId,
+      scope: {
+        scopeType: "tenant",
+        tenantId: input.tenantId,
+      },
+      acceptedKinds: ["image"],
+      requiredVisibility: "private",
+      contextualAccessibility: {
+        altText: input.altText,
+        decorative: input.decorative,
+      },
+    });
   }
 
   async function issueVerificationEmail(input: {
@@ -245,12 +285,22 @@ export function createTenantAdminsService(
     async createTenantAdmin(input) {
       await requireVisibleTenant(input.tenantId);
       await ensureUniqueActiveEmail(input.tenantId, input.email);
+      await validateProfilePicture({
+        tenantId: input.tenantId,
+        assetId: input.profilePictureAssetId,
+        altText: input.profilePictureAltText,
+        decorative: input.profilePictureDecorative,
+        requestedByActorId: input.requestedByActorId,
+      });
       const created = await repository.create({
         tenantAdminId: randomUUID(),
         tenantId: input.tenantId,
         email: input.email,
         firstName: input.firstName?.trim() ?? null,
         lastName: input.lastName?.trim() ?? null,
+        profilePictureAssetId: input.profilePictureAssetId,
+        profilePictureAltText: input.profilePictureAssetId ? input.profilePictureAltText ?? null : null,
+        profilePictureDecorative: input.profilePictureAssetId ? input.profilePictureDecorative ?? false : false,
         createdByRootAdminUserId: input.createdByRootAdminUserId,
       });
       return issueVerificationEmail({
@@ -282,12 +332,38 @@ export function createTenantAdminsService(
       if (emailChanged) {
         await repository.invalidateActiveVerificationTokens(current.tenantAdminId);
       }
+      const nextProfilePictureAssetId =
+        input.profilePictureAssetId !== undefined
+          ? input.profilePictureAssetId
+          : current.profilePictureAssetId;
+      const nextProfilePictureAltText =
+        nextProfilePictureAssetId === null
+          ? null
+          : input.profilePictureAltText !== undefined
+            ? input.profilePictureAltText
+            : current.profilePictureAltText;
+      const nextProfilePictureDecorative =
+        nextProfilePictureAssetId === null
+          ? false
+          : input.profilePictureDecorative !== undefined
+            ? input.profilePictureDecorative
+            : current.profilePictureDecorative;
+      await validateProfilePicture({
+        tenantId: input.tenantId,
+        assetId: nextProfilePictureAssetId,
+        altText: nextProfilePictureAltText,
+        decorative: nextProfilePictureDecorative,
+        requestedByActorId: input.requestedByActorId,
+      });
       const updated = await repository.update({
         tenantId: input.tenantId,
         tenantAdminId: input.tenantAdminId,
         email: input.email,
         firstName: input.firstName?.trim(),
         lastName: input.lastName?.trim(),
+        profilePictureAssetId: input.profilePictureAssetId,
+        profilePictureAltText: nextProfilePictureAssetId === null ? null : input.profilePictureAltText,
+        profilePictureDecorative: nextProfilePictureAssetId === null ? false : input.profilePictureDecorative,
         resetVerification: emailChanged,
       });
       if (updated.emailVerificationStatus === "pending") {

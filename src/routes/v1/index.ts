@@ -44,16 +44,17 @@ const tenantAuthFeature = createTenantAuthFeature(
   platformSecurityRepository,
   tenantConfigurationFeature.policyResolver,
 );
+const assetsFeature = createAssetsFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  platformSecurityRepository,
+);
 const tenantAdminsFeature = createTenantAdminsFeature(
   dbPool,
   rootRolesFeature.capabilityChecker,
   platformSecurityRepository,
   tenantAuthFeature.onboardingProvisioner,
-);
-const assetsFeature = createAssetsFeature(
-  dbPool,
-  rootRolesFeature.capabilityChecker,
-  platformSecurityRepository,
+  assetsFeature.assetsService,
 );
 const publicReadRateLimit = createRateLimitMiddleware({
   enabled: env.platformSecurity.enabled,
@@ -106,6 +107,7 @@ v1Router.use(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,
+    assetsFeature.assetsService,
   ),
 );
 v1Router.use(

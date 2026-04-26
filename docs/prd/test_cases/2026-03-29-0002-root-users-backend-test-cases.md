@@ -278,3 +278,17 @@
   Suggested Test Folder: `tests/unit/rootUsers/`
   Coverage:
   - list totals clamp to the documented `10000+` threshold deterministically
+
+- Scenario: root-user profile-picture links validate asset readiness and root scope
+  Test Case ID: `TC-ROOT-USERS-ASSET-001`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/rootUsers/`
+  Coverage:
+  - create/update calls the public `assets.validateAssetForSubject` seam before
+    persisting a linked profile-picture asset
+  - linked asset must be root-scoped, private, ready image content
+  - response includes `profilePictureAssetId` and same-origin
+    `profilePictureUrl`
+  - clearing the asset clears contextual accessibility metadata
+  - link and clear mutations emit explicit profile-picture security audit
+    events through the protected route

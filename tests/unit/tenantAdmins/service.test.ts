@@ -13,6 +13,8 @@ import {
   createTenantAdminRecord,
   createVisibleTenantsReader,
 } from "../../helpers/tenantAdminsHarness";
+import type { AssetsService } from "../../../src/features/assets";
+import type { ValidateAssetForSubjectInput } from "../../../src/features/assets/domain/types";
 
 describe("tenantAdmins service", () => {
   it("TC-TENANT-ADMINS-UNIT-001 creates tenant admins with normalized email and tenant-scoped uniqueness", async () => {
@@ -82,6 +84,61 @@ describe("tenantAdmins service", () => {
     expect(updated.emailVerificationStatus).toBe("pending");
     expect(updated.emailVerifiedAt).toBeNull();
     expect(updated.lastVerificationEmailRequestedAt).not.toBeNull();
+  });
+
+  it("TC-TENANT-ADMINS-ASSET-001 links a tenant-admin profile picture after tenant-scoped asset validation and returns a display URL", async () => {
+    const validations: ValidateAssetForSubjectInput[] = [];
+    const assetsService = {
+      async validateAssetForSubject(input: ValidateAssetForSubjectInput) {
+        validations.push(input);
+        return {} as Awaited<ReturnType<AssetsService["validateAssetForSubject"]>>;
+      },
+    } as unknown as AssetsService;
+    const repository = createInMemoryTenantAdminsRepository([
+      createTenantAdminRecord({
+        emailVerificationStatus: "verified",
+        emailVerifiedAt: new Date("2026-04-08T09:00:00.000Z"),
+      }),
+    ]);
+    const service = createTenantAdminsService(
+      repository,
+      createVisibleTenantsReader(),
+      createNotificationDeliveryService(
+        createInMemoryNotificationDeliveryRepository(),
+        new FakeNotificationEmailProvider(),
+      ),
+      undefined,
+      createNoopTenantAuthOnboardingProvisioner(),
+      assetsService,
+    );
+
+    const updated = await service.updateTenantAdminProfile({
+      tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      tenantAdminId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      profilePictureAssetId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      profilePictureAltText: "Tenant admin profile photo",
+      requestedByActorId: "11111111-1111-1111-1111-111111111111",
+    });
+
+    expect(validations).toHaveLength(1);
+    expect(validations[0]).toMatchObject({
+      actor: {
+        actorType: "root",
+        actorId: "11111111-1111-1111-1111-111111111111",
+      },
+      assetId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      scope: {
+        scopeType: "tenant",
+        tenantId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      },
+      acceptedKinds: ["image"],
+      requiredVisibility: "private",
+      contextualAccessibility: {
+        altText: "Tenant admin profile photo",
+      },
+    });
+    expect(updated.profilePictureAssetId).toBe("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+    expect(updated.profilePictureUrl).toBe("/v1/assets/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/content");
   });
 
   it("TC-TENANT-ADMINS-UNIT-002 and TC-TENANT-ADMINS-UNIT-003 read one tenant admin exactly and list tenant-scoped results deterministically", async () => {

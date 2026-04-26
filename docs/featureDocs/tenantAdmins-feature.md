@@ -15,6 +15,8 @@ shared tenant authentication. It owns:
 - public redemption of tenant-admin verification tokens
 - soft deletion and reactivation
 - feature-owned durable verification-token records linked to tenant-admins
+- optional tenant-scoped profile-picture asset links and same-origin display
+  URLs
 
 This feature does not own login, password setup, password reset, tenant
 sessions, or tenant selection. Those concerns belong to the shared
@@ -67,6 +69,7 @@ The feature entry point expects:
 - public seams from:
   - `tenants`
   - `notificationDelivery`
+  - `assets`
   - shared `src/lib/tokens`
 
 `integration.ts` owns repository and service wiring.
@@ -82,6 +85,8 @@ and audit coordination behavior.
   email workflows
 - `notificationDelivery` sends and resends verification emails while keeping
   delivery persistence and attempt history feature-owned there
+- `assets` validates optional profile-picture asset links after
+  `tenantAdmins` has authorized the tenant-admin entity relationship
 - `src/lib/tokens` provides shared one-time-token generation, parsing, and
   verification mechanics
 
@@ -98,6 +103,7 @@ The migration runner scans:
 This feature currently contributes:
 
 - `src/features/tenantAdmins/persistence/migrations/0008_create_tenant_admins.sql`
+- `src/features/tenantAdmins/persistence/migrations/0046_add_tenant_admin_profile_picture_asset.sql`
 
 ## Relationship To Root Roles
 
@@ -153,6 +159,10 @@ Example tenant-admin response:
   "email": "tenant.admin@example.com",
   "firstName": "Tenant",
   "lastName": "Admin",
+  "profilePictureAssetId": null,
+  "profilePictureUrl": null,
+  "profilePictureAltText": null,
+  "profilePictureDecorative": false,
   "emailVerificationStatus": "pending",
   "emailVerifiedAt": null,
   "lastVerificationEmailRequestedAt": "2026-04-08T14:30:00.000Z",
@@ -332,6 +342,7 @@ depending on mutable delivery or related records alone.
 ## Audit And Security Notes
 
 - successful protected mutations write operator-visible security audit events
+- profile-picture link and clear mutations write explicit security audit events
 - denied protected actions rely on shared authz middleware audit behavior
 - public verification redemption writes success and failure audit events
 - protected routes require root-user authentication and mapped root capability

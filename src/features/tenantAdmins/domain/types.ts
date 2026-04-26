@@ -10,6 +10,9 @@ export interface TenantAdminData {
   normalizedEmail: string;
   firstName: string | null;
   lastName: string | null;
+  profilePictureAssetId: string | null;
+  profilePictureAltText: string | null;
+  profilePictureDecorative: boolean;
   emailVerificationStatus: TenantAdminEmailVerificationStatus;
   emailVerifiedAt: Date | null;
   lastVerificationEmailRequestedAt: Date | null;

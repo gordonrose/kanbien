@@ -17,6 +17,14 @@
       "kind": "domain-service",
       "stability": "stable",
       "description": "Public asset seam for future consuming features to validate, read, and link assets without importing storage or persistence internals."
+    },
+    {
+      "seamId": "asset-error",
+      "symbol": "AssetError",
+      "path": "index.ts",
+      "kind": "contract-error",
+      "stability": "stable",
+      "description": "Public error base class for consuming feature routers that surface asset validation failures through their route family."
     }
   ],
   "dependsOn": [],

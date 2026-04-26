@@ -10,6 +10,7 @@ import { env } from "../../../config/env";
 import { createRateLimitMiddleware } from "../../../lib/security/rateLimit";
 import type { PlatformSecurityRepository } from "../../../lib/security/repository";
 import { NotificationDeliveryError } from "../../notificationDelivery";
+import { AssetError } from "../../assets";
 import {
   createTenantAdminBodySchema,
   listTenantAdminsQuerySchema,
@@ -73,6 +74,23 @@ async function writeOperatorAuditEvent(
   });
 }
 
+async function writeProfilePictureAuditEvent(
+  request: Request,
+  platformSecurityRepository: PlatformSecurityRepository | undefined,
+  assetId: string | null | undefined,
+) {
+  if (assetId === undefined) {
+    return;
+  }
+  await writeOperatorAuditEvent(
+    request,
+    platformSecurityRepository,
+    assetId === null
+      ? "tenant_admin_profile_picture_cleared"
+      : "tenant_admin_profile_picture_linked",
+  );
+}
+
 export function createTenantAdminsRouter(
   service: TenantAdminsService,
   capabilityChecker: RootCapabilityChecker,
@@ -131,6 +149,11 @@ export function createTenantAdminsRouter(
         requestedByActorId: session.rootUserId,
       });
       await writeOperatorAuditEvent(request, platformSecurityRepository, "tenant_admin_created");
+      await writeProfilePictureAuditEvent(
+        request,
+        platformSecurityRepository,
+        body.profilePictureAssetId,
+      );
       await writeOperatorAuditEvent(
         request,
         platformSecurityRepository,
@@ -188,6 +211,11 @@ export function createTenantAdminsRouter(
         requestedByActorId: getRequiredRootSessionContext(request).rootUserId,
       });
       await writeOperatorAuditEvent(request, platformSecurityRepository, "tenant_admin_updated");
+      await writeProfilePictureAuditEvent(
+        request,
+        platformSecurityRepository,
+        body.profilePictureAssetId,
+      );
       if (result.emailVerificationStatus === "pending") {
         await writeOperatorAuditEvent(
           request,
@@ -304,7 +332,7 @@ export function createTenantAdminsRouter(
   });
 
   router.use((error: unknown, _request: Request, response: Response, next: NextFunction) => {
-    if (error instanceof TenantAdminError || error instanceof NotificationDeliveryError) {
+    if (error instanceof TenantAdminError || error instanceof NotificationDeliveryError || error instanceof AssetError) {
       response.status(error.status).json({
         code: error.code,
         message: error.message,

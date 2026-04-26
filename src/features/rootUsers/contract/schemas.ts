@@ -3,6 +3,7 @@ import { z } from "zod";
 const uuidSchema = z.string().uuid();
 const trimmedNonEmptyString = z.string().trim().min(1);
 const normalizedEmailSchema = z.string().trim().email().transform((value) => value.toLowerCase());
+const nullableTrimmedNonEmptyString = z.string().trim().min(1).nullable();
 const isoDateTimeSchema = z.string().datetime({ offset: true });
 const prefixSchema = z.string().trim().min(3);
 const pageSchema = z.coerce.number().int().min(1).default(1);
@@ -15,6 +16,9 @@ export const createRootUserBodySchema = strictObject({
   email: normalizedEmailSchema,
   firstName: trimmedNonEmptyString.optional(),
   lastName: trimmedNonEmptyString.optional(),
+  profilePictureAssetId: uuidSchema.nullable().optional(),
+  profilePictureAltText: nullableTrimmedNonEmptyString.optional(),
+  profilePictureDecorative: z.boolean().optional(),
 });
 
 export const getRootUserParamsSchema = strictObject({ rootUserId: uuidSchema });
@@ -60,6 +64,9 @@ export const updateRootUserBodySchema = strictObject({
   email: normalizedEmailSchema.optional(),
   firstName: trimmedNonEmptyString.optional(),
   lastName: trimmedNonEmptyString.optional(),
+  profilePictureAssetId: uuidSchema.nullable().optional(),
+  profilePictureAltText: nullableTrimmedNonEmptyString.optional(),
+  profilePictureDecorative: z.boolean().optional(),
   status: statusSchema.optional(),
 }).refine((value) => Object.keys(value).length > 0, {
   message: "At least one field must be supplied.",

@@ -4,6 +4,7 @@ import type { PlatformSecurityRepository } from "../../lib/security/repository";
 import { createNotificationEmailWriter } from "../notificationDelivery";
 import type { TenantAuthOnboardingProvisioner } from "../tenantAuth";
 import { createVisibleTenantsReader } from "../tenants";
+import type { AssetsService } from "../assets";
 import { createTenantAdminsService } from "./domain/service";
 import { createPostgresTenantAdminsRepository } from "./persistence/postgresRepository";
 import {
@@ -16,6 +17,7 @@ export function createTenantAdminsFeature(
   capabilityChecker: RootCapabilityChecker,
   platformSecurityRepository: PlatformSecurityRepository,
   tenantAuthOnboardingProvisioner: TenantAuthOnboardingProvisioner,
+  assetsService?: AssetsService,
 ) {
   const repository = createPostgresTenantAdminsRepository(dbPool);
   const service = createTenantAdminsService(
@@ -24,6 +26,7 @@ export function createTenantAdminsFeature(
     createNotificationEmailWriter(dbPool),
     platformSecurityRepository,
     tenantAuthOnboardingProvisioner,
+    assetsService,
   );
 
   return {

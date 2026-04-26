@@ -54,6 +54,9 @@ export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersReposi
       email: record.email,
       firstName: record.first_name ?? undefined,
       lastName: record.last_name ?? undefined,
+      profilePictureAssetId: record.profile_picture_asset_id,
+      profilePictureAltText: record.profile_picture_alt_text,
+      profilePictureDecorative: record.profile_picture_decorative,
       anonymized: record.anonymized,
       status: record.status,
       createdAt: record.created_at,
@@ -129,13 +132,16 @@ export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersReposi
           normalized_first_name,
           last_name,
           normalized_last_name,
+          profile_picture_asset_id,
+          profile_picture_alt_text,
+          profile_picture_decorative,
           anonymized,
           status,
           created_at,
           updated_at,
           deleted_at
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $7, false, 'active', NOW(), NOW(), NULL)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, false, 'active', NOW(), NOW(), NULL)
         RETURNING *
       `, [
         input.rootUserId,
@@ -145,6 +151,9 @@ export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersReposi
         normalizeOptionalName(input.firstName),
         input.lastName ?? null,
         normalizeOptionalName(input.lastName),
+        input.profilePictureAssetId ?? null,
+        input.profilePictureAssetId ? input.profilePictureAltText ?? null : null,
+        input.profilePictureAssetId ? input.profilePictureDecorative ?? false : false,
       ]);
       return toRootUserData(result.rows[0]);
     },
@@ -184,6 +193,18 @@ export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersReposi
         values.push(normalizeOptionalName(input.lastName));
         assignments.push(`normalized_last_name = $${values.length}`);
       }
+      if (input.profilePictureAssetId !== undefined) {
+        values.push(input.profilePictureAssetId);
+        assignments.push(`profile_picture_asset_id = $${values.length}`);
+      }
+      if (input.profilePictureAltText !== undefined) {
+        values.push(input.profilePictureAltText);
+        assignments.push(`profile_picture_alt_text = $${values.length}`);
+      }
+      if (input.profilePictureDecorative !== undefined) {
+        values.push(input.profilePictureDecorative);
+        assignments.push(`profile_picture_decorative = $${values.length}`);
+      }
       if (input.status !== undefined) { values.push(input.status); assignments.push(`status = $${values.length}`); }
       assignments.push(`updated_at = NOW()`);
       values.push(input.rootUserId);
@@ -204,6 +225,9 @@ export function createPostgresRootUsersRepository(dbPool: Pool): RootUsersReposi
           normalized_first_name = $5,
           last_name = $6,
           normalized_last_name = $7,
+          profile_picture_asset_id = NULL,
+          profile_picture_alt_text = NULL,
+          profile_picture_decorative = false,
           anonymized = true,
           status = 'inactive',
           deleted_at = NOW(),

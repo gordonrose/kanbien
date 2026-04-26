@@ -6,6 +6,10 @@ import type {
   TenantAdminVerificationRedeemResult,
 } from "../contract/types";
 
+function assetContentUrl(assetId: string | null): string | null {
+  return assetId ? `/v1/assets/${assetId}/content` : null;
+}
+
 export function toTenantAdminSummary(data: TenantAdminData): TenantAdminSummary {
   return {
     tenantAdminId: data.tenantAdminId,
@@ -13,6 +17,10 @@ export function toTenantAdminSummary(data: TenantAdminData): TenantAdminSummary 
     email: data.email,
     firstName: data.firstName,
     lastName: data.lastName,
+    profilePictureAssetId: data.profilePictureAssetId,
+    profilePictureUrl: assetContentUrl(data.profilePictureAssetId),
+    profilePictureAltText: data.profilePictureAltText,
+    profilePictureDecorative: data.profilePictureDecorative,
     emailVerificationStatus: data.emailVerificationStatus,
     emailVerifiedAt: data.emailVerifiedAt?.toISOString() ?? null,
     lastVerificationEmailRequestedAt: data.lastVerificationEmailRequestedAt?.toISOString() ?? null,

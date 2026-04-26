@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const uuidSchema = z.string().uuid();
 const trimmedNonEmptyString = z.string().trim().min(1);
+const nullableTrimmedNonEmptyString = z.string().trim().min(1).nullable();
 const emailSchema = z.email().transform((value) => value.trim().toLowerCase());
 const pageSchema = z.coerce.number().int().min(1).default(1);
 const pageSizeSchema = z.coerce.number().int().min(1).max(100).default(25);
@@ -23,6 +24,9 @@ export const createTenantAdminBodySchema = strictObject({
   email: emailSchema,
   firstName: trimmedNonEmptyString.optional(),
   lastName: trimmedNonEmptyString.optional(),
+  profilePictureAssetId: uuidSchema.nullable().optional(),
+  profilePictureAltText: nullableTrimmedNonEmptyString.optional(),
+  profilePictureDecorative: z.boolean().optional(),
 });
 
 export const listTenantAdminsQuerySchema = strictObject({
@@ -44,6 +48,9 @@ export const updateTenantAdminBodySchema = strictObject({
   email: emailSchema.optional(),
   firstName: trimmedNonEmptyString.optional(),
   lastName: trimmedNonEmptyString.optional(),
+  profilePictureAssetId: uuidSchema.nullable().optional(),
+  profilePictureAltText: nullableTrimmedNonEmptyString.optional(),
+  profilePictureDecorative: z.boolean().optional(),
 }).refine((value) => Object.keys(value).length > 0, {
   message: "At least one field must be supplied.",
 });

@@ -20,7 +20,12 @@ import type {
   RootUserData,
   UpdateRootUserInput,
 } from "./types";
+import type { AssetsService } from "../../assets";
 import type { RootUsersRepository } from "../persistence/repository";
+
+function assetContentUrl(assetId: string | null): string | null {
+  return assetId ? `/v1/assets/${assetId}/content` : null;
+}
 
 function toCountValue(value: number): CountValue {
   return value > 10000 ? "10000+" : value;
@@ -32,6 +37,10 @@ function toDomain(record: RootUserData): RootUser {
     email: record.email,
     firstName: record.firstName,
     lastName: record.lastName,
+    profilePictureAssetId: record.profilePictureAssetId,
+    profilePictureUrl: assetContentUrl(record.profilePictureAssetId),
+    profilePictureAltText: record.profilePictureAltText,
+    profilePictureDecorative: record.profilePictureDecorative,
     anonymized: record.anonymized,
     status: record.status,
     createdAt: record.createdAt.toISOString(),
@@ -64,11 +73,52 @@ export interface RootUsersService {
   reActivateRootUser(input: ReActivateRootUserInput): Promise<RootUser>;
 }
 
-export function createRootUsersService(repository: RootUsersRepository): RootUsersService {
+async function validateProfilePicture(input: {
+  assetsService?: AssetsService;
+  assetId: string | null | undefined;
+  altText: string | null | undefined;
+  decorative: boolean | undefined;
+  requestedByActorId: string | undefined;
+}) {
+  if (!input.assetId) {
+    return;
+  }
+  if (!input.assetsService || !input.requestedByActorId) {
+    throw new Error("Assets service and requesting actor are required for root-user profile pictures.");
+  }
+  await input.assetsService.validateAssetForSubject({
+    actor: {
+      actorType: "root",
+      actorId: input.requestedByActorId,
+    },
+    assetId: input.assetId,
+    scope: {
+      scopeType: "root",
+    },
+    acceptedKinds: ["image"],
+    requiredVisibility: "private",
+    contextualAccessibility: {
+      altText: input.altText,
+      decorative: input.decorative,
+    },
+  });
+}
+
+export function createRootUsersService(
+  repository: RootUsersRepository,
+  assetsService?: AssetsService,
+): RootUsersService {
   return {
     async createRootUser(input) {
       const existing = await repository.findNonDeletedByEmail(input.email);
       if (existing) throw new RootUserEmailAlreadyExistsError();
+      await validateProfilePicture({
+        assetsService,
+        assetId: input.profilePictureAssetId,
+        altText: input.profilePictureAltText,
+        decorative: input.profilePictureDecorative,
+        requestedByActorId: input.requestedByActorId,
+      });
       return toDomain(await repository.create({ rootUserId: randomUUID(), ...input }));
     },
     async getRootUser(input) {
@@ -96,7 +146,38 @@ export function createRootUsersService(repository: RootUsersRepository): RootUse
         const collision = await repository.findNonDeletedByEmail(input.email);
         if (collision && collision.rootUserId !== input.rootUserId) throw new RootUserEmailAlreadyExistsError();
       }
-      return toDomain(await repository.update(input));
+      const nextProfilePictureAssetId =
+        input.profilePictureAssetId !== undefined
+          ? input.profilePictureAssetId
+          : current.profilePictureAssetId;
+      const nextProfilePictureAltText =
+        nextProfilePictureAssetId === null
+          ? null
+          : input.profilePictureAltText !== undefined
+            ? input.profilePictureAltText
+            : current.profilePictureAltText;
+      const nextProfilePictureDecorative =
+        nextProfilePictureAssetId === null
+          ? false
+          : input.profilePictureDecorative !== undefined
+            ? input.profilePictureDecorative
+            : current.profilePictureDecorative;
+      await validateProfilePicture({
+        assetsService,
+        assetId: nextProfilePictureAssetId,
+        altText: nextProfilePictureAltText,
+        decorative: nextProfilePictureDecorative,
+        requestedByActorId: input.requestedByActorId,
+      });
+      return toDomain(await repository.update({
+        ...input,
+        ...(nextProfilePictureAssetId === null
+          ? {
+              profilePictureAltText: null,
+              profilePictureDecorative: false,
+            }
+          : {}),
+      }));
     },
     async deleteRootUser(input) {
       const current = await repository.findAnyById(input.rootUserId);

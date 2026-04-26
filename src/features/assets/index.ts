@@ -7,3 +7,4 @@ export type {
   AssetKind,
   AssetVisibility,
 } from "./domain/types";
+export { AssetError } from "./contract/errors";

@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
 import { Router, type NextFunction, type Request, type Response } from "express";
 import { ZodError } from "zod";
+import { getRequiredRootSessionContext } from "../../../lib/auth/requestContext";
 import {
   createRequireRootCapability,
   type RootCapabilityChecker,
@@ -19,6 +21,7 @@ import {
   updateRootUserParamsSchema,
 } from "../contract/schemas";
 import { InvalidRequestError, RootUserError } from "../contract/errors";
+import { AssetError } from "../../assets";
 import type { RootUsersService } from "../domain/service";
 
 function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknown): T {
@@ -43,6 +46,44 @@ function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknow
     }
     throw error;
   }
+}
+
+async function writeOperatorAuditEvent(
+  request: Request,
+  platformSecurityRepository: PlatformSecurityRepository | undefined,
+  eventType: string,
+) {
+  if (!platformSecurityRepository) {
+    return;
+  }
+  const session = getRequiredRootSessionContext(request);
+  await platformSecurityRepository.createSecurityAuditEvent({
+    eventId: randomUUID(),
+    authPrincipalId: session.authPrincipalId,
+    rootUserId: session.rootUserId,
+    eventType,
+    eventOutcome: "success",
+    ipAddress: request.ip,
+    userAgent: request.header("user-agent") ?? undefined,
+    occurredAt: new Date(),
+  });
+}
+
+async function writeProfilePictureAuditEvent(
+  request: Request,
+  platformSecurityRepository: PlatformSecurityRepository | undefined,
+  assetId: string | null | undefined,
+) {
+  if (assetId === undefined) {
+    return;
+  }
+  await writeOperatorAuditEvent(
+    request,
+    platformSecurityRepository,
+    assetId === null
+      ? "root_user_profile_picture_cleared"
+      : "root_user_profile_picture_linked",
+  );
 }
 
 export function createRootUsersRouter(
@@ -93,7 +134,20 @@ export function createRootUsersRouter(
     authzOptions,
   );
 
-  router.post("/", requireCreate, async (req, res, next) => { try { res.status(201).json(await service.createRootUser(parseOrThrow(createRootUserBodySchema, req.body))); } catch (e) { next(e); } });
+  router.post("/", requireCreate, async (req, res, next) => { try {
+    const session = getRequiredRootSessionContext(req);
+    const body = parseOrThrow(createRootUserBodySchema, req.body);
+    const result = await service.createRootUser({
+      ...body,
+      requestedByActorId: session.rootUserId,
+    });
+    await writeProfilePictureAuditEvent(
+      req,
+      platformSecurityRepository,
+      body.profilePictureAssetId,
+    );
+    res.status(201).json(result);
+  } catch (e) { next(e); } });
   router.get("/active", requireReadActive, async (req, res, next) => { try {
     const query = parseOrThrow(listActiveRootUsersQuerySchema, req.query);
     res.status(200).json(await service.listActiveRootUsers({ page: query.page, pageSize: query.pageSize, orderBy: query.orderBy, orderDirection: query.orderDirection, filters: { emailPrefix: query.emailPrefix, firstNamePrefix: query.firstNamePrefix, lastNamePrefix: query.lastNamePrefix, createdAtFrom: query.createdAtFrom, createdAtTo: query.createdAtTo, updatedAtFrom: query.updatedAtFrom, updatedAtTo: query.updatedAtTo } }));
@@ -111,13 +165,28 @@ export function createRootUsersRouter(
     res.status(200).json(await service.listRootUsers({ page: query.page, pageSize: query.pageSize, orderBy: query.orderBy, orderDirection: query.orderDirection, filters: { emailPrefix: query.emailPrefix, firstNamePrefix: query.firstNamePrefix, lastNamePrefix: query.lastNamePrefix, createdAtFrom: query.createdAtFrom, createdAtTo: query.createdAtTo, updatedAtFrom: query.updatedAtFrom, updatedAtTo: query.updatedAtTo, deletedAtFrom: query.deletedAtFrom, deletedAtTo: query.deletedAtTo, status: query.status } }));
   } catch (e) { next(e); } });
   router.get("/:rootUserId", requireReadVisible, async (req, res, next) => { try { res.status(200).json(await service.getRootUser(parseOrThrow(getRootUserParamsSchema, req.params))); } catch (e) { next(e); } });
-  router.patch("/:rootUserId", requireUpdate, async (req, res, next) => { try { const params = parseOrThrow(updateRootUserParamsSchema, req.params); const body = parseOrThrow(updateRootUserBodySchema, req.body); res.status(200).json(await service.updateRootUser({ ...params, ...body })); } catch (e) { next(e); } });
+  router.patch("/:rootUserId", requireUpdate, async (req, res, next) => { try {
+    const session = getRequiredRootSessionContext(req);
+    const params = parseOrThrow(updateRootUserParamsSchema, req.params);
+    const body = parseOrThrow(updateRootUserBodySchema, req.body);
+    const result = await service.updateRootUser({
+      ...params,
+      ...body,
+      requestedByActorId: session.rootUserId,
+    });
+    await writeProfilePictureAuditEvent(
+      req,
+      platformSecurityRepository,
+      body.profilePictureAssetId,
+    );
+    res.status(200).json(result);
+  } catch (e) { next(e); } });
   router.delete("/:rootUserId", requireDelete, async (req, res, next) => { try { res.status(200).json(await service.deleteRootUser(parseOrThrow(deleteRootUserParamsSchema, req.params))); } catch (e) { next(e); } });
   router.post("/:rootUserId/remove", requireRemove, async (req, res, next) => { try { res.status(200).json(await service.removeRootUser(parseOrThrow(removeRootUserParamsSchema, req.params))); } catch (e) { next(e); } });
   router.post("/:rootUserId/reactivate", requireReactivate, async (req, res, next) => { try { res.status(200).json(await service.reActivateRootUser(parseOrThrow(reActivateRootUserParamsSchema, req.params))); } catch (e) { next(e); } });
 
   router.use((error: unknown, _req: Request, res: Response, next: NextFunction) => {
-    if (error instanceof RootUserError) {
+    if (error instanceof RootUserError || error instanceof AssetError) {
       res.status(error.status).json({ code: error.code, message: error.message, ...(error.details ? { details: error.details } : {}) });
       return;
     }
