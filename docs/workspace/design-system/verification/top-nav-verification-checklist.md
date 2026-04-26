@@ -30,10 +30,10 @@
   The full canonical `top-nav` state set now has generated render routes under
   `/design-system/canonical-renderings/top-nav/:ref`, while exploration
   controls remain on `/design-system/exploration/top-nav`. The canonical
-  `TRP-*` set remains Playwright-locked against the legacy component capture
-  route for screenshot stability, and generated-route tests now prove the
-  launcher chain, render surface ownership, scoped theme/magnification/RTL
-  behavior, and optional mobile-menu/profile absence variants.
+  `TRP-*` screenshot matrix and generated-route tests now run against the
+  generated render routes, proving the launcher chain, render surface
+  ownership, scoped theme/magnification/RTL behavior, overflow and mobile
+  states, and optional mobile-menu/profile absence variants.
 
 ## Source Verification
 
@@ -66,9 +66,8 @@
   human sign-off completed through `/design-system/canonicals/top-nav`; the
   full canonical snapshot set is stored under
   `tests/visual/__snapshots__/designSystem/canonicals/navigation/topNav.spec.ts/`
-  and continues to use the stable component capture route. Generated canonical
-  render proof now runs against `/design-system/canonical-renderings/top-nav/:ref`,
-  with the broader host/surface posture tracked in
+  and now runs against `/design-system/canonical-renderings/top-nav/:ref`.
+  The broader host/surface posture is tracked in
   `docs/workspace/design-system/verification/canonical-host-surface-isolation-audit.md`
 
 ## Prevention-Derived Checks

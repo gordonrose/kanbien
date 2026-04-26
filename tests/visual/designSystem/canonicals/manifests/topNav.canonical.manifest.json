@@ -1,115 +1,115 @@
 {
   "family": "top-nav",
-  "surface": "/design-system/components/top-nav",
-  "canonicalLauncher": "/design-system/canonicals/top-nav",
+  "surface": "/design-system/canonical-renderings/top-nav",
+  "canonicalLauncher": "/design-system/canonical-renderings/top-nav",
   "batch": "full-canonical-set",
   "states": [
     {
       "refId": "TRP-001",
       "label": "desktop default",
-      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-001",
       "snapshot": "trp-001-desktop-default.png"
     },
     {
       "refId": "TRP-002",
       "label": "desktop overflow",
-      "route": "/design-system/components/top-nav?width=880&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-002",
       "snapshot": "trp-002-desktop-overflow.png"
     },
     {
       "refId": "TRP-003",
       "label": "desktop threshold before mobile",
-      "route": "/design-system/components/top-nav?width=760&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-003",
       "snapshot": "trp-003-threshold-before-mobile.png"
     },
     {
       "refId": "TRP-004",
       "label": "mobile shell closed",
-      "route": "/design-system/components/top-nav?width=560&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-004",
       "snapshot": "trp-004-mobile-shell-closed.png"
     },
     {
       "refId": "TRP-005",
       "label": "mobile shell open",
-      "route": "/design-system/components/top-nav?width=560&fixture=standard&open=mobile&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-005",
       "snapshot": "trp-005-mobile-shell-open.png"
     },
     {
       "refId": "TRP-006",
       "label": "desktop profile menu open",
-      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=profile&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-006",
       "snapshot": "trp-006-profile-menu-open.png"
     },
     {
       "refId": "TRP-007",
       "label": "desktop overflow menu open",
-      "route": "/design-system/components/top-nav?width=880&fixture=standard&open=overflow&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-007",
       "snapshot": "trp-007-overflow-menu-open.png"
     },
     {
       "refId": "TRP-008",
       "label": "rtl desktop",
-      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=rtl&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-008",
       "snapshot": "trp-008-rtl-desktop.png"
     },
     {
       "refId": "TRP-009",
       "label": "rtl mobile",
-      "route": "/design-system/components/top-nav?width=560&fixture=standard&open=mobile&theme=normal&dir=rtl&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-009",
       "snapshot": "trp-009-rtl-mobile.png"
     },
     {
       "refId": "TRP-010",
       "label": "magnified desktop",
-      "route": "/design-system/components/top-nav?width=880&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=100&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-010",
       "snapshot": "trp-010-magnified-desktop.png"
     },
     {
       "refId": "TRP-011",
       "label": "long brand label",
-      "route": "/design-system/components/top-nav?width=1120&fixture=long-labels&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-011",
       "snapshot": "trp-011-long-brand-label.png"
     },
     {
       "refId": "TRP-012",
       "label": "long primary destination label",
-      "route": "/design-system/components/top-nav?width=880&fixture=long-labels&open=overflow&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-012",
       "snapshot": "trp-012-long-primary-label.png"
     },
     {
       "refId": "TRP-013",
       "label": "long profile trigger or menu label",
-      "route": "/design-system/components/top-nav?width=1120&fixture=long-labels&open=profile&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-013",
       "snapshot": "trp-013-long-profile-label.png"
     },
     {
       "refId": "TRP-014A",
       "label": "theme variant normal",
-      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-014A",
       "snapshot": "trp-014a-theme-normal.png"
     },
     {
       "refId": "TRP-014B",
       "label": "theme variant dark",
-      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=dark&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-014B",
       "snapshot": "trp-014b-theme-dark.png"
     },
     {
       "refId": "TRP-014C",
       "label": "theme variant desert",
-      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=desert&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-014C",
       "snapshot": "trp-014c-theme-desert.png"
     },
     {
       "refId": "TRP-015A",
       "label": "primary-colour inheritance indigo",
-      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-015A",
       "snapshot": "trp-015a-accent-indigo.png"
     },
     {
       "refId": "TRP-015B",
       "label": "primary-colour inheritance violet",
-      "route": "/design-system/components/top-nav?width=1120&fixture=standard&open=closed&theme=normal&dir=ltr&zoom=0&accent=%237c3aed",
+      "route": "/design-system/canonical-renderings/top-nav/TRP-015B",
       "snapshot": "trp-015b-accent-violet.png"
     }
   ]

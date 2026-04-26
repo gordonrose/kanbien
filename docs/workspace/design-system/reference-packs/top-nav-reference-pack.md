@@ -82,8 +82,8 @@ This pack turns them into concrete comparison targets.
 - Exploration controls belong on `/design-system/exploration/top-nav`; the
   generated canonical sign-off routes belong under
   `/design-system/canonical-renderings/top-nav/:ref`. The component render
-  route remains as the legacy screenshot-capture surface for the existing
-  visual baselines.
+  route remains as the legacy source-surface reference captured in persisted
+  canonical metadata, not the primary Playwright proof route.
 
 ## Required Reference States
 
@@ -158,9 +158,11 @@ This initial batch is the smallest useful set for making the pack operational.
   `/design-system/exploration/top-nav`
 - Generated canonical render route:
   `/design-system/canonical-renderings/top-nav/:ref`
-- Legacy screenshot capture route:
+- Legacy component source route:
   `/design-system/components/top-nav`
-- Canonical launcher:
+- Generated canonical launcher:
+  `/design-system/canonical-renderings/top-nav`
+- Legacy canonical launcher:
   `/design-system/canonicals/top-nav`
 - Preview source:
   `src/frontend/designSystem/exploration/top-nav/index.html`
