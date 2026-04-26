@@ -1,5 +1,9 @@
 import { expect, test } from "@playwright/test";
 
+function generatedHierarchyRoute(ref: string): string {
+  return `/design-system/canonical-renderings/hierarchy-tree/${ref}`;
+}
+
 test("hierarchy-tree pattern mounts under repo CSP and renders interactive rows", async ({ page }) => {
   const pageErrors: string[] = [];
   const consoleErrors: string[] = [];
@@ -99,9 +103,7 @@ test("hierarchy-tree desktop row hover and focus reveal subtle open actions with
 
 test("hierarchy-tree mobile keeps open actions in the menu and hides inline hover icons", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 900 });
-  await page.goto(
-    "/design-system/patterns/hierarchy-tree/render?ref=HTR-022&state=mobile-row-menu&width=390&theme=normal&dir=ltr&zoom=0&accent=%23635bff",
-  );
+  await page.goto(generatedHierarchyRoute("HTR-022"));
 
   const roadmapRow = page.locator(".hierarchy-tree-row").filter({ hasText: "Roadmap" }).first();
   await expect(roadmapRow.locator(".hierarchy-tree-inline-actions")).toBeHidden();
@@ -112,9 +114,7 @@ test("hierarchy-tree mobile keeps open actions in the menu and hides inline hove
 });
 
 test("hierarchy-tree RTL canonical mirrors row chrome and content docking", async ({ page }) => {
-  await page.goto(
-    "/design-system/patterns/hierarchy-tree/render?ref=HTR-024&state=rtl-docking&width=1220&theme=normal&dir=rtl&zoom=0&accent=%23635bff",
-  );
+  await page.goto(generatedHierarchyRoute("HTR-024"));
 
   const firstExpandableRow = page.locator(".hierarchy-tree-row").filter({ has: page.locator(".hierarchy-tree-expander") }).first();
   await expect(firstExpandableRow).toBeVisible();
@@ -151,6 +151,82 @@ test("hierarchy-tree RTL canonical mirrors row chrome and content docking", asyn
   expect(geometry!.titleAlign).toBe("right");
 });
 
+test("hierarchy-tree dark generated route keeps row copy and controls readable", async ({ page }) => {
+  await page.goto(generatedHierarchyRoute("HTR-026"));
+
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator("body")).toHaveAttribute("data-hierarchy-tree-surface", "canonical");
+
+  const selectedRow = page.locator('.hierarchy-tree-row[data-selected="true"]').first();
+  await expect(selectedRow).toContainText("Roadmap");
+
+  const contrastState = await selectedRow.evaluate((row) => {
+    const title = row.querySelector(".hierarchy-tree-title");
+    const menuButton = row.querySelector(".hierarchy-tree-menu-button");
+    if (!(title instanceof HTMLElement) || !(menuButton instanceof HTMLElement)) {
+      return null;
+    }
+
+    const parseRgb = (value: string): number[] => {
+      const match = value.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      return match ? [Number(match[1]), Number(match[2]), Number(match[3])] : [0, 0, 0];
+    };
+    const titleColor = parseRgb(getComputedStyle(title).color);
+    const menuColor = parseRgb(getComputedStyle(menuButton).color);
+    const rowBackground = parseRgb(getComputedStyle(row).backgroundColor);
+
+    return {
+      titleAverage: titleColor.reduce((sum, value) => sum + value, 0) / titleColor.length,
+      menuAverage: menuColor.reduce((sum, value) => sum + value, 0) / menuColor.length,
+      rowBackgroundAverage: rowBackground.reduce((sum, value) => sum + value, 0) / rowBackground.length,
+    };
+  });
+
+  expect(contrastState).not.toBeNull();
+  expect(contrastState!.titleAverage).toBeGreaterThan(150);
+  expect(contrastState!.menuAverage).toBeGreaterThan(130);
+  expect(contrastState!.rowBackgroundAverage).toBeLessThan(120);
+});
+
+test("hierarchy-tree long-title generated route preserves truncation and row menu access", async ({ page }) => {
+  await page.goto(generatedHierarchyRoute("HTR-030"));
+
+  const longTitle = page
+    .locator(".hierarchy-tree-title")
+    .filter({ hasText: "Roadmap for internationalization readiness" })
+    .first();
+  await expect(longTitle).toBeVisible();
+
+  const overflowState = await longTitle.evaluate((title) => {
+    const row = title.closest(".hierarchy-tree-row");
+    const menuButton = row?.querySelector(".hierarchy-tree-menu-button");
+    const rowActions = row?.querySelector(".hierarchy-tree-row-actions");
+    if (!(title instanceof HTMLElement) || !(row instanceof HTMLElement) || !(menuButton instanceof HTMLElement) || !(rowActions instanceof HTMLElement)) {
+      return null;
+    }
+
+    const titleRect = title.getBoundingClientRect();
+    const menuRect = menuButton.getBoundingClientRect();
+    const actionsRect = rowActions.getBoundingClientRect();
+
+    return {
+      clientWidth: title.clientWidth,
+      scrollWidth: title.scrollWidth,
+      tooltip: title.dataset.tooltip ?? "",
+      titleRight: titleRect.right,
+      menuLeft: menuRect.left,
+      actionsLeft: actionsRect.left,
+      menuWidth: menuRect.width,
+    };
+  });
+
+  expect(overflowState).not.toBeNull();
+  expect(overflowState!.scrollWidth).toBeGreaterThan(overflowState!.clientWidth);
+  expect(overflowState!.tooltip).toContain("Roadmap for internationalization readiness");
+  expect(overflowState!.titleRight).toBeLessThanOrEqual(overflowState!.actionsLeft + 1);
+  expect(overflowState!.menuWidth).toBeGreaterThan(0);
+});
+
 test("hierarchy-tree canonical launcher and render routes populate breadcrumb structure accurately", async ({ page }) => {
   await page.goto("/design-system/canonicals/hierarchy-tree");
   const launcherBreadcrumb = page.locator("#breadcrumb-list");
@@ -171,8 +247,19 @@ test("hierarchy-tree canonical launcher and render routes populate breadcrumb st
   await expect(page.locator("#breadcrumb-current-item .breadcrumb-current")).toHaveText(/HTR-010/);
 });
 
+test("hierarchy-tree generated launcher exposes generated render links for the priority batch", async ({ page }) => {
+  await page.goto("/design-system/canonical-renderings/hierarchy-tree");
+
+  const launcherButtons = page.locator(".canonical-launcher-button");
+  await expect(launcherButtons).toHaveCount(34);
+
+  for (const ref of ["HTR-022", "HTR-024", "HTR-026", "HTR-030"]) {
+    await expect(page.locator(`.canonical-launcher-button[href="${generatedHierarchyRoute(ref)}"]`)).toBeVisible();
+  }
+});
+
 test("hierarchy-tree generated canonical-rendering route preserves the signed-off specimen surface", async ({ page }) => {
-  await page.goto("/design-system/canonical-renderings/hierarchy-tree/HTR-022");
+  await page.goto(generatedHierarchyRoute("HTR-022"));
 
   await expect(page.locator("#hierarchy-tree-tree .hierarchy-tree-row")).not.toHaveCount(0);
   await expect(page.locator("body")).toHaveAttribute("data-hierarchy-tree-surface", "canonical");

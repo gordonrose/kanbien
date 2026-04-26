@@ -183,9 +183,11 @@
 - Rendered status:
   partially verified
   focused executable proof now covers the generated launcher chain, direct
-  generated route surface truth, baseline mount, row actions, mobile row-menu
-  posture, RTL docking, and breadcrumb truth; full human review of every
-  `HTR-*` stress state remains pending
+  generated route surface truth, baseline mount, row actions, generated
+  `HTR-022` mobile row-menu posture, generated `HTR-024` RTL docking,
+  generated `HTR-026` dark readability, generated `HTR-030` long-title
+  overflow, generated launcher links for that priority batch, and breadcrumb
+  truth; full human review of every `HTR-*` stress state remains pending
 - Human sign-off status:
   the live route itself is signed off as the family reference baseline
 - Promotion decision:
@@ -208,9 +210,9 @@
   direct human review batch kept in sync with the pack
 - Canonical render-ready / honest-width check required:
   partially complete
-  route truth, surface truth, and generated launcher chain are covered by
-  focused Playwright proof; exhaustive stress-state honest-width proof remains
-  pending
+  route truth, surface truth, generated launcher chain, mobile row-menu, RTL
+  docking, dark readability, and long-title overflow are covered by focused
+  Playwright proof; exhaustive stress-state honest-width proof remains pending
 - Frontend gate manifest update required:
   not yet
   wait until the first dedicated canonical batch and stronger executable proof
