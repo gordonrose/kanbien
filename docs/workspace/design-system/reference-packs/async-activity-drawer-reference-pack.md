@@ -34,11 +34,11 @@
 
 | Ref ID | Canonical route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `AADR-001` | `/design-system/canonical-renderings/async-activity-drawer/AADR-001` | Mixed shell queue | Shows running, waiting, retryable error, and completed report states together | canonical-created | Priority multi-job state |
-| `AADR-002` | `/design-system/canonical-renderings/async-activity-drawer/AADR-002` | Running job | Confirms active progress presentation and status semantics | canonical-created | Single-state proof |
-| `AADR-003` | `/design-system/canonical-renderings/async-activity-drawer/AADR-003` | Waiting job | Confirms queued work remains visible without claiming completion | canonical-created | Single-state proof |
-| `AADR-004` | `/design-system/canonical-renderings/async-activity-drawer/AADR-004` | Retryable error | Confirms stopped progress, error detail, and retry action | canonical-created | Priority recovery state |
-| `AADR-005` | `/design-system/canonical-renderings/async-activity-drawer/AADR-005` | Complete with report | Confirms success/failure counts and optional report download | canonical-created | Priority reporting state |
+| `AADR-001` | `/design-system/canonical-renderings/async-activity-drawer/AADR-001` | Mixed shell queue | Shows running, waiting, retryable error, and completed report states together | covered-by-test | Priority multi-job state |
+| `AADR-002` | `/design-system/canonical-renderings/async-activity-drawer/AADR-002` | Running job | Confirms active progress presentation and status semantics | covered-by-test | Single-state proof now verifies progress label, progress fill, running status, and absence of retry/report actions |
+| `AADR-003` | `/design-system/canonical-renderings/async-activity-drawer/AADR-003` | Waiting job | Confirms queued work remains visible without claiming completion | covered-by-test | Single-state proof now verifies progress label, progress fill, waiting status, and absence of completion results |
+| `AADR-004` | `/design-system/canonical-renderings/async-activity-drawer/AADR-004` | Retryable error | Confirms stopped progress, error detail, and retry action | covered-by-test | Priority recovery state |
+| `AADR-005` | `/design-system/canonical-renderings/async-activity-drawer/AADR-005` | Complete with report | Confirms success/failure counts and optional report download | covered-by-test | Priority reporting state |
 
 ## High-Risk Review Batch
 
@@ -51,6 +51,7 @@
 
 ## Exit Condition
 
-This pack becomes operational when audit coverage confirms the artifact chain,
-the page-shell template consumes `asyncActivityDrawer.mjs`, and Playwright
-coverage verifies the launcher plus key render states.
+This pack is operational for design-system review when audit coverage confirms
+the artifact chain, the page-shell template consumes `asyncActivityDrawer.mjs`,
+and Playwright coverage verifies the launcher plus the complete `AADR-001`
+through `AADR-005` generated-route state set.

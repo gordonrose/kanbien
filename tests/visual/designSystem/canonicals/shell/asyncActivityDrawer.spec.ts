@@ -9,6 +9,16 @@ const states = [
     expectedStates: ["running", "waiting", "error", "complete"],
   },
   {
+    ref: "AADR-002",
+    route: "/design-system/canonical-renderings/async-activity-drawer/AADR-002",
+    expectedStates: ["running"],
+  },
+  {
+    ref: "AADR-003",
+    route: "/design-system/canonical-renderings/async-activity-drawer/AADR-003",
+    expectedStates: ["waiting"],
+  },
+  {
     ref: "AADR-004",
     route: "/design-system/canonical-renderings/async-activity-drawer/AADR-004",
     expectedStates: ["error"],
@@ -27,6 +37,8 @@ test.describe("async activity drawer canonicals", () => {
     const launcherButtons = page.locator(".canonical-launcher-button");
     await expect(launcherButtons).toHaveCount(5);
     await expect(page.getByRole("link", { name: /AADR-001 Mixed shell queue/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /AADR-002 Running job/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /AADR-003 Waiting job/i })).toBeVisible();
     await expect(page.getByRole("link", { name: /AADR-004 Retryable error/i })).toBeVisible();
     await expect(page.getByRole("link", { name: /AADR-005 Complete with report/i })).toBeVisible();
 
@@ -64,6 +76,40 @@ test.describe("async activity drawer canonicals", () => {
       }
     });
   }
+
+  test("running state exposes active progress without recovery or report actions", async ({ page }) => {
+    await page.goto("/design-system/canonical-renderings/async-activity-drawer/AADR-002");
+
+    const drawer = page.locator("#async-activity-drawer");
+    const runningCard = drawer.locator('[data-async-activity-state="running"]');
+    await expect(runningCard).toHaveCount(1);
+    await expect(runningCard).toContainText("Import tenant records");
+    await expect(runningCard.getByRole("img", { name: "Running" })).toBeVisible();
+    await expect(runningCard.locator(".async-job-progress")).toHaveAttribute(
+      "aria-label",
+      "Import tenant records 62 percent complete",
+    );
+    await expect(runningCard.locator(".async-job-progress span")).toHaveAttribute("style", "width: 62%");
+    await expect(drawer.locator(".async-job-retry")).toHaveCount(0);
+    await expect(drawer.locator(".async-job-download")).toHaveCount(0);
+  });
+
+  test("waiting state exposes queued progress without implying completion", async ({ page }) => {
+    await page.goto("/design-system/canonical-renderings/async-activity-drawer/AADR-003");
+
+    const drawer = page.locator("#async-activity-drawer");
+    const waitingCard = drawer.locator('[data-async-activity-state="waiting"]');
+    await expect(waitingCard).toHaveCount(1);
+    await expect(waitingCard).toContainText("Generate role matrix");
+    await expect(waitingCard.getByRole("img", { name: "Waiting" })).toBeVisible();
+    await expect(waitingCard.locator(".async-job-progress")).toHaveAttribute(
+      "aria-label",
+      "Generate role matrix 18 percent complete",
+    );
+    await expect(waitingCard.locator(".async-job-progress span")).toHaveAttribute("style", "width: 18%");
+    await expect(drawer.locator('[data-async-activity-state="complete"]')).toHaveCount(0);
+    await expect(drawer.locator(".async-job-result-grid")).toHaveCount(0);
+  });
 
   test("error state exposes stopped progress, detail, and retry action", async ({ page }) => {
     await page.goto("/design-system/canonical-renderings/async-activity-drawer/AADR-004");
