@@ -39,8 +39,8 @@ export const generatedCanonicalRenderRouteRegistry = {
     surfaceSignature: 'id="icon-grid-preview-shell"',
   },
   "hierarchy-tree": {
-    htmlPath: ["patterns", "hierarchy-tree", "index.html"],
-    surfaceSignature: 'id="hierarchy-tree-tree"',
+    htmlPath: ["patterns", "hierarchy-tree", "render", "index.html"],
+    surfaceSignature: 'id="hierarchy-tree-canonical-current"',
   },
   "list-detail-panel": {
     htmlPath: ["components", "list-detail-panel.html"],

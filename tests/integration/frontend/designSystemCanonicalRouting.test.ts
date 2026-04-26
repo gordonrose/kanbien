@@ -180,6 +180,20 @@ describe("design-system canonical render routing", () => {
     expect(response.text).not.toContain("Design-System Route Families");
   });
 
+  it("serves the dedicated hierarchy-tree render page instead of the reference surface", async () => {
+    const response = await request(createSubject()).get(
+      "/design-system/canonical-renderings/hierarchy-tree/HTR-022",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain('class="design-system-page-main canonical-render-page"');
+    expect(response.text).toContain('id="hierarchy-tree-canonical-current"');
+    expect(response.text).toContain('id="hierarchy-tree-canonical-match-list"');
+    expect(response.text).not.toContain("Review This Pattern");
+    expect(response.text).not.toContain("This route is now the live hierarchy-tree reference page");
+    expect(response.text).not.toContain("Design-System Route Families");
+  });
+
   it("serves the dedicated list-record-card render page instead of the overview shell", async () => {
     const response = await request(createSubject()).get(
       "/design-system/canonical-renderings/list-record-card/LRC-001",

@@ -263,6 +263,10 @@ test("hierarchy-tree generated launcher exposes generated render links for the p
 test("hierarchy-tree generated canonical-rendering route preserves the signed-off specimen surface", async ({ page }) => {
   await page.goto(generatedHierarchyRoute("HTR-022"));
 
+  await expect(page.locator(".design-system-page-main")).toHaveClass(/canonical-render-page/);
+  await expect(page.locator(".canonical-render-frame")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Review This Pattern" })).toHaveCount(0);
+  await expect(page.getByText("This route is now the live hierarchy-tree reference page")).toHaveCount(0);
   await expect(page.locator("#hierarchy-tree-tree .hierarchy-tree-row")).not.toHaveCount(0);
   await expect(page.locator("body")).toHaveAttribute("data-hierarchy-tree-surface", "canonical");
   await expect(page.locator(".hierarchy-tree-row-menu")).toContainText("Open in new tab");
