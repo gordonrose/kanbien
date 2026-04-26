@@ -4,6 +4,7 @@ import { buildReport as buildGitPromoteReport, Report as GitPromoteReport } from
 type PromoteTaskStatus =
   | "READY_TO_PROMOTE"
   | "PROMOTED_LOCALLY"
+  | "PROMOTED_RETIRE_BLOCKED"
   | "APPLY_FAILED"
   | "TASK_NOT_FOUND"
   | "TASK_BLOCK"
@@ -22,11 +23,12 @@ type PromoteTaskReport = {
   integrationHome: string;
   localHead: string | null;
   recommendations: string[];
+  retirementActions: string[];
   sourceTask: TaskRecord | null;
   status: PromoteTaskStatus;
 };
 
-function parseArgs(argv: string[]): Options {
+export function parseArgs(argv: string[]): Options {
   let taskId: string | null = null;
 
   for (let index = 0; index < argv.length; index += 1) {
@@ -54,6 +56,14 @@ function runGit(args: string[], cwd: string): string {
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
   }).trim();
+}
+
+function tryRunGit(args: string[], cwd: string): string | null {
+  try {
+    return runGit(args, cwd);
+  } catch {
+    return null;
+  }
 }
 
 function resolveTask(taskId: string | null): TaskRecord | null {
@@ -97,7 +107,7 @@ function diffStat(integrationHome: string): string[] {
   return output ? output.split("\n").filter(Boolean) : [];
 }
 
-function buildReport(options: Options): PromoteTaskReport {
+export function buildReport(options: Options): PromoteTaskReport {
   const integrationHome = integrationHomePath(repoRoot());
   const task = resolveTask(options.taskId);
 
@@ -109,6 +119,7 @@ function buildReport(options: Options): PromoteTaskReport {
       integrationHome,
       localHead: shortHead(integrationHome),
       recommendations: ["Provide `--task <task-id>` from `npm run codex:tasks`."],
+      retirementActions: [],
       sourceTask: null,
       status: "TASK_NOT_FOUND",
     };
@@ -122,6 +133,24 @@ function buildReport(options: Options): PromoteTaskReport {
       integrationHome,
       localHead: shortHead(integrationHome),
       recommendations: ["Do not promote the integration home as a task. Choose a non-main task line instead."],
+      retirementActions: [],
+      sourceTask: task,
+      status: "TASK_BLOCK",
+    };
+  }
+
+  if (task.dirty) {
+    return {
+      changedFiles: [],
+      diffStat: [],
+      gitPromote: null,
+      integrationHome,
+      localHead: shortHead(integrationHome),
+      recommendations: [
+        "The source task worktree has local changes.",
+        "Commit, discard, or move those changes before promotion; automatic retirement would otherwise risk deleting WIP.",
+      ],
+      retirementActions: [],
       sourceTask: task,
       status: "TASK_BLOCK",
     };
@@ -136,6 +165,7 @@ function buildReport(options: Options): PromoteTaskReport {
       integrationHome,
       localHead: shortHead(integrationHome),
       recommendations: gitPromote.recommendations,
+      retirementActions: [],
       sourceTask: task,
       status: "PROMOTE_GUARDRAIL_BLOCK",
     };
@@ -148,18 +178,82 @@ function buildReport(options: Options): PromoteTaskReport {
     integrationHome,
     localHead: shortHead(integrationHome),
     recommendations: ["This task is ready to promote onto local main."],
+    retirementActions: [],
     sourceTask: task,
     status: "READY_TO_PROMOTE",
   };
 }
 
-function applyPromotion(report: PromoteTaskReport): PromoteTaskReport {
+function refreshTask(integrationHome: string, branch: string): TaskRecord | null {
+  const currentCwd = process.cwd();
+  try {
+    process.chdir(integrationHome);
+    const report = buildInventoryReport(repoRoot());
+    return report.records.find((record) => record.branch === branch) ?? null;
+  } finally {
+    process.chdir(currentCwd);
+  }
+}
+
+function currentRepoRoot(): string {
+  return runGit(["rev-parse", "--show-toplevel"], process.cwd());
+}
+
+function branchExists(integrationHome: string, branch: string): boolean {
+  return tryRunGit(["show-ref", "--verify", "--quiet", `refs/heads/${branch}`], integrationHome) !== null;
+}
+
+export function retirePromotedTask(integrationHome: string, task: TaskRecord): string[] {
+  const refreshedTask = refreshTask(integrationHome, task.branch);
+  if (refreshedTask === null) {
+    return [`Task ${task.branch} no longer appears in the task inventory.`];
+  }
+  if (refreshedTask.uniquePatchCommitCount !== 0) {
+    throw new Error(
+      `Refusing to retire ${task.branch}: it still has ${refreshedTask.uniquePatchCommitCount ?? "unknown"} unique patch commits.`,
+    );
+  }
+  if (refreshedTask.dirty) {
+    throw new Error(`Refusing to retire ${task.branch}: its source worktree has local changes.`);
+  }
+  if (refreshedTask.worktreePath !== null && refreshedTask.worktreePath === currentRepoRoot()) {
+    throw new Error(`Refusing to retire ${task.branch}: it is the current worktree.`);
+  }
+
+  const actions: string[] = [];
+  if (refreshedTask.worktreePath !== null) {
+    runGit(["worktree", "remove", "--force", refreshedTask.worktreePath], integrationHome);
+    runGit(["worktree", "prune"], integrationHome);
+    actions.push(`Removed worktree ${refreshedTask.worktreePath}`);
+  }
+  if (branchExists(integrationHome, refreshedTask.branch)) {
+    runGit(["branch", "-D", refreshedTask.branch], integrationHome);
+    actions.push(`Deleted branch ${refreshedTask.branch}`);
+  }
+  if (actions.length === 0) {
+    actions.push(`No branch or worktree remained for ${refreshedTask.branch}`);
+  }
+  return actions;
+}
+
+export function applyPromotion(report: PromoteTaskReport): PromoteTaskReport {
   if (report.status !== "READY_TO_PROMOTE" || report.sourceTask === null) {
     return report;
   }
 
   try {
     runGit(["merge", "--ff-only", report.sourceTask.branch], report.integrationHome);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown local promotion failure.";
+    return {
+      ...report,
+      recommendations: [...report.recommendations, `Local promotion failed: ${message}`],
+      status: "APPLY_FAILED",
+    };
+  }
+
+  try {
+    const retirementActions = retirePromotedTask(report.integrationHome, report.sourceTask);
 
     return {
       ...report,
@@ -168,16 +262,25 @@ function applyPromotion(report: PromoteTaskReport): PromoteTaskReport {
       localHead: shortHead(report.integrationHome),
       recommendations: [
         "Task promoted locally to main.",
+        "Promoted task branch/worktree retired automatically.",
         "Review the changed files on local main before pushing.",
       ],
+      retirementActions,
       status: "PROMOTED_LOCALLY",
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown local promotion failure.";
+    const message = error instanceof Error ? error.message : "Unknown task retirement failure.";
     return {
       ...report,
-      recommendations: [...report.recommendations, `Local promotion failed: ${message}`],
-      status: "APPLY_FAILED",
+      changedFiles: diffNameOnly(report.integrationHome),
+      diffStat: diffStat(report.integrationHome),
+      localHead: shortHead(report.integrationHome),
+      recommendations: [
+        "Task promoted locally to main.",
+        `Automatic task retirement failed: ${message}`,
+        "Inspect and retire the source task manually before starting unrelated work.",
+      ],
+      status: "PROMOTED_RETIRE_BLOCKED",
     };
   }
 }
@@ -210,22 +313,30 @@ function printReport(report: PromoteTaskReport): void {
       console.log(`  ${line}`);
     }
   }
+  if (report.retirementActions.length > 0) {
+    console.log("- retirement actions:");
+    for (const action of report.retirementActions) {
+      console.log(`  - ${action}`);
+    }
+  }
   console.log("- recommendations:");
   for (const recommendation of report.recommendations) {
     console.log(`  - ${recommendation}`);
   }
 }
 
-const options = parseArgs(process.argv.slice(2));
-const initialReport = buildReport(options);
-const finalReport = options.apply ? applyPromotion(initialReport) : initialReport;
+if (require.main === module) {
+  const options = parseArgs(process.argv.slice(2));
+  const initialReport = buildReport(options);
+  const finalReport = options.apply ? applyPromotion(initialReport) : initialReport;
 
-if (options.json) {
-  console.log(JSON.stringify(finalReport, null, 2));
-} else {
-  printReport(finalReport);
-}
+  if (options.json) {
+    console.log(JSON.stringify(finalReport, null, 2));
+  } else {
+    printReport(finalReport);
+  }
 
-if (!["READY_TO_PROMOTE", "PROMOTED_LOCALLY"].includes(finalReport.status)) {
-  process.exitCode = 1;
+  if (!["READY_TO_PROMOTE", "PROMOTED_LOCALLY"].includes(finalReport.status)) {
+    process.exitCode = 1;
+  }
 }

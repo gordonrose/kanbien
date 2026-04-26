@@ -176,6 +176,18 @@ After `npm run git:promote -- --source <branch-or-commit>` reports
 "ship", or equivalent mean fast-forward/promote the scoped task to `main` and
 push the promoted `main` to `origin/main`.
 
+For task-registry workflows, prefer
+`npm run codex:promote-task -- --task <task-id> --apply` over hand-running the
+fast-forward merge. A successful apply promotes the task onto local `main` and
+then automatically retires the source task branch and attached worktree once
+the task has no remaining unique patch content or dirty local state.
+
+If the source task worktree is dirty, promotion must stop before the merge.
+Commit, discard, or move that WIP first; promotion must not delete or hide
+uncommitted source-task changes. If the merge succeeds but automatic retirement
+is blocked, treat the result as partially promoted and retire the task manually
+before starting unrelated work.
+
 Do not substitute branch-only publishing or a pull-request flow for that direct
 remote-main workflow unless the user explicitly asks for branch-only publishing
 or a PR.
