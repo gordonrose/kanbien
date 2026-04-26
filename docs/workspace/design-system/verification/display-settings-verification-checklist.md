@@ -28,8 +28,10 @@
   start the payload loop after signing off the shared `context-nav drawer`
   chassis
 - What changed since the last review:
-  the canonical route now renders the real grouped payload instead of drawer
-  placeholder copy, and the payload has its own `DSR-*` state set
+  the generated canonical routes now render the real grouped payload instead
+  of drawer placeholder copy, and the payload has its own `DSR-*` state set
+  with launcher, render-surface, containment, RTL, mobile, magnification,
+  theme, accent, and selected-state persistence proof
 
 ## Source Verification
 
@@ -69,7 +71,7 @@
 - Screenshot or rendered evidence reference:
   executable browser checks now live in
   `tests/visual/designSystem/canonicals/shell/contextNavCanonicalFrame.spec.ts` for the
-  `DSR-*` states
+  generated `DSR-*` render routes
   `tests/visual/designSystem/canonicals/shell/generatedCanonicalRenderingsIndex.spec.ts`
   covers the generated launcher/render route chain
 

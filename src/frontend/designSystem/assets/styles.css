@@ -6152,6 +6152,7 @@ html[data-theme="dark"] .search-input,
   padding: 1rem;
   border-right: 0.0625rem solid var(--line);
   background: var(--surface-1);
+  color: var(--ink);
   box-shadow: var(--shadow-soft);
   overflow: auto;
   scrollbar-width: thin;

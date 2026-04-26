@@ -24,7 +24,8 @@ review.
 - Related pattern note:
   `docs/workspace/design-system/patterns/display-settings-pattern.md`
 - Related canonical launcher:
-  `/design-system/canonicals/display-settings`
+  `/design-system/canonical-renderings/display-settings`
+  legacy index card forwards from `/design-system/canonicals/display-settings`
 - Host shell reference pack:
   `docs/workspace/design-system/reference-packs/context-nav-drawer-reference-pack.md`
 
@@ -87,11 +88,11 @@ launcher and then used to drive later verification work.
 
 | Ref ID | Canonical route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `DSR-001` | `/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=DSR-001` | Desktop grouped payload baseline | Confirms the real grouped payload now exists inside the governed drawer instead of placeholder copy | canonical-created | First payload review anchor |
-| `DSR-002` | `/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=long&open=accessibility&theme=dark&dir=ltr&zoom=100&accent=%237c3aed&ref=DSR-002` | Dark theme and enlarged payload | Confirms grouped readability and structural stability under the highest-risk theme and magnification pressure | canonical-created | Primary WCAG-sensitive payload state |
-| `DSR-003` | `/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=rtl&zoom=0&accent=%23635bff&ref=DSR-003` | RTL mirrored payload | Confirms the payload body mirrors and the content copy feels native rather than remaining English-only inside an RTL shell | canonical-created | Arabic-reader review state |
-| `DSR-004` | `/design-system/components/context-nav?width=560&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=DSR-004` | Mobile bottom-sheet payload | Confirms the full grouped payload remains usable inside the mobile drawer sheet without clipping or collapsed sections | canonical-created | Honest narrow-width runtime state |
-| `DSR-005` | `/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=-100&accent=%232563eb&ref=DSR-005` | Reduced magnification and accent sweep | Confirms the low-end magnification control is real, reload-safe, and visually stable alongside a non-default accent choice | canonical-created | Guards the full range of current controls |
+| `DSR-001` | `/design-system/canonical-renderings/display-settings/DSR-001` | Desktop grouped payload baseline | Confirms the real grouped payload now exists inside the governed drawer instead of placeholder copy | canonical-created, Playwright-locked | First payload review anchor |
+| `DSR-002` | `/design-system/canonical-renderings/display-settings/DSR-002` | Dark theme and enlarged payload | Confirms grouped readability and structural stability under the highest-risk theme and magnification pressure | canonical-created, Playwright-locked | Primary WCAG-sensitive payload state |
+| `DSR-003` | `/design-system/canonical-renderings/display-settings/DSR-003` | RTL mirrored payload | Confirms the payload body mirrors and the content copy feels native rather than remaining English-only inside an RTL shell | canonical-created, Playwright-locked | Arabic-reader review state |
+| `DSR-004` | `/design-system/canonical-renderings/display-settings/DSR-004` | Mobile bottom-sheet payload | Confirms the full grouped payload remains usable inside the mobile drawer sheet without clipping or collapsed sections | canonical-created, Playwright-locked | Honest narrow-width runtime state |
+| `DSR-005` | `/design-system/canonical-renderings/display-settings/DSR-005` | Reduced magnification and accent sweep | Confirms the low-end magnification control is real, reload-safe, and visually stable alongside a non-default accent choice | canonical-created, Playwright-locked | Guards the full range of current controls |
 
 ## High-Risk Review Batch
 
@@ -115,6 +116,10 @@ non-default viewing pressure.
   drawer` chain
 - payload-specific browser verification now points directly at the `DSR-*`
   set rather than treating `CDR-*` shell states as sufficient
+- executable generated-route proof now verifies launcher links, render-surface
+  ownership, drawer containment, grouped controls, RTL copy, mobile
+  bottom-sheet posture, theme and magnification states, and selected-state
+  persistence for every `DSR-*` reference
 - direct browser proof now covers:
   - `DSR-001`
   - `DSR-002`

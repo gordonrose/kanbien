@@ -1,6 +1,26 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
+import { expectRouteSurfaceTruth } from "../../support/helpers/routeSurfaceTruth";
+
+const displaySettingsCanonicalStates = [
+  { refId: "DSR-001", label: "Desktop grouped payload baseline" },
+  { refId: "DSR-002", label: "Dark theme and enlarged payload" },
+  { refId: "DSR-003", label: "RTL mirrored payload" },
+  { refId: "DSR-004", label: "Mobile bottom-sheet payload" },
+  { refId: "DSR-005", label: "Reduced magnification and accent sweep" },
+] as const;
+
+function displaySettingsCanonicalRenderRoute(refId: string) {
+  return `/design-system/canonical-renderings/display-settings/${encodeURIComponent(refId)}`;
+}
+
+async function gotoGeneratedDisplaySettingsCanonical(page: Page, refId: string) {
+  await page.goto(displaySettingsCanonicalRenderRoute(refId));
+  await page.locator("#context-nav-preview-shell").waitFor({ state: "visible" });
+  await page.locator("#context-nav-canonical-current").waitFor({ state: "visible" });
+  await page.locator("#accessibility-drawer").waitFor({ state: "visible" });
+}
 
 test("context-nav canonical frame anchors rail and content below the preview header stack", async ({ page }) => {
   await page.goto(
@@ -704,9 +724,7 @@ test("context-nav CDR-006 alternate-theme readability state keeps stable drawer 
 });
 
 test("context-nav DSR-001 desktop canonical shows the real grouped display-settings payload with semantic active state", async ({ page }) => {
-  await page.goto(
-    "/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=DSR-001",
-  );
+  await gotoGeneratedDisplaySettingsCanonical(page, "DSR-001");
 
   const currentCanonical = page.locator("#context-nav-canonical-current");
   const drawer = page.locator("#accessibility-drawer");
@@ -729,8 +747,39 @@ test("context-nav DSR-001 desktop canonical shows the real grouped display-setti
   await expect(directionLtr).toHaveAttribute("aria-pressed", "true");
 });
 
+test("display-settings canonical launcher links every reference to the dedicated generated render route", async ({ page }) => {
+  await page.goto("/design-system/canonical-renderings/display-settings");
+
+  await expect(page.locator(".canonical-launcher-button")).toHaveCount(displaySettingsCanonicalStates.length);
+
+  for (const state of displaySettingsCanonicalStates) {
+    await expect(
+      page.locator(`.canonical-launcher-button[href="${displaySettingsCanonicalRenderRoute(state.refId)}"]`),
+      `${state.refId} should target its generated render route`,
+    ).toHaveCount(1);
+  }
+});
+
+test("display-settings generated route owns the context-nav render surface", async ({ page }) => {
+  await page.goto(displaySettingsCanonicalRenderRoute("DSR-001"));
+
+  await expectRouteSurfaceTruth(page, {
+    expectedPath: displaySettingsCanonicalRenderRoute("DSR-001"),
+    surfaceLocator: "#context-nav-preview-shell",
+    waitForReadyLocator: "#accessibility-drawer",
+    bodyAttribute: {
+      name: "data-context-nav-surface",
+      value: "canonical",
+    },
+    fallbackHeading: /Design-System Route Families/i,
+  });
+  await expect(page.locator("#context-nav-canonical-current")).toHaveText(
+    "DSR-001 - Desktop grouped payload baseline",
+  );
+});
+
 test("generated display-settings canonical keeps its drawer inside the render frame", async ({ page }) => {
-  await page.goto("/design-system/canonical-renderings/display-settings/DSR-001");
+  await gotoGeneratedDisplaySettingsCanonical(page, "DSR-001");
 
   const currentCanonical = page.locator("#context-nav-canonical-current");
   const drawer = page.locator("#accessibility-drawer");
@@ -749,9 +798,7 @@ test("generated display-settings canonical keeps its drawer inside the render fr
 });
 
 test("context-nav DSR-003 RTL canonical mirrors the display-settings payload with Arabic copy", async ({ page }) => {
-  await page.goto(
-    "/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=rtl&zoom=0&accent=%23635bff&ref=DSR-003",
-  );
+  await gotoGeneratedDisplaySettingsCanonical(page, "DSR-003");
 
   const currentCanonical = page.locator("#context-nav-canonical-current");
   const drawer = page.locator("#accessibility-drawer");
@@ -768,9 +815,7 @@ test("context-nav DSR-003 RTL canonical mirrors the display-settings payload wit
 });
 
 test("context-nav DSR-002 dark theme canonical keeps the grouped display-settings payload readable under magnification", async ({ page }) => {
-  await page.goto(
-    "/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=long&open=accessibility&theme=dark&dir=ltr&zoom=100&accent=%237c3aed&ref=DSR-002",
-  );
+  await gotoGeneratedDisplaySettingsCanonical(page, "DSR-002");
 
   const currentCanonical = page.locator("#context-nav-canonical-current");
   const drawer = page.locator("#accessibility-drawer");
@@ -782,12 +827,33 @@ test("context-nav DSR-002 dark theme canonical keeps the grouped display-setting
   await expect(page.locator("#accessibility-drawer [data-theme-option='dark']")).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("#accessibility-drawer [data-magnification-option='100']")).toHaveAttribute("aria-pressed", "true");
   await expect(shell).toHaveAttribute("data-magnification", "100");
+
+  const darkInkState = await page.evaluate(() => {
+    const readColor = (selector: string) => {
+      const node = document.querySelector(selector);
+      return node instanceof HTMLElement ? window.getComputedStyle(node).color : "";
+    };
+
+    return {
+      title: readColor("#accessibility-title"),
+      eyebrow: readColor("#accessibility-drawer [data-display-settings-copy='eyebrow']"),
+      themeLabel: readColor("#accessibility-drawer [data-display-settings-copy='theme-group']"),
+      normalChip: readColor("#accessibility-drawer [data-theme-option='normal']"),
+      darkChip: readColor("#accessibility-drawer [data-theme-option='dark']"),
+      magnificationChip: readColor("#accessibility-drawer [data-magnification-option='100']"),
+    };
+  });
+
+  expect(darkInkState.title).toBe("rgb(236, 240, 255)");
+  expect(darkInkState.eyebrow).toBe("rgb(180, 190, 216)");
+  expect(darkInkState.themeLabel).toBe("rgb(180, 190, 216)");
+  expect(darkInkState.normalChip).toBe("rgb(180, 190, 216)");
+  expect(darkInkState.darkChip).toBe("rgb(236, 240, 255)");
+  expect(darkInkState.magnificationChip).toBe("rgb(236, 240, 255)");
 });
 
 test("context-nav DSR-004 mobile canonical keeps the full display-settings payload usable inside the bottom sheet", async ({ page }) => {
-  await page.goto(
-    "/design-system/components/context-nav?width=560&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=DSR-004",
-  );
+  await gotoGeneratedDisplaySettingsCanonical(page, "DSR-004");
 
   const currentCanonical = page.locator("#context-nav-canonical-current");
   const drawer = page.locator("#accessibility-drawer");
@@ -813,9 +879,7 @@ test("context-nav DSR-004 mobile canonical keeps the full display-settings paylo
 });
 
 test("context-nav DSR-005 reduced magnification canonical keeps the low-end display-settings control reload-safe", async ({ page }) => {
-  await page.goto(
-    "/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=-100&accent=%232563eb&ref=DSR-005",
-  );
+  await gotoGeneratedDisplaySettingsCanonical(page, "DSR-005");
 
   const currentCanonical = page.locator("#context-nav-canonical-current");
   const shell = page.locator("#context-nav-preview-shell");
@@ -874,9 +938,7 @@ test("context-nav drawer outside-click close returns focus to the launcher", asy
 });
 
 test("context-nav display-settings controls do not close the drawer when a setting is selected", async ({ page }) => {
-  await page.goto(
-    "/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=standard&open=accessibility&theme=normal&dir=ltr&zoom=0&accent=%23635bff&ref=DSR-001",
-  );
+  await gotoGeneratedDisplaySettingsCanonical(page, "DSR-001");
 
   const drawer = page.locator("#accessibility-drawer");
   const darkThemeButton = page.locator("#accessibility-drawer [data-theme-option='dark']");
@@ -899,9 +961,7 @@ test("context-nav display-settings controls do not close the drawer when a setti
 });
 
 test("context-nav display-settings drawer uses the signed-off context-nav scrollbar styling", async ({ page }) => {
-  await page.goto(
-    "/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=long&open=accessibility&theme=dark&dir=ltr&zoom=100&accent=%237c3aed&ref=DSR-002",
-  );
+  await gotoGeneratedDisplaySettingsCanonical(page, "DSR-002");
 
   const scrollbarState = await page.evaluate(() => {
     const drawer = document.getElementById("accessibility-drawer");
@@ -936,9 +996,7 @@ test("context-nav display-settings drawer uses the signed-off context-nav scroll
 });
 
 test("design-system page scroll uses the signed-off context-nav scrollbar styling", async ({ page }) => {
-  await page.goto(
-    "/design-system/components/context-nav?width=1120&height=760&stack=standard&labels=long&open=accessibility&theme=dark&dir=ltr&zoom=100&accent=%237c3aed&ref=DSR-002",
-  );
+  await gotoGeneratedDisplaySettingsCanonical(page, "DSR-002");
 
   const pageScrollbarState = await page.evaluate(() => {
     const root = document.documentElement;
