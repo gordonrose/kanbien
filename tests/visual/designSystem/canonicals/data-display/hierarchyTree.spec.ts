@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { expectCanonicalOverlayContainedInRenderSurface } from "../../support/helpers/canonicalOverlayGuards";
+
 function generatedHierarchyRoute(ref: string): string {
   return `/design-system/canonical-renderings/hierarchy-tree/${ref}`;
 }
@@ -266,4 +268,18 @@ test("hierarchy-tree generated canonical-rendering route preserves the signed-of
   await expect(page.locator(".hierarchy-tree-row-menu")).toContainText("Open in new tab");
   await expect(page.locator("#breadcrumb-current-item .breadcrumb-current")).toHaveText(/HTR-022/);
   await expect(page.getByRole("heading", { name: /Design-System Route Families/i })).toHaveCount(0);
+});
+
+test("hierarchy-tree generated drawer stays inside the canonical preview shell", async ({ page }) => {
+  await page.goto(generatedHierarchyRoute("HTR-022"));
+
+  await expectCanonicalOverlayContainedInRenderSurface(page, {
+    label: "HTR-022 hierarchy-tree drawer",
+    overlay: "#hierarchy-tree-drawer",
+    panel: "#hierarchy-tree-drawer",
+    hostSurface: ".hierarchy-tree-preview-shell",
+    renderFrame: ".hierarchy-tree-preview-shell",
+    requirePanelWidthWithinHost: true,
+  });
+  await expect(page.locator(".hierarchy-tree-preview-shell")).toHaveAttribute("data-canonical-drawer-host", "true");
 });

@@ -94,6 +94,38 @@
   background: rgba(15, 23, 42, 0.12);
 }
 
+body[data-hierarchy-tree-surface="canonical"] .canonical-render-frame[data-canonical-drawer-host="true"] > .hierarchy-tree-drawer-scrim {
+  position: absolute;
+}
+
+body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > .hierarchy-tree-drawer-scrim {
+  position: absolute;
+}
+
+body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > .side-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: auto;
+  max-height: none;
+}
+
+body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > .side-panel-secondary {
+  left: var(--hierarchy-drawer-width);
+  max-width: calc(100% - var(--hierarchy-drawer-width));
+}
+
+html[dir="rtl"] body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > .side-panel {
+  right: 0;
+  left: auto;
+}
+
+html[dir="rtl"] body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > .side-panel-secondary {
+  right: var(--hierarchy-drawer-width);
+  left: auto;
+}
+
 .hierarchy-tree-display-copy,
 .hierarchy-tree-detail-copy,
 .hierarchy-tree-delete-copy,
@@ -560,6 +592,14 @@ html[dir="rtl"] .hierarchy-tree-row-actions {
   place-items: center;
   padding: 1rem;
   background: rgba(15, 23, 42, 0.38);
+}
+
+body[data-hierarchy-tree-surface="canonical"] .canonical-render-frame[data-canonical-drawer-host="true"] > .hierarchy-tree-delete-dialog {
+  position: absolute;
+}
+
+body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > .hierarchy-tree-delete-dialog {
+  position: absolute;
 }
 
 .hierarchy-tree-delete-panel {

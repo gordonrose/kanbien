@@ -1987,6 +1987,13 @@ export function mountHierarchyTreeDemo() {
   };
 
   const isCanonicalSurface = document.body.dataset.hierarchyTreeSurface === "canonical";
+  if (isCanonicalSurface) {
+    const previewShell = document.querySelector(".hierarchy-tree-preview-shell");
+    if (previewShell instanceof HTMLElement) {
+      previewShell.dataset.canonicalDrawerHost = "true";
+      previewShell.append(drawerScrim, drawer, displayDrawer, deleteDialog);
+    }
+  }
   const expandedState = new Set(isCanonicalSurface ? ["space-company", "space-product", "space-company-overview", "space-product-roadmap"] : loadExpandedState());
   applyCanonicalState(state, expandedState, request);
 
