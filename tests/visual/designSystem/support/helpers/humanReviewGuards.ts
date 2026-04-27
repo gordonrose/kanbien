@@ -46,3 +46,22 @@ export async function expectComputedColor(locator: Locator, expectedColor: strin
   const color = await locator.evaluate((node) => window.getComputedStyle(node).color);
   expect(color, `${label} should keep the agreed readable foreground color`).toBe(expectedColor);
 }
+
+export async function expectThemedScopeForegroundContract(
+  scope: Locator,
+  options: {
+    expectedColor: string;
+    label: string;
+    selectors: Array<{ selector: string; label: string }>;
+  },
+) {
+  await expectComputedColor(scope, options.expectedColor, `${options.label} scope root`);
+
+  for (const item of options.selectors) {
+    await expectComputedColor(
+      scope.locator(item.selector).first(),
+      options.expectedColor,
+      `${options.label} ${item.label}`,
+    );
+  }
+}

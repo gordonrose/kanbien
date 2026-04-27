@@ -78,6 +78,8 @@ This pack turns them into named reference targets for extraction.
   - footer-based sequential drawer navigation for record traversal
 - the detail panel starts closed on load
 - item selection currently drives all detail content through HTML dataset values
+- the detail drawer can switch into a governed create/edit form variation for
+  placeholder entity-entry work while preserving the same drawer shell
 - the runtime interaction loads through an external module because inline
   script is blocked by the active CSP
 - the current prototype does not yet have dedicated rendered reference states
@@ -119,6 +121,8 @@ This pack turns them into named reference targets for extraction.
 | `LPR-027` | `/design-system/templates/list-page` | Simple drawer footer navigation with `Previous` and `Next` only | Preserves the reviewed decision to keep footer traversal light rather than adding extra positional chrome | covered-by-test | Current Playwright coverage verifies the footer keeps the simpler previous/next treatment during normal traversal and boundary-triggered lazy-load growth |
 | `LPR-028` | `/design-system/templates/list-page?dir=rtl` | RTL drawer-control mirroring including footer nav order and header action placement | Preserves the extended RTL contract for sequential navigation and control placement, not only outer layout mirroring | covered-by-test | Current Playwright coverage verifies the mirrored header action cluster and footer nav order in RTL |
 | `LPR-029` | `/design-system/templates/list-page` | Inline load-more status link for no-scroll geometry and split-drawer review | Preserves the lazy-load contract when zoom or exact-fit geometry removes the scrollbar that would normally trigger append loading without adding separate fallback chrome | covered-by-test | Current Playwright coverage forces a no-scroll geometry state, verifies the status line remains a usable load-more link, and separately verifies the same low-profile action remains usable with the side drawer open |
+| `LPR-030` | `/design-system/templates/list-page?drawerMode=form&formIntent=create` | Create form variation open inside the list drawer | Preserves the new create-entry posture without changing the parent drawer shell | covered-by-test | Current Playwright coverage verifies the create form opens, focuses the title field, saves a placeholder record, and returns to detail view |
+| `LPR-031` | `/design-system/templates/list-page` | Edit form variation open from a selected list record | Preserves selected-record editing in the same list context | covered-by-test | Current Playwright coverage verifies pre-filled edit fields, save, card update, and detail view return |
 
 ## Extraction Guardrails
 

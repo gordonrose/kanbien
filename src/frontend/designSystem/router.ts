@@ -30,6 +30,10 @@ export const generatedCanonicalRenderRouteRegistry = {
     htmlPath: ["components", "drawer-select.html"],
     surfaceSignature: 'id="drawer-select-preview-shell"',
   },
+  "drawer-form": {
+    htmlPath: ["components", "drawer-form.html"],
+    surfaceSignature: 'data-drawer-form-preview-frame',
+  },
   "form-template": {
     htmlPath: ["templates", "form", "index.html"],
     surfaceSignature: 'class="form-page-shell',

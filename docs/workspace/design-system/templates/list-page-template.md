@@ -48,6 +48,13 @@
   focus moves into the detail surface when it opens
   a polite status message may announce the newly opened record
   footer navigation may stay as a simple previous/next pair
+- Create or edit form drawer:
+  the existing detail drawer shell may switch into a local form body for
+  placeholder entity-entry creation or selected-record editing
+  form mode keeps field labels, helper text, save, and cancel actions inside
+  the drawer while preserving the parent split layout and close behavior
+  preview saves may mutate browser-only placeholder records, while real
+  persistence and domain validation remain feature-owned
 - Dismissed:
   detail closed again, no active card
   focus returns to the originating list card on close
@@ -148,8 +155,14 @@
   `src/frontend/designSystem/assets/listPage.mjs`
 - Parent regression coverage:
   `tests/visual/designSystem/canonicals/data-display/listPage.spec.ts`
+- Drawer-form seam artifacts:
+  `docs/workspace/design-system/behavior-locks/drawer-form-behavior-lock.md`
+  `docs/workspace/design-system/reference-packs/drawer-form-reference-pack.md`
+  `docs/workspace/design-system/verification/drawer-form-verification-checklist.md`
+- Drawer-form shared renderer:
+  `src/frontend/designSystem/assets/drawerForm.mjs`
 - Current composition note:
   the parent route now recomposes the signed-off `ListRecordCard`,
   `ListDetailPanel`, and `ListDetailSplitLayout` seam shapes while keeping
-  parent-owned selection, search, loading, announcement, and focus-return
-  choreography in the parent controller
+  parent-owned selection, search, loading, drawer-form host intent, announcement,
+  and focus-return choreography in the parent controller

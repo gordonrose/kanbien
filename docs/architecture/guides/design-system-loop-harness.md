@@ -252,6 +252,13 @@ If the family lacks a consumable shared render or behavior seam, stop and raise
 the blocker for human decision rather than letting the app route duplicate the
 family markup, ARIA semantics, or controller logic locally.
 
+The same rule applies to design-system render pages themselves. A child
+canonical render page is not allowed to prove a copied parent shell. If the
+child must appear inside an already signed-off parent seam, the render page must
+consume that parent seam through a shared renderer, controller, or explicit host
+adapter. A source or browser test should fail when the render page declares the
+parent anatomy locally.
+
 Default governed-adoption preflight for first consumers:
 
 1. identify the literal signed-off source route and reference truth
@@ -310,6 +317,8 @@ For each material loop, define:
 - real interactive states when the family is interactive:
   typed input, focused input, native browser affordances, open menus, active
   drawers, or other non-empty runtime states
+- render-frame containment for every open overlay, popover, picker, drawer, or
+  fixed-position child rendered inside a canonical specimen
 - keyboard and focus behavior
 - screen-reader or semantic expectations
 - overflow/wrapping checks

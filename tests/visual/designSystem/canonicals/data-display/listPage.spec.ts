@@ -102,6 +102,141 @@ test.describe("design-system list page", () => {
     await expect(itemsContainer).toBeVisible();
   });
 
+  test("opens a create form variation inside the list drawer and saves a placeholder record", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?drawerMode=form&formIntent=create");
+
+    const detailPanel = page.locator("[data-selectable-list-detail-panel]");
+    const formDrawer = page.locator("[data-selectable-list-form]");
+    const titleInput = page.locator("[data-selectable-list-form-title]");
+
+    await expect(detailPanel).toBeVisible();
+    await expect(detailPanel).toHaveAttribute("data-list-drawer-shell-source", "list-drawer-shell");
+    await expect(formDrawer).toBeVisible();
+    await expect(formDrawer).toHaveAttribute("data-drawer-form", "");
+    await expect(page.locator("#list-page-detail-title")).toHaveText("Create placeholder record");
+    await expect(titleInput).toBeFocused();
+    await expect(page.locator("[data-selectable-list-form-elements]")).toBeVisible();
+    await expect(formDrawer.locator(".form-select-trigger")).toHaveText(/Ready for review/);
+    await expect(formDrawer.locator(".form-date-trigger")).toHaveText(/May 4, 2026/);
+    await expect(formDrawer.locator(".form-time-trigger")).toHaveText(/09:30/);
+    await formDrawer.locator(".form-date-trigger").click();
+    await expect(formDrawer.locator("[data-form-date-panel]")).toBeVisible();
+    await formDrawer.locator(".form-time-trigger").click();
+    await expect(formDrawer.locator("[data-form-date-panel]")).toBeHidden();
+    await expect(formDrawer.locator("[data-form-time-panel]")).toBeVisible();
+    await formDrawer.locator(".form-drawer-select-trigger").click();
+    await expect(formDrawer.locator("[data-form-drawer-select-panel]")).toBeVisible();
+    await expect(formDrawer.locator("[data-form-drawer-select-search]")).toBeFocused();
+    await formDrawer.locator("[data-form-drawer-select-close]").click();
+    await expect(formDrawer.locator("[data-form-drawer-select-panel]")).toBeHidden();
+    await expect(formDrawer.locator('input[type="radio"]')).toHaveCount(2);
+    await expect(formDrawer.locator('input[type="checkbox"]')).toHaveCount(3);
+    await expect(formDrawer.locator(".form-upload-dropzone")).toBeVisible();
+
+    await titleInput.fill("Created Placeholder Entry");
+    await page.locator("[data-selectable-list-form-subtitle]").fill("Created subtitle");
+    await page.locator("[data-selectable-list-form-description]").fill("Created drawer body");
+    await page.locator("[data-selectable-list-form-tags]").fill("Created, Placeholder");
+    await page.locator("[data-selectable-list-form-save]").click();
+
+    await expect(formDrawer).toBeHidden();
+    await expect(page.locator("[data-selectable-list-view-body]")).toBeVisible();
+    await expect(page.locator("[data-selectable-list-card]").first()).toContainText("Created Placeholder Entry");
+    await expect(page.locator("#list-page-detail-title")).toHaveText("Created Placeholder Entry");
+    await expect(page.locator("[data-selectable-list-announcement]")).toHaveText("Created placeholder record Created Placeholder Entry.");
+  });
+
+  test("edits the selected record through the form drawer variation without leaving list context", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    const firstItem = page.locator("[data-selectable-list-card]").first();
+    const detailPanel = page.locator("[data-selectable-list-detail-panel]");
+    const formDrawer = page.locator("[data-selectable-list-form]");
+
+    await firstItem.click();
+    await expect(detailPanel).toBeVisible();
+    await page.locator("[data-selectable-list-edit]").click();
+
+    await expect(formDrawer).toBeVisible();
+    await expect(page.locator("#list-page-detail-title")).toHaveText("Edit placeholder record");
+    await expect(page.locator("[data-selectable-list-form-title]")).toHaveValue("Title Field");
+
+    await page.locator("[data-selectable-list-form-title]").fill("Edited Placeholder Entry");
+    await page.locator("[data-selectable-list-form-description]").fill("Edited drawer body");
+    await page.locator("[data-selectable-list-form-save]").click();
+
+    await expect(formDrawer).toBeHidden();
+    await expect(firstItem).toContainText("Edited Placeholder Entry");
+    await expect(page.locator("#list-page-detail-title")).toHaveText("Edited Placeholder Entry");
+    await expect(detailPanel).toBeVisible();
+  });
+
+  test("keeps edit-form overflow inside the list drawer instead of exposing a page scrollbar", async ({ browser }) => {
+    const page = await browser.newPage({
+      viewport: { width: 1080, height: 760 },
+    });
+
+    await page.goto("/design-system/templates/list-page");
+
+    const firstItem = page.locator("[data-selectable-list-card]").first();
+    const formDrawer = page.locator("[data-selectable-list-form]");
+
+    await firstItem.click();
+    await page.locator("[data-selectable-list-edit]").click();
+    await expect(formDrawer).toBeVisible();
+
+    const editScrollState = await page.evaluate(() => {
+      const form = document.querySelector("[data-selectable-list-form]");
+      const documentStyle = getComputedStyle(document.documentElement);
+
+      return {
+        documentScrollLocked: document.documentElement.classList.contains("list-page-document-scroll-locked"),
+        documentOverflowY: documentStyle.overflowY,
+        viewportHasReservedScrollbar: document.documentElement.clientWidth < window.innerWidth,
+        formHasInternalOverflow:
+          form instanceof HTMLElement ? form.scrollHeight > form.clientHeight + 1 : false,
+      };
+    });
+
+    expect(editScrollState.documentScrollLocked).toBe(true);
+    expect(editScrollState.documentOverflowY).toBe("hidden");
+    expect(editScrollState.viewportHasReservedScrollbar).toBe(false);
+    expect(editScrollState.formHasInternalOverflow).toBe(true);
+
+    await formDrawer.locator(".form-date-trigger").click();
+    await expect(formDrawer.locator("[data-form-date-panel]")).toBeVisible();
+
+    const pickerScrollState = await page.evaluate(() => {
+      const panel = document.querySelector("[data-form-date-panel]");
+      const panelRect = panel instanceof HTMLElement ? panel.getBoundingClientRect() : null;
+
+      return {
+        documentScrollLocked: document.documentElement.classList.contains("list-page-document-scroll-locked"),
+        documentOverflowY: getComputedStyle(document.documentElement).overflowY,
+        viewportHasReservedScrollbar: document.documentElement.clientWidth < window.innerWidth,
+        pickerWithinViewport:
+          panelRect !== null
+          && panelRect.top >= 0
+          && panelRect.left >= 0
+          && panelRect.right <= window.innerWidth + 1,
+      };
+    });
+
+    expect(pickerScrollState.documentScrollLocked).toBe(true);
+    expect(pickerScrollState.documentOverflowY).toBe("hidden");
+    expect(pickerScrollState.viewportHasReservedScrollbar).toBe(false);
+    expect(pickerScrollState.pickerWithinViewport).toBe(true);
+
+    await page.locator("#list-page-detail-close").click();
+    await expect(page.locator("[data-selectable-list-detail-panel]")).toBeHidden();
+
+    await expect.poll(async () => (
+      page.evaluate(() => document.documentElement.classList.contains("list-page-document-scroll-locked"))
+    )).toBe(false);
+
+    await page.close();
+  });
+
   test("closes the drawer and returns focus to search when filtering removes the active record", async ({ page }) => {
     await page.goto("/design-system/templates/list-page");
 

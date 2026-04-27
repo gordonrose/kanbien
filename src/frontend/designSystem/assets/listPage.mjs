@@ -16,6 +16,19 @@ const detailClose = selectableList?.querySelector("#list-page-detail-close");
 const detailPrev = selectableList?.querySelector("#list-page-detail-prev");
 const detailNext = selectableList?.querySelector("#list-page-detail-next");
 const detailNextAnchor = selectableList?.querySelector("#list-page-detail-next-anchor");
+const createButton = selectableList?.querySelector("[data-selectable-list-create]");
+const editButton = selectableList?.querySelector("[data-selectable-list-edit]");
+const viewBody = selectableList?.querySelector("[data-selectable-list-view-body]");
+const viewActions = selectableList?.querySelector("[data-selectable-list-view-actions]");
+const formDrawer = selectableList?.querySelector("[data-selectable-list-form]");
+const formActions = selectableList?.querySelector("[data-selectable-list-form-actions]");
+const formCancel = selectableList?.querySelector("[data-selectable-list-form-cancel]");
+const formSave = selectableList?.querySelector("[data-selectable-list-form-save]");
+const formTitle = selectableList?.querySelector("[data-selectable-list-form-title]");
+const formSubtitle = selectableList?.querySelector("[data-selectable-list-form-subtitle]");
+const formDescription = selectableList?.querySelector("[data-selectable-list-form-description]");
+const formTags = selectableList?.querySelector("[data-selectable-list-form-tags]");
+const formStatus = selectableList?.querySelector("[data-selectable-list-form-status]");
 const lazyLoadStatusAction = selectableList?.querySelector("[data-selectable-list-status-action]");
 const lazyLoadSentinel = selectableList?.querySelector("[data-selectable-list-sentinel]");
 const loadingGroup = selectableList?.querySelector("[data-selectable-list-loading]");
@@ -41,6 +54,9 @@ const initialLongAttributesPreview = searchParams.get("listState") === "long-att
 const initialListLoadErrorPreview = searchParams.get("listLoadError") === "initial";
 const initialAppendLoadErrorPreview = searchParams.get("listLoadError") === "append";
 const initialDetailErrorPreview = searchParams.get("detailError") === "1";
+const initialFormIntent = searchParams.get("drawerMode") === "form"
+  ? searchParams.get("formIntent") === "create" ? "create" : "edit"
+  : null;
 let currentQuery = searchParams.get("q")?.trim() ?? "";
 const initialNoResultsPreview = currentQuery.length > 0;
 const untitledRecordFallback = "Untitled record";
@@ -51,6 +67,7 @@ const loadingDelayMs = 320;
 const initialLoadingDelayMs = 700;
 const defaultLazyLoadStatus = "Scroll to load more placeholder items.";
 const mobileDetailBreakpoint = "(max-width: 61.25rem)";
+const documentScrollLockClass = "list-page-document-scroll-locked";
 let nextLazyLoadIndex = 5;
 let lazyLoadComplete = false;
 let isLoading = false;
@@ -61,6 +78,8 @@ let appendFailurePending = initialAppendLoadErrorPreview;
 let detailFailurePending = initialDetailErrorPreview;
 let lastDetailRecord = null;
 let listColumnResizeObserver = null;
+let detailMode = "view";
+let activeFormIntent = null;
 
 function getItemButtons() {
   return Array.from(selectableList?.querySelectorAll("[data-selectable-list-card]") ?? []);
@@ -137,6 +156,14 @@ function syncDetailPanelAccessibility() {
   detailPanel.setAttribute("aria-modal", String(useModalSemantics));
 }
 
+function syncDocumentScrollLock() {
+  const isDetailOpen = detailPanel instanceof HTMLElement
+    && !detailPanel.classList.contains("hidden")
+    && splitLayout?.classList.contains("detail-open");
+
+  document.documentElement.classList.toggle(documentScrollLockClass, Boolean(isDetailOpen));
+}
+
 function focusDetailEntryPoint() {
   if (detailTitle instanceof HTMLElement) {
     detailTitle.focus({ preventScroll: true });
@@ -173,7 +200,12 @@ function syncLazyLoadStatusAction() {
 
 function setAppendErrorVisible(visible) {
   setStateVisibility(appendError, visible);
+  setStateVisibility(lazyLoadStatusAction?.closest("[data-selectable-list-status]"), !visible);
   syncLazyLoadStatusAction();
+}
+
+function isAppendErrorVisible() {
+  return appendError instanceof HTMLElement && !appendError.classList.contains("hidden");
 }
 
 function setDetailErrorVisible(visible) {
@@ -379,6 +411,197 @@ function setOptionalTags(container, tags) {
   }
 }
 
+function setModeVisibility(mode) {
+  const isForm = mode === "form";
+  detailMode = mode;
+
+  viewBody?.classList.toggle("hidden", isForm);
+  viewBody?.setAttribute("aria-hidden", String(isForm));
+  viewActions?.classList.toggle("hidden", isForm);
+  viewActions?.setAttribute("aria-hidden", String(isForm));
+  formDrawer?.classList.toggle("hidden", !isForm);
+  formDrawer?.setAttribute("aria-hidden", String(!isForm));
+  formActions?.classList.toggle("hidden", !isForm);
+  formActions?.setAttribute("aria-hidden", String(!isForm));
+
+  if (editButton instanceof HTMLButtonElement) {
+    editButton.disabled = isForm || !(lastDetailTrigger instanceof HTMLElement);
+  }
+}
+
+function getFormTagsValue(tags) {
+  return tags.join(", ");
+}
+
+function getFormValues() {
+  return {
+    title: normalizeText(formTitle?.value ?? "") || untitledRecordFallback,
+    subtitle: normalizeText(formSubtitle?.value ?? ""),
+    description: normalizeText(formDescription?.value ?? ""),
+    tags: normalizeText(formTags?.value ?? "")
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean),
+  };
+}
+
+function setFormStatus(message) {
+  if (formStatus instanceof HTMLElement) {
+    formStatus.textContent = message;
+  }
+}
+
+function populateForm(record, intent) {
+  if (formTitle instanceof HTMLInputElement) {
+    formTitle.value = intent === "create" ? "" : record?.detailTitle ?? "";
+  }
+
+  if (formSubtitle instanceof HTMLInputElement) {
+    formSubtitle.value = intent === "create" ? "" : record?.detailSubtitle ?? "";
+  }
+
+  if (formDescription instanceof HTMLTextAreaElement) {
+    formDescription.value = intent === "create" ? "" : record?.detailBody ?? "";
+  }
+
+  if (formTags instanceof HTMLInputElement) {
+    formTags.value = intent === "create" ? "" : getFormTagsValue(record?.tags ?? []);
+  }
+
+  setFormStatus(intent === "create" ? "Ready to create a placeholder record." : "Editing the selected placeholder record.");
+}
+
+function syncDetailHeaderForForm(intent) {
+  if (detailMeta instanceof HTMLElement) {
+    detailMeta.textContent = intent === "create" ? "Create form" : "Edit form";
+    detailMeta.classList.remove("hidden");
+    detailMeta.setAttribute("aria-hidden", "false");
+  }
+
+  if (detailTitle instanceof HTMLElement) {
+    detailTitle.textContent = intent === "create" ? "Create placeholder record" : "Edit placeholder record";
+  }
+
+  setOptionalText(
+    detailSubtitle,
+    intent === "create"
+      ? "Use the same drawer structure for new entity entries."
+      : "Update the current entity entry without leaving the list context.",
+  );
+}
+
+function openFormDrawer(intent, trigger = null) {
+  if (!(detailPanel instanceof HTMLElement)) {
+    return;
+  }
+
+  activeFormIntent = intent;
+  if (intent === "create" && trigger instanceof HTMLElement) {
+    lastDetailTrigger = trigger;
+  }
+
+  const record = intent === "edit" && lastDetailTrigger instanceof HTMLElement
+    ? getButtonRecord(lastDetailTrigger)
+    : null;
+
+  populateForm(record, intent);
+  syncDetailHeaderForForm(intent);
+  splitLayout?.classList.add("detail-open");
+  detailPanel.classList.remove("hidden");
+  detailPanel.setAttribute("aria-hidden", "false");
+  setModeVisibility("form");
+  syncDocumentScrollLock();
+  syncDetailPanelAccessibility();
+  updateDetailNavigation();
+  announce(intent === "create" ? "Opened create form drawer." : "Opened edit form drawer.");
+  scheduleListGeometrySync();
+
+  if (formTitle instanceof HTMLInputElement) {
+    formTitle.focus({ preventScroll: true });
+  } else {
+    focusDetailEntryPoint();
+  }
+}
+
+function applyRecordToButton(button, values) {
+  button.dataset.title = values.title;
+  button.dataset.subtitle = values.subtitle;
+  button.dataset.description = values.description;
+  button.dataset.detailTitle = values.title;
+  button.dataset.detailSubtitle = values.subtitle;
+  button.dataset.detailBody = values.description;
+  button.dataset.detailMeta = activeFormIntent === "create" ? "Created placeholder" : "Edited placeholder";
+  button.dataset.tags = values.tags.join("|");
+  renderCard(button);
+}
+
+function createFormRecord(values) {
+  const button = document.createElement("button");
+  button.className = "list-page-card list-page-card-button";
+  button.type = "button";
+  button.dataset.listItem = "";
+  button.dataset.selectableListCard = "";
+  button.dataset.listPageChildSeam = "list-record-card";
+  button.setAttribute("aria-controls", "list-page-detail-panel");
+  button.setAttribute("aria-pressed", "false");
+  applyRecordToButton(button, values);
+
+  if (itemsContainer instanceof HTMLElement) {
+    itemsContainer.insertBefore(button, itemsContainer.firstElementChild);
+  } else {
+    listColumn?.append(button);
+  }
+
+  return button;
+}
+
+function submitFormDrawer() {
+  if (!(detailPanel instanceof HTMLElement) || activeFormIntent === null) {
+    return;
+  }
+
+  const values = getFormValues();
+  const targetButton = activeFormIntent === "create"
+    ? createFormRecord(values)
+    : lastDetailTrigger instanceof HTMLElement
+      ? lastDetailTrigger
+      : null;
+
+  if (!(targetButton instanceof HTMLElement)) {
+    setFormStatus("Select a record before editing.");
+    return;
+  }
+
+  if (activeFormIntent === "edit") {
+    applyRecordToButton(targetButton, values);
+  }
+
+  setFormStatus("Saved placeholder changes.");
+  setModeVisibility("view");
+  setDetailContent(targetButton, { focusEntry: true });
+  announce(
+    activeFormIntent === "create"
+      ? `Created placeholder record ${values.title}.`
+      : `Saved placeholder record ${values.title}.`,
+  );
+  activeFormIntent = null;
+  scheduleOverflowTooltipUpdate();
+}
+
+function cancelFormDrawer() {
+  if (activeFormIntent === "create") {
+    activeFormIntent = null;
+    closeDetailPanel({ restoreFocus: true, focusTarget: createButton });
+    return;
+  }
+
+  activeFormIntent = null;
+  setModeVisibility("view");
+  if (lastDetailTrigger instanceof HTMLElement) {
+    setDetailContent(lastDetailTrigger);
+  }
+}
+
 function renderCard(button) {
   if (!(button instanceof HTMLElement)) {
     return;
@@ -486,7 +709,13 @@ function createPlaceholderItem(index) {
 }
 
 async function loadMoreItems(mode = "append") {
-  if (!(listColumn instanceof HTMLElement) || currentListState !== "items" || lazyLoadComplete || isLoading) {
+  if (
+    !(listColumn instanceof HTMLElement)
+    || currentListState !== "items"
+    || lazyLoadComplete
+    || isLoading
+    || (mode === "append" && isAppendErrorVisible())
+  ) {
     return false;
   }
 
@@ -543,7 +772,13 @@ async function loadMoreItems(mode = "append") {
 }
 
 async function handleListScroll() {
-  if (!(listColumn instanceof HTMLElement) || currentListState !== "items" || lazyLoadComplete || isLoading) {
+  if (
+    !(listColumn instanceof HTMLElement)
+    || currentListState !== "items"
+    || lazyLoadComplete
+    || isLoading
+    || isAppendErrorVisible()
+  ) {
     return;
   }
 
@@ -666,6 +901,9 @@ function closeDetailPanel(options = {}) {
   splitLayout?.classList.remove("detail-open");
   detailPanel.classList.add("hidden");
   detailPanel.setAttribute("aria-hidden", "true");
+  setModeVisibility("view");
+  activeFormIntent = null;
+  syncDocumentScrollLock();
   syncDetailPanelAccessibility();
 
   for (const itemButton of getItemButtons()) {
@@ -748,7 +986,9 @@ function syncQueryFilter(options = {}) {
   scheduleOverflowTooltipUpdate();
 }
 
-function setDetailContent(button) {
+function setDetailContent(button, options = {}) {
+  const { focusEntry = true } = options;
+
   if (!(button instanceof HTMLElement) || !(detailPanel instanceof HTMLElement)) {
     return;
   }
@@ -772,6 +1012,8 @@ function setDetailContent(button) {
   splitLayout?.classList.add("detail-open");
   detailPanel.classList.remove("hidden");
   detailPanel.setAttribute("aria-hidden", "false");
+  setModeVisibility("view");
+  syncDocumentScrollLock();
   syncDetailPanelAccessibility();
   updateDetailNavigation();
 
@@ -790,7 +1032,9 @@ function setDetailContent(button) {
 
   scheduleListGeometrySync();
   scheduleOverflowTooltipUpdate();
-  focusDetailEntryPoint();
+  if (focusEntry) {
+    focusDetailEntryPoint();
+  }
 }
 
 if (getItemButtons().length > 0 && detailPanel instanceof HTMLElement) {
@@ -863,6 +1107,24 @@ if (getItemButtons().length > 0 && detailPanel instanceof HTMLElement) {
 
   detailClose?.addEventListener("click", () => {
     closeDetailPanel({ restoreFocus: true });
+  });
+  createButton?.addEventListener("click", () => {
+    openFormDrawer("create", createButton);
+  });
+  editButton?.addEventListener("click", () => {
+    if (lastDetailTrigger instanceof HTMLElement) {
+      openFormDrawer("edit", editButton);
+    }
+  });
+  formCancel?.addEventListener("click", () => {
+    cancelFormDrawer();
+  });
+  formSave?.addEventListener("click", () => {
+    submitFormDrawer();
+  });
+  formDrawer?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    submitFormDrawer();
   });
   detailPrev?.addEventListener("click", () => {
     const activeIndex = getActiveItemIndex();
@@ -1000,6 +1262,20 @@ if (getItemButtons().length > 0 && detailPanel instanceof HTMLElement) {
     }
 
     setListState("items");
+
+    if (initialFormIntent === "create") {
+      openFormDrawer("create", createButton);
+      return;
+    }
+
+    if (initialFormIntent === "edit") {
+      const firstVisibleItem = getVisibleItemButtons()[0];
+      if (firstVisibleItem instanceof HTMLElement) {
+        setDetailContent(firstVisibleItem, { focusEntry: false });
+        openFormDrawer("edit", editButton);
+      }
+      return;
+    }
 
     if (initialLoadingPreview) {
       isLoading = true;

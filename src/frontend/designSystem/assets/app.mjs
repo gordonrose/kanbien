@@ -642,6 +642,11 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/canonical-renderings/list-detail-split-layout", label: "List Detail Split Layout" },
     { href: "/design-system/components/list-detail-split-layout", label: "Render" },
   ]],
+  ["/design-system/components/drawer-form", [
+    { href: "/design-system/components", label: "Home" },
+    { href: "/design-system/canonical-renderings/drawer-form", label: "Drawer Form" },
+    { href: "/design-system/components/drawer-form", label: "Render" },
+  ]],
   ["/design-system/components/simple-select", [
     { href: "/design-system/components", label: "Home" },
     { href: "/design-system/canonical-renderings/simple-select", label: "Simple Select" },

@@ -38,6 +38,7 @@ describe("design-system canonical render routing", () => {
         expect.objectContaining({ familyKey: "choice-group" }),
         expect.objectContaining({ familyKey: "date-picker" }),
         expect.objectContaining({ familyKey: "display-settings" }),
+        expect.objectContaining({ familyKey: "drawer-form" }),
         expect.objectContaining({ familyKey: "drawer-select" }),
         expect.objectContaining({ familyKey: "form-template" }),
         expect.objectContaining({ familyKey: "icon-grid" }),
@@ -145,6 +146,18 @@ describe("design-system canonical render routing", () => {
     expect(response.status).toBe(200);
     expect(response.text).toContain('id="drawer-select-preview-shell"');
     expect(response.text).toContain('id="drawer-select-canonical-current"');
+    expect(response.text).not.toContain("Design-System Route Families");
+  });
+
+  it("serves the dedicated drawer-form render page instead of the overview shell", async () => {
+    const response = await request(createSubject()).get(
+      "/design-system/canonical-renderings/drawer-form/DF-001",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("data-drawer-form-preview-frame");
+    expect(response.text).toContain('data-list-drawer-shell-template="split-layout"');
+    expect(response.text).toContain("/design-system/assets/listDrawerShell.mjs");
     expect(response.text).not.toContain("Design-System Route Families");
   });
 

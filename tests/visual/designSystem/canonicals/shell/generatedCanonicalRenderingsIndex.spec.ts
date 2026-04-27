@@ -78,6 +78,14 @@ const generatedCanonicalFamilies: readonly GeneratedCanonicalFamily[] = [
     bodyAttribute: { name: "data-drawer-select-surface", value: "canonical" as const },
   },
   {
+    familyKey: "drawer-form",
+    familyLabel: /Drawer Form/i,
+    sampleRenderPath: "/design-system/canonical-renderings/drawer-form/DF-001",
+    surfaceLocator: "[data-drawer-form-preview-layout]",
+    readyLocator: "body[data-drawer-form-canonical-ready='true']",
+    bodyAttribute: { name: "data-drawer-form-surface", value: "canonical" as const },
+  },
+  {
     familyKey: "display-settings",
     familyLabel: /Display Settings/i,
     sampleRenderPath: "/design-system/canonical-renderings/display-settings/DSR-001",

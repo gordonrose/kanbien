@@ -1,0 +1,201 @@
+WITH family_rows (
+  design_system_canonical_family_id,
+  family_key,
+  normalized_family_key,
+  display_label,
+  family_kind,
+  launcher_title,
+  launcher_description,
+  launcher_category,
+  generated_launcher_route_path,
+  legacy_launcher_route_path,
+  source_surface_route_path,
+  sort_order,
+  featured
+) AS (
+  VALUES
+    (
+      '8fe182de-7f28-4d60-bc27-1fb723f83005'::uuid,
+      'drawer-form',
+      'drawer-form',
+      'Drawer Form',
+      'component',
+      'Drawer Form Canonical Renderings',
+      'Persistence-backed launcher for the drawer-form create and edit entity-entry seam.',
+      'data-display',
+      '/design-system/canonical-renderings/drawer-form',
+      '/design-system/canonicals/drawer-form',
+      '/design-system/components/drawer-form',
+      95,
+      TRUE
+    )
+)
+INSERT INTO design_system_canonical_families (
+  design_system_canonical_family_id,
+  family_key,
+  normalized_family_key,
+  display_label,
+  family_kind,
+  launcher_title,
+  launcher_description,
+  launcher_category,
+  generated_launcher_route_path,
+  generated_root_route_path,
+  legacy_launcher_route_path,
+  source_surface_route_path,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+SELECT
+  family_rows.design_system_canonical_family_id,
+  family_rows.family_key,
+  family_rows.normalized_family_key,
+  family_rows.display_label,
+  family_rows.family_kind,
+  family_rows.launcher_title,
+  family_rows.launcher_description,
+  family_rows.launcher_category,
+  family_rows.generated_launcher_route_path,
+  '/design-system/canonical-renderings',
+  family_rows.legacy_launcher_route_path,
+  family_rows.source_surface_route_path,
+  'live',
+  family_rows.sort_order,
+  family_rows.featured,
+  NOW(),
+  NOW()
+FROM family_rows
+ON CONFLICT (normalized_family_key)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  family_kind = EXCLUDED.family_kind,
+  launcher_title = EXCLUDED.launcher_title,
+  launcher_description = EXCLUDED.launcher_description,
+  launcher_category = EXCLUDED.launcher_category,
+  generated_launcher_route_path = EXCLUDED.generated_launcher_route_path,
+  generated_root_route_path = EXCLUDED.generated_root_route_path,
+  legacy_launcher_route_path = EXCLUDED.legacy_launcher_route_path,
+  source_surface_route_path = EXCLUDED.source_surface_route_path,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();
+
+WITH reference_rows (
+  normalized_family_key,
+  reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  theme,
+  direction,
+  zoom,
+  state_variant_key,
+  specimen_payload,
+  sort_order,
+  featured
+) AS (
+  VALUES
+    ('drawer-form', 'DF-001', 'Desktop drawer-hosted form with approved control mix', 'Baseline drawer-form body rendered inside the list-detail drawer chassis.', '/design-system/canonical-renderings/drawer-form/DF-001', '/design-system/components/drawer-form?ref=DF-001&width=1080&state=baseline&dir=ltr&zoom=0&open=closed', 'Desktop drawer form lane', 1080, 'normal', 'ltr', 0, 'baseline', '{"state":"baseline","open":"closed"}'::jsonb, 10, TRUE),
+    ('drawer-form', 'DF-004', 'RTL component surface', 'RTL review keeps direction scoped to the drawer-form specimen.', '/design-system/canonical-renderings/drawer-form/DF-004', '/design-system/components/drawer-form?ref=DF-004&width=1080&state=baseline&dir=rtl&zoom=0&open=closed', 'Desktop drawer form lane', 1080, 'normal', 'rtl', 0, 'rtl', '{"state":"baseline","open":"closed"}'::jsonb, 40, TRUE),
+    ('drawer-form', 'DF-005', 'Magnified component surface', 'Magnified review keeps scale scoped to the drawer-form specimen.', '/design-system/canonical-renderings/drawer-form/DF-005', '/design-system/components/drawer-form?ref=DF-005&width=1080&state=baseline&dir=ltr&zoom=100&open=closed', 'Desktop drawer form lane', 1080, 'normal', 'ltr', 100, 'magnified', '{"state":"baseline","open":"closed"}'::jsonb, 50, TRUE),
+    ('drawer-form', 'DF-006', 'Disabled form state', 'Disabled review proves approved child controls inherit a consistent unavailable posture.', '/design-system/canonical-renderings/drawer-form/DF-006', '/design-system/components/drawer-form?ref=DF-006&width=1080&state=disabled&dir=ltr&zoom=0&open=closed', 'Desktop drawer form lane', 1080, 'normal', 'ltr', 0, 'disabled', '{"state":"disabled","open":"closed"}'::jsonb, 60, TRUE),
+    ('drawer-form', 'DF-007', 'Error form state', 'Error review proves validation posture stays inside the drawer-form lane.', '/design-system/canonical-renderings/drawer-form/DF-007', '/design-system/components/drawer-form?ref=DF-007&width=1080&state=error&dir=ltr&zoom=0&open=closed', 'Desktop drawer form lane', 1080, 'normal', 'ltr', 0, 'error', '{"state":"error","open":"closed"}'::jsonb, 70, TRUE),
+    ('drawer-form', 'DF-008', 'Mobile drawer lane', 'Mobile-width review keeps the drawer-form body as a single usable lane.', '/design-system/canonical-renderings/drawer-form/DF-008', '/design-system/components/drawer-form?ref=DF-008&width=390&state=mobile&dir=ltr&zoom=0&open=closed', 'Mobile drawer form lane', 390, 'normal', 'ltr', 0, 'mobile', '{"state":"mobile","open":"closed"}'::jsonb, 80, TRUE),
+    ('drawer-form', 'DF-009', 'Date picker open state', 'Date picker review proves the approved date control opens inside the drawer-form seam.', '/design-system/canonical-renderings/drawer-form/DF-009', '/design-system/components/drawer-form?ref=DF-009&width=1080&state=baseline&dir=ltr&zoom=0&open=date', 'Desktop drawer form lane', 1080, 'normal', 'ltr', 0, 'date-open', '{"state":"baseline","open":"date"}'::jsonb, 90, TRUE),
+    ('drawer-form', 'DF-010', 'Time picker open state', 'Time picker review proves the approved time control opens inside the drawer-form seam.', '/design-system/canonical-renderings/drawer-form/DF-010', '/design-system/components/drawer-form?ref=DF-010&width=1080&state=baseline&dir=ltr&zoom=0&open=time', 'Desktop drawer form lane', 1080, 'normal', 'ltr', 0, 'time-open', '{"state":"baseline","open":"time"}'::jsonb, 100, TRUE),
+    ('drawer-form', 'DF-011', 'Drawer select open state', 'Drawer-select review proves the approved searchable drawer control opens inside the drawer-form seam.', '/design-system/canonical-renderings/drawer-form/DF-011', '/design-system/components/drawer-form?ref=DF-011&width=1080&state=baseline&dir=ltr&zoom=0&open=drawer-select', 'Desktop drawer form lane', 1080, 'normal', 'ltr', 0, 'drawer-select-open', '{"state":"baseline","open":"drawer-select"}'::jsonb, 110, TRUE),
+    ('drawer-form', 'DF-012', 'Mobile date picker open state', 'Mobile date review proves the approved date control remains usable in the single-lane drawer.', '/design-system/canonical-renderings/drawer-form/DF-012', '/design-system/components/drawer-form?ref=DF-012&width=390&state=mobile&dir=ltr&zoom=0&open=date', 'Mobile drawer form lane', 390, 'normal', 'ltr', 0, 'mobile-date-open', '{"state":"mobile","open":"date"}'::jsonb, 120, TRUE),
+    ('drawer-form', 'DF-013', 'Mobile drawer select open state', 'Mobile drawer-select review proves the searchable drawer control remains contained in the form lane.', '/design-system/canonical-renderings/drawer-form/DF-013', '/design-system/components/drawer-form?ref=DF-013&width=390&state=mobile&dir=ltr&zoom=0&open=drawer-select', 'Mobile drawer form lane', 390, 'normal', 'ltr', 0, 'mobile-drawer-select-open', '{"state":"mobile","open":"drawer-select"}'::jsonb, 130, TRUE),
+    ('drawer-form', 'DF-014', 'RTL drawer select open state', 'RTL drawer-select review proves open overlay direction stays scoped to the specimen.', '/design-system/canonical-renderings/drawer-form/DF-014', '/design-system/components/drawer-form?ref=DF-014&width=1080&state=baseline&dir=rtl&zoom=0&open=drawer-select', 'Desktop drawer form lane', 1080, 'normal', 'rtl', 0, 'rtl-drawer-select-open', '{"state":"baseline","open":"drawer-select"}'::jsonb, 140, TRUE),
+    ('drawer-form', 'DF-015', 'RTL date picker open state', 'RTL date review proves the date overlay stays aligned inside the inherited drawer shell.', '/design-system/canonical-renderings/drawer-form/DF-015', '/design-system/components/drawer-form?ref=DF-015&width=1080&state=baseline&dir=rtl&zoom=0&open=date', 'Desktop drawer form lane', 1080, 'normal', 'rtl', 0, 'rtl-date-open', '{"state":"baseline","open":"date"}'::jsonb, 150, TRUE),
+    ('drawer-form', 'DF-016', 'Error with drawer select open', 'Error plus drawer-select review proves validation posture and open overlay layering can coexist.', '/design-system/canonical-renderings/drawer-form/DF-016', '/design-system/components/drawer-form?ref=DF-016&width=1080&state=error&dir=ltr&zoom=0&open=drawer-select', 'Desktop drawer form lane', 1080, 'normal', 'ltr', 0, 'error-drawer-select-open', '{"state":"error","open":"drawer-select"}'::jsonb, 160, TRUE),
+    ('drawer-form', 'DF-017', 'Magnified drawer select open state', 'Magnified drawer-select review proves the largest open control remains usable under zoom.', '/design-system/canonical-renderings/drawer-form/DF-017', '/design-system/components/drawer-form?ref=DF-017&width=1080&state=baseline&dir=ltr&zoom=100&open=drawer-select', 'Desktop drawer form lane', 1080, 'normal', 'ltr', 100, 'magnified-drawer-select-open', '{"state":"baseline","open":"drawer-select"}'::jsonb, 170, TRUE),
+    ('drawer-form', 'DF-018', 'Mobile error state', 'Mobile error review proves validation messaging stays readable in the single-column form lane.', '/design-system/canonical-renderings/drawer-form/DF-018', '/design-system/components/drawer-form?ref=DF-018&width=390&state=error&dir=ltr&zoom=0&open=closed', 'Mobile drawer form lane', 390, 'normal', 'ltr', 0, 'mobile-error', '{"state":"error","open":"closed"}'::jsonb, 180, TRUE),
+    ('drawer-form', 'DF-019', 'Dark theme baseline', 'Dark theme review proves the inherited drawer shell and form controls stay readable under local theme scope.', '/design-system/canonical-renderings/drawer-form/DF-019', '/design-system/components/drawer-form?ref=DF-019&width=1080&state=baseline&theme=dark&dir=ltr&zoom=0&open=closed', 'Desktop drawer form lane', 1080, 'dark', 'ltr', 0, 'dark-baseline', '{"state":"baseline","open":"closed"}'::jsonb, 190, TRUE),
+    ('drawer-form', 'DF-020', 'Desert theme baseline', 'Desert theme review proves the inherited drawer shell and form controls stay readable under local theme scope.', '/design-system/canonical-renderings/drawer-form/DF-020', '/design-system/components/drawer-form?ref=DF-020&width=1080&state=baseline&theme=desert&dir=ltr&zoom=0&open=closed', 'Desktop drawer form lane', 1080, 'desert', 'ltr', 0, 'desert-baseline', '{"state":"baseline","open":"closed"}'::jsonb, 200, TRUE),
+    ('drawer-form', 'DF-021', 'Dark drawer select open state', 'Dark drawer-select review proves the highest-pressure overlay remains readable inside the themed drawer form.', '/design-system/canonical-renderings/drawer-form/DF-021', '/design-system/components/drawer-form?ref=DF-021&width=1080&state=baseline&theme=dark&dir=ltr&zoom=0&open=drawer-select', 'Desktop drawer form lane', 1080, 'dark', 'ltr', 0, 'dark-drawer-select-open', '{"state":"baseline","open":"drawer-select"}'::jsonb, 210, TRUE)
+),
+canonical_families AS (
+  SELECT design_system_canonical_family_id, normalized_family_key
+  FROM design_system_canonical_families
+  WHERE normalized_family_key = 'drawer-form'
+)
+INSERT INTO design_system_canonical_references (
+  design_system_canonical_reference_id,
+  design_system_canonical_family_id,
+  reference_id,
+  normalized_reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  height,
+  theme,
+  direction,
+  zoom,
+  locale_fixture,
+  label_density_fixture,
+  state_variant_key,
+  specimen_payload,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+SELECT
+  gen_random_uuid(),
+  canonical_families.design_system_canonical_family_id,
+  reference_rows.reference_id,
+  lower(reference_rows.reference_id),
+  reference_rows.display_label,
+  reference_rows.description,
+  reference_rows.render_route_path,
+  reference_rows.legacy_render_route_path,
+  reference_rows.viewport,
+  reference_rows.width,
+  NULL,
+  reference_rows.theme,
+  reference_rows.direction,
+  reference_rows.zoom,
+  NULL,
+  NULL,
+  reference_rows.state_variant_key,
+  reference_rows.specimen_payload,
+  'live',
+  reference_rows.sort_order,
+  reference_rows.featured,
+  NOW(),
+  NOW()
+FROM reference_rows
+JOIN canonical_families
+  ON canonical_families.normalized_family_key = reference_rows.normalized_family_key
+ON CONFLICT (design_system_canonical_family_id, normalized_reference_id)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  description = EXCLUDED.description,
+  render_route_path = EXCLUDED.render_route_path,
+  legacy_render_route_path = EXCLUDED.legacy_render_route_path,
+  viewport = EXCLUDED.viewport,
+  width = EXCLUDED.width,
+  height = EXCLUDED.height,
+  theme = EXCLUDED.theme,
+  direction = EXCLUDED.direction,
+  zoom = EXCLUDED.zoom,
+  locale_fixture = EXCLUDED.locale_fixture,
+  label_density_fixture = EXCLUDED.label_density_fixture,
+  state_variant_key = EXCLUDED.state_variant_key,
+  specimen_payload = EXCLUDED.specimen_payload,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();

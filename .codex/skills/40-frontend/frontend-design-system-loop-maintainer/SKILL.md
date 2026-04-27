@@ -167,6 +167,49 @@ If the launcher still points at `/design-system/templates/...` or another
 parent host page for a child seam, stop and record that the child render
 surface is still missing instead of presenting the launcher as complete.
 
+### 0C. Generated Canonical Render Pages Must Match The Established Page Contract
+
+Before creating or materially changing a generated canonical render page, open
+at least one adjacent signed-off generated render page for the same ownership
+category and use it as the contract reference.
+
+Do not proceed until the new or changed page has the same required page-level
+contract shape:
+
+- `Canonical Render` intro posture, not generic component-preview posture
+- generated launcher link in the intro copy
+- metadata rows for matched canonical, viewing circumstances, state, viewport
+  contract, and review note
+- canonical stepper with current, previous, and next controls
+- dedicated visible specimen surface, not just a host-context placeholder
+- route truth and surface truth markers
+- local scoping for direction, theme, and magnification
+
+Generated render-page state must not mutate document-level `dir`,
+`data-theme`, or `--ui-scale` when the reference is meant to review only the
+specimen. Direction, theme, and zoom belong on the render surface or specimen
+shell unless the family is explicitly a page-level shell state.
+
+If a generated render page lacks any of these pieces, classify it as
+implementation-only or incomplete. Do not call it sign-off-ready.
+
+### 0D. Child Render Pages Must Consume Parent Seams
+
+When a child family is reviewed inside an already signed-off parent shell,
+first identify the literal parent render/controller seam that owns the shell
+anatomy.
+
+Do not let the child render page declare a local copy of parent anatomy such as
+drawer shells, list/detail split layouts, headers, action rows, footers, ARIA
+semantics, or controller behavior. The render page must import or hydrate the
+parent seam, or the loop must stop and record that a consumable parent seam is
+missing.
+
+Add a prevention check that would fail if the child render page starts copying
+the parent seam again. Browser geometry assertions are not sufficient when the
+failure mode is adoption drift; the harness must prove the source of truth is
+shared.
+
 ### 1. Visual Contract First
 
 Treat each request as a narrow visual contract before treating it as an
@@ -233,6 +276,8 @@ directly, not only the underlying DOM or interaction state.
 Examples of acceptable human-visible guards:
 
 - geometry assertions for overlap, clipping, containment, or stacking
+- render-frame containment assertions for every open overlay, popover, picker,
+  drawer, or fixed-position child rendered inside a canonical specimen
 - contrast assertions for visibly unreadable text on the actual risky surface
 - off-screen or overflow assertions for controls a human would describe as
   missing or broken

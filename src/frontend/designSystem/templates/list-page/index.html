@@ -313,6 +313,15 @@
                 <p class="component-catalog-meta">
                   This starts from the Page Shell baseline and swaps the center canvas for a simple full-width card list we can shape together.
                 </p>
+                <div class="list-page-header-actions">
+                  <button
+                    class="list-page-create-button"
+                    type="button"
+                    data-selectable-list-create
+                  >
+                    New placeholder record
+                  </button>
+                </div>
               </div>
 
               <div
@@ -576,115 +585,14 @@
               </div>
             </div>
 
-            <aside
-              id="list-page-detail-panel"
-              class="list-page-detail-panel hidden"
-              aria-labelledby="list-page-detail-title"
-              aria-hidden="true"
-              data-selectable-list-detail-panel
-              data-list-page-child-seam="list-detail-panel"
-              data-list-detail-split-layout-slot="detail"
-            >
-              <div class="list-page-detail-header">
-                <div class="list-page-detail-copy">
-                  <p
-                    id="list-page-detail-meta"
-                    class="list-page-detail-meta tooltip-anchor"
-                    data-selectable-list-detail-field="meta"
-                    data-overflow-tooltip-source
-                  >
-                    Meta Field
-                  </p>
-                  <h2
-                    id="list-page-detail-title"
-                    class="list-page-detail-title"
-                    data-selectable-list-detail-field="title"
-                    tabindex="-1"
-                  >
-                    Title Field
-                  </h2>
-                  <p id="list-page-detail-subtitle" class="list-page-detail-subtitle" data-selectable-list-detail-field="subtitle">Subtitle Field</p>
-                </div>
-                <div class="list-page-detail-controls">
-                  <div class="list-page-detail-action-row">
-                    <button class="list-page-detail-action-button" type="button">Edit</button>
-                    <button class="list-page-detail-action-button" type="button">Share</button>
-                    <button id="list-page-detail-close" class="drawer-close-button" type="button" aria-label="Close item details">
-                      ×
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div class="list-page-detail-body">
-                <div
-                  class="list-page-detail-error hidden"
-                  aria-live="polite"
-                  aria-hidden="true"
-                  data-selectable-list-detail-error
-                >
-                  <p class="list-page-state-eyebrow">Detail unavailable</p>
-                  <h3 class="list-page-state-title">Detail content could not load</h3>
-                  <p class="list-page-state-description">
-                    This governed detail error stays local to the drawer so the parent master-detail layout remains intact.
-                  </p>
-                  <div class="list-page-state-actions">
-                    <button
-                      class="list-page-state-button"
-                      type="button"
-                      data-selectable-list-detail-retry
-                    >
-                      Retry detail load
-                    </button>
-                  </div>
-                </div>
-                <p
-                  id="list-page-detail-description"
-                  class="list-page-detail-description"
-                  data-selectable-list-detail-field="description"
-                >
-                  Long Description Field
-                </p>
-                <div
-                  id="list-page-detail-tags"
-                  class="list-page-detail-tags"
-                  aria-label="Selected item tags"
-                  data-selectable-list-detail-field="tags"
-                >
-                  <span class="list-page-tag">Tag Field 1</span>
-                  <span class="list-page-tag">Tag Field 2</span>
-                  <span class="list-page-tag">Tag Field 3</span>
-                </div>
-              </div>
-
-              <div class="list-page-detail-footer">
-                <div class="list-page-detail-nav-row">
-                  <button
-                    id="list-page-detail-prev"
-                    class="list-page-detail-nav-button"
-                    type="button"
-                    aria-label="Show previous list item"
-                  >
-                    Previous
-                  </button>
-                  <span id="list-page-detail-next-anchor" class="tooltip-anchor list-page-detail-nav-anchor">
-                    <button
-                      id="list-page-detail-next"
-                      class="list-page-detail-nav-button"
-                      type="button"
-                      aria-label="Show next list item"
-                    >
-                      Next
-                    </button>
-                  </span>
-                </div>
-              </div>
-            </aside>
+            <div data-list-drawer-shell-template="panel"></div>
           </section>
         </section>
       </main>
     </div>
 
+    <script type="module" src="/design-system/assets/listDrawerShell.mjs"></script>
+    <script type="module" src="/design-system/assets/drawerForm.mjs"></script>
     <script type="module" src="/design-system/assets/app.mjs"></script>
     <script type="module" src="/design-system/assets/listPage.mjs"></script>
   </body>
