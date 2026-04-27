@@ -30,6 +30,16 @@
   overflow: hidden;
 }
 
+body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell {
+  zoom: var(--ui-scale, 1);
+}
+
+body[data-hierarchy-tree-surface="canonical"] .canonical-render-frame {
+  max-width: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
 .hierarchy-tree-preview-page {
   display: grid;
   gap: 1.25rem;
@@ -111,6 +121,46 @@ body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data
   max-height: none;
 }
 
+body[data-hierarchy-tree-surface="canonical"][data-hierarchy-tree-review-viewport="mobile"] .canonical-render-frame {
+  margin-inline: auto;
+  max-width: 100%;
+}
+
+body[data-hierarchy-tree-surface="canonical"][data-hierarchy-tree-review-viewport="mobile"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] {
+  max-width: 100%;
+}
+
+body[data-hierarchy-tree-surface="canonical"][data-hierarchy-tree-review-viewport="mobile"] .hierarchy-tree-preview-page {
+  padding: 1rem;
+}
+
+body[data-hierarchy-tree-surface="canonical"][data-hierarchy-tree-review-viewport="mobile"] .hierarchy-tree-preview-grid {
+  grid-template-columns: 1fr;
+}
+
+body[data-hierarchy-tree-surface="canonical"][data-hierarchy-tree-review-viewport="mobile"] .hierarchy-tree-preview-card-wide {
+  grid-column: auto;
+}
+
+body[data-hierarchy-tree-surface="canonical"][data-hierarchy-tree-review-viewport="mobile"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > #hierarchy-tree-drawer.side-panel,
+body[data-hierarchy-tree-surface="canonical"][data-hierarchy-tree-review-viewport="mobile"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > #hierarchy-tree-display-drawer.side-panel-secondary {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  border-radius: 0;
+  border-left: 0;
+  border-right: 0;
+}
+
+body[data-hierarchy-tree-surface="canonical"][data-hierarchy-tree-review-viewport="mobile"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] .hierarchy-tree-drawer-resize,
+body[data-hierarchy-tree-surface="canonical"][data-hierarchy-tree-review-viewport="mobile"] .hierarchy-tree-inline-actions {
+  display: none;
+}
+
 body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > .side-panel-secondary {
   left: var(--hierarchy-drawer-width);
   max-width: calc(100% - var(--hierarchy-drawer-width));
@@ -182,6 +232,11 @@ html[dir="rtl"] body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-pr
   max-width: calc(100vw - 4.25rem - var(--hierarchy-drawer-width));
 }
 
+body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > #hierarchy-tree-display-drawer.side-panel-secondary {
+  left: var(--hierarchy-drawer-width);
+  max-width: calc(100% - var(--hierarchy-drawer-width));
+}
+
 #display-settings-drawer.side-panel-secondary {
   left: calc(4.25rem + var(--hierarchy-drawer-width));
   width: clamp(22rem, 24vw, var(--hierarchy-display-drawer-width));
@@ -191,6 +246,11 @@ html[dir="rtl"] body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-pr
 html[dir="rtl"] #hierarchy-tree-display-drawer.side-panel-secondary {
   left: auto;
   right: calc(4.25rem + var(--hierarchy-drawer-width));
+}
+
+html[dir="rtl"] body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data-canonical-drawer-host="true"] > #hierarchy-tree-display-drawer.side-panel-secondary {
+  left: auto;
+  right: var(--hierarchy-drawer-width);
 }
 
 html[dir="rtl"] #display-settings-drawer.side-panel-secondary {
@@ -673,62 +733,63 @@ body[data-hierarchy-tree-surface="canonical"] .hierarchy-tree-preview-shell[data
   }
 }
 
-html[data-theme="dark"] .hierarchy-tree-preview-shell {
+html[data-theme="dark"] .hierarchy-tree-preview-shell,
+.hierarchy-tree-preview-shell[data-theme-scope="dark"] {
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--surface-1) 96%, #0f1524), color-mix(in srgb, var(--paper) 88%, #0f1524));
   box-shadow: 0 0.6rem 1.4rem rgba(0, 0, 0, 0.28);
 }
 
-html[data-theme="dark"] .hierarchy-tree-preview-card,
-html[data-theme="dark"] .hierarchy-tree-detail-card,
-html[data-theme="dark"] .hierarchy-tree-root-menu,
-html[data-theme="dark"] .hierarchy-tree-row-menu,
-html[data-theme="dark"] .hierarchy-tree-delete-panel {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-preview-card,
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-detail-card,
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-root-menu,
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-row-menu,
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-delete-panel {
   background: color-mix(in srgb, var(--surface-1) 96%, #0f1524);
   border-color: var(--line-strong);
 }
 
-html[data-theme="dark"] .hierarchy-tree-button,
-html[data-theme="dark"] .hierarchy-tree-menu-button,
-html[data-theme="dark"] .hierarchy-tree-action-button {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-button,
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-menu-button,
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-action-button {
   background: color-mix(in srgb, var(--surface-1) 94%, #0f1524);
   border-color: var(--line-strong);
   color: var(--ink);
 }
 
-html[data-theme="dark"] .hierarchy-tree-inline-action {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-inline-action {
   background: color-mix(in srgb, var(--surface-1) 82%, transparent);
   color: color-mix(in srgb, var(--ink-soft) 84%, var(--line-strong));
 }
 
-html[data-theme="dark"] .hierarchy-tree-inline-action:hover,
-html[data-theme="dark"] .hierarchy-tree-inline-action:focus-visible {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-inline-action:hover,
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-inline-action:focus-visible {
   background: color-mix(in srgb, var(--surface-1) 94%, #0f1524);
   border-color: color-mix(in srgb, var(--accent) 28%, var(--line-strong));
   color: var(--ink);
 }
 
-html[data-theme="dark"] .hierarchy-tree-button-primary {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-button-primary {
   background: color-mix(in srgb, var(--accent) 18%, var(--surface-1));
   border-color: color-mix(in srgb, var(--accent) 34%, var(--line-strong));
   color: var(--ink);
 }
 
-html[data-theme="dark"] .hierarchy-tree-preview-line {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-preview-line {
   background: color-mix(in srgb, var(--line-strong) 72%, var(--surface-1));
 }
 
-html[data-theme="dark"] .hierarchy-tree-row[data-selected="true"] {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-row[data-selected="true"] {
   background: color-mix(in srgb, var(--accent) 14%, var(--surface-1));
   box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--accent) 26%, transparent);
 }
 
-html[data-theme="dark"] .hierarchy-tree-row[data-current="true"] {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-row[data-current="true"] {
   background: color-mix(in srgb, var(--sun) 12%, var(--surface-1));
   box-shadow: inset 0 0 0 0.0625rem color-mix(in srgb, var(--sun) 22%, transparent);
 }
 
-html[data-theme="dark"] .hierarchy-tree-row[data-selected="true"][data-current="true"] {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-row[data-selected="true"][data-current="true"] {
   background: linear-gradient(
     135deg,
     color-mix(in srgb, var(--accent) 16%, var(--surface-1)),
@@ -736,27 +797,27 @@ html[data-theme="dark"] .hierarchy-tree-row[data-selected="true"][data-current="
   );
 }
 
-html[data-theme="dark"] .hierarchy-tree-state-chip,
-html[data-theme="dark"] .hierarchy-tree-changed {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-state-chip,
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-changed {
   color: var(--ink);
 }
 
-html[data-theme="dark"] .hierarchy-tree-state-chip {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-state-chip {
   background: color-mix(in srgb, var(--surface-1) 88%, var(--line));
 }
 
-html[data-theme="dark"] .hierarchy-tree-state-chip[data-kind="current"] {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-state-chip[data-kind="current"] {
   background: color-mix(in srgb, var(--sun) 18%, var(--surface-1));
 }
 
-html[data-theme="dark"] .hierarchy-tree-state-chip[data-kind="selected"] {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-state-chip[data-kind="selected"] {
   background: color-mix(in srgb, var(--accent) 20%, var(--surface-1));
 }
 
-html[data-theme="dark"] .hierarchy-tree-changed {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-changed {
   background: color-mix(in srgb, var(--accent) 12%, var(--surface-1));
 }
 
-html[data-theme="dark"] .hierarchy-tree-drawer-resize::before {
+:is(html[data-theme="dark"], [data-theme-scope="dark"]) .hierarchy-tree-drawer-resize::before {
   background: color-mix(in srgb, var(--ink-soft) 56%, transparent);
 }

@@ -2293,6 +2293,7 @@ if (breadcrumbPageMinusOneLink) {
   const preserveCanonicalBreadcrumbLabel =
     normalizedPath === "/design-system/canonicals"
     || normalizedPath.startsWith("/design-system/canonicals/")
+    || normalizedPath.startsWith("/design-system/canonical-renderings/")
     || normalizedPath.startsWith("/design-system/patterns/hierarchy-tree/render")
     || (
       normalizedPath.startsWith("/design-system/components/")

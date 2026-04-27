@@ -10,6 +10,14 @@ The generated canonical-render route registry mapped the `hierarchy-tree` family
 
 The hierarchy-tree drawer, display drawer, scrim, and delete dialog also stayed as top-level siblings of the page shell while the generated route marked the body as a canonical hierarchy-tree surface. The shared drawer CSS therefore used viewport/page-level positioning instead of positioning relative to the hierarchy-tree preview shell.
 
+The paired display drawer then exposed a second containment bug: a later, more specific `#hierarchy-tree-display-drawer.side-panel-secondary` rule kept the app-shell rail offset, so HTR-020 showed a gap between the hierarchy drawer and display drawer inside the canonical preview shell.
+
+The mobile generated states also depended on the outer browser viewport rather than the canonical review width. Opening HTR-021, HTR-022, or HTR-023 in a desktop browser therefore kept desktop drawer behavior even though the canonical state declares `width=390`.
+
+The dark generated state applied `data-theme="dark"` to the root document, so HTR-026 changed the outer design-system chrome and metadata instead of scoping dark treatment to the rendered hierarchy-tree specimen.
+
+The magnified generated state applied `--ui-scale` to the root document, so HTR-027 enlarged the outer shell, top nav, breadcrumb, and search row instead of only the rendered hierarchy-tree specimen. The same outer-shell pressure made the breadcrumb look unlike the signed-off sub-nav behavior.
+
 ## Why It Escaped
 
 - Existing hierarchy-tree tests proved generated route loading, mobile menu content, RTL geometry, dark readability, and long-title behavior.
@@ -25,6 +33,10 @@ The hierarchy-tree drawer, display drawer, scrim, and delete dialog also stayed 
 - Canonical hierarchy-tree surfaces now move the hierarchy drawer, display drawer, scrim, and delete dialog into `.hierarchy-tree-preview-shell` at mount time.
 - Canonical hierarchy-tree CSS now scopes those overlay surfaces to the preview shell.
 - The hierarchy-tree Playwright spec now includes a rendered containment guard for `HTR-022` using the shared canonical overlay helper.
+- HTR-020 now has a browser geometry guard proving the display drawer's leading edge touches the hierarchy drawer's trailing edge inside the preview shell.
+- HTR-021 now has a desktop-browser proof that `width=390` forces mobile drawer posture, hides desktop resize/inline actions, and constrains the drawer to the mobile preview shell.
+- HTR-026 now scopes dark theme to the hierarchy-tree preview shell and asserts the outer top nav stays on the normal page theme.
+- HTR-027 now scopes magnification to the hierarchy-tree preview shell and asserts the outer top nav, breadcrumb, and search row stay governed by the normal shell scale.
 
 ## Coverage Lesson
 

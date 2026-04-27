@@ -503,7 +503,7 @@ function getCanonicalRequest() {
 }
 
 function setDocumentEnvironment(request) {
-  if (request.theme === "normal") {
+  if (request.ref || request.theme === "normal") {
     delete document.documentElement.dataset.theme;
   } else {
     document.documentElement.dataset.theme = request.theme;
@@ -513,7 +513,11 @@ function setDocumentEnvironment(request) {
   document.documentElement.style.setProperty("--accent", request.accent);
 
   const scale = Math.max(0.5, 1 + Number(request.zoom || "0") / 100);
-  document.documentElement.style.setProperty("--ui-scale", String(scale));
+  if (request.ref) {
+    document.documentElement.style.removeProperty("--ui-scale");
+  } else {
+    document.documentElement.style.setProperty("--ui-scale", String(scale));
+  }
 }
 
 function appendDeepHierarchy(tree) {
@@ -1987,10 +1991,31 @@ export function mountHierarchyTreeDemo() {
   };
 
   const isCanonicalSurface = document.body.dataset.hierarchyTreeSurface === "canonical";
+  const canonicalReviewWidth = Number(request.width || "0");
+  const isCanonicalMobileReview = isCanonicalSurface && canonicalReviewWidth > 0 && canonicalReviewWidth <= 896;
+  const canonicalScale = Math.max(0.5, 1 + Number(request.zoom || "0") / 100);
+  let canonicalThemeScope = null;
   if (isCanonicalSurface) {
+    document.body.dataset.hierarchyTreeReviewViewport = isCanonicalMobileReview ? "mobile" : "desktop";
     const previewShell = document.querySelector(".hierarchy-tree-preview-shell");
     if (previewShell instanceof HTMLElement) {
+      canonicalThemeScope = previewShell;
+      previewShell.style.setProperty("--ui-scale", String(canonicalScale));
+      previewShell.dataset.magnification = String(Number(request.zoom || "0"));
       previewShell.dataset.canonicalDrawerHost = "true";
+      if (request.theme === "normal") {
+        delete previewShell.dataset.themeScope;
+      } else {
+        previewShell.dataset.themeScope = request.theme;
+      }
+      if (canonicalReviewWidth > 0) {
+        previewShell.style.setProperty("--hierarchy-review-width", `${canonicalReviewWidth}px`);
+        previewShell.style.inlineSize = `${canonicalReviewWidth}px`;
+        const renderFrame = previewShell.closest(".canonical-render-frame");
+        if (renderFrame instanceof HTMLElement) {
+          renderFrame.style.inlineSize = `${canonicalReviewWidth}px`;
+        }
+      }
       previewShell.append(drawerScrim, drawer, displayDrawer, deleteDialog);
     }
   }
@@ -1998,12 +2023,16 @@ export function mountHierarchyTreeDemo() {
   applyCanonicalState(state, expandedState, request);
 
   function isMobileView() {
+    if (isCanonicalMobileReview) {
+      return true;
+    }
     return window.matchMedia("(max-width: 56rem)").matches;
   }
 
   function getDrawerBounds() {
-    const minWidth = isMobileView() ? Math.min(window.innerWidth, 320) : 320;
-    const maxWidth = isMobileView() ? window.innerWidth : Math.min(window.innerWidth - 68, 1280);
+    const effectiveWindowWidth = isCanonicalMobileReview ? canonicalReviewWidth : window.innerWidth;
+    const minWidth = isMobileView() ? Math.min(effectiveWindowWidth, 320) : 320;
+    const maxWidth = isMobileView() ? effectiveWindowWidth : Math.min(effectiveWindowWidth - 68, 1280);
     return { minWidth, maxWidth };
   }
 
@@ -2775,7 +2804,14 @@ export function mountHierarchyTreeDemo() {
   themeButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const value = button.getAttribute("data-theme-option") ?? "normal";
-      if (value === "normal") {
+      if (canonicalThemeScope instanceof HTMLElement) {
+        delete document.documentElement.dataset.theme;
+        if (value === "normal") {
+          delete canonicalThemeScope.dataset.themeScope;
+        } else {
+          canonicalThemeScope.dataset.themeScope = value;
+        }
+      } else if (value === "normal") {
         delete document.documentElement.dataset.theme;
       } else {
         document.documentElement.dataset.theme = value;
@@ -2789,7 +2825,13 @@ export function mountHierarchyTreeDemo() {
     button.addEventListener("click", () => {
       const value = Number(button.getAttribute("data-magnification-option") ?? "0");
       const scale = Math.max(0.5, 1 + value / 100);
-      document.documentElement.style.setProperty("--ui-scale", String(scale));
+      if (canonicalThemeScope instanceof HTMLElement) {
+        document.documentElement.style.removeProperty("--ui-scale");
+        canonicalThemeScope.style.setProperty("--ui-scale", String(scale));
+        canonicalThemeScope.dataset.magnification = String(value);
+      } else {
+        document.documentElement.style.setProperty("--ui-scale", String(scale));
+      }
       applyDisplaySetting(magnificationButtons, String(value), "data-magnification-option");
       requestAnimationFrame(() => syncHierarchyTitleOverflowTooltips(treeRoot));
     });

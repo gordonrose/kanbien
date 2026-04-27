@@ -115,6 +115,40 @@ test("hierarchy-tree mobile keeps open actions in the menu and hides inline hove
   await expect(rowMenu).toContainText("Open in new tab");
 });
 
+test("hierarchy-tree generated mobile states render mobile posture inside a desktop browser", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(generatedHierarchyRoute("HTR-021"));
+
+  await expect(page.locator("body")).toHaveAttribute("data-hierarchy-tree-review-viewport", "mobile");
+  await expect(page.locator(".hierarchy-tree-preview-shell")).toHaveCSS("width", "390px");
+  await expect(page.locator("#hierarchy-tree-live-note")).toHaveText("Mobile uses menu-only structural edits.");
+  await expect(page.locator(".hierarchy-tree-drawer-resize")).toBeHidden();
+  await expect(page.locator(".hierarchy-tree-inline-actions").first()).toBeHidden();
+
+  const geometry = await page.evaluate(() => {
+    const host = document.querySelector(".hierarchy-tree-preview-shell");
+    const drawer = document.getElementById("hierarchy-tree-drawer");
+    if (!(host instanceof HTMLElement) || !(drawer instanceof HTMLElement)) {
+      return null;
+    }
+
+    const hostRect = host.getBoundingClientRect();
+    const drawerRect = drawer.getBoundingClientRect();
+    return {
+      hostLeft: hostRect.left,
+      hostRight: hostRect.right,
+      drawerLeft: drawerRect.left,
+      drawerRight: drawerRect.right,
+      drawerWidth: drawerRect.width,
+    };
+  });
+
+  expect(geometry).not.toBeNull();
+  expect(Math.abs(geometry!.drawerLeft - geometry!.hostLeft)).toBeLessThanOrEqual(1);
+  expect(Math.abs(geometry!.drawerRight - geometry!.hostRight)).toBeLessThanOrEqual(1);
+  expect(geometry!.drawerWidth).toBeLessThanOrEqual(391);
+});
+
 test("hierarchy-tree RTL canonical mirrors row chrome and content docking", async ({ page }) => {
   await page.goto(generatedHierarchyRoute("HTR-024"));
 
@@ -156,8 +190,32 @@ test("hierarchy-tree RTL canonical mirrors row chrome and content docking", asyn
 test("hierarchy-tree dark generated route keeps row copy and controls readable", async ({ page }) => {
   await page.goto(generatedHierarchyRoute("HTR-026"));
 
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
   await expect(page.locator("body")).toHaveAttribute("data-hierarchy-tree-surface", "canonical");
+  await expect(page.locator(".hierarchy-tree-preview-shell")).toHaveAttribute("data-theme-scope", "dark");
+
+  const themeScope = await page.evaluate(() => {
+    const topNav = document.querySelector(".top-nav");
+    const previewShell = document.querySelector(".hierarchy-tree-preview-shell");
+    if (!(topNav instanceof HTMLElement) || !(previewShell instanceof HTMLElement)) {
+      return null;
+    }
+
+    const parseRgb = (value: string): number[] => {
+      const match = value.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      return match ? [Number(match[1]), Number(match[2]), Number(match[3])] : [0, 0, 0];
+    };
+    const average = (values: number[]) => values.reduce((sum, value) => sum + value, 0) / values.length;
+
+    return {
+      topNavBackgroundAverage: average(parseRgb(getComputedStyle(topNav).backgroundColor)),
+      previewBackgroundAverage: average(parseRgb(getComputedStyle(previewShell).backgroundColor)),
+    };
+  });
+
+  expect(themeScope).not.toBeNull();
+  expect(themeScope!.topNavBackgroundAverage).toBeGreaterThan(200);
+  expect(themeScope!.previewBackgroundAverage).toBeLessThan(80);
 
   const selectedRow = page.locator('.hierarchy-tree-row[data-selected="true"]').first();
   await expect(selectedRow).toContainText("Roadmap");
@@ -188,6 +246,61 @@ test("hierarchy-tree dark generated route keeps row copy and controls readable",
   expect(contrastState!.titleAverage).toBeGreaterThan(150);
   expect(contrastState!.menuAverage).toBeGreaterThan(130);
   expect(contrastState!.rowBackgroundAverage).toBeLessThan(120);
+});
+
+test("hierarchy-tree generated magnification stays inside the render surface", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(generatedHierarchyRoute("HTR-027"));
+
+  await expect(page.locator("html")).not.toHaveCSS("--ui-scale", "2");
+  await expect(page.locator(".hierarchy-tree-preview-shell")).toHaveCSS("--ui-scale", "2");
+  await expect(page.locator(".top-nav")).not.toHaveClass(/force-mobile-nav/);
+  await expect(page.locator(".top-nav .mobile-nav-button")).toBeHidden();
+
+  const shellGeometry = await page.evaluate(() => {
+    const breadcrumbNav = document.querySelector(".design-system-shell > .sub-nav .breadcrumb-nav");
+    const searchShell = document.querySelector(".design-system-shell > .sub-nav .search-shell");
+    const topNavBrand = document.querySelector(".design-system-shell > .top-nav .brand-lockup");
+    const renderFrame = document.querySelector(".canonical-render-frame");
+    const previewShell = document.querySelector(".hierarchy-tree-preview-shell");
+
+    if (
+      !(breadcrumbNav instanceof HTMLElement) ||
+      !(searchShell instanceof HTMLElement) ||
+      !(topNavBrand instanceof HTMLElement) ||
+      !(renderFrame instanceof HTMLElement) ||
+      !(previewShell instanceof HTMLElement)
+    ) {
+      return null;
+    }
+
+    const breadcrumbRect = breadcrumbNav.getBoundingClientRect();
+    const searchRect = searchShell.getBoundingClientRect();
+    const brandRect = topNavBrand.getBoundingClientRect();
+    const frameRect = renderFrame.getBoundingClientRect();
+    const previewRect = previewShell.getBoundingClientRect();
+
+    return {
+      documentClientWidth: document.documentElement.clientWidth,
+      documentScrollWidth: document.documentElement.scrollWidth,
+      breadcrumbRight: breadcrumbRect.right,
+      searchLeft: searchRect.left,
+      brandHeight: brandRect.height,
+      frameClientWidth: renderFrame.clientWidth,
+      frameScrollWidth: renderFrame.scrollWidth,
+      frameRight: frameRect.right,
+      previewWidth: previewRect.width,
+      previewUnscaledWidth: previewShell.offsetWidth,
+    };
+  });
+
+  expect(shellGeometry).not.toBeNull();
+  expect(shellGeometry!.breadcrumbRight).toBeLessThanOrEqual(shellGeometry!.searchLeft + 1);
+  expect(shellGeometry!.brandHeight).toBeLessThan(90);
+  expect(shellGeometry!.documentScrollWidth).toBeLessThanOrEqual(shellGeometry!.documentClientWidth + 1);
+  expect(shellGeometry!.frameScrollWidth).toBeGreaterThan(shellGeometry!.frameClientWidth);
+  expect(shellGeometry!.frameRight).toBeLessThanOrEqual(shellGeometry!.documentClientWidth + 1);
+  expect(shellGeometry!.previewWidth).toBeGreaterThan(shellGeometry!.previewUnscaledWidth);
 });
 
 test("hierarchy-tree long-title generated route preserves truncation and row menu access", async ({ page }) => {
@@ -286,4 +399,40 @@ test("hierarchy-tree generated drawer stays inside the canonical preview shell",
     requirePanelWidthWithinHost: true,
   });
   await expect(page.locator(".hierarchy-tree-preview-shell")).toHaveAttribute("data-canonical-drawer-host", "true");
+});
+
+test("hierarchy-tree paired display drawer hugs the hierarchy drawer", async ({ page }) => {
+  await page.goto(generatedHierarchyRoute("HTR-020"));
+
+  await expect(page.locator("#hierarchy-tree-drawer")).toBeVisible();
+  await expect(page.locator("#hierarchy-tree-display-drawer")).toBeVisible();
+
+  const geometry = await page.evaluate(() => {
+    const host = document.querySelector(".hierarchy-tree-preview-shell");
+    const drawer = document.getElementById("hierarchy-tree-drawer");
+    const displayDrawer = document.getElementById("hierarchy-tree-display-drawer");
+    if (!(host instanceof HTMLElement) || !(drawer instanceof HTMLElement) || !(displayDrawer instanceof HTMLElement)) {
+      return null;
+    }
+
+    const hostRect = host.getBoundingClientRect();
+    const drawerRect = drawer.getBoundingClientRect();
+    const displayRect = displayDrawer.getBoundingClientRect();
+
+    return {
+      hostLeft: hostRect.left,
+      hostRight: hostRect.right,
+      drawerLeft: drawerRect.left,
+      drawerRight: drawerRect.right,
+      displayLeft: displayRect.left,
+      displayRight: displayRect.right,
+      displayWidth: displayRect.width,
+    };
+  });
+
+  expect(geometry).not.toBeNull();
+  expect(Math.abs(geometry!.displayLeft - geometry!.drawerRight)).toBeLessThanOrEqual(1);
+  expect(Math.abs(geometry!.drawerLeft - geometry!.hostLeft)).toBeLessThanOrEqual(1);
+  expect(geometry!.displayRight).toBeLessThanOrEqual(geometry!.hostRight + 1);
+  expect(geometry!.displayWidth).toBeGreaterThan(320);
 });
