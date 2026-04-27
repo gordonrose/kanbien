@@ -11,13 +11,13 @@ type LockedFile = {
 const lockedRootAdminUiFiles: LockedFile[] = [
   {
     path: "src/frontend/rootAdminShell/index.html",
-    sha256: "e0935c4a1efe94132726bd7817119e546b81bc6794aa4f974656d73c4597fb16",
+    sha256: "e38f4891b69307b4c86c33dbcd87111623506ac6066be6bf3caf6eba8593dffb",
     rationale:
       "Authenticated root-admin shell markup remains locally hosted, but governed route families such as web-app-hierarchy must no longer duplicate their workspace host markup in this file once a shared design-system render seam exists.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "5d831af01da3087dd831a348131b5683d3d9214f3aadcc4b14fc2a388a557214",
+    sha256: "cbbcf97f33929f6a446ac38e68fa1cff55abcd2ec1c56fef1eadd6c3ad1be75e",
     rationale:
       "Root-admin authenticated shell behavior remains locally composed, but approved route-topology migrations may update path resolution and canonical-location syncing as long as shared design-system shell behavior does not regress back into app-local ownership.",
   },
@@ -31,8 +31,8 @@ const lockedRootAdminUiFiles: LockedFile[] = [
 
 const requiredRootAdminShellImports = [
   "/design-system/assets/pageShellController.mjs",
-  "/design-system/assets/rootUsersListWorkspace.mjs",
   "/design-system/assets/loginTemplate.mjs",
+  "/design-system/assets/rootAdminDirectoryWorkspace.mjs",
 ];
 
 const requiredRootAdminShellStylesheets = [

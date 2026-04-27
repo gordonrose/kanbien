@@ -182,11 +182,56 @@ function buildRootUsers(total = 30) {
   });
 }
 
+function buildTenants() {
+  return [
+    {
+      tenantId: "10000000-0000-4000-8000-000000000001",
+      bizId: "acme",
+      name: "Acme Workspace",
+      category: "customer",
+      status: "live",
+      createdAt: "2026-03-01T10:00:00.000Z",
+      updatedAt: "2026-04-10T14:00:00.000Z",
+      deletedAt: null,
+    },
+    {
+      tenantId: "10000000-0000-4000-8000-000000000002",
+      bizId: "demo-hub",
+      name: "Demo Hub",
+      category: "demo",
+      status: "draft",
+      createdAt: "2026-03-02T10:00:00.000Z",
+      updatedAt: "2026-04-11T14:00:00.000Z",
+      deletedAt: null,
+    },
+  ];
+}
+
+function buildTenantAdmins(): Record<string, Array<Record<string, string>>> {
+  return {
+    "10000000-0000-4000-8000-000000000001": [
+      {
+        tenantAdminId: "20000000-0000-4000-8000-000000000001",
+        tenantId: "10000000-0000-4000-8000-000000000001",
+        email: "admin.one@example.test",
+        firstName: "Admin",
+        lastName: "One",
+        emailVerificationStatus: "pending",
+        createdAt: "2026-03-03T10:00:00.000Z",
+        updatedAt: "2026-04-12T14:00:00.000Z",
+      },
+    ],
+    "10000000-0000-4000-8000-000000000002": [],
+  };
+}
+
 async function mockRootUsersRoutes(
   page: Page,
   options: { failInitialOnce?: boolean } = {},
 ) {
-  const rootUsers = buildRootUsers();
+  let rootUsers = buildRootUsers();
+  let tenants = buildTenants();
+  const tenantAdminsByTenantId = buildTenantAdmins();
   let initialFailed = false;
   const contextNavByPageKey = defaultContextNavProjectionStore();
 
@@ -200,10 +245,40 @@ async function mockRootUsersRoutes(
 
   await page.route("**/v1/root-users**", async (route) => {
     const url = new URL(route.request().url());
+    const method = route.request().method();
+    const pathSegments = url.pathname.split("/").filter(Boolean);
+    const rootUserId = pathSegments[2];
     const email = url.searchParams.get("email")?.trim().toLowerCase() ?? "";
     const emailPrefix = url.searchParams.get("emailPrefix")?.trim().toLowerCase() ?? "";
     const pageValue = Number(url.searchParams.get("page") ?? "1");
     const pageSize = Number(url.searchParams.get("pageSize") ?? "25");
+
+    if (method === "POST") {
+      const body = route.request().postDataJSON();
+      const created = {
+        rootUserId: `00000000-0000-4000-8000-${String(rootUsers.length + 1).padStart(12, "0")}`,
+        email: body.email,
+        firstName: body.firstName ?? "",
+        lastName: body.lastName ?? "",
+        anonymized: false,
+        status: "active",
+        createdAt: "2026-04-27T10:00:00.000Z",
+        updatedAt: "2026-04-27T10:00:00.000Z",
+        deletedAt: null,
+      };
+      rootUsers = [created, ...rootUsers];
+      await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify(created) });
+      return;
+    }
+
+    if (method === "PATCH" && rootUserId) {
+      const body = route.request().postDataJSON();
+      const existing = rootUsers.find((rootUser) => rootUser.rootUserId === rootUserId);
+      const updated = { ...existing, ...body, updatedAt: "2026-04-27T11:00:00.000Z" };
+      rootUsers = rootUsers.map((rootUser) => rootUser.rootUserId === rootUserId ? updated : rootUser);
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(updated) });
+      return;
+    }
 
     if (options.failInitialOnce && !initialFailed && !email && !emailPrefix && pageValue === 1) {
       initialFailed = true;
@@ -258,6 +333,94 @@ async function mockRootUsersRoutes(
         totalMatchingRecords: filtered.length,
         totalSearchableRecords: filtered.length,
       }),
+    });
+  });
+
+  await page.route("**/v1/tenants**", async (route) => {
+    const url = new URL(route.request().url());
+    const method = route.request().method();
+    const pathSegments = url.pathname.split("/").filter(Boolean);
+    const tenantId = pathSegments[2];
+    const isAdminsRoute = pathSegments[3] === "admins";
+    const tenantAdminId = pathSegments[4];
+
+    if (isAdminsRoute && tenantId) {
+      const tenantAdmins = tenantAdminsByTenantId[tenantId] ?? [];
+      if (method === "POST") {
+        const body = route.request().postDataJSON();
+        const created = {
+          tenantAdminId: `20000000-0000-4000-8000-${String(tenantAdmins.length + 1).padStart(12, "0")}`,
+          tenantId,
+          email: body.email,
+          firstName: body.firstName ?? "",
+          lastName: body.lastName ?? "",
+          emailVerificationStatus: "pending",
+          createdAt: "2026-04-27T10:00:00.000Z",
+          updatedAt: "2026-04-27T10:00:00.000Z",
+        };
+        tenantAdminsByTenantId[tenantId] = [created, ...tenantAdmins];
+        await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify(created) });
+        return;
+      }
+      if (method === "PATCH" && tenantAdminId) {
+        const body = route.request().postDataJSON();
+        const existing = tenantAdmins.find((admin) => admin.tenantAdminId === tenantAdminId);
+        const updated = { ...existing, ...body, updatedAt: "2026-04-27T11:00:00.000Z" };
+        tenantAdminsByTenantId[tenantId] = tenantAdmins.map((admin) =>
+          admin.tenantAdminId === tenantAdminId ? updated : admin,
+        );
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(updated) });
+        return;
+      }
+      const emailPrefix = url.searchParams.get("emailPrefix")?.trim().toLowerCase() ?? "";
+      const filtered = emailPrefix
+        ? tenantAdmins.filter((admin) => admin.email.startsWith(emailPrefix))
+        : tenantAdmins;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ items: filtered, page: 1, pageSize: 25, totalPages: 1 }),
+      });
+      return;
+    }
+
+    if (method === "POST") {
+      const body = route.request().postDataJSON();
+      const created = {
+        tenantId: `10000000-0000-4000-8000-${String(tenants.length + 1).padStart(12, "0")}`,
+        bizId: body.bizId,
+        name: body.name,
+        category: body.category,
+        status: body.status ?? "draft",
+        createdAt: "2026-04-27T10:00:00.000Z",
+        updatedAt: "2026-04-27T10:00:00.000Z",
+        deletedAt: null,
+      };
+      tenants = [created, ...tenants];
+      tenantAdminsByTenantId[created.tenantId] = [];
+      await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify(created) });
+      return;
+    }
+
+    if (method === "PATCH" && tenantId) {
+      const body = route.request().postDataJSON();
+      const existing = tenants.find((tenant) => tenant.tenantId === tenantId);
+      const updated = { ...existing, ...body, updatedAt: "2026-04-27T11:00:00.000Z" };
+      tenants = tenants.map((tenant) => tenant.tenantId === tenantId ? updated : tenant);
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(updated) });
+      return;
+    }
+
+    const namePrefix = url.searchParams.get("namePrefix")?.trim().toLowerCase() ?? "";
+    const bizIdPrefix = url.searchParams.get("bizIdPrefix")?.trim().toLowerCase() ?? "";
+    const filtered = tenants.filter((tenant) =>
+      (!namePrefix || tenant.name.toLowerCase().startsWith(namePrefix))
+      && (!bizIdPrefix || tenant.bizId.toLowerCase().startsWith(bizIdPrefix)),
+    );
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ items: filtered, page: 1, pageSize: 25, totalPages: 1 }),
     });
   });
 
@@ -317,6 +480,14 @@ async function bootstrapUsersPage(
   await page.locator('[data-selectable-list-card]').first().waitFor({ state: "visible" });
 }
 
+async function bootstrapDirectoryPage(page: Page, path: string, visiblePageSelector: string) {
+  await mockRootUsersRoutes(page);
+  await page.goto(path);
+  await page.locator("#shell-view").waitFor({ state: "visible" });
+  await page.locator(visiblePageSelector).waitFor({ state: "visible" });
+  await page.locator(`${visiblePageSelector} [data-selectable-list-card]`).first().waitFor({ state: "visible" });
+}
+
 test.describe("root-admin root-users list page adoption", () => {
   test("desktop uses the signed-off split layout and footer next can cross the current page boundary", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
@@ -333,7 +504,7 @@ test.describe("root-admin root-users list page adoption", () => {
 
     await expect(page.locator('[data-selectable-list-card]')).toHaveCount(30);
     await expect(page.locator("#root-users-detail-title")).toHaveText("Root User 26");
-    await expect(page.locator(".list-page-shell-split")).toHaveClass(/detail-open/);
+    await expect(page.locator("#root-users-list-page")).toHaveClass(/detail-open/);
     const announcementState = await page.locator("#root-users-list-announcement").evaluate((node) => {
       const styles = window.getComputedStyle(node);
       return {
@@ -352,7 +523,7 @@ test.describe("root-admin root-users list page adoption", () => {
       clip: "rect(0px, 0px, 0px, 0px)",
     });
 
-    const listBox = await page.locator(".list-page-list-column").boundingBox();
+    const listBox = await page.locator("#page-users .list-page-list-column").boundingBox();
     const detailBox = await page.locator("#root-users-detail-panel").boundingBox();
     expect(listBox).not.toBeNull();
     expect(detailBox).not.toBeNull();
@@ -364,7 +535,7 @@ test.describe("root-admin root-users list page adoption", () => {
     await page.setViewportSize({ width: 1560, height: 900 });
     await bootstrapUsersPage(page);
 
-    const listColumn = page.locator(".list-page-list-column");
+    const listColumn = page.locator("#page-users .list-page-list-column");
     const itemCards = page.locator('[data-selectable-list-card]');
     const initialCount = await itemCards.count();
 
@@ -405,14 +576,14 @@ test.describe("root-admin root-users list page adoption", () => {
 
     await expect(page.locator("#root-users-detail-panel")).toBeHidden();
     await expect(searchInput).toBeFocused();
-    await expect(page.locator('[data-selectable-list-no-results-state]')).toBeVisible();
+    await expect(page.locator('#page-users [data-selectable-list-no-results-state]')).toBeVisible();
     await expect(page.locator("#shell-message")).toContainText("No visible root users matched");
 
-    await page.locator('[data-selectable-list-clear-search]').click();
+    await page.locator('#page-users [data-selectable-list-clear-search]').click();
 
     await expect(page.locator('[data-selectable-list-card]')).toHaveCount(25);
     await expect(searchInput).toBeFocused();
-    await expect(page.locator('[data-selectable-list-no-results-state]')).toBeHidden();
+    await expect(page.locator('#page-users [data-selectable-list-no-results-state]')).toBeHidden();
   });
 
   test("mobile selection becomes a full-sheet detail overlay that stays above the bottom bar", async ({ page }) => {
@@ -441,12 +612,12 @@ test.describe("root-admin root-users list page adoption", () => {
 
     await page.goto("/root-admin/users");
     await page.locator("#shell-view").waitFor({ state: "visible" });
-    await expect(page.locator('[data-selectable-list-initial-error-state]')).toBeVisible();
+    await expect(page.locator('#page-users [data-selectable-list-initial-error-state]')).toBeVisible();
 
-    await page.locator('[data-selectable-list-initial-retry]').click();
+    await page.locator('#page-users [data-selectable-list-initial-retry]').click();
 
     await expect(page.locator('[data-selectable-list-card]')).toHaveCount(25);
-    await expect(page.locator('[data-selectable-list-initial-error-state]')).toBeHidden();
+    await expect(page.locator('#page-users [data-selectable-list-initial-error-state]')).toBeHidden();
   });
 
   test("rtl mirrors the adopted split relationship while keeping the users detail flow intact", async ({ page }) => {
@@ -458,7 +629,7 @@ test.describe("root-admin root-users list page adoption", () => {
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(page.locator("#root-users-detail-panel")).toBeVisible();
 
-    const listBox = await page.locator(".list-page-list-column").boundingBox();
+    const listBox = await page.locator("#page-users .list-page-list-column").boundingBox();
     const detailBox = await page.locator("#root-users-detail-panel").boundingBox();
     expect(listBox).not.toBeNull();
     expect(detailBox).not.toBeNull();
@@ -479,5 +650,76 @@ test.describe("root-admin root-users list page adoption", () => {
     await expect
       .poll(async () => page.evaluate(() => document.documentElement.style.getPropertyValue("--ui-scale")))
       .toBe("1.5");
+  });
+
+  test("root users can be created and edited from the governed drawer form", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapUsersPage(page);
+
+    await page.locator("#page-users [data-directory-create]").click();
+    await page.locator('#page-users [data-directory-form="create"] input[name="email"]').fill("new.root@example.test");
+    await page.locator('#page-users [data-directory-form="create"] input[name="firstName"]').fill("New");
+    await page.locator('#page-users [data-directory-form="create"] input[name="lastName"]').fill("Root");
+    await page.locator("#page-users [data-directory-form-save]").click();
+
+    await expect(page.locator("#root-users-detail-title")).toHaveText("New Root");
+    await expect(page.locator("#shell-message")).toContainText("Create root user saved");
+
+    await page.locator("#root-users-detail-edit").click();
+    await page.locator('#page-users [data-directory-form="edit"] input[name="firstName"]').fill("Edited");
+    await page.locator("#page-users [data-directory-form-save]").click();
+
+    await expect(page.locator("#root-users-detail-title")).toHaveText("Edited Root");
+    await expect(page.locator("#page-users")).toContainText("Edited Root");
+  });
+
+  test("tenants can be created and edited from the governed list and form workspace", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapDirectoryPage(page, "/root-admin/tenants", "#page-tenants");
+
+    await expect(page.locator("#tenants-list-page")).toBeVisible();
+    await page.locator("#page-tenants [data-directory-create]").click();
+    await page.locator('#page-tenants [data-directory-form="create"] input[name="bizId"]').fill("launch-team");
+    await page.locator('#page-tenants [data-directory-form="create"] input[name="name"]').fill("Launch Team");
+    await page.locator('#page-tenants [data-directory-form="create"] select[name="category"]').selectOption("customer");
+    await page.locator('#page-tenants [data-directory-form="create"] select[name="status"]').selectOption("live");
+    await page.locator("#page-tenants [data-directory-form-save]").click();
+
+    await expect(page.locator("#tenants-detail-title")).toHaveText("Launch Team");
+    await expect(page.locator("#shell-message")).toContainText("Create tenant saved");
+
+    await page.locator("#tenants-detail-edit").click();
+    await page.locator('#page-tenants [data-directory-form="edit"] input[name="name"]').fill("Launch Team Edited");
+    await page.locator("#page-tenants [data-directory-form-save]").click();
+
+    await expect(page.locator("#tenants-detail-title")).toHaveText("Launch Team Edited");
+    await expect(page.locator("#page-tenants")).toContainText("Launch Team Edited");
+  });
+
+  test("tenant admins can be created inside the selected tenant from the governed form workspace", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapDirectoryPage(page, "/root-admin/tenant-admins", "#page-tenant-admins");
+
+    await expect(page.locator("#tenant-admins-list-page")).toBeVisible();
+    await expect(page.locator("#page-tenant-admins [data-directory-tenant-filter]")).toHaveValue(
+      "10000000-0000-4000-8000-000000000001",
+    );
+
+    await page.locator("#page-tenant-admins [data-directory-create]").click();
+    await page.locator('#page-tenant-admins [data-directory-form="create"] input[name="email"]').fill("new.admin@example.test");
+    await page.locator('#page-tenant-admins [data-directory-form="create"] input[name="firstName"]').fill("New");
+    await page.locator('#page-tenant-admins [data-directory-form="create"] input[name="lastName"]').fill("Admin");
+    await page.locator("#page-tenant-admins [data-directory-form-save]").click();
+
+    await expect(page.locator("#tenant-admins-detail-title")).toHaveText("New Admin");
+    await expect(page.locator("#shell-message")).toContainText("Create tenant admin saved");
+    await expect(page.locator("#page-tenant-admins")).toContainText("new.admin@example.test");
+
+    await page.locator("#tenant-admins-detail-edit").click();
+    await page.locator('#page-tenant-admins [data-directory-form="edit"] input[name="firstName"]').fill("Edited");
+    await page.locator("#page-tenant-admins [data-directory-form-save]").click();
+
+    await expect(page.locator("#tenant-admins-detail-title")).toHaveText("Edited Admin");
+    await expect(page.locator("#page-tenant-admins")).toContainText("Edited Admin");
   });
 });

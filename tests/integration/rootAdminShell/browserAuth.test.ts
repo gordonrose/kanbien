@@ -195,8 +195,6 @@ describe("root admin shell browser auth integration", () => {
     expect(frontendMarkup).toContain("Root Admin Shell POC");
     expect(frontendMarkup).toContain("Overview");
     expect(frontendMarkup).toContain("Roles");
-    expect(frontendMarkup).toContain("Tenants");
-    expect(frontendMarkup).toContain("Tenant Admins");
     expect(frontendMarkup).toContain('aria-label="Current page breadcrumb"');
     expect(frontendMarkup).toContain('role="search"');
     expect(frontendMarkup).toContain("Search root admin sections");
@@ -204,6 +202,8 @@ describe("root admin shell browser auth integration", () => {
     expect(frontendMarkup).toContain("Sign Out");
     expect(frontendMarkup).toContain('id="root-admin-context-nav-mount"');
     expect(frontendMarkup).toContain('<section id="page-users" class="hidden"></section>');
+    expect(frontendMarkup).toContain('<section id="page-tenants" class="hidden"></section>');
+    expect(frontendMarkup).toContain('<section id="page-tenant-admins" class="hidden"></section>');
     expect(frontendMarkup).toContain('<section id="page-web-app-hierarchy" class="hidden"></section>');
     expect(frontendMarkup).not.toContain('id="root-users-list-page"');
     expect(frontendMarkup).not.toContain('id="root-users-detail-panel"');
@@ -211,8 +211,8 @@ describe("root admin shell browser auth integration", () => {
     expect(frontendMarkup).not.toContain('id="web-app-page-settings-form"');
     expect(frontendMarkup).not.toContain('id="web-app-hierarchy-page-title"');
     expect(frontendAppSource).toContain("/design-system/assets/pageShellController.mjs");
-    expect(frontendAppSource).toContain("/design-system/assets/rootUsersListWorkspace.mjs");
     expect(frontendAppSource).toContain("/design-system/assets/loginTemplate.mjs");
+    expect(frontendAppSource).toContain("/design-system/assets/rootAdminDirectoryWorkspace.mjs");
     expect(frontendMarkup).toContain("data-root-admin-login-template-host");
     expect(frontendMarkup).not.toContain("/root-admin/assets/login.css");
     expect(frontendMarkup).not.toContain('class="auth-panel"');

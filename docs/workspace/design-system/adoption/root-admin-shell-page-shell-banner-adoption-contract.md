@@ -136,8 +136,8 @@
   path in `src/frontend/rootAdminShell/assets/app.mjs`
 - What existing app-local writers must migrate?
   shell search and session refresh in
-  `src/frontend/rootAdminShell/assets/app.mjs`, root-user directory feedback in
-  `src/frontend/designSystem/assets/rootUsersListWorkspace.mjs`, and governed
+  `src/frontend/rootAdminShell/assets/app.mjs`, root-admin directory feedback in
+  `src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs`, and governed
   workspace feedback that currently flows through
   `src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs`
 - What backend seams or APIs must remain untouched?

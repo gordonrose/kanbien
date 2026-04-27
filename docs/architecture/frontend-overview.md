@@ -156,10 +156,11 @@ Current audit of the active governed adoption seams:
 - `list-page`
   - shared CSS seam exists:
     `/design-system/assets/list-page-shared.css`
-  - shared render seam for app adoption does not exist yet
-  - shared interaction/controller seam for app adoption does not exist yet
-  - current real consumer still duplicates app-side markup and route-local list
-    behavior
+  - shared root-admin directory render/controller seam exists through
+    `/design-system/assets/rootAdminDirectoryWorkspace.mjs`
+  - current real consumers for `Users`, `Tenants`, and `Tenant Admins` consume
+    the DS-owned directory workspace instead of duplicating app-side list-page
+    markup or route-local list behavior
 - `hierarchy-tree`
   - shared CSS seam exists:
     `/design-system/assets/hierarchy-tree-shared.css`
@@ -182,6 +183,13 @@ Current audit of the active governed adoption seams:
     `/design-system/assets/formControls.mjs`
   - current real consumer now mounts DS-owned hosted trigger and drawer markup
     for the context-nav selector instead of duplicating the shell locally
+- `drawer-form`
+  - styling reaches root-admin through
+    `/design-system/assets/form-template-shared.css` and list-page drawer
+    posture
+  - root-admin directory create/edit flows now consume the shared
+    `rootAdminDirectoryWorkspace.mjs` controller/render seam rather than
+    adding app-local form markup
 
 ## Target Governed Adoption Model
 

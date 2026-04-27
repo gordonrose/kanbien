@@ -53,14 +53,15 @@
 ## `/root-admin/users`
 
 - Current implementation status:
-  page-family render and controller now come from a DS-owned workspace seam
+  page-family render and controller now come from a DS-owned directory
+  workspace seam with list-page and drawer-form create/edit behavior
 - Local implementation evidence:
   none for the users page body after removal of the old
   `src/frontend/rootAdminShell/assets/rootUsersList.mjs` implementation
 - Design-system sourced implementation evidence:
-  `src/frontend/designSystem/assets/rootUsersListWorkspace.mjs`
-  owns the users workspace shell and controller behavior, mounted from
-  `src/frontend/rootAdminShell/assets/app.mjs`
+  `src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs`
+  owns the users workspace shell, list behavior, and create/edit drawer-form
+  behavior, mounted from `src/frontend/rootAdminShell/assets/app.mjs`
 - Required remediation before more page work:
   continue page work through the DS workspace seam; if a new local wrapper,
   page shell, or controller branch appears in `rootAdminShell`, stop and
@@ -84,32 +85,37 @@
 ## `/root-admin/tenants`
 
 - Current implementation status:
-  local placeholder page body; not a page-family DS adoption yet
+  page-family render and controller now come from a DS-owned directory
+  workspace seam with list-page and drawer-form create/edit behavior
 - Local implementation evidence:
-  placeholder tenants content remains in
-  `src/frontend/rootAdminShell/index.html`
+  none for the tenants page body; `src/frontend/rootAdminShell/index.html`
+  keeps only the empty route mount
 - Design-system sourced implementation evidence:
-  governed root-admin shell chrome and context-nav are shared, but the tenants
-  page body itself is not backed by a DS page seam
+  `src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs`
+  owns the tenants workspace shell, list behavior, and create/edit drawer-form
+  behavior, mounted from `src/frontend/rootAdminShell/assets/app.mjs`
 - Required remediation before more page work:
-  audit the intended page family first, confirm the signed-off DS source truth,
-  and extract or adopt the shared render/controller seam before building real
-  route behavior on top of the placeholder
+  continue page work through the DS workspace seam; if a new local wrapper,
+  page shell, or controller branch appears in `rootAdminShell`, stop and
+  extract or reuse the upstream seam first
 
 ## `/root-admin/tenant-admins`
 
 - Current implementation status:
-  local placeholder page body; not a page-family DS adoption yet
+  page-family render and controller now come from a DS-owned directory
+  workspace seam with list-page and drawer-form create behavior in the
+  selected tenant context
 - Local implementation evidence:
-  placeholder tenant-admins content remains in
-  `src/frontend/rootAdminShell/index.html`
+  none for the tenant-admins page body; `src/frontend/rootAdminShell/index.html`
+  keeps only the empty route mount
 - Design-system sourced implementation evidence:
-  governed root-admin shell chrome and context-nav are shared, but the
-  tenant-admins page body itself is not backed by a DS page seam
+  `src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs`
+  owns the tenant-admins workspace shell, tenant selector, list behavior, and
+  create/edit drawer-form behavior, mounted from
+  `src/frontend/rootAdminShell/assets/app.mjs`
 - Required remediation before more page work:
-  audit the intended page family first, confirm the signed-off DS source truth,
-  and extract or adopt the shared render/controller seam before building real
-  route behavior on top of the placeholder
+  continue page work through the DS workspace seam and preserve the explicit
+  selected-tenant context for tenant-admin API calls
 
 ## `/root-admin/web-app-hierarchy`
 

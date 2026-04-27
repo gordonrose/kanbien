@@ -111,19 +111,21 @@
   narrower than the generic design-system placeholder search:
   exact email or supported `emailPrefix` only.
 - The route now consumes the DS-owned workspace seam at
-  `/design-system/assets/rootUsersListWorkspace.mjs` for both render
-  structure and controller behavior instead of recreating the list-page shell
-  or interaction grammar locally in `rootAdminShell`.
+  `/design-system/assets/rootAdminDirectoryWorkspace.mjs` for render
+  structure, list behavior, and drawer-form create/edit behavior instead of
+  recreating the list-page shell or interaction grammar locally in
+  `rootAdminShell`.
 - The route consumes the shared canonical list-page stylesheet from
   `/design-system/assets/list-page-shared.css` rather than carrying any
   root-admin-only copy of the list-page styling contract.
-- The detail panel does not ship extra header actions because the current
-  capability slice does not yet expose approved quick actions for this route.
+- The detail panel now exposes the approved edit action and create path through
+  the shared directory drawer-form behavior.
 - The local detail error seam remains present in markup but is not exercised by
   a second backend detail fetch in this first consumer, because the visible
   list payload already contains the current route-approved root-user fields.
-- The route currently adopts the visible directory only. Deleted-only,
-  anonymized-only, or lifecycle mutation surfaces remain separate future work.
+- The route currently adopts visible-directory create and edit only.
+  Deleted-only, anonymized-only, or destructive lifecycle mutation surfaces
+  remain separate future work.
 
 ## Adoption Boundary
 
@@ -143,8 +145,8 @@
 
 - Required rendered checks:
   desktop closed/open split, boundary next-load traversal, no-results
-  invalidation, clear-search recovery, mobile overlay placement, and scoped
-  initial-load retry
+  invalidation, clear-search recovery, mobile overlay placement, scoped
+  initial-load retry, and create/edit drawer-form submission
 - Required executable tests:
   `tests/visual/app/rootAdminShell/rootAdminRootUsersList.spec.ts`
 - Required manual sign-off steps:

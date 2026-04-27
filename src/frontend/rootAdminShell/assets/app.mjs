@@ -19,7 +19,7 @@ import {
   renderRootAdminLoginTemplate,
 } from "/design-system/assets/loginTemplate.mjs";
 import { createPageShellBannerRuntimeController } from "/design-system/assets/pageShellBanner.mjs";
-import { createRootUsersListWorkspaceController } from "/design-system/assets/rootUsersListWorkspace.mjs";
+import { createRootAdminDirectoryWorkspaceController } from "/design-system/assets/rootAdminDirectoryWorkspace.mjs";
 import {
   buildPageShellBreadcrumbMarkup,
   createPageShellBreadcrumbController,
@@ -124,13 +124,13 @@ const pageMetadata = {
   tenants: {
     title: "Tenants",
     breadcrumbCurrent: "Tenants",
-    searchPlaceholder: "Search tenants, routes, or shell guidance",
+    searchPlaceholder: "Search tenants by name or business ID prefix",
     searchKeywords: ["tenants", "organizations", "workspaces", "accounts"],
   },
   "tenant-admins": {
     title: "Tenant Admins",
     breadcrumbCurrent: "Tenant Admins",
-    searchPlaceholder: "Search tenant admins, routes, or shell guidance",
+    searchPlaceholder: "Search tenant admins by email prefix",
     searchKeywords: ["tenant admins", "tenant admin", "admins", "administrators"],
   },
   "web-app-hierarchy": {
@@ -382,13 +382,53 @@ const shellBannerController = createPageShellBannerRuntimeController(shellMessag
 });
 const rootAdminShellBannerPolicyNames = new Set(["error", "blocked-action", "mutation-success"]);
 
-const rootUsersListController = createRootUsersListWorkspaceController({
-  root: document.getElementById("page-users"),
-  searchInput: shellSearchInput,
-  fetchJson,
-  setShellMessage,
-  getCurrentPage: () => state.navigation.currentPage,
-});
+const rootAdminDirectoryControllers = [
+  createRootAdminDirectoryWorkspaceController({
+    pageKey: "users",
+    root: document.getElementById("page-users"),
+    searchInput: shellSearchInput,
+    fetchJson,
+    setShellMessage,
+    getCurrentPage: () => state.navigation.currentPage,
+  }),
+  createRootAdminDirectoryWorkspaceController({
+    pageKey: "tenants",
+    root: document.getElementById("page-tenants"),
+    searchInput: shellSearchInput,
+    fetchJson,
+    setShellMessage,
+    getCurrentPage: () => state.navigation.currentPage,
+  }),
+  createRootAdminDirectoryWorkspaceController({
+    pageKey: "tenant-admins",
+    root: document.getElementById("page-tenant-admins"),
+    searchInput: shellSearchInput,
+    fetchJson,
+    setShellMessage,
+    getCurrentPage: () => state.navigation.currentPage,
+  }),
+];
+
+const rootAdminDirectoryController = {
+  async handleShellSearchSubmit(query) {
+    for (const controller of rootAdminDirectoryControllers) {
+      if (await controller.handleShellSearchSubmit(query)) {
+        return true;
+      }
+    }
+    return false;
+  },
+  syncPageState() {
+    for (const controller of rootAdminDirectoryControllers) {
+      controller.syncPageState();
+    }
+  },
+  reset() {
+    for (const controller of rootAdminDirectoryControllers) {
+      controller.reset();
+    }
+  },
+};
 
 const webAppHierarchyPageController = createWebAppHierarchyPageController({
   root: document.getElementById("page-web-app-hierarchy"),
@@ -1134,7 +1174,7 @@ function render() {
   syncSubNavState();
 
   if (flags.showShellView) {
-    rootUsersListController.syncPageState();
+    rootAdminDirectoryController.syncPageState();
     webAppHierarchyPageController.syncPageState();
   }
 
@@ -1209,7 +1249,7 @@ async function bootstrapSession() {
     if (error instanceof ApiError && error.status === 401) {
       Object.assign(state, resetToLoginState(state));
       clearShellMessage();
-      rootUsersListController.reset();
+      rootAdminDirectoryController.reset();
       webAppHierarchyPageController.reset();
       renderContextNavItems([]);
       state.phase = "login";
@@ -1293,7 +1333,7 @@ async function handleLogout() {
   window.history.replaceState(null, "", buildCanonicalRootAdminPath("overview"));
   Object.assign(state, resetToLoginState(state));
   clearShellMessage();
-  rootUsersListController.reset();
+  rootAdminDirectoryController.reset();
   webAppHierarchyPageController.reset();
   setTopNavLinkCollections(buildFallbackTopNavItems());
   renderContextNavItems([]);
@@ -1318,8 +1358,8 @@ async function handleShellSearchSubmit(event) {
   }
 
   const query = shellSearchInput.value.trim();
-  const handledByRootUsers = await rootUsersListController.handleShellSearchSubmit(query);
-  if (handledByRootUsers) {
+  const handledByDirectory = await rootAdminDirectoryController.handleShellSearchSubmit(query);
+  if (handledByDirectory) {
     return;
   }
 
@@ -1343,7 +1383,7 @@ returnToLogin?.addEventListener("click", () => {
   window.history.replaceState(null, "", buildCanonicalRootAdminPath("overview"));
   Object.assign(state, resetToLoginState(state));
   clearShellMessage();
-  rootUsersListController.reset();
+  rootAdminDirectoryController.reset();
   webAppHierarchyPageController.reset();
   setTopNavLinkCollections(buildFallbackTopNavItems());
   renderContextNavItems([]);

@@ -11,6 +11,7 @@ const exactSensitiveFiles = new Set([
   "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
   "src/frontend/designSystem/assets/contextNav.mjs",
   "src/frontend/designSystem/assets/rootUsersListWorkspace.mjs",
+  "src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs",
   "src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs",
 ]);
 

@@ -70,10 +70,11 @@ behavior, or page-local controller logic into the app.
   `/design-system/assets/webAppHierarchyWorkspace.mjs`
   exports `renderWebAppHierarchyWorkspaceShell(...)` and
   `createWebAppHierarchyWorkspaceController(...)`
-- `root-users workspace`
-  `/design-system/assets/rootUsersListWorkspace.mjs`
-  exports `renderRootUsersListWorkspaceShell(...)` and
-  `createRootUsersListWorkspaceController(...)`
+- `root-admin directory workspace`
+  `/design-system/assets/rootAdminDirectoryWorkspace.mjs`
+  exports `renderRootAdminDirectoryWorkspaceShell(...)` and
+  `createRootAdminDirectoryWorkspaceController(...)` for root users,
+  tenants, and tenant admins
 - `icon-grid`
   `/design-system/assets/formControls.mjs`
   exports `renderFormIconGrid(...)`, plus initialization and refresh helpers
@@ -89,13 +90,13 @@ behavior, or page-local controller logic into the app.
 
 ### Current Duplication In App Consumers
 
-- `rootAdminShell` `Users`
+- `rootAdminShell` `Users`, `Tenants`, and `Tenant Admins`
   - imports shared list-page CSS
-  - now consumes the DS-owned root-users workspace render/controller seam from
-    `rootUsersListWorkspace.mjs`
+  - now consumes the DS-owned root-admin directory workspace render/controller
+    seam from `rootAdminDirectoryWorkspace.mjs`
   - no longer duplicates list-page shell markup in `rootAdminShell/index.html`
-  - no longer owns route-local list-page controller behavior inside
-    `rootAdminShell`
+  - no longer owns route-local list-page or drawer-form controller behavior
+    inside `rootAdminShell`
 - `rootAdminShell` `context-nav`
   - now consumes the shared DS-owned host render, mobile overflow partition,
     destination-link render, and menu-render behavior from `contextNav.mjs`
