@@ -1,5 +1,97 @@
 const storageKey = "design-system-hierarchy-tree-expanded";
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+const defaultRootMenuActions = [
+  { action: "add-root", label: "Add top-level page" },
+  { action: "expand-all", label: "Expand all" },
+  { action: "collapse-all", label: "Collapse all" },
+  { action: "reset-open", label: "Reset open state" },
+  { action: "open-selected", label: "Open selected" },
+  { action: "select-current", label: "Select current" },
+];
+
+export function renderHierarchyTreeDrawerHost({
+  eyebrow = "Hierarchy",
+  title = "Content hierarchy",
+  liveNote = "Loading curated hierarchy truth from GetTree.",
+  drawerHidden = false,
+  rootMenuActions = defaultRootMenuActions,
+} = {}) {
+  const safeRootMenuActions = Array.isArray(rootMenuActions) && rootMenuActions.length > 0
+    ? rootMenuActions
+    : defaultRootMenuActions;
+  const rootMenuItems = safeRootMenuActions
+    .map(({ action, label }) => {
+      const safeAction = escapeHtml(action);
+      const safeLabel = escapeHtml(label);
+      return `<div class="menu-item hierarchy-tree-root-menu-item" role="menuitem" tabindex="0" data-root-action="${safeAction}">${safeLabel}</div>`;
+    })
+    .join("");
+
+  return `
+    <div id="hierarchy-tree-drawer-scrim" class="hierarchy-tree-drawer-scrim hidden"></div>
+
+    <aside
+      id="hierarchy-tree-drawer"
+      class="side-panel accessibility-drawer"
+      aria-labelledby="hierarchy-tree-drawer-title"
+      aria-hidden="${drawerHidden ? "true" : "false"}"
+    >
+      <div id="hierarchy-tree-drawer-resize" class="hierarchy-tree-drawer-resize" aria-hidden="true"></div>
+      <div class="side-panel-header accessibility-drawer-header">
+        <div>
+          <p class="drawer-eyebrow">${escapeHtml(eyebrow)}</p>
+          <h2 id="hierarchy-tree-drawer-title">${escapeHtml(title)}</h2>
+          <p id="hierarchy-tree-live-note" class="hierarchy-tree-display-copy">
+            ${escapeHtml(liveNote)}
+          </p>
+        </div>
+        <div class="hierarchy-tree-drawer-header-actions">
+          <button
+            id="hierarchy-tree-root-menu-button"
+            class="icon-button"
+            type="button"
+            aria-label="Open root options"
+            aria-expanded="false"
+            aria-controls="hierarchy-tree-root-menu"
+          >
+            <span class="icon-button-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 6.75a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5zm0 7a1.75 1.75 0 1 0 0-3.5 1.75 1.75 0 0 0 0 3.5z" /></svg>
+            </span>
+          </button>
+          <div
+            id="hierarchy-tree-root-menu"
+            class="hierarchy-tree-root-menu hidden"
+            role="menu"
+            aria-labelledby="hierarchy-tree-root-menu-button"
+          >
+            ${rootMenuItems}
+          </div>
+          <button
+            id="hierarchy-tree-drawer-close"
+            class="icon-button"
+            type="button"
+            aria-label="Close hierarchy drawer"
+          >
+            <span class="icon-button-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M6 6 18 18M18 6 6 18" /></svg>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div id="hierarchy-tree-tree" class="hierarchy-tree-tree"></div>
+    </aside>
+  `;
+}
+
 const initialTree = [
   {
     id: "space-company",

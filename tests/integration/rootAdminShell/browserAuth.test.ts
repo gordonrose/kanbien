@@ -186,6 +186,8 @@ describe("root admin shell browser auth integration", () => {
     const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
     const frontendAppSource = readFileSync("src/frontend/rootAdminShell/assets/app.mjs", "utf8");
     const hierarchyPageSource = readFileSync("src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs", "utf8");
+    const hierarchyWorkspaceSource = readFileSync("src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs", "utf8");
+    const hierarchyTreeSource = readFileSync("src/frontend/designSystem/assets/hierarchyTree.mjs", "utf8");
 
     expect(shell.status).toBe(200);
     expect(shell.text).toContain("Root Admin Shell POC");
@@ -210,6 +212,11 @@ describe("root admin shell browser auth integration", () => {
     expect(frontendAppSource).toContain("/design-system/assets/pageShellController.mjs");
     expect(frontendAppSource).toContain("/design-system/assets/rootUsersListWorkspace.mjs");
     expect(hierarchyPageSource).toContain("/design-system/assets/webAppHierarchyWorkspace.mjs");
+    expect(hierarchyWorkspaceSource).toContain("renderHierarchyTreeDrawerHost");
+    expect(hierarchyWorkspaceSource).toContain("${renderHierarchyTreeDrawerHost()}");
+    expect(hierarchyWorkspaceSource).not.toContain('id="hierarchy-tree-drawer"');
+    expect(hierarchyTreeSource).toContain("export function renderHierarchyTreeDrawerHost");
+    expect(hierarchyTreeSource).toContain("export function mountRootAdminHierarchyTree");
   });
 
   it("TC-ROOT-ADMIN-SHELL-EDGE-001 and TC-ROOT-ADMIN-SHELL-EDGE-002 expose helper guidance and handle missing browser session cookies cleanly", async () => {

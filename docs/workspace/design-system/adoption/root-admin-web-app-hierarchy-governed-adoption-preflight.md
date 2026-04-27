@@ -59,7 +59,9 @@
   present through:
   `/design-system/assets/webAppHierarchyWorkspace.mjs`
   which now owns the governed route workspace shell, hosted form surface, and
-  hierarchy drawer host markup
+  hierarchy drawer host composition by calling
+  `renderHierarchyTreeDrawerHost(...)` from
+  `/design-system/assets/hierarchyTree.mjs`
 - Shared controller seam:
   present through:
   `createWebAppHierarchyWorkspaceController(...)` in

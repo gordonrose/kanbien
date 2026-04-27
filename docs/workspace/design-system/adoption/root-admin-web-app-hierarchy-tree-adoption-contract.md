@@ -105,8 +105,8 @@
 - Shared CSS seam:
   `/design-system/assets/hierarchy-tree-shared.css`
 - Shared render seam:
-  not yet complete for the drawer host; the current route still owns the outer
-  hierarchy drawer shell markup
+  `/design-system/assets/hierarchyTree.mjs`
+  through `renderHierarchyTreeDrawerHost(...)`
 - Shared controller seam:
   `/design-system/assets/hierarchyTree.mjs`
   through `mountRootAdminHierarchyTree(...)`
@@ -124,8 +124,8 @@
   shared app-entrypoint; route-specific business content may differ outside the
   tree family
 - Stop condition if a required seam is missing:
-  do not claim full governed adoption of the hierarchy drawer host while the
-  route still owns the host markup locally
+  do not claim full governed adoption of a future hierarchy-tree consumer while
+  that consumer reconstructs the required drawer host markup locally
 
 ## Consumer Contract
 
@@ -188,10 +188,12 @@
 - Tree adoption on this route should use that shared seam rather than local
   route CSS or direct copying from the design-system route.
 - Shared CSS alone is not sufficient for honest governed adoption.
-- The first consumer should also prefer a design-system-owned drawer render seam
-  and tree-controller seam rather than app-local drawer-shell reconstruction.
-- If that render or behavior seam is not yet consumable, stop and raise the
-  blocker instead of copying the drawer host markup into the app.
+- The first consumer also uses the design-system-owned
+  `renderHierarchyTreeDrawerHost(...)` drawer render seam and
+  `mountRootAdminHierarchyTree(...)` tree-controller seam rather than app-local
+  drawer-shell reconstruction.
+- If a future consumer cannot use those render or behavior seams, stop and
+  raise the blocker instead of copying the drawer host markup into the app.
 
 ## Parity Rules
 
@@ -296,10 +298,11 @@
 ## Promotion Decision
 
 - Adoption result:
-  active partial governed adoption
+  active governed adoption through the shared CSS, drawer render, workspace,
+  and controller seams
 - Follow-up work required before adoption is called fully governed:
-  extract a DS-owned hierarchy drawer host render seam or explicitly approve
-  the remaining host-owned markup as an intentional boundary
+  keep parity proof current when the hierarchy-tree family or root-admin shell
+  contract changes
 - Follow-up work required before wider reuse:
   complete first-consumer parity proof in the real root-admin page and keep the
   contract in sync with any approved backend or shell-boundary changes
