@@ -488,6 +488,30 @@ async function bootstrapDirectoryPage(page: Page, path: string, visiblePageSelec
   await page.locator(`${visiblePageSelector} [data-selectable-list-card]`).first().waitFor({ state: "visible" });
 }
 
+async function expectGovernedListItemsContainer(page: Page, visiblePageSelector: string) {
+  const itemsContainer = page.locator(`${visiblePageSelector} [data-directory-items]`);
+  await expect(itemsContainer).toHaveAttribute("data-selectable-list-items", "");
+  return itemsContainer;
+}
+
+async function expectGovernedCardStackGap(page: Page, visiblePageSelector: string) {
+  const itemsContainer = await expectGovernedListItemsContainer(page, visiblePageSelector);
+  const firstCard = page.locator(`${visiblePageSelector} [data-selectable-list-card]`).nth(0);
+  const secondCard = page.locator(`${visiblePageSelector} [data-selectable-list-card]`).nth(1);
+
+  await expect(firstCard).toBeVisible();
+  await expect(secondCard).toBeVisible();
+
+  const stackGap = await itemsContainer.evaluate((node) => window.getComputedStyle(node).rowGap);
+  expect(stackGap).toBe("16px");
+
+  const firstBox = await firstCard.boundingBox();
+  const secondBox = await secondCard.boundingBox();
+  expect(firstBox).not.toBeNull();
+  expect(secondBox).not.toBeNull();
+  expect(Math.round((secondBox?.y ?? 0) - ((firstBox?.y ?? 0) + (firstBox?.height ?? 0)))).toBe(16);
+}
+
 test.describe("root-admin root-users list page adoption", () => {
   test("desktop uses the signed-off split layout and footer next can cross the current page boundary", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
@@ -529,6 +553,19 @@ test.describe("root-admin root-users list page adoption", () => {
     expect(detailBox).not.toBeNull();
     expect((listBox?.x ?? 0)).toBeLessThan((detailBox?.x ?? 0) - 1);
     expect(Math.abs((listBox?.y ?? 0) - (detailBox?.y ?? 0))).toBeLessThanOrEqual(2);
+  });
+
+  test("directory list cards keep the governed list-page stack gap", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+
+    await bootstrapDirectoryPage(page, "/root-admin/users", "#page-users");
+    await expectGovernedCardStackGap(page, "#page-users");
+
+    await bootstrapDirectoryPage(page, "/root-admin/tenants", "#page-tenants");
+    await expectGovernedCardStackGap(page, "#page-tenants");
+
+    await bootstrapDirectoryPage(page, "/root-admin/tenant-admins", "#page-tenant-admins");
+    await expectGovernedListItemsContainer(page, "#page-tenant-admins");
   });
 
   test("desktop closed users list uses browser scroll and lazy-loads from the page bottom", async ({ page }) => {

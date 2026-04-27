@@ -412,7 +412,7 @@ export function renderRootAdminDirectoryWorkspaceShell(pageKey) {
           </div>
         </div>
 
-        <div data-directory-items></div>
+        <div data-directory-items data-selectable-list-items></div>
 
         <div class="list-page-lazy-load-status" aria-live="polite" data-directory-status>
           <button class="list-page-lazy-load-status-button" type="button" data-directory-load-more data-selectable-list-status-action>
