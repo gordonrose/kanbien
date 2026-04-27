@@ -5,7 +5,7 @@
 - Family:
   `async-activity-drawer`
 - Status:
-  draft reference pack for governed design-system review
+  signed-off reference pack for governed design-system review
 - Related behavior lock:
   `docs/workspace/design-system/behavior-locks/async-activity-drawer-behavior-lock.md`
 - Related pattern:
@@ -55,3 +55,8 @@ This pack is operational for design-system review when audit coverage confirms
 the artifact chain, the page-shell template consumes `asyncActivityDrawer.mjs`,
 and Playwright coverage verifies the launcher plus the complete `AADR-001`
 through `AADR-005` generated-route state set.
+
+The `AADR-*` state set has been visually approved by the user and is the
+signed-off design-system baseline. Do not treat this as app-adopted or
+`system-ready` until a workspace/app shell adoption contract names the real
+job feed, retry/report ownership, and consumer parity expectations.

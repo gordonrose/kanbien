@@ -35,7 +35,8 @@
   The child seam now has a generated persistence-backed canonical launcher and
   dedicated render surface so
   full-width, half-page, and mobile card states can be reviewed directly
-  instead of only through the parent page template.
+  instead of only through the parent page template; focus-visible emphasis now
+  has rendered proof on the generated child render surface.
 
 ## Source Verification
 
@@ -48,9 +49,9 @@
 - Implementation updated:
   yes
 - Known source-level risks:
-  the child canonicals now prove width/direction/magnification/theme locally,
-  but a focus-visible-specific canonical still remains a follow-up before
-  promotion to `system-ready`
+  the child canonicals now prove width, direction, magnification, theme, and
+  focus-visible behavior locally; promotion still needs a second governed
+  consumer before `system-ready`
 
 ## Rendered Verification
 
@@ -65,7 +66,7 @@
   magnified half-page canonical added
 - Real interactive states checked:
   default card, selected card, missing-attribute fallback, long-content
-  half-page state, and mobile-width state
+  half-page state, mobile-width state, and focus-visible keyboard emphasis
 - Overflow or clipping checks:
   tag wrapping remains source-inspected; rendered child-specific overflow proof
   still needed
@@ -81,17 +82,19 @@
 ## Accessibility Verification
 
 - Keyboard entry and exit:
-  source-inspected through real button semantics; dedicated focus-visible
-  canonical still remains a follow-up before promotion to `system-ready`
+  source-inspected through real button semantics; focus-visible proof now
+  verifies the card receives focus and exposes visible emphasis without
+  geometry shift
 - Focus order and return focus:
-  source-inspected only
+  rendered focus-target proof exists for the child card itself; parent detail
+  focus choreography remains parent-owned
 - Semantic structure:
   button-based card structure present
 - Screen-reader naming and labeling:
   source-inspected only
 - Contrast or motion considerations:
-  theme-variant rendered proof now exists; focus-visible contrast still needs a
-  dedicated child state before app adoption
+  theme-variant rendered proof exists; focus-visible proof checks local
+  emphasis changes on the child render surface without adding motion
 - Localization or long-content considerations:
   half-page and mobile long-content rendered review now exists; theme now has
   baseline canonical proof while broader localization still remains open
@@ -103,7 +106,8 @@
 - Default:
   covered through dedicated canonical
 - Hover / pressed / focus:
-  source-inspected only
+  focus-visible covered through dedicated child render proof; hover and pressed
+  remain source-inspected
 - Selected / active:
   covered through dedicated canonical
 - Disabled:
@@ -130,8 +134,7 @@
 - Promotion decision:
   promote to signed-off
 - Open follow-ups:
-  add a focus-visible canonical before promoting to `system-ready` or allowing
-  real-app adoption
+  prove a second governed consumer before promotion to `system-ready`
   keep future sign-off ordering explicit as child behavior lock, then child
   reference pack, then child canonicals
 

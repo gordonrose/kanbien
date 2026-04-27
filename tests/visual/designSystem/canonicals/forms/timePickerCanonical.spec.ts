@@ -170,6 +170,42 @@ test.describe("design-system time picker canonical states", () => {
     await expect(standaloneRoot.locator('[data-form-time-minute="30"]')).toBeVisible();
   });
 
+  test("explicit close buttons dismiss open panels and return focus to their triggers", async ({ page }) => {
+    await gotoCanonicalState(
+      page,
+      "/design-system/canonical-renderings/time-picker/TPR-002",
+      { width: 1600, height: 1400 },
+    );
+
+    const standaloneRoot = page.locator("#time-picker-standalone-root");
+    const standaloneTrigger = standaloneRoot.locator("[data-form-time-button]");
+    const standalonePanel = standaloneRoot.locator("[data-form-time-panel]");
+
+    await expect(standalonePanel).toBeVisible();
+    await standaloneRoot.getByRole("button", { name: /Close standalone time picker/i }).click();
+    await expect(standalonePanel).toBeHidden();
+    await expect(standaloneTrigger).toHaveAttribute("aria-expanded", "false");
+    await expect(standaloneTrigger).toBeFocused();
+
+    await gotoCanonicalState(
+      page,
+      "/design-system/canonical-renderings/time-picker/TPR-004",
+      { width: 1600, height: 1400 },
+    );
+
+    const nestedRoot = page.locator("#time-picker-nested-root");
+    const nestedTrigger = nestedRoot.locator("[data-form-time-button]");
+    const nestedPanel = nestedRoot.locator("[data-form-time-panel]");
+
+    await expect(page.locator("#time-picker-range-host-panel")).toBeVisible();
+    await expect(nestedPanel).toBeVisible();
+    await nestedRoot.getByRole("button", { name: /Close nested start time picker/i }).click();
+    await expect(nestedPanel).toBeHidden();
+    await expect(nestedTrigger).toHaveAttribute("aria-expanded", "false");
+    await expect(nestedTrigger).toBeFocused();
+    await expect(page.locator("#time-picker-range-host-panel")).toBeVisible();
+  });
+
   test("desktop and nested open time-picker states reserve enough field space for visible panels", async ({ page }) => {
     for (const referenceId of ["TPR-002", "TPR-004", "TPR-008", "TPR-009"] as const) {
       await gotoCanonicalState(page, `/design-system/canonical-renderings/time-picker/${referenceId}`, { width: 1600, height: 1400 });

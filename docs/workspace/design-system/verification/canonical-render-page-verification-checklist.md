@@ -7,7 +7,7 @@
 - Surface:
   `/design-system/templates/canonical-render-page`
 - Status under review:
-  signed-off template-hosted baseline
+  system-ready template-hosted baseline
 - Related template artifact:
   `docs/workspace/design-system/templates/canonical-render-page-template.md`
 - Related reference pack:
@@ -114,7 +114,8 @@
 - Human sign-off status:
   approved
 - Promotion decision:
-  signed off as the current canonical-render-page baseline
+  system-ready as the current canonical-render-page baseline and generated
+  render-route scaffold
 - Open follow-ups:
   expand viewport and direction assertions only if this route becomes a broader
   sign-off host for more governed families
@@ -131,3 +132,7 @@
   not yet
 - Real-app adoption now allowed:
   not applicable; this artifact governs the design-system template itself
+- Generated-route adoption now allowed:
+  yes; generated canonical render routes may consume this template contract
+  when they also carry family-specific specimen, fallback-absence, scope, and
+  containment proof

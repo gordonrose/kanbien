@@ -15,7 +15,7 @@ about what still remains parent-owned.
 - Family:
   `choice-group`
 - Status:
-  approved exploratory child reference baseline
+  signed-off child reference baseline
 - Current source surface:
   `/design-system/templates/form`
 - Host parent family:
@@ -41,7 +41,7 @@ This pack inherits the approved child-seam rules from:
   `docs/workspace/design-system/behavior-locks/choice-group-behavior-lock.md`
 
 Those behavior locks remain the rule source.
-This pack turns them into named exploratory reference targets.
+This pack turns them into named reference targets.
 
 ## What This Pack Inherits
 
@@ -72,9 +72,9 @@ Those remain governed upstream by the parent `Form Template` chain.
   - a copy stack per row with primary and secondary text
   - focus-visible row emphasis when keyboard focus enters a control
   - an inline group-error slot
-- current child-seam theme and RTL expectations are now proved on the
-  persistence-backed child render surface, while the remaining focus and
-  combined-state stress proof still stays parent-hosted
+- current child-seam theme and RTL expectations are proved on the
+  persistence-backed child render surface, while focus and combined-state
+  stress proof intentionally stays parent-hosted
 - the shared-statement variant currently adds:
   - one lead statement block above the row stack
   - full-width host placement through the parent grid
@@ -104,9 +104,9 @@ Those remain governed upstream by the parent `Form Template` chain.
 
 ## Required Reference States
 
-These are the current exploratory child reference states.
+These are the current signed-off child reference states.
 The first canonical review batch now has a persistence-backed generated child
-launcher and render surface, while the remaining states still rely on
+launcher and render surface, while the remaining states intentionally rely on
 parent-hosted proof.
 
 | Ref ID | Current route | State | Why it exists | Evidence status | Notes |
@@ -146,15 +146,15 @@ That initial visual approval set includes:
 - `CGR-010` narrow mobile long-copy review
 - `CGR-011` localized Arabic RTL review
 
-This first child batch has now been visually approved by the user on the
-dedicated child surface.
+This child batch has now been visually approved by the user on the dedicated
+child surface.
 
-`CGR-005`, `CGR-008`, and `CGR-009` still remain parent-hosted proof only for
-now, so this child canonical set is exploratory rather than fully complete.
+`CGR-005`, `CGR-008`, and `CGR-009` remain parent-hosted proof by signed-off
+boundary decision rather than by missing child-surface work.
 
 ## High-Risk Review Batch
 
-The highest-risk exploratory states are:
+The highest-risk signed-off states are:
 
 - `CGR-003` shared-statement checkbox baseline
 - `CGR-004` inline group-error review
@@ -168,11 +168,12 @@ The highest-risk exploratory states are:
 
 These states carry the biggest drift risk because they prove the seam’s unique
 shared-statement boundary, local validation treatment, and inherited stress
-behavior without yet having a dedicated child route.
+behavior across the approved mix of child-owned and parent-owned render truth.
 
 Theme contrast, focus visibility, combined `error + disabled` readability, and
 long-content/localization pressure are especially high-risk because they are
-now child-locked expectations without direct child-owned render states yet.
+child-locked expectations that depend on both child render routes and
+parent-owned form stress proof.
 
 ## Evidence Status
 
@@ -191,19 +192,17 @@ now child-locked expectations without direct child-owned render states yet.
   `/design-system/canonicals/choice-group`
   and `/design-system/components/choice-group`
 - no second governed consumer exists yet in the repo
-- `CGR-005`, `CGR-008`, and `CGR-009` still remain parent-hosted proof rather
-  than dedicated child-route proof
+- `CGR-005`, `CGR-008`, and `CGR-009` remain parent-hosted proof by approved
+  ownership boundary
 
 ## Readiness Gate
 
-`Choice Group` becomes ready for a dedicated child canonical set only when at
-least one of these is true:
+`Choice Group` becomes ready for `system-ready` only when at least one of
+these is true:
 
 - a second governed surface uses the same grouped-choice chassis honestly
-- a dedicated child render surface is introduced without smuggling in parent
-  layout ownership
-- the current parent-hosted `CGR-*` set is intentionally expanded into a full
-  child-owned proof matrix and reviewed as such
+- an approved expansion moves the current parent-owned stress states into the
+  child surface because a real consumer needs that proof there
 
 ## Parity Rule
 
@@ -211,8 +210,7 @@ A future extracted `Choice Group` implementation or real consumer matches this
 pack only when:
 
 - it preserves the approved `CG-BL-*` behaviors
-- it preserves the exploratory `CGR-*` states or approved child-owned
-  equivalents
+- it preserves the signed-off `CGR-*` states or approved equivalents
 - any host-specific difference from the current parent `Form Template` route is
   recorded explicitly before parity is claimed
 
@@ -224,7 +222,7 @@ surface at `/design-system/canonical-renderings/choice-group/:ref`, with the
 legacy launcher and legacy render route retained for compatibility during the
 migration.
 
-The first child canonical batch is visually approved, but do not treat this as
-a signed-off extracted family baseline until the remaining parent-hosted states
-are either pulled into the child surface or intentionally kept parent-owned as
-part of a stable long-term boundary.
+The child canonical batch and the parent-owned stress boundary are visually
+approved as the signed-off extracted family baseline. Do not treat this as
+`system-ready` until a second governed consumer proves the seam can be reused
+without copying parent-hosted form behavior.

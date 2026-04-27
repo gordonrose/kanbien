@@ -8,7 +8,7 @@ info:
     administration, the protected rootUsers feature, the protected tenants
     feature, the protected tenantAdmins feature, the protected
     notificationDelivery feature, the protected capability-contract-catalog
-    feature, the protected assets feature, the protected web-app-hierarchy feature, the protected
+    feature, the protected assets feature, the design-system-canonicals feature, the protected web-app-hierarchy feature, the protected
     web-app-page-settings feature, the protected web-app-surface-discovery
     feature, and the shared tenant-auth foundation.
 
@@ -26,6 +26,7 @@ tags:
   - name: Notification Delivery
   - name: Capability Contract Catalog
   - name: Assets
+  - name: Design System Canonicals
   - name: Web App Hierarchy
   - name: Web App Page Settings
   - name: Web App Surface Discovery
@@ -256,6 +257,259 @@ paths:
           $ref: "#/components/responses/Conflict"
         "429":
           $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/design-system-canonicals/families:
+    post:
+      tags:
+        - Design System Canonicals
+      summary: Create a design-system canonical family
+      operationId: createDesignSystemCanonicalFamily
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDesignSystemCanonicalFamilyBody"
+      responses:
+        "201":
+          description: Canonical family created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemCanonicalFamily"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/design-system-canonicals/families/{canonicalFamilyId}:
+    get:
+      tags:
+        - Design System Canonicals
+      summary: Read a design-system canonical family by id
+      operationId: getDesignSystemCanonicalFamily
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CanonicalFamilyId"
+      responses:
+        "200":
+          description: Canonical family
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemCanonicalFamily"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags:
+        - Design System Canonicals
+      summary: Update a design-system canonical family
+      operationId: updateDesignSystemCanonicalFamily
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CanonicalFamilyId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDesignSystemCanonicalFamilyBody"
+      responses:
+        "200":
+          description: Canonical family updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemCanonicalFamily"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/design-system-canonicals/families/{canonicalFamilyId}/references:
+    post:
+      tags:
+        - Design System Canonicals
+      summary: Create a design-system canonical reference
+      operationId: createDesignSystemCanonicalReference
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CanonicalFamilyId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDesignSystemCanonicalReferenceBody"
+      responses:
+        "201":
+          description: Canonical reference created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemCanonicalReference"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/design-system-canonicals/references/{canonicalReferenceId}:
+    get:
+      tags:
+        - Design System Canonicals
+      summary: Read a design-system canonical reference by id
+      operationId: getDesignSystemCanonicalReference
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CanonicalReferenceId"
+      responses:
+        "200":
+          description: Canonical reference
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemCanonicalReference"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+    put:
+      tags:
+        - Design System Canonicals
+      summary: Update a design-system canonical reference
+      operationId: updateDesignSystemCanonicalReference
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/CanonicalReferenceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDesignSystemCanonicalReferenceBody"
+      responses:
+        "200":
+          description: Canonical reference updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DesignSystemCanonicalReference"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/design-system-canonicals/public/families:
+    get:
+      tags:
+        - Design System Canonicals
+      summary: List live public design-system canonical families
+      operationId: listPublicDesignSystemCanonicalFamilies
+      responses:
+        "200":
+          description: Live canonical families
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicCanonicalFamilyListResponse"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/design-system-canonicals/public/families/{familyKey}/launcher:
+    get:
+      tags:
+        - Design System Canonicals
+      summary: Read a public generated canonical launcher projection
+      operationId: getPublicDesignSystemCanonicalLauncher
+      parameters:
+        - $ref: "#/components/parameters/CanonicalFamilyKey"
+      responses:
+        "200":
+          description: Public canonical launcher projection
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicCanonicalLauncherResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /v1/design-system-canonicals/public/families/{familyKey}/references/{referenceId}:
+    get:
+      tags:
+        - Design System Canonicals
+      summary: Read a public generated canonical rendering projection
+      operationId: getPublicDesignSystemCanonicalRendering
+      parameters:
+        - $ref: "#/components/parameters/CanonicalFamilyKey"
+        - $ref: "#/components/parameters/CanonicalReferenceKey"
+      responses:
+        "200":
+          description: Public canonical rendering projection
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PublicCanonicalRenderingResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalError"
 
@@ -3790,6 +4044,38 @@ components:
         type: string
         format: uuid
 
+    CanonicalFamilyId:
+      name: canonicalFamilyId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    CanonicalReferenceId:
+      name: canonicalReferenceId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    CanonicalFamilyKey:
+      name: familyKey
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+
+    CanonicalReferenceKey:
+      name: referenceId
+      in: path
+      required: true
+      schema:
+        type: string
+        minLength: 1
+
     WebAppDiscoveryRunId:
       name: webAppDiscoveryRunId
       in: path
@@ -5829,6 +6115,342 @@ components:
         - icons
         - pageTemplates
         - eligibleContextNavTargets
+
+    DesignSystemCanonicalLifecycleStatus:
+      type: string
+      enum: [draft, review, live, inactive]
+
+    DesignSystemCanonicalFamilyKind:
+      type: string
+      enum: [component, pattern, template]
+
+    DesignSystemCanonicalFamily:
+      type: object
+      properties:
+        canonicalFamilyId:
+          type: string
+          format: uuid
+        familyKey:
+          type: string
+        displayLabel:
+          type: string
+        familyKind:
+          $ref: "#/components/schemas/DesignSystemCanonicalFamilyKind"
+        launcherTitle:
+          type: string
+        launcherDescription:
+          type: string
+        launcherCategory:
+          type: [string, "null"]
+        launcherTemplateKey:
+          type: string
+          enum: [launcher]
+        renderTemplateKey:
+          type: string
+          enum: [canonical-rendering]
+        generatedLauncherRoutePath:
+          type: string
+        generatedRootRoutePath:
+          type: string
+        legacyLauncherRoutePath:
+          type: [string, "null"]
+        sourceSurfaceRoutePath:
+          type: [string, "null"]
+        status:
+          $ref: "#/components/schemas/DesignSystemCanonicalLifecycleStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+        featured:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - canonicalFamilyId
+        - familyKey
+        - displayLabel
+        - familyKind
+        - launcherTitle
+        - launcherDescription
+        - launcherCategory
+        - launcherTemplateKey
+        - renderTemplateKey
+        - generatedLauncherRoutePath
+        - generatedRootRoutePath
+        - legacyLauncherRoutePath
+        - sourceSurfaceRoutePath
+        - status
+        - sortOrder
+        - featured
+        - createdAt
+        - updatedAt
+
+    DesignSystemCanonicalReference:
+      type: object
+      properties:
+        canonicalReferenceId:
+          type: string
+          format: uuid
+        canonicalFamilyId:
+          type: string
+          format: uuid
+        familyKey:
+          type: string
+        referenceId:
+          type: string
+        displayLabel:
+          type: string
+        description:
+          type: string
+        renderRoutePath:
+          type: string
+        legacyRenderRoutePath:
+          type: [string, "null"]
+        viewport:
+          type: [string, "null"]
+        width:
+          type: [integer, "null"]
+          minimum: 1
+        height:
+          type: [integer, "null"]
+          minimum: 1
+        theme:
+          type: string
+        direction:
+          type: string
+        zoom:
+          type: integer
+          minimum: -100
+          maximum: 100
+        localeFixture:
+          type: [string, "null"]
+        labelDensityFixture:
+          type: [string, "null"]
+        stateVariantKey:
+          type: [string, "null"]
+        specimenPayload:
+          type: object
+          additionalProperties: true
+        status:
+          $ref: "#/components/schemas/DesignSystemCanonicalLifecycleStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+        featured:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - canonicalReferenceId
+        - canonicalFamilyId
+        - familyKey
+        - referenceId
+        - displayLabel
+        - description
+        - renderRoutePath
+        - legacyRenderRoutePath
+        - viewport
+        - width
+        - height
+        - theme
+        - direction
+        - zoom
+        - localeFixture
+        - labelDensityFixture
+        - stateVariantKey
+        - specimenPayload
+        - status
+        - sortOrder
+        - featured
+        - createdAt
+        - updatedAt
+
+    CreateDesignSystemCanonicalFamilyBody:
+      type: object
+      additionalProperties: false
+      properties:
+        familyKey: { type: string, minLength: 1 }
+        displayLabel: { type: string, minLength: 1 }
+        familyKind:
+          $ref: "#/components/schemas/DesignSystemCanonicalFamilyKind"
+        launcherTitle: { type: string, minLength: 1 }
+        launcherDescription: { type: string, minLength: 1 }
+        launcherCategory:
+          type: [string, "null"]
+        generatedLauncherRoutePath: { type: string, minLength: 1 }
+        generatedRootRoutePath: { type: string, minLength: 1 }
+        legacyLauncherRoutePath:
+          type: [string, "null"]
+        sourceSurfaceRoutePath:
+          type: [string, "null"]
+        status:
+          $ref: "#/components/schemas/DesignSystemCanonicalLifecycleStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+        featured:
+          type: boolean
+      required:
+        - familyKey
+        - displayLabel
+        - familyKind
+        - launcherTitle
+        - launcherDescription
+        - generatedLauncherRoutePath
+        - generatedRootRoutePath
+
+    UpdateDesignSystemCanonicalFamilyBody:
+      type: object
+      additionalProperties: false
+      properties:
+        displayLabel: { type: string, minLength: 1 }
+        familyKind:
+          $ref: "#/components/schemas/DesignSystemCanonicalFamilyKind"
+        launcherTitle: { type: string, minLength: 1 }
+        launcherDescription: { type: string, minLength: 1 }
+        launcherCategory:
+          type: [string, "null"]
+        generatedLauncherRoutePath: { type: string, minLength: 1 }
+        generatedRootRoutePath: { type: string, minLength: 1 }
+        legacyLauncherRoutePath:
+          type: [string, "null"]
+        sourceSurfaceRoutePath:
+          type: [string, "null"]
+        status:
+          $ref: "#/components/schemas/DesignSystemCanonicalLifecycleStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+        featured:
+          type: boolean
+
+    CreateDesignSystemCanonicalReferenceBody:
+      type: object
+      additionalProperties: false
+      properties:
+        referenceId: { type: string, minLength: 1 }
+        displayLabel: { type: string, minLength: 1 }
+        description: { type: string, minLength: 1 }
+        renderRoutePath: { type: string, minLength: 1 }
+        legacyRenderRoutePath:
+          type: [string, "null"]
+        viewport:
+          type: [string, "null"]
+        width:
+          type: [integer, "null"]
+          minimum: 1
+        height:
+          type: [integer, "null"]
+          minimum: 1
+        theme: { type: string, minLength: 1 }
+        direction: { type: string, minLength: 1 }
+        zoom:
+          type: integer
+          minimum: -100
+          maximum: 100
+        localeFixture:
+          type: [string, "null"]
+        labelDensityFixture:
+          type: [string, "null"]
+        stateVariantKey:
+          type: [string, "null"]
+        specimenPayload:
+          type: object
+          additionalProperties: true
+        status:
+          $ref: "#/components/schemas/DesignSystemCanonicalLifecycleStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+        featured:
+          type: boolean
+      required:
+        - referenceId
+        - displayLabel
+        - description
+        - renderRoutePath
+
+    UpdateDesignSystemCanonicalReferenceBody:
+      type: object
+      additionalProperties: false
+      properties:
+        displayLabel: { type: string, minLength: 1 }
+        description: { type: string, minLength: 1 }
+        renderRoutePath: { type: string, minLength: 1 }
+        legacyRenderRoutePath:
+          type: [string, "null"]
+        viewport:
+          type: [string, "null"]
+        width:
+          type: [integer, "null"]
+          minimum: 1
+        height:
+          type: [integer, "null"]
+          minimum: 1
+        theme: { type: string, minLength: 1 }
+        direction: { type: string, minLength: 1 }
+        zoom:
+          type: integer
+          minimum: -100
+          maximum: 100
+        localeFixture:
+          type: [string, "null"]
+        labelDensityFixture:
+          type: [string, "null"]
+        stateVariantKey:
+          type: [string, "null"]
+        specimenPayload:
+          type: object
+          additionalProperties: true
+        status:
+          $ref: "#/components/schemas/DesignSystemCanonicalLifecycleStatus"
+        sortOrder:
+          type: integer
+          minimum: 0
+        featured:
+          type: boolean
+
+    PublicCanonicalFamilyListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DesignSystemCanonicalFamily"
+      required:
+        - items
+
+    PublicCanonicalLauncherResponse:
+      type: object
+      properties:
+        family:
+          $ref: "#/components/schemas/DesignSystemCanonicalFamily"
+        references:
+          type: array
+          items:
+            $ref: "#/components/schemas/DesignSystemCanonicalReference"
+      required:
+        - family
+        - references
+
+    PublicCanonicalRenderingResponse:
+      type: object
+      properties:
+        family:
+          $ref: "#/components/schemas/DesignSystemCanonicalFamily"
+        reference:
+          $ref: "#/components/schemas/DesignSystemCanonicalReference"
+      required:
+        - family
+        - reference
 
     WebAppTopologyState:
       type: string

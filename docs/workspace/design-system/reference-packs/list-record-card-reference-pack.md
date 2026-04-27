@@ -95,6 +95,7 @@ Those remain governed upstream by the parent `List Page` chain.
 The highest-risk review states are:
 
 - `LRCR-001` desktop baseline full width
+- `LRCR-001` focus-visible keyboard emphasis without geometry shift
 - `LRCR-002` desktop selected full width
 - `LRCR-004` missing-attribute fallback
 - `LRCR-005` half-page long-content review
@@ -102,8 +103,8 @@ The highest-risk review states are:
 - `LRCR-007` RTL half-page review
 
 These states carry the biggest drift risk because they prove child-level
-selection emphasis, fallback behavior, constrained-width truncation, mobile
-full-width posture, and RTL alignment.
+focus visibility, selection emphasis, fallback behavior, constrained-width
+truncation, mobile full-width posture, and RTL alignment.
 
 ## Parity Rule
 
@@ -122,4 +123,6 @@ This child reference pack becomes operational when:
 - the `LRCR-*` states are reviewed directly from the dedicated child canonical
   launcher
 - the verification checklist points at this child pack explicitly
+- the generated child render surface proves focus-visible emphasis on the
+  baseline card without changing card geometry
 - later sign-off asks for this pack review before child canonical sign-off

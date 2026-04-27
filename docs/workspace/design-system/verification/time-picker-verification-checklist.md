@@ -37,7 +37,8 @@
   dedicated canonical launcher plus dedicated canonical render surface, and
   route-level browser proof for standalone quick-pick completion, nested
   range-with-time overlap, composed outer-label sync, mobile overlay
-  posture, and desktop RTL mirrored alignment.
+  posture, explicit close-button dismissal, and desktop RTL mirrored
+  alignment.
 
 ## Source Verification
 
@@ -52,10 +53,12 @@
   yes
   this pass codifies the child seam boundary, adds proof against the existing
   signed-off live surface, and updates the generated render surface so ready
-  is published only after settled owner-reserve geometry has been synced
+  is published only after settled owner-reserve geometry has been synced; the
+  generated render controller now binds explicit panel close buttons to the
+  seam-owned dismissal and focus-return path
 - Known source-level risks:
-  explicit close-button dismissal is source-inspected but not yet covered by a
-  dedicated child browser test
+  no current child-source blocker; promotion still needs a second governed
+  consumer before `system-ready`
 
 ## Rendered Verification
 
@@ -73,7 +76,9 @@
   standalone open state
   standalone hour selection remaining open
   standalone minute completion close and focus return
+  explicit standalone close-button dismissal and focus return
   nested overlap inside `date range with time`
+  explicit nested close-button dismissal while parent host remains open
   composed outer-label sync after nested time change
   mobile full-screen overlay geometry
   hidden closed-state guarantee before mobile open
@@ -95,10 +100,11 @@
 ## Accessibility Verification
 
 - Keyboard entry and exit:
-  covered for `Escape` and minute-completion close paths
+  covered for `Escape`, minute-completion close paths, and explicit close
+  buttons on the dedicated child render surface
 - Focus order and return focus:
-  covered for standalone minute completion, nested minute completion, and
-  mobile `Escape` dismissal
+  covered for standalone minute completion, nested minute completion, explicit
+  standalone and nested close-button dismissal, and mobile `Escape` dismissal
 - Semantic structure:
   source inspected
   trigger buttons use dialog semantics and picker panels keep labelled dialog
@@ -146,7 +152,7 @@
 - Promotion decision:
   promote to signed-off child baseline; not yet `system-ready`
 - Open follow-ups:
-  add direct rendered proof for explicit close-button dismissal
+  prove a second governed consumer before promotion to `system-ready`
   decide later whether `TPR-009` should move into the priority set or remain
   a secondary stress-state reference
 

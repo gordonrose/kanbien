@@ -14,7 +14,7 @@ concrete than the broader canonical/parity conventions note.
 - Family:
   `canonical-render-page`
 - Status:
-  signed-off review baseline
+  system-ready review baseline
 - Source surface:
   `/design-system/templates/canonical-render-page`
 - Related template artifact:
@@ -43,8 +43,28 @@ Use this pack to answer:
 - Review outcome:
   accepted as the current canonical-render-page baseline
 - Remaining gap:
-  add broader viewport- and pattern-state coverage only if this page begins
-  serving as the main review host for additional governed families
+  none for template-level system readiness; broader family readiness remains
+  per-family and follows each family's own canonical checklist
+
+## Generated Consumer Coverage
+
+Generated canonical-rendering routes are now first-class consumers of this
+template contract:
+
+- `/design-system/canonical-renderings/:familyKey/:referenceId`
+
+Current executable evidence verifies that generated render routes resolve to
+registered render surfaces, expose specimen markers, avoid fallback overview
+content, and preserve the known high-risk render contracts around theme scope,
+responsive width, and overlay containment.
+
+Generated render coverage lives in:
+
+- `tests/integration/frontend/designSystemCanonicalRouting.test.ts`
+- `tests/integration/frontend/designSystemCanonicalThemeScopeAudit.test.ts`
+- `tests/integration/frontend/designSystemCanonicalResponsiveWidthAudit.test.ts`
+- `tests/integration/frontend/designSystemCanonicalOverlayContainmentAudit.test.ts`
+- family-specific visual specs under `tests/visual/designSystem/canonicals/`
 
 ## Reference Contract
 
@@ -97,5 +117,7 @@ A future canonical-render-page change matches this reference pack only when:
 
 This pack still needs:
 
-- dedicated wider-state reference captures if the template begins governing
-  screenshot-grade sign-off for more families than the current starter set
+- dedicated wider-state reference captures only if the template route itself
+  becomes the screenshot-grade sign-off host for additional families beyond
+  the generated render routes that already carry their own family-specific
+  proof

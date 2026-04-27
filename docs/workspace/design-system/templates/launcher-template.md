@@ -108,12 +108,18 @@
   `/design-system/canonicals`
   `/design-system/canonicals/top-nav`
   `/design-system/canonicals/list-detail-panel`
+  `/design-system/canonical-renderings`
+  `/design-system/canonical-renderings/:familyKey`
 
 ## Verification
 
 - Required screenshots or visual checks:
   canonical index, one family launcher, and one detail page using the launcher
   page shape
+- Generated-route checks:
+  generated canonical-rendering index and family launchers must hydrate from
+  persisted canonical registry truth and link directly to generated render
+  routes
 - Accessibility verification:
   heading hierarchy, labelled review panel, visible focus, and descriptive
   link text

@@ -56,6 +56,8 @@ and approved cross-feature read seams.
 | Web App Discovery Link | `webAppHierarchyBuilder` | Durable discovered-to-curated reconcile record for match, block, and drift posture. | [web-app-discovery-link.md](./web-app-discovery-link.md) |
 | Web App Page Settings | `webAppPageSettings` | Durable page-attached settings record for governed icon, top-nav, template, and related configuration truth. | [web-app-page-settings.md](./web-app-page-settings.md) |
 | Web App Page Context Nav Item | `webAppPageSettings` | Durable ordered context-navigation membership row attached to one curated page. | [web-app-page-context-nav-item.md](./web-app-page-context-nav-item.md) |
+| Design System Canonical Family | `designSystemCanonicals` | Durable registry row for one generated design-system canonical launcher family. | [design-system-canonical-family.md](./design-system-canonical-family.md) |
+| Design System Canonical Reference | `designSystemCanonicals` | Durable registry row for one generated canonical-rendering reference state under a design-system family. | [design-system-canonical-reference.md](./design-system-canonical-reference.md) |
 | Auth Principal | `rootAuth` | Login identity linked to exactly one root user in the current phase. | [auth-principal.md](./auth-principal.md) |
 | Auth SSH Public Key | `rootAuth` | Registered SSH public key used for second-factor proof during root login. | [auth-ssh-public-key.md](./auth-ssh-public-key.md) |
 | Auth Login Challenge | `rootAuth` | Single-use SSH challenge issued after password-stage login. | [auth-login-challenge.md](./auth-login-challenge.md) |

@@ -5,7 +5,7 @@
 - Pattern name:
   `display-settings`
 - Status:
-  exploratory
+  signed-off
 - Owner:
   `/design-system`
 - Related principle artifacts:
@@ -145,13 +145,13 @@
 
 - First governed surface to adopt:
   `/design-system` as the payload review surface, then `rootAdminShell` with
-  the narrower app subset once the payload loop is complete
+  the narrower signed-off app subset
 - Existing pages that should migrate later:
   future governed preferences surfaces
 - Partial-adoption note:
-  `rootAdminShell` is still only a provisional follow-on note; `/design-system`
+  `rootAdminShell` may consume the narrower app subset; `/design-system`
   currently keeps accent and direction for payload review while the app subset
-  is still awaiting sign-off
+  remains limited to the approved controls
 
 ## Verification
 

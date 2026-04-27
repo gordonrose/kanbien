@@ -32,6 +32,12 @@
   assertions for progress labels, rendered progress geometry, status semantics,
   and excluded actions/results so the single-state canonicals are not only
   smoke-tested.
+- Human sign-off:
+  approved for the `AADR-*` generated canonical state set.
+- Promotion decision:
+  promote to signed-off design-system baseline; do not promote to app-adopted
+  or `system-ready` until a workspace/app shell adoption contract names the
+  real job feed, retry/report ownership, and consumer parity expectations.
 
 ## App Adoption Status
 

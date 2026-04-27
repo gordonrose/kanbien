@@ -5,7 +5,7 @@
 - Pattern name:
   `async-activity-drawer`
 - Status:
-  draft governed seam for design-system review
+  signed-off governed seam for design-system review
 - Parent pattern:
   `context-nav drawer`
 - Related behavior lock:

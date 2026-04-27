@@ -5,7 +5,7 @@
 - Component name:
   `AsyncActivityDrawer`
 - Status:
-  draft
+  signed-off
 - Source pattern:
   `docs/workspace/design-system/patterns/async-activity-drawer-pattern.md`
 - Shared implementation seam:

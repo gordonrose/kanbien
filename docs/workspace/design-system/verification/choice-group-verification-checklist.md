@@ -8,7 +8,7 @@
   persistence-backed child render surface at
   `/design-system/canonical-renderings/choice-group/:ref`
 - Status under review:
-  approved exploratory child-seam baseline with first child canonical set
+  signed-off child-seam baseline with parent-owned stress proof
 - Related behavior lock:
   `docs/workspace/design-system/behavior-locks/choice-group-behavior-lock.md`
 - Related reference pack:
@@ -35,10 +35,10 @@
   the seam now has a persistence-backed generated child canonical launcher and
   dedicated child render surface for `CGR-001`, `CGR-002`, `CGR-003`,
   `CGR-004`, `CGR-006`, `CGR-007`, `CGR-010`, and `CGR-011`
-  the remaining `CGR-005`, `CGR-008`, and `CGR-009` states still rely on
-  parent-hosted proof from the signed-off `Form Template` route
-  the user has now visually approved the first child canonical batch on the
-  dedicated child surface
+  the remaining `CGR-005`, `CGR-008`, and `CGR-009` states are intentionally
+  retained as parent-owned proof from the signed-off `Form Template` route
+  the user has now visually approved the child canonical batch and parent-owned
+  stress boundary as the signed-off baseline
 
 ## Source Verification
 
@@ -149,20 +149,17 @@
 - Implementation status:
   child launcher and render surface created
 - Rendered status:
-  partially verified through a mixed child-owned and parent-hosted proof set
+  verified through the approved mixed child-owned and parent-hosted proof set
 - Human sign-off status:
-  first child canonical batch visually approved
+  approved for the child canonical batch and parent-owned stress boundary
 - Promotion decision:
-  keep `Choice Group` exploratory while the approved child-owned render
-  surface coexists with the remaining parent-hosted states
+  promote `Choice Group` to signed-off; do not promote to `system-ready`
+  without a second governed consumer
 - Open follow-ups:
-  decide whether `CGR-005`, `CGR-008`, and `CGR-009` should move onto the child
-  render surface or remain parent-owned proof
-  determine whether the shared-statement variant can be expressed generically
-  enough to survive outside its current release-checklist host
-  decide whether the current approved exploratory baseline is stable enough to
-  keep those remaining states parent-owned permanently rather than migrating
-  them onto the child surface
+  prove a second governed consumer before promotion to `system-ready`
+  if a future consumer needs child-owned disabled or focus stress states,
+  add those as an approved expansion rather than treating them as missing from
+  the signed-off baseline
 
 ## Traceability And Sync
 
@@ -181,3 +178,5 @@
   no
 - Real-app adoption now allowed:
   no
+  a first real-app consumer still needs an adoption contract that consumes the
+  signed-off child seam without copying parent-hosted form behavior

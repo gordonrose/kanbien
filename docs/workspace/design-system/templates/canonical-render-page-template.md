@@ -5,13 +5,14 @@
 - Template name:
   `Canonical Render Page`
 - Status:
-  signed-off review baseline
+  system-ready review baseline
 - Owner:
   `/design-system`
 - Current governed surfaces:
   `/design-system/components/sub-nav`
   `/design-system/components/page-shell-banner`
   `/design-system/patterns/hierarchy-tree/render`
+  `/design-system/canonical-renderings/:familyKey/:referenceId`
 - Governing conventions:
   `docs/workspace/design-system/canonical-and-parity-conventions.md`
   `docs/architecture/guides/design-system-loop-harness.md`
@@ -121,6 +122,7 @@
   `/design-system/components/sub-nav`
   `/design-system/components/page-shell-banner`
   `/design-system/patterns/hierarchy-tree/render`
+  `/design-system/canonical-renderings/:familyKey/:referenceId`
 - Current starter specimen set on the template route:
   `sub-nav-row`
   `breadcrumb`
@@ -144,6 +146,10 @@
   dark and desert render states must apply only to the specimen lane; the page
   top nav, canonical render intro, and `.canonical-render-layout` wrapper must
   remain unthemed review chrome
+- Generated-route verification:
+  generated render routes must resolve to approved registered render surfaces,
+  expose specimen markers, avoid fallback overview content, and preserve
+  family-specific overlay and width contracts
 
 ## Traceability And Sync
 

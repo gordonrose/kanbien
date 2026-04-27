@@ -29,7 +29,7 @@ reference them explicitly.
 - Family:
   `choice-group`
 - Review outcome:
-  exploratory child behavior lock
+  signed-off child behavior lock
 - Current source surface:
   `/design-system/templates/form`
 - Host parent family:
@@ -70,7 +70,7 @@ reference them explicitly.
 | `CG-BL-013` | If inherited error and disabled review states appear together, grouped-choice errors must remain readable and attributable while the rows still clearly read as unavailable. | Prevents muddy combined-state visuals where disabled treatment buries the local error message or error styling disguises unavailable controls. | The parent form lock already governs combined review states, and the grouped-choice seam inherits that obligation for its own local error slot and row shell. | `approved` | Error and disabled should both stay legible on grouped choices. |
 | `CG-BL-014` | Disabled, mobile, RTL, and theme review states are inherited from the parent template, but the child seam must remain truthful inside them without inventing a separate overlay or layout grammar. | Records the cross-cutting review contexts while keeping host review modes parent-owned. | Current grouped-choice surfaces inherit review-state styling from the parent form shell and remain visible in default, error, and disabled mobile RTL parent proof. | `approved` | Keep cross-cutting review inherited from the parent. |
 | `CG-BL-015` | Current full-width placement of the shared-statement checklist is parent-owned host composition, not a permanent child-seam rule. | Prevents today’s host-specific grid decision from becoming accidental API. | The current shared-statement group spans both columns inside the parent grid, but that span comes from the host form layout rather than the fieldset shell itself. | `approved` | Do not freeze host grid-span as child API. |
-| `CG-BL-016` | `Choice Group` should not be treated as signed off for wider reuse until it either proves a second governed consumer or gains a dedicated child canonical set that is honest outside parent-route memory. | Keeps the seam in an exploratory state until there is enough direct child proof to justify extraction. | The seam now has a provisional child launcher/render surface plus parent-hosted proof, but it still lacks a second governed consumer and final visual sign-off. | `approved` | Start the chain honestly, but do not over-promote it yet. |
+| `CG-BL-016` | `Choice Group` should not be treated as `system-ready` for broad reuse until it proves a second governed consumer or an approved expansion shows the parent-owned stress states need child-owned routes. | Keeps the signed-off seam from being over-promoted while preserving the approved parent-owned stress boundary. | The seam now has a signed-off child launcher/render surface plus parent-hosted stress proof, but it still lacks a second governed consumer. | `approved` | Signed off now; do not over-promote it yet. |
 
 ## Exit Criteria For This Step
 
@@ -79,7 +79,8 @@ enough to guide:
 
 - the child reference pack
 - the child verification checklist
-- the first child canonical proposal, if the seam later proves ready
+- the signed-off child canonical set
 
-Do not treat `Choice Group` as a signed-off extracted family until downstream
-child artifacts and proof support that promotion honestly.
+Do not treat `Choice Group` as `system-ready` until downstream artifacts prove
+at least one future consumer beyond the parent form route or an approved
+expansion changes the parent-owned stress-state boundary.

@@ -104,6 +104,46 @@ test.describe("design-system list-record-card canonical states", () => {
     await expect(page.locator("#list-record-card-preview-tags")).toBeHidden();
   });
 
+  test("LRC-001 exposes a geometry-safe focus-visible state", async ({ page }) => {
+    await gotoCanonicalState(
+      page,
+      "/design-system/canonical-renderings/list-record-card/LRC-001",
+    );
+
+    const card = page.locator("#list-record-card-preview-card");
+    const beforeFocus = await card.evaluate((node) => {
+      const rect = node.getBoundingClientRect();
+      const styles = window.getComputedStyle(node);
+      return {
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+        backgroundColor: styles.backgroundColor,
+        borderColor: styles.borderColor,
+      };
+    });
+
+    await card.focus();
+    await expect(card).toBeFocused();
+
+    const afterFocus = await card.evaluate((node) => {
+      const rect = node.getBoundingClientRect();
+      const styles = window.getComputedStyle(node);
+      return {
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
+        backgroundColor: styles.backgroundColor,
+        borderColor: styles.borderColor,
+        focusVisible: node.matches(":focus-visible"),
+      };
+    });
+
+    expect(afterFocus.focusVisible).toBe(true);
+    expect(afterFocus.width).toBe(beforeFocus.width);
+    expect(afterFocus.height).toBe(beforeFocus.height);
+    expect(afterFocus.backgroundColor).not.toBe(beforeFocus.backgroundColor);
+    expect(afterFocus.borderColor).not.toBe(beforeFocus.borderColor);
+  });
+
   test("LRC-005 and LRC-006 keep half-page and mobile widths honest", async ({ page }) => {
     await gotoCanonicalState(
       page,

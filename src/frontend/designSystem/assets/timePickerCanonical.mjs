@@ -302,6 +302,15 @@ function closeTimePanel(trigger, panel) {
   }
 }
 
+function dismissTimePanel(trigger, panel) {
+  closeTimePanel(trigger, panel);
+  updateCanonicalPickerReserve();
+
+  if (trigger instanceof HTMLButtonElement) {
+    trigger.focus();
+  }
+}
+
 function openTimePanel(trigger, panel) {
   if (trigger instanceof HTMLButtonElement) {
     trigger.setAttribute("aria-expanded", "true");
@@ -505,6 +514,22 @@ if (nestedRoot instanceof HTMLElement) {
   nestedRoot.addEventListener("formtimechange", () => {
     updateRangeHostLabel();
   });
+}
+
+for (const root of [standaloneRoot, nestedRoot]) {
+  if (!(root instanceof HTMLElement)) {
+    continue;
+  }
+
+  const trigger = root.querySelector("[data-form-time-button]");
+  const panel = root.querySelector("[data-form-time-panel]");
+  const closeButton = root.querySelector("[data-form-time-close]");
+
+  if (closeButton instanceof HTMLButtonElement) {
+    closeButton.addEventListener("click", () => {
+      dismissTimePanel(trigger, panel);
+    });
+  }
 }
 
 async function main() {

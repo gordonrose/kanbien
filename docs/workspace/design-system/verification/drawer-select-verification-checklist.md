@@ -7,7 +7,7 @@
 - Surface:
   `/design-system/canonical-renderings/drawer-select/:ref`
 - Status under review:
-  child-seam baseline started under the signed-off `Form Template` parent
+  signed-off child-seam baseline under the signed-off `Form Template` parent
 - Related parent host family:
   `docs/workspace/design-system/reference-packs/form-template-reference-pack.md`
 - Related behavior lock:
@@ -35,7 +35,8 @@
   and reopening the drawer now resets the previous search term; the
   `DSR-001` through `DSR-027` matrix now renders on a dedicated child route,
   including summary-boundary, toggle/remove, compact empty, long-label,
-  localized, disabled, RTL, dark-theme, magnified, and mobile viewport review states
+  localized, disabled, RTL, dark-theme, magnified, and mobile viewport review
+  states; the user has visually approved the generated child matrix
 
 ## Source Verification
 
@@ -146,10 +147,13 @@
   compact, dark compact, mobile descriptive, mobile compact, and both dark
   mobile open states
 - Human sign-off status:
-  pending dedicated child-seam review
+  approved for the generated `DSR-*` child matrix
 - Promotion decision:
-  keep the child seam in progress while the expanded core matrix is reviewed
+  promote `Drawer Select` to signed-off; do not promote to `system-ready`
+  without a second governed consumer and any required first-consumer adoption
+  contract
 - Open follow-ups:
+  prove a second governed consumer before promotion to `system-ready`
   extend approved-host parity to additional states when clean one-to-one
   source seams exist, especially if a dedicated magnified host seam is later
   signed off
@@ -169,5 +173,5 @@
   no
 - Real-app adoption now allowed:
   no
-  this child seam still needs human review of the new direct canonical set
-  before governed app adoption should begin
+  a first real-app consumer still needs an adoption contract that consumes the
+  signed-off child seam without copying parent-hosted form behavior

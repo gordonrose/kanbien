@@ -125,8 +125,7 @@
   the card seam is already repeated and stable enough to document even though
   the broader parent split-layout contract is still exploratory
 - What still remains before shared code extraction?
-  a second governed consumer and completion of the focus-visible verification
-  follow-up before promotion to `system-ready`
+  a second governed consumer before promotion to `system-ready`
 - What is explicitly not blocked?
   documenting and beginning source-level hook extraction for the child seam now
 
@@ -137,6 +136,8 @@
 - Design-system route update required:
   yes:
   `/design-system/canonicals/list-record-card`
+  `/design-system/canonical-renderings/list-record-card`
+  `/design-system/canonical-renderings/list-record-card/:ref`
   `/design-system/components/list-record-card`
 - Frontend docs update required:
   yes, when the child seam gets a public preview or shared application code

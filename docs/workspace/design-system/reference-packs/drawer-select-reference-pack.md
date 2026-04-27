@@ -15,7 +15,7 @@ parent framing from `form-template`.
 - Family:
   `drawer-select`
 - Status:
-  initial child-seam reference baseline
+  signed-off child-seam reference baseline
 - Current source surface:
   `/design-system/templates/form`
 - Parent host family:
@@ -180,3 +180,8 @@ This reference pack becomes operational when:
   behavior named here
 - any later adoption artifact is written from this child-seam pack rather than
   assuming the parent template alone is sufficient sign-off
+
+The `DSR-*` state set has been visually approved by the user and is the
+signed-off child-seam baseline. Do not treat this as `system-ready` until a
+second governed consumer proves reuse without copying parent-hosted form
+behavior.

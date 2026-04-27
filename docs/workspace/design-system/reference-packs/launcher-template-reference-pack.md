@@ -43,8 +43,26 @@ Use this pack to answer:
 - Review outcome:
   accepted as the current launcher-template review baseline
 - Remaining gap:
-  validate the same page shape against at least one additional launcher-style
-  consumer once a real governed consumer adopts it
+  none for template-level system readiness; broader family readiness remains
+  per-family and follows each family's own verification checklist
+
+## Generated Consumer Coverage
+
+The generated canonical-renderings index and family launcher routes now act as
+the first real launcher-style consumers:
+
+- `/design-system/canonical-renderings`
+- `/design-system/canonical-renderings/:familyKey`
+
+Current executable evidence verifies that generated launcher publication stays
+coupled to persisted registry truth, registered render surfaces, visible
+launcher links, and direct render-route targets.
+
+Generated launcher coverage lives in:
+
+- `tests/integration/frontend/designSystemCanonicalRouting.test.ts`
+- `tests/integration/frontend/designSystemCanonicalLauncherLinkAudit.test.ts`
+- `tests/integration/designSystemCanonicals/contractArtifacts.test.ts`
 
 ## Reference Contract
 
@@ -99,5 +117,6 @@ reference pack only when:
 
 This pack still needs:
 
-- an explicit drawer-open reference state if the display-settings tray becomes
-  part of the launcher review contract rather than a supporting control
+- an explicit drawer-open reference state only if the display-settings tray
+  becomes part of the launcher review contract rather than a supporting
+  control

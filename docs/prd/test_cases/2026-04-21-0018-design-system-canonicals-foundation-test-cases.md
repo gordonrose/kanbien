@@ -38,29 +38,54 @@
 ## Current Status
 
 - Overall traceability status:
-  - planned
+  - implemented with residual promotion traceability
 - Overall execution status:
-  - not yet implemented
+  - backend foundation, public generated route family, hierarchy sync, and
+    selected family visual proof implemented
 - Layer summary:
-  - `UNIT`: planned
-  - `INT`: planned
-  - `SEC`: planned
-  - `AUD`: planned
-  - `EDGE`: planned
-  - `FRONTEND`: planned
-  - `COMPAT`: planned
-  - `CONCURRENCY/IDEMPOTENCY`: light planned
+  - `UNIT`: implemented for web-app hierarchy sync and page-template support;
+    direct `designSystemCanonicals` service-unit coverage remains folded into
+    integration and public-route tests rather than one-to-one TC ids
+  - `INT`: implemented for public generated route resolution, launcher link
+    audits, and hierarchy sync
+  - `SEC`: partially implemented through protected capability middleware and
+    existing web-app hierarchy/page-settings security suites; dedicated
+    `designSystemCanonicals` security files remain a follow-up
+  - `AUD`: partially implemented through shared authz audit posture; dedicated
+    successful-governance audit events are not a current feature-local seam
+  - `EDGE`: implemented for generated fallback avoidance, launcher visibility,
+    route registration, idempotent hierarchy sync, theme scope, responsive
+    width, and overlay containment
+  - `FRONTEND`: implemented through generated route integration tests and
+    family-specific visual specs under `tests/visual/designSystem/canonicals/`
+  - `COMPAT`: implemented for additive generated routes alongside legacy
+    canonical launcher routes
+  - `CONCURRENCY/IDEMPOTENCY`: implemented for repeated hierarchy sync;
+    repeated protected governance writes are bounded by uniqueness checks
 - Existing executable test impact:
-  - `tests/integration/designSystem/route.test.ts`
-    will likely need additive route assertions for the new generated launcher
-    and generated render families without weakening the existing legacy route
-    checks
-  - existing visual and route assertions under `tests/visual/designSystem/`
-    will likely need a reusable route-input layer so the same expectations can
-    be pointed at both legacy and generated canonical surfaces
-  - this likely means touching existing executable tests rather than only
-    adding greenfield tests; that change should be made explicitly and
-    discussed, not treated as an invisible refactor
+  - `tests/integration/frontend/designSystemCanonicalRouting.test.ts`
+    verifies generated family publication, render registry alignment,
+    fallback avoidance, family launcher routing, and unregistered-family 404
+    posture.
+  - `tests/integration/frontend/designSystemCanonicalLauncherLinkAudit.test.ts`
+    verifies migrated launcher links prefer generated canonical-rendering
+    URLs and that linked generated routes serve browser shells.
+  - `tests/integration/frontend/designSystemCanonicalOverlayContainmentAudit.test.ts`,
+    `tests/integration/frontend/designSystemCanonicalResponsiveWidthAudit.test.ts`,
+    and `tests/integration/frontend/designSystemCanonicalThemeScopeAudit.test.ts`
+    cover escaped issue classes from the canonical-rendering completion
+    checklist.
+  - `tests/unit/webAppHierarchyBuilder/service.test.ts` and
+    `tests/integration/webAppHierarchyBuilder/flow.test.ts` cover
+    canonical-renderings hierarchy sync, idempotency, active locators, and
+    template-key preservation.
+  - Family-specific generated-route visual proof lives under
+    `tests/visual/designSystem/canonicals/`.
+  - The executable test names do not consistently embed
+    `TC-DESIGN-SYS-CANON-*` ids because much of the suite was implemented as
+    regression and visual-governance evidence while the generated route family
+    was being hardened. Treat the mappings in this file as coverage intent and
+    current evidence pointers rather than exact test-name trace ids.
 
 ## QA Coverage Classification
 
