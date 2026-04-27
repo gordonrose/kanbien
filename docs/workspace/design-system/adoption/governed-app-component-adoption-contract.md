@@ -82,6 +82,10 @@ behavior, or page-local controller logic into the app.
   exports `renderFormDrawerSelect(...)`, plus initialization and refresh
   helpers such as `initializeFormDrawerSelects(...)` and
   `refreshFormDrawerSelect(...)`
+- `login-template`
+  `/design-system/assets/loginTemplate.mjs`
+  exports `renderLoginTemplate()`, `renderRootAdminLoginTemplate()`, and
+  `createLoginTemplateController(...)`
 
 ### Current Duplication In App Consumers
 
@@ -110,6 +114,13 @@ behavior, or page-local controller logic into the app.
     `rootAdminShell/index.html`
   - still depends on the broader root-admin shell for the context-nav launcher
     and surrounding shell host composition
+- `rootAdminShell` unauthenticated login
+  - imports the DS-owned login-template render/controller seam from
+    `loginTemplate.mjs`
+  - uses design-system-owned styles from `/design-system/assets/styles.css`
+  - no longer loads `src/frontend/rootAdminShell/assets/login.css`
+  - keeps root-auth API calls, signer-helper invocation, and session behavior
+    in `rootAdminShell/assets/app.mjs`
 
 ## Target Seam Shape
 

@@ -50,6 +50,22 @@ async function bootstrapAuthenticatedOverview(page: Page) {
   await page.locator(".context-nav").waitFor({ state: "visible" });
 }
 
+async function bootstrapUnauthenticatedRootAdmin(page: Page) {
+  await page.route("**/v1/root-auth/browser/session", async (route) => {
+    await route.fulfill({
+      status: 401,
+      contentType: "application/json",
+      body: JSON.stringify({
+        code: "UNAUTHORIZED",
+        message: "Authentication required.",
+      }),
+    });
+  });
+
+  await page.goto("/root-admin");
+  await page.locator("[data-login-template]").waitFor({ state: "visible" });
+}
+
 async function collectStyles(page: Page, selector: string, properties: string[]) {
   return page.locator(selector).evaluate((node, props) => {
     const styles = window.getComputedStyle(node);
@@ -75,7 +91,7 @@ test("root-admin authenticated shell uses the same shell stylesheet entrypoints 
   expect(appStylesheetHrefs).toContain("/design-system/assets/hierarchy-tree-shared.css");
   expect(appStylesheetHrefs).toContain("/design-system/assets/form-template-shared.css");
   expect(appStylesheetHrefs).toContain("/design-system/assets/hierarchyTree.css");
-  expect(appStylesheetHrefs).toContain("/root-admin/assets/login.css");
+  expect(appStylesheetHrefs).not.toContain("/root-admin/assets/login.css");
   expect(appStylesheetHrefs).not.toContain("/root-admin/assets/styles.css");
 
   await expect(page.locator("#shell-view.design-system-shell")).toHaveCount(1);
@@ -130,6 +146,130 @@ test("root-admin authenticated shell uses the same shell stylesheet entrypoints 
   }
 
   await designSystemPage.close();
+});
+
+test("root-admin login consumes the governed login template and switches into SSH challenge state", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.route("**/v1/root-auth/login/password", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        status: "SSH_CHALLENGE_REQUIRED",
+        challengeId: "challenge_001",
+        challengeText: "kanbien-root-admin-login-challenge",
+        expiresAt: "2027-04-16T18:05:00.000Z",
+        availableSshKeys: [
+          {
+            fingerprint: "SHA256:root-admin-key",
+            label: "Root admin workstation",
+          },
+        ],
+      }),
+    });
+  });
+
+  await bootstrapUnauthenticatedRootAdmin(page);
+
+  await expect(page.locator("#auth-view.login-template-stage")).toBeVisible();
+  await expect(page.locator("[data-login-template]")).toHaveAttribute("data-login-variant", "password");
+  await expect(page.locator("#login-form.login-template-form")).toBeVisible();
+  await expect(page.locator(".auth-panel")).toHaveCount(0);
+
+  await page.locator("#email").fill("root.admin@example.test");
+  await page.locator("#password").fill("StrongPass1!");
+  await page.locator("#login-form").evaluate((form) => {
+    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+  });
+
+  await expect(page.locator("[data-login-template]")).toHaveAttribute("data-login-variant", "ssh-challenge");
+  await expect(page.locator("#ssh-stage")).toBeVisible();
+  await expect(page.locator("#ssh-key-choice-list")).toBeVisible();
+  await expect(page.getByRole("radio", { name: /Root admin workstation/ })).toBeChecked();
+  await expect(page.locator('input[name="sshKeyFingerprint"]:checked')).toHaveValue("SHA256:root-admin-key");
+  await expect(page.locator(".login-template-key-fingerprint").first()).toHaveCSS("text-overflow", "ellipsis");
+  await expect(page.locator(".login-template-key-fingerprint").first()).toHaveCSS("white-space", "nowrap");
+  await expect(page.getByRole("link", { name: "Launch Helper" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Download Helper Source" })).toHaveCount(0);
+});
+
+test("root-admin login keeps backend auth errors inside the login template", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+
+  await page.route("**/v1/root-auth/login/password", async (route) => {
+    await route.fulfill({
+      status: 401,
+      contentType: "application/json",
+      body: JSON.stringify({
+        code: "INVALID_CREDENTIALS",
+        message: "Email or password is incorrect.",
+      }),
+    });
+  });
+
+  await bootstrapUnauthenticatedRootAdmin(page);
+  await page.locator("#email").fill("root.admin@example.test");
+  await page.locator("#password").fill("wrong-password");
+  await page.locator("#login-form").evaluate((form) => {
+    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+  });
+
+  await expect(page.locator("[data-login-template]")).toHaveAttribute("data-login-variant", "password");
+  await expect(page.locator("#auth-message")).toContainText("Email or password is incorrect.");
+  await expect(page.locator("#shell-view")).toBeHidden();
+  await expect(page.locator("#expiry-overlay")).toBeHidden();
+
+  await page.unroute("**/v1/root-auth/login/password");
+  await page.route("**/v1/root-auth/login/password", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        status: "SSH_CHALLENGE_REQUIRED",
+        challengeId: "challenge_001",
+        challengeText: "kanbien-root-admin-login-challenge",
+        expiresAt: "2027-04-16T18:05:00.000Z",
+        availableSshKeys: [
+          {
+            fingerprint: "SHA256:root-admin-key",
+            label: "Root admin workstation",
+          },
+        ],
+      }),
+    });
+  });
+  await page.route("http://127.0.0.1:8787/v1/root-auth/sign-login-challenge", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        publicKeyFingerprint: "SHA256:root-admin-key",
+        signature: "signed-challenge",
+      }),
+    });
+  });
+  await page.route("**/v1/root-auth/browser/login/ssh", async (route) => {
+    await route.fulfill({
+      status: 401,
+      contentType: "application/json",
+      body: JSON.stringify({
+        code: "INVALID_SIGNATURE",
+        message: "The SSH signature could not be verified.",
+      }),
+    });
+  });
+
+  await page.locator("#password").fill("StrongPass1!");
+  await page.locator("#login-form").evaluate((form) => {
+    form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+  });
+  await expect(page.locator("[data-login-template]")).toHaveAttribute("data-login-variant", "ssh-challenge");
+
+  await page.locator("#sign-submit").click();
+  await expect(page.locator("[data-login-template]")).toHaveAttribute("data-login-variant", "ssh-challenge");
+  await expect(page.locator("#auth-message")).toContainText("The SSH signature could not be verified.");
+  await expect(page.locator("#shell-view")).toBeHidden();
+  await expect(page.locator("#expiry-overlay")).toBeHidden();
 });
 
 test("root-admin users page keeps the same governed list-page header posture as the signed-off list-page route", async ({ page, context }) => {

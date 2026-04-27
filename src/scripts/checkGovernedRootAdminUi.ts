@@ -11,25 +11,19 @@ type LockedFile = {
 const lockedRootAdminUiFiles: LockedFile[] = [
   {
     path: "src/frontend/rootAdminShell/index.html",
-    sha256: "8eb43bcf0f6354d720f6e4de067a0954f100e5c8dbcee7a9632172e022e3d2a7",
+    sha256: "e0935c4a1efe94132726bd7817119e546b81bc6794aa4f974656d73c4597fb16",
     rationale:
       "Authenticated root-admin shell markup remains locally hosted, but governed route families such as web-app-hierarchy must no longer duplicate their workspace host markup in this file once a shared design-system render seam exists.",
   },
   {
-    path: "src/frontend/rootAdminShell/assets/login.css",
-    sha256: "3ff37aa1e0b000cb97fdb953b212f00131bb0b00651541a9a3815333deda10a3",
-    rationale:
-      "Login is the only approved root-admin styling exception; this file must stay scoped to the login surface rather than regrowing authenticated shell styling.",
-  },
-  {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "4e5304201c42edef461d3752c446ad2db5993bb784abef49208a148c8655127f",
+    sha256: "5d831af01da3087dd831a348131b5683d3d9214f3aadcc4b14fc2a388a557214",
     rationale:
       "Root-admin authenticated shell behavior remains locally composed, but approved route-topology migrations may update path resolution and canonical-location syncing as long as shared design-system shell behavior does not regress back into app-local ownership.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
-    sha256: "2767cab3d1d185b081afb64b191ec1d918869b2fce651b4700017e310387445b",
+    sha256: "1aa3da4fc5c4ae9c05260eeae49261b8dda319537910a2241157843a23f91f63",
     rationale:
       "Non-login root-admin hierarchy composition still routes through a local adapter, but that adapter must stay thin and render the shared design-system workspace shell instead of reconstructing governed host markup locally.",
   },
@@ -38,6 +32,7 @@ const lockedRootAdminUiFiles: LockedFile[] = [
 const requiredRootAdminShellImports = [
   "/design-system/assets/pageShellController.mjs",
   "/design-system/assets/rootUsersListWorkspace.mjs",
+  "/design-system/assets/loginTemplate.mjs",
 ];
 
 const requiredRootAdminShellStylesheets = [
@@ -46,16 +41,13 @@ const requiredRootAdminShellStylesheets = [
   '/design-system/assets/hierarchy-tree-shared.css',
   '/design-system/assets/form-template-shared.css',
   '/design-system/assets/hierarchyTree.css',
-  '/root-admin/assets/login.css',
 ];
 
 const requiredRootAdminHierarchyImports = [
   "/design-system/assets/webAppHierarchyWorkspace.mjs",
 ];
 
-const allowedRootAdminCssFiles = new Set([
-  "login.css",
-]);
+const allowedRootAdminCssFiles = new Set<string>();
 
 const forbiddenRootAdminShellOwnershipPatterns: Array<{ pattern: RegExp; rationale: string }> = [
   {
@@ -350,7 +342,7 @@ function main() {
     for (const href of missingStylesheets) {
       console.error(`- ${shellIndexSourcePath}`);
       console.error(`  missing stylesheet href: ${href}`);
-      console.error("  why blocked: Authenticated root-admin shell styling must come from design-system-owned stylesheets, with only the login exception allowed locally.");
+      console.error("  why blocked: Root-admin shell and login styling must come from design-system-owned stylesheets.");
     }
     console.error("");
   }
@@ -369,7 +361,7 @@ function main() {
     console.error("Root-admin assets contain forbidden local CSS files:");
     for (const filename of unexpectedCssFiles) {
       console.error(`- src/frontend/rootAdminShell/assets/${filename}`);
-      console.error("  why blocked: Non-login root-admin styling must come from shared design-system stylesheets, with only login.css allowed as the explicit exception.");
+      console.error("  why blocked: Root-admin styling must come from shared design-system stylesheets.");
     }
     console.error("");
   }

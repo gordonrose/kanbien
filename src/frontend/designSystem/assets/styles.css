@@ -3633,6 +3633,217 @@ html[dir="rtl"] .form-page-shell[data-form-mobile-view="true"] .form-date-nav-bu
   color: var(--error-ink-strong);
 }
 
+.login-template-stage {
+  min-height: calc(100vh - 9.5rem);
+  display: grid;
+  align-items: center;
+  justify-items: center;
+}
+
+.login-template-shell {
+  width: min(100%, 30rem);
+  margin: 0 auto;
+  display: grid;
+}
+
+.login-template-card {
+  display: grid;
+  align-content: center;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: 0 24px 80px rgba(31, 37, 64, 0.12);
+}
+
+.login-template-card-header {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.login-template-card-header h1,
+.login-template-card-header h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 2rem;
+  line-height: 1.15;
+}
+
+.login-template-form,
+.login-template-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+.login-template-panel[hidden] {
+  display: none;
+}
+
+.login-template-inline-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.login-template-check {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.login-template-link,
+.login-template-secondary {
+  border: 0;
+  padding: 0;
+  color: var(--accent);
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.login-template-link:focus-visible,
+.login-template-secondary:focus-visible,
+.login-template-primary:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 34%, transparent);
+  outline-offset: 3px;
+}
+
+.login-template-code-input {
+  letter-spacing: 0.14em;
+  font-weight: 800;
+  text-align: center;
+}
+
+.login-template-method-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+.login-template-method-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #ffffff;
+  background: var(--accent);
+}
+
+.login-template-method-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.login-template-method-card strong,
+.login-template-method-card span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.login-template-method-card strong {
+  color: var(--ink);
+}
+
+.login-template-method-card span {
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.login-template-primary {
+  width: 100%;
+  min-height: 3rem;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  color: #ffffff;
+  background: var(--accent);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.login-template-secondary-actions,
+.login-template-helper-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.login-template-helper-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.login-template-secondary {
+  min-height: 2.65rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink);
+  background: var(--surface-muted);
+  font-size: 0.78rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.login-template-status-message {
+  display: block;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--error-ink-strong);
+  background: var(--error-surface);
+}
+
+.login-template-key-copy {
+  min-width: 0;
+}
+
+.form-choice-row .login-template-key-fingerprint {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-theme="dark"] .login-template-card,
+[data-theme-scope="dark"] .login-template-card {
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+}
+
+@media (max-width: 980px) {
+  .login-template-stage {
+    align-items: start;
+  }
+
+  .login-template-secondary-actions,
+  .login-template-helper-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .login-template-card {
+    padding: 1rem;
+  }
+}
+
 .form-page-shell[data-form-disabled-mode="true"] .form-field-input,
 .form-page-shell[data-form-disabled-mode="true"] .form-select-trigger,
 .form-page-shell[data-form-disabled-mode="true"] .form-icon-grid-trigger,

@@ -9,67 +9,11 @@
     <link rel="stylesheet" href="/design-system/assets/hierarchy-tree-shared.css" />
     <link rel="stylesheet" href="/design-system/assets/form-template-shared.css" />
     <link rel="stylesheet" href="/design-system/assets/hierarchyTree.css" />
-    <link rel="stylesheet" href="/root-admin/assets/login.css" />
   </head>
   <body>
     <div id="app">
-      <section id="auth-view" class="auth-shell">
-        <div class="auth-panel">
-          <div class="auth-eyebrow">Root Admin</div>
-          <h1>Authenticate</h1>
-          <p class="auth-copy">
-            Password verification happens first. SSH proof is required before a browser session is created.
-          </p>
-
-          <form id="login-form" class="stack">
-            <label>
-              <span>Email</span>
-              <input id="email" name="email" type="email" autocomplete="username" required />
-            </label>
-            <label>
-              <span>Password</span>
-              <input id="password" name="password" type="password" autocomplete="current-password" required />
-            </label>
-            <button id="password-submit" type="submit">Verify Password</button>
-          </form>
-
-          <section id="ssh-stage" class="stack hidden">
-            <div class="auth-subpanel">
-              <h2>SSH Verification</h2>
-              <p id="ssh-instructions" class="auth-copy"></p>
-              <div class="helper-panel">
-                <p class="helper-title">Need the local signer helper?</p>
-                <p class="helper-copy">
-                  If SSH signing does not respond, download or relaunch the trusted local helper before completing
-                  browser login.
-                </p>
-                <div class="helper-actions">
-                  <a
-                    class="auth-secondary-button helper-link"
-                    href="/root-admin/helper/download/start-root-auth-signer-helper.ps1"
-                  >
-                    Launch Helper
-                  </a>
-                  <a
-                    class="auth-secondary-button helper-link"
-                    href="/root-admin/helper/download/root-auth-signer-helper.mjs"
-                  >
-                    Download Helper Source
-                  </a>
-                </div>
-              </div>
-              <label>
-                <span>Registered SSH key</span>
-                <select id="ssh-key-select"></select>
-              </label>
-              <div class="auth-actions">
-                <button id="sign-submit" type="button">Complete SSH Login</button>
-              </div>
-            </div>
-          </section>
-
-          <div id="auth-message" class="auth-status-message hidden" role="status" aria-live="polite"></div>
-        </div>
+      <section id="auth-view" class="login-template-stage">
+        <div data-root-admin-login-template-host></div>
       </section>
 
       <div id="shell-view" class="design-system-shell hidden">

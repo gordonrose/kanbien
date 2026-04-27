@@ -14,6 +14,10 @@ import {
   renderRootAdminContextNavShell,
 } from "/design-system/assets/contextNav.mjs";
 import { renderDesignSystemIconSvg } from "/design-system/assets/formControls.mjs";
+import {
+  createLoginTemplateController,
+  renderRootAdminLoginTemplate,
+} from "/design-system/assets/loginTemplate.mjs";
 import { createPageShellBannerRuntimeController } from "/design-system/assets/pageShellBanner.mjs";
 import { createRootUsersListWorkspaceController } from "/design-system/assets/rootUsersListWorkspace.mjs";
 import {
@@ -152,6 +156,13 @@ state.navigation.currentPage = "overview";
 let activeLanguageCode = resolveInitialLanguageCode();
 
 const authView = document.getElementById("auth-view");
+const rootAdminLoginTemplateHost = document.querySelector("[data-root-admin-login-template-host]");
+if (rootAdminLoginTemplateHost instanceof HTMLElement) {
+  rootAdminLoginTemplateHost.innerHTML = renderRootAdminLoginTemplate();
+}
+const rootAdminLoginTemplateController = rootAdminLoginTemplateHost instanceof HTMLElement
+  ? createLoginTemplateController(rootAdminLoginTemplateHost)
+  : null;
 const shellView = document.getElementById("shell-view");
 const sshStage = document.getElementById("ssh-stage");
 const authMessage = document.getElementById("auth-message");
@@ -159,7 +170,7 @@ const shellMessage = document.getElementById("shell-message");
 const sessionSummary = document.getElementById("session-summary");
 const expiryOverlay = document.getElementById("expiry-overlay");
 const sshInstructions = document.getElementById("ssh-instructions");
-const sshKeySelect = document.getElementById("ssh-key-select");
+const sshKeyChoiceList = document.getElementById("ssh-key-choice-list");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const loginForm = document.getElementById("login-form");
@@ -959,23 +970,28 @@ function getActiveLanguage() {
 }
 
 async function fetchJson(path, options = {}) {
+  const { markUnauthorizedAsSessionExpired = true, ...fetchOptions } = options;
   const response = await fetch(path, {
     headers: {
       accept: "application/json",
-      ...(options.body ? { "content-type": "application/json" } : {}),
-      ...(options.headers ?? {}),
+      ...(fetchOptions.body ? { "content-type": "application/json" } : {}),
+      ...(fetchOptions.headers ?? {}),
     },
-    ...options,
+    ...fetchOptions,
   });
 
   const contentType = response.headers.get("content-type") ?? "";
   const body = contentType.includes("application/json") ? await response.json() : null;
 
-  if (response.status === 401) {
+  if (response.status === 401 && markUnauthorizedAsSessionExpired) {
     Object.assign(state, markSessionExpired(state));
     clearShellMessage();
     render();
     throw new ApiError(response.status, body?.code ?? "UNAUTHORIZED", body?.message ?? "Your session has expired.");
+  }
+
+  if (response.status === 401) {
+    throw new ApiError(response.status, body?.code ?? "UNAUTHORIZED", body?.message ?? "The request was not authorized.");
   }
 
   if (!response.ok) {
@@ -1104,6 +1120,7 @@ function render() {
   authView?.classList.toggle("hidden", !flags.showAuthView);
   shellView?.classList.toggle("hidden", !flags.showShellView);
   sshStage?.classList.toggle("hidden", !flags.showSshStage);
+  rootAdminLoginTemplateController?.setVariant(flags.showSshStage ? "ssh-challenge" : "password");
   expiryOverlay?.classList.toggle("hidden", !flags.showExpiryOverlay);
 
   setMessage(authMessage, state.authMessage, "danger");
@@ -1139,13 +1156,43 @@ function messageForError(error, fallback) {
 }
 
 function renderKeyOptions(keys) {
-  sshKeySelect.innerHTML = "";
-  for (const key of keys) {
-    const option = document.createElement("option");
-    option.value = key.fingerprint;
-    option.textContent = `${key.label} (${key.fingerprint})`;
-    sshKeySelect.append(option);
+  if (!(sshKeyChoiceList instanceof HTMLElement)) {
+    return;
   }
+
+  sshKeyChoiceList.replaceChildren();
+  keys.forEach((key, index) => {
+    const label = document.createElement("label");
+    label.className = "form-choice-row";
+
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "sshKeyFingerprint";
+    input.value = key.fingerprint;
+    input.required = true;
+    input.checked = index === 0;
+
+    const copy = document.createElement("span");
+    copy.className = "login-template-key-copy";
+    const title = document.createElement("strong");
+    title.textContent = key.label;
+    const detail = document.createElement("span");
+    detail.className = "login-template-key-fingerprint";
+    detail.textContent = key.fingerprint;
+    detail.title = key.fingerprint;
+
+    copy.append(title, detail);
+    label.append(input, copy);
+    sshKeyChoiceList.append(label);
+  });
+}
+
+function selectedSshKeyFingerprint() {
+  const selectedKey = sshKeyChoiceList?.querySelector('input[name="sshKeyFingerprint"]:checked');
+  if (selectedKey instanceof HTMLInputElement) {
+    return selectedKey.value;
+  }
+  return "";
 }
 
 async function bootstrapSession() {
@@ -1183,6 +1230,7 @@ async function handlePasswordSubmit(event) {
   try {
     const response = await fetchJson("/v1/root-auth/login/password", {
       method: "POST",
+      markUnauthorizedAsSessionExpired: false,
       body: JSON.stringify({
         email: emailInput.value,
         password: passwordInput.value,
@@ -1211,10 +1259,11 @@ async function handleSshSubmit() {
   try {
     const helperResult = await signLoginChallenge(
       state.challenge.challengeText,
-      sshKeySelect.value,
+      selectedSshKeyFingerprint(),
     );
     await fetchJson("/v1/root-auth/browser/login/ssh", {
       method: "POST",
+      markUnauthorizedAsSessionExpired: false,
       body: JSON.stringify({
         challengeId: state.challenge.challengeId,
         publicKeyFingerprint: helperResult.publicKeyFingerprint,

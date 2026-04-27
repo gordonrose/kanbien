@@ -16,6 +16,24 @@
 - `Design-system sourced implementation evidence`
 - `Required remediation before more page work`
 
+## Root Admin Unauthenticated Login
+
+- Current implementation status:
+  design-system-sourced login template adopted for the root-admin browser auth
+  entry surface
+- Local implementation evidence:
+  root-auth API calls, session restoration, SSH signer-helper invocation, and
+  message wiring remain in `src/frontend/rootAdminShell/assets/app.mjs`
+- Design-system sourced implementation evidence:
+  `src/frontend/designSystem/assets/loginTemplate.mjs` owns the centered login
+  card render structure, password panel, SSH challenge panel, helper action
+  layout, and panel-switching controller consumed by
+  `src/frontend/rootAdminShell/assets/app.mjs`
+- Required remediation before more page work:
+  keep future login visual or interaction changes in the design-system
+  `loginTemplate.mjs` seam; do not reintroduce root-admin-local login markup
+  or `src/frontend/rootAdminShell/assets/login.css`
+
 ## `/root-admin`
 
 - Current implementation status:

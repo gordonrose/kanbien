@@ -185,6 +185,7 @@ describe("root admin shell browser auth integration", () => {
       .set("host", "admin.example.test");
     const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
     const frontendAppSource = readFileSync("src/frontend/rootAdminShell/assets/app.mjs", "utf8");
+    const loginTemplateSource = readFileSync("src/frontend/designSystem/assets/loginTemplate.mjs", "utf8");
     const hierarchyPageSource = readFileSync("src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs", "utf8");
     const hierarchyWorkspaceSource = readFileSync("src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs", "utf8");
     const hierarchyTreeSource = readFileSync("src/frontend/designSystem/assets/hierarchyTree.mjs", "utf8");
@@ -211,6 +212,13 @@ describe("root admin shell browser auth integration", () => {
     expect(frontendMarkup).not.toContain('id="web-app-hierarchy-page-title"');
     expect(frontendAppSource).toContain("/design-system/assets/pageShellController.mjs");
     expect(frontendAppSource).toContain("/design-system/assets/rootUsersListWorkspace.mjs");
+    expect(frontendAppSource).toContain("/design-system/assets/loginTemplate.mjs");
+    expect(frontendMarkup).toContain("data-root-admin-login-template-host");
+    expect(frontendMarkup).not.toContain("/root-admin/assets/login.css");
+    expect(frontendMarkup).not.toContain('class="auth-panel"');
+    expect(loginTemplateSource).toContain("export function renderRootAdminLoginTemplate");
+    expect(loginTemplateSource).toContain('id="login-form"');
+    expect(loginTemplateSource).toContain('id="ssh-stage"');
     expect(hierarchyPageSource).toContain("/design-system/assets/webAppHierarchyWorkspace.mjs");
     expect(hierarchyWorkspaceSource).toContain("renderHierarchyTreeDrawerHost");
     expect(hierarchyWorkspaceSource).toContain("${renderHierarchyTreeDrawerHost()}");
@@ -219,9 +227,9 @@ describe("root admin shell browser auth integration", () => {
     expect(hierarchyTreeSource).toContain("export function mountRootAdminHierarchyTree");
   });
 
-  it("TC-ROOT-ADMIN-SHELL-EDGE-001 and TC-ROOT-ADMIN-SHELL-EDGE-002 expose helper guidance and handle missing browser session cookies cleanly", async () => {
-    const frontendMarkup = await import("node:fs").then(({ readFileSync }) =>
-      readFileSync("src/frontend/rootAdminShell/index.html", "utf8"),
+  it("TC-ROOT-ADMIN-SHELL-EDGE-001 and TC-ROOT-ADMIN-SHELL-EDGE-002 keeps helper tools out of login UI and handles missing browser session cookies cleanly", async () => {
+    const loginTemplateSource = await import("node:fs").then(({ readFileSync }) =>
+      readFileSync("src/frontend/designSystem/assets/loginTemplate.mjs", "utf8"),
     );
     const missingSession = await invokeJson<{ code: string }>(
       createRootAuthIntegrationHarness().app,
@@ -234,9 +242,11 @@ describe("root admin shell browser auth integration", () => {
       },
     );
 
-    expect(frontendMarkup).toContain("/root-admin/helper/download/start-root-auth-signer-helper.ps1");
-    expect(frontendMarkup).toContain("/root-admin/helper/download/root-auth-signer-helper.mjs");
-    expect(frontendMarkup).toContain("Launch Helper");
+    expect(loginTemplateSource).toContain('id="ssh-key-choice-list"');
+    expect(loginTemplateSource).not.toContain("/root-admin/helper/download/start-root-auth-signer-helper.ps1");
+    expect(loginTemplateSource).not.toContain("/root-admin/helper/download/root-auth-signer-helper.mjs");
+    expect(loginTemplateSource).not.toContain("Launch Helper");
+    expect(loginTemplateSource).not.toContain("Download Helper Source");
     expect(missingSession.status).toBe(401);
     expect(missingSession.body.code).toBe("UNAUTHORIZED");
   });
