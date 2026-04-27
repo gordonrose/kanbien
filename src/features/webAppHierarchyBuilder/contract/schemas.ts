@@ -147,6 +147,8 @@ export const applyStructureAwareWebAppHierarchySyncBodySchema =
 
 const designSystemTemplateKeySchema = z.literal("static-html-page");
 
+export const syncDesignSystemCanonicalRenderingsBodySchema = strictObject({});
+
 export const createDesignSystemPageBodySchema = strictObject({
   webAppModuleId: uuidSchema,
   displayLabel: trimmedNonEmptyString,

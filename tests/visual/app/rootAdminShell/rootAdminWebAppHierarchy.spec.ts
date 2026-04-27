@@ -827,6 +827,25 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
     });
   });
 
+  await page.route("**/v1/web-app-hierarchy/design-system/canonical-renderings/sync", async (route) => {
+    ensurePageSettingsRecords(currentHierarchyTree);
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        syncSummary: {
+          liveFamilyCount: 0,
+          liveReferenceCount: 0,
+          createdModuleCount: 0,
+          createdPageCount: 0,
+          refreshedPageCount: 0,
+          refreshedLocatorCount: 0,
+        },
+        tree: currentHierarchyTree,
+      }),
+    });
+  });
+
   await page.route(/.*\/v1\/web-app-hierarchy\/modules\/[^/]+\/landing-page$/, async (route) => {
     const pathSegments = route.request().url().split("/");
     const moduleId = pathSegments[pathSegments.length - 2];

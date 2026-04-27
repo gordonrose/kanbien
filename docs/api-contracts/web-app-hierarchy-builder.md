@@ -22,6 +22,7 @@
   - `POST /v1/web-app-hierarchy/bootstrap`
   - `POST /v1/web-app-hierarchy/design-system/materialization/preview`
   - `POST /v1/web-app-hierarchy/design-system/materialization/apply`
+  - `POST /v1/web-app-hierarchy/design-system/canonical-renderings/sync`
   - `POST /v1/web-app-hierarchy/discovery-sync/preview`
   - `POST /v1/web-app-hierarchy/discovery-sync/apply`
   - `GET /v1/web-app-hierarchy/discovery-links`
@@ -101,6 +102,8 @@
     `{ proposalPageIds }`
   - apply design-system materialization:
     `{ proposalPageIds, previewHash }`
+  - sync design-system canonical renderings:
+    `{}`
   - apply structure-aware discovery sync:
     `{ rootFamilyIds?, selectedDiscoveredWebAppStructureNodeIds?, includeBlocked?, includeStaleDiscovered?, includeMetadataDrift?, includeInactive?, includeOrphaned? }`
   - sync discovery:
@@ -141,6 +144,8 @@
     `{ classification, previewHash, proposalCount, items }`
   - `/design-system/materialization/apply` returns:
     `{ classification, previewHash, appliedPageCount, items, tree }`
+  - `/design-system/canonical-renderings/sync` returns:
+    `{ syncSummary, tree }`
   - `/discovery-sync/preview` returns:
     `{ previewSummary, items }`
   - `/discovery-sync/apply` returns:
@@ -194,6 +199,10 @@
   - design-system materialization apply writes generated page files and the
     design-system governance stub, marks selected proposal pages applied, and
     upserts active path locators
+  - design-system canonical-renderings sync reads live families and references
+    through the `designSystemCanonicals` public seam, upserts the
+    `canonical-renderings` module, creates or refreshes launcher and
+    canonical-rendering pages, and upserts active path locators
   - structure-aware apply and sync-discovery may mutate `web_app_modules`,
     `web_app_pages`, `web_app_page_locators`, and `web_app_discovery_links`
     after reading current discovered truth through the public
@@ -228,9 +237,13 @@
   discovery and then applies the same structure-aware reconcile rules
 - sync-discovery does not make `GET /tree` merge live discovery on read
 - the current root-admin hierarchy browser workflow now performs that chain as
-  two explicit calls:
+  explicit calls:
   `POST /v1/web-app-surface-discovery/runs` followed by
-  `POST /v1/web-app-hierarchy/discovery-sync/apply`
+  `POST /v1/web-app-hierarchy/discovery-sync/apply`, then
+  `POST /v1/web-app-hierarchy/design-system/canonical-renderings/sync`
+- canonical-rendering registry sync does not discover browser routes. It
+  materializes the design-system canonical registry into the durable hierarchy
+  tree so canonical rendering pages appear alongside other curated pages.
 - multi-segment discovered paths are now mapped through modules plus child
   pages rather than being blocked by default
 - discovered pages are represented through their honest active locator model;

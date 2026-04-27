@@ -3,6 +3,7 @@ import { createRequireRootSession } from "../../src/lib/auth/middleware";
 import { createRateLimitMiddleware } from "../../src/lib/security/rateLimit";
 import { env } from "../../src/config/env";
 import type { WebAppSurfaceDiscoveryIntegrationSeam } from "../../src/features/webAppSurfaceDiscovery";
+import type { DesignSystemCanonicalsPublicSeam } from "../../src/features/designSystemCanonicals";
 import type {
   DiscoveredWebAppStructureNodeData,
   DiscoveredWebAppSurfaceData,
@@ -241,6 +242,26 @@ export function createStubWebAppSurfaceDiscoveryIntegrationSeam(
     listDiscoveredWebAppStructureTree: derivedStructureTree,
     async getDiscoveredWebAppStructureNode() {
       return null;
+    },
+    ...overrides,
+  };
+}
+
+export function createStubDesignSystemCanonicalsPublicSeam(
+  overrides: Partial<DesignSystemCanonicalsPublicSeam> = {},
+): DesignSystemCanonicalsPublicSeam {
+  return {
+    async listLiveFamilies() {
+      return { items: [] };
+    },
+    async getPublicLauncherByFamilyKey() {
+      throw new Error("Stub design-system canonical launcher lookup is not implemented.");
+    },
+    async getPublicRenderingByFamilyKeyAndReferenceId() {
+      throw new Error("Stub design-system canonical rendering lookup is not implemented.");
+    },
+    async listLiveHierarchyNodes() {
+      return [];
     },
     ...overrides,
   };
@@ -546,7 +567,7 @@ export function createInMemoryWebAppHierarchyRepository(seed?: {
         pageKey: input.pageKey,
         displayLabel: input.displayLabel,
         routeSegment: input.routeSegment,
-        normalizedRouteSegment: input.routeSegment,
+        normalizedRouteSegment: input.routeSegment.trim().toLowerCase(),
         resolvedFullRoutePath: null,
         status: input.status,
         sortOrder: input.sortOrder,
@@ -572,7 +593,7 @@ export function createInMemoryWebAppHierarchyRepository(seed?: {
         placementType: input.placementType,
         displayLabel: input.displayLabel,
         routeSegment: input.routeSegment,
-        normalizedRouteSegment: input.routeSegment,
+        normalizedRouteSegment: input.routeSegment.trim().toLowerCase(),
         status: input.status,
         sortOrder: input.sortOrder,
         bootstrapSource: input.bootstrapSource,
@@ -756,6 +777,7 @@ export function mountWebAppHierarchyBuilderFeature(
   repository: WebAppHierarchyRepository,
   discoverySeam: WebAppSurfaceDiscoveryIntegrationSeam = createStubWebAppSurfaceDiscoveryIntegrationSeam(),
   designSystemMaterializer: DesignSystemMaterializer = createStubDesignSystemMaterializer(),
+  designSystemCanonicalsSeam: DesignSystemCanonicalsPublicSeam = createStubDesignSystemCanonicalsPublicSeam(),
 ) {
   const requireRootSession = createRequireRootSession(harness.authRepository, {
     allowBrowserCookie: true,
@@ -787,7 +809,12 @@ export function mountWebAppHierarchyBuilderFeature(
     requireRootSession,
     authenticatedGeneralRateLimit,
     createWebAppHierarchyBuilderRouter(
-      createWebAppHierarchyBuilderService(repository, discoverySeam, designSystemMaterializer),
+      createWebAppHierarchyBuilderService(
+        repository,
+        discoverySeam,
+        designSystemMaterializer,
+        designSystemCanonicalsSeam,
+      ),
       capabilityChecker,
       harness.platformSecurityRepository,
     ),

@@ -3,6 +3,7 @@ import { invokeJson } from "../../harness/http";
 import { createRootAuthIntegrationHarness } from "../../harness/rootAuth/integrationHarness";
 import {
   createInMemoryWebAppHierarchyRepository,
+  createStubDesignSystemCanonicalsPublicSeam,
   createStubWebAppSurfaceDiscoveryIntegrationSeam,
   createModuleRecord,
   createPageRecord,
@@ -182,6 +183,138 @@ describe("web app hierarchy builder integration flows", () => {
                   pageKey: "root-admin-users",
                   resolvedFullRoutePath: "/root-admin#users",
                   activeLocator: expect.objectContaining({ locatorType: "hash-state" }),
+                }),
+              ]),
+            }),
+          ]),
+        }),
+      ]),
+    );
+  });
+
+  it("TC-WEB-APP-HIER-INT-014 syncs canonical-rendering registry pages into the tree route", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountWebAppHierarchyBuilderFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppHierarchyRepository(),
+      createStubWebAppSurfaceDiscoveryIntegrationSeam(),
+      undefined,
+      createStubDesignSystemCanonicalsPublicSeam({
+        async listLiveHierarchyNodes() {
+          return [
+            {
+              familyKey: "page-shell-banner",
+              familyDisplayLabel: "Page-Shell Banner",
+              launcherRoutePath: "/design-system/canonical-renderings/page-shell-banner",
+              rootRoutePath: "/design-system/canonical-renderings/page-shell-banner",
+              launcherTemplateKey: "launcher",
+              renderTemplateKey: "canonical-rendering",
+              references: [
+                {
+                  referenceId: "PSBR-001",
+                  displayLabel: "Full four-state stack",
+                  renderRoutePath: "/design-system/canonical-renderings/page-shell-banner/PSBR-001",
+                },
+              ],
+            },
+            {
+              familyKey: "hierarchy-tree",
+              familyDisplayLabel: "Hierarchy Tree",
+              launcherRoutePath: "/design-system/canonical-renderings/hierarchy-tree",
+              rootRoutePath: "/design-system/canonical-renderings/hierarchy-tree",
+              launcherTemplateKey: "launcher",
+              renderTemplateKey: "canonical-rendering",
+              references: [
+                {
+                  referenceId: "HTR-027",
+                  displayLabel: "Magnified hierarchy review with row pressure",
+                  renderRoutePath: "/design-system/canonical-renderings/hierarchy-tree/HTR-027",
+                },
+              ],
+            },
+          ];
+        },
+      }),
+    );
+    const identity = harness.seedAuthIdentity();
+    harness.setRootUserCapabilities(identity.rootUserId, [
+      "web-app-hierarchy.read-tree",
+      "web-app-hierarchy.sync-design-system-canonical-renderings",
+    ]);
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const synced = await invokeJson<{
+      syncSummary: { createdPageCount: number; liveReferenceCount: number };
+    }>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/design-system/canonical-renderings/sync",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {},
+    });
+
+    expect(synced.status).toBe(200);
+    expect(synced.body.syncSummary).toMatchObject({
+      createdPageCount: 5,
+      liveReferenceCount: 2,
+    });
+
+    const tree = await invokeJson<{
+      rootFamilies: Array<{
+        rootFamilyId: string;
+        modules: Array<{
+          moduleKey: string;
+          pages: Array<{
+            pageKey: string;
+            resolvedFullRoutePath: string | null;
+            children: Array<{
+              pageKey: string;
+              resolvedFullRoutePath: string | null;
+              children: Array<{ pageKey: string; routeSegment: string; resolvedFullRoutePath: string | null }>;
+            }>;
+          }>;
+        }>;
+      }>;
+    }>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-hierarchy/tree",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+    });
+
+    expect(tree.status).toBe(200);
+    expect(tree.body.rootFamilies).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          rootFamilyId: "design-system",
+          modules: expect.arrayContaining([
+            expect.objectContaining({
+              moduleKey: "canonical-renderings",
+              pages: expect.arrayContaining([
+                expect.objectContaining({
+                  pageKey: "design-system-canonical-renderings",
+                  children: expect.arrayContaining([
+                    expect.objectContaining({
+                      pageKey: "design-system-canonical-renderings-page-shell-banner",
+                      resolvedFullRoutePath: "/design-system/canonical-renderings/page-shell-banner",
+                      children: expect.arrayContaining([
+                        expect.objectContaining({
+                          pageKey: "design-system-canonical-renderings-page-shell-banner-psbr-001",
+                          routeSegment: "PSBR-001",
+                          resolvedFullRoutePath: "/design-system/canonical-renderings/page-shell-banner/PSBR-001",
+                        }),
+                      ]),
+                    }),
+                    expect.objectContaining({
+                      pageKey: "design-system-canonical-renderings-hierarchy-tree",
+                      children: expect.arrayContaining([
+                        expect.objectContaining({
+                          pageKey: "design-system-canonical-renderings-hierarchy-tree-htr-027",
+                          routeSegment: "HTR-027",
+                          resolvedFullRoutePath: "/design-system/canonical-renderings/hierarchy-tree/HTR-027",
+                        }),
+                      ]),
+                    }),
+                  ]),
                 }),
               ]),
             }),

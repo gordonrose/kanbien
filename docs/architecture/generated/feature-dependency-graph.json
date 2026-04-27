@@ -2,7 +2,7 @@
   "ruleVersion": 2,
   "ruleSummary": "Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.",
   "featureCount": 16,
-  "edgeCount": 15,
+  "edgeCount": 16,
   "violationCount": 0,
   "features": [
     {
@@ -97,7 +97,9 @@
       "declaredDependencies": [],
       "publicDependencies": [],
       "privateDependencyCount": 0,
-      "dependedOnBy": [],
+      "dependedOnBy": [
+        "webAppHierarchyBuilder"
+      ],
       "breakingChangeRisks": [
         "Changing the public canonical launcher or rendering seam can break generated design-system routes and any feature that reads canonical family truth through this integration seam.",
         "Changing canonical family persistence or lifecycle semantics can break public design-system route resolution and hierarchy projection."
@@ -554,7 +556,7 @@
     {
       "featureName": "webAppHierarchyBuilder",
       "manifestPath": "src/features/webAppHierarchyBuilder/feature.manifest.json",
-      "fileCount": 28,
+      "fileCount": 29,
       "publicSeams": [
         {
           "seamId": "feature-factory",
@@ -586,9 +588,11 @@
         }
       ],
       "declaredDependencies": [
-        "webAppSurfaceDiscovery"
+        "webAppSurfaceDiscovery",
+        "designSystemCanonicals"
       ],
       "publicDependencies": [
+        "designSystemCanonicals",
         "webAppSurfaceDiscovery"
       ],
       "privateDependencyCount": 0,
@@ -1095,6 +1099,40 @@
     },
     {
       "sourceFeature": "webAppHierarchyBuilder",
+      "targetFeature": "designSystemCanonicals",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "canonicals-integration-seam-factory",
+        "canonicals-integration-seam"
+      ],
+      "publicImportCount": 3,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/webAppHierarchyBuilder/domain/service.ts",
+          "importPath": "../../designSystemCanonicals",
+          "line": 58,
+          "resolvedPath": "src/features/designSystemCanonicals/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppHierarchyBuilder/domain/syncDesignSystemCanonicalRenderings.ts",
+          "importPath": "../../designSystemCanonicals",
+          "line": 7,
+          "resolvedPath": "src/features/designSystemCanonicals/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/webAppHierarchyBuilder/integration.ts",
+          "importPath": "../designSystemCanonicals",
+          "line": 7,
+          "resolvedPath": "src/features/designSystemCanonicals/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "webAppHierarchyBuilder",
       "targetFeature": "webAppSurfaceDiscovery",
       "declaredInManifest": true,
       "declaredSeamIds": [
@@ -1108,7 +1146,7 @@
         {
           "sourceFile": "src/features/webAppHierarchyBuilder/domain/service.ts",
           "importPath": "../../webAppSurfaceDiscovery",
-          "line": 55,
+          "line": 57,
           "resolvedPath": "src/features/webAppSurfaceDiscovery/index.ts",
           "visibility": "public"
         },

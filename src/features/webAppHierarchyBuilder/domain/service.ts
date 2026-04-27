@@ -8,6 +8,7 @@ import {
   previewDesignSystemMaterialization,
   readAppliedDesignSystemTopologyTree,
 } from "./designSystemTopologyMaterialization";
+import { syncDesignSystemCanonicalRenderingsIntoHierarchy } from "./syncDesignSystemCanonicalRenderings";
 import { getResolvedWebAppHierarchyTree } from "./getResolvedWebAppHierarchyTree";
 import { listOrphanedWebAppPages } from "./listOrphanedWebAppPages";
 import { listPlannerSelectableHierarchyNodes } from "./listPlannerSelectableHierarchyNodes";
@@ -26,6 +27,7 @@ import type {
   CreateDesignSystemSubpageProposalInput,
   CreateWebAppModuleInput,
   CreateWebAppPageInput,
+  DesignSystemCanonicalRenderingTreeSyncResult,
   DesignSystemMaterializationApplyResult,
   DesignSystemMaterializationPreviewResult,
   DesignSystemProposalCreateResult,
@@ -53,6 +55,7 @@ import type { WebAppHierarchyRepository } from "../persistence/repository";
 import { updateWebAppModule } from "./updateWebAppModule";
 import { updateWebAppPage } from "./updateWebAppPage";
 import type { WebAppSurfaceDiscoveryIntegrationSeam } from "../../webAppSurfaceDiscovery";
+import type { DesignSystemCanonicalsPublicSeam } from "../../designSystemCanonicals";
 import { buildWebAppHierarchyDiscoveryLinkListResponse } from "./presenters";
 
 export interface WebAppHierarchyBuilderService {
@@ -68,6 +71,9 @@ export interface WebAppHierarchyBuilderService {
   applyDesignSystemMaterialization(
     input: ApplyDesignSystemMaterializationInput,
   ): Promise<DesignSystemMaterializationApplyResult>;
+  syncDesignSystemCanonicalRenderingsIntoHierarchy(input: {
+    createdByRootAdminUserId: string;
+  }): Promise<DesignSystemCanonicalRenderingTreeSyncResult>;
   readAppliedDesignSystemTopologyTree(): Promise<ResolvedWebAppHierarchyTree>;
   createWebAppModule(input: CreateWebAppModuleInput): Promise<WebAppModule>;
   updateWebAppModule(input: UpdateWebAppModuleInput): Promise<WebAppModule>;
@@ -103,6 +109,20 @@ export function createWebAppHierarchyBuilderService(
   repository: WebAppHierarchyRepository,
   discoverySeam: WebAppSurfaceDiscoveryIntegrationSeam,
   designSystemMaterializer: DesignSystemMaterializer,
+  designSystemCanonicalsSeam: DesignSystemCanonicalsPublicSeam = {
+    async listLiveFamilies() {
+      return { items: [] };
+    },
+    async getPublicLauncherByFamilyKey() {
+      throw new Error("Design-system canonicals seam is not configured.");
+    },
+    async getPublicRenderingByFamilyKeyAndReferenceId() {
+      throw new Error("Design-system canonicals seam is not configured.");
+    },
+    async listLiveHierarchyNodes() {
+      return [];
+    },
+  },
 ): WebAppHierarchyBuilderService {
   return {
     createDesignSystemPageProposal: (input) =>
@@ -113,6 +133,12 @@ export function createWebAppHierarchyBuilderService(
       previewDesignSystemMaterialization(repository, designSystemMaterializer, input),
     applyDesignSystemMaterialization: (input) =>
       applyDesignSystemMaterialization(repository, designSystemMaterializer, input),
+    syncDesignSystemCanonicalRenderingsIntoHierarchy: (input) =>
+      syncDesignSystemCanonicalRenderingsIntoHierarchy(
+        repository,
+        designSystemCanonicalsSeam,
+        input,
+      ),
     readAppliedDesignSystemTopologyTree: () => readAppliedDesignSystemTopologyTree(repository),
     createWebAppModule: (input) => createWebAppModule(repository, input),
     updateWebAppModule: (input) => updateWebAppModule(repository, input),

@@ -1,4 +1,5 @@
 import type {
+  DesignSystemCanonicalRenderingTreeSyncResult,
   DesignSystemMaterializationApplyResult,
   DesignSystemMaterializationPreviewResult,
   DesignSystemPageTemplateKey,
@@ -269,6 +270,7 @@ export interface ListWebAppHierarchyDiscoveryLinksInput {
 }
 
 export type {
+  DesignSystemCanonicalRenderingTreeSyncResult,
   DesignSystemMaterializationApplyResult,
   DesignSystemMaterializationPreviewResult,
   DesignSystemProposalCreateResult,

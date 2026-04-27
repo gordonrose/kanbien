@@ -48,10 +48,16 @@ export function createWebAppHierarchyPageController({
         }),
       });
 
+      const canonicalRenderingSync = await fetchJson("/v1/web-app-hierarchy/design-system/canonical-renderings/sync", {
+        method: "POST",
+        body: JSON.stringify({}),
+      });
+
       const tree = await fetchJson("/v1/web-app-hierarchy/tree", { method: "GET" });
 
       return {
         ...applied,
+        canonicalRenderingSync,
         tree,
       };
     },

@@ -22,6 +22,7 @@ import {
   previewDesignSystemMaterializationBodySchema,
   previewStructureAwareWebAppHierarchySyncBodySchema,
   syncWebAppHierarchyFromDiscoveryBodySchema,
+  syncDesignSystemCanonicalRenderingsBodySchema,
   updateWebAppModuleBodySchema,
   updateWebAppModuleLandingPageBodySchema,
   updateWebAppPageBodySchema,
@@ -118,6 +119,11 @@ export function createWebAppHierarchyBuilderRouter(
   const requireApplyDesignSystemMaterialization = createRequireRootCapability(
     capabilityChecker,
     "web-app-hierarchy.apply-design-system-materialization",
+    authzOptions,
+  );
+  const requireSyncDesignSystemCanonicalRenderings = createRequireRootCapability(
+    capabilityChecker,
+    "web-app-hierarchy.sync-design-system-canonical-renderings",
     authzOptions,
   );
   const requireReadPlannerOptions = createRequireRootCapability(
@@ -310,6 +316,24 @@ export function createWebAppHierarchyBuilderRouter(
         response.status(200).json(
           await service.applyDesignSystemMaterialization({
             ...parseOrThrow(applyDesignSystemMaterializationBodySchema, request.body),
+            createdByRootAdminUserId: session.rootUserId,
+          }),
+        );
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  router.post(
+    "/design-system/canonical-renderings/sync",
+    requireSyncDesignSystemCanonicalRenderings,
+    async (request, response, next) => {
+      try {
+        const session = getRequiredRootSessionContext(request);
+        parseOrThrow(syncDesignSystemCanonicalRenderingsBodySchema, request.body);
+        response.status(200).json(
+          await service.syncDesignSystemCanonicalRenderingsIntoHierarchy({
             createdByRootAdminUserId: session.rootUserId,
           }),
         );

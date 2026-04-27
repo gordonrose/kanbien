@@ -12,6 +12,7 @@ export type {
   WebAppHierarchyDiscoveryLinkListResponse,
   WebAppHierarchyDiscoverySyncPreviewItem,
   WebAppHierarchyDiscoverySyncPreviewResult,
+  DesignSystemCanonicalRenderingTreeSyncResult,
   PlannerSelectableHierarchyNode,
   ResolvedWebAppHierarchyTree,
   WebAppHierarchyStructureAwareApplyResult,

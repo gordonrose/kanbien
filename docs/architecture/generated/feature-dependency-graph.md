@@ -3,7 +3,7 @@
 ## Summary
 
 - Features analyzed: 16
-- Cross-feature edges: 15
+- Cross-feature edges: 16
 - Validation violations: 0
 
 Rule: Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.
@@ -48,7 +48,7 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Declared dependencies: none
 - Current public dependencies: none
 - Private seam violations: 0
-- Depended on by: none
+- Depended on by: webAppHierarchyBuilder
 - Public seams:
   - `feature-factory` via `createDesignSystemCanonicalsFeature` in `index.ts` (feature-factory, stable)
   - `canonicals-integration-seam-factory` via `createDesignSystemCanonicalsIntegrationSeam` in `index.ts` (integration-seam-factory, stable)
@@ -226,9 +226,9 @@ Rule: Cross-feature imports in src/features must go through target feature index
 ### webAppHierarchyBuilder
 
 - Manifest: `src/features/webAppHierarchyBuilder/feature.manifest.json`
-- Source files: 28
-- Declared dependencies: webAppSurfaceDiscovery
-- Current public dependencies: webAppSurfaceDiscovery
+- Source files: 29
+- Declared dependencies: webAppSurfaceDiscovery, designSystemCanonicals
+- Current public dependencies: designSystemCanonicals, webAppSurfaceDiscovery
 - Private seam violations: 0
 - Depended on by: webAppPageSettings
 - Public seams:
@@ -413,6 +413,17 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - `src/features/tenantConfiguration/domain/service.ts:12` imports `../../tenants` -> `src/features/tenants/index.ts` (public)
 - `src/features/tenantConfiguration/integration.ts:5` imports `../tenants` -> `src/features/tenants/index.ts` (public)
 
+### webAppHierarchyBuilder -> designSystemCanonicals
+
+- Declared in manifest: yes
+- Declared seam ids: canonicals-integration-seam-factory, canonicals-integration-seam
+- Public imports: 3
+- Private imports: 0
+
+- `src/features/webAppHierarchyBuilder/domain/service.ts:58` imports `../../designSystemCanonicals` -> `src/features/designSystemCanonicals/index.ts` (public)
+- `src/features/webAppHierarchyBuilder/domain/syncDesignSystemCanonicalRenderings.ts:7` imports `../../designSystemCanonicals` -> `src/features/designSystemCanonicals/index.ts` (public)
+- `src/features/webAppHierarchyBuilder/integration.ts:7` imports `../designSystemCanonicals` -> `src/features/designSystemCanonicals/index.ts` (public)
+
 ### webAppHierarchyBuilder -> webAppSurfaceDiscovery
 
 - Declared in manifest: yes
@@ -420,7 +431,7 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Public imports: 5
 - Private imports: 0
 
-- `src/features/webAppHierarchyBuilder/domain/service.ts:55` imports `../../webAppSurfaceDiscovery` -> `src/features/webAppSurfaceDiscovery/index.ts` (public)
+- `src/features/webAppHierarchyBuilder/domain/service.ts:57` imports `../../webAppSurfaceDiscovery` -> `src/features/webAppSurfaceDiscovery/index.ts` (public)
 - `src/features/webAppHierarchyBuilder/domain/structureAwareDiscoverySync.ts:1` imports `../../webAppSurfaceDiscovery` -> `src/features/webAppSurfaceDiscovery/index.ts` (public)
 - `src/features/webAppHierarchyBuilder/domain/structureAwareDiscoverySync.ts:2` imports `../../webAppSurfaceDiscovery` -> `src/features/webAppSurfaceDiscovery/index.ts` (public)
 - `src/features/webAppHierarchyBuilder/domain/syncWebAppHierarchyFromDiscovery.ts:1` imports `../../webAppSurfaceDiscovery` -> `src/features/webAppSurfaceDiscovery/index.ts` (public)

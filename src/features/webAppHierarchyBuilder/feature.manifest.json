@@ -44,6 +44,14 @@
         "discovery-data-types"
       ],
       "description": "Reconciles curated hierarchy changes against discovered surface structure through surface discovery public seams."
+    },
+    {
+      "featureName": "designSystemCanonicals",
+      "seamIds": [
+        "canonicals-integration-seam-factory",
+        "canonicals-integration-seam"
+      ],
+      "description": "Syncs live design-system canonical rendering families and refs into durable curated hierarchy pages."
     }
   ],
   "breakingChangeRisks": [

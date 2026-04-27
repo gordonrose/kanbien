@@ -16,6 +16,8 @@ Today it ships the backend foundation for:
 - durable page-locator and discovery-link truth
 - chained discovery-backed sync that can run discovery, apply the
   structure-aware reconcile rules, and return the updated curated tree
+- canonical-rendering registry sync that materializes live design-system
+  canonical rendering families and refs into durable hierarchy pages
 - proposed `design-system` page and subpage creation through governed topology
 - deterministic `design-system` preview/apply materialization with applied-only
   tree reads
@@ -49,9 +51,14 @@ This feature still does not ship automated event-driven reconcile.
   the refreshed applied design-system tree
 - `POST /sync-discovery` remains as a compatibility wrapper that runs
   discovery and then applies the structure-aware reconcile rules
+- `POST /design-system/canonical-renderings/sync` reads live canonical
+  rendering families through the `designSystemCanonicals` public seam and
+  upserts the durable `Canonical Renderings` hierarchy branch
 - the current root-admin hierarchy browser workflow performs that same refresh
   chain through `POST /v1/web-app-surface-discovery/runs` followed by
-  `POST /v1/web-app-hierarchy/discovery-sync/apply`
+  `POST /v1/web-app-hierarchy/discovery-sync/apply`, then syncs canonical
+  rendering registry pages through
+  `POST /v1/web-app-hierarchy/design-system/canonical-renderings/sync`
 - `webAppPageLocator` owns curated locator truth for path and hash-state pages
 - `webAppDiscoveryLink` owns durable discovered-to-curated match and drift
   posture
@@ -81,6 +88,7 @@ Routes:
 - `POST /bootstrap`
 - `POST /design-system/materialization/preview`
 - `POST /design-system/materialization/apply`
+- `POST /design-system/canonical-renderings/sync`
 - `POST /discovery-sync/preview`
 - `POST /discovery-sync/apply`
 - `GET /discovery-links`

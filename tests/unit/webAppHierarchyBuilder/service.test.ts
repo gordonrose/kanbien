@@ -6,6 +6,7 @@ import {
 } from "../../../src/features/webAppHierarchyBuilder/contract/errors";
 import {
   createInMemoryWebAppHierarchyRepository,
+  createStubDesignSystemCanonicalsPublicSeam,
   createStubDesignSystemMaterializer,
   createStubWebAppSurfaceDiscoveryIntegrationSeam,
   createModuleRecord,
@@ -477,5 +478,132 @@ describe("web app hierarchy builder service", () => {
         rootFamilyId: "design-system",
       }),
     ]);
+  });
+
+  it("REG-WEB-APP-HIER-CANONICAL-RENDERINGS-TREE-001 syncs live canonical-rendering refs into durable hierarchy pages", async () => {
+    const repository = createInMemoryWebAppHierarchyRepository();
+    const service = createWebAppHierarchyBuilderService(
+      repository,
+      createStubWebAppSurfaceDiscoveryIntegrationSeam(),
+      createStubDesignSystemMaterializer(),
+      createStubDesignSystemCanonicalsPublicSeam({
+        async listLiveHierarchyNodes() {
+          return [
+            {
+              familyKey: "page-shell-banner",
+              familyDisplayLabel: "Page-Shell Banner",
+              launcherRoutePath: "/design-system/canonical-renderings/page-shell-banner",
+              rootRoutePath: "/design-system/canonical-renderings/page-shell-banner",
+              launcherTemplateKey: "launcher",
+              renderTemplateKey: "canonical-rendering",
+              references: [
+                {
+                  referenceId: "PSBR-001",
+                  displayLabel: "Full four-state stack",
+                  renderRoutePath: "/design-system/canonical-renderings/page-shell-banner/PSBR-001",
+                },
+                {
+                  referenceId: "PSBR-002",
+                  displayLabel: "Success state",
+                  renderRoutePath: "/design-system/canonical-renderings/page-shell-banner/PSBR-002",
+                },
+              ],
+            },
+            {
+              familyKey: "hierarchy-tree",
+              familyDisplayLabel: "Hierarchy Tree",
+              launcherRoutePath: "/design-system/canonical-renderings/hierarchy-tree",
+              rootRoutePath: "/design-system/canonical-renderings/hierarchy-tree",
+              launcherTemplateKey: "launcher",
+              renderTemplateKey: "canonical-rendering",
+              references: [
+                {
+                  referenceId: "HTR-001",
+                  displayLabel: "Reference posture",
+                  renderRoutePath: "/design-system/canonical-renderings/hierarchy-tree/HTR-001",
+                },
+              ],
+            },
+          ];
+        },
+      }),
+    );
+
+    const firstSync = await service.syncDesignSystemCanonicalRenderingsIntoHierarchy({
+      createdByRootAdminUserId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    });
+
+    expect(firstSync.syncSummary).toMatchObject({
+      liveFamilyCount: 2,
+      liveReferenceCount: 3,
+      createdModuleCount: 1,
+      createdPageCount: 6,
+      refreshedPageCount: 0,
+      refreshedLocatorCount: 6,
+    });
+    expect(firstSync.tree.rootFamilies).toEqual([
+      expect.objectContaining({
+        rootFamilyId: "design-system",
+        modules: expect.arrayContaining([
+          expect.objectContaining({
+            moduleKey: "canonical-renderings",
+            pages: expect.arrayContaining([
+              expect.objectContaining({
+                pageKey: "design-system-canonical-renderings",
+                templateKey: "launcher",
+                resolvedFullRoutePath: "/design-system/canonical-renderings",
+                activeLocator: expect.objectContaining({
+                  routePath: "/design-system/canonical-renderings",
+                }),
+                children: expect.arrayContaining([
+                  expect.objectContaining({
+                    pageKey: "design-system-canonical-renderings-page-shell-banner",
+                    templateKey: "launcher",
+                    resolvedFullRoutePath: "/design-system/canonical-renderings/page-shell-banner",
+                    children: expect.arrayContaining([
+                      expect.objectContaining({
+                        pageKey: "design-system-canonical-renderings-page-shell-banner-psbr-001",
+                        routeSegment: "PSBR-001",
+                        templateKey: "canonical-rendering",
+                        resolvedFullRoutePath: "/design-system/canonical-renderings/page-shell-banner/PSBR-001",
+                        activeLocator: expect.objectContaining({
+                          routePath: "/design-system/canonical-renderings/page-shell-banner/PSBR-001",
+                        }),
+                      }),
+                    ]),
+                  }),
+                  expect.objectContaining({
+                    pageKey: "design-system-canonical-renderings-hierarchy-tree",
+                    resolvedFullRoutePath: "/design-system/canonical-renderings/hierarchy-tree",
+                    children: expect.arrayContaining([
+                      expect.objectContaining({
+                        pageKey: "design-system-canonical-renderings-hierarchy-tree-htr-001",
+                        routeSegment: "HTR-001",
+                        templateKey: "canonical-rendering",
+                        resolvedFullRoutePath: "/design-system/canonical-renderings/hierarchy-tree/HTR-001",
+                      }),
+                    ]),
+                  }),
+                ]),
+              }),
+            ]),
+          }),
+        ]),
+      }),
+    ]);
+
+    const secondSync = await service.syncDesignSystemCanonicalRenderingsIntoHierarchy({
+      createdByRootAdminUserId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    });
+
+    expect(secondSync.syncSummary).toMatchObject({
+      liveFamilyCount: 2,
+      liveReferenceCount: 3,
+      createdModuleCount: 0,
+      createdPageCount: 0,
+      refreshedPageCount: 6,
+      refreshedLocatorCount: 0,
+    });
+    expect((await repository.listPages()).filter((page) => page.pageKey.includes("canonical-renderings"))).toHaveLength(6);
   });
 });

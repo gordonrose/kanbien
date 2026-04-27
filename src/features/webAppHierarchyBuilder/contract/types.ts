@@ -3,7 +3,7 @@ export type WebAppPagePlacementType = "module-root" | "child-page" | "orphaned";
 export type WebAppRootFamilyId = "root-admin" | "login" | "design-system";
 export type WebAppPageLocatorType = "path" | "hash-state";
 export type WebAppTopologyState = "proposed" | "applied";
-export type DesignSystemPageTemplateKey = "static-html-page";
+export type DesignSystemPageTemplateKey = "static-html-page" | "launcher" | "canonical-rendering";
 export type WebAppDiscoveryLinkStatus = "matched" | "blocked" | "stale-discovered";
 export type WebAppDiscoveryDriftStatus =
   | "none"
@@ -257,5 +257,17 @@ export interface DesignSystemMaterializationApplyResult {
   previewHash: string;
   appliedPageCount: number;
   items: DesignSystemMaterializationPreviewItem[];
+  tree: ResolvedWebAppHierarchyTree;
+}
+
+export interface DesignSystemCanonicalRenderingTreeSyncResult {
+  syncSummary: {
+    liveFamilyCount: number;
+    liveReferenceCount: number;
+    createdModuleCount: number;
+    createdPageCount: number;
+    refreshedPageCount: number;
+    refreshedLocatorCount: number;
+  };
   tree: ResolvedWebAppHierarchyTree;
 }

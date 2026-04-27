@@ -4,6 +4,7 @@ import type { PlatformSecurityRepository } from "../../lib/security/repository";
 import {
   createWebAppSurfaceDiscoveryIntegrationSeam,
 } from "../webAppSurfaceDiscovery";
+import { createDesignSystemCanonicalsIntegrationSeam } from "../designSystemCanonicals";
 import { createFilesystemDesignSystemMaterializer } from "./domain/designSystemMaterializer";
 import { createWebAppHierarchyBuilderService } from "./domain/service";
 import type { WebAppPageStatus, WebAppRootFamilyId, WebAppTopologyState } from "./domain/types";
@@ -97,6 +98,7 @@ export function createWebAppHierarchyBuilderFeature(
     repository,
     createWebAppSurfaceDiscoveryIntegrationSeam(dbPool),
     createFilesystemDesignSystemMaterializer(process.cwd()),
+    createDesignSystemCanonicalsIntegrationSeam(dbPool),
   );
 
   return createWebAppHierarchyBuilderRouter(
@@ -114,6 +116,7 @@ export function createPublicWebAppHierarchyBuilderFeature(
     repository,
     createWebAppSurfaceDiscoveryIntegrationSeam(dbPool),
     createFilesystemDesignSystemMaterializer(process.cwd()),
+    createDesignSystemCanonicalsIntegrationSeam(dbPool),
   );
 
   return createPublicWebAppHierarchyBuilderRouter(service);
