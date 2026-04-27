@@ -37,7 +37,8 @@ Today it ships the backend foundation for:
 - `src/frontend/designSystem` owns browser rendering for public generated
   launcher and render routes.
 - Legacy `/design-system/canonicals/*` routes remain compatibility and parity
-  review surfaces during migration.
+  review surfaces during migration. They are not the durable source of truth
+  for new generated canonical families.
 
 ## Current API Surface
 

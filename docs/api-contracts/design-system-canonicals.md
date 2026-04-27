@@ -142,6 +142,10 @@
 
 - Generated canonical routes are additive alongside legacy
   `/design-system/canonicals/*` routes.
+- Legacy `/design-system/canonicals/*` routes are compatibility-only launcher
+  and parity-review surfaces. New generated canonical families should publish
+  through `/design-system/canonical-renderings`, not through the legacy
+  launcher tree.
 - Public projections expose only `live` families and references.
 - Generated render paths are exact family/ref paths; query params are not
   canonical state authority.

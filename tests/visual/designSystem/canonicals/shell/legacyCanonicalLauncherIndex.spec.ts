@@ -2,6 +2,26 @@ import { expect, test } from "@playwright/test";
 
 const migratedFamilyCards = [
   {
+    label: /Top Nav Canonicals/i,
+    href: "/design-system/canonical-renderings/top-nav",
+  },
+  {
+    label: /Hierarchy Tree Canonicals/i,
+    href: "/design-system/canonical-renderings/hierarchy-tree",
+  },
+  {
+    label: /Page-Shell Banner Canonicals/i,
+    href: "/design-system/canonical-renderings/page-shell-banner",
+  },
+  {
+    label: /Async Activity Drawer Canonicals/i,
+    href: "/design-system/canonical-renderings/async-activity-drawer",
+  },
+  {
+    label: /Drawer Form Canonicals/i,
+    href: "/design-system/canonical-renderings/drawer-form",
+  },
+  {
     label: /Simple Select Canonicals/i,
     href: "/design-system/canonical-renderings/simple-select",
   },
@@ -48,6 +68,14 @@ const migratedFamilyCards = [
 ] as const;
 
 test.describe("design-system legacy canonical launcher index", () => {
+  test("states that legacy canonicals are only a compatibility bridge", async ({ page }) => {
+    await page.goto("/design-system/canonicals");
+
+    await expect(page.getByRole("heading", { name: "Legacy Design-System Canonicals" })).toBeVisible();
+    await expect(page.getByText("Generated canonical-renderings are the durable source of truth")).toBeVisible();
+    await expect(page.getByText("Do not add new generated families here")).toBeVisible();
+  });
+
   test("migrated family cards now point to generated canonical-renderings launchers", async ({ page }) => {
     await page.goto("/design-system/canonicals");
 

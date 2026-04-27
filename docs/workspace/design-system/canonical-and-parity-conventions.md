@@ -9,12 +9,17 @@ do not reinvent naming or evidence structure.
 ## Canonical Route Convention
 
 - Use:
-  `/design-system/canonicals/<family>`
+  `/design-system/canonical-renderings/<family>`
 - The route should:
   - list every canonical state for the family
   - provide one direct link per ref ID
   - support stepping through canonicals one at a time from the renderer itself
 - highlight priority states without hiding the full set
+
+Legacy `/design-system/canonicals/*` routes are compatibility and parity-review
+surfaces only. Do not add new generated families there. New or migrated
+generated canonical families must be published through the persistence-backed
+`/design-system/canonical-renderings` route family.
 
 Canonicals are evidence surfaces, not exploratory sandboxes. They should not
 depend on interactive controls to settle into the named state.

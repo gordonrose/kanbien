@@ -116,9 +116,12 @@ Use these defaults:
   public catalog for reusable component seams
 - `/design-system/patterns`:
   public catalog for governed pattern families
+- `/design-system/canonical-renderings/<family>`:
+  persistence-backed canonical launcher for one generated family, framed under
+  that family's approved public parent category
 - `/design-system/canonicals/<family>`:
-  canonical launcher for one family, framed under that family's approved public
-  parent category
+  legacy compatibility launcher for older family routes while migration and
+  parity review are still in progress; do not add new generated families here
 
 Parent-category framing rules:
 

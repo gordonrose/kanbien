@@ -106,14 +106,16 @@ describe("design system route", () => {
     const response = await request(createApp()).get("/design-system/canonicals").set("host", "admin.example.test");
 
     expect(response.status).toBe(200);
-    expect(response.text).toContain("Design-System Canonicals");
-    expect(response.text).toContain("Available Canonical Sets");
+    expect(response.text).toContain("Legacy Design-System Canonicals");
+    expect(response.text).toContain("Compatibility Canonical Sets");
+    expect(response.text).toContain("Generated canonical-renderings are the durable source of truth");
+    expect(response.text).toContain("Do not add new generated families here");
     expect(response.text).toContain("/design-system/canonicals/launcher");
-    expect(response.text).toContain("/design-system/canonicals/top-nav");
+    expect(response.text).toContain("/design-system/canonical-renderings/top-nav");
     expect(response.text).toContain("/design-system/canonicals/context-nav");
     expect(response.text).toContain("/design-system/canonicals/context-nav-drawer");
-    expect(response.text).toContain("/design-system/canonicals/page-shell-banner");
-    expect(response.text).toContain("/design-system/canonicals/time-picker");
+    expect(response.text).toContain("/design-system/canonical-renderings/page-shell-banner");
+    expect(response.text).toContain("/design-system/canonical-renderings/time-picker");
   });
 
   it("serves the page-shell-banner canonical launcher page with dedicated render links", async () => {
