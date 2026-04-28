@@ -529,6 +529,57 @@ export function renderFormDrawerSelectOptions(optionRecords = []) {
   }).join("");
 }
 
+export function renderFormImageCard({
+  variant = "person-full",
+  name = "",
+  email = "",
+  jobTitle = "",
+  title = "",
+  description = "",
+  meta = "",
+  imageLabel = "Image placeholder",
+  editLabel = "Edit image",
+  imageUrl = "",
+  imageAlt = "",
+} = {}) {
+  const hasImage = Boolean(imageUrl);
+  const cardTitle = name || title;
+  const cardEmail = email || description;
+  const cardJobTitle = jobTitle || meta;
+  const copyMarkup = [cardTitle, cardEmail, cardJobTitle].some(Boolean)
+    ? `
+      <div class="form-image-card-copy">
+        ${cardTitle ? `<strong>${escapeHtml(cardTitle)}</strong>` : ""}
+        ${cardEmail ? `<span>${escapeHtml(cardEmail)}</span>` : ""}
+        ${cardJobTitle ? `<small>${escapeHtml(cardJobTitle)}</small>` : ""}
+      </div>
+    `
+    : "";
+
+  return `
+    <article class="form-image-card" data-form-image-card data-form-image-card-variant="${escapeHtml(variant)}">
+      <div class="form-image-card-media" data-form-image-card-media>
+        ${hasImage
+          ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" data-form-image-card-image />`
+          : `<span class="form-image-card-placeholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v10A1.5 1.5 0 0 1 19 18.5H5A1.5 1.5 0 0 1 3.5 17V7A1.5 1.5 0 0 1 5 5.5zm1.5 9 3.1-3.2 2.4 2.35 1.65-1.75 3.85 3.6M8.25 9.25h.01" />
+              </svg>
+              <span>${escapeHtml(imageLabel)}</span>
+            </span>`}
+        <button class="form-image-card-edit" type="button" aria-label="${escapeHtml(editLabel)}" data-form-image-card-edit>
+          <span aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="m4.5 16.75-.75 3.5 3.5-.75L18.9 7.85a2.1 2.1 0 0 0-2.75-2.75zM14.75 6.5l2.75 2.75" />
+            </svg>
+          </span>
+        </button>
+      </div>
+      ${copyMarkup}
+    </article>
+  `;
+}
+
 export function renderFormUploadField({
   rootId = "",
   inputId = "",

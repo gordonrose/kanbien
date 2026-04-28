@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { expectHostContextNavShellAttachment } from "../../support/helpers/contextNavShellAttachment";
 
 async function expectChoiceGroupVariants(page: Page, options?: { errorsVisible?: boolean; inputsDisabled?: boolean }) {
   const errorsVisible = options?.errorsVisible ?? false;
@@ -69,6 +70,12 @@ async function expectInlineEndAligned(trigger: ReturnType<Page["locator"]>, over
 }
 
 test.describe("design-system form template", () => {
+  test("host context-nav stays inside the shell and remains attached while the form scrolls", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/design-system/templates/form");
+    await expectHostContextNavShellAttachment(page, { route: "/design-system/templates/form" });
+  });
+
   test("upload field exposes drag target, local file picker, status, and progress affordance", async ({ page }) => {
     await page.goto("/design-system/templates/form");
 
@@ -120,6 +127,97 @@ test.describe("design-system form template", () => {
     expect(errorState.dropzoneBorderColor).not.toBe("");
     expect(errorState.statusColor).not.toBe("");
     expect(errorState.dropzoneBorderColor).not.toBe(errorState.statusColor);
+  });
+
+  test("image card variants keep square thumbnails and image-scoped edit affordances", async ({ page }) => {
+    await page.goto("/design-system/templates/form");
+
+    const cards = page.locator("[data-form-image-card]");
+    const imageOnlyCard = page.locator('[data-form-image-card-variant="image-only"]');
+    const nameOnlyCard = page.locator('[data-form-image-card-variant="name-only"]');
+    const fullCard = page.locator('[data-form-image-card-variant="person-full"]');
+    const card = fullCard;
+    const media = card.locator("[data-form-image-card-media]");
+    const editButton = card.locator("[data-form-image-card-edit]");
+
+    await expect(cards).toHaveCount(3);
+    await expect(imageOnlyCard.locator(".form-image-card-copy")).toHaveCount(0);
+    await expect(nameOnlyCard).toContainText("Amara Chen");
+    await expect(nameOnlyCard).not.toContainText("example.com");
+    await expect(card).toBeVisible();
+    await expect(media).toBeVisible();
+    await expect(card).toContainText("Priya Shah");
+    await expect(card).toContainText("priya.shah@example.com");
+    await expect(card).toContainText("Regional operations lead");
+    await expect(editButton).toHaveAccessibleName("Edit profile image for Priya Shah");
+
+    const layout = await card.evaluate((node) => {
+      const mediaNode = node.querySelector<HTMLElement>("[data-form-image-card-media]");
+      const copyNode = node.querySelector<HTMLElement>(".form-image-card-copy");
+      const editNode = node.querySelector<HTMLElement>("[data-form-image-card-edit]");
+      const cardRect = node.getBoundingClientRect();
+      const mediaRect = mediaNode?.getBoundingClientRect();
+      const copyRect = copyNode?.getBoundingClientRect();
+      const editRect = editNode?.getBoundingClientRect();
+      const editStyle = editNode ? window.getComputedStyle(editNode) : null;
+
+      return {
+        cardWidth: cardRect.width,
+        mediaWidth: mediaRect?.width ?? 0,
+        mediaHeight: mediaRect?.height ?? 0,
+        mediaLeft: mediaRect?.left ?? 0,
+        copyLeft: copyRect?.left ?? 0,
+        editRight: editRect?.right ?? 0,
+        editBottom: editRect?.bottom ?? 0,
+        mediaRight: mediaRect?.right ?? 0,
+        mediaBottom: mediaRect?.bottom ?? 0,
+        editOpacity: editStyle?.opacity ?? "",
+      };
+    });
+
+    expect(layout.cardWidth).toBeGreaterThan(300);
+    expect(layout.mediaWidth).toBeGreaterThan(90);
+    expect(Math.abs(layout.mediaWidth - layout.mediaHeight)).toBeLessThanOrEqual(1);
+    expect(layout.copyLeft).toBeGreaterThan(layout.mediaLeft);
+    expect(layout.editRight).toBeLessThanOrEqual(layout.mediaRight + 1);
+    expect(layout.editBottom).toBeLessThanOrEqual(layout.mediaBottom + 1);
+    expect(layout.editOpacity).toBe("0");
+
+    await media.hover();
+    await expect(editButton).toHaveCSS("opacity", "1");
+
+    await editButton.focus();
+    await expect(editButton).toHaveCSS("opacity", "1");
+  });
+
+  test("image card remains readable inside the constrained form review", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 900 });
+    await page.goto("/design-system/templates/form?mobile=true");
+
+    const overflowState = await page.locator("[data-form-image-card]").evaluateAll((nodes) => nodes.map((node) => {
+      const cardRect = node.getBoundingClientRect();
+      const mediaRect = node.querySelector<HTMLElement>("[data-form-image-card-media]")?.getBoundingClientRect();
+      const copyRect = node.querySelector<HTMLElement>(".form-image-card-copy")?.getBoundingClientRect();
+
+      return {
+        viewportWidth: document.documentElement.clientWidth,
+        cardLeft: cardRect.left,
+        cardRight: cardRect.right,
+        mediaWidth: mediaRect?.width ?? 0,
+        mediaHeight: mediaRect?.height ?? 0,
+        copyWidth: copyRect?.width ?? 0,
+      };
+    }));
+
+    expect(overflowState.length).toBe(3);
+    for (const cardState of overflowState) {
+      expect(cardState.cardLeft).toBeGreaterThanOrEqual(0);
+      expect(cardState.cardRight).toBeLessThanOrEqual(cardState.viewportWidth);
+      expect(cardState.mediaWidth).toBeGreaterThan(70);
+      expect(Math.abs(cardState.mediaWidth - cardState.mediaHeight)).toBeLessThanOrEqual(1);
+    }
+    expect(overflowState.some((cardState) => cardState.copyWidth === 0)).toBe(true);
+    expect(overflowState.some((cardState) => cardState.copyWidth > 120)).toBe(true);
   });
 
   test("grouped-choice variants stay distinct in the default parent baseline", async ({ page }) => {

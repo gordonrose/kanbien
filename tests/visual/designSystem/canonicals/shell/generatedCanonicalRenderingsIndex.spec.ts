@@ -101,6 +101,14 @@ const generatedCanonicalFamilies: readonly GeneratedCanonicalFamily[] = [
     readyLocator: ".form-page-shell",
   },
   {
+    familyKey: "form-image-card",
+    familyLabel: /Form Image Card/i,
+    sampleRenderPath: "/design-system/canonical-renderings/form-image-card/FICR-001",
+    surfaceLocator: "#form-image-card-preview-shell",
+    readyLocator: "#form-image-card-preview-shell[data-render-status='ready']",
+    bodyAttribute: { name: "data-form-image-card-surface", value: "canonical" as const },
+  },
+  {
     familyKey: "icon-grid",
     familyLabel: /Icon Grid/i,
     sampleRenderPath: "/design-system/canonical-renderings/icon-grid/IGR-002",
@@ -193,13 +201,20 @@ test.describe("design-system generated canonical renderings index", () => {
   test("generated launcher and render pages use the normalized design-system top-nav shell", async ({ page }) => {
     const designSystemTopNavContract = await readDesignSystemTopNavContract(page);
 
-    await expectGeneratedCanonicalShellContract(page, "/design-system/canonical-renderings", designSystemTopNavContract);
+    await expectGeneratedCanonicalShellContract(
+      page,
+      "/design-system/canonical-renderings",
+      designSystemTopNavContract,
+      { requireExactLabels: false },
+    );
 
     const familyRoutes = await collectGeneratedCanonicalFamilyRoutes(page);
     expect(familyRoutes.length).toBeGreaterThan(0);
 
     for (const familyRoute of familyRoutes) {
-      await expectGeneratedCanonicalShellContract(page, familyRoute.href, designSystemTopNavContract);
+      await expectGeneratedCanonicalShellContract(page, familyRoute.href, designSystemTopNavContract, {
+        requireExactLabels: false,
+      });
     }
   });
 

@@ -83,6 +83,11 @@ behavior, or page-local controller logic into the app.
   exports `renderFormDrawerSelect(...)`, plus initialization and refresh
   helpers such as `initializeFormDrawerSelects(...)` and
   `refreshFormDrawerSelect(...)`
+- `form-image-card`
+  `/design-system/assets/formControls.mjs`
+  exports `renderFormImageCard(...)`; consuming features own any modal,
+  upload, alt-text, authorization, persistence, and asset lifecycle behavior
+  behind the image-scoped edit action
 - `login-template`
   `/design-system/assets/loginTemplate.mjs`
   exports `renderLoginTemplate()`, `renderRootAdminLoginTemplate()`, and
@@ -195,6 +200,19 @@ The app must not own:
 - Needed seam:
   keep the workspace render/controller contract narrow and explicit as route
   business callbacks evolve
+
+### 4. `form-image-card`
+
+- Why next:
+  compact reusable form child seam with no transport or persistence behavior
+- Current posture:
+  promoted to a design-system-owned render seam with dedicated component and
+  canonical render surfaces
+- Needed seam:
+  maintain `renderFormImageCard(...)` as the shared hosted render seam; app
+  consumers may pass only variant, image URL/alt label, display identity text,
+  and edit-label copy while owning all asset and modal behavior outside the
+  design-system component
 
 ## Recommended Implementation Order
 

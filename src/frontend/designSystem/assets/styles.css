@@ -2601,6 +2601,150 @@ html[data-theme="dark"] .form-drawer-select-option.active .form-drawer-select-op
   gap: 0.65rem;
 }
 
+.form-image-card {
+  display: grid;
+  grid-template-columns: minmax(5.75rem, 6.75rem) minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.8rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-2) 78%, white);
+}
+
+.form-image-card[data-form-image-card-variant="image-only"] {
+  grid-template-columns: minmax(5.75rem, 6.75rem);
+  width: max-content;
+  max-width: 100%;
+}
+
+.form-image-card-media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-width: 0;
+  overflow: hidden;
+  border: 0.0625rem solid color-mix(in srgb, var(--line-strong) 58%, white);
+  border-radius: calc(var(--radius) - 0.1rem);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-1) 80%, white), color-mix(in srgb, var(--accent-soft, #eef0ff) 58%, var(--surface-1))),
+    var(--surface-1);
+  color: var(--accent-text, var(--ink));
+}
+
+.form-image-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.form-image-card-placeholder {
+  display: grid;
+  gap: 0.3rem;
+  justify-items: center;
+  padding: 0.65rem;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.form-image-card-placeholder svg {
+  width: 1.8rem;
+  height: 1.8rem;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.form-image-card-edit {
+  position: absolute;
+  inset: auto 0.5rem 0.5rem auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.15rem;
+  height: 2.15rem;
+  border: 0.0625rem solid rgba(255, 255, 255, 0.58);
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.78);
+  color: #ffffff;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(0.25rem);
+  transition:
+    opacity 120ms ease,
+    transform 120ms ease,
+    background 120ms ease;
+}
+
+.form-image-card-edit:hover,
+.form-image-card-edit:focus-visible {
+  background: var(--accent);
+  outline: 0.125rem solid rgba(99, 91, 255, 0.22);
+  outline-offset: 0.125rem;
+}
+
+.form-image-card-media:hover .form-image-card-edit,
+.form-image-card-edit:focus-visible,
+.form-image-card:focus-within .form-image-card-edit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.form-image-card-edit svg {
+  width: 1rem;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+.form-image-card-copy {
+  display: grid;
+  gap: 0.22rem;
+  min-width: 0;
+}
+
+.form-image-card-copy strong {
+  color: var(--ink);
+  font-size: 0.98rem;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.form-image-card-copy span,
+.form-image-card-copy small {
+  color: var(--ink-soft);
+  font-size: 0.88rem;
+  line-height: 1.42;
+  overflow-wrap: anywhere;
+}
+
+.form-image-card-copy small {
+  font-weight: 700;
+}
+
+html[data-theme="dark"] .form-image-card,
+[data-theme-scope="dark"] .form-image-card {
+  background: color-mix(in srgb, var(--surface-2) 72%, var(--ink) 8%);
+}
+
+html[data-theme="dark"] .form-image-card-media,
+[data-theme-scope="dark"] .form-image-card-media {
+  border-color: color-mix(in srgb, var(--line-strong) 58%, var(--ink) 12%);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface-1) 72%, var(--ink) 8%), color-mix(in srgb, var(--accent-soft, #eef0ff) 32%, var(--surface-1))),
+    var(--surface-1);
+  color: var(--ink);
+}
+
 .form-upload-input {
   position: absolute;
   width: 0.0625rem;
@@ -2849,6 +2993,15 @@ html[data-theme="dark"] .form-upload-preview,
 }
 
 @media (max-width: 40rem) {
+  .form-image-card {
+    grid-template-columns: minmax(5.5rem, 6.5rem) minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .form-image-card[data-form-image-card-variant="image-only"] {
+    grid-template-columns: minmax(5.5rem, 6.5rem);
+  }
+
   .form-upload-dropzone {
     grid-template-columns: auto minmax(0, 1fr);
   }

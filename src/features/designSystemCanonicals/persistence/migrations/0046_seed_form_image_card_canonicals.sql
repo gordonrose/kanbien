@@ -1,0 +1,155 @@
+INSERT INTO design_system_canonical_families (
+  design_system_canonical_family_id,
+  family_key,
+  normalized_family_key,
+  display_label,
+  family_kind,
+  launcher_title,
+  launcher_description,
+  launcher_category,
+  generated_launcher_route_path,
+  generated_root_route_path,
+  legacy_launcher_route_path,
+  source_surface_route_path,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+VALUES (
+  'd501e5bc-97dc-4de7-a966-5563c84bf3a5',
+  'form-image-card',
+  'form-image-card',
+  'Form Image Card',
+  'component',
+  'Form Image Card Canonical Renderings',
+  'Persistence-backed launcher for the approved form-image-card canonical renderings.',
+  'forms',
+  '/design-system/canonical-renderings/form-image-card',
+  '/design-system/canonical-renderings',
+  '/design-system/canonicals/form-image-card',
+  '/design-system/components/form-image-card',
+  'live',
+  57,
+  FALSE,
+  NOW(),
+  NOW()
+)
+ON CONFLICT (normalized_family_key)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  family_kind = EXCLUDED.family_kind,
+  launcher_title = EXCLUDED.launcher_title,
+  launcher_description = EXCLUDED.launcher_description,
+  launcher_category = EXCLUDED.launcher_category,
+  generated_launcher_route_path = EXCLUDED.generated_launcher_route_path,
+  generated_root_route_path = EXCLUDED.generated_root_route_path,
+  legacy_launcher_route_path = EXCLUDED.legacy_launcher_route_path,
+  source_surface_route_path = EXCLUDED.source_surface_route_path,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();
+
+WITH form_image_card_family AS (
+  SELECT design_system_canonical_family_id
+  FROM design_system_canonical_families
+  WHERE normalized_family_key = 'form-image-card'
+),
+reference_rows (
+  reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  theme,
+  direction,
+  zoom,
+  state_variant_key,
+  specimen_payload,
+  sort_order,
+  featured
+) AS (
+  VALUES
+    ('FICR-001', 'Picture-only square image card', 'A compact image-only card renders no empty copy column while keeping the image-scoped edit affordance.', '/design-system/canonical-renderings/form-image-card/FICR-001', '/design-system/components/form-image-card?ref=FICR-001&width=420&variant=image-only&theme=normal&dir=ltr&zoom=0', 'Compact picture-only lane', 420, 'normal', 'ltr', 0, 'image-only', '{"variant":"image-only"}'::jsonb, 10, TRUE),
+    ('FICR-002', 'Image plus name', 'The name-only variant pairs the square thumbnail with one identity line.', '/design-system/canonical-renderings/form-image-card/FICR-002', '/design-system/components/form-image-card?ref=FICR-002&width=520&variant=name-only&theme=normal&dir=ltr&zoom=0', 'Single-line identity lane', 520, 'normal', 'ltr', 0, 'name-only', '{"variant":"name-only"}'::jsonb, 20, TRUE),
+    ('FICR-003', 'Image plus name, email, and job title', 'The full identity variant keeps all metadata adjacent to the square thumbnail.', '/design-system/canonical-renderings/form-image-card/FICR-003', '/design-system/components/form-image-card?ref=FICR-003&width=560&variant=person-full&theme=normal&dir=ltr&zoom=0', 'Full identity lane', 560, 'normal', 'ltr', 0, 'person-full', '{"variant":"person-full"}'::jsonb, 30, TRUE),
+    ('FICR-004', 'Mobile full identity review', 'The full identity variant stays readable in the narrow mobile lane without horizontal overflow.', '/design-system/canonical-renderings/form-image-card/FICR-004', '/design-system/components/form-image-card?ref=FICR-004&width=390&variant=person-full&theme=normal&dir=ltr&zoom=0', 'Mobile identity lane', 390, 'normal', 'ltr', 0, 'person-full-mobile', '{"variant":"person-full"}'::jsonb, 40, FALSE),
+    ('FICR-005', 'RTL full identity review', 'RTL direction keeps the square thumbnail and identity stack mirrored inside the same card anatomy.', '/design-system/canonical-renderings/form-image-card/FICR-005', '/design-system/components/form-image-card?ref=FICR-005&width=560&variant=person-full&theme=normal&dir=rtl&zoom=0', 'RTL identity lane', 560, 'normal', 'rtl', 0, 'person-full-rtl', '{"variant":"person-full"}'::jsonb, 50, FALSE),
+    ('FICR-006', 'Dark theme full identity review', 'Dark theme keeps thumbnail, card surface, and identity text readable without changing the component structure.', '/design-system/canonical-renderings/form-image-card/FICR-006', '/design-system/components/form-image-card?ref=FICR-006&width=560&variant=person-full&theme=dark&dir=ltr&zoom=0', 'Theme-stress identity lane', 560, 'dark', 'ltr', 0, 'person-full-dark', '{"variant":"person-full"}'::jsonb, 60, FALSE),
+    ('FICR-007', 'Magnified name-only review', 'Magnified review keeps the name-only card readable and bounded in the parent form lane.', '/design-system/canonical-renderings/form-image-card/FICR-007', '/design-system/components/form-image-card?ref=FICR-007&width=520&variant=name-only&theme=normal&dir=ltr&zoom=100', 'Magnified identity lane', 520, 'normal', 'ltr', 100, 'name-only-magnified', '{"variant":"name-only"}'::jsonb, 70, FALSE)
+)
+INSERT INTO design_system_canonical_references (
+  design_system_canonical_reference_id,
+  design_system_canonical_family_id,
+  reference_id,
+  normalized_reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  height,
+  theme,
+  direction,
+  zoom,
+  locale_fixture,
+  label_density_fixture,
+  state_variant_key,
+  specimen_payload,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+SELECT
+  gen_random_uuid(),
+  form_image_card_family.design_system_canonical_family_id,
+  reference_rows.reference_id,
+  lower(reference_rows.reference_id),
+  reference_rows.display_label,
+  reference_rows.description,
+  reference_rows.render_route_path,
+  reference_rows.legacy_render_route_path,
+  reference_rows.viewport,
+  reference_rows.width,
+  NULL,
+  reference_rows.theme,
+  reference_rows.direction,
+  reference_rows.zoom,
+  NULL,
+  NULL,
+  reference_rows.state_variant_key,
+  reference_rows.specimen_payload,
+  'live',
+  reference_rows.sort_order,
+  reference_rows.featured,
+  NOW(),
+  NOW()
+FROM reference_rows
+CROSS JOIN form_image_card_family
+ON CONFLICT (design_system_canonical_family_id, normalized_reference_id)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  description = EXCLUDED.description,
+  render_route_path = EXCLUDED.render_route_path,
+  legacy_render_route_path = EXCLUDED.legacy_render_route_path,
+  viewport = EXCLUDED.viewport,
+  width = EXCLUDED.width,
+  height = EXCLUDED.height,
+  theme = EXCLUDED.theme,
+  direction = EXCLUDED.direction,
+  zoom = EXCLUDED.zoom,
+  locale_fixture = EXCLUDED.locale_fixture,
+  label_density_fixture = EXCLUDED.label_density_fixture,
+  state_variant_key = EXCLUDED.state_variant_key,
+  specimen_payload = EXCLUDED.specimen_payload,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();

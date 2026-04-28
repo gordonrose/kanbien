@@ -183,6 +183,15 @@ Current audit of the active governed adoption seams:
     `/design-system/assets/formControls.mjs`
   - current real consumer now mounts DS-owned hosted trigger and drawer markup
     for the context-nav selector instead of duplicating the shell locally
+- `form-image-card`
+  - styling reaches app consumers through
+    `/design-system/assets/form-template-shared.css`, which imports the shared
+    form-control CSS entrypoint
+  - shared render seam exists through
+    `/design-system/assets/formControls.mjs`
+  - no real app consumer has adopted the seam yet; consuming features must own
+    upload, modal, alt-text, authorization, persistence, and asset lifecycle
+    behavior outside the DS-owned card render
 - `drawer-form`
   - styling reaches root-admin through
     `/design-system/assets/form-template-shared.css` and list-page drawer

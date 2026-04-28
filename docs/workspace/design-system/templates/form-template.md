@@ -68,6 +68,12 @@
   picker entry paths, deterministic status copy, progress affordance, and a
   local upload-error state; backend file storage and asset policy remain out
   of scope for the parent template
+- Image card review:
+  the parent may host compact image relationship cards with a square thumbnail
+  placeholder, picture-only, name-only, and name/email/job-title variants, and
+  an image-scoped edit affordance that appears on hover or keyboard focus;
+  feature-owned asset policy, alt text, upload, and durable image relationship
+  behavior remain out of scope for the parent template
 - Magnified or direction-adjusted review:
   display-settings controls can change magnification, accent, theme, and
   document direction so the parent template can be inspected under stress

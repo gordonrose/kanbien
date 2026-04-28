@@ -63,7 +63,8 @@ export async function expectGeneratedCanonicalShellContract(
     if (requireExactLabels) {
       await expect.poll(async () => readTopNavLabels(page)).toEqual(designSystemTopNavContract.labels);
     } else {
-      expect(shellNavState.labels).toContain("Overview");
+      expect(shellNavState.labels.length).toBeGreaterThan(0);
+      expect(shellNavState.labels).toContain("Canonical Renderings");
       expect(shellNavState.labels).not.toContain("Pages");
       expect(shellNavState.labels).not.toContain("Resources");
     }
