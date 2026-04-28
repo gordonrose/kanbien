@@ -388,6 +388,7 @@ const rootAdminDirectoryControllers = [
     root: document.getElementById("page-users"),
     searchInput: shellSearchInput,
     fetchJson,
+    uploadFileBytes,
     setShellMessage,
     getCurrentPage: () => state.navigation.currentPage,
   }),
@@ -396,6 +397,7 @@ const rootAdminDirectoryControllers = [
     root: document.getElementById("page-tenants"),
     searchInput: shellSearchInput,
     fetchJson,
+    uploadFileBytes,
     setShellMessage,
     getCurrentPage: () => state.navigation.currentPage,
   }),
@@ -404,6 +406,7 @@ const rootAdminDirectoryControllers = [
     root: document.getElementById("page-tenant-admins"),
     searchInput: shellSearchInput,
     fetchJson,
+    uploadFileBytes,
     setShellMessage,
     getCurrentPage: () => state.navigation.currentPage,
   }),
@@ -1039,6 +1042,41 @@ async function fetchJson(path, options = {}) {
       response.status,
       body?.code ?? "REQUEST_FAILED",
       body?.message ?? "The request could not be completed.",
+      body?.details,
+    );
+  }
+
+  return body;
+}
+
+async function uploadFileBytes(path, file, options = {}) {
+  const { markUnauthorizedAsSessionExpired = true } = options;
+  const response = await fetch(path, {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "content-type": file.type,
+    },
+    body: file,
+  });
+  const contentType = response.headers.get("content-type") ?? "";
+  const body = contentType.includes("application/json") ? await response.json() : null;
+  const fallbackMessage = response.status === 404
+    ? "The profile-picture upload route is not available. Restart the app server and try again."
+    : `The selected file could not be uploaded. (${response.status})`;
+
+  if (response.status === 401 && markUnauthorizedAsSessionExpired) {
+    Object.assign(state, markSessionExpired(state));
+    clearShellMessage();
+    render();
+    throw new ApiError(response.status, body?.code ?? "UNAUTHORIZED", body?.message ?? "Your session has expired.");
+  }
+
+  if (!response.ok) {
+    throw new ApiError(
+      response.status,
+      body?.code ?? "REQUEST_FAILED",
+      body?.message ?? fallbackMessage,
       body?.details,
     );
   }

@@ -3,7 +3,7 @@
     "_postman_id": "f41bb89a-a122-4e8a-a9df-45c9e7f6b001",
     "name": "Kanbien Assets",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for the protected assets foundation. Successful root login writes a shared root session into the active Postman environment. The local filesystem adapter returns upload-target metadata; object placement is environment-specific and completion verifies storage state before readiness."
+    "description": "Postman collection for the protected assets foundation. Successful root login writes a shared root session into the active Postman environment. The local filesystem adapter returns upload-target metadata; browser-style clients can use the same-origin upload-bytes route before completion verifies storage state and marks the asset ready."
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000" },
@@ -44,6 +44,30 @@
           }
         }
       ]
+    },
+    {
+      "name": "Assets - Upload Bytes",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{rootSessionId}}" },
+          { "key": "Content-Type", "value": "image/png" }
+        ],
+        "body": {
+          "mode": "file",
+          "file": {
+            "src": ""
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/v1/assets/{{assetId}}/upload-bytes?uploadIntentId={{uploadIntentId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["v1", "assets", "{{assetId}}", "upload-bytes"],
+          "query": [
+            { "key": "uploadIntentId", "value": "{{uploadIntentId}}" }
+          ]
+        }
+      }
     },
     {
       "name": "Assets - Complete Upload",

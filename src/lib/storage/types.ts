@@ -25,6 +25,12 @@ export interface ObjectStorageAdapter {
     expiresAt: Date;
     checksumSha256?: string | null;
   }): Promise<ObjectStorageUploadTarget>;
+  writeObject(input: {
+    storageKey: string;
+    content: Buffer;
+    contentType: string;
+    checksumSha256?: string | null;
+  }): Promise<ObjectStorageMetadata>;
   headObject(storageKey: string): Promise<ObjectStorageMetadata | null>;
   readObject(storageKey: string): Promise<ObjectStorageReadResult>;
   readObjectBytes(storageKey: string, maxBytes: number): Promise<Buffer>;

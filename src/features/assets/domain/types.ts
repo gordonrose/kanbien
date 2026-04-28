@@ -126,6 +126,14 @@ export interface CompleteUploadInput {
   checksumSha256?: string | null;
 }
 
+export interface UploadAssetBytesInput {
+  actor: AssetActorContext;
+  assetId: string;
+  uploadIntentId: string;
+  content: Buffer;
+  contentType: string;
+}
+
 export interface ReadAssetInput {
   actor: AssetActorContext;
   assetId: string;

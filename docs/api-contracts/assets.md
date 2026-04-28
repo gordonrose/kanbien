@@ -72,6 +72,19 @@
     exact UUID `assetId`
   - body:
     `{ uploadIntentId, checksumSha256? }`
+- `POST /v1/assets/{assetId}/upload-bytes`
+  - path:
+    exact UUID `assetId`
+  - query:
+    exact UUID `uploadIntentId`
+  - body:
+    raw image bytes for the pending upload intent
+  - headers:
+    `Content-Type` must match the upload intent's expected image MIME type
+  - purpose:
+    same-origin browser upload bridge for reserved private assets; this route
+    does not expose storage paths, storage credentials, public URLs, or generic
+    file-hosting behavior
 - `GET /v1/assets/{assetId}`
   - path:
     exact UUID `assetId`
@@ -95,7 +108,8 @@
   - upload intent metadata including expiry
   - local/filesystem upload target metadata for dev/test adapter use
   - no permanent bucket URL, storage credential, or raw filesystem authority
-- completion, metadata read, and delete return asset metadata:
+- browser byte upload, completion, metadata read, and delete return asset
+  metadata:
   - lifecycle, processing, cleanup, visibility, content-type, byte-size,
     checksum posture, PII posture, storage provider/key identity, and timestamps
   - no private storage credentials
@@ -117,6 +131,9 @@
   - `ASSET_NOT_FOUND`
   - `ASSET_CONFLICT`
   - `ASSET_STORAGE_VERIFICATION_FAILED`
+- browser byte upload returns `ASSET_STORAGE_VERIFICATION_FAILED` when the
+  supplied bytes, byte size, or `Content-Type` do not match the pending upload
+  intent
 - shared middleware:
   - `UNAUTHORIZED`
   - `INVALID_SESSION`

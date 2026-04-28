@@ -11,6 +11,7 @@
 ## Current Capabilities
 
 - create constrained upload intents
+- accept same-origin browser-provided bytes for a pending upload intent
 - complete uploads after storage verification
 - read ready asset metadata
 - stream ready private image content through same-origin routes
@@ -28,6 +29,8 @@
 - Upload intents expire after 15 minutes and are single-use, actor-bound,
   scope-bound, and storage-key-bound.
 - Retry creates a new intent and storage key.
+- Browser byte upload is bound to the exact pending asset and upload intent;
+  the request `Content-Type` and byte count must match the reserved intent.
 - Private content reads never expose permanent raw storage URLs.
 - Tenant logo consumers must own contextual alt text or explicit decorative
   posture; generic asset metadata does not replace contextual accessibility

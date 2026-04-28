@@ -123,6 +123,65 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /v1/assets/{assetId}/upload-bytes:
+    post:
+      tags:
+        - Assets
+      summary: Upload browser-provided bytes for a pending asset intent
+      operationId: uploadAssetBytes
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/AssetIdPath"
+        - name: uploadIntentId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          image/png:
+            schema:
+              type: string
+              format: binary
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+          image/webp:
+            schema:
+              type: string
+              format: binary
+          image/svg+xml:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          description: Asset bytes accepted for pending upload verification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Asset"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
   /v1/assets/{assetId}:
     get:
       tags:

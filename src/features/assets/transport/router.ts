@@ -12,10 +12,11 @@ import {
   cleanupExpiredUploadsBodySchema,
   completeUploadBodySchema,
   createUploadIntentBodySchema,
+  uploadAssetBytesQuerySchema,
 } from "../contract/schemas";
 import { AssetError, InvalidAssetRequestError } from "../contract/errors";
 import type { AssetsService } from "../domain/service";
-import type { AssetActorContext } from "../domain/types";
+import { RASTER_IMAGE_MAX_BYTES, SVG_IMAGE_MAX_BYTES, type AssetActorContext } from "../domain/types";
 
 function parseOrThrow<T>(schema: { parse: (input: unknown) => T }, input: unknown): T {
   try {
@@ -50,6 +51,23 @@ function rootActorFromRequest(request: Request): AssetActorContext {
     actorId: session.rootUserId,
     authPrincipalId: session.authPrincipalId,
   };
+}
+
+async function readRequestBytes(request: Request, maxBytes: number): Promise<Buffer> {
+  const chunks: Buffer[] = [];
+  let totalBytes = 0;
+  for await (const chunk of request) {
+    const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+    totalBytes += buffer.byteLength;
+    if (totalBytes > maxBytes) {
+      throw new InvalidAssetRequestError("The uploaded asset exceeds the approved browser upload size.", {
+        field: "content",
+        reason: "asset_too_large",
+      });
+    }
+    chunks.push(buffer);
+  }
+  return Buffer.concat(chunks);
 }
 
 async function recordAssetAuditEvent(
@@ -170,6 +188,38 @@ export function createAssetsRouter(
         error instanceof AssetError && error.code === "ASSET_STORAGE_VERIFICATION_FAILED"
           ? "asset_upload_completion_mismatch"
           : "asset_upload_completion_failed",
+        "failure",
+      );
+      handleAssetError(error, request, response, next);
+    }
+  });
+
+  router.post("/:assetId/upload-bytes", requireCreate, async (request, response, next) => {
+    try {
+      const params = parseOrThrow(assetIdParamsSchema, request.params);
+      const query = parseOrThrow(uploadAssetBytesQuerySchema, request.query);
+      const contentType = request.header("content-type")?.split(";")[0]?.trim().toLowerCase() ?? "";
+      const maxBytes = contentType === "image/svg+xml" ? SVG_IMAGE_MAX_BYTES : RASTER_IMAGE_MAX_BYTES;
+      const content = await readRequestBytes(request, maxBytes);
+      const result = await service.uploadAssetBytes({
+        actor: rootActorFromRequest(request),
+        assetId: params.assetId,
+        uploadIntentId: query.uploadIntentId,
+        content,
+        contentType,
+      });
+      await recordAssetAuditEvent(
+        platformSecurityRepository,
+        request,
+        "asset_upload_bytes_received",
+        "success",
+      );
+      response.status(200).json(result);
+    } catch (error) {
+      await recordAssetAuditEvent(
+        platformSecurityRepository,
+        request,
+        "asset_upload_bytes_failed",
         "failure",
       );
       handleAssetError(error, request, response, next);

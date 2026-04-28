@@ -44,6 +44,10 @@ export const completeUploadBodySchema = strictObject({
   checksumSha256: checksumSha256Schema.optional(),
 });
 
+export const uploadAssetBytesQuerySchema = strictObject({
+  uploadIntentId: uuidSchema,
+});
+
 export const cleanupExpiredUploadsBodySchema = strictObject({
   batchSize: z.number().int().min(1).max(500).default(100),
   retryFailedOnly: z.boolean().default(false),

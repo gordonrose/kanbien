@@ -1,3 +1,11 @@
+import {
+  initializeFormUploadFields,
+  renderFormUploadField,
+  setFormUploadState,
+} from "./formControls.mjs";
+
+const PROFILE_PICTURE_MAX_BYTES = 5 * 1024 * 1024;
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -111,6 +119,7 @@ const directoryConfigs = {
         ],
       },
     ],
+    profilePicture: true,
     card(record) {
       return {
         title: titleForPerson(record, "Root User"),
@@ -309,6 +318,54 @@ function renderField(field, mode, config) {
   `;
 }
 
+function renderProfilePictureFields(mode, config) {
+  if (!config.profilePicture) {
+    return "";
+  }
+  const fieldPrefix = `${config.idPrefix}-form-${mode}-profile-picture`;
+  return `
+    <div class="form-field" data-directory-profile-picture>
+      <span class="form-field-label" id="${escapeHtml(fieldPrefix)}-label">Profile picture</span>
+      ${renderFormUploadField({
+        rootId: `${fieldPrefix}-upload`,
+        inputId: `${fieldPrefix}-input`,
+        inputName: "profilePictureFile",
+        labelId: `${fieldPrefix}-label`,
+        helpId: `${fieldPrefix}-help`,
+        statusId: `${fieldPrefix}-status`,
+        accept: "image/png,image/jpeg,image/webp",
+        title: "Upload profile picture",
+        summary: "PNG, JPEG, or WebP up to 5 MB.",
+        status: "No file selected",
+      })}
+      <input type="hidden" name="profilePictureAssetId" data-profile-picture-asset-id />
+      <label class="drawer-form-field">
+        <span class="drawer-form-label">Alt text</span>
+        <input
+          class="drawer-form-input"
+          type="text"
+          name="profilePictureAltText"
+          autocomplete="off"
+          data-profile-picture-alt-text
+        />
+        <span class="drawer-form-help" id="${escapeHtml(fieldPrefix)}-help">
+          Describe the image unless it should be treated as decorative.
+        </span>
+      </label>
+      <label class="form-toggle-row">
+        <span class="form-toggle-copy">
+          <span class="form-field-label">Decorative image</span>
+          <span class="form-field-help">Use this only when the picture adds no meaningful information.</span>
+        </span>
+        <span class="form-toggle-control">
+          <input class="form-toggle-input" type="checkbox" name="profilePictureDecorative" data-profile-picture-decorative />
+          <span class="form-toggle-track" aria-hidden="true"></span>
+        </span>
+      </label>
+    </div>
+  `;
+}
+
 function renderForm(mode, config) {
   const title = mode === "create" ? `Create ${config.entityLabel}` : `Edit ${config.entityLabel}`;
   return `
@@ -317,13 +374,11 @@ function renderForm(mode, config) {
         <div class="drawer-form-section-header">
           <p class="list-page-state-eyebrow">${mode === "create" ? "Create" : "Edit"}</p>
           <h3 class="drawer-form-section-title">${escapeHtml(title)}</h3>
-          <p class="list-page-state-description">
-            Required fields stay inside this drawer form and submit to the existing protected root-admin API.
-          </p>
         </div>
         <div class="drawer-form-grid">
           ${config.fields.map((field) => renderField(field, mode, config)).join("")}
         </div>
+        ${renderProfilePictureFields(mode, config)}
         <p class="drawer-form-status" aria-live="polite" data-directory-form-status></p>
       </div>
     </form>
@@ -470,6 +525,7 @@ export function createRootAdminDirectoryWorkspaceController({
   root,
   searchInput,
   fetchJson,
+  uploadFileBytes,
   setShellMessage,
   getCurrentPage,
 }) {
@@ -526,6 +582,140 @@ export function createRootAdminDirectoryWorkspaceController({
   let mode = "view";
   let currentListState = "items";
   let lastDetailTrigger = null;
+
+  function profilePictureControls(form) {
+    if (!(form instanceof HTMLFormElement) || !config.profilePicture) {
+      return null;
+    }
+    const assetInput = form.elements.namedItem("profilePictureAssetId");
+    const altInput = form.elements.namedItem("profilePictureAltText");
+    const decorativeInput = form.elements.namedItem("profilePictureDecorative");
+    const uploadRoot = form.querySelector("[data-form-upload-field]");
+    if (
+      !(assetInput instanceof HTMLInputElement) ||
+      !(altInput instanceof HTMLInputElement) ||
+      !(decorativeInput instanceof HTMLInputElement) ||
+      !(uploadRoot instanceof HTMLElement)
+    ) {
+      return null;
+    }
+    return { assetInput, altInput, decorativeInput, uploadRoot };
+  }
+
+  async function defaultUploadFileBytes(path, file) {
+    const response = await fetch(path, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "content-type": file.type,
+      },
+      body: file,
+    });
+    const contentType = response.headers.get("content-type") ?? "";
+    const body = contentType.includes("application/json") ? await response.json() : null;
+    if (!response.ok) {
+      const fallbackMessage = response.status === 404
+        ? "The profile-picture upload route is not available. Restart the app server and try again."
+        : `The selected image could not be uploaded. (${response.status})`;
+      throw new Error(body?.message ?? fallbackMessage);
+    }
+    return body;
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve) => {
+      if (typeof FileReader === "undefined") {
+        resolve("");
+        return;
+      }
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        resolve(typeof reader.result === "string" ? reader.result : "");
+      }, { once: true });
+      reader.addEventListener("error", () => resolve(""), { once: true });
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function uploadProfilePictureFile({ file, root: uploadRoot }) {
+    if (!config.profilePicture || typeof File === "undefined" || !(file instanceof File)) {
+      return;
+    }
+    const form = uploadRoot.closest("[data-directory-form]");
+    const controls = profilePictureControls(form);
+    if (!controls) {
+      return;
+    }
+    controls.assetInput.value = "";
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      setFormUploadState(uploadRoot, {
+        state: "error",
+        file,
+        fileName: file.name,
+        status: "Use PNG, JPEG, or WebP",
+      });
+      setShellMessage("Use a PNG, JPEG, or WebP profile picture.", "error");
+      return;
+    }
+    if (file.size > PROFILE_PICTURE_MAX_BYTES) {
+      setFormUploadState(uploadRoot, {
+        state: "error",
+        file,
+        fileName: file.name,
+        status: "Use an image up to 5 MB",
+      });
+      setShellMessage("Use a profile picture up to 5 MB.", "error");
+      return;
+    }
+
+    try {
+      const created = await fetchJson("/v1/assets/upload-intents", {
+        method: "POST",
+        body: JSON.stringify({
+          scopeType: "root",
+          kind: "image",
+          contentType: file.type,
+          byteSize: file.size,
+          visibility: "private",
+          originalFilename: file.name,
+          piiPosture: "possible",
+        }),
+      });
+      const assetId = created?.asset?.assetId;
+      const uploadIntentId = created?.uploadIntent?.uploadIntentId;
+      if (!assetId || !uploadIntentId) {
+        throw new Error("The upload intent response was missing asset metadata.");
+      }
+      const uploadPath = `/v1/assets/${encodeURIComponent(assetId)}/upload-bytes?uploadIntentId=${encodeURIComponent(uploadIntentId)}`;
+      if (typeof uploadFileBytes === "function") {
+        await uploadFileBytes(uploadPath, file);
+      } else {
+        await defaultUploadFileBytes(uploadPath, file);
+      }
+      await fetchJson(`/v1/assets/${encodeURIComponent(assetId)}/complete`, {
+        method: "POST",
+        body: JSON.stringify({ uploadIntentId }),
+      });
+      const previewUrl = await readFileAsDataUrl(file);
+      controls.assetInput.value = assetId;
+      setFormUploadState(uploadRoot, {
+        state: "complete",
+        fileName: file.name,
+        previewKind: file.type.startsWith("image/") ? "image" : "none",
+        previewUrl,
+        previewLabel: file.name,
+        status: "Ready to save",
+      });
+    } catch (error) {
+      setFormUploadState(uploadRoot, {
+        state: "error",
+        file,
+        fileName: file.name,
+        status: "Upload failed",
+      });
+      setShellMessage(error?.message ?? "Could not upload the selected profile picture.", "error");
+    }
+  }
 
   function isActivePage() {
     return getCurrentPage() === config.pageKey;
@@ -847,6 +1037,17 @@ export function createRootAdminDirectoryWorkspaceController({
         payload[field.name] = value;
       }
     }
+    const profileControls = profilePictureControls(form);
+    if (profileControls?.assetInput.value) {
+      const altText = normalizeText(profileControls.altInput.value);
+      const decorative = profileControls.decorativeInput.checked;
+      if (!decorative && !altText) {
+        throw new Error("Add alt text or mark the profile picture as decorative.");
+      }
+      payload.profilePictureAssetId = profileControls.assetInput.value;
+      payload.profilePictureAltText = decorative ? null : altText;
+      payload.profilePictureDecorative = decorative;
+    }
     return payload;
   }
 
@@ -866,6 +1067,24 @@ export function createRootAdminDirectoryWorkspaceController({
         control.value = record?.tenantId ?? selectedTenantId;
       } else {
         control.value = normalizeText(record?.[field.name]);
+      }
+    }
+    const profileControls = profilePictureControls(form);
+    if (profileControls) {
+      profileControls.assetInput.value = normalizeText(record?.profilePictureAssetId);
+      profileControls.altInput.value = normalizeText(record?.profilePictureAltText);
+      profileControls.decorativeInput.checked = Boolean(record?.profilePictureDecorative);
+      if (record?.profilePictureUrl) {
+        setFormUploadState(profileControls.uploadRoot, {
+          state: "complete",
+          fileName: record.profilePictureAltText || "Current profile picture",
+          previewKind: "image",
+          previewUrl: record.profilePictureUrl,
+          previewLabel: record.profilePictureAltText || "Current profile picture",
+          status: "Current picture linked",
+        });
+      } else {
+        setFormUploadState(profileControls.uploadRoot, { state: "idle" });
       }
     }
   }
@@ -890,7 +1109,10 @@ export function createRootAdminDirectoryWorkspaceController({
 
   async function saveForm() {
     const form = root.querySelector(`[data-directory-form="${mode}"]`);
-    if (!(form instanceof HTMLFormElement) || !form.reportValidity()) {
+    if (!(form instanceof HTMLFormElement)) {
+      return;
+    }
+    if (!form.reportValidity()) {
       return;
     }
 
@@ -902,9 +1124,9 @@ export function createRootAdminDirectoryWorkspaceController({
     const path = intent === "create"
       ? config.createPath(null, context)
       : config.updatePath(selectedRecord, context);
-    const payload = payloadFromForm(form, intent);
 
     try {
+      const payload = payloadFromForm(form, intent);
       const savedRecord = await fetchJson(path, {
         method: intent === "create" ? "POST" : "PATCH",
         body: JSON.stringify(payload),
@@ -1074,6 +1296,11 @@ export function createRootAdminDirectoryWorkspaceController({
   };
   window.addEventListener("scroll", maybeLoadMoreFromScroll, { passive: true });
   listColumn?.addEventListener("scroll", maybeLoadMoreFromScroll, { passive: true });
+
+  initializeFormUploadFields({
+    scope: root,
+    onFileSelected: uploadProfilePictureFile,
+  });
 
   return {
     handleShellSearchSubmit,

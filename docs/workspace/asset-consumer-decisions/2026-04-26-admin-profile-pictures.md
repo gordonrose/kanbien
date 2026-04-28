@@ -269,8 +269,11 @@
 ## Final Decision
 
 - Approved scope:
-  Root-operated profile-picture image linking, replacement, validation, and
-  same-origin display URL exposure for root users and tenant admins.
+  Root-operated profile-picture image upload, linking, replacement,
+  validation, and same-origin display URL exposure for root users and tenant
+  admins. Browser upload must go through the protected same-origin asset byte
+  route for an exact pending upload intent rather than through raw storage
+  paths or public URLs.
 - Explicitly deferred protections:
   tenant-admin self-service profile editing, tenant-session upload routes,
   malware scanning, image renditions, EXIF stripping, signed read URLs, public

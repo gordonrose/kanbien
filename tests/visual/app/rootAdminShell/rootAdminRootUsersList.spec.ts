@@ -1,4 +1,10 @@
+import { Buffer } from "node:buffer";
 import { expect, test, type Page } from "@playwright/test";
+
+const tinyPngBuffer = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=",
+  "base64",
+);
 
 const mockSession = {
   rootUserId: "root_user_001",
@@ -227,7 +233,7 @@ function buildTenantAdmins(): Record<string, Array<Record<string, string>>> {
 
 async function mockRootUsersRoutes(
   page: Page,
-  options: { failInitialOnce?: boolean } = {},
+  options: { failInitialOnce?: boolean; uploadBytesStatus?: number; uploadBytesContentType?: string } = {},
 ) {
   let rootUsers = buildRootUsers();
   let tenants = buildTenants();
@@ -240,6 +246,61 @@ async function mockRootUsersRoutes(
       status: 200,
       contentType: "application/json",
       body: JSON.stringify(mockSession),
+    });
+  });
+
+  await page.route("**/v1/assets/upload-intents", async (route) => {
+    await route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({
+        asset: {
+          assetId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+          lifecycleStatus: "pending_upload",
+          storageKey: "root/assets/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/upload.png",
+        },
+        uploadIntent: {
+          uploadIntentId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+          expiresAt: "2026-04-27T12:00:00.000Z",
+        },
+        uploadTarget: {
+          mode: "local-filesystem",
+          storageKey: "root/assets/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/upload.png",
+          expiresAt: "2026-04-27T12:00:00.000Z",
+        },
+      }),
+    });
+  });
+
+  await page.route("**/v1/assets/*/upload-bytes**", async (route) => {
+    if (options.uploadBytesStatus && options.uploadBytesStatus !== 200) {
+      await route.fulfill({
+        status: options.uploadBytesStatus,
+        contentType: options.uploadBytesContentType ?? "text/html",
+        body: "Cannot POST /v1/assets/example/upload-bytes",
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        assetId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        lifecycleStatus: "pending_upload",
+      }),
+    });
+  });
+
+  await page.route("**/v1/assets/*/complete", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        assetId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        lifecycleStatus: "ready",
+        verifiedContentType: "image/png",
+        contentVerificationStatus: "metadata_verified",
+      }),
     });
   });
 
@@ -470,7 +531,12 @@ async function mockRootUsersRoutes(
 
 async function bootstrapUsersPage(
   page: Page,
-  options: { failInitialOnce?: boolean; search?: string } = {},
+  options: {
+    failInitialOnce?: boolean;
+    search?: string;
+    uploadBytesStatus?: number;
+    uploadBytesContentType?: string;
+  } = {},
 ) {
   await mockRootUsersRoutes(page, options);
   const search = options.search ?? "";
@@ -708,6 +774,115 @@ test.describe("root-admin root-users list page adoption", () => {
 
     await expect(page.locator("#root-users-detail-title")).toHaveText("Edited Root");
     await expect(page.locator("#page-users")).toContainText("Edited Root");
+  });
+
+  test("root-user drawer form uploads and links a profile picture asset before save", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapUsersPage(page);
+
+    await page.locator("#page-users [data-directory-create]").click();
+    const createForm = page.locator('#page-users [data-directory-form="create"]');
+    await createForm.locator('input[name="email"]').fill("picture.root@example.test");
+    await createForm.locator('input[name="firstName"]').fill("Picture");
+    await createForm.locator('input[name="lastName"]').fill("Root");
+    await createForm.locator('input[name="profilePictureAltText"]').fill("Picture Root profile portrait");
+    await createForm.locator("[data-form-upload-input]").setInputFiles({
+      name: "profile.png",
+      mimeType: "image/png",
+      buffer: tinyPngBuffer,
+    });
+
+    await expect(createForm.locator("[data-form-upload-field]")).toHaveAttribute("data-form-upload-state", "complete");
+    await expect(createForm.locator("[data-form-upload-status-copy]")).toHaveText("Ready to save");
+    await expect(createForm.locator("[data-form-upload-preview-image]")).toHaveJSProperty("naturalWidth", 1);
+    await expect(createForm.locator("[data-form-upload-preview-image]")).toHaveAttribute("src", /^data:image\/png/);
+    await expect(createForm.locator('input[name="profilePictureAssetId"]')).toHaveValue(
+      "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    );
+
+    await page.locator("#page-users [data-directory-form-save]").click();
+
+    await expect(page.locator("#root-users-detail-title")).toHaveText("Picture Root");
+    await expect(page.locator("#shell-message")).toContainText("Create root user saved");
+  });
+
+  test("root-user drawer form decorative profile pictures do not require alt text after a validation miss", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapUsersPage(page);
+
+    await page.locator("#page-users [data-directory-create]").click();
+    const createForm = page.locator('#page-users [data-directory-form="create"]');
+    await createForm.locator('input[name="email"]').fill("decorative.root@example.test");
+    await createForm.locator('input[name="firstName"]').fill("Decorative");
+    await createForm.locator('input[name="lastName"]').fill("Root");
+    await createForm.locator("[data-form-upload-input]").setInputFiles({
+      name: "decorative-profile.png",
+      mimeType: "image/png",
+      buffer: tinyPngBuffer,
+    });
+    await expect(createForm.locator("[data-form-upload-field]")).toHaveAttribute("data-form-upload-state", "complete");
+
+    await page.locator("#page-users [data-directory-form-save]").click();
+    await expect(page.locator("#shell-message")).toContainText("Add alt text or mark the profile picture as decorative.");
+    await expect(createForm.locator('input[name="profilePictureAltText"]')).toHaveJSProperty("validationMessage", "");
+    await createForm.locator(".form-toggle-row").click();
+    await expect(createForm.locator('input[name="profilePictureDecorative"]')).toBeChecked();
+
+    const saveRequest = page.waitForRequest((request) => {
+      const url = new URL(request.url());
+      return request.method() === "POST" && url.pathname === "/v1/root-users";
+    });
+    await page.locator("#page-users [data-directory-form-save]").click();
+    const request = await saveRequest;
+    const payload = request.postDataJSON();
+
+    expect(payload.profilePictureAssetId).toBe("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
+    expect(payload.profilePictureDecorative).toBe(true);
+    expect(payload.profilePictureAltText).toBeNull();
+    await expect(page.locator("#root-users-detail-title")).toHaveText("Decorative Root");
+  });
+
+  test("root-user drawer form explains when the backend upload route is stale", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapUsersPage(page, { uploadBytesStatus: 404, uploadBytesContentType: "text/html" });
+
+    await page.locator("#page-users [data-directory-create]").click();
+    const createForm = page.locator('#page-users [data-directory-form="create"]');
+    await createForm.locator("[data-form-upload-input]").setInputFiles({
+      name: "profile.jpg",
+      mimeType: "image/jpeg",
+      buffer: Buffer.from("profile"),
+    });
+
+    await expect(createForm.locator("[data-form-upload-field]")).toHaveAttribute("data-form-upload-state", "error");
+    await expect(page.locator("#shell-message")).toContainText(
+      "The profile-picture upload route is not available. Restart the app server and try again.",
+    );
+  });
+
+  test("root-user drawer form blocks oversized profile pictures before upload", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapUsersPage(page);
+
+    let uploadIntentRequests = 0;
+    page.on("request", (request) => {
+      if (request.url().includes("/v1/assets/upload-intents")) {
+        uploadIntentRequests += 1;
+      }
+    });
+
+    await page.locator("#page-users [data-directory-create]").click();
+    const createForm = page.locator('#page-users [data-directory-form="create"]');
+    await createForm.locator("[data-form-upload-input]").setInputFiles({
+      name: "large-profile.jpg",
+      mimeType: "image/jpeg",
+      buffer: Buffer.alloc((5 * 1024 * 1024) + 1),
+    });
+
+    await expect(createForm.locator("[data-form-upload-field]")).toHaveAttribute("data-form-upload-state", "error");
+    await expect(createForm.locator("[data-form-upload-status-copy]")).toHaveText("Use an image up to 5 MB");
+    await expect(page.locator("#shell-message")).toContainText("Use a profile picture up to 5 MB.");
+    expect(uploadIntentRequests).toBe(0);
   });
 
   test("tenants can be created and edited from the governed list and form workspace", async ({ page }) => {

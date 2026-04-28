@@ -8,7 +8,7 @@
       "path": "index.ts",
       "kind": "feature-factory",
       "stability": "stable",
-      "description": "Platform integration entry point for asset metadata, upload-intent, completion, content-read, delete, and cleanup routes."
+      "description": "Platform integration entry point for asset metadata, upload-intent, same-origin byte upload, completion, content-read, delete, and cleanup routes."
     },
     {
       "seamId": "service",
@@ -16,7 +16,7 @@
       "path": "index.ts",
       "kind": "domain-service",
       "stability": "stable",
-      "description": "Public asset seam for future consuming features to validate, read, and link assets without importing storage or persistence internals."
+      "description": "Public asset seam for future consuming features to create upload intents, accept same-origin bytes, validate, read, and link assets without importing storage or persistence internals."
     },
     {
       "seamId": "asset-error",

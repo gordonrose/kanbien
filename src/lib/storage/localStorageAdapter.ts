@@ -95,6 +95,32 @@ export function createLocalStorageAdapter(rootDirectory: string): ObjectStorageA
         expiresAt: input.expiresAt.toISOString(),
       };
     },
+    async writeObject(input) {
+      const objectPath = safeResolve(rootDirectory, input.storageKey);
+      await mkdir(path.dirname(objectPath), { recursive: true });
+      const checksumSha256 =
+        input.checksumSha256 ?? createHash("sha256").update(input.content).digest("hex");
+      await writeFile(objectPath, input.content);
+      await writeFile(
+        metadataPath(objectPath),
+        JSON.stringify(
+          {
+            contentType: input.contentType,
+            checksumSha256,
+            byteSize: input.content.byteLength,
+          },
+          null,
+          2,
+        ),
+        "utf8",
+      );
+      return {
+        storageKey: input.storageKey,
+        byteSize: input.content.byteLength,
+        contentType: input.contentType,
+        checksumSha256,
+      };
+    },
     headObject: toObjectMetadata,
     async readObject(storageKey) {
       const objectPath = safeResolve(rootDirectory, storageKey);

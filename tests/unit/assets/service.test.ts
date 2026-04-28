@@ -129,6 +129,12 @@ function createStorage(overrides: Partial<ObjectStorageAdapter> = {}): ObjectSto
       storageKey: input.storageKey,
       expiresAt: input.expiresAt.toISOString(),
     })),
+    writeObject: vi.fn(async (input) => ({
+      storageKey: input.storageKey,
+      byteSize: input.content.byteLength,
+      contentType: input.contentType,
+      checksumSha256: null,
+    })),
     headObject: vi.fn(async () => ({
       storageKey: "tenant/asset/logo.png",
       byteSize: 128,

@@ -2,7 +2,7 @@ import { mkdtemp } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { invokeJson } from "../../harness/http";
+import { invokeJson, invokeRaw } from "../../harness/http";
 import { createRootAuthIntegrationHarness } from "../../harness/rootAuth/integrationHarness";
 import { mountAssetsFeature, writeLocalAssetObject } from "../../helpers/assetsHarness";
 import { loginViaPasswordAndSsh } from "../../helpers/tenantsHarness";
@@ -29,6 +29,72 @@ interface AssetResponse {
 }
 
 describe("assets integration flows", () => {
+  it("TC-ASSETS-INT-009 uploads browser-provided bytes through the same-origin asset seam before completion", async () => {
+    const storageRoot = await mkdtemp(path.join(os.tmpdir(), "kanbien-assets-browser-upload-"));
+    const harness = createRootAuthIntegrationHarness();
+    mountAssetsFeature(harness.app, harness, { storageRoot });
+    const identity = harness.seedAuthIdentity();
+    harness.setRootUserCapabilities(identity.rootUserId, [
+      "asset.create",
+      "asset.read",
+      "asset.content.read",
+    ]);
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const created = await invokeJson<CreateIntentResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/assets/upload-intents",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        scopeType: "root",
+        kind: "image",
+        contentType: "image/png",
+        byteSize: 7,
+        visibility: "private",
+        originalFilename: "profile.png",
+      },
+    });
+    expect(created.status).toBe(201);
+
+    const uploaded = await invokeRaw<AssetResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/assets/${created.body.asset.assetId}/upload-bytes?uploadIntentId=${created.body.uploadIntent.uploadIntentId}`,
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+        "content-type": "image/png",
+      },
+      body: Buffer.from("profile"),
+    });
+    expect(uploaded.status).toBe(200);
+    expect(uploaded.body).toMatchObject({
+      assetId: created.body.asset.assetId,
+      lifecycleStatus: "pending_upload",
+    });
+
+    const completed = await invokeJson<AssetResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/assets/${created.body.asset.assetId}/complete`,
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        uploadIntentId: created.body.uploadIntent.uploadIntentId,
+      },
+    });
+    expect(completed.status).toBe(200);
+    expect(completed.body).toMatchObject({
+      lifecycleStatus: "ready",
+      verifiedContentType: "image/png",
+      contentVerificationStatus: "metadata_verified",
+    });
+
+    const content = await invokeJson<string>(harness.app, {
+      method: "GET",
+      path: `/v1/assets/${created.body.asset.assetId}/content`,
+      headers: { authorization: `Bearer ${session.sessionId}` },
+    });
+    expect(content.status).toBe(200);
+    expect(content.body).toBe("profile");
+  });
+
   it("TC-ASSETS-INT-001 TC-ASSETS-INT-002 TC-ASSETS-INT-004 TC-ASSETS-INT-005 TC-ASSETS-INT-008 creates, completes, reads, streams, and deletes a private image asset", async () => {
     const storageRoot = await mkdtemp(path.join(os.tmpdir(), "kanbien-assets-flow-"));
     const harness = createRootAuthIntegrationHarness();

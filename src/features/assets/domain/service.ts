@@ -21,6 +21,7 @@ import type {
   DeleteAssetInput,
   ReadAssetContentResult,
   ReadAssetInput,
+  UploadAssetBytesInput,
   ValidateAssetForSubjectInput,
 } from "./types";
 import {
@@ -103,6 +104,7 @@ function ensureReadyAsset(asset: Asset): void {
 
 export interface AssetsService {
   createUploadIntent(input: CreateUploadIntentInput): Promise<CreateUploadIntentResult>;
+  uploadAssetBytes(input: UploadAssetBytesInput): Promise<Asset>;
   completeUpload(input: CompleteUploadInput): Promise<Asset>;
   readAssetMetadata(input: ReadAssetInput): Promise<Asset>;
   readAssetContent(input: ReadAssetInput): Promise<ReadAssetContentResult>;
@@ -202,6 +204,55 @@ export function createAssetsService(
         ...persisted,
         uploadTarget,
       };
+    },
+    async uploadAssetBytes(input) {
+      const [asset, intent] = await Promise.all([
+        repository.findAssetById(input.assetId),
+        repository.findUploadIntentById(input.uploadIntentId),
+      ]);
+      if (!asset || !intent || intent.assetId !== asset.assetId) {
+        throw new AssetNotFoundError({ field: "assetId", reason: "missing_asset_or_intent" });
+      }
+      assertAssetVisibleToActor(input.actor, asset);
+      if (intent.actorType !== input.actor.actorType || intent.actorId !== input.actor.actorId) {
+        throw new AssetForbiddenError({ field: "uploadIntentId", reason: "actor_mismatch" });
+      }
+      if (intent.status !== "pending" || asset.lifecycleStatus !== "pending_upload") {
+        throw new AssetConflictError("That upload intent is no longer pending.", {
+          field: "uploadIntentId",
+          reason: "intent_not_pending",
+        });
+      }
+      if (new Date(intent.expiresAt).getTime() <= Date.now()) {
+        await repository.rejectUpload({
+          assetId: asset.assetId,
+          uploadIntentId: intent.uploadIntentId,
+          rejectionReason: "upload_expired",
+        });
+        throw new AssetConflictError("That upload intent has expired.", {
+          field: "uploadIntentId",
+          reason: "intent_expired",
+        });
+      }
+      const contentType = input.contentType.split(";")[0]?.trim().toLowerCase() ?? "";
+      if (contentType !== intent.expectedContentType) {
+        throw new AssetStorageVerificationError("The uploaded object content type does not match the intent.", {
+          field: "contentType",
+          reason: "content_type_mismatch",
+        });
+      }
+      if (input.content.byteLength !== asset.byteSize || input.content.byteLength > intent.maxByteSize) {
+        throw new AssetStorageVerificationError("The uploaded object size does not match the intent.", {
+          field: "byteSize",
+          reason: "byte_size_mismatch",
+        });
+      }
+      await storage.writeObject({
+        storageKey: intent.storageKey,
+        content: input.content,
+        contentType,
+      });
+      return asset;
     },
     async completeUpload(input) {
       const [asset, intent] = await Promise.all([
