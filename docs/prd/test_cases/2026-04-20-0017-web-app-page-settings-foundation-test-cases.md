@@ -32,9 +32,10 @@
 ## Current Status
 
 - Overall traceability status:
-  - planned
+  - active
 - Overall execution status:
-  - not yet implemented
+  - partially implemented; parent-owned context-nav projection coverage added
+    on 2026-04-28
 - Layer summary:
   - `UNIT`: planned
   - `INT`: planned
@@ -131,6 +132,10 @@
 
 - Capability: update module landing page
   Test Case ID: `TC-WEB-PAGE-SET-UNIT-006`
+  Lifecycle Status: pending-review
+  Reason: Module landing-page executable coverage is outside the 2026-04-28
+    parent-owned context-nav projection slice and needs separate lifecycle
+    review before being treated as an active gate here.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -176,6 +181,10 @@
 - Flow: options read projects approved choices and eligible target pages from
   governed seams
   Test Case ID: `TC-WEB-PAGE-SET-INT-003`
+  Lifecycle Status: pending-review
+  Reason: Existing options-read coverage inventory predates the parent-owned
+    context-nav projection update and needs separate lifecycle review before
+    being treated as an active gate here.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppPageSettings/`
   Requires Shared Test Helper: yes
@@ -189,6 +198,10 @@
 
 - Flow: module landing-page update stays topology-owned
   Test Case ID: `TC-WEB-PAGE-SET-INT-004`
+  Lifecycle Status: pending-review
+  Reason: Module landing-page executable coverage is outside the 2026-04-28
+    parent-owned context-nav projection slice and needs separate lifecycle
+    review before being treated as an active gate here.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -202,6 +215,10 @@
 - Flow: page-settings save coexists with current topology-owned template
   posture during migration
   Test Case ID: `TC-WEB-PAGE-SET-INT-005`
+  Lifecycle Status: pending-review
+  Reason: Template coexistence coverage is outside the 2026-04-28 parent-owned
+    context-nav projection slice and needs separate lifecycle review before
+    being treated as an active gate here.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppPageSettings/`
   Requires Shared Test Helper: yes
@@ -212,6 +229,23 @@
   - settings-owned page-template intent does not silently break current
     design-system topology/materialization assumptions
   - migration/coexistence posture is explicit and honest
+
+- Flow: context-nav projection endpoint resolves owner rows from the viewed
+  page parent
+  Test Case ID: `TC-WEB-PAGE-SET-INT-009`
+  Recommended Test Layer: `feature-integration`
+  Suggested Test Folder: `tests/integration/webAppPageSettings/`
+  Requires Shared Test Helper: yes
+  Features:
+  - `rootAuth`
+  - root authorization
+  - `webAppPageSettings`
+  - `webAppHierarchyBuilder`
+  Coverage:
+  - saving context-nav rows on a parent page makes those rows visible through
+    the projection endpoint for a child page
+  - the response keeps the viewed child page as `shellPageKey` while resolving
+    items from the parent owner
 
 ## Security Tests
 
@@ -234,6 +268,14 @@
   - direct API calls remain denied when the actor lacks the governing
     capability even if the UI route is reachable
 
+- Capability: parent-owned context-nav projection remains read-protected
+  Test Case ID: `TC-WEB-PAGE-SET-SEC-003`
+  Recommended Test Layer: `security-integration`
+  Suggested Test Folder: `tests/security/webAppPageSettings/`
+  Coverage:
+  - unauthenticated context-nav projection reads are rejected
+  - authenticated root users without `web-app-page-settings.read` are rejected
+
 ## Audit Tests
 
 - Capability: denied page-settings reads and writes remain audit-visible
@@ -251,16 +293,69 @@
   Coverage:
   - denied landing-page updates are written to the shared authz audit posture
 
+- Capability: denied context-nav projection reads remain audit-visible
+  Test Case ID: `TC-WEB-PAGE-SET-AUD-003`
+  Recommended Test Layer: `audit-integration`
+  Suggested Test Folder: `tests/audit/webAppPageSettings/`
+  Coverage:
+  - denied context-nav projection reads are written to the shared authz audit
+    posture with the required read capability key
+
 ## Edge And Compatibility Tests
 
 - Capability: self-only context-nav fallback remains honest
   Test Case ID: `TC-WEB-PAGE-SET-EDGE-001`
+  Lifecycle Status: pending-review
+  Reason: Exact settings fallback coverage predates the parent-owned projection
+    update and needs separate lifecycle review so exact-read fallback and
+    projection-empty behavior are not conflated.
   Recommended Test Layer: `service-unit` or `feature-integration`
   Suggested Test Folder: `tests/unit/webAppPageSettings/`
   Coverage:
   - no explicit target rows still produces a self-only effective context nav
   - saving an empty set does not produce a broken empty navigation model unless
     explicitly approved later
+
+- Capability: context-nav projection inherits from the immediate parent owner
+  Test Case ID: `TC-WEB-PAGE-SET-EDGE-005`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/webAppPageSettings/`
+  Coverage:
+  - sibling child pages resolve the same ordered context-nav items from their
+    immediate parent page's owner rows
+  - child-owned empty rows do not override the parent-owned projection rule
+
+- Capability: nested context-nav projection uses only the immediate parent
+  Test Case ID: `TC-WEB-PAGE-SET-EDGE-006`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/webAppPageSettings/`
+  Coverage:
+  - a child page uses its parent page's context-nav owner rows
+  - a grandchild page uses its immediate parent page's rows instead of the
+    grandparent rows
+
+- Capability: dynamic root-admin context-nav targets preserve their target
+  page key and icon settings
+  Test Case ID: `TC-WEB-PAGE-SET-EDGE-007`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/webAppPageSettings/`
+  Coverage:
+  - target pages that are not one of the fixed root-admin shell sections do not
+    collapse to `overview` when their route path is root-admin-scoped
+  - context-nav projection items carry the target page's own stored icon key
+    and effective icon key
+
+- Capability: fixed root-admin context-nav targets prefer page aliases over
+  nested stored route paths
+  Test Case ID: `TC-WEB-PAGE-SET-EDGE-008`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/webAppPageSettings/`
+  Coverage:
+  - root-admin target pages such as `root-admin-users` project as their fixed
+    shell page keys even when stored under nested topology paths such as
+    `/root-admin/overview/users`
+  - mixed fixed-shell context-nav targets do not collapse to `overview`
+    because of their shared parent route prefix
 
 - Capability: deterministic replacement of explicit context-nav targets
   Test Case ID: `TC-WEB-PAGE-SET-EDGE-002`
@@ -272,6 +367,10 @@
 
 - Capability: module landing-page integrity on later page moves
   Test Case ID: `TC-WEB-PAGE-SET-EDGE-003`
+  Lifecycle Status: pending-review
+  Reason: Module landing-page move integrity is outside the 2026-04-28
+    parent-owned context-nav projection slice and needs separate lifecycle
+    review before being treated as an active gate here.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Coverage:
@@ -280,6 +379,10 @@
 
 - Capability: settings/topology truth boundary remains explicit
   Test Case ID: `TC-WEB-PAGE-SET-EDGE-004`
+  Lifecycle Status: pending-review
+  Reason: Settings/topology boundary coverage is outside the 2026-04-28
+    parent-owned context-nav projection slice and needs separate lifecycle
+    review before being treated as an active gate here.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppPageSettings/`
   Coverage:
@@ -291,6 +394,10 @@
 
 - Flow: selected-page Page Settings panel loads and saves truthfully
   Test Case ID: `TC-WEB-PAGE-SET-INT-006`
+  Lifecycle Status: pending-review
+  Reason: Full selected-page settings panel workflow coverage is outside the
+    2026-04-28 parent-owned context-nav projection slice and needs separate
+    lifecycle review before being treated as an active gate here.
   Recommended Test Layer: `frontend-visual/integration`
   Suggested Test Folder: `tests/visual/app/rootAdminShell/`
   Coverage:
@@ -300,6 +407,10 @@
 
 - Flow: module landing-page affordance remains inside the Hierarchy section
   Test Case ID: `TC-WEB-PAGE-SET-INT-007`
+  Lifecycle Status: pending-review
+  Reason: Module landing-page frontend affordance coverage is outside the
+    2026-04-28 parent-owned context-nav projection slice and needs separate
+    lifecycle review before being treated as an active gate here.
   Recommended Test Layer: `frontend-visual/integration`
   Suggested Test Folder: `tests/visual/app/rootAdminShell/`
   Coverage:
@@ -317,12 +428,73 @@
   - the route remains the governed hierarchy workspace rather than a new
     route-local admin shell
 
+- Flow: root-admin shell renders inherited context-nav for child pages
+  Test Case ID: `TC-WEB-PAGE-SET-INT-010`
+  Recommended Test Layer: `frontend-visual/integration`
+  Suggested Test Folder: `tests/visual/app/rootAdminShell/`
+  Coverage:
+  - a child root-admin page renders the context-nav targets stored on its
+    parent page
+  - the child page's own empty target set does not replace the parent-owned
+    projection
+
+- Flow: Page Settings drawer-select explains inherited and child-owned roles
+  Test Case ID: `TC-WEB-PAGE-SET-INT-011`
+  Recommended Test Layer: `frontend-visual/integration`
+  Suggested Test Folder: `tests/visual/app/rootAdminShell/`
+  Coverage:
+  - selecting a child page states that the displayed context-nav is inherited
+    from its parent
+  - the same drawer-select still edits the selected page's own context-nav
+    rows for child pages that page owns
+  - option metadata distinguishes selected, immediate-child, child-page, and
+    top-level targets through the governed drawer-select option attribute slot
+
+- Flow: top-level pages define direct children through a separate drawer-select
+  Test Case ID: `TC-WEB-PAGE-SET-INT-012`
+  Recommended Test Layer: `frontend-visual/integration`
+  Suggested Test Folder: `tests/visual/app/rootAdminShell/`
+  Coverage:
+  - selecting a top-level page reveals a separate `Child pages` drawer-select
+    in the structure-owned section rather than overloading context-nav editing
+  - the drawer-select shows current direct children and available same-module
+    pages with relationship metadata
+  - saving newly selected child pages uses the hierarchy move seam so topology,
+    route, cycle, and placement protections remain owned by
+    `webAppHierarchyBuilder`
+
+- Flow: root-admin context-nav uses target page icons and working links
+  Test Case ID: `TC-WEB-PAGE-SET-INT-013`
+  Recommended Test Layer: `frontend-visual/integration`
+  Suggested Test Folder: `tests/visual/app/rootAdminShell/`
+  Coverage:
+  - context-nav buttons render the icon configured for each target page rather
+    than inheriting one owner/current-page icon
+  - fixed shell-section context-nav items retain canonical root-admin shell
+    links
+  - non-shell context-nav targets are not intercepted by shell-local page
+    routing and can follow their rendered `href`
+
+- Flow: root-admin nested overview route keeps explicit owner context-nav and
+  route normalization aligned
+  Test Case ID: `TC-WEB-PAGE-SET-INT-014`
+  Recommended Test Layer: `frontend-visual/integration`
+  Suggested Test Folder: `tests/visual/app/rootAdminShell/`
+  Coverage:
+  - a nested hierarchy-editor route for the root-admin overview page selects
+    the matching overview page by route alias
+  - root-admin context-nav renders explicit owner context-nav rows without
+    inferring nav items from child topology
+  - clicking the root-admin Overview top-nav item normalizes stale nested
+    hierarchy URLs back to `/root-admin`
+
 ## Suggested Executable Test Layout
 
 - `tests/unit/webAppPageSettings/service.test.ts`
 - `tests/integration/webAppPageSettings/flow.test.ts`
 - `tests/security/webAppPageSettings/security.test.ts`
 - `tests/audit/webAppPageSettings/audit.test.ts`
+- `tests/visual/app/rootAdminShell/rootAdminWebAppHierarchy.spec.ts`
 - additive cases in:
   - `tests/unit/webAppHierarchyBuilder/service.test.ts`
   - `tests/integration/webAppHierarchyBuilder/flow.test.ts`

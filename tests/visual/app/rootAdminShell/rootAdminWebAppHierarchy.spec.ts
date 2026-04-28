@@ -627,10 +627,14 @@ function findPage(
 function listPages(tree: ResolvedWebAppHierarchyTree): ResolvedWebAppPageTreeNode[] {
   const items: ResolvedWebAppPageTreeNode[] = [];
 
-  function walk(nodes: ResolvedWebAppPageTreeNode[]) {
+  function walk(nodes: ResolvedWebAppPageTreeNode[], parentPageId: string | null = null) {
     for (const page of nodes ?? []) {
-      items.push(page);
-      walk(page.children);
+      const effectivePage = {
+        ...page,
+        parentPageId: page.parentPageId ?? parentPageId,
+      };
+      items.push(effectivePage);
+      walk(page.children, page.webAppPageId);
     }
   }
 
@@ -693,22 +697,23 @@ function normalizeRootAdminShellPageKey(pageKey: string | null | undefined) {
 
 function deriveShellPageKeyFromRecord(pageRecord: { pageKey: string; resolvedFullRoutePath: string | null }) {
   const normalizedPageKey = normalizeRootAdminShellPageKey(pageRecord.pageKey);
+  const fallbackPageKey = normalizedPageKey ?? pageRecord.pageKey;
   if (!pageRecord.resolvedFullRoutePath) {
-    return normalizedPageKey ?? "overview";
+    return fallbackPageKey;
   }
 
   const [pathname, hash = ""] = pageRecord.resolvedFullRoutePath.split("#", 2);
   if (hash.length > 0) {
-    return hash;
+    return normalizeRootAdminShellPageKey(hash) ?? hash;
   }
 
   const normalizedPath = pathname.replace(/\/+$/, "");
   if (normalizedPath === "/root-admin") {
-    return normalizedPageKey ?? "overview";
+    return fallbackPageKey;
   }
 
   const pathSegments = normalizedPath.split("/").filter(Boolean);
-  return pathSegments[pathSegments.length - 1] ?? "overview";
+  return normalizeRootAdminShellPageKey(pathSegments[1] ?? "") ?? pathSegments[pathSegments.length - 1] ?? fallbackPageKey;
 }
 
 async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hierarchy", search = "", options: {
@@ -949,11 +954,11 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
     const requestUrl = new URL(route.request().url());
     const pathSegments = requestUrl.pathname.split("/");
     const shellPageKey = pathSegments[pathSegments.length - 2] ?? "";
-    const ownerPage = listPages(currentHierarchyTree).find((pageRecord) =>
+    const currentPage = listPages(currentHierarchyTree).find((pageRecord) =>
       deriveShellPageKeyFromRecord(pageRecord) === shellPageKey,
     );
 
-    if (!ownerPage) {
+    if (!currentPage) {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -966,6 +971,8 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
       return;
     }
 
+    const ownerPageId = currentPage.parentPageId ?? currentPage.webAppPageId;
+    const ownerPage = findPage(currentHierarchyTree, ownerPageId)?.page ?? currentPage;
     const ownerSettings = pageSettingsStore.get(ownerPage.webAppPageId) ?? defaultPageSettings();
     const items = ownerSettings.contextNavTargetPageIds.map((targetPageId, index) => {
       const targetPage = findPage(currentHierarchyTree, targetPageId)?.page;
@@ -1004,6 +1011,7 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
 
     const eligibleContextNavTargets = listPages(currentHierarchyTree).map((pageRecord) => ({
       webAppPageId: pageRecord.webAppPageId,
+      parentPageId: pageRecord.parentPageId,
       displayLabel: pageRecord.displayLabel,
       resolvedFullRoutePath: pageRecord.resolvedFullRoutePath,
       pageKey: pageRecord.pageKey,
@@ -1604,6 +1612,233 @@ test("root-admin hierarchy page shows saved explicit context-nav targets on relo
   await expect(page.locator('.context-nav .context-nav-item[data-page-link="tenants"]')).toBeVisible();
   await expect(page.locator('.context-nav .context-nav-item[data-page-link="tenant-admins"]')).toBeVisible();
   await expect(page.locator('.context-nav .context-nav-item[data-page-link="users"]')).toBeVisible();
+});
+
+test("TC-WEB-PAGE-SET-INT-010 root-admin context nav renders parent-owned targets for child pages", async ({ page }) => {
+  await page.setViewportSize({ width: 1560, height: 1400 });
+  const tree = createRootAdminVisibleContextNavTree();
+  const usersPage = tree.rootFamilies[0]?.modules?.[1]?.pages?.find(
+    (entry) => entry.webAppPageId === PAGE_ROOT_ADMIN_USERS_ID,
+  );
+  if (!usersPage) {
+    throw new Error("Expected users page fixture.");
+  }
+  usersPage.parentPageId = PAGE_ROOT_ADMIN_OVERVIEW_ID;
+
+  await bootstrapAuthenticatedHierarchy(page, "", "", {
+    path: "/root-admin/users",
+    tree,
+    pageSettingsOverrides: {
+      [PAGE_ROOT_ADMIN_OVERVIEW_ID]: {
+        contextNavTargetPageIds: [
+          PAGE_ROOT_ADMIN_ROLES_ID,
+          PAGE_ROOT_ADMIN_TENANTS_ID,
+        ],
+      },
+      [PAGE_ROOT_ADMIN_USERS_ID]: {
+        contextNavTargetPageIds: [],
+      },
+    },
+  });
+
+  await expect(page.locator("#breadcrumb-current-label")).toHaveText("Users");
+  await expect(page.locator(".context-nav .context-nav-main .context-nav-item[data-page-link]")).toHaveCount(2);
+  await expect(page.locator('.context-nav .context-nav-item[data-page-link="roles"]')).toBeVisible();
+  await expect(page.locator('.context-nav .context-nav-item[data-page-link="tenants"]')).toBeVisible();
+  await expect(page.locator('.context-nav .context-nav-item[data-page-link="users"]')).toHaveCount(0);
+});
+
+test("TC-WEB-PAGE-SET-INT-013 root-admin context nav keeps target page icons and non-shell links", async ({ page }) => {
+  await page.setViewportSize({ width: 1560, height: 1400 });
+  const tree = createRootAdminVisibleContextNavTree();
+  const discoveredModule = tree.rootFamilies[0]?.modules?.find((module) => module.webAppModuleId === MODULE_ROOT_ADMIN_DISCOVERED_ID);
+  const overviewPage = discoveredModule?.pages?.find((entry) => entry.webAppPageId === PAGE_ROOT_ADMIN_OVERVIEW_ID);
+  if (!discoveredModule || !overviewPage) {
+    throw new Error("Expected root-admin fixture pages.");
+  }
+
+  const pageStructurePageId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa7";
+  discoveredModule.pages.push({
+    ...overviewPage,
+    webAppPageId: pageStructurePageId,
+    parentPageId: PAGE_ROOT_ADMIN_OVERVIEW_ID,
+    placementType: "child-page",
+    pageKey: "page-structure",
+    displayLabel: "Page Structure",
+    routeSegment: "page-structure",
+    resolvedFullRoutePath: "/root-admin/page-structure",
+    sortOrder: 99,
+    activeLocator: overviewPage.activeLocator
+      ? {
+          ...overviewPage.activeLocator,
+          webAppPageLocatorId: "locator-root-admin-page-structure",
+          webAppPageId: pageStructurePageId,
+          canonicalLocator: "/root-admin/page-structure",
+          routePath: "/root-admin/page-structure",
+          normalizedLocatorKey: "/root-admin/page-structure",
+        }
+      : null,
+    children: [],
+  });
+
+  await bootstrapAuthenticatedHierarchy(page, "", "", {
+    path: "/root-admin",
+    tree,
+    pageSettingsOverrides: {
+      [PAGE_ROOT_ADMIN_OVERVIEW_ID]: {
+        contextNavTargetPageIds: [PAGE_ROOT_ADMIN_USERS_ID, pageStructurePageId],
+      },
+      [PAGE_ROOT_ADMIN_USERS_ID]: {
+        iconKey: "page-list",
+      },
+      [pageStructurePageId]: {
+        iconKey: "page-settings",
+      },
+    },
+  });
+
+  const usersLink = page.locator('.context-nav .context-nav-item[data-page-link="users"]');
+  await expect(usersLink).toHaveAttribute("href", "/root-admin/users");
+  await expect(usersLink.locator(".context-nav-icon path")).toHaveAttribute(
+    "d",
+    "M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z",
+  );
+
+  const pageStructureLink = page.locator('.context-nav .context-nav-item[data-page-link="page-structure"]');
+  await expect(pageStructureLink).toHaveAttribute("href", "/root-admin/page-structure");
+  await expect(pageStructureLink.locator(".context-nav-icon path")).toHaveAttribute(
+    "d",
+    "m12 3 1.05 2.2 2.43.35.7 2.35 2.22 1.1-.42 2.42 1.52 1.92-1.52 1.92.42 2.42-2.22 1.1-.7 2.35-2.43.35L12 21l-1.05-2.2-2.43-.35-.7-2.35-2.22-1.1.42-2.42L4.5 11.5l1.52-1.92-.42-2.42 2.22-1.1.7-2.35 2.43-.35zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",
+  );
+
+  await pageStructureLink.click();
+  await expect(page).toHaveURL(/\/root-admin\/page-structure$/);
+});
+
+test("TC-WEB-PAGE-SET-INT-014 root-admin nested overview route uses explicit context-nav without owner-child fallback", async ({ page }) => {
+  await page.setViewportSize({ width: 1560, height: 1400 });
+  const tree = createRootAdminVisibleContextNavTree();
+  const discoveredModule = tree.rootFamilies[0]?.modules?.find((module) => module.webAppModuleId === MODULE_ROOT_ADMIN_DISCOVERED_ID);
+  const overviewPage = discoveredModule?.pages?.find((entry) => entry.webAppPageId === PAGE_ROOT_ADMIN_OVERVIEW_ID);
+  const hierarchyPageIndex = discoveredModule?.pages?.findIndex(
+    (entry) => entry.webAppPageId === PAGE_ROOT_ADMIN_WEB_APP_HIERARCHY_ID,
+  ) ?? -1;
+  if (!discoveredModule || !overviewPage || hierarchyPageIndex < 0) {
+    throw new Error("Expected root-admin hierarchy fixture pages.");
+  }
+
+  const [hierarchyPage] = discoveredModule.pages.splice(hierarchyPageIndex, 1);
+  hierarchyPage.parentPageId = null;
+  hierarchyPage.placementType = "child-page";
+  hierarchyPage.sortOrder = 2;
+  overviewPage.children = [
+    ...(overviewPage.children ?? []),
+    {
+      ...hierarchyPage,
+      children: [],
+    },
+  ];
+
+  await bootstrapAuthenticatedHierarchy(page, "#web-app-hierarchy", "", {
+    path: "/root-admin/web-app-hierarchy/pages/root-admin-overview",
+    tree,
+    pageSettingsOverrides: {
+      [PAGE_ROOT_ADMIN_OVERVIEW_ID]: {
+        contextNavTargetPageIds: [PAGE_ROOT_ADMIN_WEB_APP_HIERARCHY_ID],
+      },
+      [PAGE_ROOT_ADMIN_WEB_APP_HIERARCHY_ID]: {
+        iconKey: "page-settings",
+      },
+    },
+  });
+
+  const hierarchyLink = page.locator('.context-nav .context-nav-item[data-page-link="web-app-hierarchy"]');
+  await expect(hierarchyLink).toBeVisible();
+  await expect(hierarchyLink).toHaveAttribute("href", "/root-admin/web-app-hierarchy");
+  await expect(hierarchyLink.locator(".context-nav-icon path")).toHaveAttribute(
+    "d",
+    "m12 3 1.05 2.2 2.43.35.7 2.35 2.22 1.1-.42 2.42 1.52 1.92-1.52 1.92.42 2.42-2.22 1.1-.7 2.35-2.43.35L12 21l-1.05-2.2-2.43-.35-.7-2.35-2.22-1.1.42-2.42L4.5 11.5l1.52-1.92-.42-2.42 2.22-1.1.7-2.35 2.43-.35zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",
+  );
+  await expect(page.getByLabel("Page name").first()).toHaveValue("Overview");
+
+  await page.locator('.primary-nav .nav-link[data-page-link="overview"]').click();
+  await expect(page).toHaveURL(/\/root-admin$/);
+});
+
+test("TC-WEB-PAGE-SET-INT-011 page settings drawer-select explains inherited and child-owned context-nav roles", async ({ page }) => {
+  await page.setViewportSize({ width: 1560, height: 1400 });
+  await bootstrapAuthenticatedHierarchy(page, "#web-app-hierarchy", "", {
+    tree: createNestedMockHierarchyTree(),
+  });
+
+  await page.locator("#hierarchy-tree-nav-button").click();
+  const parentRow = page.locator(".hierarchy-tree-row").filter({ hasText: "Choice Group" }).first();
+  await parentRow.getByRole("button", { name: "Expand Choice Group" }).click();
+  await page.locator(".hierarchy-tree-row").filter({ hasText: "Choice Group Builder" }).first().click();
+
+  await expect(page.locator("#web-app-page-settings-context-nav-help")).toContainText(
+    "Choice Group Builder inherits the context-nav it displays from Choice Group",
+  );
+  await expect(page.locator("#web-app-page-settings-context-nav-help")).toContainText(
+    "Selections here define what any child pages added later inherit",
+  );
+
+  await page.locator("#web-app-page-settings-context-nav-trigger").click();
+  await expect(
+    page.locator(
+      `#web-app-page-settings-context-nav [data-form-drawer-select-option][data-value="${PAGE_CHOICE_GROUP_BUILDER_ID}"] .form-drawer-select-option-copy span`,
+    ),
+  ).toHaveText("Selected page");
+  await expect(
+    page.locator(
+      `#web-app-page-settings-context-nav [data-form-drawer-select-option][data-value="${PAGE_CHOICE_GROUP_ID}"] .form-drawer-select-option-copy span`,
+    ),
+  ).toHaveText("Top-level page");
+});
+
+test("TC-WEB-PAGE-SET-INT-012 top-level pages define direct children through a separate drawer-select", async ({ page }) => {
+  await page.setViewportSize({ width: 1560, height: 1400 });
+  await bootstrapAuthenticatedHierarchy(page, "#web-app-hierarchy", "", {
+    tree: createNestedMockHierarchyTree(),
+  });
+
+  await page.locator("#hierarchy-tree-nav-button").click();
+  await page.locator(".hierarchy-tree-row").filter({ hasText: "Choice Group" }).first().click();
+
+  await expect(page.locator("#web-app-page-children-form")).toBeVisible();
+  await expect(page.locator("#web-app-page-children-host > #web-app-page-children[data-form-drawer-select]")).toHaveCount(1);
+  await expect(page.locator("#web-app-page-children-help")).toContainText(
+    "Saved child pages inherit this page's context-nav display",
+  );
+
+  await page.locator("#web-app-page-children-trigger").click();
+  await expect(
+    page.locator(
+      `#web-app-page-children [data-form-drawer-select-option][data-value="${PAGE_CHOICE_GROUP_BUILDER_ID}"] .form-drawer-select-option-copy span`,
+    ),
+  ).toHaveText("Current child");
+  await expect(
+    page.locator(
+      `#web-app-page-children [data-form-drawer-select-option][data-value="${PAGE_HIERARCHY_ID}"] .form-drawer-select-option-copy span`,
+    ),
+  ).toHaveText("Top-level page");
+
+  await page.locator(`#web-app-page-children [data-form-drawer-select-option][data-value="${PAGE_HIERARCHY_ID}"]`).click();
+  await page.getByRole("button", { name: "Close child-page selector" }).click();
+
+  const moveRequest = page.waitForRequest((request) =>
+    request.method() === "POST" && request.url().includes(`/v1/web-app-hierarchy/pages/${PAGE_HIERARCHY_ID}/move`),
+  );
+  await page.locator("#web-app-page-children-save").click();
+  const request = await moveRequest;
+  const payload = JSON.parse(request.postData() ?? "{}");
+
+  expect(payload).toMatchObject({
+    rootFamilyId: "design-system",
+    webAppModuleId: MODULE_PATTERNS_ID,
+    targetParentPageId: PAGE_CHOICE_GROUP_ID,
+    placementType: "child-page",
+  });
 });
 
 test("root-admin overview context nav keeps the web-app-hierarchy icon and click target when the stored route falls back to /root-admin", async ({ page }) => {

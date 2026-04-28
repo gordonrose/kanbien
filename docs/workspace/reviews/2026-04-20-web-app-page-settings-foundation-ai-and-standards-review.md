@@ -69,3 +69,26 @@
   root-admin UI adoption is still pending, the icon-grid governed selector is
   still a design-system dependency, and Postgres-backed persistence execution
   remains a follow-up verification layer
+
+## 2026-04-28 Parent-Owned Context-Nav Projection Addendum
+
+- Change:
+  context-nav projection now reads rows from the viewed page's immediate parent
+  owner when one exists, while top-level pages read their own owner rows.
+- Material AI assistance:
+  yes
+- Assisted artifacts:
+  backend projection update, unit/integration/security/audit/frontend visual
+  tests, API contract, feature docs, data dictionary, PRD/test-case docs,
+  blueprint, QA checklist, test summary, and issue-reconciliation note
+- Independent verification:
+  focused unit, integration, security, audit, frontend visual, and typecheck
+  commands passed; persistence command executed but skipped locally; traceability
+  remains repo-wide nonzero while the scoped `WEB-PAGE-SET` result is now
+  `20/20 traceable` after the drawer-select explanatory refinement
+- Standards review note:
+  no persistence schema, migration, feature dependency, authz key, route
+  mounting, asset, or async job-processing change was introduced. The change is
+  compatibility-sensitive because existing page-owned rows may now be observed
+  through the parent-owner projection rule, so contract and planning artifacts
+  were refreshed in the same slice.

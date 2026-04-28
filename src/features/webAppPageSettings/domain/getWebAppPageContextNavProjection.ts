@@ -12,12 +12,17 @@ const ROOT_ADMIN_SHELL_PAGE_KEYS = new Set([
   "web-app-hierarchy",
 ]);
 
+const ROOT_ADMIN_SHELL_PAGE_ALIASES = new Map([
+  ["root-users", "users"],
+  ["root-roles", "roles"],
+]);
+
 function normalizeRootAdminShellPageKey(pageKey: string | null | undefined): string | null {
   if (typeof pageKey !== "string" || pageKey.trim().length === 0) {
     return null;
   }
 
-  const trimmed = pageKey.trim();
+  const trimmed = ROOT_ADMIN_SHELL_PAGE_ALIASES.get(pageKey.trim()) ?? pageKey.trim();
   if (ROOT_ADMIN_SHELL_PAGE_KEYS.has(trimmed)) {
     return trimmed;
   }
@@ -42,28 +47,33 @@ function deriveShellPageKey(
 ): string {
   const normalizedRootAdminPageKey =
     page.rootFamilyId === "root-admin" ? normalizeRootAdminShellPageKey(page.pageKey) : null;
+  const fallbackPageKey = normalizedRootAdminPageKey ?? page.pageKey ?? fallback;
+
+  if (normalizedRootAdminPageKey) {
+    return normalizedRootAdminPageKey;
+  }
 
   const resolvedFullRoutePath = page.resolvedFullRoutePath;
   if (typeof resolvedFullRoutePath !== "string" || resolvedFullRoutePath.length === 0) {
-    return normalizedRootAdminPageKey ?? fallback;
+    return fallbackPageKey;
   }
 
   const [pathname, hash = ""] = resolvedFullRoutePath.split("#", 2);
   if (hash.trim().length > 0) {
-    return hash.trim();
+    return normalizeRootAdminShellPageKey(hash.trim()) ?? hash.trim();
   }
 
   const normalizedPath = pathname.replace(/\/+$/, "");
   if (normalizedPath === "/root-admin") {
-    return normalizedRootAdminPageKey ?? "overview";
+    return fallbackPageKey;
   }
 
   const segments = normalizedPath.split("/").filter(Boolean);
   if (page.rootFamilyId === "root-admin" && segments[0] === "root-admin") {
-    return normalizeRootAdminShellPageKey(segments[1]) ?? normalizedRootAdminPageKey ?? fallback;
+    return normalizeRootAdminShellPageKey(segments[1]) ?? segments[1] ?? fallbackPageKey;
   }
 
-  return segments.length > 0 ? segments[segments.length - 1] : fallback;
+  return segments.length > 0 ? segments[segments.length - 1] : fallbackPageKey;
 }
 
 export async function getWebAppPageContextNavProjection(
@@ -74,9 +84,9 @@ export async function getWebAppPageContextNavProjection(
   const pages = await hierarchySeam.listPagesByRootFamily({
     rootFamilyId: input.rootFamilyId,
   });
-  const owner = pages.find((page) => deriveShellPageKey(page) === input.pageKey);
+  const currentPage = pages.find((page) => deriveShellPageKey(page) === input.pageKey);
 
-  if (!owner) {
+  if (!currentPage) {
     return {
       rootFamilyId: input.rootFamilyId,
       shellPageKey: input.pageKey,
@@ -84,7 +94,8 @@ export async function getWebAppPageContextNavProjection(
     };
   }
 
-  const contextNavItems = await repository.listContextNavItemsByOwnerPageId(owner.webAppPageId);
+  const contextNavOwnerPageId = currentPage.parentPageId ?? currentPage.webAppPageId;
+  const contextNavItems = await repository.listContextNavItemsByOwnerPageId(contextNavOwnerPageId);
   if (contextNavItems.length === 0) {
     return {
       rootFamilyId: input.rootFamilyId,

@@ -521,6 +521,18 @@ function buildCanonicalRootAdminPath(pageKey) {
   return rootAdminCanonicalPaths[normalizePage(pageKey)] ?? rootAdminCanonicalPaths.overview;
 }
 
+function isKnownRootAdminShellPage(pageKey) {
+  return normalizeRootAdminShellPageKey(pageKey) !== null;
+}
+
+function contextNavHrefForItem(item) {
+  if (isKnownRootAdminShellPage(item?.shellPageKey)) {
+    return buildCanonicalRootAdminPath(item.shellPageKey);
+  }
+
+  return item?.resolvedFullRoutePath ?? buildCanonicalRootAdminPath(item?.shellPageKey);
+}
+
 function normalizePathname(pathname) {
   if (typeof pathname !== "string" || pathname.trim().length === 0) {
     return "/";
@@ -589,7 +601,7 @@ function syncBrowserLocationForPage(page, historyMode = "replace") {
   const canonicalPath = buildCanonicalRootAdminPath(page);
   const currentPathname = normalizePathname(window.location.pathname);
   const nextPathname =
-    currentPathname === canonicalPath || currentPathname.startsWith(`${canonicalPath}/`)
+    currentPathname === canonicalPath || (canonicalPath !== "/root-admin" && currentPathname.startsWith(`${canonicalPath}/`))
       ? currentPathname
       : canonicalPath;
 
@@ -848,7 +860,7 @@ function renderContextNavOverflowLinks(items) {
   }
 
   contextNavMoreLinks.innerHTML = renderContextNavMenuItems(items, {
-    getHref: (item) => item.resolvedFullRoutePath ?? buildCanonicalRootAdminPath(item.shellPageKey),
+    getHref: contextNavHrefForItem,
     getLabel: (item) => item.displayLabel,
     getCurrent: (item) => item.shellPageKey === state.navigation.currentPage,
     getItemKey: (item) => item.shellPageKey,
@@ -874,7 +886,7 @@ function renderContextNavItems(items) {
 
   contextNavMainItems.innerHTML = visibleItems
     ? renderSharedContextNavItems(visibleItems, {
-      getHref: (item) => item.resolvedFullRoutePath ?? buildCanonicalRootAdminPath(item.shellPageKey),
+      getHref: contextNavHrefForItem,
       getLabel: (item) => item.displayLabel,
       getCurrent: (item) => item.shellPageKey === state.navigation.currentPage,
       getItemKey: (item) => item.shellPageKey,
@@ -1530,7 +1542,7 @@ document.addEventListener("click", (event) => {
   const pageLink = target.closest("[data-page-link]");
   if (pageLink instanceof HTMLElement) {
     const page = pageLink.dataset.pageLink;
-    if (page) {
+    if (page && isKnownRootAdminShellPage(page)) {
       event.preventDefault();
       setCurrentPage(page, { historyMode: "push" });
     }

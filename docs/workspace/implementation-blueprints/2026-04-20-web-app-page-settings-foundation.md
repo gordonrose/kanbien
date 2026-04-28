@@ -174,6 +174,9 @@ posture.
     topology-owned `templateKey` posture in `design-system`
   - settings mutation must not mutate topology-owned `displayLabel`,
     placement, locator, or module ownership fields
+  - context-nav projection remains synchronous request/response work; it does
+    not enqueue background jobs or create retryable cleanup state because it
+    reads bounded hierarchy/settings seams and returns an ordered projection
 
 ## Verification Plan
 

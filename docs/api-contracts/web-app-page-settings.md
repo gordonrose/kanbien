@@ -9,6 +9,7 @@
 - In-scope routes:
   - `GET /v1/web-app-page-settings/pages/{webAppPageId}`
   - `PUT /v1/web-app-page-settings/pages/{webAppPageId}`
+  - `GET /v1/web-app-page-settings/root-families/{rootFamilyId}/pages/{pageKey}/context-nav`
   - `GET /v1/web-app-page-settings/options`
 
 ## Capability
@@ -50,6 +51,10 @@
 
 - Params:
   - `webAppPageId` is required where present and must be an exact UUID
+  - `rootFamilyId` is required for context-nav projections and must be one of
+    `root-admin`, `login`, or `design-system`
+  - `pageKey` is required for context-nav projections and must be a non-empty
+    shell page key
 - Query:
   - `GET /options` requires:
     `webAppPageId`
@@ -72,6 +77,11 @@
 - Success payload:
   - exact settings read and update return:
     `{ webAppPageId, parentPageId, rootFamilyId, displayLabel, hasStoredSettings, iconKey, effectiveIconKey, showInTopNav, topNavOrder, pageTemplateKey, effectivePageTemplateKey, contextNavItems, createdAt, updatedAt }`
+  - `/root-families/{rootFamilyId}/pages/{pageKey}/context-nav` returns:
+    `{ rootFamilyId, shellPageKey, items }`, where `items` are ordered
+    context-nav destinations resolved from the viewed page's owner settings;
+    each item includes the target page's own `iconKey`, `effectiveIconKey`,
+    `resolvedFullRoutePath`, and derived `shellPageKey`
   - `/options` returns:
     `{ webAppPageId, parentPageId, defaultIconKey, currentTopologyTemplateKey, icons, pageTemplates, eligibleContextNavTargets }`
 - Status code:
@@ -100,8 +110,9 @@
   - exact update snapshots the current hierarchy-owned `parentPageId` into the
     settings row for the selected page
   - exact update replaces explicit `web_app_page_context_nav_items` rows for
-    the owner page when `contextNavTargetPageIds` is supplied
-  - exact read and options read do not mutate persisted settings truth
+    the selected owner page when `contextNavTargetPageIds` is supplied
+  - exact read, options read, and context-nav projection read do not mutate
+    persisted settings truth
 - Audit effects:
   - denied capability-gated requests create shared platform security audit
     events through the central authz middleware
@@ -126,7 +137,14 @@
 - `pageTemplateKey` in page settings coexists with the current
   topology-owned `templateKey` posture; the effective response falls back to
   topology truth when no explicit settings template exists
-- context-nav fallback is self-only when no explicit context-nav rows exist
+- context-nav projection reads use the viewed page's hierarchy owner:
+  child pages inherit the context-nav rows stored on their immediate parent
+  page, while pages with no parent use their own rows
+- context-nav target identity is target-owned: fixed root-admin shell pages may
+  normalize to their canonical shell key, while dynamic root-admin targets keep
+  their target page key so app links and icons do not collapse to `overview`
+- exact page-settings reads still use a self-only context-nav fallback when no
+  explicit rows exist for the selected settings page
 - icons remain governed by an approved catalog source; the current backend
   catalog is intentionally narrow and additive until the signed-off
   design-system icon selector source becomes the durable provider

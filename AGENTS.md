@@ -404,6 +404,69 @@ artifact run is complete, say so plainly and classify the result as:
 Do not use "done", "complete", or equivalent close-out language for that
 state.
 
+## Runtime Bug Fix Evidence Gate
+
+When a user reports a visible runtime defect, do not treat source edits,
+static inspection, or mocked tests as sufficient evidence that the issue is
+fixed or visible.
+
+Before claiming a user-visible runtime issue is fixed, visible, working, done,
+complete, or ready for the user to check, complete and report evidence for:
+
+- the live data shape involved in the failing screen, preferably from the
+  actual persistence rows or API/projection payload the UI consumes
+- the active runtime process serving the user-facing port, including whether it
+  was started before the relevant backend/runtime code changed
+- whether backend, routing, transport, migration, or server-side projection
+  code changes require a process restart
+- the frontend assets or modules actually served by the running app, when the
+  issue is browser-visible
+- at least one regression test or governed browser scenario that matches the
+  observed live-data shape rather than only a simplified mock shape
+- a mock-honesty check showing that test fixtures do not encode rejected,
+  invented, or convenience fallback behavior that production does not have
+- the scoped test/gate commands rerun after the final code change
+- a dev-server restart and served/live verification when backend/runtime code
+  changed
+
+If any item cannot be completed, say exactly which item is missing and classify
+the state as `implementation-only`, `partially verified`, or
+`blocked on runtime verification`. Do not imply the user should see the fix
+until the relevant runtime evidence exists.
+
+## User-Visible Regression Rule
+
+When a user says they are not seeing a claimed fix, immediately switch from
+source-edit mode to runtime reconciliation before making more speculative
+changes.
+
+Required order:
+
+1. confirm the active server process, port binding, and process start time
+2. confirm served frontend assets contain the expected change when frontend
+   code is involved
+3. inspect the live API response, projection payload, or database rows behind
+   the failing screen
+4. compare the live shape against the regression fixture and identify any
+   mismatch
+5. only then patch source, tests, or data-handling behavior
+
+Do not continue making frontend-only or backend-only guesses while these checks
+remain unperformed.
+
+## Mock Honesty Gate
+
+When fixing a runtime bug, compare test mocks and browser fixtures against the
+live persistence/API shape before trusting the test result.
+
+Mocks must not contain fallback behavior, inferred behavior, route aliases,
+default values, or convenience data that production does not provide unless
+that behavior is explicitly part of the contract under test.
+
+If the user rejects an interpretation, remove that interpretation from source,
+tests, mocks, and docs before continuing. Do not leave rejected behavior in a
+test harness where it can make a regression look covered.
+
 ## Design-System Signoff Before App UI
 
 For governed frontend families, do not implement new real-app UI until that UI
@@ -807,6 +870,8 @@ Default expectations:
 - create or update a dated note under `docs/workspace/issue-reconciliations/`
   capturing the symptom, root cause, why the loop missed it, and what was added
   afterward
+- for browser-visible or runtime defects, complete the Runtime Bug Fix Evidence
+  Gate before claiming the user should see the fix
 
 Do not treat an escaped issue as complete just because the implementation bug
 was patched if the prevention-layer analysis and test reconciliation were

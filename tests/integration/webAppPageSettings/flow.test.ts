@@ -160,4 +160,86 @@ describe("web app page settings integration flows", () => {
       effectiveIconKey: "grid",
     });
   });
+
+  it("TC-WEB-PAGE-SET-INT-009 returns context-nav projection from the viewed page parent owner", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const parentPageId = "22222222-2222-4222-8222-222222222222";
+    const childOnePageId = "33333333-3333-4333-8333-333333333333";
+    const childTwoPageId = "44444444-4444-4444-8444-444444444444";
+    const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+      pages: [
+        createPageRecord({
+          webAppPageId: parentPageId,
+          pageKey: "context-parent",
+          displayLabel: "Context Parent",
+          routeSegment: "context-parent",
+          normalizedRouteSegment: "context-parent",
+          resolvedFullRoutePath: "/root-admin#context-parent",
+        }),
+        createPageRecord({
+          webAppPageId: childOnePageId,
+          parentPageId,
+          placementType: "child-page",
+          pageKey: "context-child-one",
+          displayLabel: "Context Child One",
+          routeSegment: "context-child-one",
+          normalizedRouteSegment: "context-child-one",
+          resolvedFullRoutePath: "/root-admin#context-child-one",
+        }),
+        createPageRecord({
+          webAppPageId: childTwoPageId,
+          parentPageId,
+          placementType: "child-page",
+          pageKey: "context-child-two",
+          displayLabel: "Context Child Two",
+          routeSegment: "context-child-two",
+          normalizedRouteSegment: "context-child-two",
+          resolvedFullRoutePath: "/root-admin#context-child-two",
+        }),
+      ],
+    });
+    mountWebAppPageSettingsFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppPageSettingsRepository(),
+      createStubWebAppHierarchySettingsSeam(hierarchyRepository),
+    );
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const updated = await invokeJson(harness.app, {
+      method: "PUT",
+      path: `/v1/web-app-page-settings/pages/${parentPageId}`,
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        contextNavTargetPageIds: [childOnePageId, childTwoPageId],
+      },
+    });
+    expect(updated.status).toBe(200);
+
+    const projection = await invokeJson<{
+      shellPageKey: string;
+      items: Array<{ webAppPageId: string; shellPageKey: string; displayLabel: string }>;
+    }>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-page-settings/root-families/root-admin/pages/context-child-two/context-nav",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+    });
+
+    expect(projection.status).toBe(200);
+    expect(projection.body.shellPageKey).toBe("context-child-two");
+    expect(projection.body.items).toEqual([
+      expect.objectContaining({
+        webAppPageId: childOnePageId,
+        shellPageKey: "context-child-one",
+        displayLabel: "Context Child One",
+      }),
+      expect.objectContaining({
+        webAppPageId: childTwoPageId,
+        shellPageKey: "context-child-two",
+        displayLabel: "Context Child Two",
+      }),
+    ]);
+  });
 });

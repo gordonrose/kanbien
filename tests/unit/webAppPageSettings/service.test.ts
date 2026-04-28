@@ -264,6 +264,191 @@ describe("web app page settings service", () => {
     ).rejects.toBeInstanceOf(InvalidContextNavTargetError);
   });
 
+  it("TC-WEB-PAGE-SET-EDGE-005 returns parent-owned context-nav items for sibling child pages", async () => {
+    const now = new Date("2026-04-28T01:00:00.000Z");
+    const parentPageId = "22222222-2222-4222-8222-222222222222";
+    const childOnePageId = "33333333-3333-4333-8333-333333333333";
+    const childTwoPageId = "44444444-4444-4444-8444-444444444444";
+    const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+      pages: [
+        createPageRecord({
+          webAppPageId: parentPageId,
+          pageKey: "settings-parent",
+          displayLabel: "Settings Parent",
+          routeSegment: "settings-parent",
+          normalizedRouteSegment: "settings-parent",
+          resolvedFullRoutePath: "/root-admin#parent",
+          sortOrder: 0,
+        }),
+        createPageRecord({
+          webAppPageId: childOnePageId,
+          parentPageId,
+          placementType: "child-page",
+          pageKey: "settings-child-one",
+          displayLabel: "Child One",
+          routeSegment: "child-one",
+          normalizedRouteSegment: "child-one",
+          resolvedFullRoutePath: "/root-admin#child-one",
+          sortOrder: 1,
+        }),
+        createPageRecord({
+          webAppPageId: childTwoPageId,
+          parentPageId,
+          placementType: "child-page",
+          pageKey: "settings-child-two",
+          displayLabel: "Child Two",
+          routeSegment: "child-two",
+          normalizedRouteSegment: "child-two",
+          resolvedFullRoutePath: "/root-admin#child-two",
+          sortOrder: 2,
+        }),
+      ],
+    });
+    const repository = createInMemoryWebAppPageSettingsRepository({
+      contextNavItems: [
+        {
+          webAppPageContextNavItemId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
+          ownerWebAppPageId: parentPageId,
+          targetWebAppPageId: childTwoPageId,
+          sortOrder: 1,
+          createdAt: now,
+          updatedAt: now,
+        },
+        {
+          webAppPageContextNavItemId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+          ownerWebAppPageId: parentPageId,
+          targetWebAppPageId: childOnePageId,
+          sortOrder: 0,
+          createdAt: now,
+          updatedAt: now,
+        },
+      ],
+    });
+    const service = createWebAppPageSettingsService(
+      repository,
+      createStubWebAppHierarchySettingsSeam(hierarchyRepository),
+    );
+
+    await expect(
+      service.getWebAppPageContextNavProjection({
+        rootFamilyId: "root-admin",
+        pageKey: "child-one",
+      }),
+    ).resolves.toMatchObject({
+      rootFamilyId: "root-admin",
+      shellPageKey: "child-one",
+      items: [
+        {
+          webAppPageId: childOnePageId,
+          shellPageKey: "child-one",
+          displayLabel: "Child One",
+          sortOrder: 0,
+        },
+        {
+          webAppPageId: childTwoPageId,
+          shellPageKey: "child-two",
+          displayLabel: "Child Two",
+          sortOrder: 1,
+        },
+      ],
+    });
+
+    await expect(
+      service.getWebAppPageContextNavProjection({
+        rootFamilyId: "root-admin",
+        pageKey: "child-two",
+      }),
+    ).resolves.toMatchObject({
+      items: [
+        { webAppPageId: childOnePageId, shellPageKey: "child-one" },
+        { webAppPageId: childTwoPageId, shellPageKey: "child-two" },
+      ],
+    });
+  });
+
+  it("TC-WEB-PAGE-SET-EDGE-006 uses the immediate parent page as context-nav owner for nested children", async () => {
+    const now = new Date("2026-04-28T01:00:00.000Z");
+    const parentPageId = "22222222-2222-4222-8222-222222222222";
+    const childPageId = "33333333-3333-4333-8333-333333333333";
+    const grandchildPageId = "44444444-4444-4444-8444-444444444444";
+    const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+      pages: [
+        createPageRecord({
+          webAppPageId: parentPageId,
+          pageKey: "settings-parent",
+          displayLabel: "Settings Parent",
+          routeSegment: "settings-parent",
+          normalizedRouteSegment: "settings-parent",
+          resolvedFullRoutePath: "/root-admin#parent",
+        }),
+        createPageRecord({
+          webAppPageId: childPageId,
+          parentPageId,
+          placementType: "child-page",
+          pageKey: "settings-child",
+          displayLabel: "Settings Child",
+          routeSegment: "child",
+          normalizedRouteSegment: "child",
+          resolvedFullRoutePath: "/root-admin#child",
+        }),
+        createPageRecord({
+          webAppPageId: grandchildPageId,
+          parentPageId: childPageId,
+          placementType: "child-page",
+          pageKey: "settings-grandchild",
+          displayLabel: "Settings Grandchild",
+          routeSegment: "grandchild",
+          normalizedRouteSegment: "grandchild",
+          resolvedFullRoutePath: "/root-admin#grandchild",
+        }),
+      ],
+    });
+    const repository = createInMemoryWebAppPageSettingsRepository({
+      contextNavItems: [
+        {
+          webAppPageContextNavItemId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1",
+          ownerWebAppPageId: parentPageId,
+          targetWebAppPageId: childPageId,
+          sortOrder: 0,
+          createdAt: now,
+          updatedAt: now,
+        },
+        {
+          webAppPageContextNavItemId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa2",
+          ownerWebAppPageId: childPageId,
+          targetWebAppPageId: grandchildPageId,
+          sortOrder: 0,
+          createdAt: now,
+          updatedAt: now,
+        },
+      ],
+    });
+    const service = createWebAppPageSettingsService(
+      repository,
+      createStubWebAppHierarchySettingsSeam(hierarchyRepository),
+    );
+
+    await expect(
+      service.getWebAppPageContextNavProjection({
+        rootFamilyId: "root-admin",
+        pageKey: "child",
+      }),
+    ).resolves.toMatchObject({
+      items: [{ webAppPageId: childPageId, shellPageKey: "child" }],
+    });
+
+    await expect(
+      service.getWebAppPageContextNavProjection({
+        rootFamilyId: "root-admin",
+        pageKey: "grandchild",
+      }),
+    ).resolves.toMatchObject({
+      items: [{ webAppPageId: grandchildPageId, shellPageKey: "grandchild" }],
+    });
+  });
+
   it("TC-WEB-PAGE-SET-UNIT-005 derives root-admin hash-state shell keys from page keys when the stored route falls back to /root-admin", async () => {
     const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
       modules: [createModuleRecord()],
@@ -283,7 +468,7 @@ describe("web app page settings service", () => {
           displayLabel: "Web App Hierarchy",
           routeSegment: "web-app-hierarchy",
           normalizedRouteSegment: "web-app-hierarchy",
-          resolvedFullRoutePath: "/root-admin",
+          resolvedFullRoutePath: "/root-admin/overview/web-app-hierarchy",
           sortOrder: 1,
         }),
       ],
@@ -345,6 +530,158 @@ describe("web app page settings service", () => {
         shellPageKey: "web-app-hierarchy",
         displayLabel: "Web App Hierarchy",
         effectiveIconKey: "page-default",
+      }),
+    ]);
+  });
+
+  it("TC-WEB-PAGE-SET-EDGE-008 trusts root-admin page aliases before nested stored route paths", async () => {
+    const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+      pages: [
+        createPageRecord({
+          webAppPageId: "22222222-2222-4222-8222-222222222222",
+          pageKey: "root-admin-overview",
+          displayLabel: "Overview",
+          routeSegment: "overview",
+          normalizedRouteSegment: "overview",
+          resolvedFullRoutePath: "/root-admin/overview",
+          sortOrder: 0,
+        }),
+        createPageRecord({
+          webAppPageId: "33333333-3333-4333-8333-333333333333",
+          pageKey: "root-admin-users",
+          displayLabel: "Root Users",
+          routeSegment: "users",
+          normalizedRouteSegment: "users",
+          resolvedFullRoutePath: "/root-admin/overview/users",
+          parentPageId: "22222222-2222-4222-8222-222222222222",
+          sortOrder: 1,
+        }),
+        createPageRecord({
+          webAppPageId: "44444444-4444-4444-8444-444444444444",
+          pageKey: "root-admin-web-app-hierarchy",
+          displayLabel: "Page Structure",
+          routeSegment: "web-app-hierarchy",
+          normalizedRouteSegment: "web-app-hierarchy",
+          resolvedFullRoutePath: "/root-admin/overview/web-app-hierarchy",
+          parentPageId: "22222222-2222-4222-8222-222222222222",
+          sortOrder: 2,
+        }),
+      ],
+    });
+    const repository = createInMemoryWebAppPageSettingsRepository({
+      contextNavItems: [
+        {
+          webAppPageContextNavItemId: "55555555-5555-4555-8555-555555555555",
+          ownerWebAppPageId: "22222222-2222-4222-8222-222222222222",
+          targetWebAppPageId: "33333333-3333-4333-8333-333333333333",
+          sortOrder: 0,
+          createdAt: new Date("2026-04-28T10:00:00.000Z"),
+          updatedAt: new Date("2026-04-28T10:00:00.000Z"),
+        },
+        {
+          webAppPageContextNavItemId: "66666666-6666-4666-8666-666666666666",
+          ownerWebAppPageId: "22222222-2222-4222-8222-222222222222",
+          targetWebAppPageId: "44444444-4444-4444-8444-444444444444",
+          sortOrder: 1,
+          createdAt: new Date("2026-04-28T10:00:00.000Z"),
+          updatedAt: new Date("2026-04-28T10:00:00.000Z"),
+        },
+      ],
+    });
+    const service = createWebAppPageSettingsService(
+      repository,
+      createStubWebAppHierarchySettingsSeam(hierarchyRepository),
+    );
+
+    const result = await service.getWebAppPageContextNavProjection({
+      rootFamilyId: "root-admin",
+      pageKey: "overview",
+    });
+
+    expect(result.items).toEqual([
+      expect.objectContaining({
+        displayLabel: "Root Users",
+        shellPageKey: "users",
+        resolvedFullRoutePath: "/root-admin/overview/users",
+        effectiveIconKey: "page-default",
+      }),
+      expect.objectContaining({
+        displayLabel: "Page Structure",
+        shellPageKey: "web-app-hierarchy",
+        resolvedFullRoutePath: "/root-admin/overview/web-app-hierarchy",
+        effectiveIconKey: "page-default",
+      }),
+    ]);
+  });
+
+  it("TC-WEB-PAGE-SET-EDGE-007 preserves target page keys and icons when dynamic root-admin routes are not fixed shell sections", async () => {
+    const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+      pages: [
+        createPageRecord({
+          webAppPageId: "22222222-2222-4222-8222-222222222222",
+          pageKey: "overview",
+          displayLabel: "Overview",
+          routeSegment: "overview",
+          normalizedRouteSegment: "overview",
+          resolvedFullRoutePath: "/root-admin",
+          sortOrder: 0,
+        }),
+        createPageRecord({
+          webAppPageId: "33333333-3333-4333-8333-333333333333",
+          pageKey: "page-structure",
+          displayLabel: "Page Structure",
+          routeSegment: "page-structure",
+          normalizedRouteSegment: "page-structure",
+          resolvedFullRoutePath: "/root-admin/page-structure",
+          sortOrder: 1,
+        }),
+      ],
+    });
+    const repository = createInMemoryWebAppPageSettingsRepository({
+      contextNavItems: [
+        {
+          webAppPageContextNavItemId: "44444444-4444-4444-8444-444444444444",
+          ownerWebAppPageId: "22222222-2222-4222-8222-222222222222",
+          targetWebAppPageId: "33333333-3333-4333-8333-333333333333",
+          sortOrder: 0,
+          createdAt: new Date("2026-04-28T10:00:00.000Z"),
+          updatedAt: new Date("2026-04-28T10:00:00.000Z"),
+        },
+      ],
+      settings: [
+        {
+          webAppPageSettingsId: "55555555-5555-4555-8555-555555555555",
+          webAppPageId: "33333333-3333-4333-8333-333333333333",
+          parentPageId: null,
+          iconKey: "page-list",
+          showInTopNav: false,
+          topNavOrder: null,
+          pageTemplateKey: "static-html-page",
+          createdAt: new Date("2026-04-28T10:00:00.000Z"),
+          updatedAt: new Date("2026-04-28T10:00:00.000Z"),
+        },
+      ],
+    });
+    const service = createWebAppPageSettingsService(
+      repository,
+      createStubWebAppHierarchySettingsSeam(hierarchyRepository),
+    );
+
+    const result = await service.getWebAppPageContextNavProjection({
+      rootFamilyId: "root-admin",
+      pageKey: "overview",
+    });
+
+    expect(result.items).toEqual([
+      expect.objectContaining({
+        webAppPageId: "33333333-3333-4333-8333-333333333333",
+        shellPageKey: "page-structure",
+        displayLabel: "Page Structure",
+        resolvedFullRoutePath: "/root-admin/page-structure",
+        iconKey: "page-list",
+        effectiveIconKey: "page-list",
       }),
     ]);
   });

@@ -207,6 +207,17 @@ This slice should not own:
 - repo materialization
 - arbitrary icon assets or uploaded media
 
+Async/background job posture:
+
+- this slice does not require background job processing because settings reads,
+  writes, option projection, and context-nav projection are bounded
+  root-operator request/response operations
+- no durable job entity, enqueue seam, handler seam, retry/dead-letter posture,
+  or cleanup job is introduced by the context-nav ownership projection
+- cleanup semantics remain explicit-row replacement on the selected settings
+  owner page; there are no abandoned external resources or delayed cleanup
+  states
+
 Related topology extension:
 
 - `webAppHierarchyBuilder`
@@ -259,7 +270,11 @@ Important rules:
 - unique target membership per owner page
 - deterministic order per owner page
 - target pages must come from approved curated page reads
-- no explicit rows means effective self-only fallback
+- exact settings reads use an effective self-only fallback when no explicit
+  rows exist
+- context-nav projection reads use the viewed page's immediate parent as the
+  context-nav owner when one exists, so sibling child pages inherit the same
+  owner-owned nav setup; top-level pages use their own rows
 
 ### Module landing-page truth
 

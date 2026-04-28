@@ -27,8 +27,11 @@
   Constraints / Notes: Primary key.
 - `owner_web_app_page_id`
   Type / Shape: `UUID`
-  Description: Page that owns the curated context-nav list.
-  Constraints / Notes: Required.
+  Description: Page that owns the curated context-nav list for itself when it
+  has no parent, or for its immediate child-page sibling group when those
+  children are viewed.
+  Constraints / Notes: Required. Projection reads use
+  `viewedPage.parentPageId ?? viewedPage.webAppPageId` as the owner lookup.
 - `target_web_app_page_id`
   Type / Shape: `UUID`
   Description: Page included as a selectable context-nav destination.
@@ -70,6 +73,12 @@
   Effect on stored fields: Stored order remains deterministic and duplicates are
   rejected before persistence.
 - Mutation rule: When no explicit rows exist, the effective API behavior falls
-  back to a self-only context-nav item without storing a synthetic row.
+  back to a self-only context-nav item for exact settings reads without storing
+  a synthetic row.
   Effect on stored fields: Durable storage remains explicit-only while read
   behavior stays truthful for operators.
+- Projection rule: Context-nav projection reads inherit from the viewed page's
+  immediate parent when one exists, so sibling pages share the same owner-owned
+  context-nav setup.
+  Effect on stored fields: No storage migration is required because
+  `owner_web_app_page_id` already represents the settings owner page.

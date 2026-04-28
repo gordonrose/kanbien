@@ -80,7 +80,11 @@ function findNodeIdForPageKey(nodes, pageKey) {
   }
 
   for (const node of nodes) {
-    if (node?.kind === "page" && node.meta?.pageKey === pageKey) {
+    const nodePageKey = node?.meta?.pageKey;
+    if (
+      node?.kind === "page"
+      && (nodePageKey === pageKey || `root-admin-${nodePageKey}` === pageKey)
+    ) {
       return node.id;
     }
 
@@ -169,14 +173,103 @@ function findPageNodeByPageId(nodes, pageId) {
   return null;
 }
 
-function adaptPageNode(page, meta) {
+function findParentPageNodeByChildPageId(nodes, childPageId, parentNode = null) {
+  if (typeof childPageId !== "string" || childPageId.length === 0) {
+    return null;
+  }
+
+  for (const node of nodes) {
+    if (node?.kind === "page" && node.meta?.pageId === childPageId) {
+      return parentNode;
+    }
+
+    const nested = findParentPageNodeByChildPageId(
+      node.children ?? [],
+      childPageId,
+      node?.kind === "page" ? node : parentNode,
+    );
+    if (nested) {
+      return nested;
+    }
+  }
+
+  return null;
+}
+
+function getEffectiveParentPageNode(node, tree) {
+  if (node?.kind !== "page") {
+    return null;
+  }
+
+  if (node.meta?.parentPageId) {
+    const explicitParent = findPageNodeByPageId(tree, node.meta.parentPageId);
+    if (explicitParent) {
+      return explicitParent;
+    }
+  }
+
+  return findParentPageNodeByChildPageId(tree, node.meta?.pageId);
+}
+
+function collectPageNodes(nodes, collected = []) {
+  for (const node of nodes) {
+    if (node?.kind === "page") {
+      collected.push(node);
+    }
+
+    collectPageNodes(node?.children ?? [], collected);
+  }
+
+  return collected;
+}
+
+function countPageChildren(node) {
+  return Array.isArray(node?.children) ? node.children.filter((child) => child?.kind === "page").length : 0;
+}
+
+function containsPageId(node, pageId) {
+  if (!node || typeof pageId !== "string" || pageId.length === 0) {
+    return false;
+  }
+
+  for (const child of node.children ?? []) {
+    if (child?.kind === "page" && child.meta?.pageId === pageId) {
+      return true;
+    }
+
+    if (containsPageId(child, pageId)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function isNestedChildCandidate(selectedPageNode, candidatePageId) {
+  for (const child of selectedPageNode?.children ?? []) {
+    if (child?.kind === "page" && child.meta?.pageId === candidatePageId) {
+      return false;
+    }
+
+    if (containsPageId(child, candidatePageId)) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function adaptPageNode(page, meta, parentPageId = null) {
+  const effectiveParentPageId = page.parentPageId ?? parentPageId;
   return {
     id: `page:${page.webAppPageId}`,
     title: page.displayLabel,
     status: page.status,
     changed: false,
     kind: "page",
-    children: Array.isArray(page.children) ? page.children.map((child) => adaptPageNode(child, meta)) : [],
+    children: Array.isArray(page.children)
+      ? page.children.map((child) => adaptPageNode(child, meta, page.webAppPageId))
+      : [],
     meta: {
       rootFamilyId: page.rootFamilyId,
       rootFamilyLabel: meta.rootFamilyLabel,
@@ -184,7 +277,7 @@ function adaptPageNode(page, meta) {
       moduleLabel: meta.moduleLabel,
       moduleKey: meta.moduleKey,
       pageId: page.webAppPageId,
-      parentPageId: page.parentPageId,
+      parentPageId: effectiveParentPageId,
       pageKey: page.pageKey,
       placementType: page.placementType,
       sortOrder: page.sortOrder,
@@ -393,6 +486,15 @@ export function renderWebAppHierarchyWorkspaceShell() {
                   </span>
                 </label>
               </div>
+              <div id="web-app-page-children-form" class="form-page-grid hidden">
+                <div class="form-field form-field-span-2">
+                  <span class="form-field-label" id="web-app-page-children-label">Child pages</span>
+                  <div id="web-app-page-children-host"></div>
+                  <span id="web-app-page-children-help" class="form-field-help">
+                    Choose which available pages should sit directly under this top-level page.
+                  </span>
+                </div>
+              </div>
             </section>
 
             <section
@@ -456,7 +558,7 @@ export function renderWebAppHierarchyWorkspaceShell() {
                 <div class="form-field form-field-span-2">
                   <span class="form-field-label" id="web-app-page-settings-context-nav-label">Context navigation</span>
                   <div id="web-app-page-settings-context-nav-host"></div>
-                  <span class="form-field-help">
+                  <span id="web-app-page-settings-context-nav-help" class="form-field-help">
                     If nothing is selected, the selected page becomes the default single-item context-nav destination.
                   </span>
                 </div>
@@ -465,6 +567,7 @@ export function renderWebAppHierarchyWorkspaceShell() {
 
             <div id="web-app-page-settings-actions" class="form-page-footer hidden">
               <button id="web-app-module-landing-save" class="accessibility-chip hidden" type="button">Save landing page</button>
+              <button id="web-app-page-children-save" class="accessibility-chip hidden" type="button">Save child pages</button>
               <button id="web-app-page-settings-save" type="button" class="accessibility-chip active hidden">Save page settings</button>
             </div>
           </form>
@@ -611,6 +714,32 @@ export function createWebAppHierarchyWorkspaceController({
     });
   }
 
+  const pageChildrenHost = root.querySelector("#web-app-page-children-host");
+  if (pageChildrenHost instanceof HTMLElement) {
+    pageChildrenHost.innerHTML = renderFormDrawerSelect({
+      rootId: "web-app-page-children",
+      inputId: "web-app-page-children-value",
+      inputName: "childPageIds",
+      value: "",
+      triggerId: "web-app-page-children-trigger",
+      labelId: "web-app-page-children-label",
+      panelTitleId: "web-app-page-children-modal-title",
+      searchInputId: "web-app-page-children-search",
+      optionListId: "web-app-page-children-options",
+      emptySummary: "No child pages selected",
+      triggerLabel: "No child pages selected",
+      triggerMeta: "0 selected",
+      drawerEyebrow: "Available Pages",
+      dialogTitle: "Choose child pages",
+      closeLabel: "Close child-page selector",
+      searchPlaceholder: "Search available pages",
+      selectedTitle: "Selected child pages",
+      selectedEmpty: "No pages are assigned as direct children.",
+      availableTitle: "Available pages",
+      emptyMessage: "No pages match this search.",
+    });
+  }
+
   const summary = root.querySelector("#root-admin-web-app-hierarchy-summary");
   const selectionSummary = root.querySelector("#root-admin-web-app-hierarchy-selection-summary");
   const pageStatus = root.querySelector("#web-app-hierarchy-page-status");
@@ -629,9 +758,16 @@ export function createWebAppHierarchyWorkspaceController({
   const pageSettingsContextNav = root.querySelector("#web-app-page-settings-context-nav");
   const pageSettingsContextNavValueInput = root.querySelector("#web-app-page-settings-context-nav-value");
   const pageSettingsContextNavOptions = root.querySelector("#web-app-page-settings-context-nav-options");
+  const pageSettingsContextNavHelp = root.querySelector("#web-app-page-settings-context-nav-help");
+  const pageChildrenForm = root.querySelector("#web-app-page-children-form");
+  const pageChildrenDrawerSelect = root.querySelector("#web-app-page-children");
+  const pageChildrenValueInput = root.querySelector("#web-app-page-children-value");
+  const pageChildrenOptions = root.querySelector("#web-app-page-children-options");
+  const pageChildrenHelp = root.querySelector("#web-app-page-children-help");
   const moduleLandingForm = root.querySelector("#web-app-module-landing-form");
   const moduleLandingSelect = root.querySelector("#web-app-module-landing-select");
   const moduleLandingSaveButton = root.querySelector("#web-app-module-landing-save");
+  const pageChildrenSaveButton = root.querySelector("#web-app-page-children-save");
   const pageSettingsSaveButton = root.querySelector("#web-app-page-settings-save");
   const refreshButton = root.querySelector("#web-app-hierarchy-refresh-button");
   const previewButton = root.querySelector("#web-app-hierarchy-preview-button");
@@ -801,7 +937,7 @@ export function createWebAppHierarchyWorkspaceController({
     }
   }
 
-  function renderStructureState(html, { showLandingForm = false } = {}) {
+  function renderStructureState(html, { showLandingForm = false, showChildrenForm = false } = {}) {
     if (structureContent instanceof HTMLElement) {
       structureContent.innerHTML = html.trim().startsWith("<") ? html : wrapFormCardMessage(html);
     }
@@ -814,8 +950,16 @@ export function createWebAppHierarchyWorkspaceController({
       moduleLandingSaveButton.classList.toggle("hidden", !showLandingForm);
     }
 
+    if (pageChildrenForm instanceof HTMLElement) {
+      pageChildrenForm.classList.toggle("hidden", !showChildrenForm);
+    }
+
+    if (pageChildrenSaveButton instanceof HTMLElement) {
+      pageChildrenSaveButton.classList.toggle("hidden", !showChildrenForm);
+    }
+
     if (pageSettingsActions instanceof HTMLElement) {
-      const showActions = showLandingForm || !pageSettingsShell?.classList.contains("hidden");
+      const showActions = showLandingForm || showChildrenForm || !pageSettingsShell?.classList.contains("hidden");
       pageSettingsActions.classList.toggle("hidden", !showActions);
     }
   }
@@ -853,8 +997,93 @@ export function createWebAppHierarchyWorkspaceController({
     );
   }
 
+  function describeChildPageCandidate(candidate, selectedPageNode) {
+    if (candidate.meta?.parentPageId === selectedPageNode?.meta?.pageId) {
+      return "Current child";
+    }
+
+    if (candidate.meta?.parentPageId) {
+      const parentNode = findPageNodeByPageId(latestHierarchyTree, candidate.meta.parentPageId);
+      return parentNode ? `Currently under ${parentNode.title}` : "Child page";
+    }
+
+    return "Top-level page";
+  }
+
+  function populatePageChildrenOptions(selectedPageNode) {
+    if (!(pageChildrenOptions instanceof HTMLElement) || !(pageChildrenValueInput instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const selectedChildIds = (selectedPageNode.children ?? [])
+      .filter((child) => child?.kind === "page")
+      .map((child) => child.meta.pageId);
+
+    const availablePages = collectPageNodes(latestHierarchyTree).filter((candidate) => {
+      if (candidate.meta?.pageId === selectedPageNode.meta.pageId) {
+        return false;
+      }
+
+      if (candidate.meta?.rootFamilyId !== selectedPageNode.meta.rootFamilyId) {
+        return false;
+      }
+
+      if (candidate.meta?.moduleId !== selectedPageNode.meta.moduleId) {
+        return false;
+      }
+
+      return !isNestedChildCandidate(selectedPageNode, candidate.meta?.pageId);
+    });
+
+    pageChildrenValueInput.value = selectedChildIds.join(",");
+    pageChildrenOptions.innerHTML = renderFormDrawerSelectOptions(
+      availablePages.map((candidate) => ({
+        value: candidate.meta.pageId,
+        label: candidate.title,
+        description: candidate.meta.resolvedFullRoutePath ?? candidate.meta.pageKey,
+        attribute: describeChildPageCandidate(candidate, selectedPageNode),
+      })),
+    );
+
+    if (pageChildrenHelp instanceof HTMLElement) {
+      const childCount = selectedChildIds.length;
+      const childPhrase = childCount === 1 ? "1 direct child page" : `${childCount} direct child pages`;
+      pageChildrenHelp.textContent = `Top-level page: selections here define ${selectedPageNode.title}'s ${childPhrase}. Saved child pages inherit this page's context-nav display.`;
+    }
+
+    if (pageChildrenDrawerSelect instanceof HTMLElement) {
+      refreshFormDrawerSelect(pageChildrenDrawerSelect);
+    }
+  }
+
+  function refreshPageChildrenFormForCurrentSelection() {
+    const selectedId = mount.getViewState().selectedId;
+    const currentSelectedNode = findNodeById(latestHierarchyTree, selectedId);
+    const effectiveParentNode = getEffectiveParentPageNode(currentSelectedNode, latestHierarchyTree);
+
+    if (currentSelectedNode?.kind !== "page" || effectiveParentNode) {
+      return;
+    }
+
+    selectedNode = currentSelectedNode;
+    populatePageChildrenOptions(currentSelectedNode);
+  }
+
+  function refreshPageStructureForCurrentSelection() {
+    const selectedId = mount.getViewState().selectedId;
+    const currentSelectedNode = findNodeById(latestHierarchyTree, selectedId);
+
+    if (currentSelectedNode?.kind !== "page") {
+      return;
+    }
+
+    selectedNode = currentSelectedNode;
+    renderPageStructure(currentSelectedNode);
+  }
+
   function renderPageStructure(node) {
-    const parentNode = findPageNodeByPageId(latestHierarchyTree, node.meta.parentPageId);
+    const parentNode = getEffectiveParentPageNode(node, latestHierarchyTree);
+    const canDefineChildren = !parentNode;
 
     renderStructureState(
       renderReadOnlyFieldsBlock({
@@ -870,8 +1099,12 @@ export function createWebAppHierarchyWorkspaceController({
           { label: "Topology template", value: node.meta.templateKey ?? "Not assigned" },
         ],
       }),
-      { showLandingForm: false },
+      { showLandingForm: false, showChildrenForm: canDefineChildren },
     );
+
+    if (canDefineChildren) {
+      populatePageChildrenOptions(node);
+    }
   }
 
   function renderRootFamilyStructure(node) {
@@ -950,7 +1183,42 @@ export function createWebAppHierarchyWorkspaceController({
     }
   }
 
-  function populateContextNavOptions(options, selectedIds) {
+  function formatContextNavHelp(selectedPageNode) {
+    const childCount = countPageChildren(selectedPageNode);
+    const childPhrase =
+      childCount === 1
+        ? "its 1 child page"
+        : childCount > 1
+          ? `its ${childCount} child pages`
+          : "any child pages added later";
+
+    const parentNode = getEffectiveParentPageNode(selectedPageNode, latestHierarchyTree);
+    if (parentNode) {
+      const parentLabel = parentNode?.title ?? "its parent page";
+      return `${selectedPageNode.title} inherits the context-nav it displays from ${parentLabel}. Selections here define what ${childPhrase} inherit.`;
+    }
+
+    return `Top-level page: selections here define the context-nav this page displays and what ${childPhrase} inherit.`;
+  }
+
+  function describeEligibleContextNavTarget(target, selectedPageNode) {
+    if (target.webAppPageId === selectedPageNode?.meta?.pageId) {
+      return "Selected page";
+    }
+
+    if (target.parentPageId === selectedPageNode?.meta?.pageId) {
+      return "Immediate child";
+    }
+
+    if (target.parentPageId) {
+      const parentNode = findPageNodeByPageId(latestHierarchyTree, target.parentPageId);
+      return parentNode ? `Child of ${parentNode.title}` : "Child page";
+    }
+
+    return "Top-level page";
+  }
+
+  function populateContextNavOptions(options, selectedIds, selectedPageNode) {
     if (!(pageSettingsContextNavOptions instanceof HTMLElement) || !(pageSettingsContextNavValueInput instanceof HTMLInputElement)) {
       return;
     }
@@ -962,8 +1230,13 @@ export function createWebAppHierarchyWorkspaceController({
         value: target.webAppPageId,
         label: target.displayLabel,
         description: target.resolvedFullRoutePath ?? target.pageKey,
+        attribute: describeEligibleContextNavTarget(target, selectedPageNode),
       })),
     );
+
+    if (pageSettingsContextNavHelp instanceof HTMLElement) {
+      pageSettingsContextNavHelp.textContent = formatContextNavHelp(selectedPageNode);
+    }
 
     if (pageSettingsContextNav instanceof HTMLElement) {
       refreshFormDrawerSelect(pageSettingsContextNav);
@@ -997,7 +1270,7 @@ export function createWebAppHierarchyWorkspaceController({
       ? settings.contextNavItems.filter((item) => item.source === "explicit").map((item) => item.targetWebAppPageId)
       : [];
 
-    populateContextNavOptions(options, explicitContextIds);
+    populateContextNavOptions(options, explicitContextIds, selectedPageNode);
 
     if (pageSettingsIconGrid instanceof HTMLElement) {
       refreshFormIconGrid(pageSettingsIconGrid);
@@ -1122,6 +1395,8 @@ export function createWebAppHierarchyWorkspaceController({
         currentPageKey: getCurrentPage(),
         currentPathname: getCurrentPathname(),
       });
+      refreshPageStructureForCurrentSelection();
+      refreshPageChildrenFormForCurrentSelection();
       syncingSelectionFromRoute = false;
       loadedOnce = true;
       refreshWorkflowSummary();
@@ -1149,6 +1424,8 @@ export function createWebAppHierarchyWorkspaceController({
       const response = await syncDiscoveryIntoHierarchy();
       syncingSelectionFromRoute = true;
       latestHierarchyTree = mountHierarchyResponse(mount, response.tree, mount.getViewState());
+      refreshPageStructureForCurrentSelection();
+      refreshPageChildrenFormForCurrentSelection();
       syncingSelectionFromRoute = false;
       loadedOnce = true;
       refreshWorkflowSummary();
@@ -1308,6 +1585,8 @@ export function createWebAppHierarchyWorkspaceController({
       currentId: selectedNodeId,
       selectedId: selectedNodeId,
     });
+    refreshPageStructureForCurrentSelection();
+    refreshPageChildrenFormForCurrentSelection();
     loadedOnce = true;
     refreshWorkflowSummary();
     setShellMessage(`Applied ${applied.appliedPageCount} design-system proposal(s).`, "mutation-success");
@@ -1388,12 +1667,82 @@ export function createWebAppHierarchyWorkspaceController({
     setShellMessage(`Saved landing page for ${selectedNode.title}.`, "mutation-success");
   }
 
+  async function savePageChildren() {
+    if (selectedNode?.kind !== "page" || getEffectiveParentPageNode(selectedNode, latestHierarchyTree)) {
+      setShellMessage("Select a top-level page before saving child pages.", "blocked-action");
+      return;
+    }
+
+    try {
+      closeUnrelatedFormSurfaces();
+
+      const viewState = mount.getViewState();
+      const currentChildIds = (selectedNode.children ?? [])
+        .filter((child) => child?.kind === "page")
+        .map((child) => child.meta.pageId);
+      const desiredChildIds = collectContextNavIds(pageChildrenValueInput);
+      const desiredChildIdSet = new Set(desiredChildIds);
+      const currentChildIdSet = new Set(currentChildIds);
+      const childIdsToAdd = desiredChildIds.filter((pageId) => !currentChildIdSet.has(pageId));
+      const childIdsToRemove = currentChildIds.filter((pageId) => !desiredChildIdSet.has(pageId));
+
+      for (const pageId of childIdsToAdd) {
+        const targetNode = findPageNodeByPageId(latestHierarchyTree, pageId);
+        if (!targetNode) {
+          continue;
+        }
+
+        await movePage(pageId, {
+          rootFamilyId: targetNode.meta.rootFamilyId,
+          webAppModuleId: selectedNode.meta.moduleId,
+          targetParentPageId: selectedNode.meta.pageId,
+          placementType: "child-page",
+          sortOrder: desiredChildIds.indexOf(pageId),
+        });
+      }
+
+      for (const pageId of childIdsToRemove) {
+        const targetNode = findPageNodeByPageId(latestHierarchyTree, pageId);
+        if (!targetNode) {
+          continue;
+        }
+
+        await movePage(pageId, {
+          rootFamilyId: targetNode.meta.rootFamilyId,
+          webAppModuleId: selectedNode.meta.moduleId,
+          targetParentPageId: undefined,
+          placementType: "module-root",
+        });
+      }
+
+      await loadHierarchy({
+        currentId: viewState.currentId,
+        selectedId: selectedNode.id,
+      });
+
+      const changedCount = childIdsToAdd.length + childIdsToRemove.length;
+      setShellMessage(
+        changedCount > 0
+          ? `Saved ${changedCount} child-page assignment change(s) for ${selectedNode.title}.`
+          : `Child pages for ${selectedNode.title} were already current.`,
+        "mutation-success",
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "The child page assignments could not be saved.";
+      setShellMessage(message, "error");
+    }
+  }
+
   pageSettingsSaveButton?.addEventListener("click", () => {
     void savePageSettings();
   });
 
   moduleLandingSaveButton?.addEventListener("click", () => {
     void saveModuleLandingPage();
+  });
+
+  pageChildrenSaveButton?.addEventListener("click", () => {
+    void savePageChildren();
   });
 
   function openNode({ id, node }) {

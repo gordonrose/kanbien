@@ -123,4 +123,36 @@ describe("web app page settings security flows", () => {
     expect(invalidOptions.status).toBe(400);
     expect(invalidOptions.body.code).toBe("INVALID_REQUEST");
   });
+
+  it("TC-WEB-PAGE-SET-SEC-003 protects context-nav projection behind the page-settings read capability", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+      pages: [createPageRecord()],
+    });
+    mountWebAppPageSettingsFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppPageSettingsRepository(),
+      createStubWebAppHierarchySettingsSeam(hierarchyRepository),
+    );
+
+    const missing = await invokeJson<ErrorResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-page-settings/root-families/root-admin/pages/web-app-hierarchy/context-nav",
+    });
+    expect(missing.status).toBe(401);
+
+    const identity = harness.seedAuthIdentity();
+    harness.setRootUserCapabilities(identity.rootUserId, ["web-app-page-settings.update"]);
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const denied = await invokeJson<ErrorResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-page-settings/root-families/root-admin/pages/web-app-hierarchy/context-nav",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+    });
+    expect(denied.status).toBe(403);
+    expect(denied.body.code).toBe("FORBIDDEN");
+  });
 });

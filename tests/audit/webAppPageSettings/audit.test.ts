@@ -93,4 +93,40 @@ describe("web app page settings audit visibility", () => {
       ]),
     );
   });
+
+  it("TC-WEB-PAGE-SET-AUD-003 keeps denied context-nav projection reads visible through platform security audit events", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const hierarchyRepository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+      pages: [createPageRecord()],
+    });
+    mountWebAppPageSettingsFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppPageSettingsRepository(),
+      createStubWebAppHierarchySettingsSeam(hierarchyRepository),
+    );
+    const identity = harness.seedAuthIdentity();
+    harness.setRootUserCapabilities(identity.rootUserId, ["web-app-page-settings.update"]);
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const denied = await invokeJson<ErrorResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-page-settings/root-families/root-admin/pages/web-app-hierarchy/context-nav",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+    });
+
+    expect(denied.status).toBe(403);
+    expect(denied.body.code).toBe("FORBIDDEN");
+    expect(harness.getSecurityAuditEvents()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          eventType: "root_capability_denied",
+          eventOutcome: "failure",
+          rootUserId: identity.rootUserId,
+          authPrincipalId: identity.authPrincipalId,
+        }),
+      ]),
+    );
+  });
 });

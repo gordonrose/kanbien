@@ -177,6 +177,44 @@ security controls, compliance logic, migrations, or incident/monitoring logic:
 - model/tool/version traceability
 - expert-review note
 
+### User-visible runtime defect fix
+
+Required before calling a browser-visible or otherwise runtime-observed defect
+fixed, complete, working, or ready for user verification:
+
+- issue-reconciliation note under
+  `docs/workspace/issue-reconciliations/` when the defect escaped prior
+  verification or the user reports that a claimed fix is not visible
+- live data/API evidence naming the concrete persistence rows, projection
+  payload, or route response shape behind the failing screen
+- active runtime process evidence naming the user-facing port, process start
+  time or process identity, and whether a restart was required
+- served-asset evidence for browser defects, confirming the running app serves
+  the edited frontend module or static asset
+- restart evidence when backend, transport, route, migration, server-side
+  projection, or other runtime-loaded code changed
+- mock-honesty evidence showing relevant fixtures do not encode rejected,
+  invented, or production-absent fallback behavior
+- executable regression coverage that matches the observed live-data shape
+- scoped command results after the final source change
+- final response checklist covering:
+  - live process checked
+  - backend restarted if needed
+  - served asset checked when frontend-visible
+  - live data/API inspected
+  - mock honesty checked
+  - regression added or repaired
+  - scoped tests run
+
+Recommended template:
+
+- [`runtime-bug-fix-evidence-template.md`](/home/gordon/kanbien/docs/templates/runtime-bug-fix-evidence-template.md)
+
+If any required evidence is unavailable, classify the result as
+`implementation-only`, `partially verified`, or `blocked on runtime
+verification`. Do not present the change as user-visible until runtime
+verification is complete.
+
 ## Required Documentation Dimensions For Build-From-Spec Work
 
 To make a capability reconstructable from docs and templates, document:
