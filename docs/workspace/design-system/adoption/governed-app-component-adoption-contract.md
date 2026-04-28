@@ -107,6 +107,11 @@ behavior, or page-local controller logic into the app.
     destination-link render, and menu-render behavior from `contextNav.mjs`
   - keeps route-specific page-settings fetch and current-page wiring in
     `rootAdminShell/assets/app.mjs`
+- `rootAdminShell` page shell
+  - imports the DS-owned page-shell controller seam from
+    `/design-system/assets/pageShellController.mjs`
+  - uses shared breadcrumb, chrome, language, and tooltip controllers instead
+    of re-owning those interaction grammars locally
 - `rootAdminShell` `web-app-hierarchy`
   - imports shared hierarchy-tree and form-template CSS
   - imports the DS-owned workspace render/controller seam from
