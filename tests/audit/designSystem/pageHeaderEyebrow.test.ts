@@ -152,6 +152,11 @@ describe("design system page headers", () => {
     expect(hierarchyWorkspace).toContain('<div class="form-field">\n                  <span class="form-field-label" id="web-app-page-settings-icon-label">Icon</span>');
     expect(hierarchyWorkspace).toContain('<label class="form-toggle-row">\n                  <span class="form-toggle-copy">');
     expect(hierarchyWorkspace).not.toContain('<label class="form-toggle-row form-field-span-2">\n                  <span class="form-toggle-copy">');
+    expect(hierarchyWorkspace).toContain('<div class="form-page-section-heading">\n      ${eyebrow ? `<p class="top-nav-preview-eyebrow">${escapeHtml(eyebrow)}</p>` : ""}\n      <h2 class="form-page-section-title">${escapeHtml(title)}</h2>');
+    expect(hierarchyWorkspace).toContain('<div class="form-page-section-heading">\n                <p class="top-nav-preview-eyebrow">Section 02</p>\n                <h3 id="web-app-page-settings-section-title" class="form-page-section-title">Page settings</h3>');
+    expect(hierarchyWorkspace).toContain('<div id="web-app-hierarchy-structure-content" class="form-page-section-stack">');
+    expect(hierarchyWorkspace).not.toContain("Topology-owned fields stay here so page configuration remains separate from structural placement truth.");
+    expect(hierarchyWorkspace).not.toContain("Configure the selected page's governed shell behavior without changing topology-owned placement or naming truth.");
     expect(hierarchyWorkspace).toContain("function syncProposalControls()");
     expect(hierarchyWorkspace).toContain('previewButton.classList.toggle("hidden", !hasPendingProposal);');
     expect(hierarchyWorkspace).toContain('applyButton.classList.toggle("hidden", !hasPendingProposal && !hasLoadedPreview);');
@@ -175,6 +180,10 @@ describe("design system page headers", () => {
   border: 0.0625rem solid var(--line);
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--surface-2) 80%, white);
+}`);
+    expect(styles).toContain(`.form-page-section-stack {
+  display: grid;
+  gap: 1rem;
 }`);
     expect(formTemplateStyles).toContain(`.form-field,
 .form-toggle-row {

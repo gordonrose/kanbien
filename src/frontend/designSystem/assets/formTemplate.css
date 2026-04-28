@@ -102,6 +102,11 @@
   text-transform: uppercase;
 }
 
+.form-page-section-stack {
+  display: grid;
+  gap: 1rem;
+}
+
 .form-page-intro {
   gap: 1.25rem;
   padding-bottom: 1.15rem;

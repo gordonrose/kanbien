@@ -413,14 +413,11 @@ function renderReadOnlyField(label, value, help = "") {
   `;
 }
 
-function renderReadOnlyFieldsBlock({ eyebrow, title, copy, fields }) {
+function renderReadOnlyFieldsBlock({ eyebrow, title, fields }) {
   return `
-    <div class="form-page-section-header">
-      <div>
-        ${eyebrow ? `<p class="top-nav-preview-eyebrow">${escapeHtml(eyebrow)}</p>` : ""}
-        <h2 class="form-page-section-title">${escapeHtml(title)}</h2>
-      </div>
-      ${copy ? `<p class="form-page-section-copy">${escapeHtml(copy)}</p>` : ""}
+    <div class="form-page-section-heading">
+      ${eyebrow ? `<p class="top-nav-preview-eyebrow">${escapeHtml(eyebrow)}</p>` : ""}
+      <h2 class="form-page-section-title">${escapeHtml(title)}</h2>
     </div>
     <div class="form-page-grid">
       ${fields.map((field) => renderReadOnlyField(field.label, field.value, field.help ?? "")).join("")}
@@ -473,7 +470,7 @@ export function renderWebAppHierarchyWorkspaceShell() {
                   </p>
                 </div>
               </div>
-              <div id="web-app-hierarchy-structure-content">
+              <div id="web-app-hierarchy-structure-content" class="form-page-section-stack">
                 <p class="form-page-section-copy">Select a node from the hierarchy tree to review structure-owned fields.</p>
               </div>
               <div id="web-app-module-landing-form" class="form-page-grid hidden">
@@ -501,14 +498,9 @@ export function renderWebAppHierarchyWorkspaceShell() {
               class="form-page-section"
               aria-labelledby="web-app-page-settings-section-title"
             >
-              <div class="form-page-section-header">
-                <div>
-                  <p class="top-nav-preview-eyebrow">Section 02</p>
-                  <h3 id="web-app-page-settings-section-title" class="form-page-section-title">Page settings</h3>
-                </div>
-                <p class="form-page-section-copy">
-                  Configure the selected page's governed shell behavior without changing topology-owned placement or naming truth.
-                </p>
+              <div class="form-page-section-heading">
+                <p class="top-nav-preview-eyebrow">Section 02</p>
+                <h3 id="web-app-page-settings-section-title" class="form-page-section-title">Page settings</h3>
               </div>
 
               <div id="web-app-page-settings-empty">
@@ -1105,7 +1097,6 @@ export function createWebAppHierarchyWorkspaceController({
       renderReadOnlyFieldsBlock({
         eyebrow: "Section 01",
         title: "Page structure",
-        copy: "Topology-owned fields stay here so page configuration remains separate from structural placement truth.",
         fields: [
           { label: "Page name", value: node.title },
           { label: "Module", value: node.meta.moduleLabel ?? "Unknown" },
