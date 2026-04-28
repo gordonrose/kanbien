@@ -105,7 +105,7 @@ const directoryConfigs = {
       minPrefixLength: 3,
     },
     fields: [
-      { name: "email", label: "Email", type: "email", required: true, autocomplete: "email" },
+      { name: "email", label: "Email", type: "email", required: true, autocomplete: "email", span: 2 },
       { name: "firstName", label: "First name", type: "text", autocomplete: "given-name" },
       { name: "lastName", label: "Last name", type: "text", autocomplete: "family-name" },
       {
@@ -290,7 +290,7 @@ function renderField(field, mode, config) {
     const optionSource = field.type === "tenant-select" ? " data-tenant-options" : "";
 
     return `
-      <label class="drawer-form-field">
+      <label class="drawer-form-field${field.span === 2 ? " form-field-span-2" : ""}">
         <span class="drawer-form-label">${escapeHtml(field.label)}</span>
         <select
           id="${escapeHtml(fieldId)}"
@@ -304,7 +304,7 @@ function renderField(field, mode, config) {
   }
 
   return `
-    <label class="drawer-form-field">
+    <label class="drawer-form-field${field.span === 2 ? " form-field-span-2" : ""}">
       <span class="drawer-form-label">${escapeHtml(field.label)}</span>
       <input
         id="${escapeHtml(fieldId)}"
@@ -367,14 +367,9 @@ function renderProfilePictureFields(mode, config) {
 }
 
 function renderForm(mode, config) {
-  const title = mode === "create" ? `Create ${config.entityLabel}` : `Edit ${config.entityLabel}`;
   return `
     <form class="drawer-form hidden" data-directory-form="${escapeHtml(mode)}" aria-hidden="true">
       <div class="drawer-form-section">
-        <div class="drawer-form-section-header">
-          <p class="list-page-state-eyebrow">${mode === "create" ? "Create" : "Edit"}</p>
-          <h3 class="drawer-form-section-title">${escapeHtml(title)}</h3>
-        </div>
         <div class="drawer-form-grid">
           ${config.fields.map((field) => renderField(field, mode, config)).join("")}
         </div>
