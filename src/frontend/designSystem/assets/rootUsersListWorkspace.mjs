@@ -9,7 +9,6 @@ function escapeHtml(value) {
 
 export function renderRootUsersListWorkspaceShell(copy = {}) {
   const {
-    eyebrow = "Root Admin Directory",
     title = "Root Users",
     description = "Review visible root users and select a record to inspect the current directory detail.",
     listAriaLabel = "Root users",
@@ -52,7 +51,6 @@ export function renderRootUsersListWorkspaceShell(copy = {}) {
         data-list-detail-split-layout-slot="list"
       >
         <div class="component-catalog-section-header">
-          <p class="top-nav-preview-eyebrow">${escapeHtml(eyebrow)}</p>
           <h1 id="root-users-list-title" class="component-catalog-section-title">${escapeHtml(title)}</h1>
           <p class="component-catalog-meta">${escapeHtml(description)}</p>
         </div>

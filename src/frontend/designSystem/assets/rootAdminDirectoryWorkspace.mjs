@@ -90,7 +90,6 @@ const directoryConfigs = {
     entityLabel: "root user",
     entityLabelPlural: "root users",
     title: "Root Users",
-    eyebrow: "Root Admin Directory",
     description: "Review, create, and edit visible root users from the governed list-page workspace.",
     listPath: "/v1/root-users",
     detailPath: (record) => `/v1/root-users/${encodeURIComponent(record.rootUserId)}`,
@@ -154,7 +153,6 @@ const directoryConfigs = {
     entityLabel: "tenant",
     entityLabelPlural: "tenants",
     title: "Tenants",
-    eyebrow: "Tenant Directory",
     description: "Review, create, and edit tenants from the governed list-page workspace.",
     listPath: "/v1/tenants",
     detailPath: (record) => `/v1/tenants/${encodeURIComponent(record.tenantId)}`,
@@ -223,7 +221,6 @@ const directoryConfigs = {
     entityLabel: "tenant admin",
     entityLabelPlural: "tenant admins",
     title: "Tenant Admins",
-    eyebrow: "Tenant Admin Directory",
     description: "Choose a tenant, then review, create, and edit tenant-admin profiles in the governed list-page workspace.",
     listPath: ({ selectedTenantId }) => selectedTenantId ? `/v1/tenants/${encodeURIComponent(selectedTenantId)}/admins` : null,
     detailPath: (record, { selectedTenantId }) =>
@@ -406,21 +403,20 @@ export function renderRootAdminDirectoryWorkspaceShell(pageKey) {
       <div class="list-page-list-column" aria-label="${escapeHtml(config.title)}" data-selectable-list-column>
         <div class="component-catalog-section-header">
           <div>
-            <p class="top-nav-preview-eyebrow">${escapeHtml(config.eyebrow)}</p>
             <h1 class="component-catalog-section-title">${escapeHtml(config.title)}</h1>
             <p class="component-catalog-meta">${escapeHtml(config.description)}</p>
           </div>
-          <div class="list-page-header-actions">
-            ${config.tenantParam ? `
-              <label class="drawer-form-field">
-                <span class="visually-hidden">Tenant</span>
-                <select class="drawer-form-input" data-directory-tenant-filter></select>
-              </label>
-            ` : ""}
-            <button class="list-page-create-button" type="button" data-directory-create>
-              ${escapeHtml(createLabel)}
-            </button>
-          </div>
+        </div>
+        <div class="list-page-header-actions">
+          ${config.tenantParam ? `
+            <label class="drawer-form-field">
+              <span class="visually-hidden">Tenant</span>
+              <select class="drawer-form-input" data-directory-tenant-filter></select>
+            </label>
+          ` : ""}
+          <button class="list-page-create-button" type="button" data-directory-create>
+            ${escapeHtml(createLabel)}
+          </button>
         </div>
 
         <div class="list-page-loading-group hidden" aria-live="polite" aria-hidden="true" data-directory-loading data-selectable-list-loading>

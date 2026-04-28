@@ -13,6 +13,11 @@ describe("design-system typography theme audit", () => {
   margin: 0;
   color: var(--ink);`);
 
+    expect(styles).toContain(`.form-page-section-heading .top-nav-preview-eyebrow,
+.form-page-section-heading .form-page-section-title {
+  margin: 0;
+  color: var(--ink-soft);`);
+
     expect(styles).toContain(`.form-page-section-title,
 .form-choice-legend {
   margin: 0;

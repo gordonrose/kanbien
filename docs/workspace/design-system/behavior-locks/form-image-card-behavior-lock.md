@@ -22,6 +22,7 @@ Source surfaces:
 | `FIC-BL-005` | The component must support three copy-density variants: image only, image plus name, and image plus name/email/job title. | Parent forms need the same media affordance for compact avatar, lightweight identity, and full identity review rows. | approved |
 | `FIC-BL-006` | The image-only variant must not render an empty copy column. | A picture-only card should stay compact and avoid creating misleading blank form content. | approved |
 | `FIC-BL-007` | Name, email, and job-title text must wrap inside the card without widening the parent form. | Identity metadata can contain long names or addresses and must remain readable inside constrained form layouts. | approved |
+| `FIC-BL-008` | The card must inherit the parent form field-tile shell for label, helper copy, spacing, border, radius, and grid placement. | Keeps image relationship review visually aligned with other form elements while the child seam owns only the compact media/card anatomy. | approved |
 
 ## Feature Adoption
 

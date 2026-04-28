@@ -32,7 +32,8 @@
 - What changed since the last review:
   the seam now has a dedicated canonical launcher and direct child render
   route while preserving the same shared runtime, search behavior, dense tile
-  tooltips, and parent-hosted adoption path in the form template
+  tooltips, inherited `.form-field` tile host, and parent-hosted adoption path
+  in the form template
 
 ## Source Verification
 

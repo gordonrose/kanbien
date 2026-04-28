@@ -48,7 +48,7 @@ This pack turns them into named reference targets.
 This child pack inherits, but does not redefine:
 
 - parent page shell and section cadence
-- parent helper/error framing outside the fieldset shell
+- parent tile framing plus helper/error framing outside the fieldset shell
 - parent review-state toggles for `errors`, `disabled`, and `mobile`
 - parent theme and direction controls
 - parent grid-span and release-checklist composition choices
@@ -97,7 +97,7 @@ Those remain governed upstream by the parent `Form Template` chain.
   framing, and the specific release-checklist context of the shared-statement
   example
 - Child-owned by `choice-group`:
-  fieldset shell, legend, stacked option rows, shared row anatomy, optional
+  fieldset tile shell, legend, stacked option rows, shared row anatomy, optional
   shared lead statement block, and inline group-error slot
 - Not owned by this child seam:
   page layout, section rhythm, action zoning, or parent review-toggle APIs

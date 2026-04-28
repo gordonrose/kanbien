@@ -36,7 +36,9 @@
   `DSR-001` through `DSR-027` matrix now renders on a dedicated child route,
   including summary-boundary, toggle/remove, compact empty, long-label,
   localized, disabled, RTL, dark-theme, magnified, and mobile viewport review
-  states; the user has visually approved the generated child matrix
+  states; the user has visually approved the generated child matrix, and this
+  pass makes the inherited `.form-field` tile host explicit for both drawer
+  select variants
 
 ## Source Verification
 

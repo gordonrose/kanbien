@@ -36,7 +36,8 @@
   the parent form-template docs no longer carry this seam only implicitly;
   the child seam now has its own behavior lock, reference pack, persistence-backed
   generated canonical launcher, and focused Playwright proof against the dedicated
-  child render route
+  child render route; this pass makes the inherited `.form-field` tile host an
+  explicit part of the child render contract
 
 ## Source Verification
 
@@ -46,6 +47,7 @@
   `src/frontend/designSystem/templates/form/index.html`
   `src/frontend/designSystem/assets/app.mjs`
   `src/frontend/designSystem/assets/styles.css`
+  `src/frontend/designSystem/assets/formTemplate.css`
   `src/frontend/designSystem/assets/canonicalOwnerReserve.mjs`
   `tests/visual/designSystem/canonicals/forms/simpleSelect.spec.ts`
   `tests/visual/designSystem/canonicals/forms/simpleSelectCanonical.spec.ts`

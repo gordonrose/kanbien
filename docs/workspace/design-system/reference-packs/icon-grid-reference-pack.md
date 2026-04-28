@@ -37,7 +37,8 @@ This pack inherits the approved child-seam behavior locks:
   `/design-system/components/icon-grid`
 - the parent host still lives inside `/design-system/templates/form`
 - the signed-off parent framing remains the same:
-  field label, help text, error slot, section cadence, and page chrome
+  field-tile shell, field label, help text, error slot, section cadence, and
+  page chrome
 - the child seam currently owns:
   - a single resting trigger with selected icon glyph and label
   - a compact modal panel rather than a drawer
@@ -51,7 +52,7 @@ This pack inherits the approved child-seam behavior locks:
 ## Ownership Boundary
 
 - Parent-owned by `form-template`:
-  field framing, help/error placement, section placement, grid span, and page
+  field-tile framing, help/error placement, section placement, grid span, and page
   rhythm
 - Child-owned by `icon-grid`:
   trigger summary, shared icon-library rendering, modal anatomy, search,

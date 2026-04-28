@@ -47,7 +47,7 @@ This pack turns them into named reference targets for child review.
 This child pack inherits, but does not redefine:
 
 - parent page shell and section cadence
-- parent field label/help/error framing
+- parent field-tile label/help/error framing
 - parent review-state toggles for `errors`, `disabled`, and `mobile`
 - parent theme and direction controls
 - broader form overlay exclusivity outside simple-select peers

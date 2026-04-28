@@ -47,7 +47,8 @@ This pack turns them into concrete child-seam reference targets.
 
 - the seam currently lives inside `/design-system/templates/form`
 - the signed-off parent framing remains the same:
-  grouped form sections, parent labels, and header/footer action zoning
+  grouped form sections, parent field-tile labels/help/error framing, and
+  header/footer action zoning
 - two child instances exist today:
   - a descriptive `workspace collections` variant
   - a compact `tenant segments` attribute-card variant
@@ -69,7 +70,7 @@ This pack turns them into concrete child-seam reference targets.
 
 - Parent-owned by `form-template`:
   page framing, section cadence, field grouping, helper/error placement in the
-  parent field shell, and header/footer action zoning
+  parent field-tile shell, and header/footer action zoning
 - Child-owned by `drawer-select`:
   trigger summary and meta line, drawer open/close behavior, drawer header,
   search field behavior, `Selected` stack, `Available` stack, toggle/remove

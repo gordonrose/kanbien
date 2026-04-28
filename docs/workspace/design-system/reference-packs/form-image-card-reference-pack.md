@@ -16,6 +16,7 @@ Current review surface:
 | ID | Route | Circumstance | Purpose | Status | Notes |
 | --- | --- | --- | --- | --- | --- |
 | `FICR-HOST-001` | `/design-system/templates/form` | Desktop parent form baseline | Proves the square thumbnail, text stack, and image edit affordance compose inside the parent form grid. | covered-by-test | The test verifies left media / right copy ordering, square media geometry, and hidden edit affordance at rest. |
+| `FICR-HOST-001A` | `/design-system/templates/form` | Desktop parent field-tile host | Proves the image-card seam inherits the same outer field tile as other form elements. | covered-by-test | The tile host is parent-owned; the card remains responsible only for its internal media/copy anatomy. |
 | `FICR-HOST-002` | `/design-system/templates/form` | Pointer hover over image slot | Proves the edit action appears over the image target rather than elsewhere in the card. | covered-by-test | The test hovers the media slot and checks visible edit affordance. |
 | `FICR-HOST-003` | `/design-system/templates/form` | Keyboard focus on edit action | Proves the hover-only affordance remains reachable for keyboard users. | covered-by-test | The test focuses the edit button and checks the affordance remains visible. |
 | `FICR-HOST-004` | `/design-system/templates/form?mobile=true` | Constrained parent form review | Proves each variant stays readable without horizontal overflow. | covered-by-test | The test compares every card box to the viewport width and verifies square media geometry. |

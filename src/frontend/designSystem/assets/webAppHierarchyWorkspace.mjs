@@ -442,17 +442,16 @@ export function renderWebAppHierarchyWorkspaceShell() {
     <dl id="root-admin-web-app-hierarchy-detail-meta" class="visually-hidden"></dl>
     <section class="component-catalog-section" aria-labelledby="web-app-hierarchy-page-title">
       <div class="component-catalog-section-header">
-        <p class="top-nav-preview-eyebrow">Baseline Reference</p>
         <h1 id="web-app-hierarchy-page-title" class="component-catalog-section-title">Web App Hierarchy</h1>
         <p class="component-catalog-meta">
           Configure curated hierarchy truth and page settings from one governed editing surface while the hierarchy tree stays in the shell-attached drawer.
         </p>
-        <div class="component-catalog-section-actions">
-          <span id="web-app-hierarchy-page-status" class="form-page-status">Waiting for curated hierarchy truth.</span>
-          <button id="web-app-hierarchy-refresh-button" class="accessibility-chip" type="button">Refresh hierarchy</button>
-          <button id="web-app-hierarchy-preview-button" class="accessibility-chip" type="button">Preview proposals</button>
-          <button id="web-app-hierarchy-apply-button" class="accessibility-chip active" type="button">Apply preview</button>
-        </div>
+      </div>
+      <div class="component-catalog-section-actions">
+        <span id="web-app-hierarchy-page-status" class="visually-hidden">Waiting for curated hierarchy truth.</span>
+        <button id="web-app-hierarchy-refresh-button" class="accessibility-chip" type="button">Refresh hierarchy</button>
+        <button id="web-app-hierarchy-preview-button" class="accessibility-chip hidden" type="button">Preview proposals</button>
+        <button id="web-app-hierarchy-apply-button" class="accessibility-chip active hidden" type="button">Apply preview</button>
       </div>
 
       <section
@@ -531,7 +530,7 @@ export function renderWebAppHierarchyWorkspaceShell() {
                   <span class="form-field-help">Choose a governed icon from the shared design-system icon library.</span>
                 </div>
 
-                <label class="form-toggle-row form-field-span-2">
+                <label class="form-toggle-row">
                   <span class="form-toggle-copy">
                     <strong>Show in top nav</strong>
                     <span>If enabled, the page can appear as a top-nav button.</span>
@@ -860,6 +859,21 @@ export function createWebAppHierarchyWorkspaceController({
     }
   }
 
+  function syncProposalControls() {
+    const hasPendingProposal = pendingProposalIds.length > 0;
+    const hasLoadedPreview = Boolean(latestPreview);
+
+    if (previewButton instanceof HTMLElement) {
+      previewButton.classList.toggle("hidden", !hasPendingProposal);
+      previewButton.disabled = !hasPendingProposal;
+    }
+
+    if (applyButton instanceof HTMLElement) {
+      applyButton.classList.toggle("hidden", !hasPendingProposal && !hasLoadedPreview);
+      applyButton.disabled = !hasPendingProposal && !hasLoadedPreview;
+    }
+  }
+
   function renderPreviewState() {
     if (!(previewState instanceof HTMLElement)) {
       return;
@@ -888,6 +902,8 @@ export function createWebAppHierarchyWorkspaceController({
   }
 
   function refreshWorkflowSummary() {
+    syncProposalControls();
+
     if (loading) {
       setSummary("Loading curated hierarchy truth.");
       renderPreviewState();
@@ -1950,6 +1966,7 @@ export function createWebAppHierarchyWorkspaceController({
       latestHierarchyTree = [];
       pageSettingsRequestId += 1;
       setSummary("Waiting for curated hierarchy truth.");
+      syncProposalControls();
       renderSelectionSummary("Choose a module or page from the tree to edit topology-owned details or page settings.");
       renderStructureState("Select a node from the hierarchy tree to review structure-owned fields.");
       renderObservedState("Select a page to review its current route, locator, and observed-app posture.");

@@ -46,7 +46,7 @@ This pack turns them into named reference targets for child review.
 
 This child pack inherits, but does not redefine:
 
-- parent field-row placement, local field help, and parent error copy
+- parent field-tile placement, local field help, and parent error copy
 - parent section rhythm and page action zoning
 - date-picker-owned calendar rendering, staged range guidance, anchored jumps,
   range normalization, and `Done` semantics
@@ -67,7 +67,7 @@ existing `Date Picker` chain.
   - bubbling `formtimechange` events so host seams can rerender composed labels
   - mobile full-screen overlay posture for open time panels
 - the current implementation still depends on the signed-off parent route for:
-  - surrounding field labels and helper/error copy
+- surrounding field-tile shell, field labels, and helper/error copy
   - page chrome and action rails
   - shared display-settings review toggles
 - the persistence-backed generated launcher now exists at

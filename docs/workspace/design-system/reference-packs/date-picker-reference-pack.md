@@ -49,7 +49,7 @@ This pack turns them into named reference targets for child review.
 
 This child pack inherits, but does not redefine:
 
-- parent field-row placement, local field help, and parent error copy
+- parent field-tile placement, local field help, and parent error copy
 - parent section rhythm and page action zoning
 - the active time-picker seam's hour/minute option anatomy and close grammar
 
@@ -70,7 +70,7 @@ active `Time Picker` chain.
   - mobile full-screen overlay posture with sticky header and sticky footer
   - RTL-aware mobile nav glyph mirroring
 - the current implementation still depends on the signed-off parent route for:
-  - surrounding field labels and helper copy
+- surrounding field-tile shell, field labels, and helper copy
   - page chrome and action rails
   - shared display-settings review toggles
 - the child seam now has a persistence-backed generated canonical launcher at

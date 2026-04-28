@@ -38,7 +38,8 @@
   route-level browser proof for standalone quick-pick completion, nested
   range-with-time overlap, composed outer-label sync, mobile overlay
   posture, explicit close-button dismissal, and desktop RTL mirrored
-  alignment.
+  alignment; this pass makes the inherited `.form-field` tile host explicit
+  for standalone and nested host review.
 
 ## Source Verification
 

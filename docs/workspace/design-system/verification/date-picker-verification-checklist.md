@@ -36,7 +36,8 @@
   persistence-backed generated launcher and generated child render surface plus route-level browser proof for staged range
   selection, reverse normalization, nested range-with-time summary sync,
   mobile RTL overlay behavior, anchored jump controls, and dark-theme
-  magnification stress.
+  magnification stress; this pass makes the inherited `.form-field` tile host
+  explicit for single-date, range, and range-with-time child render states.
 
 ## Source Verification
 
@@ -57,7 +58,7 @@
   settled owner-reserve geometry has been synced
 - Known source-level risks:
   the dedicated render surface still depends on copied hosted framing and will
-  need careful sync if the parent field shell evolves materially
+  need careful sync if the parent field tile shell evolves materially
 
 ## Rendered Verification
 

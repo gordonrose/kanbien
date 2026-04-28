@@ -38,7 +38,9 @@
   the remaining `CGR-005`, `CGR-008`, and `CGR-009` states are intentionally
   retained as parent-owned proof from the signed-off `Form Template` route
   the user has now visually approved the child canonical batch and parent-owned
-  stress boundary as the signed-off baseline
+  stress boundary as the signed-off baseline; this pass makes the tile-like
+  `.form-choice-group` host explicit for radio, checkbox, and shared-statement
+  variants
 
 ## Source Verification
 

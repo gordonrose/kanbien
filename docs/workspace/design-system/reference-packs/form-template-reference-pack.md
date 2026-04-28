@@ -49,10 +49,14 @@ This pack turns them into named reference targets for the next loop.
 - the current page uses:
   - the shared shell trio:
     top-nav, sub-nav, and single-item context-nav
-  - a parent title and status band with top-level actions
+  - a parent title/copy band with top-level actions aligned directly beneath
+    the header copy
   - one primary editor surface without a supporting sidebar lane
   - two primary form sections:
     `Basics` and `Preferences`
+  - inline section number/name headings without separate section-helper prose
+  - a shared field tile host for text, textarea, select, picker, drawer-select,
+    icon-grid, image-card, upload, grouped-choice, and toggle surfaces
   - inline help and inline error slots across text, textarea, choice, and
     toggle fields
   - three grouped-choice variants:
@@ -128,6 +132,10 @@ This pack turns them into named reference targets for the next loop.
 
 - The parent `Form Template` reference owns page framing, title/status posture,
   section cadence, grouped-field composition, and top/footer action zoning.
+- The parent `Form Template` reference owns the field tile host: outer label,
+  helper/error slots, padding, border, radius, background, and grid/span
+  placement. Child seams own only their inner control anatomy and interaction
+  contracts unless a later review explicitly promotes more host behavior.
 - The same parent artifact chain is now the explicit rollback baseline if a
   later replacement or app adoption drifts from the approved composition.
 - Child seams such as select, date-picker, time-picker, upload, and

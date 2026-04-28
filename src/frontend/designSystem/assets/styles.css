@@ -924,7 +924,7 @@ html[dir="rtl"] .context-nav-preview-shell.context-nav-preview-desktop .side-pan
 .component-catalog-section-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 0.65rem;
   align-items: center;
 }
@@ -1860,12 +1860,6 @@ html[dir="rtl"] .brochure-media-band {
   letter-spacing: -0.015em;
 }
 
-.form-page-status {
-  color: var(--ink-soft);
-  font-size: 0.92rem;
-  font-weight: 600;
-}
-
 .form-page-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -1911,6 +1905,24 @@ html[dir="rtl"] .brochure-media-band {
 
 .form-page-section-header > * {
   min-width: 0;
+}
+
+.form-page-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+}
+
+.form-page-section-heading .top-nav-preview-eyebrow,
+.form-page-section-heading .form-page-section-title {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .form-page-intro {
@@ -1972,6 +1984,16 @@ html[dir="rtl"] .brochure-media-band {
 .form-choice-group {
   display: grid;
   gap: 0.45rem;
+}
+
+.form-field,
+.form-toggle-row {
+  min-width: 0;
+  align-content: start;
+  padding: 1rem;
+  border: 0.0625rem solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface-2) 80%, white);
 }
 
 .form-field-span-2 {
@@ -4110,12 +4132,17 @@ html[data-theme="dark"] .login-template-card,
   display: block;
 }
 
-.form-choice-row span span {
+.form-choice-row span span,
+.form-toggle-copy .form-field-help {
   display: block;
   margin-top: 0.18rem;
   color: var(--ink-soft);
   font-size: 0.9rem;
   line-height: 1.45;
+}
+
+.form-toggle-copy .form-field-label {
+  display: block;
 }
 
 .form-choice-row input,
@@ -4129,10 +4156,6 @@ html[data-theme="dark"] .login-template-card,
   justify-content: space-between;
   gap: 1rem;
   align-items: center;
-  padding: 1rem 1.1rem;
-  border: 0.0625rem solid var(--line);
-  border-radius: var(--radius);
-  background: color-mix(in srgb, var(--surface-2) 74%, white);
 }
 
 .form-toggle-copy {

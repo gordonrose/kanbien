@@ -25,7 +25,9 @@
   action attached to the thumbnail.
 - Trigger for this review:
   Promote the form-template image-card variation into a reusable
-  design-system child seam named `FormImageCard`.
+  design-system child seam named `FormImageCard`, with the parent-owned
+  `.form-field` tile host kept visible on both the component surface and the
+  form-template host.
 
 ## Source Verification
 

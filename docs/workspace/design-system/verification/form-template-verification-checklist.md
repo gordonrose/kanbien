@@ -48,7 +48,10 @@
   affordances; `UploadFile` now exposes a shared
   `formControls.mjs` render/controller seam and component catalog page for
   feature adoption, plus a standalone generated canonical family at
-  `/design-system/canonical-renderings/upload-file`
+  `/design-system/canonical-renderings/upload-file`; the page header no longer
+  carries low-value status/helper labels, section headings now keep number and
+  name on one styled line, and the parent field tile host is the governed outer
+  shell for every field-level child seam including toggles and grouped choices
 
 ## Source Verification
 
@@ -61,6 +64,15 @@
   `src/features/designSystemCanonicals/persistence/migrations/0041_seed_upload_file_canonicals.sql`
   `src/features/designSystemCanonicals/persistence/migrations/0042_seed_upload_file_preview_canonicals.sql`
   `src/frontend/designSystem/assets/styles.css`
+  `src/frontend/designSystem/assets/formTemplate.css`
+  `src/frontend/designSystem/components/simple-select.html`
+  `src/frontend/designSystem/components/date-picker.html`
+  `src/frontend/designSystem/components/time-picker.html`
+  `src/frontend/designSystem/components/drawer-select.html`
+  `src/frontend/designSystem/components/choice-group.html`
+  `src/frontend/designSystem/components/icon-grid.html`
+  `src/frontend/designSystem/components/form-image-card.html`
+  `src/frontend/designSystem/components/upload-file.html`
   `src/features/designSystemCanonicals/persistence/migrations/0039_seed_design_system_canonicals_form_settings.sql`
   `src/features/designSystemCanonicals/persistence/migrations/0040_seed_form_template_upload_canonicals.sql`
 - Implementation updated:
@@ -68,7 +80,9 @@
   the stale supporting sidebar was removed so repo source now matches the
   approved parent surface more closely; the generated canonical launcher now
   sources `FTR-*` refs from persisted governance and generated render routes
-  serve the approved form-template route with the same state semantics
+  serve the approved form-template route with the same state semantics; the
+  shared `.form-field`, `.form-choice-group`, and `.form-toggle-row` tile host
+  styles now keep mixed field-level seams visually consistent
 - Known source-level risks:
   the parent chain still needs a cleaner statement of which composition checks
   stay parent-owned now that open-state proof is split between parent and
