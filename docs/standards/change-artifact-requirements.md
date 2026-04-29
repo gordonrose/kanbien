@@ -151,6 +151,32 @@ When the Product Discovery taxonomy or product templates change, review
 Adding or deprecating a taxonomy axis requires explicit approval because axes
 change the shape and cognitive cost of future Product Discovery packets.
 
+## Technical Steering Gate
+
+For material work that has passed Product Discovery and may affect
+architecture, seams, shared code, platform behavior, governed frontend,
+permissions, persistence, assets, runtime evidence, or source-independent
+artifacts, create or update a Technical Steering packet before Story Breakdown.
+
+Use:
+
+- `docs/templates/technical-steering-packet-template.md`
+
+Gate checks:
+
+- scope elements are classified as feature-local, feature-public-seam,
+  platform-seam, shared-lib-candidate, design-system-seam,
+  architecture-foundation-required, or blocked
+- deterministic signal checks are completed for platform seams, API contracts,
+  persistence, permissions, governed frontend, frontend surfaces, shared code,
+  data dictionary, QA/runtime evidence, and docs artifacts
+- shared versus feature-specific ownership is decided before Story Breakdown
+- risk flags name the required Layer 3 signal and Layer 4 task type
+- steering decisions include compatibility or migration strategy when relevant
+- blocked architecture decisions do not proceed as implementation tasks
+
+Canonical Technical Steering field definitions live in the template.
+
 ## Story Breakdown Gate
 
 For material work that has an approved Technical Steering packet, create or
@@ -171,6 +197,8 @@ Gate checks:
 - refactor-first and architecture-foundation blockers are represented as
   stories or blockers rather than hidden inside implementation work
 - architecture invention outside Technical Steering is blocked
+- Layer 2 architecture classification rows are preserved and converted into
+  task-type signals for Layer 4 reconciliation
 
 Validation:
 
@@ -183,6 +211,49 @@ the requester explicitly accepts the named blocker.
 
 Canonical Story Breakdown field definitions and stop conditions live in the
 template. Do not duplicate the full stop-condition list here.
+
+## Task Breakdown Gate
+
+For material work that has a Story Breakdown packet, create or update a Task
+Breakdown packet before Layer 5 Delivery begins.
+
+Use:
+
+- `docs/templates/task-breakdown-packet-template.md`
+
+Gate checks:
+
+- selected story scope comes from a story marked `ready-for-task-breakdown`
+- story acceptance criteria, capability rows, proof obligations, dependencies,
+  artifact ledger, and blockers are preserved
+- every task has a stable ID, parent story, acceptance-criterion coverage,
+  capability coverage, allowed write set, non-goals, dependencies, shared
+  seams, proof plan, artifact obligations, and branch/worktree/bootstrap
+  strategy
+- every task routes to the matching task-type guardrail reference and records
+  approval evidence before queueing
+- every queued task records structured task guardrail evidence using the exact
+  required check IDs from its task-type reference
+- every queued implementation task records code placement and extraction
+  posture so feature-local, platform-seam, shared-lib, and stay-put decisions
+  are explicit
+- shared-code placement and extraction decisions route through the shared-code
+  placement guardrail when code may move to `src/lib`, stay behind an owning
+  feature seam, or require extraction before implementation work
+- every queued task classifies its allowed write set and records forbidden
+  work so Delivery can later compare the actual diff against the approved
+  implementation envelope
+- refactor-first and architecture-foundation work is split into separate tasks
+- only unblocked tasks are handed to Delivery
+
+Validation:
+
+```sh
+npm run task-breakdown:validate -- <packet-path> --story <story-packet-path>
+```
+
+Do not hand a task to Delivery while validation is blocked unless the requester
+explicitly accepts the named blocker.
 
 ## Minimum Required Artifacts By Change Type
 

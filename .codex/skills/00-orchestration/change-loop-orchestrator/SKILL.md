@@ -140,6 +140,8 @@ Prefer narrower repo-local skills when they fit the task:
   `product-discovery-taxonomy-maintainer`
 - Story Breakdown from approved Technical Steering:
   `story-breakdown-maintainer`
+- Task Breakdown from validated Story Breakdown:
+  `task-breakdown-maintainer`
 - frontend architecture mapping or ADR maintenance:
   `frontend-architecture-maintainer`
 
@@ -241,6 +243,17 @@ Do not let Delivery begin from a vague steering scope. A story should be marked
 ready for Task Breakdown only when its job-to-be-done, acceptance criteria,
 dependency map, capability-matrix posture, proof obligations, and artifact
 ledger are present or explicitly blocked.
+
+### Do not bypass Task Breakdown
+
+For material work with a validated Story Breakdown packet, route through
+`task-breakdown-maintainer` before Delivery. Task Breakdown owns isolated task
+queues, allowed write sets, branch/worktree/bootstrap strategy, proof commands,
+artifact obligations, blockers, and Layer 5 handoff status for the selected
+story.
+
+Do not let Delivery begin from a story packet alone unless the user explicitly
+approves an exception.
 
 ### Exact ADR discovery is required
 

@@ -48,6 +48,9 @@ If the task is material, also decide whether:
 - an explicit base commit must be captured before any branch is created
 - an approved Story Breakdown packet already defines story IDs, shared seams,
   or isolation expectations that should inform branch and bootstrap naming
+- a validated Task Breakdown packet already defines the task ID, allowed write
+  set, branch name, worktree strategy, bootstrap artifact, base ref, and
+  promotion target
 
 ### 2. Inspect git state before editing
 
@@ -106,6 +109,9 @@ Minimum fields to record:
 When a Story Breakdown packet exists, use its story ID, dependency/seam map,
 and delivery shape as preferred inputs for the scope, intended write set, and
 known shared seams. Do not broaden branch scope beyond the approved story.
+When a Task Breakdown packet exists, use its task ID, allowed write set, branch
+name, worktree strategy, bootstrap artifact, base ref, and promotion target as
+the branch/worktree source of truth.
 
 ### 3. Create a task branch when appropriate
 

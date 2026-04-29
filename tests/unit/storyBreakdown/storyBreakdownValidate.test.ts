@@ -14,6 +14,19 @@ const validPacket = `# Story Breakdown Packet: Tenant Branding
 - Architecture invention check:
   \`consumes-steering-only\`
 
+## Steering Architecture Classification Snapshot
+
+| Classification ID | Scope Element | Classification | Owner / Seam | Decision Status | Required Downstream Signal |
+| --- | --- | --- | --- | --- | --- |
+| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |
+
+## Task-Type Signal Matrix
+
+| Story ID | Signal | Present | Evidence | Implied Task Type |
+| --- | --- | --- | --- | --- |
+| S-000 | source-independent docs impact | yes | Capability matrix normalization story. | docs-artifact |
+| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |
+
 ## Epic Summary
 
 - Epic job to be done:

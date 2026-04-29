@@ -60,6 +60,12 @@ Task Breakdown, or Delivery.
    queues or workers, design-system seams, frontend routes, asset-consumer
    seams, and external providers.
 
+6A. Preserve steering classifications.
+   Copy Layer 2 architecture classification rows into the Steering
+   Architecture Classification Snapshot and convert steering risk flags into
+   Task-Type Signal Matrix rows. Do not re-decide shared versus feature-local
+   posture in Story Breakdown.
+
 7. Record test obligations.
    Use `docs/architecture/guides/story-breakdown-test-design-guide.md` to
    decide actor, permission, state, object, value, validation, lifecycle,

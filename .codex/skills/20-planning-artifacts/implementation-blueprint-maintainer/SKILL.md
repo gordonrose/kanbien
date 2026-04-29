@@ -36,6 +36,8 @@ Typical inputs:
 
 - Story Breakdown packet and approved story when the change has gone through
   Technical Steering
+- Task Breakdown packet when the approved story has already been split into
+  isolated delivery tasks
 - approved capability matrix rows
 - PRD or PRD refinement
 - exact ADR discovery results for the scoped change areas
@@ -48,6 +50,10 @@ instead of inventing the implementation plan.
 If material work has an approved Technical Steering packet but no Story
 Breakdown packet, do not invent story scope inside the blueprint. Ask for Story
 Breakdown first or record the explicit exception.
+
+If a validated Story Breakdown packet exists but no Task Breakdown packet
+exists, do not invent delivery task isolation inside the blueprint. Ask for
+Task Breakdown first or record the explicit exception.
 
 ## Authority Order
 

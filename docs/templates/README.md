@@ -16,10 +16,22 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   Lightweight post-iteration feedback record for deciding whether feedback
   changes product intent before downstream artifacts or implementation scope
   move.
+- `technical-steering-packet-template.md`
+  Layer 2 packet for deciding architectural posture before Story Breakdown,
+  including feature-local versus shared/platform, design-system, public-seam,
+  shared-library, and architecture-foundation classification.
 - `story-breakdown-packet-template.md`
   Layer 3 packet for converting approved Technical Steering into the smallest
   independently deliverable and verifiable stories before Task Breakdown or
   Delivery begins.
+- `task-breakdown-packet-template.md`
+  Layer 4 packet for converting one approved Story Breakdown story, or a small
+  explicitly related story set, into isolated delivery tasks before Layer 5
+  Delivery begins. Layer 4.1 task packets route each task to a matching
+  task-type guardrail reference and require code-placement and extraction
+  review before queueing. Layer 4.2 adds structured guardrail evidence,
+  allowed write-set classification, and forbidden-work rows to reduce granular
+  implementation drift.
 - `capability-matrix-v4-template.md`
   Spreadsheet-friendly field list for end-to-end capability definition.
 - `implementation-blueprint-template.md`
@@ -94,10 +106,22 @@ For structure checks, keep validation separate:
 npm run product-discovery:validate -- <packet-path>
 ```
 
+For Technical Steering packet checks, use:
+
+```sh
+npm run technical-steering:validate -- <packet-path>
+```
+
 For Story Breakdown packet checks, use:
 
 ```sh
 npm run story-breakdown:validate -- <packet-path>
+```
+
+For Task Breakdown packet checks, use:
+
+```sh
+npm run task-breakdown:validate -- <packet-path> --story <story-packet-path>
 ```
 
 For backend and cross-feature work, treat `src/features/<featureName>/feature.manifest.json`

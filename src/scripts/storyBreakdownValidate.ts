@@ -5,6 +5,8 @@ const requiredHeadings = [
   "# Story Breakdown",
   "## Status",
   "## Handoff Validation",
+  "## Steering Architecture Classification Snapshot",
+  "## Task-Type Signal Matrix",
   "## Epic Summary",
   "## Story Queue",
   "## Acceptance Criteria",
@@ -38,6 +40,18 @@ const allowedDeliveryShapes = new Set([
   "architecture-foundation",
   "standards-compliance",
 ]);
+
+const allowedArchitectureClassifications = new Set([
+  "feature-local",
+  "feature-public-seam",
+  "platform-seam",
+  "shared-lib-candidate",
+  "design-system-seam",
+  "architecture-foundation-required",
+  "blocked",
+]);
+
+const allowedTaskSignalPresence = new Set(["yes", "no", "blocked"]);
 
 const allowedProofLayers = new Set([
   "source-level",
@@ -131,6 +145,23 @@ type FollowUpDecisionQuestionRow = {
   resolution: string;
 };
 
+type SteeringClassificationRow = {
+  classificationId: string;
+  scopeElement: string;
+  classification: string;
+  ownerSeam: string;
+  decisionStatus: string;
+  downstreamSignal: string;
+};
+
+type TaskTypeSignalRow = {
+  storyId: string;
+  signal: string;
+  present: string;
+  evidence: string;
+  impliedTaskType: string;
+};
+
 export function validateStoryBreakdownContent(content: string): StoryBreakdownValidationResult {
   const errors: string[] = [];
 
@@ -149,6 +180,8 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   const testInputs = parseStoryTestInputRows(content);
   const blockers = parseBlockerRows(content);
   const followUpQuestions = parseFollowUpDecisionQuestionRows(content);
+  const steeringClassifications = parseSteeringClassificationRows(content);
+  const taskTypeSignals = parseTaskTypeSignalRows(content);
   const packetStatus = parsePacketStatus(content);
 
   if (stories.length === 0) {
@@ -160,6 +193,7 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   const capabilityByAc = groupBy(capabilities, (row) => row.acId);
   const dependencyByStoryOrAc = dependencies;
   const testInputsByStory = new Map(testInputs.map((row) => [row.storyId, row]));
+  const taskTypeSignalsByStory = groupBy(taskTypeSignals, (row) => row.storyId);
 
   for (const story of stories) {
     validateStoryRow(story, errors);
@@ -180,6 +214,43 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
       if (!dependencyByStoryOrAc.some((row) => row.neededBy.includes(story.storyId))) {
         errors.push(`${story.storyId} is ready but has no dependency or seam mapping`);
       }
+
+      if ((taskTypeSignalsByStory.get(story.storyId) ?? []).length === 0) {
+        errors.push(`${story.storyId} is ready but has no task-type signal rows`);
+      }
+    }
+  }
+
+  for (const classification of steeringClassifications) {
+    validateRequiredField(classification.classificationId, "Scope Element", classification.scopeElement, errors);
+    validateRequiredField(classification.classificationId, "Owner / Seam", classification.ownerSeam, errors);
+    validateRequiredField(classification.classificationId, "Decision Status", classification.decisionStatus, errors);
+    validateRequiredField(classification.classificationId, "Required Downstream Signal", classification.downstreamSignal, errors);
+
+    if (!allowedArchitectureClassifications.has(classification.classification)) {
+      errors.push(
+        `${classification.classificationId} has invalid architecture classification: ${
+          classification.classification || "(blank)"
+        }`,
+      );
+    }
+
+    if (classification.classification === "blocked" || classification.decisionStatus === "blocked") {
+      errors.push(`${classification.classificationId} steering architecture classification is blocked`);
+    }
+  }
+
+  for (const signal of taskTypeSignals) {
+    if (!storiesById.has(signal.storyId)) {
+      errors.push(`${signal.signal} references unknown story ${signal.storyId}`);
+    }
+
+    validateRequiredField(signal.storyId, "Signal", signal.signal, errors);
+    validateRequiredField(signal.storyId, "Evidence", signal.evidence, errors);
+    validateRequiredField(signal.storyId, "Implied Task Type", signal.impliedTaskType, errors);
+
+    if (!allowedTaskSignalPresence.has(signal.present)) {
+      errors.push(`${signal.storyId} has invalid task signal presence: ${signal.present || "(blank)"}`);
     }
   }
 
@@ -438,6 +509,27 @@ function parseFollowUpDecisionQuestionRows(content: string): FollowUpDecisionQue
   }));
 }
 
+function parseSteeringClassificationRows(content: string): SteeringClassificationRow[] {
+  return parseTableRows(section(content, "## Steering Architecture Classification Snapshot")).map((cells) => ({
+    classificationId: cells[0] ?? "",
+    scopeElement: cells[1] ?? "",
+    classification: cells[2] ?? "",
+    ownerSeam: cells[3] ?? "",
+    decisionStatus: cells[4] ?? "",
+    downstreamSignal: cells[5] ?? "",
+  }));
+}
+
+function parseTaskTypeSignalRows(content: string): TaskTypeSignalRow[] {
+  return parseTableRows(section(content, "## Task-Type Signal Matrix")).map((cells) => ({
+    storyId: cells[0] ?? "",
+    signal: cells[1] ?? "",
+    present: cells[2] ?? "",
+    evidence: cells[3] ?? "",
+    impliedTaskType: cells[4] ?? "",
+  }));
+}
+
 function section(content: string, heading: string): string {
   const start = content.indexOf(heading);
   if (start === -1) {
@@ -457,7 +549,7 @@ function parseTableRows(sectionContent: string): string[][] {
     .map((line) => line.slice(1, -1).split("|").map((cell) => cell.trim()))
     .filter((cells) => {
       const first = cells[0] ?? "";
-      return first !== "---" && !first.startsWith("---") && !first.includes("Story ID") && !first.includes("AC ID") && !first.includes("Dependency ID") && !first.includes("Artifact ID") && !first.includes("Blocker ID") && !first.includes("Question ID") && !first.includes("New Or Changed");
+      return first !== "---" && !first.startsWith("---") && !first.includes("Story ID") && !first.includes("AC ID") && !first.includes("Dependency ID") && !first.includes("Artifact ID") && !first.includes("Blocker ID") && !first.includes("Question ID") && !first.includes("Classification ID") && !first.includes("New Or Changed");
     });
 }
 

@@ -42,6 +42,37 @@ explicitly accepted by the requester.
 - Asset/security/tenant/authz/persistence/migration/compliance risks:
 - Missing source-of-truth artifacts:
 
+## Steering Architecture Classification Snapshot
+
+Copy the approved Layer 2 architecture classification rows that affect the
+story queue. Story Breakdown preserves and refines these decisions; it does not
+re-decide whether work is feature-local, shared, platform-level,
+design-system-owned, or blocked.
+
+| Classification ID | Scope Element | Classification | Owner / Seam | Decision Status | Required Downstream Signal |
+| --- | --- | --- | --- | --- | --- |
+
+Allowed classifications:
+
+- `feature-local`
+- `feature-public-seam`
+- `platform-seam`
+- `shared-lib-candidate`
+- `design-system-seam`
+- `architecture-foundation-required`
+- `blocked`
+
+## Task-Type Signal Matrix
+
+Record the task-type signals implied by Layer 2 classifications and story
+acceptance criteria. Layer 4 must reconcile its task queue against these
+signals.
+
+| Story ID | Signal | Present | Evidence | Implied Task Type |
+| --- | --- | --- | --- | --- |
+
+Use `yes`, `no`, or `blocked` for `Present`.
+
 ## Epic Summary
 
 - Epic job to be done:

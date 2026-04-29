@@ -37,6 +37,7 @@ below a category folder.
 - `20-planning-artifacts/implementation-blueprint-maintainer`
 - `20-planning-artifacts/rebuild-readiness-maintainer`
 - `20-planning-artifacts/story-breakdown-maintainer`
+- `20-planning-artifacts/task-breakdown-maintainer`
 - `30-testing-and-reconciliation/issue-reconciliation-maintainer`
 - `30-testing-and-reconciliation/prd-test-case-implementer`
 - `30-testing-and-reconciliation/prd-test-case-planner`

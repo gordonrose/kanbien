@@ -74,8 +74,9 @@ flowchart TB
 
     subgraph Planning
       D0[Story Breakdown\nsmallest deliverable/verifiable stories]
-      D1[Implementation Blueprint]
-      D2[PRD Test Cases]
+      D1[Task Breakdown\nisolated delivery tasks]
+      D2[Implementation Blueprint]
+      D3[PRD Test Cases]
     end
 
     subgraph Execution
@@ -140,7 +141,12 @@ flowchart TB
    privacy notes, runbooks, platform standards snapshots, reconstruction
    questionnaire updates, bootstrap or helper docs, test harness internals, and
    script or helper behavior docs where relevant.
-7. For material work that has gone through Technical Steering, run Story
+7. For material work, Technical Steering decides architectural posture before
+   Story Breakdown. It classifies scope elements as feature-local,
+   feature-public-seam, platform-seam, shared-lib-candidate,
+   design-system-seam, architecture-foundation-required, or blocked. This is
+   the first authoritative decision about shared versus feature-specific work.
+8. For material work that has gone through Technical Steering, run Story
    Breakdown before Task Breakdown or Delivery.
    Story Breakdown converts approved steering into the smallest independently
    deliverable and verifiable stories. It records each story's job to be done,
@@ -148,20 +154,30 @@ flowchart TB
    map, capability-matrix posture, proof obligations, and artifact ledger.
    Story Breakdown does not replace PRDs, capability matrices, PRD-derived
    test cases, or implementation blueprints.
-8. Translate the approved scope into an implementation blueprint.
+9. Run Task Breakdown for one approved story, or a small explicitly related
+   story set, before Delivery.
+   Task Breakdown preserves story acceptance criteria, capability rows, proof
+   obligations, dependencies, artifact ledger, and blockers while creating
+   isolated tasks with allowed write sets, branch/worktree/bootstrap strategy,
+   task-type guardrail approval, code-placement and extraction review, proof
+   commands, structured guardrail evidence, allowed write-set classification,
+   forbidden work, and Layer 5 handoff status. It does not redefine story
+   scope, acceptance criteria, product intent, or Technical Steering
+   architecture.
+10. Translate the approved scope into an implementation blueprint.
    The blueprint explains how this repo should build the slice.
    If the PRD or source-independent contract artifacts are materially reset
    later in the same loop, refresh the blueprint before continuing.
-9. Derive PRD test cases.
+11. Derive PRD test cases.
    This turns intended behavior into an explicit verification inventory.
-10. Implement the change in `src/` and `tests/`.
+12. Implement the change in `src/` and `tests/`.
    Do not silently override reviewed PRD-derived test cases while writing
    executable tests; if case IDs, grouping, lifecycle, or intended behavior
    need to change, update the PRD test-case artifact first and re-review it.
    When persistence-backed behavior is added, also refresh the shared
    persistence harness and scripts in the same loop.
-11. Run standards and repo-health review.
-12. Update status-bearing artifacts so the repo does not keep stale planning or
+13. Run standards and repo-health review.
+14. Update status-bearing artifacts so the repo does not keep stale planning or
     stale compliance posture summaries.
     This includes architecture summaries, source-independent docs, OpenAPI,
     feature docs, and platform-status snapshots whose truth changed during the
@@ -177,13 +193,35 @@ flowchart TB
   business questions, out-of-scope boundaries, ambiguity ledger, feedback
   posture, and handoff readiness for Technical Steering. It does not decide
   implementation architecture.
+- Technical Steering packet:
+  Layer 2 architecture classification for the approved product scope. It
+  decides feature-local versus shared/platform posture, feature public seams,
+  shared-library candidates, design-system seams, architecture-foundation
+  blockers, deterministic signal checks, risk flags, compatibility strategy,
+  and required downstream Layer 3 signals and Layer 4 task types. It does not
+  split stories or implementation tasks.
 - Story Breakdown packet:
   Layer 3 queue of the smallest independently deliverable and verifiable
   stories from approved Technical Steering. It records value type, delivery
   shape, job to be done, acceptance criteria, dependency and seam mapping,
-  capability-matrix posture, proof obligations, and artifact ledger before Task
-  Breakdown or Delivery begins. It does not decide implementation architecture
-  or write detailed `TC-*` test cases.
+  capability-matrix posture, proof obligations, steering architecture
+  classification snapshot, task-type signal matrix, and artifact ledger before
+  Task Breakdown or Delivery begins. It does not decide implementation
+  architecture or write detailed `TC-*` test cases.
+- Task Breakdown packet:
+  Layer 4 queue of isolated tasks from one approved Story Breakdown story, or a
+  small explicitly related story set. It records parent story, acceptance
+  criteria coverage, capability rows, allowed write set, non-goals,
+  dependencies, shared seams, task-type guardrail approval, code-placement and
+  extraction review, structured guardrail evidence, allowed write-set
+  classification, forbidden work, artifact obligations, proof commands, branch
+  / worktree / bootstrap strategy, blockers, and Layer 5 Delivery handoff
+  status. It does not redefine story scope or invent architecture.
+  `platform-seam` is a Layer 4 task type, not a Layer 3 story delivery shape;
+  it should normally derive from a `system-value`, `refactor-first`,
+  `architecture-foundation`, `standards-compliance`, or `vertical-slice` story
+  whose approved scope requires shared runtime, routing, tooling, harness, or
+  generated-artifact machinery.
 - Capability matrix:
   Inventory of what must exist across a capability set.
 - PRD:
