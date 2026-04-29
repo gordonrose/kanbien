@@ -10,6 +10,55 @@ It complements ADRs and architecture guides rather than replacing them.
 
 ## Product Discovery Gate
 
+### Draft Fast Path
+
+When a user explicitly asks for a draft Product Discovery packet, draft
+discovery packet, discovery pack, or product discovery packet, the assistant
+may use the fast path.
+
+Fast path mode:
+
+- creates a draft planning artifact only
+- does not run `npm run git:preflight` by default
+- does not run branch, bootstrap, worktree, promotion, or maintained-artifact
+  sweep checks by default
+- does not inspect broad architecture docs unless explicitly requested
+- inspects only directly relevant Product Discovery README/template files
+- writes exactly the requested packet file and avoids unrelated edits
+- stops and asks if a required template cannot be found quickly
+
+Fast path output must say:
+
+> Created as a draft discovery artifact; full repo guardrails and artifact
+> sweeps were intentionally skipped.
+
+Do not treat a fast-path draft as validated, governed, complete,
+implementation-ready, artifact-complete, or promotion-ready.
+
+Preferred command:
+
+```sh
+npm run product-discovery:draft -- --slug <slug> --title "<title>"
+```
+
+Validation remains separate:
+
+```sh
+npm run product-discovery:validate -- <packet-path>
+```
+
+### Governed Product Discovery
+
+If the user asks for validated, governed, complete, implementation-ready,
+artifact-complete, promotion-ready, or similar Product Discovery output, use
+the existing full guardrails. Governed mode runs the normal repo start gates
+and artifact requirements.
+
+Preserve current safety behavior for source code, migrations, contracts,
+feature manifests, generated artifacts, and implementation work.
+
+### Required Governed Gate
+
 Before Technical Steering, PRD, capability matrix, or implementation planning,
 create or update a Product Discovery packet using
 `docs/templates/product-discovery-packet-template.md` when a change is:
@@ -59,7 +108,7 @@ and stop conditions.
 ## Product Discovery Taxonomy Governance Gate
 
 When the Product Discovery taxonomy or product templates change, review
-`docs/workspace/product-discovery/taxonomy.md` and record:
+`docs/product-discovery/taxonomy.md` and record:
 
 - change type
 - reason and motivating examples

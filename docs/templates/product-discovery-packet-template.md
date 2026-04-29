@@ -12,10 +12,24 @@ This template extends the Layer 1 Product Discovery harness. It does not
 replace PRDs, capability matrices, Technical Steering packets, implementation
 blueprints, API contracts, data dictionaries, or verification plans.
 
+Draft packet fast path:
+
+- Use only when the user explicitly asks for a draft Product Discovery packet,
+  draft discovery packet, discovery pack, or product discovery packet.
+- The preferred deterministic command is:
+  `npm run product-discovery:draft -- --slug <slug> --title "<title>"`.
+- Fast-path drafts intentionally skip git preflight, branch/bootstrap/worktree
+  checks, maintained-artifact sweeps, broad architecture-doc inspection, and
+  broad repo searches.
+- Fast-path drafts are not validated, governed, complete,
+  implementation-ready, artifact-complete, or promotion-ready.
+
 ## Status
 
 - Discovery status:
   `ready-for-technical-steering | blocked-product-intent | blocked-new-template-approval | blocked-new-family-steering | discovery-only`
+- Draft posture:
+  `draft-fast-path | governed-discovery | not-a-draft`
 - Original request:
 - Plain-language request summary:
 - Packet date:
@@ -45,6 +59,7 @@ The interview should feel like product discovery, not form completion.
   - product intent:
   - actors and governance:
   - journeys and jobs:
+  - important situations and state changes:
   - context variation:
   - unhappy paths:
   - scope boundaries:
@@ -67,7 +82,7 @@ The interview should feel like product discovery, not form completion.
 
 ## Taxonomy Classification
 
-Reference: `docs/workspace/product-discovery/taxonomy.md`.
+Reference: `docs/product-discovery/taxonomy.md`.
 
 - Product feature type:
 - UX pattern(s):
@@ -219,6 +234,41 @@ Examples involve:
 | --- | --- | --- | --- | --- | --- | --- |
 | UC-001 | JTBD-001 |  |  |  |  |  |
 
+## State-Based Journey Matrix
+
+Use this section to identify actor/object lifecycle states, edge journeys,
+configuration changes, and state transitions before Technical Steering.
+
+For authentication/access, permission-sensitive, tenant-boundary,
+lifecycle-heavy, or configuration-driven requests, the packet should not be
+considered ready for Technical Steering unless this matrix is completed or
+explicitly deferred with a reason.
+
+Product posture values:
+
+- `ready-for-signoff`
+- `needs-product-answer`
+- `defer-to-technical-steering`
+- `out-of-scope`
+
+### State Inventory
+
+| Entity / object | States considered | Notes |
+| --- | --- | --- |
+|  |  |  |
+
+### Journey Permutations
+
+| Journey ID | Actor | Actor state | Object | Object state | Action | Outcome | Product posture |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| JY-STATE-001 |  |  |  |  |  |  |  |
+
+### State Transitions
+
+| Transition ID | Actor | From state | To state | Object affected | Trigger | Expected outcome | Product posture |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ST-001 |  |  |  |  |  |  |  |
+
 ## Context Variation And Unhappy Path Coverage
 
 Use this section to make meaningful variations explicit before capabilities are
@@ -229,37 +279,27 @@ locked. Mark each item as `in-scope`, `out-of-scope`,
 | --- | --- | --- | --- |
 |  |  | yes/no |  |
 
-### Authentication / Login Request Coverage
+## Specialized Product Template / Checklist Reference
 
-Use this checklist when the request involves login, authentication,
-tenant-aware sign-in, SSO, password authentication, invited users, auth policy,
-or account recovery.
+Use this section when the taxonomy classification points to a reusable product
+family template or specialized discovery checklist.
 
-| Authentication context / edge case | Product posture | Blocking before packet status? | Notes |
-| --- | --- | --- | --- |
-| single-tenant user |  | yes/no |  |
-| multi-tenant user |  | yes/no |  |
-| no matching tenant |  | yes/no |  |
-| email exists in more than one tenant |  | yes/no |  |
-| invalid email |  | yes/no |  |
-| unsupported auth method |  | yes/no |  |
-| SSO failure or unavailable provider |  | yes/no |  |
-| password reset / forgotten password when email/password is in scope |  | yes/no |  |
-| tenant auth policy changes during in-progress login |  | yes/no |  |
-| user removed, disabled, or invited-but-not-activated |  | yes/no |  |
-| account enumeration / privacy posture |  | yes/no |  |
-| actor who configures tenant auth rules |  | yes/no |  |
-| tenants allow multiple methods or exactly one |  | yes/no |  |
-| root override of tenant auth settings |  | yes/no |  |
+- Specialized template/checklist used:
+- Required because:
+- Checklist posture:
+  `completed | partially-completed | deferred-with-reason | not-applicable`
+- Product answers imported into this packet:
+- Deferred checklist items and reason:
+- Reference:
 
 ## Product Capability Breakdown
 
-Capabilities should be derived from use cases. Do not invent implementation
-tasks here.
+Capabilities should be derived from use cases and state-based journey rows. Do
+not invent implementation tasks here.
 
-| Capability | Derived from use case | User outcome | Actor | Surface | Notes |
-| --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |
+| Capability | Derived from JTBD/use case | Derived from state journey / transition | User outcome | Actor | Surface | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |
 
 ## Business Questions Before Requirements Lock
 
@@ -309,6 +349,7 @@ tasks here.
 - Risk flags for Technical Steering:
   - permission-sensitive:
   - tenant-boundary:
+  - state-based journey matrix:
   - governed frontend:
   - new UX pattern:
   - design-system extension:

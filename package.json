@@ -29,6 +29,8 @@
     "git:preflight": "node --import tsx src/scripts/gitPreflight.ts",
     "git:promote": "node --import tsx src/scripts/gitPromote.ts",
     "git:worktree-audit": "node --import tsx src/scripts/gitWorktreeAudit.ts",
+    "product-discovery:draft": "node --import tsx src/scripts/productDiscoveryDraft.ts",
+    "product-discovery:validate": "node --import tsx src/scripts/productDiscoveryValidate.ts",
     "check:governed-ui-adoption": "node --import tsx src/scripts/checkGovernedUiAdoption.ts",
     "check:governed-root-admin-page-audit": "node --import tsx src/scripts/checkGovernedRootAdminPageAudit.ts",
     "check:governed-root-admin-ui": "node --import tsx src/scripts/checkGovernedRootAdminUi.ts",

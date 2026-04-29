@@ -13,9 +13,9 @@ This skill does not create Product Discovery packets. Use
 
 ## Inputs
 
-- `docs/workspace/product-discovery/taxonomy.md`
-- `docs/workspace/product-discovery/templates/README.md`
-- affected product templates under `docs/workspace/product-discovery/templates/`
+- `docs/product-discovery/taxonomy.md`
+- `docs/product-discovery/templates/README.md`
+- affected product templates under `docs/product-discovery/templates/`
 - Product Discovery packets that requested `new-taxonomy-value-needed`,
   `new-template-needed`, or `blocked-new-family-steering`
 

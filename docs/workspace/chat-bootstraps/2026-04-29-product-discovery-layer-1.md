@@ -32,7 +32,8 @@ from the existing lessons-led harness audit branch state.
 - Planned Write Set:
   - `docs/templates/product-discovery-packet-template.md`
   - `docs/templates/product-discovery-feedback-template.md`
-  - `docs/workspace/product-discovery/**`
+  - `docs/product-discovery/**`
+  - Product Discovery packet instances under `docs/workspace/product-discovery/`
   - `.codex/skills/20-planning-artifacts/product-discovery-maintainer/SKILL.md`
   - `.codex/skills/20-planning-artifacts/product-discovery-taxonomy-maintainer/SKILL.md`
   - `docs/architecture/build-from-spec-change-harness.md`
@@ -44,10 +45,10 @@ from the existing lessons-led harness audit branch state.
 - Known Shared Seams: Change harness routing, planning artifact templates,
   Layer 1 to Technical Steering handoff.
 - Explicit Non-Goals:
-  - No `AGENTS.md` change.
+  - No source product implementation.
   - No CRM, project-management, or task-tracker product templates.
   - No Technical Steering implementation.
-  - No executable gate implementation.
+  - No PRD, capability matrix, API contract, or implementation blueprint.
 
 ## Coordination Notes
 
@@ -56,7 +57,8 @@ from the existing lessons-led harness audit branch state.
 - Worktree Audit Result: Not run; isolation was created because the main
   worktree was dirty before edit.
 - Commit Approval Posture: User approved commit after recreation request.
-- Push Or PR Posture: Do not push unless explicitly requested.
+- Push Or PR Posture: User later requested promote and push after the
+  workspace-to-durable Product Discovery cleanup.
 - Handoff Notes: This branch is intended to support trying Product Discovery
   against future feature/change requests after review.
 

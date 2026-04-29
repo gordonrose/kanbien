@@ -195,6 +195,24 @@ flowchart TB
 Layer 1 exists to prevent vague product requests from becoming premature
 technical planning work.
 
+Product Discovery has two operating modes:
+
+- Draft fast path:
+  Use only when the user explicitly asks for a draft Product Discovery packet,
+  draft discovery packet, discovery pack, or product discovery packet. This
+  path targets 30 seconds or less, reads only directly relevant Product
+  Discovery files, writes exactly the requested packet, and intentionally skips
+  git preflight, branch/bootstrap/worktree checks, maintained-artifact sweeps,
+  broad architecture-doc inspection, and broad repo searches.
+- Governed mode:
+  Use when the user asks for validated, governed, complete,
+  implementation-ready, artifact-complete, promotion-ready, or similar output.
+  Governed mode uses the normal repo start gates and artifact requirements.
+
+Draft fast path output is draft-only and must not be described as validated,
+governed, complete, implementation-ready, artifact-complete, or
+promotion-ready.
+
 Inputs:
 
 - user change request

@@ -7,7 +7,7 @@ Taxonomy values flag product questions, likely downstream gates, and reusable
 template paths. They do not prescribe implementation architecture, persistence
 shape, route contracts, file layout, or test design.
 
-Taxonomy version: `2026-04-29.2`
+Taxonomy version: `2026-04-29.3`
 
 ## Product Feature Type
 
@@ -226,14 +226,18 @@ Purpose: identify user-visible and durable state transitions.
 Starter values:
 
 - simple active / deleted
+- active / inactive
+- enabled / disabled / suspended
 - draft / published
 - invitation / onboarding
+- membership added / removed / role changed
 - approval / rejection
 - scheduled / expired
 - retry / dead-letter
 - archived / superseded
 - versioned current / history
 - canceled / abandoned
+- configuration changed
 
 Does not decide:
 
@@ -347,3 +351,4 @@ Common downstream flags:
 | 2026-04-29 | initial version | all | N/A | starter taxonomy | Establish Layer 1 Product Discovery classification language. | generic-feature |
 | 2026-04-29 | add value | Product feature type | N/A | authentication / access | Tenant-aware login testing showed auth requests need first-class discovery classification. | generic-feature |
 | 2026-04-29 | add value | UX pattern | N/A | login / authentication flow | Tenant-aware login testing showed login is a recurring UX flow with specialized context and unhappy paths. | generic-feature |
+| 2026-04-29 | add value | Lifecycle shape | N/A | active / inactive; enabled / disabled / suspended; membership added / removed / role changed; configuration changed | State-based journey testing showed Product Discovery needs reusable lifecycle and configuration-change language before capability derivation. | generic-feature |

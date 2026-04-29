@@ -1,7 +1,7 @@
 # Product Template: Generic Feature
 
 - Template ID: `generic-feature`
-- Taxonomy version: `2026-04-29.2`
+- Taxonomy version: `2026-04-29.3`
 - Last reviewed against taxonomy: 2026-04-29
 
 ## Purpose
@@ -58,6 +58,33 @@ For each perspective:
 - What alternate or recovery paths matter?
 - What denied, empty, failed, or degraded states must be product-visible?
 
+## State-Based Journey Prompts
+
+Use these prompts before deriving capabilities for authentication/access,
+permission-sensitive, tenant-boundary, lifecycle-heavy, or configuration-driven
+requests.
+
+- Which actor states materially change the journey?
+  Examples: active, inactive, logged-in, logged-out, invited,
+  invited-but-not-activated, disabled, suspended, deleted, support-only,
+  root-operator, tenant-admin, tenant-member.
+- Which object states materially change the journey?
+  Examples: active, inactive, draft, published, expired, deleted,
+  disabled/suspended, archived, superseded, pending, failed, retrying,
+  configuration changed.
+- Which state transitions matter?
+  Examples: created -> active, created -> logged out, logged in -> logged out,
+  logged in -> deleted, active -> disabled, invited -> activated,
+  membership added, membership removed, role changed, tenant deleted, tenant
+  disabled, settings changed.
+- Which configuration changes can happen before, during, or after the journey?
+- Which relationship changes affect access or outcome?
+  Examples: user added to tenant, removed from tenant, membership changed, role
+  changed, tenant ownership changed.
+- Which states are explicitly out of scope for the first product intent?
+- Which unresolved states need a product answer before Technical Steering?
+- Which state questions are safe to defer to Technical Steering?
+
 ## Standard Questions
 
 - What product decision must be made before requirements can lock?
@@ -65,36 +92,14 @@ For each perspective:
 - Which assumptions are risky if wrong?
 - Which actor perspectives are implied beyond the final end user?
 - Which unhappy paths or context variations materially change product behavior?
+- Which actor/object lifecycle states materially change the journey?
+- Which state transitions or configuration changes must be represented before
+  capabilities are derived?
 - Which existing product family or template is closest?
 - If no family fits, what reusable business pattern is missing?
 - Does the user need a new UX pattern or extension of a governed
   design-system family?
 - Which downstream risk flags should Technical Steering evaluate?
-
-## Authentication / Login Discovery Prompts
-
-Use these prompts when the request involves login, authentication,
-tenant-aware sign-in, SSO, password authentication, invited users, auth policy,
-or account recovery.
-
-- Can a user belong to exactly one tenant, multiple tenants, or either?
-- What should happen when no tenant matches the submitted identity?
-- What should happen when the same email exists in more than one tenant?
-- What should happen for invalid email input?
-- What should happen when the user's tenant does not support the requested auth
-  method?
-- If SSO is in scope, what should happen when the provider fails or is
-  unavailable?
-- If email/password is in scope, is password reset or forgotten password part
-  of the product journey?
-- What happens if tenant auth policy changes during an in-progress login?
-- What happens if the user is removed, disabled, or invited but not activated?
-- What account enumeration or privacy posture is expected?
-- Who configures tenant auth rules?
-- Can tenants allow multiple auth methods, or exactly one?
-- Can root override tenant auth settings? If yes, for whom and why?
-- Which of these are product decisions that block packet readiness, and which
-  can be deferred to Technical Steering?
 
 ## Expected Capability Groups
 

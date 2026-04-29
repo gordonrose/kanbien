@@ -73,7 +73,22 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
 Product Discovery templates sit upstream of PRD, capability matrix,
 vertical-slice, and implementation-blueprint templates. Reusable Product
 Discovery taxonomy and product templates live under
+`docs/product-discovery/`. Product Discovery packet instances live under
 `docs/workspace/product-discovery/`.
+Specialized feature-family prompts belong in those product templates or their
+references, not in the universal packet template.
+
+For explicit draft Product Discovery packet requests, use:
+
+```sh
+npm run product-discovery:draft -- --slug <slug> --title "<title>"
+```
+
+For structure checks, keep validation separate:
+
+```sh
+npm run product-discovery:validate -- <packet-path>
+```
 
 For backend and cross-feature work, treat `src/features/<featureName>/feature.manifest.json`
 and `docs/architecture/generated/feature-dependency-graph.*` as normal

@@ -366,6 +366,23 @@ Do not continue implementation on top of knowingly stale downstream artifacts.
 Do not leave source-independent docs describing the pre-change platform once
 the implementation is otherwise considered delivered.
 
+## Draft Product Discovery Packet Fast Path
+
+When the user explicitly asks for a draft Product Discovery packet, draft
+discovery packet, discovery pack, or product discovery packet, the assistant
+may create only that draft packet through the Product Discovery fast path
+without running the normal material-change start gates.
+
+This exception applies only to draft planning artifacts. The assistant must say:
+
+"Created as a draft discovery artifact; full repo guardrails and artifact
+sweeps were intentionally skipped."
+
+Do not use the fast path for validated, governed, complete,
+implementation-ready, artifact-complete, promotion-ready, source-code,
+migration, contract, feature-manifest, generated-artifact, or implementation
+work.
+
 ## Feature Loop Completion Gate
 
 Do not stop a material feature loop at "code plus a few tests" when the

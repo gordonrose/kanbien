@@ -34,3 +34,12 @@ Every product template must state:
   reuse.
 - Product template changes must remain compatible with the taxonomy version
   they reference, or they must update the taxonomy review fields.
+
+## Starter Templates
+
+- `generic-feature-template.md`
+  Fallback template for requests that do not match a more specific product
+  family.
+- `authentication-access-template.md`
+  Specialized template for login, authentication, SSO, tenant-aware sign-in,
+  auth policy, invited-user activation, and account recovery discovery.
