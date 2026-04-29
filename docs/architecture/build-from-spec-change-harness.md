@@ -21,7 +21,8 @@ This document answers two questions:
 
 ```mermaid
 flowchart TD
-    A[Architecture Guardrails\nAGENTS.md\nsystem-overview\nprinciples\nADRs\nstandards gates] --> B[Capability Matrix\nwhat must exist]
+    A[Architecture Guardrails\nAGENTS.md\nsystem-overview\nprinciples\nADRs\nstandards gates] --> PD[Product Discovery\nintent, taxonomy, journeys,\nJTBD, use cases, capability implications]
+    PD --> B[Capability Matrix\nwhat must exist]
     B --> C[PRD / PRD refinement\nwhy and what behavior is intended]
     C --> D{Enduring change?}
     D -->|Yes| E[ADR / architecture update]
@@ -44,6 +45,13 @@ flowchart TB
       A1[Architecture]
       A2[Standards]
       A3[Change Control]
+    end
+
+    subgraph ProductDiscovery
+      P1[Taxonomy Classification]
+      P2[Product Template Fit]
+      P3[Journey / JTBD / Use Cases]
+      P4[Product Discovery Packet]
     end
 
     subgraph Specification
@@ -80,7 +88,8 @@ flowchart TB
       F3[Artifact Status Updates]
     end
 
-    Guardrails --> Specification
+    Guardrails --> ProductDiscovery
+    ProductDiscovery --> Specification
     Specification --> SourceIndependentArtifacts
     SourceIndependentArtifacts --> Planning
     Planning --> Execution
@@ -91,35 +100,48 @@ flowchart TB
 
 1. Start from architecture and standards guardrails.
    This defines what kinds of change are allowed and what evidence is required.
-2. Define the capability set.
+2. Run Product Discovery when the request is product-shaped,
+   pre-requirements, template-seeking, a new feature family, a material
+   vertical slice, or feedback that may change product intent.
+   Product Discovery starts with a plain-language summary of the request and a
+   focused interview. It classifies the request through the taxonomy, selects a
+   product template when one fits, records user journeys, bridges those
+   journeys through multi-actor job-to-be-done and use case statements, derives
+   product-level capability implications, captures context variations and
+   unhappy paths, captures open business questions, and sets the handoff status
+   for Technical Steering.
+   If product intent is blocked or no existing family/template fits, stop
+   before PRD, capability matrix, or implementation planning until the packet
+   records the required decision or steering path.
+3. Define the capability set.
    The capability matrix records what the platform or slice must do.
    It should also classify each capability boundary as `root`, `tenant`, or
    explicitly approved shared-cross-tenant, plus the tenant-context rule when
    relevant.
-3. Write or refine the PRD.
+4. Write or refine the PRD.
    The PRD captures the intended behavior, actors, and scope.
-4. Add an ADR when the change is enduring.
+5. Add an ADR when the change is enduring.
    Shared seams, lasting patterns, and cross-cutting rules should not live only
    in implementation.
-5. Create or refresh source-independent artifacts.
+6. Create or refresh source-independent artifacts.
    This includes API contracts, persistence contracts, permission mapping,
    privacy notes, runbooks, platform standards snapshots, reconstruction
    questionnaire updates, bootstrap or helper docs, test harness internals, and
    script or helper behavior docs where relevant.
-6. Translate the approved scope into an implementation blueprint.
+7. Translate the approved scope into an implementation blueprint.
    The blueprint explains how this repo should build the slice.
    If the PRD or source-independent contract artifacts are materially reset
    later in the same loop, refresh the blueprint before continuing.
-7. Derive PRD test cases.
+8. Derive PRD test cases.
    This turns intended behavior into an explicit verification inventory.
-8. Implement the change in `src/` and `tests/`.
+9. Implement the change in `src/` and `tests/`.
    Do not silently override reviewed PRD-derived test cases while writing
    executable tests; if case IDs, grouping, lifecycle, or intended behavior
    need to change, update the PRD test-case artifact first and re-review it.
    When persistence-backed behavior is added, also refresh the shared
    persistence harness and scripts in the same loop.
-9. Run standards and repo-health review.
-10. Update status-bearing artifacts so the repo does not keep stale planning or
+10. Run standards and repo-health review.
+11. Update status-bearing artifacts so the repo does not keep stale planning or
     stale compliance posture summaries.
     This includes architecture summaries, source-independent docs, OpenAPI,
     feature docs, and platform-status snapshots whose truth changed during the
@@ -129,6 +151,12 @@ flowchart TB
 
 ## What Each Artifact Is For
 
+- Product Discovery packet:
+  Product intent, taxonomy classification, template fit, journeys,
+  job-to-be-done bridge, use cases, product capability implications, open
+  business questions, out-of-scope boundaries, ambiguity ledger, feedback
+  posture, and handoff readiness for Technical Steering. It does not decide
+  implementation architecture.
 - Capability matrix:
   Inventory of what must exist across a capability set.
 - PRD:
@@ -161,6 +189,54 @@ flowchart TB
 - Platform status:
   Current standards posture snapshot for the platform, not just the proposed
   change.
+
+## Product Discovery Layer
+
+Layer 1 exists to prevent vague product requests from becoming premature
+technical planning work.
+
+Inputs:
+
+- user change request
+- post-iteration feedback
+- prior Product Discovery packets
+- product taxonomy and product templates
+- relevant PRDs, feature docs, retrospectives, or workspace notes
+
+Outputs:
+
+- Product Discovery packet using
+  `docs/templates/product-discovery-packet-template.md`
+- optional feedback note using
+  `docs/templates/product-discovery-feedback-template.md`
+- taxonomy or product-template maintenance signal when existing reuse paths do
+  not fit
+
+Handoff to Technical Steering:
+
+- locked product decisions
+- intentionally deferred product decisions
+- taxonomy classification
+- product template fit or new-family candidate
+- user journey, multi-actor job-to-be-done, use cases, context variations,
+  unhappy paths, and product capability implications
+- ambiguity and assumption ledger
+- risk flags for permission, tenant boundary, governed frontend, UX/design
+  system, assets, reporting, persistence, async jobs, external providers,
+  privacy, and compliance
+
+Stop conditions:
+
+- `blocked-product-intent`: core business or user intent is unresolved.
+- `blocked-new-template-approval`: a reusable product template appears needed
+  before requirements should lock.
+- `blocked-new-family-steering`: no existing family/template fits, and
+  Technical Steering or design-system governance must decide the new family or
+  extension path.
+
+Product Discovery may identify a new-family candidate, new UX pattern
+candidate, or design-system extension signal, but it does not approve the
+architecture, design-system pattern, or implementation path.
 
 ## How The Harness Prevents Drift
 

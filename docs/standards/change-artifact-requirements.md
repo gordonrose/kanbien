@@ -8,6 +8,69 @@ specified, documented, and verifiable.
 This document is intentionally procedural.
 It complements ADRs and architecture guides rather than replacing them.
 
+## Product Discovery Gate
+
+Before Technical Steering, PRD, capability matrix, or implementation planning,
+create or update a Product Discovery packet using
+`docs/templates/product-discovery-packet-template.md` when a change is:
+
+- a new feature family
+- a material vertical slice
+- a governed frontend family or first-consumer adoption
+- a permission-sensitive product change
+- asset-backed product behavior
+- reporting or read-model behavior
+- workflow builder or workflow execution behavior
+- post-iteration feedback that changes product intent
+
+Gate checks:
+
+- packet exists, or an explicit exemption is recorded
+- initial request summary and discovery interview confidence are recorded
+- taxonomy classification is filled
+- product template or generic template reference is recorded
+- multi-actor job-to-be-done bridge is filled when the request implies
+  configuration, governance, support, root/operator, system, or external
+  provider actors
+- use cases trace to the product capability breakdown
+- meaningful context variations and unhappy paths are captured or explicitly
+  marked out of scope/deferred
+- high-impact business questions are answered or marked blocking/deferred
+- handoff status is valid
+- Technical Steering risk flags are marked
+
+For login or authentication requests, the packet must explicitly review the
+authentication/login coverage checklist in the Product Discovery packet
+template and mark each item in-scope, out-of-scope, deferred to Technical
+Steering, or not applicable.
+
+If no existing family or product template fits, the packet must include a New
+Family Candidate section. If a new UX pattern or governed design-system
+extension may be needed, the packet must include a UX / Design-System Extension
+Signal section.
+
+Implementation planning must not proceed from `blocked-new-family-steering`
+without a Technical Steering or design-system governance decision.
+
+Do not duplicate Layer 1 stop-condition prose in other standards files; the
+Product Discovery packet template is canonical for Product Discovery statuses
+and stop conditions.
+
+## Product Discovery Taxonomy Governance Gate
+
+When the Product Discovery taxonomy or product templates change, review
+`docs/workspace/product-discovery/taxonomy.md` and record:
+
+- change type
+- reason and motivating examples
+- affected packets or product templates reviewed
+- compatibility or deprecation note when relevant
+- replacement value when a value is deprecated or renamed
+- product template taxonomy version or review field updates where relevant
+
+Adding or deprecating a taxonomy axis requires explicit approval because axes
+change the shape and cognitive cost of future Product Discovery packets.
+
 ## Minimum Required Artifacts By Change Type
 
 ### Feature-local backend capability

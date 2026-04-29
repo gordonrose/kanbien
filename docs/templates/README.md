@@ -7,6 +7,15 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
 
 ## Templates
 
+- `product-discovery-packet-template.md`
+  Layer 1 handoff packet for turning raw product requests or feedback into
+  intent, taxonomy classification, journeys, job-to-be-done statements, use
+  cases, product capability implications, open business questions, and
+  Technical Steering readiness.
+- `product-discovery-feedback-template.md`
+  Lightweight post-iteration feedback record for deciding whether feedback
+  changes product intent before downstream artifacts or implementation scope
+  move.
 - `capability-matrix-v4-template.md`
   Spreadsheet-friendly field list for end-to-end capability definition.
 - `implementation-blueprint-template.md`
@@ -60,6 +69,11 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
 - `vertical-slice-template.md`
   Combined frontend/backend slice template for one user-facing workflow across
   contracts, permissions, persistence, verification, and operations.
+
+Product Discovery templates sit upstream of PRD, capability matrix,
+vertical-slice, and implementation-blueprint templates. Reusable Product
+Discovery taxonomy and product templates live under
+`docs/workspace/product-discovery/`.
 
 For backend and cross-feature work, treat `src/features/<featureName>/feature.manifest.json`
 and `docs/architecture/generated/feature-dependency-graph.*` as normal

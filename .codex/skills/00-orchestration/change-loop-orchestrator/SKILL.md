@@ -1,6 +1,6 @@
 ---
 name: change-loop-orchestrator
-description: Use when a user has reached a clear direction and scope for a new feature or architectural change and wants Codex to drive the repo's full delivery loop consistently: PRD, ADR decision check, PRD test cases, implementation, PRD/test-case status updates, docs updates, standards compliance review, and repo health sanity check. Best for prompts like "let's implement this properly", "run the full loop", "take this through the repo process", or "formalize this change before we build it."
+description: Use when a user has reached a clear direction and scope for a new feature or architectural change and wants Codex to drive the repo's full delivery loop consistently: PRD, ADR decision check, PRD test cases, implementation, PRD/test-case status updates, docs updates, standards compliance review, and repo health sanity check. For vague, product-shaped, template-shaped, or pre-requirements requests, use product-discovery-maintainer first.
 ---
 
 # Change Loop Orchestrator
@@ -53,10 +53,28 @@ Do not use this skill for:
 - simple bug fixes fully contained inside one file with no lasting design
   impact
 - casual brainstorming where the user is not ready to commit to scope
+- vague, product-shaped, template-shaped, or pre-requirements requests that
+  need Layer 1 Product Discovery first
+
+Use `product-discovery-maintainer` first when a request needs product intent,
+taxonomy classification, product template fit, journey, job-to-be-done, use
+case, or product capability implication work before Technical Steering.
 
 ## Default Loop
 
 ### 1. Classify the change
+
+Before classifying the implementation loop, check whether a Product Discovery
+packet exists or is required.
+
+If a packet exists, inspect its status:
+
+- `ready-for-technical-steering`: continue with loop classification.
+- `blocked-product-intent`, `blocked-new-template-approval`, or
+  `blocked-new-family-steering`: do not proceed to PRD, capability matrix, or
+  implementation loop unless the user explicitly scopes discovery-only work or
+  approves a documented exception.
+- `discovery-only`: do not treat the request as a delivery loop.
 
 Determine whether the change is:
 
@@ -105,6 +123,10 @@ Prefer narrower repo-local skills when they fit the task:
 - rebuild-readiness docs: `rebuild-readiness-maintainer`
 - materially AI-assisted review notes: `ai-change-reviewer`
 - implementation blueprint maintenance: `implementation-blueprint-maintainer`
+- Product Discovery packet creation or feedback incorporation:
+  `product-discovery-maintainer`
+- Product Discovery taxonomy or product-template governance:
+  `product-discovery-taxonomy-maintainer`
 - frontend architecture mapping or ADR maintenance:
   `frontend-architecture-maintainer`
 
