@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  findDirtyWriteSetCollisions,
   parseBootstrapRecord,
+  parseDirtyPaths,
+  parseWriteSetPaths,
   validateBootstrapRecord,
 } from "../../../src/scripts/gitPreflight";
 
@@ -44,5 +47,49 @@ describe("git preflight bootstrap validation", () => {
       "bootstrap worktree /tmp/other-worktree does not match current worktree /home/gordon/kanbien",
     );
     expect(mismatches).toContain("bootstrap is missing Planned Write Set");
+  });
+});
+
+describe("git preflight dirty write-set collision detection", () => {
+  it("extracts explicit path tokens from a planned write set", () => {
+    expect(
+      parseWriteSetPaths(
+        "src/scripts/gitPreflight.ts, tests/unit/gitGuardrails/gitPreflight.test.ts and git guardrail docs",
+      ),
+    ).toEqual([
+      "src/scripts/gitPreflight.ts",
+      "tests/unit/gitGuardrails/gitPreflight.test.ts",
+    ]);
+  });
+
+  it("extracts both sides of renamed dirty paths", () => {
+    expect(parseDirtyPaths("R  docs/old.md -> docs/new.md")).toEqual([
+      "docs/old.md",
+      "docs/new.md",
+    ]);
+  });
+
+  it("allows unrelated dirty paths to stay disjoint from the current chat write set", () => {
+    const collisions = findDirtyWriteSetCollisions({
+      dirtyPaths: ["docs/workspace/product-discovery/reporting-dashboard.md"],
+      plannedWriteSetPaths: ["src/scripts/gitPreflight.ts", "tests/unit/gitGuardrails"],
+    });
+
+    expect(collisions).toEqual([]);
+  });
+
+  it("flags exact and nested collisions with the current chat write set", () => {
+    const collisions = findDirtyWriteSetCollisions({
+      dirtyPaths: [
+        "src/scripts/gitPreflight.ts",
+        "tests/unit/gitGuardrails/gitPreflight.test.ts",
+      ],
+      plannedWriteSetPaths: ["src/scripts/gitPreflight.ts", "tests/unit/gitGuardrails"],
+    });
+
+    expect(collisions).toEqual([
+      "src/scripts/gitPreflight.ts",
+      "tests/unit/gitGuardrails/gitPreflight.test.ts",
+    ]);
   });
 });

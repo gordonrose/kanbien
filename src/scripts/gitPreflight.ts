@@ -13,12 +13,14 @@ type PreflightStatus =
 
 type Options = {
   allowDirty: boolean;
+  allowDisjointDirty: boolean;
   allowMain: boolean;
   allowStaleBase: boolean;
   allowStaleMain: boolean;
   baseRef: string;
   bootstrapPath: string | null;
   json: boolean;
+  writeSetPaths: string[];
   requireBase: boolean;
 };
 
@@ -34,6 +36,10 @@ type Report = {
   localMainMatchesOriginMain: boolean;
   worktreeClean: boolean;
   worktreeChanges: string[];
+  dirtyPaths: string[];
+  plannedWriteSetPaths: string[];
+  dirtyCollisions: string[];
+  dirtyDisjointAllowed: boolean;
   bootstrapPath: string | null;
   bootstrapExists: boolean | null;
   bootstrap: BootstrapRecord | null;
@@ -51,18 +57,24 @@ export type BootstrapRecord = {
 
 function parseArgs(argv: string[]): Options {
   let allowDirty = false;
+  let allowDisjointDirty = false;
   let allowMain = false;
   let allowStaleBase = false;
   let allowStaleMain = false;
   let baseRef = "origin/main";
   let bootstrapPath: string | null = null;
   let json = false;
+  const writeSetPaths: string[] = [];
   let requireBase = false;
 
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
     if (value === "--allow-dirty") {
       allowDirty = true;
+      continue;
+    }
+    if (value === "--allow-disjoint-dirty") {
+      allowDisjointDirty = true;
       continue;
     }
     if (value === "--allow-main") {
@@ -90,6 +102,19 @@ function parseArgs(argv: string[]): Options {
       json = true;
       continue;
     }
+    if (value === "--write-set" || value === "--planned-write-set") {
+      writeSetPaths.push(...parseWriteSetPaths(argv[index + 1] ?? ""));
+      index += 1;
+      continue;
+    }
+    if (value.startsWith("--write-set=")) {
+      writeSetPaths.push(...parseWriteSetPaths(value.slice("--write-set=".length)));
+      continue;
+    }
+    if (value.startsWith("--planned-write-set=")) {
+      writeSetPaths.push(...parseWriteSetPaths(value.slice("--planned-write-set=".length)));
+      continue;
+    }
     if (value === "--require-base") {
       requireBase = true;
       continue;
@@ -106,12 +131,14 @@ function parseArgs(argv: string[]): Options {
 
   return {
     allowDirty,
+    allowDisjointDirty,
     allowMain,
     allowStaleBase,
     allowStaleMain,
     baseRef,
     bootstrapPath,
     json,
+    writeSetPaths,
     requireBase,
   };
 }
@@ -162,6 +189,59 @@ function normalizePathForCompare(value: string): string {
 
 function stripInlineComment(value: string): string {
   return value.replace(/\s+#.*$/, "").trim();
+}
+
+function normalizeRepoPath(value: string): string {
+  return value.trim().replace(/^["'`]+|["'`,.;:]+$/g, "").replace(/\\/g, "/").replace(/^\.\/+/, "").replace(/\/+$/, "");
+}
+
+export function parseWriteSetPaths(value: string): string[] {
+  return Array.from(
+    new Set(
+      value
+        .split(/[\s,]+/)
+        .map(normalizeRepoPath)
+        .filter((token) => token.length > 0)
+        .filter((token) => !token.startsWith("-"))
+        .filter((token) => token.includes("/") || /\.[A-Za-z0-9]+$/.test(token)),
+    ),
+  );
+}
+
+export function parseDirtyPaths(statusLine: string): string[] {
+  const value = statusLine.slice(3).trim();
+  if (!value) {
+    return [];
+  }
+  return value
+    .split(" -> ")
+    .map(normalizeRepoPath)
+    .filter(Boolean);
+}
+
+function pathsCollide(left: string, right: string): boolean {
+  const normalizedLeft = normalizeRepoPath(left);
+  const normalizedRight = normalizeRepoPath(right);
+  return (
+    normalizedLeft === normalizedRight ||
+    normalizedLeft.startsWith(`${normalizedRight}/`) ||
+    normalizedRight.startsWith(`${normalizedLeft}/`)
+  );
+}
+
+export function findDirtyWriteSetCollisions(input: {
+  dirtyPaths: string[];
+  plannedWriteSetPaths: string[];
+}): string[] {
+  const collisions = new Set<string>();
+  for (const dirtyPath of input.dirtyPaths) {
+    for (const plannedPath of input.plannedWriteSetPaths) {
+      if (pathsCollide(dirtyPath, plannedPath)) {
+        collisions.add(dirtyPath);
+      }
+    }
+  }
+  return Array.from(collisions);
 }
 
 export function parseBootstrapRecord(content: string): BootstrapRecord {
@@ -295,8 +375,25 @@ function buildReport(options: Options): Report {
             !mismatch.includes("current HEAD"),
         );
 
+  const plannedWriteSetPaths = Array.from(
+    new Set([
+      ...options.writeSetPaths,
+      ...parseWriteSetPaths(bootstrap?.plannedWriteSet ?? ""),
+    ]),
+  );
+  const dirtyPaths = worktreeChanges.flatMap(parseDirtyPaths);
+  const dirtyCollisions = findDirtyWriteSetCollisions({
+    dirtyPaths,
+    plannedWriteSetPaths,
+  });
+  const dirtyDisjointAllowed =
+    options.allowDisjointDirty &&
+    !worktreeClean &&
+    plannedWriteSetPaths.length > 0 &&
+    dirtyCollisions.length === 0;
+
   let status: PreflightStatus = "SAFE";
-  if (!options.allowDirty && !worktreeClean) {
+  if (!options.allowDirty && !worktreeClean && !dirtyDisjointAllowed) {
     status = "DIRTY_BLOCK";
   } else if (!options.allowStaleMain && !localMainMatchesOriginMain) {
     status = "STALE_MAIN_BLOCK";
@@ -316,9 +413,19 @@ function buildReport(options: Options): Report {
 
   const recommendations: string[] = [];
   if (!worktreeClean) {
-    recommendations.push(
-      "Commit, stash, back up, or isolate the current dirty state before starting unrelated material work.",
-    );
+    if (dirtyDisjointAllowed) {
+      recommendations.push(
+        "Dirty changes are outside the planned write set; keep the current task within the declared paths and rerun preflight if the write set changes.",
+      );
+    } else if (plannedWriteSetPaths.length > 0 && dirtyCollisions.length > 0) {
+      recommendations.push(
+        `Dirty changes collide with the planned write set: ${dirtyCollisions.join(", ")}. Commit, stash, back up, or isolate that state before continuing.`,
+      );
+    } else {
+      recommendations.push(
+        "Commit, stash, back up, or isolate the current dirty state before starting unrelated material work.",
+      );
+    }
   }
   if (!localMainMatchesOriginMain) {
     recommendations.push(
@@ -364,6 +471,10 @@ function buildReport(options: Options): Report {
     localMainMatchesOriginMain,
     worktreeClean,
     worktreeChanges,
+    dirtyPaths,
+    plannedWriteSetPaths,
+    dirtyCollisions,
+    dirtyDisjointAllowed,
     bootstrapPath: options.bootstrapPath,
     bootstrapExists,
     bootstrap,
@@ -395,6 +506,15 @@ function printReport(report: Report): void {
     `- local main synced: ${report.localMainMatchesOriginMain ? "yes" : "no"}`,
   );
   console.log(`- worktree clean: ${report.worktreeClean ? "yes" : "no"}`);
+  if (report.plannedWriteSetPaths.length > 0) {
+    console.log(`- planned write set paths: ${report.plannedWriteSetPaths.join(", ")}`);
+  }
+  if (report.dirtyDisjointAllowed) {
+    console.log("- dirty disjoint allowed: yes");
+  }
+  if (report.dirtyCollisions.length > 0) {
+    console.log(`- dirty collisions: ${report.dirtyCollisions.join(", ")}`);
+  }
   if (report.bootstrapPath !== null) {
     console.log(
       `- bootstrap: ${report.bootstrapExists ? "present" : "missing"} (${report.bootstrapPath})`,

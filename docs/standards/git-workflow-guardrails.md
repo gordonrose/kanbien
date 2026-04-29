@@ -131,9 +131,25 @@ Allowed next actions:
 - stash it
 - back it up
 - move to a dedicated worktree
+- run preflight with an explicit planned write set when the same worktree is
+  intentionally hosting separate chats and the file sets are disjoint
 - stop and ask for direction
 
 Do not treat a dirty worktree as harmless background noise.
+
+Same-worktree overlap is allowed only when the current task has an auditable
+planned write set and the existing dirty paths do not collide with it. Use one
+of these forms:
+
+```bash
+npm run git:preflight -- --bootstrap docs/workspace/chat-bootstraps/<date>-<slug>.md --allow-disjoint-dirty
+npm run git:preflight -- --write-set src/scripts/gitPreflight.ts,tests/unit/gitGuardrails --allow-disjoint-dirty
+```
+
+If any dirty path exactly matches the planned write set, is inside a planned
+directory, or contains a planned path, preflight must still return
+`DIRTY_BLOCK`. If no planned write set is supplied, the old strict dirty block
+remains in force.
 
 If a worktree is dirty and its `HEAD` does not descend from the current
 `origin/main`, treat it as a red-alert state. That usually means the task was
