@@ -7,6 +7,7 @@
   `ListRecordCard`
   `ListDetailPanel`
   `ListDetailSplitLayout`
+  `FormImageCard`
 - Status:
   active first-consumer adoption contract
 - First consumer surface:
@@ -23,6 +24,8 @@
   `docs/workspace/design-system/components/list-record-card-component.md`
   `docs/workspace/design-system/components/list-detail-panel-component.md`
   `docs/workspace/design-system/components/list-detail-split-layout-component.md`
+  `docs/workspace/design-system/behavior-locks/form-image-card-behavior-lock.md`
+  `docs/workspace/design-system/reference-packs/form-image-card-reference-pack.md`
 
 ## Purpose
 
@@ -76,9 +79,12 @@
 - Selection source:
   one selected visible root user at a time
 - Detail content mapping:
-  title uses durable root-user display identity, subtitle uses normalized
-  email, meta uses lifecycle status, and body/tags map current durable fields
-  such as identifiers and timestamps
+  the drawer header uses the signed-off `FormImageCard` seam for selected
+  root-user identity: first and last name in the top row, normalized email in
+  the second row, lifecycle status in the third row, and the linked profile
+  image when available. The hidden detail title remains the accessible panel
+  label and focus target. Body and tags map current durable fields such as
+  identifiers and timestamps.
 - Append source:
   additional pages of `GET /v1/root-users` load through the list boundary and
   footer `Next`
@@ -126,6 +132,9 @@
 - The route currently adopts visible-directory create and edit only.
   Deleted-only, anonymized-only, or destructive lifecycle mutation surfaces
   remain separate future work.
+- The root-user edit drawer places the profile-picture field before scalar
+  identity fields so the header image-card edit affordance opens the form at
+  the image relationship first.
 
 ## Adoption Boundary
 

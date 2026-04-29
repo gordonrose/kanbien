@@ -5,6 +5,7 @@ const tinyPngBuffer = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=",
   "base64",
 );
+const tinyPngDataUrl = `data:image/png;base64,${tinyPngBuffer.toString("base64")}`;
 
 const mockSession = {
   rootUserId: "root_user_001",
@@ -181,6 +182,10 @@ function buildRootUsers(total = 30) {
       lastName: `User ${number}`,
       anonymized: false,
       status: number % 6 === 0 ? "inactive" : "active",
+      profilePictureAssetId: number === 1 ? "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" : null,
+      profilePictureUrl: number === 1 ? tinyPngDataUrl : null,
+      profilePictureAltText: number === 1 ? "Root User 1 profile portrait" : null,
+      profilePictureDecorative: false,
       createdAt: `2026-03-${String(((number - 1) % 28) + 1).padStart(2, "0")}T10:00:00.000Z`,
       updatedAt: `2026-04-${String(((number - 1) % 17) + 1).padStart(2, "0")}T14:15:00.000Z`,
       deletedAt: null,
@@ -323,6 +328,10 @@ async function mockRootUsersRoutes(
         lastName: body.lastName ?? "",
         anonymized: false,
         status: "active",
+        profilePictureAssetId: body.profilePictureAssetId ?? null,
+        profilePictureUrl: body.profilePictureAssetId ? tinyPngDataUrl : null,
+        profilePictureAltText: body.profilePictureAltText ?? null,
+        profilePictureDecorative: Boolean(body.profilePictureDecorative),
         createdAt: "2026-04-27T10:00:00.000Z",
         updatedAt: "2026-04-27T10:00:00.000Z",
         deletedAt: null,
@@ -619,6 +628,30 @@ test.describe("root-admin root-users list page adoption", () => {
     expect(detailBox).not.toBeNull();
     expect((listBox?.x ?? 0)).toBeLessThan((detailBox?.x ?? 0) - 1);
     expect(Math.abs((listBox?.y ?? 0) - (detailBox?.y ?? 0))).toBeLessThanOrEqual(2);
+  });
+
+  test("root-user drawer header uses the image card identity summary and profile picture edits start at the top", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapUsersPage(page);
+
+    await page.locator('[data-selectable-list-card]').first().click();
+
+    const headerCard = page.locator("#root-users-detail-panel [data-directory-detail-identity-card] [data-form-image-card]");
+    await expect(headerCard).toBeVisible();
+    await expect(headerCard.locator(".form-image-card-copy strong")).toHaveText("Root User 1");
+    await expect(headerCard.locator(".form-image-card-copy span")).toHaveText("root.user1@example.test");
+    await expect(headerCard.locator(".form-image-card-copy small")).toHaveText("Active");
+    await expect(headerCard.locator("[data-form-image-card-image]")).toHaveAttribute("src", tinyPngDataUrl);
+    await expect(headerCard.locator("[data-form-image-card-image]")).toHaveAttribute("alt", "Root User 1 profile portrait");
+
+    await headerCard.locator("[data-form-image-card-media]").hover();
+    await headerCard.locator("[data-form-image-card-edit]").click();
+
+    const editForm = page.locator('#page-users [data-directory-form="edit"]');
+    await expect(editForm).toBeVisible();
+    await expect(editForm.locator("[data-directory-profile-picture]")).toBeVisible();
+    await expect(editForm.locator("[data-directory-profile-picture]")).toHaveJSProperty("previousElementSibling", null);
+    await expect(editForm.locator("[data-form-upload-field]")).toHaveAttribute("data-form-upload-state", "complete");
   });
 
   test("directory list cards keep the governed list-page stack gap", async ({ page }) => {

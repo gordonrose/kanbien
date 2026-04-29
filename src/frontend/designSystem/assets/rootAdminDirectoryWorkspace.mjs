@@ -1,5 +1,6 @@
 import {
   initializeFormUploadFields,
+  renderFormImageCard,
   renderFormUploadField,
   setFormUploadState,
 } from "./formControls.mjs";
@@ -143,6 +144,18 @@ const directoryConfigs = {
           record.deletedAt ? `Deleted: ${formatTimestamp(record.deletedAt)}.` : "This record remains visible.",
         ].join(" "),
         tags: [record.rootUserId, `Created ${formatTimestamp(record.createdAt)}`, `Updated ${formatTimestamp(record.updatedAt)}`],
+      };
+    },
+    detailIdentityCard(record) {
+      const name = [record?.firstName, record?.lastName].filter(Boolean).join(" ").trim();
+      return {
+        name: name || record?.email || "Root User",
+        email: record?.email,
+        jobTitle: statusLabel(record?.status),
+        imageUrl: record?.profilePictureUrl,
+        imageAlt: record?.profilePictureDecorative ? "" : record?.profilePictureAltText,
+        imageLabel: "Profile picture",
+        editLabel: "Edit profile picture",
       };
     },
   },
@@ -367,10 +380,10 @@ function renderForm(mode, config) {
   return `
     <form class="drawer-form hidden" data-directory-form="${escapeHtml(mode)}" aria-hidden="true">
       <div class="drawer-form-section">
+        ${renderProfilePictureFields(mode, config)}
         <div class="drawer-form-grid">
           ${config.fields.map((field) => renderField(field, mode, config)).join("")}
         </div>
-        ${renderProfilePictureFields(mode, config)}
         <p class="drawer-form-status" aria-live="polite" data-directory-form-status></p>
       </div>
     </form>
@@ -476,11 +489,18 @@ export function renderRootAdminDirectoryWorkspaceShell(pageKey) {
         data-selectable-list-detail-panel
       >
         <div class="list-page-detail-header">
-          <div class="list-page-detail-copy">
-            <p class="list-page-detail-meta tooltip-anchor" data-directory-detail-meta data-overflow-tooltip-source></p>
-            <h2 id="${escapeHtml(detailTitleId)}" class="list-page-detail-title" tabindex="-1" data-directory-detail-title></h2>
-            <p class="list-page-detail-subtitle" data-directory-detail-subtitle></p>
-          </div>
+          ${config.detailIdentityCard
+            ? `
+              <div data-directory-detail-identity-card></div>
+              <h2 id="${escapeHtml(detailTitleId)}" class="visually-hidden" tabindex="-1" data-directory-detail-title></h2>
+            `
+            : `
+              <div class="list-page-detail-copy">
+                <p class="list-page-detail-meta tooltip-anchor" data-directory-detail-meta data-overflow-tooltip-source></p>
+                <h2 id="${escapeHtml(detailTitleId)}" class="list-page-detail-title" tabindex="-1" data-directory-detail-title></h2>
+                <p class="list-page-detail-subtitle" data-directory-detail-subtitle></p>
+              </div>
+            `}
           <div class="list-page-detail-controls">
             <div class="list-page-detail-action-row">
               <button id="${escapeHtml(config.idPrefix)}-detail-edit" class="list-page-state-button" type="button" data-directory-edit>Edit</button>
@@ -535,6 +555,7 @@ export function createRootAdminDirectoryWorkspaceController({
   const detailPanel = root.querySelector("[data-directory-detail-panel]");
   const detailTitle = root.querySelector("[data-directory-detail-title]");
   const detailSubtitle = root.querySelector("[data-directory-detail-subtitle]");
+  const detailIdentityCard = root.querySelector("[data-directory-detail-identity-card]");
   const detailDescription = root.querySelector("[data-directory-detail-description]");
   const detailMeta = root.querySelector("[data-directory-detail-meta]");
   const detailTags = root.querySelector("[data-directory-detail-tags]");
@@ -836,6 +857,9 @@ export function createRootAdminDirectoryWorkspaceController({
       detailTitle.textContent = detail.title;
     }
     setOptionalText(detailSubtitle, detail.subtitle);
+    if (detailIdentityCard instanceof HTMLElement && typeof config.detailIdentityCard === "function") {
+      detailIdentityCard.innerHTML = renderFormImageCard(config.detailIdentityCard(record));
+    }
     setOptionalText(detailDescription, detail.description);
     setOptionalTags(detailTags, detail.tags);
 
@@ -1088,14 +1112,14 @@ export function createRootAdminDirectoryWorkspaceController({
     root.querySelector('[data-directory-form="create"] input, [data-directory-form="create"] select')?.focus({ preventScroll: true });
   }
 
-  function openEditForm() {
+  function openEditForm(focusSelector = '[data-directory-form="edit"] input, [data-directory-form="edit"] select') {
     const record = getSelectedRecord();
     if (!record) {
       return;
     }
     fillForm("edit", record);
     setMode("edit");
-    root.querySelector('[data-directory-form="edit"] input, [data-directory-form="edit"] select')?.focus({ preventScroll: true });
+    root.querySelector(focusSelector)?.focus({ preventScroll: true });
   }
 
   async function saveForm() {
@@ -1199,6 +1223,11 @@ export function createRootAdminDirectoryWorkspaceController({
     }
     if (target?.closest("[data-directory-edit]")) {
       openEditForm();
+      return;
+    }
+    if (target?.closest("[data-directory-detail-identity-card] [data-form-image-card-edit]")) {
+      openEditForm('[data-directory-form="edit"] [data-profile-picture-alt-text], [data-directory-form="edit"] [data-form-upload-input]');
+      root.querySelector('[data-directory-form="edit"] [data-directory-profile-picture]')?.scrollIntoView({ block: "nearest" });
       return;
     }
     if (target?.closest("[data-directory-close]")) {
