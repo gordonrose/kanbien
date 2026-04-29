@@ -60,12 +60,23 @@ Use `product-discovery-maintainer` first when a request needs product intent,
 taxonomy classification, product template fit, journey, job-to-be-done, use
 case, or product capability implication work before Technical Steering.
 
+When the user asks to use Layer 1, Product Discovery, product discovery, or
+discovery to define, shape, explore, or clarify a requirement, the Product
+Discovery first-response hard gate outranks this orchestrator. Do not classify
+the implementation loop, inspect repo state, run git preflight, or draft PRD /
+capability / implementation artifacts before the product-discovery-maintainer
+has given the plain-language summary and focused first question set.
+
 ## Default Loop
 
 ### 1. Classify the change
 
 Before classifying the implementation loop, check whether a Product Discovery
 packet exists or is required.
+
+If Product Discovery is required but the first-response hard gate has not
+happened in the conversation yet, stop loop classification and route to
+`product-discovery-maintainer`.
 
 If a packet exists, inspect its status:
 

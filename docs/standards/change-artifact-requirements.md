@@ -10,6 +10,29 @@ It complements ADRs and architecture guides rather than replacing them.
 
 ## Product Discovery Gate
 
+### Product Discovery Conversation
+
+When the user asks to use Layer 1, Product Discovery, product discovery, or
+discovery to define, shape, explore, or clarify a requirement, begin with the
+Product Discovery interview.
+
+This is not yet a material repo edit. The assistant should not start by running
+git preflight, checking branch/worktree state, inspecting broad repo docs,
+searching for PRD/design-system implementation templates, or reporting repo
+state to the user.
+
+The first response should summarize the request in plain language and ask only
+the next product questions needed to improve confidence.
+
+The first response must happen before tool use, repo inspection, packet
+drafting, or file creation. Do not create or fill a Product Discovery packet
+until the requester has seen the summary and has answered, corrected, or
+explicitly deferred the first question set.
+
+Do not use a first-pass-draft-then-questions pattern for Product Discovery
+conversation mode. If important product questions are known, they must be asked
+before packet creation, confidence assignment, or ready-status handoff.
+
 ### Draft Fast Path
 
 When a user explicitly asks for a draft Product Discovery packet, draft
@@ -19,6 +42,7 @@ may use the fast path.
 Fast path mode:
 
 - creates a draft planning artifact only
+- skips repo guardrails and broad sweeps, not discovery judgment
 - does not run `npm run git:preflight` by default
 - does not run branch, bootstrap, worktree, promotion, or maintained-artifact
   sweep checks by default
@@ -34,6 +58,9 @@ Fast path output must say:
 
 Do not treat a fast-path draft as validated, governed, complete,
 implementation-ready, artifact-complete, or promotion-ready.
+
+If important product questions are already known and the user has not
+explicitly asked to bypass the interview, ask before filling the packet.
 
 Preferred command:
 
@@ -63,6 +90,10 @@ Before Technical Steering, PRD, capability matrix, or implementation planning,
 create or update a Product Discovery packet using
 `docs/templates/product-discovery-packet-template.md` when a change is:
 
+This gate does not override the Product Discovery conversation gate above. If
+the user is still at the discovery-conversation stage, ask the first focused
+question set before creating or filling the packet.
+
 - a new feature family
 - a material vertical slice
 - a governed frontend family or first-consumer adoption
@@ -88,10 +119,10 @@ Gate checks:
 - handoff status is valid
 - Technical Steering risk flags are marked
 
-For login or authentication requests, the packet must explicitly review the
-authentication/login coverage checklist in the Product Discovery packet
-template and mark each item in-scope, out-of-scope, deferred to Technical
-Steering, or not applicable.
+For login or authentication requests, use
+`docs/product-discovery/templates/authentication-access-template.md` and record
+the relevant answers or deferrals in the Product Discovery packet. Do not move
+auth-specific checklist content into the universal packet template.
 
 If no existing family or product template fits, the packet must include a New
 Family Candidate section. If a new UX pattern or governed design-system

@@ -40,6 +40,26 @@ Promotion must record:
 - whether standards, skills, or architecture docs now reference the durable
   artifact
 
+## Discovery Conversation
+
+When a user asks to use Layer 1 or Product Discovery to define, shape, explore,
+or clarify a requirement, start with a discovery conversation.
+
+This mode is not a material repo edit. The first response should summarize the
+request in plain language and ask only the next product questions needed to
+increase confidence. Do not begin with git preflight, branch/worktree state,
+broad repo inspection, PRD drafting, implementation planning, or
+design-system work-item discovery.
+
+The first response must happen before tool use, packet drafting, or file
+creation. Do not create or fill a packet until the requester has seen the
+summary and has answered, corrected, or explicitly deferred the first question
+set.
+
+Do not create a rough first-pass packet and ask known product questions after
+the fact. If important questions are visible, ask them before packet creation or
+status assignment.
+
 ## Draft Fast Path
 
 When a user explicitly asks for a draft Product Discovery packet, draft
@@ -65,6 +85,10 @@ Draft fast path intentionally skips:
 - maintained-artifact sweeps
 - broad architecture-doc inspection
 - broad repo searches
+
+Draft fast path skips repo guardrails and broad sweeps, not discovery judgment.
+If important product questions are already known and the user has not
+explicitly asked to bypass the interview, ask before filling the packet.
 
 Draft fast path output must be described as:
 

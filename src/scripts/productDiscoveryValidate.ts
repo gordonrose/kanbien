@@ -5,6 +5,7 @@ const requiredHeadings = [
   "# Product Discovery Packet:",
   "## Status",
   "## Discovery Interview Summary",
+  "## Known Questions Gate",
   "## Product Intent",
   "## Taxonomy Classification",
   "## Job-To-Be-Done Bridge",

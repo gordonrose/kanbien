@@ -103,13 +103,15 @@ flowchart TB
 2. Run Product Discovery when the request is product-shaped,
    pre-requirements, template-seeking, a new feature family, a material
    vertical slice, or feedback that may change product intent.
-   Product Discovery starts with a plain-language summary of the request and a
-   focused interview. It classifies the request through the taxonomy, selects a
-   product template when one fits, records user journeys, bridges those
-   journeys through multi-actor job-to-be-done and use case statements, derives
-   product-level capability implications, captures context variations and
-   unhappy paths, captures open business questions, and sets the handoff status
-   for Technical Steering.
+   When the user asks to use Layer 1 or Product Discovery to define a
+   requirement, start with a plain-language summary and a focused interview
+   before repo inspection, preflight, PRD drafting, implementation planning, or
+   design-system work-item discovery. Product Discovery then classifies the
+   request through the taxonomy, selects a product template when one fits,
+   records user journeys, bridges those journeys through multi-actor
+   job-to-be-done and use case statements, derives product-level capability
+   implications, captures context variations and unhappy paths, captures open
+   business questions, and sets the handoff status for Technical Steering.
    If product intent is blocked or no existing family/template fits, stop
    before PRD, capability matrix, or implementation planning until the packet
    records the required decision or steering path.
@@ -195,8 +197,18 @@ flowchart TB
 Layer 1 exists to prevent vague product requests from becoming premature
 technical planning work.
 
-Product Discovery has two operating modes:
+Product Discovery has three operating modes:
 
+- Discovery conversation:
+  Use when the user asks to use Layer 1 or Product Discovery to define, shape,
+  explore, or clarify a requirement. This mode is not a material repo edit.
+  Start with a plain-language summary and focused product questions. Do not
+  begin with git preflight, branch/worktree state, broad repo inspection, PRD
+  drafting, implementation planning, or design-system work-item discovery. Do
+  not create or fill a packet until the requester has seen the summary and has
+  answered, corrected, or explicitly deferred the first question set. Do not
+  use a first-pass-draft-then-questions pattern when important product
+  questions are already known.
 - Draft fast path:
   Use only when the user explicitly asks for a draft Product Discovery packet,
   draft discovery packet, discovery pack, or product discovery packet. This

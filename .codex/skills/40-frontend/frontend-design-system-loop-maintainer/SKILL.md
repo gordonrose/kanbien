@@ -77,6 +77,13 @@ Use this skill when the prompt is about:
 Also use this skill when the user wants the same interactive style as a prior
 design-system session with tight loops and screenshot validation.
 
+If the prompt asks to use Layer 1, Product Discovery, product discovery, or
+discovery to define, shape, explore, or clarify a design-system requirement,
+yield to `product-discovery-maintainer` before using this skill. Do not inspect
+design-system source, run visual loops, create design-system artifacts, or
+draft implementation work until Product Discovery has completed its
+plain-language summary and first focused question set.
+
 Do not use this skill by itself for:
 
 - purely backend work

@@ -1,5 +1,9 @@
 # Product Discovery Packet Template
 
+Do not use this template as the first response to a Product Discovery request.
+The first response must be a plain-language summary and focused question set
+before tool use, repo inspection, packet drafting, or file creation.
+
 Use this template before Technical Steering, PRD, capability matrix, or
 implementation planning begins.
 
@@ -16,6 +20,9 @@ Draft packet fast path:
 
 - Use only when the user explicitly asks for a draft Product Discovery packet,
   draft discovery packet, discovery pack, or product discovery packet.
+- Fast path skips repo guardrails and broad sweeps; it does not skip discovery
+  judgment. If important product questions are already known and the user has
+  not explicitly asked to bypass the interview, ask before filling the packet.
 - The preferred deterministic command is:
   `npm run product-discovery:draft -- --slug <slug> --title "<title>"`.
 - Fast-path drafts intentionally skip git preflight, branch/bootstrap/worktree
@@ -70,6 +77,27 @@ The interview should feel like product discovery, not form completion.
 - Questions safe to defer to Technical Steering:
 - Confidence for chosen status:
   `high | medium | low`
+
+## Known Questions Gate
+
+Use this section to prove that known product questions were asked before packet
+status was assigned.
+
+- Plain-language summary shown before drafting:
+- First question set asked before drafting:
+- Requester answered, corrected, or explicitly deferred first question set:
+  `yes | no`
+- Known important product questions left unasked:
+  `none | list below`
+- If any known question was not asked, why was it safe to defer:
+- Packet status allowed:
+  `yes | no`
+
+Gate rule:
+
+- Do not set `ready-for-technical-steering` when known important product
+  questions remain unasked.
+- Do not use a first-pass-draft-then-questions pattern.
 
 ## Product Intent
 

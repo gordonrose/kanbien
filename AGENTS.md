@@ -366,7 +366,33 @@ Do not continue implementation on top of knowingly stale downstream artifacts.
 Do not leave source-independent docs describing the pre-change platform once
 the implementation is otherwise considered delivered.
 
-## Draft Product Discovery Packet Fast Path
+## Product Discovery Conversation And Fast Path
+
+Product Discovery conversation is not a material repo edit. When a user asks to
+use Layer 1, Product Discovery, product discovery, or discovery to define,
+shape, explore, or clarify a requirement, start with the Product Discovery
+interview instead of the material-change git loop.
+
+The first response in that mode must be a user-facing plain-language summary
+and the smallest useful question set. Do not call tools, create a packet, draft
+files, or inspect the repo before that first response. Target an immediate
+first response, normally under 30 seconds.
+
+For that conversation-only mode, do not begin by running `npm run
+git:preflight`, checking branch/worktree state, inspecting broad repo docs,
+searching for PRD/design-system implementation templates, or reporting repo
+state to the user. Start with a plain-language summary and the smallest useful
+set of product questions. Run repo guardrails only if the user later asks for a
+governed artifact, reusable harness change, implementation work, or another
+material repo edit.
+
+Do not create or fill a Product Discovery packet until the requester has seen
+the summary and has answered, corrected, or explicitly deferred the first
+question set.
+
+Do not use a "first-pass draft, then questions" pattern for Product Discovery
+conversation mode. If important product questions are already known, ask them
+before creating, filling, or assigning confidence/status to a packet.
 
 When the user explicitly asks for a draft Product Discovery packet, draft
 discovery packet, discovery pack, or product discovery packet, the assistant

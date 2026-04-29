@@ -24,6 +24,88 @@ data dictionaries, or verification plans.
 
 ## Workflow
 
+## Discovery Conversation Mode
+
+Use this mode when the user asks to use Layer 1, Product Discovery, product
+discovery, or discovery to define, shape, explore, or clarify a requirement,
+even if they do not explicitly ask for a packet file.
+
+This mode is a conversation, not a material repo edit.
+
+### First Response Hard Gate
+
+The first assistant response in Discovery Conversation Mode must be a user-facing
+message, not a tool call.
+
+Target response time: immediate, normally under 30 seconds.
+
+Before any tool use, repo inspection, preflight, branch check, worktree check,
+packet drafting, or document creation:
+
+1. summarize the request in plain language
+2. state the likely first outcome in human terms, such as "a clear requirement
+   draft we can use for the next planning step"
+3. ask only the next few questions needed to raise confidence
+4. say which questions can wait until later when that is already clear
+
+Do not produce or start producing a packet until the requester has seen this
+summary and has either answered, corrected, or explicitly deferred the first
+question set. If the model is unsure whether enough is known, ask; do not draft.
+
+Never use a "first-pass draft, then questions" pattern in Discovery
+Conversation Mode. If you can name important product questions, ask them before
+creating, filling, or assigning confidence/status to a packet.
+
+If a packet is eventually created from the conversation, record the questions
+and answers in the packet. Do not treat unstated assumptions as answered just
+because the request is detailed.
+
+Do not start Discovery Conversation Mode by:
+
+- calling tools
+- running `npm run git:preflight`
+- checking branches, worktrees, or dirty repo state
+- inspecting broad repo docs
+- searching for PRD, design-system, implementation, or test templates
+- producing a PRD, implementation plan, design-system work item, API contract,
+  test plan, or code plan
+- creating or filling a Product Discovery packet
+- creating a rough first-pass packet or requirement draft before asking known
+  important product questions
+- telling the requester about repo state, internal paths, branch names, or
+  guardrail status
+
+Allowed quick reads are limited to directly relevant Product Discovery guidance
+when needed:
+
+- `docs/product-discovery/README.md`
+- `docs/product-discovery/taxonomy.md`
+- `docs/product-discovery/templates/README.md`
+- the one product template that clearly fits, otherwise
+  `docs/product-discovery/templates/generic-feature-template.md`
+- `docs/templates/product-discovery-packet-template.md` only when a packet is
+  actually being drafted
+
+If the user later asks you to create or update a packet file, choose between
+Draft Fast Path and Governed Mode using the rules below.
+
+Example first response shape:
+
+> I think you want a reusable dashboard-building template in the design system:
+> people can add rows, split them into columns, place reporting widgets into
+> those spaces, and use hover/click interactions to inspect or filter the
+> dashboard. For now, you want the design-system pattern only; connecting it to
+> app pages and analytics APIs comes later.
+>
+> A few product questions before I turn this into a requirement:
+> 1. Who is the first builder: an internal designer/developer, an admin user,
+>    or both eventually?
+> 2. Should the first version support freeform row/column layout, or a small
+>    set of preset dashboard layouts?
+> 3. When someone clicks a chart segment to filter the dashboard, should that
+>    be part of the design-system demo now, or only documented as future app
+>    behavior?
+
 ## Draft Fast Path
 
 Use this path only when the user explicitly asks for a draft Product Discovery
@@ -34,6 +116,7 @@ planning artifact, not a completed feature loop.
 
 In draft fast path mode:
 
+- skip repo guardrails and broad sweeps, not discovery judgment
 - do not run `npm run git:preflight` by default
 - do not run branch, bootstrap, worktree, promotion, or maintained-artifact
   sweep checks by default
@@ -48,6 +131,8 @@ In draft fast path mode:
 - write exactly the requested packet file and avoid unrelated edits
 - if a required template cannot be found quickly, stop and ask rather than
   doing a broad repo crawl
+- if important product questions are already known and the user has not
+  explicitly asked to bypass the interview, ask before filling the packet
 
 Preferred command:
 
@@ -195,6 +280,8 @@ Plain-language translations:
 Do:
 
 - summarize the request first in plain language
+- when the user asks to use Layer 1 or Product Discovery, begin with the
+  discovery conversation rather than repo workflow status
 - give a brief time expectation before working silently for more than a short
   moment, such as "I have enough to draft this. It may take a minute or two
   while I organize the notes."
@@ -215,6 +302,10 @@ Do not:
 
 - dump the full packet as a questionnaire
 - narrate internal harness mechanics to the requester
+- create a first-pass packet and then ask the product questions that were
+  already known before drafting
+- start with git, branch, worktree, preflight, PRD, design-system template, or
+  implementation status when the user asked for Product Discovery
 - leave the requester staring at a silent "working" state for minutes during
   discovery packet creation
 - use progress updates to expose repo paths, internal artifact names, or
