@@ -87,9 +87,6 @@ Primary sources:
 
 Helpful secondary sources:
 
-- Story Breakdown packets under `docs/workspace/story-breakdown/` when they
-  exist for the slice, especially story IDs, acceptance criteria, dependency
-  maps, actor/state/value/error matrices, and proof-layer obligations
 - `docs/featureDocs/*`
 - `docs/api-contracts/*`
 - `docs/data-dictionary/*`
@@ -110,10 +107,6 @@ Suggested file naming:
   `docs/prd/test_cases/2026-03-25-0001-root-auth-test-cases.md`
 
 Use the template in `references/test-case-template.md`.
-
-When a Story Breakdown packet exists, use it as an upstream obligation ledger.
-Do not redefine story scope in the PRD test-case document; map detailed
-`TC-*` cases back to story IDs and acceptance-criterion IDs where practical.
 
 The output should not assume the PRD test-case doc is the whole verification
 story. When the change class requires it, explicitly call out the relationship

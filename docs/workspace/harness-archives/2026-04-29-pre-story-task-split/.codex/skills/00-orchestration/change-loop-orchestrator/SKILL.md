@@ -138,8 +138,6 @@ Prefer narrower repo-local skills when they fit the task:
   `product-discovery-maintainer`
 - Product Discovery taxonomy or product-template governance:
   `product-discovery-taxonomy-maintainer`
-- Story Breakdown from approved Technical Steering:
-  `story-breakdown-maintainer`
 - frontend architecture mapping or ADR maintenance:
   `frontend-architecture-maintainer`
 
@@ -230,17 +228,6 @@ or source-independent doc update, call that out explicitly.
 
 Use `docs/standards/change-artifact-requirements.md` as the canonical artifact
 matrix instead of restating it here.
-
-### Do not bypass Story Breakdown
-
-For material work that has an approved Technical Steering packet, route through
-`story-breakdown-maintainer` before Task Breakdown, implementation
-blueprinting, or Delivery.
-
-Do not let Delivery begin from a vague steering scope. A story should be marked
-ready for Task Breakdown only when its job-to-be-done, acceptance criteria,
-dependency map, capability-matrix posture, proof obligations, and artifact
-ledger are present or explicitly blocked.
 
 ### Exact ADR discovery is required
 

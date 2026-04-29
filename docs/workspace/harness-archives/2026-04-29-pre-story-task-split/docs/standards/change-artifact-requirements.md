@@ -151,39 +151,6 @@ When the Product Discovery taxonomy or product templates change, review
 Adding or deprecating a taxonomy axis requires explicit approval because axes
 change the shape and cognitive cost of future Product Discovery packets.
 
-## Story Breakdown Gate
-
-For material work that has an approved Technical Steering packet, create or
-update a Story Breakdown packet before Task Breakdown or Delivery begins.
-
-Use:
-
-- `docs/templates/story-breakdown-packet-template.md`
-
-Gate checks:
-
-- story ID, value type, delivery shape, job to be done, actor or system
-  perspective, outcome, and acceptance criteria are recorded
-- acceptance criteria map to proof layers and required test families
-- dependency and feature-seam obligations are recorded
-- capability-matrix posture is recorded for each acceptance criterion
-- artifact obligations are recorded before implementation work starts
-- refactor-first and architecture-foundation blockers are represented as
-  stories or blockers rather than hidden inside implementation work
-- architecture invention outside Technical Steering is blocked
-
-Validation:
-
-```sh
-npm run story-breakdown:validate -- <packet-path>
-```
-
-Do not mark a story ready for Task Breakdown while validation is blocked unless
-the requester explicitly accepts the named blocker.
-
-Canonical Story Breakdown field definitions and stop conditions live in the
-template. Do not duplicate the full stop-condition list here.
-
 ## Minimum Required Artifacts By Change Type
 
 ### Feature-local backend capability

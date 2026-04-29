@@ -34,8 +34,6 @@ settled.
 
 Typical inputs:
 
-- Story Breakdown packet and approved story when the change has gone through
-  Technical Steering
 - approved capability matrix rows
 - PRD or PRD refinement
 - exact ADR discovery results for the scoped change areas
@@ -44,10 +42,6 @@ Typical inputs:
 
 If the capability matrix or PRD is missing or materially incomplete, say so
 instead of inventing the implementation plan.
-
-If material work has an approved Technical Steering packet but no Story
-Breakdown packet, do not invent story scope inside the blueprint. Ask for Story
-Breakdown first or record the explicit exception.
 
 ## Authority Order
 

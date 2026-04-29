@@ -20,8 +20,6 @@ test architecture, and implements executable tests under `tests/`.
 It should:
 
 - preserve `TC-*` IDs in test names
-- preserve story IDs and acceptance-criterion IDs when a Story Breakdown
-  packet is part of the scoped inputs
 - implement one layer at a time unless the user explicitly asks otherwise
 - use existing `tests/harness/*`, `tests/helpers/*`, and persistence-backed
   utilities where possible

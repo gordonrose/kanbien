@@ -16,10 +16,6 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   Lightweight post-iteration feedback record for deciding whether feedback
   changes product intent before downstream artifacts or implementation scope
   move.
-- `story-breakdown-packet-template.md`
-  Layer 3 packet for converting approved Technical Steering into the smallest
-  independently deliverable and verifiable stories before Task Breakdown or
-  Delivery begins.
 - `capability-matrix-v4-template.md`
   Spreadsheet-friendly field list for end-to-end capability definition.
 - `implementation-blueprint-template.md`
@@ -92,12 +88,6 @@ For structure checks, keep validation separate:
 
 ```sh
 npm run product-discovery:validate -- <packet-path>
-```
-
-For Story Breakdown packet checks, use:
-
-```sh
-npm run story-breakdown:validate -- <packet-path>
 ```
 
 For backend and cross-feature work, treat `src/features/<featureName>/feature.manifest.json`

@@ -73,7 +73,6 @@ flowchart TB
     end
 
     subgraph Planning
-      D0[Story Breakdown\nsmallest deliverable/verifiable stories]
       D1[Implementation Blueprint]
       D2[PRD Test Cases]
     end
@@ -140,28 +139,20 @@ flowchart TB
    privacy notes, runbooks, platform standards snapshots, reconstruction
    questionnaire updates, bootstrap or helper docs, test harness internals, and
    script or helper behavior docs where relevant.
-7. For material work that has gone through Technical Steering, run Story
-   Breakdown before Task Breakdown or Delivery.
-   Story Breakdown converts approved steering into the smallest independently
-   deliverable and verifiable stories. It records each story's job to be done,
-   value type, delivery shape, acceptance criteria, dependency and feature-seam
-   map, capability-matrix posture, proof obligations, and artifact ledger.
-   Story Breakdown does not replace PRDs, capability matrices, PRD-derived
-   test cases, or implementation blueprints.
-8. Translate the approved scope into an implementation blueprint.
+7. Translate the approved scope into an implementation blueprint.
    The blueprint explains how this repo should build the slice.
    If the PRD or source-independent contract artifacts are materially reset
    later in the same loop, refresh the blueprint before continuing.
-9. Derive PRD test cases.
+8. Derive PRD test cases.
    This turns intended behavior into an explicit verification inventory.
-10. Implement the change in `src/` and `tests/`.
+9. Implement the change in `src/` and `tests/`.
    Do not silently override reviewed PRD-derived test cases while writing
    executable tests; if case IDs, grouping, lifecycle, or intended behavior
    need to change, update the PRD test-case artifact first and re-review it.
    When persistence-backed behavior is added, also refresh the shared
    persistence harness and scripts in the same loop.
-11. Run standards and repo-health review.
-12. Update status-bearing artifacts so the repo does not keep stale planning or
+10. Run standards and repo-health review.
+11. Update status-bearing artifacts so the repo does not keep stale planning or
     stale compliance posture summaries.
     This includes architecture summaries, source-independent docs, OpenAPI,
     feature docs, and platform-status snapshots whose truth changed during the
@@ -177,13 +168,6 @@ flowchart TB
   business questions, out-of-scope boundaries, ambiguity ledger, feedback
   posture, and handoff readiness for Technical Steering. It does not decide
   implementation architecture.
-- Story Breakdown packet:
-  Layer 3 queue of the smallest independently deliverable and verifiable
-  stories from approved Technical Steering. It records value type, delivery
-  shape, job to be done, acceptance criteria, dependency and seam mapping,
-  capability-matrix posture, proof obligations, and artifact ledger before Task
-  Breakdown or Delivery begins. It does not decide implementation architecture
-  or write detailed `TC-*` test cases.
 - Capability matrix:
   Inventory of what must exist across a capability set.
 - PRD:

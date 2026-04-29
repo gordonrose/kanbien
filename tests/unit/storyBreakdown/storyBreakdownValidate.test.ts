@@ -1,0 +1,244 @@
+import { describe, expect, it } from "vitest";
+
+import { validateStoryBreakdownContent } from "../../../src/scripts/storyBreakdownValidate";
+
+const validPacket = `# Story Breakdown Packet: Tenant Branding
+
+## Status
+
+- Packet status:
+  \`ready-for-task-breakdown\`
+
+## Handoff Validation
+
+- Architecture invention check:
+  \`consumes-steering-only\`
+
+## Epic Summary
+
+- Epic job to be done:
+  As the platform, keep tenant branding delivery scoped and provable.
+- Epic outcome:
+  Tenant branding stories can enter Task Breakdown without vague work.
+- Epic actors:
+  root admin, tenant user, harness
+- Epic non-goals:
+  public logo delivery
+- Epic dependency summary:
+  tenant feature and assets feature
+- Epic-level proof target:
+  \`mixed\`
+
+## Story Queue
+
+| Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| S-000 | ready-for-task-breakdown | harness-value | docs-artifact | Capability matrix normalization | As the delivery harness, I need approved stories translated into capability rows so implementation starts from explicit obligations. | harness | Approved capability rows exist for every acceptance criterion. | Technical Steering packet |
+| S-001 | ready-for-task-breakdown | user-value | backend | Root admin updates branding | As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload. | root admin | Branding display name is persisted for the selected tenant. | S-000 |
+
+## Acceptance Criteria
+
+| AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |
+| --- | --- | --- | --- | --- | --- |
+| AC-S000-01 | S-000 | Every story acceptance criterion maps to an approved capability row or explicit non-capability rationale. | contract-level | docs-alignment, standards | capability matrix |
+| AC-S001-01 | S-001 | Root admin update persists the tenant branding display name for exactly one selected tenant. | persistence-level | unit, integration, security, audit | API contract, data dictionary, permission mapping |
+
+## Capability Mapping
+
+| Story ID | AC ID | Capability Matrix Row(s) | Boundary | Capability Posture | Notes |
+| --- | --- | --- | --- | --- | --- |
+| S-000 | AC-S000-01 | CAP-BRANDING-000 | root | existing-approved | Harness control row. |
+| S-001 | AC-S001-01 | CAP-BRANDING-001 | root | existing-approved | Root-admin tenant branding update. |
+
+## Dependency And Seam Map
+
+| Dependency ID | Needed By Story / AC | Provider Feature Or Seam | Dependency Type | Existing Or New | Required Contract Proof | Integration Test Obligation |
+| --- | --- | --- | --- | --- | --- | --- |
+| DEP-000 | S-000 / AC-S000-01 | capability matrix template | pre-existing-capability | existing | template field review | docs alignment confirms capability rows cover all story ACs |
+| DEP-001 | S-001 / AC-S001-01 | tenants public read seam | feature-public-seam | existing | service contract test | integration test proves selected tenant lookup before branding update |
+
+## Downstream Capability Impact
+
+| New Or Changed Capability / Seam | Future Consumer | Contract Promise | Must Not Depend On | Integration Coverage |
+| --- | --- | --- | --- | --- |
+| tenant branding update | tenant dashboard branding projection | display name is durable branding fact | canonical tenant name mutation | integration test in first consumer story |
+
+## Story Test Input Matrix
+
+| Story ID | Actors | Actor Permissions | Actor States | Object States | Value Types / Validation Rules | Lifecycle Transitions | System Errors | NFRs |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| S-000 | harness | not-applicable: planning control | active planning packet | story queue draft and ready | valid and missing capability rows | draft to ready | missing source artifact | standards, traceability |
+| S-001 | root admin | allowed and denied root capability | active, expired session | active tenant, soft-deleted tenant | valid display name, empty string rejection | update existing branding | tenant seam unavailable, stale tenant | security, privacy, audit, resilience |
+
+## Acceptance Criteria To Test Obligation Matrix
+
+| AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
+| --- | --- | --- | --- | --- | --- |
+| AC-S001-01 | root admin active and denied | CAP-BRANDING-001 | persistence-level | create TC for update and deny path | yes |
+
+## Refactor-First And Architecture-Foundation Queue
+
+| Blocker ID | Blocks Story | Blocker Type | Reason | Required Output | Stop Condition |
+| --- | --- | --- | --- | --- | --- |
+
+## Follow-Up Decision Questions
+
+| Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |
+| --- | --- | --- | --- | --- |
+
+## Artifact Ledger
+
+| Artifact ID | Story ID | Artifact Type | Required Action | Owner Skill Or Workflow | Blocks Task Breakdown |
+| --- | --- | --- | --- | --- | --- |
+| ART-001 | S-001 | API contract | create route contract | api-contract-maintainer | yes |
+
+## Story Readiness Summary
+
+- Ready stories:
+  S-000, S-001
+- Blocked stories:
+  none
+
+## Layer 4 Handoff
+
+| Story ID | Handoff Status | Reason |
+| --- | --- | --- |
+| S-001 | ready-for-task-breakdown | Capability and proof obligations are mapped. |
+`;
+
+describe("story breakdown validation", () => {
+  it("passes a packet with concrete stories, acceptance criteria, proof, dependencies, and capability mapping", () => {
+    expect(validateStoryBreakdownContent(validPacket)).toEqual({
+      status: "PASS",
+      errors: [],
+    });
+  });
+
+  it("blocks a ready story with a missing job to be done", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload.",
+        "",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("S-001 missing Job To Be Done");
+  });
+
+  it("blocks missing acceptance criteria", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| AC-S001-01 | S-001 | Root admin update persists the tenant branding display name for exactly one selected tenant. | persistence-level | unit, integration, security, audit | API contract, data dictionary, permission mapping |\n",
+        "",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("S-001 has no acceptance criteria");
+  });
+
+  it("blocks acceptance criteria without proof layers", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| AC-S001-01 | S-001 | Root admin update persists the tenant branding display name for exactly one selected tenant. | persistence-level | unit, integration, security, audit | API contract, data dictionary, permission mapping |",
+        "| AC-S001-01 | S-001 | Root admin update persists the tenant branding display name for exactly one selected tenant. |  | unit, integration, security, audit | API contract, data dictionary, permission mapping |",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("AC-S001-01 has invalid or missing proof layer: (blank)");
+  });
+
+  it("blocks acceptance criteria without capability mapping", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| S-001 | AC-S001-01 | CAP-BRANDING-001 | root | existing-approved | Root-admin tenant branding update. |\n",
+        "",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("AC-S001-01 has no capability mapping row");
+  });
+
+  it("blocks vague shortcut wording", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "Branding display name is persisted for the selected tenant.",
+        "Implement feature and update docs as needed.",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("vague phrase found: implement feature");
+    expect(result.errors).toContain("vague phrase found: update docs");
+    expect(result.errors).toContain("vague phrase found: as needed");
+  });
+
+  it("blocks ready stories without dependency coverage", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| DEP-001 | S-001 / AC-S001-01 | tenants public read seam | feature-public-seam | existing | service contract test | integration test proves selected tenant lookup before branding update |\n",
+        "",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("S-001 is ready but has no dependency or seam mapping");
+  });
+
+  it("blocks architecture invention", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace("`consumes-steering-only`", "`proposes-new-architecture`"),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("Architecture invention check is proposes-new-architecture");
+  });
+
+  it("blocks decision-sensitive story statuses without follow-up questions", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket
+        .replace("| S-001 | ready-for-task-breakdown | user-value | backend |", "| S-001 | needs-prd-refinement | user-value | backend |")
+        .replace(
+          "## Follow-Up Decision Questions\n\n| Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |\n| --- | --- | --- | --- | --- |\n\n",
+          "## Follow-Up Decision Questions\n\n| Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |\n| --- | --- | --- | --- | --- |\n\n",
+        ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "Follow-Up Decision Questions must include at least one row when blockers or PRD-refinement story statuses are present",
+    );
+  });
+
+  it("blocks ready packets with unresolved required follow-up questions", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| --- | --- | --- | --- | --- |\n\n## Artifact Ledger",
+        "| --- | --- | --- | --- | --- |\n| Q-001 | B-001 | Which feature owns branding? | yes | ask requester |\n\n## Artifact Ledger",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("Q-001 must be resolved before Layer 3 can be ready-for-task-breakdown");
+  });
+
+  it("allows draft packets to carry unresolved required follow-up questions", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket
+        .replace("`ready-for-task-breakdown`", "`draft`")
+        .replace("| S-001 | ready-for-task-breakdown | user-value | backend |", "| S-001 | needs-prd-refinement | user-value | backend |")
+        .replace(
+          "| --- | --- | --- | --- | --- |\n\n## Artifact Ledger",
+          "| --- | --- | --- | --- | --- |\n| Q-001 | S-001 | Which feature owns branding? | yes | ask requester |\n\n## Artifact Ledger",
+        ),
+    );
+
+    expect(result).toEqual({
+      status: "PASS",
+      errors: [],
+    });
+  });
+});
