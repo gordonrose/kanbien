@@ -6,7 +6,8 @@
 - Owning feature: future tenant branding or tenant configuration branding seam
 - Asset use case: tenant logo image
 - First consumer route or workflow:
-  tenant branding logo upload, replacement, display, and read workflow
+  root-admin managed tenant branding logo upload, replacement, display, and
+  tenant-dashboard read workflow
 - Decision status: approved for v1 planning
 - Approver: product/platform owner in planning conversation
 
@@ -22,9 +23,11 @@
   user-generated content, or another purpose?
   Branding.
 - Who may upload, replace, read, download, delete, or publish this asset?
-  Upload and replacement require the tenant-branding update capability plus the
-  scoped asset operation. Read/display requires the tenant-branding read or
-  app-display path plus asset read/content-read policy.
+  V1 upload and replacement are root-admin only for a selected tenant and
+  require the tenant-branding update capability plus the scoped asset
+  operation. Tenant users may read/display the current ready logo only through
+  authenticated tenant portal/dashboard paths authorized by the consuming
+  tenant-branding feature plus asset read/content-read policy.
 - Is this a narrow approved use case or a generic asset-library/file-hosting
   surface?
   Narrow approved use case. This does not approve a generic asset library or
@@ -79,7 +82,7 @@
   Defer locale-specific alt variants until multilingual tenant branding is
   approved.
 - Who may create or update the accessibility metadata?
-  The same actor authorized to update tenant branding.
+  The same root-admin actor authorized to update tenant branding in v1.
 - Can the asset be considered ready without the required accessibility
   metadata?
   The asset can be ready as an asset, but it cannot be considered ready for the
@@ -91,22 +94,28 @@
 ## Ownership And Authorization
 
 - Capability boundary:
-  tenant
+  root-managed tenant-scoped asset relationship
 - Current tenant context rule:
-  Requests must evaluate in exactly one current tenant context matching the
-  tenant branding record and the asset tenant.
+  Root-admin write requests must identify exactly one selected tenant being
+  configured. Tenant-dashboard read/display requests must evaluate in exactly
+  one current tenant context matching the tenant branding record and the asset
+  tenant.
 - Cross-tenant deny rule:
-  Deny upload, replacement, read, link, and display when the current tenant
-  does not match the tenant branding owner and asset tenant.
+  Deny upload, replacement, read, link, and display when the selected or current
+  tenant does not match the tenant branding owner and asset tenant, unless an
+  explicitly authorized root-admin tenant-branding capability is acting on that
+  selected tenant.
 - Owning feature's entity-relationship authorization rule:
-  Tenant branding authorizes whether the actor may update or read the tenant
-  logo relationship before calling `assets` seams.
+  Tenant branding authorizes whether the root-admin actor may update the
+  selected tenant's logo relationship or whether the tenant actor may read the
+  current tenant's logo relationship before calling `assets` seams.
 - Required `assets` capability key:
   `asset.create`, `asset.read`, `asset.content.read`, and `asset.link` as
   applicable to the route flow.
 - Required consuming-feature capability key:
   Exact keys to be finalized with the tenant branding feature. Planning names:
-  `tenant-branding.logo.read` and `tenant-branding.logo.update`.
+  `root-admin.tenant-branding.logo.update` and
+  `tenant-branding.logo.read`.
 - Does any actor receive access through public delivery rather than
   authenticated authorization?
   No for v1.
@@ -274,8 +283,9 @@
 ## Final Decision
 
 - Approved scope:
-  Tenant-scoped logo image upload, replacement, validation, and display through
-  the future tenant branding consumer.
+  Root-admin managed tenant-scoped logo image upload, replacement, validation,
+  and display through the future tenant branding consumer, with tenant-user
+  dashboard display only in the matching authenticated tenant context.
 - Explicitly deferred protections:
   malware scanning, image renditions, EXIF stripping, signed read URLs, public
   CDN delivery, localization variants for alt text, and broad document/media
