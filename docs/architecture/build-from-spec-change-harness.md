@@ -125,6 +125,15 @@ flowchart TB
 5. Add an ADR when the change is enduring.
    Shared seams, lasting patterns, and cross-cutting rules should not live only
    in implementation.
+   Before deciding whether a new ADR is needed, run an explicit ADR discovery
+   pass. Search `docs/architecture/adr/` for each proposed change area, list
+   the exact ADR files reviewed in the steering, PRD, blueprint, or close-out
+   artifact, and record `no existing ADR found` for any enduring decision area
+   with no match. If no matching ADR exists, either propose a new ADR or record
+   why the slice does not require one. If an existing ADR conflicts with the
+   current implementation plan, steering packet, PRD, source-independent
+   contract, or another ADR, stop and surface the conflict before
+   implementation continues.
 6. Create or refresh source-independent artifacts.
    This includes API contracts, persistence contracts, permission mapping,
    privacy notes, runbooks, platform standards snapshots, reconstruction
@@ -277,6 +286,11 @@ This harness reduces drift by:
 - using a clear authority order:
   `AGENTS.md`, architecture docs, ADRs, PRDs, code, tests, and then
   source-independent artifacts
+- requiring exact ADR discovery instead of a vague "relevant ADRs" sweep:
+  every implementation loop must search the ADR directory for the scoped
+  change areas, list the ADR files reviewed, record missing ADR coverage for
+  enduring decisions, and stop on ADR conflicts that would change the selected
+  architecture or shared seam
 - requiring source-independent docs for routes and persistence, so important
   behavior is not trapped only in implementation files
 - deriving tests from the PRD rather than treating tests as ad hoc afterthoughts

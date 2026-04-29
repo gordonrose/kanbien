@@ -16,7 +16,12 @@ plan without losing architecture, tests, docs, or standards coverage.
 
 - Capability matrix reference:
 - PRD:
-- ADR(s):
+- Exact ADR discovery:
+  - ADR files reviewed:
+  - Change areas reviewed:
+  - Enduring decision areas with no existing ADR found:
+  - New ADR required:
+  - ADR conflict / stale guidance:
 - PRD test-case doc:
 - Journey inventory:
 - QA coverage matrix classification:

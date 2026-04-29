@@ -36,7 +36,7 @@ Typical inputs:
 
 - approved capability matrix rows
 - PRD or PRD refinement
-- relevant ADRs
+- exact ADR discovery results for the scoped change areas
 - PRD-derived test-case doc when present
 - current architecture and feature conventions
 
@@ -52,7 +52,7 @@ Use this authority order unless the user explicitly says otherwise:
 3. `docs/standards/change-artifact-requirements.md`
 4. approved capability matrix inputs
 5. PRD and PRD-derived test-case doc
-6. relevant ADRs
+6. exact ADRs discovered for the scoped change areas
 7. current repo structure in `src/` and `tests/`
 8. source-independent contract docs such as `docs/api-contracts/` and
    `docs/data-dictionary/` when relevant
@@ -80,7 +80,7 @@ Primary sources:
 - `docs/standards/change-artifact-requirements.md`
 - `docs/architecture/system-overview.md`
 - `docs/architecture/priniciples.md`
-- relevant ADRs in `docs/architecture/adr/`
+- exact ADRs discovered under `docs/architecture/adr/`
 
 Helpful secondary sources:
 
@@ -150,7 +150,23 @@ Do not produce one blueprint for unrelated work bundles.
 Pull the relevant capability-matrix rows, PRD scope, rules, errors, and test
 expectations.
 
-3. Map the work into repo shape.
+3. Run exact ADR discovery.
+Search `docs/architecture/adr/` for each scoped change area before mapping the
+work into repo shape.
+
+The blueprint must include:
+- the exact ADR files reviewed
+- the change areas each ADR was reviewed for
+- `no existing ADR found` for enduring decision areas with no match
+- whether a new ADR is required, not required, or blocked pending decision
+- any stale or conflicting ADR guidance
+
+If an ADR conflict affects the selected architecture, shared seam, authz or
+tenant-boundary rule, persistence model, API/data contract, frontend topology,
+design-system adoption path, or verification harness, stop and surface the
+conflict before producing an implementation-ready blueprint.
+
+4. Map the work into repo shape.
 Determine:
 - owning feature
 - router and contract files
@@ -165,7 +181,7 @@ Determine:
 - test folders and layers
 - docs updates required by the change class
 
-4. Check artifact completeness.
+5. Check artifact completeness.
 Use `docs/standards/change-artifact-requirements.md` as the canonical artifact
 matrix.
 
@@ -204,11 +220,11 @@ Also use `docs/architecture/guides/qa-coverage-matrix-guide.md`,
 `docs/architecture/guides/end-to-end-journey-testing-guide.md`, and
 `docs/standards/QA-RELEASE-GATE.md` as active inputs.
 
-5. Write the blueprint.
+6. Write the blueprint.
 Produce a build-ready Markdown artifact under
 `docs/workspace/implementation-blueprints/`.
 
-6. Surface gaps or blockers.
+7. Surface gaps or blockers.
 If the blueprint depends on unresolved permission rules, missing API contracts,
 missing persistence specs, unclear seam ownership, or missing verification
 expectations, call that out explicitly instead of hiding the gap inside vague
@@ -239,6 +255,8 @@ Also call out when implementation should be expected to refresh:
   capability matrix without saying so.
 - Do not let the blueprint introduce architecture that conflicts with
   `AGENTS.md` or ADR-backed seams.
+- Do not satisfy the ADR section with generic wording such as `relevant ADRs`;
+  list exact ADR files reviewed or record `no existing ADR found`.
 - Do not omit required test or documentation work just because the user asked
   primarily about code.
 - Do not treat the blueprint as a generic checklist; it must be tailored to

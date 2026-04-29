@@ -32,7 +32,7 @@ Use this authority order unless the user explicitly says otherwise:
 2. `docs/architecture/`
 3. `docs/architecture/change-control.md`
 4. `docs/standards/change-artifact-requirements.md`
-5. relevant ADRs, PRDs, and PRD test-case docs
+5. exact ADRs discovered for the scoped change areas, PRDs, and PRD test-case docs
 6. current source in `src/`
 7. executable tests in `tests/`
 8. maintained docs and source-independent artifacts for the scoped area
@@ -228,6 +228,27 @@ or source-independent doc update, call that out explicitly.
 
 Use `docs/standards/change-artifact-requirements.md` as the canonical artifact
 matrix instead of restating it here.
+
+### Exact ADR discovery is required
+
+Do not satisfy the ADR decision check with a generic phrase such as
+`relevant ADRs`.
+
+For every change that may affect architecture, shared frontend seams,
+design-system adoption, routing/topology, API/data contracts, persistence,
+authn/authz, tenant boundaries, test harness behavior, or other enduring
+patterns:
+
+- search `docs/architecture/adr/` for the scoped change areas
+- list the exact ADR files reviewed in the planning or close-out artifact
+- record `no existing ADR found` for any enduring decision area with no match
+- propose a new ADR or record why the slice does not require one when no match
+  exists
+- stop and surface any stale or conflicting ADR guidance before implementation
+  proceeds
+
+If a narrower maintainer skill performs the implementation planning, make sure
+that skill's output still contains this exact ADR discovery result.
 
 When approved capability-matrix rows introduce new protected backend
 capabilities or change role-governed access:
