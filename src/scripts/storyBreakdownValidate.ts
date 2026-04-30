@@ -15,6 +15,7 @@ const requiredHeadings = [
   "## Story Test Input Matrix",
   "## Acceptance Criteria To Test Obligation Matrix",
   "## Follow-Up Decision Questions",
+  "## Layer 3 Unblock Queue",
   "## Artifact Ledger",
   "## Layer 4 Handoff",
 ];
@@ -52,6 +53,28 @@ const allowedArchitectureClassifications = new Set([
 ]);
 
 const allowedTaskSignalPresence = new Set(["yes", "no", "blocked"]);
+
+const allowedUnblockTypes = new Set([
+  "human-decision",
+  "artifact-creation",
+  "technical-steering-revisit",
+  "design-system-governance",
+  "source-of-truth-inspection",
+  "capability-matrix-required",
+  "prd-required",
+  "api-contract-required",
+  "permission-mapping-required",
+  "data-dictionary-required",
+]);
+
+const allowedUnblockStatuses = new Set([
+  "needs-human-answer",
+  "ready-to-create-artifact",
+  "blocked-on-steering",
+  "blocked-on-source-truth",
+  "resolved",
+  "deferred-with-owner",
+]);
 
 const allowedProofLayers = new Set([
   "source-level",
@@ -145,6 +168,27 @@ type FollowUpDecisionQuestionRow = {
   resolution: string;
 };
 
+type Layer3UnblockRow = {
+  unblockId: string;
+  blocks: string;
+  blockerSource: string;
+  unblockType: string;
+  humanDecisionNeeded: string;
+  optionsOrSafeDefaults: string;
+  recommendedNextAction: string;
+  canAutoCreateArtifact: string;
+  status: string;
+};
+
+type ArtifactRow = {
+  artifactId: string;
+  storyId: string;
+  artifactType: string;
+  requiredAction: string;
+  owner: string;
+  blocksTaskBreakdown: string;
+};
+
 type SteeringClassificationRow = {
   classificationId: string;
   scopeElement: string;
@@ -180,6 +224,8 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   const testInputs = parseStoryTestInputRows(content);
   const blockers = parseBlockerRows(content);
   const followUpQuestions = parseFollowUpDecisionQuestionRows(content);
+  const unblockRows = parseLayer3UnblockRows(content);
+  const artifacts = parseArtifactRows(content);
   const steeringClassifications = parseSteeringClassificationRows(content);
   const taskTypeSignals = parseTaskTypeSignalRows(content);
   const packetStatus = parsePacketStatus(content);
@@ -294,6 +340,7 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   }
 
   validateFollowUpDecisionQuestions(stories, blockers, followUpQuestions, packetStatus, errors);
+  validateLayer3UnblockQueue(stories, followUpQuestions, unblockRows, artifacts, errors);
 
   validateVaguePhrases(content, errors);
 
@@ -301,6 +348,76 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
     status: errors.length === 0 ? "PASS" : "BLOCKED",
     errors,
   };
+}
+
+function validateLayer3UnblockQueue(
+  stories: StoryRow[],
+  followUpQuestions: FollowUpDecisionQuestionRow[],
+  unblockRows: Layer3UnblockRow[],
+  artifacts: ArtifactRow[],
+  errors: string[],
+): void {
+  const hasReadyStory = stories.some((story) => story.status === "ready-for-task-breakdown");
+  const hasBlockedStory = stories.some((story) =>
+    story.status === "blocked" ||
+    story.status === "needs-capability-matrix" ||
+    story.status === "needs-prd-refinement",
+  );
+
+  if (!hasReadyStory && hasBlockedStory && unblockRows.length === 0) {
+    errors.push("Layer 3 Unblock Queue must include at least one row when no stories are ready for Task Breakdown");
+  }
+
+  const unblockSourceText = unblockRows.map((row) => row.blockerSource).join(" ");
+
+  for (const question of followUpQuestions) {
+    const requiredValue = question.requiredBeforeLayer3Completion.trim().toLowerCase();
+    if (requiredValue === "yes" && isUnresolvedDecision(question.resolution)) {
+      if (!unblockSourceText.includes(question.questionId)) {
+        errors.push(`${question.questionId} unresolved required decision is missing a Layer 3 Unblock Queue row`);
+      }
+    }
+  }
+
+  for (const artifact of artifacts) {
+    if (artifact.blocksTaskBreakdown.trim().toLowerCase() === "yes") {
+      if (!unblockSourceText.includes(artifact.artifactId)) {
+        errors.push(`${artifact.artifactId} blocking artifact is missing a Layer 3 Unblock Queue row`);
+      }
+    }
+  }
+
+  for (const row of unblockRows) {
+    validateRequiredField(row.unblockId, "Blocks Story / AC", row.blocks, errors);
+    validateRequiredField(row.unblockId, "Blocker Source", row.blockerSource, errors);
+    validateRequiredField(row.unblockId, "Human Decision Needed", row.humanDecisionNeeded, errors);
+    validateRequiredField(row.unblockId, "Options / Safe Defaults", row.optionsOrSafeDefaults, errors);
+    validateRequiredField(row.unblockId, "Recommended Next Action", row.recommendedNextAction, errors);
+    validateRequiredField(row.unblockId, "Can Auto-Create Artifact", row.canAutoCreateArtifact, errors);
+
+    if (!allowedUnblockTypes.has(row.unblockType)) {
+      errors.push(`${row.unblockId} has invalid unblock type: ${row.unblockType || "(blank)"}`);
+    }
+
+    if (!allowedUnblockStatuses.has(row.status)) {
+      errors.push(`${row.unblockId} has invalid unblock status: ${row.status || "(blank)"}`);
+    }
+
+    const canAutoCreateArtifact = row.canAutoCreateArtifact.trim().toLowerCase();
+    if (canAutoCreateArtifact !== "yes" && canAutoCreateArtifact !== "no") {
+      errors.push(`${row.unblockId} has invalid Can Auto-Create Artifact: ${row.canAutoCreateArtifact || "(blank)"}`);
+    }
+
+    if (row.status === "needs-human-answer") {
+      if (!row.humanDecisionNeeded.includes("?")) {
+        errors.push(`${row.unblockId} needs-human-answer must include a concrete question`);
+      }
+
+      if (!row.optionsOrSafeDefaults.includes(";") && !row.optionsOrSafeDefaults.toLowerCase().includes("no safe default")) {
+        errors.push(`${row.unblockId} needs-human-answer must list options or explain no safe default`);
+      }
+    }
+  }
 }
 
 function parsePacketStatus(content: string): string {
@@ -509,6 +626,31 @@ function parseFollowUpDecisionQuestionRows(content: string): FollowUpDecisionQue
   }));
 }
 
+function parseLayer3UnblockRows(content: string): Layer3UnblockRow[] {
+  return parseTableRows(section(content, "## Layer 3 Unblock Queue")).map((cells) => ({
+    unblockId: cells[0] ?? "",
+    blocks: cells[1] ?? "",
+    blockerSource: cells[2] ?? "",
+    unblockType: cells[3] ?? "",
+    humanDecisionNeeded: cells[4] ?? "",
+    optionsOrSafeDefaults: cells[5] ?? "",
+    recommendedNextAction: cells[6] ?? "",
+    canAutoCreateArtifact: cells[7] ?? "",
+    status: cells[8] ?? "",
+  }));
+}
+
+function parseArtifactRows(content: string): ArtifactRow[] {
+  return parseTableRows(section(content, "## Artifact Ledger")).map((cells) => ({
+    artifactId: cells[0] ?? "",
+    storyId: cells[1] ?? "",
+    artifactType: cells[2] ?? "",
+    requiredAction: cells[3] ?? "",
+    owner: cells[4] ?? "",
+    blocksTaskBreakdown: cells[5] ?? "",
+  }));
+}
+
 function parseSteeringClassificationRows(content: string): SteeringClassificationRow[] {
   return parseTableRows(section(content, "## Steering Architecture Classification Snapshot")).map((cells) => ({
     classificationId: cells[0] ?? "",
@@ -549,7 +691,7 @@ function parseTableRows(sectionContent: string): string[][] {
     .map((line) => line.slice(1, -1).split("|").map((cell) => cell.trim()))
     .filter((cells) => {
       const first = cells[0] ?? "";
-      return first !== "---" && !first.startsWith("---") && !first.includes("Story ID") && !first.includes("AC ID") && !first.includes("Dependency ID") && !first.includes("Artifact ID") && !first.includes("Blocker ID") && !first.includes("Question ID") && !first.includes("Classification ID") && !first.includes("New Or Changed");
+      return first !== "---" && !first.startsWith("---") && !first.includes("Story ID") && !first.includes("AC ID") && !first.includes("Dependency ID") && !first.includes("Artifact ID") && !first.includes("Blocker ID") && !first.includes("Question ID") && !first.includes("Classification ID") && !first.includes("Unblock ID") && !first.includes("New Or Changed");
     });
 }
 

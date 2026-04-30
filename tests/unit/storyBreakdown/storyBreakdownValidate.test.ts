@@ -99,6 +99,12 @@ const validPacket = `# Story Breakdown Packet: Tenant Branding
 | Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |
 | --- | --- | --- | --- | --- |
 
+## Layer 3 Unblock Queue
+
+| Unblock ID | Blocks Story / AC | Blocker Source | Unblock Type | Human Decision Needed | Options / Safe Defaults | Recommended Next Action | Can Auto-Create Artifact | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| U-001 | S-001 / AC-S001-01 | ART-001 | api-contract-required | not-applicable: artifact already created for ready handoff | not-applicable: resolved artifact row | Confirm API contract artifact remains aligned before Delivery. | no | resolved |
+
 ## Artifact Ledger
 
 | Artifact ID | Story ID | Artifact Type | Required Action | Owner Skill Or Workflow | Blocks Task Breakdown |
@@ -229,8 +235,8 @@ describe("story breakdown validation", () => {
   it("blocks ready packets with unresolved required follow-up questions", () => {
     const result = validateStoryBreakdownContent(
       validPacket.replace(
-        "| --- | --- | --- | --- | --- |\n\n## Artifact Ledger",
-        "| --- | --- | --- | --- | --- |\n| Q-001 | B-001 | Which feature owns branding? | yes | ask requester |\n\n## Artifact Ledger",
+        "| --- | --- | --- | --- | --- |\n\n## Layer 3 Unblock Queue",
+        "| --- | --- | --- | --- | --- |\n| Q-001 | B-001 | Which feature owns branding? | yes | ask requester |\n\n## Layer 3 Unblock Queue",
       ),
     );
 
@@ -244,8 +250,12 @@ describe("story breakdown validation", () => {
         .replace("`ready-for-task-breakdown`", "`draft`")
         .replace("| S-001 | ready-for-task-breakdown | user-value | backend |", "| S-001 | needs-prd-refinement | user-value | backend |")
         .replace(
-          "| --- | --- | --- | --- | --- |\n\n## Artifact Ledger",
-          "| --- | --- | --- | --- | --- |\n| Q-001 | S-001 | Which feature owns branding? | yes | ask requester |\n\n## Artifact Ledger",
+          "| --- | --- | --- | --- | --- |\n\n## Layer 3 Unblock Queue",
+          "| --- | --- | --- | --- | --- |\n| Q-001 | S-001 | Which feature owns branding? | yes | ask requester |\n\n## Layer 3 Unblock Queue",
+        )
+        .replace(
+          "| U-001 | S-001 / AC-S001-01 | ART-001 | api-contract-required | not-applicable: artifact already created for ready handoff | not-applicable: resolved artifact row | Confirm API contract artifact remains aligned before Delivery. | no | resolved |",
+          "| U-001 | S-001 / AC-S001-01 | ART-001 | api-contract-required | not-applicable: artifact already created for ready handoff | not-applicable: resolved artifact row | Confirm API contract artifact remains aligned before Delivery. | no | resolved |\n| U-002 | S-001 | Q-001 | human-decision | Which feature owns branding? | tenantBranding feature; tenantConfiguration extension | Ask requester before PRD or capability matrix creation. | no | needs-human-answer |",
         ),
     );
 
@@ -253,5 +263,61 @@ describe("story breakdown validation", () => {
       status: "PASS",
       errors: [],
     });
+  });
+
+  it("blocks packets with no ready stories and no unblock rows", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket
+        .replace("`ready-for-task-breakdown`", "`blocked`")
+        .replace(/ready-for-task-breakdown/g, "needs-capability-matrix")
+        .replace(
+          "| U-001 | S-001 / AC-S001-01 | ART-001 | api-contract-required | not-applicable: artifact already created for ready handoff | not-applicable: resolved artifact row | Confirm API contract artifact remains aligned before Delivery. | no | resolved |\n",
+          "",
+        ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "Layer 3 Unblock Queue must include at least one row when no stories are ready for Task Breakdown",
+    );
+  });
+
+  it("blocks unresolved required follow-up questions that are not mapped to the unblock queue", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket
+        .replace("`ready-for-task-breakdown`", "`blocked`")
+        .replace("| S-001 | ready-for-task-breakdown | user-value | backend |", "| S-001 | needs-prd-refinement | user-value | backend |")
+        .replace(
+          "| --- | --- | --- | --- | --- |\n\n## Layer 3 Unblock Queue",
+          "| --- | --- | --- | --- | --- |\n| Q-001 | S-001 | Which feature owns branding? | yes | ask requester |\n\n## Layer 3 Unblock Queue",
+        ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("Q-001 unresolved required decision is missing a Layer 3 Unblock Queue row");
+  });
+
+  it("blocks artifact ledger rows that block Task Breakdown without unblock queue mapping", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| U-001 | S-001 / AC-S001-01 | ART-001 | api-contract-required | not-applicable: artifact already created for ready handoff | not-applicable: resolved artifact row | Confirm API contract artifact remains aligned before Delivery. | no | resolved |\n",
+        "",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("ART-001 blocking artifact is missing a Layer 3 Unblock Queue row");
+  });
+
+  it("blocks human decision unblock rows without concrete options", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| U-001 | S-001 / AC-S001-01 | ART-001 | api-contract-required | not-applicable: artifact already created for ready handoff | not-applicable: resolved artifact row | Confirm API contract artifact remains aligned before Delivery. | no | resolved |",
+        "| U-001 | S-001 | ART-001 | human-decision | Which feature owns branding? | choose later | Ask requester before PRD or capability matrix creation. | no | needs-human-answer |",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("U-001 needs-human-answer must list options or explain no safe default");
   });
 });

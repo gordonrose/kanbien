@@ -199,6 +199,9 @@ Gate checks:
 - architecture invention outside Technical Steering is blocked
 - Layer 2 architecture classification rows are preserved and converted into
   task-type signals for Layer 4 reconciliation
+- blocked packets include a Layer 3 Unblock Queue that maps unresolved required
+  decision questions and blocking artifact ledger rows to the smallest human
+  decision or artifact workflow needed next
 
 Validation:
 

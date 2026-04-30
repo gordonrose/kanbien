@@ -3,7 +3,7 @@
 ## Status
 
 - Packet status:
-  `draft`
+  `blocked`
 - Packet date:
   2026-04-29
 - Epic ID:
@@ -56,6 +56,31 @@
   canonical/rendering entries, pattern artifact, capability matrix, PRD if
   future production dashboard scope enters, API/read-model contracts for app
   consumers, adoption contract for first app consumer
+
+## Steering Architecture Classification Snapshot
+
+| Classification ID | Scope Element | Classification | Owner / Seam | Decision Status | Required Downstream Signal |
+| --- | --- | --- | --- | --- | --- |
+| C-001 | Reporting dashboard template family | design-system-seam | `/design-system` reporting dashboard template | approved | Design-system task for behavior lock, reference pack, verification checklist, pattern artifact, and canonical state inventory |
+| C-002 | Browser-memory dashboard render and controller seam | design-system-seam | Design-system-owned render/controller/style source of truth | approved | Frontend task only after design-system governance records row, column, container, widget, detail, and filter behavior |
+| C-003 | Chart rendering approach | architecture-foundation-required | Design-system governance and chart comparison evidence | deferred-with-owner | Architecture-foundation or design-system task for rendered comparison before widget delivery |
+| C-004 | Context-nav dashboard controls | design-system-seam | Existing context-nav drawer family or approved extension | deferred-with-owner | Design-system task to confirm reuse or record the missing drawer seam |
+| C-005 | Future app dashboard adoption | feature-public-seam | Future signed-off design-system adoption seam | deferred-with-owner | Standards-compliance task blocks app reconstruction until adoption contract and app boundary planning exist |
+| C-006 | Future dashboard API, analytics, saved layout, and permission scope | architecture-foundation-required | Future app/API planning owner | deferred-with-owner | No Layer 4 implementation task in this packet; future scope requires separate planning |
+
+## Task-Type Signal Matrix
+
+| Story ID | Signal | Present | Evidence | Implied Task Type |
+| --- | --- | --- | --- | --- |
+| S-000 | Capability matrix normalization | blocked | No approved reporting dashboard template capability matrix exists and ART-001 blocks Task Breakdown. | docs-artifact |
+| S-001 | Design-system artifact chain | blocked | Behavior lock, reference pack, verification checklist, pattern artifact, canonical inventory, and chart comparison posture are missing. | design-system |
+| S-001 | Chart comparison decision | blocked | Technical Steering defers chart rendering approach until rendered variants are compared. | architecture-foundation |
+| S-002 | Browser-memory layout composition | blocked | Layout delivery depends on capability rows and the design-system artifact chain. | frontend |
+| S-003 | Supported reporting widgets | blocked | Widget delivery depends on capability rows, governed fixture contract, and chart rendering comparison. | frontend |
+| S-004 | Accessible detail inspection | blocked | Detail behavior depends on widget seam, accessibility behavior lock, and canonical scenarios. | frontend |
+| S-005 | Category filter intent | blocked | Filter behavior depends on widget and detail behavior decisions plus governed canonical states. | frontend |
+| S-006 | Context-nav dashboard controls | blocked | Context-nav drawer composition support is not yet confirmed. | design-system |
+| S-007 | Future app adoption guardrail | blocked | Future app dashboard adoption requires signed-off seams and first-consumer boundary planning. | standards-compliance |
 
 ## Epic Summary
 
@@ -211,10 +236,19 @@
 
 | Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |
 | --- | --- | --- | --- | --- |
-| Q-001 | B-002 | Should reporting dashboard be modeled as a new design-system template family or an extension of an existing page-template family? | yes | design-system governance |
-| Q-002 | B-003 | Which chart rendering approach should proceed after rendered comparison across labels, density, themes, responsive states, and accessibility paths? | yes | design-system governance |
-| Q-003 | B-004 | Does the existing context-nav drawer expose enough render and controller seam support for dashboard-level controls? | yes | design-system governance |
+| Q-001 | B-002 | Should reporting dashboard be modeled as a new design-system template family or an extension of an existing page-template family? | yes | requester approved architectural recommendation: create a new `reporting-dashboard-template` family because the dashboard canvas, rows, columns, containers, widgets, filter state, and settings/filter list are broader than a list-page variant |
+| Q-002 | B-003 | Which chart rendering approach should proceed after rendered comparison across labels, density, themes, responsive states, and accessibility paths? | yes | requester approved architectural recommendation: use governed in-house SVG/HTML sample charts for the first design-system slice and defer production chart-library selection |
+| Q-003 | B-004 | Does the existing context-nav drawer expose enough render and controller seam support for dashboard-level controls? | yes | requester clarified dashboard settings/filter UX: use a list/detail settings pattern where all possible settings or filters are listed and selecting one opens filter-value controls; dashboard-level controls may use existing list/detail and drawer seams before creating any context-nav extension |
 | Q-004 | B-005 | Which future consumer will be the first governed app adoption target, and is that consumer root, tenant, or separately approved shared-cross-tenant? | no | future app owner |
+
+## Layer 3 Unblock Queue
+
+| Unblock ID | Blocks Story / AC | Blocker Source | Unblock Type | Human Decision Needed | Options / Safe Defaults | Recommended Next Action | Can Auto-Create Artifact | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| U-001 | S-001 through S-006 | Q-001; ART-002; ART-003; ART-004; ART-005 | design-system-governance | not-applicable: reporting-dashboard-template family decision is recorded | not-applicable: first slice is a new governed dashboard template family | Create behavior lock, reference pack, verification checklist, pattern artifact, and canonical states for the `reporting-dashboard-template` family. | yes | ready-to-create-artifact |
+| U-002 | S-003 through S-005 | Q-002; ART-006 | design-system-governance | not-applicable: first-slice chart rendering posture is recorded | not-applicable: use in-house SVG/HTML sample charts and defer production chart library selection | Record chart-rendering comparison posture in the design-system artifacts and model chart types as child widget variants under the parent dashboard family. | yes | ready-to-create-artifact |
+| U-003 | S-006 | Q-003 | design-system-governance | not-applicable: settings/filter UX recommendation is recorded | not-applicable: use list/detail settings pattern and existing drawer/list seams before creating a context-nav extension | Model dashboard settings and filters as a selectable list with detail controls for filter values; record any context-nav drawer gap only if existing seams cannot compose the controls. | yes | ready-to-create-artifact |
+| U-004 | S-000 | ART-001 | capability-matrix-required | not-applicable: capability matrix can be derived from the recorded design-system decisions | not-applicable: no product choice required once design-system decisions are recorded | Create reporting dashboard template capability matrix rows for parent family obligations and child widget variant obligations. | yes | ready-to-create-artifact |
 
 ## Artifact Ledger
 
@@ -236,10 +270,30 @@
 - Blocked stories:
   S-000 through S-007 remain blocked on capability matrix and design-system
   artifact chain decisions.
+- Stories needing capability matrix:
+  S-000 through S-007
+- Stories needing PRD refinement:
+  none for the design-system-only reporting dashboard template; future app/API
+  dashboard consumers need separate planning before app, analytics, saved
+  layout, permission, or tenant-scoped work.
 - Stories needing Technical Steering revisit:
   none if the first slice remains design-system-only and browser-memory-backed.
 - Stories needing Product Discovery revisit:
   none.
+- Broad cleanup or shortcut risk:
+  `listed-below`
+- Architecture invention risk:
+  `none`
+
+Shortcut risks:
+
+- Selecting a production charting library without rendered comparison evidence.
+- Treating the design-system template as a production analytics dashboard.
+- Letting future app pages reconstruct dashboard markup, controller behavior,
+  or app-page CSS instead of consuming signed-off seams.
+- Treating chart category filtering as authority to access production data.
+- Beginning Task Breakdown before capability rows and design-system artifacts
+  exist.
 
 ## Layer 4 Handoff
 

@@ -205,9 +205,11 @@ flowchart TB
   stories from approved Technical Steering. It records value type, delivery
   shape, job to be done, acceptance criteria, dependency and seam mapping,
   capability-matrix posture, proof obligations, steering architecture
-  classification snapshot, task-type signal matrix, and artifact ledger before
-  Task Breakdown or Delivery begins. It does not decide implementation
-  architecture or write detailed `TC-*` test cases.
+  classification snapshot, task-type signal matrix, artifact ledger, and a
+  Layer 3 Unblock Queue when stories cannot yet move to Task Breakdown. The
+  unblock queue maps blocking artifacts and unresolved required decisions to
+  the smallest human decision or artifact workflow needed next. It does not
+  decide implementation architecture or write detailed `TC-*` test cases.
 - Task Breakdown packet:
   Layer 4 queue of isolated tasks from one approved Story Breakdown story, or a
   small explicitly related story set. It records parent story, acceptance

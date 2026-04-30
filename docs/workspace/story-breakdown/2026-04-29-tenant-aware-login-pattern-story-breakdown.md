@@ -3,7 +3,7 @@
 ## Status
 
 - Packet status:
-  `draft`
+  `blocked`
 - Packet date:
   2026-04-29
 - Epic ID:
@@ -59,6 +59,44 @@
   reference pack, verification checklist, implementation blueprint, feature
   manifest decisions, generated dependency graph refresh if new seams are
   introduced
+
+## Steering Architecture Classification Snapshot
+
+| Classification ID | Scope Element | Classification | Owner / Seam | Decision Status | Required Downstream Signal |
+| --- | --- | --- | --- | --- | --- |
+| C-001 | Tenant-aware login feature boundary and auth scope | architecture-foundation-required | PRD and auth architecture governance | deferred-with-owner | Architecture-foundation task for tenantAuth, tenantConfiguration, identity, provider, and session-authority decisions before delivery |
+| C-002 | Root-managed tenant auth configuration | feature-local | Tenant auth or tenant configuration owning feature, exact owner deferred to PRD | deferred-with-owner | Backend, API-contract, migration/persistence, permission-mapping, and data-dictionary tasks after PRD and capability matrix approval |
+| C-003 | Pre-auth email resolution, tenant selection, and method choice | feature-local | Tenant login route family and tenant-auth session seams | deferred-with-owner | Backend and API-contract tasks for generic no-match behavior and exactly one selected tenant context |
+| C-004 | Email-password reset and SSO provider posture | feature-public-seam | One-time token, notification, and provider callback seams | deferred-with-owner | Architecture-foundation, API-contract, migration/persistence, and backend tasks after provider and token lifecycle decisions |
+| C-005 | Active-session interruption and authority refresh | platform-seam | Auth/session authority seam | deferred-with-owner | Platform-seam and backend tasks only after the invalidation or refresh mechanism is selected |
+| C-006 | Tenant login governed frontend pattern | design-system-seam | Design-system login render/controller/style seams | deferred-with-owner | Design-system and frontend tasks after behavior lock, reference pack, verification checklist, and adoption path exist |
+| C-007 | Security, audit, privacy, and artifact conformance | feature-local | Tenant auth, audit, permission, API, data, and test planning artifacts | deferred-with-owner | Permission-mapping, data-dictionary, API-contract, QA/evidence, and docs-artifact tasks after source-of-truth artifacts exist |
+
+## Task-Type Signal Matrix
+
+| Story ID | Signal | Present | Evidence | Implied Task Type |
+| --- | --- | --- | --- | --- |
+| S-000 | Capability matrix normalization | blocked | No approved tenant-aware login capability matrix exists and ART-001 blocks delivery stories. | docs-artifact |
+| S-001 | Auth scope and feature-boundary lock | blocked | PRD has not selected feature boundaries, durable identity model, provider posture, or session authority mechanics. | architecture-foundation |
+| S-002 | Root-managed tenant auth configuration | blocked | Root configuration needs PRD, capability matrix, API, permission, data, and migration decisions before implementation. | backend |
+| S-002 | Root auth configuration route contract | blocked | Root manage/read behavior, validation, and audit evidence require API contract planning. | API-contract |
+| S-002 | Tenant auth configuration persistence | blocked | Durable method set, provider reference metadata, policy version, timestamps, and lifecycle state require persistence planning. | migration/persistence |
+| S-003 | Pre-auth email and tenant resolution | blocked | Generic no-match behavior and safe tenant-choice disclosure need approved API and security posture. | backend |
+| S-003 | Pre-auth route contract | blocked | Email normalization, validation, and disclosure threshold require API contract rows. | API-contract |
+| S-004 | Tenant selection and method choice | blocked | Method execution must bind exactly one selected tenant context after PRD/session decisions. | backend |
+| S-004 | Selected-tenant state contract | blocked | Request-body tenant inference and disabled-method transition behavior require API contract planning. | API-contract |
+| S-005 | Email-password and password-reset policy | blocked | Reset availability and token lifecycle depend on selected tenant, enabled method policy, token, and notification seams. | backend |
+| S-005 | Password reset persistence and token lifecycle | blocked | Tenant-bound, single-use, short-lived reset tokens require data and lifecycle planning. | migration/persistence |
+| S-006 | SSO unavailable and fallback posture | blocked | Provider handoff, callback, outage, and fallback behavior are intentionally deferred. | backend |
+| S-006 | SSO provider architecture | blocked | Provider-specific behavior affects security, session state, audit, and fallback contracts. | architecture-foundation |
+| S-007 | Session interruption and authority refresh | blocked | Active-session interruption mechanism has not been selected. | platform-seam |
+| S-007 | Current tenant authority enforcement | blocked | Removed users, membership changes, disabled tenants, and forced-login state need backend enforcement planning. | backend |
+| S-008 | Audit, privacy, and replay-state controls | blocked | Audit event inventory and forbidden sensitive fields require source-independent security and API artifacts. | QA/evidence |
+| S-008 | Permission and privacy mapping | blocked | Authz boundaries, audit access, and replay-state exclusions need permission and security documentation. | permission-mapping |
+| S-009 | Governed tenant login pattern | blocked | Tenant login UI requires signed-off design-system seams and cannot copy root-login markup. | design-system |
+| S-009 | Tenant login app adoption | blocked | Future app UI can proceed only after governed render/controller/style seams exist. | frontend |
+| S-010 | Maintained artifact conformance | blocked | API, data, permission, design-system, feature-manifest, generated graph, and test-case artifacts do not yet exist. | docs-artifact |
+| S-010 | PRD-derived test planning | blocked | Detailed TC planning is required before delivery stories can claim proof coverage. | test-only |
 
 ## Epic Summary
 
@@ -245,11 +283,23 @@
 
 | Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |
 | --- | --- | --- | --- | --- |
-| Q-001 | B-002 | Does tenant-aware login extend tenantAuth, tenantConfiguration, or a narrower auth-method configuration seam? | yes | architecture governance |
-| Q-002 | B-002 | What durable identity, membership, per-tenant email uniqueness, provider reference, and session policy/version records own the auth facts? | yes | PRD and data governance |
-| Q-003 | B-004 | Which mechanism interrupts active sessions after user, membership, tenant, or auth-policy state changes? | yes | auth/session architecture |
-| Q-004 | B-003 | Which SSO provider posture and callback constraints are approved for the first slice, and which provider-specific behaviors remain out of scope? | yes | auth architecture |
-| Q-005 | B-005 | Does an existing governed login pattern expose sufficient tenant selection, method choice, recovery, disabled-method, unavailable-provider, and forced-login seams? | yes | design-system governance |
+| Q-001 | B-002 | Does tenant-aware login extend tenantAuth, tenantConfiguration, or a narrower auth-method configuration seam? | yes | requester accepted architectural recommendation: split ownership so `tenantConfiguration` owns root-managed tenant auth policy/configuration and `tenantAuth` owns login flow, tenant selection, method execution, password reset, SSO handoff, session authority, and active-session checks |
+| Q-002 | B-002 | What durable identity, membership, per-tenant email uniqueness, provider reference, and session policy/version records own the auth facts? | yes | architectural recommendation recorded: durable tenant auth policy/configuration, normalized tenant-scoped identity and membership facts, provider references, policy version, and session authority facts must be persisted; they must not depend only on provider or UI state |
+| Q-003 | B-004 | Which mechanism interrupts active sessions after user, membership, tenant, or auth-policy state changes? | yes | requester accepted architectural recommendation: start with request-time authority checks plus tenant auth policy/session version checks; defer scheduler, pub/sub, or worker invalidation until runtime requirements demand it |
+| Q-004 | B-003 | Which SSO provider posture and callback constraints are approved for the first slice, and which provider-specific behaviors remain out of scope? | yes | requester accepted architectural recommendation: plan the SSO seam but defer broad SSO provider implementation; first delivery can focus on email/password and method choice while SSO remains a bounded future method with explicit callback constraints |
+| Q-005 | B-005 | Does an existing governed login pattern expose sufficient tenant selection, method choice, recovery, disabled-method, unavailable-provider, and forced-login seams? | yes | requester accepted UX recommendation: base tenant and method selection on the existing SSH-key-selection pattern, using a selectable list/radio-card style for tenant choice followed by method choice and next-step disclosure |
+
+## Layer 3 Unblock Queue
+
+| Unblock ID | Blocks Story / AC | Blocker Source | Unblock Type | Human Decision Needed | Options / Safe Defaults | Recommended Next Action | Can Auto-Create Artifact | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| U-001 | S-001 through S-008 | Q-001; Q-002; ART-002; ART-003 | prd-required | not-applicable: architectural ownership and durable fact recommendations are recorded | not-applicable: split ownership between `tenantConfiguration` policy/configuration and `tenantAuth` execution/session behavior | Create tenant-aware login PRD and data dictionary entries using the recorded split ownership and durable auth fact model. | yes | ready-to-create-artifact |
+| U-002 | S-007 | Q-003 | prd-required | not-applicable: active-session interruption recommendation is recorded | not-applicable: request-time authority checks plus tenant auth policy/session version checks are the first-slice default | Capture request-time authority and policy/session version checks in PRD, API contracts, data dictionary, and tests; defer scheduler or worker invalidation. | yes | ready-to-create-artifact |
+| U-003 | S-005; S-006 | Q-004 | prd-required | not-applicable: SSO first-slice posture is recorded | not-applicable: defer broad SSO provider implementation while preserving a bounded future SSO method seam | Record first-slice email/password and method-choice scope plus future SSO callback constraints in PRD and capability matrix. | yes | ready-to-create-artifact |
+| U-004 | S-009 | Q-005; ART-006; ART-007; ART-008; ART-009 | design-system-governance | not-applicable: tenant/method selection UX recommendation is recorded | not-applicable: adapt the SSH-key-selection pattern for tenant choice and method choice | Create tenant login behavior lock, reference pack, verification checklist, and adoption contract using selectable tenant and method-choice states. | yes | ready-to-create-artifact |
+| U-005 | S-000 | ART-001 | capability-matrix-required | not-applicable: capability matrix can be derived from recorded auth and design-system recommendations | not-applicable: no product choice required once recommendations are recorded | Create tenant-aware login capability matrix rows for every AC or explicit non-capability rationale. | yes | ready-to-create-artifact |
+| U-006 | S-002 through S-008 | ART-004; ART-005 | artifact-creation | not-applicable: API and permission artifacts depend on PRD and capability rows | not-applicable: use recorded split ownership, session authority, and SSO posture as source decisions | Create API contracts and permission mappings after PRD and capability rows exist. | yes | deferred-with-owner |
+| U-007 | S-010 | ART-010; ART-011; ART-012 | artifact-creation | not-applicable: final planning artifacts depend on PRD, matrix, API, data, permission, and design-system artifacts | not-applicable: no standalone safe default before upstream artifacts exist | Create PRD-derived test cases, implementation blueprint, feature manifests, and generated graph after upstream artifacts are coherent. | yes | deferred-with-owner |
 
 ## Artifact Ledger
 
@@ -276,11 +326,30 @@
   S-000 through S-010 remain blocked on capability matrix, PRD/auth
   architecture decisions, design-system seam governance, and maintained
   artifact creation.
+- Stories needing capability matrix:
+  S-000 through S-010
+- Stories needing PRD refinement:
+  S-001 through S-008
 - Stories needing Technical Steering revisit:
   none if the work stays within root-managed tenant auth configuration,
   tenant-aware login, bounded reset, bounded SSO fallback, and governed UI.
 - Stories needing Product Discovery revisit:
   none.
+- Broad cleanup or shortcut risk:
+  `listed-below`
+- Architecture invention risk:
+  `none`
+
+Shortcut risks:
+
+- Copying root-login markup or controller behavior into tenant login UI before
+  governed design-system seams exist.
+- Letting password reset bypass selected-tenant method policy.
+- Treating tenant selection, SSO callback, reset tokens, replay links, or
+  provider state as authority without server-side validation.
+- Deferring active-session interruption mechanics into source implementation.
+- Beginning Task Breakdown before PRD, capability matrix, API, data,
+  permission, design-system, and test-case artifacts exist.
 
 ## Layer 4 Handoff
 

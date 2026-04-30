@@ -3,7 +3,7 @@
 ## Status
 
 - Packet status:
-  `draft`
+  `ready-for-task-breakdown`
 - Packet date:
   2026-04-29
 - Epic ID:
@@ -15,12 +15,23 @@
 - Source Technical Steering packet:
   `docs/workspace/technical-steering/2026-04-29-tenant-branding-configuration-steering.md`
 - Related PRD:
-  not created in this layer
+  `docs/prd/2026-04-30-0022-tenant-branding-configuration.md`
 - Related capability matrix:
-  not created in this layer
+  `docs/workspace/capability-matrices/2026-04-30-tenant-branding-configuration-capability-matrix-first-draft.csv`
 - Related design-system, asset, ADR, or architecture artifacts:
   `docs/workspace/asset-consumer-decisions/2026-04-25-tenant-branding-logo.md`;
+  `docs/workspace/asset-consumer-decisions/2026-04-30-tenant-branding-logo-alignment.md`;
+  `docs/workspace/runbooks/2026-04-30-tenant-branding-logo-cleanup-and-privacy.md`;
+  `docs/api-contracts/tenant-branding.md`;
+  `docs/architecture/permission-mappings/tenant-branding-permission-mapping.md`;
+  `docs/workspace/implementation-blueprints/2026-04-30-tenant-branding-configuration-v1.md`;
+  `docs/prd/test_cases/2026-04-30-0022-tenant-branding-configuration-test-cases.md`;
   `docs/architecture/guides/story-breakdown-test-design-guide.md`;
+  `docs/workspace/design-system/behavior-locks/tenant-branding-composition-behavior-lock.md`;
+  `docs/workspace/design-system/reference-packs/tenant-branding-composition-reference-pack.md`;
+  `docs/workspace/design-system/verification/tenant-branding-composition-verification-checklist.md`;
+  `docs/workspace/design-system/adoption/tenant-branding-composition-adoption-contract.md`;
+  `docs/workspace/design-system/patterns/tenant-branding-composition-pattern.md`;
   ADRs named by Technical Steering for feature bundles, cross-feature seams,
   tenant authz, asset foundation, frontend topology, and governed app adoption
 - Validation command:
@@ -42,12 +53,14 @@
 - Steering stop conditions resolved or carried as blockers:
   requester explicitly asked for Story Breakdown after the steering packet; PRD
   decisions, capability matrix coverage, design-system behavior locks, API/data
-  contracts, permission mappings, and implementation blueprint remain
-  downstream blockers
+  contracts, permission mappings, asset/runbook notes, implementation
+  blueprint, and PRD-derived test cases are now recorded. OpenAPI/Postman,
+  design-system browser signoff, feature manifests, and generated graph
+  refresh are preserved as Layer 4 / Layer 5 delivery obligations.
 - Architecture invention check:
   `consumes-steering-only`
 - Governed frontend seam posture:
-  `missing-seam`
+  `ready-for-design-system-task-breakdown`
 - Asset/security/tenant/authz/persistence/migration/compliance risks:
   asset relationship authorization, same-origin private delivery, SVG sanitizer
   readiness, contextual accessibility metadata, selected-tenant root writes,
@@ -55,10 +68,46 @@
   events, durable fallback facts, and migration/index agreement must be proven
   before delivery
 - Missing source-of-truth artifacts:
-  PRD, capability matrix, API contract/OpenAPI/Postman artifacts, data
-  dictionary entries, permission mappings, design-system behavior locks and
-  references, implementation blueprint, feature manifest decisions, generated
-  dependency graph refresh if new seams are introduced
+  none blocking Layer 3. OpenAPI/Postman, browser/canonical signoff, feature
+  manifest refresh, generated dependency graph refresh, and final feature docs
+  are implementation-time or Layer 4 task obligations.
+
+## Steering Architecture Classification Snapshot
+
+| Classification ID | Scope Element | Classification | Owner / Seam | Decision Status | Required Downstream Signal |
+| --- | --- | --- | --- | --- | --- |
+| C-001 | Tenant branding owning feature boundary | architecture-foundation-required | PRD and architecture governance for tenantBranding versus tenantConfiguration | deferred-with-owner | Architecture-foundation task for owning feature, public seams, fallback scope, and logo lifecycle decisions |
+| C-002 | Root-admin branding configuration record | feature-local | Future tenant branding or tenant configuration feature | deferred-with-owner | Backend, API-contract, migration/persistence, data-dictionary, and permission-mapping tasks after PRD and capability matrix approval |
+| C-003 | Tenant logo asset relationship | feature-public-seam | Tenant branding consumer seam plus assets public seams | deferred-with-owner | Backend, API-contract, migration/persistence, permission-mapping, and QA/evidence tasks after asset alignment is recorded |
+| C-004 | Tenant dashboard branding projection | feature-local | Tenant branding projection consumed by tenant dashboard shell | deferred-with-owner | Backend and API-contract tasks for projection shape, fallback behavior, and current-tenant authorization |
+| C-005 | Authorization, audit, lifecycle, and cleanup posture | feature-local | Root authz, tenant authz, audit, asset lifecycle, and operations artifacts | deferred-with-owner | Permission-mapping, data-dictionary, migration/persistence, QA/evidence, and docs-artifact tasks after source-of-truth artifacts exist |
+| C-006 | Root-admin and dashboard governed frontend surfaces | design-system-seam | Design-system form, upload, colour, dashboard branding, and adoption seams | deferred-with-owner | Design-system and frontend tasks only after signed-off render/controller/style seams or approved exception exist |
+| C-007 | Maintained artifact conformance | feature-public-seam | Feature manifests, generated dependency graph, API, data, permission, asset, and test-case artifacts | deferred-with-owner | Docs-artifact and standards-compliance tasks before Layer 5 delivery |
+
+## Task-Type Signal Matrix
+
+| Story ID | Signal | Present | Evidence | Implied Task Type |
+| --- | --- | --- | --- | --- |
+| S-000 | Capability matrix normalization | yes | Tenant branding capability matrix first draft exists and maps the AC inventory for Task Breakdown planning. | docs-artifact |
+| S-001 | Scope and fallback decision lock | yes | PRD records owning feature boundary, fallback values, replacement-only logo posture, dashboard scope, and cleanup/quota defaults. | architecture-foundation |
+| S-001 | Source-independent PRD and fallback artifacts | yes | PRD, capability matrix, API contract, asset alignment note, runbook/privacy note, data dictionary, and permission mapping exist. | docs-artifact |
+| S-002 | Governed design-system seam readiness | yes | Composition artifacts identify the design-system seams and browser/canonical signoff remains an explicit design-system task before app UI delivery. | design-system |
+| S-003 | Root-admin branding configuration record | yes | PRD, matrix, API contract, data dictionary, permission mapping, and blueprint define root-admin read/save behavior. | backend |
+| S-003 | Branding persistence and durable facts | yes | Data dictionary and blueprint define display name, primary colour, timestamps, soft delete, audit evidence, and tenant-name isolation. | migration/persistence |
+| S-003 | Root-admin branding API contract | yes | API contract defines selected-tenant read/save shape, validation, authz, and audit behavior. | API-contract |
+| S-004 | Tenant logo relationship management | yes | Asset alignment, API contract, data dictionary, runbook, and blueprint define upload, readiness, content read, replacement, accessibility metadata, and cleanup. | backend |
+| S-004 | Logo relationship persistence | yes | Data dictionary and runbook define current logo relationship, consumer readiness, replacement, retention, cleanup, and quota posture. | migration/persistence |
+| S-004 | Asset-sensitive API contract | yes | API contract defines upload intent, link, content read, headers, SVG image-resource posture, and no public delivery. | API-contract |
+| S-005 | Tenant dashboard branding projection | yes | Projection has approved fallback behavior, current-tenant authorization, logo readiness, and route contract. | backend |
+| S-005 | Projection API contract | yes | API contract defines display name, primary colour, logo URL or null, accessibility posture, fallback indicators, and timing metadata. | API-contract |
+| S-006 | Authorization, audit, and lifecycle evidence | yes | Permission mapping, PRD, runbook, and test-case packet record capability keys, grants, deny rules, audit fields, cleanup states, quota, and retry semantics. | permission-mapping |
+| S-006 | Audit and lifecycle proof | yes | Runbook/privacy note, data dictionary, blueprint, and PRD-derived test cases define cleanup and audit evidence. | QA/evidence |
+| S-007 | Root-admin governed branding screen | yes | App UI depends on signed-off design-system seams and backend/API readiness; both dependency paths are now explicit Layer 4 task inputs. | frontend |
+| S-007 | Root-admin branding design-system adoption | yes | Behavior lock, reference pack, verification checklist, adoption artifact, and pattern artifact define the design-system adoption task. | design-system |
+| S-008 | Tenant dashboard governed branding consumption | yes | Dashboard rendering depends on projection, asset authorization order, fallback table, and design-system signoff; all are task-breakdown inputs. | frontend |
+| S-008 | Dashboard branding design-system adoption | yes | Dashboard branding consumption states are recorded for canonical/browser scenario tasks. | design-system |
+| S-009 | Maintained artifact conformance | yes | API, data, permission, design-system, asset, runbook, blueprint, and test-case artifacts exist; implementation-time artifacts are recorded in blueprint. | docs-artifact |
+| S-009 | Standards and generated artifact proof | yes | Feature manifest and dependency graph verification are planned delivery obligations before Layer 5 completion. | standards-compliance |
 
 ## Epic Summary
 
@@ -88,16 +137,16 @@
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | needs-capability-matrix | harness-value | docs-artifact | Capability matrix normalization | As the delivery harness, I need approved stories translated into capability rows so delivery cannot proceed from broad value statements. | harness | Approved capability rows cover every acceptance criterion and identify non-capability-backed criteria. | Blocks all delivery stories |
-| S-001 | needs-prd-refinement | system-value | docs-artifact | Scope and fallback decision lock | As product and architecture governance, I need the owning feature boundary, screen placement, fallback values, logo clear behavior, dashboard surface scope, and old-logo lifecycle decisions locked. | product governance | Downstream contracts can describe exact behavior without inventing architecture during implementation. | Blocks S-003 through S-008 |
-| S-002 | needs-prd-refinement | system-value | architecture-foundation | Governed design-system seam readiness | As frontend governance, I need signed-off design-system render, controller, style, and verification seams for the root-admin form and dashboard branding consumption. | design-system governance | App implementation can consume shared seams without app-page CSS or copied governed composition. | Blocks S-007 and S-008 |
-| S-003 | needs-capability-matrix | user-value | backend | Root-admin branding configuration record | As a root admin, I need to read and save tenant branding display name and primary colour for exactly one selected tenant. | root admin | Durable tenant branding facts are stored, validated, permissioned, and auditable. | Depends on S-000 and S-001 |
-| S-004 | needs-capability-matrix | user-value | backend | Tenant logo relationship management | As a root admin, I need to create, replace, and consume a current tenant logo relationship only when the asset is ready and consumer metadata is present. | root admin and asset system | Tenant branding owns the logo relationship while assets owns file safety, storage policy, and content delivery invariants. | Depends on S-000, S-001, and asset decision |
-| S-005 | needs-capability-matrix | user-value | backend | Tenant dashboard branding projection | As a tenant user, I need the dashboard branding projection to return safe display name, primary colour, and logo content reference for my current tenant after login or reload. | tenant user | The dashboard consumes authorized tenant branding without live push behavior or cross-tenant leakage. | Depends on S-000, S-001, S-003, and S-004 |
-| S-006 | needs-capability-matrix | system-value | backend | Authorization, audit, and lifecycle evidence | As platform governance, I need allow and deny decisions, audit events, lifecycle cleanup states, quota posture, and privacy exclusions recorded for branding and logo operations. | security, audit, and operations | Permission-sensitive and asset-sensitive behavior has durable evidence and retryable failure visibility. | Depends on S-000 and S-001 |
-| S-007 | needs-capability-matrix | user-value | frontend | Root-admin governed branding screen | As a root admin, I need a governed root-admin surface for branding values, logo status, accessibility metadata, validation, and preview. | root admin | Root-admin users can manage branding through signed-off design-system seams. | Depends on S-002, S-003, S-004, and S-006 |
-| S-008 | needs-capability-matrix | user-value | frontend | Tenant dashboard governed branding consumption | As a tenant user, I need the tenant dashboard shell to apply branding from the authenticated projection after login or reload with explicit fallback states. | tenant user | Tenant users see configured branding or approved fallback using signed-off dashboard seams. | Depends on S-002, S-005, and S-006 |
-| S-009 | needs-capability-matrix | harness-value | standards-compliance | Maintained artifact conformance | As repo governance, I need API, data, permission, feature-manifest, dependency graph, design-system, asset, and test-case artifacts to reflect the approved story set before Task Breakdown. | repo governance | Downstream Task Breakdown starts from coherent source-independent artifacts. | Depends on S-000 through S-008 |
+| S-000 | superseded | harness-value | docs-artifact | Capability matrix normalization | As the delivery harness, I need approved stories translated into capability rows so delivery cannot proceed from broad value statements. | harness | Approved capability rows cover every acceptance criterion and identify non-capability-backed criteria. | Fulfilled by capability matrix first draft |
+| S-001 | superseded | system-value | docs-artifact | Scope and fallback decision lock | As product and architecture governance, I need the owning feature boundary, screen placement, fallback values, logo clear behavior, dashboard surface scope, and old-logo lifecycle decisions locked. | product governance | Downstream contracts can describe exact behavior without inventing architecture during implementation. | Fulfilled by PRD and source-independent artifacts |
+| S-002 | ready-for-task-breakdown | system-value | architecture-foundation | Governed design-system seam readiness | As frontend governance, I need signed-off design-system render, controller, style, and verification seams for the root-admin form and dashboard branding consumption. | design-system governance | App implementation can consume shared seams without app-page CSS or copied governed composition. | Blocks S-007 and S-008 delivery; ready for design-system task breakdown |
+| S-003 | ready-for-task-breakdown | user-value | backend | Root-admin branding configuration record | As a root admin, I need to read and save tenant branding display name and primary colour for exactly one selected tenant. | root admin | Durable tenant branding facts are stored, validated, permissioned, and auditable. | Depends on S-002 only for app UI, not backend delivery |
+| S-004 | ready-for-task-breakdown | user-value | backend | Tenant logo relationship management | As a root admin, I need to create, replace, and consume a current tenant logo relationship only when the asset is ready and consumer metadata is present. | root admin and asset system | Tenant branding owns the logo relationship while assets owns file safety, storage policy, and content delivery invariants. | Depends on approved asset decision and assets public seams |
+| S-005 | ready-for-task-breakdown | user-value | backend | Tenant dashboard branding projection | As a tenant user, I need the dashboard branding projection to return safe display name, primary colour, and logo content reference for my current tenant after login or reload. | tenant user | The dashboard consumes authorized tenant branding without live push behavior or cross-tenant leakage. | Depends on S-003 and S-004 backend outputs |
+| S-006 | ready-for-task-breakdown | system-value | backend | Authorization, audit, and lifecycle evidence | As platform governance, I need allow and deny decisions, audit events, lifecycle cleanup states, quota posture, and privacy exclusions recorded for branding and logo operations. | security, audit, and operations | Permission-sensitive and asset-sensitive behavior has durable evidence and retryable failure visibility. | Cross-cuts S-003 through S-005 |
+| S-007 | ready-for-task-breakdown | user-value | frontend | Root-admin governed branding screen | As a root admin, I need a governed root-admin surface for branding values, logo status, accessibility metadata, validation, and preview. | root admin | Root-admin users can manage branding through signed-off design-system seams. | Depends on S-002, S-003, S-004, and S-006 delivery order |
+| S-008 | ready-for-task-breakdown | user-value | frontend | Tenant dashboard governed branding consumption | As a tenant user, I need the tenant dashboard shell to apply branding from the authenticated projection after login or reload with explicit fallback states. | tenant user | Tenant users see configured branding or approved fallback using signed-off dashboard seams. | Depends on S-002, S-005, and S-006 delivery order |
+| S-009 | ready-for-task-breakdown | harness-value | standards-compliance | Maintained artifact conformance | As repo governance, I need API, data, permission, feature-manifest, dependency graph, design-system, asset, and test-case artifacts to reflect the approved story set before Task Breakdown. | repo governance | Downstream Task Breakdown starts from coherent source-independent artifacts. | Tracks delivery-time artifact sweep |
 
 ## Acceptance Criteria
 
@@ -249,12 +298,12 @@
 
 | Blocker ID | Blocks Story | Blocker Type | Reason | Required Output | Stop Condition |
 | --- | --- | --- | --- | --- | --- |
-| B-001 | S-003 through S-008 | capability-matrix | No approved capability matrix exists for this steering scope. | Capability matrix covering all AC rows or explicit non-capability rationale. | Task Breakdown for delivery stories waits until matrix coverage exists. |
-| B-002 | S-003 through S-008 | architecture-foundation | Owning feature boundary is not selected. | PRD decision for new tenantBranding feature versus tenantConfiguration extension and public seams. | Delivery story handoff waits until selected boundary is recorded. |
-| B-003 | S-007 and S-008 | design-system-foundation | Governed frontend seams are not confirmed for app adoption. | Behavior locks, reference pack, canonical verification, and adoption path for both surfaces. | App UI story handoff waits until consumable seams exist or explicit exception is approved. |
-| B-004 | S-004, S-005, S-006, S-008 | asset-decision | Existing asset decision is approved, but PRD must not change MIME, public delivery, scanning, checksum, or SVG assumptions without approval. | Asset alignment note confirming no changed assumptions or updated asset decision. | Asset-sensitive story handoff waits until alignment is recorded. |
-| B-005 | S-003 through S-008 | permission-model | Exact capability keys and grants are not approved. | Permission mapping for root manage/read, tenant dashboard read, and asset capabilities. | Permission-sensitive story handoff waits until allow and deny rules are mapped. |
-| B-006 | S-009 | artifact-drift | Downstream source-independent artifacts do not yet exist for the feature. | API/data/permission/design/test artifacts created through their owner workflows. | Task Breakdown waits on artifacts marked blocking by change-control requirements. |
+| B-001 | S-003 through S-008 | capability-matrix | Resolved: tenant branding capability matrix first draft exists. | Keep matrix aligned if Task Breakdown changes delivery ordering. | No longer blocks Task Breakdown. |
+| B-002 | S-003 through S-008 | architecture-foundation | Resolved: PRD selects a new narrow `tenantBranding` feature bundle and records public seam posture. | Refresh PRD if delivery proposes broader architecture. | No longer blocks Task Breakdown. |
+| B-003 | S-007 and S-008 | design-system-foundation | Resolved for Task Breakdown: design-system first-draft artifacts exist; browser/canonical signoff remains a required design-system delivery task before app UI implementation. | Complete behavior lock, canonical/browser verification, and adoption proof before app UI task closes. | Blocks app UI delivery, not Task Breakdown. |
+| B-004 | S-004, S-005, S-006, S-008 | asset-decision | Resolved: asset alignment note confirms PRD/API/data posture preserves approved tenant-logo decision. | Create superseding asset decision if delivery broadens scope. | No longer blocks Task Breakdown. |
+| B-005 | S-003 through S-008 | permission-model | Resolved: permission mapping first draft names root-admin, tenant-dashboard, asset, and deny-rule boundaries. | Reconcile target rows into canonical mappings and seeds during implementation. | No longer blocks Task Breakdown. |
+| B-006 | S-009 | artifact-drift | Resolved for Layer 3: source-independent PRD, matrix, API, data, permission, design, asset, runbook, blueprint, and TC artifacts exist. | OpenAPI/Postman, manifests, generated graph, feature docs, QA evidence, and standards review remain delivery-time artifacts. | No longer blocks Task Breakdown. |
 
 ## Follow-Up Decision Questions
 
@@ -265,39 +314,55 @@
 | Q-003 | B-004; AC-S001-03; AC-S004-04 | Does v1 support clearing a tenant logo, or is replacement-only the approved behavior for the first release? | yes | requester approved conservative v1 default: replacement-only; explicit logo clearing is out of scope for v1 |
 | Q-004 | B-004; AC-S004-02; AC-S007-02; AC-S008-01 | Is logo accessibility metadata entered by root admin, derived from branding display name, or recorded as an explicit decorative posture per logo relationship? | yes | requester approved conservative v1 default: root admin must provide explicit alt text or explicitly mark the logo decorative per tenant logo relationship |
 | Q-005 | B-001; AC-S005-02; AC-S008-01 | Which tenant dashboard surfaces consume branding in v1: dashboard shell only, dashboard content header, login-to-dashboard handoff, or another named surface? | yes | requester approved conservative v1 default: dashboard shell only |
-| Q-006 | B-003; AC-S002-01; AC-S002-02 | Do existing design-system seams cover root-admin branding configuration and tenant-dashboard consumption, or must a design-system foundation story be completed first? | yes | requester approved conservative v1 default: require a design-system foundation story first if existing signed-off seams are incomplete |
+| Q-006 | B-003; AC-S002-01; AC-S002-02 | Do existing design-system seams cover root-admin branding configuration and tenant-dashboard consumption, or must a design-system foundation story be completed first? | yes | requester accepted design-system recommendation: use existing form-template, upload-file or form-image-card, simple-select or choice-group, drawer-form, list-page, page-shell, and context-nav primitives where possible; create only a narrow tenant-branding composition/adoption artifact if no existing artifact already covers the composed surface |
 | Q-007 | B-005; AC-S006-01 | Which exact root-admin, tenant-dashboard, and assets capability keys and grant holders are approved for v1? | yes | requester approved conservative v1 default: use narrow tenant-branding capability keys proposed in this packet as planning names, then finalize exact grants in permission mapping before Task Breakdown |
 | Q-008 | B-004; AC-S006-03 | Do failed-cleanup or pending logo records continue to count against tenant quota, actor limits, cost limits, and abuse limits while retry is pending? | yes | requester approved conservative v1 default: pending and failed-cleanup logo records continue to count against limits until cleanup succeeds or a later approved retention policy says otherwise |
+
+## Layer 3 Unblock Queue
+
+| Unblock ID | Blocks Story / AC | Blocker Source | Unblock Type | Human Decision Needed | Options / Safe Defaults | Recommended Next Action | Can Auto-Create Artifact | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| U-001 | S-001 | Q-001; Q-002; Q-003; Q-004; Q-005; Q-008; A-001 | prd-required | not-applicable: human decisions are recorded in Follow-Up Decision Questions | not-applicable: conservative v1 defaults are already recorded | PRD first draft created at `docs/prd/2026-04-30-0022-tenant-branding-configuration.md`; refresh if downstream API/data/authz decisions change source truth. | yes | resolved |
+| U-002 | S-000; S-003 through S-009 | A-002 | capability-matrix-required | not-applicable: capability rows can be derived from the accepted story and AC inventory | not-applicable: use recorded planning names until permission mapping finalizes grants | Capability matrix first draft created at `docs/workspace/capability-matrices/2026-04-30-tenant-branding-configuration-capability-matrix-first-draft.csv`; finalize grants in permission mapping. | yes | resolved |
+| U-003 | S-003; S-004; S-005 | A-003; A-004 | api-contract-required | not-applicable: route families are named and depend on PRD and matrix completion | not-applicable: route contract is created; executable route artifacts should follow implementation route truth | API contract first draft created at `docs/api-contracts/tenant-branding.md`; OpenAPI/Postman artifacts are implementation-time delivery tasks. | yes | resolved |
+| U-004 | S-003; S-004; S-006 | A-005 | data-dictionary-required | not-applicable: data obligations are listed in AC and artifact ledger rows | not-applicable: persistence truth must follow PRD, matrix, and API decisions | Data dictionary first drafts created at `docs/data-dictionary/tenant-branding.md` and `docs/data-dictionary/tenant-branding-logo-relationship.md`; refresh when migration design lands. | yes | resolved |
+| U-005 | S-006 | Q-007; A-006 | permission-mapping-required | not-applicable: planning capability names are recorded and exact grants are delegated to permission mapping | not-applicable: no grant default is safe before permission mapping | Permission mapping first draft created at `docs/architecture/permission-mappings/tenant-branding-permission-mapping.md`; reconcile target rows into canonical mapping docs when implementation lands. | yes | resolved |
+| U-006 | S-004; S-006 | A-007; A-013 | artifact-creation | not-applicable: asset posture and cleanup defaults are recorded | not-applicable: asset decision remains source of truth | Asset alignment and runbook/privacy first drafts created at `docs/workspace/asset-consumer-decisions/2026-04-30-tenant-branding-logo-alignment.md` and `docs/workspace/runbooks/2026-04-30-tenant-branding-logo-cleanup-and-privacy.md`; refresh when implementation selects exact cleanup command or scheduler seam. | yes | resolved |
+| U-007 | S-002; S-007; S-008 | Q-006; A-008 | design-system-governance | not-applicable: design-system composition recommendation is recorded | not-applicable: use existing governed form, upload, image, choice, drawer, list-page, page-shell, and context-nav primitives before creating new primitives | Design-system composition first drafts created under `docs/workspace/design-system/`; canonical/browser signoff and adoption proof are Layer 4/5 task obligations before app UI closes. | yes | resolved |
+| U-008 | S-003 through S-009 | A-009; A-010; A-011; A-012 | artifact-creation | not-applicable: final planning and generated artifacts depend on upstream artifact completion | not-applicable: no standalone safe default before PRD, matrix, API, data, permission, asset, and design artifacts exist | Implementation blueprint and PRD-derived test cases created; feature manifests and generated dependency graph are implementation-time artifacts and must be included in delivery tasks when public seams land. | yes | resolved |
 
 ## Artifact Ledger
 
 | Artifact ID | Story ID | Artifact Type | Required Action | Owner Skill Or Workflow | Blocks Task Breakdown |
 | --- | --- | --- | --- | --- | --- |
-| A-001 | S-001 | PRD | Create root-admin managed tenant branding PRD with scope, non-goals, fallback, feature boundary, lifecycle, and dashboard surface decisions. | PRD workflow | yes |
-| A-002 | S-000 | capability matrix | Create tenant branding capability matrix rows for every AC or non-capability rationale. | capability matrix workflow | yes |
-| A-003 | S-003; S-004; S-005 | API contract | Create root-admin read/save, logo relationship, asset content-read, and tenant-dashboard projection contracts. | api-contract-maintainer | yes |
-| A-004 | S-003; S-004; S-005 | OpenAPI/Postman | Add maintained route artifacts after API contract decisions. | API artifact workflow | yes |
-| A-005 | S-003; S-004; S-006 | data dictionary | Add branding fields, logo relationship metadata, accessibility metadata, audit/lifecycle fields, indexes, and soft-delete behavior. | data-dictionary-maintainer | yes |
-| A-006 | S-006 | permission mapping | Add root-admin manage/read, tenant dashboard read, and required asset capability mappings with deny rules. | permission workflow | yes |
-| A-007 | S-004; S-006 | asset decision alignment | Record whether the PRD preserves approved tenant-logo asset assumptions. | asset decision workflow | yes |
-| A-008 | S-002; S-007; S-008 | design-system governance | Create behavior locks, references, canonical scenarios, verification checklist, and adoption artifact for governed surfaces. | frontend-design-system-loop-maintainer | yes |
-| A-009 | S-003 through S-008 | implementation blueprint | Create blueprint only after PRD, matrix, API, data, authz, asset, and design decisions are coherent. | implementation-blueprint-maintainer | yes |
-| A-010 | S-003 through S-008 | PRD-derived test cases | Create TC packet mapping actor, permission, state, object, value, validation, lifecycle, system-error, and NFR obligations. | prd-test-case-planner | yes |
-| A-011 | S-003; S-004; S-005 | feature manifest | Create or refresh feature manifests for tenant branding and touched providers/consumers. | feature governance | yes if public seams change |
-| A-012 | S-009 | generated dependency graph | Regenerate feature dependency graph after manifest or public seam changes. | generated artifact workflow | yes if manifests change |
-| A-013 | S-006 | runbook/privacy note | Record cleanup failure retry, quota posture, forbidden logged fields, and operational visibility. | operational docs workflow | yes |
+| A-001 | S-001 | PRD | Created first draft: `docs/prd/2026-04-30-0022-tenant-branding-configuration.md`; refresh if downstream contracts change source truth. | PRD workflow | no |
+| A-002 | S-000 | capability matrix | Created first draft: `docs/workspace/capability-matrices/2026-04-30-tenant-branding-configuration-capability-matrix-first-draft.csv`; finalize authz grants in permission mapping. | capability matrix workflow | no |
+| A-003 | S-003; S-004; S-005 | API contract | Created first draft: `docs/api-contracts/tenant-branding.md`; refresh if route topology changes. | api-contract-maintainer | no |
+| A-004 | S-003; S-004; S-005 | OpenAPI/Postman | Implementation-time artifact: add maintained route artifacts when tenantBranding routes are implemented; API contract records target route family. | API artifact workflow | no |
+| A-005 | S-003; S-004; S-006 | data dictionary | Created first drafts: `docs/data-dictionary/tenant-branding.md` and `docs/data-dictionary/tenant-branding-logo-relationship.md`; refresh when migration design lands. | data-dictionary-maintainer | no |
+| A-006 | S-006 | permission mapping | Created first draft: `docs/architecture/permission-mappings/tenant-branding-permission-mapping.md`; reconcile into canonical mapping docs when implementation lands. | permission workflow | no |
+| A-007 | S-004; S-006 | asset decision alignment | Created first draft: `docs/workspace/asset-consumer-decisions/2026-04-30-tenant-branding-logo-alignment.md`; approved tenant-logo decision remains source truth. | asset decision workflow | no |
+| A-008 | S-002; S-007; S-008 | design-system governance | Created first-draft composition artifacts under `docs/workspace/design-system/`; browser canonicals and signoff are required design-system delivery tasks before app UI closes. | frontend-design-system-loop-maintainer | no |
+| A-009 | S-003 through S-008 | implementation blueprint | Created first draft: `docs/workspace/implementation-blueprints/2026-04-30-tenant-branding-configuration-v1.md`. | implementation-blueprint-maintainer | no |
+| A-010 | S-003 through S-008 | PRD-derived test cases | Created first draft: `docs/prd/test_cases/2026-04-30-0022-tenant-branding-configuration-test-cases.md`. | prd-test-case-planner | no |
+| A-011 | S-003; S-004; S-005 | feature manifest | Implementation-time artifact: create or refresh `tenantBranding` and touched consumer/provider manifests when source seams land; blueprint records required manifest plan. | feature governance | no |
+| A-012 | S-009 | generated dependency graph | Implementation-time artifact: regenerate feature dependency graph after manifest or public seam changes; blueprint records required generated-artifact plan. | generated artifact workflow | no |
+| A-013 | S-006 | runbook/privacy note | Created first draft: `docs/workspace/runbooks/2026-04-30-tenant-branding-logo-cleanup-and-privacy.md`; exact cleanup command or scheduler seam must be finalized during implementation blueprint. | operational docs workflow | no |
 
 ## Story Readiness Summary
 
 - Ready stories:
-  none
+  S-002 through S-009
 - Blocked stories:
-  S-002 is blocked for app delivery until governed design-system seams are
-  confirmed or an explicit exception is approved
+  none for Task Breakdown. Design-system browser/canonical signoff,
+  OpenAPI/Postman, feature manifests, generated dependency graph, feature docs,
+  QA evidence, and standards review remain required delivery tasks before
+  Layer 5 completion.
 - Stories needing capability matrix:
-  S-000, S-003, S-004, S-005, S-006, S-007, S-008, S-009
+  none for Task Breakdown; permission mapping target rows must still be
+  reconciled into canonical mapping/seed artifacts during delivery.
 - Stories needing PRD refinement:
-  S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008
+  none unless delivery proposes a broader scope than the PRD.
 - Stories needing Technical Steering revisit:
   none under the current steering scope; revisit only if PRD proposes public
   logo delivery, generic asset library behavior, tenant-admin self-service,
@@ -335,13 +400,13 @@ A story may hand off to Task Breakdown only when:
 
 | Story ID | Handoff Status | Reason |
 | --- | --- | --- |
-| S-000 | control-story-only | Capability matrix normalization is the required control story before delivery stories can advance. |
-| S-001 | blocked | PRD decisions are required for feature boundary, fallback, clear/replacement, dashboard surface, and lifecycle semantics. |
-| S-002 | blocked | Governed design-system seams are not confirmed for root-admin or dashboard app adoption. |
-| S-003 | blocked | Needs PRD decisions, capability rows, API/data contracts, permission mapping, and persistence planning. |
-| S-004 | blocked | Needs PRD decisions, capability rows, asset alignment, API/data contracts, and lifecycle planning. |
-| S-005 | blocked | Needs projection contract, fallback decisions, authz mapping, and dashboard consumption scope. |
-| S-006 | blocked | Needs permission mapping, audit event contract, privacy note, and lifecycle cleanup model. |
-| S-007 | blocked | Needs signed-off design-system seams plus backend and permission contracts. |
-| S-008 | blocked | Needs signed-off dashboard seams plus projection and logo authorization contracts. |
-| S-009 | blocked | Artifact conformance depends on downstream PRD, matrix, API, data, permission, design-system, and test-case artifacts. |
+| S-000 | control-story-fulfilled | Capability matrix first draft now covers the story and AC inventory. |
+| S-001 | control-story-fulfilled | PRD first draft records feature boundary, fallback, replacement-only logo, dashboard surface, and lifecycle semantics. |
+| S-002 | ready-for-task-breakdown | Design-system composition artifacts exist; browser canonicals, rendered verification, and adoption proof should become design-system tasks before app UI delivery. |
+| S-003 | ready-for-task-breakdown | PRD, matrix, API contract, data dictionary, permission mapping, and blueprint define backend scope and dependencies. |
+| S-004 | ready-for-task-breakdown | Asset alignment, API contract, data dictionary, runbook, permission mapping, and blueprint define logo relationship scope and dependencies. |
+| S-005 | ready-for-task-breakdown | Projection contract, fallback decisions, authz mapping, and dashboard consumption scope are recorded. |
+| S-006 | ready-for-task-breakdown | Permission mapping, audit/privacy note, lifecycle cleanup model, and PRD-derived tests are recorded. |
+| S-007 | ready-for-task-breakdown | Depends on S-002 design-system signoff and backend stories; dependencies are explicit enough for Layer 4 task ordering. |
+| S-008 | ready-for-task-breakdown | Depends on S-002 design-system signoff and S-005 projection; dependencies are explicit enough for Layer 4 task ordering. |
+| S-009 | ready-for-task-breakdown | Layer 3 source-independent artifacts exist; implementation-time artifacts are recorded as delivery obligations. |

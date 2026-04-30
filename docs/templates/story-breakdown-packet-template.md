@@ -207,6 +207,47 @@ before the packet can be marked `ready-for-task-breakdown`.
 | Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |
 | --- | --- | --- | --- | --- |
 
+## Layer 3 Unblock Queue
+
+Use this section when Story Breakdown is valid but cannot hand stories to Task
+Breakdown. Each unresolved required decision question and each blocking
+artifact ledger row must map to at least one unblock row.
+
+| Unblock ID | Blocks Story / AC | Blocker Source | Unblock Type | Human Decision Needed | Options / Safe Defaults | Recommended Next Action | Can Auto-Create Artifact | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+Allowed unblock types:
+
+- `human-decision`
+- `artifact-creation`
+- `technical-steering-revisit`
+- `design-system-governance`
+- `source-of-truth-inspection`
+- `capability-matrix-required`
+- `prd-required`
+- `api-contract-required`
+- `permission-mapping-required`
+- `data-dictionary-required`
+
+Allowed statuses:
+
+- `needs-human-answer`
+- `ready-to-create-artifact`
+- `blocked-on-steering`
+- `blocked-on-source-truth`
+- `resolved`
+- `deferred-with-owner`
+
+Rules:
+
+- use `yes` or `no` for `Can Auto-Create Artifact`
+- `needs-human-answer` rows must ask the smallest concrete decision question
+  and list viable options or explain why there is no safe default
+- `ready-to-create-artifact` rows must name the exact artifact or workflow to
+  run next
+- do not mark a story `ready-for-task-breakdown` while an unresolved unblock
+  row still blocks it
+
 ## Artifact Ledger
 
 | Artifact ID | Story ID | Artifact Type | Required Action | Owner Skill Or Workflow | Blocks Task Breakdown |

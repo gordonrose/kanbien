@@ -86,6 +86,18 @@ Task Breakdown, or Delivery.
    packet can be marked `ready-for-task-breakdown`; otherwise keep the packet
    draft or blocked and record the owner/resolution state.
 
+9A. Build the Layer 3 Unblock Queue.
+   When no stories are ready, or when required follow-up questions or blocking
+   artifact ledger rows remain, add a Layer 3 Unblock Queue row for each
+   blocker. Classify each row as `human-decision`, `artifact-creation`,
+   `technical-steering-revisit`, `design-system-governance`,
+   `source-of-truth-inspection`, `capability-matrix-required`, `prd-required`,
+   `api-contract-required`, `permission-mapping-required`, or
+   `data-dictionary-required`. If the unblock row is `needs-human-answer`,
+   ask the smallest concrete decision question before proceeding further. If
+   the unblock row is `ready-to-create-artifact`, name the exact owner workflow
+   that can create the artifact next. Do not invent missing decisions.
+
 10. Set story readiness.
    A story can be `ready-for-task-breakdown` only when it has concrete
    acceptance criteria, dependency mapping, capability-matrix posture, proof
@@ -107,6 +119,9 @@ Task Breakdown, or Delivery.
   control story is queued to create or refresh them.
 - Do not treat missing design-system render/controller seams as a frontend
   implementation detail.
+- Do not leave a validated blocked packet as a dead end. Record the unblock
+  queue and surface the smallest human decision set or artifact creation path
+  needed to advance.
 
 ## Output
 
