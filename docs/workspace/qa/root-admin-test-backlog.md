@@ -37,12 +37,12 @@ across new work.
 | RA-E2E-005A | implemented | `tests/e2e/rootAdmin/operator-journeys.test.ts` proves tenants API lifecycle readback for create, edit, visible list, soft delete, deleted list, reactivate, remove, removed absence, and limited-root update denial. |
 | RA-E2E-005 | implemented | `tests/visual/app/rootAdminShell/rootAdminRootUsersList.spec.ts` proves the browser tenants active create/edit/list/reload journey while consuming RA-E2E-005A for destructive lifecycle and denied capability proof. |
 | RA-E2E-006 | implemented | `tests/e2e/rootAdmin/operator-journeys.test.ts` proves root-role creation, grant updates, assignment, replacement, effective-permission readback, inactive-role denial, deleted-target denial, last-admin denial, and limited role-editor denial. |
+| RA-SEC-001 | implemented | `tests/security/rootAdmin/permissionMatrix.test.ts` and `docs/workspace/qa/root-admin-security-matrix.md` prove mapped capability denials across mounted protected root-admin API route families. |
 
 ## Prioritized Backlog
 
 | Backlog ID | Priority | Task Type | Scope | Required Matrix |
 | --- | --- | --- | --- | --- |
-| RA-SEC-001 | P0 | `test-only` | Root-admin permission/state matrix closure for all currently mounted root-admin APIs. | actor, permission, object lifecycle, boundary, operation, and data-shape rows for each privileged route family. |
 | RA-TRACE-001 | P1 | `test-only` | Close `ROOT-PATH` traceability gaps from `npm run test:traceability`. | route compatibility, direct path entry, legacy hash aliases, security, audit, and edge cases. |
 | RA-TRACE-002 | P1 | `test-only` | Close `WEB-APP-HIER` root-admin topology traceability gaps. | hierarchy route/object lifecycle, applied tree state, discovery-sync failure, permission denial. |
 | RA-TRACE-003 | P1 | `test-only` | Close `DESIGN-SYS-TOPO` and `DESIGN-SYS-CANON` root-admin/design-system traceability gaps. | design-system canonical route, visual artifact, security, audit, and edge coverage. |
