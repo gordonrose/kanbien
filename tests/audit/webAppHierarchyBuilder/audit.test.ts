@@ -5,6 +5,7 @@ import {
   createInMemoryWebAppHierarchyRepository,
   createStubWebAppSurfaceDiscoveryIntegrationSeam,
   createModuleRecord,
+  createPageRecord,
   loginViaPasswordAndSsh,
   mountWebAppHierarchyBuilderFeature,
 } from "../../helpers/webAppHierarchyBuilderHarness";
@@ -88,6 +89,92 @@ describe("web app hierarchy builder audit visibility", () => {
           eventOutcome: "failure",
           rootUserId: identity.rootUserId,
           authPrincipalId: identity.authPrincipalId,
+        }),
+      ]),
+    );
+  });
+
+  it("TC-WEB-APP-HIER-AUD-003 and TC-WEB-APP-HIER-AUD-004 keep move and bootstrap context operator-visible", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountWebAppHierarchyBuilderFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppHierarchyRepository({
+        modules: [createModuleRecord()],
+        pages: [createPageRecord()],
+      }),
+    );
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const before = await invokeJson<{
+      rootFamilies: Array<{ rootFamilyId: string; modules: Array<{ pages: Array<{ pageKey: string; resolvedFullRoutePath: string | null }> }> }>;
+    }>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-hierarchy/tree",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+    });
+    expect(before.body.rootFamilies[0]?.modules[0]?.pages[0]).toMatchObject({
+      pageKey: "catalog-home",
+      resolvedFullRoutePath: "/root-admin/catalog",
+    });
+
+    const moved = await invokeJson<PageResponse & { placementType: string; rootFamilyId: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/pages/22222222-2222-4222-8222-222222222222/move",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        rootFamilyId: "root-admin",
+        webAppModuleId: "11111111-1111-4111-8111-111111111111",
+        placementType: "orphaned",
+      },
+    });
+    expect(moved.status).toBe(200);
+    expect(moved.body).toMatchObject({
+      rootFamilyId: "root-admin",
+      webAppPageId: "22222222-2222-4222-8222-222222222222",
+      placementType: "orphaned",
+      resolvedFullRoutePath: null,
+    });
+
+    const bootstrapped = await invokeJson<{
+      rootFamilies: Array<{ rootFamilyId: string; modules: Array<{ moduleKey: string; pages: Array<{ pageKey: string }> }> }>;
+    }>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/bootstrap",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        observedRootFamilies: [
+          {
+            rootFamilyId: "design-system",
+            modules: [
+              {
+                moduleKey: "patterns",
+                displayLabel: "Patterns",
+                pages: [
+                  {
+                    pageKey: "patterns-home",
+                    displayLabel: "Patterns Home",
+                    routeSegment: "patterns",
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+    expect(bootstrapped.status).toBe(200);
+    expect(bootstrapped.body.rootFamilies).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          rootFamilyId: "design-system",
+          modules: expect.arrayContaining([
+            expect.objectContaining({
+              moduleKey: "patterns",
+              pages: [expect.objectContaining({ pageKey: "patterns-home" })],
+            }),
+          ]),
         }),
       ]),
     );

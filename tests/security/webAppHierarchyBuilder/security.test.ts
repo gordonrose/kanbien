@@ -123,6 +123,76 @@ describe("web app hierarchy builder security flows", () => {
     });
   });
 
+  it("TC-WEB-APP-HIER-SEC-004 blocks cycle creation through strict tree validation", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountWebAppHierarchyBuilderFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppHierarchyRepository({
+        modules: [createModuleRecord()],
+        pages: [createPageRecord()],
+      }),
+    );
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const invalid = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/pages/22222222-2222-4222-8222-222222222222/move",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        rootFamilyId: "root-admin",
+        webAppModuleId: "11111111-1111-4111-8111-111111111111",
+        targetParentPageId: "22222222-2222-4222-8222-222222222222",
+        placementType: "child-page",
+      },
+    });
+
+    expect(invalid.status).toBe(409);
+    expect(invalid.body).toMatchObject({
+      code: "WEB_APP_HIERARCHY_CYCLE",
+      details: {
+        field: "targetParentPageId",
+        reason: "cycle_detected",
+      },
+    });
+  });
+
+  it("TC-WEB-APP-HIER-SEC-005 rejects bootstrap attempts to smuggle raw hierarchy replacement payloads", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountWebAppHierarchyBuilderFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppHierarchyRepository(),
+    );
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const invalid = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/bootstrap",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        observedRootFamilies: [],
+        webAppPages: [
+          {
+            webAppPageId: "22222222-2222-4222-8222-222222222222",
+            resolvedFullRoutePath: "/root-admin/invented",
+          },
+        ],
+      },
+    });
+
+    expect(invalid.status).toBe(400);
+    expect(invalid.body).toMatchObject({
+      code: "INVALID_REQUEST",
+      details: {
+        field: "webAppPages",
+        reason: "unexpected_field",
+      },
+    });
+  });
+
   it("TC-WEB-APP-HIER-SEC-006 enforces the dedicated preview, apply, and link-status capability gates", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(
@@ -164,6 +234,40 @@ describe("web app hierarchy builder security flows", () => {
     });
     expect(deniedLinks.status).toBe(403);
     expect(deniedLinks.body.code).toBe("FORBIDDEN");
+  });
+
+  it("TC-WEB-APP-HIER-SEC-008 rejects client-submitted locator and discovery-link managed fields on apply", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountWebAppHierarchyBuilderFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppHierarchyRepository(),
+      createStubWebAppSurfaceDiscoveryIntegrationSeam(),
+    );
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const invalid = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/discovery-sync/apply",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        includeInactive: false,
+        includeOrphaned: false,
+        webAppPageLocatorId: "66666666-6666-4666-8666-666666666666",
+        webAppDiscoveryLinkId: "77777777-7777-4777-8777-777777777777",
+        driftStatus: "none",
+      },
+    });
+
+    expect(invalid.status).toBe(400);
+    expect(invalid.body).toMatchObject({
+      code: "INVALID_REQUEST",
+      details: {
+        field: "webAppPageLocatorId",
+        reason: "unexpected_field",
+      },
+    });
   });
 
   it("TC-DESIGN-SYS-TOPO-SEC-001 enforces the design-system create preview and apply capability gates", async () => {
