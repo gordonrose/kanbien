@@ -65,6 +65,27 @@
   Why It Matters For Rebuild Or Shared Environments:
   Source: `src/...`
 
+## Compliance Classification And Governance
+
+- Data classification:
+- Privacy / PII relevance:
+- Security relevance:
+- Audit relevance:
+- Retention / cleanup posture:
+- Export / deletion posture:
+- Legal hold posture:
+- Operational evidence requirements:
+- Source:
+
+## Compliance And Enforcement Trace
+
+| Standard / Rule | Applies? | Repo Enforcement | Test / Evidence | Notes |
+| --- | --- | --- | --- | --- |
+| System-managed identifiers and lifecycle fields | yes | enforced-in-code | `tests/...` or `missing` |  |
+| Normal-read soft-delete visibility | not-applicable | not-applicable | not-applicable | Explain when entity has no soft-delete lifecycle. |
+| Tenant boundary / object-level authorization | yes | enforced-in-code | `TC-*`; `tests/...` |  |
+| Retention and cleanup posture | planned | planned | `docs/...` |  |
+
 ## Related Errors
 
 - `EXAMPLE_ERROR`

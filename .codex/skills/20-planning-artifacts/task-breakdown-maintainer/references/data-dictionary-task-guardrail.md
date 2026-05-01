@@ -7,12 +7,15 @@ Use for task type: `DOC:data-dictionary`
 - durable entity facts, normalized fields, lifecycle fields, soft-delete
   posture, uniqueness, indexes, and retention behavior
 - source-independent persistence truth stays aligned with migrations and code
+- compliance classification, privacy/security/audit relevance, and
+  enforcement/test traceability are recorded honestly
 
 ## Approval Evidence
 
 - entity or table affected
 - source files and migrations reviewed
 - field/index/lifecycle changes
+- classification, retention, cleanup, and compliance trace posture
 - validation or docs-alignment proof
 
 ## Deep Delivery Standard
@@ -31,6 +34,8 @@ or update:
 - entity data dictionary docs under `docs/data-dictionary/`
 - field, normalized-value, index, uniqueness, lifecycle, retention, soft-delete,
   and searchable-storage notes when maintained as documentation artifacts
+- compliance classification, privacy/security/audit relevance, retention,
+  export/delete, legal-hold, operational-evidence, and enforcement trace rows
 - compatibility notes for durable entity facts and schema-facing behavior
 - task packet evidence that traces durable data expectations back to approved
   source truth
@@ -49,6 +54,13 @@ Before queueing, the task packet should name:
   domain/contract sources used as truth
 - field semantics, normalized values, lifecycle fields, soft-delete posture,
   uniqueness, searchable-storage model, retention, and durable fact behavior
+- data classification plus privacy, security, audit, retention, cleanup,
+  export/delete, legal-hold, and operational-evidence posture
+- applicable repo standards and whether each is enforced in code, schema, tests,
+  maintained artifacts, manual review, planned work, blocked work, or
+  not-applicable with rationale
+- test case IDs, executable test paths, migration/schema proof, validator/gate
+  commands, review evidence, or explicit missing/not-applicable markers
 - compatibility posture: docs-only alignment, no schema change, additive,
   compatibility-sensitive, or blocked pending migration/approval
 - validation command, docs-alignment review workflow, or explicit blocked reason
@@ -67,6 +79,8 @@ Split or block the task when:
   change
 - executable persistence, migration, API, or regression tests are missing or
   newly required
+- compliance/enforcement trace exposes missing runtime, schema, or test
+  enforcement that must be fixed before delivery
 - live schema and source files disagree and the correct source of truth is not
   approved
 

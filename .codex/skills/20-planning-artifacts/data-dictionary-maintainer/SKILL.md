@@ -41,6 +41,9 @@ For persistence-backed entities, also document:
 - normalization and uniqueness rules
 - lifecycle semantics
 - mutation semantics that affect lifecycle or audit-relevant fields
+- data classification, privacy, security, and audit relevance
+- retention, cleanup, export/delete, and legal-hold posture when relevant
+- repo enforcement and test/evidence trace for applicable data standards
 - migration compatibility notes
 - exact cross-feature read seam model when applicable
 
@@ -89,8 +92,11 @@ Helpful secondary sources:
 - `docs/prd/test_cases/*`
 - `docs/privacy/*`
 - `docs/operations/*`
+- `docs/permission-mapping/*`
 - `docs/standards/platform-status/*` when the entity behavior affects the
   maintained security, privacy, or audit posture summary
+- `docs/standards/*.md` when a repo-wide data handling rule applies to the
+  entity
 - `docs/workspace/implementation-blueprints/*` when a maintained blueprint
   exists for the same slice
 
@@ -178,6 +184,8 @@ For every persistence-backed entity page, add explicit sections for:
 - mutation semantics
 - migration compatibility notes
 - cross-feature read seams when applicable
+- compliance classification and governance notes
+- compliance and enforcement trace
 
 The page should stand on its own as much as possible.
 Use source citations, but do not make the reader reconstruct the contract only
@@ -200,8 +208,62 @@ Document:
   safety
 - the exact exported seam used for cross-feature reads, plus which feature
   consumes it
+- data classification, privacy/PII/security/audit relevance, retention,
+  cleanup, export/delete posture, legal-hold notes, and operational evidence
+  requirements when relevant
+- whether applicable repo standards are enforced in code, schema, tests,
+  maintained docs, manual review, or are missing/blocked
 
 If a detail is not explicit in the source, mark it as inferred.
+
+## Compliance And Enforcement Trace Rules
+
+Every entity page should include a `Compliance And Enforcement Trace` section.
+Use it to connect applicable repo standards to current enforcement and evidence
+instead of implying confidence through prose.
+
+For each applicable standard, rule, or durable-data obligation, record:
+
+- standard or rule name
+- whether it applies
+- repo enforcement posture
+- test case, executable test, migration proof, audit command, or review evidence
+- notes for gaps, blockers, or not-applicable rationale
+
+Allowed repo enforcement posture values:
+
+- `enforced-in-code`
+- `enforced-by-db-constraint`
+- `enforced-by-test`
+- `enforced-by-maintained-artifact`
+- `manual-review-required`
+- `documented-not-enforced`
+- `planned`
+- `blocked`
+- `not-applicable`
+
+Use `documented-not-enforced`, `planned`, or `blocked` honestly when the repo
+does not yet enforce the standard. Do not invent test case IDs or executable
+paths. When evidence exists, prefer the most direct stable reference:
+
+- PRD-derived `TC-*` ID
+- executable test path
+- migration or schema file
+- validator, script, or gate command
+- maintained artifact review note
+- explicit `missing` or `not-applicable` marker with rationale
+
+At minimum, consider the entity against:
+
+- system-managed identifiers, timestamps, lifecycle, and audit fields
+- normalization and empty-string behavior
+- uniqueness and searchable-storage rules
+- soft-delete and normal-read visibility rules
+- tenant boundary and object-level authorization rules
+- retention, cleanup, export/delete, privacy, and legal-hold posture
+- auditability and operational evidence requirements
+- API contract and permission-mapping alignment when the entity is API-visible
+  or permission-sensitive
 
 ## Error Documentation Rules
 
@@ -262,6 +324,9 @@ On every run:
    - changed mutation semantics
    - changed migration compatibility notes
    - changed cross-feature seams
+   - changed classification, privacy, security, retention, cleanup, export,
+     legal-hold, audit, or operational-evidence posture
+   - added, removed, or changed compliance/enforcement trace rows
    - added, removed, or changed errors
 4. Surface wider artifact impact when relevant.
    If the dictionary change materially alters the understood persistence,
