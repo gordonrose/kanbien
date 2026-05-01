@@ -156,6 +156,32 @@ Avoid phrases like "tenant assignments", "active sessions", "ownership",
 immediately" in the first question unless the requester used those concepts
 first.
 
+UX questions should ask about the value a person needs from the experience, not
+which widget or component should be used. Do not ask the requester to choose
+between controls such as dropdown, picker, drawer, table, modal, or multi-select
+unless they already framed the decision that way.
+
+Instead ask about everyday needs:
+
+- how many things they may need to choose from
+- whether they need search to find the right thing quickly
+- whether they need to compare selected and available things
+- whether mistakes would be easy or painful to undo
+- whether the list may grow over time
+- whether the person needs confidence before saving
+
+Then make the UX recommendation yourself in plain language. For example, when a
+root admin needs to add or remove tenants for a tenant admin and the tenant list
+could grow, assume a searchable selection drawer or equivalent design-system
+picker is the likely recommendation. Ask to confirm the business value instead:
+
+> Because the tenant list could get long, my recommendation would be a search
+> and review step rather than a tiny dropdown.
+>
+> When someone is choosing tenants here, is the most important thing finding the
+> right tenant quickly, seeing all selected tenants clearly, or avoiding
+> accidental removals?
+
 ## Draft Fast Path
 
 Use this path only when the user explicitly asks for a draft Product Discovery

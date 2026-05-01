@@ -88,6 +88,18 @@ Prepare the requester for the interview with a brief bridge such as, "I'll walk
 through this one step at a time so we get the everyday version clear before we
 worry about awkward cases."
 
+For UX discovery, ask about the value the experience must provide rather than
+the behavior of a specific UI element. Avoid asking the requester to choose
+between controls such as dropdown, picker, drawer, table, modal, or
+multi-select unless they introduced that choice. Ask about list size, search,
+comparison, confidence before saving, mistake recovery, and whether the list
+may grow; then recommend the likely UX pattern in plain language.
+
+When a list can become large, such as tenants available to assign to a tenant
+admin, the likely recommendation is a searchable selection drawer or equivalent
+governed picker. Confirm the needed business value instead of asking the
+requester to choose the component.
+
 The requester should not be expected to know platform vocabulary. Keep terms
 like Technical Steering, taxonomy, state matrix, capability, tenant, API,
 schema, persistence, migration, route, and artifact out of the interview unless

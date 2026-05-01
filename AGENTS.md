@@ -430,6 +430,19 @@ best-practice recommendation when helpful, and confirm whether that summary
 should be treated as the rule, a usual case, an exception, out of scope, or
 deferred until later before asking the next question.
 
+For UX questions, ask about the value the person needs from the experience, not
+which widget or component should be used. Do not ask the requester to choose
+between controls such as dropdown, picker, drawer, table, modal, or
+multi-select unless they already framed the decision that way. Ask about real
+needs such as list size, search, comparison, confidence before saving, mistake
+recovery, and whether the list may grow. Then make the UX recommendation in
+plain language.
+
+When a choice list could grow large, such as choosing tenants for a tenant
+admin, assume a searchable selection drawer or equivalent governed picker is
+the likely best-practice recommendation. Ask to confirm the value it must
+provide rather than asking the requester to pick the control.
+
 Use the requester's world, not platform vocabulary. Avoid words such as
 `tenant`, `authz`, `capability`, `entity`, `persistence`, `API`, `migration`,
 `route`, `contract`, `state matrix`, `taxonomy`, `artifact`, `governed`,

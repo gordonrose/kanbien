@@ -16,6 +16,8 @@ const checks: Check[] = [
       "Do not call\ntools, create a packet, draft files, or inspect the repo before that first\nresponse.",
       "Do not present a grouped list of follow-up questions in the first response.",
       "The first question must be a gentle orientation question about the normal thing",
+      "For UX questions, ask about the value the person needs from the experience",
+      "When a choice list could grow large, such as choosing tenants for a tenant\nadmin",
       "Do not use a \"first-pass draft, then questions\" pattern",
     ],
     mustNotInclude: [
@@ -32,6 +34,8 @@ const checks: Check[] = [
       "ask exactly one next question in the requester's everyday language",
       "Do not start with edge cases, failure handling, session\nrevocation",
       "First-question ladder:",
+      "UX questions should ask about the value a person needs from the experience",
+      "assume a searchable selection drawer or equivalent design-system\npicker is the likely recommendation",
       "ask several unrelated questions in one turn during the interview",
       "Never use a \"first-pass draft, then questions\" pattern",
       "skip repo guardrails and broad sweeps, not discovery judgment",
@@ -106,6 +110,8 @@ const checks: Check[] = [
     mustInclude: [
       "Start with the user's normal everyday goal before asking about awkward cases.",
       "Prepare the requester for the interview with a brief bridge",
+      "For UX discovery, ask about the value the experience must provide",
+      "the likely recommendation is a searchable selection drawer or equivalent\ngoverned picker",
     ],
   },
 ];
