@@ -22,6 +22,8 @@
   - this slice introduces a new durable business root entity and should keep
     persistence-backed verification in scope for lifecycle and uniqueness rules
   - Traceability Enforcement: enforced
+  - Current executable traceability status: 24/24 documented tenant test cases
+    traceable
   - Lifecycle metadata defaults currently apply:
     - `Version: v1`
     - `Lifecycle Status: active`
@@ -397,6 +399,54 @@
   - default `page = 1` and `pageSize = 25` apply
   - minimum and maximum page-size bounds are enforced
   - default order direction remains `desc`
+
+## End-To-End Root Admin Journeys
+
+- Journey: tenant API lifecycle can be completed by an allowed root operator
+  and denied for a root operator missing the tenant capability
+  Test Case ID: `TC-TENANTS-E2E-001`
+  Journey ID: `JY-ROOT-ADMIN-006`
+  Recommended Test Layer: `e2e`
+  Suggested Test Folder: `tests/e2e/rootAdmin/`
+  Requires Shared Test Helper: yes
+  Requires Manifest Tracking: yes
+  Cleanup Expectation:
+  uses the in-memory tenant repository for deterministic root-admin lifecycle
+  proof; persistence-backed lifecycle coverage remains under
+  `TC-TENANTS-INT-*` and `TC-TENANTS-EDGE-*`
+  Features:
+  - `rootAuth`
+  - shared root capability middleware
+  - `tenants`
+  Coverage:
+  - allowed root operator creates, edits, exact-reads, and visible-lists an
+    active tenant
+  - allowed root operator soft-deletes, verifies active-read hiding, lists
+    deleted tenants, reactivates, removes, and verifies removed tenant absence
+  - root operator with read-only tenant capability is denied mutation
+  - active, deleted, and removed tenant object states remain distinct
+
+- Journey: tenant browser workspace can create and edit active tenants through
+  the governed root-admin directory UI
+  Test Case ID: `TC-TENANTS-E2E-002`
+  Journey ID: `JY-ROOT-ADMIN-007`
+  Recommended Test Layer: `browser-e2e`
+  Suggested Test Folder: `tests/visual/app/rootAdminShell/`
+  Requires Shared Test Helper: yes
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a; browser route mocks are reset per test
+  Features:
+  - root-admin shell
+  - governed directory workspace
+  - tenant list and form UI
+  Coverage:
+  - browser user enters the tenant suite through the path-backed
+    `/root-admin/tenants` route
+  - tenant create and edit flows persist through the mocked tenant API seam
+  - list/detail readback and page reload still show the edited tenant
+  - destructive lifecycle and denied-capability proof are intentionally covered
+    by `TC-TENANTS-E2E-001` until governed browser controls exist for those
+    operations
 
 ## Coverage Gaps Or Open Questions
 

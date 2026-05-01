@@ -30,7 +30,14 @@ interface RootUserListResponse {
 interface TenantResponse {
   tenantId: string;
   bizId: string;
+  name: string;
+  category: string;
   status: string;
+  deletedAt: string | null;
+}
+
+interface TenantListResponse {
+  items: TenantResponse[];
 }
 
 interface RootRoleSummary {
@@ -315,6 +322,170 @@ describe("root-admin operator e2e journeys", () => {
       headers: { authorization: `Bearer ${limitedSession.sessionId}` },
       body: {
         firstName: "Denied",
+      },
+    });
+    expect(deniedUpdate.status).toBe(403);
+    expect(deniedUpdate.body.code).toBe("FORBIDDEN");
+  });
+
+  it("TC-TENANTS-E2E-001 and JY-ROOT-ADMIN-006 prove tenants lifecycle readback and denied capability states", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountTenantsFeature(harness.app, harness, createInMemoryTenantsRepository());
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+    const authHeaders = { authorization: `Bearer ${session.sessionId}` };
+
+    const created = await invokeJson<TenantResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/tenants",
+      headers: authHeaders,
+      body: {
+        bizId: "Lifecycle-Tenant",
+        name: "Lifecycle Tenant",
+        category: "customer",
+        status: "live",
+      },
+    });
+    expect(created.status).toBe(201);
+    expect(created.body).toMatchObject({
+      bizId: "lifecycle-tenant",
+      name: "Lifecycle Tenant",
+      category: "customer",
+      status: "live",
+      deletedAt: null,
+    });
+
+    const updated = await invokeJson<TenantResponse>(harness.app, {
+      method: "PATCH",
+      path: `/v1/tenants/${created.body.tenantId}`,
+      headers: authHeaders,
+      body: {
+        name: "Lifecycle Tenant Updated",
+        category: "demo",
+        status: "draft",
+      },
+    });
+    expect(updated.status).toBe(200);
+    expect(updated.body).toMatchObject({
+      tenantId: created.body.tenantId,
+      name: "Lifecycle Tenant Updated",
+      category: "demo",
+      status: "draft",
+    });
+
+    const exactRead = await invokeJson<TenantResponse>(harness.app, {
+      method: "GET",
+      path: `/v1/tenants/${created.body.tenantId}`,
+      headers: authHeaders,
+    });
+    expect(exactRead.status).toBe(200);
+    expect(exactRead.body.name).toBe("Lifecycle Tenant Updated");
+
+    const visibleList = await invokeJson<TenantListResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/tenants?pageSize=100",
+      headers: authHeaders,
+    });
+    expect(visibleList.status).toBe(200);
+    expect(visibleList.body.items.map((item) => item.tenantId)).toContain(created.body.tenantId);
+
+    const softDeleted = await invokeJson<TenantResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/tenants/${created.body.tenantId}/delete`,
+      headers: authHeaders,
+      body: {},
+    });
+    expect(softDeleted.status).toBe(200);
+    expect(softDeleted.body).toMatchObject({
+      tenantId: created.body.tenantId,
+      status: "inactive",
+    });
+    expect(softDeleted.body.deletedAt).not.toBeNull();
+
+    const hiddenAfterDelete = await invokeJson<ErrorResponse>(harness.app, {
+      method: "GET",
+      path: `/v1/tenants/${created.body.tenantId}`,
+      headers: authHeaders,
+    });
+    expect(hiddenAfterDelete.status).toBe(404);
+    expect(hiddenAfterDelete.body.code).toBe("TENANT_NOT_FOUND");
+
+    const deletedList = await invokeJson<TenantListResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/tenants/deleted?pageSize=100",
+      headers: authHeaders,
+    });
+    expect(deletedList.status).toBe(200);
+    expect(deletedList.body.items.map((item) => item.tenantId)).toContain(created.body.tenantId);
+
+    const reactivated = await invokeJson<TenantResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/tenants/${created.body.tenantId}/reactivate`,
+      headers: authHeaders,
+      body: {},
+    });
+    expect(reactivated.status).toBe(200);
+    expect(reactivated.body).toMatchObject({
+      tenantId: created.body.tenantId,
+      status: "draft",
+      deletedAt: null,
+    });
+
+    const removed = await invokeJson<TenantResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/tenants/${created.body.tenantId}/remove`,
+      headers: authHeaders,
+      body: {
+        confirm: true,
+        reason: "E2E tenant lifecycle cleanup proof.",
+      },
+    });
+    expect(removed.status).toBe(200);
+    expect(removed.body.tenantId).toBe(created.body.tenantId);
+
+    const missingAfterRemove = await invokeJson<ErrorResponse>(harness.app, {
+      method: "GET",
+      path: `/v1/tenants/${created.body.tenantId}`,
+      headers: authHeaders,
+    });
+    expect(missingAfterRemove.status).toBe(404);
+    expect(missingAfterRemove.body.code).toBe("TENANT_NOT_FOUND");
+
+    const denialTarget = await invokeJson<TenantResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/tenants",
+      headers: authHeaders,
+      body: {
+        bizId: "Denied-Update-Tenant",
+        name: "Denied Update Tenant",
+        category: "test",
+      },
+    });
+    expect(denialTarget.status).toBe(201);
+
+    const limitedIdentity = harness.seedAuthIdentity({
+      rootUser: {
+        rootUserId: "99999999-9999-4999-8999-999999999999",
+        email: "limited-tenant-root@example.test",
+        firstName: "Limited",
+        lastName: "Tenant",
+      },
+      loginEmail: "limited-tenant-root@example.test",
+    });
+    harness.setRootUserCapabilities(limitedIdentity.rootUserId, [
+      "root-auth.password.change.own",
+      "root-auth.session.read.own",
+      "root-auth.session.logout.own",
+      "tenant.read",
+    ]);
+    const limitedSession = await loginViaPasswordAndSsh(harness, limitedIdentity);
+
+    const deniedUpdate = await invokeJson<ErrorResponse>(harness.app, {
+      method: "PATCH",
+      path: `/v1/tenants/${denialTarget.body.tenantId}`,
+      headers: { authorization: `Bearer ${limitedSession.sessionId}` },
+      body: {
+        name: "Denied Tenant",
       },
     });
     expect(deniedUpdate.status).toBe(403);

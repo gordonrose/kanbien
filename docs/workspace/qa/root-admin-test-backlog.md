@@ -15,7 +15,7 @@ matrix coverage should be made explicit.
 - `ROOT-ADMIN-SHELL`: `20/20` documented PRD test cases traceable.
 - `ROOT-USERS`: `24/24` documented PRD test cases traceable.
 - `ROOT-ROLES`: `31/31` documented PRD test cases traceable.
-- `TENANTS`: `22/22` documented PRD test cases traceable.
+- `TENANTS`: `24/24` documented PRD test cases traceable.
 - `TENANT-ADMINS`: `28/28` documented PRD test cases traceable.
 - `ROOT-PATH`: `8/20` documented PRD test cases traceable.
 - `WEB-APP-HIER`: `22/54` documented PRD test cases traceable.
@@ -34,12 +34,13 @@ across new work.
 | RA-E2E-003 | implemented | `tests/visual/app/rootAdminShell/rootAdminShellJourney.spec.ts` proves browser direct entry, active browser-session bootstrap, logout return-to-login, and unauthenticated/expired bootstrap denial. |
 | RA-E2E-004A | implemented | `tests/e2e/rootAdmin/operator-journeys.test.ts` proves root-users API lifecycle readback for create, edit, visible list, soft delete, deleted list, reactivate, remove/anonymize denial, and limited-root update denial. |
 | RA-E2E-004 | implemented | `tests/visual/app/rootAdminShell/rootAdminRootUsersList.spec.ts` proves the browser root-users active create/edit/list/reload journey while consuming RA-E2E-004A for destructive lifecycle and denied capability proof. |
+| RA-E2E-005A | implemented | `tests/e2e/rootAdmin/operator-journeys.test.ts` proves tenants API lifecycle readback for create, edit, visible list, soft delete, deleted list, reactivate, remove, removed absence, and limited-root update denial. |
+| RA-E2E-005 | implemented | `tests/visual/app/rootAdminShell/rootAdminRootUsersList.spec.ts` proves the browser tenants active create/edit/list/reload journey while consuming RA-E2E-005A for destructive lifecycle and denied capability proof. |
 
 ## Prioritized Backlog
 
 | Backlog ID | Priority | Task Type | Scope | Required Matrix |
 | --- | --- | --- | --- | --- |
-| RA-E2E-005 | P0 | `test-only` | Tenants browser/API journey with create, edit, soft delete, reactivate, remove, and reload proof. | actor: allowed root operator, missing tenant capability; object: active/deleted/removed tenant; boundary: root-owned tenant administration. |
 | RA-E2E-006 | P0 | `test-only` | Root-roles assignment journey with role creation, grant update, assignment, replacement, last-admin/last-role denial, and effective permission readback. | actor: RootUserAdmin, limited role editor; permission: allow/deny; object: active/inactive role and active/deleted target root user. |
 | RA-SEC-001 | P0 | `test-only` | Root-admin permission/state matrix closure for all currently mounted root-admin APIs. | actor, permission, object lifecycle, boundary, operation, and data-shape rows for each privileged route family. |
 | RA-TRACE-001 | P1 | `test-only` | Close `ROOT-PATH` traceability gaps from `npm run test:traceability`. | route compatibility, direct path entry, legacy hash aliases, security, audit, and edge cases. |

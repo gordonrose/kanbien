@@ -924,7 +924,7 @@ test.describe("root-admin root-users list page adoption", () => {
     expect(uploadIntentRequests).toBe(0);
   });
 
-  test("tenants can be created and edited from the governed list and form workspace", async ({ page }) => {
+  test("TC-TENANTS-E2E-002 and JY-ROOT-ADMIN-007 tenants can be created, edited, listed, and reloaded from the governed drawer form", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
     await bootstrapDirectoryPage(page, "/root-admin/tenants", "#page-tenants");
 
@@ -945,6 +945,12 @@ test.describe("root-admin root-users list page adoption", () => {
 
     await expect(page.locator("#tenants-detail-title")).toHaveText("Launch Team Edited");
     await expect(page.locator("#page-tenants")).toContainText("Launch Team Edited");
+
+    await page.reload();
+    await expect(page.locator("#page-tenants")).toBeVisible();
+    await expect(page.locator("#tenants-list-page")).toBeVisible();
+    await expect(page.locator("#page-tenants")).toContainText("Launch Team Edited");
+    await expect(page.locator("#page-tenants")).toContainText("launch-team");
   });
 
   test("tenant admins can be created inside the selected tenant from the governed form workspace", async ({ page }) => {
