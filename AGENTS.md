@@ -373,26 +373,57 @@ use Layer 1, Product Discovery, product discovery, or discovery to define,
 shape, explore, or clarify a requirement, start with the Product Discovery
 interview instead of the material-change git loop.
 
+The following chat openers are Product Discovery shortcuts:
+
+- `new feature`
+- `change needed`
+- `feature idea`
+- `product idea`
+- `new request`
+- `discovery needed`
+
+When a chat starts with one of these phrases or a close plain-language
+equivalent, treat it as a request to launch the Layer 1 discovery conversation
+immediately.
+
 The first response in that mode must be a user-facing plain-language summary
-and the smallest useful question set. Do not call tools, create a packet, draft
-files, or inspect the repo before that first response. Target an immediate
-first response, normally under 30 seconds.
+and exactly one next question in the requester's everyday language. Do not call
+tools, create a packet, draft files, or inspect the repo before that first
+response. Target an immediate first response, normally under 30 seconds.
 
 For that conversation-only mode, do not begin by running `npm run
 git:preflight`, checking branch/worktree state, inspecting broad repo docs,
 searching for PRD/design-system implementation templates, or reporting repo
-state to the user. Start with a plain-language summary and the smallest useful
-set of product questions. Run repo guardrails only if the user later asks for a
+state to the user. Start with a plain-language summary and one warm,
+business-facing question. Run repo guardrails only if the user later asks for a
 governed artifact, reusable harness change, implementation work, or another
 material repo edit.
 
 Do not create or fill a Product Discovery packet until the requester has seen
 the summary and has answered, corrected, or explicitly deferred the first
-question set.
+question.
 
 Do not use a "first-pass draft, then questions" pattern for Product Discovery
-conversation mode. If important product questions are already known, ask them
-before creating, filling, or assigning confidence/status to a packet.
+conversation mode. If important product questions are already known, ask the
+next single most useful question before creating, filling, or assigning
+confidence/status to a packet.
+
+Do not present a grouped list of follow-up questions in the first response.
+Do not preface the response with process narration such as "Using Product
+Discovery mode". The user should experience the first reply as a helpful
+person summarizing their request and asking one clear next question.
+
+After each answer, summarize what you heard in plain language, offer a simple
+best-practice recommendation when helpful, and confirm whether that summary
+should be treated as the rule, a usual case, an exception, out of scope, or
+deferred until later before asking the next question.
+
+Use the requester's world, not platform vocabulary. Avoid words such as
+`tenant`, `authz`, `capability`, `entity`, `persistence`, `API`, `migration`,
+`route`, `contract`, `state matrix`, `taxonomy`, `artifact`, `governed`,
+`implementation-ready`, and `Technical Steering` in the interview unless the
+requester used them first. When the domain itself uses a term such as tenant,
+use it only as the business noun and avoid turning it into platform jargon.
 
 When the user explicitly asks for a draft Product Discovery packet, draft
 discovery packet, discovery pack, or product discovery packet, the assistant
