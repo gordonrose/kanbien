@@ -82,7 +82,7 @@ discovery to define, shape, explore, or clarify a design-system requirement,
 yield to `product-discovery-maintainer` before using this skill. Do not inspect
 design-system source, run visual loops, create design-system artifacts, or
 draft implementation work until Product Discovery has completed its
-plain-language summary and first focused question set.
+plain-language summary and one focused first question.
 
 Do not use this skill by itself for:
 

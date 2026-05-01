@@ -267,13 +267,14 @@ Product Discovery has three operating modes:
 - Discovery conversation:
   Use when the user asks to use Layer 1 or Product Discovery to define, shape,
   explore, or clarify a requirement. This mode is not a material repo edit.
-  Start with a plain-language summary and focused product questions. Do not
+  Start with a plain-language summary and one focused product question. Do not
   begin with git preflight, branch/worktree state, broad repo inspection, PRD
   drafting, implementation planning, or design-system work-item discovery. Do
   not create or fill a packet until the requester has seen the summary and has
-  answered, corrected, or explicitly deferred the first question set. Do not
-  use a first-pass-draft-then-questions pattern when important product
-  questions are already known.
+  answered, corrected, or explicitly deferred the first question. Do not use a
+  first-pass-draft-then-questions pattern when important product questions are
+  already known; ask the next single most useful question instead of a grouped
+  list.
 - Draft fast path:
   Use only when the user explicitly asks for a draft Product Discovery packet,
   draft discovery packet, discovery pack, or product discovery packet. This

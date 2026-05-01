@@ -65,7 +65,7 @@ discovery to define, shape, explore, or clarify a requirement, the Product
 Discovery first-response hard gate outranks this orchestrator. Do not classify
 the implementation loop, inspect repo state, run git preflight, or draft PRD /
 capability / implementation artifacts before the product-discovery-maintainer
-has given the plain-language summary and focused first question set.
+has given the plain-language summary and one focused first question.
 
 ## Default Loop
 

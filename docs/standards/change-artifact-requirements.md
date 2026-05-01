@@ -21,17 +21,22 @@ git preflight, checking branch/worktree state, inspecting broad repo docs,
 searching for PRD/design-system implementation templates, or reporting repo
 state to the user.
 
-The first response should summarize the request in plain language and ask only
-the next product questions needed to improve confidence.
+The first response should summarize the request in plain language and ask
+exactly one next product question needed to improve confidence.
 
 The first response must happen before tool use, repo inspection, packet
 drafting, or file creation. Do not create or fill a Product Discovery packet
 until the requester has seen the summary and has answered, corrected, or
-explicitly deferred the first question set.
+explicitly deferred the first question.
 
 Do not use a first-pass-draft-then-questions pattern for Product Discovery
-conversation mode. If important product questions are known, they must be asked
-before packet creation, confidence assignment, or ready-status handoff.
+conversation mode. If important product questions are known, ask the next
+single most useful question before packet creation, confidence assignment, or
+ready-status handoff.
+
+Do not present a grouped list of follow-up questions in the first response.
+The requester should experience the first reply as a plain-language summary
+and one warm, business-facing question.
 
 ### Draft Fast Path
 
@@ -91,8 +96,8 @@ create or update a Product Discovery packet using
 `docs/templates/product-discovery-packet-template.md` when a change is:
 
 This gate does not override the Product Discovery conversation gate above. If
-the user is still at the discovery-conversation stage, ask the first focused
-question set before creating or filling the packet.
+the user is still at the discovery-conversation stage, ask the first single
+focused question before creating or filling the packet.
 
 - a new feature family
 - a material vertical slice

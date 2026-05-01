@@ -13,8 +13,13 @@ const checks: Check[] = [
     name: "AGENTS protects Product Discovery first response",
     path: "AGENTS.md",
     mustInclude: [
-      "Do not call tools, create a packet, draft\nfiles, or inspect the repo before that first response.",
+      "Do not call\ntools, create a packet, draft files, or inspect the repo before that first\nresponse.",
+      "Do not present a grouped list of follow-up questions in the first response.",
       "Do not use a \"first-pass draft, then questions\" pattern",
+    ],
+    mustNotInclude: [
+      "smallest useful question set",
+      "smallest useful\nset of product questions",
     ],
   },
   {
@@ -22,6 +27,8 @@ const checks: Check[] = [
     path: ".codex/skills/20-planning-artifacts/product-discovery-maintainer/SKILL.md",
     mustInclude: [
       "The first assistant response in Discovery Conversation Mode must be a user-facing\nmessage, not a tool call.",
+      "ask exactly one next question in the requester's everyday language",
+      "ask several unrelated questions in one turn during the interview",
       "Never use a \"first-pass draft, then questions\" pattern",
       "skip repo guardrails and broad sweeps, not discovery judgment",
     ],
@@ -31,8 +38,12 @@ const checks: Check[] = [
     path: "docs/templates/product-discovery-packet-template.md",
     mustInclude: [
       "Do not use this template as the first response to a Product Discovery request.",
+      "The first response must be a plain-language summary and one focused question",
       "## Known Questions Gate",
       "Do not use a first-pass-draft-then-questions pattern.",
+    ],
+    mustNotInclude: [
+      "focused question set",
     ],
   },
   {
@@ -42,9 +53,12 @@ const checks: Check[] = [
       "docs/product-discovery/templates/authentication-access-template.md",
       "skips repo guardrails and broad sweeps, not discovery judgment",
       "This gate does not override the Product Discovery conversation gate above.",
+      "ask the first single\nfocused question before creating or filling the packet",
     ],
     mustNotInclude: [
       "authentication/login coverage checklist in the Product Discovery packet\ntemplate",
+      "first question set",
+      "next product questions",
     ],
   },
   {
@@ -53,6 +67,10 @@ const checks: Check[] = [
     mustInclude: [
       "the Product\nDiscovery first-response hard gate outranks this orchestrator",
       "stop loop classification and route to\n`product-discovery-maintainer`",
+      "one focused first question",
+    ],
+    mustNotInclude: [
+      "focused first question set",
     ],
   },
   {
@@ -60,7 +78,22 @@ const checks: Check[] = [
     path: ".codex/skills/40-frontend/frontend-design-system-loop-maintainer/SKILL.md",
     mustInclude: [
       "yield to `product-discovery-maintainer` before using this skill",
-      "plain-language summary and first focused question set",
+      "plain-language summary and one focused first question",
+    ],
+    mustNotInclude: [
+      "focused question set",
+    ],
+  },
+  {
+    name: "Build-from-spec harness uses one-question Product Discovery start",
+    path: "docs/architecture/build-from-spec-change-harness.md",
+    mustInclude: [
+      "Start with a plain-language summary and one focused product question.",
+      "ask the next single most useful question instead of a grouped\n  list",
+    ],
+    mustNotInclude: [
+      "focused product questions",
+      "first question set",
     ],
   },
 ];

@@ -1,7 +1,7 @@
 # Product Discovery Packet Template
 
 Do not use this template as the first response to a Product Discovery request.
-The first response must be a plain-language summary and focused question set
+The first response must be a plain-language summary and one focused question
 before tool use, repo inspection, packet drafting, or file creation.
 
 Use this template before Technical Steering, PRD, capability matrix, or
