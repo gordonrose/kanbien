@@ -173,6 +173,15 @@ or Technical Steering architecture.
    explicitly a broad audit, migration, generated/canonical sweep, or otherwise
    has strong written rationale.
 
+8B. Add debt-health summary commands when relevant.
+   Use focused proof commands for task behavior, then add summary commands that
+   expose residual debt without replacing the focused proof. For
+   `DOC:data-dictionary` tasks, include `npm run data:compliance-health` unless
+   the task is an explicitly local draft. For `TEST:test-only` and
+   `TEST:test-suite-alignment` tasks, include `npm run test:coverage-strength`
+   when the task adds, removes, renames, or materially reframes tests. These
+   summaries complement traceability; they do not prove behavior by themselves.
+
 9. Preserve blockers.
    Put DECISION:refactor-first and DECISION:architecture-foundation findings into their own
    tasks. Do not hide them inside feature work or mark dependent feature tasks

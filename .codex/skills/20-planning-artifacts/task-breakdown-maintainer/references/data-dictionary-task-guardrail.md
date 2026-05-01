@@ -61,6 +61,8 @@ Before queueing, the task packet should name:
   not-applicable with rationale
 - test case IDs, executable test paths, migration/schema proof, validator/gate
   commands, review evidence, or explicit missing/not-applicable markers
+- `npm run data:compliance-health` output after the update, or an explicit
+  rationale when the task is intentionally limited to a local draft
 - compatibility posture: docs-only alignment, no schema change, additive,
   compatibility-sensitive, or blocked pending migration/approval
 - validation command, docs-alignment review workflow, or explicit blocked reason

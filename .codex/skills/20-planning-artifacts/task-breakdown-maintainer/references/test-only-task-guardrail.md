@@ -20,6 +20,8 @@ Use for task type: `TEST:test-only`
 - test layer and proof target
 - fixture source and mock-honesty check
 - focused test command
+- `npm run test:coverage-strength` output or a scoped equivalent showing
+  coverage-strength/debt impact beyond traceability
 - production behavior change posture
 - permission/state matrix or concrete not-applicable rationale
 
@@ -38,6 +40,9 @@ Use for task type: `TEST:test-only`
   explicitly; do not let a happy-path-only test satisfy the task
 - broad suites may supplement but cannot replace a named test scenario or
   expected failing/passing assertion
+- use `npm run test:coverage-strength` as a non-traceability coverage-health
+  summary after adding or materially changing tests; traceability alone does not
+  prove coverage strength
 - if the test reveals missing production behavior, stop and split the required
   implementation into the owning `DEV:backend`, `DEV:frontend`, `DEV:vertical-slice`, or
   other task type before continuing

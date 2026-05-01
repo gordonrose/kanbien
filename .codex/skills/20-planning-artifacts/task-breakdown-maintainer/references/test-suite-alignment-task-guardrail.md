@@ -23,6 +23,8 @@ Use for task type: `TEST:test-suite-alignment`
 - explicit production behavior change posture
 - split decision for any newly required proof
 - traceability command and expected before/after evidence
+- `npm run test:coverage-strength` output or a scoped equivalent when alignment
+  materially changes the apparent coverage shape
 
 ## Deep Delivery Standard
 
@@ -39,6 +41,9 @@ Use for task type: `TEST:test-suite-alignment`
 - focused proof must include `npm run test:traceability` or an approved
   traceability-equivalent command, plus any focused suite needed to prove that
   renamed or relabeled tests still execute
+- use `npm run test:coverage-strength` to summarize whether alignment improved,
+  weakened, or merely relabeled coverage strength; do not treat traceability
+  cleanup as proof of deeper coverage
 - if the reconciliation reveals missing product, design, architecture,
   permission, lifecycle, or security behavior, stop and create the owning task
   type rather than continuing alignment
