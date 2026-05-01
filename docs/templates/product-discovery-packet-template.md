@@ -49,8 +49,12 @@ Draft packet fast path:
 
 Canonical Layer 1 stop condition:
 
-- Do not hand off to Technical Steering while high-impact product decisions
-  remain unresolved unless this packet explicitly marks them safe to defer.
+- Do not hand off to Technical Steering below 95% confidence for the chosen
+  scope.
+- Do not hand off while high-impact product decisions remain unresolved unless
+  the Layer 1 requester explicitly signed each one off as deferred until later.
+- Technical questions should be packaged for technical stakeholders rather than
+  treated as business-owner answers.
 - Use `blocked-new-family-steering` when product intent is clear enough to know
   existing families or templates do not fit, but Technical Steering or
   design-system governance must decide how to create or extend the family
@@ -59,10 +63,16 @@ Canonical Layer 1 stop condition:
 ## Discovery Interview Summary
 
 Use this section to record the conversation path before the packet was filled.
-The interview should feel like product discovery, not form completion.
+The interview should feel like a guided business conversation, not form
+completion. Ask one question at a time in plain language, summarize each answer
+back, recommend the safest default when useful, and confirm whether the summary
+should be treated as the rule before moving on.
 
 - Initial understanding shared with requester:
-- Question groups covered:
+- Interview cadence:
+  `one-question-at-a-time-followed | exception-approved`
+- If interview cadence exception was approved, why:
+- Coverage areas tracked internally:
   - product intent:
   - actors and governance:
   - journeys and jobs:
@@ -72,11 +82,12 @@ The interview should feel like product discovery, not form completion.
   - scope boundaries:
   - Technical Steering deferrals:
 - Assumptions confirmed by requester:
-- Assumptions explicitly deferred:
+- Business questions explicitly signed off as deferred until later:
+- Technical questions packaged for technical stakeholder:
 - Questions still blocking packet confidence:
-- Questions safe to defer to Technical Steering:
+- Scope cuts used to reach confidence:
 - Confidence for chosen status:
-  `high | medium | low`
+  `<percent>; must be 95% or higher for ready-for-technical-steering`
 
 ## Known Questions Gate
 
@@ -84,19 +95,29 @@ Use this section to prove that known product questions were asked before packet
 status was assigned.
 
 - Plain-language summary shown before drafting:
-- First question set asked before drafting:
-- Requester answered, corrected, or explicitly deferred first question set:
+- First one question asked before drafting:
+- Requester answered, corrected, or explicitly deferred first question:
   `yes | no`
 - Known important product questions left unasked:
   `none | list below`
-- If any known question was not asked, why was it safe to defer:
+- For each unasked business question, requester signoff for "deferred until
+  later":
+  `none | list below`
+- Technical questions not asked of business owner and packaged for technical
+  stakeholder:
+  `none | list below`
+- If any known question was not asked, why was it safe to defer or package:
 - Packet status allowed:
   `yes | no`
 
 Gate rule:
 
 - Do not set `ready-for-technical-steering` when known important product
-  questions remain unasked.
+  questions remain unasked, unanswered, unscoped, or unsigned-off as deferred
+  until later.
+- Do not set `ready-for-technical-steering` below 95% packet confidence.
+- Do not ask a business owner to answer technical implementation questions;
+  package those questions for technical stakeholders.
 - Do not use a first-pass-draft-then-questions pattern.
 
 ## Product Intent
@@ -331,9 +352,19 @@ not invent implementation tasks here.
 
 ## Business Questions Before Requirements Lock
 
-| Question | Why it matters | Required before steering? | Current answer / owner |
+| Question | Why it matters in plain language | Required before steering? | Current answer / owner | Deferred until later signed off by requester? |
+| --- | --- | --- | --- | --- |
+|  |  | yes/no |  | yes/no/not-applicable |
+
+## Technical Questions For Technical Stakeholders
+
+Use this section for questions the business owner should not be expected to
+answer. Include enough plain-language context that a technical stakeholder can
+decide without reopening product intent.
+
+| Question | Plain-language context | Suggested technical owner | Blocks Technical Steering handoff? |
 | --- | --- | --- | --- |
-|  |  | yes/no |  |
+|  |  |  | yes/no |
 
 ## Explicitly Out Of Scope
 
@@ -341,9 +372,9 @@ not invent implementation tasks here.
 
 ## Ambiguity And Assumption Ledger
 
-| Item | Assumption | Confidence | Risk if wrong | Decision needed |
-| --- | --- | --- | --- | --- |
-|  |  | high/medium/low |  | yes/no |
+| Item | Assumption | Confidence | Risk if wrong | Decision needed | Owner / signoff |
+| --- | --- | --- | --- | --- | --- |
+|  |  | high/medium/low |  | yes/no | confirmed / deferred by requester / technical owner / blocking |
 
 ## Discovery Feedback Loop
 
@@ -373,7 +404,10 @@ not invent implementation tasks here.
 ## Technical Steering Handoff
 
 - Product decisions locked:
-- Product decisions intentionally deferred:
+- Business decisions intentionally deferred until later with requester signoff:
+- Technical questions packaged for technical stakeholder:
+- Packet confidence for handoff:
+- Scope cuts made to reach confidence:
 - Risk flags for Technical Steering:
   - permission-sensitive:
   - tenant-boundary:

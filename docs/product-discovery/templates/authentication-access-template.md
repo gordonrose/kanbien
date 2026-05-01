@@ -50,6 +50,11 @@ Capture JTBDs for every relevant perspective:
 
 ## Authentication / Login Discovery Prompts
 
+These prompts are internal coverage checks for access-related discovery. Ask
+them one at a time in plain business language. The requester should not need to
+understand login architecture, session design, tenant vocabulary, or security
+implementation terms to answer.
+
 - Can a user belong to exactly one tenant, multiple tenants, or either?
 - What should happen when no tenant matches the submitted identity?
 - What should happen when the same email exists in more than one tenant?
@@ -70,6 +75,10 @@ Capture JTBDs for every relevant perspective:
   can be deferred to Technical Steering?
 
 ## Authentication / Login State Prompts
+
+Translate these into real-life situations before asking. For example, ask "What
+should happen if someone is removed while they are trying to sign in?" rather
+than asking about state transitions.
 
 - What happens when the user is not logged in, logged in, or logged out?
 - What happens when the user is deleted, disabled, or invited but not

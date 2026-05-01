@@ -45,20 +45,55 @@ Promotion must record:
 When a user asks to use Layer 1 or Product Discovery to define, shape, explore,
 or clarify a requirement, start with a discovery conversation.
 
+The following chat openers are Product Discovery shortcuts:
+
+- `new feature`
+- `change needed`
+- `feature idea`
+- `product idea`
+- `new request`
+- `discovery needed`
+
+When a chat starts with one of these phrases or a close plain-language
+equivalent, treat it as a request to launch the Layer 1 discovery conversation
+immediately.
+
 This mode is not a material repo edit. The first response should summarize the
-request in plain language and ask only the next product questions needed to
-increase confidence. Do not begin with git preflight, branch/worktree state,
-broad repo inspection, PRD drafting, implementation planning, or
-design-system work-item discovery.
+request in plain language and ask exactly one next question in the requester's
+everyday language. Do not begin with git preflight, branch/worktree state,
+broad repo inspection, PRD drafting, implementation planning, or design-system
+work-item discovery.
 
 The first response must happen before tool use, packet drafting, or file
 creation. Do not create or fill a packet until the requester has seen the
-summary and has answered, corrected, or explicitly deferred the first question
-set.
+summary and has answered, corrected, or explicitly deferred the first question.
 
 Do not create a rough first-pass packet and ask known product questions after
 the fact. If important questions are visible, ask them before packet creation or
 status assignment.
+
+Layer 1 should feel like a guided business conversation, not a form. Ask one
+question at a time, briefly explain why it matters when needed, recommend the
+plain safest default when helpful, summarize each answer back, and confirm
+whether it should be treated as the rule before moving on.
+
+The requester should not be expected to know platform vocabulary. Keep terms
+like Technical Steering, taxonomy, state matrix, capability, tenant, API,
+schema, persistence, migration, route, and artifact out of the interview unless
+the requester used them first.
+
+Use a strict readiness standard beneath the friendly conversation:
+
+- target at least 95% confidence that the next planning step will not need
+  product rework for the chosen scope
+- keep asking in later sessions when needed rather than passing incomplete
+  product intent downstream
+- unresolved business questions must be answered, cut from the first scope, or
+  explicitly signed off by the requester as "deferred until later"
+- technical questions should be packaged for a technical stakeholder, not
+  pushed onto the business owner
+- if confidence remains below the threshold, stop with a blocked or
+  discovery-only packet instead of handoff
 
 ## Draft Fast Path
 
@@ -119,8 +154,11 @@ Governed mode uses the normal repo start gates and artifact requirements.
 3. Use a product template when one fits, otherwise use the generic template.
 4. Produce or update a Product Discovery packet using
    `docs/templates/product-discovery-packet-template.md`.
-5. Stop if the packet status is not `ready-for-technical-steering`.
-6. Hand the packet to Technical Steering when product intent is ready.
+5. Stop if the packet status is not `ready-for-technical-steering` or packet
+   confidence is below 95%.
+6. Hand the packet to Technical Steering only when product intent is ready,
+   business deferrals have explicit requester signoff, and technical questions
+   are packaged for technical owners.
 
 ## Boundaries
 

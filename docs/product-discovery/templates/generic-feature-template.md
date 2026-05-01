@@ -14,6 +14,10 @@ prepare a Technical Steering handoff.
 
 ## Taxonomy Prompts
 
+These prompts are internal coverage checks. Do not read them to the requester
+as a list. Translate them into one plain-language question at a time, summarize
+each answer back, and recommend the safest default when helpful.
+
 - Which product feature type best describes the request?
 - Which UX patterns are needed for the user to complete the journey?
 - Which feature or module owns the durable source of truth?
@@ -52,6 +56,10 @@ For each perspective:
 
 ## Generic Journey Prompts
 
+Ask these as guided conversation, one at a time. For example, "Where does this
+start for the person doing the work?" is preferable to naming internal journey
+categories.
+
 - Where does the user start?
 - What decision or action are they trying to complete?
 - What is the minimum successful end state?
@@ -63,6 +71,10 @@ For each perspective:
 Use these prompts before deriving capabilities for authentication/access,
 permission-sensitive, tenant-boundary, lifecycle-heavy, or configuration-driven
 requests.
+
+Keep these prompts in the requester's world. Ask about real situations such as
+"what if someone leaves halfway through?" or "what if someone's access changes
+while they are doing this?" rather than using state or lifecycle jargon.
 
 - Which actor states materially change the journey?
   Examples: active, inactive, logged-in, logged-out, invited,
@@ -86,6 +98,11 @@ requests.
 - Which state questions are safe to defer to Technical Steering?
 
 ## Standard Questions
+
+Use these as the hidden completeness checklist for the packet, not as a visible
+questionnaire. A ready handoff needs at least 95% confidence, explicit
+requester signoff for any business question deferred until later, and technical
+questions packaged for technical stakeholders.
 
 - What product decision must be made before requirements can lock?
 - What should explicitly remain out of scope?

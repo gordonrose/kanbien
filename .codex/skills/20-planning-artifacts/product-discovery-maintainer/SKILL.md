@@ -1,6 +1,6 @@
 ---
 name: product-discovery-maintainer
-description: Use when a user request is product-shaped, vague, pre-requirements, template-seeking, or based on post-iteration feedback and needs to become a Product Discovery packet before Technical Steering, PRD, capability matrix, or implementation planning begins.
+description: Use when a user request is product-shaped, vague, pre-requirements, template-seeking, or based on post-iteration feedback and needs to become a Product Discovery packet before Technical Steering, PRD, capability matrix, or implementation planning begins. Also use immediately when a chat starts with shortcut phrases such as "new feature", "change needed", "feature idea", "product idea", "new request", or "discovery needed".
 ---
 
 # Product Discovery Maintainer
@@ -30,6 +30,21 @@ Use this mode when the user asks to use Layer 1, Product Discovery, product
 discovery, or discovery to define, shape, explore, or clarify a requirement,
 even if they do not explicitly ask for a packet file.
 
+Also use this mode immediately when a chat starts with one of these shortcut
+phrases or a close plain-language equivalent:
+
+- `new feature`
+- `change needed`
+- `feature idea`
+- `product idea`
+- `new request`
+- `discovery needed`
+
+Treat these shortcuts as the requester asking for a friendly Layer 1 discovery
+conversation. The first response must follow the First Response Hard Gate:
+summarize in plain language and ask exactly one next question before any tool
+use or repo inspection.
+
 This mode is a conversation, not a material repo edit.
 
 ### First Response Hard Gate
@@ -45,12 +60,14 @@ packet drafting, or document creation:
 1. summarize the request in plain language
 2. state the likely first outcome in human terms, such as "a clear requirement
    draft we can use for the next planning step"
-3. ask only the next few questions needed to raise confidence
-4. say which questions can wait until later when that is already clear
+3. ask exactly one next question in the requester's everyday language
+4. briefly say why that one question matters when the reason is not obvious
+5. offer a plain-language best-practice recommendation when the requester would
+   benefit from guidance
 
 Do not produce or start producing a packet until the requester has seen this
 summary and has either answered, corrected, or explicitly deferred the first
-question set. If the model is unsure whether enough is known, ask; do not draft.
+question. If the model is unsure whether enough is known, ask; do not draft.
 
 Never use a "first-pass draft, then questions" pattern in Discovery
 Conversation Mode. If you can name important product questions, ask them before
@@ -97,14 +114,11 @@ Example first response shape:
 > dashboard. For now, you want the design-system pattern only; connecting it to
 > app pages and analytics APIs comes later.
 >
-> A few product questions before I turn this into a requirement:
-> 1. Who is the first builder: an internal designer/developer, an admin user,
->    or both eventually?
-> 2. Should the first version support freeform row/column layout, or a small
->    set of preset dashboard layouts?
-> 3. When someone clicks a chart segment to filter the dashboard, should that
->    be part of the design-system demo now, or only documented as future app
->    behavior?
+> First, who is this mainly for: someone on our own team building examples, or
+> a customer admin arranging their own dashboard?
+>
+> I ask because the safest first version is different depending on who has to
+> use it day to day.
 
 ## Draft Fast Path
 
@@ -167,20 +181,24 @@ feature manifests, generated artifacts, and implementation work.
    correction before locking assumptions.
 
 2. Interview for the next confidence step.
-   Ask only the questions needed to improve packet confidence. Group questions
-   naturally by topic, such as product intent, actors/governance, journeys,
-   context variation, unhappy paths, scope boundaries, and Technical Steering
-   deferrals.
+   Ask one question at a time. Keep the internal coverage model organized by
+   topic, such as product intent, actors/governance, journeys, context
+   variation, unhappy paths, scope boundaries, and Technical Steering
+   deferrals, but do not present those topics as a questionnaire to the
+   requester.
 
-3. Confirm assumptions explicitly.
-   Do not silently lock assumptions. Say which assumptions you are using, ask
-   for confirmation when they materially affect scope, and record whether
-   unanswered questions block the packet or can be deferred.
+3. Confirm each answer before moving on.
+   After each answer, summarize it back in plain language, name any safest
+   default or recommendation, and ask whether to treat that summary as the rule
+   or change it. Do not silently lock assumptions.
 
 4. Continue until the packet has enough confidence for its chosen status.
-   If important product questions remain open, choose a blocked status. If a
-   question is architectural rather than product intent, mark it as safe to
-   defer to Technical Steering.
+   Target at least 95% confidence that Technical Steering will not need product
+   rework. If important business questions remain open, the requester must
+   answer them, cut scope so they no longer matter, or explicitly sign them off
+   as deferred until later. If a question is technical rather than business
+   intent, package it for a technical stakeholder instead of asking the
+   business owner to decide it.
 
 5. Determine whether the user is still exploring product intent.
    If yes, stay in Product Discovery and do not create an implementation plan.
@@ -235,9 +253,11 @@ feature manifests, generated artifacts, and implementation work.
    the generic packet template. For authentication/access requests, use
    `docs/product-discovery/templates/authentication-access-template.md`.
 
-11. Record open product decisions.
-    Separate blocking business questions from decisions that are safe to defer
-    into Technical Steering.
+11. Record open decisions by owner.
+    Separate business questions, requester-approved business deferrals, and
+    technical stakeholder questions. Business questions cannot be treated as
+    safe for handoff unless the Layer 1 requester explicitly signed them off as
+    deferred until later.
 
 12. Detect reuse gaps.
     If existing families/templates do not fit, complete the New Family Candidate
@@ -251,7 +271,10 @@ feature manifests, generated artifacts, and implementation work.
 
 14. Set the handoff status.
     Use `ready-for-technical-steering` only when product intent is clear enough
-    for Technical Steering to evaluate architecture, seams, and artifact gates.
+    for Technical Steering to evaluate architecture, seams, and artifact gates,
+    packet confidence is at least 95%, every remaining business question has
+    explicit requester deferral signoff, and technical questions are packaged
+    for a technical stakeholder.
 
 ## Interview Style
 
@@ -261,6 +284,11 @@ Use plain, non-technical language with the requester. Avoid repo, harness,
 architecture, and process jargon during the interview unless the requester uses
 those terms first. Keep internal terms in the packet when the template requires
 them, but translate them in conversation.
+
+The requester's experience should feel like a helpful person learning how their
+world works, not like a form, system interview, or test of platform knowledge.
+The maintainer should translate silently: ask in human terms, track the
+structured coverage internally, and hand off in structured terms.
 
 Plain-language translations:
 
@@ -276,6 +304,18 @@ Plain-language translations:
   "state-based journey permutations"
 - say "rules changed while someone is using it" instead of
   "configuration-change scenario"
+- say "who should be allowed to do this?" instead of "authorization model"
+- say "what should we remember later?" instead of "durable data"
+- say "what happens if someone stops halfway?" instead of "lifecycle cleanup"
+- say "should old things disappear or stay somewhere?" instead of
+  "soft delete or retention"
+- say "should this show up in reports or history?" instead of
+  "reporting/read-model and audit requirements"
+
+Avoid these words in the user-facing interview unless the requester used them
+first: `tenant`, `authz`, `capability`, `entity`, `persistence`, `API`,
+`migration`, `route`, `contract`, `state matrix`, `taxonomy`, `artifact`,
+`governed`, `implementation-ready`, and `Technical Steering`.
 
 Do:
 
@@ -290,17 +330,27 @@ Do:
   update before the user has to wonder whether the process is stuck
 - use an on-the-line support voice while working: calm, concrete, and
   reassuring about what is happening now
-- ask the smallest useful set of questions
-- group questions by topic
+- ask exactly one question at a time
+- keep the hidden coverage grouped by topic, but do not show a checklist unless
+  the requester asks for one
+- after each answer, summarize what you heard in plain language before asking
+  the next question
+- give a simple best-practice recommendation when it helps the requester decide
+- confirm whether the summary should be treated as the rule, a usual case, an
+  exception, out of scope, or deferred until later
 - explain why a question matters when it could feel surprising
 - confirm assumptions before treating them as locked
-- identify whether unanswered questions block Product Discovery or can be
-  deferred to Technical Steering
+- identify whether unanswered business questions block Product Discovery, have
+  been explicitly deferred by the requester, or should be answered by a
+  technical stakeholder
 - stop and produce a blocked packet when product intent is not ready
+- encourage scope cuts when a smaller first version would let the requester
+  answer confidently and defer the rest intentionally
 
 Do not:
 
 - dump the full packet as a questionnaire
+- ask several unrelated questions in one turn during the interview
 - narrate internal harness mechanics to the requester
 - create a first-pass packet and then ask the product questions that were
   already known before drafting
@@ -314,8 +364,32 @@ Do not:
   `state matrix`, `taxonomy`, `governed`, or `implementation-ready` in the
   interview unless the requester has asked in those terms
 - ask technical implementation questions before product intent is ready
+- ask the business owner to decide technical mechanisms such as routes, schema,
+  storage, migrations, framework choices, or exact integration architecture
 - treat architecture choices as product answers
 - hide unresolved product decisions inside assumptions
+- mark unresolved business questions safe for handoff unless the requester has
+  explicitly signed them off as deferred until later
+
+## Strict Readiness Rules
+
+Layer 1 should prefer multiple friendly sessions, a smaller first scope, or a
+blocked packet over passing incomplete product intent downstream.
+
+Before handoff:
+
+- confidence must be at least 95% for the chosen scope
+- all core business questions must be answered, scoped out, or explicitly
+  signed off by the Layer 1 requester as "deferred until later"
+- technical questions must be packaged for a technical stakeholder with clear
+  plain-language context and should not be disguised as product answers
+- assumptions must be labeled as confirmed, intentionally deferred, or blocking
+- the handoff must name any scope cuts used to reach confidence
+
+If confidence is below 95%, stay in discovery and ask the next single useful
+question. If the requester wants to proceed anyway, create a blocked or
+discovery-only packet unless they explicitly sign off each remaining business
+question as deferred until later.
 
 ## Feedback Updates
 

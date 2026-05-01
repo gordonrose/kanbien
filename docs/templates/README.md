@@ -94,6 +94,12 @@ Discovery taxonomy and product templates live under
 Specialized feature-family prompts belong in those product templates or their
 references, not in the universal packet template.
 
+Layer 1 discovery should be warm and one-question-at-a-time for the requester,
+while strict underneath. A packet should not hand off unless the chosen scope
+has at least 95% confidence, unresolved business questions are explicitly
+signed off as deferred until later, and technical questions are packaged for
+technical stakeholders.
+
 For explicit draft Product Discovery packet requests, use:
 
 ```sh
