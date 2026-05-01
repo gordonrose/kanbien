@@ -41,8 +41,9 @@ or Technical Steering architecture.
 
 4. Split into isolated tasks.
    Assign stable task IDs and one task type per task. Use separate tasks for
-   backend, frontend, vertical-slice, docs-artifact, test-only, refactor-first,
-   architecture-foundation, standards-compliance, platform-seam,
+   backend, frontend, vertical-slice, docs-artifact, test-only,
+   test-suite-alignment, refactor-first, architecture-foundation,
+   standards-compliance, platform-seam,
    migration/persistence, design-system, API-contract, permission-mapping,
    data-dictionary, and QA/evidence work when those concerns have distinct
    write sets or proof.
@@ -125,6 +126,17 @@ or Technical Steering architecture.
    Matrix with allowed and denied coverage. Do not use `test-only` when
    production behavior must change; split that work into the owning
    implementation task type.
+
+5J. Gate test-suite alignment tasks.
+   Use `test-suite-alignment` when existing tests, PRD test cases, QA backlog
+   rows, journey IDs, traceability output, or standards expectations need to be
+   reconciled without changing product behavior. Fill the Test Suite Alignment
+   Contract before queueing. Keep the task to one feature, route family,
+   test-case document, or mismatch family. If the task discovers missing
+   executable proof, split that work into `test-only`; if it discovers missing
+   product, design, architecture, permission, lifecycle, or security behavior,
+   split to the owning task type instead of rewriting documentation to fit the
+   current implementation.
 
 5A. Reconcile steering classifications.
    Reconcile the task queue against Layer 2 architecture classifications and

@@ -71,6 +71,7 @@ const requiredHeadings = [
   "## Tight Allowed Write Envelope",
   "## Task-Specific Proof Plan",
   "## Test-Only Coverage Contract",
+  "## Test Suite Alignment Contract",
   "## Capability Permission / State Matrix",
   "## Forbidden Assumptions",
   "## Task-Type Approval Guardrails",
@@ -451,6 +452,18 @@ type TestOnlyCoverageContractRow = {
   focusedCommand: string;
 };
 
+type TestSuiteAlignmentContractRow = {
+  taskId: string;
+  alignmentSourceTrigger: string;
+  mismatchClass: string;
+  documentationTargets: string;
+  executableTargets: string;
+  allowedEditPosture: string;
+  splitDecisionForNewProof: string;
+  traceabilityCommand: string;
+  completionEvidence: string;
+};
+
 type CapabilityPermissionStateMatrixRow = {
   taskId: string;
   capabilityRouteObject: string;
@@ -632,6 +645,7 @@ export function validateTaskBreakdownContent(
   const tightWriteEnvelopes = parseTightWriteEnvelopeRows(taskContent);
   const taskSpecificProofPlans = parseTaskSpecificProofPlanRows(taskContent);
   const testOnlyCoverageContracts = parseTestOnlyCoverageContractRows(taskContent);
+  const testSuiteAlignmentContracts = parseTestSuiteAlignmentContractRows(taskContent);
   const capabilityPermissionStateMatrices = parseCapabilityPermissionStateMatrixRows(taskContent);
   const forbiddenAssumptions = parseForbiddenAssumptionRows(taskContent);
   const guardrails = parseTaskTypeGuardrailRows(taskContent);
@@ -699,6 +713,7 @@ export function validateTaskBreakdownContent(
   const tightWriteEnvelopesByTask = groupBy(tightWriteEnvelopes, (row) => row.taskId);
   const taskSpecificProofPlansByTask = groupBy(taskSpecificProofPlans, (row) => row.taskId);
   const testOnlyCoverageContractsByTask = groupBy(testOnlyCoverageContracts, (row) => row.taskId);
+  const testSuiteAlignmentContractsByTask = groupBy(testSuiteAlignmentContracts, (row) => row.taskId);
   const capabilityPermissionStateMatricesByTask = groupBy(capabilityPermissionStateMatrices, (row) => row.taskId);
   const forbiddenAssumptionsByTask = groupBy(forbiddenAssumptions, (row) => row.taskId);
   const guardrailsByTask = groupBy(guardrails, (row) => row.taskId);
@@ -742,6 +757,7 @@ export function validateTaskBreakdownContent(
       tightWriteEnvelopesByTask.get(task.taskId) ?? [],
       taskSpecificProofPlansByTask.get(task.taskId) ?? [],
       testOnlyCoverageContractsByTask.get(task.taskId) ?? [],
+      testSuiteAlignmentContractsByTask.get(task.taskId) ?? [],
       capabilityPermissionStateMatricesByTask.get(task.taskId) ?? [],
       forbiddenAssumptionsByTask.get(task.taskId) ?? [],
       acCoverageByTask.get(task.taskId) ?? [],
@@ -779,6 +795,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Tight Allowed Write Envelope", tightWriteEnvelopes.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Task-Specific Proof Plan", taskSpecificProofPlans.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test-Only Coverage Contract", testOnlyCoverageContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Test Suite Alignment Contract", testSuiteAlignmentContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Capability Permission / State Matrix", capabilityPermissionStateMatrices.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Forbidden Assumptions", forbiddenAssumptions.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Task-Type Approval Guardrails", guardrails.map((row) => row.taskId), taskIds, errors);
@@ -852,6 +869,7 @@ function validateDeepDeliveryReadiness(
   envelopeRows: TightWriteEnvelopeRow[],
   proofRows: TaskSpecificProofPlanRow[],
   testOnlyCoverageRows: TestOnlyCoverageContractRow[],
+  testSuiteAlignmentRows: TestSuiteAlignmentContractRow[],
   capabilityPermissionStateMatrixRows: CapabilityPermissionStateMatrixRow[],
   forbiddenAssumptionRows: ForbiddenAssumptionRow[],
   acCoverageRows: TaskAcCoverageRow[],
@@ -878,6 +896,7 @@ function validateDeepDeliveryReadiness(
   validateTightWriteEnvelope(task, envelopeRows, errors);
   validateTaskSpecificProofPlan(task, proofRows, errors);
   validateTestOnlyCoverage(task, testOnlyCoverageRows, capabilityPermissionStateMatrixRows, errors);
+  validateTestSuiteAlignment(task, testSuiteAlignmentRows, errors);
   validateForbiddenAssumptions(task, forbiddenAssumptionRows, errors);
 }
 
@@ -1831,6 +1850,66 @@ function validateTestOnlyCoverage(
 
     if (matrixRequired && isHappyPathOnly(row.requiredNegativeCases)) {
       errors.push(`${task.taskId} permission/state matrix cannot be happy-path only`);
+    }
+  }
+}
+
+function validateTestSuiteAlignment(
+  task: TaskRow,
+  alignmentRows: TestSuiteAlignmentContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "test-suite-alignment") {
+    return;
+  }
+
+  if (alignmentRows.length === 0) {
+    errors.push(`${task.taskId} queued test-suite-alignment task has no test suite alignment contract row`);
+    return;
+  }
+
+  for (const row of alignmentRows) {
+    validateRequiredField(task.taskId, "Alignment Source / Trigger", row.alignmentSourceTrigger, errors);
+    validateRequiredField(task.taskId, "Mismatch Class", row.mismatchClass, errors);
+    validateRequiredField(task.taskId, "Documentation Targets", row.documentationTargets, errors);
+    validateRequiredField(task.taskId, "Executable Targets", row.executableTargets, errors);
+    validateRequiredField(task.taskId, "Allowed Edit Posture", row.allowedEditPosture, errors);
+    validateRequiredField(task.taskId, "Split Decision For New Proof", row.splitDecisionForNewProof, errors);
+    validateRequiredField(task.taskId, "Traceability Command", row.traceabilityCommand, errors);
+    validateRequiredField(task.taskId, "Completion Evidence", row.completionEvidence, errors);
+
+    if (!mentionsAlignmentMismatchClass(row.mismatchClass)) {
+      errors.push(`${task.taskId} test-suite-alignment task must name an approved mismatch class`);
+    }
+
+    if (!mentionsAlignmentDocumentationTarget(row.documentationTargets)) {
+      errors.push(`${task.taskId} test-suite-alignment task must name docs/prd/test_cases, QA backlog/status, or another documentation target`);
+    }
+
+    if (!mentionsAlignmentExecutableTarget(row.executableTargets)) {
+      errors.push(`${task.taskId} test-suite-alignment task must name executable test targets or a concrete not-applicable rationale`);
+    }
+
+    if (row.allowedEditPosture === "blocked-production-change-required") {
+      errors.push(`${task.taskId} test-suite-alignment task cannot queue when production behavior changes are required`);
+    } else if (!mentionsAlignmentOnlyEditPosture(row.allowedEditPosture)) {
+      errors.push(`${task.taskId} test-suite-alignment task must restrict edits to docs and test labels/comments`);
+    }
+
+    if (mentionsProductionCodePath(task.allowedWriteSet, row.documentationTargets, row.executableTargets)) {
+      errors.push(`${task.taskId} test-suite-alignment task must not include production code paths in its write envelope`);
+    }
+
+    if (!mentionsSplitNewProofDecision(row.splitDecisionForNewProof)) {
+      errors.push(`${task.taskId} test-suite-alignment task must split newly required proof into test-only or state no new proof is required`);
+    }
+
+    if (!mentionsTraceabilityCommand(row.traceabilityCommand)) {
+      errors.push(`${task.taskId} test-suite-alignment task must include npm run test:traceability or an approved traceability-equivalent command`);
+    }
+
+    if (!mentionsBeforeAfterEvidence(row.completionEvidence)) {
+      errors.push(`${task.taskId} test-suite-alignment task must define before/after traceability or alignment evidence`);
     }
   }
 }
@@ -2993,7 +3072,12 @@ function isApprovedBroadFrontendEnvelope(task: TaskRow, row: TightWriteEnvelopeR
 }
 
 function isBroadProofAllowed(task: TaskRow): boolean {
-  return task.taskType === "standards-compliance" || task.taskType === "QA/evidence" || task.taskType === "docs-artifact";
+  return (
+    task.taskType === "standards-compliance" ||
+    task.taskType === "QA/evidence" ||
+    task.taskType === "docs-artifact" ||
+    task.taskType === "test-suite-alignment"
+  );
 }
 
 function isPermissionStateMatrixRequired(task: TaskRow, coverageRows: TestOnlyCoverageContractRow[]): boolean {
@@ -3031,6 +3115,88 @@ function isPermissionStateMatrixRequired(task: TaskRow, coverageRows: TestOnlyCo
 
 function mentionsTraceabilityId(value: string): boolean {
   return /\b(?:TC|AC)-[A-Z0-9-]+/.test(value.toUpperCase());
+}
+
+function mentionsAlignmentMismatchClass(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return [
+    "missing-documented-test-case",
+    "missing-executable-id",
+    "stale-status",
+    "malformed-id",
+    "orphaned-executable-id",
+    "standards-drift",
+    "backlog-drift",
+    "proof-layer-drift",
+    "fixture-doc-drift",
+  ].some((token) => normalized.includes(token));
+}
+
+function mentionsAlignmentDocumentationTarget(value: string): boolean {
+  const normalized = value.replace(/\\/g, "/").toLowerCase();
+  return (
+    normalized.includes("docs/prd/test_cases") ||
+    normalized.includes("docs/workspace/qa") ||
+    normalized.includes("qa backlog") ||
+    normalized.includes("status artifact") ||
+    normalized.includes("test case")
+  );
+}
+
+function mentionsAlignmentExecutableTarget(value: string): boolean {
+  const normalized = value.replace(/\\/g, "/").toLowerCase();
+  return (
+    normalized.includes("tests/") ||
+    normalized.includes("test name") ||
+    normalized.includes("test title") ||
+    normalized.includes("executable") ||
+    normalized.includes("not-applicable:")
+  );
+}
+
+function mentionsAlignmentOnlyEditPosture(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return [
+    "docs-only",
+    "test-title-or-comment-only",
+    "docs-and-test-labels-only",
+  ].some((token) => normalized.includes(token));
+}
+
+function mentionsProductionCodePath(...values: string[]): boolean {
+  const normalized = values.join(" ").replace(/\\/g, "/").toLowerCase();
+  return (
+    normalized.includes("src/features/") ||
+    normalized.includes("src/frontend/") ||
+    normalized.includes("src/routes/") ||
+    normalized.includes("src/lib/") ||
+    normalized.includes("migrations/") ||
+    normalized.includes("package.json")
+  );
+}
+
+function mentionsSplitNewProofDecision(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("split") && normalized.includes("test-only")) ||
+    normalized.includes("no new proof") ||
+    normalized.includes("no-new-proof")
+  );
+}
+
+function mentionsTraceabilityCommand(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return normalized.includes("npm run test:traceability") || normalized.includes("traceability-equivalent");
+}
+
+function mentionsBeforeAfterEvidence(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("before") && normalized.includes("after")) ||
+    normalized.includes("before/after") ||
+    normalized.includes("traceability delta") ||
+    normalized.includes("alignment evidence")
+  );
 }
 
 function mentionsConcreteTestLayer(value: string): boolean {
@@ -3510,6 +3676,20 @@ function parseTestOnlyCoverageContractRows(content: string): TestOnlyCoverageCon
     mockRuntimeHonesty: cells[6] ?? "",
     productionBehaviorChangePosture: cells[7] ?? "",
     focusedCommand: cells[8] ?? "",
+  }));
+}
+
+function parseTestSuiteAlignmentContractRows(content: string): TestSuiteAlignmentContractRow[] {
+  return parseTableRows(section(content, "## Test Suite Alignment Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    alignmentSourceTrigger: cells[1] ?? "",
+    mismatchClass: cells[2] ?? "",
+    documentationTargets: cells[3] ?? "",
+    executableTargets: cells[4] ?? "",
+    allowedEditPosture: cells[5] ?? "",
+    splitDecisionForNewProof: cells[6] ?? "",
+    traceabilityCommand: cells[7] ?? "",
+    completionEvidence: cells[8] ?? "",
   }));
 }
 

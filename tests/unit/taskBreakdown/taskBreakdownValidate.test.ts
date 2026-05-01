@@ -265,6 +265,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Test Suite Alignment Contract
+
+| Task ID | Alignment Source / Trigger | Mismatch Class | Documentation Targets | Executable Targets | Allowed Edit Posture | Split Decision For New Proof | Traceability Command | Completion Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Capability Permission / State Matrix
 
 | Task ID | Capability / Route / Object | Actor States Covered | Permission States Covered | Object Lifecycle States Covered | Boundary States Covered | Required Negative Cases | Not Applicable Rationale | Missing Coverage / Follow-Up Task |
@@ -476,6 +481,9 @@ const testOnlyCoverageRow =
 const testOnlyMatrixRow =
   "| T-S001-01 | /root-admin and /v1/root-users root-admin object | root actor allowed; expired session denied; unauthenticated actor denied | RootUserAdmin capability allowed; missing capability denied | active object visible; deleted object denied through normal path | root boundary only; tenant actor denied; cross-tenant not-applicable: root-owned surface | denied unauthenticated, expired, and missing capability states | not-applicable: no tenant-scoped object in this root-owned task | none: required allowed and denied states covered |";
 
+const testSuiteAlignmentRow =
+  "| T-S001-01 | npm run test:traceability reports ROOT-USERS E2E mismatch | missing-documented-test-case | docs/prd/test_cases/2026-03-29-0002-root-users-backend-test-cases.md; docs/workspace/qa/root-admin-test-backlog.md | tests/e2e/rootAdmin/operator-journeys.test.ts | docs-and-test-labels-only | no new proof required; split any newly required proof into test-only | npm run test:traceability | before/after traceability evidence for ROOT-USERS E2E is recorded |";
+
 function testOnlyStoryPacket(): string {
   return sourceStoryPacket
     .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | root-admin e2e proof | test | tests/e2e/rootAdmin | approved | test-only |")
@@ -522,6 +530,53 @@ function testOnlyTaskPacketWith(input: {
     .replace(
       "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
       "| T-S001-01 | test-traceability | pass | AC-ROOT-ADMIN-E2E-001 is named. |\n| T-S001-01 | test-proof-layer | pass | e2e journey test layer is named. |\n| T-S001-01 | test-permission-state-matrix | pass | Root-admin actor, permission, object, and boundary states are covered. |\n| T-S001-01 | test-mock-honesty | pass | Runtime harness data mirrors production contracts. |\n| T-S001-01 | test-no-behavior-change | pass | No production behavior change allowed. |\n| T-S001-01 | test-command | pass | Focused vitest command is named. |",
+    );
+}
+
+function testSuiteAlignmentStoryPacket(): string {
+  return sourceStoryPacket
+    .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | root-users traceability alignment | test | docs/prd/test_cases; tests/e2e/rootAdmin | approved | test-suite-alignment |")
+    .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | root-users traceability alignment | yes | Existing e2e proof and PRD test-case documentation must align. | test-suite-alignment |");
+}
+
+function testSuiteAlignmentTaskPacketWith(input: {
+  alignmentRow?: string;
+  scope?: string;
+  allowedWriteSet?: string;
+} = {}): string {
+  const alignmentRow = input.alignmentRow ?? testSuiteAlignmentRow;
+  const scope = input.scope ?? "Align root-users e2e PRD test-case traceability with existing executable proof.";
+  const allowedWriteSet =
+    input.allowedWriteSet ??
+    "docs/prd/test_cases/2026-03-29-0002-root-users-backend-test-cases.md, docs/workspace/qa/root-admin-test-backlog.md, tests/e2e/rootAdmin/operator-journeys.test.ts";
+
+  return validTaskPacket
+    .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | test | test-suite-alignment | T-S001-01 | covered | Alignment task preserves test/documentation traceability classification. |")
+    .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | test-suite-alignment | root-users traceability alignment | T-S001-01 | Covered by test suite alignment task. |")
+    .replace("| T-S001-01 | S-001 | backend | Add root-admin tenant branding persistence update using the approved tenants public seam. |", `| T-S001-01 | S-001 | test-suite-alignment | ${scope} |`)
+    .replace(
+      "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+      allowedWriteSet,
+    )
+    .replace(
+      "| T-S001-01 | exact-files | src/features/tenantConfiguration/domain/updateBranding.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | not-applicable: exact files only |",
+      "| T-S001-01 | exact-files | docs/prd/test_cases/2026-03-29-0002-root-users-backend-test-cases.md; docs/workspace/qa/root-admin-test-backlog.md; tests/e2e/rootAdmin/operator-journeys.test.ts | not-applicable: exact files only |",
+    )
+    .replace(
+      "| T-S001-01 | task-specific | tenantConfiguration persistence update selected tenant branding display name | not-applicable: task-specific proof is named |",
+      "| T-S001-01 | task-specific | ROOT-USERS E2E traceability alignment before/after evidence | not-applicable: task-specific proof is named |",
+    )
+    .replace(
+      "## Test Suite Alignment Contract\n\n| Task ID | Alignment Source / Trigger | Mismatch Class | Documentation Targets | Executable Targets | Allowed Edit Posture | Split Decision For New Proof | Traceability Command | Completion Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+      `## Test Suite Alignment Contract\n\n| Task ID | Alignment Source / Trigger | Mismatch Class | Documentation Targets | Executable Targets | Allowed Edit Posture | Split Decision For New Proof | Traceability Command | Completion Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${alignmentRow ? `${alignmentRow}\n` : ""}\n`,
+    )
+    .replace(
+      "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+      "| T-S001-01 | test-suite-alignment | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/test-suite-alignment-task-guardrail.md | approved | Test suite alignment guardrail reviewed for source map, mismatch class, edit envelope, split decision, and traceability command. |",
+    )
+    .replace(
+      "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+      "| T-S001-01 | test-alignment-source-map | pass | Docs and executable test targets are named. |\n| T-S001-01 | test-alignment-mismatch-class | pass | Mismatch class is missing-documented-test-case. |\n| T-S001-01 | test-alignment-edit-envelope | pass | Edits are limited to docs and test labels. |\n| T-S001-01 | test-alignment-no-production-change | pass | No production behavior change is allowed. |\n| T-S001-01 | test-alignment-split-new-proof | pass | Newly required proof splits to test-only. |\n| T-S001-01 | test-alignment-traceability-command | pass | npm run test:traceability is required. |",
     );
 }
 
@@ -1265,6 +1320,50 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 test-only task must name a focused test command, not only a broad suite");
+  });
+
+  it("passes a bounded test-suite-alignment task with traceability proof", () => {
+    expect(validateTaskBreakdownContent(testSuiteAlignmentTaskPacketWith(), testSuiteAlignmentStoryPacket())).toEqual({
+      status: "PASS",
+      errors: [],
+    });
+  });
+
+  it("blocks queued test-suite-alignment tasks without an alignment contract row", () => {
+    const result = validateTaskBreakdownContent(
+      testSuiteAlignmentTaskPacketWith({ alignmentRow: "" }),
+      testSuiteAlignmentStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 queued test-suite-alignment task has no test suite alignment contract row");
+  });
+
+  it("blocks test-suite-alignment tasks that include production write paths", () => {
+    const result = validateTaskBreakdownContent(
+      testSuiteAlignmentTaskPacketWith({
+        allowedWriteSet: "src/features/rootUsers/domain/service.ts, docs/prd/test_cases/2026-03-29-0002-root-users-backend-test-cases.md",
+      }),
+      testSuiteAlignmentStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 test-suite-alignment task must not include production code paths in its write envelope");
+  });
+
+  it("blocks test-suite-alignment tasks that hide new proof instead of splitting to test-only", () => {
+    const result = validateTaskBreakdownContent(
+      testSuiteAlignmentTaskPacketWith({
+        alignmentRow: testSuiteAlignmentRow.replace(
+          "no new proof required; split any newly required proof into test-only",
+          "implement missing e2e proof here",
+        ),
+      }),
+      testSuiteAlignmentStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 test-suite-alignment task must split newly required proof into test-only or state no new proof is required");
   });
 
   it("blocks queued backend tasks without backend implementation approach", () => {

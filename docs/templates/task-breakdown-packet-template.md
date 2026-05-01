@@ -99,6 +99,7 @@ Allowed task types:
 - `vertical-slice`
 - `docs-artifact`
 - `test-only`
+- `test-suite-alignment`
 - `refactor-first`
 - `architecture-foundation`
 - `standards-compliance`
@@ -359,8 +360,9 @@ Rendered proof that uses only mocks without a contract/runtime tie blocks.
 Queued `vertical-slice` tasks must prove why backend and frontend work are
 inseparable for exactly one journey behavior. Use a vertical slice only when one
 proof story must cross API/data/browser boundaries together. Split work into
-backend, frontend, design-system, migration/persistence, test-only, or
-QA/evidence tasks when those concerns can be delivered and proven separately.
+backend, frontend, design-system, migration/persistence, test-only,
+test-suite-alignment, or QA/evidence tasks when those concerns can be
+delivered and proven separately.
 
 | Task ID | Journey Behavior | Backend Seam | Frontend Seam | API / Data Contract | Browser Proof Story | Why Backend And Frontend Proof Are Inseparable | Split Rejection Rationale |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -464,6 +466,36 @@ Allowed production behavior change postures:
 - `blocked-production-change-required`
 
 | Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Test Suite Alignment Contract
+
+Queued `test-suite-alignment` tasks reconcile existing or newly discovered test
+suite/documentation drift. Use this task type when PRD test cases, QA backlog
+rows, journey IDs, executable test names, traceability output, or standards
+expectations no longer line up. Do not use it to implement meaningful new
+coverage; split that work into `test-only`.
+
+Allowed mismatch classes:
+
+- `missing-documented-test-case`
+- `missing-executable-id`
+- `stale-status`
+- `malformed-id`
+- `orphaned-executable-id`
+- `standards-drift`
+- `backlog-drift`
+- `proof-layer-drift`
+- `fixture-doc-drift`
+
+Allowed edit postures:
+
+- `docs-only`
+- `test-title-or-comment-only`
+- `docs-and-test-labels-only`
+- `blocked-production-change-required`
+
+| Task ID | Alignment Source / Trigger | Mismatch Class | Documentation Targets | Executable Targets | Allowed Edit Posture | Split Decision For New Proof | Traceability Command | Completion Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Capability Permission / State Matrix

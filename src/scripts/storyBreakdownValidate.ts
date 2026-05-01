@@ -58,6 +58,7 @@ const allowedDeliveryShapes = new Set([
   "vertical-slice",
   "docs-artifact",
   "test-only",
+  "test-suite-alignment",
   "refactor-first",
   "architecture-foundation",
   "standards-compliance",

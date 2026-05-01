@@ -25,6 +25,7 @@ harness law unless promoted to architecture, standards, templates, or skills.
 - frontend/design-system sub-standard when relevant
 - tight allowed write envelope
 - task-specific proof plan
+- test suite alignment contract when reconciling test/docs traceability drift
 - forbidden assumptions
 - parent story and acceptance-criterion coverage
 - capability-row coverage

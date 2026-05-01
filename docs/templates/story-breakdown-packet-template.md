@@ -141,6 +141,7 @@ Allowed delivery shapes:
 - `vertical-slice`
 - `docs-artifact`
 - `test-only`
+- `test-suite-alignment`
 - `refactor-first`
 - `architecture-foundation`
 - `standards-compliance`
