@@ -100,6 +100,19 @@ admin, the likely recommendation is a searchable selection drawer or equivalent
 governed picker. Confirm the needed business value instead of asking the
 requester to choose the component.
 
+Baseline non-functional and compliance requirements are not optional business
+choices in Product Discovery. Do not ask the requester whether baseline audit,
+history, security, privacy, accessibility, tenant-boundary protection,
+operational evidence, or abuse-prevention behavior is needed for the first
+version. Assume those are required when a feature touches access, roles,
+permissions, customer data, billing, compliance, user-managed assets, or other
+sensitive business records.
+
+Record baseline requirements as assumptions for the next planning step. Ask
+only about business-visible policy choices, such as who should be able to see
+history, whether customers should see it, how long business users expect it to
+remain visible, or whether the requester is asking for an unusual exception.
+
 The requester should not be expected to know platform vocabulary. Keep terms
 like Technical Steering, taxonomy, state matrix, capability, tenant, API,
 schema, persistence, migration, route, and artifact out of the interview unless

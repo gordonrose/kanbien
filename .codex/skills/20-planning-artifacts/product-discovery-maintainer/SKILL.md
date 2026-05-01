@@ -182,6 +182,32 @@ picker is the likely recommendation. Ask to confirm the business value instead:
 > right tenant quickly, seeing all selected tenants clearly, or avoiding
 > accidental removals?
 
+Baseline non-functional and compliance requirements are not optional business
+choices in Layer 1. Do not ask the business owner whether baseline audit,
+history, security, privacy, accessibility, tenant-boundary protection,
+operational evidence, or abuse-prevention behavior is needed for the first
+version. Assume those are required when the feature touches access, roles,
+permissions, customer data, billing, compliance, user-managed assets, or other
+sensitive business records.
+
+Record those assumptions as baseline requirements for the next planning step,
+then package technical details for technical stakeholders. Ask the requester
+only when there is a business-visible policy decision, such as who should be
+able to see the history, how long business users expect it to remain visible,
+whether customers should see it, or whether an unusual exception is explicitly
+requested.
+
+Preferred phrasing:
+
+> I’ll assume we keep a clear history of who changed this and when, because
+> this affects access. The business question is who should be able to see that
+> history day to day, if anyone.
+
+Avoid phrasing:
+
+> Should this create an audit/history entry, or is that not needed for the
+> first version?
+
 ## Draft Fast Path
 
 Use this path only when the user explicitly asks for a draft Product Discovery

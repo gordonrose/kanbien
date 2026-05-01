@@ -443,6 +443,20 @@ admin, assume a searchable selection drawer or equivalent governed picker is
 the likely best-practice recommendation. Ask to confirm the value it must
 provide rather than asking the requester to pick the control.
 
+Baseline non-functional and compliance requirements are not optional business
+choices in Layer 1. Do not ask the business owner whether baseline audit,
+history, security, privacy, accessibility, tenant-boundary protection,
+operational evidence, or abuse-prevention behavior is needed for the first
+version. Assume those are required when the feature touches access, roles,
+permissions, customer data, billing, compliance, user-managed assets, or other
+sensitive business records.
+
+Record those assumptions as baseline requirements for the next planning step,
+then package technical details for technical stakeholders. Ask the requester
+only when there is a business-visible policy decision, such as who should see
+history, how long it should remain visible to business users, whether customers
+should see it, or whether an unusual exception is explicitly requested.
+
 Use the requester's world, not platform vocabulary. Avoid words such as
 `tenant`, `authz`, `capability`, `entity`, `persistence`, `API`, `migration`,
 `route`, `contract`, `state matrix`, `taxonomy`, `artifact`, `governed`,

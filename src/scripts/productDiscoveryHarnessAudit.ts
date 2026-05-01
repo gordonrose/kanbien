@@ -18,6 +18,8 @@ const checks: Check[] = [
       "The first question must be a gentle orientation question about the normal thing",
       "For UX questions, ask about the value the person needs from the experience",
       "When a choice list could grow large, such as choosing tenants for a tenant\nadmin",
+      "Baseline non-functional and compliance requirements are not optional business\nchoices in Layer 1.",
+      "Do not ask the business owner whether baseline audit,\nhistory, security, privacy",
       "Do not use a \"first-pass draft, then questions\" pattern",
     ],
     mustNotInclude: [
@@ -36,6 +38,8 @@ const checks: Check[] = [
       "First-question ladder:",
       "UX questions should ask about the value a person needs from the experience",
       "assume a searchable selection drawer or equivalent design-system\npicker is the likely recommendation",
+      "Baseline non-functional and compliance requirements are not optional business\nchoices in Layer 1.",
+      "Should this create an audit/history entry, or is that not needed for the\n> first version?",
       "ask several unrelated questions in one turn during the interview",
       "Never use a \"first-pass draft, then questions\" pattern",
       "skip repo guardrails and broad sweeps, not discovery judgment",
@@ -112,6 +116,8 @@ const checks: Check[] = [
       "Prepare the requester for the interview with a brief bridge",
       "For UX discovery, ask about the value the experience must provide",
       "the likely recommendation is a searchable selection drawer or equivalent\ngoverned picker",
+      "Baseline non-functional and compliance requirements are not optional business\nchoices in Product Discovery.",
+      "Assume those are required when a feature touches access, roles,\npermissions",
     ],
   },
 ];
