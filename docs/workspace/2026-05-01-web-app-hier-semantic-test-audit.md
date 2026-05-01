@@ -29,9 +29,9 @@ test would fail for the behavior the PRD-derived test case intended to protect.
 
 | Classification | Count | Meaning |
 | --- | ---: | --- |
-| `strong` | 27 | Good semantic protection. |
+| `strong` | 28 | Good semantic protection. |
 | `partial` | 26 | Useful tests, but the documented case is broader than the assertions. |
-| `weak` | 1 | Traceable but shallow; repair should tighten assertions or add durable evidence. |
+| `weak` | 0 | No remaining weak WEB hierarchy semantic mappings. |
 | `misleading` | 0 | Traceability id is attached to a materially different behavior. |
 | `implementation-gap` | 0 | PRD semantics exceed current implementation. |
 
@@ -76,7 +76,7 @@ test would fail for the behavior the PRD-derived test case intended to protect.
 | `TC-WEB-APP-HIER-INT-002` | `partial` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Covers planner alignment after orphan move; does not prove created nodes appear or inactive default exclusion. | Add create/inactive planner cases. |
 | `TC-WEB-APP-HIER-INT-003` | `partial` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Covers route-segment update and descendant tree path; does not prove move refresh or orphan reads. | Add move-refresh and orphan-read assertions. |
 | `TC-WEB-APP-HIER-INT-004` | `partial` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Covers bootstrap of approved input and absence of an invented string; does not prove ambiguity records land in review. | Add ambiguity/review bootstrap case. |
-| `TC-WEB-APP-HIER-INT-005` | `weak` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Covers preview response create counts, but does not assert no durable curated rows were created or blocked/drift item handling. | Assert repository remains unchanged after preview and add blocked/drift preview row. |
+| `TC-WEB-APP-HIER-INT-005` | `strong` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Directly proves preview reports create and blocked rows while leaving curated modules, pages, locators, discovery links, and audit events unchanged. | No immediate repair. |
 | `TC-WEB-APP-HIER-INT-006` | `strong` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Directly proves multi-segment apply creates module/page/path locator and tree truth. | No immediate repair. |
 | `TC-WEB-APP-HIER-INT-007` | `strong` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Now attached to the structure-aware apply integration proof that imports `/root-admin#users` as a hash-state locator. | No immediate repair. |
 | `TC-WEB-APP-HIER-INT-008` | `strong` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Now directly proves link-status reads expose matched page discovery-link truth after apply. | No immediate repair. |

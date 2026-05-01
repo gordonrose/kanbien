@@ -276,10 +276,32 @@ describe("web app hierarchy builder integration flows", () => {
 
   it("TC-WEB-APP-HIER-INT-005 previews structure-aware reconcile without mutating the curated tree", async () => {
     const harness = createRootAuthIntegrationHarness();
+    const repository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+      pages: [
+        createPageRecord({
+          pageKey: "root-admin-users",
+          displayLabel: "Users",
+          routeSegment: "users",
+          normalizedRouteSegment: "users",
+          resolvedFullRoutePath: "/root-admin#users",
+          status: "live",
+        }),
+      ],
+      pageLocators: [
+        createPageLocatorRecord({
+          canonicalLocator: "/root-admin#users",
+          routePath: "/root-admin",
+          routeHash: "users",
+          normalizedLocatorKey: "/root-admin#users",
+          locatorType: "hash-state",
+        }),
+      ],
+    });
     mountWebAppHierarchyBuilderFeature(
       harness.app,
       harness,
-      createInMemoryWebAppHierarchyRepository(),
+      repository,
       createStubWebAppSurfaceDiscoveryIntegrationSeam({
         async listDiscoveredWebAppSurfaces(input) {
           if (input?.staleStatus === "stale") {
@@ -296,6 +318,17 @@ describe("web app hierarchy builder integration flows", () => {
               locatorType: "path",
               userFacingDisposition: "user-facing",
             }),
+            createDiscoveredSurfaceRecord({
+              discoveredWebAppSurfaceId: "55555555-5555-4555-8555-555555555555",
+              rootFamilyId: "root-admin",
+              routePath: "/root-admin/users",
+              routeHash: null,
+              canonicalLocator: "/root-admin/users",
+              displayLabel: "Users",
+              surfaceKind: "page-route",
+              locatorType: "path",
+              userFacingDisposition: "user-facing",
+            }),
           ];
         },
       }),
@@ -303,9 +336,28 @@ describe("web app hierarchy builder integration flows", () => {
     const identity = harness.seedAuthIdentity();
     const session = await loginViaPasswordAndSsh(harness, identity);
 
+    const beforeCounts = {
+      modules: repository.modules.size,
+      pages: repository.pages.size,
+      pageLocators: repository.pageLocators.size,
+      discoveryLinks: repository.discoveryLinks.size,
+      auditEvents: repository.auditEvents.size,
+    };
+
     const response = await invokeJson<{
-      previewSummary: { createdModuleCount: number; createdPageCount: number };
-      items: Array<{ itemType: string; pageKey: string | null; moduleKey: string | null }>;
+      previewSummary: {
+        createdModuleCount: number;
+        createdPageCount: number;
+        blockedItemCount: number;
+      };
+      items: Array<{
+        itemType: string;
+        pageKey: string | null;
+        moduleKey: string | null;
+        plannedAction: string;
+        blockedReason: string | null;
+        canonicalLocator: string | null;
+      }>;
     }>(harness.app, {
       method: "POST",
       path: "/v1/web-app-hierarchy/discovery-sync/preview",
@@ -317,6 +369,7 @@ describe("web app hierarchy builder integration flows", () => {
     expect(response.body.previewSummary).toMatchObject({
       createdModuleCount: 1,
       createdPageCount: 1,
+      blockedItemCount: 1,
     });
     expect(response.body.items).toEqual(
       expect.arrayContaining([
@@ -327,9 +380,24 @@ describe("web app hierarchy builder integration flows", () => {
         expect.objectContaining({
           itemType: "page",
           pageKey: "design-system-components-top-nav",
+          plannedAction: "create",
+        }),
+        expect.objectContaining({
+          itemType: "page",
+          pageKey: "root-admin-users",
+          plannedAction: "blocked",
+          blockedReason: "locator_conflict",
+          canonicalLocator: "/root-admin/users",
         }),
       ]),
     );
+    expect({
+      modules: repository.modules.size,
+      pages: repository.pages.size,
+      pageLocators: repository.pageLocators.size,
+      discoveryLinks: repository.discoveryLinks.size,
+      auditEvents: repository.auditEvents.size,
+    }).toEqual(beforeCounts);
   });
 
   it("TC-WEB-APP-HIER-INT-006, TC-WEB-APP-HIER-INT-007, TC-WEB-APP-HIER-INT-011, and TC-WEB-APP-HIER-INT-012 apply structure-aware reconcile and keep tree consumers compatible", async () => {
