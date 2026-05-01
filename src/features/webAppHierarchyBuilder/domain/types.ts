@@ -105,12 +105,29 @@ export interface WebAppDiscoveryLinkData {
   updatedAt: Date;
 }
 
+export type WebAppHierarchyAuditEventOutcome = "success" | "failure";
+
+export interface WebAppHierarchyAuditEventData {
+  webAppHierarchyAuditEventId: string;
+  actorRootUserId: string | null;
+  rootFamilyId: WebAppRootFamilyId | null;
+  webAppModuleId: string | null;
+  webAppPageId: string | null;
+  eventType: string;
+  eventOutcome: WebAppHierarchyAuditEventOutcome;
+  reason: string | null;
+  beforeState: unknown | null;
+  afterState: unknown | null;
+  occurredAt: Date;
+}
+
 export interface CreateWebAppModuleInput {
   rootFamilyId: WebAppRootFamilyId;
   moduleKey: string;
   displayLabel: string;
   status?: WebAppPageStatus;
   sortOrder?: number;
+  actorRootUserId?: string;
 }
 
 export interface UpdateWebAppModuleInput {
@@ -119,6 +136,7 @@ export interface UpdateWebAppModuleInput {
   landingPageWebAppPageId?: string | null;
   status?: WebAppPageStatus;
   sortOrder?: number;
+  actorRootUserId?: string;
 }
 
 export interface CreateWebAppPageInput {
@@ -143,6 +161,7 @@ export interface UpdateWebAppPageInput {
   routeSegment?: string;
   status?: WebAppPageStatus;
   sortOrder?: number;
+  actorRootUserId?: string;
 }
 
 export interface MoveWebAppPageInput {
@@ -152,6 +171,7 @@ export interface MoveWebAppPageInput {
   targetParentPageId?: string;
   placementType: WebAppPagePlacementType;
   sortOrder?: number;
+  actorRootUserId?: string;
 }
 
 export interface GetResolvedWebAppHierarchyTreeInput {

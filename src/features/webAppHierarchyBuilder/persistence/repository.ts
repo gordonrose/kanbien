@@ -1,5 +1,6 @@
 import type {
   WebAppDiscoveryLinkData,
+  WebAppHierarchyAuditEventData,
   WebAppModuleData,
   WebAppPageData,
   WebAppPageLocatorData,
@@ -8,8 +9,10 @@ import type {
 } from "../domain/types";
 import type {
   BootstrapUpsertWebAppPageRecordInput,
+  CreateWebAppHierarchyAuditEventRecordInput,
   CreateWebAppModuleRecordInput,
   CreateWebAppPageRecordInput,
+  ListWebAppHierarchyAuditEventsRecordInput,
   MarkWebAppPageAppliedRecordInput,
   MoveWebAppPageRecordInput,
   UpsertWebAppDiscoveryLinkRecordInput,
@@ -65,4 +68,10 @@ export interface WebAppHierarchyRepository {
   updateResolvedFullRoutePaths(
     updates: Array<{ webAppPageId: string; resolvedFullRoutePath: string | null }>,
   ): Promise<void>;
+  createAuditEvent(
+    input: CreateWebAppHierarchyAuditEventRecordInput,
+  ): Promise<WebAppHierarchyAuditEventData>;
+  listAuditEvents(
+    input?: ListWebAppHierarchyAuditEventsRecordInput,
+  ): Promise<WebAppHierarchyAuditEventData[]>;
 }

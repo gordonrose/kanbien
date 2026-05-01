@@ -164,9 +164,15 @@ export function createWebAppHierarchyBuilderRouter(
 
   router.post("/modules", requireCreateModule, async (request, response, next) => {
     try {
+      const session = getRequiredRootSessionContext(request);
       response
         .status(201)
-        .json(await service.createWebAppModule(parseOrThrow(createWebAppModuleBodySchema, request.body)));
+        .json(
+          await service.createWebAppModule({
+            ...parseOrThrow(createWebAppModuleBodySchema, request.body),
+            actorRootUserId: session.rootUserId,
+          }),
+        );
     } catch (error) {
       next(error);
     }
@@ -174,9 +180,16 @@ export function createWebAppHierarchyBuilderRouter(
 
   router.patch("/modules/:webAppModuleId", requireUpdateModule, async (request, response, next) => {
     try {
+      const session = getRequiredRootSessionContext(request);
       const params = parseOrThrow(webAppModuleIdParamsSchema, request.params);
       const body = parseOrThrow(updateWebAppModuleBodySchema, request.body);
-      response.status(200).json(await service.updateWebAppModule({ ...params, ...body }));
+      response.status(200).json(
+        await service.updateWebAppModule({
+          ...params,
+          ...body,
+          actorRootUserId: session.rootUserId,
+        }),
+      );
     } catch (error) {
       next(error);
     }
@@ -187,9 +200,16 @@ export function createWebAppHierarchyBuilderRouter(
     requireUpdateModuleLandingPage,
     async (request, response, next) => {
       try {
+        const session = getRequiredRootSessionContext(request);
         const params = parseOrThrow(webAppModuleIdParamsSchema, request.params);
         const body = parseOrThrow(updateWebAppModuleLandingPageBodySchema, request.body);
-        response.status(200).json(await service.updateModuleLandingPage({ ...params, ...body }));
+        response.status(200).json(
+          await service.updateModuleLandingPage({
+            ...params,
+            ...body,
+            actorRootUserId: session.rootUserId,
+          }),
+        );
       } catch (error) {
         next(error);
       }
@@ -244,9 +264,16 @@ export function createWebAppHierarchyBuilderRouter(
 
   router.patch("/pages/:webAppPageId", requireUpdatePage, async (request, response, next) => {
     try {
+      const session = getRequiredRootSessionContext(request);
       const params = parseOrThrow(webAppPageIdParamsSchema, request.params);
       const body = parseOrThrow(updateWebAppPageBodySchema, request.body);
-      response.status(200).json(await service.updateWebAppPage({ ...params, ...body }));
+      response.status(200).json(
+        await service.updateWebAppPage({
+          ...params,
+          ...body,
+          actorRootUserId: session.rootUserId,
+        }),
+      );
     } catch (error) {
       next(error);
     }
@@ -254,6 +281,7 @@ export function createWebAppHierarchyBuilderRouter(
 
   router.post("/pages/:webAppPageId/move", requireMovePage, async (request, response, next) => {
     try {
+      const session = getRequiredRootSessionContext(request);
       const params = parseOrThrow(webAppPageIdParamsSchema, request.params);
       const body = parseOrThrow(moveWebAppPageBodySchema, request.body);
       response.status(200).json(
@@ -264,6 +292,7 @@ export function createWebAppHierarchyBuilderRouter(
           targetParentPageId: body.targetParentPageId,
           placementType: body.placementType,
           sortOrder: body.sortOrder,
+          actorRootUserId: session.rootUserId,
         }),
       );
     } catch (error) {

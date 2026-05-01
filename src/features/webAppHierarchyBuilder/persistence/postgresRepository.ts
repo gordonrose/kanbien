@@ -2,6 +2,7 @@ import type { Pool } from "pg";
 import type { WebAppHierarchyRepository } from "./repository";
 import type {
   BootstrapUpsertWebAppPageRecordInput,
+  CreateWebAppHierarchyAuditEventRecordInput,
   CreateWebAppModuleRecordInput,
   CreateWebAppPageRecordInput,
   MoveWebAppPageRecordInput,
@@ -10,6 +11,7 @@ import type {
   UpdateWebAppModuleRecordInput,
   UpdateWebAppPageMetadataRecordInput,
   WebAppDiscoveryLinkRecord,
+  WebAppHierarchyAuditEventRecord,
   WebAppModuleRecord,
   WebAppPageLocatorRecord,
   WebAppPageRecord,
@@ -70,6 +72,15 @@ function toDiscoveryLinkData(record: WebAppDiscoveryLinkRecord): WebAppDiscovery
     ...record,
     createdAt: new Date(record.createdAt),
     updatedAt: new Date(record.updatedAt),
+  };
+}
+
+function toAuditEventData(
+  record: WebAppHierarchyAuditEventRecord,
+): WebAppHierarchyAuditEventRecord {
+  return {
+    ...record,
+    occurredAt: new Date(record.occurredAt),
   };
 }
 
@@ -912,6 +923,98 @@ export function createPostgresWebAppHierarchyRepository(dbPool: Pool): WebAppHie
       } finally {
         client.release();
       }
+    },
+    async createAuditEvent(input: CreateWebAppHierarchyAuditEventRecordInput) {
+      const result = await dbPool.query<WebAppHierarchyAuditEventRecord>(
+        `
+          INSERT INTO web_app_hierarchy_audit_events (
+            web_app_hierarchy_audit_event_id,
+            actor_root_user_id,
+            root_family_id,
+            web_app_module_id,
+            web_app_page_id,
+            event_type,
+            event_outcome,
+            reason,
+            before_state,
+            after_state,
+            occurred_at
+          )
+          VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8,
+            CASE WHEN $9::text IS NULL THEN NULL ELSE $9::jsonb END,
+            CASE WHEN $10::text IS NULL THEN NULL ELSE $10::jsonb END,
+            COALESCE($11::timestamptz, NOW())
+          )
+          RETURNING
+            web_app_hierarchy_audit_event_id AS "webAppHierarchyAuditEventId",
+            actor_root_user_id AS "actorRootUserId",
+            root_family_id AS "rootFamilyId",
+            web_app_module_id AS "webAppModuleId",
+            web_app_page_id AS "webAppPageId",
+            event_type AS "eventType",
+            event_outcome AS "eventOutcome",
+            reason,
+            before_state AS "beforeState",
+            after_state AS "afterState",
+            occurred_at AS "occurredAt"
+        `,
+        [
+          input.webAppHierarchyAuditEventId,
+          input.actorRootUserId ?? null,
+          input.rootFamilyId ?? null,
+          input.webAppModuleId ?? null,
+          input.webAppPageId ?? null,
+          input.eventType,
+          input.eventOutcome,
+          input.reason ?? null,
+          input.beforeState ? JSON.stringify(input.beforeState) : null,
+          input.afterState ? JSON.stringify(input.afterState) : null,
+          input.occurredAt?.toISOString() ?? null,
+        ],
+      );
+      return toAuditEventData(result.rows[0]);
+    },
+    async listAuditEvents(input = {}) {
+      const values: unknown[] = [];
+      const where: string[] = [];
+      if (input.eventType) {
+        values.push(input.eventType);
+        where.push(`event_type = $${values.length}`);
+      }
+      if (input.rootFamilyId) {
+        values.push(input.rootFamilyId);
+        where.push(`root_family_id = $${values.length}`);
+      }
+      if (input.webAppModuleId) {
+        values.push(input.webAppModuleId);
+        where.push(`web_app_module_id = $${values.length}`);
+      }
+      if (input.webAppPageId) {
+        values.push(input.webAppPageId);
+        where.push(`web_app_page_id = $${values.length}`);
+      }
+      const result = await dbPool.query<WebAppHierarchyAuditEventRecord>(
+        `
+          SELECT
+            web_app_hierarchy_audit_event_id AS "webAppHierarchyAuditEventId",
+            actor_root_user_id AS "actorRootUserId",
+            root_family_id AS "rootFamilyId",
+            web_app_module_id AS "webAppModuleId",
+            web_app_page_id AS "webAppPageId",
+            event_type AS "eventType",
+            event_outcome AS "eventOutcome",
+            reason,
+            before_state AS "beforeState",
+            after_state AS "afterState",
+            occurred_at AS "occurredAt"
+          FROM web_app_hierarchy_audit_events
+          ${where.length > 0 ? `WHERE ${where.join(" AND ")}` : ""}
+          ORDER BY occurred_at ASC, web_app_hierarchy_audit_event_id ASC
+        `,
+        values,
+      );
+      return result.rows.map(toAuditEventData);
     },
   };
 }

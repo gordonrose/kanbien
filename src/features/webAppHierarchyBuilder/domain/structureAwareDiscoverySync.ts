@@ -8,6 +8,10 @@ import type { WebAppHierarchyRepository } from "../persistence/repository";
 import { DiscoveryLinkConflictError, PageLocatorConflictError } from "../contract/errors";
 import { createWebAppHierarchyId, normalizeKey, requireRootFamily } from "./helpers";
 import { buildResolvedWebAppHierarchyTree } from "./presenters";
+import {
+  recordWebAppHierarchyAuditEvent,
+  WEB_APP_HIERARCHY_AUDIT_EVENTS,
+} from "./audit";
 import type {
   ApplyStructureAwareWebAppHierarchySyncInput,
   PreviewStructureAwareWebAppHierarchySyncInput,
@@ -746,6 +750,32 @@ export async function applyStructureAwareWebAppHierarchySync(
   }
 
   const tree = await readTree(repository, input.includeInactive ?? false, input.includeOrphaned ?? false);
+  const touchedRootFamilyIds = Array.from(
+    new Set(plannedState.items.map((item) => item.rootFamilyId)),
+  );
+  const applySummary = {
+    createdModuleCount,
+    createdPageCount,
+    refreshedLocatorCount,
+    refreshedLinkCount,
+    blockedItemCount: plannedState.items.filter((item) => item.plannedAction === "blocked").length,
+  };
+
+  await recordWebAppHierarchyAuditEvent(repository, {
+    actorRootUserId: input.createdByRootAdminUserId,
+    rootFamilyId: touchedRootFamilyIds.length === 1 ? touchedRootFamilyIds[0] : null,
+    eventType: WEB_APP_HIERARCHY_AUDIT_EVENTS.discoverySyncApplied,
+    beforeState: {
+      rootFamilyIds: input.rootFamilyIds ?? null,
+      selectedDiscoveredWebAppStructureNodeIds:
+        input.selectedDiscoveredWebAppStructureNodeIds ?? null,
+      plannedItemCount: plannedState.items.length,
+    },
+    afterState: {
+      rootFamilyIds: touchedRootFamilyIds,
+      applySummary,
+    },
+  });
 
   return {
     previewSummary: {
@@ -756,13 +786,7 @@ export async function applyStructureAwareWebAppHierarchySync(
       blockedItemCount: plannedState.items.filter((item) => item.plannedAction === "blocked").length,
       staleDiscoveredItemCount: plannedState.items.filter((item) => item.driftStatus === "stale-discovered").length,
     },
-    applySummary: {
-      createdModuleCount,
-      createdPageCount,
-      refreshedLocatorCount,
-      refreshedLinkCount,
-      blockedItemCount: plannedState.items.filter((item) => item.plannedAction === "blocked").length,
-    },
+    applySummary,
     items: plannedState.items,
     tree,
   };

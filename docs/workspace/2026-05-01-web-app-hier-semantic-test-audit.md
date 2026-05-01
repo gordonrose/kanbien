@@ -29,9 +29,9 @@ test would fail for the behavior the PRD-derived test case intended to protect.
 
 | Classification | Count | Meaning |
 | --- | ---: | --- |
-| `strong` | 23 | Good semantic protection. |
-| `partial` | 27 | Useful tests, but the documented case is broader than the assertions. |
-| `weak` | 4 | Traceable but shallow; repair should tighten assertions or add durable evidence. |
+| `strong` | 27 | Good semantic protection. |
+| `partial` | 26 | Useful tests, but the documented case is broader than the assertions. |
+| `weak` | 1 | Traceable but shallow; repair should tighten assertions or add durable evidence. |
 | `misleading` | 0 | Traceability id is attached to a materially different behavior. |
 | `implementation-gap` | 0 | PRD semantics exceed current implementation. |
 
@@ -94,11 +94,11 @@ test would fail for the behavior the PRD-derived test case intended to protect.
 | `TC-WEB-APP-HIER-SEC-006` | `strong` | `tests/security/webAppHierarchyBuilder/security.test.ts` | Now directly proves unauthenticated preview, apply, and link-status requests are rejected. | No immediate repair. |
 | `TC-WEB-APP-HIER-SEC-007` | `strong` | `tests/security/webAppHierarchyBuilder/security.test.ts` | Now directly proves authenticated users without dedicated preview, apply, and link-status capabilities are denied. | No immediate repair. |
 | `TC-WEB-APP-HIER-SEC-008` | `strong` | `tests/security/webAppHierarchyBuilder/security.test.ts` | Directly proves apply rejects client-submitted locator/link ids and drift state. | No immediate repair. |
-| `TC-WEB-APP-HIER-AUD-001` | `weak` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Proves successful page-create response is operator-visible; does not prove create module, update, move, bootstrap, or durable audit evidence. | Add durable audit/equivalent evidence matrix for successful mutations. |
+| `TC-WEB-APP-HIER-AUD-001` | `strong` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Directly proves a successful privileged page mutation writes durable audit evidence with actor, root family, module, page, outcome, and after-state route truth. | No immediate repair. |
 | `TC-WEB-APP-HIER-AUD-002` | `partial` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Proves denied create emits platform security event; does not cover move, bootstrap, or privileged read denial. | Add denied action matrix. |
-| `TC-WEB-APP-HIER-AUD-003` | `weak` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Captures before response, move response, and bootstrap response; does not prove durable before/after audit payload or created/skipped/conflict counts. | Add durable/equivalent audit payload proof. |
-| `TC-WEB-APP-HIER-AUD-004` | `weak` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Proves root family appears in move/bootstrap responses; not durable audit payload coverage. | Add root-family context assertion in audit event/equivalent durable record. |
-| `TC-WEB-APP-HIER-AUD-005` | `partial` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Proves apply summary exposes created pages and locators; does not prove preview summary or full summary fields. | Add preview summary and all apply summary count fields. |
+| `TC-WEB-APP-HIER-AUD-003` | `strong` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Directly proves move and bootstrap actions write durable audit events with before/after or aggregate summary evidence. | No immediate repair. |
+| `TC-WEB-APP-HIER-AUD-004` | `strong` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Directly proves root-family context is persisted on durable move, bootstrap, and discovery-sync audit evidence. | No immediate repair. |
+| `TC-WEB-APP-HIER-AUD-005` | `strong` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Directly proves structure-aware apply writes durable summary evidence with created-page and refreshed-locator counts. Preview remains intentionally read-only and response-visible. | No immediate repair. |
 | `TC-WEB-APP-HIER-AUD-006` | `strong` | `tests/audit/webAppHierarchyBuilder/audit.test.ts` | Directly proves denied preview action creates a capability-denial audit event. | No immediate repair. |
 | `TC-WEB-APP-HIER-EDGE-001` | `strong` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Now directly proves inactive planner exclusion by default and explicit inclusion when requested. | No immediate repair. |
 | `TC-WEB-APP-HIER-EDGE-002` | `strong` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Directly proves orphaning removes from active tree and orphan read preserves identity. | No immediate repair. |

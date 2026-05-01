@@ -17,6 +17,10 @@ import {
   requireRootFamily,
 } from "./helpers";
 import { buildResolvedWebAppHierarchyTree } from "./presenters";
+import {
+  recordWebAppHierarchyAuditEvent,
+  WEB_APP_HIERARCHY_AUDIT_EVENTS,
+} from "./audit";
 
 async function ensureBootstrapModule(
   repository: WebAppHierarchyRepository,
@@ -112,7 +116,11 @@ export async function bootstrapWebAppHierarchy(
   repository: WebAppHierarchyRepository,
   input: BootstrapWebAppHierarchyInput,
 ): Promise<ResolvedWebAppHierarchyTree> {
-  const rootFamilies = await repository.listRootFamilies();
+  const [rootFamilies, modulesBefore, pagesBefore] = await Promise.all([
+    repository.listRootFamilies(),
+    repository.listModules(),
+    repository.listPages(),
+  ]);
   for (const observedRootFamily of input.observedRootFamilies) {
     requireRootFamily(rootFamilies, observedRootFamily.rootFamilyId);
     for (const observedModule of observedRootFamily.modules) {
@@ -141,10 +149,27 @@ export async function bootstrapWebAppHierarchy(
   await repository.updateResolvedFullRoutePaths(
     computeResolvedFullRoutePaths(refreshedRootFamilies, refreshedPages),
   );
+  const finalPages = await repository.listPages();
+  const touchedRootFamilyIds = input.observedRootFamilies.map((item) => item.rootFamilyId);
+  await recordWebAppHierarchyAuditEvent(repository, {
+    actorRootUserId: input.createdByRootAdminUserId,
+    rootFamilyId: touchedRootFamilyIds.length === 1 ? touchedRootFamilyIds[0] : null,
+    eventType: WEB_APP_HIERARCHY_AUDIT_EVENTS.bootstrapApplied,
+    beforeState: {
+      moduleCount: modulesBefore.length,
+      pageCount: pagesBefore.length,
+      rootFamilyIds: touchedRootFamilyIds,
+    },
+    afterState: {
+      moduleCount: refreshedModules.length,
+      pageCount: finalPages.length,
+      rootFamilyIds: touchedRootFamilyIds,
+    },
+  });
   return buildResolvedWebAppHierarchyTree(
     refreshedRootFamilies,
     refreshedModules,
-    await repository.listPages(),
+    finalPages,
     true,
     true,
   );

@@ -15,6 +15,10 @@ import {
   validatePlacement,
 } from "./helpers";
 import { toWebAppPage } from "./presenters";
+import {
+  recordWebAppHierarchyAuditEvent,
+  WEB_APP_HIERARCHY_AUDIT_EVENTS,
+} from "./audit";
 
 function resolvePlacementType(input: CreateWebAppPageInput): WebAppPagePlacementType {
   if (input.placementType) {
@@ -81,5 +85,15 @@ export async function createWebAppPage(
   const refreshedPages = [...pages, { ...created, normalizedRouteSegment: created.routeSegment }];
   await repository.updateResolvedFullRoutePaths(computeResolvedFullRoutePaths(rootFamilies, refreshedPages));
 
-  return toWebAppPage((await repository.findPageById(created.webAppPageId))!);
+  const refreshed = (await repository.findPageById(created.webAppPageId))!;
+  await recordWebAppHierarchyAuditEvent(repository, {
+    actorRootUserId: input.createdByRootAdminUserId,
+    rootFamilyId: refreshed.rootFamilyId,
+    webAppModuleId: refreshed.webAppModuleId,
+    webAppPageId: refreshed.webAppPageId,
+    eventType: WEB_APP_HIERARCHY_AUDIT_EVENTS.pageCreated,
+    afterState: refreshed,
+  });
+
+  return toWebAppPage(refreshed);
 }

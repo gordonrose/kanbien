@@ -6,6 +6,10 @@ import {
 import { toWebAppModule } from "./presenters";
 import type { WebAppHierarchyRepository } from "../persistence/repository";
 import type { UpdateWebAppModuleInput } from "./types";
+import {
+  recordWebAppHierarchyAuditEvent,
+  WEB_APP_HIERARCHY_AUDIT_EVENTS,
+} from "./audit";
 
 export async function updateModuleLandingPage(
   repository: WebAppHierarchyRepository,
@@ -18,12 +22,20 @@ export async function updateModuleLandingPage(
 
   const landingPageWebAppPageId = input.landingPageWebAppPageId ?? null;
   if (!landingPageWebAppPageId) {
-    return toWebAppModule(
-      await repository.updateModule({
-        webAppModuleId: input.webAppModuleId,
-        landingPageWebAppPageId: null,
-      }),
-    );
+    const updated = await repository.updateModule({
+      webAppModuleId: input.webAppModuleId,
+      landingPageWebAppPageId: null,
+    });
+    await recordWebAppHierarchyAuditEvent(repository, {
+      actorRootUserId: input.actorRootUserId,
+      rootFamilyId: updated.rootFamilyId,
+      webAppModuleId: updated.webAppModuleId,
+      webAppPageId: module.landingPageWebAppPageId,
+      eventType: WEB_APP_HIERARCHY_AUDIT_EVENTS.moduleLandingPageUpdated,
+      beforeState: module,
+      afterState: updated,
+    });
+    return toWebAppModule(updated);
   }
 
   const page = await repository.findPageById(landingPageWebAppPageId);
@@ -42,10 +54,18 @@ export async function updateModuleLandingPage(
     });
   }
 
-  return toWebAppModule(
-    await repository.updateModule({
-      webAppModuleId: input.webAppModuleId,
-      landingPageWebAppPageId,
-    }),
-  );
+  const updated = await repository.updateModule({
+    webAppModuleId: input.webAppModuleId,
+    landingPageWebAppPageId,
+  });
+  await recordWebAppHierarchyAuditEvent(repository, {
+    actorRootUserId: input.actorRootUserId,
+    rootFamilyId: updated.rootFamilyId,
+    webAppModuleId: updated.webAppModuleId,
+    webAppPageId: landingPageWebAppPageId,
+    eventType: WEB_APP_HIERARCHY_AUDIT_EVENTS.moduleLandingPageUpdated,
+    beforeState: module,
+    afterState: updated,
+  });
+  return toWebAppModule(updated);
 }

@@ -97,6 +97,66 @@ describeIfPostgres("web app hierarchy postgres repository", () => {
     expect(stored?.resolvedFullRoutePath).toBe("/root-admin/catalog");
   });
 
+  it("persists durable hierarchy audit events with actor, target, and before-after payloads", async () => {
+    const repository = createPostgresWebAppHierarchyRepository(pool);
+    const module = await repository.createModule({
+      webAppModuleId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      rootFamilyId: "root-admin",
+      moduleKey: "catalog",
+      displayLabel: "Catalog",
+      status: "draft",
+      sortOrder: 0,
+    });
+    const page = await repository.createPage({
+      webAppPageId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      rootFamilyId: "root-admin",
+      webAppModuleId: module.webAppModuleId,
+      parentPageId: null,
+      placementType: "module-root",
+      pageKey: "catalog-home",
+      displayLabel: "Catalog Home",
+      routeSegment: "catalog",
+      status: "draft",
+      sortOrder: 0,
+      createdByRootAdminUserId: actorRootUserId,
+      bootstrapSource: null,
+      topologyState: "applied",
+      templateKey: null,
+      materializedAt: null,
+    });
+
+    await repository.createAuditEvent({
+      webAppHierarchyAuditEventId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+      actorRootUserId,
+      rootFamilyId: "root-admin",
+      webAppModuleId: module.webAppModuleId,
+      webAppPageId: page.webAppPageId,
+      eventType: "web_app_hierarchy.page_moved",
+      eventOutcome: "success",
+      beforeState: { placementType: "module-root" },
+      afterState: { placementType: "orphaned" },
+      occurredAt: new Date("2026-05-01T12:00:00.000Z"),
+    });
+
+    await expect(
+      repository.listAuditEvents({
+        eventType: "web_app_hierarchy.page_moved",
+        webAppPageId: page.webAppPageId,
+      }),
+    ).resolves.toEqual([
+      expect.objectContaining({
+        webAppHierarchyAuditEventId: "cccccccc-cccc-4ccc-8ccc-cccccccccccc",
+        actorRootUserId,
+        rootFamilyId: "root-admin",
+        webAppModuleId: module.webAppModuleId,
+        webAppPageId: page.webAppPageId,
+        eventOutcome: "success",
+        beforeState: { placementType: "module-root" },
+        afterState: { placementType: "orphaned" },
+      }),
+    ]);
+  });
+
   it("TC-WEB-APP-HIER-INT-013 and TC-WEB-APP-HIER-EDGE-011 enforce page-locator schema and activation constraints", async () => {
     const repository = createPostgresWebAppHierarchyRepository(pool);
     const module = await repository.createModule({

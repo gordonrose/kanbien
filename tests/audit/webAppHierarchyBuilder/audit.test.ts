@@ -23,14 +23,15 @@ interface ErrorResponse {
 }
 
 describe("web app hierarchy builder audit visibility", () => {
-  it("TC-WEB-APP-HIER-AUD-001 keeps successful hierarchy mutations operator-visible through backend responses", async () => {
+  it("TC-WEB-APP-HIER-AUD-001 keeps successful hierarchy mutations durably queryable", async () => {
     const harness = createRootAuthIntegrationHarness();
+    const repository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+    });
     mountWebAppHierarchyBuilderFeature(
       harness.app,
       harness,
-      createInMemoryWebAppHierarchyRepository({
-        modules: [createModuleRecord()],
-      }),
+      repository,
     );
     const identity = harness.seedAuthIdentity();
     const session = await loginViaPasswordAndSsh(harness, identity);
@@ -51,6 +52,23 @@ describe("web app hierarchy builder audit visibility", () => {
     expect(created.status).toBe(201);
     expect(created.body.createdByRootAdminUserId).toBe(identity.rootUserId);
     expect(created.body.resolvedFullRoutePath).toBe("/root-admin/settings");
+
+    expect(await repository.listAuditEvents()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          actorRootUserId: identity.rootUserId,
+          eventType: "web_app_hierarchy.page_created",
+          eventOutcome: "success",
+          rootFamilyId: "root-admin",
+          webAppModuleId: "11111111-1111-4111-8111-111111111111",
+          webAppPageId: created.body.webAppPageId,
+          afterState: expect.objectContaining({
+            pageKey: "catalog-settings",
+            resolvedFullRoutePath: "/root-admin/settings",
+          }),
+        }),
+      ]),
+    );
   });
 
   it("TC-WEB-APP-HIER-AUD-002 keeps denied privileged actions visible through platform security audit events", async () => {
@@ -96,13 +114,14 @@ describe("web app hierarchy builder audit visibility", () => {
 
   it("TC-WEB-APP-HIER-AUD-003 and TC-WEB-APP-HIER-AUD-004 keep move and bootstrap context operator-visible", async () => {
     const harness = createRootAuthIntegrationHarness();
+    const repository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+      pages: [createPageRecord()],
+    });
     mountWebAppHierarchyBuilderFeature(
       harness.app,
       harness,
-      createInMemoryWebAppHierarchyRepository({
-        modules: [createModuleRecord()],
-        pages: [createPageRecord()],
-      }),
+      repository,
     );
     const identity = harness.seedAuthIdentity();
     const session = await loginViaPasswordAndSsh(harness, identity);
@@ -136,6 +155,25 @@ describe("web app hierarchy builder audit visibility", () => {
       placementType: "orphaned",
       resolvedFullRoutePath: null,
     });
+    expect(
+      await repository.listAuditEvents({
+        eventType: "web_app_hierarchy.page_moved",
+        webAppPageId: "22222222-2222-4222-8222-222222222222",
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        actorRootUserId: identity.rootUserId,
+        rootFamilyId: "root-admin",
+        beforeState: expect.objectContaining({
+          placementType: "module-root",
+          resolvedFullRoutePath: "/root-admin/catalog",
+        }),
+        afterState: expect.objectContaining({
+          placementType: "orphaned",
+          resolvedFullRoutePath: null,
+        }),
+      }),
+    ]);
 
     const bootstrapped = await invokeJson<{
       rootFamilies: Array<{ rootFamilyId: string; modules: Array<{ moduleKey: string; pages: Array<{ pageKey: string }> }> }>;
@@ -178,14 +216,30 @@ describe("web app hierarchy builder audit visibility", () => {
         }),
       ]),
     );
+    expect(
+      await repository.listAuditEvents({
+        eventType: "web_app_hierarchy.bootstrap_applied",
+        rootFamilyId: "design-system",
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        actorRootUserId: identity.rootUserId,
+        afterState: expect.objectContaining({
+          rootFamilyIds: ["design-system"],
+          moduleCount: expect.any(Number),
+          pageCount: expect.any(Number),
+        }),
+      }),
+    ]);
   });
 
-  it("TC-WEB-APP-HIER-AUD-005 keeps successful structure-aware apply operator-visible through its summary response", async () => {
+  it("TC-WEB-APP-HIER-AUD-005 keeps successful structure-aware apply durably queryable with summary evidence", async () => {
     const harness = createRootAuthIntegrationHarness();
+    const repository = createInMemoryWebAppHierarchyRepository();
     mountWebAppHierarchyBuilderFeature(
       harness.app,
       harness,
-      createInMemoryWebAppHierarchyRepository(),
+      repository,
       createStubWebAppSurfaceDiscoveryIntegrationSeam({
         async listDiscoveredWebAppSurfaces() {
           return [
@@ -223,6 +277,23 @@ describe("web app hierarchy builder audit visibility", () => {
       createdPageCount: 1,
       refreshedLocatorCount: 1,
     });
+    expect(
+      await repository.listAuditEvents({
+        eventType: "web_app_hierarchy.discovery_sync_applied",
+        rootFamilyId: "design-system",
+      }),
+    ).toEqual([
+      expect.objectContaining({
+        actorRootUserId: identity.rootUserId,
+        afterState: expect.objectContaining({
+          applySummary: expect.objectContaining({
+            createdPageCount: 1,
+            refreshedLocatorCount: 1,
+          }),
+          rootFamilyIds: ["design-system"],
+        }),
+      }),
+    ]);
   });
 
   it("TC-WEB-APP-HIER-AUD-006 and TC-ROOT-PATH-AUD-002 keep denied preview actions visible through platform security audit events", async () => {

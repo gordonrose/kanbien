@@ -8,6 +8,10 @@ import {
   requirePage,
 } from "./helpers";
 import { toWebAppPage } from "./presenters";
+import {
+  recordWebAppHierarchyAuditEvent,
+  WEB_APP_HIERARCHY_AUDIT_EVENTS,
+} from "./audit";
 
 export async function updateWebAppPage(
   repository: WebAppHierarchyRepository,
@@ -47,5 +51,16 @@ export async function updateWebAppPage(
     computeResolvedFullRoutePaths(rootFamilies, refreshedPages),
   );
 
-  return toWebAppPage(requirePage(await repository.listPages(), current.webAppPageId));
+  const updated = requirePage(await repository.listPages(), current.webAppPageId);
+  await recordWebAppHierarchyAuditEvent(repository, {
+    actorRootUserId: input.actorRootUserId,
+    rootFamilyId: updated.rootFamilyId,
+    webAppModuleId: updated.webAppModuleId,
+    webAppPageId: updated.webAppPageId,
+    eventType: WEB_APP_HIERARCHY_AUDIT_EVENTS.pageUpdated,
+    beforeState: current,
+    afterState: updated,
+  });
+
+  return toWebAppPage(updated);
 }

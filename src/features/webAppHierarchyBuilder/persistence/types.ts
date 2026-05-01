@@ -1,5 +1,6 @@
 import type {
   WebAppDiscoveryLinkData,
+  WebAppHierarchyAuditEventData,
   WebAppModuleData,
   WebAppPageData,
   WebAppPageLocatorData,
@@ -104,8 +105,30 @@ export interface UpsertWebAppDiscoveryLinkRecordInput {
   lastMatchedWebAppDiscoveryRunId: string | null;
 }
 
+export interface CreateWebAppHierarchyAuditEventRecordInput {
+  webAppHierarchyAuditEventId: string;
+  actorRootUserId?: string | null;
+  rootFamilyId?: WebAppRootFamilyId | null;
+  webAppModuleId?: string | null;
+  webAppPageId?: string | null;
+  eventType: string;
+  eventOutcome: "success" | "failure";
+  reason?: string | null;
+  beforeState?: unknown | null;
+  afterState?: unknown | null;
+  occurredAt?: Date;
+}
+
+export interface ListWebAppHierarchyAuditEventsRecordInput {
+  eventType?: string;
+  rootFamilyId?: WebAppRootFamilyId;
+  webAppModuleId?: string;
+  webAppPageId?: string;
+}
+
 export interface WebAppRootFamilyRecord extends WebAppRootFamilyData {}
 export interface WebAppModuleRecord extends WebAppModuleData {}
 export interface WebAppPageRecord extends WebAppPageData {}
 export interface WebAppPageLocatorRecord extends WebAppPageLocatorData {}
 export interface WebAppDiscoveryLinkRecord extends WebAppDiscoveryLinkData {}
+export interface WebAppHierarchyAuditEventRecord extends WebAppHierarchyAuditEventData {}

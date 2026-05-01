@@ -12,6 +12,10 @@ import {
   validatePlacement,
 } from "./helpers";
 import { toWebAppPage } from "./presenters";
+import {
+  recordWebAppHierarchyAuditEvent,
+  WEB_APP_HIERARCHY_AUDIT_EVENTS,
+} from "./audit";
 
 export async function moveWebAppPage(
   repository: WebAppHierarchyRepository,
@@ -61,5 +65,16 @@ export async function moveWebAppPage(
     computeResolvedFullRoutePaths(rootFamilies, refreshedPages),
   );
 
-  return toWebAppPage(requirePage(await repository.listPages(), current.webAppPageId));
+  const moved = requirePage(await repository.listPages(), current.webAppPageId);
+  await recordWebAppHierarchyAuditEvent(repository, {
+    actorRootUserId: input.actorRootUserId,
+    rootFamilyId: moved.rootFamilyId,
+    webAppModuleId: moved.webAppModuleId,
+    webAppPageId: moved.webAppPageId,
+    eventType: WEB_APP_HIERARCHY_AUDIT_EVENTS.pageMoved,
+    beforeState: current,
+    afterState: moved,
+  });
+
+  return toWebAppPage(moved);
 }

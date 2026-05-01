@@ -13,6 +13,7 @@ import type {
   DesignSystemMaterializationPlan,
   DesignSystemMaterializer,
   WebAppDiscoveryLinkData,
+  WebAppHierarchyAuditEventData,
   WebAppModuleData,
   WebAppPageData,
   WebAppPageLocatorData,
@@ -22,6 +23,7 @@ import { computeResolvedFullRoutePaths } from "../../src/features/webAppHierarch
 import type { WebAppHierarchyRepository } from "../../src/features/webAppHierarchyBuilder/persistence/repository";
 import type {
   BootstrapUpsertWebAppPageRecordInput,
+  CreateWebAppHierarchyAuditEventRecordInput,
   CreateWebAppModuleRecordInput,
   CreateWebAppPageRecordInput,
   MoveWebAppPageRecordInput,
@@ -307,6 +309,13 @@ function cloneDiscoveryLink(link: WebAppDiscoveryLinkData): WebAppDiscoveryLinkD
   };
 }
 
+function cloneAuditEvent(event: WebAppHierarchyAuditEventData): WebAppHierarchyAuditEventData {
+  return {
+    ...event,
+    occurredAt: new Date(event.occurredAt),
+  };
+}
+
 export function createRootFamilyRecord(
   overrides: Partial<WebAppRootFamilyData> = {},
 ): WebAppRootFamilyData {
@@ -413,18 +422,40 @@ export function createDiscoveryLinkRecord(
   };
 }
 
+export function createAuditEventRecord(
+  overrides: Partial<WebAppHierarchyAuditEventData> = {},
+): WebAppHierarchyAuditEventData {
+  const now = new Date("2026-04-19T03:00:00.000Z");
+  return {
+    webAppHierarchyAuditEventId: "88888888-8888-4888-8888-888888888888",
+    actorRootUserId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    rootFamilyId: "root-admin",
+    webAppModuleId: null,
+    webAppPageId: null,
+    eventType: "web_app_hierarchy.test_event",
+    eventOutcome: "success",
+    reason: null,
+    beforeState: null,
+    afterState: null,
+    occurredAt: now,
+    ...overrides,
+  };
+}
+
 export function createInMemoryWebAppHierarchyRepository(seed?: {
   rootFamilies?: WebAppRootFamilyData[];
   modules?: WebAppModuleData[];
   pages?: WebAppPageData[];
   pageLocators?: WebAppPageLocatorData[];
   discoveryLinks?: WebAppDiscoveryLinkData[];
+  auditEvents?: WebAppHierarchyAuditEventData[];
 }): WebAppHierarchyRepository & {
   rootFamilies: Map<string, WebAppRootFamilyData>;
   modules: Map<string, WebAppModuleData>;
   pages: Map<string, WebAppPageData>;
   pageLocators: Map<string, WebAppPageLocatorData>;
   discoveryLinks: Map<string, WebAppDiscoveryLinkData>;
+  auditEvents: Map<string, WebAppHierarchyAuditEventData>;
 } {
   const rootFamilies = new Map(
     (seed?.rootFamilies ?? [
@@ -453,6 +484,9 @@ export function createInMemoryWebAppHierarchyRepository(seed?: {
   const discoveryLinks = new Map(
     (seed?.discoveryLinks ?? []).map((item) => [item.webAppDiscoveryLinkId, cloneDiscoveryLink(item)]),
   );
+  const auditEvents = new Map(
+    (seed?.auditEvents ?? []).map((item) => [item.webAppHierarchyAuditEventId, cloneAuditEvent(item)]),
+  );
 
   return {
     rootFamilies,
@@ -460,6 +494,7 @@ export function createInMemoryWebAppHierarchyRepository(seed?: {
     pages,
     pageLocators,
     discoveryLinks,
+    auditEvents,
     async listRootFamilies() {
       return [...rootFamilies.values()].map(cloneRootFamily);
     },
@@ -736,6 +771,31 @@ export function createInMemoryWebAppHierarchyRepository(seed?: {
           }),
         );
       }
+    },
+    async createAuditEvent(input: CreateWebAppHierarchyAuditEventRecordInput) {
+      const record = createAuditEventRecord({
+        webAppHierarchyAuditEventId: input.webAppHierarchyAuditEventId,
+        actorRootUserId: input.actorRootUserId ?? null,
+        rootFamilyId: input.rootFamilyId ?? null,
+        webAppModuleId: input.webAppModuleId ?? null,
+        webAppPageId: input.webAppPageId ?? null,
+        eventType: input.eventType,
+        eventOutcome: input.eventOutcome,
+        reason: input.reason ?? null,
+        beforeState: input.beforeState ?? null,
+        afterState: input.afterState ?? null,
+        occurredAt: input.occurredAt ?? new Date("2026-04-19T03:00:00.000Z"),
+      });
+      auditEvents.set(record.webAppHierarchyAuditEventId, record);
+      return cloneAuditEvent(record);
+    },
+    async listAuditEvents(input = {}) {
+      return [...auditEvents.values()]
+        .filter((item) => !input.eventType || item.eventType === input.eventType)
+        .filter((item) => !input.rootFamilyId || item.rootFamilyId === input.rootFamilyId)
+        .filter((item) => !input.webAppModuleId || item.webAppModuleId === input.webAppModuleId)
+        .filter((item) => !input.webAppPageId || item.webAppPageId === input.webAppPageId)
+        .map(cloneAuditEvent);
     },
   };
 }
