@@ -22,7 +22,7 @@
 ## Current Status
 
 - Overall traceability status:
-  - all `21/21` `rootUsers` backend PRD test cases are now traceable in
+  - all `23/23` `rootUsers` backend PRD test cases are now traceable in
     executable test code
 - Overall execution status:
   - dedicated direct runtime coverage now exists for:
@@ -43,6 +43,7 @@
     - `TC-ROOT-USERS-SEC-001`
     - `TC-ROOT-USERS-SEC-002`
     - `TC-ROOT-USERS-SEC-003`
+    - `TC-ROOT-USERS-E2E-001`
     - `TC-ROOT-USERS-AUD-001`
     - `TC-ROOT-USERS-EDGE-001`
     - `TC-ROOT-USERS-EDGE-002`
@@ -205,6 +206,32 @@
   Coverage:
   - create -> soft delete -> deleted list -> reactivate -> visible list
   - remove/anonymize prevents later reactivation
+
+## End-To-End Journey Tests
+
+- Journey: root-admin operator proves root-users lifecycle readback and denied
+  capability states
+  Test Case ID: `TC-ROOT-USERS-E2E-001`
+  Journey ID: `JY-ROOT-ADMIN-003`
+  Recommended Test Layer: `e2e`
+  Suggested Test Folder: `tests/e2e/rootAdmin/`
+  Features:
+  - `rootAuth`
+  - shared auth middleware
+  - root capability middleware
+  - `rootUsers`
+  Coverage:
+  - allowed root operator creates a root user
+  - update is persisted and exact read returns updated data
+  - normal visible list includes the active user
+  - soft delete hides the user from normal exact read
+  - deleted list exposes the deleted user
+  - reactivation restores normal state
+  - remove/anonymize prevents later reactivation
+  - limited root actor with read-only capability is denied update access
+  Notes:
+  - this case intentionally proves root-admin API journey behavior; browser
+    rendering remains a separate root-admin browser journey task.
 
 ## NFR Security Tests
 

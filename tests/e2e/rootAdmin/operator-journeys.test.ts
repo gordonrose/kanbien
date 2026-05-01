@@ -16,10 +16,15 @@ interface ErrorResponse {
 interface RootUserResponse {
   rootUserId: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
+  anonymized: boolean;
+  status: "active" | "inactive";
+  deletedAt: string | null;
 }
 
 interface RootUserListResponse {
-  items: Array<{ rootUserId: string; email: string }>;
+  items: RootUserResponse[];
 }
 
 interface TenantResponse {
@@ -176,5 +181,143 @@ describe("root-admin operator e2e journeys", () => {
     });
     expect(missingTenantCapability.status).toBe(403);
     expect(missingTenantCapability.body.code).toBe("FORBIDDEN");
+  });
+
+  it("TC-ROOT-USERS-E2E-001 and JY-ROOT-ADMIN-003 prove root-users lifecycle readback and denied capability states", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+    const authHeaders = { authorization: `Bearer ${session.sessionId}` };
+
+    const created = await invokeJson<RootUserResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: authHeaders,
+      body: {
+        email: "Lifecycle.Root@Example.test",
+        firstName: "Lifecycle",
+        lastName: "Original",
+      },
+    });
+    expect(created.status).toBe(201);
+    expect(created.body).toMatchObject({
+      email: "lifecycle.root@example.test",
+      firstName: "Lifecycle",
+      lastName: "Original",
+      anonymized: false,
+      status: "active",
+      deletedAt: null,
+    });
+
+    const updated = await invokeJson<RootUserResponse>(harness.app, {
+      method: "PATCH",
+      path: `/v1/root-users/${created.body.rootUserId}`,
+      headers: authHeaders,
+      body: {
+        firstName: "Lifecycle",
+        lastName: "Updated",
+      },
+    });
+    expect(updated.status).toBe(200);
+    expect(updated.body).toMatchObject({
+      rootUserId: created.body.rootUserId,
+      firstName: "Lifecycle",
+      lastName: "Updated",
+    });
+
+    const exactRead = await invokeJson<RootUserResponse>(harness.app, {
+      method: "GET",
+      path: `/v1/root-users/${created.body.rootUserId}`,
+      headers: authHeaders,
+    });
+    expect(exactRead.status).toBe(200);
+    expect(exactRead.body.lastName).toBe("Updated");
+
+    const visibleList = await invokeJson<RootUserListResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users?pageSize=100",
+      headers: authHeaders,
+    });
+    expect(visibleList.status).toBe(200);
+    expect(visibleList.body.items.map((item) => item.rootUserId)).toContain(created.body.rootUserId);
+
+    const deleted = await invokeJson<RootUserResponse>(harness.app, {
+      method: "DELETE",
+      path: `/v1/root-users/${created.body.rootUserId}`,
+      headers: authHeaders,
+    });
+    expect(deleted.status).toBe(200);
+    expect(deleted.body.deletedAt).not.toBeNull();
+
+    const hiddenAfterDelete = await invokeJson<ErrorResponse>(harness.app, {
+      method: "GET",
+      path: `/v1/root-users/${created.body.rootUserId}`,
+      headers: authHeaders,
+    });
+    expect(hiddenAfterDelete.status).toBe(404);
+    expect(hiddenAfterDelete.body.code).toBe("ROOT_USER_NOT_FOUND");
+
+    const deletedList = await invokeJson<RootUserListResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users/deleted?pageSize=100",
+      headers: authHeaders,
+    });
+    expect(deletedList.status).toBe(200);
+    expect(deletedList.body.items.map((item) => item.rootUserId)).toContain(created.body.rootUserId);
+
+    const reactivated = await invokeJson<RootUserResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/root-users/${created.body.rootUserId}/reactivate`,
+      headers: authHeaders,
+      body: {},
+    });
+    expect(reactivated.status).toBe(200);
+    expect(reactivated.body.deletedAt).toBeNull();
+
+    const removed = await invokeJson<RootUserResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/root-users/${created.body.rootUserId}/remove`,
+      headers: authHeaders,
+      body: {},
+    });
+    expect(removed.status).toBe(200);
+    expect(removed.body.anonymized).toBe(true);
+
+    const deniedReactivation = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/root-users/${created.body.rootUserId}/reactivate`,
+      headers: authHeaders,
+      body: {},
+    });
+    expect(deniedReactivation.status).toBe(409);
+    expect(deniedReactivation.body.code).toBe("ROOT_USER_ALREADY_ANONYMIZED");
+
+    const limitedIdentity = harness.seedAuthIdentity({
+      rootUser: {
+        rootUserId: "88888888-8888-4888-8888-888888888888",
+        email: "limited-root@example.test",
+        firstName: "Limited",
+        lastName: "Root",
+      },
+      loginEmail: "limited-root@example.test",
+    });
+    harness.setRootUserCapabilities(limitedIdentity.rootUserId, [
+      "root-auth.password.change.own",
+      "root-auth.session.read.own",
+      "root-auth.session.logout.own",
+      "root-user.read.visible",
+    ]);
+    const limitedSession = await loginViaPasswordAndSsh(harness, limitedIdentity);
+
+    const deniedUpdate = await invokeJson<ErrorResponse>(harness.app, {
+      method: "PATCH",
+      path: `/v1/root-users/${identity.rootUserId}`,
+      headers: { authorization: `Bearer ${limitedSession.sessionId}` },
+      body: {
+        firstName: "Denied",
+      },
+    });
+    expect(deniedUpdate.status).toBe(403);
+    expect(deniedUpdate.body.code).toBe("FORBIDDEN");
   });
 });

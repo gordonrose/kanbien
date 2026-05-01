@@ -31,13 +31,14 @@ across new work.
 | --- | --- | --- |
 | RA-E2E-001 | implemented | `tests/e2e/rootAdmin/operator-journeys.test.ts` proves a root operator session across root-users, tenants, and root-roles seams. |
 | RA-E2E-002 | implemented | `tests/e2e/rootAdmin/operator-journeys.test.ts` proves missing session and missing capability denials for root-admin object access. |
+| RA-E2E-004A | implemented | `tests/e2e/rootAdmin/operator-journeys.test.ts` proves root-users API lifecycle readback for create, edit, visible list, soft delete, deleted list, reactivate, remove/anonymize denial, and limited-root update denial. |
 
 ## Prioritized Backlog
 
 | Backlog ID | Priority | Task Type | Scope | Required Matrix |
 | --- | --- | --- | --- | --- |
 | RA-E2E-003 | P0 | `test-only` | Browser root-admin shell e2e smoke with authenticated session, bootstrap, direct route entry, and logout using the fewest mocks possible. | actor: active root operator, expired session, unauthenticated; permission: allowed, missing shell capability; object: shell route active/missing; boundary: root-only. |
-| RA-E2E-004 | P0 | `test-only` | Root-users browser journey with real API proof for create, edit, list refresh, and reload persistence. | actor: allowed root operator, insufficient root operator; object: active/deleted/anonymized root user; data: malformed/system-managed fields. |
+| RA-E2E-004 | P0 | `test-only` | Root-users browser journey that consumes the real API lifecycle proof from RA-E2E-004A for create, edit, list refresh, and reload persistence with minimal mocks. | actor: allowed root operator, insufficient root operator; object: active/deleted/anonymized root user; data: malformed/system-managed fields. |
 | RA-E2E-005 | P0 | `test-only` | Tenants browser/API journey with create, edit, soft delete, reactivate, remove, and reload proof. | actor: allowed root operator, missing tenant capability; object: active/deleted/removed tenant; boundary: root-owned tenant administration. |
 | RA-E2E-006 | P0 | `test-only` | Root-roles assignment journey with role creation, grant update, assignment, replacement, last-admin/last-role denial, and effective permission readback. | actor: RootUserAdmin, limited role editor; permission: allow/deny; object: active/inactive role and active/deleted target root user. |
 | RA-SEC-001 | P0 | `test-only` | Root-admin permission/state matrix closure for all currently mounted root-admin APIs. | actor, permission, object lifecycle, boundary, operation, and data-shape rows for each privileged route family. |
