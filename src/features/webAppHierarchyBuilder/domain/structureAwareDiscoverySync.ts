@@ -52,6 +52,7 @@ function buildPlannedPageItem(input: {
   pageDepth: number;
   includeMetadataDrift: boolean;
   activeLocatorByKey: Map<string, { webAppPageId: string }>;
+  hasAmbiguousExistingMatch?: boolean;
 }): PlannedItem {
   const desiredDisplayLabel = input.node.displayLabel ?? titleCaseSegment(input.node.nodeKey);
   const proposedLocatorType: WebAppPageLocatorType =
@@ -62,14 +63,28 @@ function buildPlannedPageItem(input: {
       : buildCanonicalPath(input.rootFamily, input.chainNodeSegments);
   const normalizedLocatorKey = normalizeKey(canonicalLocator);
   const locatorOwner = input.activeLocatorByKey.get(normalizedLocatorKey) ?? null;
+  const existingCanonical = input.existingPage?.activeLocator?.canonicalLocator
+    ?? input.existingPage?.resolvedFullRoutePath
+    ?? null;
+  const wouldRewriteLiveLocator =
+    Boolean(input.existingPage)
+    && input.existingPage!.status === "live"
+    && Boolean(existingCanonical)
+    && existingCanonical !== canonicalLocator;
   const blockedReason: BlockedReason =
-    locatorOwner && locatorOwner.webAppPageId !== input.existingPage?.webAppPageId
-      ? "locator_conflict"
-      : input.leafNode.staleAt
-        ? "stale_discovered"
-        : null;
+    input.hasAmbiguousExistingMatch
+      ? "ambiguous_existing_match"
+      : locatorOwner && locatorOwner.webAppPageId !== input.existingPage?.webAppPageId
+        ? "locator_conflict"
+        : wouldRewriteLiveLocator
+          ? "locator_conflict"
+          : input.leafNode.staleAt
+            ? "stale_discovered"
+            : null;
   const driftStatus =
-    blockedReason === "stale_discovered"
+    blockedReason === "ambiguous_existing_match"
+      ? "blocked-ambiguity"
+      : blockedReason === "stale_discovered"
       ? "stale-discovered"
       : blockedReason === "locator_conflict"
         ? "blocked-locator"
@@ -127,6 +142,42 @@ function buildPageKey(rootFamilyId: string, segments: string[]): string {
 
 function buildCanonicalPath(rootFamily: WebAppRootFamilyData, segments: string[]): string {
   return `${rootFamily.routePrefix}/${segments.join("/")}`.replace(/\/+/g, "/");
+}
+
+function isPlausibleExistingPageMatch(input: {
+  page: WebAppPageData;
+  rootFamilyId: DiscoveredWebAppStructureNodeData["rootFamilyId"];
+  pageKey: string;
+  desiredDisplayLabel: string;
+  desiredCanonicalLocator: string;
+  desiredRouteSegment: string;
+}): boolean {
+  if (input.page.rootFamilyId !== input.rootFamilyId || input.page.pageKey === input.pageKey) {
+    return false;
+  }
+  const existingCanonical = input.page.activeLocator?.canonicalLocator
+    ?? input.page.resolvedFullRoutePath
+    ?? null;
+  return (
+    existingCanonical === input.desiredCanonicalLocator
+    || normalizeKey(input.page.displayLabel) === normalizeKey(input.desiredDisplayLabel)
+    || input.page.normalizedRouteSegment === normalizeKey(input.desiredRouteSegment)
+  );
+}
+
+function hasAmbiguousExistingPageMatch(input: {
+  pages: WebAppPageData[];
+  existingPage: WebAppPageData | null;
+  rootFamilyId: DiscoveredWebAppStructureNodeData["rootFamilyId"];
+  pageKey: string;
+  desiredDisplayLabel: string;
+  desiredCanonicalLocator: string;
+  desiredRouteSegment: string;
+}): boolean {
+  if (input.existingPage) {
+    return false;
+  }
+  return input.pages.filter((page) => isPlausibleExistingPageMatch({ ...input, page })).length > 1;
 }
 
 function comparePreviewItems(left: PlannedItem, right: PlannedItem): number {
@@ -405,6 +456,9 @@ async function buildPlannedState(
       && moduleNodeRouteSurface
     ) {
       const existingPage = pageByKey.get(buildPageKey(leafNode.rootFamilyId, [moduleNode.nodeKey])) ?? null;
+      const pageKey = buildPageKey(leafNode.rootFamilyId, [moduleNode.nodeKey]);
+      const desiredCanonicalLocator = buildCanonicalPath(rootFamily, [moduleNode.nodeKey]);
+      const desiredDisplayLabel = moduleNode.displayLabel ?? titleCaseSegment(moduleNode.nodeKey);
       plannedItems.push(
         buildPlannedPageItem({
           node: moduleNode,
@@ -420,6 +474,15 @@ async function buildPlannedState(
           pageDepth: 1,
           includeMetadataDrift: input.includeMetadataDrift !== false,
           activeLocatorByKey,
+          hasAmbiguousExistingMatch: hasAmbiguousExistingPageMatch({
+            pages: pageWithLocators,
+            existingPage,
+            rootFamilyId: leafNode.rootFamilyId,
+            pageKey,
+            desiredDisplayLabel,
+            desiredCanonicalLocator,
+            desiredRouteSegment: moduleNode.nodeKey,
+          }),
         }),
       );
     }
@@ -433,6 +496,11 @@ async function buildPlannedState(
       const pageSegments = moduleNode ? chainNodeSegments.slice(1) : chainNodeSegments;
       const pageKey = buildPageKey(leafNode.rootFamilyId, chainNodeSegments);
       const existingPage = pageByKey.get(pageKey) ?? null;
+      const desiredDisplayLabel = chainNode.displayLabel ?? titleCaseSegment(chainNode.nodeKey);
+      const desiredCanonicalLocator =
+        chainNode === leafNode && linkedSurface?.locatorType === "hash-state"
+          ? linkedSurface.canonicalLocator
+          : buildCanonicalPath(rootFamily, chainNodeSegments);
       const parentSegments = pageSegments.slice(0, -1);
       const parentPageKey = parentSegments.length > 0
         ? buildPageKey(
@@ -456,6 +524,15 @@ async function buildPlannedState(
           pageDepth: index + 1,
           includeMetadataDrift: input.includeMetadataDrift !== false,
           activeLocatorByKey,
+          hasAmbiguousExistingMatch: hasAmbiguousExistingPageMatch({
+            pages: pageWithLocators,
+            existingPage,
+            rootFamilyId: leafNode.rootFamilyId,
+            pageKey,
+            desiredDisplayLabel,
+            desiredCanonicalLocator,
+            desiredRouteSegment: chainNode.nodeKey,
+          }),
         }),
       );
     }

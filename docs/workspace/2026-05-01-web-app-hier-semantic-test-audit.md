@@ -3,7 +3,8 @@
 Date: 2026-05-01
 
 Scope: `WEB-APP-HIER` traced executable tests after the traceability checkpoint
-`fffe416`, plus the semantic-id repair pass on this branch.
+`fffe416`, the semantic-id repair pass, and the implementation-gap closure for
+`EDGE-007` and `EDGE-009`.
 
 ## Purpose
 
@@ -28,11 +29,11 @@ test would fail for the behavior the PRD-derived test case intended to protect.
 
 | Classification | Count | Meaning |
 | --- | ---: | --- |
-| `strong` | 21 | Good semantic protection. |
+| `strong` | 23 | Good semantic protection. |
 | `partial` | 27 | Useful tests, but the documented case is broader than the assertions. |
 | `weak` | 4 | Traceable but shallow; repair should tighten assertions or add durable evidence. |
 | `misleading` | 0 | Traceability id is attached to a materially different behavior. |
-| `implementation-gap` | 2 | PRD semantics exceed current implementation. |
+| `implementation-gap` | 0 | PRD semantics exceed current implementation. |
 
 ## Highest-Risk Findings
 
@@ -40,10 +41,10 @@ test would fail for the behavior the PRD-derived test case intended to protect.
    `UNIT-001`, `UNIT-002`, `UNIT-012`, `UNIT-013`, `INT-007`, `INT-008`,
    `INT-014`, `SEC-006`, `SEC-007`, and `EDGE-001`. The repair pass moved
    those ids onto tests that now assert the intended documented behavior.
-2. The first two traceability-closed edge cases, `EDGE-007` and `EDGE-009`,
-   remain implementation gaps. The tests prove current defensive blocking, not
-   the full ambiguous-match and live-locator semantics from the PRD-derived
-   cases.
+2. The former implementation gaps, `EDGE-007` and `EDGE-009`, now have
+   executable semantic proof. The planner emits `ambiguous_existing_match` when
+   multiple plausible curated pages exist, and it blocks live same-page locator
+   rewrites when no compatibility path is approved.
 3. Audit coverage is mostly response-visible rather than durable
    audit-evidence-visible. The test-case docs allow "equivalent durable
    evidence" in places, but the current tests do not consistently prove durable
@@ -105,20 +106,17 @@ test would fail for the behavior the PRD-derived test case intended to protect.
 | `TC-WEB-APP-HIER-EDGE-004` | `partial` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Proves live move is blocked; does not prove live route-segment update block at integration level. | Add live update route case. |
 | `TC-WEB-APP-HIER-EDGE-005` | `partial` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Proves deterministic order after repeated move; does not cover repeated create/update operations. | Add repeated create/update order assertions. |
 | `TC-WEB-APP-HIER-EDGE-006` | `partial` | `tests/integration/webAppHierarchyBuilder/flow.test.ts` | Proves duplicate same-target move stays stable by response and final tree; does not assert no duplicate rows beyond visible read. | Add repository row-count assertion or persistence-backed proof. |
-| `TC-WEB-APP-HIER-EDGE-007` | `implementation-gap` | `tests/unit/webAppHierarchyBuilder/service.test.ts` | Executable blocks a missing linked surface. The documented case requires multiple plausible curated matches to be blocked. | Implement true ambiguity detection or revise the PRD case if missing-link is the approved v1 behavior. |
+| `TC-WEB-APP-HIER-EDGE-007` | `strong` | `tests/unit/webAppHierarchyBuilder/service.test.ts` | Directly proves multiple plausible curated page matches are blocked with `ambiguous_existing_match` and are not applied. | No immediate repair. |
 | `TC-WEB-APP-HIER-EDGE-008` | `strong` | `tests/unit/webAppHierarchyBuilder/service.test.ts` | Directly proves support-only and review-required leaves are blocked and not imported. | No immediate repair. |
-| `TC-WEB-APP-HIER-EDGE-009` | `implementation-gap` | `tests/unit/webAppHierarchyBuilder/service.test.ts` | Executable blocks locator ownership conflict. The documented case requires blocking same-page live locator rewrites without compatibility path. | Implement live-locator compatibility guard or revise the PRD case. |
+| `TC-WEB-APP-HIER-EDGE-009` | `strong` | `tests/unit/webAppHierarchyBuilder/service.test.ts` | Directly proves a live page with an existing hash-state locator is blocked from automatic same-page path-locator rewrite without a compatibility path. | No immediate repair. |
 | `TC-WEB-APP-HIER-EDGE-010` | `strong` | `tests/unit/webAppHierarchyBuilder/service.test.ts` | Directly proves stale discovered links remain queryable and apply does not delete curated page. | No immediate repair. |
 | `TC-WEB-APP-HIER-EDGE-011` | `strong` | `tests/integration/webAppHierarchyBuilder/persistence.test.ts` | Directly proves impossible mixed locator posture and multiple active locators are rejected. Local execution is Postgres-gated. | Keep in persistence suite; run under `RUN_POSTGRES_TESTS=true` before release. |
 
 ## Recommended Repair Order
 
-1. Address the two implementation gaps explicitly. Either implement the PRD
-   semantics or revise the documented cases so the current v1 safety posture is
-   the approved contract.
-2. Tighten security and audit matrices. These cases protect privileged root
+1. Tighten security and audit matrices. These cases protect privileged root
    admin behavior and should be stronger than route smoke tests.
-3. Expand broad foundation unit cases only where the missing assertions are
+2. Expand broad foundation unit cases only where the missing assertions are
    still part of the intended v1 contract. If the documented cases are too
    broad, split them rather than stuffing unrelated assertions into one test.
 

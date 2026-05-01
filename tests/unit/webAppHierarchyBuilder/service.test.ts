@@ -515,26 +515,28 @@ describe("web app hierarchy builder service", () => {
     );
   });
 
-  it("TC-WEB-APP-HIER-EDGE-009 and TC-ROOT-PATH-UNIT-005 block conflicting migrated root-admin path locator ownership instead of widening route truth", async () => {
+  it("TC-WEB-APP-HIER-EDGE-009 and TC-ROOT-PATH-UNIT-005 block live same-page locator rewrites without a compatibility path", async () => {
     const repository = createInMemoryWebAppHierarchyRepository({
       pages: [
         createPageRecord({
-          webAppPageId: "99999999-9999-4999-8999-999999999999",
-          pageKey: "legacy-root-admin-users-owner",
-          displayLabel: "Legacy Users Owner",
-          resolvedFullRoutePath: "/root-admin/users",
+          webAppPageId: "22222222-2222-4222-8222-222222222222",
+          pageKey: "root-admin-users",
+          displayLabel: "Users",
+          routeSegment: "users",
+          normalizedRouteSegment: "users",
+          resolvedFullRoutePath: "/root-admin#users",
           status: "live",
         }),
       ],
       pageLocators: [
         createPageLocatorRecord({
           webAppPageLocatorId: "88888888-8888-4888-8888-888888888888",
-          webAppPageId: "99999999-9999-4999-8999-999999999999",
-          canonicalLocator: "/root-admin/users",
-          routePath: "/root-admin/users",
-          routeHash: null,
-          normalizedLocatorKey: "/root-admin/users",
-          locatorType: "path",
+          webAppPageId: "22222222-2222-4222-8222-222222222222",
+          canonicalLocator: "/root-admin#users",
+          routePath: "/root-admin",
+          routeHash: "users",
+          normalizedLocatorKey: "/root-admin#users",
+          locatorType: "hash-state",
           isActive: true,
         }),
       ],
@@ -573,61 +575,69 @@ describe("web app hierarchy builder service", () => {
           proposedLocatorType: "path",
           plannedAction: "blocked",
           blockedReason: "locator_conflict",
+          curatedWebAppPageId: "22222222-2222-4222-8222-222222222222",
+          driftStatus: "blocked-locator",
         }),
       ]),
     );
+
+    const applied = await service.applyStructureAwareWebAppHierarchySync({
+      createdByRootAdminUserId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    });
+    expect(applied.applySummary.refreshedLocatorCount).toBe(0);
+    expect((await repository.findPageById("22222222-2222-4222-8222-222222222222"))?.activeLocator)
+      .toMatchObject({
+        locatorType: "hash-state",
+        canonicalLocator: "/root-admin#users",
+      });
   });
 
-  it("TC-WEB-APP-HIER-EDGE-007 blocks unresolvable discovered leaves instead of guessing a curated match", async () => {
-    const repository = createInMemoryWebAppHierarchyRepository();
+  it("TC-WEB-APP-HIER-EDGE-007 blocks ambiguous discovered-to-curated matches instead of guessing", async () => {
+    const repository = createInMemoryWebAppHierarchyRepository({
+      modules: [
+        createModuleRecord(),
+        createModuleRecord({
+          webAppModuleId: "99999999-1111-4111-8111-111111111111",
+          moduleKey: "operations",
+          displayLabel: "Operations",
+        }),
+      ],
+      pages: [
+        createPageRecord({
+          webAppPageId: "33333333-3333-4333-8333-333333333333",
+          pageKey: "legacy-users-a",
+          displayLabel: "Users",
+          routeSegment: "legacy-users-a",
+          normalizedRouteSegment: "legacy-users-a",
+          resolvedFullRoutePath: "/root-admin/legacy-users-a",
+        }),
+        createPageRecord({
+          webAppPageId: "44444444-4444-4444-8444-444444444444",
+          webAppModuleId: "99999999-1111-4111-8111-111111111111",
+          pageKey: "legacy-users-b",
+          displayLabel: "Users",
+          routeSegment: "legacy-users-b",
+          normalizedRouteSegment: "legacy-users-b",
+          resolvedFullRoutePath: "/root-admin/legacy-users-b",
+        }),
+      ],
+    });
     const service = createWebAppHierarchyBuilderService(
       repository,
       createStubWebAppSurfaceDiscoveryIntegrationSeam({
-        async listDiscoveredWebAppStructureTree() {
-          const now = new Date("2026-04-19T12:00:00.000Z");
+        async listDiscoveredWebAppSurfaces() {
           return [
-            {
-              discoveredWebAppStructureNodeId: "11111111-1111-4111-8111-111111111111",
+            createDiscoveredSurfaceRecord({
+              discoveredWebAppSurfaceId: "55555555-5555-4555-8555-555555555555",
               rootFamilyId: "root-admin",
-              structureKey: "root-admin",
-              parentStructureKey: null,
-              parentDiscoveredWebAppStructureNodeId: null,
-              nodeKey: "root-admin",
-              nodeKind: "root",
-              displayLabel: "Root Admin",
-              depth: 0,
-              linkedDiscoveredWebAppSurfaceId: null,
-              providerKey: "test",
-              implementationSourcePath: null,
-              firstDiscoveredRunId: "99999999-9999-4999-8999-999999999999",
-              lastDiscoveredRunId: "99999999-9999-4999-8999-999999999999",
-              firstDiscoveredAt: now,
-              lastDiscoveredAt: now,
-              staleAt: null,
-              createdAt: now,
-              updatedAt: now,
-            },
-            {
-              discoveredWebAppStructureNodeId: "22222222-2222-4222-8222-222222222222",
-              rootFamilyId: "root-admin",
-              structureKey: "root-admin/users",
-              parentStructureKey: "root-admin",
-              parentDiscoveredWebAppStructureNodeId: "11111111-1111-4111-8111-111111111111",
-              nodeKey: "users",
-              nodeKind: "page-surface",
+              routePath: "/root-admin/users",
+              routeHash: null,
+              canonicalLocator: "/root-admin/users",
               displayLabel: "Users",
-              depth: 1,
-              linkedDiscoveredWebAppSurfaceId: null,
-              providerKey: "test",
-              implementationSourcePath: null,
-              firstDiscoveredRunId: "99999999-9999-4999-8999-999999999999",
-              lastDiscoveredRunId: "99999999-9999-4999-8999-999999999999",
-              firstDiscoveredAt: now,
-              lastDiscoveredAt: now,
-              staleAt: null,
-              createdAt: now,
-              updatedAt: now,
-            },
+              surfaceKind: "page-route",
+              locatorType: "path",
+              userFacingDisposition: "user-facing",
+            }),
           ];
         },
       }),
@@ -641,8 +651,9 @@ describe("web app hierarchy builder service", () => {
         expect.objectContaining({
           itemType: "page",
           pageKey: "root-admin-users",
+          canonicalLocator: "/root-admin/users",
           plannedAction: "blocked",
-          blockedReason: "missing_surface_link",
+          blockedReason: "ambiguous_existing_match",
           driftStatus: "blocked-ambiguity",
         }),
       ]),
@@ -652,7 +663,10 @@ describe("web app hierarchy builder service", () => {
       createdByRootAdminUserId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
     });
     expect(applied.applySummary.createdPageCount).toBe(0);
-    expect(await repository.listPages()).toEqual([]);
+    expect((await repository.listPages()).map((item) => item.pageKey).sort()).toEqual([
+      "legacy-users-a",
+      "legacy-users-b",
+    ]);
   });
 
   it("TC-WEB-APP-HIER-EDGE-008 blocks support-only and review-required leaves from default curated imports", async () => {
