@@ -192,6 +192,124 @@ describe("web app hierarchy builder integration flows", () => {
     );
   });
 
+  it("TC-ROOT-PATH-INT-003 keeps discovery truth and curated topology truth aligned for migrated root-admin path locators", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountWebAppHierarchyBuilderFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppHierarchyRepository(),
+      createStubWebAppSurfaceDiscoveryIntegrationSeam({
+        async listDiscoveredWebAppSurfaces() {
+          return [
+            createDiscoveredSurfaceRecord({
+              discoveredWebAppSurfaceId: "55555555-5555-4555-8555-555555555555",
+              rootFamilyId: "root-admin",
+              routePath: "/root-admin/users",
+              routeHash: null,
+              canonicalLocator: "/root-admin/users",
+              displayLabel: "Users",
+              surfaceKind: "page-route",
+              locatorType: "path",
+              userFacingDisposition: "user-facing",
+            }),
+            createDiscoveredSurfaceRecord({
+              discoveredWebAppSurfaceId: "66666666-6666-4666-8666-666666666666",
+              rootFamilyId: "root-admin",
+              routePath: "/root-admin/tenants",
+              routeHash: null,
+              canonicalLocator: "/root-admin/tenants",
+              displayLabel: "Tenants",
+              surfaceKind: "page-route",
+              locatorType: "path",
+              userFacingDisposition: "user-facing",
+            }),
+          ];
+        },
+      }),
+    );
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const preview = await invokeJson<{
+      previewSummary: { createdPageCount: number; blockedItemCount: number };
+      items: Array<{ canonicalLocator: string | null; proposedLocatorType: string | null }>;
+    }>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/discovery-sync/preview",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {},
+    });
+    expect(preview.status).toBe(200);
+    expect(preview.body.previewSummary).toMatchObject({
+      createdPageCount: 2,
+      blockedItemCount: 0,
+    });
+    expect(preview.body.items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ canonicalLocator: "/root-admin/users", proposedLocatorType: "path" }),
+        expect.objectContaining({ canonicalLocator: "/root-admin/tenants", proposedLocatorType: "path" }),
+      ]),
+    );
+
+    const applied = await invokeJson<{
+      tree: {
+        rootFamilies: Array<{
+          rootFamilyId: string;
+          modules: Array<{
+            moduleKey: string;
+            pages: Array<{
+              pageKey: string;
+              resolvedFullRoutePath: string | null;
+              activeLocator: { locatorType: string; canonicalLocator: string; routeHash: string | null } | null;
+            }>;
+          }>;
+        }>;
+      };
+    }>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/discovery-sync/apply",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {
+        includeInactive: false,
+        includeOrphaned: false,
+      },
+    });
+
+    expect(applied.status).toBe(200);
+    expect(applied.body.tree.rootFamilies).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          rootFamilyId: "root-admin",
+          modules: expect.arrayContaining([
+            expect.objectContaining({
+              moduleKey: "root-admin-discovered-routes",
+              pages: expect.arrayContaining([
+                expect.objectContaining({
+                  pageKey: "root-admin-users",
+                  resolvedFullRoutePath: "/root-admin/users",
+                  activeLocator: expect.objectContaining({
+                    locatorType: "path",
+                    canonicalLocator: "/root-admin/users",
+                    routeHash: null,
+                  }),
+                }),
+                expect.objectContaining({
+                  pageKey: "root-admin-tenants",
+                  resolvedFullRoutePath: "/root-admin/tenants",
+                  activeLocator: expect.objectContaining({
+                    locatorType: "path",
+                    canonicalLocator: "/root-admin/tenants",
+                    routeHash: null,
+                  }),
+                }),
+              ]),
+            }),
+          ]),
+        }),
+      ]),
+    );
+  });
+
   it("TC-WEB-APP-HIER-INT-014 syncs canonical-rendering registry pages into the tree route", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(

@@ -138,7 +138,7 @@ describe("web app hierarchy builder audit visibility", () => {
     });
   });
 
-  it("TC-WEB-APP-HIER-AUD-006 keeps denied preview actions visible through platform security audit events", async () => {
+  it("TC-WEB-APP-HIER-AUD-006 and TC-ROOT-PATH-AUD-002 keep denied preview actions visible through platform security audit events", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(
       harness.app,

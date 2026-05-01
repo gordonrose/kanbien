@@ -5,6 +5,14 @@ import {
   markSessionExpired,
   resetToLoginState,
 } from "./state.mjs";
+import {
+  buildCanonicalRootAdminPath,
+  deriveShellPageKeyFromPathname,
+  deriveShellPageKeyFromRoutePath,
+  isKnownRootAdminShellPage,
+  normalizePage,
+  normalizeRootAdminShellPageKey,
+} from "./routeTopology.mjs";
 import { signLoginChallenge } from "./helperClient.mjs";
 import { createWebAppHierarchyPageController } from "./webAppHierarchyPage.mjs";
 import {
@@ -84,11 +92,6 @@ const displaySettingsCopy = {
   },
 };
 
-const pageAliases = {
-  "root-users": "users",
-  "root-roles": "roles",
-};
-
 const rootAdminTopNavPageOrder = [
   "overview",
   "users",
@@ -139,15 +142,6 @@ const pageMetadata = {
     searchPlaceholder: "Search hierarchy routes, modules, or shell guidance",
     searchKeywords: ["hierarchy", "web app hierarchy", "tree", "modules", "pages", "routes"],
   },
-};
-
-const rootAdminCanonicalPaths = {
-  overview: "/root-admin",
-  users: "/root-admin/users",
-  roles: "/root-admin/roles",
-  tenants: "/root-admin/tenants",
-  "tenant-admins": "/root-admin/tenant-admins",
-  "web-app-hierarchy": "/root-admin/web-app-hierarchy",
 };
 
 const state = createInitialState();
@@ -480,51 +474,6 @@ function defaultDisplayIconKeyForPage(pageKey) {
   }
 }
 
-function normalizeRootAdminShellPageKey(pageKey) {
-  if (typeof pageKey !== "string" || pageKey.trim().length === 0) {
-    return null;
-  }
-
-  const trimmed = pageAliases[pageKey.trim()] ?? pageKey.trim();
-  if (Object.hasOwn(pageMetadata, trimmed)) {
-    return trimmed;
-  }
-
-  if (trimmed.startsWith("root-admin-")) {
-    const stripped = trimmed.slice("root-admin-".length);
-    return Object.hasOwn(pageMetadata, stripped) ? stripped : null;
-  }
-
-  return null;
-}
-
-function deriveShellPageKeyFromRoutePath(routePath, fallbackPageKey = "overview") {
-  if (typeof routePath !== "string" || routePath.trim().length === 0) {
-    return fallbackPageKey;
-  }
-
-  const [pathname, hash = ""] = routePath.split("#", 2);
-  if (hash.trim().length > 0) {
-    return normalizePage(hash.trim());
-  }
-
-  const normalizedPath = pathname.replace(/\/+$/, "");
-  if (normalizedPath === "/root-admin") {
-    return fallbackPageKey;
-  }
-
-  const segments = normalizedPath.split("/").filter(Boolean);
-  return normalizePage(segments.at(-1) ?? fallbackPageKey);
-}
-
-function buildCanonicalRootAdminPath(pageKey) {
-  return rootAdminCanonicalPaths[normalizePage(pageKey)] ?? rootAdminCanonicalPaths.overview;
-}
-
-function isKnownRootAdminShellPage(pageKey) {
-  return normalizeRootAdminShellPageKey(pageKey) !== null;
-}
-
 function contextNavHrefForItem(item) {
   if (isKnownRootAdminShellPage(item?.shellPageKey)) {
     return buildCanonicalRootAdminPath(item.shellPageKey);
@@ -559,28 +508,6 @@ function syncBrowserLocationForPathname(pathname, historyMode = "replace") {
 
   const historyMethod = historyMode === "push" ? "pushState" : "replaceState";
   window.history[historyMethod](null, "", nextLocation);
-}
-
-function deriveShellPageKeyFromPathname(pathname, fallbackPageKey = "overview") {
-  if (typeof pathname !== "string" || pathname.trim().length === 0) {
-    return fallbackPageKey;
-  }
-
-  const normalizedPath = pathname.replace(/\/+$/, "");
-  if (normalizedPath === "/root-admin" || normalizedPath === "") {
-    return "overview";
-  }
-
-  const segments = normalizedPath.split("/").filter(Boolean);
-  if (segments[0] !== "root-admin") {
-    return fallbackPageKey;
-  }
-
-  if (segments.length === 1) {
-    return "overview";
-  }
-
-  return normalizePage(segments[1] ?? fallbackPageKey);
 }
 
 function resolvePageLocationFromWindow() {
@@ -840,11 +767,6 @@ function setPageLinkIcon(pageKey, iconKey) {
   if (pageKey === "web-app-hierarchy") {
     renderPageLinkIcon(hierarchyTreeNavButton?.querySelector(".context-nav-icon"), iconKey);
   }
-}
-
-function normalizePage(page) {
-  const normalizedPage = normalizeRootAdminShellPageKey(page);
-  return normalizedPage ?? "overview";
 }
 
 let contextNavRequestId = 0;

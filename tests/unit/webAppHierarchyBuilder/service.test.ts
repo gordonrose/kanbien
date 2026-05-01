@@ -10,6 +10,7 @@ import {
   createStubDesignSystemMaterializer,
   createStubWebAppSurfaceDiscoveryIntegrationSeam,
   createModuleRecord,
+  createPageLocatorRecord,
   createPageRecord,
   refreshInMemoryResolvedPaths,
 } from "../../helpers/webAppHierarchyBuilderHarness";
@@ -93,7 +94,7 @@ describe("web app hierarchy builder service", () => {
     ).rejects.toBeInstanceOf(PageKeyAlreadyExistsError);
   });
 
-  it("TC-WEB-APP-HIER-UNIT-010 previews structure-aware reconcile for multi-segment paths and migrated root-admin path pages", async () => {
+  it("TC-WEB-APP-HIER-UNIT-010 and TC-ROOT-PATH-UNIT-005 preview structure-aware reconcile for multi-segment paths and migrated root-admin path pages", async () => {
     const repository = createInMemoryWebAppHierarchyRepository();
     const service = createWebAppHierarchyBuilderService(
       repository,
@@ -152,6 +153,68 @@ describe("web app hierarchy builder service", () => {
           pageKey: "root-admin-users",
           canonicalLocator: "/root-admin/users",
           proposedLocatorType: "path",
+        }),
+      ]),
+    );
+  });
+
+  it("TC-ROOT-PATH-UNIT-005 blocks conflicting migrated root-admin path locator ownership instead of widening route truth", async () => {
+    const repository = createInMemoryWebAppHierarchyRepository({
+      pages: [
+        createPageRecord({
+          webAppPageId: "99999999-9999-4999-8999-999999999999",
+          pageKey: "legacy-root-admin-users-owner",
+          displayLabel: "Legacy Users Owner",
+          resolvedFullRoutePath: "/root-admin/users",
+        }),
+      ],
+      pageLocators: [
+        createPageLocatorRecord({
+          webAppPageLocatorId: "88888888-8888-4888-8888-888888888888",
+          webAppPageId: "99999999-9999-4999-8999-999999999999",
+          canonicalLocator: "/root-admin/users",
+          routePath: "/root-admin/users",
+          routeHash: null,
+          normalizedLocatorKey: "/root-admin/users",
+          locatorType: "path",
+          isActive: true,
+        }),
+      ],
+    });
+    const service = createWebAppHierarchyBuilderService(
+      repository,
+      createStubWebAppSurfaceDiscoveryIntegrationSeam({
+        async listDiscoveredWebAppSurfaces() {
+          return [
+            createDiscoveredSurfaceRecord({
+              discoveredWebAppSurfaceId: "55555555-5555-4555-8555-555555555555",
+              rootFamilyId: "root-admin",
+              routePath: "/root-admin/users",
+              routeHash: null,
+              canonicalLocator: "/root-admin/users",
+              displayLabel: "Users",
+              surfaceKind: "page-route",
+              locatorType: "path",
+              userFacingDisposition: "user-facing",
+            }),
+          ];
+        },
+      }),
+      createStubDesignSystemMaterializer(),
+    );
+
+    const result = await service.previewStructureAwareWebAppHierarchySync({});
+
+    expect(result.previewSummary.blockedItemCount).toBe(1);
+    expect(result.items).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          itemType: "page",
+          pageKey: "root-admin-users",
+          canonicalLocator: "/root-admin/users",
+          proposedLocatorType: "path",
+          plannedAction: "blocked",
+          blockedReason: "locator_conflict",
         }),
       ]),
     );

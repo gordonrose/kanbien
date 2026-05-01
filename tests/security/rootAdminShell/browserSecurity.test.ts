@@ -108,4 +108,53 @@ describe("root admin shell browser security", () => {
     expect(appSource).not.toContain("sessionStorage");
     expect(appSource).not.toContain("Authorization");
   });
+
+  it("TC-ROOT-PATH-SEC-001 keeps migrated path entry behind protected backend session enforcement", async () => {
+    const harness = createRootAuthIntegrationHarness();
+
+    const unauthenticated = await invokeJson<{ code: string }>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users",
+      headers: {
+        referer: "http://admin.example.test/root-admin/users",
+      },
+    });
+    const invalidSession = await invokeJson<{ code: string }>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users",
+      headers: {
+        authorization: "Bearer expired-or-unknown-session",
+        referer: "http://admin.example.test/root-admin/users",
+      },
+    });
+
+    expect(unauthenticated.status).toBe(401);
+    expect(unauthenticated.body.code).toBe("UNAUTHORIZED");
+    expect(invalidSession.status).toBe(401);
+    expect(invalidSession.body.code).toBe("INVALID_SESSION");
+  });
+
+  it("TC-ROOT-PATH-SEC-002 treats legacy aliases as navigation compatibility, not backend authority", async () => {
+    const harness = createRootAuthIntegrationHarness();
+
+    const legacyAliasReferer = await invokeJson<{ code: string }>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users",
+      headers: {
+        referer: "http://admin.example.test/root-admin#users",
+      },
+    });
+    const unsupportedAliasReferer = await invokeJson<{ code: string }>(harness.app, {
+      method: "GET",
+      path: "/v1/root-users",
+      headers: {
+        referer: "http://admin.example.test/root-admin#unsupported-alias",
+      },
+    });
+
+    expect(legacyAliasReferer.status).toBe(401);
+    expect(legacyAliasReferer.body.code).toBe("UNAUTHORIZED");
+    expect(unsupportedAliasReferer.status).toBe(401);
+    expect(unsupportedAliasReferer.body.code).toBe("UNAUTHORIZED");
+  });
 });

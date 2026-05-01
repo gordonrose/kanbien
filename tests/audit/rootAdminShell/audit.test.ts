@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createRootAuthIntegrationHarness } from "../../harness/rootAuth/integrationHarness";
 import { invokeJson, TestCookieJar } from "../../harness/http";
+import { loginViaPasswordAndSsh } from "../../helpers/webAppHierarchyBuilderHarness";
 
 describe("root admin shell audit visibility", () => {
   it("TC-ROOT-ADMIN-SHELL-AUD-001 records browser login through the existing password and SSH-stage audit events", async () => {
@@ -77,6 +78,41 @@ describe("root admin shell audit visibility", () => {
     expect(harness.getAuthAuditEvents()).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ eventType: "session_revoked", eventOutcome: "success" }),
+      ]),
+    );
+  });
+
+  it("TC-ROOT-PATH-AUD-001 keeps denied protected API calls from migrated path entry audit-visible", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    harness.setRootUserCapabilities(identity.rootUserId, ["root-user.read.visible"]);
+
+    const denied = await invokeJson<{ code: string }>(harness.app, {
+      method: "POST",
+      path: "/v1/root-users",
+      headers: {
+        authorization: `Bearer ${session.sessionId}`,
+        referer: "http://admin.example.test/root-admin/users",
+      },
+      body: {
+        email: "path-denied.root@example.test",
+        firstName: "Path",
+        lastName: "Denied",
+      },
+    });
+    expect(denied.status).toBe(403);
+    expect(denied.body.code).toBe("FORBIDDEN");
+
+    expect(harness.getSecurityAuditEvents()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          eventType: "root_capability_denied",
+          eventOutcome: "failure",
+          rootUserId: identity.rootUserId,
+          authPrincipalId: identity.authPrincipalId,
+        }),
       ]),
     );
   });

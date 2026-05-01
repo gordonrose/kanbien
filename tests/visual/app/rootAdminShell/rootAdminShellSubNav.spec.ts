@@ -619,7 +619,7 @@ test.describe("root-admin shell sub-nav and context-nav adoption", () => {
     await expect(page.locator("#shell-message")).toBeHidden();
   });
 
-  test("real shell banners preserve spacing and clear on navigation by default", async ({ page }) => {
+  test("TC-ROOT-PATH-EDGE-001 real shell banners preserve spacing and clear on navigation by default", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
     await bootstrapAuthenticatedShell(page, "/root-admin/tenant-admins");
 

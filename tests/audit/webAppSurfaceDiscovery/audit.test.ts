@@ -55,7 +55,7 @@ describe("webAppSurfaceDiscovery audit visibility", () => {
     expect(created.body.structureCreatedCount).toBeGreaterThan(0);
   });
 
-  it("TC-WEB-APP-SURF-DISC-AUD-002 keeps denied privileged discovery actions visible through platform security audit events", async () => {
+  it("TC-WEB-APP-SURF-DISC-AUD-002 and TC-ROOT-PATH-AUD-002 keep denied privileged discovery actions visible through platform security audit events", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppSurfaceDiscoveryFeature(
       harness.app,
