@@ -122,6 +122,371 @@ Allowed delivery handoff statuses:
 
 Use stable task IDs such as `T-S001-01`.
 
+## Task Size Guardrail
+
+Layer 4 is a deep-delivery quality gate. A task is not ready for Delivery
+merely because it has a type, write set, and proof command. It must be small
+enough for one durable behavior, decision, or proof target to be delivered
+deeply without guessing.
+
+Allowed task grain classifications:
+
+- `single-behavior`
+- `single-decision`
+- `single-proof-target`
+- `inseparable-two-ac-slice`
+- `split-required`
+- `coarse-blocked`
+
+| Task ID | Task Grain | AC Count | AC Count Rationale | Primary Behavior / Decision / Proof Target | Primary Seam | Main Proof Story | Additional Behaviors Present | Why Not Further Split |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+Queued tasks should usually cover one acceptance criterion. Two ACs are
+allowed only when inseparable and justified. More than two ACs must block
+Delivery handoff. If one AC is itself too broad, block the task and send it
+back for Story Breakdown refinement rather than rewriting the AC in Layer 4.
+
+## Decision Escalation / Stop Conditions
+
+Use this section to record the decisions an implementer must not guess.
+Every queued task needs at least one row. Use `none-known` only when the task
+has no identified decision trigger and the rationale explains why.
+
+Allowed trigger types:
+
+- `none-known`
+- `human-decision`
+- `technical-steering-revisit`
+- `design-system-seam-gap`
+- `product-decision`
+- `architecture-decision`
+- `source-truth-mismatch`
+- `proof-gap`
+
+| Task ID | Trigger Type | Stop Condition / Do Not Guess Decision | Required Escalation | May Proceed If Hit | Rationale |
+| --- | --- | --- | --- | --- | --- |
+
+Use `yes` or `no` for `May Proceed If Hit`. Decision-bearing triggers should
+normally use `no`.
+
+## Exact Starting Context
+
+List the exact source context the implementer must inspect before editing.
+
+| Task ID | Files / Routes / Canonicals To Inspect | Existing Seams To Consume | Governing Source Artifacts |
+| --- | --- | --- | --- |
+
+## Frontend Architecture Decision Reconciliation
+
+For `frontend`, `design-system`, and frontend-affecting `vertical-slice` tasks,
+copy the relevant Layer 2 frontend architecture decisions. Layer 4 packages and
+enforces these decisions; it must not invent route family, product module,
+journey group, topology, locator, authority, state, shell, design-system
+prerequisite, or materialization posture.
+
+| Task ID | Source Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Source Steering Decision |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+Source placement defaults:
+
+- `shell-bootstrap` and `shell-route-registry` may touch shell entry files
+  only for bootstrap, route resolution, navigation registry, or shell
+  composition; `shell-route-registry` may own registry/route mounting only, not
+  page or journey behavior
+- `module-journey-files` is required for page, module, or journey behavior and
+  must not add behavior to root shell entry files such as
+  `src/frontend/rootAdminShell/assets/app.mjs`; allowed write paths must name
+  the approved product module/journey group or explain `path-unknown:` when the
+  exact path is not known yet
+- `design-system-family-files` is required for design-system-owned render,
+  behavior, accessibility, and app-consumption seams
+- `generated-output` requires `Materialization Model` =
+  `preview-apply-required`, a named preview/apply or materialization seam, and
+  no hand edits unless the task is an explicitly approved generated/canonical
+  sweep
+
+## Frontend / Design-System Sub-Standard
+
+For `frontend`, `design-system`, and frontend-affecting `vertical-slice` tasks,
+name the primary sub-standard. Complex frontend or design-system work must
+split when fixture/data contracts, visual rendering, interaction behavior,
+accessibility semantics, and evidence sweep are independently meaningful.
+
+Allowed sub-standards:
+
+- `not-applicable`
+- `fixture-data-contract`
+- `visual-rendering`
+- `interaction-behavior`
+- `accessibility-semantics`
+- `evidence-sweep`
+
+Proof expectations:
+
+- `fixture-data-contract` requires contract, fixture, and live/runtime payload
+  proof.
+- `visual-rendering` requires a canonical screenshot or evidence artifact name.
+- `interaction-behavior` requires an exact state transition or interaction
+  scenario name.
+- `accessibility-semantics` requires role, name, state, and focus proof.
+- `evidence-sweep` requires exact evidence artifact names and sweep scope.
+- `not-applicable` is allowed only with concrete rationale and only where the
+  task type permits it.
+
+| Task ID | Primary Sub-Standard | Additional Sub-Standards | Split Rationale | Required Compliance Proof |
+| --- | --- | --- | --- | --- |
+
+## Frontend Performance Posture
+
+For queued `frontend`, `design-system`, and frontend-facing `vertical-slice`
+tasks, classify frontend performance risk. Layer 4 must not invent new
+frontend architecture decisions, but it must package enough proof for the
+primary frontend/design-system work.
+
+Allowed postures:
+
+- `static-low-risk`
+- `interactive-low-risk`
+- `data-list-or-table`
+- `route-initialization`
+- `large-dom-or-canvas`
+- `asset-heavy`
+- `animation-or-transition-heavy`
+- `not-applicable`
+- `unknown-blocked`
+
+Proof expectations:
+
+- `static-low-risk`: explain why render proof is sufficient and no
+  performance-specific proof is needed.
+- `interactive-low-risk`: interaction scenario proves no repeated work or fetch
+  loop.
+- `data-list-or-table`: bounded data-size scenario and DOM/list/table rendering
+  proof.
+- `route-initialization`: route init/load proof or Lighthouse/trace evidence
+  where appropriate.
+- `large-dom-or-canvas`: bounded DOM/canvas size plus nonblank and interaction
+  proof.
+- `asset-heavy`: asset size/loading strategy and rendered asset evidence.
+- `animation-or-transition-heavy`: interaction/transition timing or
+  reduced-motion behavior proof.
+- `not-applicable`: concrete rationale required.
+- `unknown-blocked`: blocks Delivery handoff.
+
+| Task ID | Performance Posture | Evidence / Proof Plan | Rationale |
+| --- | --- | --- | --- |
+
+## Design-System Seam Contract
+
+Design-system tasks must produce, refine, or prove a seam that frontend tasks
+can consume. Frontend tasks must consume an existing signed-off seam or record
+an approved exception; they must not recreate governed render structure,
+controller behavior, ARIA/state semantics, or page CSS locally.
+
+Allowed seam postures:
+
+- `not-applicable`
+- `produces-consumable-seam`
+- `refines-existing-seam`
+- `proves-existing-seam`
+- `consumes-existing-seam`
+- `approved-exception`
+- `blocks-on-missing-seam`
+
+| Task ID | Seam Posture | Seam Name / Export / Route | Owned Render Structure | Owned Behavior Controller | Owned Accessibility Semantics | Canonical / Behavior Lock / Evidence | Frontend Consumption Contract |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Frontend Adoption Contract
+
+Queued `frontend` tasks with Design-System Seam Contract posture
+`consumes-existing-seam` must record the exact adoption contract. Layer 4 must
+make the consumer boundary deterministic: the app may compose and bind data
+around signed-off design-system seams, but must not reconstruct governed
+markup, controller behavior, ARIA/state semantics, or CSS locally.
+
+Use concrete `not-applicable:` rationale when a seam type genuinely does not
+apply, such as a static render seam with no behavior/controller seam.
+
+| Task ID | Consumed DS Render Seam | Consumed DS Behavior / Controller Seam | Consumed DS Accessibility Semantics | Consumed DS Style / CSS Seam | Allowed App-Local Composition / Data Binding | Forbidden Local Reconstruction | Adoption Proof Route / Scenario |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Frontend Security Evidence
+
+For `frontend`, `design-system`, and frontend-affecting `vertical-slice` tasks,
+copy the relevant Layer 2/3 Browser Security Posture rows. Layer 4 packages and
+enforces the proof plan; it must not invent whether a browser security area is
+present. If Layer 2/3 says an area is present or `Stop If Missing` is `yes`,
+the queued task needs a matching row or it must block.
+
+Allowed security areas:
+
+- `session-cookie`
+- `csp-assets`
+- `privileged-helper`
+- `csrf-mutation`
+- `url-replay-state`
+- `sensitive-rendering`
+- `asset-delivery`
+- `not-applicable`
+
+Use `yes`, `no`, or `blocked` for `Source Present`.
+
+| Task ID | Security Area | Source Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Layer 4 Evidence Plan / Blocking Reason |
+| --- | --- | --- | --- | --- | --- |
+
+## Frontend Permission Rendering Evidence
+
+Frontend, design-system, and frontend-facing vertical-slice tasks that render
+privileged, tenant, user, role, asset, lifecycle, or otherwise sensitive data
+must carry permission-aware rendering proof notes. Tenant-scoped rendering must
+include cross-tenant denial proof.
+
+| Task ID | Sensitive Rendering Scope | Allowed State Proof | Denied / Unauthorized State Proof | Expired / Unauthenticated State Proof | Cross-Tenant Denial Proof |
+| --- | --- | --- | --- | --- | --- |
+
+## Frontend Runtime Data And Mock Honesty
+
+Frontend, design-system, and frontend-facing vertical-slice tasks that render
+API or projection data must tie rendered proof to the governing contract and a
+live/runtime payload, or explain why runtime payload evidence is unavailable.
+Rendered proof that uses only mocks without a contract/runtime tie blocks.
+
+| Task ID | Governing API / Projection Contract | Fixture Source | Live / Runtime Payload Evidence | Runtime Evidence Unavailable Reason | Mock-Honesty Statement |
+| --- | --- | --- | --- | --- | --- |
+
+## Vertical Slice Coupling
+
+Queued `vertical-slice` tasks must prove why backend and frontend work are
+inseparable for exactly one journey behavior. Use a vertical slice only when one
+proof story must cross API/data/browser boundaries together. Split work into
+backend, frontend, design-system, migration/persistence, test-only, or
+QA/evidence tasks when those concerns can be delivered and proven separately.
+
+| Task ID | Journey Behavior | Backend Seam | Frontend Seam | API / Data Contract | Browser Proof Story | Why Backend And Frontend Proof Are Inseparable | Split Rejection Rationale |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Backend Implementation Approach
+
+Queued `backend` tasks must translate repo-wide architecture law into the
+specific implementation approach for this task without copying the full
+constitution into the packet.
+
+Allowed capability file strategies:
+
+- `new-capability-file`
+- `existing-capability-file`
+- `service-composition-only`
+- `transport-only`
+- `not-applicable-with-rationale`
+
+| Task ID | Feature Owner | Capability File Strategy | Expected Files / Layers | Layer Responsibilities | Public Seam / Manifest Impact | Formatting / Generated Artifact Expectations |
+| --- | --- | --- | --- | --- | --- | --- |
+
+Use this to name whether the task adds or updates
+`domain/<capabilityName>.ts`, keeps `domain/service.ts` as composition,
+touches `contract/`, `persistence/`, `transport/`, `integration.ts`,
+`index.ts`, or `feature.manifest.json`, and which source-independent artifacts
+or generated artifacts must stay aligned.
+
+## Migration / Persistence Approach
+
+Queued `migration/persistence` tasks must name the exact persistence change
+class, live-schema posture, source data shape validation, per-row migration
+eligibility validation, rejected-row behavior, migration identity posture, SQL
+execution semantics, representative read/write proof, and shared Postgres
+harness impact before Delivery starts.
+
+Allowed change types:
+
+- `live-schema-inspection`
+- `new-migration`
+- `corrective-migration`
+- `repository-query-semantics`
+- `index-or-constraint`
+- `normalization-or-uniqueness`
+- `postgres-harness-update`
+- `not-applicable-with-rationale`
+
+| Task ID | Change Type | Live Schema Check | Source Data Shape Validation | Per-Row Eligibility Validation | Rejected Row Behavior | Migration Identity / Applied File Posture | SQL Execution Semantics Check | Representative Read / Write Proof | Postgres Harness Impact |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+Use this to keep migration identity, live schema, code, indexes, normalization,
+repository behavior, and shared persistence harness obligations explicit.
+Data-transforming migrations must validate the overall source data shape before
+mutation and validate each row's eligibility before transforming it. Rows that
+do not match the approved source shape must fail closed, quarantine/report, or
+follow an approved corrective/manual repair path rather than being silently
+migrated.
+
+## Tight Allowed Write Envelope
+
+Prefer exact files over broad directories. Broad frontend or design-system
+write sets are blocked by default for queued implementation tasks unless the
+task is explicitly an audit, migration, generated/canonical sweep, or another
+approved broad-scope task with strong rationale.
+
+Allowed envelope classes:
+
+- `exact-files`
+- `narrow-pattern`
+- `broad-pattern-justified`
+- `broad-pattern-blocked`
+
+| Task ID | Envelope Class | Exact Files Or Narrow Patterns | Broad Write Rationale |
+| --- | --- | --- | --- |
+
+## Task-Specific Proof Plan
+
+Queued tasks need at least one task-specific proof target. Broad commands can
+supplement the task-specific proof, but they cannot be the only proof unless
+the task type is intentionally broad and the rationale explains why.
+
+Allowed proof specificity statuses:
+
+- `task-specific`
+- `broad-with-rationale`
+- `blocked`
+
+| Task ID | Proof Specificity | Task-Specific Test / Scenario / Evidence Name | Broad Proof Rationale |
+| --- | --- | --- | --- |
+
+## Test-Only Coverage Contract
+
+Queued `test-only` tasks must say exactly what kind of test work they perform.
+Use this task type for PRD-derived `TC-*` implementation, isolated proof-gap
+tests, security/permutation matrix tests, or e2e journey tests. Do not use it
+when production behavior must change.
+
+Allowed production behavior change postures:
+
+- `no-production-change`
+- `test-harness-only`
+- `blocked-production-change-required`
+
+| Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Capability Permission / State Matrix
+
+Privileged, root-admin, tenant-boundary, authz, sensitive-rendering, asset,
+lifecycle, and security-sensitive `test-only` tasks must carry an explicit
+matrix. The matrix should name the allowed path and the meaningful denied or
+edge states rather than relying on a happy-path-only test.
+
+Use concrete `not-applicable:` rationale only for ordinary non-sensitive test
+work.
+
+| Task ID | Capability / Route / Object | Actor States Covered | Permission States Covered | Object Lifecycle States Covered | Boundary States Covered | Required Negative Cases | Not Applicable Rationale | Missing Coverage / Follow-Up Task |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Forbidden Assumptions
+
+Record product, design, architecture, source-truth, or proof assumptions the
+implementer must not invent.
+
+| Task ID | Forbidden Assumption | Escalation Path |
+| --- | --- | --- |
+
 ## Task-Type Approval Guardrails
 
 Each task must route to the guardrail reference that matches its task type.

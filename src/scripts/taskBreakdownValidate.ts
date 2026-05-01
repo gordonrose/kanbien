@@ -1,6 +1,49 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+import {
+  layer4BackendCapabilityFileStrategies,
+  layer4CapabilityCoverageStatuses,
+  layer4DesignSystemSeamPostures,
+  layer4FoundationBlockerTypes,
+  layer4FoundationTaskTypes,
+  layer4FrontendDesignSystemSubStandards,
+  layer4FrontendPerformancePostures,
+  layer4FrontendTaskTypes,
+  layer4GuardrailEvidenceStatuses,
+  layer4GuardrailReferenceByTaskType,
+  layer4ImplementationTaskTypes,
+  layer4MigrationPersistenceChangeTypes,
+  layer4PlacementDecisions,
+  layer4ProceedIfTriggerHitValues,
+  layer4ProofSpecificityStatuses,
+  layer4RequiredCheckIdsByTaskType,
+  layer4SharedCodePlacementCheckIds,
+  layer4StopConditionTriggerTypes,
+  layer4SuspiciousCoarseScopePhrases,
+  layer4TaskGrainClassifications,
+  layer4TaskStatuses,
+  layer4TaskTypes,
+  layer4WriteEnvelopeClasses,
+  layer4WriteClasses,
+  frontendActorScopes,
+  frontendAuthorityTransitionPostures,
+  frontendBrowserSecurityAreas,
+  frontendDesignSystemPrerequisites,
+  frontendImplementationReadiness,
+  frontendLocatorTypes,
+  frontendMaterializationModels,
+  frontendRouteFamilies,
+  frontendRouteVisibilities,
+  frontendRuntimeShapes,
+  frontendShellGovernancePostures,
+  frontendSourcePlacements,
+  frontendStateOwners,
+  frontendSurfaceClasses,
+  frontendTopologyAuthorities,
+  frontendTopologyClasses,
+} from "./featureCompiler/contracts";
+
 const requiredHeadings = [
   "# Task Breakdown",
   "## Status",
@@ -11,6 +54,25 @@ const requiredHeadings = [
   "## Story Acceptance Criteria Snapshot",
   "## Story Capability And Artifact Snapshot",
   "## Task Queue",
+  "## Task Size Guardrail",
+  "## Decision Escalation / Stop Conditions",
+  "## Exact Starting Context",
+  "## Frontend Architecture Decision Reconciliation",
+  "## Frontend / Design-System Sub-Standard",
+  "## Frontend Performance Posture",
+  "## Design-System Seam Contract",
+  "## Frontend Adoption Contract",
+  "## Frontend Security Evidence",
+  "## Frontend Permission Rendering Evidence",
+  "## Frontend Runtime Data And Mock Honesty",
+  "## Vertical Slice Coupling",
+  "## Backend Implementation Approach",
+  "## Migration / Persistence Approach",
+  "## Tight Allowed Write Envelope",
+  "## Task-Specific Proof Plan",
+  "## Test-Only Coverage Contract",
+  "## Capability Permission / State Matrix",
+  "## Forbidden Assumptions",
   "## Task-Type Approval Guardrails",
   "## Task Guardrail Evidence",
   "## Code Placement And Extraction Review",
@@ -33,194 +95,54 @@ const storyHeadings = [
   "## Capability Mapping",
   "## Artifact Ledger",
   "## Steering Architecture Classification Snapshot",
+  "## Frontend Architecture Classification Snapshot",
+  "## Browser Security Posture Snapshot",
   "## Task-Type Signal Matrix",
   "## Layer 4 Handoff",
 ];
 
-const allowedTaskTypes = new Set([
-  "backend",
-  "frontend",
-  "vertical-slice",
-  "docs-artifact",
-  "test-only",
-  "refactor-first",
-  "architecture-foundation",
-  "standards-compliance",
-  "platform-seam",
-  "migration/persistence",
-  "design-system",
-  "API-contract",
-  "permission-mapping",
-  "data-dictionary",
-  "QA/evidence",
-]);
-
-const allowedTaskStatuses = new Set(["draft", "blocked", "queued-for-delivery", "superseded"]);
-const allowedCapabilityCoverageStatuses = new Set(["approved", "not-capability-backed", "blocked-missing-row"]);
-
-const foundationBlockerTypes = new Set(["refactor-first", "architecture-foundation"]);
-const foundationTaskTypes = new Set(["refactor-first", "architecture-foundation"]);
-const implementationTaskTypes = new Set([
-  "backend",
-  "frontend",
-  "vertical-slice",
-  "migration/persistence",
-  "design-system",
-  "platform-seam",
-]);
-
-const guardrailReferenceByTaskType = new Map([
-  ["backend", "backend-task-guardrail.md"],
-  ["frontend", "frontend-task-guardrail.md"],
-  ["vertical-slice", "vertical-slice-task-guardrail.md"],
-  ["docs-artifact", "docs-artifact-task-guardrail.md"],
-  ["test-only", "test-only-task-guardrail.md"],
-  ["refactor-first", "refactor-first-task-guardrail.md"],
-  ["architecture-foundation", "architecture-foundation-task-guardrail.md"],
-  ["standards-compliance", "standards-compliance-task-guardrail.md"],
-  ["platform-seam", "platform-seam-task-guardrail.md"],
-  ["migration/persistence", "migration-persistence-task-guardrail.md"],
-  ["design-system", "design-system-task-guardrail.md"],
-  ["API-contract", "api-contract-task-guardrail.md"],
-  ["permission-mapping", "permission-mapping-task-guardrail.md"],
-  ["data-dictionary", "data-dictionary-task-guardrail.md"],
-  ["QA/evidence", "qa-evidence-task-guardrail.md"],
-]);
-
-const allowedPlacementDecisions = new Set(["feature-local", "platform-seam", "shared-lib", "stay-put", "blocked"]);
-const allowedGuardrailEvidenceStatuses = new Set(["pass", "blocked"]);
-const allowedWriteClasses = new Set([
-  "feature-local",
-  "platform-seam",
-  "test",
-  "docs-artifact",
-  "generated-artifact",
-  "config-script",
-  "blocked",
-]);
-
-const requiredCheckIdsByTaskType = new Map([
-  ["backend", [
-    "backend-owning-feature",
-    "backend-feature-structure",
-    "backend-cross-feature-seams",
-    "backend-authz-tenant",
-    "backend-persistence-migration",
-    "backend-artifacts",
-    "backend-proof-commands",
-  ]],
-  ["frontend", [
-    "frontend-design-system-seam",
-    "frontend-no-app-css",
-    "frontend-no-copied-behavior",
-    "frontend-accessibility-state",
-    "frontend-rendered-proof",
-    "frontend-runtime-evidence",
-    "frontend-artifacts",
-  ]],
-  ["vertical-slice", [
-    "vertical-backend-seam",
-    "vertical-frontend-seam",
-    "vertical-api-data-shape",
-    "vertical-browser-workflow",
-    "vertical-mock-honesty",
-    "vertical-artifacts",
-    "vertical-proof-commands",
-  ]],
-  ["docs-artifact", [
-    "docs-source-truth-reviewed",
-    "docs-stale-artifact-sweep",
-    "docs-status-posture",
-    "docs-validation-command",
-  ]],
-  ["test-only", [
-    "test-traceability",
-    "test-proof-layer",
-    "test-mock-honesty",
-    "test-no-behavior-change",
-    "test-command",
-  ]],
-  ["refactor-first", [
-    "refactor-existing-behavior",
-    "refactor-affected-consumers",
-    "refactor-compatibility-proof",
-    "refactor-downstream-unblocker",
-    "refactor-no-product-change",
-  ]],
-  ["architecture-foundation", [
-    "architecture-adrs-reviewed",
-    "architecture-decision-owner",
-    "architecture-output-path",
-    "architecture-downstream-block",
-    "architecture-compatibility",
-  ]],
-  ["standards-compliance", [
-    "standards-gate-named",
-    "standards-posture-recorded",
-    "standards-command",
-    "standards-status-artifact",
-  ]],
-  ["platform-seam", [
-    "platform-seam-owner",
-    "platform-not-feature-local",
-    "platform-consumers",
-    "platform-compatibility-proof",
-    "platform-artifact-impact",
-    "platform-architecture-impact",
-  ]],
-  ["migration/persistence", [
-    "migration-live-schema",
-    "migration-applied-file-safety",
-    "migration-index-normalization",
-    "migration-read-write-proof",
-    "migration-postgres-harness",
-  ]],
-  ["design-system", [
-    "design-system-family",
-    "design-system-behavior-lock",
-    "design-system-render-behavior",
-    "design-system-visual-proof",
-    "design-system-adoption-path",
-  ]],
-  ["API-contract", [
-    "api-route-family",
-    "api-request-response",
-    "api-authz-validation",
-    "api-compatibility",
-    "api-maintained-artifacts",
-    "api-validation-command",
-  ]],
-  ["permission-mapping", [
-    "permission-capability-rows",
-    "permission-boundary",
-    "permission-allow-deny",
-    "permission-grants-migration",
-    "permission-authz-proof",
-  ]],
-  ["data-dictionary", [
-    "data-entity-table",
-    "data-source-reviewed",
-    "data-field-index-lifecycle",
-    "data-durable-facts",
-    "data-validation-proof",
-  ]],
-  ["QA/evidence", [
-    "qa-proof-target",
-    "qa-command-plan",
-    "qa-runtime-evidence",
-    "qa-mock-honesty",
-    "qa-evidence-status",
-  ]],
-]);
-
-const sharedCodePlacementCheckIds = [
-  "shared-code-current-owner",
-  "shared-code-proposed-owner",
-  "shared-code-location-rationale",
-  "shared-code-existing-consumers",
-  "shared-code-compatibility-proof",
-  "shared-code-extraction-task",
-];
+const allowedTaskTypes: Set<string> = new Set(layer4TaskTypes);
+const allowedTaskStatuses: Set<string> = new Set(layer4TaskStatuses);
+const allowedCapabilityCoverageStatuses: Set<string> = new Set(layer4CapabilityCoverageStatuses);
+const foundationBlockerTypes: Set<string> = new Set(layer4FoundationBlockerTypes);
+const foundationTaskTypes: Set<string> = new Set(layer4FoundationTaskTypes);
+const implementationTaskTypes: Set<string> = new Set(layer4ImplementationTaskTypes);
+const frontendTaskTypes: Set<string> = new Set(layer4FrontendTaskTypes);
+const guardrailReferenceByTaskType: Map<string, string> = new Map(Object.entries(layer4GuardrailReferenceByTaskType));
+const allowedPlacementDecisions: Set<string> = new Set(layer4PlacementDecisions);
+const allowedGuardrailEvidenceStatuses: Set<string> = new Set(layer4GuardrailEvidenceStatuses);
+const allowedWriteClasses: Set<string> = new Set(layer4WriteClasses);
+const allowedTaskGrainClassifications: Set<string> = new Set(layer4TaskGrainClassifications);
+const allowedStopConditionTriggerTypes: Set<string> = new Set(layer4StopConditionTriggerTypes);
+const allowedProceedIfTriggerHitValues: Set<string> = new Set(layer4ProceedIfTriggerHitValues);
+const allowedWriteEnvelopeClasses: Set<string> = new Set(layer4WriteEnvelopeClasses);
+const allowedProofSpecificityStatuses: Set<string> = new Set(layer4ProofSpecificityStatuses);
+const allowedFrontendDesignSystemSubStandards: Set<string> = new Set(layer4FrontendDesignSystemSubStandards);
+const allowedFrontendPerformancePostures: Set<string> = new Set(layer4FrontendPerformancePostures);
+const allowedDesignSystemSeamPostures: Set<string> = new Set(layer4DesignSystemSeamPostures);
+const allowedBackendCapabilityFileStrategies: Set<string> = new Set(layer4BackendCapabilityFileStrategies);
+const allowedMigrationPersistenceChangeTypes: Set<string> = new Set(layer4MigrationPersistenceChangeTypes);
+const suspiciousCoarseScopePhrases: string[] = [...layer4SuspiciousCoarseScopePhrases];
+const requiredCheckIdsByTaskType: Map<string, readonly string[]> = new Map(Object.entries(layer4RequiredCheckIdsByTaskType));
+const sharedCodePlacementCheckIds: string[] = [...layer4SharedCodePlacementCheckIds];
+const allowedFrontendRouteFamilies: Set<string> = new Set(frontendRouteFamilies);
+const allowedFrontendRuntimeShapes: Set<string> = new Set(frontendRuntimeShapes);
+const allowedFrontendSurfaceClasses: Set<string> = new Set(frontendSurfaceClasses);
+const allowedFrontendTopologyClasses: Set<string> = new Set(frontendTopologyClasses);
+const allowedFrontendLocatorTypes: Set<string> = new Set(frontendLocatorTypes);
+const allowedFrontendTopologyAuthorities: Set<string> = new Set(frontendTopologyAuthorities);
+const allowedFrontendAuthorityTransitionPostures: Set<string> = new Set(frontendAuthorityTransitionPostures);
+const allowedFrontendStateOwners: Set<string> = new Set(frontendStateOwners);
+const allowedFrontendShellGovernancePostures: Set<string> = new Set(frontendShellGovernancePostures);
+const allowedFrontendDesignSystemPrerequisites: Set<string> = new Set(frontendDesignSystemPrerequisites);
+const allowedFrontendMaterializationModels: Set<string> = new Set(frontendMaterializationModels);
+const allowedFrontendRouteVisibilities: Set<string> = new Set(frontendRouteVisibilities);
+const allowedFrontendActorScopes: Set<string> = new Set(frontendActorScopes);
+const allowedFrontendImplementationReadiness: Set<string> = new Set(frontendImplementationReadiness);
+const allowedFrontendSourcePlacements: Set<string> = new Set(frontendSourcePlacements);
+const allowedFrontendBrowserSecurityAreas: Set<string> = new Set(frontendBrowserSecurityAreas);
+const allowedSecurityPresence = new Set(["yes", "no", "blocked"]);
+const allowedYesNo = new Set(["yes", "no"]);
 
 const vaguePhrases = [
   "implement feature",
@@ -317,6 +239,234 @@ type TaskRow = {
   dependencies: string;
   sharedSeams: string;
   handoffStatus: string;
+};
+
+type TaskSizeGuardrailRow = {
+  taskId: string;
+  taskGrain: string;
+  acCount: string;
+  acCountRationale: string;
+  primaryTarget: string;
+  primarySeam: string;
+  mainProofStory: string;
+  additionalBehaviorsPresent: string;
+  whyNotFurtherSplit: string;
+};
+
+type StopConditionRow = {
+  taskId: string;
+  triggerType: string;
+  stopCondition: string;
+  requiredEscalation: string;
+  mayProceedIfHit: string;
+  rationale: string;
+};
+
+type StartingContextRow = {
+  taskId: string;
+  filesRoutesCanonicals: string;
+  seamsToConsume: string;
+  governingArtifacts: string;
+};
+
+type FrontendArchitectureDecisionRow = {
+  taskId: string;
+  sourceScopeElement: string;
+  routeFamily: string;
+  productModule: string;
+  journeyGroup: string;
+  routeVisibility: string;
+  actorScope: string;
+  runtimeShape: string;
+  surfaceClass: string;
+  topologyClass: string;
+  locatorType: string;
+  canonicalLocator: string;
+  compatibilityLocators: string;
+  topologyAuthority: string;
+  targetTopologyAuthority: string;
+  authorityTransitionPosture: string;
+  stateOwner: string;
+  shellGovernance: string;
+  designSystemPrerequisite: string;
+  materializationModel: string;
+  sourcePlacement: string;
+  implementationReadiness: string;
+  sourceSteeringDecision: string;
+};
+
+type SourceFrontendArchitectureClassificationRow = {
+  scopeElement: string;
+  routeFamily: string;
+  productModule: string;
+  journeyGroup: string;
+  routeVisibility: string;
+  actorScope: string;
+  runtimeShape: string;
+  surfaceClass: string;
+  topologyClass: string;
+  locatorType: string;
+  canonicalLocator: string;
+  compatibilityLocators: string;
+  topologyAuthority: string;
+  targetTopologyAuthority: string;
+  authorityTransitionPosture: string;
+  stateOwner: string;
+  shellGovernance: string;
+  designSystemPrerequisite: string;
+  materializationModel: string;
+  sourcePlacement: string;
+  implementationReadiness: string;
+};
+
+type SourceBrowserSecurityPostureRow = {
+  securityArea: string;
+  present: string;
+  decisionEvidence: string;
+  requiredLayer4Signal: string;
+  stopIfMissing: string;
+};
+
+type FrontendSubStandardRow = {
+  taskId: string;
+  primarySubStandard: string;
+  additionalSubStandards: string;
+  splitRationale: string;
+  complianceProof: string;
+};
+
+type FrontendPerformancePostureRow = {
+  taskId: string;
+  posture: string;
+  proofPlan: string;
+  rationale: string;
+};
+
+type FrontendSecurityEvidenceRow = {
+  taskId: string;
+  securityArea: string;
+  sourcePresent: string;
+  layer2DecisionEvidence: string;
+  requiredLayer4Signal: string;
+  layer4EvidencePlan: string;
+};
+
+type FrontendPermissionRenderingEvidenceRow = {
+  taskId: string;
+  sensitiveRenderingScope: string;
+  allowedStateProof: string;
+  deniedUnauthorizedStateProof: string;
+  expiredUnauthenticatedStateProof: string;
+  crossTenantDenialProof: string;
+};
+
+type FrontendRuntimeDataMockHonestyRow = {
+  taskId: string;
+  governingContract: string;
+  fixtureSource: string;
+  liveRuntimePayloadEvidence: string;
+  unavailableReason: string;
+  mockHonestyStatement: string;
+};
+
+type VerticalSliceCouplingRow = {
+  taskId: string;
+  journeyBehavior: string;
+  backendSeam: string;
+  frontendSeam: string;
+  apiDataContract: string;
+  browserProofStory: string;
+  inseparableProofRationale: string;
+  splitRejectionRationale: string;
+};
+
+type DesignSystemSeamContractRow = {
+  taskId: string;
+  seamPosture: string;
+  seamNameExportRoute: string;
+  ownedRenderStructure: string;
+  ownedBehaviorController: string;
+  ownedAccessibilitySemantics: string;
+  canonicalBehaviorLockEvidence: string;
+  frontendConsumptionContract: string;
+};
+
+type FrontendAdoptionContractRow = {
+  taskId: string;
+  consumedRenderSeam: string;
+  consumedBehaviorControllerSeam: string;
+  consumedAccessibilitySemantics: string;
+  consumedStyleCssSeam: string;
+  allowedAppLocalCompositionDataBinding: string;
+  forbiddenLocalReconstruction: string;
+  adoptionProofRouteScenario: string;
+};
+
+type BackendImplementationApproachRow = {
+  taskId: string;
+  featureOwner: string;
+  capabilityFileStrategy: string;
+  expectedFilesLayers: string;
+  layerResponsibilities: string;
+  publicSeamManifestImpact: string;
+  formattingGeneratedArtifactExpectations: string;
+};
+
+type MigrationPersistenceApproachRow = {
+  taskId: string;
+  changeType: string;
+  liveSchemaCheck: string;
+  sourceDataShapeValidation: string;
+  perRowEligibilityValidation: string;
+  rejectedRowBehavior: string;
+  migrationIdentityPosture: string;
+  sqlExecutionSemanticsCheck: string;
+  representativeReadWriteProof: string;
+  postgresHarnessImpact: string;
+};
+
+type TightWriteEnvelopeRow = {
+  taskId: string;
+  envelopeClass: string;
+  exactFilesOrPatterns: string;
+  broadWriteRationale: string;
+};
+
+type TaskSpecificProofPlanRow = {
+  taskId: string;
+  proofSpecificity: string;
+  taskSpecificProofName: string;
+  broadProofRationale: string;
+};
+
+type TestOnlyCoverageContractRow = {
+  taskId: string;
+  coverageSource: string;
+  traceabilityIds: string;
+  testLayer: string;
+  proofTarget: string;
+  fixtureDataSource: string;
+  mockRuntimeHonesty: string;
+  productionBehaviorChangePosture: string;
+  focusedCommand: string;
+};
+
+type CapabilityPermissionStateMatrixRow = {
+  taskId: string;
+  capabilityRouteObject: string;
+  actorStatesCovered: string;
+  permissionStatesCovered: string;
+  objectLifecycleStatesCovered: string;
+  boundaryStatesCovered: string;
+  requiredNegativeCases: string;
+  notApplicableRationale: string;
+  missingCoverageFollowUpTask: string;
+};
+
+type ForbiddenAssumptionRow = {
+  taskId: string;
+  forbiddenAssumption: string;
+  escalationPath: string;
 };
 
 type TaskTypeGuardrailRow = {
@@ -455,6 +605,8 @@ export function validateTaskBreakdownContent(
   const sourceArtifacts = storyContent ? parseSourceArtifactRows(storyContent) : [];
   const sourceHandoffs = storyContent ? parseSourceHandoffRows(storyContent) : [];
   const sourceSteeringClassifications = storyContent ? parseSourceSteeringClassificationRows(storyContent) : [];
+  const sourceFrontendArchitectureClassifications = storyContent ? parseSourceFrontendArchitectureClassificationRows(storyContent) : [];
+  const sourceBrowserSecurityPosture = storyContent ? parseSourceBrowserSecurityPostureRows(storyContent) : [];
   const sourceTaskTypeSignals = storyContent ? parseSourceTaskTypeSignalRows(storyContent) : [];
 
   const selectedStories = parseSelectedStoryRows(taskContent);
@@ -463,6 +615,25 @@ export function validateTaskBreakdownContent(
   const steeringReconciliation = parseSteeringReconciliationRows(taskContent);
   const expectedTaskTypeReconciliation = parseExpectedTaskTypeReconciliationRows(taskContent);
   const tasks = parseTaskRows(taskContent);
+  const taskSizeGuardrails = parseTaskSizeGuardrailRows(taskContent);
+  const stopConditions = parseStopConditionRows(taskContent);
+  const startingContexts = parseStartingContextRows(taskContent);
+  const frontendArchitectureDecisions = parseFrontendArchitectureDecisionRows(taskContent);
+  const frontendSubStandards = parseFrontendSubStandardRows(taskContent);
+  const frontendPerformancePostures = parseFrontendPerformancePostureRows(taskContent);
+  const designSystemSeamContracts = parseDesignSystemSeamContractRows(taskContent);
+  const frontendAdoptionContracts = parseFrontendAdoptionContractRows(taskContent);
+  const frontendSecurityEvidence = parseFrontendSecurityEvidenceRows(taskContent);
+  const frontendPermissionRenderingEvidence = parseFrontendPermissionRenderingEvidenceRows(taskContent);
+  const frontendRuntimeDataMockHonesty = parseFrontendRuntimeDataMockHonestyRows(taskContent);
+  const verticalSliceCouplings = parseVerticalSliceCouplingRows(taskContent);
+  const backendImplementationApproaches = parseBackendImplementationApproachRows(taskContent);
+  const migrationPersistenceApproaches = parseMigrationPersistenceApproachRows(taskContent);
+  const tightWriteEnvelopes = parseTightWriteEnvelopeRows(taskContent);
+  const taskSpecificProofPlans = parseTaskSpecificProofPlanRows(taskContent);
+  const testOnlyCoverageContracts = parseTestOnlyCoverageContractRows(taskContent);
+  const capabilityPermissionStateMatrices = parseCapabilityPermissionStateMatrixRows(taskContent);
+  const forbiddenAssumptions = parseForbiddenAssumptionRows(taskContent);
   const guardrails = parseTaskTypeGuardrailRows(taskContent);
   const guardrailEvidence = parseTaskGuardrailEvidenceRows(taskContent);
   const placements = parseCodePlacementRows(taskContent);
@@ -490,6 +661,9 @@ export function validateTaskBreakdownContent(
   const sourceAcsById = new Map(sourceAcs.map((row) => [row.acId, row]));
   const sourceCapabilitiesByAc = groupBy(sourceCapabilities, (row) => row.acId);
   const sourceHandoffsByStory = new Map(sourceHandoffs.map((row) => [row.storyId, row]));
+  const sourceFrontendArchitectureByScope = new Map(
+    sourceFrontendArchitectureClassifications.map((row) => [row.scopeElement, row]),
+  );
   const selectedStoryIds = new Set(selectedStories.map((row) => row.storyId));
   const taskIds = new Set(tasks.map((row) => row.taskId));
 
@@ -508,6 +682,25 @@ export function validateTaskBreakdownContent(
   );
 
   const acCoverageByTask = groupBy(acCoverage, (row) => row.taskId);
+  const taskSizeGuardrailsByTask = groupBy(taskSizeGuardrails, (row) => row.taskId);
+  const stopConditionsByTask = groupBy(stopConditions, (row) => row.taskId);
+  const startingContextsByTask = groupBy(startingContexts, (row) => row.taskId);
+  const frontendArchitectureDecisionsByTask = groupBy(frontendArchitectureDecisions, (row) => row.taskId);
+  const frontendSubStandardsByTask = groupBy(frontendSubStandards, (row) => row.taskId);
+  const frontendPerformancePosturesByTask = groupBy(frontendPerformancePostures, (row) => row.taskId);
+  const designSystemSeamContractsByTask = groupBy(designSystemSeamContracts, (row) => row.taskId);
+  const frontendAdoptionContractsByTask = groupBy(frontendAdoptionContracts, (row) => row.taskId);
+  const frontendSecurityEvidenceByTask = groupBy(frontendSecurityEvidence, (row) => row.taskId);
+  const frontendPermissionRenderingEvidenceByTask = groupBy(frontendPermissionRenderingEvidence, (row) => row.taskId);
+  const frontendRuntimeDataMockHonestyByTask = groupBy(frontendRuntimeDataMockHonesty, (row) => row.taskId);
+  const verticalSliceCouplingsByTask = groupBy(verticalSliceCouplings, (row) => row.taskId);
+  const backendImplementationApproachesByTask = groupBy(backendImplementationApproaches, (row) => row.taskId);
+  const migrationPersistenceApproachesByTask = groupBy(migrationPersistenceApproaches, (row) => row.taskId);
+  const tightWriteEnvelopesByTask = groupBy(tightWriteEnvelopes, (row) => row.taskId);
+  const taskSpecificProofPlansByTask = groupBy(taskSpecificProofPlans, (row) => row.taskId);
+  const testOnlyCoverageContractsByTask = groupBy(testOnlyCoverageContracts, (row) => row.taskId);
+  const capabilityPermissionStateMatricesByTask = groupBy(capabilityPermissionStateMatrices, (row) => row.taskId);
+  const forbiddenAssumptionsByTask = groupBy(forbiddenAssumptions, (row) => row.taskId);
   const guardrailsByTask = groupBy(guardrails, (row) => row.taskId);
   const guardrailEvidenceByTask = groupBy(guardrailEvidence, (row) => row.taskId);
   const placementsByTask = groupBy(placements, (row) => row.taskId);
@@ -527,6 +720,33 @@ export function validateTaskBreakdownContent(
     validateTaskReferences(task.taskId, taskIds, errors);
 
     validateAcCoverage(task, acCoverageByTask.get(task.taskId) ?? [], sourceAcsById, selectedStoryIds, errors);
+    validateDeepDeliveryReadiness(
+      task,
+      taskSizeGuardrailsByTask.get(task.taskId) ?? [],
+      stopConditionsByTask.get(task.taskId) ?? [],
+      startingContextsByTask.get(task.taskId) ?? [],
+      frontendArchitectureDecisionsByTask.get(task.taskId) ?? [],
+      sourceFrontendArchitectureByScope,
+      frontendSubStandardsByTask.get(task.taskId) ?? [],
+      frontendPerformancePosturesByTask.get(task.taskId) ?? [],
+      designSystemSeamContractsByTask.get(task.taskId) ?? [],
+      frontendAdoptionContractsByTask.get(task.taskId) ?? [],
+      frontendSecurityEvidenceByTask.get(task.taskId) ?? [],
+      sourceBrowserSecurityPosture,
+      frontendPermissionRenderingEvidenceByTask.get(task.taskId) ?? [],
+      frontendRuntimeDataMockHonestyByTask.get(task.taskId) ?? [],
+      proofsByTask.get(task.taskId) ?? [],
+      verticalSliceCouplingsByTask.get(task.taskId) ?? [],
+      backendImplementationApproachesByTask.get(task.taskId) ?? [],
+      migrationPersistenceApproachesByTask.get(task.taskId) ?? [],
+      tightWriteEnvelopesByTask.get(task.taskId) ?? [],
+      taskSpecificProofPlansByTask.get(task.taskId) ?? [],
+      testOnlyCoverageContractsByTask.get(task.taskId) ?? [],
+      capabilityPermissionStateMatricesByTask.get(task.taskId) ?? [],
+      forbiddenAssumptionsByTask.get(task.taskId) ?? [],
+      acCoverageByTask.get(task.taskId) ?? [],
+      errors,
+    );
     validateTaskTypeGuardrail(task, guardrailsByTask.get(task.taskId) ?? [], errors);
     validateTaskGuardrailEvidence(task, guardrailEvidenceByTask.get(task.taskId) ?? [], placementsByTask.get(task.taskId) ?? [], errors);
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
@@ -542,6 +762,25 @@ export function validateTaskBreakdownContent(
   }
 
   validateUnknownTaskReferences("Task Acceptance Criteria Coverage", acCoverage.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Task Size Guardrail", taskSizeGuardrails.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Decision Escalation / Stop Conditions", stopConditions.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Exact Starting Context", startingContexts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Frontend Architecture Decision Reconciliation", frontendArchitectureDecisions.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Frontend / Design-System Sub-Standard", frontendSubStandards.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Frontend Performance Posture", frontendPerformancePostures.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Design-System Seam Contract", designSystemSeamContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Frontend Adoption Contract", frontendAdoptionContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Frontend Security Evidence", frontendSecurityEvidence.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Frontend Permission Rendering Evidence", frontendPermissionRenderingEvidence.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Frontend Runtime Data And Mock Honesty", frontendRuntimeDataMockHonesty.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Vertical Slice Coupling", verticalSliceCouplings.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Backend Implementation Approach", backendImplementationApproaches.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Migration / Persistence Approach", migrationPersistenceApproaches.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Tight Allowed Write Envelope", tightWriteEnvelopes.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Task-Specific Proof Plan", taskSpecificProofPlans.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Test-Only Coverage Contract", testOnlyCoverageContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Capability Permission / State Matrix", capabilityPermissionStateMatrices.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Forbidden Assumptions", forbiddenAssumptions.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Task-Type Approval Guardrails", guardrails.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Task Guardrail Evidence", guardrailEvidence.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Code Placement And Extraction Review", placements.map((row) => row.taskId), taskIds, errors);
@@ -588,6 +827,1023 @@ function validateTaskTypeGuardrail(task: TaskRow, rows: TaskTypeGuardrailRow[], 
     } else {
       errors.push(`${task.taskId} has invalid task-type guardrail approval status: ${row.approvalStatus || "(blank)"}`);
     }
+  }
+}
+
+function validateDeepDeliveryReadiness(
+  task: TaskRow,
+  sizeRows: TaskSizeGuardrailRow[],
+  stopRows: StopConditionRow[],
+  contextRows: StartingContextRow[],
+  frontendArchitectureRows: FrontendArchitectureDecisionRow[],
+  sourceFrontendArchitectureByScope: Map<string, SourceFrontendArchitectureClassificationRow>,
+  subStandardRows: FrontendSubStandardRow[],
+  performancePostureRows: FrontendPerformancePostureRow[],
+  seamContractRows: DesignSystemSeamContractRow[],
+  adoptionContractRows: FrontendAdoptionContractRow[],
+  securityEvidenceRows: FrontendSecurityEvidenceRow[],
+  sourceBrowserSecurityRows: SourceBrowserSecurityPostureRow[],
+  permissionRenderingRows: FrontendPermissionRenderingEvidenceRow[],
+  runtimeDataRows: FrontendRuntimeDataMockHonestyRow[],
+  proofRowsForRuntime: ProofCommandRow[],
+  verticalSliceCouplingRows: VerticalSliceCouplingRow[],
+  backendApproachRows: BackendImplementationApproachRow[],
+  migrationApproachRows: MigrationPersistenceApproachRow[],
+  envelopeRows: TightWriteEnvelopeRow[],
+  proofRows: TaskSpecificProofPlanRow[],
+  testOnlyCoverageRows: TestOnlyCoverageContractRow[],
+  capabilityPermissionStateMatrixRows: CapabilityPermissionStateMatrixRow[],
+  forbiddenAssumptionRows: ForbiddenAssumptionRow[],
+  acCoverageRows: TaskAcCoverageRow[],
+  errors: string[],
+): void {
+  if (task.handoffStatus !== "queued-for-delivery") {
+    return;
+  }
+
+  validateTaskSizeGuardrail(task, sizeRows, acCoverageRows, errors);
+  validateStopConditions(task, stopRows, errors);
+  validateStartingContext(task, contextRows, errors);
+  validateFrontendArchitectureDecision(task, frontendArchitectureRows, sourceFrontendArchitectureByScope, contextRows, envelopeRows, errors);
+  validateFrontendSubStandard(task, subStandardRows, errors);
+  validateFrontendPerformancePosture(task, performancePostureRows, errors);
+  validateDesignSystemSeamContract(task, seamContractRows, errors);
+  validateFrontendAdoptionContract(task, seamContractRows, adoptionContractRows, errors);
+  validateFrontendSecurityEvidence(task, securityEvidenceRows, sourceBrowserSecurityRows, errors);
+  validateFrontendPermissionRenderingEvidence(task, frontendArchitectureRows, securityEvidenceRows, permissionRenderingRows, errors);
+  validateFrontendRuntimeDataMockHonesty(task, frontendArchitectureRows, runtimeDataRows, proofRowsForRuntime, errors);
+  validateVerticalSliceCoupling(task, verticalSliceCouplingRows, errors);
+  validateBackendImplementationApproach(task, backendApproachRows, errors);
+  validateMigrationPersistenceApproach(task, migrationApproachRows, errors);
+  validateTightWriteEnvelope(task, envelopeRows, errors);
+  validateTaskSpecificProofPlan(task, proofRows, errors);
+  validateTestOnlyCoverage(task, testOnlyCoverageRows, capabilityPermissionStateMatrixRows, errors);
+  validateForbiddenAssumptions(task, forbiddenAssumptionRows, errors);
+}
+
+function validateTaskSizeGuardrail(
+  task: TaskRow,
+  rows: TaskSizeGuardrailRow[],
+  acCoverageRows: TaskAcCoverageRow[],
+  errors: string[],
+): void {
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued task has no task size guardrail row`);
+    return;
+  }
+
+  const actualAcCount = new Set(acCoverageRows.flatMap((row) => splitIds(row.acIds))).size;
+
+  for (const row of rows) {
+    if (!allowedTaskGrainClassifications.has(row.taskGrain)) {
+      errors.push(`${task.taskId} has invalid task grain: ${row.taskGrain || "(blank)"}`);
+    }
+
+    validateRequiredField(task.taskId, "AC Count", row.acCount, errors);
+    validateRequiredField(task.taskId, "AC Count Rationale", row.acCountRationale, errors);
+    validateRequiredField(task.taskId, "Primary Behavior / Decision / Proof Target", row.primaryTarget, errors);
+    validateRequiredField(task.taskId, "Primary Seam", row.primarySeam, errors);
+    validateRequiredField(task.taskId, "Main Proof Story", row.mainProofStory, errors);
+    validateRequiredField(task.taskId, "Additional Behaviors Present", row.additionalBehaviorsPresent, errors);
+    validateRequiredField(task.taskId, "Why Not Further Split", row.whyNotFurtherSplit, errors);
+
+    const declaredAcCount = Number.parseInt(row.acCount, 10);
+    if (!Number.isFinite(declaredAcCount) || declaredAcCount < 0) {
+      errors.push(`${task.taskId} has invalid AC Count: ${row.acCount || "(blank)"}`);
+    } else if (actualAcCount > 0 && declaredAcCount !== actualAcCount) {
+      errors.push(`${task.taskId} AC Count ${declaredAcCount} does not match coverage count ${actualAcCount}`);
+    }
+
+    if (declaredAcCount > 2) {
+      errors.push(`${task.taskId} covers more than two acceptance criteria and must be split`);
+    } else if (declaredAcCount === 2 && !mentionsInseparable(row.acCountRationale, row.whyNotFurtherSplit)) {
+      errors.push(`${task.taskId} covers two acceptance criteria without inseparable split rationale`);
+    }
+
+    if (row.taskGrain === "split-required" || row.taskGrain === "coarse-blocked") {
+      errors.push(`${task.taskId} task grain ${row.taskGrain} cannot be queued for delivery`);
+    }
+
+    if (hasAffirmativeValue(row.additionalBehaviorsPresent) && !mentionsInseparable(row.whyNotFurtherSplit, row.acCountRationale)) {
+      errors.push(`${task.taskId} has additional behaviors without inseparable split rationale`);
+    }
+
+    for (const phrase of suspiciousCoarseScopePhrases) {
+      if (task.scope.toLowerCase().includes(phrase) && !mentionsInseparable(row.whyNotFurtherSplit, row.acCountRationale)) {
+        errors.push(`${task.taskId} scope contains coarse phrase "${phrase}" without split rationale`);
+      }
+    }
+  }
+}
+
+function validateStopConditions(task: TaskRow, rows: StopConditionRow[], errors: string[]): void {
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued task has no decision escalation / stop condition row`);
+    return;
+  }
+
+  for (const row of rows) {
+    if (!allowedStopConditionTriggerTypes.has(row.triggerType)) {
+      errors.push(`${task.taskId} has invalid stop condition trigger type: ${row.triggerType || "(blank)"}`);
+    }
+
+    validateRequiredField(task.taskId, "Stop Condition / Do Not Guess Decision", row.stopCondition, errors);
+    validateRequiredField(task.taskId, "Required Escalation", row.requiredEscalation, errors);
+    validateRequiredField(task.taskId, "May Proceed If Hit", row.mayProceedIfHit, errors);
+    validateRequiredField(task.taskId, "Stop Condition Rationale", row.rationale, errors);
+
+    const mayProceed = row.mayProceedIfHit.trim().toLowerCase();
+    if (!allowedProceedIfTriggerHitValues.has(mayProceed)) {
+      errors.push(`${task.taskId} has invalid May Proceed If Hit: ${row.mayProceedIfHit || "(blank)"}`);
+    }
+
+    if (row.triggerType === "none-known" && mayProceed !== "yes") {
+      errors.push(`${task.taskId} none-known stop condition must allow proceed with rationale`);
+    }
+
+    if (row.triggerType !== "none-known" && mayProceed === "yes") {
+      errors.push(`${task.taskId} decision-bearing stop condition must not proceed when hit`);
+    }
+  }
+}
+
+function validateStartingContext(task: TaskRow, rows: StartingContextRow[], errors: string[]): void {
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued task has no exact starting context row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Files / Routes / Canonicals To Inspect", row.filesRoutesCanonicals, errors);
+    validateRequiredField(task.taskId, "Existing Seams To Consume", row.seamsToConsume, errors);
+    validateRequiredField(task.taskId, "Governing Source Artifacts", row.governingArtifacts, errors);
+  }
+}
+
+function validateFrontendArchitectureDecision(
+  task: TaskRow,
+  rows: FrontendArchitectureDecisionRow[],
+  sourceRowsByScope: Map<string, SourceFrontendArchitectureClassificationRow>,
+  contextRows: StartingContextRow[],
+  envelopeRows: TightWriteEnvelopeRow[],
+  errors: string[],
+): void {
+  if (!frontendTaskTypes.has(task.taskType)) {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued frontend/design-system task has no frontend architecture decision row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Source Scope Element", row.sourceScopeElement, errors);
+    validateRequiredField(task.taskId, "Frontend Product Module", row.productModule, errors);
+    validateRequiredField(task.taskId, "Frontend Journey Group", row.journeyGroup, errors);
+    validateRequiredField(task.taskId, "Canonical Locator", row.canonicalLocator, errors);
+    validateRequiredField(task.taskId, "Compatibility Locators", row.compatibilityLocators, errors);
+    validateRequiredField(task.taskId, "Source Steering Decision", row.sourceSteeringDecision, errors);
+
+    validateAllowedValue(task.taskId, "Route Family", row.routeFamily, allowedFrontendRouteFamilies, errors);
+    validateAllowedValue(task.taskId, "Route Visibility", row.routeVisibility, allowedFrontendRouteVisibilities, errors);
+    validateAllowedValue(task.taskId, "Actor Scope", row.actorScope, allowedFrontendActorScopes, errors);
+    validateAllowedValue(task.taskId, "Runtime Shape", row.runtimeShape, allowedFrontendRuntimeShapes, errors);
+    validateAllowedValue(task.taskId, "Surface Class", row.surfaceClass, allowedFrontendSurfaceClasses, errors);
+    validateAllowedValue(task.taskId, "Topology Class", row.topologyClass, allowedFrontendTopologyClasses, errors);
+    validateAllowedValue(task.taskId, "Locator Type", row.locatorType, allowedFrontendLocatorTypes, errors);
+    validateAllowedValue(task.taskId, "Topology Authority", row.topologyAuthority, allowedFrontendTopologyAuthorities, errors);
+    validateAllowedValue(
+      task.taskId,
+      "Target Topology Authority",
+      row.targetTopologyAuthority,
+      allowedFrontendTopologyAuthorities,
+      errors,
+    );
+    validateAllowedValue(
+      task.taskId,
+      "Authority Transition Posture",
+      row.authorityTransitionPosture,
+      allowedFrontendAuthorityTransitionPostures,
+      errors,
+    );
+    validateAllowedValue(task.taskId, "State Owner", row.stateOwner, allowedFrontendStateOwners, errors);
+    validateAllowedValue(task.taskId, "Shell Governance", row.shellGovernance, allowedFrontendShellGovernancePostures, errors);
+    validateAllowedValue(
+      task.taskId,
+      "Design-System Prerequisite",
+      row.designSystemPrerequisite,
+      allowedFrontendDesignSystemPrerequisites,
+      errors,
+    );
+    validateAllowedValue(task.taskId, "Materialization Model", row.materializationModel, allowedFrontendMaterializationModels, errors);
+    validateAllowedValue(task.taskId, "Source Placement", row.sourcePlacement, allowedFrontendSourcePlacements, errors);
+    validateAllowedValue(task.taskId, "Implementation Readiness", row.implementationReadiness, allowedFrontendImplementationReadiness, errors);
+
+    const sourceRow = sourceRowsByScope.get(row.sourceScopeElement);
+    if (!sourceRow) {
+      errors.push(`${task.taskId} frontend architecture decision references unknown Layer 2/3 scope: ${row.sourceScopeElement || "(blank)"}`);
+    } else {
+      validateFrontendArchitectureMatchesSource(task.taskId, row, sourceRow, errors);
+    }
+
+    if (row.implementationReadiness.startsWith("blocked-on")) {
+      errors.push(`${task.taskId} frontend architecture decision readiness is ${row.implementationReadiness}`);
+    }
+
+    if ((task.taskType === "frontend" || task.taskType === "design-system") && row.routeFamily === "not-applicable") {
+      errors.push(`${task.taskId} ${task.taskType} task must consume a frontend architecture classification, not not-applicable`);
+    }
+
+    if (task.taskType === "frontend" && row.designSystemPrerequisite === "DS-task-required") {
+      errors.push(`${task.taskId} frontend task cannot proceed while Layer 2 requires upstream design-system work`);
+    }
+
+    if (row.authorityTransitionPosture === "blocked-until-transition") {
+      errors.push(`${task.taskId} frontend topology authority transition blocks delivery`);
+    }
+
+    if (
+      task.taskType === "frontend" &&
+      (row.topologyClass === "durable-page" || row.topologyClass === "durable-subroute") &&
+      row.locatorType === "none"
+    ) {
+      errors.push(`${task.taskId} durable frontend topology requires a non-none locator type`);
+    }
+
+    if (task.taskType === "frontend" && row.locatorType === "migration" && !mentionsCompatibilityLocator(row.compatibilityLocators)) {
+      errors.push(`${task.taskId} frontend locator migration must name compatibility locators`);
+    }
+
+    if (row.sourcePlacement === "generated-output" && row.materializationModel !== "preview-apply-required") {
+      errors.push(`${task.taskId} generated frontend output requires preview-apply materialization`);
+    }
+
+    if (
+      row.sourcePlacement === "generated-output" &&
+      row.materializationModel === "preview-apply-required" &&
+      !mentionsPreviewApplyOrMaterializationSeam(task, row, contextRows, envelopeRows)
+    ) {
+      errors.push(`${task.taskId} generated frontend output must name the preview/apply or materialization seam`);
+    }
+
+    if (
+      row.sourcePlacement === "generated-output" &&
+      mentionsGeneratedOutputHandEdit(task.allowedWriteSet, envelopeRows.map((envelope) => envelope.exactFilesOrPatterns).join(" ")) &&
+      !mentionsApprovedGeneratedCanonicalSweep(task.scope, task.nonGoals, task.allowedWriteSet, envelopeRows.map((envelope) => envelope.broadWriteRationale).join(" "))
+    ) {
+      errors.push(`${task.taskId} generated frontend output cannot be hand-edited without an approved generated/canonical sweep rationale`);
+    }
+
+    if (row.sourcePlacement === "shell-route-registry" && mentionsPageJourneyBehaviorOwnership(task.scope, task.allowedWriteSet)) {
+      errors.push(`${task.taskId} shell-route-registry placement may only own registry or route mounting, not page or journey behavior`);
+    }
+
+    if (
+      row.sourcePlacement === "module-journey-files" &&
+      !writeSetMatchesProductModuleJourneyGroup(task.allowedWriteSet, row.productModule, row.journeyGroup) &&
+      !mentionsUnknownModuleJourneyPathRationale(task.allowedWriteSet, task.scope)
+    ) {
+      errors.push(`${task.taskId} module-journey-files placement must include the approved product module/journey group in the allowed write paths or give concrete path-unknown rationale`);
+    }
+
+    if (task.taskType === "frontend" && row.stateOwner === "never-serialize" && mentionsUrlOrReplayState(task.scope, task.allowedWriteSet)) {
+      errors.push(`${task.taskId} never-serialize frontend state must not be placed in URL or replay payloads`);
+    }
+
+    if (
+      task.taskType === "frontend" &&
+      row.sourcePlacement === "module-journey-files" &&
+      mentionsRootAdminShellEntry(task.allowedWriteSet)
+    ) {
+      errors.push(`${task.taskId} module/journey frontend work must not add behavior to rootAdminShell/assets/app.mjs`);
+    }
+  }
+}
+
+function validateFrontendArchitectureMatchesSource(
+  taskId: string,
+  row: FrontendArchitectureDecisionRow,
+  sourceRow: SourceFrontendArchitectureClassificationRow,
+  errors: string[],
+): void {
+  const fields: Array<[keyof FrontendArchitectureDecisionRow, keyof SourceFrontendArchitectureClassificationRow, string]> = [
+    ["routeFamily", "routeFamily", "Route Family"],
+    ["productModule", "productModule", "Product Module"],
+    ["journeyGroup", "journeyGroup", "Journey Group"],
+    ["routeVisibility", "routeVisibility", "Route Visibility"],
+    ["actorScope", "actorScope", "Actor Scope"],
+    ["runtimeShape", "runtimeShape", "Runtime Shape"],
+    ["surfaceClass", "surfaceClass", "Surface Class"],
+    ["topologyClass", "topologyClass", "Topology Class"],
+    ["locatorType", "locatorType", "Locator Type"],
+    ["canonicalLocator", "canonicalLocator", "Canonical Locator"],
+    ["compatibilityLocators", "compatibilityLocators", "Compatibility Locators"],
+    ["topologyAuthority", "topologyAuthority", "Topology Authority"],
+    ["targetTopologyAuthority", "targetTopologyAuthority", "Target Topology Authority"],
+    ["authorityTransitionPosture", "authorityTransitionPosture", "Authority Transition Posture"],
+    ["stateOwner", "stateOwner", "State Owner"],
+    ["shellGovernance", "shellGovernance", "Shell Governance"],
+    ["designSystemPrerequisite", "designSystemPrerequisite", "Design-System Prerequisite"],
+    ["materializationModel", "materializationModel", "Materialization Model"],
+    ["sourcePlacement", "sourcePlacement", "Source Placement"],
+    ["implementationReadiness", "implementationReadiness", "Implementation Readiness"],
+  ];
+
+  for (const [taskField, sourceField, label] of fields) {
+    if (row[taskField] !== sourceRow[sourceField]) {
+      errors.push(
+        `${taskId} frontend architecture ${label} does not match Layer 2/3 snapshot for ${sourceRow.scopeElement}`,
+      );
+    }
+  }
+}
+
+function validateFrontendSubStandard(task: TaskRow, rows: FrontendSubStandardRow[], errors: string[]): void {
+  if (!frontendTaskTypes.has(task.taskType)) {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued frontend/design-system task has no sub-standard row`);
+    return;
+  }
+
+  for (const row of rows) {
+    if (!allowedFrontendDesignSystemSubStandards.has(row.primarySubStandard)) {
+      errors.push(`${task.taskId} has invalid frontend/design-system sub-standard: ${row.primarySubStandard || "(blank)"}`);
+    }
+
+    validateRequiredField(task.taskId, "Additional Sub-Standards", row.additionalSubStandards, errors);
+    validateRequiredField(task.taskId, "Frontend / Design-System Split Rationale", row.splitRationale, errors);
+    validateRequiredField(task.taskId, "Frontend / Design-System Compliance Proof", row.complianceProof, errors);
+
+    if (row.primarySubStandard === "not-applicable" && task.taskType !== "vertical-slice") {
+      errors.push(`${task.taskId} ${task.taskType} task must name a frontend/design-system sub-standard`);
+    }
+
+    if (row.primarySubStandard === "not-applicable" && !mentionsNotApplicableRationale(row.splitRationale, row.complianceProof)) {
+      errors.push(`${task.taskId} not-applicable frontend/design-system sub-standard requires concrete rationale`);
+    }
+
+    validateFrontendSubStandardProof(task.taskId, row, errors);
+
+    if (hasMeaningfulAdditionalSubStandards(row.additionalSubStandards) && !mentionsInseparable(row.splitRationale, "")) {
+      errors.push(`${task.taskId} has additional frontend/design-system sub-standards without inseparable split rationale`);
+    }
+  }
+}
+
+function validateFrontendSubStandardProof(taskId: string, row: FrontendSubStandardRow, errors: string[]): void {
+  if (!allowedFrontendDesignSystemSubStandards.has(row.primarySubStandard)) {
+    return;
+  }
+
+  if (row.primarySubStandard === "not-applicable") {
+    return;
+  }
+
+  const proof = row.complianceProof;
+  if (row.primarySubStandard === "fixture-data-contract" && !mentionsFixtureDataContractProof(proof)) {
+    errors.push(`${taskId} fixture-data-contract sub-standard requires contract/fixture/live-payload proof`);
+  }
+
+  if (row.primarySubStandard === "visual-rendering" && !mentionsScreenshotOrEvidenceArtifact(proof)) {
+    errors.push(`${taskId} visual-rendering sub-standard requires a canonical screenshot or evidence artifact name`);
+  }
+
+  if (row.primarySubStandard === "interaction-behavior" && !mentionsInteractionScenario(proof)) {
+    errors.push(`${taskId} interaction-behavior sub-standard requires an exact state transition or interaction scenario name`);
+  }
+
+  if (row.primarySubStandard === "accessibility-semantics" && !mentionsAccessibilitySemanticsProof(proof)) {
+    errors.push(`${taskId} accessibility-semantics sub-standard requires role/name/state/focus proof`);
+  }
+
+  if (row.primarySubStandard === "evidence-sweep" && !mentionsEvidenceSweepArtifactsAndScope(proof)) {
+    errors.push(`${taskId} evidence-sweep sub-standard requires exact evidence artifact names and sweep scope`);
+  }
+}
+
+function validateFrontendPerformancePosture(task: TaskRow, rows: FrontendPerformancePostureRow[], errors: string[]): void {
+  if (!frontendTaskTypes.has(task.taskType)) {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued frontend/design-system task has no performance posture row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Frontend Performance Posture", row.posture, errors);
+    validateRequiredField(task.taskId, "Frontend Performance Proof Plan", row.proofPlan, errors);
+    validateRequiredField(task.taskId, "Frontend Performance Rationale", row.rationale, errors);
+
+    if (!allowedFrontendPerformancePostures.has(row.posture)) {
+      errors.push(`${task.taskId} has invalid frontend performance posture: ${row.posture || "(blank)"}`);
+      continue;
+    }
+
+    if (row.posture === "unknown-blocked") {
+      errors.push(`${task.taskId} frontend performance posture unknown-blocked cannot be queued for delivery`);
+      continue;
+    }
+
+    if (row.posture === "not-applicable" && !mentionsNotApplicableRationale(row.rationale, row.proofPlan)) {
+      errors.push(`${task.taskId} not-applicable frontend performance posture requires concrete rationale`);
+    }
+
+    validateFrontendPerformanceProof(task.taskId, row, errors);
+  }
+}
+
+function validateFrontendPerformanceProof(taskId: string, row: FrontendPerformancePostureRow, errors: string[]): void {
+  const proof = `${row.proofPlan} ${row.rationale}`;
+
+  if (row.posture === "static-low-risk" && !mentionsStaticLowRiskPerformanceProof(proof)) {
+    errors.push(`${taskId} static-low-risk performance posture must explain why render proof is sufficient`);
+  }
+
+  if (row.posture === "interactive-low-risk" && !mentionsInteractiveLowRiskPerformanceProof(proof)) {
+    errors.push(`${taskId} interactive-low-risk performance posture requires interaction proof with no repeated work or fetch loop`);
+  }
+
+  if (row.posture === "data-list-or-table" && !mentionsDataListPerformanceProof(proof)) {
+    errors.push(`${taskId} data-list-or-table performance posture requires bounded data-size and DOM/list rendering proof`);
+  }
+
+  if (row.posture === "route-initialization" && !mentionsRouteInitializationPerformanceProof(proof)) {
+    errors.push(`${taskId} route-initialization performance posture requires route init/load proof or Lighthouse/trace evidence`);
+  }
+
+  if (row.posture === "large-dom-or-canvas" && !mentionsLargeDomCanvasPerformanceProof(proof)) {
+    errors.push(`${taskId} large-dom-or-canvas performance posture requires bounded DOM/canvas size and nonblank interaction proof`);
+  }
+
+  if (row.posture === "asset-heavy" && !mentionsAssetHeavyPerformanceProof(proof)) {
+    errors.push(`${taskId} asset-heavy performance posture requires asset size/loading strategy and rendered asset evidence`);
+  }
+
+  if (row.posture === "animation-or-transition-heavy" && !mentionsAnimationPerformanceProof(proof)) {
+    errors.push(`${taskId} animation-or-transition-heavy performance posture requires timing or reduced-motion proof`);
+  }
+}
+
+function validateDesignSystemSeamContract(task: TaskRow, rows: DesignSystemSeamContractRow[], errors: string[]): void {
+  if (!frontendTaskTypes.has(task.taskType)) {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued frontend/design-system task has no design-system seam contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Design-System Seam Posture", row.seamPosture, errors);
+    validateRequiredField(task.taskId, "Design-System Seam Name / Export / Route", row.seamNameExportRoute, errors);
+    validateRequiredField(task.taskId, "Owned Render Structure", row.ownedRenderStructure, errors);
+    validateRequiredField(task.taskId, "Owned Behavior Controller", row.ownedBehaviorController, errors);
+    validateRequiredField(task.taskId, "Owned Accessibility Semantics", row.ownedAccessibilitySemantics, errors);
+    validateRequiredField(task.taskId, "Canonical / Behavior Lock / Evidence", row.canonicalBehaviorLockEvidence, errors);
+    validateRequiredField(task.taskId, "Frontend Consumption Contract", row.frontendConsumptionContract, errors);
+
+    if (!allowedDesignSystemSeamPostures.has(row.seamPosture)) {
+      errors.push(`${task.taskId} has invalid design-system seam posture: ${row.seamPosture || "(blank)"}`);
+    }
+
+    if (task.taskType === "design-system" && !isDesignSystemProducerPosture(row.seamPosture)) {
+      errors.push(`${task.taskId} design-system task must produce, refine, or prove a consumable seam`);
+    }
+
+    if (task.taskType === "frontend" && !isFrontendConsumerPosture(row.seamPosture)) {
+      errors.push(`${task.taskId} frontend task must consume an existing design-system seam or record an approved exception`);
+    }
+
+    if (task.taskType === "vertical-slice" && row.seamPosture === "blocks-on-missing-seam") {
+      errors.push(`${task.taskId} queued vertical-slice task cannot proceed with a missing design-system seam`);
+    }
+
+    if (row.seamPosture !== "not-applicable" && !mentionsDesignSystemSeam(row.seamNameExportRoute, row.frontendConsumptionContract)) {
+      errors.push(`${task.taskId} design-system seam contract must name a consumable route, export, component, or controller seam`);
+    }
+  }
+}
+
+function validateFrontendAdoptionContract(
+  task: TaskRow,
+  seamRows: DesignSystemSeamContractRow[],
+  rows: FrontendAdoptionContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "frontend") {
+    return;
+  }
+
+  const consumesExistingSeam = seamRows.some((row) => row.seamPosture === "consumes-existing-seam");
+  if (!consumesExistingSeam) {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} frontend task consuming an existing design-system seam must have a frontend adoption contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredOrConcreteNotApplicable(
+      task.taskId,
+      "Consumed DS Render Seam",
+      row.consumedRenderSeam,
+      errors,
+    );
+    validateRequiredOrConcreteNotApplicable(
+      task.taskId,
+      "Consumed DS Behavior / Controller Seam",
+      row.consumedBehaviorControllerSeam,
+      errors,
+    );
+    validateRequiredOrConcreteNotApplicable(
+      task.taskId,
+      "Consumed DS Accessibility Semantics",
+      row.consumedAccessibilitySemantics,
+      errors,
+    );
+    validateRequiredOrConcreteNotApplicable(
+      task.taskId,
+      "Consumed DS Style / CSS Seam",
+      row.consumedStyleCssSeam,
+      errors,
+    );
+    validateRequiredField(
+      task.taskId,
+      "Allowed App-Local Composition / Data Binding",
+      row.allowedAppLocalCompositionDataBinding,
+      errors,
+    );
+    validateRequiredField(task.taskId, "Forbidden Local Reconstruction", row.forbiddenLocalReconstruction, errors);
+    validateRequiredField(task.taskId, "Adoption Proof Route / Scenario", row.adoptionProofRouteScenario, errors);
+
+    if (!explicitlyProhibitsCopiedDsInternals(row.forbiddenLocalReconstruction)) {
+      errors.push(`${task.taskId} forbidden local reconstruction must explicitly prohibit copied markup, controller, ARIA, and CSS`);
+    }
+
+    if (claimsGovernedDsInternalOwnership(row.allowedAppLocalCompositionDataBinding)) {
+      errors.push(`${task.taskId} app-local composition/data binding cannot claim ownership of governed render/controller/accessibility/style internals`);
+    }
+  }
+}
+
+function validateFrontendSecurityEvidence(
+  task: TaskRow,
+  rows: FrontendSecurityEvidenceRow[],
+  sourceRows: SourceBrowserSecurityPostureRow[],
+  errors: string[],
+): void {
+  if (!frontendTaskTypes.has(task.taskType)) {
+    return;
+  }
+
+  if (sourceRows.length === 0) {
+    errors.push(`${task.taskId} queued frontend/design-system task has no Layer 2/3 browser security posture snapshot`);
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued frontend/design-system task has no frontend security evidence row`);
+    return;
+  }
+
+  const sourceByArea = new Map(sourceRows.map((row) => [row.securityArea, row]));
+  const rowsByArea = new Map(rows.map((row) => [row.securityArea, row]));
+
+  for (const source of sourceRows) {
+    validateBrowserSecuritySourceRow(source, errors);
+
+    if (source.present === "blocked") {
+      errors.push(`${task.taskId} browser security posture ${source.securityArea} is blocked in Layer 2/3`);
+    }
+
+    if (source.present === "yes" || source.stopIfMissing === "yes") {
+      const row = rowsByArea.get(source.securityArea);
+      if (!row) {
+        errors.push(`${task.taskId} missing frontend security evidence for ${source.securityArea}`);
+      }
+    }
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Frontend Security Area", row.securityArea, errors);
+    validateRequiredField(task.taskId, "Source Present", row.sourcePresent, errors);
+    validateRequiredField(task.taskId, "Layer 2 Decision / Evidence", row.layer2DecisionEvidence, errors);
+    validateRequiredField(task.taskId, "Required Layer 4 Signal", row.requiredLayer4Signal, errors);
+    validateRequiredField(task.taskId, "Layer 4 Evidence Plan / Blocking Reason", row.layer4EvidencePlan, errors);
+
+    validateAllowedValue(task.taskId, "Frontend Security Area", row.securityArea, allowedFrontendBrowserSecurityAreas, errors);
+    validateAllowedValue(task.taskId, "Source Present", row.sourcePresent, allowedSecurityPresence, errors);
+
+    if (row.securityArea === "not-applicable") {
+      continue;
+    }
+
+    const source = sourceByArea.get(row.securityArea);
+    if (!source) {
+      errors.push(`${task.taskId} frontend security evidence invents Layer 2 posture for ${row.securityArea}`);
+      continue;
+    }
+
+    if (row.sourcePresent !== source.present) {
+      errors.push(`${task.taskId} frontend security evidence for ${row.securityArea} does not match Layer 2/3 present value`);
+    }
+
+    if (row.layer2DecisionEvidence !== source.decisionEvidence) {
+      errors.push(`${task.taskId} frontend security evidence for ${row.securityArea} does not match Layer 2/3 decision evidence`);
+    }
+
+    if (row.requiredLayer4Signal !== source.requiredLayer4Signal) {
+      errors.push(`${task.taskId} frontend security evidence for ${row.securityArea} does not match Layer 2/3 required Layer 4 signal`);
+    }
+
+    if (source.present === "yes" && !mentionsRuntimeEvidence(row.layer4EvidencePlan)) {
+      errors.push(`${task.taskId} frontend security evidence for ${row.securityArea} must name proof or runtime evidence`);
+    }
+  }
+}
+
+function validateBrowserSecuritySourceRow(source: SourceBrowserSecurityPostureRow, errors: string[]): void {
+  validateRequiredField(source.securityArea, "Security Area", source.securityArea, errors);
+  validateRequiredField(source.securityArea, "Present", source.present, errors);
+  validateRequiredField(source.securityArea, "Layer 2 Decision / Evidence", source.decisionEvidence, errors);
+  validateRequiredField(source.securityArea, "Required Layer 4 Signal", source.requiredLayer4Signal, errors);
+  validateRequiredField(source.securityArea, "Stop If Missing", source.stopIfMissing, errors);
+  validateAllowedValue(source.securityArea, "Security Area", source.securityArea, allowedFrontendBrowserSecurityAreas, errors);
+  validateAllowedValue(source.securityArea, "Present", source.present, allowedSecurityPresence, errors);
+  validateAllowedValue(source.securityArea, "Stop If Missing", source.stopIfMissing, allowedYesNo, errors);
+}
+
+function validateFrontendPermissionRenderingEvidence(
+  task: TaskRow,
+  frontendArchitectureRows: FrontendArchitectureDecisionRow[],
+  securityRows: FrontendSecurityEvidenceRow[],
+  rows: FrontendPermissionRenderingEvidenceRow[],
+  errors: string[],
+): void {
+  if (!frontendTaskTypes.has(task.taskType)) {
+    return;
+  }
+
+  const required = requiresPermissionRenderingEvidence(task, frontendArchitectureRows, securityRows);
+  if (!required) {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} renders sensitive frontend data but has no permission rendering evidence row`);
+    return;
+  }
+
+  const tenantScoped = frontendArchitectureRows.some((row) => row.actorScope === "tenant-actor") || mentionsTenantScope(task.scope, task.allowedWriteSet);
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Sensitive Rendering Scope", row.sensitiveRenderingScope, errors);
+    validateRequiredField(task.taskId, "Allowed State Proof", row.allowedStateProof, errors);
+    validateRequiredField(task.taskId, "Denied / Unauthorized State Proof", row.deniedUnauthorizedStateProof, errors);
+    validateRequiredField(task.taskId, "Expired / Unauthenticated State Proof", row.expiredUnauthenticatedStateProof, errors);
+    validateRequiredField(task.taskId, "Cross-Tenant Denial Proof", row.crossTenantDenialProof, errors);
+
+    if (!mentionsAllowedProof(row.allowedStateProof)) {
+      errors.push(`${task.taskId} permission rendering evidence must prove the allowed state`);
+    }
+
+    if (!mentionsDeniedProof(row.deniedUnauthorizedStateProof)) {
+      errors.push(`${task.taskId} permission rendering evidence must prove denied or unauthorized state`);
+    }
+
+    if (!mentionsExpiredOrUnauthenticated(row.expiredUnauthenticatedStateProof)) {
+      errors.push(`${task.taskId} permission rendering evidence must prove expired or unauthenticated state`);
+    }
+
+    if (tenantScoped && !mentionsCrossTenantDenial(row.crossTenantDenialProof)) {
+      errors.push(`${task.taskId} tenant-scoped permission rendering evidence must prove cross-tenant denial`);
+    }
+  }
+}
+
+function validateFrontendRuntimeDataMockHonesty(
+  task: TaskRow,
+  frontendArchitectureRows: FrontendArchitectureDecisionRow[],
+  rows: FrontendRuntimeDataMockHonestyRow[],
+  proofRows: ProofCommandRow[],
+  errors: string[],
+): void {
+  if (!frontendTaskTypes.has(task.taskType)) {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued frontend/design-system task has no runtime data and mock-honesty row`);
+    return;
+  }
+
+  const requiresRuntimeTie = requiresRuntimeDataEvidence(task, frontendArchitectureRows, proofRows, rows);
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Governing API / Projection Contract", row.governingContract, errors);
+    validateRequiredField(task.taskId, "Fixture Source", row.fixtureSource, errors);
+    validateRequiredField(task.taskId, "Mock-Honesty Statement", row.mockHonestyStatement, errors);
+
+    const hasLiveEvidence = hasMeaningfulEvidence(row.liveRuntimePayloadEvidence);
+    const hasUnavailableReason = hasMeaningfulEvidence(row.unavailableReason);
+
+    if (!hasLiveEvidence && !hasUnavailableReason) {
+      errors.push(`${task.taskId} runtime data evidence must include live/runtime payload evidence or an explicit unavailable reason`);
+    }
+
+    if (!mentionsMockHonesty(row.mockHonestyStatement)) {
+      errors.push(`${task.taskId} runtime data evidence must include a mock-honesty statement`);
+    }
+
+    if (requiresRuntimeTie && isNotApplicableValue(row.governingContract) && !hasLiveEvidence) {
+      errors.push(`${task.taskId} rendered proof using mocks requires a governing API/projection contract or live runtime payload evidence`);
+    }
+  }
+}
+
+function validateVerticalSliceCoupling(
+  task: TaskRow,
+  rows: VerticalSliceCouplingRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "vertical-slice") {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued vertical-slice task has no vertical slice coupling row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Vertical Slice Journey Behavior", row.journeyBehavior, errors);
+    validateRequiredField(task.taskId, "Vertical Slice Backend Seam", row.backendSeam, errors);
+    validateRequiredField(task.taskId, "Vertical Slice Frontend Seam", row.frontendSeam, errors);
+    validateRequiredField(task.taskId, "Vertical Slice API / Data Contract", row.apiDataContract, errors);
+    validateRequiredField(task.taskId, "Vertical Slice Browser Proof Story", row.browserProofStory, errors);
+    validateRequiredField(
+      task.taskId,
+      "Why Backend And Frontend Proof Are Inseparable",
+      row.inseparableProofRationale,
+      errors,
+    );
+    validateRequiredField(task.taskId, "Vertical Slice Split Rejection Rationale", row.splitRejectionRationale, errors);
+
+    if (!mentionsInseparable(row.inseparableProofRationale, row.splitRejectionRationale)) {
+      errors.push(`${task.taskId} vertical slice must explain why backend and frontend proof are inseparable`);
+    }
+
+    if (!mentionsJourneyBehavior(row.journeyBehavior, row.browserProofStory)) {
+      errors.push(`${task.taskId} vertical slice must name one journey behavior and browser proof story`);
+    }
+
+    if (!mentionsBackendAndFrontendSeams(row.backendSeam, row.frontendSeam)) {
+      errors.push(`${task.taskId} vertical slice must name both backend and frontend seams`);
+    }
+
+    if (!mentionsContractOrPayload(row.apiDataContract)) {
+      errors.push(`${task.taskId} vertical slice must name an API/data contract or payload seam`);
+    }
+
+    if (mentionsShortcutScope(task.scope, row.splitRejectionRationale)) {
+      errors.push(`${task.taskId} vertical slice cannot be used as a shortcut around separable task types`);
+    }
+  }
+}
+
+function validateBackendImplementationApproach(
+  task: TaskRow,
+  rows: BackendImplementationApproachRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "backend") {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued backend task has no backend implementation approach row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Backend Feature Owner", row.featureOwner, errors);
+    validateRequiredField(task.taskId, "Backend Capability File Strategy", row.capabilityFileStrategy, errors);
+    validateRequiredField(task.taskId, "Expected Files / Layers", row.expectedFilesLayers, errors);
+    validateRequiredField(task.taskId, "Layer Responsibilities", row.layerResponsibilities, errors);
+    validateRequiredField(task.taskId, "Public Seam / Manifest Impact", row.publicSeamManifestImpact, errors);
+    validateRequiredField(
+      task.taskId,
+      "Formatting / Generated Artifact Expectations",
+      row.formattingGeneratedArtifactExpectations,
+      errors,
+    );
+
+    if (!allowedBackendCapabilityFileStrategies.has(row.capabilityFileStrategy)) {
+      errors.push(`${task.taskId} has invalid backend capability file strategy: ${row.capabilityFileStrategy || "(blank)"}`);
+    }
+
+    if (!mentionsBackendFeatureOwner(row.featureOwner)) {
+      errors.push(`${task.taskId} backend feature owner should name a src/features/<featureName> owner`);
+    }
+
+    if (row.capabilityFileStrategy === "not-applicable-with-rationale" && !mentionsNotApplicableRationale(row.expectedFilesLayers, row.layerResponsibilities)) {
+      errors.push(`${task.taskId} backend not-applicable capability strategy needs rationale`);
+    }
+  }
+}
+
+function validateMigrationPersistenceApproach(
+  task: TaskRow,
+  rows: MigrationPersistenceApproachRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "migration/persistence") {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued migration/persistence task has no migration / persistence approach row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Migration / Persistence Change Type", row.changeType, errors);
+    validateRequiredField(task.taskId, "Live Schema Check", row.liveSchemaCheck, errors);
+    validateRequiredField(task.taskId, "Source Data Shape Validation", row.sourceDataShapeValidation, errors);
+    validateRequiredField(task.taskId, "Per-Row Eligibility Validation", row.perRowEligibilityValidation, errors);
+    validateRequiredField(task.taskId, "Rejected Row Behavior", row.rejectedRowBehavior, errors);
+    validateRequiredField(task.taskId, "Migration Identity / Applied File Posture", row.migrationIdentityPosture, errors);
+    validateRequiredField(task.taskId, "SQL Execution Semantics Check", row.sqlExecutionSemanticsCheck, errors);
+    validateRequiredField(task.taskId, "Representative Read / Write Proof", row.representativeReadWriteProof, errors);
+    validateRequiredField(task.taskId, "Postgres Harness Impact", row.postgresHarnessImpact, errors);
+
+    if (!allowedMigrationPersistenceChangeTypes.has(row.changeType)) {
+      errors.push(`${task.taskId} has invalid migration/persistence change type: ${row.changeType || "(blank)"}`);
+    }
+
+    if (row.changeType === "not-applicable-with-rationale" && !mentionsNotApplicableRationale(row.liveSchemaCheck, row.migrationIdentityPosture)) {
+      errors.push(`${task.taskId} migration/persistence not-applicable change type needs rationale`);
+    }
+
+    if (
+      (row.changeType === "new-migration" || row.changeType === "corrective-migration") &&
+      !mentionsMigrationIdentity(row.migrationIdentityPosture)
+    ) {
+      errors.push(`${task.taskId} migration task must name new/corrective migration identity posture`);
+    }
+  }
+}
+
+function validateTightWriteEnvelope(task: TaskRow, rows: TightWriteEnvelopeRow[], errors: string[]): void {
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued task has no tight allowed write envelope row`);
+    return;
+  }
+
+  for (const row of rows) {
+    if (!allowedWriteEnvelopeClasses.has(row.envelopeClass)) {
+      errors.push(`${task.taskId} has invalid write envelope class: ${row.envelopeClass || "(blank)"}`);
+    }
+
+    validateRequiredField(task.taskId, "Exact Files Or Narrow Patterns", row.exactFilesOrPatterns, errors);
+    validateRequiredField(task.taskId, "Broad Write Rationale", row.broadWriteRationale, errors);
+
+    if (row.envelopeClass === "broad-pattern-blocked") {
+      errors.push(`${task.taskId} write envelope is broad-pattern-blocked`);
+    }
+
+    if (isBroadFrontendWriteEnvelope(task, row) && !isApprovedBroadFrontendEnvelope(task, row)) {
+      errors.push(`${task.taskId} has broad frontend/design-system write envelope without approved broad-scope rationale`);
+    }
+  }
+}
+
+function validateTaskSpecificProofPlan(task: TaskRow, rows: TaskSpecificProofPlanRow[], errors: string[]): void {
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued task has no task-specific proof plan row`);
+    return;
+  }
+
+  for (const row of rows) {
+    if (!allowedProofSpecificityStatuses.has(row.proofSpecificity)) {
+      errors.push(`${task.taskId} has invalid proof specificity: ${row.proofSpecificity || "(blank)"}`);
+    }
+
+    validateRequiredField(task.taskId, "Task-Specific Test / Scenario / Evidence Name", row.taskSpecificProofName, errors);
+    validateRequiredField(task.taskId, "Broad Proof Rationale", row.broadProofRationale, errors);
+
+    if (row.proofSpecificity === "blocked") {
+      errors.push(`${task.taskId} proof specificity is blocked`);
+    }
+
+    if (row.proofSpecificity === "broad-with-rationale" && !isBroadProofAllowed(task)) {
+      errors.push(`${task.taskId} broad proof requires an intentionally broad task type`);
+    }
+  }
+}
+
+function validateTestOnlyCoverage(
+  task: TaskRow,
+  coverageRows: TestOnlyCoverageContractRow[],
+  matrixRows: CapabilityPermissionStateMatrixRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "test-only") {
+    return;
+  }
+
+  if (coverageRows.length === 0) {
+    errors.push(`${task.taskId} queued test-only task has no test-only coverage contract row`);
+    return;
+  }
+
+  const matrixRequired = isPermissionStateMatrixRequired(task, coverageRows);
+
+  for (const row of coverageRows) {
+    validateRequiredField(task.taskId, "Test-Only Coverage Source", row.coverageSource, errors);
+    validateRequiredField(task.taskId, "Test-Only Traceability IDs", row.traceabilityIds, errors);
+    validateRequiredField(task.taskId, "Test-Only Test Layer", row.testLayer, errors);
+    validateRequiredField(task.taskId, "Test-Only Proof Target", row.proofTarget, errors);
+    validateRequiredField(task.taskId, "Fixture / Data Source", row.fixtureDataSource, errors);
+    validateRequiredField(task.taskId, "Mock / Runtime Honesty", row.mockRuntimeHonesty, errors);
+    validateRequiredField(
+      task.taskId,
+      "Production Behavior Change Posture",
+      row.productionBehaviorChangePosture,
+      errors,
+    );
+    validateRequiredField(task.taskId, "Focused Command", row.focusedCommand, errors);
+
+    if (!mentionsTraceabilityId(row.traceabilityIds)) {
+      errors.push(`${task.taskId} test-only task must name approved TC-* or AC-* traceability IDs`);
+    }
+
+    if (!mentionsConcreteTestLayer(row.testLayer)) {
+      errors.push(`${task.taskId} test-only task must name a concrete test layer`);
+    }
+
+    if (!mentionsMockHonesty(row.mockRuntimeHonesty)) {
+      errors.push(`${task.taskId} test-only task must include mock-honesty or runtime-data evidence`);
+    }
+
+    if (row.productionBehaviorChangePosture === "blocked-production-change-required") {
+      errors.push(`${task.taskId} test-only task cannot queue when production behavior changes are required`);
+    } else if (!mentionsNoProductionBehaviorChange(row.productionBehaviorChangePosture)) {
+      errors.push(`${task.taskId} test-only task must declare no production behavior change or test-harness-only posture`);
+    }
+
+    if (isBroadOnlyCommand(row.focusedCommand)) {
+      errors.push(`${task.taskId} test-only task must name a focused test command, not only a broad suite`);
+    }
+  }
+
+  if (matrixRequired && matrixRows.length === 0) {
+    errors.push(`${task.taskId} privileged/security-sensitive test-only task has no capability permission/state matrix row`);
+    return;
+  }
+
+  for (const row of matrixRows) {
+    validateRequiredField(task.taskId, "Capability / Route / Object", row.capabilityRouteObject, errors);
+    validateRequiredField(task.taskId, "Actor States Covered", row.actorStatesCovered, errors);
+    validateRequiredField(task.taskId, "Permission States Covered", row.permissionStatesCovered, errors);
+    validateRequiredField(task.taskId, "Object Lifecycle States Covered", row.objectLifecycleStatesCovered, errors);
+    validateRequiredField(task.taskId, "Boundary States Covered", row.boundaryStatesCovered, errors);
+    validateRequiredField(task.taskId, "Required Negative Cases", row.requiredNegativeCases, errors);
+    validateRequiredField(task.taskId, "Matrix Not Applicable Rationale", row.notApplicableRationale, errors);
+    validateRequiredField(task.taskId, "Missing Coverage / Follow-Up Task", row.missingCoverageFollowUpTask, errors);
+
+    if (matrixRequired && !mentionsAllowedAndDenied(row.actorStatesCovered, row.permissionStatesCovered, row.requiredNegativeCases)) {
+      errors.push(`${task.taskId} permission/state matrix must cover both allowed and denied states`);
+    }
+
+    if (matrixRequired && !mentionsActorPermissionObjectBoundary(row)) {
+      errors.push(`${task.taskId} permission/state matrix must cover actor, permission, object lifecycle, and boundary dimensions`);
+    }
+
+    if (matrixRequired && isHappyPathOnly(row.requiredNegativeCases)) {
+      errors.push(`${task.taskId} permission/state matrix cannot be happy-path only`);
+    }
+  }
+}
+
+function validateForbiddenAssumptions(task: TaskRow, rows: ForbiddenAssumptionRow[], errors: string[]): void {
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued task has no forbidden assumptions row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Forbidden Assumption", row.forbiddenAssumption, errors);
+    validateRequiredField(task.taskId, "Forbidden Assumption Escalation Path", row.escalationPath, errors);
   }
 }
 
@@ -1244,6 +2500,30 @@ function validateRequiredField(id: string, fieldName: string, value: string, err
   }
 }
 
+function validateRequiredOrConcreteNotApplicable(id: string, fieldName: string, value: string, errors: string[]): void {
+  const before = errors.length;
+  validateRequiredField(id, fieldName, value, errors);
+  if (errors.length > before || !value.trim().toLowerCase().startsWith("not-applicable")) {
+    return;
+  }
+
+  if (!mentionsNotApplicableRationale(value)) {
+    errors.push(`${id} ${fieldName} uses not-applicable without concrete rationale`);
+  }
+}
+
+function validateAllowedValue(
+  id: string,
+  fieldName: string,
+  value: string,
+  allowedValues: Set<string>,
+  errors: string[],
+): void {
+  if (!allowedValues.has(value)) {
+    errors.push(`${id} has invalid ${fieldName}: ${value || "(blank)"}`);
+  }
+}
+
 function validateVaguePhrases(content: string, errors: string[]): void {
   const lowered = content.toLowerCase();
   for (const phrase of vaguePhrases) {
@@ -1265,6 +2545,571 @@ function mentionsCompatibilityEvidence(value: string): boolean {
     normalized.includes("existing-consumer") ||
     normalized.includes("compatibility") ||
     normalized.includes("regression")
+  );
+}
+
+function mentionsInseparable(...values: string[]): boolean {
+  const normalized = values.join(" ").trim().toLowerCase();
+  return normalized.includes("inseparable") || normalized.includes("same invariant");
+}
+
+function hasAffirmativeValue(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  return normalized === "yes" || normalized === "true" || normalized === "present";
+}
+
+function hasMeaningfulAdditionalSubStandards(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  return Boolean(normalized) && !normalized.startsWith("none") && !normalized.startsWith("not-applicable");
+}
+
+function hasMeaningfulEvidence(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  return Boolean(normalized) && !normalized.startsWith("none") && !normalized.startsWith("not-applicable");
+}
+
+function isNotApplicableValue(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  return !normalized || normalized.startsWith("not-applicable");
+}
+
+function mentionsRuntimeEvidence(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  return (
+    normalized.includes("proof") ||
+    normalized.includes("evidence") ||
+    normalized.includes("test") ||
+    normalized.includes("scenario") ||
+    normalized.includes("runtime") ||
+    normalized.includes("payload")
+  );
+}
+
+function requiresPermissionRenderingEvidence(
+  task: TaskRow,
+  frontendArchitectureRows: FrontendArchitectureDecisionRow[],
+  securityRows: FrontendSecurityEvidenceRow[],
+): boolean {
+  if (securityRows.some((row) => row.securityArea === "sensitive-rendering" && row.sourcePresent === "yes")) {
+    return true;
+  }
+
+  const combined = `${task.scope} ${task.allowedWriteSet} ${task.sharedSeams}`.toLowerCase();
+  return (
+    combined.includes("privileged") ||
+    combined.includes("permission") ||
+    combined.includes("tenant") ||
+    combined.includes("user") ||
+    combined.includes("role") ||
+    combined.includes("asset") ||
+    combined.includes("lifecycle") ||
+    combined.includes("sensitive") ||
+    frontendArchitectureRows.some((row) => row.actorScope === "tenant-actor" || row.actorScope === "root-operator")
+  );
+}
+
+function requiresRuntimeDataEvidence(
+  task: TaskRow,
+  frontendArchitectureRows: FrontendArchitectureDecisionRow[],
+  proofRows: ProofCommandRow[],
+  runtimeRows: FrontendRuntimeDataMockHonestyRow[],
+): boolean {
+  const combined = [
+    task.scope,
+    task.allowedWriteSet,
+    task.sharedSeams,
+    ...proofRows.flatMap((row) => [row.proofLayers, row.commands, row.evidenceNotes]),
+    ...runtimeRows.flatMap((row) => [row.governingContract, row.fixtureSource, row.liveRuntimePayloadEvidence, row.mockHonestyStatement]),
+  ].join(" ").toLowerCase();
+
+  return (
+    combined.includes("mock") ||
+    combined.includes("fixture") ||
+    combined.includes("api") ||
+    combined.includes("projection") ||
+    combined.includes("payload") ||
+    combined.includes("rendered-browser") ||
+    frontendArchitectureRows.some((row) => row.runtimeShape === "app-shell" || row.runtimeShape === "browser-workflow")
+  );
+}
+
+function mentionsTenantScope(...values: string[]): boolean {
+  return values.join(" ").toLowerCase().includes("tenant");
+}
+
+function mentionsAllowedProof(value: string): boolean {
+  return value.toLowerCase().includes("allowed");
+}
+
+function mentionsDeniedProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return normalized.includes("denied") || normalized.includes("unauthorized") || normalized.includes("forbidden");
+}
+
+function mentionsExpiredOrUnauthenticated(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return normalized.includes("expired") || normalized.includes("unauthenticated") || normalized.includes("anonymous");
+}
+
+function mentionsCrossTenantDenial(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return normalized.includes("cross-tenant") && (normalized.includes("denial") || normalized.includes("denied"));
+}
+
+function mentionsMockHonesty(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return normalized.includes("mock-honesty") || (normalized.includes("fixture") && !normalized.includes("invent"));
+}
+
+function mentionsJourneyBehavior(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  return normalized.includes("journey") && (normalized.includes("behavior") || normalized.includes("workflow") || normalized.includes("scenario"));
+}
+
+function mentionsBackendAndFrontendSeams(backendSeam: string, frontendSeam: string): boolean {
+  const backend = backendSeam.toLowerCase();
+  const frontend = frontendSeam.toLowerCase();
+  return (
+    (backend.includes("backend") || backend.includes("api") || backend.includes("persistence") || backend.includes("service")) &&
+    (frontend.includes("frontend") || frontend.includes("browser") || frontend.includes("render") || frontend.includes("route"))
+  );
+}
+
+function mentionsContractOrPayload(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return normalized.includes("contract") || normalized.includes("payload") || normalized.includes("api") || normalized.includes("projection");
+}
+
+function mentionsShortcutScope(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  return (
+    normalized.includes("shortcut") ||
+    normalized.includes("do everything") ||
+    normalized.includes("end-to-end implementation") ||
+    normalized.includes("full feature") ||
+    normalized.includes("all tasks") ||
+    normalized.includes("avoid separate")
+  );
+}
+
+function mentionsFixtureDataContractProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("contract") &&
+    normalized.includes("fixture") &&
+    (normalized.includes("live payload") || normalized.includes("live/runtime payload") || normalized.includes("runtime payload"))
+  );
+}
+
+function mentionsScreenshotOrEvidenceArtifact(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("screenshot") ||
+    normalized.includes(".png") ||
+    normalized.includes(".jpg") ||
+    normalized.includes(".jpeg") ||
+    normalized.includes(".webp") ||
+    normalized.includes("evidence artifact")
+  );
+}
+
+function mentionsInteractionScenario(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("scenario") || normalized.includes("state transition")) &&
+    (normalized.includes("interaction") || normalized.includes("click") || normalized.includes("keyboard") || normalized.includes("toggle"))
+  );
+}
+
+function mentionsAccessibilitySemanticsProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("role") &&
+    normalized.includes("name") &&
+    normalized.includes("state") &&
+    normalized.includes("focus")
+  );
+}
+
+function mentionsEvidenceSweepArtifactsAndScope(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("artifact") || normalized.includes(".png") || normalized.includes(".json") || normalized.includes(".md")) &&
+    normalized.includes("scope")
+  );
+}
+
+function mentionsStaticLowRiskPerformanceProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return normalized.includes("render proof") && (normalized.includes("sufficient") || normalized.includes("no performance-specific"));
+}
+
+function mentionsInteractiveLowRiskPerformanceProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("interaction") || normalized.includes("scenario")) &&
+    (normalized.includes("no repeated work") || normalized.includes("no repeated fetch") || normalized.includes("no fetch loop"))
+  );
+}
+
+function mentionsDataListPerformanceProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("bounded data") || normalized.includes("bounded data-size") || normalized.includes("page size")) &&
+    (normalized.includes("dom") || normalized.includes("list") || normalized.includes("table")) &&
+    (normalized.includes("proof") || normalized.includes("scenario") || normalized.includes("evidence"))
+  );
+}
+
+function mentionsRouteInitializationPerformanceProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("route init") || normalized.includes("route load") || normalized.includes("initialization") || normalized.includes("lighthouse") || normalized.includes("trace")) &&
+    (normalized.includes("proof") || normalized.includes("evidence") || normalized.includes("scenario") || normalized.includes("trace"))
+  );
+}
+
+function mentionsLargeDomCanvasPerformanceProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("bounded dom") || normalized.includes("bounded canvas") || normalized.includes("canvas size") || normalized.includes("dom size")) &&
+    normalized.includes("nonblank") &&
+    (normalized.includes("interaction") || normalized.includes("proof") || normalized.includes("scenario"))
+  );
+}
+
+function mentionsAssetHeavyPerformanceProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("asset size") &&
+    (normalized.includes("loading strategy") || normalized.includes("load strategy")) &&
+    (normalized.includes("rendered asset") || normalized.includes("asset evidence"))
+  );
+}
+
+function mentionsAnimationPerformanceProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("timing") || normalized.includes("duration") || normalized.includes("reduced-motion")) &&
+    (normalized.includes("transition") || normalized.includes("animation") || normalized.includes("motion"))
+  );
+}
+
+function isDesignSystemProducerPosture(value: string): boolean {
+  return value === "produces-consumable-seam" || value === "refines-existing-seam" || value === "proves-existing-seam";
+}
+
+function isFrontendConsumerPosture(value: string): boolean {
+  return value === "consumes-existing-seam" || value === "approved-exception";
+}
+
+function mentionsDesignSystemSeam(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  return (
+    normalized.includes("/design-system") ||
+    normalized.includes("src/frontend/design-system") ||
+    normalized.includes("render") ||
+    normalized.includes("controller") ||
+    normalized.includes("export") ||
+    normalized.includes("component")
+  );
+}
+
+function explicitlyProhibitsCopiedDsInternals(value: string): boolean {
+  const normalized = value.toLowerCase();
+  const prohibitsCopying =
+    normalized.includes("prohibit") ||
+    normalized.includes("forbid") ||
+    normalized.includes("must not") ||
+    normalized.includes("no copied") ||
+    normalized.includes("not copy");
+  return (
+    prohibitsCopying &&
+    normalized.includes("markup") &&
+    normalized.includes("controller") &&
+    normalized.includes("aria") &&
+    normalized.includes("css")
+  );
+}
+
+function claimsGovernedDsInternalOwnership(value: string): boolean {
+  const normalized = value.toLowerCase();
+  const claimsOwnership =
+    normalized.includes("owns") ||
+    normalized.includes("own ") ||
+    normalized.includes("controls") ||
+    normalized.includes("implements") ||
+    normalized.includes("recreates");
+  const governedInternal =
+    normalized.includes("governed render") ||
+    normalized.includes("render structure") ||
+    normalized.includes("controller") ||
+    normalized.includes("accessibility") ||
+    normalized.includes("aria") ||
+    normalized.includes("style internal") ||
+    normalized.includes("css internal") ||
+    normalized.includes("css seam");
+  return claimsOwnership && governedInternal;
+}
+
+function mentionsRootAdminShellEntry(value: string): boolean {
+  const normalized = value.replace(/\\/g, "/").toLowerCase();
+  return normalized
+    .split(/[,;\s]+/)
+    .some((item: string) => item.endsWith("src/frontend/rootadminshell/assets/app.mjs"));
+}
+
+function mentionsPreviewApplyOrMaterializationSeam(
+  task: TaskRow,
+  row: FrontendArchitectureDecisionRow,
+  contextRows: StartingContextRow[],
+  envelopeRows: TightWriteEnvelopeRow[],
+): boolean {
+  const normalized = [
+    task.scope,
+    task.allowedWriteSet,
+    task.sharedSeams,
+    row.sourceSteeringDecision,
+    ...contextRows.flatMap((context) => [
+      context.filesRoutesCanonicals,
+      context.seamsToConsume,
+      context.governingArtifacts,
+    ]),
+    ...envelopeRows.flatMap((envelope) => [envelope.exactFilesOrPatterns, envelope.broadWriteRationale]),
+  ]
+    .join(" ")
+    .toLowerCase();
+  return (
+    normalized.includes("preview/apply") ||
+    normalized.includes("preview-apply") ||
+    normalized.includes("apply seam") ||
+    normalized.includes("preview seam") ||
+    normalized.includes("materialization seam") ||
+    normalized.includes("materialization")
+  );
+}
+
+function mentionsGeneratedOutputHandEdit(...values: string[]): boolean {
+  const normalized = values.join(" ").replace(/\\/g, "/").toLowerCase();
+  return (
+    normalized.includes("hand-edit") ||
+    normalized.includes("hand edit") ||
+    normalized.includes("manual edit") ||
+    normalized.includes("generated-output") ||
+    normalized.includes("/generated/") ||
+    normalized.includes("docs/architecture/generated") ||
+    normalized.includes("generated routing") ||
+    normalized.includes("generated route")
+  );
+}
+
+function mentionsApprovedGeneratedCanonicalSweep(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  return (
+    normalized.includes("approved generated/canonical sweep") ||
+    normalized.includes("approved generated sweep") ||
+    normalized.includes("approved canonical sweep")
+  );
+}
+
+function mentionsPageJourneyBehaviorOwnership(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  const pageJourneyBehavior =
+    normalized.includes("page behavior") ||
+    normalized.includes("journey behavior") ||
+    normalized.includes("controller behavior") ||
+    normalized.includes("interaction behavior") ||
+    normalized.includes("state machine") ||
+    normalized.includes("render behavior");
+  const registryOnly =
+    normalized.includes("registry only") ||
+    normalized.includes("route mounting only") ||
+    normalized.includes("route mount only");
+  return pageJourneyBehavior && !registryOnly;
+}
+
+function writeSetMatchesProductModuleJourneyGroup(allowedWriteSet: string, productModule: string, journeyGroup: string): boolean {
+  const normalizedWriteSet = normalizePathToken(allowedWriteSet);
+  const normalizedProductModule = normalizePathToken(productModule);
+  const normalizedJourneyGroup = normalizePathToken(journeyGroup);
+
+  if (!normalizedProductModule || normalizedProductModule.startsWith("notapplicable")) {
+    return true;
+  }
+
+  if (!normalizedWriteSet.includes(normalizedProductModule)) {
+    return false;
+  }
+
+  return !normalizedJourneyGroup || normalizedJourneyGroup.startsWith("notapplicable") || normalizedWriteSet.includes(normalizedJourneyGroup);
+}
+
+function normalizePathToken(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+
+function mentionsUnknownModuleJourneyPathRationale(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  return (
+    normalized.includes("path-unknown:") ||
+    normalized.includes("exact path unknown:") ||
+    normalized.includes("path not known:") ||
+    normalized.includes("exact module/journey path not known:")
+  );
+}
+
+function mentionsCompatibilityLocator(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  return Boolean(normalized) && !normalized.startsWith("none") && !normalized.startsWith("not-applicable");
+}
+
+function mentionsUrlOrReplayState(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  return normalized.includes("url") || normalized.includes("query param") || normalized.includes("replay");
+}
+
+function isBroadFrontendWriteEnvelope(task: TaskRow, row: TightWriteEnvelopeRow): boolean {
+  const normalizedPaths = row.exactFilesOrPatterns.toLowerCase();
+  return (
+    frontendTaskTypes.has(task.taskType) &&
+    (row.envelopeClass.startsWith("broad-pattern") ||
+      normalizedPaths.includes("src/frontend/**") ||
+      normalizedPaths.includes("src/frontend/design-system/**") ||
+      normalizedPaths.includes("src/frontend/designsystem/**"))
+  );
+}
+
+function isApprovedBroadFrontendEnvelope(task: TaskRow, row: TightWriteEnvelopeRow): boolean {
+  const rationale = row.broadWriteRationale.toLowerCase();
+  return (
+    row.envelopeClass === "broad-pattern-justified" &&
+    (task.taskType === "QA/evidence" ||
+      rationale.includes("audit") ||
+      rationale.includes("migration") ||
+      rationale.includes("generated") ||
+      rationale.includes("canonical sweep") ||
+      rationale.includes("evidence sweep"))
+  );
+}
+
+function isBroadProofAllowed(task: TaskRow): boolean {
+  return task.taskType === "standards-compliance" || task.taskType === "QA/evidence" || task.taskType === "docs-artifact";
+}
+
+function isPermissionStateMatrixRequired(task: TaskRow, coverageRows: TestOnlyCoverageContractRow[]): boolean {
+  const normalized = [
+    task.scope,
+    task.nonGoals,
+    ...coverageRows.flatMap((row) => [
+      row.coverageSource,
+      row.testLayer,
+      row.proofTarget,
+      row.fixtureDataSource,
+      row.mockRuntimeHonesty,
+    ]),
+  ].join(" ").toLowerCase();
+
+  return [
+    "root-admin",
+    "root admin",
+    "root-user",
+    "root user",
+    "root-role",
+    "root role",
+    "tenant-boundary",
+    "cross-tenant",
+    "authz",
+    "authorization",
+    "permission",
+    "privileged",
+    "security",
+    "sensitive",
+    "asset",
+    "lifecycle",
+  ].some((token) => normalized.includes(token));
+}
+
+function mentionsTraceabilityId(value: string): boolean {
+  return /\b(?:TC|AC)-[A-Z0-9-]+/.test(value.toUpperCase());
+}
+
+function mentionsConcreteTestLayer(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return [
+    "unit",
+    "integration",
+    "persistence",
+    "security",
+    "audit",
+    "e2e",
+    "visual",
+    "browser",
+    "performance",
+    "traceability",
+  ].some((token) => normalized.includes(token));
+}
+
+function mentionsNoProductionBehaviorChange(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized === "no-production-change" ||
+    normalized === "test-harness-only" ||
+    normalized.includes("no production behavior change") ||
+    normalized.includes("test harness only")
+  );
+}
+
+function isBroadOnlyCommand(value: string): boolean {
+  const normalized = value.trim().toLowerCase();
+  return normalized === "npm test" || normalized === "npm run test" || normalized === "npm run test:all";
+}
+
+function mentionsAllowedAndDenied(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  const hasAllowed = normalized.includes("allow") || normalized.includes("success") || normalized.includes("authorized");
+  const hasDenied = normalized.includes("deny") || normalized.includes("denied") || normalized.includes("unauthorized") || normalized.includes("forbid");
+  return hasAllowed && hasDenied;
+}
+
+function mentionsActorPermissionObjectBoundary(row: CapabilityPermissionStateMatrixRow): boolean {
+  const actor = row.actorStatesCovered.toLowerCase();
+  const permission = row.permissionStatesCovered.toLowerCase();
+  const object = row.objectLifecycleStatesCovered.toLowerCase();
+  const boundary = row.boundaryStatesCovered.toLowerCase();
+  return (
+    (actor.includes("actor") || actor.includes("root") || actor.includes("tenant") || actor.includes("session")) &&
+    (permission.includes("permission") || permission.includes("capability") || permission.includes("role")) &&
+    (object.includes("object") || object.includes("active") || object.includes("deleted") || object.includes("inactive")) &&
+    (boundary.includes("boundary") || boundary.includes("tenant") || boundary.includes("root") || boundary.includes("cross-tenant"))
+  );
+}
+
+function isHappyPathOnly(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("none") || normalized.includes("not-applicable")) &&
+    !normalized.includes("deny") &&
+    !normalized.includes("unauthorized") &&
+    !normalized.includes("negative")
+  );
+}
+
+function mentionsBackendFeatureOwner(value: string): boolean {
+  return value.includes("src/features/");
+}
+
+function mentionsNotApplicableRationale(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  return normalized.includes("not-applicable:") || normalized.includes("not applicable because");
+}
+
+function mentionsMigrationIdentity(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("new migration") ||
+    normalized.includes("corrective migration") ||
+    normalized.includes(".sql") ||
+    normalized.includes("applied migration")
   );
 }
 
@@ -1375,6 +3220,44 @@ function parseSourceSteeringClassificationRows(content: string): SourceSteeringC
   }));
 }
 
+function parseSourceFrontendArchitectureClassificationRows(
+  content: string,
+): SourceFrontendArchitectureClassificationRow[] {
+  return parseTableRows(section(content, "## Frontend Architecture Classification Snapshot")).map((cells) => ({
+    scopeElement: cells[0] ?? "",
+    routeFamily: cells[1] ?? "",
+    productModule: cells[2] ?? "",
+    journeyGroup: cells[3] ?? "",
+    routeVisibility: cells[4] ?? "",
+    actorScope: cells[5] ?? "",
+    runtimeShape: cells[6] ?? "",
+    surfaceClass: cells[7] ?? "",
+    topologyClass: cells[8] ?? "",
+    locatorType: cells[9] ?? "",
+    canonicalLocator: cells[10] ?? "",
+    compatibilityLocators: cells[11] ?? "",
+    topologyAuthority: cells[12] ?? "",
+    targetTopologyAuthority: cells[13] ?? "",
+    authorityTransitionPosture: cells[14] ?? "",
+    stateOwner: cells[15] ?? "",
+    shellGovernance: cells[16] ?? "",
+    designSystemPrerequisite: cells[17] ?? "",
+    materializationModel: cells[18] ?? "",
+    sourcePlacement: cells[19] ?? "",
+    implementationReadiness: cells[20] ?? "",
+  }));
+}
+
+function parseSourceBrowserSecurityPostureRows(content: string): SourceBrowserSecurityPostureRow[] {
+  return parseTableRows(section(content, "## Browser Security Posture Snapshot")).map((cells) => ({
+    securityArea: cells[0] ?? "",
+    present: cells[1] ?? "",
+    decisionEvidence: cells[2] ?? "",
+    requiredLayer4Signal: cells[3] ?? "",
+    stopIfMissing: cells[4] ?? "",
+  }));
+}
+
 function parseSourceTaskTypeSignalRows(content: string): SourceTaskTypeSignalRow[] {
   return parseTableRows(section(content, "## Task-Type Signal Matrix")).map((cells) => ({
     storyId: cells[0] ?? "",
@@ -1415,6 +3298,240 @@ function parseTaskRows(content: string): TaskRow[] {
     dependencies: cells[6] ?? "",
     sharedSeams: cells[7] ?? "",
     handoffStatus: cells[8] ?? "",
+  }));
+}
+
+function parseTaskSizeGuardrailRows(content: string): TaskSizeGuardrailRow[] {
+  return parseTableRows(section(content, "## Task Size Guardrail")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    taskGrain: cells[1] ?? "",
+    acCount: cells[2] ?? "",
+    acCountRationale: cells[3] ?? "",
+    primaryTarget: cells[4] ?? "",
+    primarySeam: cells[5] ?? "",
+    mainProofStory: cells[6] ?? "",
+    additionalBehaviorsPresent: cells[7] ?? "",
+    whyNotFurtherSplit: cells[8] ?? "",
+  }));
+}
+
+function parseStopConditionRows(content: string): StopConditionRow[] {
+  return parseTableRows(section(content, "## Decision Escalation / Stop Conditions")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    triggerType: cells[1] ?? "",
+    stopCondition: cells[2] ?? "",
+    requiredEscalation: cells[3] ?? "",
+    mayProceedIfHit: cells[4] ?? "",
+    rationale: cells[5] ?? "",
+  }));
+}
+
+function parseStartingContextRows(content: string): StartingContextRow[] {
+  return parseTableRows(section(content, "## Exact Starting Context")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    filesRoutesCanonicals: cells[1] ?? "",
+    seamsToConsume: cells[2] ?? "",
+    governingArtifacts: cells[3] ?? "",
+  }));
+}
+
+function parseFrontendArchitectureDecisionRows(content: string): FrontendArchitectureDecisionRow[] {
+  return parseTableRows(section(content, "## Frontend Architecture Decision Reconciliation")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    sourceScopeElement: cells[1] ?? "",
+    routeFamily: cells[2] ?? "",
+    productModule: cells[3] ?? "",
+    journeyGroup: cells[4] ?? "",
+    routeVisibility: cells[5] ?? "",
+    actorScope: cells[6] ?? "",
+    runtimeShape: cells[7] ?? "",
+    surfaceClass: cells[8] ?? "",
+    topologyClass: cells[9] ?? "",
+    locatorType: cells[10] ?? "",
+    canonicalLocator: cells[11] ?? "",
+    compatibilityLocators: cells[12] ?? "",
+    topologyAuthority: cells[13] ?? "",
+    targetTopologyAuthority: cells[14] ?? "",
+    authorityTransitionPosture: cells[15] ?? "",
+    stateOwner: cells[16] ?? "",
+    shellGovernance: cells[17] ?? "",
+    designSystemPrerequisite: cells[18] ?? "",
+    materializationModel: cells[19] ?? "",
+    sourcePlacement: cells[20] ?? "",
+    implementationReadiness: cells[21] ?? "",
+    sourceSteeringDecision: cells[22] ?? "",
+  }));
+}
+
+function parseFrontendSubStandardRows(content: string): FrontendSubStandardRow[] {
+  return parseTableRows(section(content, "## Frontend / Design-System Sub-Standard")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    primarySubStandard: cells[1] ?? "",
+    additionalSubStandards: cells[2] ?? "",
+    splitRationale: cells[3] ?? "",
+    complianceProof: cells[4] ?? "",
+  }));
+}
+
+function parseFrontendPerformancePostureRows(content: string): FrontendPerformancePostureRow[] {
+  return parseTableRows(section(content, "## Frontend Performance Posture")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    posture: cells[1] ?? "",
+    proofPlan: cells[2] ?? "",
+    rationale: cells[3] ?? "",
+  }));
+}
+
+function parseDesignSystemSeamContractRows(content: string): DesignSystemSeamContractRow[] {
+  return parseTableRows(section(content, "## Design-System Seam Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    seamPosture: cells[1] ?? "",
+    seamNameExportRoute: cells[2] ?? "",
+    ownedRenderStructure: cells[3] ?? "",
+    ownedBehaviorController: cells[4] ?? "",
+    ownedAccessibilitySemantics: cells[5] ?? "",
+    canonicalBehaviorLockEvidence: cells[6] ?? "",
+    frontendConsumptionContract: cells[7] ?? "",
+  }));
+}
+
+function parseFrontendAdoptionContractRows(content: string): FrontendAdoptionContractRow[] {
+  return parseTableRows(section(content, "## Frontend Adoption Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    consumedRenderSeam: cells[1] ?? "",
+    consumedBehaviorControllerSeam: cells[2] ?? "",
+    consumedAccessibilitySemantics: cells[3] ?? "",
+    consumedStyleCssSeam: cells[4] ?? "",
+    allowedAppLocalCompositionDataBinding: cells[5] ?? "",
+    forbiddenLocalReconstruction: cells[6] ?? "",
+    adoptionProofRouteScenario: cells[7] ?? "",
+  }));
+}
+
+function parseFrontendSecurityEvidenceRows(content: string): FrontendSecurityEvidenceRow[] {
+  return parseTableRows(section(content, "## Frontend Security Evidence")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    securityArea: cells[1] ?? "",
+    sourcePresent: cells[2] ?? "",
+    layer2DecisionEvidence: cells[3] ?? "",
+    requiredLayer4Signal: cells[4] ?? "",
+    layer4EvidencePlan: cells[5] ?? "",
+  }));
+}
+
+function parseFrontendPermissionRenderingEvidenceRows(content: string): FrontendPermissionRenderingEvidenceRow[] {
+  return parseTableRows(section(content, "## Frontend Permission Rendering Evidence")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    sensitiveRenderingScope: cells[1] ?? "",
+    allowedStateProof: cells[2] ?? "",
+    deniedUnauthorizedStateProof: cells[3] ?? "",
+    expiredUnauthenticatedStateProof: cells[4] ?? "",
+    crossTenantDenialProof: cells[5] ?? "",
+  }));
+}
+
+function parseFrontendRuntimeDataMockHonestyRows(content: string): FrontendRuntimeDataMockHonestyRow[] {
+  return parseTableRows(section(content, "## Frontend Runtime Data And Mock Honesty")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    governingContract: cells[1] ?? "",
+    fixtureSource: cells[2] ?? "",
+    liveRuntimePayloadEvidence: cells[3] ?? "",
+    unavailableReason: cells[4] ?? "",
+    mockHonestyStatement: cells[5] ?? "",
+  }));
+}
+
+function parseVerticalSliceCouplingRows(content: string): VerticalSliceCouplingRow[] {
+  return parseTableRows(section(content, "## Vertical Slice Coupling")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    journeyBehavior: cells[1] ?? "",
+    backendSeam: cells[2] ?? "",
+    frontendSeam: cells[3] ?? "",
+    apiDataContract: cells[4] ?? "",
+    browserProofStory: cells[5] ?? "",
+    inseparableProofRationale: cells[6] ?? "",
+    splitRejectionRationale: cells[7] ?? "",
+  }));
+}
+
+function parseBackendImplementationApproachRows(content: string): BackendImplementationApproachRow[] {
+  return parseTableRows(section(content, "## Backend Implementation Approach")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    featureOwner: cells[1] ?? "",
+    capabilityFileStrategy: cells[2] ?? "",
+    expectedFilesLayers: cells[3] ?? "",
+    layerResponsibilities: cells[4] ?? "",
+    publicSeamManifestImpact: cells[5] ?? "",
+    formattingGeneratedArtifactExpectations: cells[6] ?? "",
+  }));
+}
+
+function parseMigrationPersistenceApproachRows(content: string): MigrationPersistenceApproachRow[] {
+  return parseTableRows(section(content, "## Migration / Persistence Approach")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    changeType: cells[1] ?? "",
+    liveSchemaCheck: cells[2] ?? "",
+    sourceDataShapeValidation: cells[3] ?? "",
+    perRowEligibilityValidation: cells[4] ?? "",
+    rejectedRowBehavior: cells[5] ?? "",
+    migrationIdentityPosture: cells[6] ?? "",
+    sqlExecutionSemanticsCheck: cells[7] ?? "",
+    representativeReadWriteProof: cells[8] ?? "",
+    postgresHarnessImpact: cells[9] ?? "",
+  }));
+}
+
+function parseTightWriteEnvelopeRows(content: string): TightWriteEnvelopeRow[] {
+  return parseTableRows(section(content, "## Tight Allowed Write Envelope")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    envelopeClass: cells[1] ?? "",
+    exactFilesOrPatterns: cells[2] ?? "",
+    broadWriteRationale: cells[3] ?? "",
+  }));
+}
+
+function parseTaskSpecificProofPlanRows(content: string): TaskSpecificProofPlanRow[] {
+  return parseTableRows(section(content, "## Task-Specific Proof Plan")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    proofSpecificity: cells[1] ?? "",
+    taskSpecificProofName: cells[2] ?? "",
+    broadProofRationale: cells[3] ?? "",
+  }));
+}
+
+function parseTestOnlyCoverageContractRows(content: string): TestOnlyCoverageContractRow[] {
+  return parseTableRows(section(content, "## Test-Only Coverage Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    coverageSource: cells[1] ?? "",
+    traceabilityIds: cells[2] ?? "",
+    testLayer: cells[3] ?? "",
+    proofTarget: cells[4] ?? "",
+    fixtureDataSource: cells[5] ?? "",
+    mockRuntimeHonesty: cells[6] ?? "",
+    productionBehaviorChangePosture: cells[7] ?? "",
+    focusedCommand: cells[8] ?? "",
+  }));
+}
+
+function parseCapabilityPermissionStateMatrixRows(content: string): CapabilityPermissionStateMatrixRow[] {
+  return parseTableRows(section(content, "## Capability Permission / State Matrix")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    capabilityRouteObject: cells[1] ?? "",
+    actorStatesCovered: cells[2] ?? "",
+    permissionStatesCovered: cells[3] ?? "",
+    objectLifecycleStatesCovered: cells[4] ?? "",
+    boundaryStatesCovered: cells[5] ?? "",
+    requiredNegativeCases: cells[6] ?? "",
+    notApplicableRationale: cells[7] ?? "",
+    missingCoverageFollowUpTask: cells[8] ?? "",
+  }));
+}
+
+function parseForbiddenAssumptionRows(content: string): ForbiddenAssumptionRow[] {
+  return parseTableRows(section(content, "## Forbidden Assumptions")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    forbiddenAssumption: cells[1] ?? "",
+    escalationPath: cells[2] ?? "",
   }));
 }
 
@@ -1576,6 +3693,7 @@ function parseTableRows(sectionContent: string): string[][] {
         !first.includes("Story ID") &&
         !first.includes("AC ID") &&
         !first.includes("Task ID") &&
+        !first.includes("Security Area") &&
         !first.includes("Blocker ID") &&
         !first.includes("Artifact ID") &&
         !first.includes("Classification ID") &&

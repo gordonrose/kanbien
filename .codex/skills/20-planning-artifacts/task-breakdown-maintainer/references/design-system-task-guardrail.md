@@ -14,12 +14,67 @@ Use for task type: `design-system`
 - design-system family and canonical route
 - behavior lock or signoff artifact
 - screenshot/visual proof command
+- Browser Security Posture evidence copied from Layer 2/3 without invention
+- runtime data/mock-honesty evidence when the family renders API or projection
+  data
+- Frontend Performance Posture row with allowed posture and posture-matched
+  proof; `unknown-blocked` blocks queueing
 - adoption contract or blocker
+
+## Deep Delivery Standard
+
+- split by sub-standard: fixture-data-contract, visual-rendering,
+  interaction-behavior, accessibility-semantics, and evidence-sweep
+- queued design-system tasks must produce, refine, or prove a named consumable
+  seam for frontend tasks, not only a local `/design-system` demonstration
+- do not queue a full component family, all states, interaction set,
+  accessibility semantics, and evidence capture in one task
+- visual rendering tasks name the canonical state and expected screenshot or
+  browser evidence artifact
+- interaction tasks name the state transition, pointer/keyboard behavior, and
+  controller seam
+- accessibility tasks name the role/name/state/focus semantics under proof
+- evidence-sweep tasks should be separate from implementation tasks for complex
+  families
+- fixture/data tasks name contract, fixture, and live/runtime payload proof;
+  evidence-sweep tasks name exact artifact names and sweep scope
+- queued tasks classify Frontend Performance Posture as static-low-risk,
+  interactive-low-risk, data-list-or-table, route-initialization,
+  large-dom-or-canvas, asset-heavy, animation-or-transition-heavy, or
+  not-applicable with concrete rationale; posture proof must match the named
+  risk without broadening the family task
+
+## Consumable Seam Contract
+
+Design-system tasks are upstream of frontend implementation tasks. Before a
+design-system task is queued, it must name the seam frontend tasks will consume:
+
+- render structure seam, such as a shared renderer, component, template, or
+  generated route output
+- behavior seam, such as a controller, state machine, event contract, or
+  documented no-behavior posture
+- accessibility seam, including owned role, name, state, focus, and keyboard
+  semantics or a documented no-new-semantics posture
+- canonical route, behavior lock, screenshot, or evidence artifact proving the
+  seam
+- frontend consumption contract that says how app/frontend tasks must import,
+  call, mount, or reference the seam
+- adoption contract expectations for downstream frontend tasks, including the
+  render, controller/behavior, accessibility, and style/CSS seams that must be
+  consumed rather than locally reconstructed
+
+If the design-system work does not create a consumable seam, mark the task
+blocked or split out the missing seam work. Do not satisfy this guardrail with
+CSS sharing alone, copied markup, copied controller logic, or an informal visual
+match.
 
 ## Required Check IDs
 
 - `design-system-family`
 - `design-system-behavior-lock`
+- `design-system-consumable-seam`
 - `design-system-render-behavior`
 - `design-system-visual-proof`
+- `design-system-security-evidence`
+- `design-system-runtime-data-mock-honesty`
 - `design-system-adoption-path`

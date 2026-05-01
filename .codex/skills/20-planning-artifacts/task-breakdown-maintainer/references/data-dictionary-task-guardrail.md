@@ -15,6 +15,14 @@ Use for task type: `data-dictionary`
 - field/index/lifecycle changes
 - validation or docs-alignment proof
 
+## Deep Delivery Standard
+
+- one entity, durable fact group, lifecycle rule, or index/searchability
+  decision per queued task
+- split data dictionary refresh from migration or repository implementation
+  when the source-truth review and code change have distinct proof
+- name the exact entity docs, migrations, repositories, and validation proof
+
 ## Required Check IDs
 
 - `data-entity-table`

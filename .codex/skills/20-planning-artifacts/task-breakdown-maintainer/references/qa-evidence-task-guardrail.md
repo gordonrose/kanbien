@@ -17,6 +17,16 @@ Use for task type: `QA/evidence`
 - mock-honesty comparison
 - blocked, partial, or passing evidence status
 
+## Deep Delivery Standard
+
+- evidence capture, mock-honesty review, visual sweep, and runtime proof should
+  normally be separate from implementation for complex work
+- name exact evidence artifacts, scenarios, payload shapes, or audit outputs
+- broad proof commands are acceptable only when the task is explicitly an
+  evidence sweep and the task-specific evidence targets are still named
+- do not change product behavior inside a QA/evidence task unless a separate
+  implementation task authorizes it
+
 ## Required Check IDs
 
 - `qa-proof-target`

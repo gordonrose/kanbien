@@ -16,6 +16,14 @@ Use for task type: `API-contract`
 - compatibility posture
 - validation command or review workflow
 
+## Deep Delivery Standard
+
+- one route family, contract behavior, or compatibility decision per queued task
+- split API contract documentation from backend implementation when each has a
+  distinct proof target or artifact owner
+- name the exact contract file, route shape, and validation command or review
+  output
+
 ## Required Check IDs
 
 - `api-route-family`

@@ -15,6 +15,12 @@ Use for task type: `architecture-foundation`
 - approved output path
 - downstream tasks blocked until approval
 
+## Deep Delivery Standard
+
+- one architecture decision, ADR gap, or compatibility strategy per queued task
+- do not combine architecture decision work with dependent implementation
+- name the downstream tasks blocked until the decision is recorded
+
 ## Required Check IDs
 
 - `architecture-adrs-reviewed`

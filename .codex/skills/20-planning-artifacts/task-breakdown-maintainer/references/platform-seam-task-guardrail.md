@@ -17,6 +17,14 @@ Use for task type: `platform-seam`
 - compatibility proof commands
 - generated artifact or manifest impact
 
+## Deep Delivery Standard
+
+- one platform seam, generated-artifact mechanism, runtime helper, or consumer
+  compatibility decision per queued task
+- split platform foundation work from dependent feature implementation
+- name current consumers, exact shared files, compatibility proof, and stop
+  conditions for architecture revisit
+
 ## Required Check IDs
 
 - `platform-seam-owner`

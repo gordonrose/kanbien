@@ -16,6 +16,14 @@ Use for task type: `docs-artifact`
 - validation or review command
 - downstream stale-artifact sweep result
 
+## Deep Delivery Standard
+
+- one artifact family or source-truth alignment target per queued task
+- separate decision/audit tasks from implementation or docs refresh tasks when
+  the audit may change scope
+- name the exact source files inspected, docs updated, and validation or review
+  output
+
 ## Required Check IDs
 
 - `docs-source-truth-reviewed`

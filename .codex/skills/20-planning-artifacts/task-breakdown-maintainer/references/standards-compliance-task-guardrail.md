@@ -15,6 +15,14 @@ Use for task type: `standards-compliance`
 - affected status snapshot or standards artifact
 - blocker or waiver posture when not passing
 
+## Deep Delivery Standard
+
+- one standards gate, posture snapshot, or compliance evidence target per queued
+  task
+- broad proof commands are acceptable when the named standard itself requires a
+  broad gate, but the specific gate and output artifact must still be named
+- do not hide implementation cleanup inside standards-compliance work
+
 ## Required Check IDs
 
 - `standards-gate-named`

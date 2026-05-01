@@ -28,6 +28,14 @@ Use with any task that may move, extract, or newly share code.
 - compatibility proof commands
 - separate extraction task when needed
 
+## Deep Delivery Standard
+
+- one placement or extraction decision per queued task
+- split shared-code decision work from dependent implementation when placement
+  is not already approved
+- extraction work must name exact current owner, proposed owner, existing
+  consumers, compatibility proof, and downstream implementation task
+
 ## Required Check IDs
 
 - `shared-code-current-owner`

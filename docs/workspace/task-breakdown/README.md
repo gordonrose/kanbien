@@ -19,6 +19,13 @@ harness law unless promoted to architecture, standards, templates, or skills.
 ## Expected Outputs
 
 - stable task queue
+- task size guardrail and split rationale
+- decision escalation / stop conditions
+- exact starting context
+- frontend/design-system sub-standard when relevant
+- tight allowed write envelope
+- task-specific proof plan
+- forbidden assumptions
 - parent story and acceptance-criterion coverage
 - capability-row coverage
 - allowed write set and non-goals per task
@@ -42,3 +49,19 @@ npm run task-breakdown:validate -- <packet-path> --story <story-packet-path>
 
 Do not hand tasks to Delivery while validation is blocked unless the requester
 explicitly accepts the named blocker.
+
+## Harness Refinement Routing
+
+When a real delivery result shows that Task Breakdown missed a risk, classify
+the refinement before changing the harness:
+
+- which layer should have caught it
+- which file or surface should have caught it
+- what the canonical source should be
+- which supporting files should reference that source without duplicating it
+- which test or fixture proves the refinement
+
+Use the compiler contract registry for allowed values and check IDs, the packet
+template for field shape, the validator for enforcement, this workspace README
+for packet-location guidance, the maintainer skill for operator workflow, and
+task-type references for task-specific interpretation.

@@ -52,6 +52,80 @@ or Technical Steering architecture.
    capability rows covered, allowed write set, non-goals, dependencies, shared
    seams, required artifacts, required proof layers, and proof commands.
 
+5B. Apply the deep-delivery task size guardrail.
+   A queued task must be small enough for deep Layer 5 delivery. Prefer one
+   durable behavior, decision, or proof target; one primary seam; one main proof
+   story; and one acceptance criterion. Two acceptance criteria are allowed only
+   when inseparable and justified. More than two acceptance criteria blocks
+   queueing. Do not broaden acceptance criteria to satisfy task-size rules; if
+   an acceptance criterion is too broad, block the task and route it back to
+   Story Breakdown refinement.
+
+5C. Record stop conditions and exact starting context.
+   Every queued task must say what the implementer must inspect before editing,
+   which existing seams must be consumed, which source artifacts govern the
+   task, and which product, design, architecture, source-truth, or proof
+   decisions must not be guessed.
+
+5D. Split complex frontend and design-system work by sub-standard.
+   When independently meaningful, split fixture/data contracts, visual
+   rendering, interaction behavior, accessibility semantics, and evidence sweep
+   into separate tasks. Each queued frontend, design-system, or frontend-facing
+   vertical-slice task must name a primary sub-standard and the compliance proof
+   expected for that sub-standard.
+
+5E. Lock the design-system-to-frontend seam.
+   A design-system task is not ready merely because it renders in
+   `/design-system`; it must produce, refine, or prove a named consumable seam
+   for future frontend tasks. A frontend task that touches governed UI must
+   consume the signed-off design-system render, behavior, and accessibility seam
+   or record an approved exception. If the seam does not exist, block the
+   frontend task and create design-system work first. When a frontend task
+   consumes an existing seam, fill the Frontend Adoption Contract with the
+   consumed render, controller/behavior, accessibility, and style/CSS seams,
+   allowed app-local composition/data binding, prohibited local reconstruction,
+   and the adoption proof route or scenario.
+
+5F. Package frontend security and runtime evidence.
+   For queued `frontend`, `design-system`, and frontend-facing
+   `vertical-slice` tasks, copy the relevant Layer 2/3 Browser Security
+   Posture rows into Frontend Security Evidence. If Layer 2/3 says a browser
+   security area is present, require the matching Layer 4 evidence row or block.
+   Do not invent a security posture in Layer 4. For sensitive rendering,
+   require allowed, denied/unauthorized, expired/unauthenticated, and
+   tenant-scoped cross-tenant denial proof notes. For API/projection rendering,
+   require the governing contract, fixture source, live/runtime payload
+   evidence or explicit unavailable reason, and a mock-honesty statement.
+   Rendered proof based only on mocks without contract/runtime tie blocks.
+
+5G. Classify frontend performance posture.
+   For queued `frontend`, `design-system`, and frontend-facing
+   `vertical-slice` tasks, add a Frontend Performance Posture row. Layer 4
+   classifies delivery proof posture only; it does not invent Layer 2 frontend
+   architecture decisions or broaden task scope. `unknown-blocked` blocks
+   queueing. Require posture-matched proof such as render-proof sufficiency,
+   no repeated work/fetch loop, bounded data/list DOM proof, route init/load
+   proof, bounded DOM/canvas proof, asset size/loading evidence, transition
+   timing, reduced-motion behavior, or concrete not-applicable rationale.
+
+5H. Gate vertical slices.
+   Use `vertical-slice` only when one journey behavior requires backend and
+   frontend proof together. Fill the Vertical Slice Coupling row before
+   queueing. If backend/API, frontend render, design-system, migration,
+   permission, runtime evidence, or artifact work can be proven separately,
+   split it into the matching task type instead of hiding it in a vertical
+   slice.
+
+5I. Gate test-only tasks.
+   Use `test-only` for PRD-derived `TC-*` implementation, isolated proof-gap
+   tests, security/permutation matrix tests, or e2e journey tests. Fill the
+   Test-Only Coverage Contract before queueing. If the task is privileged,
+   root-admin, tenant-boundary, authz, sensitive-rendering, asset, lifecycle,
+   or otherwise security-sensitive, also fill the Capability Permission / State
+   Matrix with allowed and denied coverage. Do not use `test-only` when
+   production behavior must change; split that work into the owning
+   implementation task type.
+
 5A. Reconcile steering classifications.
    Reconcile the task queue against Layer 2 architecture classifications and
    Layer 3 task-type signals. Do not queue a task that contradicts the
@@ -82,6 +156,10 @@ or Technical Steering architecture.
 8A. Classify write sets and forbidden work.
    Classify each allowed write path or path pattern and convert non-goals into
    explicit forbidden-work rows before queueing.
+   Prefer exact files or narrow path patterns. Broad frontend and design-system
+   write envelopes block queued implementation tasks unless the task is
+   explicitly a broad audit, migration, generated/canonical sweep, or otherwise
+   has strong written rationale.
 
 9. Preserve blockers.
    Put refactor-first and architecture-foundation findings into their own
@@ -113,6 +191,39 @@ or Technical Steering architecture.
   not-applicable with rationale.
 - Do not queue implementation work with a blocked code-placement decision.
 - Do not treat `src/lib` as a place for feature-owned domain logic.
+- Do not queue coarse tasks that combine a full component family, state matrix,
+  interaction set, accessibility semantics, and evidence sweep.
+- Do not let broad proof commands such as `npm test` be the only proof for a
+  queued task unless the task is intentionally broad and the rationale says why.
+
+## Harness Refinement Routing
+
+When real Layer 5 delivery results show that the harness missed something,
+classify the refinement before editing files. Every refinement must name:
+
+1. what failed in delivery
+2. which compiler layer should have caught it
+3. which file or surface should have caught it
+4. whether the miss was caused by a missing allowed value, packet field,
+   validator rule, operator workflow, task-type standard, architecture or
+   standards rule, example fixture, or delivery-conformance check
+5. the single canonical source for the refinement
+6. any supporting files that should reference that source without duplicating it
+7. the test or fixture that proves the refinement works
+
+Use this routing model:
+
+- allowed values, check IDs, task types, statuses, and sub-standards belong in
+  the compiler contract registry
+- packet shape belongs in the Task Breakdown template
+- executable enforcement belongs in `taskBreakdownValidate`
+- operator workflow belongs in this skill
+- task-type interpretation belongs in the matching reference guardrail
+- durable repo-wide law belongs in `AGENTS.md`, architecture docs, or standards
+- examples and regression proof belong in fixtures and tests
+
+Do not copy the same refinement paragraph across multiple surfaces. If several
+files change, each file must have a distinct job.
 
 ## Output
 

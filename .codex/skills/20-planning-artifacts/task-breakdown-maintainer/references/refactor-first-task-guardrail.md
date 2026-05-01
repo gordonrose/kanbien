@@ -17,6 +17,15 @@ Use for task type: `refactor-first`
 - downstream task dependency
 - rollback or staged-delivery note when relevant
 
+## Deep Delivery Standard
+
+- one behavior-preserving extraction, movement, or simplification target per
+  queued task
+- do not include new product behavior, acceptance criteria changes, or
+  architecture invention
+- name the downstream task unblocked and the exact compatibility proof for
+  existing consumers
+
 ## Required Check IDs
 
 - `refactor-existing-behavior`

@@ -16,6 +16,14 @@ Use for task type: `permission-mapping`
 - seed or corrective migration impact
 - security/authz proof command
 
+## Deep Delivery Standard
+
+- one capability key, grant boundary, deny rule, or tenant-context decision per
+  queued task
+- split mapping docs, seed migration, and authz runtime implementation when
+  they have distinct write sets or proof
+- name the exact role/capability rows and allow/deny proof
+
 ## Required Check IDs
 
 - `permission-capability-rows`
