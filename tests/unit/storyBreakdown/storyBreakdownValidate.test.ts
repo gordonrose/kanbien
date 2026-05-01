@@ -20,6 +20,18 @@ const validPacket = `# Story Breakdown Packet: Tenant Branding
 | --- | --- | --- | --- | --- | --- |
 | CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |
 
+## Frontend Architecture Classification Snapshot
+
+| Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |
+
+## Browser Security Posture Snapshot
+
+| Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |
+| --- | --- | --- | --- | --- |
+| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no frontend task | no |
+
 ## Task-Type Signal Matrix
 
 | Story ID | Signal | Present | Evidence | Implied Task Type |
@@ -193,6 +205,38 @@ describe("story breakdown validation", () => {
     expect(result.errors).toContain("vague phrase found: implement feature");
     expect(result.errors).toContain("vague phrase found: update docs");
     expect(result.errors).toContain("vague phrase found: as needed");
+  });
+
+  it("blocks frontend-affecting stories without frontend architecture snapshot rows", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket
+        .replace(
+          "| tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |\n",
+          "",
+        )
+        .replace(
+          "| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |",
+          "| S-001 | frontend rendered surface | yes | Root admin branding page changes. | frontend |",
+        ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("frontend-affecting stories require Frontend Architecture Classification Snapshot rows");
+  });
+
+  it("blocks frontend-affecting stories without browser security posture snapshots", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket
+        .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | frontend rendered surface | yes | Root admin page changes. | frontend |")
+        .replace(
+          "## Browser Security Posture Snapshot\n\n| Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |\n| --- | --- | --- | --- | --- |\n| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no frontend task | no |\n\n",
+          "",
+        ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("missing heading: ## Browser Security Posture Snapshot");
+    expect(result.errors).toContain("frontend-affecting stories require Browser Security Posture Snapshot rows");
   });
 
   it("blocks ready stories without dependency coverage", () => {

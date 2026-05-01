@@ -31,6 +31,24 @@ const validPacket = `# Technical Steering Packet: Tenant Branding
 | --- | --- | --- | --- | --- |
 | API route or contract change | yes | Root admin update route contract changes. | API route or contract change | API-contract |
 
+## Frontend Architecture Classification
+
+| Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| tenant branding backend update | not-applicable | not-applicable: backend feature | not-applicable: backend feature | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |
+
+## Browser Security Posture
+
+| Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |
+| --- | --- | --- | --- | --- |
+| not-applicable | no | Backend-only steering does not change browser runtime behavior. | not-applicable | no |
+
+## Artifact Obligations
+
+| Artifact | Required Action | Owner Layer | Blocks Handoff | Notes |
+| --- | --- | --- | --- | --- |
+| API contract | update | Layer 4 | yes | Route contract artifact must move with the backend task. |
+
 ## Deterministic Signal Checks
 
 | Trigger ID | Trigger Question | Trigger Status | Evidence | Required Classification | Required Layer 4 Task Type | Exception / Decision |
@@ -122,5 +140,46 @@ describe("technical steering validation", () => {
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("vague phrase found: figure out later");
     expect(result.errors).toContain("vague phrase found: probably feature-local");
+  });
+
+  it("blocks frontend-affecting steering without frontend architecture rows", () => {
+    const result = validateTechnicalSteeringContent(
+      validPacket
+        .replace(
+          "| tenant branding backend update | not-applicable | not-applicable: backend feature | not-applicable: backend feature | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |\n",
+          "",
+        )
+        .replace(
+          "| TSIG-FRONTEND-SURFACE | Does the change add or alter a rendered frontend surface, browser workflow, frontend route, or served asset behavior? | no | Backend-only story. | feature-local | frontend | not-applicable |",
+          "| TSIG-FRONTEND-SURFACE | Does the change add or alter a rendered frontend surface, browser workflow, frontend route, or served asset behavior? | yes | Root admin branding page changes. | feature-local | frontend | not-applicable |",
+        ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("frontend-affecting steering requires Frontend Architecture Classification rows");
+  });
+
+  it("blocks invalid frontend classification enum values", () => {
+    const result = validateTechnicalSteeringContent(
+      validPacket.replace(
+        "| tenant branding backend update | not-applicable | not-applicable: backend feature | not-applicable: backend feature | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |",
+        "| tenant branding backend update | vibes-app | not-applicable: backend feature | not-applicable: backend feature | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("tenant branding backend update has invalid Route Family: vibes-app");
+  });
+
+  it("blocks asset-delivery security posture without blocking asset decision artifact", () => {
+    const result = validateTechnicalSteeringContent(
+      validPacket.replace(
+        "| not-applicable | no | Backend-only steering does not change browser runtime behavior. | not-applicable | no |",
+        "| asset-delivery | yes | Tenant logo upload and inline display are introduced. | asset decision record / platform-seam | yes |",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("asset-delivery browser security posture requires a blocking asset consumer decision record obligation");
   });
 });

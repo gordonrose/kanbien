@@ -62,6 +62,40 @@ Allowed classifications:
 - `architecture-foundation-required`
 - `blocked`
 
+## Frontend Architecture Classification Snapshot
+
+Copy the approved Layer 2 frontend architecture classification rows that affect
+the story queue. Story Breakdown preserves these decisions; it does not
+re-decide route family, product module, journey group, topology, locator,
+authority, state, shell, design-system prerequisite, materialization, source
+placement, or implementation readiness.
+
+| Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Browser Security Posture Snapshot
+
+Copy the approved Layer 2 Browser Security Posture rows that affect the story
+queue. Story Breakdown preserves these decisions; it does not decide whether a
+browser security area is present or required.
+
+Allowed security areas:
+
+- `session-cookie`
+- `csp-assets`
+- `privileged-helper`
+- `csrf-mutation`
+- `url-replay-state`
+- `sensitive-rendering`
+- `asset-delivery`
+- `not-applicable`
+
+Use `yes`, `no`, or `blocked` for `Present`. Use `yes` or `no` for
+`Stop If Missing`. A `blocked` posture blocks Layer 4 handoff.
+
+| Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |
+| --- | --- | --- | --- | --- |
+
 ## Task-Type Signal Matrix
 
 Record the task-type signals implied by Layer 2 classifications and story

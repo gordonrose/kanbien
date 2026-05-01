@@ -8,6 +8,11 @@ governance, and documentation decisions have one current-state reference.
 Use this file for the frontend shape that is implemented now.
 Use ADRs for enduring frontend architecture decisions and decision changes over
 time.
+Use `docs/architecture/guides/frontend-architecture-classification-model.md`
+for the Layer 2 classification fields that decide frontend placement,
+runtime shape, surface class, topology, locator, authority, state, shell,
+design-system, materialization, browser-security, and artifact posture before
+Task Breakdown packages implementation work.
 
 ## Current Summary
 

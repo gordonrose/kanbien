@@ -72,6 +72,199 @@ Recommended risk areas:
 - QA/runtime evidence need
 - source-independent docs impact
 
+## Frontend Architecture Classification
+
+For frontend-affecting work, Layer 2 owns frontend placement, route,
+topology, authority, state, shell, design-system prerequisite, and
+materialization decisions. Layer 3 must preserve these decisions. Layer 4 must
+package and enforce them without inventing frontend architecture.
+
+Use `not-applicable` fields with a concrete reason only when the packet has no
+frontend impact. Frontend-affecting packets with missing rows are blocked.
+
+| Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+Allowed route families:
+
+- `design-system`
+- `root-admin`
+- `login`
+- `new-family`
+- `not-applicable`
+
+Allowed runtime shapes:
+
+- `file-routed-reference`
+- `app-shell`
+- `support-route`
+- `generated-route`
+- `static-asset`
+- `browser-workflow`
+- `not-applicable`
+
+Allowed surface classes:
+
+- `page`
+- `journey`
+- `canonical`
+- `pattern`
+- `template`
+- `support`
+- `app-adoption`
+- `generated-materialization`
+- `not-applicable`
+
+Allowed topology classes:
+
+- `durable-page`
+- `durable-subroute`
+- `journey-state`
+- `ui-state`
+- `support-only`
+- `not-topology`
+
+Allowed locator types:
+
+- `path`
+- `hash-state`
+- `none`
+- `migration`
+
+Allowed topology authorities:
+
+- `curated-webAppHierarchyBuilder`
+- `discovered-webAppSurfaceDiscovery`
+- `design-system-file-route`
+- `manual-shell-registry`
+- `generated-materializer`
+- `support-only`
+- `not-applicable`
+
+Allowed authority transition postures:
+
+- `not-applicable`
+- `target-authority-current`
+- `transitional-accepted`
+- `transition-required`
+- `blocked-until-transition`
+
+Allowed state owners:
+
+- `curated-topology`
+- `page-settings`
+- `feature-local-state-machine`
+- `ui-local`
+- `server-backed-snapshot`
+- `never-serialize`
+- `not-applicable`
+
+Allowed shell governance postures:
+
+- `DS-owned-shell-required`
+- `local-legacy-shell`
+- `exception-approved`
+- `not-applicable`
+
+Allowed design-system prerequisites:
+
+- `signed-off-seam-exists`
+- `DS-task-required`
+- `approved-exception`
+- `not-governed`
+
+Allowed materialization models:
+
+- `preview-apply-required`
+- `manual-file-route`
+- `shell-registry-update`
+- `support-route-only`
+- `none`
+
+Allowed source placement values:
+
+- `shell-bootstrap`
+- `shell-route-registry`
+- `module-journey-files`
+- `design-system-family-files`
+- `support-route-files`
+- `generated-output`
+- `not-applicable`
+
+Source placement rule:
+
+- app shell entry files such as `rootAdminShell/assets/app.mjs` own bootstrap,
+  session, route resolution, shell registry, and shell composition only
+- page, module, and journey behavior must live in module/journey files rather
+  than accumulating in the root shell entry file
+- governed design-system behavior must come from design-system-owned family
+  files and shared app-consumption seams
+
+Allowed route visibility values:
+
+- `primary-nav`
+- `context-nav`
+- `deep-link-only`
+- `support-only`
+- `hidden/internal`
+- `not-applicable`
+
+Allowed actor scopes:
+
+- `root-operator`
+- `tenant-actor`
+- `public-pre-auth`
+- `support/operator`
+- `not-applicable`
+
+Allowed implementation readiness values:
+
+- `ready`
+- `blocked-on-architecture`
+- `blocked-on-design-system`
+- `blocked-on-security`
+- `blocked-on-artifacts`
+- `blocked-on-topology-transition`
+- `not-applicable`
+
+## Browser Security Posture
+
+For frontend-affecting work, this section is a gate. Layer 2 must classify
+browser security implications before Layer 3 or Layer 4 can proceed.
+
+| Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |
+| --- | --- | --- | --- | --- |
+| session-cookie |  |  |  |  |
+| csp-assets |  |  |  |  |
+| privileged-helper |  |  |  |  |
+| csrf-mutation |  |  |  |  |
+| url-replay-state |  |  |  |  |
+| sensitive-rendering |  |  |  |  |
+| asset-delivery |  |  |  |  |
+
+Use `yes`, `no`, or `blocked` for `Present`. Use `yes` or `no` for
+`Stop If Missing`. A `blocked` security posture blocks handoff.
+
+## Artifact Obligations
+
+For frontend-affecting work, this section is a handoff-blocking artifact bill.
+Layer 4 must assign required artifacts to tasks, prove they are current, defer
+them with an approved owner and non-blocking rationale, or block Delivery
+handoff.
+
+| Artifact | Required Action | Owner Layer | Blocks Handoff | Notes |
+| --- | --- | --- | --- | --- |
+
+Allowed required actions:
+
+- `create`
+- `update`
+- `prove-current`
+- `defer-approved`
+- `not-applicable`
+
+Use `yes` or `no` for `Blocks Handoff`.
+
 ## Deterministic Signal Checks
 
 These checks make architecture classification less dependent on prose. Mark

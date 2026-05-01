@@ -1,11 +1,32 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
+import {
+  frontendActorScopes,
+  frontendAuthorityTransitionPostures,
+  frontendBrowserSecurityAreas,
+  frontendDesignSystemPrerequisites,
+  frontendImplementationReadiness,
+  frontendLocatorTypes,
+  frontendMaterializationModels,
+  frontendRouteFamilies,
+  frontendRouteVisibilities,
+  frontendRuntimeShapes,
+  frontendShellGovernancePostures,
+  frontendSourcePlacements,
+  frontendStateOwners,
+  frontendSurfaceClasses,
+  frontendTopologyAuthorities,
+  frontendTopologyClasses,
+} from "./featureCompiler/contracts";
+
 const requiredHeadings = [
   "# Story Breakdown",
   "## Status",
   "## Handoff Validation",
   "## Steering Architecture Classification Snapshot",
+  "## Frontend Architecture Classification Snapshot",
+  "## Browser Security Posture Snapshot",
   "## Task-Type Signal Matrix",
   "## Epic Summary",
   "## Story Queue",
@@ -53,6 +74,25 @@ const allowedArchitectureClassifications = new Set([
 ]);
 
 const allowedTaskSignalPresence = new Set(["yes", "no", "blocked"]);
+const frontendTaskTypes = new Set(["frontend", "design-system", "vertical-slice"]);
+const allowedFrontendRouteFamilies: Set<string> = new Set(frontendRouteFamilies);
+const allowedFrontendRuntimeShapes: Set<string> = new Set(frontendRuntimeShapes);
+const allowedFrontendSurfaceClasses: Set<string> = new Set(frontendSurfaceClasses);
+const allowedFrontendTopologyClasses: Set<string> = new Set(frontendTopologyClasses);
+const allowedFrontendLocatorTypes: Set<string> = new Set(frontendLocatorTypes);
+const allowedFrontendTopologyAuthorities: Set<string> = new Set(frontendTopologyAuthorities);
+const allowedFrontendAuthorityTransitionPostures: Set<string> = new Set(frontendAuthorityTransitionPostures);
+const allowedFrontendStateOwners: Set<string> = new Set(frontendStateOwners);
+const allowedFrontendShellGovernancePostures: Set<string> = new Set(frontendShellGovernancePostures);
+const allowedFrontendDesignSystemPrerequisites: Set<string> = new Set(frontendDesignSystemPrerequisites);
+const allowedFrontendMaterializationModels: Set<string> = new Set(frontendMaterializationModels);
+const allowedFrontendRouteVisibilities: Set<string> = new Set(frontendRouteVisibilities);
+const allowedFrontendActorScopes: Set<string> = new Set(frontendActorScopes);
+const allowedFrontendImplementationReadiness: Set<string> = new Set(frontendImplementationReadiness);
+const allowedFrontendSourcePlacements: Set<string> = new Set(frontendSourcePlacements);
+const allowedFrontendBrowserSecurityAreas: Set<string> = new Set(frontendBrowserSecurityAreas);
+const allowedBrowserSecurityPresence = new Set(["yes", "no", "blocked"]);
+const allowedYesNo = new Set(["yes", "no"]);
 
 const allowedUnblockTypes = new Set([
   "human-decision",
@@ -128,6 +168,39 @@ type CapabilityRow = {
   acId: string;
   capabilityRows: string;
   posture: string;
+};
+
+type FrontendClassificationSnapshotRow = {
+  scopeElement: string;
+  routeFamily: string;
+  productModule: string;
+  journeyGroup: string;
+  routeVisibility: string;
+  actorScope: string;
+  runtimeShape: string;
+  surfaceClass: string;
+  topologyClass: string;
+  locatorType: string;
+  canonicalLocator: string;
+  compatibilityLocators: string;
+  topologyAuthority: string;
+  targetTopologyAuthority: string;
+  authorityTransitionPosture: string;
+  stateOwner: string;
+  shellGovernance: string;
+  designSystemPrerequisite: string;
+  materializationModel: string;
+  sourcePlacement: string;
+  implementationReadiness: string;
+  evidence: string;
+};
+
+type BrowserSecurityPostureSnapshotRow = {
+  securityArea: string;
+  present: string;
+  decisionEvidence: string;
+  requiredLayer4Signal: string;
+  stopIfMissing: string;
 };
 
 type DependencyRow = {
@@ -227,6 +300,8 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   const unblockRows = parseLayer3UnblockRows(content);
   const artifacts = parseArtifactRows(content);
   const steeringClassifications = parseSteeringClassificationRows(content);
+  const frontendClassificationSnapshots = parseFrontendClassificationSnapshotRows(content);
+  const browserSecurityPostureSnapshots = parseBrowserSecurityPostureSnapshotRows(content);
   const taskTypeSignals = parseTaskTypeSignalRows(content);
   const packetStatus = parsePacketStatus(content);
 
@@ -299,6 +374,9 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
       errors.push(`${signal.storyId} has invalid task signal presence: ${signal.present || "(blank)"}`);
     }
   }
+
+  validateFrontendClassificationSnapshots(frontendClassificationSnapshots, taskTypeSignals, errors);
+  validateBrowserSecurityPostureSnapshots(browserSecurityPostureSnapshots, taskTypeSignals, errors);
 
   for (const ac of acceptanceCriteria) {
     if (!storiesById.has(ac.storyId)) {
@@ -547,6 +625,106 @@ function validateVaguePhrases(content: string, errors: string[]): void {
   }
 }
 
+function validateFrontendClassificationSnapshots(
+  rows: FrontendClassificationSnapshotRow[],
+  taskTypeSignals: TaskTypeSignalRow[],
+  errors: string[],
+): void {
+  const frontendAffectingSignal = taskTypeSignals.some(
+    (signal) => signal.present === "yes" && frontendTaskTypes.has(signal.impliedTaskType),
+  );
+
+  if (frontendAffectingSignal && rows.length === 0) {
+    errors.push("frontend-affecting stories require Frontend Architecture Classification Snapshot rows");
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(row.scopeElement, "Frontend Scope Element", row.scopeElement, errors);
+    validateRequiredField(row.scopeElement, "Product Module", row.productModule, errors);
+    validateRequiredField(row.scopeElement, "Journey Group", row.journeyGroup, errors);
+    validateRequiredField(row.scopeElement, "Canonical Locator", row.canonicalLocator, errors);
+    validateRequiredField(row.scopeElement, "Compatibility Locators", row.compatibilityLocators, errors);
+    validateRequiredField(row.scopeElement, "Evidence", row.evidence, errors);
+
+    validateAllowedValue(row.scopeElement, "Route Family", row.routeFamily, allowedFrontendRouteFamilies, errors);
+    validateAllowedValue(row.scopeElement, "Route Visibility", row.routeVisibility, allowedFrontendRouteVisibilities, errors);
+    validateAllowedValue(row.scopeElement, "Actor Scope", row.actorScope, allowedFrontendActorScopes, errors);
+    validateAllowedValue(row.scopeElement, "Runtime Shape", row.runtimeShape, allowedFrontendRuntimeShapes, errors);
+    validateAllowedValue(row.scopeElement, "Surface Class", row.surfaceClass, allowedFrontendSurfaceClasses, errors);
+    validateAllowedValue(row.scopeElement, "Topology Class", row.topologyClass, allowedFrontendTopologyClasses, errors);
+    validateAllowedValue(row.scopeElement, "Locator Type", row.locatorType, allowedFrontendLocatorTypes, errors);
+    validateAllowedValue(row.scopeElement, "Topology Authority", row.topologyAuthority, allowedFrontendTopologyAuthorities, errors);
+    validateAllowedValue(
+      row.scopeElement,
+      "Target Topology Authority",
+      row.targetTopologyAuthority,
+      allowedFrontendTopologyAuthorities,
+      errors,
+    );
+    validateAllowedValue(
+      row.scopeElement,
+      "Authority Transition Posture",
+      row.authorityTransitionPosture,
+      allowedFrontendAuthorityTransitionPostures,
+      errors,
+    );
+    validateAllowedValue(row.scopeElement, "State Owner", row.stateOwner, allowedFrontendStateOwners, errors);
+    validateAllowedValue(row.scopeElement, "Shell Governance", row.shellGovernance, allowedFrontendShellGovernancePostures, errors);
+    validateAllowedValue(
+      row.scopeElement,
+      "Design-System Prerequisite",
+      row.designSystemPrerequisite,
+      allowedFrontendDesignSystemPrerequisites,
+      errors,
+    );
+    validateAllowedValue(row.scopeElement, "Materialization Model", row.materializationModel, allowedFrontendMaterializationModels, errors);
+    validateAllowedValue(row.scopeElement, "Source Placement", row.sourcePlacement, allowedFrontendSourcePlacements, errors);
+    validateAllowedValue(row.scopeElement, "Implementation Readiness", row.implementationReadiness, allowedFrontendImplementationReadiness, errors);
+
+    if (row.implementationReadiness.startsWith("blocked-on")) {
+      errors.push(`${row.scopeElement} frontend implementation readiness is ${row.implementationReadiness}`);
+    }
+  }
+}
+
+function validateBrowserSecurityPostureSnapshots(
+  rows: BrowserSecurityPostureSnapshotRow[],
+  taskTypeSignals: TaskTypeSignalRow[],
+  errors: string[],
+): void {
+  const frontendAffectingSignal = taskTypeSignals.some(
+    (signal) => signal.present === "yes" && frontendTaskTypes.has(signal.impliedTaskType),
+  );
+
+  if (frontendAffectingSignal && rows.length === 0) {
+    errors.push("frontend-affecting stories require Browser Security Posture Snapshot rows");
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(row.securityArea, "Security Area", row.securityArea, errors);
+    validateRequiredField(row.securityArea, "Present", row.present, errors);
+    validateRequiredField(row.securityArea, "Layer 2 Decision / Evidence", row.decisionEvidence, errors);
+    validateRequiredField(row.securityArea, "Required Layer 4 Signal", row.requiredLayer4Signal, errors);
+    validateRequiredField(row.securityArea, "Stop If Missing", row.stopIfMissing, errors);
+
+    validateAllowedValue(row.securityArea, "Security Area", row.securityArea, allowedFrontendBrowserSecurityAreas, errors);
+    validateAllowedValue(row.securityArea, "Present", row.present, allowedBrowserSecurityPresence, errors);
+    validateAllowedValue(row.securityArea, "Stop If Missing", row.stopIfMissing, allowedYesNo, errors);
+
+    if (row.present === "blocked") {
+      errors.push(`${row.securityArea} browser security posture is blocked`);
+    }
+  }
+}
+
+function validateAllowedValue(id: string, fieldName: string, value: string, allowed: Set<string>, errors: string[]): void {
+  if (!allowed.has(value)) {
+    errors.push(`${id} has invalid ${fieldName}: ${value || "(blank)"}`);
+  }
+}
+
 function parseStoryRows(content: string): StoryRow[] {
   return parseTableRows(section(content, "## Story Queue")).map((cells) => ({
     storyId: cells[0] ?? "",
@@ -662,6 +840,43 @@ function parseSteeringClassificationRows(content: string): SteeringClassificatio
   }));
 }
 
+function parseFrontendClassificationSnapshotRows(content: string): FrontendClassificationSnapshotRow[] {
+  return parseTableRows(section(content, "## Frontend Architecture Classification Snapshot")).map((cells) => ({
+    scopeElement: cells[0] ?? "",
+    routeFamily: cells[1] ?? "",
+    productModule: cells[2] ?? "",
+    journeyGroup: cells[3] ?? "",
+    routeVisibility: cells[4] ?? "",
+    actorScope: cells[5] ?? "",
+    runtimeShape: cells[6] ?? "",
+    surfaceClass: cells[7] ?? "",
+    topologyClass: cells[8] ?? "",
+    locatorType: cells[9] ?? "",
+    canonicalLocator: cells[10] ?? "",
+    compatibilityLocators: cells[11] ?? "",
+    topologyAuthority: cells[12] ?? "",
+    targetTopologyAuthority: cells[13] ?? "",
+    authorityTransitionPosture: cells[14] ?? "",
+    stateOwner: cells[15] ?? "",
+    shellGovernance: cells[16] ?? "",
+    designSystemPrerequisite: cells[17] ?? "",
+    materializationModel: cells[18] ?? "",
+    sourcePlacement: cells[19] ?? "",
+    implementationReadiness: cells[20] ?? "",
+    evidence: cells[21] ?? "",
+  }));
+}
+
+function parseBrowserSecurityPostureSnapshotRows(content: string): BrowserSecurityPostureSnapshotRow[] {
+  return parseTableRows(section(content, "## Browser Security Posture Snapshot")).map((cells) => ({
+    securityArea: cells[0] ?? "",
+    present: cells[1] ?? "",
+    decisionEvidence: cells[2] ?? "",
+    requiredLayer4Signal: cells[3] ?? "",
+    stopIfMissing: cells[4] ?? "",
+  }));
+}
+
 function parseTaskTypeSignalRows(content: string): TaskTypeSignalRow[] {
   return parseTableRows(section(content, "## Task-Type Signal Matrix")).map((cells) => ({
     storyId: cells[0] ?? "",
@@ -691,7 +906,7 @@ function parseTableRows(sectionContent: string): string[][] {
     .map((line) => line.slice(1, -1).split("|").map((cell) => cell.trim()))
     .filter((cells) => {
       const first = cells[0] ?? "";
-      return first !== "---" && !first.startsWith("---") && !first.includes("Story ID") && !first.includes("AC ID") && !first.includes("Dependency ID") && !first.includes("Artifact ID") && !first.includes("Blocker ID") && !first.includes("Question ID") && !first.includes("Classification ID") && !first.includes("Unblock ID") && !first.includes("New Or Changed");
+      return first !== "---" && !first.startsWith("---") && !first.includes("Story ID") && !first.includes("AC ID") && !first.includes("Dependency ID") && !first.includes("Artifact ID") && !first.includes("Blocker ID") && !first.includes("Question ID") && !first.includes("Classification ID") && !first.includes("Unblock ID") && !first.includes("New Or Changed") && !first.includes("Scope Element") && !first.includes("Security Area");
     });
 }
 
