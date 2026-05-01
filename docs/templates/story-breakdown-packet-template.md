@@ -6,7 +6,7 @@ direction for material work.
 Story Breakdown converts an approved steering scope into the smallest
 independently deliverable and verifiable stories. It does not replace PRDs,
 capability matrices, PRD-derived test cases, implementation blueprints, API
-contracts, data dictionaries, permission mappings, DEV:design-system governance,
+contracts, data dictionaries, permission mappings, GOV:design-system governance,
 or Delivery.
 
 Do not describe a packet as ready for Task Breakdown unless
@@ -24,7 +24,7 @@ explicitly accepted by the requester.
 - Source Technical Steering packet:
 - Related PRD:
 - Related capability matrix:
-- Related DEV:design-system, asset, ADR, or architecture artifacts:
+- Related GOV:design-system, asset, ADR, or architecture artifacts:
 - Validation command:
 - Validation status:
   `not-run | pass | blocked | not-applicable`
@@ -67,7 +67,7 @@ Allowed classifications:
 Copy the approved Layer 2 DEV:frontend architecture classification rows that affect
 the story queue. Story Breakdown preserves these decisions; it does not
 re-decide route family, product module, journey group, topology, locator,
-authority, state, shell, DEV:design-system prerequisite, materialization, source
+authority, state, shell, GOV:design-system prerequisite, materialization, source
 placement, or implementation readiness.
 
 | Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
@@ -145,6 +145,9 @@ Allowed delivery shapes:
 - `DECISION:refactor-first`
 - `DECISION:architecture-foundation`
 - `DOC:standards-compliance`
+- `GOV:standards-update`
+- `GOV:architecture-update`
+- `GOV:design-system`
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |

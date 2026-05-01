@@ -8,9 +8,11 @@ export const layer4TaskTypes = [
   "DECISION:refactor-first",
   "DECISION:architecture-foundation",
   "DOC:standards-compliance",
+  "GOV:standards-update",
+  "GOV:architecture-update",
   "DEV:platform-seam",
   "DEV:migration-persistence",
-  "DEV:design-system",
+  "GOV:design-system",
   "DOC:api-contract",
   "DOC:permission-mapping",
   "DOC:data-dictionary",
@@ -34,7 +36,7 @@ export const layer4ImplementationTaskTypes = [
   "DEV:frontend",
   "DEV:vertical-slice",
   "DEV:migration-persistence",
-  "DEV:design-system",
+  "GOV:design-system",
   "DEV:platform-seam",
 ] as const;
 
@@ -48,9 +50,11 @@ export const layer4GuardrailReferenceByTaskType = {
   "DECISION:refactor-first": "refactor-first-task-guardrail.md",
   "DECISION:architecture-foundation": "architecture-foundation-task-guardrail.md",
   "DOC:standards-compliance": "standards-compliance-task-guardrail.md",
+  "GOV:standards-update": "standards-update-task-guardrail.md",
+  "GOV:architecture-update": "architecture-update-task-guardrail.md",
   "DEV:platform-seam": "platform-seam-task-guardrail.md",
   "DEV:migration-persistence": "migration-persistence-task-guardrail.md",
-  "DEV:design-system": "design-system-task-guardrail.md",
+  "GOV:design-system": "design-system-task-guardrail.md",
   "DOC:api-contract": "api-contract-task-guardrail.md",
   "DOC:permission-mapping": "permission-mapping-task-guardrail.md",
   "DOC:data-dictionary": "data-dictionary-task-guardrail.md",
@@ -133,7 +137,7 @@ export const layer4FrontendPerformancePostures = [
   "unknown-blocked",
 ] as const;
 
-export const layer4FrontendTaskTypes = ["DEV:frontend", "DEV:design-system", "DEV:vertical-slice"] as const;
+export const layer4FrontendTaskTypes = ["DEV:frontend", "GOV:design-system", "DEV:vertical-slice"] as const;
 
 export const layer4DesignSystemSeamPostures = [
   "not-applicable",
@@ -256,6 +260,20 @@ export const layer4RequiredCheckIdsByTaskType = {
     "standards-command",
     "standards-status-artifact",
   ],
+  "GOV:standards-update": [
+    "standards-change-owner",
+    "standards-rationale",
+    "standards-affected-surfaces",
+    "standards-rollout-compatibility",
+    "standards-validation",
+  ],
+  "GOV:architecture-update": [
+    "architecture-authority-reviewed",
+    "architecture-change-owner",
+    "architecture-output-artifact",
+    "architecture-downstream-impact",
+    "architecture-validation",
+  ],
   "DEV:platform-seam": [
     "platform-seam-owner",
     "platform-not-feature-local",
@@ -274,7 +292,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "migration-read-write-proof",
     "migration-postgres-harness",
   ],
-  "DEV:design-system": [
+  "GOV:design-system": [
     "design-system-family",
     "design-system-behavior-lock",
     "design-system-consumable-seam",

@@ -18,7 +18,7 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   move.
 - `technical-steering-packet-template.md`
   Layer 2 packet for deciding architectural posture before Story Breakdown,
-  including feature-local versus shared/platform, DEV:design-system, public-seam,
+  including feature-local versus shared/platform, GOV:design-system, public-seam,
   shared-library, and DECISION:architecture-foundation classification.
 - `story-breakdown-packet-template.md`
   Layer 3 packet for converting approved Technical Steering into the smallest
@@ -58,7 +58,7 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   and adoption readiness.
 - `design-system-adoption-contract-template.md`
   Bridge template mapping capability or workflow ownership onto a signed-off
-  DEV:design-system family before real app adoption.
+  GOV:design-system family before real app adoption.
 - `governed-app-adoption-preflight-template.md`
   Preflight template for first-consumer or materially changed governed app
   adoption so seam readiness, ownership boundaries, literal parity targets,

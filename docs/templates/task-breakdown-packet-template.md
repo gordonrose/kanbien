@@ -103,9 +103,11 @@ Allowed task types:
 - `DECISION:refactor-first`
 - `DECISION:architecture-foundation`
 - `DOC:standards-compliance`
+- `GOV:standards-update`
+- `GOV:architecture-update`
 - `DEV:platform-seam`
 - `DEV:migration-persistence`
-- `DEV:design-system`
+- `GOV:design-system`
 - `DOC:api-contract`
 - `DOC:permission-mapping`
 - `DOC:data-dictionary`
@@ -179,10 +181,10 @@ List the exact source context the implementer must inspect before editing.
 
 ## Frontend Architecture Decision Reconciliation
 
-For `DEV:frontend`, `DEV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
+For `DEV:frontend`, `GOV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
 copy the relevant Layer 2 DEV:frontend architecture decisions. Layer 4 packages and
 enforces these decisions; it must not invent route family, product module,
-journey group, topology, locator, authority, state, shell, DEV:design-system
+journey group, topology, locator, authority, state, shell, GOV:design-system
 prerequisite, or materialization posture.
 
 | Task ID | Source Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Source Steering Decision |
@@ -208,8 +210,8 @@ Source placement defaults:
 
 ## Frontend / Design-System Sub-Standard
 
-For `DEV:frontend`, `DEV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
-name the primary sub-standard. Complex DEV:frontend or DEV:design-system work must
+For `DEV:frontend`, `GOV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
+name the primary sub-standard. Complex DEV:frontend or GOV:design-system work must
 split when fixture/data contracts, visual rendering, interaction behavior,
 accessibility semantics, and evidence sweep are independently meaningful.
 
@@ -239,7 +241,7 @@ Proof expectations:
 
 ## Frontend Performance Posture
 
-For queued `DEV:frontend`, `DEV:design-system`, and frontend-facing `DEV:vertical-slice`
+For queued `DEV:frontend`, `GOV:design-system`, and frontend-facing `DEV:vertical-slice`
 tasks, classify DEV:frontend performance risk. Layer 4 must not invent new
 DEV:frontend architecture decisions, but it must package enough proof for the
 primary DEV:frontend/design-system work.
@@ -302,7 +304,7 @@ Allowed seam postures:
 Queued `DEV:frontend` tasks with Design-System Seam Contract posture
 `consumes-existing-seam` must record the exact adoption contract. Layer 4 must
 make the consumer boundary deterministic: the app may compose and bind data
-around signed-off DEV:design-system seams, but must not reconstruct governed
+around signed-off GOV:design-system seams, but must not reconstruct governed
 markup, controller behavior, ARIA/state semantics, or CSS locally.
 
 Use concrete `not-applicable:` rationale when a seam type genuinely does not
@@ -313,7 +315,7 @@ apply, such as a static render seam with no behavior/controller seam.
 
 ## Frontend Security Evidence
 
-For `DEV:frontend`, `DEV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
+For `DEV:frontend`, `GOV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
 copy the relevant Layer 2/3 Browser Security Posture rows. Layer 4 packages and
 enforces the proof plan; it must not invent whether a browser security area is
 present. If Layer 2/3 says an area is present or `Stop If Missing` is `yes`,
@@ -337,7 +339,7 @@ Use `yes`, `no`, or `blocked` for `Source Present`.
 
 ## Frontend Permission Rendering Evidence
 
-Frontend, DEV:design-system, and frontend-facing DEV:vertical-slice tasks that render
+Frontend, GOV:design-system, and frontend-facing DEV:vertical-slice tasks that render
 privileged, tenant, user, role, asset, lifecycle, or otherwise sensitive data
 must carry permission-aware rendering proof notes. Tenant-scoped rendering must
 include cross-tenant denial proof.
@@ -347,7 +349,7 @@ include cross-tenant denial proof.
 
 ## Frontend Runtime Data And Mock Honesty
 
-Frontend, DEV:design-system, and frontend-facing DEV:vertical-slice tasks that render
+Frontend, GOV:design-system, and frontend-facing DEV:vertical-slice tasks that render
 API or projection data must tie rendered proof to the governing contract and a
 live/runtime payload, or explain why runtime payload evidence is unavailable.
 Rendered proof that uses only mocks without a contract/runtime tie blocks.
@@ -360,7 +362,7 @@ Rendered proof that uses only mocks without a contract/runtime tie blocks.
 Queued `DEV:vertical-slice` tasks must prove why DEV:backend and DEV:frontend work are
 inseparable for exactly one journey behavior. Use a vertical slice only when one
 proof story must cross API/data/browser boundaries together. Split work into
-DEV:backend, DEV:frontend, DEV:design-system, DEV:migration-persistence, TEST:test-only,
+DEV:backend, DEV:frontend, GOV:design-system, DEV:migration-persistence, TEST:test-only,
 TEST:test-suite-alignment, or EVIDENCE:qa-evidence tasks when those concerns can be
 delivered and proven separately.
 
@@ -422,7 +424,7 @@ migrated.
 
 ## Tight Allowed Write Envelope
 
-Prefer exact files over broad directories. Broad DEV:frontend or DEV:design-system
+Prefer exact files over broad directories. Broad DEV:frontend or GOV:design-system
 write sets are blocked by default for queued implementation tasks unless the
 task is explicitly an audit, migration, generated/canonical sweep, or another
 approved broad-scope task with strong rationale.

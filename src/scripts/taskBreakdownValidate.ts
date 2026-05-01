@@ -1026,7 +1026,7 @@ function validateFrontendArchitectureDecision(
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no DEV:frontend architecture decision row`);
+    errors.push(`${task.taskId} queued DEV:frontend/GOV:design-system task has no DEV:frontend architecture decision row`);
     return;
   }
 
@@ -1084,12 +1084,12 @@ function validateFrontendArchitectureDecision(
       errors.push(`${task.taskId} DEV:frontend architecture decision readiness is ${row.implementationReadiness}`);
     }
 
-    if ((task.taskType === "DEV:frontend" || task.taskType === "DEV:design-system") && row.routeFamily === "not-applicable") {
+    if ((task.taskType === "DEV:frontend" || task.taskType === "GOV:design-system") && row.routeFamily === "not-applicable") {
       errors.push(`${task.taskId} ${task.taskType} task must consume a DEV:frontend architecture classification, not not-applicable`);
     }
 
     if (task.taskType === "DEV:frontend" && row.designSystemPrerequisite === "DS-task-required") {
-      errors.push(`${task.taskId} DEV:frontend task cannot proceed while Layer 2 requires upstream DEV:design-system work`);
+      errors.push(`${task.taskId} DEV:frontend task cannot proceed while Layer 2 requires upstream GOV:design-system work`);
     }
 
     if (row.authorityTransitionPosture === "blocked-until-transition") {
@@ -1198,13 +1198,13 @@ function validateFrontendSubStandard(task: TaskRow, rows: FrontendSubStandardRow
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no sub-standard row`);
+    errors.push(`${task.taskId} queued DEV:frontend/GOV:design-system task has no sub-standard row`);
     return;
   }
 
   for (const row of rows) {
     if (!allowedFrontendDesignSystemSubStandards.has(row.primarySubStandard)) {
-      errors.push(`${task.taskId} has invalid DEV:frontend/DEV:design-system sub-standard: ${row.primarySubStandard || "(blank)"}`);
+      errors.push(`${task.taskId} has invalid DEV:frontend/GOV:design-system sub-standard: ${row.primarySubStandard || "(blank)"}`);
     }
 
     validateRequiredField(task.taskId, "Additional Sub-Standards", row.additionalSubStandards, errors);
@@ -1212,17 +1212,17 @@ function validateFrontendSubStandard(task: TaskRow, rows: FrontendSubStandardRow
     validateRequiredField(task.taskId, "Frontend / Design-System Compliance Proof", row.complianceProof, errors);
 
     if (row.primarySubStandard === "not-applicable" && task.taskType !== "DEV:vertical-slice") {
-      errors.push(`${task.taskId} ${task.taskType} task must name a DEV:frontend/DEV:design-system sub-standard`);
+      errors.push(`${task.taskId} ${task.taskType} task must name a DEV:frontend/GOV:design-system sub-standard`);
     }
 
     if (row.primarySubStandard === "not-applicable" && !mentionsNotApplicableRationale(row.splitRationale, row.complianceProof)) {
-      errors.push(`${task.taskId} not-applicable DEV:frontend/DEV:design-system sub-standard requires concrete rationale`);
+      errors.push(`${task.taskId} not-applicable DEV:frontend/GOV:design-system sub-standard requires concrete rationale`);
     }
 
     validateFrontendSubStandardProof(task.taskId, row, errors);
 
     if (hasMeaningfulAdditionalSubStandards(row.additionalSubStandards) && !mentionsInseparable(row.splitRationale, "")) {
-      errors.push(`${task.taskId} has additional DEV:frontend/DEV:design-system sub-standards without inseparable split rationale`);
+      errors.push(`${task.taskId} has additional DEV:frontend/GOV:design-system sub-standards without inseparable split rationale`);
     }
   }
 }
@@ -1264,7 +1264,7 @@ function validateFrontendPerformancePosture(task: TaskRow, rows: FrontendPerform
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no performance posture row`);
+    errors.push(`${task.taskId} queued DEV:frontend/GOV:design-system task has no performance posture row`);
     return;
   }
 
@@ -1329,7 +1329,7 @@ function validateDesignSystemSeamContract(task: TaskRow, rows: DesignSystemSeamC
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no DEV:design-system seam contract row`);
+    errors.push(`${task.taskId} queued DEV:frontend/GOV:design-system task has no GOV:design-system seam contract row`);
     return;
   }
 
@@ -1343,23 +1343,23 @@ function validateDesignSystemSeamContract(task: TaskRow, rows: DesignSystemSeamC
     validateRequiredField(task.taskId, "Frontend Consumption Contract", row.frontendConsumptionContract, errors);
 
     if (!allowedDesignSystemSeamPostures.has(row.seamPosture)) {
-      errors.push(`${task.taskId} has invalid DEV:design-system seam posture: ${row.seamPosture || "(blank)"}`);
+      errors.push(`${task.taskId} has invalid GOV:design-system seam posture: ${row.seamPosture || "(blank)"}`);
     }
 
-    if (task.taskType === "DEV:design-system" && !isDesignSystemProducerPosture(row.seamPosture)) {
-      errors.push(`${task.taskId} DEV:design-system task must produce, refine, or prove a consumable seam`);
+    if (task.taskType === "GOV:design-system" && !isDesignSystemProducerPosture(row.seamPosture)) {
+      errors.push(`${task.taskId} GOV:design-system task must produce, refine, or prove a consumable seam`);
     }
 
     if (task.taskType === "DEV:frontend" && !isFrontendConsumerPosture(row.seamPosture)) {
-      errors.push(`${task.taskId} DEV:frontend task must consume an existing DEV:design-system seam or record an approved exception`);
+      errors.push(`${task.taskId} DEV:frontend task must consume an existing GOV:design-system seam or record an approved exception`);
     }
 
     if (task.taskType === "DEV:vertical-slice" && row.seamPosture === "blocks-on-missing-seam") {
-      errors.push(`${task.taskId} queued DEV:vertical-slice task cannot proceed with a missing DEV:design-system seam`);
+      errors.push(`${task.taskId} queued DEV:vertical-slice task cannot proceed with a missing GOV:design-system seam`);
     }
 
     if (row.seamPosture !== "not-applicable" && !mentionsDesignSystemSeam(row.seamNameExportRoute, row.frontendConsumptionContract)) {
-      errors.push(`${task.taskId} DEV:design-system seam contract must name a consumable route, export, component, or controller seam`);
+      errors.push(`${task.taskId} GOV:design-system seam contract must name a consumable route, export, component, or controller seam`);
     }
   }
 }
@@ -1380,7 +1380,7 @@ function validateFrontendAdoptionContract(
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} DEV:frontend task consuming an existing DEV:design-system seam must have a DEV:frontend adoption contract row`);
+    errors.push(`${task.taskId} DEV:frontend task consuming an existing GOV:design-system seam must have a DEV:frontend adoption contract row`);
     return;
   }
 
@@ -1439,12 +1439,12 @@ function validateFrontendSecurityEvidence(
   }
 
   if (sourceRows.length === 0) {
-    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no Layer 2/3 browser security posture snapshot`);
+    errors.push(`${task.taskId} queued DEV:frontend/GOV:design-system task has no Layer 2/3 browser security posture snapshot`);
     return;
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no DEV:frontend security evidence row`);
+    errors.push(`${task.taskId} queued DEV:frontend/GOV:design-system task has no DEV:frontend security evidence row`);
     return;
   }
 
@@ -1575,7 +1575,7 @@ function validateFrontendRuntimeDataMockHonesty(
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no runtime data and mock-honesty row`);
+    errors.push(`${task.taskId} queued DEV:frontend/GOV:design-system task has no runtime data and mock-honesty row`);
     return;
   }
 
@@ -1755,7 +1755,7 @@ function validateTightWriteEnvelope(task: TaskRow, rows: TightWriteEnvelopeRow[]
     }
 
     if (isBroadFrontendWriteEnvelope(task, row) && !isApprovedBroadFrontendEnvelope(task, row)) {
-      errors.push(`${task.taskId} has broad DEV:frontend/DEV:design-system write envelope without approved broad-scope rationale`);
+      errors.push(`${task.taskId} has broad DEV:frontend/GOV:design-system write envelope without approved broad-scope rationale`);
     }
   }
 }
@@ -2376,12 +2376,20 @@ function validateTaskCategoryBoundary(task: TaskRow, errors: string[]): void {
     errors.push(`${task.taskId} EVIDENCE task type must not patch production behavior`);
   }
 
+  if (task.taskType.startsWith("GOV:") && task.taskType !== "GOV:design-system" && mentionsProductionCodePath(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} GOV task type must not own product/runtime implementation write paths`);
+  }
+
   if (task.taskType.startsWith("DEV:") && mentionsBroadDocsSweep(task.allowedWriteSet)) {
     errors.push(`${task.taskId} DEV task type must not own broad source-independent artifact sweeps`);
   }
 
   if (task.taskType === "DECISION:architecture-foundation" && mentionsProductionCodePath(task.allowedWriteSet)) {
     errors.push(`${task.taskId} DECISION:architecture-foundation must record decisions before source implementation changes`);
+  }
+
+  if (task.taskType === "DOC:standards-compliance" && mentionsStandardsAuthorityWritePath(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} DOC:standards-compliance must not change standards authority; use GOV:standards-update`);
   }
 }
 
@@ -3275,6 +3283,16 @@ function mentionsBroadDocsSweep(...values: string[]): boolean {
     normalized.includes("docs/architecture/**") ||
     normalized.includes("source-independent artifact sweep") ||
     normalized.includes("artifact sweep")
+  );
+}
+
+function mentionsStandardsAuthorityWritePath(...values: string[]): boolean {
+  const normalized = values.join(" ").replace(/\\/g, "/").toLowerCase();
+  return (
+    (normalized.includes("docs/standards/") && !normalized.includes("docs/standards/platform-status/")) ||
+    normalized.includes("docs/templates/") ||
+    normalized.includes(".codex/skills/") ||
+    normalized.includes("src/scripts/")
   );
 }
 

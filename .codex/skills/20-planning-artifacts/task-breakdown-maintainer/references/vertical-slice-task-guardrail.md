@@ -21,7 +21,7 @@ Use for task type: `DEV:vertical-slice`
 - Frontend Performance Posture row for frontend-facing slices with allowed
   posture and posture-matched proof; `unknown-blocked` blocks queueing
 - if the slice includes first-consumer DEV:frontend adoption of a signed-off
-  DEV:design-system seam, carry the same adoption contract fields required for a
+  GOV:design-system seam, carry the same adoption contract fields required for a
   DEV:frontend task or split adoption into a separate DEV:frontend task
 - artifact obligations carried from the story
 
@@ -42,9 +42,9 @@ Use for task type: `DEV:vertical-slice`
 - classify Frontend Performance Posture for the frontend-facing journey and
   provide posture-matched proof without turning the vertical slice into a broad
   DEV:frontend sweep
-- do not use DEV:vertical-slice as a shortcut for copying DEV:design-system markup,
+- do not use DEV:vertical-slice as a shortcut for copying GOV:design-system markup,
   controller behavior, ARIA/state semantics, or CSS into app code
-- do not use DEV:vertical-slice as a shortcut around separate DEV:design-system,
+- do not use DEV:vertical-slice as a shortcut around separate GOV:design-system,
   permission, migration, or evidence tasks
 
 ## Required Check IDs

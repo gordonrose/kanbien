@@ -62,6 +62,9 @@ const allowedDeliveryShapes = new Set([
   "DECISION:refactor-first",
   "DECISION:architecture-foundation",
   "DOC:standards-compliance",
+  "GOV:standards-update",
+  "GOV:architecture-update",
+  "GOV:design-system",
 ]);
 
 const allowedArchitectureClassifications = new Set([
@@ -75,7 +78,7 @@ const allowedArchitectureClassifications = new Set([
 ]);
 
 const allowedTaskSignalPresence = new Set(["yes", "no", "blocked"]);
-const frontendTaskTypes = new Set(["DEV:frontend", "DEV:design-system", "DEV:vertical-slice"]);
+const frontendTaskTypes = new Set(["DEV:frontend", "GOV:design-system", "DEV:vertical-slice"]);
 const allowedFrontendRouteFamilies: Set<string> = new Set(frontendRouteFamilies);
 const allowedFrontendRuntimeShapes: Set<string> = new Set(frontendRuntimeShapes);
 const allowedFrontendSurfaceClasses: Set<string> = new Set(frontendSurfaceClasses);

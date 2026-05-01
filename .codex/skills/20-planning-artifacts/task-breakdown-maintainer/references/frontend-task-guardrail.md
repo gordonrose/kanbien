@@ -4,16 +4,16 @@ Use for task type: `DEV:frontend`
 
 ## Must Preserve
 
-- governed app UI consumes signed-off DEV:design-system render and behavior seams
+- governed app UI consumes signed-off GOV:design-system render and behavior seams
 - no app-page CSS for governed pages
-- no copied DEV:design-system markup, ARIA, state behavior, or controller logic
+- no copied GOV:design-system markup, ARIA, state behavior, or controller logic
 - accessibility, permission-aware rendering, and browser-visible proof
 - served asset/runtime evidence when the task changes visible runtime behavior
 
 ## Approval Evidence
 
-- signed-off DEV:design-system seam or explicit approved exception
-- Frontend Adoption Contract when consuming an existing DEV:design-system seam,
+- signed-off GOV:design-system seam or explicit approved exception
+- Frontend Adoption Contract when consuming an existing GOV:design-system seam,
   naming consumed render, controller/behavior, accessibility, and style/CSS
   seams plus app-local composition and adoption proof
 - affected route/surface and allowed write set
@@ -33,7 +33,7 @@ Use for task type: `DEV:frontend`
 - queued DEV:frontend tasks must consume a Layer 2/3 DEV:frontend architecture
   classification row by source scope element; Layer 4 must not invent route
   family, product module, journey group, topology, locator, authority, state,
-  shell, DEV:design-system prerequisite, materialization, or source placement
+  shell, GOV:design-system prerequisite, materialization, or source placement
 - split fixture/data contracts, visual rendering, interaction behavior,
   non-trivial accessibility semantics, and evidence sweep when independently
   meaningful
@@ -48,7 +48,7 @@ Use for task type: `DEV:frontend`
   large-dom-or-canvas, asset-heavy, animation-or-transition-heavy, or
   not-applicable with concrete rationale; posture proof must match the named
   risk and must not broaden the DEV:frontend task scope
-- governed DEV:frontend tasks must name the signed-off DEV:design-system seam they
+- governed DEV:frontend tasks must name the signed-off GOV:design-system seam they
   consume, including render, behavior, accessibility, canonical, and evidence
   posture; missing seams block DEV:frontend delivery unless an explicit exception is
   approved

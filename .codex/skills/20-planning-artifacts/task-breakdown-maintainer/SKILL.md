@@ -43,8 +43,8 @@ or Technical Steering architecture.
    Assign stable task IDs and one task type per task. Use separate tasks for
    DEV:backend, DEV:frontend, DEV:vertical-slice, DOC:docs-artifact, TEST:test-only,
    TEST:test-suite-alignment, DECISION:refactor-first, DECISION:architecture-foundation,
-   DOC:standards-compliance, DEV:platform-seam,
-   DEV:migration-persistence, DEV:design-system, DOC:api-contract, DOC:permission-mapping,
+   DOC:standards-compliance, GOV:standards-update, GOV:architecture-update, DEV:platform-seam,
+   DEV:migration-persistence, GOV:design-system, DOC:api-contract, DOC:permission-mapping,
    DOC:data-dictionary, and EVIDENCE:qa-evidence work when those concerns have distinct
    write sets or proof.
 
@@ -68,27 +68,27 @@ or Technical Steering architecture.
    task, and which product, design, architecture, source-truth, or proof
    decisions must not be guessed.
 
-5D. Split complex DEV:frontend and DEV:design-system work by sub-standard.
+5D. Split complex DEV:frontend and GOV:design-system work by sub-standard.
    When independently meaningful, split fixture/data contracts, visual
    rendering, interaction behavior, accessibility semantics, and evidence sweep
-   into separate tasks. Each queued DEV:frontend, DEV:design-system, or frontend-facing
+   into separate tasks. Each queued DEV:frontend, GOV:design-system, or frontend-facing
    DEV:vertical-slice task must name a primary sub-standard and the compliance proof
    expected for that sub-standard.
 
 5E. Lock the design-system-to-frontend seam.
-   A DEV:design-system task is not ready merely because it renders in
+   A GOV:design-system task is not ready merely because it renders in
    `/design-system`; it must produce, refine, or prove a named consumable seam
    for future DEV:frontend tasks. A DEV:frontend task that touches governed UI must
-   consume the signed-off DEV:design-system render, behavior, and accessibility seam
+   consume the signed-off GOV:design-system render, behavior, and accessibility seam
    or record an approved exception. If the seam does not exist, block the
-   DEV:frontend task and create DEV:design-system work first. When a DEV:frontend task
+   DEV:frontend task and create GOV:design-system work first. When a DEV:frontend task
    consumes an existing seam, fill the Frontend Adoption Contract with the
    consumed render, controller/behavior, accessibility, and style/CSS seams,
    allowed app-local composition/data binding, prohibited local reconstruction,
    and the adoption proof route or scenario.
 
 5F. Package DEV:frontend security and runtime evidence.
-   For queued `DEV:frontend`, `DEV:design-system`, and frontend-facing
+   For queued `DEV:frontend`, `GOV:design-system`, and frontend-facing
    `DEV:vertical-slice` tasks, copy the relevant Layer 2/3 Browser Security
    Posture rows into Frontend Security Evidence. If Layer 2/3 says a browser
    security area is present, require the matching Layer 4 evidence row or block.
@@ -100,7 +100,7 @@ or Technical Steering architecture.
    Rendered proof based only on mocks without contract/runtime tie blocks.
 
 5G. Classify DEV:frontend performance posture.
-   For queued `DEV:frontend`, `DEV:design-system`, and frontend-facing
+   For queued `DEV:frontend`, `GOV:design-system`, and frontend-facing
    `DEV:vertical-slice` tasks, add a Frontend Performance Posture row. Layer 4
    classifies delivery proof posture only; it does not invent Layer 2 DEV:frontend
    architecture decisions or broaden task scope. `unknown-blocked` blocks
@@ -112,7 +112,7 @@ or Technical Steering architecture.
 5H. Gate vertical slices.
    Use `DEV:vertical-slice` only when one journey behavior requires DEV:backend and
    DEV:frontend proof together. Fill the Vertical Slice Coupling row before
-   queueing. If DEV:backend/API, DEV:frontend render, DEV:design-system, migration,
+   queueing. If DEV:backend/API, DEV:frontend render, GOV:design-system, migration,
    permission, runtime evidence, or artifact work can be proven separately,
    split it into the matching task type instead of hiding it in a vertical
    slice.
@@ -168,7 +168,7 @@ or Technical Steering architecture.
 8A. Classify write sets and forbidden work.
    Classify each allowed write path or path pattern and convert non-goals into
    explicit forbidden-work rows before queueing.
-   Prefer exact files or narrow path patterns. Broad DEV:frontend and DEV:design-system
+   Prefer exact files or narrow path patterns. Broad DEV:frontend and GOV:design-system
    write envelopes block queued implementation tasks unless the task is
    explicitly a broad audit, migration, generated/canonical sweep, or otherwise
    has strong written rationale.

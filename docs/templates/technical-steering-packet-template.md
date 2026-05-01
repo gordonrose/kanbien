@@ -65,7 +65,7 @@ Recommended risk areas:
 - persistence or migration change
 - authz or permission change
 - DEV:frontend rendered surface
-- governed DEV:design-system seam
+- governed GOV:design-system seam
 - shared platform/runtime seam
 - reusable logic or extraction pressure
 - data dictionary impact
@@ -75,7 +75,7 @@ Recommended risk areas:
 ## Frontend Architecture Classification
 
 For frontend-affecting work, Layer 2 owns DEV:frontend placement, route,
-topology, authority, state, shell, DEV:design-system prerequisite, and
+topology, authority, state, shell, GOV:design-system prerequisite, and
 materialization decisions. Layer 3 must preserve these decisions. Layer 4 must
 package and enforce them without inventing DEV:frontend architecture.
 
@@ -87,7 +87,7 @@ DEV:frontend impact. Frontend-affecting packets with missing rows are blocked.
 
 Allowed route families:
 
-- `DEV:design-system`
+- `design-system`
 - `root-admin`
 - `login`
 - `new-family`
@@ -166,7 +166,7 @@ Allowed shell governance postures:
 - `exception-approved`
 - `not-applicable`
 
-Allowed DEV:design-system prerequisites:
+Allowed GOV:design-system prerequisites:
 
 - `signed-off-seam-exists`
 - `DS-task-required`
@@ -197,7 +197,7 @@ Source placement rule:
   session, route resolution, shell registry, and shell composition only
 - page, module, and journey behavior must live in module/journey files rather
   than accumulating in the root shell entry file
-- governed DEV:design-system behavior must come from design-system-owned family
+- governed GOV:design-system behavior must come from design-system-owned family
   files and shared app-consumption seams
 
 Allowed route visibility values:
@@ -278,7 +278,7 @@ approved exception.
 | TSIG-API-CONTRACT | Does the change add or alter route contract, request/response shape, status codes, validation, pagination, sorting, or API auth behavior? |  |  | feature-local | DOC:api-contract |  |
 | TSIG-PERSISTENCE | Does the change alter schema, indexes, query semantics, normalization, uniqueness, lifecycle fields, soft delete, migrations, or persistence harness behavior? |  |  | feature-local | DEV:migration-persistence |  |
 | TSIG-PERMISSION | Does the change add or alter authz capability keys, grants, deny rules, tenant context, object-level permissions, or protected route access? |  |  | feature-local | DOC:permission-mapping |  |
-| TSIG-GOVERNED-FRONTEND | Does the change add or alter governed app UI, shell chrome, navigation, drawers, dialogs, reusable controls, page chrome, app-page CSS, or design-system-owned behavior? |  |  | design-system-seam | DEV:design-system |  |
+| TSIG-GOVERNED-FRONTEND | Does the change add or alter governed app UI, shell chrome, navigation, drawers, dialogs, reusable controls, page chrome, app-page CSS, or design-system-owned behavior? |  |  | design-system-seam | GOV:design-system |  |
 | TSIG-FRONTEND-SURFACE | Does the change add or alter a rendered DEV:frontend surface, browser workflow, DEV:frontend route, or served asset behavior? |  |  | feature-local | DEV:frontend |  |
 | TSIG-SHARED-CODE | Does the change reuse, move, extract, or generalize logic across features or into `src/lib`? |  |  | shared-lib-candidate | DECISION:refactor-first |  |
 | TSIG-DATA-DICTIONARY | Does the change alter durable entity facts, fields, lifecycle, retention, searchable storage, indexes, or source-independent persistence truth? |  |  | feature-local | DOC:data-dictionary |  |

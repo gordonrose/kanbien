@@ -198,7 +198,7 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Task ID | Primary Sub-Standard | Additional Sub-Standards | Split Rationale | Required Compliance Proof |
 | --- | --- | --- | --- | --- |
-| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |
+| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or GOV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or GOV:design-system sub-standard proof |
 
 ## Frontend Performance Posture
 
@@ -409,7 +409,7 @@ function frontendTaskPacketWith(decisionRow: string): string {
     )
     .replace(backendFrontendDecisionRow, decisionRow)
     .replace(
-      "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
+      "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or GOV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or GOV:design-system sub-standard proof |",
       "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single app adoption proof story. | canonical screenshot/evidence artifact root-admin-marketing-campaign-default.png |",
     )
     .replace(
@@ -422,7 +422,7 @@ function frontendTaskPacketWith(decisionRow: string): string {
     )
     .replace(
       "## Frontend Adoption Contract\n\n| Task ID | Consumed DS Render Seam | Consumed DS Behavior / Controller Seam | Consumed DS Accessibility Semantics | Consumed DS Style / CSS Seam | Allowed App-Local Composition / Data Binding | Forbidden Local Reconstruction | Adoption Proof Route / Scenario |\n| --- | --- | --- | --- | --- | --- | --- | --- |",
-      "## Frontend Adoption Contract\n\n| Task ID | Consumed DS Render Seam | Consumed DS Behavior / Controller Seam | Consumed DS Accessibility Semantics | Consumed DS Style / CSS Seam | Allowed App-Local Composition / Data Binding | Forbidden Local Reconstruction | Adoption Proof Route / Scenario |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | DEV:design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam | /root-admin/marketing campaign-management default route scenario |",
+      "## Frontend Adoption Contract\n\n| Task ID | Consumed DS Render Seam | Consumed DS Behavior / Controller Seam | Consumed DS Accessibility Semantics | Consumed DS Style / CSS Seam | Allowed App-Local Composition / Data Binding | Forbidden Local Reconstruction | Adoption Proof Route / Scenario |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | GOV:design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the GOV:design-system seam | /root-admin/marketing campaign-management default route scenario |",
     )
     .replace(
       "## Frontend Security Evidence\n\n| Task ID | Security Area | Source Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Layer 4 Evidence Plan / Blocking Reason |\n| --- | --- | --- | --- | --- | --- |",
@@ -438,7 +438,7 @@ function frontendTaskPacketWith(decisionRow: string): string {
     )
     .replace(
       "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-      "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for architecture placement and DEV:design-system seam consumption. |",
+      "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for architecture placement and GOV:design-system seam consumption. |",
     )
     .replace(
       "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -467,7 +467,7 @@ function verticalSliceTaskPacketWith(couplingRow: string): string {
     .replace("| S-001 | DEV:frontend | DEV:frontend rendered surface | T-S001-01 |", "| S-001 | DEV:vertical-slice | DEV:frontend rendered surface | T-S001-01 |")
     .replace("| T-S001-01 | S-001 | DEV:frontend |", "| T-S001-01 | S-001 | DEV:vertical-slice |")
     .replace(
-      "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for architecture placement and DEV:design-system seam consumption. |",
+      "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for architecture placement and GOV:design-system seam consumption. |",
       "| T-S001-01 | DEV:vertical-slice | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/vertical-slice-task-guardrail.md | approved | Vertical slice guardrail reviewed for inseparable DEV:backend/DEV:frontend journey proof. |",
     )
     .replace(
@@ -768,6 +768,31 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 EVIDENCE task type must not patch production behavior");
   });
 
+  it("blocks non-design-system GOV task types that try to own runtime implementation paths", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket.replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:architecture-update |"),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 GOV task type must not own product/runtime implementation write paths");
+  });
+
+  it("blocks standards compliance tasks that try to change standards authority", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:standards-compliance |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/standards/QA-RELEASE-GATE.md",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 DOC:standards-compliance must not change standards authority; use GOV:standards-update");
+  });
+
   it("blocks broad DEV:frontend write envelopes without approved broad-scope rationale", () => {
     const frontendStoryPacket = sourceStoryPacket
       .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding DEV:frontend rendering | feature-local | src/frontend/designSystem | approved | DEV:frontend |")
@@ -782,7 +807,7 @@ describe("task breakdown validation", () => {
         "src/frontend/**",
       )
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or GOV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or GOV:design-system sub-standard proof |",
         "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single visual rendering proof story. | canonical screenshot/evidence artifact tenant-branding-card-default.png |",
       )
       .replace(
@@ -801,7 +826,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(frontendPacket, frontendStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 has broad DEV:frontend/DEV:design-system write envelope without approved broad-scope rationale");
+    expect(result.errors).toContain("T-S001-01 has broad DEV:frontend/GOV:design-system write envelope without approved broad-scope rationale");
   });
 
   it("blocks queued DEV:frontend tasks without DEV:frontend architecture decision reconciliation", () => {
@@ -821,7 +846,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(frontendPacket, frontendStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 queued DEV:frontend/DEV:design-system task has no DEV:frontend architecture decision row");
+    expect(result.errors).toContain("T-S001-01 queued DEV:frontend/GOV:design-system task has no DEV:frontend architecture decision row");
   });
 
   it("blocks DEV:frontend architecture decisions that drift from the Layer 2/3 snapshot", () => {
@@ -880,7 +905,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 queued DEV:frontend/DEV:design-system task has no performance posture row");
+    expect(result.errors).toContain("T-S001-01 queued DEV:frontend/GOV:design-system task has no performance posture row");
   });
 
   it("blocks unknown DEV:frontend performance posture", () => {
@@ -974,7 +999,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 queued DEV:frontend/DEV:design-system task has no DEV:frontend security evidence row");
+    expect(result.errors).toContain("T-S001-01 queued DEV:frontend/GOV:design-system task has no DEV:frontend security evidence row");
   });
 
   it("blocks DEV:frontend security evidence that rewrites Layer 2 security posture text", () => {
@@ -1022,7 +1047,7 @@ describe("task breakdown validation", () => {
 
   it("blocks DEV:frontend task consuming DS seam but missing adoption contract", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
-      "| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | DEV:design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam | /root-admin/marketing campaign-management default route scenario |\n",
+      "| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | GOV:design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the GOV:design-system seam | /root-admin/marketing campaign-management default route scenario |\n",
       "",
     );
 
@@ -1030,14 +1055,14 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain(
-      "T-S001-01 DEV:frontend task consuming an existing DEV:design-system seam must have a DEV:frontend adoption contract row",
+      "T-S001-01 DEV:frontend task consuming an existing GOV:design-system seam must have a DEV:frontend adoption contract row",
     );
   });
 
   it("blocks adoption contract missing render behavior accessibility or style seam", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
-      "| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | DEV:design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam | /root-admin/marketing campaign-management default route scenario |",
-      "| T-S001-01 |  | not-applicable |  |  | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam | /root-admin/marketing campaign-management default route scenario |",
+      "| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | GOV:design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the GOV:design-system seam | /root-admin/marketing campaign-management default route scenario |",
+      "| T-S001-01 |  | not-applicable |  |  | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the GOV:design-system seam | /root-admin/marketing campaign-management default route scenario |",
     );
 
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
@@ -1051,7 +1076,7 @@ describe("task breakdown validation", () => {
 
   it("blocks adoption contract allowing copied markup controller ARIA or CSS", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
-      "must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam",
+      "must not copy markup, controller, ARIA, or CSS from the GOV:design-system seam",
       "app may copy markup and controller as needed",
     );
 
@@ -1175,7 +1200,7 @@ describe("task breakdown validation", () => {
         "| T-S001-01 | root-admin marketing journey | root-admin | marketing | campaign-management | deep-link-only | root-operator | app-shell | journey | journey-state | none | not-applicable: journey is shell-state only | not-applicable: no compatibility locator | manual-shell-registry | curated-webAppHierarchyBuilder | transitional-accepted | feature-local-state-machine | local-legacy-shell | signed-off-seam-exists | shell-registry-update | module-journey-files | ready | Layer 2 places journey behavior in module files, not the shell entry. |",
       )
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or GOV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or GOV:design-system sub-standard proof |",
         "| T-S001-01 | interaction-behavior | visual-rendering | inseparable because this tests one journey interaction seam | interaction scenario campaign-filter-toggle state transition |",
       )
       .replace(
@@ -1193,17 +1218,17 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 module/journey DEV:frontend work must not add behavior to rootAdminShell/assets/app.mjs");
   });
 
-  it("blocks queued DEV:design-system tasks that do not produce, refine, or prove a consumable seam", () => {
+  it("blocks queued GOV:design-system tasks that do not produce, refine, or prove a consumable seam", () => {
     const designSystemStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding card pattern | design-system-seam | src/frontend/design-system | approved | DEV:design-system |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:design-system governed surface | yes | Tenant branding card pattern needs a governed seam. | DEV:design-system |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding card pattern | design-system-seam | src/frontend/design-system | approved | GOV:design-system |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | GOV:design-system governed surface | yes | Tenant branding card pattern needs a governed seam. | GOV:design-system |");
 
     const designSystemPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | platform-seam | DEV:design-system | T-S001-01 | covered | Design-system task preserves Layer 2 platform seam classification. |")
-      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:design-system | DEV:design-system governed surface | T-S001-01 | Covered by DEV:design-system delivery task. |")
-      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:design-system |")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | platform-seam | GOV:design-system | T-S001-01 | covered | Design-system task preserves Layer 2 platform seam classification. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | GOV:design-system | GOV:design-system governed surface | T-S001-01 | Covered by GOV:design-system delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:design-system |")
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or GOV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or GOV:design-system sub-standard proof |",
         "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single visual rendering proof story. | canonical screenshot/evidence artifact tenant-branding-card-default.png |",
       )
       .replace(
@@ -1216,20 +1241,20 @@ describe("task breakdown validation", () => {
       )
       .replace(
         "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | DEV:design-system | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/design-system-task-guardrail.md | approved | Design-system guardrail reviewed for consumable seam and visual proof obligations. |",
+        "| T-S001-01 | GOV:design-system | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/design-system-task-guardrail.md | approved | Design-system guardrail reviewed for consumable seam and visual proof obligations. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
-        "| T-S001-01 | design-system-family | pass | Tenant branding card family is named. |\n| T-S001-01 | design-system-behavior-lock | pass | Behavior lock is required. |\n| T-S001-01 | design-system-consumable-seam | pass | Consumable renderer seam is required. |\n| T-S001-01 | design-system-render-behavior | pass | Render behavior is owned by DEV:design-system. |\n| T-S001-01 | design-system-visual-proof | pass | Canonical screenshot proof is required. |\n| T-S001-01 | design-system-adoption-path | pass | Frontend adoption contract is named. |",
+        "| T-S001-01 | design-system-family | pass | Tenant branding card family is named. |\n| T-S001-01 | design-system-behavior-lock | pass | Behavior lock is required. |\n| T-S001-01 | design-system-consumable-seam | pass | Consumable renderer seam is required. |\n| T-S001-01 | design-system-render-behavior | pass | Render behavior is owned by GOV:design-system. |\n| T-S001-01 | design-system-visual-proof | pass | Canonical screenshot proof is required. |\n| T-S001-01 | design-system-adoption-path | pass | Frontend adoption contract is named. |",
       );
 
     const result = validateTaskBreakdownContent(designSystemPacket, designSystemStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 DEV:design-system task must produce, refine, or prove a consumable seam");
+    expect(result.errors).toContain("T-S001-01 GOV:design-system task must produce, refine, or prove a consumable seam");
   });
 
-  it("blocks queued DEV:frontend tasks when the required DEV:design-system seam is missing", () => {
+  it("blocks queued DEV:frontend tasks when the required GOV:design-system seam is missing", () => {
     const frontendStoryPacket = sourceStoryPacket
       .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding DEV:frontend rendering | feature-local | src/frontend/rootAdmin | approved | DEV:frontend |")
       .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:frontend rendered surface | yes | Root admin page consumes tenant branding card. | DEV:frontend |");
@@ -1239,7 +1264,7 @@ describe("task breakdown validation", () => {
       .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:frontend | DEV:frontend rendered surface | T-S001-01 | Covered by DEV:frontend delivery task. |")
       .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:frontend |")
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or GOV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or GOV:design-system sub-standard proof |",
         "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single app adoption proof story. | canonical screenshot/evidence artifact tenant-branding-card-default.png |",
       )
       .replace(
@@ -1252,7 +1277,7 @@ describe("task breakdown validation", () => {
       )
       .replace(
         "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for signed-off DEV:design-system seam consumption. |",
+        "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for signed-off GOV:design-system seam consumption. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -1262,7 +1287,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(frontendPacket, frontendStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 DEV:frontend task must consume an existing DEV:design-system seam or record an approved exception");
+    expect(result.errors).toContain("T-S001-01 DEV:frontend task must consume an existing GOV:design-system seam or record an approved exception");
   });
 
   it("blocks queued DEV:vertical-slice tasks without a coupling row", () => {
