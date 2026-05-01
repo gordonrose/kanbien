@@ -1,12 +1,12 @@
 # Test Suite Alignment Task Guardrail
 
-Use for task type: `test-suite-alignment`
+Use for task type: `TEST:test-suite-alignment`
 
 ## Must Preserve
 
 - approved PRD, story, and acceptance-criterion intent
 - existing executable proof semantics unless a separate implementation or
-  `test-only` task is approved
+  `TEST:test-only` task is approved
 - exact `TC-*`, `AC-*`, journey, backlog, and evidence IDs where they are
   already reviewed and valid
 - traceability between `docs/prd/test_cases`, QA backlog/status artifacts, and
@@ -33,7 +33,7 @@ Use for task type: `test-suite-alignment`
   executable IDs, standards drift, backlog drift, proof-layer drift, or
   fixture/documentation drift
 - do not use as a shortcut for implementing meaningful new test coverage; split
-  new proof into `test-only`
+  new proof into `TEST:test-only`
 - do not rewrite PRD intent merely to match weak or shallow executable tests
 - exact source artifacts and executable targets must be named before queueing
 - focused proof must include `npm run test:traceability` or an approved

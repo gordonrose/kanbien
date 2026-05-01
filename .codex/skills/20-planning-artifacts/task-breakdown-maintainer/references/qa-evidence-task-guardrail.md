@@ -1,6 +1,6 @@
 # QA Evidence Task Guardrail
 
-Use for task type: `QA/evidence`
+Use for task type: `EVIDENCE:qa-evidence`
 
 ## Must Preserve
 
@@ -24,7 +24,7 @@ Use for task type: `QA/evidence`
 - name exact evidence artifacts, scenarios, payload shapes, or audit outputs
 - broad proof commands are acceptable only when the task is explicitly an
   evidence sweep and the task-specific evidence targets are still named
-- do not change product behavior inside a QA/evidence task unless a separate
+- do not change product behavior inside a EVIDENCE:qa-evidence task unless a separate
   implementation task authorizes it
 
 ## Required Check IDs

@@ -18,26 +18,26 @@ const validPacket = `# Story Breakdown Packet: Tenant Branding
 
 | Classification ID | Scope Element | Classification | Owner / Seam | Decision Status | Required Downstream Signal |
 | --- | --- | --- | --- | --- | --- |
-| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |
+| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |
 
 ## Frontend Architecture Classification Snapshot
 
 | Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |
+| tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered DEV:frontend surface. |
 
 ## Browser Security Posture Snapshot
 
 | Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |
 | --- | --- | --- | --- | --- |
-| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no frontend task | no |
+| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no DEV:frontend task | no |
 
 ## Task-Type Signal Matrix
 
 | Story ID | Signal | Present | Evidence | Implied Task Type |
 | --- | --- | --- | --- | --- |
-| S-000 | source-independent docs impact | yes | Capability matrix normalization story. | docs-artifact |
-| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |
+| S-000 | source-independent docs impact | yes | Capability matrix normalization story. | DOC:docs-artifact |
+| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |
 
 ## Epic Summary
 
@@ -58,8 +58,8 @@ const validPacket = `# Story Breakdown Packet: Tenant Branding
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | ready-for-task-breakdown | harness-value | docs-artifact | Capability matrix normalization | As the delivery harness, I need approved stories translated into capability rows so implementation starts from explicit obligations. | harness | Approved capability rows exist for every acceptance criterion. | Technical Steering packet |
-| S-001 | ready-for-task-breakdown | user-value | backend | Root admin updates branding | As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload. | root admin | Branding display name is persisted for the selected tenant. | S-000 |
+| S-000 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Capability matrix normalization | As the delivery harness, I need approved stories translated into capability rows so implementation starts from explicit obligations. | harness | Approved capability rows exist for every acceptance criterion. | Technical Steering packet |
+| S-001 | ready-for-task-breakdown | user-value | DEV:backend | Root admin updates branding | As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload. | root admin | Branding display name is persisted for the selected tenant. | S-000 |
 
 ## Acceptance Criteria
 
@@ -207,16 +207,16 @@ describe("story breakdown validation", () => {
     expect(result.errors).toContain("vague phrase found: as needed");
   });
 
-  it("blocks frontend-affecting stories without frontend architecture snapshot rows", () => {
+  it("blocks frontend-affecting stories without DEV:frontend architecture snapshot rows", () => {
     const result = validateStoryBreakdownContent(
       validPacket
         .replace(
-          "| tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |\n",
+          "| tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered DEV:frontend surface. |\n",
           "",
         )
         .replace(
-          "| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |",
-          "| S-001 | frontend rendered surface | yes | Root admin branding page changes. | frontend |",
+          "| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |",
+          "| S-001 | DEV:frontend rendered surface | yes | Root admin branding page changes. | DEV:frontend |",
         ),
     );
 
@@ -227,9 +227,9 @@ describe("story breakdown validation", () => {
   it("blocks frontend-affecting stories without browser security posture snapshots", () => {
     const result = validateStoryBreakdownContent(
       validPacket
-        .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | frontend rendered surface | yes | Root admin page changes. | frontend |")
+        .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:frontend rendered surface | yes | Root admin page changes. | DEV:frontend |")
         .replace(
-          "## Browser Security Posture Snapshot\n\n| Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |\n| --- | --- | --- | --- | --- |\n| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no frontend task | no |\n\n",
+          "## Browser Security Posture Snapshot\n\n| Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |\n| --- | --- | --- | --- | --- |\n| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no DEV:frontend task | no |\n\n",
           "",
         ),
     );
@@ -263,7 +263,7 @@ describe("story breakdown validation", () => {
   it("blocks decision-sensitive story statuses without follow-up questions", () => {
     const result = validateStoryBreakdownContent(
       validPacket
-        .replace("| S-001 | ready-for-task-breakdown | user-value | backend |", "| S-001 | needs-prd-refinement | user-value | backend |")
+        .replace("| S-001 | ready-for-task-breakdown | user-value | DEV:backend |", "| S-001 | needs-prd-refinement | user-value | DEV:backend |")
         .replace(
           "## Follow-Up Decision Questions\n\n| Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |\n| --- | --- | --- | --- | --- |\n\n",
           "## Follow-Up Decision Questions\n\n| Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |\n| --- | --- | --- | --- | --- |\n\n",
@@ -292,7 +292,7 @@ describe("story breakdown validation", () => {
     const result = validateStoryBreakdownContent(
       validPacket
         .replace("`ready-for-task-breakdown`", "`draft`")
-        .replace("| S-001 | ready-for-task-breakdown | user-value | backend |", "| S-001 | needs-prd-refinement | user-value | backend |")
+        .replace("| S-001 | ready-for-task-breakdown | user-value | DEV:backend |", "| S-001 | needs-prd-refinement | user-value | DEV:backend |")
         .replace(
           "| --- | --- | --- | --- | --- |\n\n## Layer 3 Unblock Queue",
           "| --- | --- | --- | --- | --- |\n| Q-001 | S-001 | Which feature owns branding? | yes | ask requester |\n\n## Layer 3 Unblock Queue",
@@ -330,7 +330,7 @@ describe("story breakdown validation", () => {
     const result = validateStoryBreakdownContent(
       validPacket
         .replace("`ready-for-task-breakdown`", "`blocked`")
-        .replace("| S-001 | ready-for-task-breakdown | user-value | backend |", "| S-001 | needs-prd-refinement | user-value | backend |")
+        .replace("| S-001 | ready-for-task-breakdown | user-value | DEV:backend |", "| S-001 | needs-prd-refinement | user-value | DEV:backend |")
         .replace(
           "| --- | --- | --- | --- | --- |\n\n## Layer 3 Unblock Queue",
           "| --- | --- | --- | --- | --- |\n| Q-001 | S-001 | Which feature owns branding? | yes | ask requester |\n\n## Layer 3 Unblock Queue",

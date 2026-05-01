@@ -1,6 +1,6 @@
 # Platform Seam Task Guardrail
 
-Use for task type: `platform-seam`
+Use for task type: `DEV:platform-seam`
 
 ## Must Preserve
 

@@ -18,8 +18,8 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   move.
 - `technical-steering-packet-template.md`
   Layer 2 packet for deciding architectural posture before Story Breakdown,
-  including feature-local versus shared/platform, design-system, public-seam,
-  shared-library, and architecture-foundation classification.
+  including feature-local versus shared/platform, DEV:design-system, public-seam,
+  shared-library, and DECISION:architecture-foundation classification.
 - `story-breakdown-packet-template.md`
   Layer 3 packet for converting approved Technical Steering into the smallest
   independently deliverable and verifiable stories before Task Breakdown or
@@ -37,7 +37,7 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
 - `implementation-blueprint-template.md`
   Structured build sheet derived from the capability matrix and PRD.
 - `api-contract-template.md`
-  Route and contract template for backend capabilities.
+  Route and contract template for DEV:backend capabilities.
 - `permission-mapping-template.md`
   Role-to-capability mapping template for future authorization architecture.
 - `asset-consumer-decision-record-template.md`
@@ -58,7 +58,7 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   and adoption readiness.
 - `design-system-adoption-contract-template.md`
   Bridge template mapping capability or workflow ownership onto a signed-off
-  design-system family before real app adoption.
+  DEV:design-system family before real app adoption.
 - `governed-app-adoption-preflight-template.md`
   Preflight template for first-consumer or materially changed governed app
   adoption so seam readiness, ownership boundaries, literal parity targets,
@@ -77,17 +77,17 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   Frontend slice template covering route/state, permissions, accessibility,
   performance, degraded UX, and telemetry.
 - `frontend-telemetry-review-template.md`
-  Unified review template for frontend analytics, logging, monitoring,
+  Unified review template for DEV:frontend analytics, logging, monitoring,
   alerting, and telemetry-related security/privacy considerations.
 - `frontend-public-route-review-checklist.md`
-  Human review checklist for public frontend routes whose qualitative design
+  Human review checklist for public DEV:frontend routes whose qualitative design
   quality cannot be fully protected by automation alone.
 - `vertical-slice-template.md`
-  Combined frontend/backend slice template for one user-facing workflow across
+  Combined DEV:frontend/DEV:backend slice template for one user-facing workflow across
   contracts, permissions, persistence, verification, and operations.
 
 Product Discovery templates sit upstream of PRD, capability matrix,
-vertical-slice, and implementation-blueprint templates. Reusable Product
+DEV:vertical-slice, and implementation-blueprint templates. Reusable Product
 Discovery taxonomy and product templates live under
 `docs/product-discovery/`. Product Discovery packet instances live under
 `docs/workspace/product-discovery/`.
@@ -130,11 +130,11 @@ For Task Breakdown packet checks, use:
 npm run task-breakdown:validate -- <packet-path> --story <story-packet-path>
 ```
 
-For backend and cross-feature work, treat `src/features/<featureName>/feature.manifest.json`
+For DEV:backend and cross-feature work, treat `src/features/<featureName>/feature.manifest.json`
 and `docs/architecture/generated/feature-dependency-graph.*` as normal
 maintained artifacts alongside the templates above.
 
-For backend or backend-adjacent feature work, the implementation blueprint and
+For DEV:backend or backend-adjacent feature work, the implementation blueprint and
 capability matrix must also answer the async job-processing decision gate. That
 gate applies even when the decision is "no background work needed"; record why
 synchronous execution is acceptable or define the durable work entity, safe

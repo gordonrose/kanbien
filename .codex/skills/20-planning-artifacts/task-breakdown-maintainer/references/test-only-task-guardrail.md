@@ -1,6 +1,6 @@
 # Test-Only Task Guardrail
 
-Use for task type: `test-only`
+Use for task type: `TEST:test-only`
 
 ## Must Preserve
 
@@ -9,7 +9,7 @@ Use for task type: `test-only`
 - proof layer that matches the risk being tested
 - exact test file, scenario, or assertion target
 - mock honesty against production persistence/API/browser shape
-- no behavior changes hidden inside test-only work
+- no behavior changes hidden inside TEST:test-only work
 - explicit actor, permission, object, boundary, and state coverage when the
   task is privileged, root-admin, tenant-boundary, authz, sensitive-rendering,
   asset, lifecycle, or security-sensitive
@@ -39,7 +39,7 @@ Use for task type: `test-only`
 - broad suites may supplement but cannot replace a named test scenario or
   expected failing/passing assertion
 - if the test reveals missing production behavior, stop and split the required
-  implementation into the owning `backend`, `frontend`, `vertical-slice`, or
+  implementation into the owning `DEV:backend`, `DEV:frontend`, `DEV:vertical-slice`, or
   other task type before continuing
 
 ## Required Check IDs

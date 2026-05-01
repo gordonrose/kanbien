@@ -385,7 +385,7 @@ function validateFrontendArchitectureClassification(
     );
 
     if (row.implementationReadiness.startsWith("blocked-on")) {
-      errors.push(`${row.scopeElement} frontend implementation readiness is ${row.implementationReadiness}`);
+      errors.push(`${row.scopeElement} DEV:frontend implementation readiness is ${row.implementationReadiness}`);
     }
   }
 }

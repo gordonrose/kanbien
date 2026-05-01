@@ -53,15 +53,15 @@ const allowedStoryStatuses = new Set([
 const allowedValueTypes = new Set(["user-value", "system-value", "harness-value"]);
 
 const allowedDeliveryShapes = new Set([
-  "backend",
-  "frontend",
-  "vertical-slice",
-  "docs-artifact",
-  "test-only",
-  "test-suite-alignment",
-  "refactor-first",
-  "architecture-foundation",
-  "standards-compliance",
+  "DEV:backend",
+  "DEV:frontend",
+  "DEV:vertical-slice",
+  "DOC:docs-artifact",
+  "TEST:test-only",
+  "TEST:test-suite-alignment",
+  "DECISION:refactor-first",
+  "DECISION:architecture-foundation",
+  "DOC:standards-compliance",
 ]);
 
 const allowedArchitectureClassifications = new Set([
@@ -75,7 +75,7 @@ const allowedArchitectureClassifications = new Set([
 ]);
 
 const allowedTaskSignalPresence = new Set(["yes", "no", "blocked"]);
-const frontendTaskTypes = new Set(["frontend", "design-system", "vertical-slice"]);
+const frontendTaskTypes = new Set(["DEV:frontend", "DEV:design-system", "DEV:vertical-slice"]);
 const allowedFrontendRouteFamilies: Set<string> = new Set(frontendRouteFamilies);
 const allowedFrontendRuntimeShapes: Set<string> = new Set(frontendRuntimeShapes);
 const allowedFrontendSurfaceClasses: Set<string> = new Set(frontendSurfaceClasses);
@@ -684,7 +684,7 @@ function validateFrontendClassificationSnapshots(
     validateAllowedValue(row.scopeElement, "Implementation Readiness", row.implementationReadiness, allowedFrontendImplementationReadiness, errors);
 
     if (row.implementationReadiness.startsWith("blocked-on")) {
-      errors.push(`${row.scopeElement} frontend implementation readiness is ${row.implementationReadiness}`);
+      errors.push(`${row.scopeElement} DEV:frontend implementation readiness is ${row.implementationReadiness}`);
     }
   }
 }

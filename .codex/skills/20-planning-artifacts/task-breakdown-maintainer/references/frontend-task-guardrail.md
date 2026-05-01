@@ -1,19 +1,19 @@
 # Frontend Task Guardrail
 
-Use for task type: `frontend`
+Use for task type: `DEV:frontend`
 
 ## Must Preserve
 
-- governed app UI consumes signed-off design-system render and behavior seams
+- governed app UI consumes signed-off DEV:design-system render and behavior seams
 - no app-page CSS for governed pages
-- no copied design-system markup, ARIA, state behavior, or controller logic
+- no copied DEV:design-system markup, ARIA, state behavior, or controller logic
 - accessibility, permission-aware rendering, and browser-visible proof
 - served asset/runtime evidence when the task changes visible runtime behavior
 
 ## Approval Evidence
 
-- signed-off design-system seam or explicit approved exception
-- Frontend Adoption Contract when consuming an existing design-system seam,
+- signed-off DEV:design-system seam or explicit approved exception
+- Frontend Adoption Contract when consuming an existing DEV:design-system seam,
   naming consumed render, controller/behavior, accessibility, and style/CSS
   seams plus app-local composition and adoption proof
 - affected route/surface and allowed write set
@@ -26,14 +26,14 @@ Use for task type: `frontend`
   when rendered proof uses fixtures or mocks
 - Frontend Performance Posture row with allowed posture and posture-matched
   proof; `unknown-blocked` blocks queueing
-- artifact obligations for topology, adoption, or frontend docs
+- artifact obligations for topology, adoption, or DEV:frontend docs
 
 ## Deep Delivery Standard
 
-- queued frontend tasks must consume a Layer 2/3 frontend architecture
+- queued DEV:frontend tasks must consume a Layer 2/3 DEV:frontend architecture
   classification row by source scope element; Layer 4 must not invent route
   family, product module, journey group, topology, locator, authority, state,
-  shell, design-system prerequisite, materialization, or source placement
+  shell, DEV:design-system prerequisite, materialization, or source placement
 - split fixture/data contracts, visual rendering, interaction behavior,
   non-trivial accessibility semantics, and evidence sweep when independently
   meaningful
@@ -47,12 +47,12 @@ Use for task type: `frontend`
   interactive-low-risk, data-list-or-table, route-initialization,
   large-dom-or-canvas, asset-heavy, animation-or-transition-heavy, or
   not-applicable with concrete rationale; posture proof must match the named
-  risk and must not broaden the frontend task scope
-- governed frontend tasks must name the signed-off design-system seam they
+  risk and must not broaden the DEV:frontend task scope
+- governed DEV:frontend tasks must name the signed-off DEV:design-system seam they
   consume, including render, behavior, accessibility, canonical, and evidence
-  posture; missing seams block frontend delivery unless an explicit exception is
+  posture; missing seams block DEV:frontend delivery unless an explicit exception is
   approved
-- frontend adoption tasks must keep app-local work to composition and data
+- DEV:frontend adoption tasks must keep app-local work to composition and data
   binding; they must explicitly prohibit copied markup, controller behavior,
   ARIA/state semantics, and CSS, and must name the proof route or scenario
 - page, module, and journey behavior must use module/journey files rather than
@@ -74,7 +74,7 @@ Use for task type: `frontend`
 - module-journey-files placement must name the approved product module/journey
   write path, or carry concrete path-unknown rationale when Layer 2 has not
   named the exact path yet
-- broad frontend write envelopes are blocked unless this is an approved audit,
+- broad DEV:frontend write envelopes are blocked unless this is an approved audit,
   migration, generated/canonical sweep, or evidence sweep task
 - do not combine app adoption, component rendering, interaction behavior, and
   visual proof into one implementation task

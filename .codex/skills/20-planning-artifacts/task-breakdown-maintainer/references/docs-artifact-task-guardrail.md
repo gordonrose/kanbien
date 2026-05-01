@@ -1,6 +1,6 @@
 # Docs Artifact Task Guardrail
 
-Use for task type: `docs-artifact`
+Use for task type: `DOC:docs-artifact`
 
 ## Must Preserve
 
@@ -23,6 +23,14 @@ Use for task type: `docs-artifact`
   the audit may change scope
 - name the exact source files inspected, docs updated, and validation or review
   output
+
+## API Artifact Boundary
+
+`DOC:docs-artifact` may identify stale API contract, OpenAPI, or Postman
+artifacts as part of a maintained-artifact sweep. It should not own the route
+contract update itself when the change is about API request/response shape,
+status codes, validation, authn/authz, pagination, sorting, or compatibility.
+Route-contract artifact updates belong to `DOC:api-contract`.
 
 ## Required Check IDs
 

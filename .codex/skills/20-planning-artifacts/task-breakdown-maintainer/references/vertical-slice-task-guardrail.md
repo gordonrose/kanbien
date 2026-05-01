@@ -1,17 +1,17 @@
 # Vertical Slice Task Guardrail
 
-Use for task type: `vertical-slice`
+Use for task type: `DEV:vertical-slice`
 
 ## Must Preserve
 
-- approved backend and frontend guardrails for the same story
+- approved DEV:backend and DEV:frontend guardrails for the same story
 - API/data shape and browser workflow compatibility
 - mock-honesty between fixtures and live API or persistence shape
-- artifact ledger across contracts, permissions, frontend, tests, and docs
+- artifact ledger across contracts, permissions, DEV:frontend, tests, and docs
 
 ## Approval Evidence
 
-- backend and frontend seams named
+- DEV:backend and DEV:frontend seams named
 - journey proof target
 - API/persistence/browser proof commands
 - Browser Security Posture evidence copied from Layer 2/3 without invention
@@ -20,31 +20,31 @@ Use for task type: `vertical-slice`
 - runtime evidence plan when user-visible
 - Frontend Performance Posture row for frontend-facing slices with allowed
   posture and posture-matched proof; `unknown-blocked` blocks queueing
-- if the slice includes first-consumer frontend adoption of a signed-off
-  design-system seam, carry the same adoption contract fields required for a
-  frontend task or split adoption into a separate frontend task
+- if the slice includes first-consumer DEV:frontend adoption of a signed-off
+  DEV:design-system seam, carry the same adoption contract fields required for a
+  DEV:frontend task or split adoption into a separate DEV:frontend task
 - artifact obligations carried from the story
 
 ## Deep Delivery Standard
 
-- use a vertical-slice task only when backend and frontend proof are
+- use a DEV:vertical-slice task only when DEV:backend and DEV:frontend proof are
   inseparable for one journey behavior
 - queued vertical slices must fill the Vertical Slice Coupling row with one
-  journey behavior, backend seam, frontend seam, API/data contract, browser
+  journey behavior, DEV:backend seam, DEV:frontend seam, API/data contract, browser
   proof, and explicit split rejection rationale
-- split backend persistence/API work from frontend render or interaction work
+- split DEV:backend persistence/API work from DEV:frontend render or interaction work
   when they can be proven independently
 - name one journey proof story and the exact API/data/browser evidence needed
-- when the slice is frontend-facing, name the primary frontend/design-system
+- when the slice is frontend-facing, name the primary DEV:frontend/design-system
   sub-standard and provide the matching proof: contract/fixture/live-payload,
   canonical screenshot/evidence artifact, exact interaction scenario,
   role/name/state/focus semantics, or evidence artifact names plus sweep scope
 - classify Frontend Performance Posture for the frontend-facing journey and
   provide posture-matched proof without turning the vertical slice into a broad
-  frontend sweep
-- do not use vertical-slice as a shortcut for copying design-system markup,
+  DEV:frontend sweep
+- do not use DEV:vertical-slice as a shortcut for copying DEV:design-system markup,
   controller behavior, ARIA/state semantics, or CSS into app code
-- do not use vertical-slice as a shortcut around separate design-system,
+- do not use DEV:vertical-slice as a shortcut around separate DEV:design-system,
   permission, migration, or evidence tasks
 
 ## Required Check IDs

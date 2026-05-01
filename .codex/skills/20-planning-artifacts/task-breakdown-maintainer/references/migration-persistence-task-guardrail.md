@@ -1,6 +1,6 @@
 # Migration Persistence Task Guardrail
 
-Use for task type: `migration/persistence`
+Use for task type: `DEV:migration-persistence`
 
 ## Must Preserve
 
@@ -28,7 +28,7 @@ Use for task type: `migration/persistence`
 
 ## Migration / Persistence Approach
 
-Queued migration/persistence tasks must apply the persistence and migration
+Queued DEV:migration-persistence tasks must apply the persistence and migration
 rules to the specific change before Delivery starts:
 
 - choose one primary change type: live-schema-inspection, new-migration,
@@ -54,7 +54,7 @@ rules to the specific change before Delivery starts:
   `tests/harness/postgres/testDatabase.ts`, and package persistence test
   scripts when relevant
 
-Do not satisfy migration/persistence work by only editing migration files. The
+Do not satisfy DEV:migration-persistence work by only editing migration files. The
 task must also say how code, live schema, source data shape, per-row eligibility,
 indexes, and representative reads and writes will agree after Delivery. Do not
 silently migrate rows that do not match the approved starting shape; fail closed

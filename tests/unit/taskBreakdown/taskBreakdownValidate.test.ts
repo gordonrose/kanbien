@@ -18,25 +18,25 @@ const sourceStoryPacket = `# Story Breakdown Packet: Tenant Branding
 
 | Classification ID | Scope Element | Classification | Owner / Seam | Decision Status | Required Downstream Signal |
 | --- | --- | --- | --- | --- | --- |
-| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |
+| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |
 
 ## Frontend Architecture Classification Snapshot
 
 | Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |
+| tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered DEV:frontend surface. |
 
 ## Browser Security Posture Snapshot
 
 | Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |
 | --- | --- | --- | --- | --- |
-| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no frontend task | no |
+| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no DEV:frontend task | no |
 
 ## Task-Type Signal Matrix
 
 | Story ID | Signal | Present | Evidence | Implied Task Type |
 | --- | --- | --- | --- | --- |
-| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |
+| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |
 
 ## Epic Summary
 
@@ -47,7 +47,7 @@ const sourceStoryPacket = `# Story Breakdown Packet: Tenant Branding
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-001 | ready-for-task-breakdown | user-value | backend | Root admin updates branding | As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload. | root admin | Branding display name is persisted for the selected tenant. |  |
+| S-001 | ready-for-task-breakdown | user-value | DEV:backend | Root admin updates branding | As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload. | root admin | Branding display name is persisted for the selected tenant. |  |
 
 ## Acceptance Criteria
 
@@ -138,19 +138,19 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Classification ID | Classification | Required Downstream Signal | Covered By Task ID | Reconciliation Status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |
+| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |
 
 ## Expected Task-Type Reconciliation
 
 | Story ID | Expected Task Type | Source Signal | Covered By Task ID | Missing / Deferred Reason |
 | --- | --- | --- | --- | --- |
-| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |
+| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |
 
 ## Selected Story Scope
 
 | Story ID | Story Status | Value Type | Delivery Shape | Title | Job To Be Done | Outcome | Task Breakdown Rationale |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-001 | ready-for-task-breakdown | user-value | backend | Root admin updates branding | As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload. | Branding display name is persisted for the selected tenant. | One backend task can deliver the approved persistence and API contract slice. |
+| S-001 | ready-for-task-breakdown | user-value | DEV:backend | Root admin updates branding | As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload. | Branding display name is persisted for the selected tenant. | One DEV:backend task can deliver the approved persistence and API contract slice. |
 
 ## Story Acceptance Criteria Snapshot
 
@@ -168,13 +168,13 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Task ID | Parent Story ID | Task Type | Title / Execution Scope | Allowed Write Set | Non-Goals | Dependencies | Shared Seams | Delivery Handoff Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S001-01 | S-001 | backend | Add root-admin tenant branding persistence update using the approved tenants public seam. | src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts | frontend rendering, public asset delivery, tenant-scoped self-service branding | not-applicable: first task for story | tenants public read seam | queued-for-delivery |
+| T-S001-01 | S-001 | DEV:backend | Add root-admin tenant branding persistence update using the approved tenants public seam. | src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts | DEV:frontend rendering, public asset delivery, tenant-scoped self-service branding | not-applicable: first task for story | tenants public read seam | queued-for-delivery |
 
 ## Task Size Guardrail
 
 | Task ID | Task Grain | AC Count | AC Count Rationale | Primary Behavior / Decision / Proof Target | Primary Seam | Main Proof Story | Additional Behaviors Present | Why Not Further Split |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S001-01 | single-behavior | 1 | One acceptance criterion covers the persistence update behavior. | Durable tenant branding display name update | tenantConfiguration backend seam | Persistence integration proves the selected tenant update. | no | Single proof story and one backend seam. |
+| T-S001-01 | single-behavior | 1 | One acceptance criterion covers the persistence update behavior. | Durable tenant branding display name update | tenantConfiguration DEV:backend seam | Persistence integration proves the selected tenant update. | no | Single proof story and one DEV:backend seam. |
 
 ## Decision Escalation / Stop Conditions
 
@@ -192,13 +192,13 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Task ID | Source Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Source Steering Decision |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S001-01 | tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |
+| T-S001-01 | tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |
 
 ## Frontend / Design-System Sub-Standard
 
 | Task ID | Primary Sub-Standard | Additional Sub-Standards | Split Rationale | Required Compliance Proof |
 | --- | --- | --- | --- | --- |
-| T-S001-01 | not-applicable | not-applicable: backend task | not-applicable: no frontend or design-system work | not-applicable: backend task has no frontend or design-system sub-standard proof |
+| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |
 
 ## Frontend Performance Posture
 
@@ -209,7 +209,7 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Task ID | Seam Posture | Seam Name / Export / Route | Owned Render Structure | Owned Behavior Controller | Owned Accessibility Semantics | Canonical / Behavior Lock / Evidence | Frontend Consumption Contract |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S001-01 | not-applicable | not-applicable: backend task has no governed UI seam | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task |
+| T-S001-01 | not-applicable | not-applicable: DEV:backend task has no governed UI seam | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task |
 
 ## Frontend Adoption Contract
 
@@ -246,7 +246,7 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Task ID | Change Type | Live Schema Check | Source Data Shape Validation | Per-Row Eligibility Validation | Rejected Row Behavior | Migration Identity / Applied File Posture | SQL Execution Semantics Check | Representative Read / Write Proof | Postgres Harness Impact |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S001-01 | not-applicable-with-rationale | not-applicable: backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible | not-applicable: no migration file touched | not-applicable: no SQL execution change | not-applicable: backend persistence proof only | not-applicable: no harness impact |
+| T-S001-01 | not-applicable-with-rationale | not-applicable: DEV:backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible | not-applicable: no migration file touched | not-applicable: no SQL execution change | not-applicable: DEV:backend persistence proof only | not-applicable: no harness impact |
 
 ## Tight Allowed Write Envelope
 
@@ -279,13 +279,13 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Task ID | Forbidden Assumption | Escalation Path |
 | --- | --- | --- |
-| T-S001-01 | Do not invent frontend rendering, public asset delivery, or tenant self-service behavior. | Stop and create separate Story/Task Breakdown coverage. |
+| T-S001-01 | Do not invent DEV:frontend rendering, public asset delivery, or tenant self-service behavior. | Stop and create separate Story/Task Breakdown coverage. |
 
 ## Task-Type Approval Guardrails
 
 | Task ID | Task Type | Required Guardrail Reference | Approval Status | Evidence / Rationale |
 | --- | --- | --- | --- | --- |
-| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |
+| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |
 
 ## Task Guardrail Evidence
 
@@ -317,7 +317,7 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Task ID | Forbidden Work | Reason |
 | --- | --- | --- |
-| T-S001-01 | frontend rendering or public asset delivery | Explicit non-goals for the backend task. |
+| T-S001-01 | DEV:frontend rendering or public asset delivery | Explicit non-goals for the DEV:backend task. |
 
 ## Task Acceptance Criteria Coverage
 
@@ -370,7 +370,7 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Task ID | Handoff Status | Blockers Remaining | Delivery Notes |
 | --- | --- | --- | --- |
-| T-S001-01 | queued-for-delivery | none | Ready for Layer 5 as an isolated backend task. |
+| T-S001-01 | queued-for-delivery | none | Ready for Layer 5 as an isolated DEV:backend task. |
 `;
 
 const frontendSourceRow =
@@ -380,31 +380,31 @@ const frontendDecisionRow =
   "| T-S001-01 | root-admin marketing journey | root-admin | marketing | campaign-management | deep-link-only | root-operator | app-shell | journey | journey-state | none | not-applicable: journey is shell-state only | not-applicable: no compatibility locator | manual-shell-registry | curated-webAppHierarchyBuilder | transitional-accepted | feature-local-state-machine | local-legacy-shell | signed-off-seam-exists | shell-registry-update | module-journey-files | ready | Layer 2 places journey behavior in module files. |";
 
 const backendFrontendSourceRow =
-  "| tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |";
+  "| tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered DEV:frontend surface. |";
 
 const backendFrontendDecisionRow =
-  "| T-S001-01 | tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |";
+  "| T-S001-01 | tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |";
 
 function frontendStoryPacketWith(frontendRow: string): string {
   return sourceStoryPacket
-    .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | frontend |")
+    .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | DEV:frontend |")
     .replace(backendFrontendSourceRow, frontendRow)
-    .replace("| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no frontend task | no |", "| sensitive-rendering | yes | Layer 2 says the root-admin journey renders privileged campaign data. | permission-aware rendering evidence | yes |")
-    .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | frontend rendered surface | yes | Marketing journey page changes. | frontend |");
+    .replace("| not-applicable | no | Backend-only steering has no browser security posture. | not-applicable: no DEV:frontend task | no |", "| sensitive-rendering | yes | Layer 2 says the root-admin journey renders privileged campaign data. | permission-aware rendering evidence | yes |")
+    .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:frontend rendered surface | yes | Marketing journey page changes. | DEV:frontend |");
 }
 
 function frontendTaskPacketWith(decisionRow: string): string {
   return validTaskPacket
-    .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | frontend | T-S001-01 | covered | Frontend task preserves Layer 2 module placement. |")
-    .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | frontend | frontend rendered surface | T-S001-01 | Covered by frontend delivery task. |")
-    .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | frontend |")
+    .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:frontend | T-S001-01 | covered | Frontend task preserves Layer 2 module placement. |")
+    .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:frontend | DEV:frontend rendered surface | T-S001-01 | Covered by DEV:frontend delivery task. |")
+    .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:frontend |")
     .replace(
       "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
       "src/frontend/rootAdminShell/assets/modules/marketing/campaignManagement/page.mjs",
     )
     .replace(backendFrontendDecisionRow, decisionRow)
     .replace(
-      "| T-S001-01 | not-applicable | not-applicable: backend task | not-applicable: no frontend or design-system work | not-applicable: backend task has no frontend or design-system sub-standard proof |",
+      "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
       "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single app adoption proof story. | canonical screenshot/evidence artifact root-admin-marketing-campaign-default.png |",
     )
     .replace(
@@ -412,12 +412,12 @@ function frontendTaskPacketWith(decisionRow: string): string {
       "## Frontend Performance Posture\n\n| Task ID | Performance Posture | Evidence / Proof Plan | Rationale |\n| --- | --- | --- | --- |\n| T-S001-01 | static-low-risk | canonical render proof is sufficient for static card composition; no performance-specific proof needed | Static rendering only, no list, asset-heavy, route initialization, animation, or repeated interaction work. |",
     )
     .replace(
-      "| T-S001-01 | not-applicable | not-applicable: backend task has no governed UI seam | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task |",
-      "| T-S001-01 | consumes-existing-seam | /design-system/components/tenant-branding-card export TenantBrandingCard | TenantBrandingCard render structure | no behavior controller for static card | card role/name semantics owned by DS | canonical screenshot tenant-branding-card-default.png | frontend imports TenantBrandingCard renderer |",
+      "| T-S001-01 | not-applicable | not-applicable: DEV:backend task has no governed UI seam | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task |",
+      "| T-S001-01 | consumes-existing-seam | /design-system/components/tenant-branding-card export TenantBrandingCard | TenantBrandingCard render structure | no behavior controller for static card | card role/name semantics owned by DS | canonical screenshot tenant-branding-card-default.png | DEV:frontend imports TenantBrandingCard renderer |",
     )
     .replace(
       "## Frontend Adoption Contract\n\n| Task ID | Consumed DS Render Seam | Consumed DS Behavior / Controller Seam | Consumed DS Accessibility Semantics | Consumed DS Style / CSS Seam | Allowed App-Local Composition / Data Binding | Forbidden Local Reconstruction | Adoption Proof Route / Scenario |\n| --- | --- | --- | --- | --- | --- | --- | --- |",
-      "## Frontend Adoption Contract\n\n| Task ID | Consumed DS Render Seam | Consumed DS Behavior / Controller Seam | Consumed DS Accessibility Semantics | Consumed DS Style / CSS Seam | Allowed App-Local Composition / Data Binding | Forbidden Local Reconstruction | Adoption Proof Route / Scenario |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the design-system seam | /root-admin/marketing campaign-management default route scenario |",
+      "## Frontend Adoption Contract\n\n| Task ID | Consumed DS Render Seam | Consumed DS Behavior / Controller Seam | Consumed DS Accessibility Semantics | Consumed DS Style / CSS Seam | Allowed App-Local Composition / Data Binding | Forbidden Local Reconstruction | Adoption Proof Route / Scenario |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | DEV:design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam | /root-admin/marketing campaign-management default route scenario |",
     )
     .replace(
       "## Frontend Security Evidence\n\n| Task ID | Security Area | Source Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Layer 4 Evidence Plan / Blocking Reason |\n| --- | --- | --- | --- | --- | --- |",
@@ -432,42 +432,42 @@ function frontendTaskPacketWith(decisionRow: string): string {
       "## Frontend Runtime Data And Mock Honesty\n\n| Task ID | Governing API / Projection Contract | Fixture Source | Live / Runtime Payload Evidence | Runtime Evidence Unavailable Reason | Mock-Honesty Statement |\n| --- | --- | --- | --- | --- | --- |\n| T-S001-01 | docs/api-contracts/root-admin-campaigns.md projection response | browser fixture copied from contract example | served /v1/root-admin/campaigns payload captured in browser scenario | not-applicable: live payload evidence required | mock-honesty: fixture mirrors contract payload and does not invent fallback behavior |",
     )
     .replace(
-      "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-      "| T-S001-01 | frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for architecture placement and design-system seam consumption. |",
+      "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+      "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for architecture placement and DEV:design-system seam consumption. |",
     )
     .replace(
       "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
-      "| T-S001-01 | frontend-architecture-classification | pass | Layer 2 frontend classification is copied by source scope element. |\n| T-S001-01 | frontend-source-placement | pass | Work stays in approved module/journey files. |\n| T-S001-01 | frontend-state-owner | pass | State owner is feature-local-state-machine and no URL replay state is introduced. |\n| T-S001-01 | frontend-route-topology | pass | Route/topology posture follows Layer 2 locator and authority decisions. |\n| T-S001-01 | frontend-design-system-seam | pass | Signed-off visual seam is named. |\n| T-S001-01 | frontend-adoption-contract | pass | Adoption contract names consumed render, behavior, accessibility, and CSS seams. |\n| T-S001-01 | frontend-no-app-css | pass | No app CSS is allowed. |\n| T-S001-01 | frontend-no-copied-behavior | pass | No copied controller behavior is allowed. |\n| T-S001-01 | frontend-accessibility-state | pass | Accessibility state remains unchanged. |\n| T-S001-01 | frontend-rendered-proof | pass | Visual rendering proof is required. |\n| T-S001-01 | frontend-security-evidence | pass | Browser security posture evidence is copied from Layer 2. |\n| T-S001-01 | frontend-permission-rendering | pass | Allowed, denied, expired, and unauthenticated states are required. |\n| T-S001-01 | frontend-runtime-data-mock-honesty | pass | Contract, runtime payload, and mock-honesty proof are required. |\n| T-S001-01 | frontend-runtime-evidence | pass | Served asset evidence is required. |\n| T-S001-01 | frontend-artifacts | pass | Frontend architecture artifact obligations are carried. |",
+      "| T-S001-01 | frontend-architecture-classification | pass | Layer 2 DEV:frontend classification is copied by source scope element. |\n| T-S001-01 | frontend-source-placement | pass | Work stays in approved module/journey files. |\n| T-S001-01 | frontend-state-owner | pass | State owner is feature-local-state-machine and no URL replay state is introduced. |\n| T-S001-01 | frontend-route-topology | pass | Route/topology posture follows Layer 2 locator and authority decisions. |\n| T-S001-01 | frontend-design-system-seam | pass | Signed-off visual seam is named. |\n| T-S001-01 | frontend-adoption-contract | pass | Adoption contract names consumed render, behavior, accessibility, and CSS seams. |\n| T-S001-01 | frontend-no-app-css | pass | No app CSS is allowed. |\n| T-S001-01 | frontend-no-copied-behavior | pass | No copied controller behavior is allowed. |\n| T-S001-01 | frontend-accessibility-state | pass | Accessibility state remains unchanged. |\n| T-S001-01 | frontend-rendered-proof | pass | Visual rendering proof is required. |\n| T-S001-01 | frontend-security-evidence | pass | Browser security posture evidence is copied from Layer 2. |\n| T-S001-01 | frontend-permission-rendering | pass | Allowed, denied, expired, and unauthenticated states are required. |\n| T-S001-01 | frontend-runtime-data-mock-honesty | pass | Contract, runtime payload, and mock-honesty proof are required. |\n| T-S001-01 | frontend-runtime-evidence | pass | Served asset evidence is required. |\n| T-S001-01 | frontend-artifacts | pass | Frontend architecture artifact obligations are carried. |",
     );
 }
 
 const verticalSliceCouplingRow =
-  "| T-S001-01 | journey behavior campaign publish workflow | backend API service seam src/features/campaigns/contract/updateCampaign.ts | frontend route render seam src/frontend/rootAdminShell/assets/modules/marketing/campaignManagement/page.mjs | API contract docs/api-contracts/root-admin-campaigns.md projection payload | browser journey scenario campaign publish workflow shows saved backend state in route | inseparable because the same journey proof must confirm backend mutation and frontend render consume the same response payload | split rejection rationale: backend and frontend proof are inseparable for this one journey behavior; separate tasks would not prove the cross-boundary payload together |";
+  "| T-S001-01 | journey behavior campaign publish workflow | DEV:backend API service seam src/features/campaigns/contract/updateCampaign.ts | DEV:frontend route render seam src/frontend/rootAdminShell/assets/modules/marketing/campaignManagement/page.mjs | API contract docs/api-contracts/root-admin-campaigns.md projection payload | browser journey scenario campaign publish workflow shows saved DEV:backend state in route | inseparable because the same journey proof must confirm DEV:backend mutation and DEV:frontend render consume the same response payload | split rejection rationale: DEV:backend and DEV:frontend proof are inseparable for this one journey behavior; separate tasks would not prove the cross-boundary payload together |";
 
 function verticalSliceStoryPacketWith(frontendRow: string): string {
   return frontendStoryPacketWith(frontendRow)
     .replace(
-      "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | frontend |",
-      "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | vertical-slice |",
+      "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | DEV:frontend |",
+      "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | DEV:vertical-slice |",
     )
     .replace(
-      "| S-001 | frontend rendered surface | yes | Marketing journey page changes. | frontend |",
-      "| S-001 | frontend rendered surface | yes | Marketing journey page changes. | vertical-slice |",
+      "| S-001 | DEV:frontend rendered surface | yes | Marketing journey page changes. | DEV:frontend |",
+      "| S-001 | DEV:frontend rendered surface | yes | Marketing journey page changes. | DEV:vertical-slice |",
     );
 }
 
 function verticalSliceTaskPacketWith(couplingRow: string): string {
   return frontendTaskPacketWith(frontendDecisionRow)
-    .replace("| CLS-001 | feature-local | frontend | T-S001-01 | covered |", "| CLS-001 | feature-local | vertical-slice | T-S001-01 | covered |")
-    .replace("| S-001 | frontend | frontend rendered surface | T-S001-01 |", "| S-001 | vertical-slice | frontend rendered surface | T-S001-01 |")
-    .replace("| T-S001-01 | S-001 | frontend |", "| T-S001-01 | S-001 | vertical-slice |")
+    .replace("| CLS-001 | feature-local | DEV:frontend | T-S001-01 | covered |", "| CLS-001 | feature-local | DEV:vertical-slice | T-S001-01 | covered |")
+    .replace("| S-001 | DEV:frontend | DEV:frontend rendered surface | T-S001-01 |", "| S-001 | DEV:vertical-slice | DEV:frontend rendered surface | T-S001-01 |")
+    .replace("| T-S001-01 | S-001 | DEV:frontend |", "| T-S001-01 | S-001 | DEV:vertical-slice |")
     .replace(
-      "| T-S001-01 | frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for architecture placement and design-system seam consumption. |",
-      "| T-S001-01 | vertical-slice | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/vertical-slice-task-guardrail.md | approved | Vertical slice guardrail reviewed for inseparable backend/frontend journey proof. |",
+      "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for architecture placement and DEV:design-system seam consumption. |",
+      "| T-S001-01 | DEV:vertical-slice | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/vertical-slice-task-guardrail.md | approved | Vertical slice guardrail reviewed for inseparable DEV:backend/DEV:frontend journey proof. |",
     )
     .replace(
-      "| T-S001-01 | frontend-architecture-classification | pass | Layer 2 frontend classification is copied by source scope element. |\n| T-S001-01 | frontend-source-placement | pass | Work stays in approved module/journey files. |\n| T-S001-01 | frontend-state-owner | pass | State owner is feature-local-state-machine and no URL replay state is introduced. |\n| T-S001-01 | frontend-route-topology | pass | Route/topology posture follows Layer 2 locator and authority decisions. |\n| T-S001-01 | frontend-design-system-seam | pass | Signed-off visual seam is named. |\n| T-S001-01 | frontend-adoption-contract | pass | Adoption contract names consumed render, behavior, accessibility, and CSS seams. |\n| T-S001-01 | frontend-no-app-css | pass | No app CSS is allowed. |\n| T-S001-01 | frontend-no-copied-behavior | pass | No copied controller behavior is allowed. |\n| T-S001-01 | frontend-accessibility-state | pass | Accessibility state remains unchanged. |\n| T-S001-01 | frontend-rendered-proof | pass | Visual rendering proof is required. |\n| T-S001-01 | frontend-security-evidence | pass | Browser security posture evidence is copied from Layer 2. |\n| T-S001-01 | frontend-permission-rendering | pass | Allowed, denied, expired, and unauthenticated states are required. |\n| T-S001-01 | frontend-runtime-data-mock-honesty | pass | Contract, runtime payload, and mock-honesty proof are required. |\n| T-S001-01 | frontend-runtime-evidence | pass | Served asset evidence is required. |\n| T-S001-01 | frontend-artifacts | pass | Frontend architecture artifact obligations are carried. |",
-      "| T-S001-01 | vertical-inseparable-journey | pass | One journey proof requires backend and frontend evidence together. |\n| T-S001-01 | vertical-backend-seam | pass | Backend API seam is named. |\n| T-S001-01 | vertical-frontend-seam | pass | Frontend route/render seam is named. |\n| T-S001-01 | vertical-api-data-shape | pass | API/data contract is named. |\n| T-S001-01 | vertical-browser-workflow | pass | Browser journey proof is named. |\n| T-S001-01 | vertical-security-evidence | pass | Browser security posture evidence is carried. |\n| T-S001-01 | vertical-permission-rendering | pass | Permission rendering evidence is carried when sensitive. |\n| T-S001-01 | vertical-runtime-data-mock-honesty | pass | Runtime data/mock honesty is carried. |\n| T-S001-01 | vertical-mock-honesty | pass | Fixtures match live API/persistence shape. |\n| T-S001-01 | vertical-artifacts | pass | Artifact ledger is carried. |\n| T-S001-01 | vertical-proof-commands | pass | API and browser proof commands are named. |",
+      "| T-S001-01 | frontend-architecture-classification | pass | Layer 2 DEV:frontend classification is copied by source scope element. |\n| T-S001-01 | frontend-source-placement | pass | Work stays in approved module/journey files. |\n| T-S001-01 | frontend-state-owner | pass | State owner is feature-local-state-machine and no URL replay state is introduced. |\n| T-S001-01 | frontend-route-topology | pass | Route/topology posture follows Layer 2 locator and authority decisions. |\n| T-S001-01 | frontend-design-system-seam | pass | Signed-off visual seam is named. |\n| T-S001-01 | frontend-adoption-contract | pass | Adoption contract names consumed render, behavior, accessibility, and CSS seams. |\n| T-S001-01 | frontend-no-app-css | pass | No app CSS is allowed. |\n| T-S001-01 | frontend-no-copied-behavior | pass | No copied controller behavior is allowed. |\n| T-S001-01 | frontend-accessibility-state | pass | Accessibility state remains unchanged. |\n| T-S001-01 | frontend-rendered-proof | pass | Visual rendering proof is required. |\n| T-S001-01 | frontend-security-evidence | pass | Browser security posture evidence is copied from Layer 2. |\n| T-S001-01 | frontend-permission-rendering | pass | Allowed, denied, expired, and unauthenticated states are required. |\n| T-S001-01 | frontend-runtime-data-mock-honesty | pass | Contract, runtime payload, and mock-honesty proof are required. |\n| T-S001-01 | frontend-runtime-evidence | pass | Served asset evidence is required. |\n| T-S001-01 | frontend-artifacts | pass | Frontend architecture artifact obligations are carried. |",
+      "| T-S001-01 | vertical-inseparable-journey | pass | One journey proof requires DEV:backend and DEV:frontend evidence together. |\n| T-S001-01 | vertical-backend-seam | pass | Backend API seam is named. |\n| T-S001-01 | vertical-frontend-seam | pass | Frontend route/render seam is named. |\n| T-S001-01 | vertical-api-data-shape | pass | API/data contract is named. |\n| T-S001-01 | vertical-browser-workflow | pass | Browser journey proof is named. |\n| T-S001-01 | vertical-security-evidence | pass | Browser security posture evidence is carried. |\n| T-S001-01 | vertical-permission-rendering | pass | Permission rendering evidence is carried when sensitive. |\n| T-S001-01 | vertical-runtime-data-mock-honesty | pass | Runtime data/mock honesty is carried. |\n| T-S001-01 | vertical-mock-honesty | pass | Fixtures match live API/persistence shape. |\n| T-S001-01 | vertical-artifacts | pass | Artifact ledger is carried. |\n| T-S001-01 | vertical-proof-commands | pass | API and browser proof commands are named. |",
     )
     .replace(
       "## Vertical Slice Coupling\n\n| Task ID | Journey Behavior | Backend Seam | Frontend Seam | API / Data Contract | Browser Proof Story | Why Backend And Frontend Proof Are Inseparable | Split Rejection Rationale |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
@@ -482,12 +482,12 @@ const testOnlyMatrixRow =
   "| T-S001-01 | /root-admin and /v1/root-users root-admin object | root actor allowed; expired session denied; unauthenticated actor denied | RootUserAdmin capability allowed; missing capability denied | active object visible; deleted object denied through normal path | root boundary only; tenant actor denied; cross-tenant not-applicable: root-owned surface | denied unauthenticated, expired, and missing capability states | not-applicable: no tenant-scoped object in this root-owned task | none: required allowed and denied states covered |";
 
 const testSuiteAlignmentRow =
-  "| T-S001-01 | npm run test:traceability reports ROOT-USERS E2E mismatch | missing-documented-test-case | docs/prd/test_cases/2026-03-29-0002-root-users-backend-test-cases.md; docs/workspace/qa/root-admin-test-backlog.md | tests/e2e/rootAdmin/operator-journeys.test.ts | docs-and-test-labels-only | no new proof required; split any newly required proof into test-only | npm run test:traceability | before/after traceability evidence for ROOT-USERS E2E is recorded |";
+  "| T-S001-01 | npm run test:traceability reports ROOT-USERS E2E mismatch | missing-documented-test-case | docs/prd/test_cases/2026-03-29-0002-root-users-backend-test-cases.md; docs/workspace/qa/root-admin-test-backlog.md | tests/e2e/rootAdmin/operator-journeys.test.ts | docs-and-test-labels-only | no new proof required; split any newly required proof into TEST:test-only | npm run test:traceability | before/after traceability evidence for ROOT-USERS E2E is recorded |";
 
 function testOnlyStoryPacket(): string {
   return sourceStoryPacket
-    .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | root-admin e2e proof | test | tests/e2e/rootAdmin | approved | test-only |")
-    .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | root-admin e2e proof gap | yes | Root-admin journey proof must cover allowed and denied states. | test-only |");
+    .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | root-admin e2e proof | test | tests/e2e/rootAdmin | approved | TEST:test-only |")
+    .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | root-admin e2e proof gap | yes | Root-admin journey proof must cover allowed and denied states. | TEST:test-only |");
 }
 
 function testOnlyTaskPacketWith(input: {
@@ -500,9 +500,9 @@ function testOnlyTaskPacketWith(input: {
   const scope = input.scope ?? "Add root-admin e2e proof for allowed and denied operator journeys.";
 
   return validTaskPacket
-    .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | test | test-only | T-S001-01 | covered | Test-only task preserves proof-only classification. |")
-    .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | test-only | root-admin e2e proof gap | T-S001-01 | Covered by test-only delivery task. |")
-    .replace("| T-S001-01 | S-001 | backend | Add root-admin tenant branding persistence update using the approved tenants public seam. |", `| T-S001-01 | S-001 | test-only | ${scope} |`)
+    .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | test | TEST:test-only | T-S001-01 | covered | Test-only task preserves proof-only classification. |")
+    .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | TEST:test-only | root-admin e2e proof gap | T-S001-01 | Covered by TEST:test-only delivery task. |")
+    .replace("| T-S001-01 | S-001 | DEV:backend | Add root-admin tenant branding persistence update using the approved tenants public seam. |", `| T-S001-01 | S-001 | TEST:test-only | ${scope} |`)
     .replace(
       "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
       "tests/e2e/rootAdmin/operator-journeys.test.ts",
@@ -524,8 +524,8 @@ function testOnlyTaskPacketWith(input: {
       `## Capability Permission / State Matrix\n\n| Task ID | Capability / Route / Object | Actor States Covered | Permission States Covered | Object Lifecycle States Covered | Boundary States Covered | Required Negative Cases | Not Applicable Rationale | Missing Coverage / Follow-Up Task |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${matrixRow ? `${matrixRow}\n` : ""}\n`,
     )
     .replace(
-      "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-      "| T-S001-01 | test-only | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/test-only-task-guardrail.md | approved | Test-only guardrail reviewed for traceability, proof layer, permission/state matrix, and no behavior changes. |",
+      "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+      "| T-S001-01 | TEST:test-only | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/test-only-task-guardrail.md | approved | Test-only guardrail reviewed for traceability, proof layer, permission/state matrix, and no behavior changes. |",
     )
     .replace(
       "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -535,8 +535,8 @@ function testOnlyTaskPacketWith(input: {
 
 function testSuiteAlignmentStoryPacket(): string {
   return sourceStoryPacket
-    .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | root-users traceability alignment | test | docs/prd/test_cases; tests/e2e/rootAdmin | approved | test-suite-alignment |")
-    .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | root-users traceability alignment | yes | Existing e2e proof and PRD test-case documentation must align. | test-suite-alignment |");
+    .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | root-users traceability alignment | test | docs/prd/test_cases; tests/e2e/rootAdmin | approved | TEST:test-suite-alignment |")
+    .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | root-users traceability alignment | yes | Existing e2e proof and PRD test-case documentation must align. | TEST:test-suite-alignment |");
 }
 
 function testSuiteAlignmentTaskPacketWith(input: {
@@ -551,9 +551,9 @@ function testSuiteAlignmentTaskPacketWith(input: {
     "docs/prd/test_cases/2026-03-29-0002-root-users-backend-test-cases.md, docs/workspace/qa/root-admin-test-backlog.md, tests/e2e/rootAdmin/operator-journeys.test.ts";
 
   return validTaskPacket
-    .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | test | test-suite-alignment | T-S001-01 | covered | Alignment task preserves test/documentation traceability classification. |")
-    .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | test-suite-alignment | root-users traceability alignment | T-S001-01 | Covered by test suite alignment task. |")
-    .replace("| T-S001-01 | S-001 | backend | Add root-admin tenant branding persistence update using the approved tenants public seam. |", `| T-S001-01 | S-001 | test-suite-alignment | ${scope} |`)
+    .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | test | TEST:test-suite-alignment | T-S001-01 | covered | Alignment task preserves test/documentation traceability classification. |")
+    .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | TEST:test-suite-alignment | root-users traceability alignment | T-S001-01 | Covered by test suite alignment task. |")
+    .replace("| T-S001-01 | S-001 | DEV:backend | Add root-admin tenant branding persistence update using the approved tenants public seam. |", `| T-S001-01 | S-001 | TEST:test-suite-alignment | ${scope} |`)
     .replace(
       "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
       allowedWriteSet,
@@ -571,12 +571,12 @@ function testSuiteAlignmentTaskPacketWith(input: {
       `## Test Suite Alignment Contract\n\n| Task ID | Alignment Source / Trigger | Mismatch Class | Documentation Targets | Executable Targets | Allowed Edit Posture | Split Decision For New Proof | Traceability Command | Completion Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${alignmentRow ? `${alignmentRow}\n` : ""}\n`,
     )
     .replace(
-      "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-      "| T-S001-01 | test-suite-alignment | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/test-suite-alignment-task-guardrail.md | approved | Test suite alignment guardrail reviewed for source map, mismatch class, edit envelope, split decision, and traceability command. |",
+      "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+      "| T-S001-01 | TEST:test-suite-alignment | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/test-suite-alignment-task-guardrail.md | approved | Test suite alignment guardrail reviewed for source map, mismatch class, edit envelope, split decision, and traceability command. |",
     )
     .replace(
       "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
-      "| T-S001-01 | test-alignment-source-map | pass | Docs and executable test targets are named. |\n| T-S001-01 | test-alignment-mismatch-class | pass | Mismatch class is missing-documented-test-case. |\n| T-S001-01 | test-alignment-edit-envelope | pass | Edits are limited to docs and test labels. |\n| T-S001-01 | test-alignment-no-production-change | pass | No production behavior change is allowed. |\n| T-S001-01 | test-alignment-split-new-proof | pass | Newly required proof splits to test-only. |\n| T-S001-01 | test-alignment-traceability-command | pass | npm run test:traceability is required. |",
+      "| T-S001-01 | test-alignment-source-map | pass | Docs and executable test targets are named. |\n| T-S001-01 | test-alignment-mismatch-class | pass | Mismatch class is missing-documented-test-case. |\n| T-S001-01 | test-alignment-edit-envelope | pass | Edits are limited to docs and test labels. |\n| T-S001-01 | test-alignment-no-production-change | pass | No production behavior change is allowed. |\n| T-S001-01 | test-alignment-split-new-proof | pass | Newly required proof splits to TEST:test-only. |\n| T-S001-01 | test-alignment-traceability-command | pass | npm run test:traceability is required. |",
     );
 }
 
@@ -601,7 +601,7 @@ describe("task breakdown validation", () => {
   it("blocks queued tasks without task-type guardrail routing", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |\n",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |\n",
         "",
       ),
       sourceStoryPacket,
@@ -624,15 +624,15 @@ describe("task breakdown validation", () => {
   it("blocks task-type guardrail not-applicable because every task must route to its type guardrail", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | not-applicable: backend is simple | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | not-applicable: DEV:backend is simple | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
       ),
       sourceStoryPacket,
     );
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain(
-      "T-S001-01 has invalid task-type guardrail approval status: not-applicable: backend is simple",
+      "T-S001-01 has invalid task-type guardrail approval status: not-applicable: DEV:backend is simple",
     );
   });
 
@@ -652,7 +652,7 @@ describe("task breakdown validation", () => {
   it("blocks queued tasks without deep-delivery task size guardrails", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
-        "## Task Size Guardrail\n\n| Task ID | Task Grain | AC Count | AC Count Rationale | Primary Behavior / Decision / Proof Target | Primary Seam | Main Proof Story | Additional Behaviors Present | Why Not Further Split |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | single-behavior | 1 | One acceptance criterion covers the persistence update behavior. | Durable tenant branding display name update | tenantConfiguration backend seam | Persistence integration proves the selected tenant update. | no | Single proof story and one backend seam. |\n\n",
+        "## Task Size Guardrail\n\n| Task ID | Task Grain | AC Count | AC Count Rationale | Primary Behavior / Decision / Proof Target | Primary Seam | Main Proof Story | Additional Behaviors Present | Why Not Further Split |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | single-behavior | 1 | One acceptance criterion covers the persistence update behavior. | Durable tenant branding display name update | tenantConfiguration DEV:backend seam | Persistence integration proves the selected tenant update. | no | Single proof story and one DEV:backend seam. |\n\n",
         "",
       ),
       sourceStoryPacket,
@@ -667,8 +667,8 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket
         .replace(
-          "| T-S001-01 | single-behavior | 1 | One acceptance criterion covers the persistence update behavior. | Durable tenant branding display name update | tenantConfiguration backend seam | Persistence integration proves the selected tenant update. | no | Single proof story and one backend seam. |",
-          "| T-S001-01 | single-behavior | 3 | Three acceptance criteria are easier together. | Durable tenant branding display name update | tenantConfiguration backend seam | Persistence integration proves the selected tenant update. | no | Same file is easier. |",
+          "| T-S001-01 | single-behavior | 1 | One acceptance criterion covers the persistence update behavior. | Durable tenant branding display name update | tenantConfiguration DEV:backend seam | Persistence integration proves the selected tenant update. | no | Single proof story and one DEV:backend seam. |",
+          "| T-S001-01 | single-behavior | 3 | Three acceptance criteria are easier together. | Durable tenant branding display name update | tenantConfiguration DEV:backend seam | Persistence integration proves the selected tenant update. | no | Same file is easier. |",
         )
         .replace("| T-S001-01 | AC-S001-01 | Covers the approved persistence and authorization acceptance criterion. |", "| T-S001-01 | AC-S001-01, AC-S001-02, AC-S001-03 | Covers too much. |"),
       sourceStoryPacket.replace(
@@ -722,30 +722,63 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 broad proof requires an intentionally broad task type");
   });
 
-  it("blocks broad frontend write envelopes without approved broad-scope rationale", () => {
+  it("blocks DOC task types that try to own source implementation paths", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket.replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:api-contract |"),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 DOC task type must not own source implementation write paths");
+  });
+
+  it("blocks DEV task types that try to own broad artifact sweeps", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket.replace(
+        "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+        "docs/**",
+      ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 DEV task type must not own broad source-independent artifact sweeps");
+  });
+
+  it("blocks EVIDENCE task types that try to patch production behavior", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket.replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | EVIDENCE:qa-evidence |"),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 EVIDENCE task type must not patch production behavior");
+  });
+
+  it("blocks broad DEV:frontend write envelopes without approved broad-scope rationale", () => {
     const frontendStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | tenant branding frontend rendering | feature-local | src/frontend/designSystem | approved | frontend |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | frontend rendered surface | yes | Logo card rendering changes. | frontend |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding DEV:frontend rendering | feature-local | src/frontend/designSystem | approved | DEV:frontend |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:frontend rendered surface | yes | Logo card rendering changes. | DEV:frontend |");
 
     const frontendPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | frontend | T-S001-01 | covered | Frontend task preserves Layer 2 feature-local classification. |")
-      .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | frontend | frontend rendered surface | T-S001-01 | Covered by frontend delivery task. |")
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | frontend |")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:frontend | T-S001-01 | covered | Frontend task preserves Layer 2 feature-local classification. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:frontend | DEV:frontend rendered surface | T-S001-01 | Covered by DEV:frontend delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:frontend |")
       .replace(
         "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
         "src/frontend/**",
       )
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: backend task | not-applicable: no frontend or design-system work | not-applicable: backend task has no frontend or design-system sub-standard proof |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
         "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single visual rendering proof story. | canonical screenshot/evidence artifact tenant-branding-card-default.png |",
       )
       .replace(
         "| T-S001-01 | exact-files | src/features/tenantConfiguration/domain/updateBranding.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | not-applicable: exact files only |",
-        "| T-S001-01 | broad-pattern-justified | src/frontend/** | Broad frontend implementation seems convenient. |",
+        "| T-S001-01 | broad-pattern-justified | src/frontend/** | Broad DEV:frontend implementation seems convenient. |",
       )
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for visual rendering. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for visual rendering. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -755,39 +788,39 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(frontendPacket, frontendStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 has broad frontend/design-system write envelope without approved broad-scope rationale");
+    expect(result.errors).toContain("T-S001-01 has broad DEV:frontend/DEV:design-system write envelope without approved broad-scope rationale");
   });
 
-  it("blocks queued frontend tasks without frontend architecture decision reconciliation", () => {
+  it("blocks queued DEV:frontend tasks without DEV:frontend architecture decision reconciliation", () => {
     const frontendStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | tenant branding frontend rendering | feature-local | src/frontend/designSystem | approved | frontend |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | frontend rendered surface | yes | Logo card rendering changes. | frontend |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding DEV:frontend rendering | feature-local | src/frontend/designSystem | approved | DEV:frontend |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:frontend rendered surface | yes | Logo card rendering changes. | DEV:frontend |");
 
     const frontendPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | frontend | T-S001-01 | covered | Frontend task preserves Layer 2 feature-local classification. |")
-      .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | frontend | frontend rendered surface | T-S001-01 | Covered by frontend delivery task. |")
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | frontend |")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:frontend | T-S001-01 | covered | Frontend task preserves Layer 2 feature-local classification. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:frontend | DEV:frontend rendered surface | T-S001-01 | Covered by DEV:frontend delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:frontend |")
       .replace(
-        "| T-S001-01 | tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |\n",
+        "| T-S001-01 | tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |\n",
         "",
       );
 
     const result = validateTaskBreakdownContent(frontendPacket, frontendStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 queued frontend/design-system task has no frontend architecture decision row");
+    expect(result.errors).toContain("T-S001-01 queued DEV:frontend/DEV:design-system task has no DEV:frontend architecture decision row");
   });
 
-  it("blocks frontend architecture decisions that drift from the Layer 2/3 snapshot", () => {
+  it("blocks DEV:frontend architecture decisions that drift from the Layer 2/3 snapshot", () => {
     const frontendStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | frontend |")
-      .replace("| tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |", "| root-admin marketing journey | root-admin | marketing | campaign-management | deep-link-only | root-operator | app-shell | journey | journey-state | none | not-applicable: journey is shell-state only | not-applicable: no compatibility locator | manual-shell-registry | curated-webAppHierarchyBuilder | transitional-accepted | feature-local-state-machine | local-legacy-shell | signed-off-seam-exists | shell-registry-update | module-journey-files | ready | Layer 2 places journey behavior in module files. |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | frontend rendered surface | yes | Marketing journey page changes. | frontend |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | DEV:frontend |")
+      .replace("| tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered DEV:frontend surface. |", "| root-admin marketing journey | root-admin | marketing | campaign-management | deep-link-only | root-operator | app-shell | journey | journey-state | none | not-applicable: journey is shell-state only | not-applicable: no compatibility locator | manual-shell-registry | curated-webAppHierarchyBuilder | transitional-accepted | feature-local-state-machine | local-legacy-shell | signed-off-seam-exists | shell-registry-update | module-journey-files | ready | Layer 2 places journey behavior in module files. |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:frontend rendered surface | yes | Marketing journey page changes. | DEV:frontend |");
 
     const frontendPacket = validTaskPacket
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | frontend |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:frontend |")
       .replace(
-        "| T-S001-01 | tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |",
+        "| T-S001-01 | tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |",
         "| T-S001-01 | root-admin marketing journey | root-admin | sales | campaign-management | deep-link-only | root-operator | app-shell | journey | journey-state | none | not-applicable: journey is shell-state only | not-applicable: no compatibility locator | manual-shell-registry | curated-webAppHierarchyBuilder | transitional-accepted | feature-local-state-machine | local-legacy-shell | signed-off-seam-exists | shell-registry-update | module-journey-files | ready | Layer 2 places journey behavior in module files. |",
       );
 
@@ -795,11 +828,11 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain(
-      "T-S001-01 frontend architecture Product Module does not match Layer 2/3 snapshot for root-admin marketing journey",
+      "T-S001-01 DEV:frontend architecture Product Module does not match Layer 2/3 snapshot for root-admin marketing journey",
     );
   });
 
-  it("blocks durable frontend topology without a concrete locator", () => {
+  it("blocks durable DEV:frontend topology without a concrete locator", () => {
     const sourceRow = frontendSourceRow
       .replace("journey | journey-state | none", "page | durable-page | none")
       .replace("not-applicable: journey is shell-state only", "not-applicable: missing locator should block");
@@ -810,10 +843,10 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(frontendTaskPacketWith(decisionRow), frontendStoryPacketWith(sourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 durable frontend topology requires a non-none locator type");
+    expect(result.errors).toContain("T-S001-01 durable DEV:frontend topology requires a non-none locator type");
   });
 
-  it("blocks frontend locator migrations without compatibility locators", () => {
+  it("blocks DEV:frontend locator migrations without compatibility locators", () => {
     const sourceRow = frontendSourceRow
       .replace("journey-state | none | not-applicable: journey is shell-state only | not-applicable: no compatibility locator", "durable-page | migration | /root-admin/marketing | not-applicable: no compatibility locator");
     const decisionRow = frontendDecisionRow
@@ -822,10 +855,10 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(frontendTaskPacketWith(decisionRow), frontendStoryPacketWith(sourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 frontend locator migration must name compatibility locators");
+    expect(result.errors).toContain("T-S001-01 DEV:frontend locator migration must name compatibility locators");
   });
 
-  it("blocks queued frontend tasks without a performance posture row", () => {
+  it("blocks queued DEV:frontend tasks without a performance posture row", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
       "| T-S001-01 | static-low-risk | canonical render proof is sufficient for static card composition; no performance-specific proof needed | Static rendering only, no list, asset-heavy, route initialization, animation, or repeated interaction work. |\n",
       "",
@@ -834,10 +867,10 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 queued frontend/design-system task has no performance posture row");
+    expect(result.errors).toContain("T-S001-01 queued DEV:frontend/DEV:design-system task has no performance posture row");
   });
 
-  it("blocks unknown frontend performance posture", () => {
+  it("blocks unknown DEV:frontend performance posture", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
       "| T-S001-01 | static-low-risk | canonical render proof is sufficient for static card composition; no performance-specific proof needed | Static rendering only, no list, asset-heavy, route initialization, animation, or repeated interaction work. |",
       "| T-S001-01 | unknown-blocked | performance posture is not known yet | proof gap remains unresolved |",
@@ -846,7 +879,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 frontend performance posture unknown-blocked cannot be queued for delivery");
+    expect(result.errors).toContain("T-S001-01 DEV:frontend performance posture unknown-blocked cannot be queued for delivery");
   });
 
   it("blocks data-list performance posture without bounded data proof", () => {
@@ -919,7 +952,7 @@ describe("task breakdown validation", () => {
     );
   });
 
-  it("blocks frontend tasks when Layer 2 security posture is present without matching evidence", () => {
+  it("blocks DEV:frontend tasks when Layer 2 security posture is present without matching evidence", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
       "| T-S001-01 | sensitive-rendering | yes | Layer 2 says the root-admin journey renders privileged campaign data. | permission-aware rendering evidence | Browser scenario proves allowed, denied, expired, and unauthorized sensitive rendering states. |\n",
       "",
@@ -928,10 +961,10 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 queued frontend/design-system task has no frontend security evidence row");
+    expect(result.errors).toContain("T-S001-01 queued DEV:frontend/DEV:design-system task has no DEV:frontend security evidence row");
   });
 
-  it("blocks frontend security evidence that rewrites Layer 2 security posture text", () => {
+  it("blocks DEV:frontend security evidence that rewrites Layer 2 security posture text", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
       "| T-S001-01 | sensitive-rendering | yes | Layer 2 says the root-admin journey renders privileged campaign data. | permission-aware rendering evidence | Browser scenario proves allowed, denied, expired, and unauthorized sensitive rendering states. |",
       "| T-S001-01 | sensitive-rendering | yes | Layer 4 rewrites the security decision. | looser proof is fine | Browser scenario proves allowed, denied, expired, and unauthorized sensitive rendering states. |",
@@ -941,14 +974,14 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain(
-      "T-S001-01 frontend security evidence for sensitive-rendering does not match Layer 2/3 decision evidence",
+      "T-S001-01 DEV:frontend security evidence for sensitive-rendering does not match Layer 2/3 decision evidence",
     );
     expect(result.errors).toContain(
-      "T-S001-01 frontend security evidence for sensitive-rendering does not match Layer 2/3 required Layer 4 signal",
+      "T-S001-01 DEV:frontend security evidence for sensitive-rendering does not match Layer 2/3 required Layer 4 signal",
     );
   });
 
-  it("blocks sensitive frontend rendering without permission-state proof", () => {
+  it("blocks sensitive DEV:frontend rendering without permission-state proof", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
       "| T-S001-01 | privileged root-admin campaign data | allowed root operator sees campaign page | denied operator sees unauthorized state | expired session sees unauthenticated state | not-applicable: root operator task has no tenant-scoped rendering |\n",
       "",
@@ -957,10 +990,10 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 renders sensitive frontend data but has no permission rendering evidence row");
+    expect(result.errors).toContain("T-S001-01 renders sensitive DEV:frontend data but has no permission rendering evidence row");
   });
 
-  it("blocks rendered frontend proof that uses mocks without a contract or runtime tie", () => {
+  it("blocks rendered DEV:frontend proof that uses mocks without a contract or runtime tie", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
       "| T-S001-01 | docs/api-contracts/root-admin-campaigns.md projection response | browser fixture copied from contract example | served /v1/root-admin/campaigns payload captured in browser scenario | not-applicable: live payload evidence required | mock-honesty: fixture mirrors contract payload and does not invent fallback behavior |",
       "| T-S001-01 | not-applicable: contract missing | mock fixture copied from convenience data | not-applicable: no runtime payload captured | payload unavailable because task only uses mocks | mock-honesty: fixture does not invent fallback behavior |",
@@ -974,9 +1007,9 @@ describe("task breakdown validation", () => {
     );
   });
 
-  it("blocks frontend task consuming DS seam but missing adoption contract", () => {
+  it("blocks DEV:frontend task consuming DS seam but missing adoption contract", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
-      "| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the design-system seam | /root-admin/marketing campaign-management default route scenario |\n",
+      "| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | DEV:design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam | /root-admin/marketing campaign-management default route scenario |\n",
       "",
     );
 
@@ -984,14 +1017,14 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain(
-      "T-S001-01 frontend task consuming an existing design-system seam must have a frontend adoption contract row",
+      "T-S001-01 DEV:frontend task consuming an existing DEV:design-system seam must have a DEV:frontend adoption contract row",
     );
   });
 
   it("blocks adoption contract missing render behavior accessibility or style seam", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
-      "| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the design-system seam | /root-admin/marketing campaign-management default route scenario |",
-      "| T-S001-01 |  | not-applicable |  |  | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the design-system seam | /root-admin/marketing campaign-management default route scenario |",
+      "| T-S001-01 | TenantBrandingCard render export from /design-system/components/tenant-branding-card | not-applicable: static card has no behavior/controller seam | TenantBrandingCard card role/name semantics | DEV:design-system tenant-branding-card CSS seam | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam | /root-admin/marketing campaign-management default route scenario |",
+      "| T-S001-01 |  | not-applicable |  |  | app passes approved campaign projection data and composes route shell only | must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam | /root-admin/marketing campaign-management default route scenario |",
     );
 
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
@@ -1005,7 +1038,7 @@ describe("task breakdown validation", () => {
 
   it("blocks adoption contract allowing copied markup controller ARIA or CSS", () => {
     const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
-      "must not copy markup, controller, ARIA, or CSS from the design-system seam",
+      "must not copy markup, controller, ARIA, or CSS from the DEV:design-system seam",
       "app may copy markup and controller as needed",
     );
 
@@ -1017,7 +1050,7 @@ describe("task breakdown validation", () => {
     );
   });
 
-  it("blocks generated frontend output without preview/apply materialization", () => {
+  it("blocks generated DEV:frontend output without preview/apply materialization", () => {
     const sourceRow = frontendSourceRow
       .replace("manual-shell-registry | curated-webAppHierarchyBuilder", "generated-materializer | generated-materializer")
       .replace("shell-registry-update | module-journey-files", "shell-registry-update | generated-output");
@@ -1028,7 +1061,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(frontendTaskPacketWith(decisionRow), frontendStoryPacketWith(sourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 generated frontend output requires preview-apply materialization");
+    expect(result.errors).toContain("T-S001-01 generated DEV:frontend output requires preview-apply materialization");
   });
 
   it("blocks generated-output task missing materialization seam", () => {
@@ -1043,7 +1076,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(sourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 generated frontend output must name the preview/apply or materialization seam");
+    expect(result.errors).toContain("T-S001-01 generated DEV:frontend output must name the preview/apply or materialization seam");
   });
 
   it("blocks generated-output task attempting hand edits without approved sweep rationale", () => {
@@ -1062,7 +1095,7 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain(
-      "T-S001-01 generated frontend output cannot be hand-edited without an approved generated/canonical sweep rationale",
+      "T-S001-01 generated DEV:frontend output cannot be hand-edited without an approved generated/canonical sweep rationale",
     );
   });
 
@@ -1096,7 +1129,7 @@ describe("task breakdown validation", () => {
     );
   });
 
-  it("blocks never-serialize frontend state from being placed in URL or replay payloads", () => {
+  it("blocks never-serialize DEV:frontend state from being placed in URL or replay payloads", () => {
     const sourceRow = frontendSourceRow.replace("feature-local-state-machine | local-legacy-shell", "never-serialize | local-legacy-shell");
     const decisionRow = frontendDecisionRow.replace("feature-local-state-machine | local-legacy-shell", "never-serialize | local-legacy-shell");
     const packet = frontendTaskPacketWith(decisionRow).replace(
@@ -1107,34 +1140,34 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(sourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 never-serialize frontend state must not be placed in URL or replay payloads");
+    expect(result.errors).toContain("T-S001-01 never-serialize DEV:frontend state must not be placed in URL or replay payloads");
   });
 
-  it("blocks module and journey frontend tasks from adding behavior to the root shell entry file", () => {
+  it("blocks module and journey DEV:frontend tasks from adding behavior to the root shell entry file", () => {
     const frontendStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | frontend |")
-      .replace("| tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered frontend surface. |", "| root-admin marketing journey | root-admin | marketing | campaign-management | deep-link-only | root-operator | app-shell | journey | journey-state | none | not-applicable: journey is shell-state only | not-applicable: no compatibility locator | manual-shell-registry | curated-webAppHierarchyBuilder | transitional-accepted | feature-local-state-machine | local-legacy-shell | signed-off-seam-exists | shell-registry-update | module-journey-files | ready | Layer 2 places journey behavior in module files. |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | frontend rendered surface | yes | Marketing journey page changes. | frontend |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | root-admin marketing journey | feature-local | src/frontend/rootAdminShell/assets/modules/marketing | approved | DEV:frontend |")
+      .replace("| tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Backend-only steering has no rendered DEV:frontend surface. |", "| root-admin marketing journey | root-admin | marketing | campaign-management | deep-link-only | root-operator | app-shell | journey | journey-state | none | not-applicable: journey is shell-state only | not-applicable: no compatibility locator | manual-shell-registry | curated-webAppHierarchyBuilder | transitional-accepted | feature-local-state-machine | local-legacy-shell | signed-off-seam-exists | shell-registry-update | module-journey-files | ready | Layer 2 places journey behavior in module files. |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:frontend rendered surface | yes | Marketing journey page changes. | DEV:frontend |");
 
     const frontendPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | frontend | T-S001-01 | covered | Frontend task preserves Layer 2 module placement. |")
-      .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | frontend | frontend rendered surface | T-S001-01 | Covered by frontend delivery task. |")
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | frontend |")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:frontend | T-S001-01 | covered | Frontend task preserves Layer 2 module placement. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:frontend | DEV:frontend rendered surface | T-S001-01 | Covered by DEV:frontend delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:frontend |")
       .replace(
         "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
         "src/frontend/rootAdminShell/assets/app.mjs, src/frontend/rootAdminShell/assets/modules/marketing/campaignManagement/page.mjs",
       )
       .replace(
-        "| T-S001-01 | tenant branding backend update | not-applicable | not-applicable: backend task | not-applicable: backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |",
+        "| T-S001-01 | tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |",
         "| T-S001-01 | root-admin marketing journey | root-admin | marketing | campaign-management | deep-link-only | root-operator | app-shell | journey | journey-state | none | not-applicable: journey is shell-state only | not-applicable: no compatibility locator | manual-shell-registry | curated-webAppHierarchyBuilder | transitional-accepted | feature-local-state-machine | local-legacy-shell | signed-off-seam-exists | shell-registry-update | module-journey-files | ready | Layer 2 places journey behavior in module files, not the shell entry. |",
       )
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: backend task | not-applicable: no frontend or design-system work | not-applicable: backend task has no frontend or design-system sub-standard proof |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
         "| T-S001-01 | interaction-behavior | visual-rendering | inseparable because this tests one journey interaction seam | interaction scenario campaign-filter-toggle state transition |",
       )
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for module/journey placement. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for module/journey placement. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -1144,69 +1177,69 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(frontendPacket, frontendStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 module/journey frontend work must not add behavior to rootAdminShell/assets/app.mjs");
+    expect(result.errors).toContain("T-S001-01 module/journey DEV:frontend work must not add behavior to rootAdminShell/assets/app.mjs");
   });
 
-  it("blocks queued design-system tasks that do not produce, refine, or prove a consumable seam", () => {
+  it("blocks queued DEV:design-system tasks that do not produce, refine, or prove a consumable seam", () => {
     const designSystemStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | tenant branding card pattern | platform-seam | src/frontend/design-system | approved | design-system |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | design-system governed surface | yes | Tenant branding card pattern needs a governed seam. | design-system |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding card pattern | design-system-seam | src/frontend/design-system | approved | DEV:design-system |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:design-system governed surface | yes | Tenant branding card pattern needs a governed seam. | DEV:design-system |");
 
     const designSystemPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | platform-seam | design-system | T-S001-01 | covered | Design-system task preserves Layer 2 platform seam classification. |")
-      .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | design-system | design-system governed surface | T-S001-01 | Covered by design-system delivery task. |")
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | design-system |")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | platform-seam | DEV:design-system | T-S001-01 | covered | Design-system task preserves Layer 2 platform seam classification. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:design-system | DEV:design-system governed surface | T-S001-01 | Covered by DEV:design-system delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:design-system |")
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: backend task | not-applicable: no frontend or design-system work | not-applicable: backend task has no frontend or design-system sub-standard proof |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
         "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single visual rendering proof story. | canonical screenshot/evidence artifact tenant-branding-card-default.png |",
       )
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: backend task has no governed UI seam | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task |",
-        "| T-S001-01 | consumes-existing-seam | /design-system/components/tenant-branding-card | shared TenantBrandingCard render structure | no behavior controller for static card | card role/name semantics owned by DS | canonical screenshot tenant-branding-card-default.png | frontend imports TenantBrandingCard renderer |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task has no governed UI seam | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task |",
+        "| T-S001-01 | consumes-existing-seam | /design-system/components/tenant-branding-card | shared TenantBrandingCard render structure | no behavior controller for static card | card role/name semantics owned by DS | canonical screenshot tenant-branding-card-default.png | DEV:frontend imports TenantBrandingCard renderer |",
       )
       .replace(
         "| T-S001-01 | exact-files | src/features/tenantConfiguration/domain/updateBranding.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | not-applicable: exact files only |",
         "| T-S001-01 | exact-files | src/frontend/design-system/components/tenantBrandingCard.ts; tests/visual/designSystem/tenantBrandingCard.spec.ts | not-applicable: exact files only |",
       )
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | design-system | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/design-system-task-guardrail.md | approved | Design-system guardrail reviewed for consumable seam and visual proof obligations. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:design-system | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/design-system-task-guardrail.md | approved | Design-system guardrail reviewed for consumable seam and visual proof obligations. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
-        "| T-S001-01 | design-system-family | pass | Tenant branding card family is named. |\n| T-S001-01 | design-system-behavior-lock | pass | Behavior lock is required. |\n| T-S001-01 | design-system-consumable-seam | pass | Consumable renderer seam is required. |\n| T-S001-01 | design-system-render-behavior | pass | Render behavior is owned by design-system. |\n| T-S001-01 | design-system-visual-proof | pass | Canonical screenshot proof is required. |\n| T-S001-01 | design-system-adoption-path | pass | Frontend adoption contract is named. |",
+        "| T-S001-01 | design-system-family | pass | Tenant branding card family is named. |\n| T-S001-01 | design-system-behavior-lock | pass | Behavior lock is required. |\n| T-S001-01 | design-system-consumable-seam | pass | Consumable renderer seam is required. |\n| T-S001-01 | design-system-render-behavior | pass | Render behavior is owned by DEV:design-system. |\n| T-S001-01 | design-system-visual-proof | pass | Canonical screenshot proof is required. |\n| T-S001-01 | design-system-adoption-path | pass | Frontend adoption contract is named. |",
       );
 
     const result = validateTaskBreakdownContent(designSystemPacket, designSystemStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 design-system task must produce, refine, or prove a consumable seam");
+    expect(result.errors).toContain("T-S001-01 DEV:design-system task must produce, refine, or prove a consumable seam");
   });
 
-  it("blocks queued frontend tasks when the required design-system seam is missing", () => {
+  it("blocks queued DEV:frontend tasks when the required DEV:design-system seam is missing", () => {
     const frontendStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | tenant branding frontend rendering | feature-local | src/frontend/rootAdmin | approved | frontend |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | frontend rendered surface | yes | Root admin page consumes tenant branding card. | frontend |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding DEV:frontend rendering | feature-local | src/frontend/rootAdmin | approved | DEV:frontend |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | DEV:frontend rendered surface | yes | Root admin page consumes tenant branding card. | DEV:frontend |");
 
     const frontendPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | frontend | T-S001-01 | covered | Frontend task preserves Layer 2 feature-local classification. |")
-      .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | frontend | frontend rendered surface | T-S001-01 | Covered by frontend delivery task. |")
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | frontend |")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:frontend | T-S001-01 | covered | Frontend task preserves Layer 2 feature-local classification. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:frontend | DEV:frontend rendered surface | T-S001-01 | Covered by DEV:frontend delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:frontend |")
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: backend task | not-applicable: no frontend or design-system work | not-applicable: backend task has no frontend or design-system sub-standard proof |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or DEV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or DEV:design-system sub-standard proof |",
         "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single app adoption proof story. | canonical screenshot/evidence artifact tenant-branding-card-default.png |",
       )
       .replace(
-        "| T-S001-01 | not-applicable | not-applicable: backend task has no governed UI seam | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task | not-applicable: backend task |",
-        "| T-S001-01 | blocks-on-missing-seam | /design-system/components/tenant-branding-card | renderer seam missing | controller seam missing | accessibility seam missing | canonical evidence missing | frontend must wait for signed-off TenantBrandingCard seam |",
+        "| T-S001-01 | not-applicable | not-applicable: DEV:backend task has no governed UI seam | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task |",
+        "| T-S001-01 | blocks-on-missing-seam | /design-system/components/tenant-branding-card | renderer seam missing | controller seam missing | accessibility seam missing | canonical evidence missing | DEV:frontend must wait for signed-off TenantBrandingCard seam |",
       )
       .replace(
         "| T-S001-01 | exact-files | src/features/tenantConfiguration/domain/updateBranding.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | not-applicable: exact files only |",
         "| T-S001-01 | exact-files | src/frontend/rootAdmin/tenantBrandingPage.ts | not-applicable: exact files only |",
       )
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for signed-off design-system seam consumption. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:frontend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/frontend-task-guardrail.md | approved | Frontend guardrail reviewed for signed-off DEV:design-system seam consumption. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -1216,26 +1249,26 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(frontendPacket, frontendStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 frontend task must consume an existing design-system seam or record an approved exception");
+    expect(result.errors).toContain("T-S001-01 DEV:frontend task must consume an existing DEV:design-system seam or record an approved exception");
   });
 
-  it("blocks queued vertical-slice tasks without a coupling row", () => {
+  it("blocks queued DEV:vertical-slice tasks without a coupling row", () => {
     const result = validateTaskBreakdownContent(
       verticalSliceTaskPacketWith(""),
       verticalSliceStoryPacketWith(frontendSourceRow),
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 queued vertical-slice task has no vertical slice coupling row");
+    expect(result.errors).toContain("T-S001-01 queued DEV:vertical-slice task has no vertical slice coupling row");
   });
 
-  it("blocks vertical-slice coupling without inseparable backend/frontend proof rationale", () => {
+  it("blocks DEV:vertical-slice coupling without inseparable DEV:backend/DEV:frontend proof rationale", () => {
     const packet = verticalSliceTaskPacketWith(
       verticalSliceCouplingRow.replace(
-        "inseparable because the same journey proof must confirm backend mutation and frontend render consume the same response payload",
-        "backend and frontend can be checked later",
+        "inseparable because the same journey proof must confirm DEV:backend mutation and DEV:frontend render consume the same response payload",
+        "DEV:backend and DEV:frontend can be checked later",
       ).replace(
-        "split rejection rationale: backend and frontend proof are inseparable for this one journey behavior; separate tasks would not prove the cross-boundary payload together",
+        "split rejection rationale: DEV:backend and DEV:frontend proof are inseparable for this one journey behavior; separate tasks would not prove the cross-boundary payload together",
         "split rejection rationale: separate implementation tasks can happen later",
       ),
     );
@@ -1243,10 +1276,10 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(packet, verticalSliceStoryPacketWith(frontendSourceRow));
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 vertical slice must explain why backend and frontend proof are inseparable");
+    expect(result.errors).toContain("T-S001-01 vertical slice must explain why DEV:backend and DEV:frontend proof are inseparable");
   });
 
-  it("blocks vertical-slice tasks used as a shortcut around separable task types", () => {
+  it("blocks DEV:vertical-slice tasks used as a shortcut around separable task types", () => {
     const packet = verticalSliceTaskPacketWith(verticalSliceCouplingRow)
       .replace(
         "Add root-admin tenant branding persistence update using the approved tenants public seam.",
@@ -1259,27 +1292,27 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 vertical slice cannot be used as a shortcut around separable task types");
   });
 
-  it("blocks queued test-only tasks without a coverage contract row", () => {
+  it("blocks queued TEST:test-only tasks without a coverage contract row", () => {
     const result = validateTaskBreakdownContent(
       testOnlyTaskPacketWith({ coverageRow: "" }),
       testOnlyStoryPacket(),
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 queued test-only task has no test-only coverage contract row");
+    expect(result.errors).toContain("T-S001-01 queued TEST:test-only task has no TEST:test-only coverage contract row");
   });
 
-  it("blocks privileged test-only tasks without a permission/state matrix", () => {
+  it("blocks privileged TEST:test-only tasks without a permission/state matrix", () => {
     const result = validateTaskBreakdownContent(
       testOnlyTaskPacketWith({ matrixRow: "" }),
       testOnlyStoryPacket(),
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 privileged/security-sensitive test-only task has no capability permission/state matrix row");
+    expect(result.errors).toContain("T-S001-01 privileged/security-sensitive TEST:test-only task has no capability permission/state matrix row");
   });
 
-  it("blocks test-only tasks that require production behavior changes", () => {
+  it("blocks TEST:test-only tasks that require production behavior changes", () => {
     const result = validateTaskBreakdownContent(
       testOnlyTaskPacketWith({
         coverageRow: testOnlyCoverageRow.replace("no-production-change", "blocked-production-change-required"),
@@ -1288,10 +1321,10 @@ describe("task breakdown validation", () => {
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 test-only task cannot queue when production behavior changes are required");
+    expect(result.errors).toContain("T-S001-01 TEST:test-only task cannot queue when production behavior changes are required");
   });
 
-  it("blocks privileged test-only matrices that are happy-path only", () => {
+  it("blocks privileged TEST:test-only matrices that are happy-path only", () => {
     const result = validateTaskBreakdownContent(
       testOnlyTaskPacketWith({
         matrixRow: testOnlyMatrixRow
@@ -1307,7 +1340,7 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 permission/state matrix cannot be happy-path only");
   });
 
-  it("blocks test-only tasks whose focused command is only a broad suite", () => {
+  it("blocks TEST:test-only tasks whose focused command is only a broad suite", () => {
     const result = validateTaskBreakdownContent(
       testOnlyTaskPacketWith({
         coverageRow: testOnlyCoverageRow.replace(
@@ -1319,27 +1352,27 @@ describe("task breakdown validation", () => {
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 test-only task must name a focused test command, not only a broad suite");
+    expect(result.errors).toContain("T-S001-01 TEST:test-only task must name a focused test command, not only a broad suite");
   });
 
-  it("passes a bounded test-suite-alignment task with traceability proof", () => {
+  it("passes a bounded TEST:test-suite-alignment task with traceability proof", () => {
     expect(validateTaskBreakdownContent(testSuiteAlignmentTaskPacketWith(), testSuiteAlignmentStoryPacket())).toEqual({
       status: "PASS",
       errors: [],
     });
   });
 
-  it("blocks queued test-suite-alignment tasks without an alignment contract row", () => {
+  it("blocks queued TEST:test-suite-alignment tasks without an alignment contract row", () => {
     const result = validateTaskBreakdownContent(
       testSuiteAlignmentTaskPacketWith({ alignmentRow: "" }),
       testSuiteAlignmentStoryPacket(),
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 queued test-suite-alignment task has no test suite alignment contract row");
+    expect(result.errors).toContain("T-S001-01 queued TEST:test-suite-alignment task has no test suite alignment contract row");
   });
 
-  it("blocks test-suite-alignment tasks that include production write paths", () => {
+  it("blocks TEST:test-suite-alignment tasks that include production write paths", () => {
     const result = validateTaskBreakdownContent(
       testSuiteAlignmentTaskPacketWith({
         allowedWriteSet: "src/features/rootUsers/domain/service.ts, docs/prd/test_cases/2026-03-29-0002-root-users-backend-test-cases.md",
@@ -1348,14 +1381,14 @@ describe("task breakdown validation", () => {
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 test-suite-alignment task must not include production code paths in its write envelope");
+    expect(result.errors).toContain("T-S001-01 TEST:test-suite-alignment task must not include production code paths in its write envelope");
   });
 
-  it("blocks test-suite-alignment tasks that hide new proof instead of splitting to test-only", () => {
+  it("blocks TEST:test-suite-alignment tasks that hide new proof instead of splitting to TEST:test-only", () => {
     const result = validateTaskBreakdownContent(
       testSuiteAlignmentTaskPacketWith({
         alignmentRow: testSuiteAlignmentRow.replace(
-          "no new proof required; split any newly required proof into test-only",
+          "no new proof required; split any newly required proof into TEST:test-only",
           "implement missing e2e proof here",
         ),
       }),
@@ -1363,10 +1396,10 @@ describe("task breakdown validation", () => {
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 test-suite-alignment task must split newly required proof into test-only or state no new proof is required");
+    expect(result.errors).toContain("T-S001-01 TEST:test-suite-alignment task must split newly required proof into TEST:test-only or state no new proof is required");
   });
 
-  it("blocks queued backend tasks without backend implementation approach", () => {
+  it("blocks queued DEV:backend tasks without DEV:backend implementation approach", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
         "## Backend Implementation Approach\n\n| Task ID | Feature Owner | Capability File Strategy | Expected Files / Layers | Layer Responsibilities | Public Seam / Manifest Impact | Formatting / Generated Artifact Expectations |\n| --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | src/features/tenantConfiguration | new-capability-file | domain/updateBranding.ts; transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | domain owns branding rule, transport routes, persistence test proves repository behavior | no new public seam; manifest unchanged unless export changes | repo formatter and no generated graph change expected |\n\n",
@@ -1377,35 +1410,35 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("missing heading: ## Backend Implementation Approach");
-    expect(result.errors).toContain("T-S001-01 queued backend task has no backend implementation approach row");
+    expect(result.errors).toContain("T-S001-01 queued DEV:backend task has no DEV:backend implementation approach row");
   });
 
-  it("blocks queued backend tasks with an invalid capability file strategy", () => {
+  it("blocks queued DEV:backend tasks with an invalid capability file strategy", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace("new-capability-file", "whatever-is-easy"),
       sourceStoryPacket,
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 has invalid backend capability file strategy: whatever-is-easy");
+    expect(result.errors).toContain("T-S001-01 has invalid DEV:backend capability file strategy: whatever-is-easy");
   });
 
-  it("blocks queued migration/persistence tasks without migration approach", () => {
+  it("blocks queued DEV:migration-persistence tasks without migration approach", () => {
     const migrationStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | tenant branding persistence migration | feature-local | src/features/tenantConfiguration/persistence | approved | migration/persistence |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | persistence or migration change | yes | Tenant branding schema changes. | migration/persistence |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding persistence migration | feature-local | src/features/tenantConfiguration/persistence | approved | DEV:migration-persistence |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | persistence or migration change | yes | Tenant branding schema changes. | DEV:migration-persistence |");
 
     const migrationPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | migration/persistence | T-S001-01 | covered | Migration task preserves Layer 2 feature-local classification. |")
-      .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | migration/persistence | persistence or migration change | T-S001-01 | Covered by migration delivery task. |")
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | migration/persistence |")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:migration-persistence | T-S001-01 | covered | Migration task preserves Layer 2 feature-local classification. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:migration-persistence | persistence or migration change | T-S001-01 | Covered by migration delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:migration-persistence |")
       .replace(
-        "## Migration / Persistence Approach\n\n| Task ID | Change Type | Live Schema Check | Source Data Shape Validation | Per-Row Eligibility Validation | Rejected Row Behavior | Migration Identity / Applied File Posture | SQL Execution Semantics Check | Representative Read / Write Proof | Postgres Harness Impact |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | not-applicable-with-rationale | not-applicable: backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible | not-applicable: no migration file touched | not-applicable: no SQL execution change | not-applicable: backend persistence proof only | not-applicable: no harness impact |\n\n",
+        "## Migration / Persistence Approach\n\n| Task ID | Change Type | Live Schema Check | Source Data Shape Validation | Per-Row Eligibility Validation | Rejected Row Behavior | Migration Identity / Applied File Posture | SQL Execution Semantics Check | Representative Read / Write Proof | Postgres Harness Impact |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | not-applicable-with-rationale | not-applicable: DEV:backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible | not-applicable: no migration file touched | not-applicable: no SQL execution change | not-applicable: DEV:backend persistence proof only | not-applicable: no harness impact |\n\n",
         "",
       )
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | migration/persistence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/migration-persistence-task-guardrail.md | approved | Migration guardrail reviewed for schema, live schema, and harness obligations. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:migration-persistence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/migration-persistence-task-guardrail.md | approved | Migration guardrail reviewed for schema, live schema, and harness obligations. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -1416,22 +1449,22 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("missing heading: ## Migration / Persistence Approach");
-    expect(result.errors).toContain("T-S001-01 queued migration/persistence task has no migration / persistence approach row");
+    expect(result.errors).toContain("T-S001-01 queued DEV:migration-persistence task has no migration / persistence approach row");
   });
 
-  it("blocks queued migration/persistence tasks with invalid change type", () => {
+  it("blocks queued DEV:migration-persistence tasks with invalid change type", () => {
     const migrationStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | tenant branding persistence migration | feature-local | src/features/tenantConfiguration/persistence | approved | migration/persistence |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | persistence or migration change | yes | Tenant branding schema changes. | migration/persistence |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding persistence migration | feature-local | src/features/tenantConfiguration/persistence | approved | DEV:migration-persistence |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | persistence or migration change | yes | Tenant branding schema changes. | DEV:migration-persistence |");
 
     const migrationPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | migration/persistence | T-S001-01 | covered | Migration task preserves Layer 2 feature-local classification. |")
-      .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | migration/persistence | persistence or migration change | T-S001-01 | Covered by migration delivery task. |")
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | migration/persistence |")
-      .replace("not-applicable-with-rationale | not-applicable: backend task has no schema change", "schema-magic | live schema checked")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:migration-persistence | T-S001-01 | covered | Migration task preserves Layer 2 feature-local classification. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:migration-persistence | persistence or migration change | T-S001-01 | Covered by migration delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:migration-persistence |")
+      .replace("not-applicable-with-rationale | not-applicable: DEV:backend task has no schema change", "schema-magic | live schema checked")
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | migration/persistence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/migration-persistence-task-guardrail.md | approved | Migration guardrail reviewed for schema, live schema, and harness obligations. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:migration-persistence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/migration-persistence-task-guardrail.md | approved | Migration guardrail reviewed for schema, live schema, and harness obligations. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -1441,22 +1474,22 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(migrationPacket, migrationStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 has invalid migration/persistence change type: schema-magic");
+    expect(result.errors).toContain("T-S001-01 has invalid DEV:migration-persistence change type: schema-magic");
   });
 
-  it("blocks queued migration/persistence tasks without source data shape validation", () => {
+  it("blocks queued DEV:migration-persistence tasks without source data shape validation", () => {
     const migrationStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | tenant branding persistence migration | feature-local | src/features/tenantConfiguration/persistence | approved | migration/persistence |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | persistence or migration change | yes | Tenant branding schema changes. | migration/persistence |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding persistence migration | feature-local | src/features/tenantConfiguration/persistence | approved | DEV:migration-persistence |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | persistence or migration change | yes | Tenant branding schema changes. | DEV:migration-persistence |");
 
     const migrationPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | migration/persistence | T-S001-01 | covered | Migration task preserves Layer 2 feature-local classification. |")
-      .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | migration/persistence | persistence or migration change | T-S001-01 | Covered by migration delivery task. |")
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | migration/persistence |")
-      .replace("not-applicable-with-rationale | not-applicable: backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible", "new-migration | SELECT column_name FROM information_schema.columns WHERE table_name = 'tenant_branding' |  | Check tenant_id and legacy_logo_url before transforming each row | Fail atomically and report rejected row IDs")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:migration-persistence | T-S001-01 | covered | Migration task preserves Layer 2 feature-local classification. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:migration-persistence | persistence or migration change | T-S001-01 | Covered by migration delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:migration-persistence |")
+      .replace("not-applicable-with-rationale | not-applicable: DEV:backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible", "new-migration | SELECT column_name FROM information_schema.columns WHERE table_name = 'tenant_branding' |  | Check tenant_id and legacy_logo_url before transforming each row | Fail atomically and report rejected row IDs")
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | migration/persistence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/migration-persistence-task-guardrail.md | approved | Migration guardrail reviewed for schema, live schema, and harness obligations. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:migration-persistence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/migration-persistence-task-guardrail.md | approved | Migration guardrail reviewed for schema, live schema, and harness obligations. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -1469,19 +1502,19 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 missing Source Data Shape Validation");
   });
 
-  it("blocks queued migration/persistence tasks without per-row eligibility validation", () => {
+  it("blocks queued DEV:migration-persistence tasks without per-row eligibility validation", () => {
     const migrationStoryPacket = sourceStoryPacket
-      .replace("| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |", "| CLS-001 | tenant branding persistence migration | feature-local | src/features/tenantConfiguration/persistence | approved | migration/persistence |")
-      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |", "| S-001 | persistence or migration change | yes | Tenant branding schema changes. | migration/persistence |");
+      .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding persistence migration | feature-local | src/features/tenantConfiguration/persistence | approved | DEV:migration-persistence |")
+      .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | persistence or migration change | yes | Tenant branding schema changes. | DEV:migration-persistence |");
 
     const migrationPacket = validTaskPacket
-      .replace("| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | migration/persistence | T-S001-01 | covered | Migration task preserves Layer 2 feature-local classification. |")
-      .replace("| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |", "| S-001 | migration/persistence | persistence or migration change | T-S001-01 | Covered by migration delivery task. |")
-      .replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-001 | migration/persistence |")
-      .replace("not-applicable-with-rationale | not-applicable: backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible", "new-migration | SELECT column_name FROM information_schema.columns WHERE table_name = 'tenant_branding' | Assert every source row has tenant_id and legacy_logo_url before mutation |  | Fail atomically and report rejected row IDs")
+      .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:migration-persistence | T-S001-01 | covered | Migration task preserves Layer 2 feature-local classification. |")
+      .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:migration-persistence | persistence or migration change | T-S001-01 | Covered by migration delivery task. |")
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:migration-persistence |")
+      .replace("not-applicable-with-rationale | not-applicable: DEV:backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible", "new-migration | SELECT column_name FROM information_schema.columns WHERE table_name = 'tenant_branding' | Assert every source row has tenant_id and legacy_logo_url before mutation |  | Fail atomically and report rejected row IDs")
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | migration/persistence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/migration-persistence-task-guardrail.md | approved | Migration guardrail reviewed for schema, live schema, and harness obligations. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:migration-persistence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/migration-persistence-task-guardrail.md | approved | Migration guardrail reviewed for schema, live schema, and harness obligations. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -1497,7 +1530,7 @@ describe("task breakdown validation", () => {
   it("blocks missing expected task-type reconciliation from story signals", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
-        "| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |\n",
+        "| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |\n",
         "",
       ),
       sourceStoryPacket,
@@ -1505,15 +1538,15 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain(
-      "S-001 API route or contract change missing expected task-type reconciliation for backend",
+      "S-001 API route or contract change missing expected task-type reconciliation for DEV:backend",
     );
   });
 
   it("blocks task queues that contradict steering classification", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
-        "| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |",
-        "| CLS-001 | platform-seam | backend | T-S001-01 | covered | Incorrectly changes steering classification. |",
+        "| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |",
+        "| CLS-001 | platform-seam | DEV:backend | T-S001-01 | covered | Incorrectly changes steering classification. |",
       ),
       sourceStoryPacket,
     );
@@ -1526,7 +1559,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
         "| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
-        "| T-S001-01 | backend-random-extra | pass | This check is not part of the approved backend guardrail. |",
+        "| T-S001-01 | backend-random-extra | pass | This check is not part of the approved DEV:backend guardrail. |",
       ),
       sourceStoryPacket,
     );
@@ -1550,38 +1583,38 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 is queued-for-delivery without approved code placement");
   });
 
-  it("allows platform-seam tasks with the platform guardrail and platform placement", () => {
+  it("allows DEV:platform-seam tasks with the platform guardrail and platform placement", () => {
     const platformSourceStoryPacket = sourceStoryPacket
       .replace(
-        "| CLS-001 | tenant branding backend update | feature-local | src/features/tenantConfiguration | approved | backend |",
-        "| CLS-001 | tenant branding backend update | platform-seam | src/routes/v1 | approved | platform-seam |",
+        "| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |",
+        "| CLS-001 | tenant branding DEV:backend update | platform-seam | src/routes/v1 | approved | DEV:platform-seam |",
       )
       .replace(
-        "| S-001 | API route or contract change | yes | Root admin update route contract changes. | backend |",
-        "| S-001 | shared platform/runtime seam | yes | Root admin update route needs shared route registration helper. | platform-seam |",
+        "| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |",
+        "| S-001 | shared platform/runtime seam | yes | Root admin update route needs shared route registration helper. | DEV:platform-seam |",
       );
 
     const platformPacket = validTaskPacket
       .replace(
-        "| CLS-001 | feature-local | backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |",
-        "| CLS-001 | platform-seam | platform-seam | T-S001-01 | covered | Platform task preserves Layer 2 platform-seam classification. |",
+        "| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |",
+        "| CLS-001 | platform-seam | DEV:platform-seam | T-S001-01 | covered | Platform task preserves Layer 2 platform-seam classification. |",
       )
       .replace(
-        "| S-001 | backend | API route or contract change | T-S001-01 | Covered by backend delivery task. |",
-        "| S-001 | platform-seam | shared platform/runtime seam | T-S001-01 | Covered by platform-seam delivery task. |",
+        "| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |",
+        "| S-001 | DEV:platform-seam | shared platform/runtime seam | T-S001-01 | Covered by DEV:platform-seam delivery task. |",
       )
-      .replace(/\| T-S001-01 \| S-001 \| backend \|/, "| T-S001-01 | S-001 | platform-seam |")
+      .replace(/\| T-S001-01 \| S-001 \| DEV:backend \|/, "| T-S001-01 | S-001 | DEV:platform-seam |")
       .replace(
         "Add root-admin tenant branding persistence update using the approved tenants public seam.",
-        "Adjust shared route registration helper used by the approved tenant branding backend route.",
+        "Adjust shared route registration helper used by the approved tenant branding DEV:backend route.",
       )
       .replace(
         "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
         "src/routes/v1/index.ts, src/scripts/checkFeatureDependencies.ts, tests/unit/routes/v1RouteRegistration.test.ts",
       )
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-01 | platform-seam | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/platform-seam-task-guardrail.md | approved | Platform seam guardrail reviewed for shared route registration consumers and compatibility proof. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:platform-seam | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/platform-seam-task-guardrail.md | approved | Platform seam guardrail reviewed for shared route registration consumers and compatibility proof. |",
       )
       .replace(
         "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
@@ -1608,7 +1641,7 @@ describe("task breakdown validation", () => {
     );
 
     expect(result.status).toBe("BLOCKED");
-    expect(result.errors).toContain("T-S001-01 needs separate refactor-first or platform-seam extraction task");
+    expect(result.errors).toContain("T-S001-01 needs separate DECISION:refactor-first or DEV:platform-seam extraction task");
   });
 
   it("blocks shared-code placement without the supplemental guardrail reference", () => {
@@ -1641,7 +1674,7 @@ describe("task breakdown validation", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
         "| T-S001-01 | src/features/tenantConfiguration/domain/updateBranding.ts | feature-local | Owning feature domain capability file. |",
-        "| T-S001-01 | src/lib/branding.ts | blocked | Not approved for this backend task. |",
+        "| T-S001-01 | src/lib/branding.ts | blocked | Not approved for this DEV:backend task. |",
       ),
       sourceStoryPacket,
     );
@@ -1653,12 +1686,12 @@ describe("task breakdown validation", () => {
   it("blocks extraction when the dependent task does not depend on the extraction task", () => {
     const packetWithExtractionTask = validTaskPacket
       .replace(
-        "| T-S001-01 | S-001 | backend | Add root-admin tenant branding persistence update using the approved tenants public seam.",
-        "| T-S001-00 | S-001 | refactor-first | Extract reusable branding normalization without behavior changes. | src/features/tenantConfiguration/domain/brandingNormalization.ts, tests/unit/tenantConfiguration/brandingNormalization.test.ts | API route changes, frontend rendering | not-applicable: prerequisite extraction task | not-applicable: feature-local refactor | queued-for-delivery |\n| T-S001-01 | S-001 | backend | Add root-admin tenant branding persistence update using the approved tenants public seam.",
+        "| T-S001-01 | S-001 | DEV:backend | Add root-admin tenant branding persistence update using the approved tenants public seam.",
+        "| T-S001-00 | S-001 | DECISION:refactor-first | Extract reusable branding normalization without behavior changes. | src/features/tenantConfiguration/domain/brandingNormalization.ts, tests/unit/tenantConfiguration/brandingNormalization.test.ts | API route changes, DEV:frontend rendering | not-applicable: prerequisite extraction task | not-applicable: feature-local refactor | queued-for-delivery |\n| T-S001-01 | S-001 | DEV:backend | Add root-admin tenant branding persistence update using the approved tenants public seam.",
       )
       .replace(
-        "| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
-        "| T-S001-00 | refactor-first | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/refactor-first-task-guardrail.md | approved | Refactor-first guardrail reviewed for behavior-preserving extraction. |\n| T-S001-01 | backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-00 | DECISION:refactor-first | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/refactor-first-task-guardrail.md | approved | Refactor-first guardrail reviewed for behavior-preserving extraction. |\n| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
       )
       .replace(
         "| T-S001-01 | feature-local | src/features/tenantConfiguration | src/features/tenantConfiguration | no | not-applicable: no shared code placement | Existing consumer compatibility protected by tenantConfiguration persistence regression. | approved |",
@@ -1693,21 +1726,21 @@ describe("task breakdown validation", () => {
         "| T-S001-00 | codex/s001-tenant-branding-refactor | current dedicated task branch | docs/workspace/chat-bootstraps/2026-04-29-s001-tenant-branding-refactor.md | origin/main | record exact base commit before Delivery edits | main after promote guardrail |\n| T-S001-01 | codex/s001-tenant-branding-backend | current dedicated task branch | docs/workspace/chat-bootstraps/2026-04-29-s001-tenant-branding-backend.md | origin/main | record exact base commit before Delivery edits | main after promote guardrail |",
       )
       .replace(
-        "| T-S001-01 | queued-for-delivery | none | Ready for Layer 5 as an isolated backend task. |",
-        "| T-S001-00 | queued-for-delivery | none | Ready for Layer 5 as an isolated refactor task. |\n| T-S001-01 | queued-for-delivery | none | Ready for Layer 5 as an isolated backend task. |",
+        "| T-S001-01 | queued-for-delivery | none | Ready for Layer 5 as an isolated DEV:backend task. |",
+        "| T-S001-00 | queued-for-delivery | none | Ready for Layer 5 as an isolated refactor task. |\n| T-S001-01 | queued-for-delivery | none | Ready for Layer 5 as an isolated DEV:backend task. |",
       );
 
     const result = validateTaskBreakdownContent(packetWithExtractionTask, sourceStoryPacket);
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain(
-      "T-S001-01 extraction dependency must block queueing on a refactor-first or platform-seam task",
+      "T-S001-01 extraction dependency must block queueing on a DECISION:refactor-first or DEV:platform-seam task",
     );
   });
 
   it("blocks tasks mapped to stories that are not approved for task breakdown", () => {
     const result = validateTaskBreakdownContent(
-      validTaskPacket.replace("| T-S001-01 | S-001 | backend |", "| T-S001-01 | S-999 | backend |"),
+      validTaskPacket.replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-999 | DEV:backend |"),
       sourceStoryPacket,
     );
 
@@ -1835,11 +1868,11 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("Architecture invention check is proposes-new-architecture");
   });
 
-  it("blocks hidden refactor-first blockers inside feature work", () => {
+  it("blocks hidden DECISION:refactor-first blockers inside feature work", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
         "| --- | --- | --- | --- | --- | --- |\n\n## Layer 5 Delivery Handoff",
-        "| --- | --- | --- | --- | --- | --- |\n| B-001 | T-S001-01 | refactor-first |  | Repository seam must be split before backend work. | pending |\n\n## Layer 5 Delivery Handoff",
+        "| --- | --- | --- | --- | --- | --- |\n| B-001 | T-S001-01 | DECISION:refactor-first |  | Repository seam must be split before DEV:backend work. | pending |\n\n## Layer 5 Delivery Handoff",
       ),
       sourceStoryPacket,
     );

@@ -1,20 +1,20 @@
 export const layer4TaskTypes = [
-  "backend",
-  "frontend",
-  "vertical-slice",
-  "docs-artifact",
-  "test-only",
-  "test-suite-alignment",
-  "refactor-first",
-  "architecture-foundation",
-  "standards-compliance",
-  "platform-seam",
-  "migration/persistence",
-  "design-system",
-  "API-contract",
-  "permission-mapping",
-  "data-dictionary",
-  "QA/evidence",
+  "DEV:backend",
+  "DEV:frontend",
+  "DEV:vertical-slice",
+  "DOC:docs-artifact",
+  "TEST:test-only",
+  "TEST:test-suite-alignment",
+  "DECISION:refactor-first",
+  "DECISION:architecture-foundation",
+  "DOC:standards-compliance",
+  "DEV:platform-seam",
+  "DEV:migration-persistence",
+  "DEV:design-system",
+  "DOC:api-contract",
+  "DOC:permission-mapping",
+  "DOC:data-dictionary",
+  "EVIDENCE:qa-evidence",
 ] as const;
 
 export const layer4TaskStatuses = ["draft", "blocked", "queued-for-delivery", "superseded"] as const;
@@ -25,36 +25,36 @@ export const layer4CapabilityCoverageStatuses = [
   "blocked-missing-row",
 ] as const;
 
-export const layer4FoundationBlockerTypes = ["refactor-first", "architecture-foundation"] as const;
+export const layer4FoundationBlockerTypes = ["DECISION:refactor-first", "DECISION:architecture-foundation"] as const;
 
-export const layer4FoundationTaskTypes = ["refactor-first", "architecture-foundation"] as const;
+export const layer4FoundationTaskTypes = ["DECISION:refactor-first", "DECISION:architecture-foundation"] as const;
 
 export const layer4ImplementationTaskTypes = [
-  "backend",
-  "frontend",
-  "vertical-slice",
-  "migration/persistence",
-  "design-system",
-  "platform-seam",
+  "DEV:backend",
+  "DEV:frontend",
+  "DEV:vertical-slice",
+  "DEV:migration-persistence",
+  "DEV:design-system",
+  "DEV:platform-seam",
 ] as const;
 
 export const layer4GuardrailReferenceByTaskType = {
-  backend: "backend-task-guardrail.md",
-  frontend: "frontend-task-guardrail.md",
-  "vertical-slice": "vertical-slice-task-guardrail.md",
-  "docs-artifact": "docs-artifact-task-guardrail.md",
-  "test-only": "test-only-task-guardrail.md",
-  "test-suite-alignment": "test-suite-alignment-task-guardrail.md",
-  "refactor-first": "refactor-first-task-guardrail.md",
-  "architecture-foundation": "architecture-foundation-task-guardrail.md",
-  "standards-compliance": "standards-compliance-task-guardrail.md",
-  "platform-seam": "platform-seam-task-guardrail.md",
-  "migration/persistence": "migration-persistence-task-guardrail.md",
-  "design-system": "design-system-task-guardrail.md",
-  "API-contract": "api-contract-task-guardrail.md",
-  "permission-mapping": "permission-mapping-task-guardrail.md",
-  "data-dictionary": "data-dictionary-task-guardrail.md",
-  "QA/evidence": "qa-evidence-task-guardrail.md",
+  "DEV:backend": "backend-task-guardrail.md",
+  "DEV:frontend": "frontend-task-guardrail.md",
+  "DEV:vertical-slice": "vertical-slice-task-guardrail.md",
+  "DOC:docs-artifact": "docs-artifact-task-guardrail.md",
+  "TEST:test-only": "test-only-task-guardrail.md",
+  "TEST:test-suite-alignment": "test-suite-alignment-task-guardrail.md",
+  "DECISION:refactor-first": "refactor-first-task-guardrail.md",
+  "DECISION:architecture-foundation": "architecture-foundation-task-guardrail.md",
+  "DOC:standards-compliance": "standards-compliance-task-guardrail.md",
+  "DEV:platform-seam": "platform-seam-task-guardrail.md",
+  "DEV:migration-persistence": "migration-persistence-task-guardrail.md",
+  "DEV:design-system": "design-system-task-guardrail.md",
+  "DOC:api-contract": "api-contract-task-guardrail.md",
+  "DOC:permission-mapping": "permission-mapping-task-guardrail.md",
+  "DOC:data-dictionary": "data-dictionary-task-guardrail.md",
+  "EVIDENCE:qa-evidence": "qa-evidence-task-guardrail.md",
 } as const satisfies Record<Layer4TaskType, string>;
 
 export const layer4PlacementDecisions = [
@@ -133,7 +133,7 @@ export const layer4FrontendPerformancePostures = [
   "unknown-blocked",
 ] as const;
 
-export const layer4FrontendTaskTypes = ["frontend", "design-system", "vertical-slice"] as const;
+export const layer4FrontendTaskTypes = ["DEV:frontend", "DEV:design-system", "DEV:vertical-slice"] as const;
 
 export const layer4DesignSystemSeamPostures = [
   "not-applicable",
@@ -175,7 +175,7 @@ export const layer4SuspiciousCoarseScopePhrases = [
 ] as const;
 
 export const layer4RequiredCheckIdsByTaskType = {
-  backend: [
+  "DEV:backend": [
     "backend-owning-feature",
     "backend-feature-structure",
     "backend-cross-feature-seams",
@@ -184,7 +184,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "backend-artifacts",
     "backend-proof-commands",
   ],
-  frontend: [
+  "DEV:frontend": [
     "frontend-architecture-classification",
     "frontend-source-placement",
     "frontend-state-owner",
@@ -201,7 +201,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "frontend-runtime-evidence",
     "frontend-artifacts",
   ],
-  "vertical-slice": [
+  "DEV:vertical-slice": [
     "vertical-inseparable-journey",
     "vertical-backend-seam",
     "vertical-frontend-seam",
@@ -214,13 +214,13 @@ export const layer4RequiredCheckIdsByTaskType = {
     "vertical-artifacts",
     "vertical-proof-commands",
   ],
-  "docs-artifact": [
+  "DOC:docs-artifact": [
     "docs-source-truth-reviewed",
     "docs-stale-artifact-sweep",
     "docs-status-posture",
     "docs-validation-command",
   ],
-  "test-only": [
+  "TEST:test-only": [
     "test-traceability",
     "test-proof-layer",
     "test-permission-state-matrix",
@@ -228,7 +228,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "test-no-behavior-change",
     "test-command",
   ],
-  "test-suite-alignment": [
+  "TEST:test-suite-alignment": [
     "test-alignment-source-map",
     "test-alignment-mismatch-class",
     "test-alignment-edit-envelope",
@@ -236,27 +236,27 @@ export const layer4RequiredCheckIdsByTaskType = {
     "test-alignment-split-new-proof",
     "test-alignment-traceability-command",
   ],
-  "refactor-first": [
+  "DECISION:refactor-first": [
     "refactor-existing-behavior",
     "refactor-affected-consumers",
     "refactor-compatibility-proof",
     "refactor-downstream-unblocker",
     "refactor-no-product-change",
   ],
-  "architecture-foundation": [
+  "DECISION:architecture-foundation": [
     "architecture-adrs-reviewed",
     "architecture-decision-owner",
     "architecture-output-path",
     "architecture-downstream-block",
     "architecture-compatibility",
   ],
-  "standards-compliance": [
+  "DOC:standards-compliance": [
     "standards-gate-named",
     "standards-posture-recorded",
     "standards-command",
     "standards-status-artifact",
   ],
-  "platform-seam": [
+  "DEV:platform-seam": [
     "platform-seam-owner",
     "platform-not-feature-local",
     "platform-consumers",
@@ -264,7 +264,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "platform-artifact-impact",
     "platform-architecture-impact",
   ],
-  "migration/persistence": [
+  "DEV:migration-persistence": [
     "migration-live-schema",
     "migration-source-data-shape",
     "migration-per-row-eligibility",
@@ -274,7 +274,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "migration-read-write-proof",
     "migration-postgres-harness",
   ],
-  "design-system": [
+  "DEV:design-system": [
     "design-system-family",
     "design-system-behavior-lock",
     "design-system-consumable-seam",
@@ -284,7 +284,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "design-system-runtime-data-mock-honesty",
     "design-system-adoption-path",
   ],
-  "API-contract": [
+  "DOC:api-contract": [
     "api-route-family",
     "api-request-response",
     "api-authz-validation",
@@ -292,21 +292,21 @@ export const layer4RequiredCheckIdsByTaskType = {
     "api-maintained-artifacts",
     "api-validation-command",
   ],
-  "permission-mapping": [
+  "DOC:permission-mapping": [
     "permission-capability-rows",
     "permission-boundary",
     "permission-allow-deny",
     "permission-grants-migration",
     "permission-authz-proof",
   ],
-  "data-dictionary": [
+  "DOC:data-dictionary": [
     "data-entity-table",
     "data-source-reviewed",
     "data-field-index-lifecycle",
     "data-durable-facts",
     "data-validation-proof",
   ],
-  "QA/evidence": [
+  "EVIDENCE:qa-evidence": [
     "qa-proof-target",
     "qa-command-plan",
     "qa-runtime-evidence",

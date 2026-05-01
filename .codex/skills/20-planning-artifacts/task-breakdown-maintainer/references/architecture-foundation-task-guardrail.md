@@ -1,6 +1,6 @@
 # Architecture Foundation Task Guardrail
 
-Use for task type: `architecture-foundation`
+Use for task type: `DECISION:architecture-foundation`
 
 ## Must Preserve
 

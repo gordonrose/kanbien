@@ -5,7 +5,7 @@ Use with any task that may move, extract, or newly share code.
 ## Placement Decisions
 
 - `feature-local`: logic belongs under `src/features/<featureName>`.
-- `platform-seam`: logic belongs in shared platform/runtime/tooling seams.
+- `DEV:platform-seam`: logic belongs in shared platform/runtime/tooling seams.
 - `shared-lib`: logic belongs under `src/lib`.
 - `stay-put`: reused legacy capability remains owned where it is and is exposed
   through a public seam when needed.
@@ -17,7 +17,7 @@ Use with any task that may move, extract, or newly share code.
   persistence types
 - domain-specific reuse should prefer an owning feature public seam
 - extraction must be behavior-preserving for existing consumers
-- dependent feature work waits for refactor-first or platform-seam extraction
+- dependent feature work waits for DECISION:refactor-first or DEV:platform-seam extraction
   tasks when extraction is needed
 
 ## Approval Evidence

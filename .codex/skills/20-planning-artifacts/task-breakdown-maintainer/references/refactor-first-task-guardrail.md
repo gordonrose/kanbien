@@ -1,6 +1,6 @@
 # Refactor-First Task Guardrail
 
-Use for task type: `refactor-first`
+Use for task type: `DECISION:refactor-first`
 
 ## Must Preserve
 

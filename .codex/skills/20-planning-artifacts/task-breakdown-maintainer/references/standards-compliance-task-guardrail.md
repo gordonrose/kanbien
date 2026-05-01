@@ -1,6 +1,6 @@
 # Standards Compliance Task Guardrail
 
-Use for task type: `standards-compliance`
+Use for task type: `DOC:standards-compliance`
 
 ## Must Preserve
 
@@ -21,7 +21,7 @@ Use for task type: `standards-compliance`
   task
 - broad proof commands are acceptable when the named standard itself requires a
   broad gate, but the specific gate and output artifact must still be named
-- do not hide implementation cleanup inside standards-compliance work
+- do not hide implementation cleanup inside DOC:standards-compliance work
 
 ## Required Check IDs
 

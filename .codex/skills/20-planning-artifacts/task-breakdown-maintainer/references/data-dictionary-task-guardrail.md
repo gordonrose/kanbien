@@ -1,6 +1,6 @@
 # Data Dictionary Task Guardrail
 
-Use for task type: `data-dictionary`
+Use for task type: `DOC:data-dictionary`
 
 ## Must Preserve
 

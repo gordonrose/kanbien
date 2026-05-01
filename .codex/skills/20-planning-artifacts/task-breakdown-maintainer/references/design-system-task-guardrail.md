@@ -1,6 +1,6 @@
 # Design System Task Guardrail
 
-Use for task type: `design-system`
+Use for task type: `DEV:design-system`
 
 ## Must Preserve
 
@@ -11,7 +11,7 @@ Use for task type: `design-system`
 
 ## Approval Evidence
 
-- design-system family and canonical route
+- DEV:design-system family and canonical route
 - behavior lock or signoff artifact
 - screenshot/visual proof command
 - Browser Security Posture evidence copied from Layer 2/3 without invention
@@ -25,8 +25,8 @@ Use for task type: `design-system`
 
 - split by sub-standard: fixture-data-contract, visual-rendering,
   interaction-behavior, accessibility-semantics, and evidence-sweep
-- queued design-system tasks must produce, refine, or prove a named consumable
-  seam for frontend tasks, not only a local `/design-system` demonstration
+- queued DEV:design-system tasks must produce, refine, or prove a named consumable
+  seam for DEV:frontend tasks, not only a local `/design-system` demonstration
 - do not queue a full component family, all states, interaction set,
   accessibility semantics, and evidence capture in one task
 - visual rendering tasks name the canonical state and expected screenshot or
@@ -46,8 +46,8 @@ Use for task type: `design-system`
 
 ## Consumable Seam Contract
 
-Design-system tasks are upstream of frontend implementation tasks. Before a
-design-system task is queued, it must name the seam frontend tasks will consume:
+Design-system tasks are upstream of DEV:frontend implementation tasks. Before a
+DEV:design-system task is queued, it must name the seam DEV:frontend tasks will consume:
 
 - render structure seam, such as a shared renderer, component, template, or
   generated route output
@@ -57,13 +57,13 @@ design-system task is queued, it must name the seam frontend tasks will consume:
   semantics or a documented no-new-semantics posture
 - canonical route, behavior lock, screenshot, or evidence artifact proving the
   seam
-- frontend consumption contract that says how app/frontend tasks must import,
+- DEV:frontend consumption contract that says how app/frontend tasks must import,
   call, mount, or reference the seam
-- adoption contract expectations for downstream frontend tasks, including the
+- adoption contract expectations for downstream DEV:frontend tasks, including the
   render, controller/behavior, accessibility, and style/CSS seams that must be
   consumed rather than locally reconstructed
 
-If the design-system work does not create a consumable seam, mark the task
+If the DEV:design-system work does not create a consumable seam, mark the task
 blocked or split out the missing seam work. Do not satisfy this guardrail with
 CSS sharing alone, copied markup, copied controller logic, or an informal visual
 match.

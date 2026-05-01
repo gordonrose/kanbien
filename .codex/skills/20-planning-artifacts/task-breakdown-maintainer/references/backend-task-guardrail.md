@@ -1,6 +1,6 @@
 # Backend Task Guardrail
 
-Use for task type: `backend`
+Use for task type: `DEV:backend`
 
 ## Must Preserve
 
@@ -22,19 +22,19 @@ Use for task type: `backend`
 
 ## Deep Delivery Standard
 
-- one backend behavior or backend seam per queued task
-- split migration/persistence, API-contract, permission-mapping, and
-  data-dictionary work into separate tasks when they have distinct proof or
+- one DEV:backend behavior or DEV:backend seam per queued task
+- split DEV:migration-persistence, DOC:api-contract, DOC:permission-mapping, and
+  DOC:data-dictionary work into separate tasks when they have distinct proof or
   write sets
 - do not combine implementation with evidence sweep or source-independent
-  artifact audit work unless the task is explicitly docs-artifact or
-  QA/evidence
+  artifact audit work unless the task is explicitly DOC:docs-artifact or
+  EVIDENCE:qa-evidence
 - name the exact repository, service, route, migration, and test context to
   inspect before editing
 
 ## Backend Implementation Approach
 
-Queued backend tasks must specify the feature-local implementation approach
+Queued DEV:backend tasks must specify the feature-local implementation approach
 before Delivery starts:
 
 - prefer the established feature structure:

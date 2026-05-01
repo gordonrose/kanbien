@@ -1,12 +1,12 @@
 # Permission Mapping Task Guardrail
 
-Use for task type: `permission-mapping`
+Use for task type: `DOC:permission-mapping`
 
 ## Must Preserve
 
 - capability keys, root/tenant/shared-cross-tenant boundary, grants, deny rules,
   and object-level rules when relevant
-- migration-backed role grants for protected backend behavior
+- migration-backed role grants for protected DEV:backend behavior
 - current tenant context remains exactly one context per request
 
 ## Approval Evidence

@@ -41,11 +41,11 @@ or Technical Steering architecture.
 
 4. Split into isolated tasks.
    Assign stable task IDs and one task type per task. Use separate tasks for
-   backend, frontend, vertical-slice, docs-artifact, test-only,
-   test-suite-alignment, refactor-first, architecture-foundation,
-   standards-compliance, platform-seam,
-   migration/persistence, design-system, API-contract, permission-mapping,
-   data-dictionary, and QA/evidence work when those concerns have distinct
+   DEV:backend, DEV:frontend, DEV:vertical-slice, DOC:docs-artifact, TEST:test-only,
+   TEST:test-suite-alignment, DECISION:refactor-first, DECISION:architecture-foundation,
+   DOC:standards-compliance, DEV:platform-seam,
+   DEV:migration-persistence, DEV:design-system, DOC:api-contract, DOC:permission-mapping,
+   DOC:data-dictionary, and EVIDENCE:qa-evidence work when those concerns have distinct
    write sets or proof.
 
 5. Define task boundaries.
@@ -68,28 +68,28 @@ or Technical Steering architecture.
    task, and which product, design, architecture, source-truth, or proof
    decisions must not be guessed.
 
-5D. Split complex frontend and design-system work by sub-standard.
+5D. Split complex DEV:frontend and DEV:design-system work by sub-standard.
    When independently meaningful, split fixture/data contracts, visual
    rendering, interaction behavior, accessibility semantics, and evidence sweep
-   into separate tasks. Each queued frontend, design-system, or frontend-facing
-   vertical-slice task must name a primary sub-standard and the compliance proof
+   into separate tasks. Each queued DEV:frontend, DEV:design-system, or frontend-facing
+   DEV:vertical-slice task must name a primary sub-standard and the compliance proof
    expected for that sub-standard.
 
 5E. Lock the design-system-to-frontend seam.
-   A design-system task is not ready merely because it renders in
+   A DEV:design-system task is not ready merely because it renders in
    `/design-system`; it must produce, refine, or prove a named consumable seam
-   for future frontend tasks. A frontend task that touches governed UI must
-   consume the signed-off design-system render, behavior, and accessibility seam
+   for future DEV:frontend tasks. A DEV:frontend task that touches governed UI must
+   consume the signed-off DEV:design-system render, behavior, and accessibility seam
    or record an approved exception. If the seam does not exist, block the
-   frontend task and create design-system work first. When a frontend task
+   DEV:frontend task and create DEV:design-system work first. When a DEV:frontend task
    consumes an existing seam, fill the Frontend Adoption Contract with the
    consumed render, controller/behavior, accessibility, and style/CSS seams,
    allowed app-local composition/data binding, prohibited local reconstruction,
    and the adoption proof route or scenario.
 
-5F. Package frontend security and runtime evidence.
-   For queued `frontend`, `design-system`, and frontend-facing
-   `vertical-slice` tasks, copy the relevant Layer 2/3 Browser Security
+5F. Package DEV:frontend security and runtime evidence.
+   For queued `DEV:frontend`, `DEV:design-system`, and frontend-facing
+   `DEV:vertical-slice` tasks, copy the relevant Layer 2/3 Browser Security
    Posture rows into Frontend Security Evidence. If Layer 2/3 says a browser
    security area is present, require the matching Layer 4 evidence row or block.
    Do not invent a security posture in Layer 4. For sensitive rendering,
@@ -99,10 +99,10 @@ or Technical Steering architecture.
    evidence or explicit unavailable reason, and a mock-honesty statement.
    Rendered proof based only on mocks without contract/runtime tie blocks.
 
-5G. Classify frontend performance posture.
-   For queued `frontend`, `design-system`, and frontend-facing
-   `vertical-slice` tasks, add a Frontend Performance Posture row. Layer 4
-   classifies delivery proof posture only; it does not invent Layer 2 frontend
+5G. Classify DEV:frontend performance posture.
+   For queued `DEV:frontend`, `DEV:design-system`, and frontend-facing
+   `DEV:vertical-slice` tasks, add a Frontend Performance Posture row. Layer 4
+   classifies delivery proof posture only; it does not invent Layer 2 DEV:frontend
    architecture decisions or broaden task scope. `unknown-blocked` blocks
    queueing. Require posture-matched proof such as render-proof sufficiency,
    no repeated work/fetch loop, bounded data/list DOM proof, route init/load
@@ -110,30 +110,30 @@ or Technical Steering architecture.
    timing, reduced-motion behavior, or concrete not-applicable rationale.
 
 5H. Gate vertical slices.
-   Use `vertical-slice` only when one journey behavior requires backend and
-   frontend proof together. Fill the Vertical Slice Coupling row before
-   queueing. If backend/API, frontend render, design-system, migration,
+   Use `DEV:vertical-slice` only when one journey behavior requires DEV:backend and
+   DEV:frontend proof together. Fill the Vertical Slice Coupling row before
+   queueing. If DEV:backend/API, DEV:frontend render, DEV:design-system, migration,
    permission, runtime evidence, or artifact work can be proven separately,
    split it into the matching task type instead of hiding it in a vertical
    slice.
 
-5I. Gate test-only tasks.
-   Use `test-only` for PRD-derived `TC-*` implementation, isolated proof-gap
+5I. Gate TEST:test-only tasks.
+   Use `TEST:test-only` for PRD-derived `TC-*` implementation, isolated proof-gap
    tests, security/permutation matrix tests, or e2e journey tests. Fill the
    Test-Only Coverage Contract before queueing. If the task is privileged,
    root-admin, tenant-boundary, authz, sensitive-rendering, asset, lifecycle,
    or otherwise security-sensitive, also fill the Capability Permission / State
-   Matrix with allowed and denied coverage. Do not use `test-only` when
+   Matrix with allowed and denied coverage. Do not use `TEST:test-only` when
    production behavior must change; split that work into the owning
    implementation task type.
 
 5J. Gate test-suite alignment tasks.
-   Use `test-suite-alignment` when existing tests, PRD test cases, QA backlog
+   Use `TEST:test-suite-alignment` when existing tests, PRD test cases, QA backlog
    rows, journey IDs, traceability output, or standards expectations need to be
    reconciled without changing product behavior. Fill the Test Suite Alignment
    Contract before queueing. Keep the task to one feature, route family,
    test-case document, or mismatch family. If the task discovers missing
-   executable proof, split that work into `test-only`; if it discovers missing
+   executable proof, split that work into `TEST:test-only`; if it discovers missing
    product, design, architecture, permission, lifecycle, or security behavior,
    split to the owning task type instead of rewriting documentation to fit the
    current implementation.
@@ -157,7 +157,7 @@ or Technical Steering architecture.
    reuse. When placement is `shared-lib`, `stay-put`, or extraction is `yes`,
    require `shared-code-placement-task-guardrail.md` as a supplemental
    guardrail reference. Extraction `yes` must also have a separate
-   `refactor-first` or `platform-seam` dependency before dependent
+   `DECISION:refactor-first` or `DEV:platform-seam` dependency before dependent
    implementation work can queue.
 
 8. Set branch and bootstrap strategy.
@@ -168,13 +168,13 @@ or Technical Steering architecture.
 8A. Classify write sets and forbidden work.
    Classify each allowed write path or path pattern and convert non-goals into
    explicit forbidden-work rows before queueing.
-   Prefer exact files or narrow path patterns. Broad frontend and design-system
+   Prefer exact files or narrow path patterns. Broad DEV:frontend and DEV:design-system
    write envelopes block queued implementation tasks unless the task is
    explicitly a broad audit, migration, generated/canonical sweep, or otherwise
    has strong written rationale.
 
 9. Preserve blockers.
-   Put refactor-first and architecture-foundation findings into their own
+   Put DECISION:refactor-first and DECISION:architecture-foundation findings into their own
    tasks. Do not hide them inside feature work or mark dependent feature tasks
    queued while those blockers remain.
 
@@ -194,7 +194,7 @@ or Technical Steering architecture.
 - Do not use vague task scopes such as "implement feature", "wire up", "clean
   up", "handle errors", "add tests", "update docs", "as needed", or "etc.".
 - Do not create broad cleanup tasks unless cleanup is the approved story or a
-  separate refactor-first task.
+  separate DECISION:refactor-first task.
 - Do not let Delivery rediscover artifact obligations; carry the ledger into
   tasks.
 - Do not queue implementation tasks when required capability rows are missing.

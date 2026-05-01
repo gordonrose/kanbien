@@ -733,6 +733,7 @@ export function validateTaskBreakdownContent(
   for (const task of tasks) {
     validateTaskRow(task, selectedStoryIds, errors);
     validateTaskReferences(task.taskId, taskIds, errors);
+    validateTaskCategoryBoundary(task, errors);
 
     validateAcCoverage(task, acCoverageByTask.get(task.taskId) ?? [], sourceAcsById, selectedStoryIds, errors);
     validateDeepDeliveryReadiness(
@@ -1012,7 +1013,7 @@ function validateFrontendArchitectureDecision(
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued frontend/design-system task has no frontend architecture decision row`);
+    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no DEV:frontend architecture decision row`);
     return;
   }
 
@@ -1061,41 +1062,41 @@ function validateFrontendArchitectureDecision(
 
     const sourceRow = sourceRowsByScope.get(row.sourceScopeElement);
     if (!sourceRow) {
-      errors.push(`${task.taskId} frontend architecture decision references unknown Layer 2/3 scope: ${row.sourceScopeElement || "(blank)"}`);
+      errors.push(`${task.taskId} DEV:frontend architecture decision references unknown Layer 2/3 scope: ${row.sourceScopeElement || "(blank)"}`);
     } else {
       validateFrontendArchitectureMatchesSource(task.taskId, row, sourceRow, errors);
     }
 
     if (row.implementationReadiness.startsWith("blocked-on")) {
-      errors.push(`${task.taskId} frontend architecture decision readiness is ${row.implementationReadiness}`);
+      errors.push(`${task.taskId} DEV:frontend architecture decision readiness is ${row.implementationReadiness}`);
     }
 
-    if ((task.taskType === "frontend" || task.taskType === "design-system") && row.routeFamily === "not-applicable") {
-      errors.push(`${task.taskId} ${task.taskType} task must consume a frontend architecture classification, not not-applicable`);
+    if ((task.taskType === "DEV:frontend" || task.taskType === "DEV:design-system") && row.routeFamily === "not-applicable") {
+      errors.push(`${task.taskId} ${task.taskType} task must consume a DEV:frontend architecture classification, not not-applicable`);
     }
 
-    if (task.taskType === "frontend" && row.designSystemPrerequisite === "DS-task-required") {
-      errors.push(`${task.taskId} frontend task cannot proceed while Layer 2 requires upstream design-system work`);
+    if (task.taskType === "DEV:frontend" && row.designSystemPrerequisite === "DS-task-required") {
+      errors.push(`${task.taskId} DEV:frontend task cannot proceed while Layer 2 requires upstream DEV:design-system work`);
     }
 
     if (row.authorityTransitionPosture === "blocked-until-transition") {
-      errors.push(`${task.taskId} frontend topology authority transition blocks delivery`);
+      errors.push(`${task.taskId} DEV:frontend topology authority transition blocks delivery`);
     }
 
     if (
-      task.taskType === "frontend" &&
+      task.taskType === "DEV:frontend" &&
       (row.topologyClass === "durable-page" || row.topologyClass === "durable-subroute") &&
       row.locatorType === "none"
     ) {
-      errors.push(`${task.taskId} durable frontend topology requires a non-none locator type`);
+      errors.push(`${task.taskId} durable DEV:frontend topology requires a non-none locator type`);
     }
 
-    if (task.taskType === "frontend" && row.locatorType === "migration" && !mentionsCompatibilityLocator(row.compatibilityLocators)) {
-      errors.push(`${task.taskId} frontend locator migration must name compatibility locators`);
+    if (task.taskType === "DEV:frontend" && row.locatorType === "migration" && !mentionsCompatibilityLocator(row.compatibilityLocators)) {
+      errors.push(`${task.taskId} DEV:frontend locator migration must name compatibility locators`);
     }
 
     if (row.sourcePlacement === "generated-output" && row.materializationModel !== "preview-apply-required") {
-      errors.push(`${task.taskId} generated frontend output requires preview-apply materialization`);
+      errors.push(`${task.taskId} generated DEV:frontend output requires preview-apply materialization`);
     }
 
     if (
@@ -1103,7 +1104,7 @@ function validateFrontendArchitectureDecision(
       row.materializationModel === "preview-apply-required" &&
       !mentionsPreviewApplyOrMaterializationSeam(task, row, contextRows, envelopeRows)
     ) {
-      errors.push(`${task.taskId} generated frontend output must name the preview/apply or materialization seam`);
+      errors.push(`${task.taskId} generated DEV:frontend output must name the preview/apply or materialization seam`);
     }
 
     if (
@@ -1111,7 +1112,7 @@ function validateFrontendArchitectureDecision(
       mentionsGeneratedOutputHandEdit(task.allowedWriteSet, envelopeRows.map((envelope) => envelope.exactFilesOrPatterns).join(" ")) &&
       !mentionsApprovedGeneratedCanonicalSweep(task.scope, task.nonGoals, task.allowedWriteSet, envelopeRows.map((envelope) => envelope.broadWriteRationale).join(" "))
     ) {
-      errors.push(`${task.taskId} generated frontend output cannot be hand-edited without an approved generated/canonical sweep rationale`);
+      errors.push(`${task.taskId} generated DEV:frontend output cannot be hand-edited without an approved generated/canonical sweep rationale`);
     }
 
     if (row.sourcePlacement === "shell-route-registry" && mentionsPageJourneyBehaviorOwnership(task.scope, task.allowedWriteSet)) {
@@ -1126,16 +1127,16 @@ function validateFrontendArchitectureDecision(
       errors.push(`${task.taskId} module-journey-files placement must include the approved product module/journey group in the allowed write paths or give concrete path-unknown rationale`);
     }
 
-    if (task.taskType === "frontend" && row.stateOwner === "never-serialize" && mentionsUrlOrReplayState(task.scope, task.allowedWriteSet)) {
-      errors.push(`${task.taskId} never-serialize frontend state must not be placed in URL or replay payloads`);
+    if (task.taskType === "DEV:frontend" && row.stateOwner === "never-serialize" && mentionsUrlOrReplayState(task.scope, task.allowedWriteSet)) {
+      errors.push(`${task.taskId} never-serialize DEV:frontend state must not be placed in URL or replay payloads`);
     }
 
     if (
-      task.taskType === "frontend" &&
+      task.taskType === "DEV:frontend" &&
       row.sourcePlacement === "module-journey-files" &&
       mentionsRootAdminShellEntry(task.allowedWriteSet)
     ) {
-      errors.push(`${task.taskId} module/journey frontend work must not add behavior to rootAdminShell/assets/app.mjs`);
+      errors.push(`${task.taskId} module/journey DEV:frontend work must not add behavior to rootAdminShell/assets/app.mjs`);
     }
   }
 }
@@ -1172,7 +1173,7 @@ function validateFrontendArchitectureMatchesSource(
   for (const [taskField, sourceField, label] of fields) {
     if (row[taskField] !== sourceRow[sourceField]) {
       errors.push(
-        `${taskId} frontend architecture ${label} does not match Layer 2/3 snapshot for ${sourceRow.scopeElement}`,
+        `${taskId} DEV:frontend architecture ${label} does not match Layer 2/3 snapshot for ${sourceRow.scopeElement}`,
       );
     }
   }
@@ -1184,31 +1185,31 @@ function validateFrontendSubStandard(task: TaskRow, rows: FrontendSubStandardRow
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued frontend/design-system task has no sub-standard row`);
+    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no sub-standard row`);
     return;
   }
 
   for (const row of rows) {
     if (!allowedFrontendDesignSystemSubStandards.has(row.primarySubStandard)) {
-      errors.push(`${task.taskId} has invalid frontend/design-system sub-standard: ${row.primarySubStandard || "(blank)"}`);
+      errors.push(`${task.taskId} has invalid DEV:frontend/DEV:design-system sub-standard: ${row.primarySubStandard || "(blank)"}`);
     }
 
     validateRequiredField(task.taskId, "Additional Sub-Standards", row.additionalSubStandards, errors);
     validateRequiredField(task.taskId, "Frontend / Design-System Split Rationale", row.splitRationale, errors);
     validateRequiredField(task.taskId, "Frontend / Design-System Compliance Proof", row.complianceProof, errors);
 
-    if (row.primarySubStandard === "not-applicable" && task.taskType !== "vertical-slice") {
-      errors.push(`${task.taskId} ${task.taskType} task must name a frontend/design-system sub-standard`);
+    if (row.primarySubStandard === "not-applicable" && task.taskType !== "DEV:vertical-slice") {
+      errors.push(`${task.taskId} ${task.taskType} task must name a DEV:frontend/DEV:design-system sub-standard`);
     }
 
     if (row.primarySubStandard === "not-applicable" && !mentionsNotApplicableRationale(row.splitRationale, row.complianceProof)) {
-      errors.push(`${task.taskId} not-applicable frontend/design-system sub-standard requires concrete rationale`);
+      errors.push(`${task.taskId} not-applicable DEV:frontend/DEV:design-system sub-standard requires concrete rationale`);
     }
 
     validateFrontendSubStandardProof(task.taskId, row, errors);
 
     if (hasMeaningfulAdditionalSubStandards(row.additionalSubStandards) && !mentionsInseparable(row.splitRationale, "")) {
-      errors.push(`${task.taskId} has additional frontend/design-system sub-standards without inseparable split rationale`);
+      errors.push(`${task.taskId} has additional DEV:frontend/DEV:design-system sub-standards without inseparable split rationale`);
     }
   }
 }
@@ -1250,7 +1251,7 @@ function validateFrontendPerformancePosture(task: TaskRow, rows: FrontendPerform
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued frontend/design-system task has no performance posture row`);
+    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no performance posture row`);
     return;
   }
 
@@ -1260,17 +1261,17 @@ function validateFrontendPerformancePosture(task: TaskRow, rows: FrontendPerform
     validateRequiredField(task.taskId, "Frontend Performance Rationale", row.rationale, errors);
 
     if (!allowedFrontendPerformancePostures.has(row.posture)) {
-      errors.push(`${task.taskId} has invalid frontend performance posture: ${row.posture || "(blank)"}`);
+      errors.push(`${task.taskId} has invalid DEV:frontend performance posture: ${row.posture || "(blank)"}`);
       continue;
     }
 
     if (row.posture === "unknown-blocked") {
-      errors.push(`${task.taskId} frontend performance posture unknown-blocked cannot be queued for delivery`);
+      errors.push(`${task.taskId} DEV:frontend performance posture unknown-blocked cannot be queued for delivery`);
       continue;
     }
 
     if (row.posture === "not-applicable" && !mentionsNotApplicableRationale(row.rationale, row.proofPlan)) {
-      errors.push(`${task.taskId} not-applicable frontend performance posture requires concrete rationale`);
+      errors.push(`${task.taskId} not-applicable DEV:frontend performance posture requires concrete rationale`);
     }
 
     validateFrontendPerformanceProof(task.taskId, row, errors);
@@ -1315,7 +1316,7 @@ function validateDesignSystemSeamContract(task: TaskRow, rows: DesignSystemSeamC
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued frontend/design-system task has no design-system seam contract row`);
+    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no DEV:design-system seam contract row`);
     return;
   }
 
@@ -1329,23 +1330,23 @@ function validateDesignSystemSeamContract(task: TaskRow, rows: DesignSystemSeamC
     validateRequiredField(task.taskId, "Frontend Consumption Contract", row.frontendConsumptionContract, errors);
 
     if (!allowedDesignSystemSeamPostures.has(row.seamPosture)) {
-      errors.push(`${task.taskId} has invalid design-system seam posture: ${row.seamPosture || "(blank)"}`);
+      errors.push(`${task.taskId} has invalid DEV:design-system seam posture: ${row.seamPosture || "(blank)"}`);
     }
 
-    if (task.taskType === "design-system" && !isDesignSystemProducerPosture(row.seamPosture)) {
-      errors.push(`${task.taskId} design-system task must produce, refine, or prove a consumable seam`);
+    if (task.taskType === "DEV:design-system" && !isDesignSystemProducerPosture(row.seamPosture)) {
+      errors.push(`${task.taskId} DEV:design-system task must produce, refine, or prove a consumable seam`);
     }
 
-    if (task.taskType === "frontend" && !isFrontendConsumerPosture(row.seamPosture)) {
-      errors.push(`${task.taskId} frontend task must consume an existing design-system seam or record an approved exception`);
+    if (task.taskType === "DEV:frontend" && !isFrontendConsumerPosture(row.seamPosture)) {
+      errors.push(`${task.taskId} DEV:frontend task must consume an existing DEV:design-system seam or record an approved exception`);
     }
 
-    if (task.taskType === "vertical-slice" && row.seamPosture === "blocks-on-missing-seam") {
-      errors.push(`${task.taskId} queued vertical-slice task cannot proceed with a missing design-system seam`);
+    if (task.taskType === "DEV:vertical-slice" && row.seamPosture === "blocks-on-missing-seam") {
+      errors.push(`${task.taskId} queued DEV:vertical-slice task cannot proceed with a missing DEV:design-system seam`);
     }
 
     if (row.seamPosture !== "not-applicable" && !mentionsDesignSystemSeam(row.seamNameExportRoute, row.frontendConsumptionContract)) {
-      errors.push(`${task.taskId} design-system seam contract must name a consumable route, export, component, or controller seam`);
+      errors.push(`${task.taskId} DEV:design-system seam contract must name a consumable route, export, component, or controller seam`);
     }
   }
 }
@@ -1356,7 +1357,7 @@ function validateFrontendAdoptionContract(
   rows: FrontendAdoptionContractRow[],
   errors: string[],
 ): void {
-  if (task.taskType !== "frontend") {
+  if (task.taskType !== "DEV:frontend") {
     return;
   }
 
@@ -1366,7 +1367,7 @@ function validateFrontendAdoptionContract(
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} frontend task consuming an existing design-system seam must have a frontend adoption contract row`);
+    errors.push(`${task.taskId} DEV:frontend task consuming an existing DEV:design-system seam must have a DEV:frontend adoption contract row`);
     return;
   }
 
@@ -1425,12 +1426,12 @@ function validateFrontendSecurityEvidence(
   }
 
   if (sourceRows.length === 0) {
-    errors.push(`${task.taskId} queued frontend/design-system task has no Layer 2/3 browser security posture snapshot`);
+    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no Layer 2/3 browser security posture snapshot`);
     return;
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued frontend/design-system task has no frontend security evidence row`);
+    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no DEV:frontend security evidence row`);
     return;
   }
 
@@ -1447,7 +1448,7 @@ function validateFrontendSecurityEvidence(
     if (source.present === "yes" || source.stopIfMissing === "yes") {
       const row = rowsByArea.get(source.securityArea);
       if (!row) {
-        errors.push(`${task.taskId} missing frontend security evidence for ${source.securityArea}`);
+        errors.push(`${task.taskId} missing DEV:frontend security evidence for ${source.securityArea}`);
       }
     }
   }
@@ -1468,24 +1469,24 @@ function validateFrontendSecurityEvidence(
 
     const source = sourceByArea.get(row.securityArea);
     if (!source) {
-      errors.push(`${task.taskId} frontend security evidence invents Layer 2 posture for ${row.securityArea}`);
+      errors.push(`${task.taskId} DEV:frontend security evidence invents Layer 2 posture for ${row.securityArea}`);
       continue;
     }
 
     if (row.sourcePresent !== source.present) {
-      errors.push(`${task.taskId} frontend security evidence for ${row.securityArea} does not match Layer 2/3 present value`);
+      errors.push(`${task.taskId} DEV:frontend security evidence for ${row.securityArea} does not match Layer 2/3 present value`);
     }
 
     if (row.layer2DecisionEvidence !== source.decisionEvidence) {
-      errors.push(`${task.taskId} frontend security evidence for ${row.securityArea} does not match Layer 2/3 decision evidence`);
+      errors.push(`${task.taskId} DEV:frontend security evidence for ${row.securityArea} does not match Layer 2/3 decision evidence`);
     }
 
     if (row.requiredLayer4Signal !== source.requiredLayer4Signal) {
-      errors.push(`${task.taskId} frontend security evidence for ${row.securityArea} does not match Layer 2/3 required Layer 4 signal`);
+      errors.push(`${task.taskId} DEV:frontend security evidence for ${row.securityArea} does not match Layer 2/3 required Layer 4 signal`);
     }
 
     if (source.present === "yes" && !mentionsRuntimeEvidence(row.layer4EvidencePlan)) {
-      errors.push(`${task.taskId} frontend security evidence for ${row.securityArea} must name proof or runtime evidence`);
+      errors.push(`${task.taskId} DEV:frontend security evidence for ${row.securityArea} must name proof or runtime evidence`);
     }
   }
 }
@@ -1518,7 +1519,7 @@ function validateFrontendPermissionRenderingEvidence(
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} renders sensitive frontend data but has no permission rendering evidence row`);
+    errors.push(`${task.taskId} renders sensitive DEV:frontend data but has no permission rendering evidence row`);
     return;
   }
 
@@ -1561,7 +1562,7 @@ function validateFrontendRuntimeDataMockHonesty(
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued frontend/design-system task has no runtime data and mock-honesty row`);
+    errors.push(`${task.taskId} queued DEV:frontend/DEV:design-system task has no runtime data and mock-honesty row`);
     return;
   }
 
@@ -1594,12 +1595,12 @@ function validateVerticalSliceCoupling(
   rows: VerticalSliceCouplingRow[],
   errors: string[],
 ): void {
-  if (task.taskType !== "vertical-slice") {
+  if (task.taskType !== "DEV:vertical-slice") {
     return;
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued vertical-slice task has no vertical slice coupling row`);
+    errors.push(`${task.taskId} queued DEV:vertical-slice task has no vertical slice coupling row`);
     return;
   }
 
@@ -1618,7 +1619,7 @@ function validateVerticalSliceCoupling(
     validateRequiredField(task.taskId, "Vertical Slice Split Rejection Rationale", row.splitRejectionRationale, errors);
 
     if (!mentionsInseparable(row.inseparableProofRationale, row.splitRejectionRationale)) {
-      errors.push(`${task.taskId} vertical slice must explain why backend and frontend proof are inseparable`);
+      errors.push(`${task.taskId} vertical slice must explain why DEV:backend and DEV:frontend proof are inseparable`);
     }
 
     if (!mentionsJourneyBehavior(row.journeyBehavior, row.browserProofStory)) {
@@ -1626,7 +1627,7 @@ function validateVerticalSliceCoupling(
     }
 
     if (!mentionsBackendAndFrontendSeams(row.backendSeam, row.frontendSeam)) {
-      errors.push(`${task.taskId} vertical slice must name both backend and frontend seams`);
+      errors.push(`${task.taskId} vertical slice must name both DEV:backend and DEV:frontend seams`);
     }
 
     if (!mentionsContractOrPayload(row.apiDataContract)) {
@@ -1644,12 +1645,12 @@ function validateBackendImplementationApproach(
   rows: BackendImplementationApproachRow[],
   errors: string[],
 ): void {
-  if (task.taskType !== "backend") {
+  if (task.taskType !== "DEV:backend") {
     return;
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued backend task has no backend implementation approach row`);
+    errors.push(`${task.taskId} queued DEV:backend task has no DEV:backend implementation approach row`);
     return;
   }
 
@@ -1667,15 +1668,15 @@ function validateBackendImplementationApproach(
     );
 
     if (!allowedBackendCapabilityFileStrategies.has(row.capabilityFileStrategy)) {
-      errors.push(`${task.taskId} has invalid backend capability file strategy: ${row.capabilityFileStrategy || "(blank)"}`);
+      errors.push(`${task.taskId} has invalid DEV:backend capability file strategy: ${row.capabilityFileStrategy || "(blank)"}`);
     }
 
     if (!mentionsBackendFeatureOwner(row.featureOwner)) {
-      errors.push(`${task.taskId} backend feature owner should name a src/features/<featureName> owner`);
+      errors.push(`${task.taskId} DEV:backend feature owner should name a src/features/<featureName> owner`);
     }
 
     if (row.capabilityFileStrategy === "not-applicable-with-rationale" && !mentionsNotApplicableRationale(row.expectedFilesLayers, row.layerResponsibilities)) {
-      errors.push(`${task.taskId} backend not-applicable capability strategy needs rationale`);
+      errors.push(`${task.taskId} DEV:backend not-applicable capability strategy needs rationale`);
     }
   }
 }
@@ -1685,12 +1686,12 @@ function validateMigrationPersistenceApproach(
   rows: MigrationPersistenceApproachRow[],
   errors: string[],
 ): void {
-  if (task.taskType !== "migration/persistence") {
+  if (task.taskType !== "DEV:migration-persistence") {
     return;
   }
 
   if (rows.length === 0) {
-    errors.push(`${task.taskId} queued migration/persistence task has no migration / persistence approach row`);
+    errors.push(`${task.taskId} queued DEV:migration-persistence task has no migration / persistence approach row`);
     return;
   }
 
@@ -1706,11 +1707,11 @@ function validateMigrationPersistenceApproach(
     validateRequiredField(task.taskId, "Postgres Harness Impact", row.postgresHarnessImpact, errors);
 
     if (!allowedMigrationPersistenceChangeTypes.has(row.changeType)) {
-      errors.push(`${task.taskId} has invalid migration/persistence change type: ${row.changeType || "(blank)"}`);
+      errors.push(`${task.taskId} has invalid DEV:migration-persistence change type: ${row.changeType || "(blank)"}`);
     }
 
     if (row.changeType === "not-applicable-with-rationale" && !mentionsNotApplicableRationale(row.liveSchemaCheck, row.migrationIdentityPosture)) {
-      errors.push(`${task.taskId} migration/persistence not-applicable change type needs rationale`);
+      errors.push(`${task.taskId} DEV:migration-persistence not-applicable change type needs rationale`);
     }
 
     if (
@@ -1741,7 +1742,7 @@ function validateTightWriteEnvelope(task: TaskRow, rows: TightWriteEnvelopeRow[]
     }
 
     if (isBroadFrontendWriteEnvelope(task, row) && !isApprovedBroadFrontendEnvelope(task, row)) {
-      errors.push(`${task.taskId} has broad frontend/design-system write envelope without approved broad-scope rationale`);
+      errors.push(`${task.taskId} has broad DEV:frontend/DEV:design-system write envelope without approved broad-scope rationale`);
     }
   }
 }
@@ -1776,12 +1777,12 @@ function validateTestOnlyCoverage(
   matrixRows: CapabilityPermissionStateMatrixRow[],
   errors: string[],
 ): void {
-  if (task.taskType !== "test-only") {
+  if (task.taskType !== "TEST:test-only") {
     return;
   }
 
   if (coverageRows.length === 0) {
-    errors.push(`${task.taskId} queued test-only task has no test-only coverage contract row`);
+    errors.push(`${task.taskId} queued TEST:test-only task has no TEST:test-only coverage contract row`);
     return;
   }
 
@@ -1803,30 +1804,30 @@ function validateTestOnlyCoverage(
     validateRequiredField(task.taskId, "Focused Command", row.focusedCommand, errors);
 
     if (!mentionsTraceabilityId(row.traceabilityIds)) {
-      errors.push(`${task.taskId} test-only task must name approved TC-* or AC-* traceability IDs`);
+      errors.push(`${task.taskId} TEST:test-only task must name approved TC-* or AC-* traceability IDs`);
     }
 
     if (!mentionsConcreteTestLayer(row.testLayer)) {
-      errors.push(`${task.taskId} test-only task must name a concrete test layer`);
+      errors.push(`${task.taskId} TEST:test-only task must name a concrete test layer`);
     }
 
     if (!mentionsMockHonesty(row.mockRuntimeHonesty)) {
-      errors.push(`${task.taskId} test-only task must include mock-honesty or runtime-data evidence`);
+      errors.push(`${task.taskId} TEST:test-only task must include mock-honesty or runtime-data evidence`);
     }
 
     if (row.productionBehaviorChangePosture === "blocked-production-change-required") {
-      errors.push(`${task.taskId} test-only task cannot queue when production behavior changes are required`);
+      errors.push(`${task.taskId} TEST:test-only task cannot queue when production behavior changes are required`);
     } else if (!mentionsNoProductionBehaviorChange(row.productionBehaviorChangePosture)) {
-      errors.push(`${task.taskId} test-only task must declare no production behavior change or test-harness-only posture`);
+      errors.push(`${task.taskId} TEST:test-only task must declare no production behavior change or test-harness-only posture`);
     }
 
     if (isBroadOnlyCommand(row.focusedCommand)) {
-      errors.push(`${task.taskId} test-only task must name a focused test command, not only a broad suite`);
+      errors.push(`${task.taskId} TEST:test-only task must name a focused test command, not only a broad suite`);
     }
   }
 
   if (matrixRequired && matrixRows.length === 0) {
-    errors.push(`${task.taskId} privileged/security-sensitive test-only task has no capability permission/state matrix row`);
+    errors.push(`${task.taskId} privileged/security-sensitive TEST:test-only task has no capability permission/state matrix row`);
     return;
   }
 
@@ -1859,12 +1860,12 @@ function validateTestSuiteAlignment(
   alignmentRows: TestSuiteAlignmentContractRow[],
   errors: string[],
 ): void {
-  if (task.taskType !== "test-suite-alignment") {
+  if (task.taskType !== "TEST:test-suite-alignment") {
     return;
   }
 
   if (alignmentRows.length === 0) {
-    errors.push(`${task.taskId} queued test-suite-alignment task has no test suite alignment contract row`);
+    errors.push(`${task.taskId} queued TEST:test-suite-alignment task has no test suite alignment contract row`);
     return;
   }
 
@@ -1879,37 +1880,37 @@ function validateTestSuiteAlignment(
     validateRequiredField(task.taskId, "Completion Evidence", row.completionEvidence, errors);
 
     if (!mentionsAlignmentMismatchClass(row.mismatchClass)) {
-      errors.push(`${task.taskId} test-suite-alignment task must name an approved mismatch class`);
+      errors.push(`${task.taskId} TEST:test-suite-alignment task must name an approved mismatch class`);
     }
 
     if (!mentionsAlignmentDocumentationTarget(row.documentationTargets)) {
-      errors.push(`${task.taskId} test-suite-alignment task must name docs/prd/test_cases, QA backlog/status, or another documentation target`);
+      errors.push(`${task.taskId} TEST:test-suite-alignment task must name docs/prd/test_cases, QA backlog/status, or another documentation target`);
     }
 
     if (!mentionsAlignmentExecutableTarget(row.executableTargets)) {
-      errors.push(`${task.taskId} test-suite-alignment task must name executable test targets or a concrete not-applicable rationale`);
+      errors.push(`${task.taskId} TEST:test-suite-alignment task must name executable test targets or a concrete not-applicable rationale`);
     }
 
     if (row.allowedEditPosture === "blocked-production-change-required") {
-      errors.push(`${task.taskId} test-suite-alignment task cannot queue when production behavior changes are required`);
+      errors.push(`${task.taskId} TEST:test-suite-alignment task cannot queue when production behavior changes are required`);
     } else if (!mentionsAlignmentOnlyEditPosture(row.allowedEditPosture)) {
-      errors.push(`${task.taskId} test-suite-alignment task must restrict edits to docs and test labels/comments`);
+      errors.push(`${task.taskId} TEST:test-suite-alignment task must restrict edits to docs and test labels/comments`);
     }
 
     if (mentionsProductionCodePath(task.allowedWriteSet, row.documentationTargets, row.executableTargets)) {
-      errors.push(`${task.taskId} test-suite-alignment task must not include production code paths in its write envelope`);
+      errors.push(`${task.taskId} TEST:test-suite-alignment task must not include production code paths in its write envelope`);
     }
 
     if (!mentionsSplitNewProofDecision(row.splitDecisionForNewProof)) {
-      errors.push(`${task.taskId} test-suite-alignment task must split newly required proof into test-only or state no new proof is required`);
+      errors.push(`${task.taskId} TEST:test-suite-alignment task must split newly required proof into TEST:test-only or state no new proof is required`);
     }
 
     if (!mentionsTraceabilityCommand(row.traceabilityCommand)) {
-      errors.push(`${task.taskId} test-suite-alignment task must include npm run test:traceability or an approved traceability-equivalent command`);
+      errors.push(`${task.taskId} TEST:test-suite-alignment task must include npm run test:traceability or an approved traceability-equivalent command`);
     }
 
     if (!mentionsBeforeAfterEvidence(row.completionEvidence)) {
-      errors.push(`${task.taskId} test-suite-alignment task must define before/after traceability or alignment evidence`);
+      errors.push(`${task.taskId} TEST:test-suite-alignment task must define before/after traceability or alignment evidence`);
     }
   }
 }
@@ -2123,11 +2124,11 @@ function validateCodePlacement(
     if (extractionNeeded === "yes") {
       const extractionTasks = tasks.filter((candidate) =>
         candidate.taskId !== task.taskId &&
-        (candidate.taskType === "refactor-first" || candidate.taskType === "platform-seam")
+        (candidate.taskType === "DECISION:refactor-first" || candidate.taskType === "DEV:platform-seam")
       );
 
-      if (extractionTasks.length === 0 && task.taskType !== "refactor-first" && task.taskType !== "platform-seam") {
-        errors.push(`${task.taskId} needs separate refactor-first or platform-seam extraction task`);
+      if (extractionTasks.length === 0 && task.taskType !== "DECISION:refactor-first" && task.taskType !== "DEV:platform-seam") {
+        errors.push(`${task.taskId} needs separate DECISION:refactor-first or DEV:platform-seam extraction task`);
       }
 
       const dependencyIds = new Set(dependencyRows.flatMap((dependency) => splitIds(dependency.dependsOnTaskIds)));
@@ -2139,11 +2140,11 @@ function validateCodePlacement(
       );
 
       if (
-        task.taskType !== "refactor-first" &&
-        task.taskType !== "platform-seam" &&
+        task.taskType !== "DECISION:refactor-first" &&
+        task.taskType !== "DEV:platform-seam" &&
         (!dependsOnExtractionTask || !blocksQueueing)
       ) {
-        errors.push(`${task.taskId} extraction dependency must block queueing on a refactor-first or platform-seam task`);
+        errors.push(`${task.taskId} extraction dependency must block queueing on a DECISION:refactor-first or DEV:platform-seam task`);
       }
     }
   }
@@ -2342,6 +2343,32 @@ function validateTaskRow(task: TaskRow, selectedStoryIds: Set<string>, errors: s
 
   if (!allowedTaskStatuses.has(task.handoffStatus)) {
     errors.push(`${task.taskId} has invalid delivery handoff status: ${task.handoffStatus || "(blank)"}`);
+  }
+}
+
+function validateTaskCategoryBoundary(task: TaskRow, errors: string[]): void {
+  if (!allowedTaskTypes.has(task.taskType)) {
+    return;
+  }
+
+  if (task.taskType.startsWith("DOC:") && mentionsProductionCodePath(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} DOC task type must not own source implementation write paths`);
+  }
+
+  if (task.taskType.startsWith("TEST:") && mentionsProductionCodePath(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} TEST task type must not own production code write paths`);
+  }
+
+  if (task.taskType.startsWith("EVIDENCE:") && mentionsProductionCodePath(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} EVIDENCE task type must not patch production behavior`);
+  }
+
+  if (task.taskType.startsWith("DEV:") && mentionsBroadDocsSweep(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} DEV task type must not own broad source-independent artifact sweeps`);
+  }
+
+  if (task.taskType === "DECISION:architecture-foundation" && mentionsProductionCodePath(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} DECISION:architecture-foundation must record decisions before source implementation changes`);
   }
 }
 
@@ -2749,8 +2776,8 @@ function mentionsBackendAndFrontendSeams(backendSeam: string, frontendSeam: stri
   const backend = backendSeam.toLowerCase();
   const frontend = frontendSeam.toLowerCase();
   return (
-    (backend.includes("backend") || backend.includes("api") || backend.includes("persistence") || backend.includes("service")) &&
-    (frontend.includes("frontend") || frontend.includes("browser") || frontend.includes("render") || frontend.includes("route"))
+    (backend.includes("DEV:backend") || backend.includes("api") || backend.includes("persistence") || backend.includes("service")) &&
+    (frontend.includes("DEV:frontend") || frontend.includes("browser") || frontend.includes("render") || frontend.includes("route"))
   );
 }
 
@@ -3062,7 +3089,7 @@ function isApprovedBroadFrontendEnvelope(task: TaskRow, row: TightWriteEnvelopeR
   const rationale = row.broadWriteRationale.toLowerCase();
   return (
     row.envelopeClass === "broad-pattern-justified" &&
-    (task.taskType === "QA/evidence" ||
+    (task.taskType === "EVIDENCE:qa-evidence" ||
       rationale.includes("audit") ||
       rationale.includes("migration") ||
       rationale.includes("generated") ||
@@ -3073,10 +3100,10 @@ function isApprovedBroadFrontendEnvelope(task: TaskRow, row: TightWriteEnvelopeR
 
 function isBroadProofAllowed(task: TaskRow): boolean {
   return (
-    task.taskType === "standards-compliance" ||
-    task.taskType === "QA/evidence" ||
-    task.taskType === "docs-artifact" ||
-    task.taskType === "test-suite-alignment"
+    task.taskType === "DOC:standards-compliance" ||
+    task.taskType === "EVIDENCE:qa-evidence" ||
+    task.taskType === "DOC:docs-artifact" ||
+    task.taskType === "TEST:test-suite-alignment"
   );
 }
 
@@ -3175,10 +3202,23 @@ function mentionsProductionCodePath(...values: string[]): boolean {
   );
 }
 
+function mentionsBroadDocsSweep(...values: string[]): boolean {
+  const normalized = values.join(" ").replace(/\\/g, "/").toLowerCase();
+  return (
+    normalized.includes("docs/**") ||
+    normalized.includes("docs/workspace/**") ||
+    normalized.includes("docs/prd/**") ||
+    normalized.includes("docs/templates/**") ||
+    normalized.includes("docs/architecture/**") ||
+    normalized.includes("source-independent artifact sweep") ||
+    normalized.includes("artifact sweep")
+  );
+}
+
 function mentionsSplitNewProofDecision(value: string): boolean {
   const normalized = value.toLowerCase();
   return (
-    (normalized.includes("split") && normalized.includes("test-only")) ||
+    (normalized.includes("split") && normalized.includes("TEST:test-only")) ||
     normalized.includes("no new proof") ||
     normalized.includes("no-new-proof")
   );

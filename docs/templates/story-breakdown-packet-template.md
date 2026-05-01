@@ -6,7 +6,7 @@ direction for material work.
 Story Breakdown converts an approved steering scope into the smallest
 independently deliverable and verifiable stories. It does not replace PRDs,
 capability matrices, PRD-derived test cases, implementation blueprints, API
-contracts, data dictionaries, permission mappings, design-system governance,
+contracts, data dictionaries, permission mappings, DEV:design-system governance,
 or Delivery.
 
 Do not describe a packet as ready for Task Breakdown unless
@@ -24,7 +24,7 @@ explicitly accepted by the requester.
 - Source Technical Steering packet:
 - Related PRD:
 - Related capability matrix:
-- Related design-system, asset, ADR, or architecture artifacts:
+- Related DEV:design-system, asset, ADR, or architecture artifacts:
 - Validation command:
 - Validation status:
   `not-run | pass | blocked | not-applicable`
@@ -37,7 +37,7 @@ explicitly accepted by the requester.
 - Steering stop conditions resolved or carried as blockers:
 - Architecture invention check:
   `consumes-steering-only | proposes-new-architecture | blocked`
-- Governed frontend seam posture:
+- Governed DEV:frontend seam posture:
   `not-applicable | ready-seam | missing-seam | approved-exception | blocked`
 - Asset/security/tenant/authz/persistence/migration/compliance risks:
 - Missing source-of-truth artifacts:
@@ -56,7 +56,7 @@ Allowed classifications:
 
 - `feature-local`
 - `feature-public-seam`
-- `platform-seam`
+- `DEV:platform-seam`
 - `shared-lib-candidate`
 - `design-system-seam`
 - `architecture-foundation-required`
@@ -64,10 +64,10 @@ Allowed classifications:
 
 ## Frontend Architecture Classification Snapshot
 
-Copy the approved Layer 2 frontend architecture classification rows that affect
+Copy the approved Layer 2 DEV:frontend architecture classification rows that affect
 the story queue. Story Breakdown preserves these decisions; it does not
 re-decide route family, product module, journey group, topology, locator,
-authority, state, shell, design-system prerequisite, materialization, source
+authority, state, shell, DEV:design-system prerequisite, materialization, source
 placement, or implementation readiness.
 
 | Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
@@ -136,19 +136,19 @@ Allowed value types:
 
 Allowed delivery shapes:
 
-- `backend`
-- `frontend`
-- `vertical-slice`
-- `docs-artifact`
-- `test-only`
-- `test-suite-alignment`
-- `refactor-first`
-- `architecture-foundation`
-- `standards-compliance`
+- `DEV:backend`
+- `DEV:frontend`
+- `DEV:vertical-slice`
+- `DOC:docs-artifact`
+- `TEST:test-only`
+- `TEST:test-suite-alignment`
+- `DECISION:refactor-first`
+- `DECISION:architecture-foundation`
+- `DOC:standards-compliance`
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | needs-capability-matrix | harness-value | docs-artifact | Capability matrix normalization | As the delivery harness, I need approved stories translated into explicit capability rows so implementation cannot proceed from vague value statements. | harness | Approved capability rows exist for every story acceptance criterion. |  |
+| S-000 | needs-capability-matrix | harness-value | DOC:docs-artifact | Capability matrix normalization | As the delivery harness, I need approved stories translated into explicit capability rows so implementation cannot proceed from vague value statements. | harness | Approved capability rows exist for every story acceptance criterion. |  |
 
 ## Acceptance Criteria
 
@@ -221,8 +221,8 @@ replace the PRD-derived test-case workflow.
 
 Allowed blocker types:
 
-- `refactor-first`
-- `architecture-foundation`
+- `DECISION:refactor-first`
+- `DECISION:architecture-foundation`
 - `design-system-foundation`
 - `asset-decision`
 - `permission-model`

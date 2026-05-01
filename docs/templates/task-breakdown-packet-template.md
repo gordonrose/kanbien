@@ -94,22 +94,22 @@ task-layer rewrites.
 
 Allowed task types:
 
-- `backend`
-- `frontend`
-- `vertical-slice`
-- `docs-artifact`
-- `test-only`
-- `test-suite-alignment`
-- `refactor-first`
-- `architecture-foundation`
-- `standards-compliance`
-- `platform-seam`
-- `migration/persistence`
-- `design-system`
-- `API-contract`
-- `permission-mapping`
-- `data-dictionary`
-- `QA/evidence`
+- `DEV:backend`
+- `DEV:frontend`
+- `DEV:vertical-slice`
+- `DOC:docs-artifact`
+- `TEST:test-only`
+- `TEST:test-suite-alignment`
+- `DECISION:refactor-first`
+- `DECISION:architecture-foundation`
+- `DOC:standards-compliance`
+- `DEV:platform-seam`
+- `DEV:migration-persistence`
+- `DEV:design-system`
+- `DOC:api-contract`
+- `DOC:permission-mapping`
+- `DOC:data-dictionary`
+- `EVIDENCE:qa-evidence`
 
 Allowed delivery handoff statuses:
 
@@ -179,10 +179,10 @@ List the exact source context the implementer must inspect before editing.
 
 ## Frontend Architecture Decision Reconciliation
 
-For `frontend`, `design-system`, and frontend-affecting `vertical-slice` tasks,
-copy the relevant Layer 2 frontend architecture decisions. Layer 4 packages and
+For `DEV:frontend`, `DEV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
+copy the relevant Layer 2 DEV:frontend architecture decisions. Layer 4 packages and
 enforces these decisions; it must not invent route family, product module,
-journey group, topology, locator, authority, state, shell, design-system
+journey group, topology, locator, authority, state, shell, DEV:design-system
 prerequisite, or materialization posture.
 
 | Task ID | Source Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Source Steering Decision |
@@ -208,8 +208,8 @@ Source placement defaults:
 
 ## Frontend / Design-System Sub-Standard
 
-For `frontend`, `design-system`, and frontend-affecting `vertical-slice` tasks,
-name the primary sub-standard. Complex frontend or design-system work must
+For `DEV:frontend`, `DEV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
+name the primary sub-standard. Complex DEV:frontend or DEV:design-system work must
 split when fixture/data contracts, visual rendering, interaction behavior,
 accessibility semantics, and evidence sweep are independently meaningful.
 
@@ -239,10 +239,10 @@ Proof expectations:
 
 ## Frontend Performance Posture
 
-For queued `frontend`, `design-system`, and frontend-facing `vertical-slice`
-tasks, classify frontend performance risk. Layer 4 must not invent new
-frontend architecture decisions, but it must package enough proof for the
-primary frontend/design-system work.
+For queued `DEV:frontend`, `DEV:design-system`, and frontend-facing `DEV:vertical-slice`
+tasks, classify DEV:frontend performance risk. Layer 4 must not invent new
+DEV:frontend architecture decisions, but it must package enough proof for the
+primary DEV:frontend/design-system work.
 
 Allowed postures:
 
@@ -279,7 +279,7 @@ Proof expectations:
 
 ## Design-System Seam Contract
 
-Design-system tasks must produce, refine, or prove a seam that frontend tasks
+Design-system tasks must produce, refine, or prove a seam that DEV:frontend tasks
 can consume. Frontend tasks must consume an existing signed-off seam or record
 an approved exception; they must not recreate governed render structure,
 controller behavior, ARIA/state semantics, or page CSS locally.
@@ -299,10 +299,10 @@ Allowed seam postures:
 
 ## Frontend Adoption Contract
 
-Queued `frontend` tasks with Design-System Seam Contract posture
+Queued `DEV:frontend` tasks with Design-System Seam Contract posture
 `consumes-existing-seam` must record the exact adoption contract. Layer 4 must
 make the consumer boundary deterministic: the app may compose and bind data
-around signed-off design-system seams, but must not reconstruct governed
+around signed-off DEV:design-system seams, but must not reconstruct governed
 markup, controller behavior, ARIA/state semantics, or CSS locally.
 
 Use concrete `not-applicable:` rationale when a seam type genuinely does not
@@ -313,7 +313,7 @@ apply, such as a static render seam with no behavior/controller seam.
 
 ## Frontend Security Evidence
 
-For `frontend`, `design-system`, and frontend-affecting `vertical-slice` tasks,
+For `DEV:frontend`, `DEV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
 copy the relevant Layer 2/3 Browser Security Posture rows. Layer 4 packages and
 enforces the proof plan; it must not invent whether a browser security area is
 present. If Layer 2/3 says an area is present or `Stop If Missing` is `yes`,
@@ -337,7 +337,7 @@ Use `yes`, `no`, or `blocked` for `Source Present`.
 
 ## Frontend Permission Rendering Evidence
 
-Frontend, design-system, and frontend-facing vertical-slice tasks that render
+Frontend, DEV:design-system, and frontend-facing DEV:vertical-slice tasks that render
 privileged, tenant, user, role, asset, lifecycle, or otherwise sensitive data
 must carry permission-aware rendering proof notes. Tenant-scoped rendering must
 include cross-tenant denial proof.
@@ -347,7 +347,7 @@ include cross-tenant denial proof.
 
 ## Frontend Runtime Data And Mock Honesty
 
-Frontend, design-system, and frontend-facing vertical-slice tasks that render
+Frontend, DEV:design-system, and frontend-facing DEV:vertical-slice tasks that render
 API or projection data must tie rendered proof to the governing contract and a
 live/runtime payload, or explain why runtime payload evidence is unavailable.
 Rendered proof that uses only mocks without a contract/runtime tie blocks.
@@ -357,11 +357,11 @@ Rendered proof that uses only mocks without a contract/runtime tie blocks.
 
 ## Vertical Slice Coupling
 
-Queued `vertical-slice` tasks must prove why backend and frontend work are
+Queued `DEV:vertical-slice` tasks must prove why DEV:backend and DEV:frontend work are
 inseparable for exactly one journey behavior. Use a vertical slice only when one
 proof story must cross API/data/browser boundaries together. Split work into
-backend, frontend, design-system, migration/persistence, test-only,
-test-suite-alignment, or QA/evidence tasks when those concerns can be
+DEV:backend, DEV:frontend, DEV:design-system, DEV:migration-persistence, TEST:test-only,
+TEST:test-suite-alignment, or EVIDENCE:qa-evidence tasks when those concerns can be
 delivered and proven separately.
 
 | Task ID | Journey Behavior | Backend Seam | Frontend Seam | API / Data Contract | Browser Proof Story | Why Backend And Frontend Proof Are Inseparable | Split Rejection Rationale |
@@ -369,7 +369,7 @@ delivered and proven separately.
 
 ## Backend Implementation Approach
 
-Queued `backend` tasks must translate repo-wide architecture law into the
+Queued `DEV:backend` tasks must translate repo-wide architecture law into the
 specific implementation approach for this task without copying the full
 constitution into the packet.
 
@@ -392,7 +392,7 @@ or generated artifacts must stay aligned.
 
 ## Migration / Persistence Approach
 
-Queued `migration/persistence` tasks must name the exact persistence change
+Queued `DEV:migration-persistence` tasks must name the exact persistence change
 class, live-schema posture, source data shape validation, per-row migration
 eligibility validation, rejected-row behavior, migration identity posture, SQL
 execution semantics, representative read/write proof, and shared Postgres
@@ -422,7 +422,7 @@ migrated.
 
 ## Tight Allowed Write Envelope
 
-Prefer exact files over broad directories. Broad frontend or design-system
+Prefer exact files over broad directories. Broad DEV:frontend or DEV:design-system
 write sets are blocked by default for queued implementation tasks unless the
 task is explicitly an audit, migration, generated/canonical sweep, or another
 approved broad-scope task with strong rationale.
@@ -454,7 +454,7 @@ Allowed proof specificity statuses:
 
 ## Test-Only Coverage Contract
 
-Queued `test-only` tasks must say exactly what kind of test work they perform.
+Queued `TEST:test-only` tasks must say exactly what kind of test work they perform.
 Use this task type for PRD-derived `TC-*` implementation, isolated proof-gap
 tests, security/permutation matrix tests, or e2e journey tests. Do not use it
 when production behavior must change.
@@ -470,11 +470,11 @@ Allowed production behavior change postures:
 
 ## Test Suite Alignment Contract
 
-Queued `test-suite-alignment` tasks reconcile existing or newly discovered test
+Queued `TEST:test-suite-alignment` tasks reconcile existing or newly discovered test
 suite/documentation drift. Use this task type when PRD test cases, QA backlog
 rows, journey IDs, executable test names, traceability output, or standards
 expectations no longer line up. Do not use it to implement meaningful new
-coverage; split that work into `test-only`.
+coverage; split that work into `TEST:test-only`.
 
 Allowed mismatch classes:
 
@@ -501,7 +501,7 @@ Allowed edit postures:
 ## Capability Permission / State Matrix
 
 Privileged, root-admin, tenant-boundary, authz, sensitive-rendering, asset,
-lifecycle, and security-sensitive `test-only` tasks must carry an explicit
+lifecycle, and security-sensitive `TEST:test-only` tasks must carry an explicit
 matrix. The matrix should name the allowed path and the meaningful denied or
 edge states rather than relying on a happy-path-only test.
 
@@ -566,7 +566,7 @@ Use this section to decide whether code belongs in a feature, a platform seam,
 Allowed placement decisions:
 
 - `feature-local`
-- `platform-seam`
+- `DEV:platform-seam`
 - `shared-lib`
 - `stay-put`
 - `blocked`
@@ -585,7 +585,7 @@ Rules:
 - `shared-lib` requires evidence that the logic is generic, has no
   feature-specific contract/domain/persistence dependency, and preserves
   existing consumers
-- extraction `yes` requires a separate `refactor-first` or `platform-seam`
+- extraction `yes` requires a separate `DECISION:refactor-first` or `DEV:platform-seam`
   task and a `Task Dependencies` row that blocks the dependent task from
   queueing until extraction completes
 - `shared-lib`, `stay-put`, and extraction `yes` require
@@ -602,9 +602,9 @@ the actual diff against the approved implementation envelope.
 Allowed write classes:
 
 - `feature-local`
-- `platform-seam`
+- `DEV:platform-seam`
 - `test`
-- `docs-artifact`
+- `DOC:docs-artifact`
 - `generated-artifact`
 - `config-script`
 - `blocked`
@@ -676,8 +676,8 @@ source-independent or maintained artifacts.
 
 Allowed blocker types:
 
-- `refactor-first`
-- `architecture-foundation`
+- `DECISION:refactor-first`
+- `DECISION:architecture-foundation`
 - `design-system-foundation`
 - `asset-decision`
 - `permission-model`
@@ -686,7 +686,7 @@ Allowed blocker types:
 - `shared-seam-ownership`
 - `runtime-evidence`
 
-Refactor-first and architecture-foundation blockers must be split into their
+Refactor-first and DECISION:architecture-foundation blockers must be split into their
 own tasks. Do not hide them inside feature work.
 
 ## Layer 5 Delivery Handoff
