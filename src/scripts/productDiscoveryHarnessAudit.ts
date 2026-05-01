@@ -15,6 +15,7 @@ const checks: Check[] = [
     mustInclude: [
       "Do not call\ntools, create a packet, draft files, or inspect the repo before that first\nresponse.",
       "Do not present a grouped list of follow-up questions in the first response.",
+      "The first question must be a gentle orientation question about the normal thing",
       "Do not use a \"first-pass draft, then questions\" pattern",
     ],
     mustNotInclude: [
@@ -27,7 +28,10 @@ const checks: Check[] = [
     path: ".codex/skills/20-planning-artifacts/product-discovery-maintainer/SKILL.md",
     mustInclude: [
       "The first assistant response in Discovery Conversation Mode must be a user-facing\nmessage, not a tool call.",
+      "reassure the requester that you will walk through the requirement one step\n   at a time",
       "ask exactly one next question in the requester's everyday language",
+      "Do not start with edge cases, failure handling, session\nrevocation",
+      "First-question ladder:",
       "ask several unrelated questions in one turn during the interview",
       "Never use a \"first-pass draft, then questions\" pattern",
       "skip repo guardrails and broad sweeps, not discovery judgment",
@@ -94,6 +98,14 @@ const checks: Check[] = [
     mustNotInclude: [
       "focused product questions",
       "first question set",
+    ],
+  },
+  {
+    name: "Product Discovery README protects gentle first question",
+    path: "docs/product-discovery/README.md",
+    mustInclude: [
+      "Start with the user's normal everyday goal before asking about awkward cases.",
+      "Prepare the requester for the interview with a brief bridge",
     ],
   },
 ];

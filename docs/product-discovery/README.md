@@ -77,6 +77,17 @@ question at a time, briefly explain why it matters when needed, recommend the
 plain safest default when helpful, summarize each answer back, and confirm
 whether it should be treated as the rule before moving on.
 
+Start with the user's normal everyday goal before asking about awkward cases.
+The first question should orient around who the feature is for, what the person
+should be able to do, where they expect to do it, or what a successful first
+version looks like. Removal effects, unfinished work, historical records,
+permissions internals, and technical mechanism choices come later unless the
+requester explicitly raised them first.
+
+Prepare the requester for the interview with a brief bridge such as, "I'll walk
+through this one step at a time so we get the everyday version clear before we
+worry about awkward cases."
+
 The requester should not be expected to know platform vocabulary. Keep terms
 like Technical Steering, taxonomy, state matrix, capability, tenant, API,
 schema, persistence, migration, route, and artifact out of the interview unless

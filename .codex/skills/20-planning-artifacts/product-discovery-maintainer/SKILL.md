@@ -60,10 +60,20 @@ packet drafting, or document creation:
 1. summarize the request in plain language
 2. state the likely first outcome in human terms, such as "a clear requirement
    draft we can use for the next planning step"
-3. ask exactly one next question in the requester's everyday language
-4. briefly say why that one question matters when the reason is not obvious
-5. offer a plain-language best-practice recommendation when the requester would
+3. reassure the requester that you will walk through the requirement one step
+   at a time
+4. ask exactly one next question in the requester's everyday language
+5. briefly say why that one question matters when the reason is not obvious
+6. offer a plain-language best-practice recommendation when the requester would
    benefit from guidance
+
+The first question should be a gentle orientation question about the normal
+thing the requester wants to happen, such as who this is for, what the person
+should be able to do, where they expect to do it, or what a successful first
+version looks like. Do not start with edge cases, failure handling, session
+revocation, ownership conflicts, pending work, audit history, billing,
+permissions internals, or technical mechanism choices unless the requester
+explicitly made that the main concern.
 
 Do not produce or start producing a packet until the requester has seen this
 summary and has either answered, corrected, or explicitly deferred the first
@@ -119,6 +129,32 @@ Example first response shape:
 >
 > I ask because the safest first version is different depending on who has to
 > use it day to day.
+
+For an admin-screen change, prefer this kind of first response:
+
+> Got it. You want someone in the root admin area to open a tenant admin and
+> choose which tenants that person helps look after: add a tenant when they
+> should help with it, and remove one when they should not.
+>
+> I’ll walk through this one step at a time so we get the everyday version
+> clear before we worry about awkward cases.
+>
+> First, when the root admin opens that edit screen, what should feel like the
+> main job: choosing the tenant admin’s list of tenants, or editing their
+> personal details with tenant choice as a smaller part of the page?
+
+First-question ladder:
+
+1. Start with the normal workflow or desired first version.
+2. Then ask who may do it and where it should happen.
+3. Then ask what counts as finished or successful.
+4. Only after the basic workflow is confirmed, ask about removal effects,
+   unfinished work, historical records, notifications, and other edge cases.
+
+Avoid phrases like "tenant assignments", "active sessions", "ownership",
+"pending invitations", "audit history", "API contract", or "persist
+immediately" in the first question unless the requester used those concepts
+first.
 
 ## Draft Fast Path
 

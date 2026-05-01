@@ -391,6 +391,10 @@ and exactly one next question in the requester's everyday language. Do not call
 tools, create a packet, draft files, or inspect the repo before that first
 response. Target an immediate first response, normally under 30 seconds.
 
+The first response should also prepare the requester for the conversation in
+plain language, for example: "I'll walk through this one step at a time so we
+get the everyday version clear before we worry about awkward cases."
+
 For that conversation-only mode, do not begin by running `npm run
 git:preflight`, checking branch/worktree state, inspecting broad repo docs,
 searching for PRD/design-system implementation templates, or reporting repo
@@ -412,6 +416,14 @@ Do not present a grouped list of follow-up questions in the first response.
 Do not preface the response with process narration such as "Using Product
 Discovery mode". The user should experience the first reply as a helpful
 person summarizing their request and asking one clear next question.
+
+The first question must be a gentle orientation question about the normal thing
+the requester wants to happen, such as who this is for, what the person should
+be able to do, where they expect to do it, or what a successful first version
+looks like. Do not start with edge cases, failure handling, session revocation,
+ownership conflicts, pending work, audit history, billing, permissions
+internals, or technical mechanism choices unless the requester explicitly made
+that the main concern.
 
 After each answer, summarize what you heard in plain language, offer a simple
 best-practice recommendation when helpful, and confirm whether that summary
