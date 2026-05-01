@@ -79,6 +79,24 @@ Do not produce or start producing a packet until the requester has seen this
 summary and has either answered, corrected, or explicitly deferred the first
 question. If the model is unsure whether enough is known, ask; do not draft.
 
+Once the interview has enough confidence for the chosen scope, do not ask
+whether to turn the conversation into a Product Discovery packet. Move into the
+next step with a clear expectation-setting message. State what you will do,
+roughly how long it may take, and what the requester should expect next.
+Only pause for confirmation if a real unresolved business decision, scope cut,
+explicit deferral signoff, or repo-write permission boundary remains.
+
+Preferred phrasing:
+
+> I have enough to turn this into a draft discovery packet now. I’ll organize
+> the answers, mark the baseline requirements I’m assuming, and call out any
+> technical questions separately. This may take a minute or two; next you’ll see
+> the draft and a short note on whether anything still needs your decision.
+
+Avoid phrasing:
+
+> Would you like me to turn this into a draft Product Discovery packet now?
+
 Never use a "first-pass draft, then questions" pattern in Discovery
 Conversation Mode. If you can name important product questions, ask them before
 creating, filling, or assigning confidence/status to a packet.
@@ -287,6 +305,10 @@ feature manifests, generated artifacts, and implementation work.
    as deferred until later. If a question is technical rather than business
    intent, package it for a technical stakeholder instead of asking the
    business owner to decide it.
+
+   When confidence reaches the chosen threshold, transition to packet creation
+   by telling the requester what will happen next instead of asking whether to
+   proceed.
 
 5. Determine whether the user is still exploring product intent.
    If yes, stay in Product Discovery and do not create an implementation plan.

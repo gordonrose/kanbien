@@ -407,6 +407,13 @@ Do not create or fill a Product Discovery packet until the requester has seen
 the summary and has answered, corrected, or explicitly deferred the first
 question.
 
+Once the interview has enough confidence for the chosen scope, do not ask
+whether to turn the conversation into a Product Discovery packet. Move into the
+next step with a clear expectation-setting message. State what you will do,
+roughly how long it may take, and what the requester should expect next.
+Only pause for confirmation if a real unresolved business decision, scope cut,
+explicit deferral signoff, or repo-write permission boundary remains.
+
 Do not use a "first-pass draft, then questions" pattern for Product Discovery
 conversation mode. If important product questions are already known, ask the
 next single most useful question before creating, filling, or assigning

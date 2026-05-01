@@ -131,6 +131,13 @@ Use a strict readiness standard beneath the friendly conversation:
 - if confidence remains below the threshold, stop with a blocked or
   discovery-only packet instead of handoff
 
+When confidence reaches the chosen threshold, move into packet creation with an
+expectation-setting message rather than asking whether the requester wants a
+packet. Say what will happen next, roughly how long it may take, and what the
+requester should expect to see. Ask for confirmation only when there is a real
+unresolved business decision, scope cut, explicit deferral signoff, or repo
+write permission boundary.
+
 ## Draft Fast Path
 
 When a user explicitly asks for a draft Product Discovery packet, draft
