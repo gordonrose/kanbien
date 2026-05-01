@@ -193,7 +193,43 @@ describe("web app hierarchy builder security flows", () => {
     });
   });
 
-  it("TC-WEB-APP-HIER-SEC-006 enforces the dedicated preview, apply, and link-status capability gates", async () => {
+  it("TC-WEB-APP-HIER-SEC-006 rejects unauthenticated preview, apply, and link-status requests", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountWebAppHierarchyBuilderFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppHierarchyRepository(),
+      createStubWebAppSurfaceDiscoveryIntegrationSeam(),
+    );
+
+    const preview = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/discovery-sync/preview",
+      body: {},
+    });
+    expect(preview.status).toBe(401);
+    expect(preview.body.code).toBe("UNAUTHORIZED");
+
+    const apply = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/discovery-sync/apply",
+      body: {
+        includeInactive: false,
+        includeOrphaned: false,
+      },
+    });
+    expect(apply.status).toBe(401);
+    expect(apply.body.code).toBe("UNAUTHORIZED");
+
+    const links = await invokeJson<ErrorResponse>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-hierarchy/discovery-links",
+    });
+    expect(links.status).toBe(401);
+    expect(links.body.code).toBe("UNAUTHORIZED");
+  });
+
+  it("TC-WEB-APP-HIER-SEC-007 enforces the dedicated preview, apply, and link-status capability gates", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(
       harness.app,
@@ -374,7 +410,7 @@ describe("web app hierarchy builder security flows", () => {
     expect(deniedApply.status).toBe(403);
   });
 
-  it("TC-WEB-APP-HIER-SEC-007 enforces the dedicated module landing-page capability and exact payload contract", async () => {
+  it("enforces the dedicated module landing-page capability and exact payload contract", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(
       harness.app,

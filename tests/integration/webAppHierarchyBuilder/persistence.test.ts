@@ -50,7 +50,7 @@ describeIfPostgres("web app hierarchy postgres repository", () => {
     await pool.end();
   });
 
-  it("TC-WEB-APP-HIER-EDGE-001 seeds the special root families and persists resolved route paths", async () => {
+  it("seeds the special root families and persists resolved route paths", async () => {
     const repository = createPostgresWebAppHierarchyRepository(pool);
     const rootFamilies = await pool.query<RootFamilyRow>(
       `SELECT root_family_id, route_prefix FROM web_app_root_families ORDER BY sort_order ASC`,
@@ -280,6 +280,257 @@ describeIfPostgres("web app hierarchy postgres repository", () => {
           )
         `,
         [actorRootUserId],
+      ),
+    ).rejects.toThrow();
+  });
+
+  it("TC-WEB-APP-HIER-INT-014 enforces discovery-link schema and target exclusivity constraints", async () => {
+    const repository = createPostgresWebAppHierarchyRepository(pool);
+    const module = await repository.createModule({
+      webAppModuleId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      rootFamilyId: "root-admin",
+      moduleKey: "catalog",
+      displayLabel: "Catalog",
+      status: "draft",
+      sortOrder: 0,
+    });
+    const page = await repository.createPage({
+      webAppPageId: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      rootFamilyId: "root-admin",
+      webAppModuleId: module.webAppModuleId,
+      parentPageId: null,
+      placementType: "module-root",
+      pageKey: "catalog-home",
+      displayLabel: "Catalog Home",
+      routeSegment: "catalog",
+      status: "draft",
+      sortOrder: 0,
+      createdByRootAdminUserId: actorRootUserId,
+      bootstrapSource: null,
+      topologyState: "applied",
+      templateKey: null,
+      materializedAt: null,
+    });
+
+    await pool.query(
+      `
+        INSERT INTO web_app_discovery_runs (
+          web_app_discovery_run_id,
+          scope_key,
+          status,
+          trigger_kind,
+          provider_version,
+          created_by_root_admin_user_id,
+          started_at,
+          completed_at
+        )
+        VALUES (
+          '66666666-6666-4666-8666-666666666666',
+          'current-approved-root-families',
+          'succeeded',
+          'manual',
+          '1',
+          $1,
+          NOW(),
+          NOW()
+        )
+      `,
+      [actorRootUserId],
+    );
+    await pool.query(
+      `
+        INSERT INTO discovered_web_app_surfaces (
+          discovered_web_app_surface_id,
+          root_family_id,
+          discovery_key,
+          surface_kind,
+          locator_type,
+          route_path,
+          route_hash,
+          canonical_locator,
+          display_label,
+          user_facing_disposition,
+          provider_key,
+          implementation_source_path,
+          first_discovered_run_id,
+          last_discovered_run_id,
+          first_discovered_at,
+          last_discovered_at
+        )
+        VALUES (
+          '77777777-7777-4777-8777-777777777777',
+          'root-admin',
+          'root-admin:/root-admin/catalog',
+          'page-route',
+          'path',
+          '/root-admin/catalog',
+          NULL,
+          '/root-admin/catalog',
+          'Catalog Home',
+          'user-facing',
+          'test',
+          'src/frontend/rootAdmin/catalog',
+          '66666666-6666-4666-8666-666666666666',
+          '66666666-6666-4666-8666-666666666666',
+          NOW(),
+          NOW()
+        )
+      `,
+    );
+    await pool.query(
+      `
+        INSERT INTO discovered_web_app_structure_nodes (
+          discovered_web_app_structure_node_id,
+          root_family_id,
+          structure_key,
+          parent_structure_key,
+          parent_discovered_web_app_structure_node_id,
+          node_key,
+          node_kind,
+          display_label,
+          depth,
+          linked_discovered_web_app_surface_id,
+          provider_key,
+          implementation_source_path,
+          first_discovered_run_id,
+          last_discovered_run_id,
+          first_discovered_at,
+          last_discovered_at
+        )
+        VALUES (
+          '88888888-8888-4888-8888-888888888888',
+          'root-admin',
+          'root-admin/catalog',
+          'root-admin',
+          NULL,
+          'catalog',
+          'page-surface',
+          'Catalog Home',
+          1,
+          '77777777-7777-4777-8777-777777777777',
+          'test',
+          'src/frontend/rootAdmin/catalog',
+          '66666666-6666-4666-8666-666666666666',
+          '66666666-6666-4666-8666-666666666666',
+          NOW(),
+          NOW()
+        )
+      `,
+    );
+
+    await pool.query(
+      `
+        INSERT INTO web_app_discovery_links (
+          web_app_discovery_link_id,
+          discovered_web_app_structure_node_id,
+          discovered_web_app_surface_id,
+          root_family_id,
+          curated_target_type,
+          curated_web_app_module_id,
+          curated_web_app_page_id,
+          link_status,
+          drift_status
+        )
+        VALUES (
+          '99999999-9999-4999-8999-999999999999',
+          '88888888-8888-4888-8888-888888888888',
+          '77777777-7777-4777-8777-777777777777',
+          'root-admin',
+          'page',
+          NULL,
+          $1,
+          'matched',
+          'none'
+        )
+      `,
+      [page.webAppPageId],
+    );
+
+    await expect(
+      pool.query(
+        `
+          INSERT INTO web_app_discovery_links (
+            web_app_discovery_link_id,
+            discovered_web_app_structure_node_id,
+            discovered_web_app_surface_id,
+            root_family_id,
+            curated_target_type,
+            curated_web_app_module_id,
+            curated_web_app_page_id,
+            link_status,
+            drift_status
+          )
+          VALUES (
+            '11111111-1111-4111-8111-111111111111',
+            '88888888-8888-4888-8888-888888888888',
+            '77777777-7777-4777-8777-777777777777',
+            'root-admin',
+            'module',
+            NULL,
+            NULL,
+            'matched',
+            'none'
+          )
+        `,
+      ),
+    ).rejects.toThrow();
+
+    await expect(
+      pool.query(
+        `
+          INSERT INTO web_app_discovery_links (
+            web_app_discovery_link_id,
+            discovered_web_app_structure_node_id,
+            discovered_web_app_surface_id,
+            root_family_id,
+            curated_target_type,
+            curated_web_app_module_id,
+            curated_web_app_page_id,
+            link_status,
+            drift_status
+          )
+          VALUES (
+            '22222222-2222-4222-8222-222222222222',
+            '88888888-8888-4888-8888-888888888888',
+            '77777777-7777-4777-8777-777777777777',
+            'root-admin',
+            'page',
+            NULL,
+            NULL,
+            'matched',
+            'none'
+          )
+        `,
+      ),
+    ).rejects.toThrow();
+
+    await expect(
+      pool.query(
+        `
+          INSERT INTO web_app_discovery_links (
+            web_app_discovery_link_id,
+            discovered_web_app_structure_node_id,
+            discovered_web_app_surface_id,
+            root_family_id,
+            curated_target_type,
+            curated_web_app_module_id,
+            curated_web_app_page_id,
+            link_status,
+            drift_status
+          )
+          VALUES (
+            '33333333-3333-4333-8333-333333333333',
+            '88888888-8888-4888-8888-888888888888',
+            '77777777-7777-4777-8777-777777777777',
+            'root-admin',
+            'page',
+            NULL,
+            $1,
+            'matched',
+            'none'
+          )
+        `,
+        [page.webAppPageId],
       ),
     ).rejects.toThrow();
   });

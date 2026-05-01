@@ -3,6 +3,8 @@ import { createWebAppHierarchyBuilderService } from "../../../src/features/webAp
 import {
   HierarchyCycleError,
   LiveRouteChangeBlockedError,
+  ModuleKeyAlreadyExistsError,
+  ModuleNotFoundError,
   RouteSegmentAlreadyExistsError,
   PageKeyAlreadyExistsError,
 } from "../../../src/features/webAppHierarchyBuilder/contract/errors";
@@ -20,57 +22,73 @@ import {
 import { createDiscoveredSurfaceRecord } from "../../helpers/webAppSurfaceDiscoveryHarness";
 
 describe("web app hierarchy builder service", () => {
-  it("TC-WEB-APP-HIER-UNIT-001 creates a module-root page and derives its full route path", async () => {
-    const repository = createInMemoryWebAppHierarchyRepository({
-      modules: [createModuleRecord()],
-    });
+  it("TC-WEB-APP-HIER-UNIT-001 creates a module with stable root-family metadata and rejects duplicate keys", async () => {
+    const repository = createInMemoryWebAppHierarchyRepository();
     const service = createWebAppHierarchyBuilderService(
       repository,
       createStubWebAppSurfaceDiscoveryIntegrationSeam(),
       createStubDesignSystemMaterializer(),
     );
 
-    const created = await service.createWebAppPage({
+    const created = await service.createWebAppModule({
       rootFamilyId: "root-admin",
-      webAppModuleId: "11111111-1111-4111-8111-111111111111",
-      pageKey: "catalog-settings",
-      displayLabel: "Catalog Settings",
-      routeSegment: "settings",
-      createdByRootAdminUserId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      moduleKey: "Operators",
+      displayLabel: "Operators",
+      status: "review",
+      sortOrder: 8,
     });
 
-    expect(created.placementType).toBe("module-root");
-    expect(created.resolvedFullRoutePath).toBe("/root-admin/settings");
-  });
-
-  it("TC-WEB-APP-HIER-UNIT-002 blocks route-affecting moves for live branches", async () => {
-    const repository = createInMemoryWebAppHierarchyRepository({
-      modules: [createModuleRecord()],
-      pages: [
-        createPageRecord({
-          webAppPageId: "33333333-3333-4333-8333-333333333333",
-          pageKey: "catalog-root",
-          routeSegment: "catalog",
-          normalizedRouteSegment: "catalog",
-          status: "live",
-        }),
-      ],
+    expect(created).toMatchObject({
+      rootFamilyId: "root-admin",
+      moduleKey: "operators",
+      displayLabel: "Operators",
+      status: "review",
+      sortOrder: 8,
     });
-    refreshInMemoryResolvedPaths(repository);
-    const service = createWebAppHierarchyBuilderService(
-      repository,
-      createStubWebAppSurfaceDiscoveryIntegrationSeam(),
-      createStubDesignSystemMaterializer(),
+    expect(created.webAppModuleId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
     );
 
     await expect(
-      service.moveWebAppPage({
-        webAppPageId: "33333333-3333-4333-8333-333333333333",
+      service.createWebAppModule({
         rootFamilyId: "root-admin",
-        webAppModuleId: "11111111-1111-4111-8111-111111111111",
-        placementType: "orphaned",
+        moduleKey: "operators",
+        displayLabel: "Operators Again",
       }),
-    ).rejects.toBeInstanceOf(LiveRouteChangeBlockedError);
+    ).rejects.toBeInstanceOf(ModuleKeyAlreadyExistsError);
+  });
+
+  it("TC-WEB-APP-HIER-UNIT-002 updates module metadata and rejects missing modules", async () => {
+    const repository = createInMemoryWebAppHierarchyRepository({
+      modules: [createModuleRecord()],
+    });
+    const service = createWebAppHierarchyBuilderService(
+      repository,
+      createStubWebAppSurfaceDiscoveryIntegrationSeam(),
+      createStubDesignSystemMaterializer(),
+    );
+
+    const updated = await service.updateWebAppModule({
+      webAppModuleId: "11111111-1111-4111-8111-111111111111",
+      displayLabel: "Catalog Operations",
+      status: "live",
+      sortOrder: 12,
+    });
+    expect(updated).toMatchObject({
+      webAppModuleId: "11111111-1111-4111-8111-111111111111",
+      displayLabel: "Catalog Operations",
+      status: "live",
+      sortOrder: 12,
+    });
+    expect((await repository.findModuleById("11111111-1111-4111-8111-111111111111"))?.updatedAt.toISOString())
+      .toBe("2026-04-19T01:00:00.000Z");
+
+    await expect(
+      service.updateWebAppModule({
+        webAppModuleId: "99999999-9999-4999-8999-999999999999",
+        displayLabel: "Missing",
+      }),
+    ).rejects.toBeInstanceOf(ModuleNotFoundError);
   });
 
   it("TC-WEB-APP-HIER-UNIT-003 rejects duplicate page keys during bootstrap and normal create flows", async () => {
@@ -784,7 +802,77 @@ describe("web app hierarchy builder service", () => {
     );
   });
 
-  it("TC-WEB-APP-HIER-UNIT-013 creates a module-root page when discovery finds a module route with child pages", async () => {
+  it("TC-WEB-APP-HIER-UNIT-012 refreshes path-backed locator truth and keeps one active locator per page", async () => {
+    const repository = createInMemoryWebAppHierarchyRepository({
+      modules: [
+        createModuleRecord({
+          moduleKey: "root-admin-discovered-routes",
+          displayLabel: "Root Admin Discovered Pages",
+        }),
+      ],
+      pages: [
+        createPageRecord({
+          pageKey: "root-admin-users",
+          displayLabel: "Users",
+          routeSegment: "users",
+          normalizedRouteSegment: "users",
+          resolvedFullRoutePath: "/root-admin/users",
+        }),
+      ],
+      pageLocators: [
+        createPageLocatorRecord({
+          webAppPageLocatorId: "99999999-1111-4111-8111-111111111111",
+          canonicalLocator: "/root-admin#users",
+          routePath: "/root-admin",
+          routeHash: "users",
+          locatorType: "hash-state",
+          normalizedLocatorKey: "/root-admin#users",
+          isActive: true,
+        }),
+      ],
+    });
+    const service = createWebAppHierarchyBuilderService(
+      repository,
+      createStubWebAppSurfaceDiscoveryIntegrationSeam({
+        async listDiscoveredWebAppSurfaces() {
+          return [
+            createDiscoveredSurfaceRecord({
+              discoveredWebAppSurfaceId: "55555555-5555-4555-8555-555555555555",
+              rootFamilyId: "root-admin",
+              routePath: "/root-admin/users",
+              routeHash: null,
+              canonicalLocator: "/root-admin/users",
+              displayLabel: "Users",
+              surfaceKind: "page-route",
+              locatorType: "path",
+              userFacingDisposition: "user-facing",
+            }),
+          ];
+        },
+      }),
+      createStubDesignSystemMaterializer(),
+    );
+
+    await service.applyStructureAwareWebAppHierarchySync({
+      createdByRootAdminUserId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+    });
+
+    const locators = await repository.listPageLocators();
+    const activeLocators = locators.filter((item) => item.webAppPageId === "22222222-2222-4222-8222-222222222222" && item.isActive);
+    expect(activeLocators).toEqual([
+      expect.objectContaining({
+        locatorType: "path",
+        canonicalLocator: "/root-admin/users",
+        routePath: "/root-admin/users",
+        routeHash: null,
+        normalizedLocatorKey: "/root-admin/users",
+      }),
+    ]);
+    expect(locators.find((item) => item.webAppPageLocatorId === "99999999-1111-4111-8111-111111111111")?.isActive)
+      .toBe(false);
+  });
+
+  it("TC-WEB-APP-HIER-UNIT-013 stores hash-state locator truth without fake path conversion", async () => {
     const repository = createInMemoryWebAppHierarchyRepository();
     const service = createWebAppHierarchyBuilderService(
       repository,
@@ -792,23 +880,14 @@ describe("web app hierarchy builder service", () => {
         async listDiscoveredWebAppSurfaces() {
           return [
             createDiscoveredSurfaceRecord({
-              discoveredWebAppSurfaceId: "44444444-4444-4444-8444-444444444444",
-              rootFamilyId: "design-system",
-              routePath: "/design-system/canonicals",
-              canonicalLocator: "/design-system/canonicals",
-              displayLabel: "Canonicals",
-              surfaceKind: "page-route",
-              locatorType: "path",
-              userFacingDisposition: "user-facing",
-            }),
-            createDiscoveredSurfaceRecord({
               discoveredWebAppSurfaceId: "55555555-5555-4555-8555-555555555555",
-              rootFamilyId: "design-system",
-              routePath: "/design-system/canonicals/top-nav",
-              canonicalLocator: "/design-system/canonicals/top-nav",
-              displayLabel: "Top Nav",
-              surfaceKind: "page-route",
-              locatorType: "path",
+              rootFamilyId: "root-admin",
+              routePath: "/root-admin",
+              routeHash: "users",
+              canonicalLocator: "/root-admin#users",
+              displayLabel: "Users",
+              surfaceKind: "shell-state",
+              locatorType: "hash-state",
               userFacingDisposition: "user-facing",
             }),
           ];
@@ -825,24 +904,26 @@ describe("web app hierarchy builder service", () => {
 
     expect(result.applySummary).toMatchObject({
       createdModuleCount: 1,
-      createdPageCount: 2,
-      refreshedLocatorCount: 2,
+      createdPageCount: 1,
+      refreshedLocatorCount: 1,
     });
     expect(result.tree.rootFamilies).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          rootFamilyId: "design-system",
+          rootFamilyId: "root-admin",
           modules: expect.arrayContaining([
             expect.objectContaining({
-              moduleKey: "canonicals",
+              moduleKey: "root-admin-discovered-routes",
               pages: expect.arrayContaining([
                 expect.objectContaining({
-                  pageKey: "design-system-canonicals",
-                  resolvedFullRoutePath: "/design-system/canonicals",
-                }),
-                expect.objectContaining({
-                  pageKey: "design-system-canonicals-top-nav",
-                  resolvedFullRoutePath: "/design-system/canonicals/top-nav",
+                  pageKey: "root-admin-users",
+                  resolvedFullRoutePath: "/root-admin#users",
+                  activeLocator: expect.objectContaining({
+                    locatorType: "hash-state",
+                    canonicalLocator: "/root-admin#users",
+                    routePath: "/root-admin",
+                    routeHash: "users",
+                  }),
                 }),
               ]),
             }),
@@ -1085,7 +1166,7 @@ describe("web app hierarchy builder service", () => {
       .toBe("/root-admin/catalog");
   });
 
-  it("TC-WEB-APP-HIER-UNIT-012 updates module landing-page truth only for direct child pages", async () => {
+  it("updates module landing-page truth only for direct child pages", async () => {
     const repository = createInMemoryWebAppHierarchyRepository({
       modules: [createModuleRecord()],
       pages: [

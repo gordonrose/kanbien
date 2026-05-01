@@ -131,6 +131,50 @@ describe("web app hierarchy builder integration flows", () => {
     expect(afterMove.body.map((item) => item.pageKey)).not.toContain("catalog-home");
   });
 
+  it("TC-WEB-APP-HIER-EDGE-001 excludes inactive pages from planner reads by default", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountWebAppHierarchyBuilderFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppHierarchyRepository({
+        modules: [createModuleRecord()],
+        pages: [
+          createPageRecord(),
+          createPageRecord({
+            webAppPageId: "33333333-3333-4333-8333-333333333333",
+            pageKey: "catalog-inactive",
+            displayLabel: "Catalog Inactive",
+            routeSegment: "inactive",
+            normalizedRouteSegment: "inactive",
+            resolvedFullRoutePath: "/root-admin/inactive",
+            status: "inactive",
+          }),
+        ],
+      }),
+    );
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const defaultPlanner = await invokeJson<Array<{ pageKey: string | null }>>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-hierarchy/planner-nodes",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+    });
+    expect(defaultPlanner.status).toBe(200);
+    expect(defaultPlanner.body.map((item) => item.pageKey)).toContain("catalog-home");
+    expect(defaultPlanner.body.map((item) => item.pageKey)).not.toContain("catalog-inactive");
+
+    const inclusivePlanner = await invokeJson<Array<{ pageKey: string | null }>>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-hierarchy/planner-nodes?includeInactive=true",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+    });
+    expect(inclusivePlanner.status).toBe(200);
+    expect(inclusivePlanner.body.map((item) => item.pageKey)).toEqual(
+      expect.arrayContaining(["catalog-home", "catalog-inactive"]),
+    );
+  });
+
   it("TC-WEB-APP-HIER-INT-003 keeps derived route truth synchronized after route edits and branch moves", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(
@@ -288,7 +332,7 @@ describe("web app hierarchy builder integration flows", () => {
     );
   });
 
-  it("TC-WEB-APP-HIER-INT-006, TC-WEB-APP-HIER-INT-011, and TC-WEB-APP-HIER-INT-012 apply structure-aware reconcile and keep tree consumers compatible", async () => {
+  it("TC-WEB-APP-HIER-INT-006, TC-WEB-APP-HIER-INT-007, TC-WEB-APP-HIER-INT-011, and TC-WEB-APP-HIER-INT-012 apply structure-aware reconcile and keep tree consumers compatible", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(
       harness.app,
@@ -407,6 +451,70 @@ describe("web app hierarchy builder integration flows", () => {
         }),
       ]),
     );
+  });
+
+  it("TC-WEB-APP-HIER-INT-008 keeps drift and link-status reads aligned after apply", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    mountWebAppHierarchyBuilderFeature(
+      harness.app,
+      harness,
+      createInMemoryWebAppHierarchyRepository(),
+      createStubWebAppSurfaceDiscoveryIntegrationSeam({
+        async listDiscoveredWebAppSurfaces() {
+          return [
+            createDiscoveredSurfaceRecord({
+              discoveredWebAppSurfaceId: "44444444-4444-4444-8444-444444444444",
+              rootFamilyId: "design-system",
+              routePath: "/design-system/components/top-nav",
+              canonicalLocator: "/design-system/components/top-nav",
+              displayLabel: "Top Nav",
+              surfaceKind: "page-route",
+              locatorType: "path",
+              userFacingDisposition: "user-facing",
+            }),
+          ];
+        },
+      }),
+    );
+    const identity = harness.seedAuthIdentity();
+    const session = await loginViaPasswordAndSsh(harness, identity);
+
+    const applied = await invokeJson<{ applySummary: { refreshedLinkCount: number } }>(harness.app, {
+      method: "POST",
+      path: "/v1/web-app-hierarchy/discovery-sync/apply",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+      body: {},
+    });
+    expect(applied.status).toBe(200);
+    expect(applied.body.applySummary.refreshedLinkCount).toBeGreaterThan(0);
+
+    const matchedLinks = await invokeJson<{
+      totalMatchingRecords: number;
+      items: Array<{
+        rootFamilyId: string;
+        curatedTargetType: string;
+        linkStatus: string;
+        driftStatus: string;
+        curatedWebAppPageId: string | null;
+      }>;
+    }>(harness.app, {
+      method: "GET",
+      path: "/v1/web-app-hierarchy/discovery-links?rootFamilyId=design-system&linkStatus=matched&driftStatus=none&curatedTargetType=page",
+      headers: { authorization: `Bearer ${session.sessionId}` },
+    });
+    expect(matchedLinks.status).toBe(200);
+    expect(matchedLinks.body).toMatchObject({
+      totalMatchingRecords: 1,
+      items: [
+        expect.objectContaining({
+          rootFamilyId: "design-system",
+          curatedTargetType: "page",
+          linkStatus: "matched",
+          driftStatus: "none",
+        }),
+      ],
+    });
+    expect(matchedLinks.body.items[0]?.curatedWebAppPageId).toBeTruthy();
   });
 
   it("TC-WEB-APP-HIER-INT-009 handles root index route discovery without inventing a fake route segment", async () => {
@@ -619,7 +727,7 @@ describe("web app hierarchy builder integration flows", () => {
     );
   });
 
-  it("TC-WEB-APP-HIER-INT-014 syncs canonical-rendering registry pages into the tree route", async () => {
+  it("syncs canonical-rendering registry pages into the tree route", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(
       harness.app,
@@ -751,7 +859,7 @@ describe("web app hierarchy builder integration flows", () => {
     );
   });
 
-  it("TC-WEB-APP-HIER-INT-008 applies a module route plus child routes as a selectable module-root page", async () => {
+  it("applies a module route plus child routes as a selectable module-root page", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(
       harness.app,
@@ -1095,7 +1203,7 @@ describe("web app hierarchy builder integration flows", () => {
     ]);
   });
 
-  it("TC-WEB-APP-HIER-INT-007 updates and clears a direct-child module landing page through the hierarchy route", async () => {
+  it("updates and clears a direct-child module landing page through the hierarchy route", async () => {
     const harness = createRootAuthIntegrationHarness();
     mountWebAppHierarchyBuilderFeature(
       harness.app,
