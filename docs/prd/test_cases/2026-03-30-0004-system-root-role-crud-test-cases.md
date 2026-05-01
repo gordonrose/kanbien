@@ -20,6 +20,8 @@
   - this slice is privileged and permission-sensitive, so allow and deny
     expectations are first-class
   - Traceability Enforcement: enforced
+  - Current executable traceability status: 32/32 documented root-role test
+    cases traceable
   - Lifecycle metadata defaults currently apply:
     - `Version: v1`
     - `Lifecycle Status: active`
@@ -506,6 +508,38 @@
   - missing source assignment rejected
   - missing target role rejected
   - replacement to same effective assignment shape handled deterministically
+
+## End-To-End Root Admin Journeys
+
+- Journey: root-role assignment operations update effective permissions while
+  preserving safety guardrails
+  Test Case ID: `TC-ROOT-ROLES-E2E-001`
+  Journey ID: `JY-ROOT-ADMIN-008`
+  Recommended Test Layer: `e2e`
+  Suggested Test Folder: `tests/e2e/rootAdmin/`
+  Requires Shared Test Helper: yes
+  Requires Manifest Tracking: yes
+  Cleanup Expectation:
+  uses the mounted root-auth, root-users, and root-roles integration harness
+  with deterministic in-memory durable seams; persistence-backed role and
+  assignment behavior remains covered by `TC-ROOT-ROLES-INT-*`,
+  `TC-ROOT-ROLES-SEC-*`, `TC-ROOT-ROLES-AUD-*`, and
+  `TC-ROOT-ROLES-EDGE-*`
+  Features:
+  - `rootAuth`
+  - `rootUsers`
+  - `rootRoles`
+  Coverage:
+  - allowed root operator creates source and target roles
+  - allowed root operator updates capability grants for both roles
+  - allowed root operator assigns the source role to an active target root user
+  - replacement atomically moves the target root user to the target role
+  - effective-permission readback shows the replacement grants
+  - assignment list readback excludes the replaced source assignment
+  - inactive roles cannot be newly assigned
+  - deleted target root users cannot receive role assignments
+  - replacing the last `RootUserAdmin` assignment is denied
+  - a limited role reader is denied capability-grant mutation
 
 ## Coverage Gaps Or Open Questions
 

@@ -43,6 +43,28 @@ interface TenantListResponse {
 interface RootRoleSummary {
   rootRoleId: string;
   roleKey: string;
+  assignable?: boolean;
+}
+
+interface RootRoleGrantListResponse {
+  items: Array<{ capabilityKey: string }>;
+}
+
+interface RootRoleAssignmentResponse {
+  rootRoleAssignmentId: string;
+  rootUserId: string;
+  rootRoleId: string;
+  roleKey: string;
+}
+
+interface RootRoleAssignmentListResponse {
+  items: RootRoleAssignmentResponse[];
+}
+
+interface EffectivePermissionsResponse {
+  rootUserId: string;
+  roles: Array<{ rootRoleAssignmentId: string; roleKey: string }>;
+  permissions: Array<{ capabilityKey: string; grantedByRoleKeys: string[] }>;
 }
 
 describe("root-admin operator e2e journeys", () => {
@@ -490,5 +512,243 @@ describe("root-admin operator e2e journeys", () => {
     });
     expect(deniedUpdate.status).toBe(403);
     expect(deniedUpdate.body.code).toBe("FORBIDDEN");
+  });
+
+  it("TC-ROOT-ROLES-E2E-001 and JY-ROOT-ADMIN-008 prove root-role assignment replacement, effective permissions, and safety denials", async () => {
+    const harness = createRootAuthIntegrationHarness();
+    const identity = harness.seedAuthIdentity();
+    const target = harness.seedRootUser({
+      rootUserId: "aaaaaaaa-0000-4000-8000-000000000001",
+      email: "role-e2e-target@example.test",
+      firstName: "Role",
+      lastName: "Target",
+    });
+    const deletedTarget = harness.seedRootUser({
+      rootUserId: "aaaaaaaa-0000-4000-8000-000000000002",
+      email: "role-e2e-deleted-target@example.test",
+      firstName: "Deleted",
+      lastName: "Target",
+    });
+    const session = await loginViaPasswordAndSsh(harness, identity);
+    const authHeaders = { authorization: `Bearer ${session.sessionId}` };
+
+    const sourceRole = await invokeJson<RootRoleSummary>(harness.app, {
+      method: "POST",
+      path: "/v1/root-roles",
+      headers: authHeaders,
+      body: {
+        roleKey: "E2ERootSource",
+        displayName: "E2E Root Source",
+        description: "Source role for root-role E2E replacement.",
+      },
+    });
+    expect(sourceRole.status).toBe(201);
+
+    const targetRole = await invokeJson<RootRoleSummary>(harness.app, {
+      method: "POST",
+      path: "/v1/root-roles",
+      headers: authHeaders,
+      body: {
+        roleKey: "E2ERootTarget",
+        displayName: "E2E Root Target",
+        description: "Target role for root-role E2E replacement.",
+      },
+    });
+    expect(targetRole.status).toBe(201);
+
+    const sourceGrants = await invokeJson<RootRoleGrantListResponse>(harness.app, {
+      method: "PUT",
+      path: `/v1/root-roles/${sourceRole.body.rootRoleId}/capability-assignments`,
+      headers: authHeaders,
+      body: {
+        capabilityKeys: ["root-user.read.visible"],
+        reason: "E2E source role grants.",
+      },
+    });
+    expect(sourceGrants.status).toBe(200);
+    expect(sourceGrants.body.items.map((item) => item.capabilityKey)).toContain("root-user.read.visible");
+
+    const targetGrants = await invokeJson<RootRoleGrantListResponse>(harness.app, {
+      method: "PUT",
+      path: `/v1/root-roles/${targetRole.body.rootRoleId}/capability-assignments`,
+      headers: authHeaders,
+      body: {
+        capabilityKeys: ["root-user.read.active", "root-role.read"],
+        reason: "E2E target role grants.",
+      },
+    });
+    expect(targetGrants.status).toBe(200);
+    expect(targetGrants.body.items.map((item) => item.capabilityKey)).toEqual(
+      expect.arrayContaining(["root-user.read.active", "root-role.read"]),
+    );
+
+    const assigned = await invokeJson<RootRoleAssignmentResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/root-users/${target.rootUserId}/root-role-assignments`,
+      headers: authHeaders,
+      body: {
+        rootRoleId: sourceRole.body.rootRoleId,
+        reason: "E2E source assignment.",
+      },
+    });
+    expect(assigned.status).toBe(201);
+    expect(assigned.body).toMatchObject({
+      rootUserId: target.rootUserId,
+      roleKey: "E2ERootSource",
+    });
+
+    const effectiveBeforeReplace = await invokeJson<EffectivePermissionsResponse>(harness.app, {
+      method: "GET",
+      path: `/v1/root-users/${target.rootUserId}/effective-permissions`,
+      headers: authHeaders,
+    });
+    expect(effectiveBeforeReplace.status).toBe(200);
+    expect(effectiveBeforeReplace.body.permissions.map((item) => item.capabilityKey)).toContain(
+      "root-user.read.visible",
+    );
+
+    const replaced = await invokeJson<EffectivePermissionsResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/root-users/${target.rootUserId}/root-role-assignments/replace`,
+      headers: authHeaders,
+      body: {
+        sourceRootRoleAssignmentId: assigned.body.rootRoleAssignmentId,
+        targetRootRoleId: targetRole.body.rootRoleId,
+        reason: "E2E replacement proof.",
+      },
+    });
+    expect(replaced.status).toBe(200);
+    expect(replaced.body.roles.map((item) => item.roleKey)).toEqual(
+      expect.arrayContaining(["RootUserAdmin", "E2ERootTarget"]),
+    );
+    expect(replaced.body.permissions.map((item) => item.capabilityKey)).toEqual(
+      expect.arrayContaining(["root-user.read.active", "root-role.read"]),
+    );
+
+    const assignmentList = await invokeJson<RootRoleAssignmentListResponse>(harness.app, {
+      method: "GET",
+      path: `/v1/root-users/${target.rootUserId}/root-roles?pageSize=100`,
+      headers: authHeaders,
+    });
+    expect(assignmentList.status).toBe(200);
+    expect(assignmentList.body.items.map((item) => item.roleKey)).toEqual(
+      expect.arrayContaining(["RootUserAdmin", "E2ERootTarget"]),
+    );
+    expect(assignmentList.body.items.map((item) => item.roleKey)).not.toContain("E2ERootSource");
+
+    const deactivatedTargetRole = await invokeJson<RootRoleSummary>(harness.app, {
+      method: "POST",
+      path: `/v1/root-roles/${targetRole.body.rootRoleId}/deactivate`,
+      headers: authHeaders,
+      body: {},
+    });
+    expect(deactivatedTargetRole.status).toBe(200);
+    expect(deactivatedTargetRole.body.assignable).toBe(false);
+
+    const inactiveAssign = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/root-users/${deletedTarget.rootUserId}/root-role-assignments`,
+      headers: authHeaders,
+      body: {
+        rootRoleId: targetRole.body.rootRoleId,
+      },
+    });
+    expect(inactiveAssign.status).toBe(409);
+    expect(inactiveAssign.body.code).toBe("ROOT_ROLE_INACTIVE");
+
+    const deleted = await invokeJson<RootUserResponse>(harness.app, {
+      method: "DELETE",
+      path: `/v1/root-users/${deletedTarget.rootUserId}`,
+      headers: authHeaders,
+    });
+    expect(deleted.status).toBe(200);
+    expect(deleted.body.deletedAt).not.toBeNull();
+
+    const deletedTargetAssign = await invokeJson<ErrorResponse>(harness.app, {
+      method: "POST",
+      path: `/v1/root-users/${deletedTarget.rootUserId}/root-role-assignments`,
+      headers: authHeaders,
+      body: {
+        rootRoleId: sourceRole.body.rootRoleId,
+      },
+    });
+    expect(deletedTargetAssign.status).toBe(404);
+    expect(deletedTargetAssign.body.code).toBe("ROOT_USER_NOT_FOUND");
+
+    const safetyHarness = createRootAuthIntegrationHarness();
+    const safetyIdentity = safetyHarness.seedAuthIdentity({
+      rootUser: {
+        rootUserId: "aaaaaaaa-0000-4000-8000-000000000004",
+        email: "last-admin-root@example.test",
+        firstName: "Last",
+        lastName: "Admin",
+      },
+      loginEmail: "last-admin-root@example.test",
+    });
+    const safetySession = await loginViaPasswordAndSsh(safetyHarness, safetyIdentity);
+    const safetyHeaders = { authorization: `Bearer ${safetySession.sessionId}` };
+    const safetyTargetRole = await invokeJson<RootRoleSummary>(safetyHarness.app, {
+      method: "POST",
+      path: "/v1/root-roles",
+      headers: safetyHeaders,
+      body: {
+        roleKey: "E2ELastAdminReplacement",
+        displayName: "E2E Last Admin Replacement",
+        description: "Non-admin role for last-admin safety proof.",
+      },
+    });
+    expect(safetyTargetRole.status).toBe(201);
+
+    const identityAssignments = await invokeJson<RootRoleAssignmentListResponse>(safetyHarness.app, {
+      method: "GET",
+      path: `/v1/root-users/${safetyIdentity.rootUserId}/root-roles?pageSize=100`,
+      headers: safetyHeaders,
+    });
+    expect(identityAssignments.status).toBe(200);
+    const bootstrapAssignment = identityAssignments.body.items.find(
+      (item) => item.roleKey === "RootUserAdmin",
+    );
+    expect(bootstrapAssignment).toBeDefined();
+
+    const lastAdminReplacement = await invokeJson<ErrorResponse>(safetyHarness.app, {
+      method: "POST",
+      path: `/v1/root-users/${safetyIdentity.rootUserId}/root-role-assignments/replace`,
+      headers: safetyHeaders,
+      body: {
+        sourceRootRoleId: bootstrapAssignment!.rootRoleId,
+        targetRootRoleId: safetyTargetRole.body.rootRoleId,
+        reason: "E2E last-admin denial proof.",
+      },
+    });
+    expect(lastAdminReplacement.status).toBe(409);
+    expect(lastAdminReplacement.body.code).toBe("ROOT_USER_ADMIN_ROLE_REQUIRED");
+
+    const limitedIdentity = harness.seedAuthIdentity({
+      rootUser: {
+        rootUserId: "aaaaaaaa-0000-4000-8000-000000000003",
+        email: "limited-role-editor@example.test",
+        firstName: "Limited",
+        lastName: "Role",
+      },
+      loginEmail: "limited-role-editor@example.test",
+    });
+    harness.setRootUserCapabilities(limitedIdentity.rootUserId, [
+      "root-auth.password.change.own",
+      "root-auth.session.read.own",
+      "root-auth.session.logout.own",
+      "root-role.read",
+    ]);
+    const limitedSession = await loginViaPasswordAndSsh(harness, limitedIdentity);
+
+    const deniedGrantUpdate = await invokeJson<ErrorResponse>(harness.app, {
+      method: "PUT",
+      path: `/v1/root-roles/${sourceRole.body.rootRoleId}/capability-assignments`,
+      headers: { authorization: `Bearer ${limitedSession.sessionId}` },
+      body: {
+        capabilityKeys: ["root-user.read.active"],
+      },
+    });
+    expect(deniedGrantUpdate.status).toBe(403);
+    expect(deniedGrantUpdate.body.code).toBe("FORBIDDEN");
   });
 });
