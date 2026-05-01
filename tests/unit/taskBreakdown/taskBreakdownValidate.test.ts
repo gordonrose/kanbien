@@ -355,6 +355,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | --- | --- | --- | --- |
 | T-S001-01 | persistence-level, contract-level | npx vitest run tests/integration/tenantConfiguration/persistence.test.ts; npm run typecheck | persistence fixture must use the same selected tenant shape as production repository reads |
 
+## Debt Health Summary Commands
+
+| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |
+| --- | --- | --- | --- | --- | --- |
+
 ## Branch Worktree Bootstrap Strategy
 
 | Task ID | Branch Name | Worktree Strategy | Bootstrap Artifact | Base Ref | Base Commit Policy | Promotion Target |
@@ -524,6 +529,10 @@ function testOnlyTaskPacketWith(input: {
       `## Capability Permission / State Matrix\n\n| Task ID | Capability / Route / Object | Actor States Covered | Permission States Covered | Object Lifecycle States Covered | Boundary States Covered | Required Negative Cases | Not Applicable Rationale | Missing Coverage / Follow-Up Task |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${matrixRow ? `${matrixRow}\n` : ""}\n`,
     )
     .replace(
+      "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n\n",
+      "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n| T-S001-01 | npm run test:coverage-strength | debt-found | root-admin e2e coverage breadth reviewed; no new TEST:test-only debt introduced by this task | accepted-deferred | QA roadmap owns broader suite-strength follow-up |\n\n",
+    )
+    .replace(
       "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
       "| T-S001-01 | TEST:test-only | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/test-only-task-guardrail.md | approved | Test-only guardrail reviewed for traceability, proof layer, permission/state matrix, and no behavior changes. |",
     )
@@ -569,6 +578,10 @@ function testSuiteAlignmentTaskPacketWith(input: {
     .replace(
       "## Test Suite Alignment Contract\n\n| Task ID | Alignment Source / Trigger | Mismatch Class | Documentation Targets | Executable Targets | Allowed Edit Posture | Split Decision For New Proof | Traceability Command | Completion Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
       `## Test Suite Alignment Contract\n\n| Task ID | Alignment Source / Trigger | Mismatch Class | Documentation Targets | Executable Targets | Allowed Edit Posture | Split Decision For New Proof | Traceability Command | Completion Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${alignmentRow ? `${alignmentRow}\n` : ""}\n`,
+    )
+    .replace(
+      "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n\n",
+      "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n| T-S001-01 | npm run test:coverage-strength | debt-found | traceability labels aligned; broader coverage-strength debt unchanged | accepted-deferred | QA roadmap owns broader suite-strength follow-up |\n\n",
     )
     .replace(
       "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",

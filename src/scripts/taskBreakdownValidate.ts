@@ -562,6 +562,15 @@ type ProofCommandRow = {
   evidenceNotes: string;
 };
 
+type DebtHealthSummaryRow = {
+  taskId: string;
+  summaryCommand: string;
+  summaryResult: string;
+  debtFound: string;
+  debtDisposition: string;
+  followUpTaskOrOwner: string;
+};
+
 type BootstrapRow = {
   taskId: string;
   branchName: string;
@@ -659,6 +668,7 @@ export function validateTaskBreakdownContent(
   const sharedSeams = parseSharedSeamRows(taskContent);
   const artifacts = parseArtifactObligationRows(taskContent);
   const proofs = parseProofCommandRows(taskContent);
+  const debtHealthSummaries = parseDebtHealthSummaryRows(taskContent);
   const bootstraps = parseBootstrapRows(taskContent);
   const blockers = parseBlockerRows(taskContent);
   const handoffs = parseDeliveryHandoffRows(taskContent);
@@ -726,6 +736,7 @@ export function validateTaskBreakdownContent(
   const sharedSeamsByTask = groupBy(sharedSeams, (row) => row.taskId);
   const artifactsByTask = groupBy(artifacts, (row) => row.taskId);
   const proofsByTask = groupBy(proofs, (row) => row.taskId);
+  const debtHealthSummariesByTask = groupBy(debtHealthSummaries, (row) => row.taskId);
   const bootstrapsByTask = groupBy(bootstraps, (row) => row.taskId);
   const blockersByTask = groupBy(blockers, (row) => row.blocksTaskId);
   const handoffsByTask = new Map(handoffs.map((row) => [row.taskId, row]));
@@ -774,6 +785,7 @@ export function validateTaskBreakdownContent(
     validateSharedSeams(task, sharedSeamsByTask.get(task.taskId) ?? [], errors);
     validateArtifacts(task, artifactsByTask.get(task.taskId) ?? [], errors);
     validateProofs(task, proofsByTask.get(task.taskId) ?? [], errors);
+    validateDebtHealthSummaries(task, debtHealthSummariesByTask.get(task.taskId) ?? [], errors);
     validateBootstrap(task, bootstrapsByTask.get(task.taskId) ?? [], errors);
     validateDeliveryHandoff(task, handoffsByTask.get(task.taskId), blockersByTask.get(task.taskId) ?? [], errors);
   }
@@ -809,6 +821,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Shared Seams", sharedSeams.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Artifact Obligations", artifacts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Proof And Command Plan", proofs.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Debt Health Summary Commands", debtHealthSummaries.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Branch Worktree Bootstrap Strategy", bootstraps.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Layer 5 Delivery Handoff", handoffs.map((row) => row.taskId), taskIds, errors);
 
@@ -2501,6 +2514,56 @@ function validateProofs(task: TaskRow, rows: ProofCommandRow[], errors: string[]
   }
 }
 
+function validateDebtHealthSummaries(task: TaskRow, rows: DebtHealthSummaryRow[], errors: string[]): void {
+  const requiresSummary =
+    task.taskType === "DOC:data-dictionary" ||
+    task.taskType === "TEST:test-only" ||
+    task.taskType === "TEST:test-suite-alignment";
+
+  if (requiresSummary && rows.length === 0) {
+    errors.push(`${task.taskId} ${task.taskType} task has no debt health summary command row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Summary Command", row.summaryCommand, errors);
+    validateRequiredField(task.taskId, "Summary Result", row.summaryResult, errors);
+    validateRequiredField(task.taskId, "Debt Found", row.debtFound, errors);
+    validateRequiredField(task.taskId, "Debt Disposition", row.debtDisposition, errors);
+    validateRequiredField(task.taskId, "Follow-Up Task ID / Owner", row.followUpTaskOrOwner, errors);
+
+    if (!mentionsAllowedDebtSummaryResult(row.summaryResult)) {
+      errors.push(`${task.taskId} has invalid debt health summary result: ${row.summaryResult || "(blank)"}`);
+    }
+
+    if (!mentionsAllowedDebtDisposition(row.debtDisposition)) {
+      errors.push(`${task.taskId} has invalid debt disposition: ${row.debtDisposition || "(blank)"}`);
+    }
+
+    if (task.taskType === "DOC:data-dictionary" && !mentionsDataComplianceHealthCommand(row.summaryCommand)) {
+      errors.push(`${task.taskId} DOC:data-dictionary task must include npm run data:compliance-health`);
+    }
+
+    if (
+      (task.taskType === "TEST:test-only" || task.taskType === "TEST:test-suite-alignment") &&
+      !mentionsCoverageStrengthCommand(row.summaryCommand)
+    ) {
+      errors.push(`${task.taskId} ${task.taskType} task must include npm run test:coverage-strength`);
+    }
+
+    if (row.summaryResult === "blocked" || row.debtDisposition === "blocked") {
+      errors.push(`${task.taskId} debt health summary is blocked`);
+    }
+
+    if (
+      (row.debtDisposition === "split-follow-up" || row.debtDisposition === "accepted-deferred") &&
+      isNotApplicableValue(row.followUpTaskOrOwner)
+    ) {
+      errors.push(`${task.taskId} debt disposition ${row.debtDisposition} must name a follow-up task or owner`);
+    }
+  }
+}
+
 function validateBootstrap(task: TaskRow, rows: BootstrapRow[], errors: string[]): void {
   if (rows.length === 0) {
     errors.push(`${task.taskId} has no branch/worktree/bootstrap strategy row`);
@@ -3229,6 +3292,36 @@ function mentionsTraceabilityCommand(value: string): boolean {
   return normalized.includes("npm run test:traceability") || normalized.includes("traceability-equivalent");
 }
 
+function mentionsDataComplianceHealthCommand(value: string): boolean {
+  return value.toLowerCase().includes("npm run data:compliance-health");
+}
+
+function mentionsCoverageStrengthCommand(value: string): boolean {
+  return value.toLowerCase().includes("npm run test:coverage-strength");
+}
+
+function mentionsAllowedDebtSummaryResult(value: string): boolean {
+  const normalized = value.toLowerCase().trim();
+  return (
+    normalized === "pass" ||
+    normalized === "debt-found" ||
+    normalized === "blocked" ||
+    normalized.startsWith("not-run:")
+  );
+}
+
+function mentionsAllowedDebtDisposition(value: string): boolean {
+  const normalized = value.toLowerCase().trim();
+  return (
+    normalized === "none" ||
+    normalized === "in-scope-resolved" ||
+    normalized === "split-follow-up" ||
+    normalized === "accepted-deferred" ||
+    normalized === "blocked" ||
+    normalized.startsWith("not-applicable:")
+  );
+}
+
 function mentionsBeforeAfterEvidence(value: string): boolean {
   const normalized = value.toLowerCase();
   return (
@@ -3854,6 +3947,17 @@ function parseProofCommandRows(content: string): ProofCommandRow[] {
     proofLayers: cells[1] ?? "",
     commands: cells[2] ?? "",
     evidenceNotes: cells[3] ?? "",
+  }));
+}
+
+function parseDebtHealthSummaryRows(content: string): DebtHealthSummaryRow[] {
+  return parseTableRows(section(content, "## Debt Health Summary Commands")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    summaryCommand: cells[1] ?? "",
+    summaryResult: cells[2] ?? "",
+    debtFound: cells[3] ?? "",
+    debtDisposition: cells[4] ?? "",
+    followUpTaskOrOwner: cells[5] ?? "",
   }));
 }
 

@@ -664,6 +664,39 @@ source-independent or maintained artifacts.
 | Task ID | Required Proof Layers | Required Test Or Proof Commands | Mock Honesty / Runtime Evidence Notes |
 | --- | --- | --- | --- |
 
+## Debt Health Summary Commands
+
+Use this section for summary commands that expose residual debt after the
+focused proof commands have done their job. These summaries do not replace
+task-specific proof. They help Delivery decide whether debt was resolved,
+split, accepted with owner, or deferred.
+
+| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |
+| --- | --- | --- | --- | --- | --- |
+
+Allowed summary result values:
+
+- `pass`
+- `debt-found`
+- `blocked`
+- `not-run: <reason>`
+
+Allowed debt dispositions:
+
+- `none`
+- `in-scope-resolved`
+- `split-follow-up`
+- `accepted-deferred`
+- `blocked`
+- `not-applicable: <reason>`
+
+`DOC:data-dictionary` tasks should normally include
+`npm run data:compliance-health`. `TEST:test-only` and
+`TEST:test-suite-alignment` tasks should include
+`npm run test:coverage-strength` when they add, remove, rename, or materially
+reframe executable tests. These commands summarize debt; they do not prove the
+task behavior by themselves.
+
 ## Branch Worktree Bootstrap Strategy
 
 | Task ID | Branch Name | Worktree Strategy | Bootstrap Artifact | Base Ref | Base Commit Policy | Promotion Target |
