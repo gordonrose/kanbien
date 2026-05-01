@@ -22,7 +22,7 @@
 ## Current Status
 
 - Overall traceability status:
-  - all `23/23` `rootUsers` backend PRD test cases are now traceable in
+  - all `24/24` `rootUsers` backend PRD test cases are now traceable in
     executable test code
 - Overall execution status:
   - dedicated direct runtime coverage now exists for:
@@ -44,6 +44,7 @@
     - `TC-ROOT-USERS-SEC-002`
     - `TC-ROOT-USERS-SEC-003`
     - `TC-ROOT-USERS-E2E-001`
+    - `TC-ROOT-USERS-E2E-002`
     - `TC-ROOT-USERS-AUD-001`
     - `TC-ROOT-USERS-EDGE-001`
     - `TC-ROOT-USERS-EDGE-002`
@@ -232,6 +233,26 @@
   Notes:
   - this case intentionally proves root-admin API journey behavior; browser
     rendering remains a separate root-admin browser journey task.
+
+- Journey: root-admin browser renders the root-users active create/edit journey
+  Test Case ID: `TC-ROOT-USERS-E2E-002`
+  Journey ID: `JY-ROOT-ADMIN-005`
+  Recommended Test Layer: `browser-e2e`
+  Suggested Test Folder: `tests/visual/app/rootAdminShell/`
+  Features:
+  - `rootAuth` browser session bootstrap
+  - root-admin shell
+  - `rootUsers`
+  Coverage:
+  - direct `/root-admin/users` entry restores the browser session
+  - governed root-users drawer creates a root user
+  - visible list refresh includes the created root user
+  - governed edit flow persists a changed first name
+  - reload proof shows the edited root user remains listed
+  Notes:
+  - destructive lifecycle states and denied update capability are intentionally
+    covered by `TC-ROOT-USERS-E2E-001` through the API journey until a governed
+    browser control exists for those lifecycle transitions.
 
 ## NFR Security Tests
 

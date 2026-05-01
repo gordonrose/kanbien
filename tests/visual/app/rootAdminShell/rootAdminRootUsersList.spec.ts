@@ -788,7 +788,7 @@ test.describe("root-admin root-users list page adoption", () => {
       .toBe("1.5");
   });
 
-  test("root users can be created and edited from the governed drawer form", async ({ page }) => {
+  test("TC-ROOT-USERS-E2E-002 and JY-ROOT-ADMIN-005 root users can be created, edited, listed, and reloaded from the governed drawer form", async ({ page }) => {
     await page.setViewportSize({ width: 1560, height: 1400 });
     await bootstrapUsersPage(page);
 
@@ -807,6 +807,12 @@ test.describe("root-admin root-users list page adoption", () => {
 
     await expect(page.locator("#root-users-detail-title")).toHaveText("Edited Root");
     await expect(page.locator("#page-users")).toContainText("Edited Root");
+
+    await page.reload();
+    await page.locator("#shell-view").waitFor({ state: "visible" });
+    await page.locator("#page-users").waitFor({ state: "visible" });
+    await expect(page.locator("#page-users")).toContainText("Edited Root");
+    await expect(page.locator("#page-users")).toContainText("new.root@example.test");
   });
 
   test("root-user drawer form uploads and links a profile picture asset before save", async ({ page }) => {
