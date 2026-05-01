@@ -5,11 +5,14 @@
 
 ## Current Status
 
-- all `19/19` root-admin-shell PRD test cases are traceable in executable test code
+- all `20/20` root-admin-shell PRD test cases are traceable in executable test code
 - unit coverage is runtime-tested for helper client behavior, OpenSSH-native
   backend signature verification compatibility, and session-expiry state logic
 - integration coverage is runtime-tested for browser login, bootstrap, logout,
   same-origin shell mount shape, and OpenSSH-native helper signature acceptance
+- browser e2e coverage is runtime-tested for direct shell entry, active browser
+  session bootstrap, logout return-to-login, and unauthenticated/expired
+  bootstrap denial
 - security coverage is runtime-tested for cookie policy, browser-origin checks,
   CSP allowlist direction, helper integrity verification, and
   no-browser-storage handling
@@ -62,6 +65,17 @@
   - Scenario: root-admin shell assets are served same-origin under `/root-admin`
   - Recommended Test Layer: `feature-integration`
   - Suggested Test Folder: `tests/integration/rootAdminShell/`
+
+## End-To-End Journey
+
+- `TC-ROOT-ADMIN-SHELL-E2E-001`
+  - Journey ID: `JY-ROOT-ADMIN-004`
+  - Scenario: browser root-admin shell direct entry restores an active session,
+    renders the authenticated shell, logs out through the browser logout seam,
+    returns to the login template, and keeps unauthenticated or expired
+    bootstrap responses out of the shell
+  - Recommended Test Layer: `browser-e2e`
+  - Suggested Test Folder: `tests/visual/app/rootAdminShell/`
 
 ## Security
 
