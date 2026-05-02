@@ -2376,6 +2376,14 @@ function validateTaskCategoryBoundary(task: TaskRow, errors: string[]): void {
     errors.push(`${task.taskId} EVIDENCE task type must not patch production behavior`);
   }
 
+  if (task.taskType === "EVIDENCE:qa-evidence" && mentionsExecutableTestWritePath(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} EVIDENCE:qa-evidence must not own executable test changes; use TEST:test-only or TEST:test-suite-alignment`);
+  }
+
+  if (task.taskType === "EVIDENCE:qa-evidence" && mentionsAuthorityWritePath(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} EVIDENCE:qa-evidence must not change durable standards or architecture authority; use GOV:standards-update or GOV:architecture-update`);
+  }
+
   if (task.taskType.startsWith("GOV:") && task.taskType !== "GOV:design-system" && mentionsProductionCodePath(task.allowedWriteSet)) {
     errors.push(`${task.taskId} GOV task type must not own product/runtime implementation write paths`);
   }
@@ -2526,7 +2534,8 @@ function validateDebtHealthSummaries(task: TaskRow, rows: DebtHealthSummaryRow[]
   const requiresSummary =
     task.taskType === "DOC:data-dictionary" ||
     task.taskType === "TEST:test-only" ||
-    task.taskType === "TEST:test-suite-alignment";
+    task.taskType === "TEST:test-suite-alignment" ||
+    task.taskType === "EVIDENCE:qa-evidence";
 
   if (requiresSummary && rows.length === 0) {
     errors.push(`${task.taskId} ${task.taskType} task has no debt health summary command row`);
@@ -2553,7 +2562,9 @@ function validateDebtHealthSummaries(task: TaskRow, rows: DebtHealthSummaryRow[]
     }
 
     if (
-      (task.taskType === "TEST:test-only" || task.taskType === "TEST:test-suite-alignment") &&
+      (task.taskType === "TEST:test-only" ||
+        task.taskType === "TEST:test-suite-alignment" ||
+        task.taskType === "EVIDENCE:qa-evidence") &&
       !mentionsCoverageStrengthCommand(row.summaryCommand)
     ) {
       errors.push(`${task.taskId} ${task.taskType} task must include npm run test:coverage-strength`);
@@ -3283,6 +3294,29 @@ function mentionsBroadDocsSweep(...values: string[]): boolean {
     normalized.includes("docs/architecture/**") ||
     normalized.includes("source-independent artifact sweep") ||
     normalized.includes("artifact sweep")
+  );
+}
+
+function mentionsExecutableTestWritePath(...values: string[]): boolean {
+  const normalized = values.join(" ").replace(/\\/g, "/").toLowerCase();
+  return (
+    normalized.includes("tests/") ||
+    normalized.includes("test/") ||
+    normalized.includes(".test.ts") ||
+    normalized.includes(".spec.ts") ||
+    normalized.includes("playwright.config") ||
+    normalized.includes("vitest.config")
+  );
+}
+
+function mentionsAuthorityWritePath(...values: string[]): boolean {
+  const normalized = values.join(" ").replace(/\\/g, "/").toLowerCase();
+  return (
+    mentionsStandardsAuthorityWritePath(normalized) ||
+    normalized.includes("docs/architecture/") ||
+    normalized.includes("docs/templates/technical-steering") ||
+    normalized.includes("docs/templates/story-breakdown") ||
+    normalized.includes("docs/templates/task-breakdown")
   );
 }
 

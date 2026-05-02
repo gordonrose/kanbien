@@ -177,10 +177,12 @@ or Technical Steering architecture.
    Use focused proof commands for task behavior, then add summary commands that
    expose residual debt without replacing the focused proof. For
    `DOC:data-dictionary` tasks, include `npm run data:compliance-health` unless
-   the task is an explicitly local draft. For `TEST:test-only` and
-   `TEST:test-suite-alignment` tasks, include `npm run test:coverage-strength`
-   when the task adds, removes, renames, or materially reframes tests. These
-   summaries complement traceability; they do not prove behavior by themselves.
+   the task is an explicitly local draft. For `TEST:test-only`,
+   `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence` tasks, include a
+   `npm run test:coverage-strength` summary row. Use `not-run: <reason>` only
+   when the summary is genuinely unavailable or not applicable to the scoped
+   proof. These summaries complement traceability and evidence capture; they do
+   not prove behavior by themselves.
 
 9. Preserve blockers.
    Put DECISION:refactor-first and DECISION:architecture-foundation findings into their own

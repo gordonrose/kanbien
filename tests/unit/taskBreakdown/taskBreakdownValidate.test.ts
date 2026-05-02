@@ -593,6 +593,59 @@ function testSuiteAlignmentTaskPacketWith(input: {
     );
 }
 
+function evidenceStoryPacket(): string {
+  return sourceStoryPacket
+    .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding QA evidence | feature-local | docs/workspace/qa | approved | EVIDENCE:qa-evidence |")
+    .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | runtime QA evidence hardening | yes | Tenant branding runtime evidence and mock-honesty status must be captured. | EVIDENCE:qa-evidence |");
+}
+
+function evidenceTaskPacketWith(input: {
+  allowedWriteSet?: string;
+  debtSummaryRow?: string;
+} = {}): string {
+  const allowedWriteSet = input.allowedWriteSet ?? "docs/workspace/qa/tenant-branding-runtime-evidence.md";
+  const debtSummaryRow =
+    input.debtSummaryRow ??
+    "| T-S001-01 | npm run test:coverage-strength | debt-found | runtime evidence inventory updated; broader coverage-strength debt unchanged | accepted-deferred | QA roadmap owns broader suite-strength follow-up |";
+
+  return validTaskPacket
+    .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | EVIDENCE:qa-evidence | T-S001-01 | covered | QA evidence task preserves Layer 2 proof signal without changing implementation. |")
+    .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | EVIDENCE:qa-evidence | runtime QA evidence hardening | T-S001-01 | Covered by QA evidence task. |")
+    .replace("| T-S001-01 | S-001 | DEV:backend | Add root-admin tenant branding persistence update using the approved tenants public seam. |", "| T-S001-01 | S-001 | EVIDENCE:qa-evidence | Capture runtime QA evidence and mock-honesty status for tenant branding update. |")
+    .replace(
+      "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+      allowedWriteSet,
+    )
+    .replace(
+      "| T-S001-01 | exact-files | src/features/tenantConfiguration/domain/updateBranding.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | not-applicable: exact files only |",
+      `| T-S001-01 | exact-files | ${allowedWriteSet} | not-applicable: exact evidence artifact only |`,
+    )
+    .replace(
+      "| T-S001-01 | task-specific | tenantConfiguration persistence update selected tenant branding display name | not-applicable: task-specific proof is named |",
+      "| T-S001-01 | task-specific | tenant branding runtime evidence artifact plus mock-honesty comparison | not-applicable: task-specific evidence target is named |",
+    )
+    .replace(
+      "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+      "| T-S001-01 | EVIDENCE:qa-evidence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/qa-evidence-task-guardrail.md | approved | QA evidence guardrail reviewed for runtime proof, command plan, mock honesty, evidence status, and coverage-strength summary. |",
+    )
+    .replace(
+      "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-feature-structure | pass | Work stays in domain, transport, and persistence tests for the owning feature. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant | pass | CAP-BRANDING-001 is root-scoped and tenant actors are denied. |\n| T-S001-01 | backend-persistence-migration | pass | No migration needed; existing tenantConfiguration persistence path is updated. |\n| T-S001-01 | backend-artifacts | pass | API contract, data dictionary, and permission mapping obligations are carried. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+      "| T-S001-01 | qa-proof-target | pass | Tenant branding runtime evidence artifact and payload shape are named. |\n| T-S001-01 | qa-command-plan | pass | Focused runtime proof command is named. |\n| T-S001-01 | qa-runtime-evidence | pass | Live API/projection evidence source is named. |\n| T-S001-01 | qa-mock-honesty | pass | Mock fixture is compared against live payload shape. |\n| T-S001-01 | qa-evidence-status | pass | Evidence status is recorded as passing, partial, or blocked. |\n| T-S001-01 | qa-coverage-strength-summary | pass | npm run test:coverage-strength summary is required for QA evidence inventory impact. |",
+    )
+    .replace(
+      "| T-S001-01 | src/features/tenantConfiguration/domain/updateBranding.ts | feature-local | Owning feature domain capability file. |\n| T-S001-01 | src/features/tenantConfiguration/transport/rootAdminRoutes.ts | feature-local | Owning feature root-admin transport seam. |\n| T-S001-01 | tests/integration/tenantConfiguration/persistence.test.ts | test | Persistence regression for approved story AC. |",
+      `| T-S001-01 | ${allowedWriteSet} | docs-artifact | Runtime QA evidence artifact for the approved story AC. |`,
+    )
+    .replace(
+      "| T-S001-01 | persistence-level, contract-level | npx vitest run tests/integration/tenantConfiguration/persistence.test.ts; npm run typecheck | persistence fixture must use the same selected tenant shape as production repository reads |",
+      "| T-S001-01 | runtime-level, mock-honesty | npm run test:coverage-strength; npx playwright test tests/visual/tenant-branding-runtime.spec.ts | runtime payload evidence must match production API/projection shape; mocks may not invent fallback behavior |",
+    )
+    .replace(
+      "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n\n",
+      `## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n${debtSummaryRow ? `${debtSummaryRow}\n` : ""}\n`,
+    );
+}
+
 describe("task breakdown validation", () => {
   it("passes an isolated task mapped to an approved story and acceptance criterion", () => {
     expect(validateTaskBreakdownContent(validTaskPacket, sourceStoryPacket)).toEqual({
@@ -766,6 +819,43 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 EVIDENCE task type must not patch production behavior");
+  });
+
+  it("passes an isolated EVIDENCE task with runtime evidence and coverage-strength summary", () => {
+    expect(validateTaskBreakdownContent(evidenceTaskPacketWith(), evidenceStoryPacket())).toEqual({
+      status: "PASS",
+      errors: [],
+    });
+  });
+
+  it("blocks EVIDENCE task types without coverage-strength summary evidence", () => {
+    const result = validateTaskBreakdownContent(
+      evidenceTaskPacketWith({ debtSummaryRow: "" }),
+      evidenceStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 EVIDENCE:qa-evidence task has no debt health summary command row");
+  });
+
+  it("blocks EVIDENCE task types that try to own executable test changes", () => {
+    const result = validateTaskBreakdownContent(
+      evidenceTaskPacketWith({ allowedWriteSet: "tests/visual/tenant-branding-runtime.spec.ts" }),
+      evidenceStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 EVIDENCE:qa-evidence must not own executable test changes; use TEST:test-only or TEST:test-suite-alignment");
+  });
+
+  it("blocks EVIDENCE task types that try to change durable authority", () => {
+    const result = validateTaskBreakdownContent(
+      evidenceTaskPacketWith({ allowedWriteSet: "docs/standards/qa-release-gate.md" }),
+      evidenceStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 EVIDENCE:qa-evidence must not change durable standards or architecture authority; use GOV:standards-update or GOV:architecture-update");
   });
 
   it("blocks non-design-system GOV task types that try to own runtime implementation paths", () => {

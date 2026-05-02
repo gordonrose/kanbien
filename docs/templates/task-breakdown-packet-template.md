@@ -693,11 +693,12 @@ Allowed debt dispositions:
 - `not-applicable: <reason>`
 
 `DOC:data-dictionary` tasks should normally include
-`npm run data:compliance-health`. `TEST:test-only` and
-`TEST:test-suite-alignment` tasks should include
-`npm run test:coverage-strength` when they add, remove, rename, or materially
-reframe executable tests. These commands summarize debt; they do not prove the
-task behavior by themselves.
+`npm run data:compliance-health`. `TEST:test-only`,
+`TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence` tasks should include a
+`npm run test:coverage-strength` summary row. Use `not-run: <reason>` only when
+the summary is genuinely unavailable or not applicable to the scoped proof.
+These commands summarize debt; they do not prove the task behavior by
+themselves.
 
 ## Branch Worktree Bootstrap Strategy
 

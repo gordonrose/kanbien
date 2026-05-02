@@ -330,6 +330,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "qa-runtime-evidence",
     "qa-mock-honesty",
     "qa-evidence-status",
+    "qa-coverage-strength-summary",
   ],
 } as const satisfies Record<Layer4TaskType, readonly string[]>;
 
