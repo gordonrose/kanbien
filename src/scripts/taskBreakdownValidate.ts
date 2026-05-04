@@ -1648,6 +1648,10 @@ function validateVerticalSliceCoupling(
       errors.push(`${task.taskId} vertical slice must explain why DEV:backend and DEV:frontend proof are inseparable`);
     }
 
+    if (!mentionsBackendToFrontendSeamRisk(row.inseparableProofRationale, row.splitRejectionRationale)) {
+      errors.push(`${task.taskId} vertical slice must name the backend-to-frontend seam risk that makes split proof insufficient`);
+    }
+
     if (!mentionsJourneyBehavior(row.journeyBehavior, row.browserProofStory)) {
       errors.push(`${task.taskId} vertical slice must name one journey behavior and browser proof story`);
     }
@@ -2905,6 +2909,26 @@ function mentionsBackendAndFrontendSeams(backendSeam: string, frontendSeam: stri
 function mentionsContractOrPayload(value: string): boolean {
   const normalized = value.toLowerCase();
   return normalized.includes("contract") || normalized.includes("payload") || normalized.includes("api") || normalized.includes("projection");
+}
+
+function mentionsBackendToFrontendSeamRisk(...values: string[]): boolean {
+  const normalized = values.join(" ").toLowerCase();
+  const hasBackendFrontend = normalized.includes("backend") && normalized.includes("frontend");
+  const hasBrowserRuntime = normalized.includes("browser") || normalized.includes("route") || normalized.includes("render");
+  const hasSeamRisk = [
+    "payload",
+    "projection",
+    "api/data",
+    "api data",
+    "persistence-to-render",
+    "persisted",
+    "response",
+    "permission rendering",
+    "browser workflow",
+    "runtime coupling",
+    "cross-boundary",
+  ].some((token) => normalized.includes(token));
+  return hasBackendFrontend && hasBrowserRuntime && hasSeamRisk;
 }
 
 function mentionsShortcutScope(...values: string[]): boolean {

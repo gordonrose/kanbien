@@ -360,8 +360,10 @@ Rendered proof that uses only mocks without a contract/runtime tie blocks.
 ## Vertical Slice Coupling
 
 Queued `DEV:vertical-slice` tasks must prove why DEV:backend and DEV:frontend work are
-inseparable for exactly one journey behavior. Use a vertical slice only when one
-proof story must cross API/data/browser boundaries together. Split work into
+inseparable for exactly one journey behavior. Backend and frontend work should
+split by default; use a vertical slice only when one user-visible journey's main
+proof risk is the backend-to-frontend browser seam itself and one proof story
+must cross API/data/browser boundaries together. Split work into
 DEV:backend, DEV:frontend, GOV:design-system, DEV:migration-persistence, TEST:test-only,
 TEST:test-suite-alignment, or EVIDENCE:qa-evidence tasks when those concerns can be
 delivered and proven separately.

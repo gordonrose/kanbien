@@ -1447,6 +1447,27 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 vertical slice must explain why DEV:backend and DEV:frontend proof are inseparable");
   });
 
+  it("blocks DEV:vertical-slice coupling without backend-to-frontend seam risk", () => {
+    const packet = verticalSliceTaskPacketWith(
+      verticalSliceCouplingRow
+        .replace(
+          "inseparable because the same journey proof must confirm DEV:backend mutation and DEV:frontend render consume the same response payload",
+          "inseparable because the same journey proof is convenient for coordination",
+        )
+        .replace(
+          "split rejection rationale: DEV:backend and DEV:frontend proof are inseparable for this one journey behavior; separate tasks would not prove the cross-boundary payload together",
+          "split rejection rationale: DEV:backend and DEV:frontend proof are inseparable for this one journey behavior",
+        ),
+    );
+
+    const result = validateTaskBreakdownContent(packet, verticalSliceStoryPacketWith(frontendSourceRow));
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "T-S001-01 vertical slice must name the backend-to-frontend seam risk that makes split proof insufficient",
+    );
+  });
+
   it("blocks DEV:vertical-slice tasks used as a shortcut around separable task types", () => {
     const packet = verticalSliceTaskPacketWith(verticalSliceCouplingRow)
       .replace(
