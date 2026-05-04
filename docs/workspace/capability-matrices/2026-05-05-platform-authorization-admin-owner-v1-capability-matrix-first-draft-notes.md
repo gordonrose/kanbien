@@ -18,7 +18,7 @@
 
 ## Current Posture
 
-This is a first-draft planning matrix for the v1 platform authorization
+This is a first-draft v5 planning matrix for the v1 platform authorization
 `adminOwner` foundation.
 
 It should be treated as:
@@ -26,6 +26,11 @@ It should be treated as:
 - a capability planning source for implementation blueprint work
 - a traceability bridge from Product Discovery, Technical Steering, Story
   Breakdown, and PRD into later task planning
+- the proving example for the v5 capability matrix architecture/authz envelope
+- the proving example for v5 frontend-topology and testing/evidence columns,
+  even where this first slice marks frontend work as not applicable or blocked
+- the proving example for compact v5 harness-gate columns that point to
+  downstream artifacts without replacing those artifacts
 - not a runtime grant catalog
 - not approval to expose UI controls
 - not approval to implement broad ABAC/ReBAC

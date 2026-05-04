@@ -2,6 +2,12 @@
 
 Use one row per capability in the matrix and fill in the following groups.
 
+V4 remains legacy-compatible for existing matrices. Prefer
+`capability-matrix-v5-template.md` for new permission-sensitive,
+platform-scope, tenant-boundary, asset, billing, compliance, or background-job
+capabilities because v5 records the explicit architecture and authorization
+envelope required by the current planning harness.
+
 ## Capability Identity
 
 - Feature

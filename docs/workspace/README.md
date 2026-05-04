@@ -42,6 +42,16 @@ finalized architecture, PRD, or standards artifact.
   It should now also make the capability boundary explicit:
   `root`, `tenant`, or explicitly approved shared-cross-tenant, plus the
   tenant-context rule when relevant.
+  Use the v5 matrix shape for new permission-sensitive, platform-scope,
+  tenant-boundary, asset, billing, compliance, or background-job planning.
+  Use the same v5 shape for frontend-relevant capabilities because it records
+  route family, topology, design-system prerequisite, materialization,
+  source-placement, and evidence posture. V5 also includes compact harness
+  gates for downstream artifacts such as data dictionaries, API contracts,
+  permission mappings, asset decisions, job/cleanup decisions, compliance
+  gates, feature manifests, runbooks, and generated artifacts. Existing v4
+  matrices remain legacy-compatible and should be migrated only when their
+  feature is materially refreshed.
 - Implementation blueprint:
   A build-ready plan for how one approved slice should be implemented in this
   repo. This is the construction drawing. It translates the approved PRD and

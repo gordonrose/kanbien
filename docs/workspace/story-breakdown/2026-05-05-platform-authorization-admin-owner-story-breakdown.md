@@ -44,9 +44,10 @@
 - Steering stop conditions resolved or carried as blockers:
   Layer 2 has approved layered evaluation, tenant lifecycle/deletion posture,
   API denial contract, evaluator seam, audit/event taxonomy, and expanded
-  permission mapping source posture. Runtime work remains blocked on PRD,
-  capability matrix, API route-family adoption, data dictionary, audit storage,
-  implementation blueprint, PRD-derived test cases, and task breakdown.
+  permission mapping source posture. PRD, capability matrix, and a
+  pre-Task-Breakdown implementation blueprint now exist. Runtime work remains
+  blocked on API route-family adoption, data dictionary, audit storage, and
+  task breakdown.
 - Architecture invention check:
   `consumes-steering-only`
 - Governed DEV:frontend seam posture:
@@ -58,9 +59,8 @@
   UI eligibility only after runtime enforcement
 - Missing source-of-truth artifacts:
   API contract updates for first route families, data dictionary for tenant
-  authz grants/proof/audit if new storage is introduced, implementation
-  blueprint, PRD-derived test cases, capability catalog materialization update
-  for expanded source posture
+  authz grants/proof/audit if new storage is introduced, capability catalog
+  materialization update for expanded source posture
 
 ## Steering Architecture Classification Snapshot
 
@@ -306,7 +306,7 @@
 | U-003 | S-002 | B-004 | api-contract-required | no | Adopt shared denial contract by default. | Refresh first tenant-admin route-family API contract once PRD names routes. | yes | ready-to-create-artifact |
 | U-004 | S-003/S-005/S-008 | Q-001/Q-002/Q-004 / ART-004 | human-decision | Which grant storage, audit sink, and lifecycle compatibility strategy are approved? | Options: extend existing tenant-auth grants; add a tenant authz grant/proof store; defer runtime implementation until implementation blueprint chooses storage. | Answer storage/audit/lifecycle compatibility questions in PRD or implementation blueprint. | no | needs-human-answer |
 | U-005 | S-009 | B-006 / ART-008 | artifact-creation | no | Defer catalog materialization until first runtime implementation, but keep UI ineligible. | Create catalog materialization story when runtime-enforced capabilities are introduced. | yes | ready-to-create-artifact |
-| U-006 | S-004 through S-008 | ART-005 / ART-006 / ART-007 | artifact-creation | no | Use PRD and capability matrix as source; do not plan runtime slices before those exist. | Create implementation blueprint, PRD-derived test cases, and detailed permission mapping refresh after PRD/matrix. | yes | ready-to-create-artifact |
+| U-006 | S-004 through S-008 | ART-007 | artifact-creation | no | Use PRD, capability matrix, implementation blueprint, and PRD-derived test cases as source. | Create detailed permission mapping refresh after first runtime scope is selected. | yes | ready-to-create-artifact |
 
 ## Artifact Ledger
 
@@ -316,8 +316,8 @@
 | ART-002 | S-001 | PRD | create v1 `adminOwner` PRD | PRD workflow | yes |
 | ART-003 | S-002 | API contract | create or update first tenant-admin route-family API contracts | api-contract-maintainer | yes for route work |
 | ART-004 | S-003/S-005/S-008 | data dictionary | create tenant authz grant/proof/lifecycle dictionary pages when storage is selected | data-dictionary-maintainer | yes for persistence work |
-| ART-005 | S-004/S-006/S-007 | implementation blueprint | create v1 backend/platform implementation blueprint after PRD and matrix | implementation-blueprint-maintainer | yes |
-| ART-006 | S-004 through S-008 | PRD-derived test cases | create detailed authz test cases | prd-test-case-planner | yes |
+| ART-005 | S-004/S-006/S-007 | implementation blueprint | created `docs/workspace/implementation-blueprints/2026-05-05-platform-authorization-admin-owner-v1.md`; refresh only if storage, audit, lifecycle, or first route-family posture changes | implementation-blueprint-maintainer | no |
+| ART-006 | S-004 through S-008 | PRD-derived test cases | created `docs/prd/test_cases/2026-05-05-platform-authorization-admin-owner-v1-test-cases.md`; refresh when first route family is selected | prd-test-case-planner | no |
 | ART-007 | S-009 | permission mappings | refresh detailed rows after capability matrix and before runtime completion | permission-mapping workflow | yes |
 | ART-008 | S-009 | capability catalog | plan materialization support for expanded source posture before UI eligibility | capability catalog workflow | yes before UI/catalog exposure |
 | ART-009 | S-009 | feature manifests/generated graph | update only if runtime seams/dependencies change | feature dependency workflow | yes for runtime seam changes |
@@ -328,8 +328,8 @@
   S-000, S-001, S-002
 - Blocked stories:
   S-003 through S-009 are blocked from Task Breakdown for runtime work until
-  PRD, capability matrix, storage/API/audit choices, and implementation
-  blueprint exist.
+  storage/API/audit choices are accepted for the target runtime slice and
+  route-specific artifact obligations are created or explicitly deferred.
 - Stories needing capability matrix:
   S-003 through S-009
 - Stories needing PRD refinement:

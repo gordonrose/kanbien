@@ -33,7 +33,14 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   allowed write-set classification, and forbidden-work rows to reduce granular
   implementation drift.
 - `capability-matrix-v4-template.md`
-  Spreadsheet-friendly field list for end-to-end capability definition.
+  Legacy-compatible spreadsheet-friendly field list for end-to-end capability
+  definition.
+- `capability-matrix-v5-template.md`
+  Preferred capability matrix schema for new permission-sensitive,
+  platform-scope, tenant-boundary, asset, billing, compliance, or background-job
+  capabilities. V5 adds explicit architecture, authorization, lifecycle,
+  grant-source, denial, audit, frontend topology, testing/evidence,
+  compatibility, harness-gate, and source-artifact fields.
 - `implementation-blueprint-template.md`
   Structured build sheet derived from the capability matrix and PRD.
 - `api-contract-template.md`
