@@ -239,12 +239,15 @@ export const layer4RequiredCheckIdsByTaskType = {
     "test-split-boundary",
   ],
   "TEST:test-suite-alignment": [
+    "test-alignment-source-authority",
     "test-alignment-source-map",
     "test-alignment-mismatch-class",
     "test-alignment-edit-envelope",
     "test-alignment-no-production-change",
     "test-alignment-split-new-proof",
     "test-alignment-traceability-command",
+    "test-alignment-coverage-strength",
+    "test-alignment-source-truth-boundary",
   ],
   "DECISION:refactor-first": [
     "refactor-existing-behavior",
