@@ -27,6 +27,10 @@ Use for task type: `GOV:design-system`
   interaction-behavior, accessibility-semantics, and evidence-sweep
 - queued GOV:design-system tasks must produce, refine, or prove a named consumable
   seam for DEV:frontend tasks, not only a local `/design-system` demonstration
+- queued GOV:design-system tasks may own design-system family files, canonical
+  routes, behavior locks, visual fixtures, and adoption contracts, but they must
+  not own real app-page/module implementation; first app consumption belongs to
+  a downstream `DEV:frontend` task
 - do not queue a full component family, all states, interaction set,
   accessibility semantics, and evidence capture in one task
 - visual rendering tasks name the canonical state and expected screenshot or
@@ -67,6 +71,22 @@ If the GOV:design-system work does not create a consumable seam, mark the task
 blocked or split out the missing seam work. Do not satisfy this guardrail with
 CSS sharing alone, copied markup, copied controller logic, or an informal visual
 match.
+
+## Split / Route Rules
+
+- If a governed app page must consume the seam, create a downstream
+  `DEV:frontend` task with a Frontend Adoption Contract. Do not include app-page
+  implementation paths in GOV:design-system.
+- If the design-system family needs source data, fixture, or live payload
+  decisions, split the fixture/data contract from visual, interaction, and
+  accessibility work when those decisions are independently meaningful.
+- If the family changes standards, architecture authority, or app adoption law,
+  split that to `GOV:standards-update` or `GOV:architecture-update`.
+- If the main work is screenshots, visual sweep collation, served asset checks,
+  or runtime evidence after the seam exists, use `EVIDENCE:qa-evidence`.
+- If the family cannot expose a render, behavior, accessibility, or style/CSS
+  seam for downstream consumption, keep the task blocked rather than producing
+  only a visually similar canonical.
 
 ## Required Check IDs
 

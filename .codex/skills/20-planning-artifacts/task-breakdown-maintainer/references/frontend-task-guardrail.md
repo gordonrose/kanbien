@@ -79,6 +79,24 @@ Use for task type: `DEV:frontend`
 - do not combine app adoption, component rendering, interaction behavior, and
   visual proof into one implementation task
 
+## Split / Route Rules
+
+- If the signed-off GOV:design-system seam is missing, block DEV:frontend and
+  create upstream `GOV:design-system` work. Do not satisfy adoption by copying
+  design-system markup, CSS, ARIA/state semantics, or controller behavior into
+  the app.
+- If the app change needs new route/API payload truth, split that to
+  `DOC:api-contract` before DEV:frontend consumes fixtures or mocks.
+- If the rendered state is permission-sensitive, split missing permission truth
+  to `DOC:permission-mapping` and missing executable allow/deny proof to
+  `TEST:test-only`.
+- If the task primarily captures screenshots, live payload samples, served
+  asset checks, or mock-honesty evidence after implementation, use
+  `EVIDENCE:qa-evidence`.
+- If a browser-visible defect is being fixed, DEV:frontend must carry runtime
+  evidence requirements rather than claiming source edits or mock-only tests as
+  sufficient completion proof.
+
 ## Required Check IDs
 
 - `frontend-architecture-classification`

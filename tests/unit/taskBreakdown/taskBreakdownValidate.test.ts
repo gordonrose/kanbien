@@ -1367,6 +1367,23 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 GOV:design-system task must produce, refine, or prove a consumable seam");
   });
 
+  it("blocks GOV:design-system tasks from owning app page implementation paths", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:design-system |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "src/frontend/rootAdminShell/assets/modules/marketing/campaignManagement/page.mjs",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "T-S001-01 GOV:design-system task must not own app-page implementation paths; split app adoption to DEV:frontend",
+    );
+  });
+
   it("blocks queued DEV:frontend tasks when the required GOV:design-system seam is missing", () => {
     const frontendStoryPacket = sourceStoryPacket
       .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding DEV:frontend rendering | feature-local | src/frontend/rootAdmin | approved | DEV:frontend |")

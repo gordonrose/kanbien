@@ -2401,6 +2401,10 @@ function validateTaskCategoryBoundary(task: TaskRow, errors: string[]): void {
     errors.push(`${task.taskId} GOV task type must not own product/runtime implementation write paths`);
   }
 
+  if (task.taskType === "GOV:design-system" && mentionsAppFrontendImplementationPath(task.allowedWriteSet)) {
+    errors.push(`${task.taskId} GOV:design-system task must not own app-page implementation paths; split app adoption to DEV:frontend`);
+  }
+
   if (task.taskType.startsWith("DEV:") && mentionsBroadDocsSweep(task.allowedWriteSet)) {
     errors.push(`${task.taskId} DEV task type must not own broad source-independent artifact sweeps`);
   }
@@ -3316,6 +3320,15 @@ function mentionsProductionCodePath(...values: string[]): boolean {
     normalized.includes("src/lib/") ||
     normalized.includes("migrations/") ||
     normalized.includes("package.json")
+  );
+}
+
+function mentionsAppFrontendImplementationPath(...values: string[]): boolean {
+  const normalized = values.join(" ").replace(/\\/g, "/").toLowerCase();
+  return (
+    normalized.includes("src/frontend/") &&
+    !normalized.includes("src/frontend/design-system/") &&
+    !normalized.includes("src/frontend/designsystem/")
   );
 }
 
