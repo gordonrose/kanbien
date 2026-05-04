@@ -261,6 +261,9 @@ Discovery is draft-ready only when:
 
 - every universal coverage area is classified
 - every triggered overlay area is classified
+- the packet's Change Routing section is filled with a likely delivery path,
+  routing rationale, approval posture, evidence expectation, and blockers when
+  routing is not yet safe
 - normal first-version behavior and authority boundaries are clear
 - deferred future support has a known direction or is explicitly out of scope
 - no high-risk unknown remains except as a named blocker
@@ -360,11 +363,53 @@ feature manifests, generated artifacts, and implementation work.
    Fill every relevant taxonomy axis. If no current value fits, record
    `new-taxonomy-value-needed` in the packet rather than mutating the taxonomy.
 
-7. Select a product template.
+7. Classify Change Routing.
+   Fill the packet's Change Routing section before handoff. Infer routing from
+   the normal Product Discovery conversation whenever possible; do not ask the
+   requester to choose between `config-builder`, `tenant-extension-pr`, and
+   `core-platform-pr` unless they are intentionally acting as a technical
+   stakeholder.
+
+   Preferred delivery-path order:
+   - `config-builder`
+   - `tenant-extension-pr`
+   - `core-platform-pr`
+   - `needs-routing-decision`
+
+   Use `config-builder` when the request can be represented as structured
+   product configuration. Use `tenant-extension-pr` when the request is
+   tenant-specific, cannot be represented by existing configuration, and fits
+   an approved extension point. Use `core-platform-pr` when the request creates
+   or changes reusable platform behavior, source code, migrations, API
+   behavior, permissions, billing, tenant boundaries, auth, security, shared
+   design-system behavior, extension points, or config-builder capabilities.
+   Use `needs-routing-decision` when Product Discovery cannot safely classify
+   the path without a human or Technical Steering decision.
+
+   Ask explicit routing questions only when the route is risky, ambiguous, or
+   likely to create the wrong kind of backlog item. Prefer plain-language
+   questions such as whether the need is for one customer or broadly useful,
+   whether the product already has settings/builders for it, whether it should
+   be adjustable without engineering help, or whether different customers need
+   different behavior.
+
+   The Change Routing section should name:
+   - requested change type and secondary change types
+   - likely delivery path and routing confidence
+   - routing rationale
+   - config-first check
+   - tenant-specific extension check
+   - core platform check
+   - backlog item shape
+   - approval posture
+   - evidence expectation
+   - routing blockers
+
+8. Select a product template.
    Use a specific template only when it clearly fits. Otherwise use
    `generic-feature-template.md`.
 
-8. Build the multi-actor journey-to-capability trace.
+9. Build the multi-actor journey-to-capability trace.
    Capture the main journey, every implied actor perspective, job-to-be-done
    bridge, use case statements, context variations, unhappy paths, and
    product-level capability implications.
@@ -374,7 +419,7 @@ feature manifests, generated artifacts, and implementation work.
    - support, root, or governance actors when relevant
    - system or external-provider actors when they affect product behavior
 
-9. Build the state-based journey matrix.
+10. Build the state-based journey matrix.
    For authentication/access, permission-sensitive, tenant-boundary,
    lifecycle-heavy, or configuration-driven requests, do not consider the
    packet ready for Technical Steering unless the state matrix is completed or
@@ -400,29 +445,29 @@ feature manifests, generated artifacts, and implementation work.
    - `defer-to-technical-steering`
    - `out-of-scope`
 
-10. Apply specialized product-template rigor.
+11. Apply specialized product-template rigor.
    When taxonomy classification points to a specialized product template, use
    that template instead of adding feature-family-specific checklist content to
    the generic packet template. For authentication/access requests, use
    `docs/product-discovery/templates/authentication-access-template.md`.
 
-11. Record open decisions by owner.
+12. Record open decisions by owner.
     Separate business questions, requester-approved business deferrals, and
     technical stakeholder questions. Business questions cannot be treated as
     safe for handoff unless the Layer 1 requester explicitly signed them off as
     deferred until later.
 
-12. Detect reuse gaps.
+13. Detect reuse gaps.
     If existing families/templates do not fit, complete the New Family Candidate
     section and set status to `blocked-new-family-steering` when family creation
     must be decided before requirements lock.
 
-13. Detect UX/design-system gaps.
+14. Detect UX/design-system gaps.
     If the request may need a new UX pattern, governed design-system extension,
     or first-consumer app adoption decision, complete the UX / Design-System
     Extension Signal section.
 
-14. Set the handoff status.
+15. Set the handoff status.
     Use `ready-for-technical-steering` only when product intent is clear enough
     for Technical Steering to evaluate architecture, seams, and artifact gates,
     packet confidence is at least 95%, every remaining business question has
