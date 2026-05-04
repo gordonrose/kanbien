@@ -15,9 +15,9 @@
 - Source Technical Steering packet:
   `docs/workspace/technical-steering/2026-05-04-platform-authorization-model-steering.md`
 - Related PRD:
-  not created in this layer
+  `docs/prd/2026-05-05-0023-platform-authorization-admin-owner-v1.md`
 - Related capability matrix:
-  not created in this layer
+  `docs/workspace/capability-matrices/2026-05-05-platform-authorization-admin-owner-v1-capability-matrix-first-draft.csv`
 - Related GOV:design-system, asset, ADR, or architecture artifacts:
   `docs/architecture/adr/0036-adopt-layered-platform-authorization-evaluation.md`;
   `docs/architecture/adr/0037-separate-tenant-operational-lifecycle-from-deletion-posture.md`;
@@ -57,10 +57,10 @@
   compatibility for tenant status/deleted_at; route-family denial behavior;
   UI eligibility only after runtime enforcement
 - Missing source-of-truth artifacts:
-  v1 `adminOwner` PRD, capability matrix, API contract updates for first route
-  families, data dictionary for tenant authz grants/proof/audit if new storage
-  is introduced, implementation blueprint, PRD-derived test cases, capability
-  catalog materialization update for expanded source posture
+  API contract updates for first route families, data dictionary for tenant
+  authz grants/proof/audit if new storage is introduced, implementation
+  blueprint, PRD-derived test cases, capability catalog materialization update
+  for expanded source posture
 
 ## Steering Architecture Classification Snapshot
 
