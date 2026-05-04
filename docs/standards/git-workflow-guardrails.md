@@ -201,6 +201,17 @@ on:
   resolution, and owner
 - discard only with explicit human approval
 
+Record superseded or intentionally parked branch-stack work under:
+
+```text
+docs/workspace/branch-stack-reconciliations/<slug>.md
+```
+
+The record must name the branch, head commit, disposition, and the commit or
+artifact that accounts for the work. The audit may treat that branch as visible
+but reconciled; it must not disappear from the operator's mental model without
+that record.
+
 Do not rely on branch names, a clean `git status`, or a pushed branch as proof
 that all work from the current harness stream has been accounted for.
 

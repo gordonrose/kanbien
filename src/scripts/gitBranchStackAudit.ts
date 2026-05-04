@@ -1,4 +1,6 @@
 import { execFileSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
 export type BranchStackRefKind = "local" | "remote";
 
@@ -6,6 +8,8 @@ export type BranchStackRisk =
   | "current"
   | "accounted-in-current"
   | "patch-accounted-in-current"
+  | "recorded-superseded"
+  | "recorded-parked"
   | "base-only"
   | "unaccounted-local"
   | "unaccounted-remote";
@@ -19,7 +23,18 @@ export type BranchStackEntry = {
   aheadCurrent: number;
   unaccountedPatchCount: number;
   missingCurrent: number;
+  reconciliationRecord: BranchStackReconciliationRecord | null;
   risk: BranchStackRisk;
+};
+
+export type BranchStackReconciliationDisposition = "superseded-by-current" | "intentionally-parked";
+
+export type BranchStackReconciliationRecord = {
+  filePath: string;
+  branch: string;
+  headCommit: string;
+  disposition: BranchStackReconciliationDisposition;
+  accountedBy: string;
 };
 
 export type BranchStackAuditReport = {
@@ -38,6 +53,7 @@ type Options = {
   includeBaseOnly: boolean;
   includeRemote: boolean;
   json: boolean;
+  reconciliationDir: string;
 };
 
 function parseArgs(argv: string[]): Options {
@@ -46,6 +62,7 @@ function parseArgs(argv: string[]): Options {
   let includeBaseOnly = false;
   let includeRemote = true;
   let json = false;
+  let reconciliationDir = "docs/workspace/branch-stack-reconciliations";
 
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
@@ -77,10 +94,19 @@ function parseArgs(argv: string[]): Options {
     }
     if (value === "--json") {
       json = true;
+      continue;
+    }
+    if (value === "--reconciliation-dir") {
+      reconciliationDir = argv[index + 1] ?? reconciliationDir;
+      index += 1;
+      continue;
+    }
+    if (value.startsWith("--reconciliation-dir=")) {
+      reconciliationDir = value.slice("--reconciliation-dir=".length);
     }
   }
 
-  return { baseRef, currentRef, includeBaseOnly, includeRemote, json };
+  return { baseRef, currentRef, includeBaseOnly, includeRemote, json, reconciliationDir };
 }
 
 function runGit(args: string[]): string {
@@ -129,6 +155,60 @@ function listRefs(includeRemote: boolean): Array<{ name: string; kind: BranchSta
     }));
 }
 
+function readMarkdownField(content: string, label: string): string | null {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = content.match(new RegExp(`^-\\s*${escaped}:\\s*(.+?)\\s*$`, "im"));
+  return match?.[1]?.trim() ?? null;
+}
+
+export function parseBranchStackReconciliationRecordMarkdown(
+  content: string,
+  filePath: string,
+): BranchStackReconciliationRecord | null {
+  const branch = readMarkdownField(content, "Branch");
+  const headCommit = readMarkdownField(content, "Head Commit");
+  const disposition = readMarkdownField(content, "Disposition");
+  const accountedBy = readMarkdownField(content, "Accounted By");
+  if (
+    branch === null ||
+    headCommit === null ||
+    accountedBy === null ||
+    (disposition !== "superseded-by-current" && disposition !== "intentionally-parked")
+  ) {
+    return null;
+  }
+  return { filePath, branch, headCommit, disposition, accountedBy };
+}
+
+export function readBranchStackReconciliationRecords(directory: string): BranchStackReconciliationRecord[] {
+  if (!existsSync(directory)) {
+    return [];
+  }
+  return readdirSync(directory, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+    .map((entry) => {
+      const filePath = join(directory, entry.name);
+      return parseBranchStackReconciliationRecordMarkdown(readFileSync(filePath, "utf8"), filePath);
+    })
+    .filter((record): record is BranchStackReconciliationRecord => record !== null);
+}
+
+function findReconciliationRecord(
+  records: BranchStackReconciliationRecord[],
+  refName: string,
+  head: string,
+): BranchStackReconciliationRecord | null {
+  return (
+    records.find((record) => {
+      const remoteBranch = record.branch.startsWith("origin/") ? record.branch : `origin/${record.branch}`;
+      return (
+        (record.branch === refName || remoteBranch === refName) &&
+        head.toLowerCase().startsWith(record.headCommit.toLowerCase())
+      );
+    }) ?? null
+  );
+}
+
 export function classifyBranchStackEntry(input: {
   name: string;
   kind: BranchStackRefKind;
@@ -136,6 +216,7 @@ export function classifyBranchStackEntry(input: {
   aheadBase: number;
   aheadCurrent: number;
   unaccountedPatchCount: number;
+  reconciliationRecord: BranchStackReconciliationRecord | null;
 }): BranchStackRisk {
   if (input.name === input.currentBranch || input.name === `origin/${input.currentBranch}`) {
     return "current";
@@ -143,6 +224,12 @@ export function classifyBranchStackEntry(input: {
   if (input.aheadCurrent > 0) {
     if (input.unaccountedPatchCount === 0) {
       return "patch-accounted-in-current";
+    }
+    if (input.reconciliationRecord?.disposition === "superseded-by-current") {
+      return "recorded-superseded";
+    }
+    if (input.reconciliationRecord?.disposition === "intentionally-parked") {
+      return "recorded-parked";
     }
     return input.kind === "remote" ? "unaccounted-remote" : "unaccounted-local";
   }
@@ -156,6 +243,7 @@ export function buildReport(options: Options): BranchStackAuditReport {
   const baseCommit = tryRunGit(["rev-parse", "--verify", options.baseRef]);
   const currentCommit = runGit(["rev-parse", "--verify", options.currentRef]);
   const currentBranch = runGit(["branch", "--show-current"]) || options.currentRef;
+  const reconciliationRecords = readBranchStackReconciliationRecords(options.reconciliationDir);
   const refs = listRefs(options.includeRemote);
   const entries = refs
     .map((ref) => {
@@ -165,6 +253,7 @@ export function buildReport(options: Options): BranchStackAuditReport {
       const aheadCurrent = commitCount(`${options.currentRef}..${ref.name}`);
       const patchesMissing = aheadCurrent > 0 ? unaccountedPatchCount(options.currentRef, ref.name) : 0;
       const missingCurrent = commitCount(`${ref.name}..${options.currentRef}`);
+      const reconciliationRecord = findReconciliationRecord(reconciliationRecords, ref.name, head);
       const risk = classifyBranchStackEntry({
         name: ref.name,
         kind: ref.kind,
@@ -172,6 +261,7 @@ export function buildReport(options: Options): BranchStackAuditReport {
         aheadBase,
         aheadCurrent,
         unaccountedPatchCount: patchesMissing,
+        reconciliationRecord,
       });
       return {
         name: ref.name,
@@ -182,6 +272,7 @@ export function buildReport(options: Options): BranchStackAuditReport {
         aheadCurrent,
         unaccountedPatchCount: patchesMissing,
         missingCurrent,
+        reconciliationRecord,
         risk,
       };
     })
@@ -225,6 +316,9 @@ function printReport(report: BranchStackAuditReport): void {
     );
     if (entry.aheadCurrent > 0) {
       console.log(`  unaccounted patches: ${entry.unaccountedPatchCount}`);
+    }
+    if (entry.reconciliationRecord !== null) {
+      console.log(`  reconciliation: ${entry.reconciliationRecord.filePath}`);
     }
     console.log(`  ${entry.subject}`);
   }
