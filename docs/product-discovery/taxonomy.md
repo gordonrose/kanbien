@@ -7,7 +7,168 @@ Taxonomy values flag product questions, likely downstream gates, and reusable
 template paths. They do not prescribe implementation architecture, persistence
 shape, route contracts, file layout, or test design.
 
-Taxonomy version: `2026-04-29.3`
+Taxonomy version: `2026-05-03.1`
+
+## Discovery Coverage Overlays
+
+Purpose: add topic-specific coverage areas to the universal discovery matrix.
+Apply every overlay that materially matches the request. Overlays do not decide
+implementation architecture; they make sure the interview asks enough product
+questions before handoff.
+
+Starter overlays:
+
+- access / authorization
+- billing / commercial model
+- tenant boundary
+- frontend / UX
+- user-managed assets
+- data lifecycle and retention
+- integration / API
+- compliance / reporting
+- operations / support
+- configuration / feature flags
+- notification / communication
+- workflow / approval
+
+Overlay rules:
+
+- The assistant may mark an overlay area `not-applicable`, but must give a
+  reason.
+- For complex or foundational requests, deferred future support must still be
+  explored enough to classify the direction as known, open, or intentionally
+  out of scope.
+- A packet is not ready for Technical Steering while a triggered overlay has
+  unclassified coverage areas.
+
+### Access / Authorization Overlay
+
+Use when a request affects account access, roles, permissions, tenant context,
+operator access, support access, public access, or sensitive action gating.
+
+Required coverage areas:
+
+- actor classes and authority worlds
+- root/operator versus tenant/account responsibilities
+- current tenant context and cross-tenant deny posture
+- role naming and role family direction
+- grant source posture and lifecycle
+- feature/configuration/flag gate posture
+- allow and deny proof expectations
+- object/entity-level rule direction
+- attribute-based rule direction
+- relationship-based rule direction
+- support/operator access posture
+- emergency or break-glass access posture
+- onboarding, offboarding, and role-change lifecycle
+- audit/history visibility and retention expectations
+- user-facing denial behavior
+- compatibility with current authn/authz behavior
+
+### Billing / Commercial Model Overlay
+
+Use when a request affects plans, pricing, payment details, usage, quotas,
+entitlements, invoices, customer billing contacts, or commercial packages.
+
+Required coverage areas:
+
+- plan, price, and tier ownership
+- tenant-managed billing details
+- entitlement and quota boundaries
+- usage measurement and customer-visible usage
+- payment-data sensitivity and provider posture
+- billing history, invoice visibility, and audit needs
+- downgrade, cancellation, suspension, and failed-payment posture
+- compatibility with existing customer access
+
+### Tenant Boundary Overlay
+
+Use when a request affects tenant-scoped data, tenant selection, tenant
+management, cross-tenant support, shared-cross-tenant behavior, or data
+isolation.
+
+Required coverage areas:
+
+- owning tenant context
+- actor's current tenant context
+- cross-tenant deny rule
+- root/operator exception posture
+- tenant admin visibility and management boundaries
+- tenant lifecycle impact
+- tenant-scoped audit and reporting visibility
+
+### Frontend / UX Overlay
+
+Use when a request creates or changes a user-facing screen, journey, dashboard,
+settings surface, admin tool, public page, or browser workflow.
+
+Required coverage areas:
+
+- primary user value
+- surface and management location
+- list size, search, comparison, and review needs
+- mistake recovery and confirmation needs
+- empty, denied, loading, failed, and degraded states
+- customer-facing wording and confidence needs
+- governed design-system or frontend topology signal
+
+### User-Managed Assets Overlay
+
+Use when a request uploads, displays, links, downloads, replaces, deletes, or
+publishes user-managed files or media.
+
+Required coverage areas:
+
+- asset owner and consuming relationship
+- allowed asset kinds and visibility
+- upload, replace, read, download, delete, and publish authority
+- rendering or delivery posture
+- privacy, scanning, checksum, and verification assumptions
+- quota, cleanup, retention, export, and legal-hold expectations
+- accessibility metadata expectations
+
+### Data Lifecycle And Retention Overlay
+
+Use when durable records can expire, be abandoned, be revoked, fail midway,
+need cleanup, be soft-deleted, be hard-deleted, be archived, or be retained for
+history/compliance.
+
+Required coverage areas:
+
+- lifecycle states and transitions
+- ownership of cleanup decisions
+- expiry, abandonment, retry, and failure posture
+- soft-delete, hard-delete, archive, restore, and purge expectations
+- retained history and user-visible history
+- operational recovery and evidence expectations
+
+### Integration / API Overlay
+
+Use when a request affects public or private API behavior, external providers,
+webhooks, import/export, generated contracts, or machine-readable interfaces.
+
+Required coverage areas:
+
+- consumer and provider actors
+- success, rejected, retry, partial, and degraded behavior
+- compatibility and versioning expectations
+- customer-visible error behavior
+- external provider authority and fallback posture
+- evidence, audit, and reconciliation expectations
+
+### Compliance / Reporting Overlay
+
+Use when a request affects evidence, audit history, exports, business reports,
+compliance posture, privacy review, or accountable decision records.
+
+Required coverage areas:
+
+- report consumers and decisions supported
+- source of truth and freshness expectations
+- permission filtering and sensitive-field visibility
+- exportability and retention expectations
+- audit/evidence completeness and immutability expectations
+- customer-visible versus operator-only evidence
 
 ## Product Feature Type
 

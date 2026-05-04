@@ -131,6 +131,67 @@ Use a strict readiness standard beneath the friendly conversation:
 - if confidence remains below the threshold, stop with a blocked or
   discovery-only packet instead of handoff
 
+### Discovery Completion Gate
+
+Before ending a discovery interview or creating a packet, classify the request
+complexity:
+
+- `simple`: one main workflow, one primary actor, low policy or lifecycle risk
+- `moderate`: multiple actors, surfaces, lifecycle states, or user-visible
+  policy choices
+- `complex/foundational`: platform policy, authorization, billing, tenant
+  boundaries, compliance, reusable architecture, sensitive data, or durable
+  extensibility pressure
+
+For `complex/foundational` discovery, knowing the first-version workflow is not
+enough. Deferred future support must still be explored enough to classify the
+direction as known, open, or intentionally out of scope.
+
+Every discovery packet must classify the universal coverage areas below before
+handoff:
+
+| Coverage Area | Required Classification |
+| --- | --- |
+| Goal and success outcome | `answered`, `assumed-baseline`, `deferred-with-known-direction`, `deferred-open`, or `not-applicable` |
+| Primary users and actors | same |
+| Normal first-version workflow | same |
+| Authority and responsibility boundaries | same |
+| Data created, changed, viewed, retained, or deleted | same |
+| Lifecycle states and transitions | same |
+| Exceptions, reversals, and recovery | same |
+| Visibility, notifications, and user feedback | same |
+| Security, privacy, audit, compliance, and abuse baseline | same |
+| Business policy decisions | same |
+| Configuration or customization | same |
+| Billing, plan, quota, or entitlement impact | same |
+| Operational and support needs | same |
+| Reporting, history, and evidence needs | same |
+| Compatibility with existing behavior | same |
+| Future extensibility pressure | same |
+| Explicit out of scope | same |
+| Open blockers | same |
+
+`not-applicable` must include a reason. Do not omit a coverage area silently.
+
+After the universal matrix, select risk overlays from the taxonomy. Overlays add
+topic-specific coverage areas, such as access/authorization, billing,
+tenant-boundary, frontend/UX, asset, data lifecycle, integration/API, or
+compliance/reporting questions.
+
+Discovery is draft-ready only when:
+
+- every universal coverage area is classified
+- every triggered overlay area is classified
+- `deferred-open` items are either resolved, accepted as blockers, or
+  explicitly signed off as deferred by the requester
+- normal first-version behavior and authority boundaries are clear
+- deferred future support has at least a known direction or is explicitly out of
+  scope
+- the packet states why Layer 1 is draft-ready
+
+Do not use a short first-version answer as a substitute for this completion
+gate on complex or foundational requests.
+
 When confidence reaches the chosen threshold, move into packet creation with an
 expectation-setting message rather than asking whether the requester wants a
 packet. Say what will happen next, roughly how long it may take, and what the

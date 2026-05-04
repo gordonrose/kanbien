@@ -73,14 +73,7 @@ should be treated as the rule before moving on.
   `one-question-at-a-time-followed | exception-approved`
 - If interview cadence exception was approved, why:
 - Coverage areas tracked internally:
-  - product intent:
-  - actors and governance:
-  - journeys and jobs:
-  - important situations and state changes:
-  - context variation:
-  - unhappy paths:
-  - scope boundaries:
-  - Technical Steering deferrals:
+  `see Universal Coverage Matrix and Triggered Overlay Coverage below`
 - Assumptions confirmed by requester:
 - Business questions explicitly signed off as deferred until later:
 - Technical questions packaged for technical stakeholder:
@@ -88,6 +81,75 @@ should be treated as the rule before moving on.
 - Scope cuts used to reach confidence:
 - Confidence for chosen status:
   `<percent>; must be 95% or higher for ready-for-technical-steering`
+
+## Discovery Complexity And Completion Gate
+
+- Request complexity:
+  `simple | moderate | complex/foundational`
+- Complexity rationale:
+- Draft-ready rationale:
+- First-version path known:
+  `yes | no`
+- Deferred future support explored:
+  `yes | no | not-applicable`
+- Deferred future support summary:
+- High-risk unknowns remain:
+  `none | list below`
+- Packet may proceed:
+  `yes | no`
+
+Completion rule:
+
+- For `complex/foundational` discovery, knowing the first-version workflow is
+  not enough. Deferred future support must be explored enough to classify it as
+  `deferred-with-known-direction`, `deferred-open`, or `not-applicable`.
+- Do not set `ready-for-technical-steering` until every universal coverage area
+  and every triggered overlay area has been classified.
+- Every `not-applicable` classification must include a reason.
+- Every `deferred-open` item must be resolved, accepted as a blocker, or signed
+  off by the requester as deferred before handoff.
+
+## Universal Coverage Matrix
+
+Use this matrix for every Product Discovery packet, regardless of topic.
+
+Allowed status values:
+
+- `answered`
+- `assumed-baseline`
+- `deferred-with-known-direction`
+- `deferred-open`
+- `not-applicable`
+
+| Coverage Area | Status | Reason / Evidence | Needs User Decision? |
+| --- | --- | --- | --- |
+| Goal and success outcome |  |  |  |
+| Primary users and actors |  |  |  |
+| Normal first-version workflow |  |  |  |
+| Authority and responsibility boundaries |  |  |  |
+| Data created, changed, viewed, retained, or deleted |  |  |  |
+| Lifecycle states and transitions |  |  |  |
+| Exceptions, reversals, and recovery |  |  |  |
+| Visibility, notifications, and user feedback |  |  |  |
+| Security, privacy, audit, compliance, and abuse baseline |  |  |  |
+| Business policy decisions |  |  |  |
+| Configuration or customization |  |  |  |
+| Billing, plan, quota, or entitlement impact |  |  |  |
+| Operational and support needs |  |  |  |
+| Reporting, history, and evidence needs |  |  |  |
+| Compatibility with existing behavior |  |  |  |
+| Future extensibility pressure |  |  |  |
+| Explicit out of scope |  |  |  |
+| Open blockers |  |  |  |
+
+## Triggered Overlay Coverage
+
+Select overlays from `docs/product-discovery/taxonomy.md`. Add one row per
+topic-specific area that the selected overlays require.
+
+| Overlay | Coverage Area | Status | Reason / Evidence | Needs User Decision? |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
 
 ## Known Questions Gate
 

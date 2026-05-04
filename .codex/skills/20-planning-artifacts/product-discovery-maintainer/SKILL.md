@@ -226,6 +226,49 @@ Avoid phrasing:
 > Should this create an audit/history entry, or is that not needed for the
 > first version?
 
+### Discovery Completion Gate
+
+Before ending a discovery interview or creating a packet, classify the request
+complexity:
+
+- `simple`: one main workflow, one primary actor, low policy or lifecycle risk
+- `moderate`: multiple actors, surfaces, lifecycle states, or user-visible
+  policy choices
+- `complex/foundational`: platform policy, authorization, billing, tenant
+  boundaries, compliance, reusable architecture, sensitive data, or durable
+  extensibility pressure
+
+For `complex/foundational` discovery, do not stop merely because the
+first-version path is known. Deferred future support must still be explored
+enough to classify each area as:
+
+- `answered`
+- `assumed-baseline`
+- `deferred-with-known-direction`
+- `deferred-open`
+- `not-applicable`
+
+Use the universal coverage matrix from
+`docs/templates/product-discovery-packet-template.md` for every topic. Then
+select topic-specific overlays from `docs/product-discovery/taxonomy.md`.
+Triggered overlays add required coverage areas that must also be classified.
+
+Every `not-applicable` classification must include a reason. Every
+`deferred-open` item must be resolved, accepted as a blocker, or explicitly
+signed off by the requester as deferred before handoff.
+
+Discovery is draft-ready only when:
+
+- every universal coverage area is classified
+- every triggered overlay area is classified
+- normal first-version behavior and authority boundaries are clear
+- deferred future support has a known direction or is explicitly out of scope
+- no high-risk unknown remains except as a named blocker
+- the packet states why Layer 1 is draft-ready
+
+Do not use a first-version answer as a substitute for the completion gate on
+complex or foundational requests.
+
 ## Draft Fast Path
 
 Use this path only when the user explicitly asks for a draft Product Discovery
