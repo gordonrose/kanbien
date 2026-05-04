@@ -10,6 +10,8 @@ It carries both:
 - the currently implemented role-to-authz mapping baseline
 - the approved target mapping for the next specified slice when a PRD exists
   but code has not landed yet
+- approved architecture-target role/capability families for the platform
+  authorization model before detailed Layer 3 story breakdown
 
 ## Current Role Baseline
 
@@ -32,8 +34,64 @@ are not a role.
 - rows marked `current` describe implemented repo truth
 - rows marked `target` describe approved PRD-backed next-slice mappings that
   are not yet implemented
+- rows marked `architecture-target` describe approved Layer 2 direction that
+  still needs PRD/capability-matrix/story breakdown before implementation
+- rows marked `blocked` describe capabilities that must not be granted,
+  selected, or used
 - future tenant or business roles should not be added here until those feature
   sets are specified
+
+## Expanded Role Mapping Schema For Platform Authorization
+
+Future new or materially changed role rows must carry enough metadata to prove
+the role belongs to the right authority world and is safe to expose.
+
+| Field | Meaning |
+| --- | --- |
+| `authorityWorld` | Permission universe: `root`, `tenant`, or `system`. |
+| `actorBoundary` | Role or actor boundary, such as `rootAdmin`, `rootSupport`, `adminOwner`, `systemJob`, or public entrypoint. |
+| `authzCapability` | Capability key granted to the role/boundary. |
+| `grantSourcePosture` | `documentation-only`, `seed-backed`, `corrective-migration-backed`, `runtime-enforced`, or `blocked`. |
+| `grantModel` | How the role receives the grant, such as mandatory role capability, protected role capability, public route entrypoint, system authority, or future assignment. |
+| `uiEligibility` | Whether the capability may appear as a usable admin/UI option. |
+| `tenantContextRequired` | Whether the role can exercise the capability only inside one current tenant context. |
+| `crossTenantPosture` | Whether cross-tenant access is denied by default, root-explicit-only, approved shared-cross-tenant, or not applicable. |
+| `auditRequirement` | Required audit posture for allow/deny/mutation. |
+| `sourceArtifact` | Approved source artifact for the row. |
+
+Role rows must preserve the authority-world split:
+
+- root roles grant root/operator capabilities only
+- tenant roles grant tenant/account capabilities only
+- system/job authority must preserve initiating actor and policy source
+- public entrypoints are not roles
+
+## Platform Authorization Target Role Families
+
+These rows are architecture-target role/capability families. They are not
+runtime grants and must not be exposed in UI until the grant source posture is
+`runtime-enforced`.
+
+| Role / Boundary | Authz Capability Family | Status | authorityWorld | actorBoundary | grantSourcePosture | Grant Model | UI Eligibility | Tenant Context Required | Cross-Tenant Posture | Audit Requirement | Source Artifact | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `rootAdmin` | `root.tenant.setup.manage` | `architecture-target` | `root` | `rootAdmin` | `documentation-only` | future protected root capability | no | explicit tenant target | `root-explicit-only` | required-on-mutation | TS-2026-05-04 / ADR-0036 / ADR-0037 | Root owns tenant setup and branding. |
+| `rootAdmin` | `root.tenant-admin.manage` | `architecture-target` | `root` | `rootAdmin` | `documentation-only` | future protected root capability | no | explicit tenant target | `root-explicit-only` | required | TS-2026-05-04 / Product Discovery | Root owns tenant admin management in v1. |
+| `rootAdmin` | `root.commercial-entitlement.manage` | `architecture-target` | `root` | `rootAdmin` | `documentation-only` | future protected root capability | no | explicit tenant target when tenant-specific | `root-explicit-only` | required-on-mutation | TS-2026-05-04 / Product Discovery | Root owns pricing, tiers, limits, and entitlements. |
+| `rootSupport` | `root.support.tenant.read` | `architecture-target` | `root` | `rootSupport` | `documentation-only` | future read-only support capability with reason/reference | no | explicit tenant target | `root-explicit-only` | required | TS-2026-05-04 audit taxonomy | Root support is read-only and internal-audit-visible in v1. |
+| `rootAdmin` | `root.emergency.tenant.act` | `architecture-target` | `root` | `rootAdmin` | `documentation-only` | future emergency capability with reason/reference | no | explicit tenant target | `root-explicit-only` | required | TS-2026-05-04 audit taxonomy | Emergency powers allowed; formal review workflow deferred. |
+| `adminOwner` | `admin.tenant-account.manage` | `architecture-target` | `tenant` | `adminOwner` | `documentation-only` | future mandatory tenant-admin capability | no | yes | `deny-default` | required-on-mutation | TS-2026-05-04 / Product Discovery | Tenant admins manage day-to-day account operation within root-approved availability. |
+| `adminOwner` | `admin.tenant-data.export` | `architecture-target` | `tenant` | `adminOwner` | `documentation-only` | future protected tenant-admin capability | no | yes | `deny-default` | required | TS-2026-05-04 / ADR-0037 | Tenant admins can export tenant data/logs through approved reporting/export layers. |
+| `systemJob` | `system.job.authz.execute` | `architecture-target` | `system` | `systemJob` | `documentation-only` | future system authority with initiating actor/policy source | no | tenant-specific when job is tenant-scoped | `deny-default` | required | TS-2026-05-04 audit taxonomy | Jobs must preserve initiating actor, tenant context, and policy source. |
+
+## Blocked Or Deferred Role Families
+
+| Role / Boundary | Capability Family | Status | authorityWorld | grantSourcePosture | UI Eligibility | Reason |
+| --- | --- | --- | --- | --- | --- | --- |
+| `adminOwner` | tenant-created custom roles | `blocked` | `tenant` | `blocked` | no | Tenant-created custom roles are out of scope for v1. |
+| `adminOwner` | tenant-specific role divergence | `blocked` | `tenant` | `blocked` | no | `adminOwner` is globally consistent in v1. |
+| `adminOwner` | tenant self-service tenant-admin management | `blocked` | `tenant` | `blocked` | no | Root owns tenant admin management in v1. |
+| root staff | tenant user impersonation | `blocked` | `root` | `blocked` | no | Support access is root-scoped read-only viewing, not impersonation. |
+| `adminOwner` | ABAC/ReBAC tenant admin UI | `blocked` | `tenant` | `blocked` | no | ABAC/ReBAC are typed extension points only until future feature-specific steering approves them. |
 
 ## Capability Mapping
 

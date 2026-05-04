@@ -10,6 +10,8 @@ It now carries both:
 - the backend/authz mappings the current repo can stand behind today
 - approved target mappings for the next specified slice when a PRD has been
   accepted but implementation has not landed yet
+- approved architecture-target mapping families for the platform authorization
+  model before detailed Layer 3 story breakdown
 
 That keeps the live baseline visible without losing the next agreed step in the
 build-from-spec chain.
@@ -40,8 +42,50 @@ boundary implemented by the repo.
 - rows marked `current` describe implemented repo truth
 - rows marked `target` describe approved PRD-backed next-slice mappings that
   are not yet implemented
+- rows marked `architecture-target` describe approved Layer 2 direction that
+  still needs PRD/capability-matrix/story breakdown before implementation
+- rows marked `blocked` describe capabilities that must not be granted,
+  selected, or used
 - future roles and permissions should still be added through the repo's normal
   specification loop, not predeclared speculatively
+
+## Expanded Mapping Schema For Platform Authorization
+
+Future new or materially changed authorization-sensitive rows must include the
+expanded fields below, either directly in this document, in a capability matrix,
+or in a generated/materialized catalog that cites this mapping.
+
+| Field | Meaning |
+| --- | --- |
+| `authorityWorld` | Permission universe: `root`, `tenant`, or `system`. |
+| `actorBoundary` | Actor or role boundary allowed to exercise the capability, such as `rootAdmin`, `rootSupport`, `adminOwner`, or `systemJob`. |
+| `governingCapability` | Capability key the backend/evaluator enforces. |
+| `grantSourcePosture` | Whether the grant is `documentation-only`, `seed-backed`, `corrective-migration-backed`, `runtime-enforced`, or `blocked`. |
+| `uiEligibility` | Whether the capability may appear as a usable admin/UI option. Only `runtime-enforced` capabilities may be usable. |
+| `runtimeEnforcementRequired` | Whether backend runtime enforcement is required before shipping the capability. |
+| `tenantContextRequired` | Whether exactly one current tenant context is required. |
+| `crossTenantPosture` | Cross-tenant posture, such as `deny-default`, `root-explicit-only`, `shared-cross-tenant-approved`, or `not-applicable`. |
+| `lifecycleGateRequired` | Whether tenant operational lifecycle/deletion posture must be evaluated. |
+| `denialCategory` | Shared denial category from `docs/api-contracts/platform-authorization-denials.md`. |
+| `auditRequirement` | Audit posture, such as `required`, `required-on-deny`, `required-on-mutation`, `route-specific`, or `optional`. |
+| `evaluatorLayers` | Central evaluator layers required for the decision. |
+| `objectRuleRequired` | Whether object/entity-level authorization is required. |
+| `abacRebacExtension` | `none`, `abac-planned`, `rebac-planned`, `object-rule-planned`, or `abac-rebac-planned`. |
+| `sourceArtifact` | Approved source artifact for the row. |
+
+### Source Posture Rules
+
+- `documentation-only` capabilities may be documented but must not be granted,
+  selected, or used.
+- `seed-backed` capabilities may exist in seed/catalog truth, but are not UI
+  eligible without runtime enforcement proof.
+- `corrective-migration-backed` capabilities may repair or backfill grants, but
+  are not UI eligible without runtime enforcement proof.
+- `runtime-enforced` capabilities are enforced in the active request path and
+  may be UI eligible when durable source truth also exists.
+- `blocked` capabilities must not be granted, selected, or used.
+- UI eligibility requires `runtime-enforced` posture. Documentation or catalog
+  presence alone is never enough.
 
 ## Naming Rules
 
@@ -57,8 +101,40 @@ boundary implemented by the repo.
   and verification workflows
 - `root-admin-shell.*` is reserved for cookie-backed browser-session shell
   behavior
+- `root.*` is reserved for new root/operator authority-world capability
+  families introduced by the platform authorization model
+- `admin.*` is reserved for new tenant/account admin authority-world
+  capability families introduced by the platform authorization model
 - public entrypoints stay explicitly marked as public entrypoints rather than
   being modeled as normal role-granted capabilities
+
+## Platform Authorization Target Families
+
+These rows capture approved architecture-target capability families. They are
+not runtime implemented by this document and must not be treated as UI-usable
+until their grant source posture becomes `runtime-enforced` through the normal
+implementation loop.
+
+| Mapping Area | Backend / Surface Capability Family | Status | authorityWorld | actorBoundary | governingCapability | grantSourcePosture | uiEligibility | tenantContextRequired | crossTenantPosture | lifecycleGateRequired | denialCategory | auditRequirement | evaluatorLayers | objectRuleRequired | abacRebacExtension | sourceArtifact |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| root tenant setup | tenant branding and setup governance | `architecture-target` | `root` | `rootAdmin` | `root.tenant.setup.manage` | `documentation-only` | no | explicit tenant target | `root-explicit-only` | yes | `missing_capability` / `tenant_lifecycle_restricted` | required-on-mutation | authn, root-capability, lifecycle, audit-proof | no | none | TS-2026-05-04 / ADR-0036 / ADR-0037 |
+| root tenant admin management | tenant-admin invite, remove, suspend, recover | `architecture-target` | `root` | `rootAdmin` | `root.tenant-admin.manage` | `documentation-only` | no | explicit tenant target | `root-explicit-only` | yes | `missing_capability` / `tenant_lifecycle_restricted` | required | authn, root-capability, lifecycle, audit-proof | yes | object-rule-planned | TS-2026-05-04 / Product Discovery |
+| root commercial controls | pricing, tiers, limits, entitlements | `architecture-target` | `root` | `rootAdmin` | `root.commercial-entitlement.manage` | `documentation-only` | no | explicit tenant target when tenant-specific | `root-explicit-only` | yes | `missing_capability` / `feature_unavailable` | required-on-mutation | authn, root-capability, feature-config-entitlement, audit-proof | no | none | TS-2026-05-04 / Product Discovery |
+| root support | read-only support visibility into tenant context | `architecture-target` | `root` | `rootSupport` | `root.support.tenant.read` | `documentation-only` | no | explicit tenant target | `root-explicit-only` | yes | `support_reference_required` / `missing_capability` | required | authn, root-capability, lifecycle, audit-proof | yes | object-rule-planned | TS-2026-05-04 audit taxonomy |
+| root emergency | emergency root action with reason/reference | `architecture-target` | `root` | `rootAdmin` | `root.emergency.tenant.act` | `documentation-only` | no | explicit tenant target | `root-explicit-only` | yes | `emergency_reference_required` / `missing_capability` | required | authn, root-capability, lifecycle, audit-proof | yes | object-rule-planned | TS-2026-05-04 audit taxonomy |
+| tenant account administration | tenant settings, allowed flags/options, payment details, usage choices | `architecture-target` | `tenant` | `adminOwner` | `admin.tenant-account.manage` | `documentation-only` | no | yes | `deny-default` | yes | `tenant_selection_required` / `missing_capability` / `feature_unavailable` | required-on-mutation | authn, tenant-boundary, lifecycle, feature-config-entitlement, rbac, audit-proof | no | none | TS-2026-05-04 / Product Discovery |
+| tenant data access | tenant-visible data, approved logs, and exports | `architecture-target` | `tenant` | `adminOwner` | `admin.tenant-data.export` | `documentation-only` | no | yes | `deny-default` | yes | `tenant_lifecycle_restricted` / `missing_capability` | required | authn, tenant-boundary, lifecycle, rbac, audit-proof | yes | object-rule-planned | TS-2026-05-04 / ADR-0037 |
+| system job authority | async job execution preserving initiator and policy source | `architecture-target` | `system` | `systemJob` | `system.job.authz.execute` | `documentation-only` | no | tenant-specific when job is tenant-scoped | `deny-default` | yes | `sensitive_denial` | required | system-authority, tenant-boundary, lifecycle, audit-proof | route-specific | object-rule-planned | TS-2026-05-04 audit taxonomy |
+
+## Blocked Or Deferred Capability Families
+
+| Capability Family | Status | authorityWorld | actorBoundary | grantSourcePosture | uiEligibility | Reason |
+| --- | --- | --- | --- | --- | --- | --- |
+| tenant-created custom roles | `blocked` | `tenant` | `adminOwner` | `blocked` | no | Out of scope for v1; role-template versioning and upgrade policy are deferred. |
+| tenant-specific `adminOwner` divergence | `blocked` | `tenant` | `adminOwner` | `blocked` | no | v1 uses one globally consistent `adminOwner`. |
+| tenant self-service tenant-admin management | `blocked` | `tenant` | `adminOwner` | `blocked` | no | Root owns tenant admin management in v1. |
+| root impersonation of tenant users | `blocked` | `root` | root staff | `blocked` | no | Support access is read-only root-scoped viewing, not impersonation. |
+| ABAC/ReBAC tenant admin UI | `blocked` | `tenant` | `adminOwner` | `blocked` | no | Future extension points exist, but no broad ABAC/ReBAC admin UI is approved. |
 
 ## Mapping
 

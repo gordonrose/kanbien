@@ -46,3 +46,6 @@ evolves.
 - `0032-promote-selected-root-admin-suites-from-hash-aliases-to-path-backed-canonical-routes.md`
 - `0033-add-a-capability-contract-catalog-foundation-with-hybrid-materialization-and-drift-audit.md`
 - `0034-add-a-bullmq-backed-job-processing-foundation-with-transactional-outbox.md`
+- `0035-adopt-object-storage-backed-asset-foundation.md`
+- `0036-adopt-layered-platform-authorization-evaluation.md`
+- `0037-separate-tenant-operational-lifecycle-from-deletion-posture.md`

@@ -29,3 +29,9 @@ Typical contract docs should capture:
 - compatibility notes where behavior is subtle
 
 When maintaining these docs, prefer the `api-contract-maintainer` skill.
+
+Shared platform contracts:
+
+- `platform-authorization-denials.md` defines the reusable authn/authz denial
+  matrix for future protected root, tenant, lifecycle, entitlement, RBAC, ABAC,
+  ReBAC, object-level, support, and emergency route families.
