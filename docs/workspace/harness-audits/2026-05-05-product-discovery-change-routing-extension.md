@@ -116,10 +116,19 @@ and any secondary change types.
 | New reusable platform capability | `core-platform-pr` | Requires normal planning, evidence, and artifact chain. |
 | Harness or policy behavior | `core-platform-pr` | May also require policy-pack or project-profile updates. |
 
-## Product Discovery Questions To Answer
+## Product Discovery Routing Answers
 
-Product Discovery should answer these questions internally, using plain
-language with the requester:
+Product Discovery should produce these routing answers internally. Most should
+be inferred from the normal Product Discovery conversation rather than asked as
+explicit checklist questions.
+
+The requester should experience a plain-language conversation about what they
+want to happen, who needs it, where it should show up, what outcome matters,
+and what should be easy to change later. The assistant should translate those
+answers into routing classification behind the scenes.
+
+Ask explicitly only when the routing decision would otherwise be risky,
+ambiguous, or likely to create the wrong kind of backlog item.
 
 1. What kind of change is being requested?
 2. Is this mainly for one tenant, one tenant group, or every tenant?
