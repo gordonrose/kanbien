@@ -260,6 +260,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | --- | --- | --- | --- |
 | T-S001-01 | task-specific | tenantConfiguration persistence update selected tenant branding display name | not-applicable: task-specific proof is named |
 
+## Refactor-First Contract
+
+| Task ID | Refactor Trigger | Refactor Type | Unchanged Behavior | Affected Consumers | Downstream Task Unblocked | Compatibility Proof | Routing Check | Forbidden Behavior / Authority Change |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 | Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |
@@ -1883,6 +1888,10 @@ describe("task breakdown validation", () => {
         "| T-S001-00 | DECISION:refactor-first | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/refactor-first-task-guardrail.md | approved | Refactor-first guardrail reviewed for behavior-preserving extraction. |\n| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
       )
       .replace(
+        "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |",
+        "| T-S001-00 | refactor-trigger | pass | extraction-before-reuse trigger applies before the backend task can safely reuse normalization behavior. |\n| T-S001-00 | refactor-type | pass | extract is the approved refactor type. |\n| T-S001-00 | refactor-existing-behavior | pass | Existing branding normalization output remains unchanged. |\n| T-S001-00 | refactor-affected-consumers | pass | Existing tenantConfiguration consumers are named and preserved. |\n| T-S001-00 | refactor-compatibility-proof | pass | Existing consumer compatibility is protected by branding normalization regression. |\n| T-S001-00 | refactor-downstream-unblocker | pass | T-S001-01 is the downstream backend task unblocked by the extraction. |\n| T-S001-00 | refactor-no-product-change | pass | No product behavior, API contract, persistence meaning, or architecture authority changes. |\n| T-S001-00 | refactor-routing-check | pass | Routing check stays-refactor-first because no shared seam authority changes. |\n| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |",
+      )
+      .replace(
         "| T-S001-01 | feature-local | src/features/tenantConfiguration | src/features/tenantConfiguration | no | not-applicable: no shared code placement | Existing consumer compatibility protected by tenantConfiguration persistence regression. | approved |",
         "| T-S001-00 | feature-local | src/features/tenantConfiguration | src/features/tenantConfiguration | no | not-applicable: no shared code placement | Existing consumer compatibility protected by branding normalization regression. | approved |\n| T-S001-01 | shared-lib | src/features/tenantConfiguration | src/lib/branding | yes | shared-code-placement-task-guardrail.md | Existing consumer compatibility protected by regression coverage. | approved |",
       )
@@ -1911,6 +1920,10 @@ describe("task breakdown validation", () => {
         "| T-S001-00 | source-level | npx vitest run tests/unit/tenantConfiguration/brandingNormalization.test.ts; npm run typecheck | fixture preserves existing normalization behavior |\n| T-S001-01 | persistence-level, contract-level | npx vitest run tests/integration/tenantConfiguration/persistence.test.ts; npm run typecheck | persistence fixture must use the same selected tenant shape as production repository reads |",
       )
       .replace(
+        "## Refactor-First Contract\n\n| Task ID | Refactor Trigger | Refactor Type | Unchanged Behavior | Affected Consumers | Downstream Task Unblocked | Compatibility Proof | Routing Check | Forbidden Behavior / Authority Change |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "## Refactor-First Contract\n\n| Task ID | Refactor Trigger | Refactor Type | Unchanged Behavior | Affected Consumers | Downstream Task Unblocked | Compatibility Proof | Routing Check | Forbidden Behavior / Authority Change |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-00 | extraction-before-reuse | extract | Existing branding normalization returns the same normalized display-name value. | Existing tenantConfiguration callers and tests. | T-S001-01 | Existing consumer compatibility protected by branding normalization regression. | stays-refactor-first | Product behavior, API contract, persistence meaning, architecture authority, and shared seam authority must not change. |",
+      )
+      .replace(
         "| T-S001-01 | codex/s001-tenant-branding-backend | current dedicated task branch | docs/workspace/chat-bootstraps/2026-04-29-s001-tenant-branding-backend.md | origin/main | record exact base commit before Delivery edits | main after promote guardrail |",
         "| T-S001-00 | codex/s001-tenant-branding-refactor | current dedicated task branch | docs/workspace/chat-bootstraps/2026-04-29-s001-tenant-branding-refactor.md | origin/main | record exact base commit before Delivery edits | main after promote guardrail |\n| T-S001-01 | codex/s001-tenant-branding-backend | current dedicated task branch | docs/workspace/chat-bootstraps/2026-04-29-s001-tenant-branding-backend.md | origin/main | record exact base commit before Delivery edits | main after promote guardrail |",
       )
@@ -1925,6 +1938,46 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain(
       "T-S001-01 extraction dependency must block queueing on a DECISION:refactor-first or DEV:platform-seam task",
     );
+  });
+
+  it("blocks refactor-first tasks without a refactor contract", () => {
+    const refactorPacket = validTaskPacket
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DECISION:refactor-first |")
+      .replace(
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DECISION:refactor-first | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/refactor-first-task-guardrail.md | approved | Refactor-first guardrail reviewed for behavior-preserving extraction. |",
+      )
+      .replace(
+        "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+        "| T-S001-01 | refactor-trigger | pass | extraction-before-reuse trigger applies. |\n| T-S001-01 | refactor-type | pass | extract is the approved refactor type. |\n| T-S001-01 | refactor-existing-behavior | pass | Existing behavior remains unchanged. |\n| T-S001-01 | refactor-affected-consumers | pass | Existing consumers are named. |\n| T-S001-01 | refactor-compatibility-proof | pass | Existing consumer compatibility is protected by regression proof. |\n| T-S001-01 | refactor-downstream-unblocker | pass | Downstream task is named. |\n| T-S001-01 | refactor-no-product-change | pass | No product behavior changes. |\n| T-S001-01 | refactor-routing-check | pass | Routing check stays-refactor-first. |",
+      );
+
+    const result = validateTaskBreakdownContent(refactorPacket, sourceStoryPacket);
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has no Refactor-First Contract row");
+  });
+
+  it("blocks refactor-first tasks when the routing check routes to an owning task type", () => {
+    const refactorPacket = validTaskPacket
+      .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DECISION:refactor-first |")
+      .replace(
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-01 | DECISION:refactor-first | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/refactor-first-task-guardrail.md | approved | Refactor-first guardrail reviewed for behavior-preserving extraction. |",
+      )
+      .replace(
+        "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+        "| T-S001-01 | refactor-trigger | pass | extraction-before-reuse trigger applies. |\n| T-S001-01 | refactor-type | pass | extract is the approved refactor type. |\n| T-S001-01 | refactor-existing-behavior | pass | Existing behavior remains unchanged. |\n| T-S001-01 | refactor-affected-consumers | pass | Existing consumers are named. |\n| T-S001-01 | refactor-compatibility-proof | pass | Existing consumer compatibility is protected by regression proof. |\n| T-S001-01 | refactor-downstream-unblocker | pass | Downstream task is named. |\n| T-S001-01 | refactor-no-product-change | pass | No product behavior changes. |\n| T-S001-01 | refactor-routing-check | pass | Routing check routes away because platform seam authority changes. |",
+      )
+      .replace(
+        "## Refactor-First Contract\n\n| Task ID | Refactor Trigger | Refactor Type | Unchanged Behavior | Affected Consumers | Downstream Task Unblocked | Compatibility Proof | Routing Check | Forbidden Behavior / Authority Change |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "## Refactor-First Contract\n\n| Task ID | Refactor Trigger | Refactor Type | Unchanged Behavior | Affected Consumers | Downstream Task Unblocked | Compatibility Proof | Routing Check | Forbidden Behavior / Authority Change |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | extraction-before-reuse | extract | Existing normalization behavior remains unchanged. | Existing tenantConfiguration consumers. | not-applicable: downstream task not in this negative fixture | Existing consumer compatibility protected by regression proof. | blocked-route-to-DEV:platform-seam | Public platform seam authority must not change inside refactor-first. |",
+      );
+
+    const result = validateTaskBreakdownContent(refactorPacket, sourceStoryPacket);
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 Refactor-First Contract routes away to DEV:platform-seam");
   });
 
   it("blocks tasks mapped to stories that are not approved for task breakdown", () => {

@@ -456,6 +456,47 @@ Allowed proof specificity statuses:
 | Task ID | Proof Specificity | Task-Specific Test / Scenario / Evidence Name | Broad Proof Rationale |
 | --- | --- | --- | --- |
 
+## Refactor-First Contract
+
+Required for `DECISION:refactor-first` tasks. Leave empty when no
+`DECISION:refactor-first` task is queued.
+
+Allowed triggers:
+
+- `over-broad-write-set`
+- `shared-logic-before-behavior`
+- `unreliable-proof-seam`
+- `duplicated-equivalent-behavior`
+- `wrong-owner-or-layer`
+- `decision-guess-risk`
+- `extraction-before-reuse`
+- `test-seam-needed`
+
+Allowed refactor types:
+
+- `extract`
+- `move`
+- `rename-clarify`
+- `decompose`
+- `consolidate`
+- `adapter-compatibility`
+- `test-seam`
+- `performance-preserving`
+
+Allowed routing check values:
+
+- `stays-refactor-first`
+- `blocked-route-to-DEV:platform-seam`
+- `blocked-route-to-GOV:architecture-update`
+- `blocked-route-to-GOV:standards-update`
+- `blocked-route-to-DOC:api-contract`
+- `blocked-route-to-DEV:migration-persistence`
+- `blocked-route-to-DOC:permission-mapping`
+- `blocked-route-to-GOV:design-system`
+
+| Task ID | Refactor Trigger | Refactor Type | Unchanged Behavior | Affected Consumers | Downstream Task Unblocked | Compatibility Proof | Routing Check | Forbidden Behavior / Authority Change |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 Queued `TEST:test-only` tasks must say exactly what kind of test work they perform.

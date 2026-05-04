@@ -70,6 +70,7 @@ const requiredHeadings = [
   "## Migration / Persistence Approach",
   "## Tight Allowed Write Envelope",
   "## Task-Specific Proof Plan",
+  "## Refactor-First Contract",
   "## Test-Only Coverage Contract",
   "## Test Suite Alignment Contract",
   "## Capability Permission / State Matrix",
@@ -145,6 +146,36 @@ const allowedFrontendSourcePlacements: Set<string> = new Set(frontendSourcePlace
 const allowedFrontendBrowserSecurityAreas: Set<string> = new Set(frontendBrowserSecurityAreas);
 const allowedSecurityPresence = new Set(["yes", "no", "blocked"]);
 const allowedYesNo = new Set(["yes", "no"]);
+const allowedRefactorTriggers = new Set([
+  "over-broad-write-set",
+  "shared-logic-before-behavior",
+  "unreliable-proof-seam",
+  "duplicated-equivalent-behavior",
+  "wrong-owner-or-layer",
+  "decision-guess-risk",
+  "extraction-before-reuse",
+  "test-seam-needed",
+]);
+const allowedRefactorTypes = new Set([
+  "extract",
+  "move",
+  "rename-clarify",
+  "decompose",
+  "consolidate",
+  "adapter-compatibility",
+  "test-seam",
+  "performance-preserving",
+]);
+const allowedRefactorRoutingChecks = new Set([
+  "stays-refactor-first",
+  "blocked-route-to-DEV:platform-seam",
+  "blocked-route-to-GOV:architecture-update",
+  "blocked-route-to-GOV:standards-update",
+  "blocked-route-to-DOC:api-contract",
+  "blocked-route-to-DEV:migration-persistence",
+  "blocked-route-to-DOC:permission-mapping",
+  "blocked-route-to-GOV:design-system",
+]);
 
 const vaguePhrases = [
   "implement feature",
@@ -441,6 +472,18 @@ type TaskSpecificProofPlanRow = {
   broadProofRationale: string;
 };
 
+type RefactorFirstContractRow = {
+  taskId: string;
+  trigger: string;
+  refactorType: string;
+  unchangedBehavior: string;
+  affectedConsumers: string;
+  downstreamTaskUnblocked: string;
+  compatibilityProof: string;
+  routingCheck: string;
+  forbiddenBehaviorOrAuthorityChange: string;
+};
+
 type TestOnlyCoverageContractRow = {
   taskId: string;
   coverageSource: string;
@@ -662,6 +705,7 @@ export function validateTaskBreakdownContent(
   const migrationPersistenceApproaches = parseMigrationPersistenceApproachRows(taskContent);
   const tightWriteEnvelopes = parseTightWriteEnvelopeRows(taskContent);
   const taskSpecificProofPlans = parseTaskSpecificProofPlanRows(taskContent);
+  const refactorFirstContracts = parseRefactorFirstContractRows(taskContent);
   const testOnlyCoverageContracts = parseTestOnlyCoverageContractRows(taskContent);
   const testSuiteAlignmentContracts = parseTestSuiteAlignmentContractRows(taskContent);
   const capabilityPermissionStateMatrices = parseCapabilityPermissionStateMatrixRows(taskContent);
@@ -732,6 +776,7 @@ export function validateTaskBreakdownContent(
   const migrationPersistenceApproachesByTask = groupBy(migrationPersistenceApproaches, (row) => row.taskId);
   const tightWriteEnvelopesByTask = groupBy(tightWriteEnvelopes, (row) => row.taskId);
   const taskSpecificProofPlansByTask = groupBy(taskSpecificProofPlans, (row) => row.taskId);
+  const refactorFirstContractsByTask = groupBy(refactorFirstContracts, (row) => row.taskId);
   const testOnlyCoverageContractsByTask = groupBy(testOnlyCoverageContracts, (row) => row.taskId);
   const testSuiteAlignmentContractsByTask = groupBy(testSuiteAlignmentContracts, (row) => row.taskId);
   const capabilityPermissionStateMatricesByTask = groupBy(capabilityPermissionStateMatrices, (row) => row.taskId);
@@ -788,6 +833,7 @@ export function validateTaskBreakdownContent(
     );
     validateTaskTypeGuardrail(task, guardrailsByTask.get(task.taskId) ?? [], errors);
     validateTaskGuardrailEvidence(task, guardrailEvidenceByTask.get(task.taskId) ?? [], placementsByTask.get(task.taskId) ?? [], errors);
+    validateRefactorFirstContract(task, refactorFirstContractsByTask.get(task.taskId) ?? [], tasks, errors);
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
     validateWriteSetClassification(task, writeSetClassificationsByTask.get(task.taskId) ?? [], errors);
     validateForbiddenWork(task, forbiddenWorkByTask.get(task.taskId) ?? [], errors);
@@ -819,6 +865,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Migration / Persistence Approach", migrationPersistenceApproaches.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Tight Allowed Write Envelope", tightWriteEnvelopes.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Task-Specific Proof Plan", taskSpecificProofPlans.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Refactor-First Contract", refactorFirstContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test-Only Coverage Contract", testOnlyCoverageContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test Suite Alignment Contract", testSuiteAlignmentContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Capability Permission / State Matrix", capabilityPermissionStateMatrices.map((row) => row.taskId), taskIds, errors);
@@ -2093,6 +2140,73 @@ function validateTaskGuardrailEvidence(
       }
     } else if (!allowedGuardrailEvidenceStatuses.has(row.status)) {
       errors.push(`${task.taskId} guardrail check ${row.checkId} has invalid status: ${row.status || "(blank)"}`);
+    }
+  }
+}
+
+function validateRefactorFirstContract(
+  task: TaskRow,
+  rows: RefactorFirstContractRow[],
+  tasks: TaskRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DECISION:refactor-first") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has Refactor-First Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} has no Refactor-First Contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateAllowedValue(task.taskId, "Refactor Trigger", row.trigger, allowedRefactorTriggers, errors);
+    validateAllowedValue(task.taskId, "Refactor Type", row.refactorType, allowedRefactorTypes, errors);
+    validateAllowedValue(task.taskId, "Routing Check", row.routingCheck, allowedRefactorRoutingChecks, errors);
+    validateRequiredField(task.taskId, "Unchanged Behavior", row.unchangedBehavior, errors);
+    validateRequiredField(task.taskId, "Affected Consumers", row.affectedConsumers, errors);
+    validateRequiredField(task.taskId, "Downstream Task Unblocked", row.downstreamTaskUnblocked, errors);
+    validateRequiredField(task.taskId, "Compatibility Proof", row.compatibilityProof, errors);
+    validateRequiredField(task.taskId, "Forbidden Behavior / Authority Change", row.forbiddenBehaviorOrAuthorityChange, errors);
+
+    if (!mentionsCompatibilityEvidence(row.compatibilityProof)) {
+      errors.push(`${task.taskId} Refactor-First Contract needs existing-consumer compatibility proof`);
+    }
+
+    const downstreamIds = splitIds(row.downstreamTaskUnblocked);
+    const knownTaskIds = new Set(tasks.map((candidate) => candidate.taskId));
+    for (const downstreamId of downstreamIds) {
+      if (
+        downstreamId.startsWith("blocked") ||
+        downstreamId.startsWith("deferred") ||
+        downstreamId.startsWith("not-applicable")
+      ) {
+        continue;
+      }
+      if (!knownTaskIds.has(downstreamId)) {
+        errors.push(`${task.taskId} Refactor-First Contract references unknown downstream task ${downstreamId}`);
+      }
+    }
+
+    if (row.routingCheck.startsWith("blocked-route-to-")) {
+      errors.push(`${task.taskId} Refactor-First Contract routes away to ${row.routingCheck.replace("blocked-route-to-", "")}`);
+    }
+
+    const refactorText = [
+      task.scope,
+      row.unchangedBehavior,
+      row.affectedConsumers,
+      row.downstreamTaskUnblocked,
+      row.compatibilityProof,
+      row.forbiddenBehaviorOrAuthorityChange,
+    ].join(" ").toLowerCase();
+    for (const phrase of ["make nicer", "tidy up", "future-proof", "prepare for future", "make reusable"]) {
+      if (refactorText.includes(phrase)) {
+        errors.push(`${task.taskId} has vague refactor rationale: ${phrase}`);
+      }
     }
   }
 }
@@ -3919,6 +4033,20 @@ function parseTaskSpecificProofPlanRows(content: string): TaskSpecificProofPlanR
     proofSpecificity: cells[1] ?? "",
     taskSpecificProofName: cells[2] ?? "",
     broadProofRationale: cells[3] ?? "",
+  }));
+}
+
+function parseRefactorFirstContractRows(content: string): RefactorFirstContractRow[] {
+  return parseTableRows(section(content, "## Refactor-First Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    trigger: cells[1] ?? "",
+    refactorType: cells[2] ?? "",
+    unchangedBehavior: cells[3] ?? "",
+    affectedConsumers: cells[4] ?? "",
+    downstreamTaskUnblocked: cells[5] ?? "",
+    compatibilityProof: cells[6] ?? "",
+    routingCheck: cells[7] ?? "",
+    forbiddenBehaviorOrAuthorityChange: cells[8] ?? "",
   }));
 }
 

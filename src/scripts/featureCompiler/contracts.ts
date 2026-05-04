@@ -250,11 +250,14 @@ export const layer4RequiredCheckIdsByTaskType = {
     "test-alignment-source-truth-boundary",
   ],
   "DECISION:refactor-first": [
+    "refactor-trigger",
+    "refactor-type",
     "refactor-existing-behavior",
     "refactor-affected-consumers",
     "refactor-compatibility-proof",
     "refactor-downstream-unblocker",
     "refactor-no-product-change",
+    "refactor-routing-check",
   ],
   "DECISION:architecture-foundation": [
     "architecture-adrs-reviewed",
