@@ -72,6 +72,7 @@ const requiredHeadings = [
   "## Task-Specific Proof Plan",
   "## Refactor-First Contract",
   "## Architecture Foundation Contract",
+  "## Architecture Update Contract",
   "## Test-Only Coverage Contract",
   "## Test Suite Alignment Contract",
   "## Capability Permission / State Matrix",
@@ -212,6 +213,20 @@ const allowedArchitectureFoundationRoutes = new Set([
   "GOV:architecture-update",
   "GOV:standards-update",
   "blocked-human-decision",
+]);
+const allowedArchitectureDecisionAnalysisStatuses = new Set([
+  "approved-source-exists",
+  "missing-layer-2-analysis",
+  "incomplete-layer-2-analysis",
+  "adr-required",
+  "blocked-human-decision",
+]);
+const allowedArchitectureUpdateDecisionSources = new Set([
+  "Layer-2-technical-steering",
+  "ADR",
+  "existing-architecture-source",
+  "approved-architecture-foundation-output",
+  "explicit-recorded-human-approval",
 ]);
 
 const vaguePhrases = [
@@ -526,6 +541,9 @@ type ArchitectureFoundationContractRow = {
   concernArea: string;
   trigger: string;
   question: string;
+  decisionAnalysisStatus: string;
+  decisionProvenanceSource: string;
+  missingAnalysisFields: string;
   sourcesToReview: string;
   decisionOwner: string;
   outputArtifactTarget: string;
@@ -533,6 +551,19 @@ type ArchitectureFoundationContractRow = {
   compatibilityPosture: string;
   finalAuthorityRoute: string;
   forbiddenImplementationGuess: string;
+};
+
+type ArchitectureUpdateContractRow = {
+  taskId: string;
+  approvedDecisionSource: string;
+  decisionSourcePathReference: string;
+  decisionSummary: string;
+  architectureArtifactTarget: string;
+  consistencySweepTargets: string;
+  downstreamImpact: string;
+  compatibilityPosture: string;
+  forbiddenImplementationStandardsWork: string;
+  validationReviewEvidence: string;
 };
 
 type TestOnlyCoverageContractRow = {
@@ -758,6 +789,7 @@ export function validateTaskBreakdownContent(
   const taskSpecificProofPlans = parseTaskSpecificProofPlanRows(taskContent);
   const refactorFirstContracts = parseRefactorFirstContractRows(taskContent);
   const architectureFoundationContracts = parseArchitectureFoundationContractRows(taskContent);
+  const architectureUpdateContracts = parseArchitectureUpdateContractRows(taskContent);
   const testOnlyCoverageContracts = parseTestOnlyCoverageContractRows(taskContent);
   const testSuiteAlignmentContracts = parseTestSuiteAlignmentContractRows(taskContent);
   const capabilityPermissionStateMatrices = parseCapabilityPermissionStateMatrixRows(taskContent);
@@ -830,6 +862,7 @@ export function validateTaskBreakdownContent(
   const taskSpecificProofPlansByTask = groupBy(taskSpecificProofPlans, (row) => row.taskId);
   const refactorFirstContractsByTask = groupBy(refactorFirstContracts, (row) => row.taskId);
   const architectureFoundationContractsByTask = groupBy(architectureFoundationContracts, (row) => row.taskId);
+  const architectureUpdateContractsByTask = groupBy(architectureUpdateContracts, (row) => row.taskId);
   const testOnlyCoverageContractsByTask = groupBy(testOnlyCoverageContracts, (row) => row.taskId);
   const testSuiteAlignmentContractsByTask = groupBy(testSuiteAlignmentContracts, (row) => row.taskId);
   const capabilityPermissionStateMatricesByTask = groupBy(capabilityPermissionStateMatrices, (row) => row.taskId);
@@ -888,6 +921,7 @@ export function validateTaskBreakdownContent(
     validateTaskGuardrailEvidence(task, guardrailEvidenceByTask.get(task.taskId) ?? [], placementsByTask.get(task.taskId) ?? [], errors);
     validateRefactorFirstContract(task, refactorFirstContractsByTask.get(task.taskId) ?? [], tasks, errors);
     validateArchitectureFoundationContract(task, architectureFoundationContractsByTask.get(task.taskId) ?? [], tasks, errors);
+    validateArchitectureUpdateContract(task, architectureUpdateContractsByTask.get(task.taskId) ?? [], errors);
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
     validateWriteSetClassification(task, writeSetClassificationsByTask.get(task.taskId) ?? [], errors);
     validateForbiddenWork(task, forbiddenWorkByTask.get(task.taskId) ?? [], errors);
@@ -921,6 +955,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Task-Specific Proof Plan", taskSpecificProofPlans.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Refactor-First Contract", refactorFirstContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Architecture Foundation Contract", architectureFoundationContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Architecture Update Contract", architectureUpdateContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test-Only Coverage Contract", testOnlyCoverageContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test Suite Alignment Contract", testSuiteAlignmentContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Capability Permission / State Matrix", capabilityPermissionStateMatrices.map((row) => row.taskId), taskIds, errors);
@@ -2287,8 +2322,11 @@ function validateArchitectureFoundationContract(
   for (const row of rows) {
     validateAllowedValue(task.taskId, "Concern Area", row.concernArea, allowedArchitectureFoundationConcernAreas, errors);
     validateAllowedValue(task.taskId, "Architecture Trigger", row.trigger, allowedArchitectureFoundationTriggers, errors);
+    validateAllowedValue(task.taskId, "Decision Analysis Status", row.decisionAnalysisStatus, allowedArchitectureDecisionAnalysisStatuses, errors);
     validateAllowedValue(task.taskId, "Final Authority Route", row.finalAuthorityRoute, allowedArchitectureFoundationRoutes, errors);
     validateRequiredField(task.taskId, "Architecture Question", row.question, errors);
+    validateRequiredField(task.taskId, "Decision Provenance Source", row.decisionProvenanceSource, errors);
+    validateRequiredField(task.taskId, "Missing Analysis Fields", row.missingAnalysisFields, errors);
     validateRequiredField(task.taskId, "Sources To Review", row.sourcesToReview, errors);
     validateRequiredField(task.taskId, "Decision Owner", row.decisionOwner, errors);
     validateRequiredField(task.taskId, "Output Artifact Target", row.outputArtifactTarget, errors);
@@ -2311,8 +2349,16 @@ function validateArchitectureFoundationContract(
       errors.push(`${task.taskId} Architecture Foundation Contract needs compatibility, migration, or not-applicable posture`);
     }
 
+    if (row.decisionAnalysisStatus !== "approved-source-exists") {
+      const missing = row.missingAnalysisFields.trim().toLowerCase();
+      if (missing === "none" || missing.startsWith("not-applicable")) {
+        errors.push(`${task.taskId} Architecture Foundation Contract must name missing analysis fields when decision analysis is not approved`);
+      }
+    }
+
     const downstreamIds = splitIds(row.downstreamTasksBlocked);
     const knownTaskIds = new Set(tasks.map((candidate) => candidate.taskId));
+    const tasksById = new Map(tasks.map((candidate) => [candidate.taskId, candidate]));
     for (const downstreamId of downstreamIds) {
       if (
         downstreamId.startsWith("blocked") ||
@@ -2323,6 +2369,17 @@ function validateArchitectureFoundationContract(
       }
       if (!knownTaskIds.has(downstreamId)) {
         errors.push(`${task.taskId} Architecture Foundation Contract references unknown downstream task ${downstreamId}`);
+        continue;
+      }
+
+      const downstreamTask = tasksById.get(downstreamId);
+      if (
+        row.decisionAnalysisStatus !== "approved-source-exists" &&
+        downstreamTask &&
+        downstreamTask.taskType.startsWith("DEV:") &&
+        downstreamTask.handoffStatus === "queued-for-delivery"
+      ) {
+        errors.push(`${downstreamId} must remain blocked until ${task.taskId} has approved architecture decision analysis`);
       }
     }
 
@@ -2331,6 +2388,56 @@ function validateArchitectureFoundationContract(
       if (vagueText.includes(phrase)) {
         errors.push(`${task.taskId} has vague architecture foundation rationale: ${phrase}`);
       }
+    }
+  }
+}
+
+function validateArchitectureUpdateContract(
+  task: TaskRow,
+  rows: ArchitectureUpdateContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "GOV:architecture-update") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has Architecture Update Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} has no Architecture Update Contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateAllowedValue(task.taskId, "Approved Decision Source", row.approvedDecisionSource, allowedArchitectureUpdateDecisionSources, errors);
+    validateRequiredField(task.taskId, "Decision Source Path / Reference", row.decisionSourcePathReference, errors);
+    validateRequiredField(task.taskId, "Decision Summary", row.decisionSummary, errors);
+    validateRequiredField(task.taskId, "Architecture Artifact Target", row.architectureArtifactTarget, errors);
+    validateRequiredField(task.taskId, "Consistency Sweep Targets", row.consistencySweepTargets, errors);
+    validateRequiredField(task.taskId, "Downstream Impact", row.downstreamImpact, errors);
+    validateRequiredField(task.taskId, "Compatibility Posture", row.compatibilityPosture, errors);
+    validateRequiredField(task.taskId, "Forbidden Implementation / Standards Work", row.forbiddenImplementationStandardsWork, errors);
+    validateRequiredField(task.taskId, "Validation / Review Evidence", row.validationReviewEvidence, errors);
+
+    const source = `${row.approvedDecisionSource} ${row.decisionSourcePathReference}`.toLowerCase();
+    if (
+      !source.includes("technical") &&
+      !source.includes("adr") &&
+      !source.includes("architecture") &&
+      !source.includes("approval")
+    ) {
+      errors.push(`${task.taskId} Architecture Update Contract needs an approved architecture decision source`);
+    }
+
+    const target = row.architectureArtifactTarget.toLowerCase();
+    if (!target.includes("docs/architecture") && !target.includes("docs/workspace/technical-steering") && !target.includes("docs/templates")) {
+      errors.push(`${task.taskId} Architecture Update Contract target must be an architecture-owned artifact`);
+    }
+
+    const forbidden = row.forbiddenImplementationStandardsWork.toLowerCase();
+    if (!forbidden.includes("implementation") || !forbidden.includes("standards")) {
+      errors.push(`${task.taskId} Architecture Update Contract must forbid implementation and standards work`);
     }
   }
 }
@@ -4180,13 +4287,31 @@ function parseArchitectureFoundationContractRows(content: string): ArchitectureF
     concernArea: cells[1] ?? "",
     trigger: cells[2] ?? "",
     question: cells[3] ?? "",
-    sourcesToReview: cells[4] ?? "",
-    decisionOwner: cells[5] ?? "",
-    outputArtifactTarget: cells[6] ?? "",
-    downstreamTasksBlocked: cells[7] ?? "",
-    compatibilityPosture: cells[8] ?? "",
-    finalAuthorityRoute: cells[9] ?? "",
-    forbiddenImplementationGuess: cells[10] ?? "",
+    decisionAnalysisStatus: cells[4] ?? "",
+    decisionProvenanceSource: cells[5] ?? "",
+    missingAnalysisFields: cells[6] ?? "",
+    sourcesToReview: cells[7] ?? "",
+    decisionOwner: cells[8] ?? "",
+    outputArtifactTarget: cells[9] ?? "",
+    downstreamTasksBlocked: cells[10] ?? "",
+    compatibilityPosture: cells[11] ?? "",
+    finalAuthorityRoute: cells[12] ?? "",
+    forbiddenImplementationGuess: cells[13] ?? "",
+  }));
+}
+
+function parseArchitectureUpdateContractRows(content: string): ArchitectureUpdateContractRow[] {
+  return parseTableRows(section(content, "## Architecture Update Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    approvedDecisionSource: cells[1] ?? "",
+    decisionSourcePathReference: cells[2] ?? "",
+    decisionSummary: cells[3] ?? "",
+    architectureArtifactTarget: cells[4] ?? "",
+    consistencySweepTargets: cells[5] ?? "",
+    downstreamImpact: cells[6] ?? "",
+    compatibilityPosture: cells[7] ?? "",
+    forbiddenImplementationStandardsWork: cells[8] ?? "",
+    validationReviewEvidence: cells[9] ?? "",
   }));
 }
 

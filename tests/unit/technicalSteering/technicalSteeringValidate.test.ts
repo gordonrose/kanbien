@@ -31,6 +31,12 @@ const validPacket = `# Technical Steering Packet: Tenant Branding
 | --- | --- | --- | --- | --- |
 | API route or contract change | yes | Root admin update route contract changes. | API route or contract change | DOC:api-contract |
 
+## Architecture Decision Analysis
+
+| Decision ID | Concern Area | Architecture Question | Analysis Status | Options Considered | Industry / Best-Practice Baseline | Local Repo Constraints | Trade-Offs | Risk Review | Cost / Delivery Impact | Security / Privacy / Compliance Impact | Operability Impact | Migration / Compatibility Impact | Testability / Evidence Impact | Reversibility | Recommended Option | Rejected Alternatives | Decision Owner / Signoff | Durable Authority Target |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| DEC-001 | ownership-boundary | Should tenant branding backend behavior remain feature-local? | approved | Feature-local tenantConfiguration owner; platform seam; shared library. | Feature-owned behavior stays with the owning domain unless cross-feature reuse or platform authority is proven. | Existing tenantConfiguration feature owns branding behavior and no shared runtime seam is needed. | Feature-local keeps scope narrow; platform seam would add unnecessary authority. | Low risk because no shared seam or migration is introduced. | Low delivery cost; avoids broader platform work. | Root-only capability and permission mapping remain explicit. | Existing operational model unchanged. | Backwards-compatible additive route behavior; no migration required. | Persistence and contract tests cover the decision. | Reversible by later architecture-foundation and GOV:architecture-update if reuse emerges. | Keep tenant branding DEV:backend feature-local. | Platform seam and shared-lib alternatives rejected until reuse or authority need exists. | Technical Steering approval in this packet. | docs/workspace/technical-steering/tenant-branding.md |
+
 ## Frontend Architecture Classification
 
 | Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
@@ -140,6 +146,31 @@ describe("technical steering validation", () => {
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("vague phrase found: figure out later");
     expect(result.errors).toContain("vague phrase found: probably feature-local");
+  });
+
+  it("blocks approved architecture steering without decision analysis", () => {
+    const result = validateTechnicalSteeringContent(
+      validPacket.replace(
+        "## Architecture Decision Analysis\n\n| Decision ID | Concern Area | Architecture Question | Analysis Status | Options Considered | Industry / Best-Practice Baseline | Local Repo Constraints | Trade-Offs | Risk Review | Cost / Delivery Impact | Security / Privacy / Compliance Impact | Operability Impact | Migration / Compatibility Impact | Testability / Evidence Impact | Reversibility | Recommended Option | Rejected Alternatives | Decision Owner / Signoff | Durable Authority Target |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| DEC-001 | ownership-boundary | Should tenant branding backend behavior remain feature-local? | approved | Feature-local tenantConfiguration owner; platform seam; shared library. | Feature-owned behavior stays with the owning domain unless cross-feature reuse or platform authority is proven. | Existing tenantConfiguration feature owns branding behavior and no shared runtime seam is needed. | Feature-local keeps scope narrow; platform seam would add unnecessary authority. | Low risk because no shared seam or migration is introduced. | Low delivery cost; avoids broader platform work. | Root-only capability and permission mapping remain explicit. | Existing operational model unchanged. | Backwards-compatible additive route behavior; no migration required. | Persistence and contract tests cover the decision. | Reversible by later architecture-foundation and GOV:architecture-update if reuse emerges. | Keep tenant branding DEV:backend feature-local. | Platform seam and shared-lib alternatives rejected until reuse or authority need exists. | Technical Steering approval in this packet. | docs/workspace/technical-steering/tenant-branding.md |\n\n",
+        "## Architecture Decision Analysis\n\n| Decision ID | Concern Area | Architecture Question | Analysis Status | Options Considered | Industry / Best-Practice Baseline | Local Repo Constraints | Trade-Offs | Risk Review | Cost / Delivery Impact | Security / Privacy / Compliance Impact | Operability Impact | Migration / Compatibility Impact | Testability / Evidence Impact | Reversibility | Recommended Option | Rejected Alternatives | Decision Owner / Signoff | Durable Authority Target |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("Architecture Decision Analysis is required for architecture-sensitive steering");
+  });
+
+  it("blocks incomplete architecture decision analysis", () => {
+    const result = validateTechnicalSteeringContent(
+      validPacket.replace(
+        "| DEC-001 | ownership-boundary | Should tenant branding backend behavior remain feature-local? | approved |",
+        "| DEC-001 | ownership-boundary | Should tenant branding backend behavior remain feature-local? | incomplete |",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("Architecture Decision Analysis must include approved or not-required-with-rationale analysis");
+    expect(result.errors).toContain("DEC-001 Architecture Decision Analysis is incomplete");
   });
 
   it("blocks frontend-affecting steering without DEV:frontend architecture rows", () => {

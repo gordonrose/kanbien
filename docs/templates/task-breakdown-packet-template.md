@@ -541,8 +541,32 @@ Allowed final authority routes:
 - `GOV:standards-update`
 - `blocked-human-decision`
 
-| Task ID | Concern Area | Architecture Trigger | Architecture Question | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+Allowed decision analysis statuses:
+
+- `approved-source-exists`
+- `missing-layer-2-analysis`
+- `incomplete-layer-2-analysis`
+- `adr-required`
+- `blocked-human-decision`
+
+| Task ID | Concern Area | Architecture Trigger | Architecture Question | Decision Analysis Status | Decision Provenance Source | Missing Analysis Fields | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Architecture Update Contract
+
+Required for `GOV:architecture-update` tasks. Leave empty when no
+`GOV:architecture-update` task is queued.
+
+Allowed approved decision sources:
+
+- `Layer-2-technical-steering`
+- `ADR`
+- `existing-architecture-source`
+- `approved-architecture-foundation-output`
+- `explicit-recorded-human-approval`
+
+| Task ID | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Test-Only Coverage Contract
 

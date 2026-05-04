@@ -267,8 +267,13 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 ## Architecture Foundation Contract
 
-| Task ID | Concern Area | Architecture Trigger | Architecture Question | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Task ID | Concern Area | Architecture Trigger | Architecture Question | Decision Analysis Status | Decision Provenance Source | Missing Analysis Fields | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Architecture Update Contract
+
+| Task ID | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Test-Only Coverage Contract
 
@@ -899,6 +904,33 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 GOV task type must not own product/runtime implementation write paths");
+  });
+
+  it("blocks GOV:architecture-update tasks without an approved decision-source contract", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:architecture-update |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/architecture/adr/0042-tenant-branding-ownership.md",
+        )
+        .replace(
+          "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+          "| T-S001-01 | GOV:architecture-update | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/architecture-update-task-guardrail.md | approved | Architecture update guardrail reviewed for approved decision source and artifact target. |",
+        )
+        .replace(
+          "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+          "| T-S001-01 | architecture-approved-decision-source | pass | Layer 2 Technical Steering approved the ownership decision. |\n| T-S001-01 | architecture-authority-reviewed | pass | ADRs and architecture docs reviewed. |\n| T-S001-01 | architecture-change-owner | pass | Technical Steering owns the architecture change. |\n| T-S001-01 | architecture-output-artifact | pass | ADR output artifact is named. |\n| T-S001-01 | architecture-downstream-impact | pass | DEV:backend and DOC task impacts are named. |\n| T-S001-01 | architecture-validation | pass | Technical steering and task breakdown validation required. |",
+        )
+        .replace(
+          "| T-S001-01 | src/features/tenantConfiguration/domain/updateBranding.ts | feature-local | Owning feature domain capability file. |",
+          "| T-S001-01 | docs/architecture/adr/0042-tenant-branding-ownership.md | docs-artifact | Architecture ADR output. |",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has no Architecture Update Contract row");
   });
 
   it("blocks standards compliance tasks that try to change standards authority", () => {
@@ -2013,7 +2045,7 @@ describe("task breakdown validation", () => {
       )
       .replace(
         "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |",
-        "| T-S001-00 | architecture-concern-area | pass | ownership-boundary is the architecture concern area. |\n| T-S001-00 | architecture-trigger | pass | owner-boundary trigger applies because the owning feature must be confirmed before backend delivery. |\n| T-S001-00 | architecture-question | pass | The question names whether tenant branding ownership remains tenantConfiguration. |\n| T-S001-00 | architecture-adrs-reviewed | pass | ADRs, architecture docs, and Technical Steering are reviewed. |\n| T-S001-00 | architecture-decision-owner | pass | Technical Steering owns the decision. |\n| T-S001-00 | architecture-output-path | pass | Output target is docs/workspace/technical-steering/tenant-branding-ownership.md or an ADR if authority changes. |\n| T-S001-00 | architecture-downstream-block | pass | T-S001-01 is blocked until the decision is recorded. |\n| T-S001-00 | architecture-compatibility | pass | Backwards compatibility posture is recorded before implementation. |\n| T-S001-00 | architecture-final-authority-route | pass | Final route is GOV:architecture-update if architecture authority changes. |\n| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |",
+        "| T-S001-00 | architecture-concern-area | pass | ownership-boundary is the architecture concern area. |\n| T-S001-00 | architecture-trigger | pass | owner-boundary trigger applies because the owning feature must be confirmed before backend delivery. |\n| T-S001-00 | architecture-question | pass | The question names whether tenant branding ownership remains tenantConfiguration. |\n| T-S001-00 | architecture-decision-provenance | pass | Technical Steering DEC-001 contains approved option, trade-off, risk, cost, compatibility, evidence, and signoff analysis. |\n| T-S001-00 | architecture-adrs-reviewed | pass | ADRs, architecture docs, and Technical Steering are reviewed. |\n| T-S001-00 | architecture-decision-owner | pass | Technical Steering owns the decision. |\n| T-S001-00 | architecture-output-path | pass | Output target is docs/workspace/technical-steering/tenant-branding-ownership.md or an ADR if authority changes. |\n| T-S001-00 | architecture-downstream-block | pass | T-S001-01 is blocked until the decision is recorded. |\n| T-S001-00 | architecture-compatibility | pass | Backwards compatibility posture is recorded before implementation. |\n| T-S001-00 | architecture-final-authority-route | pass | Final route is GOV:architecture-update if architecture authority changes. |\n| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |",
       )
       .replace(
         "| T-S001-01 | feature-local | src/features/tenantConfiguration | src/features/tenantConfiguration | no | not-applicable: no shared code placement | Existing consumer compatibility protected by tenantConfiguration persistence regression. | approved |",
@@ -2064,8 +2096,8 @@ describe("task breakdown validation", () => {
         "| T-S001-00 | Do not invent architecture ownership, backend implementation, API behavior, persistence behavior, or permission behavior. | Stop and route unresolved authority to Technical Steering or GOV:architecture-update. |\n| T-S001-01 | Do not invent DEV:frontend rendering, public asset delivery, or tenant self-service behavior. | Stop and create separate Story/Task Breakdown coverage. |",
       )
       .replace(
-        "## Architecture Foundation Contract\n\n| Task ID | Concern Area | Architecture Trigger | Architecture Question | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
-        "## Architecture Foundation Contract\n\n| Task ID | Concern Area | Architecture Trigger | Architecture Question | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-00 | ownership-boundary | owner-boundary | Does tenant branding ownership remain in tenantConfiguration for this backend change? | docs/architecture/adr/; docs/architecture/system-overview.md; Technical Steering packet | Technical Steering | docs/workspace/technical-steering/tenant-branding-ownership.md or docs/architecture/adr/new-tenant-branding-ownership.md | T-S001-01 | Backwards compatibility required; no migration or runtime behavior change in this task. | GOV:architecture-update | Do not implement backend behavior, change API contracts, or invent architecture ownership. |",
+        "## Architecture Foundation Contract\n\n| Task ID | Concern Area | Architecture Trigger | Architecture Question | Decision Analysis Status | Decision Provenance Source | Missing Analysis Fields | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "## Architecture Foundation Contract\n\n| Task ID | Concern Area | Architecture Trigger | Architecture Question | Decision Analysis Status | Decision Provenance Source | Missing Analysis Fields | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-00 | ownership-boundary | owner-boundary | Does tenant branding ownership remain in tenantConfiguration for this backend change? | approved-source-exists | Technical Steering DEC-001 approved analysis. | none | docs/architecture/adr/; docs/architecture/system-overview.md; Technical Steering packet | Technical Steering | docs/workspace/technical-steering/tenant-branding-ownership.md or docs/architecture/adr/new-tenant-branding-ownership.md | T-S001-01 | Backwards compatibility required; no migration or runtime behavior change in this task. | GOV:architecture-update | Do not implement backend behavior, change API contracts, or invent architecture ownership. |",
       )
       .replace(
         "| T-S001-01 | codex/s001-tenant-branding-backend | current dedicated task branch | docs/workspace/chat-bootstraps/2026-04-29-s001-tenant-branding-backend.md | origin/main | record exact base commit before Delivery edits | main after promote guardrail |",
@@ -2092,13 +2124,38 @@ describe("task breakdown validation", () => {
         )
         .replace(
           "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
-          "| T-S001-01 | architecture-concern-area | pass | ownership-boundary concern applies. |\n| T-S001-01 | architecture-trigger | pass | owner-boundary trigger applies. |\n| T-S001-01 | architecture-question | pass | Question is specific. |\n| T-S001-01 | architecture-adrs-reviewed | pass | ADRs and architecture docs reviewed. |\n| T-S001-01 | architecture-decision-owner | pass | Technical Steering owns decision. |\n| T-S001-01 | architecture-output-path | pass | Output path named. |\n| T-S001-01 | architecture-downstream-block | pass | Downstream task blocked. |\n| T-S001-01 | architecture-compatibility | pass | Compatibility posture recorded. |\n| T-S001-01 | architecture-final-authority-route | pass | Authority route named. |",
+          "| T-S001-01 | architecture-concern-area | pass | ownership-boundary concern applies. |\n| T-S001-01 | architecture-trigger | pass | owner-boundary trigger applies. |\n| T-S001-01 | architecture-question | pass | Question is specific. |\n| T-S001-01 | architecture-decision-provenance | pass | Technical Steering decision provenance is named. |\n| T-S001-01 | architecture-adrs-reviewed | pass | ADRs and architecture docs reviewed. |\n| T-S001-01 | architecture-decision-owner | pass | Technical Steering owns decision. |\n| T-S001-01 | architecture-output-path | pass | Output path named. |\n| T-S001-01 | architecture-downstream-block | pass | Downstream task blocked. |\n| T-S001-01 | architecture-compatibility | pass | Compatibility posture recorded. |\n| T-S001-01 | architecture-final-authority-route | pass | Authority route named. |",
         ),
       sourceStoryPacket,
     );
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 has no Architecture Foundation Contract row");
+  });
+
+  it("blocks downstream DEV work when architecture decision analysis is incomplete", () => {
+    const architecturePacket = validTaskPacket
+      .replace(
+        "| T-S001-01 | S-001 | DEV:backend | Add root-admin tenant branding persistence update using the approved tenants public seam.",
+        "| T-S001-00 | S-001 | DECISION:architecture-foundation | Resolve whether tenant branding ownership remains tenantConfiguration before backend delivery. | docs/workspace/technical-steering/tenant-branding-ownership.md, docs/architecture/adr/ | DEV:backend implementation | not-applicable: architecture decision task | not-applicable: architecture blocker | queued-for-delivery |\n| T-S001-01 | S-001 | DEV:backend | Add root-admin tenant branding persistence update using the approved tenants public seam.",
+      )
+      .replace(
+        "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+        "| T-S001-00 | DECISION:architecture-foundation | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/architecture-foundation-task-guardrail.md | approved | Architecture-foundation guardrail reviewed for missing Layer 2 analysis. |\n| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+      )
+      .replace(
+        "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |",
+        "| T-S001-00 | architecture-concern-area | pass | ownership-boundary concern applies. |\n| T-S001-00 | architecture-trigger | pass | owner-boundary trigger applies. |\n| T-S001-00 | architecture-question | pass | Question is specific. |\n| T-S001-00 | architecture-decision-provenance | pass | Layer 2 analysis is incomplete and missing signoff. |\n| T-S001-00 | architecture-adrs-reviewed | pass | ADRs and architecture docs reviewed. |\n| T-S001-00 | architecture-decision-owner | pass | Technical Steering owns decision. |\n| T-S001-00 | architecture-output-path | pass | Output path named. |\n| T-S001-00 | architecture-downstream-block | pass | T-S001-01 is blocked. |\n| T-S001-00 | architecture-compatibility | pass | Compatibility posture recorded. |\n| T-S001-00 | architecture-final-authority-route | pass | Route back to Layer 2. |\n| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |",
+      )
+      .replace(
+        "## Architecture Foundation Contract\n\n| Task ID | Concern Area | Architecture Trigger | Architecture Question | Decision Analysis Status | Decision Provenance Source | Missing Analysis Fields | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "## Architecture Foundation Contract\n\n| Task ID | Concern Area | Architecture Trigger | Architecture Question | Decision Analysis Status | Decision Provenance Source | Missing Analysis Fields | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-00 | ownership-boundary | owner-boundary | Does tenant branding ownership remain in tenantConfiguration? | incomplete-layer-2-analysis | Technical Steering packet missing complete decision analysis. | options, trade-offs, risk, cost, signoff | docs/architecture/adr/; docs/architecture/system-overview.md; Technical Steering packet | Technical Steering | docs/workspace/technical-steering/tenant-branding-ownership.md | T-S001-01 | Backwards compatibility required. | Layer-2-technical-steering | Do not implement backend behavior or invent architecture ownership. |",
+      );
+
+    const result = validateTaskBreakdownContent(architecturePacket, sourceStoryPacket);
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 must remain blocked until T-S001-00 has approved architecture decision analysis");
   });
 
   it("blocks tasks mapped to stories that are not approved for task breakdown", () => {

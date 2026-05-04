@@ -263,6 +263,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "architecture-concern-area",
     "architecture-trigger",
     "architecture-question",
+    "architecture-decision-provenance",
     "architecture-adrs-reviewed",
     "architecture-decision-owner",
     "architecture-output-path",
@@ -284,6 +285,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "standards-validation",
   ],
   "GOV:architecture-update": [
+    "architecture-approved-decision-source",
     "architecture-authority-reviewed",
     "architecture-change-owner",
     "architecture-output-artifact",

@@ -12,10 +12,28 @@ Use for task type: `GOV:architecture-update`
 
 ## Approval Evidence
 
+- approved decision source from Layer 2, ADR, existing architecture authority,
+  or explicit recorded human approval
 - architecture source of authority reviewed
 - architecture artifact path being created or changed
 - rationale, compatibility posture, and downstream task impact
 - validation or review command
+
+## Approved Decision Sources
+
+`GOV:architecture-update` may only update durable architecture authority from
+an approved decision source:
+
+- `Layer-2-technical-steering`
+- `ADR`
+- `existing-architecture-source`
+- `approved-architecture-foundation-output`
+- `explicit-recorded-human-approval`
+
+If options, trade-offs, risk, cost, compatibility, operability, security,
+privacy, compliance, testability, reversibility, recommendation, rejected
+alternatives, or signoff are unresolved, route back to
+`DECISION:architecture-foundation` or Layer 2 Technical Steering.
 
 ## Deep Delivery Standard
 
@@ -39,6 +57,7 @@ task.
 
 ## Required Check IDs
 
+- `architecture-approved-decision-source`
 - `architecture-authority-reviewed`
 - `architecture-change-owner`
 - `architecture-output-artifact`

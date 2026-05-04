@@ -72,6 +72,23 @@ Recommended risk areas:
 - QA/runtime evidence need
 - source-independent docs impact
 
+## Architecture Decision Analysis
+
+Layer 2 owns architecture decision quality. For every material architecture
+classification that approves, blocks, or routes architecture-sensitive work,
+record the option, trade-off, risk, cost, and signoff analysis here. Use
+`not-applicable: <reason>` only when a field truly does not apply.
+
+Allowed analysis statuses:
+
+- `approved`
+- `incomplete`
+- `blocked`
+- `not-required-with-rationale`
+
+| Decision ID | Concern Area | Architecture Question | Analysis Status | Options Considered | Industry / Best-Practice Baseline | Local Repo Constraints | Trade-Offs | Risk Review | Cost / Delivery Impact | Security / Privacy / Compliance Impact | Operability Impact | Migration / Compatibility Impact | Testability / Evidence Impact | Reversibility | Recommended Option | Rejected Alternatives | Decision Owner / Signoff | Durable Authority Target |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Frontend Architecture Classification
 
 For frontend-affecting work, Layer 2 owns DEV:frontend placement, route,

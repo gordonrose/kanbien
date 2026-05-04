@@ -94,10 +94,37 @@ If the decision changes durable architecture authority, downstream
 implementation remains blocked until a `GOV:architecture-update` or equivalent
 authority-owning task records the decision.
 
+## Decision Provenance
+
+Layer 4 may identify an architecture decision gap, but it must not approve the
+architecture decision itself. Every queued task must classify the status of
+the Layer 2 or durable-authority decision analysis.
+
+Allowed decision analysis statuses:
+
+- `approved-source-exists`: Layer 2, ADR, or architecture authority already
+  contains enough option, trade-off, risk, cost, compatibility, operability,
+  testability, reversibility, recommendation, and signoff analysis
+- `missing-layer-2-analysis`: the architecture question must return to Layer 2
+  because no sufficient decision-analysis record exists
+- `incomplete-layer-2-analysis`: Layer 2 analysis exists but is missing
+  required option, trade-off, risk, cost, compatibility, operability,
+  testability, reversibility, recommendation, or signoff evidence
+- `adr-required`: the approved decision requires an ADR before implementation
+  proceeds
+- `blocked-human-decision`: human architecture approval is required before any
+  downstream queueing
+
+When the status is not `approved-source-exists`, downstream implementation
+must remain blocked. Layer 4 records missing analysis fields and the resolution
+route; it does not fill in the architecture decision.
+
 ## Approval Evidence
 
 - approved concern area
 - approved trigger
+- decision analysis status and provenance source
+- missing decision-analysis fields when the source is absent or incomplete
 - exact architecture question
 - exact ADRs or architecture docs reviewed
 - decision needed and owner
@@ -118,6 +145,7 @@ authority-owning task records the decision.
 - `architecture-concern-area`
 - `architecture-trigger`
 - `architecture-question`
+- `architecture-decision-provenance`
 - `architecture-adrs-reviewed`
 - `architecture-decision-owner`
 - `architecture-output-path`

@@ -28,6 +28,7 @@ const requiredHeadings = [
   "## Product Handoff",
   "## Architecture Classification",
   "## Architecture Risk Flags",
+  "## Architecture Decision Analysis",
   "## Frontend Architecture Classification",
   "## Browser Security Posture",
   "## Artifact Obligations",
@@ -48,6 +49,12 @@ const allowedClassifications = new Set([
 ]);
 
 const allowedDecisionStatuses = new Set(["approved", "blocked", "deferred-with-owner"]);
+const allowedArchitectureAnalysisStatuses = new Set([
+  "approved",
+  "incomplete",
+  "blocked",
+  "not-required-with-rationale",
+]);
 const allowedTriggerStatuses = new Set(["yes", "no", "blocked"]);
 const allowedHandoffStatuses = new Set(["ready-for-story-breakdown", "blocked", "superseded"]);
 const allowedFrontendRouteFamilies: Set<string> = new Set(frontendRouteFamilies);
@@ -116,6 +123,28 @@ type SignalCheckRow = {
   exceptionDecision: string;
 };
 
+type ArchitectureDecisionAnalysisRow = {
+  decisionId: string;
+  concernArea: string;
+  question: string;
+  analysisStatus: string;
+  optionsConsidered: string;
+  bestPracticeBaseline: string;
+  localConstraints: string;
+  tradeOffs: string;
+  riskReview: string;
+  costDeliveryImpact: string;
+  securityPrivacyComplianceImpact: string;
+  operabilityImpact: string;
+  migrationCompatibilityImpact: string;
+  testabilityEvidenceImpact: string;
+  reversibility: string;
+  recommendedOption: string;
+  rejectedAlternatives: string;
+  decisionOwnerSignoff: string;
+  durableAuthorityTarget: string;
+};
+
 type HandoffRow = {
   scopeElement: string;
   handoffStatus: string;
@@ -177,6 +206,7 @@ export function validateTechnicalSteeringContent(content: string): TechnicalStee
 
   const classifications = parseClassificationRows(content);
   const signalChecks = parseSignalCheckRows(content);
+  const architectureDecisionAnalyses = parseArchitectureDecisionAnalysisRows(content);
   const handoffs = parseHandoffRows(content);
   const frontendClassifications = parseFrontendClassificationRows(content);
   const browserSecurityPosture = parseBrowserSecurityPostureRows(content);
@@ -189,6 +219,8 @@ export function validateTechnicalSteeringContent(content: string): TechnicalStee
   if (signalChecks.length === 0) {
     errors.push("Deterministic Signal Checks has no rows");
   }
+
+  validateArchitectureDecisionAnalysis(architectureDecisionAnalyses, classifications, errors);
 
   const classificationsById = new Map(classifications.map((row) => [row.classificationId, row]));
   const signalChecksById = new Map(signalChecks.map((row) => [row.triggerId, row]));
@@ -390,6 +422,57 @@ function validateFrontendArchitectureClassification(
   }
 }
 
+function validateArchitectureDecisionAnalysis(
+  rows: ArchitectureDecisionAnalysisRow[],
+  classifications: ClassificationRow[],
+  errors: string[],
+): void {
+  const architectureSensitiveClassifications = classifications.filter((classification) =>
+    classification.decisionStatus === "approved" ||
+    classification.decisionStatus === "blocked" ||
+    classification.classification === "architecture-foundation-required" ||
+    classification.downstreamSignal === "GOV:architecture-update" ||
+    classification.downstreamSignal === "DECISION:architecture-foundation"
+  );
+
+  if (architectureSensitiveClassifications.length > 0 && rows.length === 0) {
+    errors.push("Architecture Decision Analysis is required for architecture-sensitive steering");
+    return;
+  }
+
+  const hasApprovedOrNotRequiredAnalysis = rows.some((row) =>
+    row.analysisStatus === "approved" || row.analysisStatus === "not-required-with-rationale"
+  );
+  if (architectureSensitiveClassifications.length > 0 && !hasApprovedOrNotRequiredAnalysis) {
+    errors.push("Architecture Decision Analysis must include approved or not-required-with-rationale analysis");
+  }
+
+  for (const row of rows) {
+    validateRequiredField(row.decisionId, "Concern Area", row.concernArea, errors);
+    validateRequiredField(row.decisionId, "Architecture Question", row.question, errors);
+    validateAllowedValue(row.decisionId, "Analysis Status", row.analysisStatus, allowedArchitectureAnalysisStatuses, errors);
+    validateRequiredField(row.decisionId, "Options Considered", row.optionsConsidered, errors);
+    validateRequiredField(row.decisionId, "Industry / Best-Practice Baseline", row.bestPracticeBaseline, errors);
+    validateRequiredField(row.decisionId, "Local Repo Constraints", row.localConstraints, errors);
+    validateRequiredField(row.decisionId, "Trade-Offs", row.tradeOffs, errors);
+    validateRequiredField(row.decisionId, "Risk Review", row.riskReview, errors);
+    validateRequiredField(row.decisionId, "Cost / Delivery Impact", row.costDeliveryImpact, errors);
+    validateRequiredField(row.decisionId, "Security / Privacy / Compliance Impact", row.securityPrivacyComplianceImpact, errors);
+    validateRequiredField(row.decisionId, "Operability Impact", row.operabilityImpact, errors);
+    validateRequiredField(row.decisionId, "Migration / Compatibility Impact", row.migrationCompatibilityImpact, errors);
+    validateRequiredField(row.decisionId, "Testability / Evidence Impact", row.testabilityEvidenceImpact, errors);
+    validateRequiredField(row.decisionId, "Reversibility", row.reversibility, errors);
+    validateRequiredField(row.decisionId, "Recommended Option", row.recommendedOption, errors);
+    validateRequiredField(row.decisionId, "Rejected Alternatives", row.rejectedAlternatives, errors);
+    validateRequiredField(row.decisionId, "Decision Owner / Signoff", row.decisionOwnerSignoff, errors);
+    validateRequiredField(row.decisionId, "Durable Authority Target", row.durableAuthorityTarget, errors);
+
+    if (row.analysisStatus === "blocked" || row.analysisStatus === "incomplete") {
+      errors.push(`${row.decisionId} Architecture Decision Analysis is ${row.analysisStatus}`);
+    }
+  }
+}
+
 function validateBrowserSecurityPosture(
   rows: BrowserSecurityPostureRow[],
   frontendAffectingSignal: boolean,
@@ -530,6 +613,30 @@ function parseHandoffRows(content: string): HandoffRow[] {
   }));
 }
 
+function parseArchitectureDecisionAnalysisRows(content: string): ArchitectureDecisionAnalysisRow[] {
+  return parseTableRows(section(content, "## Architecture Decision Analysis")).map((cells) => ({
+    decisionId: cells[0] ?? "",
+    concernArea: cells[1] ?? "",
+    question: cells[2] ?? "",
+    analysisStatus: cells[3] ?? "",
+    optionsConsidered: cells[4] ?? "",
+    bestPracticeBaseline: cells[5] ?? "",
+    localConstraints: cells[6] ?? "",
+    tradeOffs: cells[7] ?? "",
+    riskReview: cells[8] ?? "",
+    costDeliveryImpact: cells[9] ?? "",
+    securityPrivacyComplianceImpact: cells[10] ?? "",
+    operabilityImpact: cells[11] ?? "",
+    migrationCompatibilityImpact: cells[12] ?? "",
+    testabilityEvidenceImpact: cells[13] ?? "",
+    reversibility: cells[14] ?? "",
+    recommendedOption: cells[15] ?? "",
+    rejectedAlternatives: cells[16] ?? "",
+    decisionOwnerSignoff: cells[17] ?? "",
+    durableAuthorityTarget: cells[18] ?? "",
+  }));
+}
+
 function parseFrontendClassificationRows(content: string): FrontendClassificationRow[] {
   return parseTableRows(section(content, "## Frontend Architecture Classification")).map((cells) => ({
     scopeElement: cells[0] ?? "",
@@ -600,6 +707,7 @@ function parseTableRows(sectionContent: string): string[][] {
         first !== "---" &&
         !first.startsWith("---") &&
         !first.includes("Classification ID") &&
+        !first.includes("Decision ID") &&
         !first.includes("Trigger ID") &&
         !first.includes("Story Scope Element") &&
         !first.includes("Scope Element") &&
