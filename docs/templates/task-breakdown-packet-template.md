@@ -497,6 +497,53 @@ Allowed routing check values:
 | Task ID | Refactor Trigger | Refactor Type | Unchanged Behavior | Affected Consumers | Downstream Task Unblocked | Compatibility Proof | Routing Check | Forbidden Behavior / Authority Change |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Architecture Foundation Contract
+
+Required for `DECISION:architecture-foundation` tasks. Leave empty when no
+`DECISION:architecture-foundation` task is queued.
+
+Allowed concern areas:
+
+- `ownership-boundary`
+- `integration-boundary`
+- `security-privacy-boundary`
+- `authorization-boundary`
+- `persistence-data-model`
+- `data-governance-compliance`
+- `frontend-architecture-boundary`
+- `design-system-architecture-boundary`
+- `scalability-performance`
+- `resilience-consistency`
+- `observability-operability`
+- `deployment-runtime-topology`
+- `dependency-selection`
+- `migration-rollout-strategy`
+- `testing-strategy-architecture`
+
+Allowed triggers:
+
+- `owner-boundary`
+- `platform-vs-feature`
+- `authz-boundary`
+- `persistence-model`
+- `topology-authority`
+- `lifecycle-cleanup`
+- `shared-seam-authority`
+- `compatibility-strategy`
+- `architecture-source-gap`
+
+Allowed final authority routes:
+
+- `existing-architecture-source`
+- `Layer-2-technical-steering`
+- `ADR-required`
+- `GOV:architecture-update`
+- `GOV:standards-update`
+- `blocked-human-decision`
+
+| Task ID | Concern Area | Architecture Trigger | Architecture Question | Sources To Review | Decision Owner | Output Artifact Target | Downstream Tasks Blocked | Compatibility Posture | Final Authority Route | Forbidden Implementation / Guess |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 Queued `TEST:test-only` tasks must say exactly what kind of test work they perform.

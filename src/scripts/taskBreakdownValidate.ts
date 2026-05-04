@@ -71,6 +71,7 @@ const requiredHeadings = [
   "## Tight Allowed Write Envelope",
   "## Task-Specific Proof Plan",
   "## Refactor-First Contract",
+  "## Architecture Foundation Contract",
   "## Test-Only Coverage Contract",
   "## Test Suite Alignment Contract",
   "## Capability Permission / State Matrix",
@@ -175,6 +176,42 @@ const allowedRefactorRoutingChecks = new Set([
   "blocked-route-to-DEV:migration-persistence",
   "blocked-route-to-DOC:permission-mapping",
   "blocked-route-to-GOV:design-system",
+]);
+const allowedArchitectureFoundationConcernAreas = new Set([
+  "ownership-boundary",
+  "integration-boundary",
+  "security-privacy-boundary",
+  "authorization-boundary",
+  "persistence-data-model",
+  "data-governance-compliance",
+  "frontend-architecture-boundary",
+  "design-system-architecture-boundary",
+  "scalability-performance",
+  "resilience-consistency",
+  "observability-operability",
+  "deployment-runtime-topology",
+  "dependency-selection",
+  "migration-rollout-strategy",
+  "testing-strategy-architecture",
+]);
+const allowedArchitectureFoundationTriggers = new Set([
+  "owner-boundary",
+  "platform-vs-feature",
+  "authz-boundary",
+  "persistence-model",
+  "topology-authority",
+  "lifecycle-cleanup",
+  "shared-seam-authority",
+  "compatibility-strategy",
+  "architecture-source-gap",
+]);
+const allowedArchitectureFoundationRoutes = new Set([
+  "existing-architecture-source",
+  "Layer-2-technical-steering",
+  "ADR-required",
+  "GOV:architecture-update",
+  "GOV:standards-update",
+  "blocked-human-decision",
 ]);
 
 const vaguePhrases = [
@@ -484,6 +521,20 @@ type RefactorFirstContractRow = {
   forbiddenBehaviorOrAuthorityChange: string;
 };
 
+type ArchitectureFoundationContractRow = {
+  taskId: string;
+  concernArea: string;
+  trigger: string;
+  question: string;
+  sourcesToReview: string;
+  decisionOwner: string;
+  outputArtifactTarget: string;
+  downstreamTasksBlocked: string;
+  compatibilityPosture: string;
+  finalAuthorityRoute: string;
+  forbiddenImplementationGuess: string;
+};
+
 type TestOnlyCoverageContractRow = {
   taskId: string;
   coverageSource: string;
@@ -706,6 +757,7 @@ export function validateTaskBreakdownContent(
   const tightWriteEnvelopes = parseTightWriteEnvelopeRows(taskContent);
   const taskSpecificProofPlans = parseTaskSpecificProofPlanRows(taskContent);
   const refactorFirstContracts = parseRefactorFirstContractRows(taskContent);
+  const architectureFoundationContracts = parseArchitectureFoundationContractRows(taskContent);
   const testOnlyCoverageContracts = parseTestOnlyCoverageContractRows(taskContent);
   const testSuiteAlignmentContracts = parseTestSuiteAlignmentContractRows(taskContent);
   const capabilityPermissionStateMatrices = parseCapabilityPermissionStateMatrixRows(taskContent);
@@ -777,6 +829,7 @@ export function validateTaskBreakdownContent(
   const tightWriteEnvelopesByTask = groupBy(tightWriteEnvelopes, (row) => row.taskId);
   const taskSpecificProofPlansByTask = groupBy(taskSpecificProofPlans, (row) => row.taskId);
   const refactorFirstContractsByTask = groupBy(refactorFirstContracts, (row) => row.taskId);
+  const architectureFoundationContractsByTask = groupBy(architectureFoundationContracts, (row) => row.taskId);
   const testOnlyCoverageContractsByTask = groupBy(testOnlyCoverageContracts, (row) => row.taskId);
   const testSuiteAlignmentContractsByTask = groupBy(testSuiteAlignmentContracts, (row) => row.taskId);
   const capabilityPermissionStateMatricesByTask = groupBy(capabilityPermissionStateMatrices, (row) => row.taskId);
@@ -834,6 +887,7 @@ export function validateTaskBreakdownContent(
     validateTaskTypeGuardrail(task, guardrailsByTask.get(task.taskId) ?? [], errors);
     validateTaskGuardrailEvidence(task, guardrailEvidenceByTask.get(task.taskId) ?? [], placementsByTask.get(task.taskId) ?? [], errors);
     validateRefactorFirstContract(task, refactorFirstContractsByTask.get(task.taskId) ?? [], tasks, errors);
+    validateArchitectureFoundationContract(task, architectureFoundationContractsByTask.get(task.taskId) ?? [], tasks, errors);
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
     validateWriteSetClassification(task, writeSetClassificationsByTask.get(task.taskId) ?? [], errors);
     validateForbiddenWork(task, forbiddenWorkByTask.get(task.taskId) ?? [], errors);
@@ -866,6 +920,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Tight Allowed Write Envelope", tightWriteEnvelopes.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Task-Specific Proof Plan", taskSpecificProofPlans.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Refactor-First Contract", refactorFirstContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Architecture Foundation Contract", architectureFoundationContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test-Only Coverage Contract", testOnlyCoverageContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test Suite Alignment Contract", testSuiteAlignmentContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Capability Permission / State Matrix", capabilityPermissionStateMatrices.map((row) => row.taskId), taskIds, errors);
@@ -2206,6 +2261,75 @@ function validateRefactorFirstContract(
     for (const phrase of ["make nicer", "tidy up", "future-proof", "prepare for future", "make reusable"]) {
       if (refactorText.includes(phrase)) {
         errors.push(`${task.taskId} has vague refactor rationale: ${phrase}`);
+      }
+    }
+  }
+}
+
+function validateArchitectureFoundationContract(
+  task: TaskRow,
+  rows: ArchitectureFoundationContractRow[],
+  tasks: TaskRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DECISION:architecture-foundation") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has Architecture Foundation Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} has no Architecture Foundation Contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateAllowedValue(task.taskId, "Concern Area", row.concernArea, allowedArchitectureFoundationConcernAreas, errors);
+    validateAllowedValue(task.taskId, "Architecture Trigger", row.trigger, allowedArchitectureFoundationTriggers, errors);
+    validateAllowedValue(task.taskId, "Final Authority Route", row.finalAuthorityRoute, allowedArchitectureFoundationRoutes, errors);
+    validateRequiredField(task.taskId, "Architecture Question", row.question, errors);
+    validateRequiredField(task.taskId, "Sources To Review", row.sourcesToReview, errors);
+    validateRequiredField(task.taskId, "Decision Owner", row.decisionOwner, errors);
+    validateRequiredField(task.taskId, "Output Artifact Target", row.outputArtifactTarget, errors);
+    validateRequiredField(task.taskId, "Downstream Tasks Blocked", row.downstreamTasksBlocked, errors);
+    validateRequiredField(task.taskId, "Compatibility Posture", row.compatibilityPosture, errors);
+    validateRequiredField(task.taskId, "Forbidden Implementation / Guess", row.forbiddenImplementationGuess, errors);
+
+    const sources = row.sourcesToReview.toLowerCase();
+    if (!sources.includes("adr") && !sources.includes("architecture") && !sources.includes("technical steering")) {
+      errors.push(`${task.taskId} Architecture Foundation Contract must review ADRs, architecture docs, or Technical Steering`);
+    }
+
+    const outputTarget = row.outputArtifactTarget.toLowerCase();
+    if (!outputTarget.includes("adr") && !outputTarget.includes("architecture") && !outputTarget.includes("technical-steering") && !outputTarget.includes("technical steering")) {
+      errors.push(`${task.taskId} Architecture Foundation Contract needs an architecture or Technical Steering output artifact target`);
+    }
+
+    const compatibility = row.compatibilityPosture.toLowerCase();
+    if (!compatibility.includes("compat") && !compatibility.includes("migration") && !compatibility.includes("not-applicable")) {
+      errors.push(`${task.taskId} Architecture Foundation Contract needs compatibility, migration, or not-applicable posture`);
+    }
+
+    const downstreamIds = splitIds(row.downstreamTasksBlocked);
+    const knownTaskIds = new Set(tasks.map((candidate) => candidate.taskId));
+    for (const downstreamId of downstreamIds) {
+      if (
+        downstreamId.startsWith("blocked") ||
+        downstreamId.startsWith("deferred") ||
+        downstreamId.startsWith("not-applicable")
+      ) {
+        continue;
+      }
+      if (!knownTaskIds.has(downstreamId)) {
+        errors.push(`${task.taskId} Architecture Foundation Contract references unknown downstream task ${downstreamId}`);
+      }
+    }
+
+    const vagueText = [task.scope, row.question, row.outputArtifactTarget].join(" ").toLowerCase();
+    for (const phrase of ["think about architecture", "figure out architecture", "architecture stuff", "as needed"]) {
+      if (vagueText.includes(phrase)) {
+        errors.push(`${task.taskId} has vague architecture foundation rationale: ${phrase}`);
       }
     }
   }
@@ -4047,6 +4171,22 @@ function parseRefactorFirstContractRows(content: string): RefactorFirstContractR
     compatibilityProof: cells[6] ?? "",
     routingCheck: cells[7] ?? "",
     forbiddenBehaviorOrAuthorityChange: cells[8] ?? "",
+  }));
+}
+
+function parseArchitectureFoundationContractRows(content: string): ArchitectureFoundationContractRow[] {
+  return parseTableRows(section(content, "## Architecture Foundation Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    concernArea: cells[1] ?? "",
+    trigger: cells[2] ?? "",
+    question: cells[3] ?? "",
+    sourcesToReview: cells[4] ?? "",
+    decisionOwner: cells[5] ?? "",
+    outputArtifactTarget: cells[6] ?? "",
+    downstreamTasksBlocked: cells[7] ?? "",
+    compatibilityPosture: cells[8] ?? "",
+    finalAuthorityRoute: cells[9] ?? "",
+    forbiddenImplementationGuess: cells[10] ?? "",
   }));
 }
 

@@ -260,11 +260,15 @@ export const layer4RequiredCheckIdsByTaskType = {
     "refactor-routing-check",
   ],
   "DECISION:architecture-foundation": [
+    "architecture-concern-area",
+    "architecture-trigger",
+    "architecture-question",
     "architecture-adrs-reviewed",
     "architecture-decision-owner",
     "architecture-output-path",
     "architecture-downstream-block",
     "architecture-compatibility",
+    "architecture-final-authority-route",
   ],
   "DOC:standards-compliance": [
     "standards-gate-named",
