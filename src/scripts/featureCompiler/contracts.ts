@@ -346,6 +346,7 @@ export const layer4RequiredCheckIdsByTaskType = {
   "EVIDENCE:qa-evidence": [
     "qa-proof-target",
     "qa-command-plan",
+    "qa-evidence-instruments",
     "qa-runtime-evidence",
     "qa-mock-honesty",
     "qa-evidence-status",

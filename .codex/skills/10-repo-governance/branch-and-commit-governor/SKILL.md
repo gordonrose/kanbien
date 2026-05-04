@@ -26,6 +26,7 @@ material and there is any realistic chance of parallel chat activity.
 For this repo, the workflow must run the executable guardrails first:
 
 - `npm run git:preflight`
+- `npm run git:branch-stack-audit` when cleaning up or reconciling branch stacks
 - `npm run git:promote -- --source <branch-or-commit>` before promotion work
 
 Treat `npm run git:preflight` as a pre-edit gate, not a later hygiene pass.
@@ -60,6 +61,8 @@ Check:
 - whether the worktree is clean
 - whether the existing branch is already a dedicated scoped task branch
 - whether local `main` matches `origin/main`
+- whether sibling local or remote task branches contain commits not reachable
+  from the current branch
 
 If the worktree already has unrelated changes, do not silently continue into a
 new mixed branch. Surface the state and ask how to proceed when separation is
@@ -71,6 +74,12 @@ unsafe ambient base until proven otherwise.
 
 If `npm run git:preflight` returns a blocking state, do not continue with
 material edits until the repo state is repaired.
+
+If the user asks to clean up the repo, do not stop at a clean worktree. Run
+`npm run git:branch-stack-audit` and account for every branch with commits
+ahead of the current branch. Classify each as merged/cherry-picked,
+superseded, intentionally parked with a durable note, or discardable only with
+explicit human approval.
 
 When Codex is being launched for repo-local work, prefer the guarded launcher:
 
@@ -232,6 +241,15 @@ the user. Explicit approval still gates commits.
 9. create scoped commit(s)
 10. if asked to push, fast-forward/promote to `main` after a safe promotion
     guardrail and push `origin/main`
+
+For cleanup or stack reconciliation, also run:
+
+```bash
+npm run git:branch-stack-audit
+```
+
+Treat unaccounted sibling commits as real work, even when every worktree is
+clean.
 
 ## Promotion Guardrail
 

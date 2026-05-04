@@ -85,6 +85,7 @@ const requiredHeadings = [
   "## Shared Seams",
   "## Artifact Obligations",
   "## Proof And Command Plan",
+  "## QA Evidence Instrument Summary",
   "## Branch Worktree Bootstrap Strategy",
   "## Blockers And Isolation Controls",
   "## Layer 5 Delivery Handoff",
@@ -562,6 +563,14 @@ type ProofCommandRow = {
   evidenceNotes: string;
 };
 
+type QaEvidenceInstrumentSummaryRow = {
+  taskId: string;
+  selectedEvidenceInstruments: string;
+  liveRuntimePayloadEvidence: string;
+  mockHonestyComparison: string;
+  evidenceStatusRemainingGap: string;
+};
+
 type DebtHealthSummaryRow = {
   taskId: string;
   summaryCommand: string;
@@ -668,6 +677,7 @@ export function validateTaskBreakdownContent(
   const sharedSeams = parseSharedSeamRows(taskContent);
   const artifacts = parseArtifactObligationRows(taskContent);
   const proofs = parseProofCommandRows(taskContent);
+  const qaEvidenceInstrumentSummaries = parseQaEvidenceInstrumentSummaryRows(taskContent);
   const debtHealthSummaries = parseDebtHealthSummaryRows(taskContent);
   const bootstraps = parseBootstrapRows(taskContent);
   const blockers = parseBlockerRows(taskContent);
@@ -736,6 +746,7 @@ export function validateTaskBreakdownContent(
   const sharedSeamsByTask = groupBy(sharedSeams, (row) => row.taskId);
   const artifactsByTask = groupBy(artifacts, (row) => row.taskId);
   const proofsByTask = groupBy(proofs, (row) => row.taskId);
+  const qaEvidenceInstrumentSummariesByTask = groupBy(qaEvidenceInstrumentSummaries, (row) => row.taskId);
   const debtHealthSummariesByTask = groupBy(debtHealthSummaries, (row) => row.taskId);
   const bootstrapsByTask = groupBy(bootstraps, (row) => row.taskId);
   const blockersByTask = groupBy(blockers, (row) => row.blocksTaskId);
@@ -785,6 +796,7 @@ export function validateTaskBreakdownContent(
     validateSharedSeams(task, sharedSeamsByTask.get(task.taskId) ?? [], errors);
     validateArtifacts(task, artifactsByTask.get(task.taskId) ?? [], errors);
     validateProofs(task, proofsByTask.get(task.taskId) ?? [], errors);
+    validateQaEvidenceInstrumentSummaries(task, qaEvidenceInstrumentSummariesByTask.get(task.taskId) ?? [], errors);
     validateDebtHealthSummaries(task, debtHealthSummariesByTask.get(task.taskId) ?? [], errors);
     validateBootstrap(task, bootstrapsByTask.get(task.taskId) ?? [], errors);
     validateDeliveryHandoff(task, handoffsByTask.get(task.taskId), blockersByTask.get(task.taskId) ?? [], errors);
@@ -821,6 +833,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Shared Seams", sharedSeams.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Artifact Obligations", artifacts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Proof And Command Plan", proofs.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("QA Evidence Instrument Summary", qaEvidenceInstrumentSummaries.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Debt Health Summary Commands", debtHealthSummaries.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Branch Worktree Bootstrap Strategy", bootstraps.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Layer 5 Delivery Handoff", handoffs.map((row) => row.taskId), taskIds, errors);
@@ -2530,6 +2543,28 @@ function validateProofs(task: TaskRow, rows: ProofCommandRow[], errors: string[]
   }
 }
 
+function validateQaEvidenceInstrumentSummaries(
+  task: TaskRow,
+  rows: QaEvidenceInstrumentSummaryRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "EVIDENCE:qa-evidence") {
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} EVIDENCE:qa-evidence task has no QA evidence instrument summary row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Selected Evidence Instruments", row.selectedEvidenceInstruments, errors);
+    validateRequiredField(task.taskId, "Live Runtime / Payload Evidence", row.liveRuntimePayloadEvidence, errors);
+    validateRequiredField(task.taskId, "Mock Honesty Comparison", row.mockHonestyComparison, errors);
+    validateRequiredField(task.taskId, "Evidence Status / Remaining Gap", row.evidenceStatusRemainingGap, errors);
+  }
+}
+
 function validateDebtHealthSummaries(task: TaskRow, rows: DebtHealthSummaryRow[], errors: string[]): void {
   const requiresSummary =
     task.taskType === "DOC:data-dictionary" ||
@@ -3999,6 +4034,16 @@ function parseProofCommandRows(content: string): ProofCommandRow[] {
     proofLayers: cells[1] ?? "",
     commands: cells[2] ?? "",
     evidenceNotes: cells[3] ?? "",
+  }));
+}
+
+function parseQaEvidenceInstrumentSummaryRows(content: string): QaEvidenceInstrumentSummaryRow[] {
+  return parseTableRows(section(content, "## QA Evidence Instrument Summary")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    selectedEvidenceInstruments: cells[1] ?? "",
+    liveRuntimePayloadEvidence: cells[2] ?? "",
+    mockHonestyComparison: cells[3] ?? "",
+    evidenceStatusRemainingGap: cells[4] ?? "",
   }));
 }
 

@@ -144,10 +144,13 @@ or Technical Steering architecture.
    steering classification for shared versus feature-local work.
 
 6. Route task-type guardrails.
-   For each task, load only the reference file matching its task type from
-   `references/`. Fill the Task-Type Approval Guardrails section before
-   queueing the task. Then fill Task Guardrail Evidence with every required
-   check ID from the matching reference.
+   Start with
+   `references/task-type-contract-manifest.md` to confirm the task type's input
+   contract, job, output contract, and remaining hardening gap. Then, for each
+   task, load only the reference file matching its task type from `references/`.
+   Fill the Task-Type Approval Guardrails section before queueing the task. Then
+   fill Task Guardrail Evidence with every required check ID from the matching
+   reference.
 
 7. Review code placement and extraction.
    Decide whether the task is feature-local, platform-seam, shared-lib,

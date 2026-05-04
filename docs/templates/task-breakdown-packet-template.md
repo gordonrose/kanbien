@@ -666,6 +666,18 @@ source-independent or maintained artifacts.
 | Task ID | Required Proof Layers | Required Test Or Proof Commands | Mock Honesty / Runtime Evidence Notes |
 | --- | --- | --- | --- |
 
+## QA Evidence Instrument Summary
+
+Use this section for `EVIDENCE:qa-evidence` tasks. It records which deterministic
+and contextual evidence instruments the task will use and what remains unproven.
+Scripts are instruments inside the evidence task; they do not replace the
+task-specific proof story.
+
+| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |
+| --- | --- | --- | --- | --- |
+
+For non-`EVIDENCE:qa-evidence` tasks, use `not-applicable: <reason>`.
+
 ## Debt Health Summary Commands
 
 Use this section for summary commands that expose residual debt after the
@@ -695,10 +707,11 @@ Allowed debt dispositions:
 `DOC:data-dictionary` tasks should normally include
 `npm run data:compliance-health`. `TEST:test-only`,
 `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence` tasks should include a
-`npm run test:coverage-strength` summary row. Use `not-run: <reason>` only when
-the summary is genuinely unavailable or not applicable to the scoped proof.
-These commands summarize debt; they do not prove the task behavior by
-themselves.
+`npm run test:coverage-strength` summary row. `EVIDENCE:qa-evidence` tasks may
+also include `npm run qa:evidence-summary -- <task-packet-path>` after their
+instrument summary is filled. Use `not-run: <reason>` only when the summary is
+genuinely unavailable or not applicable to the scoped proof. These commands
+summarize debt; they do not prove the task behavior by themselves.
 
 ## Branch Worktree Bootstrap Strategy
 

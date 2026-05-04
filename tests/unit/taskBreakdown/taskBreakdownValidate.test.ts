@@ -356,6 +356,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | --- | --- | --- | --- |
 | T-S001-01 | persistence-level, contract-level | npx vitest run tests/integration/tenantConfiguration/persistence.test.ts; npm run typecheck | persistence fixture must use the same selected tenant shape as production repository reads |
 
+## QA Evidence Instrument Summary
+
+| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |
+| --- | --- | --- | --- | --- |
+
 ## Debt Health Summary Commands
 
 | Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |
@@ -631,7 +636,7 @@ function evidenceTaskPacketWith(input: {
     )
     .replace(
       "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
-      "| T-S001-01 | qa-proof-target | pass | Tenant branding runtime evidence artifact and payload shape are named. |\n| T-S001-01 | qa-command-plan | pass | Focused runtime proof command is named. |\n| T-S001-01 | qa-runtime-evidence | pass | Live API/projection evidence source is named. |\n| T-S001-01 | qa-mock-honesty | pass | Mock fixture is compared against live payload shape. |\n| T-S001-01 | qa-evidence-status | pass | Evidence status is recorded as passing, partial, or blocked. |\n| T-S001-01 | qa-coverage-strength-summary | pass | npm run test:coverage-strength summary is required for QA evidence inventory impact. |",
+      "| T-S001-01 | qa-proof-target | pass | Tenant branding runtime evidence artifact and payload shape are named. |\n| T-S001-01 | qa-command-plan | pass | Focused runtime proof command is named. |\n| T-S001-01 | qa-evidence-instruments | pass | Instrument summary selects coverage-strength, browser proof, live payload, and mock-honesty comparison. |\n| T-S001-01 | qa-runtime-evidence | pass | Live API/projection evidence source is named. |\n| T-S001-01 | qa-mock-honesty | pass | Mock fixture is compared against live payload shape. |\n| T-S001-01 | qa-evidence-status | pass | Evidence status is recorded as passing, partial, or blocked. |\n| T-S001-01 | qa-coverage-strength-summary | pass | npm run test:coverage-strength summary is required for QA evidence inventory impact. |",
     )
     .replace(
       "| T-S001-01 | src/features/tenantConfiguration/domain/updateBranding.ts | feature-local | Owning feature domain capability file. |\n| T-S001-01 | src/features/tenantConfiguration/transport/rootAdminRoutes.ts | feature-local | Owning feature root-admin transport seam. |\n| T-S001-01 | tests/integration/tenantConfiguration/persistence.test.ts | test | Persistence regression for approved story AC. |",
@@ -640,6 +645,10 @@ function evidenceTaskPacketWith(input: {
     .replace(
       "| T-S001-01 | persistence-level, contract-level | npx vitest run tests/integration/tenantConfiguration/persistence.test.ts; npm run typecheck | persistence fixture must use the same selected tenant shape as production repository reads |",
       "| T-S001-01 | runtime-level, mock-honesty | npm run test:coverage-strength; npx playwright test tests/visual/tenant-branding-runtime.spec.ts | runtime payload evidence must match production API/projection shape; mocks may not invent fallback behavior |",
+    )
+    .replace(
+      "## QA Evidence Instrument Summary\n\n| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |\n| --- | --- | --- | --- | --- |\n\n",
+      "## QA Evidence Instrument Summary\n\n| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |\n| --- | --- | --- | --- | --- |\n| T-S001-01 | npm run test:coverage-strength; Playwright browser proof; live API payload sample | live API/projection payload must be captured for tenant branding route before completion | fixture fields compared with live payload shape; no invented fallback behavior | partial: broader suite-strength debt accepted with owner |\n\n",
     )
     .replace(
       "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n\n",
@@ -837,6 +846,19 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 EVIDENCE:qa-evidence task has no debt health summary command row");
+  });
+
+  it("blocks EVIDENCE task types without QA evidence instrument summary", () => {
+    const result = validateTaskBreakdownContent(
+      evidenceTaskPacketWith().replace(
+        "## QA Evidence Instrument Summary\n\n| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |\n| --- | --- | --- | --- | --- |\n| T-S001-01 | npm run test:coverage-strength; Playwright browser proof; live API payload sample | live API/projection payload must be captured for tenant branding route before completion | fixture fields compared with live payload shape; no invented fallback behavior | partial: broader suite-strength debt accepted with owner |\n\n",
+        "## QA Evidence Instrument Summary\n\n| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |\n| --- | --- | --- | --- | --- |\n\n",
+      ),
+      evidenceStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 EVIDENCE:qa-evidence task has no QA evidence instrument summary row");
   });
 
   it("blocks EVIDENCE task types that try to own executable test changes", () => {

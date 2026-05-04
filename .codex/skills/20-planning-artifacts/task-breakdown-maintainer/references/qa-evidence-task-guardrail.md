@@ -15,6 +15,10 @@ Use for task type: `EVIDENCE:qa-evidence`
 ## Approval Evidence
 
 - proof target and commands
+- evidence instruments selected for the scoped risk, such as focused test
+  commands, coverage-strength summaries, runtime/process checks, served asset
+  checks, live API or projection payload samples, live persistence snapshots,
+  browser screenshots/traces, accessibility evidence, or audit outputs
 - live data/API/browser evidence plan when relevant
 - mock-honesty comparison
 - blocked, partial, or passing evidence status
@@ -27,6 +31,18 @@ Use for task type: `EVIDENCE:qa-evidence`
 - evidence capture, mock-honesty review, visual sweep, and runtime proof should
   normally be separate from implementation for complex work
 - name exact evidence artifacts, scenarios, payload shapes, or audit outputs
+- treat deterministic scripts as evidence instruments, not as the evidence task
+  itself; the task must still state why each instrument is relevant, how to
+  interpret the result, and what remains unproven
+- `npm run test:coverage-strength` measures test-suite strength beyond
+  traceability; it does not replace slice-specific runtime, payload, browser,
+  persistence, or mock-honesty proof when those risks are present
+- for user-visible runtime proof, name the active process or served surface to
+  inspect, whether a restart is required, and the live API, projection,
+  persistence, served-asset, or browser evidence needed before completion
+- for mock-heavy proof, compare fixtures and mocks with the approved contract or
+  live data/API/projection shape; invented fallback behavior, missing fields, or
+  convenience-only states must be recorded as evidence gaps
 - broad proof commands are acceptable only when the task is explicitly an
   evidence sweep and the task-specific evidence targets are still named
 - do not change product behavior inside a EVIDENCE:qa-evidence task unless a separate
@@ -35,11 +51,18 @@ Use for task type: `EVIDENCE:qa-evidence`
   split that work to TEST:test-only or TEST:test-suite-alignment
 - do not change QA standards, templates, validators, or architecture authority;
   split authority changes to GOV:standards-update or GOV:architecture-update
+- if the evidence task finds a gap, route the gap to the owning task type:
+  missing product/runtime behavior to `DEV:*`, missing executable proof to
+  `TEST:test-only`, stale or misaligned traceability to
+  `TEST:test-suite-alignment`, stale source-independent artifacts to the
+  matching `DOC:*` task, and changed standards or architecture authority to the
+  matching `GOV:*` task
 
 ## Required Check IDs
 
 - `qa-proof-target`
 - `qa-command-plan`
+- `qa-evidence-instruments`
 - `qa-runtime-evidence`
 - `qa-mock-honesty`
 - `qa-evidence-status`

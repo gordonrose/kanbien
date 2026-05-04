@@ -45,10 +45,15 @@ When multiple chats or worktrees are active, also run:
 
 ```bash
 npm run git:worktree-audit
+npm run git:branch-stack-audit
 ```
 
 This checks sibling worktrees for dirty stale-base states and suspicious
-branch/topic mismatches.
+branch/topic mismatches, then checks local and remote branches for commits
+that are not reachable from the current branch. A repo is not clean in the
+governed sense while relevant committed work is stranded on a sibling branch
+without being merged, cherry-picked, superseded, or recorded as intentionally
+parked.
 
 Before promotion or merge planning, run:
 
@@ -178,6 +183,27 @@ Do not use a preserved-worktree marker to hide unknown dirty state, mixed task
 changes, or work that is about to be promoted. The marker is a temporary
 coordination record for intentionally parked WIP, not a bypass for cleanup.
 
+## Branch Stack Rule
+
+Clean worktrees are not enough. Before calling a repo cleanup complete, run:
+
+```bash
+npm run git:branch-stack-audit
+```
+
+This audit reports local and remote topic branches with commits that are ahead
+of the current branch. Each unaccounted branch must be classified before moving
+on:
+
+- merge or cherry-pick into the current workstream
+- supersede because the current branch already replaced the work
+- intentionally park with a durable note naming the branch, commits, expected
+  resolution, and owner
+- discard only with explicit human approval
+
+Do not rely on branch names, a clean `git status`, or a pushed branch as proof
+that all work from the current harness stream has been accounted for.
+
 ## Main Branch Rule
 
 Do not perform material implementation directly on `main`.
@@ -238,6 +264,8 @@ When the repo feels confusing, stop and confirm:
   actually editing
 - whether `npm run git:worktree-audit` reports dirty stale-base sibling
   worktrees or branch/topic mismatches
+- whether `npm run git:branch-stack-audit` reports committed work stranded on
+  sibling branches
 
 The fix for confusion is not more guessing. The fix is re-establishing the
 baseline truth explicitly.
