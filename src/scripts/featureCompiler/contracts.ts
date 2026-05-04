@@ -311,8 +311,11 @@ export const layer4RequiredCheckIdsByTaskType = {
     "api-validation-command",
   ],
   "DOC:permission-mapping": [
+    "permission-authz-model-source",
     "permission-capability-rows",
     "permission-boundary",
+    "permission-grant-source-ui",
+    "permission-denial-audit",
     "permission-allow-deny",
     "permission-grants-migration",
     "permission-authz-proof",
