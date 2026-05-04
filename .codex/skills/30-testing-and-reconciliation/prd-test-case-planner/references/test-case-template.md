@@ -7,11 +7,15 @@
 - Capability matrix:
 - Implementation blueprint:
 - Story Breakdown:
+- Journey inventory:
 - Primary features involved:
 - Cross-feature seams:
 - QA coverage-matrix classification:
 - Harness gates triggered:
 - Journey inventory required:
+- Journey inventory posture:
+  not-required / exists-current / needs-create / needs-refresh /
+  deferred-with-risk
 - Required human QA artifacts:
 - Traceability posture:
 - Coverage-strength posture:
@@ -72,6 +76,12 @@
   Source Authority:
   Related Story / AC:
   Related Journey ID:
+  Journey Inventory:
+  Journey Tier:
+  E2E Execution Gate:
+  Planned Executable Path:
+  Required Permutations:
+  Known-Pitfall Coverage:
   Recommended Test Layer: `end-to-end-journey`
   Suggested Test Folder: `tests/e2e/<featureName>/`
   Requires Shared Test Helper:
@@ -82,6 +92,31 @@
   Coverage Strength Signal:
   Coverage:
   Notes:
+
+## End-To-End Journey Inventory Requirements
+
+Use when the PRD includes multi-step workflows, tenant/role variation,
+remediation/recovery paths, legacy/pre-change versus post-change behavior,
+lifecycle/deletion/revocation/expiry, or operator-induced state changes.
+
+- Journey inventory path:
+- Inventory action:
+  not-required / create / refresh / align / deferred-with-risk
+- Related `JY-*` IDs:
+- Tiering:
+- Behavior-changing dimensions:
+- Equivalence classes:
+- Required coverage level:
+  single-class only / pairwise / higher-order required / excluded
+- Omitted permutation rationale:
+- Known-pitfall research summary:
+- Planned executable `tests/e2e/` paths:
+- Execution gates:
+  vertical-slice / broader validation / production gate
+- Curated run summary expectation:
+
+| Journey ID | Journey Name | Tier | Related TC IDs | Planned Executable Path | Required Permutations | Execution Gate | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## NFR Security Tests
 
@@ -211,6 +246,11 @@ security-sensitive behavior.
 | Test Case ID | Traceability / Execution Posture | Expected Downstream Task Type | Coverage Strength Signal | Alignment Needed Before Proof |
 | --- | --- | --- | --- | --- |
 
+## E2E Traceability Plan
+
+| Journey ID | Related TC IDs | Journey Inventory Path | Executable Test Path | Traceability Posture | Deferred / Missing Work |
+| --- | --- | --- | --- | --- | --- |
+
 ## Coverage Gaps Or Open Questions
 
 - Item:
@@ -226,5 +266,6 @@ security-sensitive behavior.
 
 - TEST:test-only candidates:
 - TEST:test-suite-alignment candidates:
+- Journey inventory candidates:
 - EVIDENCE:qa-evidence candidates:
 - Owning implementation / artifact task candidates:

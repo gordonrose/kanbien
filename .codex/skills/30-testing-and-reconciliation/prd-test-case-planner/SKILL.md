@@ -96,6 +96,9 @@ Helpful secondary sources:
 - implementation blueprints under `docs/workspace/implementation-blueprints/`
   when they exist, especially chosen storage, route-family, audit/proof,
   cleanup, compatibility, and verification posture
+- journey inventories under `docs/prd/journey_inventories/`, especially
+  `JY-*` IDs, journey tiers, permutation dimensions, known-pitfall research,
+  planned `tests/e2e/` paths, and execution gates
 - `docs/featureDocs/*`
 - `docs/api-contracts/*`
 - `docs/data-dictionary/*`
@@ -141,6 +144,13 @@ they are not executable proof by themselves. Treat traceability as an ID/linkage
 contract and coverage strength as a separate question. When the planned cases
 materially affect the apparent suite posture, require downstream
 `npm run test:coverage-strength` evidence or an explicit scoped equivalent.
+
+For multi-step workflows, authorization-sensitive journeys, tenant/role
+variation, lifecycle/revocation/deletion changes, remediation/recovery paths,
+legacy-versus-post-change behavior, or operator-driven state changes, PRD test
+cases are not enough by themselves. Require or update a journey inventory under
+`docs/prd/journey_inventories/` and carry its `JY-*` IDs into end-to-end test
+case planning.
 
 ## ID Convention
 
@@ -196,6 +206,7 @@ test suite.
 - explicitly mentioned failure modes
 - stated or implied security and logging expectations
 - whether the workflow implies end-to-end journey coverage
+- whether a journey inventory already exists or must be created/refreshed
 - whether the change class likely triggers performance, resilience,
   concurrency/idempotency, compatibility, or accessibility layers
 - whether the behavior implies operator-induced, lifecycle, or recovery-state
@@ -227,6 +238,9 @@ Check:
 - whether test fixtures must be tied to an API contract, data dictionary,
   runtime payload, persistence shape, or browser projection so mocks do not
   encode convenience behavior production lacks
+- whether executable end-to-end proof should live under `tests/e2e/<area>/`,
+  and whether existing `JY-*` or `TC-*` IDs already appear in executable test
+  names or nearby comments
 
 3. Build the test inventory in these sections:
 - unit tests
@@ -269,6 +283,20 @@ lifecycle, support/emergency, asset, billing, export, audit/proof, or other
 sensitive behavior. Record allowed, denied/forbidden, unauthenticated or
 expired-session, cross-tenant, and object/entity-level denial states when they
 apply.
+
+For end-to-end journey cases, also record:
+
+- related `JY-*` journey ID
+- journey tier: `Tier 0`, `Tier 1`, or `Tier 2`
+- planned executable path under `tests/e2e/<area>/`
+- journey inventory path or `needs-journey-inventory`
+- required behavior-changing permutations and equivalence classes
+- known-pitfall research source or summary
+- whether the expected execution gate is vertical-slice, broader validation, or
+  production/release gate
+
+Do not treat a single-route happy-path check as end-to-end journey proof unless
+it exercises meaningful workflow state, persistence, and cross-step behavior.
 
 4. Compare to any existing file under `docs/prd/test_cases/` for the same PRD.
 Summarize:
@@ -508,6 +536,46 @@ Recommended target folders:
 - `tests/integration/`
 - `tests/compatibility/`
 
+### End-To-End Journey Coverage
+
+Use this section when the feature has a multi-step customer/operator workflow,
+tenant or role variation, remediation/recovery path, legacy/pre-change versus
+post-change behavior, lifecycle/revocation/deletion state, or operator-induced
+state changes that can alter the outcome.
+
+Durable journey decisions live in:
+
+- `docs/architecture/guides/end-to-end-journey-testing-guide.md`
+- `docs/architecture/guides/end-to-end-journey-operations-guide.md`
+- `docs/prd/journey_inventories/`
+
+Planning rules:
+
+- create or refresh a journey inventory before treating e2e planning as
+  complete
+- use stable `JY-*` IDs and repeat them in executable e2e test names or nearby
+  comments
+- classify each journey as `Tier 0`, `Tier 1`, or `Tier 2`
+- identify behavior-changing dimensions, equivalence classes, and required
+  coverage level
+- cover every behavior-changing class at least once and pairwise interactions
+  by default; add higher-order coverage only when risk or standards justify it
+- record omitted permutation classes as equivalent, unreachable, or explicitly
+  deferred with risk
+- keep e2e tests deterministic: real app wiring and real persistence when the
+  workflow depends on durable state; fake/stub external providers by default
+- store executable e2e tests under `tests/e2e/<featureArea>/`
+- store curated significant run summaries under
+  `docs/workspace/test-run-summaries/`
+
+Recommended layer label:
+
+- `end-to-end-journey`
+
+Recommended target folders:
+
+- `tests/e2e/<featureArea>/`
+
 ### Edge Cases
 
 Always include meaningful edge coverage such as:
@@ -544,6 +612,10 @@ Also include:
 
 - `Source Authority`
 - `Related Story / AC`
+- `Related Journey ID` for e2e cases
+- `Journey Inventory`
+- `Journey Tier`
+- `E2E Execution Gate`
 - `Recommended Test Layer`
 - `Suggested Test Folder`
 - `Requires Shared Test Helper`
@@ -568,6 +640,10 @@ Use these posture values where helpful:
   case documentation, not executable tests unless the user asks for that next.
 - Do not treat PRD test-case documentation as executable proof.
 - Do not treat traceability as evidence of coverage strength.
+- Do not treat PRD `TC-*` cases as a substitute for a required journey
+  inventory when the workflow needs reviewed e2e scenario coverage.
+- Do not invent `JY-*` IDs inside executable tests without a durable journey
+  inventory or explicit reviewed deferred posture.
 - Keep unit and integration coverage separate.
 - Do not skip NFR security or audit coverage even if the PRD emphasizes only
   functional behavior.
@@ -598,6 +674,11 @@ Use these posture values where helpful:
   behavior.
 - Do not hide missing product, API, authz, data, architecture, standards, or
   runtime behavior inside a test-case planning update.
+- Do not call single-route reachability, duplicated integration tests, or
+  mock-only browser checks end-to-end journey proof.
+- Do not silently omit lifecycle, revocation, deletion, expiry, tenant/role
+  variation, remediation, recovery, legacy-data, or operator-induced state
+  branches when they can alter journey outcome.
 
 ## Split Boundaries
 
@@ -606,6 +687,9 @@ Use these posture values where helpful:
 - Use `TEST:test-suite-alignment` when existing test docs, labels, lifecycle
   status, QA backlog rows, traceability output, or suite metadata need
   reconciliation without changing executable proof semantics.
+- Use a journey-inventory planning/update task when the e2e scenario inventory
+  is missing, stale, or missing `JY-*`, tier, permutation, known-pitfall, or
+  execution-gate decisions.
 - Use `EVIDENCE:qa-evidence` when the main work is runtime evidence capture,
   screenshots, curated test-run summaries, QA checklists, exploratory notes, or
   coverage-health reporting.
