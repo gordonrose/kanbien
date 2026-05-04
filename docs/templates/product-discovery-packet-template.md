@@ -182,6 +182,45 @@ Gate rule:
   package those questions for technical stakeholders.
 - Do not use a first-pass-draft-then-questions pattern.
 
+## Change Routing
+
+Use this section to classify the likely delivery path for the request before it
+enters backlog, story planning, task planning, or harness execution.
+
+Most routing answers should be inferred from the normal Product Discovery
+conversation rather than asked as explicit checklist questions. Ask explicitly
+only when the routing decision would otherwise be risky, ambiguous, or likely
+to create the wrong kind of backlog item.
+
+- Requested change type:
+- Secondary change types:
+- Likely delivery path:
+  `config-builder | tenant-extension-pr | core-platform-pr | needs-routing-decision`
+- Routing confidence:
+  `<percent>`
+- Routing rationale:
+- Config-first check:
+- Tenant-specific extension check:
+- Core platform check:
+- Backlog item shape:
+- Approval posture:
+- Evidence expectation:
+- Routing blockers:
+
+Routing rule:
+
+- Prefer the safest delivery path that can satisfy the request.
+- Check `config-builder` first when the request may be expressed as structured
+  product configuration.
+- Use `tenant-extension-pr` when the request is tenant-specific, cannot be
+  expressed by existing configuration, and fits an approved extension point.
+- Use `core-platform-pr` when the request creates or changes reusable platform
+  behavior, source code, migrations, API behavior, permissions, billing,
+  tenant boundaries, auth, security, shared design-system behavior, extension
+  points, or config-builder capabilities.
+- Use `needs-routing-decision` when Product Discovery cannot safely classify
+  the path without a human or Technical Steering decision.
+
 ## Product Intent
 
 - Problem to solve:
