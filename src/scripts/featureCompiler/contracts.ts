@@ -227,12 +227,16 @@ export const layer4RequiredCheckIdsByTaskType = {
     "docs-validation-command",
   ],
   "TEST:test-only": [
+    "test-source-authority",
     "test-traceability",
     "test-proof-layer",
     "test-permission-state-matrix",
     "test-mock-honesty",
     "test-no-behavior-change",
-    "test-command",
+    "test-sensitive-state-coverage",
+    "test-focused-command",
+    "test-coverage-strength",
+    "test-split-boundary",
   ],
   "TEST:test-suite-alignment": [
     "test-alignment-source-map",
