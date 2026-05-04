@@ -10,15 +10,30 @@ Use for task type: `DEV:backend`
 - no direct imports from another feature's `persistence/*`
 - API/entity defaults from `AGENTS.md`
 - tenant/authz, audit, migration, and soft-delete defaults when relevant
+- approved product, story, capability, API, permission, lifecycle, cleanup, and
+  architecture decisions from upstream artifacts
+- separation between runtime implementation and source-independent artifact
+  definition
 
 ## Approval Evidence
 
+- source authority: Story Breakdown, PRD/capability row, Technical Steering,
+  ADR, API contract, permission mapping, data dictionary, or standard that
+  governs the backend behavior
 - owning feature and allowed write set
-- public seams used or changed
-- persistence and migration impact
-- authz and tenant-boundary impact
-- API/data/permission artifact obligations
-- proof layers and commands
+- one backend behavior or seam and the exact feature-local layers it touches
+- public seams used or changed, including feature manifest and dependency graph
+  impact when a public seam or cross-feature dependency changes
+- authz, tenant-boundary, lifecycle/deletion, grant-source, denial, and
+  audit/proof posture when the behavior is protected or permission-sensitive
+- API contract boundary: whether route/request/response/error behavior is
+  already approved or must split to `DOC:api-contract`
+- persistence and migration boundary: whether the backend task only consumes
+  existing storage or must split schema, migration, live data, index, or query
+  semantics to `DEV:migration-persistence`
+- data dictionary, permission mapping, feature docs, generated artifact, and
+  maintained-artifact obligations carried from the source artifact ledger
+- proof layers and commands tied to the behavior being implemented
 
 ## Deep Delivery Standard
 
@@ -31,6 +46,11 @@ Use for task type: `DEV:backend`
   EVIDENCE:qa-evidence
 - name the exact repository, service, route, migration, and test context to
   inspect before editing
+- do not queue a backend task that requires product, architecture, authz,
+  lifecycle, cleanup, API, migration, or artifact decisions the source artifacts
+  have not made
+- do not treat a seeded, documented, or architecture-target permission as
+  runtime enforcement without route-level proof
 
 ## Backend Implementation Approach
 
@@ -58,12 +78,88 @@ strategy, public seam or manifest impact, and formatting/generated-artifact
 expectations. Do not copy this whole section into each packet; apply it through
 the `Backend Implementation Approach` row.
 
+## Source Authority And Split Rules
+
+DEV:backend consumes approved planning truth. It may implement the approved
+runtime behavior, but it must not define the missing envelope itself.
+
+Split or block when:
+
+- route paths, request schemas, response shape, error codes, denial mapping, or
+  maintained OpenAPI/Postman artifacts are missing or changing; create
+  `DOC:api-contract`
+- capability keys, role/grant rows, authority world, tenant context,
+  grant-source posture, UI eligibility, allow/deny posture, safe denial, or
+  audit/proof visibility are missing or changing; create
+  `DOC:permission-mapping`
+- entity fields, durable facts, lifecycle states, retention, audit fields, PII
+  posture, data classification, or compliance-friendly dictionary rows are
+  missing or changing; create `DOC:data-dictionary`
+- SQL schema, live schema inspection, indexes, uniqueness, data migration,
+  repository query semantics, persistence harness behavior, or per-row data
+  validation is required; create `DEV:migration-persistence`
+- shared platform behavior, evaluator order, middleware architecture, route
+  mounting, scheduler/job authority, or cross-feature public seam ownership is
+  the primary change; use `DEV:platform-seam` or `GOV:architecture-update`
+- executable proof is the only missing work; create `TEST:test-only`
+- evidence capture, artifact sweep, or post-implementation proof collation is
+  the main work; create `EVIDENCE:qa-evidence`
+
+DEV:backend may carry artifact obligations as required follow-through, but it
+must not hide a distinct source-truth or proof task inside the implementation
+scope.
+
+## Authz-Sensitive Backend Work
+
+For protected, tenant-scoped, root-scoped, support/emergency, lifecycle,
+asset, billing, export, audit, or otherwise sensitive backend behavior, the
+task must copy the approved posture from source artifacts before queueing:
+
+- authority world
+- actor boundary
+- current tenant context source or not-applicable rationale
+- cross-tenant posture
+- lifecycle/deletion gate
+- feature/configuration/entitlement gate
+- governing capability key or explicit not-applicable rationale
+- grant source posture and UI eligibility
+- safe public denial category
+- internal audit/proof expectation
+- allowed, denied, unauthorized/expired, and cross-tenant proof story when
+  applicable
+
+If any required posture is absent or contradictory, block the backend task and
+route the missing decision to the owning task type. Do not let Delivery infer
+the rule from existing middleware shape, fixture convenience, UI visibility, or
+role names.
+
+## Proof Expectations
+
+Queued DEV:backend tasks must name focused proof for the implemented behavior:
+
+- unit/domain tests for business rules, normalization, lifecycle decisions, and
+  durable entity behavior
+- transport/integration tests for route parsing, authn/authz placement,
+  request/response/error behavior, and API compatibility
+- persistence-backed tests when storage reads/writes, repository behavior,
+  uniqueness, soft delete, or query semantics are touched
+- security tests for root/tenant separation, cross-tenant denial, permission
+  denial, lifecycle denial, sensitive fallback, and grant revocation when
+  relevant
+- manifest/dependency-graph, API contract, permission mapping, data dictionary,
+  standards, or artifact-sweep commands when those obligations are in scope
+
+Broad commands such as `npm test` may be supporting evidence, but they are not
+enough unless the task also names the focused proof command for the behavior.
+
 ## Required Check IDs
 
+- `backend-source-authority`
 - `backend-owning-feature`
-- `backend-feature-structure`
+- `backend-layer-responsibilities`
 - `backend-cross-feature-seams`
-- `backend-authz-tenant`
-- `backend-persistence-migration`
-- `backend-artifacts`
+- `backend-authz-tenant-lifecycle`
+- `backend-api-contract-boundary`
+- `backend-persistence-migration-boundary`
+- `backend-artifact-obligations`
 - `backend-proof-commands`

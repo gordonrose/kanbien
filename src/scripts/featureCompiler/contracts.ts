@@ -180,12 +180,14 @@ export const layer4SuspiciousCoarseScopePhrases = [
 
 export const layer4RequiredCheckIdsByTaskType = {
   "DEV:backend": [
+    "backend-source-authority",
     "backend-owning-feature",
-    "backend-feature-structure",
+    "backend-layer-responsibilities",
     "backend-cross-feature-seams",
-    "backend-authz-tenant",
-    "backend-persistence-migration",
-    "backend-artifacts",
+    "backend-authz-tenant-lifecycle",
+    "backend-api-contract-boundary",
+    "backend-persistence-migration-boundary",
+    "backend-artifact-obligations",
     "backend-proof-commands",
   ],
   "DEV:frontend": [
