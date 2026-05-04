@@ -3,11 +3,19 @@
 ## PRD Scope
 
 - PRD:
+- Source authority:
+- Capability matrix:
+- Implementation blueprint:
+- Story Breakdown:
 - Primary features involved:
 - Cross-feature seams:
 - QA coverage-matrix classification:
+- Harness gates triggered:
 - Journey inventory required:
 - Required human QA artifacts:
+- Traceability posture:
+- Coverage-strength posture:
+- Evidence gate:
 - Notes:
 
 ## Existing Test Impact
@@ -15,16 +23,27 @@
 - Existing executable tests likely affected:
 - Nature of impact:
 - Discussion needed before changing existing tests:
+- Impact classification:
+  additive / expectation-changing / structure-changing / alignment-only /
+  unknown
+- Split recommendation:
+  TEST:test-only / TEST:test-suite-alignment / EVIDENCE:qa-evidence /
+  owning implementation task / not applicable
 
 ## Unit Tests For Individual Capabilities
 
 - Capability:
   Test Case ID: `TC-EXAMPLE-UNIT-001`
+  Source Authority:
+  Related Story / AC:
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/<featureName>/`
   Requires Shared Test Helper:
   Requires Manifest Tracking:
   Cleanup Expectation:
+  Mock / Runtime Honesty:
+  Traceability / Execution Posture:
+  Coverage Strength Signal:
   Coverage:
   Notes:
 
@@ -32,11 +51,16 @@
 
 - Flow:
   Test Case ID: `TC-EXAMPLE-INT-001`
+  Source Authority:
+  Related Story / AC:
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/`
   Requires Shared Test Helper:
   Requires Manifest Tracking:
   Cleanup Expectation:
+  Mock / Runtime Honesty:
+  Traceability / Execution Posture:
+  Coverage Strength Signal:
   Features:
   Coverage:
   Notes:
@@ -45,12 +69,17 @@
 
 - Flow:
   Test Case ID: `TC-EXAMPLE-E2E-001`
+  Source Authority:
+  Related Story / AC:
   Related Journey ID:
   Recommended Test Layer: `end-to-end-journey`
   Suggested Test Folder: `tests/e2e/<featureName>/`
   Requires Shared Test Helper:
   Requires Manifest Tracking:
   Cleanup Expectation:
+  Mock / Runtime Honesty:
+  Traceability / Execution Posture:
+  Coverage Strength Signal:
   Coverage:
   Notes:
 
@@ -58,11 +87,23 @@
 
 - Scenario:
   Test Case ID: `TC-EXAMPLE-SEC-001`
+  Source Authority:
+  Related Story / AC:
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/`
   Requires Shared Test Helper:
   Requires Manifest Tracking:
   Cleanup Expectation:
+  Permission / State Matrix:
+  - Allowed state:
+  - Denied / forbidden state:
+  - Unauthenticated / expired state:
+  - Cross-tenant denial state:
+  - Object / entity denial state:
+  - Expected public denial or safe fallback:
+  Mock / Runtime Honesty:
+  Traceability / Execution Posture:
+  Coverage Strength Signal:
   Coverage:
   Notes:
 
@@ -70,11 +111,16 @@
 
 - Scenario:
   Test Case ID: `TC-EXAMPLE-AUD-001`
+  Source Authority:
+  Related Story / AC:
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/`
   Requires Shared Test Helper:
   Requires Manifest Tracking:
   Cleanup Expectation:
+  Mock / Runtime Honesty:
+  Traceability / Execution Posture:
+  Coverage Strength Signal:
   Coverage:
   Notes:
 
@@ -82,11 +128,16 @@
 
 - Scenario:
   Test Case ID: `TC-EXAMPLE-CONC-001`
+  Source Authority:
+  Related Story / AC:
   Recommended Test Layer: `concurrency-integration`
   Suggested Test Folder:
   Requires Shared Test Helper:
   Requires Manifest Tracking:
   Cleanup Expectation:
+  Mock / Runtime Honesty:
+  Traceability / Execution Posture:
+  Coverage Strength Signal:
   Coverage:
   Notes:
 
@@ -94,11 +145,16 @@
 
 - Scenario:
   Test Case ID: `TC-EXAMPLE-PERF-001`
+  Source Authority:
+  Related Story / AC:
   Recommended Test Layer: `performance`
   Suggested Test Folder: `tests/performance/<featureName>/`
   Requires Shared Test Helper:
   Requires Manifest Tracking:
   Cleanup Expectation:
+  Mock / Runtime Honesty:
+  Traceability / Execution Posture:
+  Coverage Strength Signal:
   Coverage:
   Notes:
 
@@ -106,11 +162,16 @@
 
 - Scenario:
   Test Case ID: `TC-EXAMPLE-RES-001`
+  Source Authority:
+  Related Story / AC:
   Recommended Test Layer:
   Suggested Test Folder:
   Requires Shared Test Helper:
   Requires Manifest Tracking:
   Cleanup Expectation:
+  Mock / Runtime Honesty:
+  Traceability / Execution Posture:
+  Coverage Strength Signal:
   Coverage:
   Notes:
 
@@ -118,13 +179,37 @@
 
 - Scenario:
   Test Case ID: `TC-EXAMPLE-EDGE-001`
+  Source Authority:
+  Related Story / AC:
   Recommended Test Layer:
   Suggested Test Folder:
   Requires Shared Test Helper:
   Requires Manifest Tracking:
   Cleanup Expectation:
+  Mock / Runtime Honesty:
+  Traceability / Execution Posture:
+  Coverage Strength Signal:
   Coverage:
   Notes:
+
+## Permission / State Coverage Matrix
+
+Use for privileged, tenant-boundary, authz, lifecycle/deletion,
+support/emergency, asset, billing, export, audit/proof, sensitive-rendering, or
+security-sensitive behavior.
+
+| Scope | Allowed State | Denied / Forbidden State | Unauthenticated / Expired State | Cross-Tenant Denial State | Object / Entity Denial State | Public Denial / Safe Fallback | Source Authority |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Mock / Runtime Honesty Plan
+
+| Test Case ID | Fixture Source | Contract / Runtime Source | Mock-Honesty Expectation | Runtime Evidence Needed Later |
+| --- | --- | --- | --- | --- |
+
+## Traceability And Coverage Strength
+
+| Test Case ID | Traceability / Execution Posture | Expected Downstream Task Type | Coverage Strength Signal | Alignment Needed Before Proof |
+| --- | --- | --- | --- | --- |
 
 ## Coverage Gaps Or Open Questions
 
@@ -136,3 +221,10 @@
 - Exploratory QA note required:
 - Curated test-run summary required:
 - Waiver or quarantine record expected:
+
+## Split Boundary Notes
+
+- TEST:test-only candidates:
+- TEST:test-suite-alignment candidates:
+- EVIDENCE:qa-evidence candidates:
+- Owning implementation / artifact task candidates:

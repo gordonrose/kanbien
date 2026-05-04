@@ -90,6 +90,12 @@ Helpful secondary sources:
 - Story Breakdown packets under `docs/workspace/story-breakdown/` when they
   exist for the slice, especially story IDs, acceptance criteria, dependency
   maps, actor/state/value/error matrices, and proof-layer obligations
+- capability matrices under `docs/workspace/capability-matrices/`, especially
+  v5 architecture/authz, frontend topology, harness-gate, and testing/evidence
+  columns
+- implementation blueprints under `docs/workspace/implementation-blueprints/`
+  when they exist, especially chosen storage, route-family, audit/proof,
+  cleanup, compatibility, and verification posture
 - `docs/featureDocs/*`
 - `docs/api-contracts/*`
 - `docs/data-dictionary/*`
@@ -121,12 +127,20 @@ between:
 
 - PRD-derived `TC-*` test cases
 - journey inventory coverage
+- `TEST:test-only` executable implementation tasks
+- `TEST:test-suite-alignment` reconciliation tasks
 - required non-functional suites
 - curated QA evidence and human QA artifacts
 
 Use `docs/standards/change-artifact-requirements.md` and the QA guides as the
 canonical source for which broader artifact and verification layers are
 required. Do not restate the full repo artifact matrix in this skill.
+
+PRD test-case documents are source authority for later executable proof, but
+they are not executable proof by themselves. Treat traceability as an ID/linkage
+contract and coverage strength as a separate question. When the planned cases
+materially affect the apparent suite posture, require downstream
+`npm run test:coverage-strength` evidence or an explicit scoped equivalent.
 
 ## ID Convention
 
@@ -172,6 +186,10 @@ test suite.
 - API surfaces
 - feature boundaries
 - cross-feature interactions
+- capability-matrix or blueprint source authority, if present
+- harness gates triggered by v5 capability matrix rows, including data
+  dictionary, API contract, permission mapping, asset, job/cleanup,
+  compliance, feature manifest, runbook, and generated artifact gates
 - whether the change class carries explicit standards expectations for
   auth/authz, audit, or verification coverage
 - required validations
@@ -182,6 +200,9 @@ test suite.
   concurrency/idempotency, compatibility, or accessibility layers
 - whether the behavior implies operator-induced, lifecycle, or recovery-state
   permutations that should be included by default
+- whether sensitive actor, permission, object, lifecycle, tenant, asset,
+  billing, support/emergency, export, audit/proof, or frontend-rendering states
+  require an explicit permission/state matrix
 
 2. Map PRD behavior to the current codebase.
 Check:
@@ -203,6 +224,9 @@ Check:
   that justify stress, soak, or performance verification
 - whether the slice has external, browser, schema, or consumer-facing
   contracts that justify compatibility or contract checks
+- whether test fixtures must be tied to an API contract, data dictionary,
+  runtime payload, persistence shape, or browser projection so mocks do not
+  encode convenience behavior production lacks
 
 3. Build the test inventory in these sections:
 - unit tests
@@ -218,6 +242,9 @@ Check:
 Assign an ID to every test case while building the inventory.
 Assign a recommended test layer and target test folder to every case while
 building the inventory.
+For every case, record the source authority, proof target, mock/runtime honesty
+expectation, and whether the case is expected to become `TEST:test-only`,
+`TEST:test-suite-alignment`, or a deferred/non-executable planning obligation.
 If a case will create durable data, also note:
 
 - whether shared test helpers or factories are required
@@ -237,6 +264,11 @@ When the change class triggers them, also record explicit coverage intent for:
 Keep this as one integrated verification plan. The planner should decide which
 layers are needed for the slice rather than splitting planning into separate
 skills for unit, integration, end-to-end, performance, or security work.
+Do not plan happy-path-only proof for privileged, tenant-boundary, authz,
+lifecycle, support/emergency, asset, billing, export, audit/proof, or other
+sensitive behavior. Record allowed, denied/forbidden, unauthenticated or
+expired-session, cross-tenant, and object/entity-level denial states when they
+apply.
 
 4. Compare to any existing file under `docs/prd/test_cases/` for the same PRD.
 Summarize:
@@ -248,6 +280,9 @@ Summarize:
   implemented as written
 - whether those likely test changes are additive, expectation-changing, or
   structure-changing
+- whether existing docs/tests need `TEST:test-suite-alignment` before new proof
+  should be implemented
+- whether newly required executable proof should split to `TEST:test-only`
 
 5. Surface existing-test impact before editing.
 If the PRD-derived plan suggests changing existing executable tests, say so
@@ -257,6 +292,8 @@ explicitly before making doc updates. Keep it short but concrete:
 - whether this looks additive or expectation-changing
 - whether the current tests appear to encode behavior that may conflict with
   the PRD
+- whether the issue is alignment-only, new proof, or missing production
+  behavior
 
 When a PRD adds role/capability gates or materially changes protected-route
 access rules, explicitly call out affected pre-existing protected-feature test
@@ -367,6 +404,14 @@ Recommended target folders:
 
 - `tests/security/`
 - `tests/integration/security/`
+
+For permission-sensitive, tenant-boundary, root/support/emergency,
+lifecycle/deletion, asset, billing, export, audit/proof, or sensitive-rendering
+work, include a permission/state matrix in the test-case document. At minimum,
+name the allowed state, denied/forbidden state, unauthenticated or expired
+state when relevant, cross-tenant denial when tenant-scoped data is involved,
+object/entity-level denial when applicable, and expected public denial category
+or safe fallback when an API contract defines one.
 
 ### NFR Logging Or Audit Coverage
 
@@ -497,16 +542,32 @@ Prefer bullet lists over dense prose.
 Include the test-case ID immediately under each case heading.
 Also include:
 
+- `Source Authority`
+- `Related Story / AC`
 - `Recommended Test Layer`
 - `Suggested Test Folder`
 - `Requires Shared Test Helper`
 - `Requires Manifest Tracking`
 - `Cleanup Expectation`
+- `Mock / Runtime Honesty`
+- `Traceability / Execution Posture`
+- `Coverage Strength Signal`
+
+Use these posture values where helpful:
+
+- `planned-TC-only`
+- `ready-for-TEST:test-only`
+- `alignment-needed-before-proof`
+- `blocked-missing-source-truth`
+- `blocked-missing-implementation`
+- `deferred-not-in-scope`
 
 ## Guardrails
 
 - Do not confuse implementation files with test cases; this skill produces test
   case documentation, not executable tests unless the user asks for that next.
+- Do not treat PRD test-case documentation as executable proof.
+- Do not treat traceability as evidence of coverage strength.
 - Keep unit and integration coverage separate.
 - Do not skip NFR security or audit coverage even if the PRD emphasizes only
   functional behavior.
@@ -529,6 +590,28 @@ Also include:
   those rules when updating older PRD test-case documents as well.
 - If existing executable tests appear likely to need changes, call that out as
   part of the proposal instead of treating those future edits as implicit.
+- Do not rewrite source-independent test-case truth merely to match incomplete
+  implementation. Route that mismatch to `TEST:test-suite-alignment`,
+  `TEST:test-only`, or the owning implementation task as appropriate.
+- Do not add fixture fallback, mock convenience behavior, or invented runtime
+  payloads as planned proof unless the source contract explicitly approves that
+  behavior.
+- Do not hide missing product, API, authz, data, architecture, standards, or
+  runtime behavior inside a test-case planning update.
+
+## Split Boundaries
+
+- Use `TEST:test-only` when the next work is implementing executable proof for
+  approved `TC-*` cases or a clearly approved proof gap.
+- Use `TEST:test-suite-alignment` when existing test docs, labels, lifecycle
+  status, QA backlog rows, traceability output, or suite metadata need
+  reconciliation without changing executable proof semantics.
+- Use `EVIDENCE:qa-evidence` when the main work is runtime evidence capture,
+  screenshots, curated test-run summaries, QA checklists, exploratory notes, or
+  coverage-health reporting.
+- Use the owning `DEV:*`, `DOC:*`, or `GOV:*` task type when planning reveals
+  missing implementation, API contract truth, permission mapping, data
+  dictionary, architecture, standards, migration, or platform behavior.
 
 ## Existing Test Impact Rule
 
