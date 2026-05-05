@@ -775,11 +775,14 @@ type ArchitectureFoundationContractRow = {
   decisionProvenanceSource: string;
   missingAnalysisFields: string;
   sourcesToReview: string;
+  decisionSourceInventory: string;
+  decisionAnalysisChecklist: string;
   decisionOwner: string;
   outputArtifactTarget: string;
   downstreamTasksBlocked: string;
   compatibilityPosture: string;
   finalAuthorityRoute: string;
+  humanReviewBoundary: string;
   forbiddenImplementationGuess: string;
 };
 
@@ -3409,15 +3412,40 @@ function validateArchitectureFoundationContract(
     validateRequiredField(task.taskId, "Decision Provenance Source", row.decisionProvenanceSource, errors);
     validateRequiredField(task.taskId, "Missing Analysis Fields", row.missingAnalysisFields, errors);
     validateRequiredField(task.taskId, "Sources To Review", row.sourcesToReview, errors);
+    validateRequiredField(task.taskId, "Decision Source Inventory", row.decisionSourceInventory, errors);
+    validateRequiredField(task.taskId, "Decision Analysis Checklist", row.decisionAnalysisChecklist, errors);
     validateRequiredField(task.taskId, "Decision Owner", row.decisionOwner, errors);
     validateRequiredField(task.taskId, "Output Artifact Target", row.outputArtifactTarget, errors);
     validateRequiredField(task.taskId, "Downstream Tasks Blocked", row.downstreamTasksBlocked, errors);
     validateRequiredField(task.taskId, "Compatibility Posture", row.compatibilityPosture, errors);
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
     validateRequiredField(task.taskId, "Forbidden Implementation / Guess", row.forbiddenImplementationGuess, errors);
 
     const sources = row.sourcesToReview.toLowerCase();
     if (!sources.includes("adr") && !sources.includes("architecture") && !sources.includes("technical steering")) {
       errors.push(`${task.taskId} Architecture Foundation Contract must review ADRs, architecture docs, or Technical Steering`);
+    }
+
+    if (!mentionsScriptableInventory(row.decisionSourceInventory)) {
+      errors.push(`${task.taskId} Architecture Foundation Contract needs a scriptable decision source inventory`);
+    }
+
+    const checklist = row.decisionAnalysisChecklist.toLowerCase();
+    const checklistTerms = [
+      "option",
+      "trade",
+      "risk",
+      "cost",
+      "compat",
+      "operab",
+      "test",
+      "revers",
+      "recommend",
+      "signoff",
+      "missing",
+    ];
+    if (!checklistTerms.some((term) => checklist.includes(term))) {
+      errors.push(`${task.taskId} Architecture Foundation Contract needs a decision-analysis checklist or missing-fields list`);
     }
 
     const outputTarget = row.outputArtifactTarget.toLowerCase();
@@ -7094,12 +7122,15 @@ function parseArchitectureFoundationContractRows(content: string): ArchitectureF
     decisionProvenanceSource: cells[5] ?? "",
     missingAnalysisFields: cells[6] ?? "",
     sourcesToReview: cells[7] ?? "",
-    decisionOwner: cells[8] ?? "",
-    outputArtifactTarget: cells[9] ?? "",
-    downstreamTasksBlocked: cells[10] ?? "",
-    compatibilityPosture: cells[11] ?? "",
-    finalAuthorityRoute: cells[12] ?? "",
-    forbiddenImplementationGuess: cells[13] ?? "",
+    decisionSourceInventory: cells[8] ?? "",
+    decisionAnalysisChecklist: cells[9] ?? "",
+    decisionOwner: cells[10] ?? "",
+    outputArtifactTarget: cells[11] ?? "",
+    downstreamTasksBlocked: cells[12] ?? "",
+    compatibilityPosture: cells[13] ?? "",
+    finalAuthorityRoute: cells[14] ?? "",
+    humanReviewBoundary: cells[15] ?? "",
+    forbiddenImplementationGuess: cells[16] ?? "",
   }));
 }
 

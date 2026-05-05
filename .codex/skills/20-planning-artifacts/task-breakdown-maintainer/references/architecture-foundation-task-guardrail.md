@@ -127,16 +127,24 @@ route; it does not fill in the architecture decision.
 - missing decision-analysis fields when the source is absent or incomplete
 - exact architecture question
 - exact ADRs or architecture docs reviewed
+- scriptable decision source inventory naming files, globs, or command output
+- decision-analysis checklist covering reviewed or missing option, trade-off,
+  risk, cost, compatibility, operability, testability, reversibility,
+  recommendation, and signoff evidence
 - decision needed and owner
 - approved output path
 - downstream tasks blocked until approval
 - final authority route
+- human-review boundary limited to architecture judgment, sufficiency, and
+  authority routing
 
 ## Deep Delivery Standard
 
 - one architecture decision, ADR gap, or compatibility strategy per queued task
 - do not combine architecture decision work with dependent implementation
 - name the downstream tasks blocked until the decision is recorded
+- name exact decision sources and checklist evidence before queueing downstream
+  work so scripts can inspect the source set before human architecture review
 - do not update implementation, API behavior, persistence behavior, permission
   behavior, route behavior, or design-system seams inside this decision task
 
@@ -147,8 +155,11 @@ route; it does not fill in the architecture decision.
 - `architecture-question`
 - `architecture-decision-provenance`
 - `architecture-adrs-reviewed`
+- `architecture-decision-source-inventory`
+- `architecture-decision-analysis-checklist`
 - `architecture-decision-owner`
 - `architecture-output-path`
 - `architecture-downstream-block`
 - `architecture-compatibility`
 - `architecture-final-authority-route`
+- `architecture-human-review-boundary`
