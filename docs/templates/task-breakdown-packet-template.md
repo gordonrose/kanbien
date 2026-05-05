@@ -566,6 +566,17 @@ do not match the approved source shape must fail closed, quarantine/report, or
 follow an approved corrective/manual repair path rather than being silently
 migrated.
 
+## Migration / Persistence Class Contract
+
+Queued `DEV:migration-persistence` tasks must also record class-specific
+expectations for the selected persistence change. The migration/persistence
+class must match the `Migration / Persistence Approach` change type. This keeps
+schema, index, repository, normalization, data migration, corrective migration,
+and Postgres harness work from sharing one generic proof shape.
+
+| Task ID | Migration / Persistence Class | Class-Specific Required Proof | Required Data / Schema Coverage | Required Read / Write Or Harness Coverage | Split / Blocked Follow-Up |
+| --- | --- | --- | --- | --- | --- |
+
 ## Tight Allowed Write Envelope
 
 Prefer exact files over broad directories. Broad DEV:frontend or GOV:design-system

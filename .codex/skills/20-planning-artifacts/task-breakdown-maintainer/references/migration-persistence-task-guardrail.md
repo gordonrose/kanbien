@@ -79,12 +79,38 @@ rules to the specific change before Delivery starts:
   updates, including `tests/harness/postgres/migrations.ts`,
   `tests/harness/postgres/testDatabase.ts`, and package persistence test
   scripts when relevant
+- fill the `Migration / Persistence Class Contract` with class-specific proof,
+  required data/schema coverage, required read/write or harness coverage, and
+  split/blocker routing for any documentation or executable-proof debt
 
 Do not satisfy DEV:migration-persistence work by only editing migration files. The
 task must also say how code, live schema, source data shape, per-row eligibility,
 indexes, and representative reads and writes will agree after Delivery. Do not
 silently migrate rows that do not match the approved starting shape; fail closed
 unless an approved compatibility or manual repair strategy says otherwise.
+
+Class-specific expectations:
+
+- `live-schema-inspection` must prove current live schema, indexes, and code
+  expectations agree or route drift before implementation.
+- `new-migration` must prove sortable migration identity, live start-state,
+  SQL execution semantics, source data shape, per-row eligibility, rejected-row
+  behavior, and representative read/write paths.
+- `corrective-migration` must prove the defect or drift source, live
+  start-state, eligibility/rejected-row handling, repair compatibility, and
+  representative read/write paths after correction.
+- `repository-query-semantics` must prove query/filter/sort/tenant or
+  lifecycle semantics without hiding schema/index work.
+- `index-or-constraint` must prove index or constraint behavior, uniqueness or
+  lookup semantics, representative read/write paths, and compatibility with
+  existing data.
+- `normalization-or-uniqueness` must prove normalization rules, unique
+  normalized values, duplicate/corrupt data handling, and representative
+  create/update/read behavior.
+- `postgres-harness-update` must prove the shared Postgres harness/script
+  change and the representative persistence tests that consume it.
+- `not-applicable-with-rationale` must explain why a non-migration task carries
+  no migration/persistence implementation proof.
 
 ## Storage Decision And Split Rules
 
@@ -132,6 +158,7 @@ other sensitive persisted data, the task must name focused proof for:
 ## Required Check IDs
 
 - `migration-source-authority`
+- `migration-change-class`
 - `migration-live-schema`
 - `migration-storage-decision-boundary`
 - `migration-source-data-shape`

@@ -75,6 +75,7 @@ const requiredHeadings = [
   "## Platform Seam Class Contract",
   "## Backend Implementation Approach",
   "## Migration / Persistence Approach",
+  "## Migration / Persistence Class Contract",
   "## Tight Allowed Write Envelope",
   "## Task-Specific Proof Plan",
   "## Refactor-First Contract",
@@ -706,6 +707,15 @@ type MigrationPersistenceApproachRow = {
   postgresHarnessImpact: string;
 };
 
+type MigrationPersistenceClassContractRow = {
+  taskId: string;
+  migrationPersistenceClass: string;
+  classSpecificRequiredProof: string;
+  requiredDataSchemaCoverage: string;
+  requiredReadWriteOrHarnessCoverage: string;
+  splitBlockedFollowUp: string;
+};
+
 type TightWriteEnvelopeRow = {
   taskId: string;
   envelopeClass: string;
@@ -1073,6 +1083,7 @@ export function validateTaskBreakdownContent(
   const platformSeamClassContracts = parsePlatformSeamClassContractRows(taskContent);
   const backendImplementationApproaches = parseBackendImplementationApproachRows(taskContent);
   const migrationPersistenceApproaches = parseMigrationPersistenceApproachRows(taskContent);
+  const migrationPersistenceClassContracts = parseMigrationPersistenceClassContractRows(taskContent);
   const tightWriteEnvelopes = parseTightWriteEnvelopeRows(taskContent);
   const taskSpecificProofPlans = parseTaskSpecificProofPlanRows(taskContent);
   const refactorFirstContracts = parseRefactorFirstContractRows(taskContent);
@@ -1156,6 +1167,7 @@ export function validateTaskBreakdownContent(
   const platformSeamClassContractsByTask = groupBy(platformSeamClassContracts, (row) => row.taskId);
   const backendImplementationApproachesByTask = groupBy(backendImplementationApproaches, (row) => row.taskId);
   const migrationPersistenceApproachesByTask = groupBy(migrationPersistenceApproaches, (row) => row.taskId);
+  const migrationPersistenceClassContractsByTask = groupBy(migrationPersistenceClassContracts, (row) => row.taskId);
   const tightWriteEnvelopesByTask = groupBy(tightWriteEnvelopes, (row) => row.taskId);
   const taskSpecificProofPlansByTask = groupBy(taskSpecificProofPlans, (row) => row.taskId);
   const refactorFirstContractsByTask = groupBy(refactorFirstContracts, (row) => row.taskId);
@@ -1241,6 +1253,12 @@ export function validateTaskBreakdownContent(
       platformSeamClassContractsByTask.get(task.taskId) ?? [],
       errors,
     );
+    validateMigrationPersistenceClassContract(
+      task,
+      migrationPersistenceApproachesByTask.get(task.taskId) ?? [],
+      migrationPersistenceClassContractsByTask.get(task.taskId) ?? [],
+      errors,
+    );
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
     validateWriteSetClassification(task, writeSetClassificationsByTask.get(task.taskId) ?? [], errors);
     validateForbiddenWork(task, forbiddenWorkByTask.get(task.taskId) ?? [], errors);
@@ -1274,6 +1292,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Platform Seam Class Contract", platformSeamClassContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Backend Implementation Approach", backendImplementationApproaches.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Migration / Persistence Approach", migrationPersistenceApproaches.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Migration / Persistence Class Contract", migrationPersistenceClassContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Tight Allowed Write Envelope", tightWriteEnvelopes.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Task-Specific Proof Plan", taskSpecificProofPlans.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Refactor-First Contract", refactorFirstContracts.map((row) => row.taskId), taskIds, errors);
@@ -2625,6 +2644,100 @@ function validateMigrationPersistenceApproach(
     ) {
       errors.push(`${task.taskId} migration task must name new/corrective migration identity posture`);
     }
+  }
+}
+
+function validateMigrationPersistenceClassContract(
+  task: TaskRow,
+  approachRows: MigrationPersistenceApproachRow[],
+  classRows: MigrationPersistenceClassContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DEV:migration-persistence") {
+    if (classRows.length > 0) {
+      errors.push(`${task.taskId} has Migration / Persistence Class Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (classRows.length === 0) {
+    errors.push(`${task.taskId} queued DEV:migration-persistence task has no migration / persistence class contract row`);
+    return;
+  }
+
+  for (const row of classRows) {
+    validateAllowedValue(task.taskId, "Migration / Persistence Class", row.migrationPersistenceClass, allowedMigrationPersistenceChangeTypes, errors);
+    validateRequiredField(task.taskId, "Class-Specific Required Proof", row.classSpecificRequiredProof, errors);
+    validateRequiredField(task.taskId, "Required Data / Schema Coverage", row.requiredDataSchemaCoverage, errors);
+    validateRequiredField(task.taskId, "Required Read / Write Or Harness Coverage", row.requiredReadWriteOrHarnessCoverage, errors);
+    validateRequiredField(task.taskId, "Migration / Persistence Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
+
+    if (approachRows.length > 0 && !approachRows.some((approachRow) => approachRow.changeType === row.migrationPersistenceClass)) {
+      errors.push(`${task.taskId} Migration / Persistence Class Contract class must match the Migration / Persistence Approach change type`);
+    }
+
+    validateMigrationPersistenceClassSpecifics(task.taskId, row, errors);
+  }
+}
+
+function validateMigrationPersistenceClassSpecifics(
+  taskId: string,
+  row: MigrationPersistenceClassContractRow,
+  errors: string[],
+): void {
+  const proof = row.classSpecificRequiredProof.toLowerCase();
+  const dataSchema = row.requiredDataSchemaCoverage.toLowerCase();
+  const readWriteHarness = row.requiredReadWriteOrHarnessCoverage.toLowerCase();
+  const followUp = row.splitBlockedFollowUp.toLowerCase();
+  const combined = `${proof} ${dataSchema} ${readWriteHarness} ${followUp}`;
+  const followUpRequiresRouting = !followUp.includes("not-applicable") && !followUp.includes("unchanged");
+
+  if (row.migrationPersistenceClass === "live-schema-inspection" && !mentionsLiveSchemaInspectionClassProof(combined)) {
+    errors.push(`${taskId} live-schema-inspection migration class must prove live schema, indexes, and code expectations agree or route drift`);
+  }
+
+  if (row.migrationPersistenceClass === "new-migration" && !mentionsNewMigrationClassProof(combined)) {
+    errors.push(`${taskId} new-migration class must prove migration identity, live start state, SQL semantics, source data shape, per-row eligibility, rejected-row behavior, and read/write paths`);
+  }
+
+  if (row.migrationPersistenceClass === "corrective-migration" && !mentionsCorrectiveMigrationClassProof(combined)) {
+    errors.push(`${taskId} corrective-migration class must prove defect/drift source, repair compatibility, eligibility/rejected-row handling, and read/write paths`);
+  }
+
+  if (row.migrationPersistenceClass === "repository-query-semantics" && !mentionsRepositoryQuerySemanticsClassProof(combined)) {
+    errors.push(`${taskId} repository-query-semantics class must prove query semantics and representative read/write behavior without hiding schema or index work`);
+  }
+
+  if (row.migrationPersistenceClass === "index-or-constraint" && !mentionsIndexConstraintClassProof(combined)) {
+    errors.push(`${taskId} index-or-constraint class must prove index/constraint behavior, existing-data compatibility, and representative read/write paths`);
+  }
+
+  if (row.migrationPersistenceClass === "normalization-or-uniqueness" && !mentionsNormalizationUniquenessClassProof(combined)) {
+    errors.push(`${taskId} normalization-or-uniqueness class must prove normalization, uniqueness, duplicate/corrupt data handling, and create/update/read behavior`);
+  }
+
+  if (row.migrationPersistenceClass === "postgres-harness-update" && !mentionsPostgresHarnessClassProof(combined)) {
+    errors.push(`${taskId} postgres-harness-update class must prove shared Postgres harness/script behavior and representative persistence test consumers`);
+  }
+
+  if (row.migrationPersistenceClass === "not-applicable-with-rationale" && !mentionsNotApplicableRationale(proof, dataSchema, readWriteHarness)) {
+    errors.push(`${taskId} not-applicable-with-rationale migration class must explain why migration/persistence proof is not applicable`);
+  }
+
+  if (
+    followUpRequiresRouting &&
+    (followUp.includes("data dictionary") || followUp.includes("durable fact") || followUp.includes("retention")) &&
+    !followUp.includes("doc:data-dictionary")
+  ) {
+    errors.push(`${taskId} Migration / Persistence Class Contract data dictionary debt must route to DOC:data-dictionary`);
+  }
+
+  if (
+    followUpRequiresRouting &&
+    (followUp.includes("test") || followUp.includes("executable proof") || followUp.includes("coverage")) &&
+    !followUp.includes("test:test-only")
+  ) {
+    errors.push(`${taskId} Migration / Persistence Class Contract executable proof debt must route to TEST:test-only`);
   }
 }
 
@@ -5959,6 +6072,70 @@ function mentionsMigrationIdentity(value: string): boolean {
   );
 }
 
+function mentionsLiveSchemaInspectionClassProof(value: string): boolean {
+  return value.includes("live schema") && value.includes("index") && value.includes("code");
+}
+
+function mentionsNewMigrationClassProof(value: string): boolean {
+  return (
+    value.includes("migration identity") &&
+    (value.includes("live start") || value.includes("start-state") || value.includes("start state")) &&
+    value.includes("sql") &&
+    value.includes("source data") &&
+    value.includes("per-row") &&
+    value.includes("rejected-row") &&
+    (value.includes("read/write") || (value.includes("read") && value.includes("write")))
+  );
+}
+
+function mentionsCorrectiveMigrationClassProof(value: string): boolean {
+  return (
+    (value.includes("defect") || value.includes("drift")) &&
+    value.includes("repair") &&
+    value.includes("compat") &&
+    value.includes("eligibility") &&
+    value.includes("rejected-row") &&
+    (value.includes("read/write") || (value.includes("read") && value.includes("write")))
+  );
+}
+
+function mentionsRepositoryQuerySemanticsClassProof(value: string): boolean {
+  return (
+    value.includes("query") &&
+    (value.includes("filter") || value.includes("sort") || value.includes("tenant") || value.includes("lifecycle")) &&
+    (value.includes("read/write") || (value.includes("read") && value.includes("write"))) &&
+    (value.includes("schema") || value.includes("index"))
+  );
+}
+
+function mentionsIndexConstraintClassProof(value: string): boolean {
+  return (
+    (value.includes("index") || value.includes("constraint")) &&
+    (value.includes("compat") || value.includes("existing data")) &&
+    (value.includes("read/write") || (value.includes("read") && value.includes("write")))
+  );
+}
+
+function mentionsNormalizationUniquenessClassProof(value: string): boolean {
+  return (
+    value.includes("normalization") &&
+    value.includes("uniqueness") &&
+    (value.includes("duplicate") || value.includes("corrupt")) &&
+    value.includes("create") &&
+    value.includes("update") &&
+    value.includes("read")
+  );
+}
+
+function mentionsPostgresHarnessClassProof(value: string): boolean {
+  return (
+    value.includes("postgres") &&
+    value.includes("harness") &&
+    (value.includes("script") || value.includes("testdatabase") || value.includes("migrations.ts")) &&
+    value.includes("persistence test")
+  );
+}
+
 function isNoBlockers(value: string): boolean {
   const normalized = value.trim().toLowerCase();
   return normalized === "none" || normalized.startsWith("not-applicable");
@@ -6388,6 +6565,17 @@ function parseMigrationPersistenceApproachRows(content: string): MigrationPersis
     sqlExecutionSemanticsCheck: cells[7] ?? "",
     representativeReadWriteProof: cells[8] ?? "",
     postgresHarnessImpact: cells[9] ?? "",
+  }));
+}
+
+function parseMigrationPersistenceClassContractRows(content: string): MigrationPersistenceClassContractRow[] {
+  return parseTableRows(section(content, "## Migration / Persistence Class Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    migrationPersistenceClass: cells[1] ?? "",
+    classSpecificRequiredProof: cells[2] ?? "",
+    requiredDataSchemaCoverage: cells[3] ?? "",
+    requiredReadWriteOrHarnessCoverage: cells[4] ?? "",
+    splitBlockedFollowUp: cells[5] ?? "",
   }));
 }
 

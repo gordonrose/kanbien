@@ -361,6 +361,7 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "DEV:migration-persistence": [
     "migration-source-authority",
+    "migration-change-class",
     "migration-live-schema",
     "migration-storage-decision-boundary",
     "migration-source-data-shape",

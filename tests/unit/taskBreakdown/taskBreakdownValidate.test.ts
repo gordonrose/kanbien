@@ -283,6 +283,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S001-01 | not-applicable-with-rationale | not-applicable: DEV:backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible | not-applicable: no migration file touched | not-applicable: no SQL execution change | not-applicable: DEV:backend persistence proof only | not-applicable: no harness impact |
 
+## Migration / Persistence Class Contract
+
+| Task ID | Migration / Persistence Class | Class-Specific Required Proof | Required Data / Schema Coverage | Required Read / Write Or Harness Coverage | Split / Blocked Follow-Up |
+| --- | --- | --- | --- | --- | --- |
+
 ## Tight Allowed Write Envelope
 
 | Task ID | Envelope Class | Exact Files Or Narrow Patterns | Broad Write Rationale |
@@ -774,6 +779,62 @@ function platformSeamPacketWithContract(contractRow: string, classRow = platform
     .replace(
       emptyPlatformSeamClassContractSection,
       `## Platform Seam Class Contract\n\n| Task ID | Platform Seam Class | Class-Specific Required Proof | Required Consumer Coverage | Runtime / Materialization Expectation | Forbidden Contamination / Split Notes |\n| --- | --- | --- | --- | --- | --- |\n${classRow ? `${classRow}\n` : ""}\n`,
+    );
+}
+
+const emptyMigrationPersistenceClassContractSection =
+  "## Migration / Persistence Class Contract\n\n| Task ID | Migration / Persistence Class | Class-Specific Required Proof | Required Data / Schema Coverage | Required Read / Write Or Harness Coverage | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- |\n\n";
+
+const migrationPersistenceGuardrailEvidenceRows =
+  "| T-S001-01 | migration-source-authority | pass | Approved PRD, capability row, data dictionary, or blueprint authorizes the storage change. |\n" +
+  "| T-S001-01 | migration-change-class | pass | Migration persistence class is new-migration. |\n" +
+  "| T-S001-01 | migration-live-schema | pass | Live schema inspection is required. |\n" +
+  "| T-S001-01 | migration-storage-decision-boundary | pass | Storage model is approved or split before migration implementation. |\n" +
+  "| T-S001-01 | migration-source-data-shape | pass | Source rows must match the approved starting shape before mutation. |\n" +
+  "| T-S001-01 | migration-per-row-eligibility | pass | Each transformed row must pass eligibility validation before mutation. |\n" +
+  "| T-S001-01 | migration-rejected-row-behavior | pass | Non-compliant rows must fail closed or follow an approved repair path. |\n" +
+  "| T-S001-01 | migration-compatibility-repair | pass | Existing-environment compatibility and repair posture are named. |\n" +
+  "| T-S001-01 | migration-applied-file-safety | pass | Applied migration identities remain stable. |\n" +
+  "| T-S001-01 | migration-index-normalization-uniqueness | pass | Index, normalization, and uniqueness proof is required. |\n" +
+  "| T-S001-01 | migration-security-tenant-proof | pass | Tenant, authz, lifecycle, audit, or compliance-sensitive storage proof is named or not applicable with rationale. |\n" +
+  "| T-S001-01 | migration-read-write-proof | pass | Representative read/write proof is required. |\n" +
+  "| T-S001-01 | migration-postgres-harness | pass | Harness impact is classified. |";
+
+const migrationPersistenceApproachNewMigrationRow =
+  "| T-S001-01 | new-migration | SELECT column_name FROM information_schema.columns WHERE table_name = 'tenant_branding' | Assert source data shape has tenant_id and legacy_logo_url before mutation | Check per-row eligibility before transforming each row | Fail atomically and report rejected-row IDs | new migration 0002_tenant_branding_logo_url.sql; applied migration files untouched | SQL execution semantics check covers backfill visibility and index creation order | Representative read/write proof covers create, update, read after migration | not-applicable: no shared Postgres harness impact |";
+
+const migrationPersistenceClassNewMigrationRow =
+  "| T-S001-01 | new-migration | migration identity, live start state, SQL semantics, source data shape, per-row eligibility, rejected-row behavior, and read/write paths are proven | live start-state schema, approved source data shape, and affected migration file are covered | representative read/write persistence proof after migration | not-applicable: data dictionary and TEST:test-only work unchanged |";
+
+function migrationPersistenceStoryPacket(): string {
+  return sourceStoryPacket
+    .replace("| CLS-001 | tenant branding DEV:backend update | feature-local | src/features/tenantConfiguration | approved | DEV:backend |", "| CLS-001 | tenant branding persistence migration | feature-local | src/features/tenantConfiguration/persistence | approved | DEV:migration-persistence |")
+    .replace("| S-001 | API route or contract change | yes | Root admin update route contract changes. | DEV:backend |", "| S-001 | persistence or migration change | yes | Tenant branding schema changes. | DEV:migration-persistence |");
+}
+
+function migrationPersistenceTaskPacketWithClass(input: {
+  approachRow?: string;
+  classRow?: string;
+} = {}): string {
+  const approachRow = input.approachRow ?? migrationPersistenceApproachNewMigrationRow;
+  const classRow = input.classRow ?? migrationPersistenceClassNewMigrationRow;
+
+  return validTaskPacket
+    .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | feature-local | DEV:migration-persistence | T-S001-01 | covered | Migration task preserves Layer 2 feature-local classification. |")
+    .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | DEV:migration-persistence | persistence or migration change | T-S001-01 | Covered by migration delivery task. |")
+    .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DEV:migration-persistence |")
+    .replace(
+      "| T-S001-01 | not-applicable-with-rationale | not-applicable: DEV:backend task has no schema change | not-applicable: no live data transform | not-applicable: no per-row migration | not-applicable: no rejected rows possible | not-applicable: no migration file touched | not-applicable: no SQL execution change | not-applicable: DEV:backend persistence proof only | not-applicable: no harness impact |",
+      approachRow,
+    )
+    .replace(
+      "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+      "| T-S001-01 | DEV:migration-persistence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/migration-persistence-task-guardrail.md | approved | Migration guardrail reviewed for schema, live schema, class contract, and harness obligations. |",
+    )
+    .replace(backendGuardrailEvidenceRows, migrationPersistenceGuardrailEvidenceRows)
+    .replace(
+      emptyMigrationPersistenceClassContractSection,
+      `## Migration / Persistence Class Contract\n\n| Task ID | Migration / Persistence Class | Class-Specific Required Proof | Required Data / Schema Coverage | Required Read / Write Or Harness Coverage | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- |\n${classRow ? `${classRow}\n` : ""}\n`,
     );
 }
 
@@ -2553,6 +2614,49 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 missing Per-Row Eligibility Validation");
+  });
+
+  it("blocks queued DEV:migration-persistence tasks without a migration class contract row", () => {
+    const result = validateTaskBreakdownContent(
+      migrationPersistenceTaskPacketWithClass({ classRow: "" }),
+      migrationPersistenceStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 queued DEV:migration-persistence task has no migration / persistence class contract row");
+  });
+
+  it("blocks migration class rows that do not match the approach change type", () => {
+    const result = validateTaskBreakdownContent(
+      migrationPersistenceTaskPacketWithClass({
+        classRow:
+          "| T-S001-01 | index-or-constraint | index constraint behavior and read/write paths are proven | existing data compatibility and index coverage | representative read/write proof | not-applicable: unchanged |",
+      }),
+      migrationPersistenceStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 Migration / Persistence Class Contract class must match the Migration / Persistence Approach change type");
+  });
+
+  it("blocks new-migration class rows without full source-data and read/write proof shape", () => {
+    const result = validateTaskBreakdownContent(
+      migrationPersistenceTaskPacketWithClass({
+        classRow:
+          "| T-S001-01 | new-migration | generic migration proof | schema coverage | read proof | not-applicable: unchanged |",
+      }),
+      migrationPersistenceStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 new-migration class must prove migration identity, live start state, SQL semantics, source data shape, per-row eligibility, rejected-row behavior, and read/write paths");
+  });
+
+  it("passes a bounded DEV:migration-persistence task with a class contract", () => {
+    expect(validateTaskBreakdownContent(migrationPersistenceTaskPacketWithClass(), migrationPersistenceStoryPacket())).toEqual({
+      status: "PASS",
+      errors: [],
+    });
   });
 
   it("blocks missing expected task-type reconciliation from story signals", () => {
