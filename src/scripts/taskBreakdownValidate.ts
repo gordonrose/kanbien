@@ -78,6 +78,7 @@ const requiredHeadings = [
   "## Standards Update Contract",
   "## Permission Mapping Contract",
   "## API Contract",
+  "## Data Dictionary Contract",
   "## Test-Only Coverage Contract",
   "## Test Suite Alignment Contract",
   "## Capability Permission / State Matrix",
@@ -300,6 +301,23 @@ const allowedApiMaintainedArtifactPostures = new Set([
   "openapi-and-postman-maintained",
   "generated-docs-maintained",
   "not-maintained-with-rationale",
+]);
+const allowedDataCompatibilityPostures = new Set([
+  "docs-only-alignment",
+  "no-schema-change",
+  "additive",
+  "compatibility-sensitive",
+  "blocked-pending-migration-or-approval",
+]);
+const allowedDataEnforcementPostures = new Set([
+  "schema-enforced",
+  "code-enforced",
+  "test-enforced",
+  "artifact-documented",
+  "manual-review",
+  "planned-work",
+  "blocked",
+  "not-applicable",
 ]);
 
 const vaguePhrases = [
@@ -708,6 +726,21 @@ type ApiContractRow = {
   validationReviewEvidence: string;
 };
 
+type DataDictionaryContractRow = {
+  taskId: string;
+  entityTableFactGroup: string;
+  dictionaryArtifactTarget: string;
+  sourceTruthReviewed: string;
+  fieldIndexLifecycleTruth: string;
+  durableFactRetentionTruth: string;
+  classificationCompliancePosture: string;
+  enforcementTrace: string;
+  testEvidenceTrace: string;
+  compatibilityPosture: string;
+  splitBlockedFollowUp: string;
+  validationReviewEvidence: string;
+};
+
 type TestOnlyCoverageContractRow = {
   taskId: string;
   coverageSource: string;
@@ -937,6 +970,7 @@ export function validateTaskBreakdownContent(
   const standardsUpdateContracts = parseStandardsUpdateContractRows(taskContent);
   const permissionMappingContracts = parsePermissionMappingContractRows(taskContent);
   const apiContracts = parseApiContractRows(taskContent);
+  const dataDictionaryContracts = parseDataDictionaryContractRows(taskContent);
   const testOnlyCoverageContracts = parseTestOnlyCoverageContractRows(taskContent);
   const testSuiteAlignmentContracts = parseTestSuiteAlignmentContractRows(taskContent);
   const capabilityPermissionStateMatrices = parseCapabilityPermissionStateMatrixRows(taskContent);
@@ -1015,6 +1049,7 @@ export function validateTaskBreakdownContent(
   const standardsUpdateContractsByTask = groupBy(standardsUpdateContracts, (row) => row.taskId);
   const permissionMappingContractsByTask = groupBy(permissionMappingContracts, (row) => row.taskId);
   const apiContractsByTask = groupBy(apiContracts, (row) => row.taskId);
+  const dataDictionaryContractsByTask = groupBy(dataDictionaryContracts, (row) => row.taskId);
   const testOnlyCoverageContractsByTask = groupBy(testOnlyCoverageContracts, (row) => row.taskId);
   const testSuiteAlignmentContractsByTask = groupBy(testSuiteAlignmentContracts, (row) => row.taskId);
   const capabilityPermissionStateMatricesByTask = groupBy(capabilityPermissionStateMatrices, (row) => row.taskId);
@@ -1079,6 +1114,7 @@ export function validateTaskBreakdownContent(
     validateStandardsUpdateContract(task, standardsUpdateContractsByTask.get(task.taskId) ?? [], errors);
     validatePermissionMappingContract(task, permissionMappingContractsByTask.get(task.taskId) ?? [], errors);
     validateApiContract(task, apiContractsByTask.get(task.taskId) ?? [], errors);
+    validateDataDictionaryContract(task, dataDictionaryContractsByTask.get(task.taskId) ?? [], errors);
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
     validateWriteSetClassification(task, writeSetClassificationsByTask.get(task.taskId) ?? [], errors);
     validateForbiddenWork(task, forbiddenWorkByTask.get(task.taskId) ?? [], errors);
@@ -1118,6 +1154,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Standards Update Contract", standardsUpdateContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Permission Mapping Contract", permissionMappingContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("API Contract", apiContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Data Dictionary Contract", dataDictionaryContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test-Only Coverage Contract", testOnlyCoverageContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test Suite Alignment Contract", testSuiteAlignmentContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Capability Permission / State Matrix", capabilityPermissionStateMatrices.map((row) => row.taskId), taskIds, errors);
@@ -3022,6 +3059,115 @@ function validateApiContract(
     }
     if (followUp.includes("test") && !followUp.includes("test:test-only")) {
       errors.push(`${task.taskId} API Contract executable proof must route to TEST:test-only`);
+    }
+  }
+}
+
+function validateDataDictionaryContract(
+  task: TaskRow,
+  rows: DataDictionaryContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DOC:data-dictionary") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has Data Dictionary Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} has no Data Dictionary Contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Entity / Table / Fact Group", row.entityTableFactGroup, errors);
+    validateRequiredField(task.taskId, "Dictionary Artifact Target", row.dictionaryArtifactTarget, errors);
+    validateRequiredField(task.taskId, "Source Truth Reviewed", row.sourceTruthReviewed, errors);
+    validateRequiredField(task.taskId, "Field / Index / Lifecycle Truth", row.fieldIndexLifecycleTruth, errors);
+    validateRequiredField(task.taskId, "Durable Fact / Retention Truth", row.durableFactRetentionTruth, errors);
+    validateRequiredField(task.taskId, "Classification / Compliance Posture", row.classificationCompliancePosture, errors);
+    validateAllowedValue(task.taskId, "Enforcement Trace", row.enforcementTrace, allowedDataEnforcementPostures, errors);
+    validateRequiredField(task.taskId, "Test / Evidence Trace", row.testEvidenceTrace, errors);
+    validateAllowedValue(task.taskId, "Compatibility Posture", row.compatibilityPosture, allowedDataCompatibilityPostures, errors);
+    validateRequiredField(task.taskId, "Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
+    validateRequiredField(task.taskId, "Validation / Review Evidence", row.validationReviewEvidence, errors);
+
+    const target = row.dictionaryArtifactTarget.replace(/\\/g, "/").toLowerCase();
+    if (!target.includes("docs/data-dictionary/")) {
+      errors.push(`${task.taskId} Data Dictionary Contract target must be under docs/data-dictionary/`);
+    }
+
+    const source = row.sourceTruthReviewed.toLowerCase();
+    if (
+      !source.includes("migration") &&
+      !source.includes("schema") &&
+      !source.includes("repository") &&
+      !source.includes("domain") &&
+      !source.includes("contract") &&
+      !source.includes("prd") &&
+      !source.includes("technical steering") &&
+      !source.includes("data dictionary") &&
+      !source.includes("capability")
+    ) {
+      errors.push(`${task.taskId} Data Dictionary Contract needs source truth from migrations, schema, repositories, domain/contract code, PRD, Technical Steering, capability rows, or existing data dictionary docs`);
+    }
+
+    const dataTruth = `${row.fieldIndexLifecycleTruth} ${row.durableFactRetentionTruth}`.toLowerCase();
+    if (
+      !dataTruth.includes("field") &&
+      !dataTruth.includes("index") &&
+      !dataTruth.includes("lifecycle") &&
+      !dataTruth.includes("retention") &&
+      !dataTruth.includes("durable fact") &&
+      !dataTruth.includes("soft-delete") &&
+      !dataTruth.includes("normalization") &&
+      !dataTruth.includes("uniqueness")
+    ) {
+      errors.push(`${task.taskId} Data Dictionary Contract must name field, index, lifecycle, retention, durable fact, soft-delete, normalization, or uniqueness truth`);
+    }
+
+    const compliance = row.classificationCompliancePosture.toLowerCase();
+    if (
+      !compliance.includes("classification") &&
+      !compliance.includes("privacy") &&
+      !compliance.includes("security") &&
+      !compliance.includes("audit") &&
+      !compliance.includes("retention") &&
+      !compliance.includes("compliance") &&
+      !compliance.includes("not-applicable")
+    ) {
+      errors.push(`${task.taskId} Data Dictionary Contract must classify data compliance, privacy, security, audit, or retention posture`);
+    }
+
+    const followUp = row.splitBlockedFollowUp.toLowerCase();
+    if ((followUp.includes("schema") || followUp.includes("migration") || followUp.includes("index")) && !followUp.includes("dev:migration-persistence")) {
+      errors.push(`${task.taskId} Data Dictionary Contract schema, migration, or index changes must route to DEV:migration-persistence`);
+    }
+    if (
+      (followUp.includes("repository") ||
+        followUp.includes("domain") ||
+        followUp.includes("normalization") ||
+        followUp.includes("runtime") ||
+        followUp.includes("persistence behavior")) &&
+      !followUp.includes("dev:backend") &&
+      !followUp.includes("dev:vertical-slice")
+    ) {
+      errors.push(`${task.taskId} Data Dictionary Contract runtime or persistence behavior changes must route to DEV:backend or DEV:vertical-slice`);
+    }
+    if ((followUp.includes("api") || followUp.includes("response") || followUp.includes("request")) && !followUp.includes("doc:api-contract")) {
+      errors.push(`${task.taskId} Data Dictionary Contract API-visible data shape changes must route to DOC:api-contract`);
+    }
+    if ((followUp.includes("permission") || followUp.includes("authz") || followUp.includes("tenant boundary")) && !followUp.includes("doc:permission-mapping")) {
+      errors.push(`${task.taskId} Data Dictionary Contract permission or tenant-boundary changes must route to DOC:permission-mapping`);
+    }
+    if ((followUp.includes("test") || followUp.includes("executable proof")) && !followUp.includes("test:test-only")) {
+      errors.push(`${task.taskId} Data Dictionary Contract executable proof changes must route to TEST:test-only`);
+    }
+    if (row.enforcementTrace === "blocked" || row.compatibilityPosture === "blocked-pending-migration-or-approval") {
+      if (!followUp.includes("blocked") && !followUp.includes("approval") && !followUp.includes("migration")) {
+        errors.push(`${task.taskId} Data Dictionary Contract blocked posture must name blocked, approval, or migration follow-up`);
+      }
     }
   }
 }
@@ -5100,6 +5246,23 @@ function parseApiContractRows(content: string): ApiContractRow[] {
     validationPaginationSortingSystemFields: cells[7] ?? "",
     compatibilityPosture: cells[8] ?? "",
     maintainedApiArtifacts: cells[9] ?? "",
+    splitBlockedFollowUp: cells[10] ?? "",
+    validationReviewEvidence: cells[11] ?? "",
+  }));
+}
+
+function parseDataDictionaryContractRows(content: string): DataDictionaryContractRow[] {
+  return parseTableRows(section(content, "## Data Dictionary Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    entityTableFactGroup: cells[1] ?? "",
+    dictionaryArtifactTarget: cells[2] ?? "",
+    sourceTruthReviewed: cells[3] ?? "",
+    fieldIndexLifecycleTruth: cells[4] ?? "",
+    durableFactRetentionTruth: cells[5] ?? "",
+    classificationCompliancePosture: cells[6] ?? "",
+    enforcementTrace: cells[7] ?? "",
+    testEvidenceTrace: cells[8] ?? "",
+    compatibilityPosture: cells[9] ?? "",
     splitBlockedFollowUp: cells[10] ?? "",
     validationReviewEvidence: cells[11] ?? "",
   }));

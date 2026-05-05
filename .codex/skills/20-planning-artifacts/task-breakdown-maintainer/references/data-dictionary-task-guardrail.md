@@ -67,6 +67,10 @@ Before queueing, the task packet should name:
   compatibility-sensitive, or blocked pending migration/approval
 - validation command, docs-alignment review workflow, or explicit blocked reason
 
+The task packet must also fill the `Data Dictionary Contract` table. Leave
+runtime, schema, API, permission, and executable proof work out of the
+`DOC:data-dictionary` task and route each to its owning task type.
+
 ## Split Conditions
 
 Split or block the task when:
@@ -105,4 +109,8 @@ Split or block the task when:
 - `data-source-reviewed`
 - `data-field-index-lifecycle`
 - `data-durable-facts`
+- `data-classification-compliance`
+- `data-enforcement-trace`
+- `data-split-routing`
+- `data-compliance-health`
 - `data-validation-proof`

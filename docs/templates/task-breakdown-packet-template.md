@@ -702,6 +702,38 @@ mapping, migrations, and executable tests must split to the owning task type.
 | Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Data Dictionary Contract
+
+Required for `DOC:data-dictionary` tasks. Leave empty when no
+`DOC:data-dictionary` task is queued.
+
+Allowed compatibility postures:
+
+- `docs-only-alignment`
+- `no-schema-change`
+- `additive`
+- `compatibility-sensitive`
+- `blocked-pending-migration-or-approval`
+
+Allowed enforcement trace postures:
+
+- `schema-enforced`
+- `code-enforced`
+- `test-enforced`
+- `artifact-documented`
+- `manual-review`
+- `planned-work`
+- `blocked`
+- `not-applicable`
+
+`DOC:data-dictionary` records durable data truth only. Schema changes,
+migrations, repository/query behavior, domain normalization, API-visible data
+shape changes, permission mapping, and executable proof must split to the
+owning task type.
+
+| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Enforcement Trace | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 Queued `TEST:test-only` tasks must say exactly what kind of test work they perform.

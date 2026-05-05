@@ -359,6 +359,10 @@ export const layer4RequiredCheckIdsByTaskType = {
     "data-source-reviewed",
     "data-field-index-lifecycle",
     "data-durable-facts",
+    "data-classification-compliance",
+    "data-enforcement-trace",
+    "data-split-routing",
+    "data-compliance-health",
     "data-validation-proof",
   ],
   "EVIDENCE:qa-evidence": [

@@ -300,6 +300,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Data Dictionary Contract
+
+| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Enforcement Trace | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 | Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |
@@ -1252,6 +1257,89 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 API Contract runtime implementation must route to DEV:*");
+  });
+
+  it("blocks data dictionary tasks without a data dictionary contract row", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:data-dictionary |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/data-dictionary/tenant-configuration.md",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has no Data Dictionary Contract row");
+  });
+
+  it("allows data dictionary tasks with durable data truth, compliance trace, and debt summary", () => {
+    const dataDictionaryRow =
+      "| T-S001-01 | tenantConfiguration tenant_branding displayName durable fact | docs/data-dictionary/tenant-configuration.md | Source story AC-S001-01, capability CAP-BRANDING-001, migration 0001, live schema snapshot, repository and domain contract reviewed. | field displayName is normalized; uniqueness not-applicable; lifecycle follows tenant soft-delete posture; index unchanged | durable fact retained on owning tenant configuration record; retention and cleanup not-applicable to docs-only alignment | data classification internal; privacy low; security, audit, retention, and compliance posture recorded | artifact-documented | existing persistence test path and data:compliance-health evidence recorded | docs-only-alignment | not-applicable: docs-only data dictionary update; schema, repository/domain runtime, API, permission mapping, and tests unchanged | manual dictionary review plus npm run data:compliance-health |";
+
+    const guardrailRows =
+      "| T-S001-01 | data-entity-table | pass | tenantConfiguration tenant_branding displayName durable fact documented. |\n| T-S001-01 | data-source-reviewed | pass | Story, capability row, migration, live schema snapshot, repository, and domain contract reviewed. |\n| T-S001-01 | data-field-index-lifecycle | pass | Field, normalization, lifecycle, soft-delete, uniqueness, and index posture recorded. |\n| T-S001-01 | data-durable-facts | pass | Durable fact and retention posture recorded. |\n| T-S001-01 | data-classification-compliance | pass | Data classification, privacy, security, audit, retention, and compliance posture recorded. |\n| T-S001-01 | data-enforcement-trace | pass | Enforcement posture is artifact-documented with existing persistence proof. |\n| T-S001-01 | data-split-routing | pass | Schema, runtime, API, permission, and test work are unchanged or split. |\n| T-S001-01 | data-compliance-health | pass | npm run data:compliance-health required as debt summary. |\n| T-S001-01 | data-validation-proof | pass | Manual dictionary review and data compliance health summary required. |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:data-dictionary |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/data-dictionary/tenant-configuration.md",
+        )
+        .replace(
+          "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+          "| T-S001-01 | DOC:data-dictionary | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/data-dictionary-task-guardrail.md | approved | Data dictionary guardrail reviewed for durable fact, compliance trace, split routing, and validation evidence. |",
+        )
+        .replace(
+          "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+          guardrailRows,
+        )
+        .replace(
+          "| T-S001-01 | feature-local | src/features/tenantConfiguration | src/features/tenantConfiguration | no | not-applicable: no shared code placement | Existing consumer compatibility protected by tenantConfiguration persistence regression. | approved |",
+          "| T-S001-01 | stay-put | docs/data-dictionary | docs/data-dictionary/tenant-configuration.md | no | not-applicable: no shared code placement | Docs-only alignment preserves runtime behavior. | approved |",
+        )
+        .replace(
+          "| T-S001-01 | src/features/tenantConfiguration/domain/updateBranding.ts | feature-local | Owning feature domain capability file. |\n| T-S001-01 | src/features/tenantConfiguration/transport/rootAdminRoutes.ts | feature-local | Owning feature root-admin transport seam. |\n| T-S001-01 | tests/integration/tenantConfiguration/persistence.test.ts | test | Persistence regression for approved story AC. |",
+          "| T-S001-01 | docs/data-dictionary/tenant-configuration.md | docs-artifact | Source-independent durable data truth artifact. |",
+        )
+        .replace(
+          "## Data Dictionary Contract\n\n| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Enforcement Trace | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Data Dictionary Contract\n\n| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Enforcement Trace | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${dataDictionaryRow}\n\n`,
+        )
+        .replace(
+          "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n\n",
+          "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n| T-S001-01 | npm run data:compliance-health | pass | no scoped data dictionary debt found | none | not-applicable: no follow-up |\n\n",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.errors).not.toContain("T-S001-01 has no Data Dictionary Contract row");
+    expect(result.errors).not.toContain("T-S001-01 DOC:data-dictionary task must include npm run data:compliance-health");
+    expect(result.errors).not.toContain("T-S001-01 Data Dictionary Contract must classify data compliance, privacy, security, audit, or retention posture");
+  });
+
+  it("blocks data dictionary tasks that route schema work without a migration split", () => {
+    const dataDictionaryRow =
+      "| T-S001-01 | tenantConfiguration tenant_branding displayName durable fact | docs/data-dictionary/tenant-configuration.md | Source story AC-S001-01 and migration/schema reviewed. | field displayName and index posture recorded | durable fact retained; retention posture recorded | data classification internal; audit and retention posture recorded | artifact-documented | existing persistence test evidence recorded | additive | schema and index follow-up needed | manual dictionary review |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:data-dictionary |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/data-dictionary/tenant-configuration.md",
+        )
+        .replace(
+          "## Data Dictionary Contract\n\n| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Enforcement Trace | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Data Dictionary Contract\n\n| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Enforcement Trace | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${dataDictionaryRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 Data Dictionary Contract schema, migration, or index changes must route to DEV:migration-persistence");
   });
 
   it("blocks standards update tasks without an approved standards-change contract", () => {
