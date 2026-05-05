@@ -568,6 +568,36 @@ Allowed approved decision sources:
 | Task ID | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Validation / Review Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Standards Compliance Contract
+
+Required for `DOC:standards-compliance` tasks. Leave empty when no
+`DOC:standards-compliance` task is queued.
+
+Allowed compliance target types:
+
+- `repo-standard-gate`
+- `external-standard-control-map`
+- `platform-status-snapshot`
+- `task-slice-gate-review`
+- `waiver-or-blocker-review`
+
+Allowed compliance postures:
+
+- `pass`
+- `partial`
+- `fail`
+- `not-assessed`
+- `not-applicable`
+- `blocked`
+- `waived-with-approval`
+
+External control maps should live under `docs/standards/control-maps/` and
+must link adopted external requirements to repo enforcement, tests, evidence,
+and decision sources without duplicating the external standard text.
+
+| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Review Method / Command | Compliance Posture | Evidence Artifact Target | Findings Summary | Follow-Up Routing | Waiver / Blocker Posture |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Standards Update Contract
 
 Required for `GOV:standards-update` tasks. Leave empty when no

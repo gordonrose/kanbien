@@ -20,6 +20,7 @@ AI-assisted development, and AI-related product changes.
 - `FRONTEND-OBSERVABILITY-GATE.md`
 - `FRONTEND-ALERTING-GATE.md`
 - `change-artifact-requirements.md`
+- `control-maps/`
 - `platform-status/`
 
 ## What each gate covers
@@ -123,6 +124,15 @@ Use for:
 - tracking the current platform baseline against each standards gate
 - summarizing where the repo currently passes, partially meets, fails, or does not trigger a control area
 - giving PRD, ADR, and architecture work a realistic starting point before new changes are assessed
+
+### `control-maps/`
+Use for:
+- mapping adopted external standards to repo standards, enforcement surfaces,
+  tests, evidence artifacts, and decision sources
+- showing how external controls such as WCAG, GDPR, ISO, NIST, or OWASP are
+  checked without duplicating the external standard text
+- routing gaps to the correct task type rather than hiding compliance debt in
+  implementation work
 
 ## How to use these gates
 

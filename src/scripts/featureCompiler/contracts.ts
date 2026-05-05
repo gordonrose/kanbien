@@ -273,9 +273,11 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "DOC:standards-compliance": [
     "standards-gate-named",
+    "standards-source-path",
     "standards-posture-recorded",
     "standards-command",
     "standards-status-artifact",
+    "standards-follow-up-routing",
   ],
   "GOV:standards-update": [
     "standards-approved-change-source",
