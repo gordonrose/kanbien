@@ -327,8 +327,8 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 ## Standards Compliance Contract
 
-| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Review Method / Command | Compliance Posture | Evidence Artifact Target | Findings Summary | Follow-Up Routing | Waiver / Blocker Posture |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Control / Evidence Inventory | Review Method / Command | Compliance Posture | Evidence Artifact Target | Coverage Summary Command | Findings Summary | Follow-Up Routing | Human Review Boundary | Waiver / Blocker Posture |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Standards Update Contract
 
@@ -1275,7 +1275,7 @@ describe("task breakdown validation", () => {
 
   it("allows standards compliance tasks to update external control maps with explicit source and routing", () => {
     const standardsComplianceContractRow =
-      "| T-S001-01 | external-standard-control-map | WCAG 2.2 AA | https://www.w3.org/WAI/standards-guidelines/wcag/ | root-admin tenant branding journey accessibility controls | manual standards review plus npx vitest run tests/unit/taskBreakdown/taskBreakdownValidate.test.ts | partial | docs/standards/control-maps/WCAG-2.2-AA-CONTROL-MAP.md | Maps applicable WCAG success criteria to repo frontend, design-system, test, and evidence surfaces without copying the standard. | TEST:test-only follow-up for missing keyboard proof | blocker: missing executable proof routed before delivery |";
+      "| T-S001-01 | external-standard-control-map | WCAG 2.2 AA | https://www.w3.org/WAI/standards-guidelines/wcag/ | root-admin tenant branding journey accessibility controls | docs/standards/change-artifact-requirements.md; docs/workspace/design-system/verification/; tests/visual/rootAdmin/; npm run frontend:gate output | manual standards review plus npx vitest run tests/unit/taskBreakdown/taskBreakdownValidate.test.ts | partial | docs/standards/control-maps/WCAG-2.2-AA-CONTROL-MAP.md | rg \"WCAG|accessibility|keyboard\" docs/standards docs/workspace tests | Maps applicable WCAG success criteria to repo frontend, design-system, test, and evidence surfaces without copying the standard. | TEST:test-only follow-up for missing keyboard proof | human review limited to applicability and compliance judgment | blocker: missing executable proof routed before delivery |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1285,8 +1285,8 @@ describe("task breakdown validation", () => {
           "docs/standards/control-maps/WCAG-2.2-AA-CONTROL-MAP.md",
         )
         .replace(
-          "## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Review Method / Command | Compliance Posture | Evidence Artifact Target | Findings Summary | Follow-Up Routing | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-          `## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Review Method / Command | Compliance Posture | Evidence Artifact Target | Findings Summary | Follow-Up Routing | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${standardsComplianceContractRow}\n\n`,
+          "## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Control / Evidence Inventory | Review Method / Command | Compliance Posture | Evidence Artifact Target | Coverage Summary Command | Findings Summary | Follow-Up Routing | Human Review Boundary | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Control / Evidence Inventory | Review Method / Command | Compliance Posture | Evidence Artifact Target | Coverage Summary Command | Findings Summary | Follow-Up Routing | Human Review Boundary | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${standardsComplianceContractRow}\n\n`,
         ),
       sourceStoryPacket,
     );
@@ -1298,7 +1298,7 @@ describe("task breakdown validation", () => {
 
   it("blocks non-passing standards compliance postures without follow-up routing", () => {
     const standardsComplianceContractRow =
-      "| T-S001-01 | external-standard-control-map | WCAG 2.2 AA | https://www.w3.org/WAI/standards-guidelines/wcag/ | root-admin tenant branding journey accessibility controls | manual standards review | partial | docs/standards/control-maps/WCAG-2.2-AA-CONTROL-MAP.md | Maps applicable controls to repo evidence. | not-applicable: no follow-up needed | blocker: missing proof not yet routed |";
+      "| T-S001-01 | external-standard-control-map | WCAG 2.2 AA | https://www.w3.org/WAI/standards-guidelines/wcag/ | root-admin tenant branding journey accessibility controls | docs/standards/change-artifact-requirements.md; tests/visual/rootAdmin/ | manual standards review | partial | docs/standards/control-maps/WCAG-2.2-AA-CONTROL-MAP.md | rg \"WCAG|accessibility\" docs/standards tests | Maps applicable controls to repo evidence. | not-applicable: no follow-up needed | human review limited to applicability and compliance judgment | blocker: missing proof not yet routed |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1308,14 +1308,41 @@ describe("task breakdown validation", () => {
           "docs/standards/control-maps/WCAG-2.2-AA-CONTROL-MAP.md",
         )
         .replace(
-          "## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Review Method / Command | Compliance Posture | Evidence Artifact Target | Findings Summary | Follow-Up Routing | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-          `## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Review Method / Command | Compliance Posture | Evidence Artifact Target | Findings Summary | Follow-Up Routing | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${standardsComplianceContractRow}\n\n`,
+          "## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Control / Evidence Inventory | Review Method / Command | Compliance Posture | Evidence Artifact Target | Coverage Summary Command | Findings Summary | Follow-Up Routing | Human Review Boundary | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Control / Evidence Inventory | Review Method / Command | Compliance Posture | Evidence Artifact Target | Coverage Summary Command | Findings Summary | Follow-Up Routing | Human Review Boundary | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${standardsComplianceContractRow}\n\n`,
         ),
       sourceStoryPacket,
     );
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 Standards Compliance Contract needs follow-up routing for non-passing posture");
+  });
+
+  it("blocks standards compliance tasks without scriptable evidence inventory or coverage summary", () => {
+    const standardsComplianceContractRow =
+      "| T-S001-01 | external-standard-control-map | WCAG 2.2 AA | https://www.w3.org/WAI/standards-guidelines/wcag/ | root-admin tenant branding journey accessibility controls | evidence | manual standards review | partial | docs/standards/control-maps/WCAG-2.2-AA-CONTROL-MAP.md | compare coverage manually | Maps applicable controls to repo evidence. | TEST:test-only follow-up for missing keyboard proof | human review limited to applicability and compliance judgment | blocker: missing proof routed before delivery |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:standards-compliance |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/standards/control-maps/WCAG-2.2-AA-CONTROL-MAP.md",
+        )
+        .replace(
+          "## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Control / Evidence Inventory | Review Method / Command | Compliance Posture | Evidence Artifact Target | Coverage Summary Command | Findings Summary | Follow-Up Routing | Human Review Boundary | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Standards Compliance Contract\n\n| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Control / Evidence Inventory | Review Method / Command | Compliance Posture | Evidence Artifact Target | Coverage Summary Command | Findings Summary | Follow-Up Routing | Human Review Boundary | Waiver / Blocker Posture |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${standardsComplianceContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "T-S001-01 Standards Compliance Contract must name concrete control/evidence inventory paths, artifacts, or command output",
+    );
+    expect(result.errors).toContain(
+      "T-S001-01 Standards Compliance Contract coverage summary must name a command or explicit manual-review rationale",
+    );
   });
 
   it("blocks permission mapping tasks without a permission mapping contract", () => {

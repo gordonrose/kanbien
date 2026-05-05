@@ -806,8 +806,13 @@ External control maps should live under `docs/standards/control-maps/` and
 must link adopted external requirements to repo enforcement, tests, evidence,
 and decision sources without duplicating the external standard text.
 
-| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Review Method / Command | Compliance Posture | Evidence Artifact Target | Findings Summary | Follow-Up Routing | Waiver / Blocker Posture |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+For external control maps, record repo evidence, enforcement surfaces, tests,
+decision sources, and gaps without copying external standard text. Keep
+human review limited to applicability, compliance judgment, and waiver/blocker
+interpretation.
+
+| Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Control / Evidence Inventory | Review Method / Command | Compliance Posture | Evidence Artifact Target | Coverage Summary Command | Findings Summary | Follow-Up Routing | Human Review Boundary | Waiver / Blocker Posture |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Standards Update Contract
 

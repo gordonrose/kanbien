@@ -806,11 +806,14 @@ type StandardsComplianceContractRow = {
   standardGate: string;
   sourceStandardPathReference: string;
   scopeUnderReview: string;
+  controlEvidenceInventory: string;
   reviewMethodCommand: string;
   compliancePosture: string;
   evidenceArtifactTarget: string;
+  coverageSummaryCommand: string;
   findingsSummary: string;
   followUpRouting: string;
+  humanReviewBoundary: string;
   waiverBlockerPosture: string;
 };
 
@@ -3633,11 +3636,14 @@ function validateStandardsComplianceContract(
     validateRequiredField(task.taskId, "Standard / Gate", row.standardGate, errors);
     validateRequiredField(task.taskId, "Source Standard Path / Reference", row.sourceStandardPathReference, errors);
     validateRequiredField(task.taskId, "Scope Under Review", row.scopeUnderReview, errors);
+    validateRequiredField(task.taskId, "Control / Evidence Inventory", row.controlEvidenceInventory, errors);
     validateRequiredField(task.taskId, "Review Method / Command", row.reviewMethodCommand, errors);
     validateAllowedValue(task.taskId, "Compliance Posture", row.compliancePosture, allowedStandardsCompliancePostures, errors);
     validateRequiredField(task.taskId, "Evidence Artifact Target", row.evidenceArtifactTarget, errors);
+    validateRequiredField(task.taskId, "Coverage Summary Command", row.coverageSummaryCommand, errors);
     validateRequiredField(task.taskId, "Findings Summary", row.findingsSummary, errors);
     validateRequiredField(task.taskId, "Follow-Up Routing", row.followUpRouting, errors);
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
     validateRequiredField(task.taskId, "Waiver / Blocker Posture", row.waiverBlockerPosture, errors);
 
     const source = row.sourceStandardPathReference.replace(/\\/g, "/").toLowerCase();
@@ -3662,12 +3668,32 @@ function validateStandardsComplianceContract(
       errors.push(`${task.taskId} Standards Compliance Contract evidence target must be a compliance evidence artifact`);
     }
 
+    const inventory = row.controlEvidenceInventory.toLowerCase();
+    if (!mentionsScriptableInventory(inventory)) {
+      errors.push(`${task.taskId} Standards Compliance Contract must name concrete control/evidence inventory paths, artifacts, or command output`);
+    }
+
+    const reviewCommand = row.reviewMethodCommand.toLowerCase();
+    if (!mentionsScriptCommandOrRationale(reviewCommand) && !reviewCommand.includes("rg ") && !reviewCommand.includes("manual standards review")) {
+      errors.push(`${task.taskId} Standards Compliance Contract review method must name a command or explicit manual standards review rationale`);
+    }
+
+    const coverageCommand = row.coverageSummaryCommand.toLowerCase();
+    if (
+      !mentionsScriptCommandOrRationale(coverageCommand) &&
+      !coverageCommand.includes("rg ") &&
+      !coverageCommand.includes("git diff") &&
+      !coverageCommand.includes("manual standards review")
+    ) {
+      errors.push(`${task.taskId} Standards Compliance Contract coverage summary must name a command or explicit manual-review rationale`);
+    }
+
     if (row.complianceTargetType === "external-standard-control-map") {
       if (!evidenceTarget.includes("docs/standards/control-maps/")) {
         errors.push(`${task.taskId} external-standard-control-map evidence must target docs/standards/control-maps/`);
       }
 
-      const summary = `${row.standardGate} ${row.findingsSummary}`.toLowerCase();
+      const summary = `${row.standardGate} ${row.findingsSummary} ${row.controlEvidenceInventory}`.toLowerCase();
       if (summary.includes("full text") || summary.includes("copy external standard") || summary.includes("duplicate external standard")) {
         errors.push(`${task.taskId} external control maps must not duplicate external standard text`);
       }
@@ -6907,12 +6933,15 @@ function parseStandardsComplianceContractRows(content: string): StandardsComplia
     standardGate: cells[2] ?? "",
     sourceStandardPathReference: cells[3] ?? "",
     scopeUnderReview: cells[4] ?? "",
-    reviewMethodCommand: cells[5] ?? "",
-    compliancePosture: cells[6] ?? "",
-    evidenceArtifactTarget: cells[7] ?? "",
-    findingsSummary: cells[8] ?? "",
-    followUpRouting: cells[9] ?? "",
-    waiverBlockerPosture: cells[10] ?? "",
+    controlEvidenceInventory: cells[5] ?? "",
+    reviewMethodCommand: cells[6] ?? "",
+    compliancePosture: cells[7] ?? "",
+    evidenceArtifactTarget: cells[8] ?? "",
+    coverageSummaryCommand: cells[9] ?? "",
+    findingsSummary: cells[10] ?? "",
+    followUpRouting: cells[11] ?? "",
+    humanReviewBoundary: cells[12] ?? "",
+    waiverBlockerPosture: cells[13] ?? "",
   }));
 }
 
