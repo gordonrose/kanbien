@@ -346,6 +346,25 @@ Allowed seam postures:
 | Task ID | Seam Posture | Seam Name / Export / Route | Owned Render Structure | Owned Behavior Controller | Owned Accessibility Semantics | Canonical / Behavior Lock / Evidence | Frontend Consumption Contract |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Design-System Seam Class Contract
+
+Queued `GOV:design-system` tasks must classify the governed seam class they
+produce, refine, or prove. This is separate from the frontend/design-system
+sub-standard: the sub-standard names the primary proof focus, while this table
+names the downstream-consumable seam shape and contamination boundary.
+
+Allowed seam classes:
+
+- `render-structure-seam`
+- `behavior-controller-seam`
+- `accessibility-semantics-seam`
+- `style-css-seam`
+- `fixture-data-contract`
+- `canonical-evidence-update`
+
+| Task ID | Design-System Seam Class | Class-Specific Required Proof | Downstream Consumption Boundary | Forbidden App / Evidence / Standards Work |
+| --- | --- | --- | --- | --- |
+
 ## Frontend Adoption Contract
 
 Queued `DEV:frontend` tasks with Design-System Seam Contract posture

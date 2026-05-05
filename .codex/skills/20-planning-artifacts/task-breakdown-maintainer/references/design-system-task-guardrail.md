@@ -66,11 +66,33 @@ GOV:design-system task is queued, it must name the seam DEV:frontend tasks will 
 - adoption contract expectations for downstream DEV:frontend tasks, including the
   render, controller/behavior, accessibility, and style/CSS seams that must be
   consumed rather than locally reconstructed
+- seam class contract identifying whether the task primarily produces,
+  refines, or proves a render structure seam, behavior/controller seam,
+  accessibility semantics seam, style/CSS seam, fixture/data contract, or
+  canonical/evidence update
 
 If the GOV:design-system work does not create a consumable seam, mark the task
 blocked or split out the missing seam work. Do not satisfy this guardrail with
 CSS sharing alone, copied markup, copied controller logic, or an informal visual
 match.
+
+## Seam Class Expectations
+
+- `render-structure-seam` must name the renderer/component/template/export and
+  prove downstream consumers do not copy markup.
+- `behavior-controller-seam` must name the controller/state/event seam and
+  prove downstream consumers do not recreate interaction logic.
+- `accessibility-semantics-seam` must name owned role/name/state/focus or
+  keyboard semantics and prove downstream consumers do not recreate ARIA/state
+  behavior.
+- `style-css-seam` must name the governed style/CSS seam and prove app pages do
+  not add local CSS for governed layout or presentation.
+- `fixture-data-contract` must name the contract, fixture, and runtime payload
+  or approved unavailable reason; it must split API or data-dictionary truth to
+  the owning task type.
+- `canonical-evidence-update` must name the canonical route, behavior lock,
+  screenshot or evidence artifact, and split evidence-only sweeps to
+  `EVIDENCE:qa-evidence` when the seam already exists.
 
 ## Split / Route Rules
 
@@ -92,6 +114,7 @@ match.
 
 - `design-system-family`
 - `design-system-behavior-lock`
+- `design-system-seam-class`
 - `design-system-consumable-seam`
 - `design-system-render-behavior`
 - `design-system-visual-proof`

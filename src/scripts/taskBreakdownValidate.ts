@@ -5,6 +5,7 @@ import {
   layer4BackendCapabilityFileStrategies,
   layer4BackendChangeClasses,
   layer4CapabilityCoverageStatuses,
+  layer4DesignSystemSeamClasses,
   layer4DesignSystemSeamPostures,
   layer4FoundationBlockerTypes,
   layer4FoundationTaskTypes,
@@ -65,6 +66,7 @@ const requiredHeadings = [
   "## Frontend / Design-System Sub-Standard",
   "## Frontend Performance Posture",
   "## Design-System Seam Contract",
+  "## Design-System Seam Class Contract",
   "## Frontend Adoption Contract",
   "## Frontend Security Evidence",
   "## Frontend Permission Rendering Evidence",
@@ -139,6 +141,7 @@ const allowedProofSpecificityStatuses: Set<string> = new Set(layer4ProofSpecific
 const allowedFrontendDesignSystemSubStandards: Set<string> = new Set(layer4FrontendDesignSystemSubStandards);
 const allowedFrontendPerformancePostures: Set<string> = new Set(layer4FrontendPerformancePostures);
 const allowedDesignSystemSeamPostures: Set<string> = new Set(layer4DesignSystemSeamPostures);
+const allowedDesignSystemSeamClasses: Set<string> = new Set(layer4DesignSystemSeamClasses);
 const allowedBackendCapabilityFileStrategies: Set<string> = new Set(layer4BackendCapabilityFileStrategies);
 const allowedBackendChangeClasses: Set<string> = new Set(layer4BackendChangeClasses);
 const allowedMigrationPersistenceChangeTypes: Set<string> = new Set(layer4MigrationPersistenceChangeTypes);
@@ -663,6 +666,14 @@ type DesignSystemSeamContractRow = {
   frontendConsumptionContract: string;
 };
 
+type DesignSystemSeamClassContractRow = {
+  taskId: string;
+  seamClass: string;
+  classSpecificRequiredProof: string;
+  downstreamConsumptionBoundary: string;
+  forbiddenAppEvidenceStandardsWork: string;
+};
+
 type FrontendAdoptionContractRow = {
   taskId: string;
   consumedRenderSeam: string;
@@ -1073,6 +1084,7 @@ export function validateTaskBreakdownContent(
   const frontendSubStandards = parseFrontendSubStandardRows(taskContent);
   const frontendPerformancePostures = parseFrontendPerformancePostureRows(taskContent);
   const designSystemSeamContracts = parseDesignSystemSeamContractRows(taskContent);
+  const designSystemSeamClassContracts = parseDesignSystemSeamClassContractRows(taskContent);
   const frontendAdoptionContracts = parseFrontendAdoptionContractRows(taskContent);
   const frontendSecurityEvidence = parseFrontendSecurityEvidenceRows(taskContent);
   const frontendPermissionRenderingEvidence = parseFrontendPermissionRenderingEvidenceRows(taskContent);
@@ -1157,6 +1169,7 @@ export function validateTaskBreakdownContent(
   const frontendSubStandardsByTask = groupBy(frontendSubStandards, (row) => row.taskId);
   const frontendPerformancePosturesByTask = groupBy(frontendPerformancePostures, (row) => row.taskId);
   const designSystemSeamContractsByTask = groupBy(designSystemSeamContracts, (row) => row.taskId);
+  const designSystemSeamClassContractsByTask = groupBy(designSystemSeamClassContracts, (row) => row.taskId);
   const frontendAdoptionContractsByTask = groupBy(frontendAdoptionContracts, (row) => row.taskId);
   const frontendSecurityEvidenceByTask = groupBy(frontendSecurityEvidence, (row) => row.taskId);
   const frontendPermissionRenderingEvidenceByTask = groupBy(frontendPermissionRenderingEvidence, (row) => row.taskId);
@@ -1246,6 +1259,7 @@ export function validateTaskBreakdownContent(
     validatePermissionMappingContract(task, permissionMappingContractsByTask.get(task.taskId) ?? [], errors);
     validateApiContract(task, apiContractsByTask.get(task.taskId) ?? [], errors);
     validateDataDictionaryContract(task, dataDictionaryContractsByTask.get(task.taskId) ?? [], errors);
+    validateDesignSystemSeamClassContract(task, designSystemSeamClassContractsByTask.get(task.taskId) ?? [], errors);
     validatePlatformSeamContract(task, platformSeamContractsByTask.get(task.taskId) ?? [], errors);
     validatePlatformSeamClassContract(
       task,
@@ -1282,6 +1296,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Frontend / Design-System Sub-Standard", frontendSubStandards.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Frontend Performance Posture", frontendPerformancePostures.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Design-System Seam Contract", designSystemSeamContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Design-System Seam Class Contract", designSystemSeamClassContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Frontend Adoption Contract", frontendAdoptionContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Frontend Security Evidence", frontendSecurityEvidence.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Frontend Permission Rendering Evidence", frontendPermissionRenderingEvidence.map((row) => row.taskId), taskIds, errors);
@@ -2009,6 +2024,86 @@ function validateDesignSystemSeamContract(task: TaskRow, rows: DesignSystemSeamC
     if (row.seamPosture !== "not-applicable" && !mentionsDesignSystemSeam(row.seamNameExportRoute, row.frontendConsumptionContract)) {
       errors.push(`${task.taskId} GOV:design-system seam contract must name a consumable route, export, component, or controller seam`);
     }
+  }
+}
+
+function validateDesignSystemSeamClassContract(
+  task: TaskRow,
+  rows: DesignSystemSeamClassContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "GOV:design-system") {
+    if (rows.length > 0 && task.taskType !== "DEV:frontend" && task.taskType !== "DEV:vertical-slice") {
+      errors.push(`${task.taskId} has Design-System Seam Class Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued GOV:design-system task has no design-system seam class contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateAllowedValue(task.taskId, "Design-System Seam Class", row.seamClass, allowedDesignSystemSeamClasses, errors);
+    validateRequiredField(task.taskId, "Design-System Class-Specific Required Proof", row.classSpecificRequiredProof, errors);
+    validateRequiredField(task.taskId, "Design-System Downstream Consumption Boundary", row.downstreamConsumptionBoundary, errors);
+    validateRequiredField(task.taskId, "Design-System Forbidden App / Evidence / Standards Work", row.forbiddenAppEvidenceStandardsWork, errors);
+
+    validateDesignSystemSeamClassSpecifics(task.taskId, row, errors);
+  }
+}
+
+function validateDesignSystemSeamClassSpecifics(taskId: string, row: DesignSystemSeamClassContractRow, errors: string[]): void {
+  const proof = row.classSpecificRequiredProof.toLowerCase();
+  const boundary = row.downstreamConsumptionBoundary.toLowerCase();
+  const forbidden = row.forbiddenAppEvidenceStandardsWork.toLowerCase();
+  const combined = `${proof} ${boundary} ${forbidden}`;
+  const forbiddenRequiresRouting = !forbidden.includes("not-applicable") && !forbidden.includes("unchanged");
+
+  if (row.seamClass === "render-structure-seam" && !mentionsRenderStructureSeamProof(combined)) {
+    errors.push(`${taskId} render-structure-seam design-system class must name renderer/component/template/export proof and prohibit copied markup`);
+  }
+
+  if (row.seamClass === "behavior-controller-seam" && !mentionsBehaviorControllerSeamProof(combined)) {
+    errors.push(`${taskId} behavior-controller-seam design-system class must name controller/state/event proof and prohibit copied interaction logic`);
+  }
+
+  if (row.seamClass === "accessibility-semantics-seam" && !mentionsAccessibilitySeamProof(combined)) {
+    errors.push(`${taskId} accessibility-semantics-seam design-system class must name role/name/state/focus proof and prohibit copied ARIA/state behavior`);
+  }
+
+  if (row.seamClass === "style-css-seam" && !mentionsStyleCssSeamProof(combined)) {
+    errors.push(`${taskId} style-css-seam design-system class must name governed CSS/style seam proof and prohibit app-page CSS drift`);
+  }
+
+  if (row.seamClass === "fixture-data-contract" && !mentionsFixtureDataContractProof(combined)) {
+    errors.push(`${taskId} fixture-data-contract design-system class must name contract, fixture, and live/runtime payload proof`);
+  }
+
+  if (row.seamClass === "canonical-evidence-update" && !mentionsCanonicalEvidenceUpdateProof(combined)) {
+    errors.push(`${taskId} canonical-evidence-update design-system class must name canonical route, behavior lock, and screenshot/evidence artifact proof`);
+  }
+
+  if (forbiddenRequiresRouting && mentionsAppFrontendImplementationPath(forbidden) && !forbidden.includes("dev:frontend")) {
+    errors.push(`${taskId} Design-System Seam Class Contract app adoption work must route to DEV:frontend`);
+  }
+
+  if (
+    forbiddenRequiresRouting &&
+    (forbidden.includes("screenshot") || forbidden.includes("evidence sweep") || forbidden.includes("served asset")) &&
+    !forbidden.includes("evidence:qa-evidence")
+  ) {
+    errors.push(`${taskId} Design-System Seam Class Contract evidence-only work must route to EVIDENCE:qa-evidence`);
+  }
+
+  if (
+    forbiddenRequiresRouting &&
+    (forbidden.includes("standard") || forbidden.includes("architecture")) &&
+    !forbidden.includes("gov:standards-update") &&
+    !forbidden.includes("gov:architecture-update")
+  ) {
+    errors.push(`${taskId} Design-System Seam Class Contract standards or architecture work must route to GOV:standards-update or GOV:architecture-update`);
   }
 }
 
@@ -5365,6 +5460,47 @@ function mentionsEvidenceSweepArtifactsAndScope(value: string): boolean {
   );
 }
 
+function mentionsRenderStructureSeamProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("renderer") || normalized.includes("component") || normalized.includes("template") || normalized.includes("export")) &&
+    (normalized.includes("markup") || normalized.includes("render structure")) &&
+    (normalized.includes("must not copy") || normalized.includes("prohibit") || normalized.includes("forbidden"))
+  );
+}
+
+function mentionsBehaviorControllerSeamProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("controller") || normalized.includes("state") || normalized.includes("event")) &&
+    (normalized.includes("interaction logic") || normalized.includes("behavior")) &&
+    (normalized.includes("must not copy") || normalized.includes("prohibit") || normalized.includes("forbidden"))
+  );
+}
+
+function mentionsAccessibilitySeamProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return mentionsAccessibilitySemanticsProof(normalized) && (normalized.includes("aria") || normalized.includes("keyboard"));
+}
+
+function mentionsStyleCssSeamProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("css") || normalized.includes("style")) &&
+    (normalized.includes("seam") || normalized.includes("governed")) &&
+    (normalized.includes("app-page css") || normalized.includes("local css") || normalized.includes("css drift"))
+  );
+}
+
+function mentionsCanonicalEvidenceUpdateProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("canonical") &&
+    (normalized.includes("behavior lock") || normalized.includes("lock")) &&
+    mentionsScreenshotOrEvidenceArtifact(normalized)
+  );
+}
+
 function mentionsStaticLowRiskPerformanceProof(value: string): boolean {
   const normalized = value.toLowerCase();
   return normalized.includes("render proof") && (normalized.includes("sufficient") || normalized.includes("no performance-specific"));
@@ -6425,6 +6561,16 @@ function parseDesignSystemSeamContractRows(content: string): DesignSystemSeamCon
     ownedAccessibilitySemantics: cells[5] ?? "",
     canonicalBehaviorLockEvidence: cells[6] ?? "",
     frontendConsumptionContract: cells[7] ?? "",
+  }));
+}
+
+function parseDesignSystemSeamClassContractRows(content: string): DesignSystemSeamClassContractRow[] {
+  return parseTableRows(section(content, "## Design-System Seam Class Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    seamClass: cells[1] ?? "",
+    classSpecificRequiredProof: cells[2] ?? "",
+    downstreamConsumptionBoundary: cells[3] ?? "",
+    forbiddenAppEvidenceStandardsWork: cells[4] ?? "",
   }));
 }
 

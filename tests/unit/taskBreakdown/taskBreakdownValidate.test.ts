@@ -231,6 +231,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S001-01 | not-applicable | not-applicable: DEV:backend task has no governed UI seam | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task |
 
+## Design-System Seam Class Contract
+
+| Task ID | Design-System Seam Class | Class-Specific Required Proof | Downstream Consumption Boundary | Forbidden App / Evidence / Standards Work |
+| --- | --- | --- | --- | --- |
+
 ## Frontend Adoption Contract
 
 | Task ID | Consumed DS Render Seam | Consumed DS Behavior / Controller Seam | Consumed DS Accessibility Semantics | Consumed DS Style / CSS Seam | Allowed App-Local Composition / Data Binding | Forbidden Local Reconstruction | Adoption Proof Route / Scenario |
@@ -835,6 +840,36 @@ function migrationPersistenceTaskPacketWithClass(input: {
     .replace(
       emptyMigrationPersistenceClassContractSection,
       `## Migration / Persistence Class Contract\n\n| Task ID | Migration / Persistence Class | Class-Specific Required Proof | Required Data / Schema Coverage | Required Read / Write Or Harness Coverage | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- |\n${classRow ? `${classRow}\n` : ""}\n`,
+    );
+}
+
+const emptyDesignSystemSeamClassContractSection =
+  "## Design-System Seam Class Contract\n\n| Task ID | Design-System Seam Class | Class-Specific Required Proof | Downstream Consumption Boundary | Forbidden App / Evidence / Standards Work |\n| --- | --- | --- | --- | --- |\n\n";
+
+function designSystemTaskPacketWithSeamClass(classRow: string): string {
+  return validTaskPacket
+    .replace("| CLS-001 | feature-local | DEV:backend | T-S001-01 | covered | Backend task preserves Layer 2 feature-local classification. |", "| CLS-001 | platform-seam | GOV:design-system | T-S001-01 | covered | Design-system task preserves Layer 2 platform seam classification. |")
+    .replace("| S-001 | DEV:backend | API route or contract change | T-S001-01 | Covered by DEV:backend delivery task. |", "| S-001 | GOV:design-system | GOV:design-system governed surface | T-S001-01 | Covered by GOV:design-system delivery task. |")
+    .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:design-system |")
+    .replace(
+      "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or GOV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or GOV:design-system sub-standard proof |",
+      "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single visual rendering proof story. | canonical screenshot/evidence artifact tenant-branding-card-default.png |",
+    )
+    .replace(
+      "| T-S001-01 | not-applicable | not-applicable: DEV:backend task has no governed UI seam | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable: DEV:backend task |",
+      "| T-S001-01 | produces-consumable-seam | /design-system/components/tenant-branding-card export TenantBrandingCard | TenantBrandingCard renderer owns render structure and markup | not-applicable: static card has no behavior controller | card role/name/state/focus semantics owned by DS | canonical screenshot tenant-branding-card-default.png and behavior lock | DEV:frontend imports TenantBrandingCard renderer and must not copy markup |",
+    )
+    .replace(
+      "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+      "| T-S001-01 | GOV:design-system | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/design-system-task-guardrail.md | approved | Design-system guardrail reviewed for consumable seam and visual proof obligations. |",
+    )
+    .replace(
+      backendGuardrailEvidenceRows,
+      "| T-S001-01 | design-system-family | pass | Tenant branding card family is named. |\n| T-S001-01 | design-system-behavior-lock | pass | Behavior lock is required. |\n| T-S001-01 | design-system-seam-class | pass | Seam class is render-structure-seam. |\n| T-S001-01 | design-system-consumable-seam | pass | Consumable renderer seam is required. |\n| T-S001-01 | design-system-render-behavior | pass | Render behavior is owned by GOV:design-system. |\n| T-S001-01 | design-system-visual-proof | pass | Canonical screenshot proof is required. |\n| T-S001-01 | design-system-security-evidence | pass | Browser security posture evidence is copied when relevant. |\n| T-S001-01 | design-system-runtime-data-mock-honesty | pass | Runtime data/mock honesty evidence is named when relevant. |\n| T-S001-01 | design-system-adoption-path | pass | Frontend adoption contract is named. |",
+    )
+    .replace(
+      emptyDesignSystemSeamClassContractSection,
+      `## Design-System Seam Class Contract\n\n| Task ID | Design-System Seam Class | Class-Specific Required Proof | Downstream Consumption Boundary | Forbidden App / Evidence / Standards Work |\n| --- | --- | --- | --- | --- |\n${classRow ? `${classRow}\n` : ""}\n`,
     );
 }
 
@@ -2142,6 +2177,37 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain(
       "T-S001-01 GOV:design-system task must not own app-page implementation paths; split app adoption to DEV:frontend",
     );
+  });
+
+  it("blocks queued GOV:design-system tasks without a seam class contract row", () => {
+    const result = validateTaskBreakdownContent(designSystemTaskPacketWithSeamClass(""), sourceStoryPacket);
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 queued GOV:design-system task has no design-system seam class contract row");
+  });
+
+  it("blocks GOV:design-system seam class rows with invalid classes", () => {
+    const result = validateTaskBreakdownContent(
+      designSystemTaskPacketWithSeamClass(
+        "| T-S001-01 | markup-ish | renderer export proof prohibits copied markup | DEV:frontend imports renderer and must not copy markup | not-applicable: app adoption, evidence, standards, and architecture work unchanged |",
+      ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has invalid Design-System Seam Class: markup-ish");
+  });
+
+  it("blocks render seam class rows that do not prohibit copied markup", () => {
+    const result = validateTaskBreakdownContent(
+      designSystemTaskPacketWithSeamClass(
+        "| T-S001-01 | render-structure-seam | generic render proof | DEV:frontend consumes something | not-applicable: app adoption, evidence, standards, and architecture work unchanged |",
+      ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 render-structure-seam design-system class must name renderer/component/template/export proof and prohibit copied markup");
   });
 
   it("blocks queued DEV:frontend tasks when the required GOV:design-system seam is missing", () => {

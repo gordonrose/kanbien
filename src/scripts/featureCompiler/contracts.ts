@@ -167,6 +167,15 @@ export const layer4DesignSystemSeamPostures = [
   "blocks-on-missing-seam",
 ] as const;
 
+export const layer4DesignSystemSeamClasses = [
+  "render-structure-seam",
+  "behavior-controller-seam",
+  "accessibility-semantics-seam",
+  "style-css-seam",
+  "fixture-data-contract",
+  "canonical-evidence-update",
+] as const;
+
 export const layer4BackendCapabilityFileStrategies = [
   "new-capability-file",
   "existing-capability-file",
@@ -377,6 +386,7 @@ export const layer4RequiredCheckIdsByTaskType = {
   "GOV:design-system": [
     "design-system-family",
     "design-system-behavior-lock",
+    "design-system-seam-class",
     "design-system-consumable-seam",
     "design-system-render-behavior",
     "design-system-visual-proof",
