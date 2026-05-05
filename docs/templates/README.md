@@ -16,6 +16,12 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   Lightweight post-iteration feedback record for deciding whether feedback
   changes product intent before downstream artifacts or implementation scope
   move.
+- `product-request-template.md`
+  Thin cover-sheet template for the durable Product Request backlog object. A
+  Product Request gives humans the target users, change type, routing layer,
+  current status, and links to source-of-truth artifacts without replacing
+  Product Discovery, Technical Steering, Story Breakdown, Task Breakdown, Loop
+  Runs, or PR evidence.
 - `technical-steering-packet-template.md`
   Layer 2 packet for deciding architectural posture before Story Breakdown,
   including feature-local versus shared/platform, GOV:design-system, public-seam,

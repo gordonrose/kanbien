@@ -329,17 +329,19 @@ For the first implementation model, keep these boundaries:
   level?
 - What is the first durable storage model: docs-only, database-backed, or both?
 
-## Current Workspace References
+## Current References
 
 - Template:
+  `docs/templates/product-request-template.md`
+- Workspace template seed:
   `docs/workspace/harness-audits/product-request-template.md`
 - First example:
   `docs/workspace/harness-audits/2026-05-06-product-request-example-chat-interface.md`
 
 ## Immediate Next Step
 
-Use the workspace template on one more real Product Request or decide whether
-the template should be promoted into durable `docs/templates/`.
+Use the durable template on one more real Product Request before creating
+schema, API, UI, or automation.
 
 Do not create schema, API, UI, or automation until at least one more example
 confirms the thin cover-sheet shape is stable.
