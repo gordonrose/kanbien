@@ -56,11 +56,16 @@ Before queueing, the task packet should name:
   uniqueness, searchable-storage model, retention, and durable fact behavior
 - data classification plus privacy, security, audit, retention, cleanup,
   export/delete, legal-hold, and operational-evidence posture
-- applicable repo standards and whether each is enforced in code, schema, tests,
-  maintained artifacts, manual review, planned work, blocked work, or
-  not-applicable with rationale
+- applicable repo standards and adopted external controls, whether each is
+  enforced in code, schema, tests, maintained artifacts, manual review, planned
+  work, blocked work, or not-applicable with rationale, and which evidence or
+  test case covers that posture
+- enforcement evidence that points to concrete schema, migration, repository,
+  domain, contract, maintained artifact, command, or test-case evidence instead
+  of saying only that the data was reviewed
 - test case IDs, executable test paths, migration/schema proof, validator/gate
-  commands, review evidence, or explicit missing/not-applicable markers
+  commands, review evidence, planned/blocked posture, or explicit
+  missing/not-applicable markers
 - `npm run data:compliance-health` output after the update, or an explicit
   rationale when the task is intentionally limited to a local draft
 - compatibility posture: docs-only alignment, no schema change, additive,
@@ -87,6 +92,9 @@ Split or block the task when:
   newly required
 - compliance/enforcement trace exposes missing runtime, schema, or test
   enforcement that must be fixed before delivery
+- standards/control trace exposes a standards assessment or durable standards
+  authority change that belongs to `DOC:standards-compliance` or
+  `GOV:standards-update`
 - live schema and source files disagree and the correct source of truth is not
   approved
 
@@ -110,7 +118,10 @@ Split or block the task when:
 - `data-field-index-lifecycle`
 - `data-durable-facts`
 - `data-classification-compliance`
+- `data-standards-control-trace`
 - `data-enforcement-trace`
+- `data-enforcement-evidence`
+- `data-test-evidence-trace`
 - `data-split-routing`
 - `data-compliance-health`
 - `data-validation-proof`

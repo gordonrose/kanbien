@@ -779,11 +779,17 @@ Allowed enforcement trace postures:
 
 `DOC:data-dictionary` records durable data truth only. Schema changes,
 migrations, repository/query behavior, domain normalization, API-visible data
-shape changes, permission mapping, and executable proof must split to the
-owning task type.
+shape changes, permission mapping, standards authority changes, compliance
+assessment, and executable proof must split to the owning task type.
 
-| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Enforcement Trace | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+The standards/control trace should name applicable repo rules or adopted
+external controls and whether they are enforced, evidenced, planned, blocked,
+or not applicable for this data fact group. Enforcement evidence should point
+to concrete code, schema, maintained artifact, command, or test-case evidence
+instead of only saying "reviewed."
+
+| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Standards / Control Trace | Enforcement Trace | Enforcement Evidence | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Test-Only Coverage Contract
 

@@ -772,7 +772,9 @@ type DataDictionaryContractRow = {
   fieldIndexLifecycleTruth: string;
   durableFactRetentionTruth: string;
   classificationCompliancePosture: string;
+  standardsControlTrace: string;
   enforcementTrace: string;
+  enforcementEvidence: string;
   testEvidenceTrace: string;
   compatibilityPosture: string;
   splitBlockedFollowUp: string;
@@ -3331,7 +3333,9 @@ function validateDataDictionaryContract(
     validateRequiredField(task.taskId, "Field / Index / Lifecycle Truth", row.fieldIndexLifecycleTruth, errors);
     validateRequiredField(task.taskId, "Durable Fact / Retention Truth", row.durableFactRetentionTruth, errors);
     validateRequiredField(task.taskId, "Classification / Compliance Posture", row.classificationCompliancePosture, errors);
+    validateRequiredField(task.taskId, "Standards / Control Trace", row.standardsControlTrace, errors);
     validateAllowedValue(task.taskId, "Enforcement Trace", row.enforcementTrace, allowedDataEnforcementPostures, errors);
+    validateRequiredField(task.taskId, "Enforcement Evidence", row.enforcementEvidence, errors);
     validateRequiredField(task.taskId, "Test / Evidence Trace", row.testEvidenceTrace, errors);
     validateAllowedValue(task.taskId, "Compatibility Posture", row.compatibilityPosture, allowedDataCompatibilityPostures, errors);
     validateRequiredField(task.taskId, "Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
@@ -3384,29 +3388,51 @@ function validateDataDictionaryContract(
       errors.push(`${task.taskId} Data Dictionary Contract must classify data compliance, privacy, security, audit, or retention posture`);
     }
 
+    if (!mentionsDataStandardsControlTrace(row.standardsControlTrace)) {
+      errors.push(`${task.taskId} Data Dictionary Contract must name applicable repo or external standards/control trace, or not-applicable with rationale`);
+    }
+
+    if (!mentionsDataEnforcementEvidence(row.enforcementTrace, row.enforcementEvidence)) {
+      errors.push(`${task.taskId} Data Dictionary Contract enforcement evidence must name repo enforcement, evidence path, command, test case, planned work, blocked work, or not-applicable rationale`);
+    }
+
+    if (!mentionsDataTestEvidenceTrace(row.testEvidenceTrace)) {
+      errors.push(`${task.taskId} Data Dictionary Contract test/evidence trace must name test case, executable test path, validation command, evidence artifact, planned work, blocked work, or not-applicable rationale`);
+    }
+
+    if (!mentionsDataComplianceHealthCommand(row.validationReviewEvidence)) {
+      errors.push(`${task.taskId} Data Dictionary Contract validation evidence must include npm run data:compliance-health or explicit debt summary command evidence`);
+    }
+
     const followUp = row.splitBlockedFollowUp.toLowerCase();
-    if ((followUp.includes("schema") || followUp.includes("migration") || followUp.includes("index")) && !followUp.includes("dev:migration-persistence")) {
-      errors.push(`${task.taskId} Data Dictionary Contract schema, migration, or index changes must route to DEV:migration-persistence`);
-    }
-    if (
-      (followUp.includes("repository") ||
-        followUp.includes("domain") ||
-        followUp.includes("normalization") ||
-        followUp.includes("runtime") ||
-        followUp.includes("persistence behavior")) &&
-      !followUp.includes("dev:backend") &&
-      !followUp.includes("dev:vertical-slice")
-    ) {
-      errors.push(`${task.taskId} Data Dictionary Contract runtime or persistence behavior changes must route to DEV:backend or DEV:vertical-slice`);
-    }
-    if ((followUp.includes("api") || followUp.includes("response") || followUp.includes("request")) && !followUp.includes("doc:api-contract")) {
-      errors.push(`${task.taskId} Data Dictionary Contract API-visible data shape changes must route to DOC:api-contract`);
-    }
-    if ((followUp.includes("permission") || followUp.includes("authz") || followUp.includes("tenant boundary")) && !followUp.includes("doc:permission-mapping")) {
-      errors.push(`${task.taskId} Data Dictionary Contract permission or tenant-boundary changes must route to DOC:permission-mapping`);
-    }
-    if ((followUp.includes("test") || followUp.includes("executable proof")) && !followUp.includes("test:test-only")) {
-      errors.push(`${task.taskId} Data Dictionary Contract executable proof changes must route to TEST:test-only`);
+    const followUpRequiresRouting = !followUp.includes("not-applicable") && !followUp.includes("unchanged") && !followUp.includes("already split");
+    if (followUpRequiresRouting) {
+      if ((followUp.includes("schema") || followUp.includes("migration") || followUp.includes("index")) && !followUp.includes("dev:migration-persistence")) {
+        errors.push(`${task.taskId} Data Dictionary Contract schema, migration, or index changes must route to DEV:migration-persistence`);
+      }
+      if (
+        (followUp.includes("repository") ||
+          followUp.includes("domain") ||
+          followUp.includes("normalization") ||
+          followUp.includes("runtime") ||
+          followUp.includes("persistence behavior")) &&
+        !followUp.includes("dev:backend") &&
+        !followUp.includes("dev:vertical-slice")
+      ) {
+        errors.push(`${task.taskId} Data Dictionary Contract runtime or persistence behavior changes must route to DEV:backend or DEV:vertical-slice`);
+      }
+      if ((followUp.includes("api") || followUp.includes("response") || followUp.includes("request")) && !followUp.includes("doc:api-contract")) {
+        errors.push(`${task.taskId} Data Dictionary Contract API-visible data shape changes must route to DOC:api-contract`);
+      }
+      if ((followUp.includes("permission") || followUp.includes("authz") || followUp.includes("tenant boundary")) && !followUp.includes("doc:permission-mapping")) {
+        errors.push(`${task.taskId} Data Dictionary Contract permission or tenant-boundary changes must route to DOC:permission-mapping`);
+      }
+      if ((followUp.includes("test") || followUp.includes("executable proof")) && !followUp.includes("test:test-only")) {
+        errors.push(`${task.taskId} Data Dictionary Contract executable proof changes must route to TEST:test-only`);
+      }
+      if ((followUp.includes("standard") || followUp.includes("control") || followUp.includes("external compliance")) && !followUp.includes("doc:standards-compliance") && !followUp.includes("gov:standards-update")) {
+        errors.push(`${task.taskId} Data Dictionary Contract standards/control follow-up must route to DOC:standards-compliance or GOV:standards-update`);
+      }
     }
     if (row.enforcementTrace === "blocked" || row.compatibilityPosture === "blocked-pending-migration-or-approval") {
       if (!followUp.includes("blocked") && !followUp.includes("approval") && !followUp.includes("migration")) {
@@ -3414,6 +3440,59 @@ function validateDataDictionaryContract(
       }
     }
   }
+}
+
+function mentionsDataStandardsControlTrace(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("standard") ||
+    normalized.includes("control") ||
+    normalized.includes("rule") ||
+    normalized.includes("gdpr") ||
+    normalized.includes("hipaa") ||
+    normalized.includes("iso") ||
+    normalized.includes("wcag") ||
+    normalized.includes("owasp") ||
+    normalized.includes("repo") ||
+    normalized.includes("privacy") ||
+    normalized.includes("security") ||
+    normalized.includes("retention") ||
+    normalized.includes("not-applicable")
+  );
+}
+
+function mentionsDataEnforcementEvidence(enforcementTrace: string, evidence: string): boolean {
+  const normalized = `${enforcementTrace} ${evidence}`.toLowerCase();
+  return (
+    normalized.includes("schema") ||
+    normalized.includes("migration") ||
+    normalized.includes("repository") ||
+    normalized.includes("domain") ||
+    normalized.includes("contract") ||
+    normalized.includes("test") ||
+    normalized.includes("tc-") ||
+    normalized.includes("docs/data-dictionary/") ||
+    normalized.includes("npm run") ||
+    normalized.includes("manual-review") ||
+    normalized.includes("planned") ||
+    normalized.includes("blocked") ||
+    normalized.includes("not-applicable")
+  );
+}
+
+function mentionsDataTestEvidenceTrace(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("test") ||
+    normalized.includes("tc-") ||
+    normalized.includes("npm run") ||
+    normalized.includes("data:compliance-health") ||
+    normalized.includes("evidence") ||
+    normalized.includes("docs/data-dictionary/") ||
+    normalized.includes("planned") ||
+    normalized.includes("blocked") ||
+    normalized.includes("not-applicable")
+  );
 }
 
 function validatePlatformSeamContract(
@@ -5811,11 +5890,13 @@ function parseDataDictionaryContractRows(content: string): DataDictionaryContrac
     fieldIndexLifecycleTruth: cells[4] ?? "",
     durableFactRetentionTruth: cells[5] ?? "",
     classificationCompliancePosture: cells[6] ?? "",
-    enforcementTrace: cells[7] ?? "",
-    testEvidenceTrace: cells[8] ?? "",
-    compatibilityPosture: cells[9] ?? "",
-    splitBlockedFollowUp: cells[10] ?? "",
-    validationReviewEvidence: cells[11] ?? "",
+    standardsControlTrace: cells[7] ?? "",
+    enforcementTrace: cells[8] ?? "",
+    enforcementEvidence: cells[9] ?? "",
+    testEvidenceTrace: cells[10] ?? "",
+    compatibilityPosture: cells[11] ?? "",
+    splitBlockedFollowUp: cells[12] ?? "",
+    validationReviewEvidence: cells[13] ?? "",
   }));
 }
 
