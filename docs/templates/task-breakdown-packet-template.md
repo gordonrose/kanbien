@@ -568,6 +568,30 @@ Allowed approved decision sources:
 | Task ID | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Validation / Review Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Docs Artifact Contract
+
+Required for `DOC:docs-artifact` tasks. Leave empty when no
+`DOC:docs-artifact` task is queued.
+
+Allowed artifact families:
+
+- `feature-doc`
+- `readme`
+- `runbook`
+- `workspace-status`
+- `implementation-blueprint-status`
+- `generated-artifact-summary`
+- `maintained-artifact-sweep`
+- `ordinary-doc-sync`
+
+`DOC:docs-artifact` is the residual docs-sync lane. Route API contracts, data
+dictionaries, permission mappings, standards/compliance artifacts, governance
+authority, design-system signoff/seams, QA evidence, and test-suite alignment
+to their specialized task types.
+
+| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Standards Compliance Contract
 
 Required for `DOC:standards-compliance` tasks. Leave empty when no

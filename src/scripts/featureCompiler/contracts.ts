@@ -225,6 +225,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "docs-stale-artifact-sweep",
     "docs-status-posture",
     "docs-validation-command",
+    "docs-specialized-routing",
   ],
   "TEST:test-only": [
     "test-source-authority",

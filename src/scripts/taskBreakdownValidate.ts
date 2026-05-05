@@ -73,6 +73,7 @@ const requiredHeadings = [
   "## Refactor-First Contract",
   "## Architecture Foundation Contract",
   "## Architecture Update Contract",
+  "## Docs Artifact Contract",
   "## Standards Compliance Contract",
   "## Standards Update Contract",
   "## Test-Only Coverage Contract",
@@ -260,6 +261,16 @@ const allowedStandardsCompliancePostures = new Set([
   "not-applicable",
   "blocked",
   "waived-with-approval",
+]);
+const allowedDocsArtifactFamilies = new Set([
+  "feature-doc",
+  "readme",
+  "runbook",
+  "workspace-status",
+  "implementation-blueprint-status",
+  "generated-artifact-summary",
+  "maintained-artifact-sweep",
+  "ordinary-doc-sync",
 ]);
 
 const vaguePhrases = [
@@ -599,6 +610,17 @@ type ArchitectureUpdateContractRow = {
   validationReviewEvidence: string;
 };
 
+type DocsArtifactContractRow = {
+  taskId: string;
+  artifactFamily: string;
+  sourceTruthReviewed: string;
+  docsTarget: string;
+  statusPosture: string;
+  staleArtifactSweep: string;
+  specializedRoutingSplitDecisions: string;
+  validationReviewEvidence: string;
+};
+
 type StandardsComplianceContractRow = {
   taskId: string;
   complianceTargetType: string;
@@ -851,6 +873,7 @@ export function validateTaskBreakdownContent(
   const refactorFirstContracts = parseRefactorFirstContractRows(taskContent);
   const architectureFoundationContracts = parseArchitectureFoundationContractRows(taskContent);
   const architectureUpdateContracts = parseArchitectureUpdateContractRows(taskContent);
+  const docsArtifactContracts = parseDocsArtifactContractRows(taskContent);
   const standardsComplianceContracts = parseStandardsComplianceContractRows(taskContent);
   const standardsUpdateContracts = parseStandardsUpdateContractRows(taskContent);
   const testOnlyCoverageContracts = parseTestOnlyCoverageContractRows(taskContent);
@@ -926,6 +949,7 @@ export function validateTaskBreakdownContent(
   const refactorFirstContractsByTask = groupBy(refactorFirstContracts, (row) => row.taskId);
   const architectureFoundationContractsByTask = groupBy(architectureFoundationContracts, (row) => row.taskId);
   const architectureUpdateContractsByTask = groupBy(architectureUpdateContracts, (row) => row.taskId);
+  const docsArtifactContractsByTask = groupBy(docsArtifactContracts, (row) => row.taskId);
   const standardsComplianceContractsByTask = groupBy(standardsComplianceContracts, (row) => row.taskId);
   const standardsUpdateContractsByTask = groupBy(standardsUpdateContracts, (row) => row.taskId);
   const testOnlyCoverageContractsByTask = groupBy(testOnlyCoverageContracts, (row) => row.taskId);
@@ -987,6 +1011,7 @@ export function validateTaskBreakdownContent(
     validateRefactorFirstContract(task, refactorFirstContractsByTask.get(task.taskId) ?? [], tasks, errors);
     validateArchitectureFoundationContract(task, architectureFoundationContractsByTask.get(task.taskId) ?? [], tasks, errors);
     validateArchitectureUpdateContract(task, architectureUpdateContractsByTask.get(task.taskId) ?? [], errors);
+    validateDocsArtifactContract(task, docsArtifactContractsByTask.get(task.taskId) ?? [], errors);
     validateStandardsComplianceContract(task, standardsComplianceContractsByTask.get(task.taskId) ?? [], errors);
     validateStandardsUpdateContract(task, standardsUpdateContractsByTask.get(task.taskId) ?? [], errors);
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
@@ -1023,6 +1048,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Refactor-First Contract", refactorFirstContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Architecture Foundation Contract", architectureFoundationContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Architecture Update Contract", architectureUpdateContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Docs Artifact Contract", docsArtifactContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Standards Compliance Contract", standardsComplianceContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Standards Update Contract", standardsUpdateContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test-Only Coverage Contract", testOnlyCoverageContracts.map((row) => row.taskId), taskIds, errors);
@@ -2511,6 +2537,62 @@ function validateArchitectureUpdateContract(
   }
 }
 
+function validateDocsArtifactContract(
+  task: TaskRow,
+  rows: DocsArtifactContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DOC:docs-artifact") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has Docs Artifact Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} has no Docs Artifact Contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateAllowedValue(task.taskId, "Artifact Family", row.artifactFamily, allowedDocsArtifactFamilies, errors);
+    validateRequiredField(task.taskId, "Source Truth Reviewed", row.sourceTruthReviewed, errors);
+    validateRequiredField(task.taskId, "Docs Target", row.docsTarget, errors);
+    validateRequiredField(task.taskId, "Status Posture", row.statusPosture, errors);
+    validateRequiredField(task.taskId, "Stale Artifact Sweep", row.staleArtifactSweep, errors);
+    validateRequiredField(task.taskId, "Specialized Routing / Split Decisions", row.specializedRoutingSplitDecisions, errors);
+    validateRequiredField(task.taskId, "Validation / Review Evidence", row.validationReviewEvidence, errors);
+
+    const docsTarget = row.docsTarget.replace(/\\/g, "/").toLowerCase();
+    if (!docsTarget.includes("docs/") && !docsTarget.includes("readme")) {
+      errors.push(`${task.taskId} Docs Artifact Contract target must be a docs or README artifact`);
+    }
+
+    const specializedText = `${task.scope} ${task.allowedWriteSet} ${row.docsTarget} ${row.sourceTruthReviewed}`.toLowerCase();
+    const routeAwayTask = docsArtifactRouteAwayTask(specializedText);
+    if (routeAwayTask) {
+      errors.push(`${task.taskId} DOC:docs-artifact must route this specialized artifact work to ${routeAwayTask}`);
+    }
+
+    const routing = row.specializedRoutingSplitDecisions.toLowerCase();
+    if (
+      !routing.includes("not-applicable") &&
+      !routing.includes("doc:api-contract") &&
+      !routing.includes("doc:data-dictionary") &&
+      !routing.includes("doc:permission-mapping") &&
+      !routing.includes("doc:standards-compliance") &&
+      !routing.includes("gov:standards-update") &&
+      !routing.includes("gov:architecture-update") &&
+      !routing.includes("gov:design-system") &&
+      !routing.includes("evidence:qa-evidence") &&
+      !routing.includes("test:test-suite-alignment") &&
+      !routing.includes("test:test-only")
+    ) {
+      errors.push(`${task.taskId} Docs Artifact Contract must record specialized routing decisions`);
+    }
+  }
+}
+
 function validateStandardsComplianceContract(
   task: TaskRow,
   rows: StandardsComplianceContractRow[],
@@ -3974,6 +4056,105 @@ function mentionsStandardsAuthorityWritePath(...values: string[]): boolean {
   );
 }
 
+function docsArtifactRouteAwayTask(value: string): string | null {
+  const normalized = value.replace(/\\/g, "/").toLowerCase();
+
+  if (
+    normalized.includes("docs/api-contracts/") ||
+    normalized.includes("openapi") ||
+    normalized.includes("postman") ||
+    normalized.includes("api contract")
+  ) {
+    return "DOC:api-contract";
+  }
+
+  if (
+    normalized.includes("docs/data-dictionary/") ||
+    normalized.includes("data dictionary") ||
+    normalized.includes("field semantics") ||
+    normalized.includes("durable fact") ||
+    normalized.includes("retention") ||
+    normalized.includes("data classification")
+  ) {
+    return "DOC:data-dictionary";
+  }
+
+  if (
+    normalized.includes("docs/architecture/permission-mappings/") ||
+    normalized.includes("permission mapping") ||
+    normalized.includes("capability mapping") ||
+    normalized.includes("role-to-authz") ||
+    normalized.includes("authz capability")
+  ) {
+    return "DOC:permission-mapping";
+  }
+
+  if (
+    normalized.includes("docs/standards/platform-status/") ||
+    normalized.includes("docs/standards/control-maps/") ||
+    normalized.includes("standards compliance") ||
+    normalized.includes("external control map")
+  ) {
+    return "DOC:standards-compliance";
+  }
+
+  if (
+    normalized.includes("docs/standards/") ||
+    normalized.includes("standards update") ||
+    normalized.includes("validator contract") ||
+    normalized.includes("check ids")
+  ) {
+    return "GOV:standards-update";
+  }
+
+  if (
+    normalized.includes("docs/architecture/adr/") ||
+    normalized.includes("docs/architecture/system-overview") ||
+    normalized.includes("docs/architecture/priniciples") ||
+    normalized.includes("architecture authority") ||
+    normalized.includes("topology authority")
+  ) {
+    return "GOV:architecture-update";
+  }
+
+  if (
+    normalized.includes("design-system") &&
+    (normalized.includes("behavior lock") ||
+      normalized.includes("canonical") ||
+      normalized.includes("signoff") ||
+      normalized.includes("governed seam") ||
+      normalized.includes("adoption contract"))
+  ) {
+    return "GOV:design-system";
+  }
+
+  if (
+    normalized.includes("runtime evidence") ||
+    normalized.includes("browser evidence") ||
+    normalized.includes("mock-honesty") ||
+    normalized.includes("screenshot") ||
+    normalized.includes("trace")
+  ) {
+    return "EVIDENCE:qa-evidence";
+  }
+
+  if (
+    normalized.includes("test-suite alignment") ||
+    normalized.includes("traceability drift") ||
+    normalized.includes("test case id") ||
+    normalized.includes("qa backlog") ||
+    normalized.includes("executable test label")
+  ) {
+    return "TEST:test-suite-alignment";
+  }
+
+  if (normalized.includes("new executable proof") || normalized.includes("missing executable proof")) {
+    return "TEST:test-only";
+  }
+
+  return null;
+}
+
 function mentionsSplitNewProofDecision(value: string): boolean {
   const normalized = value.toLowerCase();
   return (
@@ -4539,6 +4720,19 @@ function parseArchitectureUpdateContractRows(content: string): ArchitectureUpdat
     compatibilityPosture: cells[7] ?? "",
     forbiddenImplementationStandardsWork: cells[8] ?? "",
     validationReviewEvidence: cells[9] ?? "",
+  }));
+}
+
+function parseDocsArtifactContractRows(content: string): DocsArtifactContractRow[] {
+  return parseTableRows(section(content, "## Docs Artifact Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    artifactFamily: cells[1] ?? "",
+    sourceTruthReviewed: cells[2] ?? "",
+    docsTarget: cells[3] ?? "",
+    statusPosture: cells[4] ?? "",
+    staleArtifactSweep: cells[5] ?? "",
+    specializedRoutingSplitDecisions: cells[6] ?? "",
+    validationReviewEvidence: cells[7] ?? "",
   }));
 }
 

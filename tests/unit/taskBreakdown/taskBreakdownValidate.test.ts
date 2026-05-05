@@ -275,6 +275,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | Task ID | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Validation / Review Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Docs Artifact Contract
+
+| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Standards Compliance Contract
 
 | Task ID | Compliance Target Type | Standard / Gate | Source Standard Path / Reference | Scope Under Review | Review Method / Command | Compliance Posture | Evidence Artifact Target | Findings Summary | Follow-Up Routing | Waiver / Blocker Posture |
@@ -956,6 +961,65 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 DOC:standards-compliance must not change standards authority; use GOV:standards-update");
+  });
+
+  it("blocks docs artifact tasks without a docs artifact contract", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:docs-artifact |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/features/tenant-configuration.md",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has no Docs Artifact Contract row");
+  });
+
+  it("blocks docs artifact tasks that try to own specialized API contract docs", () => {
+    const docsArtifactContractRow =
+      "| T-S001-01 | ordinary-doc-sync | approved API route contract and backend implementation | docs/api-contracts/tenant-configuration.md | partial | stale API contract identified | DOC:api-contract split required for route contract truth | manual docs review |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:docs-artifact |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/api-contracts/tenant-configuration.md",
+        )
+        .replace(
+          "## Docs Artifact Contract\n\n| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Docs Artifact Contract\n\n| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n${docsArtifactContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 DOC:docs-artifact must route this specialized artifact work to DOC:api-contract");
+  });
+
+  it("allows docs artifact tasks for residual feature docs with route-away decisions recorded", () => {
+    const docsArtifactContractRow =
+      "| T-S001-01 | feature-doc | approved backend implementation and source story artifact ledger | docs/features/tenant-configuration.md | updated | API contract, data dictionary, permission mapping, standards, QA evidence, and architecture artifacts reviewed for route-away impact | not-applicable: no specialized doc changes in this residual feature-doc refresh | manual docs review plus npm run task-breakdown:validate -- packet.md --story story.md |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:docs-artifact |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/features/tenant-configuration.md",
+        )
+        .replace(
+          "## Docs Artifact Contract\n\n| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Docs Artifact Contract\n\n| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n${docsArtifactContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.errors).not.toContain("T-S001-01 has no Docs Artifact Contract row");
+    expect(result.errors).not.toContain("T-S001-01 DOC:docs-artifact must route this specialized artifact work to DOC:api-contract");
   });
 
   it("blocks standards compliance tasks without a compliance contract", () => {
