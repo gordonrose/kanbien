@@ -650,6 +650,7 @@ type PlatformSeamContractRow = {
   compatibilityMode: string;
   approvedAuthoritySource: string;
   seamOwnerLocation: string;
+  seamSourceInventory: string;
   seamChangeScope: string;
   exactWriteEnvelope: string;
   whyNotFeatureLocal: string;
@@ -660,9 +661,11 @@ type PlatformSeamContractRow = {
   rolloutBackoutPosture: string;
   artifactMaterializationImpact: string;
   generatedApplyCheckCommand: string;
+  expectedSeamOutput: string;
   architectureStandardsBoundary: string;
   splitBlockedFollowUp: string;
   proofCommands: string;
+  humanReviewBoundary: string;
 };
 
 type PlatformSeamClassContractRow = {
@@ -4477,6 +4480,7 @@ function validatePlatformSeamContract(
     validateAllowedValue(task.taskId, "Compatibility Mode", row.compatibilityMode, allowedPlatformCompatibilityModes, errors);
     validateRequiredField(task.taskId, "Approved Authority Source", row.approvedAuthoritySource, errors);
     validateRequiredField(task.taskId, "Seam Owner / Location", row.seamOwnerLocation, errors);
+    validateRequiredField(task.taskId, "Seam Source Inventory", row.seamSourceInventory, errors);
     validateRequiredField(task.taskId, "Seam Change Scope", row.seamChangeScope, errors);
     validateRequiredField(task.taskId, "Exact Write Envelope", row.exactWriteEnvelope, errors);
     validateRequiredField(task.taskId, "Why Not Feature-Local", row.whyNotFeatureLocal, errors);
@@ -4487,9 +4491,11 @@ function validatePlatformSeamContract(
     validateRequiredField(task.taskId, "Rollout / Backout Posture", row.rolloutBackoutPosture, errors);
     validateRequiredField(task.taskId, "Artifact / Materialization Impact", row.artifactMaterializationImpact, errors);
     validateRequiredField(task.taskId, "Generated / Apply / Check Command", row.generatedApplyCheckCommand, errors);
+    validateRequiredField(task.taskId, "Expected Seam Output", row.expectedSeamOutput, errors);
     validateRequiredField(task.taskId, "Architecture / Standards Boundary", row.architectureStandardsBoundary, errors);
     validateRequiredField(task.taskId, "Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
     validateRequiredField(task.taskId, "Proof Commands", row.proofCommands, errors);
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
 
     const authority = row.approvedAuthoritySource.toLowerCase();
     if (
@@ -4519,6 +4525,10 @@ function validatePlatformSeamContract(
       !ownerScope.includes("platform")
     ) {
       errors.push(`${task.taskId} Platform Seam Contract must name a shared platform, runtime, tooling, generated-artifact, or materialization seam`);
+    }
+
+    if (!mentionsScriptableInventory(row.seamSourceInventory)) {
+      errors.push(`${task.taskId} Platform Seam Contract needs scriptable seam source inventory`);
     }
 
     const writeEnvelope = row.exactWriteEnvelope.replace(/\\/g, "/").toLowerCase();
@@ -4608,6 +4618,18 @@ function validatePlatformSeamContract(
     }
 
     const materializationCommand = row.generatedApplyCheckCommand.toLowerCase();
+    const expectedOutput = row.expectedSeamOutput.toLowerCase();
+    if (
+      !expectedOutput.includes("output") &&
+      !expectedOutput.includes("artifact") &&
+      !expectedOutput.includes("route") &&
+      !expectedOutput.includes("helper") &&
+      !expectedOutput.includes("generated") &&
+      !expectedOutput.includes("seam") &&
+      !expectedOutput.includes("not-applicable")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract must name expected seam output or artifact target`);
+    }
     if (row.seamKind === "generated-artifact-materialization") {
       if (
         materializationCommand.includes("not-applicable") ||
@@ -7071,19 +7093,22 @@ function parsePlatformSeamContractRows(content: string): PlatformSeamContractRow
     compatibilityMode: cells[2] ?? "",
     approvedAuthoritySource: cells[3] ?? "",
     seamOwnerLocation: cells[4] ?? "",
-    seamChangeScope: cells[5] ?? "",
-    exactWriteEnvelope: cells[6] ?? "",
-    whyNotFeatureLocal: cells[7] ?? "",
-    currentFutureUnsupportedConsumers: cells[8] ?? "",
-    compatibilityContract: cells[9] ?? "",
-    representativeConsumerProof: cells[10] ?? "",
-    runtimeRestartImpact: cells[11] ?? "",
-    rolloutBackoutPosture: cells[12] ?? "",
-    artifactMaterializationImpact: cells[13] ?? "",
-    generatedApplyCheckCommand: cells[14] ?? "",
-    architectureStandardsBoundary: cells[15] ?? "",
-    splitBlockedFollowUp: cells[16] ?? "",
-    proofCommands: cells[17] ?? "",
+    seamSourceInventory: cells[5] ?? "",
+    seamChangeScope: cells[6] ?? "",
+    exactWriteEnvelope: cells[7] ?? "",
+    whyNotFeatureLocal: cells[8] ?? "",
+    currentFutureUnsupportedConsumers: cells[9] ?? "",
+    compatibilityContract: cells[10] ?? "",
+    representativeConsumerProof: cells[11] ?? "",
+    runtimeRestartImpact: cells[12] ?? "",
+    rolloutBackoutPosture: cells[13] ?? "",
+    artifactMaterializationImpact: cells[14] ?? "",
+    generatedApplyCheckCommand: cells[15] ?? "",
+    expectedSeamOutput: cells[16] ?? "",
+    architectureStandardsBoundary: cells[17] ?? "",
+    splitBlockedFollowUp: cells[18] ?? "",
+    proofCommands: cells[19] ?? "",
+    humanReviewBoundary: cells[20] ?? "",
   }));
 }
 

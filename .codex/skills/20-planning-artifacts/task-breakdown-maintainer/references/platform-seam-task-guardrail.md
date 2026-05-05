@@ -19,13 +19,17 @@ Use for task type: `DEV:platform-seam`
   blueprint, Story Breakdown classification, or maintained architecture doc
   that approves the shared seam change
 - platform seam owner and allowed write set
+- scriptable seam source inventory naming exact files, globs, generated
+  artifacts, materialization commands, runtime routes, or harness scripts
 - why feature-local implementation is not appropriate
 - current consumers, future consumers, and unsupported consumers
 - compatibility contract and backwards-compatibility posture
 - rollout, fallback, or rollback posture for shared runtime changes
 - generated artifact, manifest, bootstrap, or materialization impact
+- expected seam output or artifact target
 - architecture-decision boundary: whether the task can proceed under existing
   architecture or must split to `GOV:architecture-update`
+- human-review boundary for platform authority and compatibility sufficiency
 - focused proof commands for the seam and representative consumers
 
 ## Deep Delivery Standard
@@ -35,6 +39,9 @@ Use for task type: `DEV:platform-seam`
 - split platform foundation work from dependent feature implementation
 - name current consumers, exact shared files, compatibility proof, and stop
   conditions for architecture revisit
+- name exact source inventory and expected output so generator/materialization,
+  route mounting, middleware, scheduler, harness, and helper seams can be
+  inspected before human compatibility review
 - do not use `DEV:platform-seam` as a broad infrastructure cleanup bucket
 - do not hide product behavior, feature-local implementation, route contract
   truth, permission rows, migration/storage changes, or evidence sweep inside a
@@ -143,6 +150,7 @@ The task packet must also fill the `Platform Seam Class Contract` table:
 - `platform-seam-kind`
 - `platform-seam-class`
 - `platform-seam-owner`
+- `platform-seam-source-inventory`
 - `platform-not-feature-local`
 - `platform-exact-write-envelope`
 - `platform-consumer-inventory`
@@ -152,6 +160,8 @@ The task packet must also fill the `Platform Seam Class Contract` table:
 - `platform-runtime-restart-impact`
 - `platform-rollout-backout`
 - `platform-artifact-materialization`
+- `platform-expected-output`
 - `platform-architecture-boundary`
 - `platform-split-routing`
 - `platform-proof-commands`
+- `platform-human-review-boundary`

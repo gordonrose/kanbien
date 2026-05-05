@@ -268,8 +268,8 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 ## Platform Seam Contract
 
-| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Source Inventory | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Expected Seam Output | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands | Human Review Boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Platform Seam Class Contract
 
@@ -762,13 +762,65 @@ function evidenceTaskPacketWith(input: {
 }
 
 const emptyPlatformSeamContractSection =
-  "## Platform Seam Contract\n\n| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n";
+  "## Platform Seam Contract\n\n| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Source Inventory | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Expected Seam Output | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n";
 
 const emptyPlatformSeamClassContractSection =
   "## Platform Seam Class Contract\n\n| Task ID | Platform Seam Class | Class-Specific Required Proof | Required Consumer Coverage | Runtime / Materialization Expectation | Forbidden Contamination / Split Notes |\n| --- | --- | --- | --- | --- | --- |\n\n";
 
 const platformSeamClassContractRow =
   "| T-S001-01 | router-route-mounting | route registration and route mounting proof for shared v1 router | current route consumer and future route consumer coverage; unsupported feature behavior consumers excluded | runtime restart not-required for helper-only route registration proof | not-applicable: no split needed; API, permission, feature behavior, architecture, standards, and evidence work unchanged |";
+
+function platformSeamContractRow(
+  overrides: Partial<{
+    seamKind: string;
+    compatibilityMode: string;
+    approvedAuthoritySource: string;
+    seamOwnerLocation: string;
+    seamSourceInventory: string;
+    seamChangeScope: string;
+    exactWriteEnvelope: string;
+    whyNotFeatureLocal: string;
+    currentFutureUnsupportedConsumers: string;
+    compatibilityContract: string;
+    representativeConsumerProof: string;
+    runtimeRestartImpact: string;
+    rolloutBackoutPosture: string;
+    artifactMaterializationImpact: string;
+    generatedApplyCheckCommand: string;
+    expectedSeamOutput: string;
+    architectureStandardsBoundary: string;
+    splitBlockedFollowUp: string;
+    proofCommands: string;
+    humanReviewBoundary: string;
+  }> = {},
+): string {
+  const row = {
+    seamKind: "router-route-mounting",
+    compatibilityMode: "no-behavior-change",
+    approvedAuthoritySource: "Story classification and existing architecture docs approve shared v1 route registration.",
+    seamOwnerLocation: "src/routes/v1 router platform seam",
+    seamSourceInventory: "src/routes/v1/index.ts; tests/unit/routes/v1RouteRegistration.test.ts; src/scripts/checkFeatureDependencies.ts",
+    seamChangeScope: "adjust shared route registration helper only",
+    exactWriteEnvelope: "exact files: src/routes/v1/index.ts; tests/unit/routes/v1RouteRegistration.test.ts",
+    whyNotFeatureLocal: "not feature-local because multiple feature routers register through this shared platform router",
+    currentFutureUnsupportedConsumers:
+      "current consumers: existing v1 feature routes; future consumers: new feature routers; unsupported consumers: feature-local business behavior and route contract docs",
+    compatibilityContract: "backwards-compatible route mounting behavior preserved for existing consumers",
+    representativeConsumerProof: "representative consumer proof: route registration test covers existing v1 route consumer",
+    runtimeRestartImpact: "runtime restart not-required: helper-only test harness change",
+    rolloutBackoutPosture: "no staged rollout; backout by reverting one helper seam change",
+    artifactMaterializationImpact: "generated feature dependency artifacts checked; materialization impact not-applicable",
+    generatedApplyCheckCommand: "not-applicable: no generated/apply command because route registration is not generated",
+    expectedSeamOutput: "expected route registration seam output remains existing v1 route mounting behavior",
+    architectureStandardsBoundary: "existing architecture and standards consumed; no authority changes",
+    splitBlockedFollowUp: "not-applicable: platform seam only; API, permission, migration, feature behavior, architecture, standards, and evidence sweeps unchanged",
+    proofCommands: "npx vitest run tests/unit/routes/v1RouteRegistration.test.ts; npm run feature-dependencies:check",
+    humanReviewBoundary: "human review limited to platform authority and compatibility sufficiency",
+    ...overrides,
+  };
+
+  return `| T-S001-01 | ${row.seamKind} | ${row.compatibilityMode} | ${row.approvedAuthoritySource} | ${row.seamOwnerLocation} | ${row.seamSourceInventory} | ${row.seamChangeScope} | ${row.exactWriteEnvelope} | ${row.whyNotFeatureLocal} | ${row.currentFutureUnsupportedConsumers} | ${row.compatibilityContract} | ${row.representativeConsumerProof} | ${row.runtimeRestartImpact} | ${row.rolloutBackoutPosture} | ${row.artifactMaterializationImpact} | ${row.generatedApplyCheckCommand} | ${row.expectedSeamOutput} | ${row.architectureStandardsBoundary} | ${row.splitBlockedFollowUp} | ${row.proofCommands} | ${row.humanReviewBoundary} |`;
+}
 
 function platformSeamPacketWithContract(contractRow: string, classRow = platformSeamClassContractRow): string {
   return validTaskPacket
@@ -779,7 +831,7 @@ function platformSeamPacketWithContract(contractRow: string, classRow = platform
     )
     .replace(
       emptyPlatformSeamContractSection,
-      `## Platform Seam Contract\n\n| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${contractRow}\n\n`,
+      `## Platform Seam Contract\n\n| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Source Inventory | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Expected Seam Output | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${contractRow}\n\n`,
     )
     .replace(
       emptyPlatformSeamClassContractSection,
@@ -2954,8 +3006,7 @@ describe("task breakdown validation", () => {
   });
 
   it("blocks DEV:platform-seam tasks with invalid seam kind or compatibility mode", () => {
-    const row =
-      "| T-S001-01 | broad-platform-work | risky-compatible | Story classification and architecture docs approve the seam. | src/routes/v1 router platform seam | adjust shared route registration helper only | exact files: src/routes/v1/index.ts | shared platform router, not feature-local | current consumers: existing routes; future consumers: new routes; unsupported consumers: feature behavior | backwards-compatible route behavior preserved | representative consumer proof: route test | restart not-required | backout by revert | materialization not-applicable | not-applicable: no generated command | no architecture or standards changes | not-applicable: unchanged | npx vitest run tests/unit/routes/v1RouteRegistration.test.ts |";
+    const row = platformSeamContractRow({ seamKind: "broad-platform-work", compatibilityMode: "risky-compatible" });
 
     const result = validateTaskBreakdownContent(platformSeamPacketWithContract(row), sourceStoryPacket);
 
@@ -2965,8 +3016,7 @@ describe("task breakdown validation", () => {
   });
 
   it("blocks DEV:platform-seam tasks with broad source write envelopes", () => {
-    const row =
-      "| T-S001-01 | router-route-mounting | no-behavior-change | Story classification and architecture docs approve the seam. | src/routes/v1 router platform seam | adjust shared route registration helper only | src/ as needed | shared platform router, not feature-local | current consumers: existing routes; future consumers: new routes; unsupported consumers: feature behavior | backwards-compatible route behavior preserved | representative consumer proof: route test | restart not-required | backout by revert | materialization not-applicable | not-applicable: no generated command | no architecture or standards changes | not-applicable: unchanged | npx vitest run tests/unit/routes/v1RouteRegistration.test.ts |";
+    const row = platformSeamContractRow({ exactWriteEnvelope: "src/ as needed" });
 
     const result = validateTaskBreakdownContent(platformSeamPacketWithContract(row), sourceStoryPacket);
 
@@ -2975,8 +3025,21 @@ describe("task breakdown validation", () => {
   });
 
   it("blocks runtime platform seams without restart or reload posture", () => {
-    const row =
-      "| T-S001-01 | middleware-auth-request-context | additive-compatible | Story classification and architecture docs approve the seam. | src/server middleware platform seam | adjust shared auth request context helper only | exact files: src/server/requestContext.ts; tests/unit/server/requestContext.test.ts | shared platform middleware, not feature-local | current consumers: existing middleware; future consumers: new route families; unsupported consumers: feature behavior | backwards-compatible request context preserved | representative consumer proof: middleware consumer test | runtime impact TBD | backout by revert | materialization not-applicable | not-applicable: no generated command | no architecture or standards changes | not-applicable: unchanged | npx vitest run tests/unit/server/requestContext.test.ts |";
+    const row = platformSeamContractRow({
+      seamKind: "middleware-auth-request-context",
+      compatibilityMode: "additive-compatible",
+      seamOwnerLocation: "src/server middleware platform seam",
+      seamSourceInventory: "src/server/requestContext.ts; tests/unit/server/requestContext.test.ts",
+      seamChangeScope: "adjust shared auth request context helper only",
+      exactWriteEnvelope: "exact files: src/server/requestContext.ts; tests/unit/server/requestContext.test.ts",
+      whyNotFeatureLocal: "shared platform middleware, not feature-local",
+      currentFutureUnsupportedConsumers:
+        "current consumers: existing middleware; future consumers: new route families; unsupported consumers: feature behavior",
+      compatibilityContract: "backwards-compatible request context preserved",
+      representativeConsumerProof: "representative consumer proof: middleware consumer test",
+      runtimeRestartImpact: "runtime impact TBD",
+      proofCommands: "npx vitest run tests/unit/server/requestContext.test.ts",
+    });
 
     const result = validateTaskBreakdownContent(platformSeamPacketWithContract(row), sourceStoryPacket);
 
@@ -2985,8 +3048,26 @@ describe("task breakdown validation", () => {
   });
 
   it("blocks generated platform seams without generator or check command", () => {
-    const row =
-      "| T-S001-01 | generated-artifact-materialization | additive-compatible | Story classification and architecture docs approve the seam. | src/scripts generated artifact materialization seam | adjust generated feature graph materialization only | exact files: src/scripts/checkFeatureDependencies.ts; docs/architecture/generated/feature-dependency-graph.md | shared generated artifact seam, not feature-local | current consumers: architecture docs; future consumers: feature manifests; unsupported consumers: feature behavior | backwards-compatible generated output shape preserved | representative consumer proof: generated artifact check | not-required: script-only seam | backout by revert | generated feature dependency graph changes | missing | no architecture or standards changes | not-applicable: unchanged | npm run feature-dependencies:check |";
+    const row = platformSeamContractRow({
+      seamKind: "generated-artifact-materialization",
+      compatibilityMode: "additive-compatible",
+      seamOwnerLocation: "src/scripts generated artifact materialization seam",
+      seamSourceInventory:
+        "src/scripts/checkFeatureDependencies.ts; docs/architecture/generated/feature-dependency-graph.md",
+      seamChangeScope: "adjust generated feature graph materialization only",
+      exactWriteEnvelope:
+        "exact files: src/scripts/checkFeatureDependencies.ts; docs/architecture/generated/feature-dependency-graph.md",
+      whyNotFeatureLocal: "shared generated artifact seam, not feature-local",
+      currentFutureUnsupportedConsumers:
+        "current consumers: architecture docs; future consumers: feature manifests; unsupported consumers: feature behavior",
+      compatibilityContract: "backwards-compatible generated output shape preserved",
+      representativeConsumerProof: "representative consumer proof: generated artifact check",
+      runtimeRestartImpact: "not-required: script-only seam",
+      artifactMaterializationImpact: "generated feature dependency graph changes",
+      generatedApplyCheckCommand: "missing",
+      expectedSeamOutput: "expected generated artifact output remains feature dependency graph markdown",
+      proofCommands: "npm run feature-dependencies:check",
+    });
 
     const result = validateTaskBreakdownContent(platformSeamPacketWithContract(row), sourceStoryPacket);
 
@@ -2995,8 +3076,11 @@ describe("task breakdown validation", () => {
   });
 
   it("blocks compatibility-sensitive platform seams without blocked or approval routing", () => {
-    const row =
-      "| T-S001-01 | router-route-mounting | compatibility-sensitive-blocked | Story classification and architecture docs approve the seam. | src/routes/v1 router platform seam | adjust shared route registration helper only | exact files: src/routes/v1/index.ts; tests/unit/routes/v1RouteRegistration.test.ts | shared platform router, not feature-local | current consumers: existing routes; future consumers: new routes; unsupported consumers: feature behavior | compatibility blocker exists for old route registration behavior | representative consumer proof: route registration test | restart not-required | backout by revert | materialization not-applicable | not-applicable: no generated command | no architecture or standards changes | follow-up TBD | npx vitest run tests/unit/routes/v1RouteRegistration.test.ts |";
+    const row = platformSeamContractRow({
+      compatibilityMode: "compatibility-sensitive-blocked",
+      compatibilityContract: "compatibility blocker exists for old route registration behavior",
+      splitBlockedFollowUp: "follow-up TBD",
+    });
 
     const result = validateTaskBreakdownContent(platformSeamPacketWithContract(row), sourceStoryPacket);
 
@@ -3005,8 +3089,7 @@ describe("task breakdown validation", () => {
   });
 
   it("blocks DEV:platform-seam tasks without a platform seam class contract row", () => {
-    const row =
-      "| T-S001-01 | router-route-mounting | no-behavior-change | Story classification and architecture docs approve the seam. | src/routes/v1 router platform seam | adjust shared route registration helper only | exact files: src/routes/v1/index.ts | shared platform router, not feature-local | current consumers: existing routes; future consumers: new routes; unsupported consumers: feature behavior | backwards-compatible route behavior preserved | representative consumer proof: route test | restart not-required | backout by revert | materialization not-applicable | not-applicable: no generated command | no architecture or standards changes | not-applicable: unchanged | npx vitest run tests/unit/routes/v1RouteRegistration.test.ts |";
+    const row = platformSeamContractRow({ exactWriteEnvelope: "exact files: src/routes/v1/index.ts" });
 
     const result = validateTaskBreakdownContent(platformSeamPacketWithContract(row, ""), sourceStoryPacket);
 
@@ -3015,8 +3098,7 @@ describe("task breakdown validation", () => {
   });
 
   it("blocks platform seam class rows that do not match the seam kind", () => {
-    const row =
-      "| T-S001-01 | router-route-mounting | no-behavior-change | Story classification and architecture docs approve the seam. | src/routes/v1 router platform seam | adjust shared route registration helper only | exact files: src/routes/v1/index.ts | shared platform router, not feature-local | current consumers: existing routes; future consumers: new routes; unsupported consumers: feature behavior | backwards-compatible route behavior preserved | representative consumer proof: route test | restart not-required | backout by revert | materialization not-applicable | not-applicable: no generated command | no architecture or standards changes | not-applicable: unchanged | npx vitest run tests/unit/routes/v1RouteRegistration.test.ts |";
+    const row = platformSeamContractRow({ exactWriteEnvelope: "exact files: src/routes/v1/index.ts" });
     const classRow =
       "| T-S001-01 | tooling-harness | tool script command proof | workflow test consumer coverage | not-applicable: script-only tool | not-applicable: no split needed |";
 
@@ -3027,8 +3109,7 @@ describe("task breakdown validation", () => {
   });
 
   it("blocks router platform seam class rows without route consumer proof", () => {
-    const row =
-      "| T-S001-01 | router-route-mounting | no-behavior-change | Story classification and architecture docs approve the seam. | src/routes/v1 router platform seam | adjust shared route registration helper only | exact files: src/routes/v1/index.ts | shared platform router, not feature-local | current consumers: existing routes; future consumers: new routes; unsupported consumers: feature behavior | backwards-compatible route behavior preserved | representative consumer proof: route test | restart not-required | backout by revert | materialization not-applicable | not-applicable: no generated command | no architecture or standards changes | not-applicable: unchanged | npx vitest run tests/unit/routes/v1RouteRegistration.test.ts |";
+    const row = platformSeamContractRow({ exactWriteEnvelope: "exact files: src/routes/v1/index.ts" });
     const classRow =
       "| T-S001-01 | router-route-mounting | generic platform proof | current and future consumers | restart not-required | not-applicable: no split needed |";
 
@@ -3049,8 +3130,10 @@ describe("task breakdown validation", () => {
         "| S-001 | shared platform/runtime seam | yes | Root admin update route needs shared route registration helper. | DEV:platform-seam |",
       );
 
-    const platformContractRow =
-      "| T-S001-01 | router-route-mounting | no-behavior-change | Story classification and existing architecture docs approve shared v1 route registration. | src/routes/v1 router platform seam | adjust shared route registration helper only | exact files: src/routes/v1/index.ts; tests/unit/routes/v1RouteRegistration.test.ts | not feature-local because multiple feature routers register through this shared platform router | current consumers: existing v1 feature routes; future consumers: new feature routers; unsupported consumers: feature-local business behavior and route contract docs | backwards-compatible route mounting behavior preserved for existing consumers | representative consumer proof: route registration test covers existing v1 route consumer | runtime restart not-required: helper-only test harness change; normal server restart would pick up source edits | no staged rollout; backout by reverting one helper seam change | generated feature dependency artifacts checked; materialization impact not-applicable | not-applicable: no generated/apply command because route registration is not generated | existing architecture and standards consumed; no authority changes | not-applicable: platform seam only; API, permission, migration, feature behavior, architecture, standards, and evidence sweeps unchanged | npx vitest run tests/unit/routes/v1RouteRegistration.test.ts; npm run feature-dependencies:check |";
+    const platformContractRow = platformSeamContractRow({
+      runtimeRestartImpact:
+        "runtime restart not-required: helper-only test harness change; normal server restart would pick up source edits",
+    });
 
     const platformPacket = validTaskPacket
       .replace(
@@ -3076,15 +3159,15 @@ describe("task breakdown validation", () => {
       )
       .replace(
         backendGuardrailEvidenceRows,
-        "| T-S001-01 | platform-source-authority | pass | Story classification and existing v1 router architecture approve the shared route registration seam. |\n| T-S001-01 | platform-seam-kind | pass | Seam kind is router-route-mounting. |\n| T-S001-01 | platform-seam-class | pass | Platform seam class is router-route-mounting with route registration and route consumer proof. |\n| T-S001-01 | platform-seam-owner | pass | Shared route registration is owned by src/routes/v1. |\n| T-S001-01 | platform-not-feature-local | pass | Route registration helper is shared platform wiring, not feature-local logic. |\n| T-S001-01 | platform-exact-write-envelope | pass | Exact route registration and route-registration test files are named. |\n| T-S001-01 | platform-consumer-inventory | pass | Current feature routes remain registered through the v1 router and unsupported consumers are not in scope. |\n| T-S001-01 | platform-compatibility-mode | pass | Compatibility mode is no-behavior-change. |\n| T-S001-01 | platform-compatibility-contract | pass | Existing route registration behavior and feature route mounting remain backwards compatible. |\n| T-S001-01 | platform-representative-consumer-proof | pass | Representative route consumer proof is named. |\n| T-S001-01 | platform-runtime-restart-impact | pass | Runtime restart posture is not-required for the helper-only proof loop. |\n| T-S001-01 | platform-rollout-backout | pass | Helper-only route registration adjustment has no staged rollout and can be reverted as one seam change. |\n| T-S001-01 | platform-artifact-materialization | pass | Feature dependency artifacts are checked by existing commands. |\n| T-S001-01 | platform-architecture-boundary | pass | No ADR change needed for helper-only route registration adjustment. |\n| T-S001-01 | platform-split-routing | pass | API, permission, migration, feature-local, architecture, standards, and evidence-sweep work are unchanged or split. |\n| T-S001-01 | platform-proof-commands | pass | Route registration regression and dependency artifact checks prove the shared seam. |",
+        "| T-S001-01 | platform-source-authority | pass | Story classification and existing v1 router architecture approve the shared route registration seam. |\n| T-S001-01 | platform-seam-kind | pass | Seam kind is router-route-mounting. |\n| T-S001-01 | platform-seam-class | pass | Platform seam class is router-route-mounting with route registration and route consumer proof. |\n| T-S001-01 | platform-seam-owner | pass | Shared route registration is owned by src/routes/v1. |\n| T-S001-01 | platform-seam-source-inventory | pass | Seam source inventory names route registration, dependency script, and route-registration test files. |\n| T-S001-01 | platform-not-feature-local | pass | Route registration helper is shared platform wiring, not feature-local logic. |\n| T-S001-01 | platform-exact-write-envelope | pass | Exact route registration and route-registration test files are named. |\n| T-S001-01 | platform-consumer-inventory | pass | Current feature routes remain registered through the v1 router and unsupported consumers are not in scope. |\n| T-S001-01 | platform-compatibility-mode | pass | Compatibility mode is no-behavior-change. |\n| T-S001-01 | platform-compatibility-contract | pass | Existing route registration behavior and feature route mounting remain backwards compatible. |\n| T-S001-01 | platform-representative-consumer-proof | pass | Representative route consumer proof is named. |\n| T-S001-01 | platform-runtime-restart-impact | pass | Runtime restart posture is not-required for the helper-only proof loop. |\n| T-S001-01 | platform-rollout-backout | pass | Helper-only route registration adjustment has no staged rollout and can be reverted as one seam change. |\n| T-S001-01 | platform-artifact-materialization | pass | Feature dependency artifacts are checked by existing commands. |\n| T-S001-01 | platform-expected-output | pass | Expected route registration seam output is named. |\n| T-S001-01 | platform-architecture-boundary | pass | No ADR change needed for helper-only route registration adjustment. |\n| T-S001-01 | platform-split-routing | pass | API, permission, migration, feature-local, architecture, standards, and evidence-sweep work are unchanged or split. |\n| T-S001-01 | platform-proof-commands | pass | Route registration regression and dependency artifact checks prove the shared seam. |\n| T-S001-01 | platform-human-review-boundary | pass | Human review is limited to platform authority and compatibility sufficiency. |",
       )
       .replace(
         "| T-S001-01 | feature-local | src/features/tenantConfiguration | src/features/tenantConfiguration | no | not-applicable: no shared code placement | Existing consumer compatibility protected by tenantConfiguration persistence regression. | approved |",
         "| T-S001-01 | platform-seam | src/routes/v1 | src/routes/v1 | no | not-applicable: no shared code placement | Existing consumer compatibility protected by route registration regression. | approved |",
       )
       .replace(
-        "## Platform Seam Contract\n\n| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-        `## Platform Seam Contract\n\n| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${platformContractRow}\n\n`,
+        emptyPlatformSeamContractSection,
+        `## Platform Seam Contract\n\n| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Source Inventory | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Expected Seam Output | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${platformContractRow}\n\n`,
       )
       .replace(
         emptyPlatformSeamClassContractSection,
