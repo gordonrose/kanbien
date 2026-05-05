@@ -51,6 +51,10 @@ Before queueing, the task packet should name:
   generated docs, and test-case traceability
 - validation command, contract review workflow, or explicit blocked reason
 
+The task packet must also fill the API Contract table. If OpenAPI, Postman, or
+generated API docs are not maintained for the affected route seam, the task
+must say so explicitly with rationale instead of assuming.
+
 ## Split Conditions
 
 Split or block the task when:
@@ -72,8 +76,10 @@ compatibility evidence.
 ## Required Check IDs
 
 - `api-route-family`
+- `api-contract-source`
 - `api-request-response`
 - `api-authz-validation`
 - `api-compatibility`
 - `api-maintained-artifacts`
+- `api-split-routing`
 - `api-validation-command`

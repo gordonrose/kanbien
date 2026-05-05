@@ -674,6 +674,34 @@ model changes must split to the owning task type.
 | Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## API Contract
+
+Required for `DOC:api-contract` tasks. Leave empty when no `DOC:api-contract`
+task is queued.
+
+Allowed compatibility postures:
+
+- `no-wire-change`
+- `additive`
+- `compatibility-sensitive`
+- `blocked-pending-migration-or-approval`
+
+Allowed maintained artifact postures:
+
+- `docs-api-contract-only`
+- `openapi-maintained`
+- `postman-maintained`
+- `openapi-and-postman-maintained`
+- `generated-docs-maintained`
+- `not-maintained-with-rationale`
+
+`DOC:api-contract` records API-facing contract truth only. Runtime route
+implementation, transport schemas, domain behavior, persistence, permission
+mapping, migrations, and executable tests must split to the owning task type.
+
+| Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 Queued `TEST:test-only` tasks must say exactly what kind of test work they perform.

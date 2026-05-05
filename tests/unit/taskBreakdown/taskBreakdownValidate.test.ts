@@ -295,6 +295,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## API Contract
+
+| Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 | Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |
@@ -1166,6 +1171,87 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 Permission Mapping Contract authz model changes must route to GOV:architecture-update");
+  });
+
+  it("blocks API contract tasks without an API contract row", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:api-contract |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/api-contracts/tenant-configuration.md",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has no API Contract row");
+  });
+
+  it("allows API contract tasks with explicit route shape, artifact posture, and split routing", () => {
+    const apiContractRow =
+      "| T-S001-01 | root-admin tenant configuration | Source story AC-S001-01 and existing API contract docs authorize the route contract update. | PATCH /v1/root-admin/tenants/:tenantId/branding | route param tenantId required; request body displayName required | response includes updated tenant branding; status 200; validation errors return 400 | root auth required; CAP-BRANDING-001 authz; tenant boundary from route param tenant context | validation rejects empty displayName; pagination not-applicable; sorting not-applicable; system-managed fields not client supplied | additive | openapi-and-postman-maintained | not-applicable: docs-only contract update; runtime, permission mapping, migrations, and tests already split or unchanged | contract review plus OpenAPI/Postman validation |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:api-contract |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/api-contracts/tenant-configuration.md",
+        )
+        .replace(
+          "## API Contract\n\n| Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## API Contract\n\n| Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${apiContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.errors).not.toContain("T-S001-01 has no API Contract row");
+    expect(result.errors).not.toContain("T-S001-01 API Contract must name HTTP method and route path");
+  });
+
+  it("blocks API contract tasks with compatibility-sensitive changes and no compatibility route", () => {
+    const apiContractRow =
+      "| T-S001-01 | root-admin tenant configuration | Source story AC-S001-01 and existing API contract docs authorize the route contract update. | PATCH /v1/root-admin/tenants/:tenantId/branding | route param tenantId required; request body displayName required | response includes updated tenant branding; status 200; validation errors return 400 | root auth required; CAP-BRANDING-001 authz; tenant boundary from route param tenant context | validation rejects empty displayName; pagination not-applicable; sorting not-applicable; system-managed fields not client supplied | compatibility-sensitive | openapi-maintained | not-applicable: docs-only update | contract review |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:api-contract |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/api-contracts/tenant-configuration.md",
+        )
+        .replace(
+          "## API Contract\n\n| Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## API Contract\n\n| Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${apiContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 API Contract compatibility-sensitive changes need approval, migration, compatibility, or blocked follow-up");
+  });
+
+  it("blocks API contract tasks that route runtime work without a DEV split", () => {
+    const apiContractRow =
+      "| T-S001-01 | root-admin tenant configuration | Source story AC-S001-01 and existing API contract docs authorize the route contract update. | PATCH /v1/root-admin/tenants/:tenantId/branding | route param tenantId required; request body displayName required | response includes updated tenant branding; status 200; validation errors return 400 | root auth required; CAP-BRANDING-001 authz; tenant boundary from route param tenant context | validation rejects empty displayName; pagination not-applicable; sorting not-applicable; system-managed fields not client supplied | additive | docs-api-contract-only | runtime route handler follow-up needed | contract review |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:api-contract |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/api-contracts/tenant-configuration.md",
+        )
+        .replace(
+          "## API Contract\n\n| Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## API Contract\n\n| Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${apiContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 API Contract runtime implementation must route to DEV:*");
   });
 
   it("blocks standards update tasks without an approved standards-change contract", () => {

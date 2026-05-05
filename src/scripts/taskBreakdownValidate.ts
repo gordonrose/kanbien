@@ -77,6 +77,7 @@ const requiredHeadings = [
   "## Standards Compliance Contract",
   "## Standards Update Contract",
   "## Permission Mapping Contract",
+  "## API Contract",
   "## Test-Only Coverage Contract",
   "## Test Suite Alignment Contract",
   "## Capability Permission / State Matrix",
@@ -285,6 +286,20 @@ const allowedPermissionMappingRowPostures = new Set([
   "target",
   "architecture-target",
   "blocked",
+]);
+const allowedApiCompatibilityPostures = new Set([
+  "no-wire-change",
+  "additive",
+  "compatibility-sensitive",
+  "blocked-pending-migration-or-approval",
+]);
+const allowedApiMaintainedArtifactPostures = new Set([
+  "docs-api-contract-only",
+  "openapi-maintained",
+  "postman-maintained",
+  "openapi-and-postman-maintained",
+  "generated-docs-maintained",
+  "not-maintained-with-rationale",
 ]);
 
 const vaguePhrases = [
@@ -678,6 +693,21 @@ type PermissionMappingContractRow = {
   splitBlockedFollowUp: string;
 };
 
+type ApiContractRow = {
+  taskId: string;
+  routeFamily: string;
+  contractSourceAuthority: string;
+  methodsPaths: string;
+  paramsQueryBody: string;
+  responseStatusErrorShape: string;
+  authnAuthzTenantBoundary: string;
+  validationPaginationSortingSystemFields: string;
+  compatibilityPosture: string;
+  maintainedApiArtifacts: string;
+  splitBlockedFollowUp: string;
+  validationReviewEvidence: string;
+};
+
 type TestOnlyCoverageContractRow = {
   taskId: string;
   coverageSource: string;
@@ -906,6 +936,7 @@ export function validateTaskBreakdownContent(
   const standardsComplianceContracts = parseStandardsComplianceContractRows(taskContent);
   const standardsUpdateContracts = parseStandardsUpdateContractRows(taskContent);
   const permissionMappingContracts = parsePermissionMappingContractRows(taskContent);
+  const apiContracts = parseApiContractRows(taskContent);
   const testOnlyCoverageContracts = parseTestOnlyCoverageContractRows(taskContent);
   const testSuiteAlignmentContracts = parseTestSuiteAlignmentContractRows(taskContent);
   const capabilityPermissionStateMatrices = parseCapabilityPermissionStateMatrixRows(taskContent);
@@ -983,6 +1014,7 @@ export function validateTaskBreakdownContent(
   const standardsComplianceContractsByTask = groupBy(standardsComplianceContracts, (row) => row.taskId);
   const standardsUpdateContractsByTask = groupBy(standardsUpdateContracts, (row) => row.taskId);
   const permissionMappingContractsByTask = groupBy(permissionMappingContracts, (row) => row.taskId);
+  const apiContractsByTask = groupBy(apiContracts, (row) => row.taskId);
   const testOnlyCoverageContractsByTask = groupBy(testOnlyCoverageContracts, (row) => row.taskId);
   const testSuiteAlignmentContractsByTask = groupBy(testSuiteAlignmentContracts, (row) => row.taskId);
   const capabilityPermissionStateMatricesByTask = groupBy(capabilityPermissionStateMatrices, (row) => row.taskId);
@@ -1046,6 +1078,7 @@ export function validateTaskBreakdownContent(
     validateStandardsComplianceContract(task, standardsComplianceContractsByTask.get(task.taskId) ?? [], errors);
     validateStandardsUpdateContract(task, standardsUpdateContractsByTask.get(task.taskId) ?? [], errors);
     validatePermissionMappingContract(task, permissionMappingContractsByTask.get(task.taskId) ?? [], errors);
+    validateApiContract(task, apiContractsByTask.get(task.taskId) ?? [], errors);
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
     validateWriteSetClassification(task, writeSetClassificationsByTask.get(task.taskId) ?? [], errors);
     validateForbiddenWork(task, forbiddenWorkByTask.get(task.taskId) ?? [], errors);
@@ -1084,6 +1117,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Standards Compliance Contract", standardsComplianceContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Standards Update Contract", standardsUpdateContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Permission Mapping Contract", permissionMappingContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("API Contract", apiContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test-Only Coverage Contract", testOnlyCoverageContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test Suite Alignment Contract", testSuiteAlignmentContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Capability Permission / State Matrix", capabilityPermissionStateMatrices.map((row) => row.taskId), taskIds, errors);
@@ -2883,6 +2917,115 @@ function validatePermissionMappingContract(
   }
 }
 
+function validateApiContract(
+  task: TaskRow,
+  rows: ApiContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DOC:api-contract") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has API Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} has no API Contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Route Family", row.routeFamily, errors);
+    validateRequiredField(task.taskId, "Contract Source / Authority", row.contractSourceAuthority, errors);
+    validateRequiredField(task.taskId, "Methods / Paths", row.methodsPaths, errors);
+    validateRequiredField(task.taskId, "Params / Query / Body", row.paramsQueryBody, errors);
+    validateRequiredField(task.taskId, "Response / Status / Error Shape", row.responseStatusErrorShape, errors);
+    validateRequiredField(task.taskId, "Authn / Authz / Tenant Boundary", row.authnAuthzTenantBoundary, errors);
+    validateRequiredField(task.taskId, "Validation / Pagination / Sorting / System Fields", row.validationPaginationSortingSystemFields, errors);
+    validateAllowedValue(task.taskId, "Compatibility Posture", row.compatibilityPosture, allowedApiCompatibilityPostures, errors);
+    validateAllowedValue(task.taskId, "Maintained API Artifacts", row.maintainedApiArtifacts, allowedApiMaintainedArtifactPostures, errors);
+    validateRequiredField(task.taskId, "Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
+    validateRequiredField(task.taskId, "Validation / Review Evidence", row.validationReviewEvidence, errors);
+
+    const source = row.contractSourceAuthority.toLowerCase();
+    if (
+      !source.includes("story") &&
+      !source.includes("prd") &&
+      !source.includes("technical steering") &&
+      !source.includes("api contract") &&
+      !source.includes("openapi") &&
+      !source.includes("postman") &&
+      !source.includes("implementation blueprint") &&
+      !source.includes("capability")
+    ) {
+      errors.push(`${task.taskId} API Contract needs an approved contract source or authority`);
+    }
+
+    const methodsPaths = row.methodsPaths.toLowerCase();
+    if (!mentionsHttpMethod(methodsPaths) || !methodsPaths.includes("/")) {
+      errors.push(`${task.taskId} API Contract must name HTTP method and route path`);
+    }
+
+    const shape = `${row.paramsQueryBody} ${row.responseStatusErrorShape}`.toLowerCase();
+    if (!shape.includes("response") || !shape.includes("status")) {
+      errors.push(`${task.taskId} API Contract must name response shape and status/error posture`);
+    }
+
+    const boundary = row.authnAuthzTenantBoundary.toLowerCase();
+    if (!boundary.includes("auth") && !boundary.includes("public") && !boundary.includes("not-applicable")) {
+      errors.push(`${task.taskId} API Contract must name authn/authz or public boundary`);
+    }
+    if (boundary.includes("tenant") && !boundary.includes("tenant boundary") && !boundary.includes("tenant context")) {
+      errors.push(`${task.taskId} API Contract tenant routes must name tenant boundary or tenant context`);
+    }
+
+    const behaviorDefaults = row.validationPaginationSortingSystemFields.toLowerCase();
+    if (
+      !behaviorDefaults.includes("validation") &&
+      !behaviorDefaults.includes("pagination") &&
+      !behaviorDefaults.includes("sorting") &&
+      !behaviorDefaults.includes("system-managed") &&
+      !behaviorDefaults.includes("not-applicable")
+    ) {
+      errors.push(`${task.taskId} API Contract must classify validation, pagination, sorting, or system-managed field posture`);
+    }
+
+    if (
+      row.maintainedApiArtifacts === "not-maintained-with-rationale" &&
+      !row.splitBlockedFollowUp.toLowerCase().includes("not-maintained") &&
+      !row.validationReviewEvidence.toLowerCase().includes("not-maintained")
+    ) {
+      errors.push(`${task.taskId} API Contract must include rationale when OpenAPI/Postman/generated docs are not maintained`);
+    }
+
+    const compatibility = row.compatibilityPosture.toLowerCase();
+    const followUp = row.splitBlockedFollowUp.toLowerCase();
+    if (compatibility === "compatibility-sensitive" || compatibility === "blocked-pending-migration-or-approval") {
+      if (
+        !followUp.includes("approval") &&
+        !followUp.includes("migration") &&
+        !followUp.includes("compatibility") &&
+        !followUp.includes("blocked")
+      ) {
+        errors.push(`${task.taskId} API Contract compatibility-sensitive changes need approval, migration, compatibility, or blocked follow-up`);
+      }
+    }
+
+    if (followUp.includes("runtime") && !followUp.includes("dev:")) {
+      errors.push(`${task.taskId} API Contract runtime implementation must route to DEV:*`);
+    }
+    if ((followUp.includes("authz") || followUp.includes("permission")) && !followUp.includes("doc:permission-mapping")) {
+      errors.push(`${task.taskId} API Contract permission mapping changes must route to DOC:permission-mapping`);
+    }
+    if ((followUp.includes("persistence") || followUp.includes("migration") || followUp.includes("schema")) && !followUp.includes("dev:migration-persistence")) {
+      errors.push(`${task.taskId} API Contract persistence or migration changes must route to DEV:migration-persistence`);
+    }
+    if (followUp.includes("test") && !followUp.includes("test:test-only")) {
+      errors.push(`${task.taskId} API Contract executable proof must route to TEST:test-only`);
+    }
+  }
+}
+
 function validateCodePlacement(
   task: TaskRow,
   rows: CodePlacementRow[],
@@ -4308,6 +4451,13 @@ function mentionsPermissionBoundary(value: string): boolean {
   ].some((token) => normalized.includes(token));
 }
 
+function mentionsHttpMethod(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return ["get", "post", "put", "patch", "delete", "options", "head"].some((method) =>
+    new RegExp(`(^|[^a-z])${method}([^a-z]|$)`).test(normalized),
+  );
+}
+
 function mentionsSplitNewProofDecision(value: string): boolean {
   const normalized = value.toLowerCase();
   return (
@@ -4935,6 +5085,23 @@ function parsePermissionMappingContractRows(content: string): PermissionMappingC
     denialAuditProofExpectation: cells[9] ?? "",
     migrationImpact: cells[10] ?? "",
     splitBlockedFollowUp: cells[11] ?? "",
+  }));
+}
+
+function parseApiContractRows(content: string): ApiContractRow[] {
+  return parseTableRows(section(content, "## API Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    routeFamily: cells[1] ?? "",
+    contractSourceAuthority: cells[2] ?? "",
+    methodsPaths: cells[3] ?? "",
+    paramsQueryBody: cells[4] ?? "",
+    responseStatusErrorShape: cells[5] ?? "",
+    authnAuthzTenantBoundary: cells[6] ?? "",
+    validationPaginationSortingSystemFields: cells[7] ?? "",
+    compatibilityPosture: cells[8] ?? "",
+    maintainedApiArtifacts: cells[9] ?? "",
+    splitBlockedFollowUp: cells[10] ?? "",
+    validationReviewEvidence: cells[11] ?? "",
   }));
 }
 

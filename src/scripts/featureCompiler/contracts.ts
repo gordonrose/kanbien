@@ -334,10 +334,12 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "DOC:api-contract": [
     "api-route-family",
+    "api-contract-source",
     "api-request-response",
     "api-authz-validation",
     "api-compatibility",
     "api-maintained-artifacts",
+    "api-split-routing",
     "api-validation-command",
   ],
   "DOC:permission-mapping": [
