@@ -23,6 +23,7 @@ import {
   layer4ProceedIfTriggerHitValues,
   layer4ProofSpecificityStatuses,
   layer4RequiredCheckIdsByTaskType,
+  layer4StandardsUpdateClasses,
   layer4SharedCodePlacementCheckIds,
   layer4StopConditionTriggerTypes,
   layer4SuspiciousCoarseScopePhrases,
@@ -304,6 +305,7 @@ const allowedStandardsUpdateEnforcementPostures = new Set([
   "script-reported-debt",
   "advisory-with-approved-debt-route",
 ]);
+const allowedStandardsUpdateClasses: Set<string> = new Set(layer4StandardsUpdateClasses);
 const allowedStandardsComplianceTargetTypes = new Set([
   "repo-standard-gate",
   "external-standard-control-map",
@@ -819,11 +821,13 @@ type StandardsComplianceContractRow = {
 
 type StandardsUpdateContractRow = {
   taskId: string;
+  standardsUpdateClass: string;
   approvedStandardsChangeSource: string;
   sourcePathReference: string;
   standardsChangeSummary: string;
   standardsArtifactTarget: string;
   affectedSurfacesConsistencySweep: string;
+  artifactInvalidationSweep: string;
   enforcementPosture: string;
   compatibilityRolloutPosture: string;
   debtRouteIfNotEnforcedNow: string;
@@ -3735,11 +3739,13 @@ function validateStandardsUpdateContract(
   }
 
   for (const row of rows) {
+    validateAllowedValue(task.taskId, "Standards Update Class", row.standardsUpdateClass, allowedStandardsUpdateClasses, errors);
     validateAllowedValue(task.taskId, "Approved Standards Change Source", row.approvedStandardsChangeSource, allowedStandardsUpdateChangeSources, errors);
     validateRequiredField(task.taskId, "Source Path / Reference", row.sourcePathReference, errors);
     validateRequiredField(task.taskId, "Standards Change Summary", row.standardsChangeSummary, errors);
     validateRequiredField(task.taskId, "Standards Artifact Target", row.standardsArtifactTarget, errors);
     validateRequiredField(task.taskId, "Affected Surfaces / Consistency Sweep", row.affectedSurfacesConsistencySweep, errors);
+    validateRequiredField(task.taskId, "Artifact Invalidation Sweep", row.artifactInvalidationSweep, errors);
     validateAllowedValue(task.taskId, "Enforcement Posture", row.enforcementPosture, allowedStandardsUpdateEnforcementPostures, errors);
     validateRequiredField(task.taskId, "Compatibility / Rollout Posture", row.compatibilityRolloutPosture, errors);
     validateRequiredField(task.taskId, "Debt Route If Not Enforced Now", row.debtRouteIfNotEnforcedNow, errors);
@@ -3770,7 +3776,15 @@ function validateStandardsUpdateContract(
     }
 
     const enforcement = row.enforcementPosture.toLowerCase();
+    const updateClass = row.standardsUpdateClass.toLowerCase();
     const debtRoute = row.debtRouteIfNotEnforcedNow.toLowerCase();
+    const invalidationSweep = `${row.affectedSurfacesConsistencySweep} ${row.artifactInvalidationSweep}`.toLowerCase();
+    if (!invalidationSweep.includes("sweep") && !invalidationSweep.includes("reviewed") && !invalidationSweep.includes("not-applicable")) {
+      errors.push(`${task.taskId} Standards Update Contract must record an artifact invalidation sweep or not-applicable rationale`);
+    }
+
+    validateStandardsUpdateClassPosture(task.taskId, updateClass, enforcement, invalidationSweep, errors);
+
     if (enforcement === "advisory-with-approved-debt-route") {
       if (
         !debtRoute.includes("docs/workspace/") &&
@@ -3789,6 +3803,34 @@ function validateStandardsUpdateContract(
     if (!forbidden.includes("implementation") || !forbidden.includes("architecture") || !forbidden.includes("compliance")) {
       errors.push(`${task.taskId} Standards Update Contract must forbid implementation, architecture, and compliance work`);
     }
+  }
+}
+
+function validateStandardsUpdateClassPosture(
+  taskId: string,
+  updateClass: string,
+  enforcement: string,
+  invalidationSweep: string,
+  errors: string[],
+): void {
+  if (updateClass === "enforced-now" && enforcement !== "validator-or-gate-enforced-now") {
+    errors.push(`${taskId} Standards Update Contract enforced-now class must use validator-or-gate-enforced-now posture`);
+  }
+
+  if (updateClass === "template-required" && enforcement !== "template-required-now") {
+    errors.push(`${taskId} Standards Update Contract template-required class must use template-required-now posture`);
+  }
+
+  if (updateClass === "script-reported-debt" && enforcement !== "script-reported-debt") {
+    errors.push(`${taskId} Standards Update Contract script-reported-debt class must use script-reported-debt posture`);
+  }
+
+  if (updateClass === "advisory-approved-debt" && enforcement !== "advisory-with-approved-debt-route") {
+    errors.push(`${taskId} Standards Update Contract advisory-approved-debt class must use advisory-with-approved-debt-route posture`);
+  }
+
+  if (updateClass === "artifact-invalidation-sweep" && !invalidationSweep.includes("invalidation")) {
+    errors.push(`${taskId} Standards Update Contract artifact-invalidation-sweep class must name invalidation sweep scope`);
   }
 }
 
@@ -6948,16 +6990,18 @@ function parseStandardsComplianceContractRows(content: string): StandardsComplia
 function parseStandardsUpdateContractRows(content: string): StandardsUpdateContractRow[] {
   return parseTableRows(section(content, "## Standards Update Contract")).map((cells) => ({
     taskId: cells[0] ?? "",
-    approvedStandardsChangeSource: cells[1] ?? "",
-    sourcePathReference: cells[2] ?? "",
-    standardsChangeSummary: cells[3] ?? "",
-    standardsArtifactTarget: cells[4] ?? "",
-    affectedSurfacesConsistencySweep: cells[5] ?? "",
-    enforcementPosture: cells[6] ?? "",
-    compatibilityRolloutPosture: cells[7] ?? "",
-    debtRouteIfNotEnforcedNow: cells[8] ?? "",
-    forbiddenImplementationArchitectureComplianceWork: cells[9] ?? "",
-    validationReviewEvidence: cells[10] ?? "",
+    standardsUpdateClass: cells[1] ?? "",
+    approvedStandardsChangeSource: cells[2] ?? "",
+    sourcePathReference: cells[3] ?? "",
+    standardsChangeSummary: cells[4] ?? "",
+    standardsArtifactTarget: cells[5] ?? "",
+    affectedSurfacesConsistencySweep: cells[6] ?? "",
+    artifactInvalidationSweep: cells[7] ?? "",
+    enforcementPosture: cells[8] ?? "",
+    compatibilityRolloutPosture: cells[9] ?? "",
+    debtRouteIfNotEnforcedNow: cells[10] ?? "",
+    forbiddenImplementationArchitectureComplianceWork: cells[11] ?? "",
+    validationReviewEvidence: cells[12] ?? "",
   }));
 }
 

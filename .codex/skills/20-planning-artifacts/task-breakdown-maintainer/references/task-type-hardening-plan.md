@@ -65,7 +65,7 @@ Ratings:
 | `DECISION:refactor-first` | medium | strong | medium | medium | strong | yes | medium | P2 | Add trigger/type examples and scriptable detection hints for duplicated behavior, wrong owner/layer, broad write sets, and test-seam pressure. |
 | `DECISION:architecture-foundation` | medium | strong | medium | medium | strong | yes | medium | P2 | Add examples across architecture concern areas and make decision-analysis completeness easier to inspect before downstream task queueing. |
 | `EVIDENCE:qa-evidence` | medium | strong | medium | strong | strong | yes | medium | P2 | Add narrower script instruments for live payload sampling, served asset verification, and mock-honesty comparison. |
-| `GOV:standards-update` | weak | medium | medium | medium | strong | yes | high | P1 | Add examples for enforced-now, advisory-with-approved-debt-route, script-reported-debt, and existing-artifact invalidation sweeps. |
+| `GOV:standards-update` | strong | strong | strong | strong | strong | yes | medium | P3 | Add more worked examples for enforced-now, advisory-with-approved-debt-route, script-reported-debt, and existing-artifact invalidation sweeps now that update class, enforcement posture, and artifact invalidation sweep are validator-backed. |
 | `GOV:architecture-update` | weak | medium | medium | medium | strong | yes | high | P1 | Add examples for ADR creation/amendment, system overview updates, frontend topology authority, and architecture-owned template changes. |
 | `GOV:design-system` | strong | strong | medium | strong | strong | yes | medium | P3 | Add worked examples for seam-producing tasks, app-adoption contamination, and evidence-only split to `EVIDENCE:qa-evidence`. |
 

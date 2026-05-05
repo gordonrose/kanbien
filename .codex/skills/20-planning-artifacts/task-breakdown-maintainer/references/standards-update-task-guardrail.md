@@ -15,9 +15,11 @@ Use for task type: `GOV:standards-update`
 - approved standards change source, such as recorded human approval,
   standards-compliance audit, issue/escaped-defect reconciliation, harness
   retrospective, Layer 2 steering, or existing standards contradiction
+- standards update class and matching enforcement posture
 - standard, gate, checklist, template, or validator surface being changed
 - rationale for why the standard itself must change
-- affected downstream task types, maintained artifacts, and validation commands
+- affected downstream task types, maintained artifacts, invalidation sweep, and
+  validation commands
 - compatibility or rollout posture for existing artifacts
 
 ## Approved Standards Change Sources
@@ -50,6 +52,33 @@ when the task records why immediate enforcement is not possible, which debt
 artifact or follow-up task owns cleanup, and what will make the advisory rule
 enforceable later.
 
+## Standards Update Classes
+
+Use the class to make the standards update script-first and reviewable:
+
+- `enforced-now`: changes a validator, gate, check ID, or proof script in the
+  same task; enforcement posture must be `validator-or-gate-enforced-now`.
+- `template-required`: changes a standards-owned template or required packet
+  field; enforcement posture must be `template-required-now`.
+- `script-reported-debt`: adds or changes a reporting script that surfaces debt
+  without failing existing work; enforcement posture must be
+  `script-reported-debt`.
+- `advisory-approved-debt`: records an advisory rule with an approved cleanup
+  route; enforcement posture must be `advisory-with-approved-debt-route`.
+- `artifact-invalidation-sweep`: reviews which existing packets, templates,
+  validators, status snapshots, examples, or generated artifacts are invalidated
+  by the standard and records owner/routing outcomes.
+
+Worked examples:
+
+- enforced now: add a required check ID plus validator test coverage.
+- advisory with approved debt route: add a rule that cannot yet fail because
+  existing packets need a named cleanup task.
+- script-reported debt: add a health/report command that lists debt without
+  blocking until the debt policy is approved.
+- existing-artifact invalidation sweep: review affected maintained artifacts
+  and split specialized rewrites to their owning task types.
+
 ## Deep Delivery Standard
 
 - one standard family, gate, checklist, or validator contract per queued task
@@ -58,6 +87,8 @@ enforceable later.
   owning task type
 - name the exact standards files, templates, validators, and status artifacts
   affected
+- record the artifact invalidation sweep or an explicit not-applicable
+  rationale before queueing
 
 ## Ownership Boundary
 
@@ -73,9 +104,11 @@ runtime behavior, or add missing tests. Those belong to
 ## Required Check IDs
 
 - `standards-approved-change-source`
+- `standards-update-class`
 - `standards-change-owner`
 - `standards-rationale`
 - `standards-affected-surfaces`
+- `standards-invalidation-sweep`
 - `standards-enforcement-plan`
 - `standards-rollout-compatibility`
 - `standards-validation`

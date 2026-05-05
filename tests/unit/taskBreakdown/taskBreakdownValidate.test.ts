@@ -332,8 +332,8 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 ## Standards Update Contract
 
-| Task ID | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Task ID | Standards Update Class | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Artifact Invalidation Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Permission Mapping Contract
 
@@ -1719,7 +1719,7 @@ describe("task breakdown validation", () => {
 
   it("blocks advisory standards updates without an approved debt route", () => {
     const standardsContractRow =
-      "| T-S001-01 | explicit-recorded-human-approval | chat approval 2026-05-05 | Require standards updates to record enforcement or debt posture. | docs/standards/change-artifact-requirements.md | task-breakdown template; validator; tests | advisory-with-approved-debt-route | applies to new task packets; existing packets reviewed later | not-applicable: decide later | implementation and architecture and compliance work are forbidden and split to owning task types | npx vitest run tests/unit/taskBreakdown/taskBreakdownValidate.test.ts |";
+      "| T-S001-01 | advisory-approved-debt | explicit-recorded-human-approval | chat approval 2026-05-05 | Require standards updates to record enforcement or debt posture. | docs/standards/change-artifact-requirements.md | task-breakdown template; validator; tests | invalidation sweep reviewed existing packets and routed cleanup later | advisory-with-approved-debt-route | applies to new task packets; existing packets reviewed later | not-applicable: decide later | implementation and architecture and compliance work are forbidden and split to owning task types | npx vitest run tests/unit/taskBreakdown/taskBreakdownValidate.test.ts |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1729,14 +1729,38 @@ describe("task breakdown validation", () => {
           "docs/standards/change-artifact-requirements.md",
         )
         .replace(
-          "## Standards Update Contract\n\n| Task ID | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-          `## Standards Update Contract\n\n| Task ID | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${standardsContractRow}\n\n`,
+          "## Standards Update Contract\n\n| Task ID | Standards Update Class | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Artifact Invalidation Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Standards Update Contract\n\n| Task ID | Standards Update Class | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Artifact Invalidation Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${standardsContractRow}\n\n`,
         ),
       sourceStoryPacket,
     );
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 Standards Update Contract advisory posture needs an explicit approved debt route");
+  });
+
+  it("blocks standards update tasks when class and enforcement posture disagree", () => {
+    const standardsContractRow =
+      "| T-S001-01 | enforced-now | explicit-recorded-human-approval | chat approval 2026-05-05 | Require standards updates to record enforcement or debt posture. | docs/standards/change-artifact-requirements.md | task-breakdown template; validator; tests | invalidation sweep reviewed existing packets and routed cleanup later | advisory-with-approved-debt-route | applies to new task packets; existing packets reviewed later | docs/workspace/task-breakdown-cleanup.md follow-up debt route approved | implementation and architecture and compliance work are forbidden and split to owning task types | npx vitest run tests/unit/taskBreakdown/taskBreakdownValidate.test.ts |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:standards-update |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/standards/change-artifact-requirements.md",
+        )
+        .replace(
+          "## Standards Update Contract\n\n| Task ID | Standards Update Class | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Artifact Invalidation Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Standards Update Contract\n\n| Task ID | Standards Update Class | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Artifact Invalidation Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${standardsContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "T-S001-01 Standards Update Contract enforced-now class must use validator-or-gate-enforced-now posture",
+    );
   });
 
   it("blocks broad DEV:frontend write envelopes without approved broad-scope rationale", () => {

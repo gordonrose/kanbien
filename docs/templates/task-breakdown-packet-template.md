@@ -836,8 +836,21 @@ Allowed enforcement postures:
 - `script-reported-debt`
 - `advisory-with-approved-debt-route`
 
-| Task ID | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+Allowed standards update classes:
+
+- `enforced-now`
+- `template-required`
+- `script-reported-debt`
+- `advisory-approved-debt`
+- `artifact-invalidation-sweep`
+
+Class and enforcement posture must match. Record which existing packets,
+templates, validators, generated artifacts, status snapshots, or examples are
+invalidated or reviewed by the new standard, even when the answer is
+`not-applicable` with rationale.
+
+| Task ID | Standards Update Class | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Artifact Invalidation Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Permission Mapping Contract
 

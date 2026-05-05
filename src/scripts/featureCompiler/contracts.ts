@@ -91,6 +91,14 @@ export const layer4DocsArtifactClasses = [
   "template-or-example-sync",
 ] as const;
 
+export const layer4StandardsUpdateClasses = [
+  "enforced-now",
+  "template-required",
+  "script-reported-debt",
+  "advisory-approved-debt",
+  "artifact-invalidation-sweep",
+] as const;
+
 export const layer4TaskGrainClassifications = [
   "single-behavior",
   "single-decision",
@@ -349,9 +357,11 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "GOV:standards-update": [
     "standards-approved-change-source",
+    "standards-update-class",
     "standards-change-owner",
     "standards-rationale",
     "standards-affected-surfaces",
+    "standards-invalidation-sweep",
     "standards-enforcement-plan",
     "standards-rollout-compatibility",
     "standards-validation",
