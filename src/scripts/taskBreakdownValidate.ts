@@ -7,6 +7,7 @@ import {
   layer4CapabilityCoverageStatuses,
   layer4DesignSystemSeamClasses,
   layer4DesignSystemSeamPostures,
+  layer4DocsArtifactClasses,
   layer4FoundationBlockerTypes,
   layer4FoundationTaskTypes,
   layer4FrontendDesignSystemSubStandards,
@@ -133,6 +134,7 @@ const guardrailReferenceByTaskType: Map<string, string> = new Map(Object.entries
 const allowedPlacementDecisions: Set<string> = new Set(layer4PlacementDecisions);
 const allowedGuardrailEvidenceStatuses: Set<string> = new Set(layer4GuardrailEvidenceStatuses);
 const allowedWriteClasses: Set<string> = new Set(layer4WriteClasses);
+const allowedDocsArtifactClasses: Set<string> = new Set(layer4DocsArtifactClasses);
 const allowedTaskGrainClassifications: Set<string> = new Set(layer4TaskGrainClassifications);
 const allowedStopConditionTriggerTypes: Set<string> = new Set(layer4StopConditionTriggerTypes);
 const allowedProceedIfTriggerHitValues: Set<string> = new Set(layer4ProceedIfTriggerHitValues);
@@ -786,11 +788,15 @@ type ArchitectureUpdateContractRow = {
 type DocsArtifactContractRow = {
   taskId: string;
   artifactFamily: string;
+  docsArtifactClass: string;
+  scriptableSourceInventory: string;
   sourceTruthReviewed: string;
   docsTarget: string;
   statusPosture: string;
   staleArtifactSweep: string;
   specializedRoutingSplitDecisions: string;
+  diffCheckCommand: string;
+  humanReviewBoundary: string;
   validationReviewEvidence: string;
 };
 
@@ -2660,6 +2666,23 @@ function mentionsScriptCommandOrRationale(value: string): boolean {
   );
 }
 
+function mentionsScriptableInventory(value: string): boolean {
+  const normalized = value.replace(/\\/g, "/").toLowerCase();
+  return (
+    normalized.includes("docs/") ||
+    normalized.includes("src/") ||
+    normalized.includes("tests/") ||
+    normalized.includes(".codex/") ||
+    normalized.includes("package.json") ||
+    normalized.includes("readme") ||
+    normalized.includes("rg ") ||
+    normalized.includes("git diff") ||
+    normalized.includes("npm run") ||
+    normalized.includes("node ") ||
+    normalized.includes("npx ")
+  );
+}
+
 function validateBackendSplitRouting(taskId: string, followUp: string, errors: string[]): void {
   if ((followUp.includes("api") || followUp.includes("openapi") || followUp.includes("postman")) && !followUp.includes("doc:api-contract")) {
     errors.push(`${taskId} DEV:backend API contract work must route to DOC:api-contract`);
@@ -3482,11 +3505,15 @@ function validateDocsArtifactContract(
 
   for (const row of rows) {
     validateAllowedValue(task.taskId, "Artifact Family", row.artifactFamily, allowedDocsArtifactFamilies, errors);
+    validateAllowedValue(task.taskId, "Docs Artifact Class", row.docsArtifactClass, allowedDocsArtifactClasses, errors);
+    validateRequiredField(task.taskId, "Scriptable Source Inventory", row.scriptableSourceInventory, errors);
     validateRequiredField(task.taskId, "Source Truth Reviewed", row.sourceTruthReviewed, errors);
     validateRequiredField(task.taskId, "Docs Target", row.docsTarget, errors);
     validateRequiredField(task.taskId, "Status Posture", row.statusPosture, errors);
     validateRequiredField(task.taskId, "Stale Artifact Sweep", row.staleArtifactSweep, errors);
     validateRequiredField(task.taskId, "Specialized Routing / Split Decisions", row.specializedRoutingSplitDecisions, errors);
+    validateRequiredField(task.taskId, "Diff / Check Command", row.diffCheckCommand, errors);
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
     validateRequiredField(task.taskId, "Validation / Review Evidence", row.validationReviewEvidence, errors);
 
     const docsTarget = row.docsTarget.replace(/\\/g, "/").toLowerCase();
@@ -3494,7 +3521,20 @@ function validateDocsArtifactContract(
       errors.push(`${task.taskId} Docs Artifact Contract target must be a docs or README artifact`);
     }
 
-    const specializedText = `${task.scope} ${task.allowedWriteSet} ${row.docsTarget} ${row.sourceTruthReviewed}`.toLowerCase();
+    const classText = `${row.docsArtifactClass} ${row.scriptableSourceInventory} ${row.docsTarget} ${row.diffCheckCommand} ${row.validationReviewEvidence}`.toLowerCase();
+    validateDocsArtifactClassSpecifics(task.taskId, row, classText, errors);
+
+    const sourceInventory = row.scriptableSourceInventory.toLowerCase();
+    if (!mentionsScriptableInventory(sourceInventory)) {
+      errors.push(`${task.taskId} DOC:docs-artifact must name concrete source paths, globs, artifacts, or command output for scriptable inventory`);
+    }
+
+    const diffCommand = row.diffCheckCommand.toLowerCase();
+    if (!mentionsScriptCommandOrRationale(diffCommand) && !diffCommand.includes("rg ") && !diffCommand.includes("git diff")) {
+      errors.push(`${task.taskId} DOC:docs-artifact diff/check command must name an executable command or explicit manual-review rationale`);
+    }
+
+    const specializedText = `${task.scope} ${task.allowedWriteSet} ${row.docsTarget} ${row.sourceTruthReviewed} ${row.scriptableSourceInventory}`.toLowerCase();
     const routeAwayTask = docsArtifactRouteAwayTask(specializedText);
     if (routeAwayTask) {
       errors.push(`${task.taskId} DOC:docs-artifact must route this specialized artifact work to ${routeAwayTask}`);
@@ -3516,6 +3556,58 @@ function validateDocsArtifactContract(
     ) {
       errors.push(`${task.taskId} Docs Artifact Contract must record specialized routing decisions`);
     }
+  }
+}
+
+function validateDocsArtifactClassSpecifics(
+  taskId: string,
+  row: DocsArtifactContractRow,
+  combinedText: string,
+  errors: string[],
+): void {
+  if (row.docsArtifactClass === "feature-doc-refresh" && !combinedText.includes("docs/features/")) {
+    errors.push(`${taskId} DOC:docs-artifact feature-doc-refresh must target docs/features/`);
+  }
+
+  if (row.docsArtifactClass === "readme-index-sync" && !combinedText.includes("readme")) {
+    errors.push(`${taskId} DOC:docs-artifact readme-index-sync must target a README or index artifact`);
+  }
+
+  if (row.docsArtifactClass === "runbook-update" && !combinedText.includes("runbook")) {
+    errors.push(`${taskId} DOC:docs-artifact runbook-update must target a runbook artifact`);
+  }
+
+  if (
+    row.docsArtifactClass === "implementation-status-note" &&
+    !combinedText.includes("status") &&
+    !combinedText.includes("implementation-blueprint")
+  ) {
+    errors.push(`${taskId} DOC:docs-artifact implementation-status-note must target implementation status truth`);
+  }
+
+  if (row.docsArtifactClass === "workspace-summary-artifact" && !combinedText.includes("docs/workspace/")) {
+    errors.push(`${taskId} DOC:docs-artifact workspace-summary-artifact must target docs/workspace/`);
+  }
+
+  if (row.docsArtifactClass === "stale-artifact-sweep") {
+    const sweep = `${row.staleArtifactSweep} ${row.specializedRoutingSplitDecisions}`.toLowerCase();
+    if (
+      !sweep.includes("sweep") ||
+      (!sweep.includes("doc:") &&
+        !sweep.includes("gov:") &&
+        !sweep.includes("test:") &&
+        !sweep.includes("evidence:"))
+    ) {
+      errors.push(`${taskId} DOC:docs-artifact stale-artifact-sweep must name sweep scope and route-away outcomes`);
+    }
+  }
+
+  if (
+    row.docsArtifactClass === "template-or-example-sync" &&
+    !combinedText.includes("template") &&
+    !combinedText.includes("example")
+  ) {
+    errors.push(`${taskId} DOC:docs-artifact template-or-example-sync must target template or example artifacts`);
   }
 }
 
@@ -6795,12 +6887,16 @@ function parseDocsArtifactContractRows(content: string): DocsArtifactContractRow
   return parseTableRows(section(content, "## Docs Artifact Contract")).map((cells) => ({
     taskId: cells[0] ?? "",
     artifactFamily: cells[1] ?? "",
-    sourceTruthReviewed: cells[2] ?? "",
-    docsTarget: cells[3] ?? "",
-    statusPosture: cells[4] ?? "",
-    staleArtifactSweep: cells[5] ?? "",
-    specializedRoutingSplitDecisions: cells[6] ?? "",
-    validationReviewEvidence: cells[7] ?? "",
+    docsArtifactClass: cells[2] ?? "",
+    scriptableSourceInventory: cells[3] ?? "",
+    sourceTruthReviewed: cells[4] ?? "",
+    docsTarget: cells[5] ?? "",
+    statusPosture: cells[6] ?? "",
+    staleArtifactSweep: cells[7] ?? "",
+    specializedRoutingSplitDecisions: cells[8] ?? "",
+    diffCheckCommand: cells[9] ?? "",
+    humanReviewBoundary: cells[10] ?? "",
+    validationReviewEvidence: cells[11] ?? "",
   }));
 }
 

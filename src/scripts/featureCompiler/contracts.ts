@@ -81,6 +81,16 @@ export const layer4WriteClasses = [
   "blocked",
 ] as const;
 
+export const layer4DocsArtifactClasses = [
+  "feature-doc-refresh",
+  "readme-index-sync",
+  "runbook-update",
+  "implementation-status-note",
+  "workspace-summary-artifact",
+  "stale-artifact-sweep",
+  "template-or-example-sync",
+] as const;
+
 export const layer4TaskGrainClassifications = [
   "single-behavior",
   "single-decision",
@@ -274,6 +284,8 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "DOC:docs-artifact": [
     "docs-source-truth-reviewed",
+    "docs-artifact-class",
+    "docs-scriptable-source-inventory",
     "docs-stale-artifact-sweep",
     "docs-status-posture",
     "docs-validation-command",

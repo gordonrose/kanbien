@@ -12,8 +12,11 @@ Use for task type: `DOC:docs-artifact`
 ## Approval Evidence
 
 - source files or artifacts reviewed
+- docs artifact class and scriptable source inventory
 - docs artifact family and source-of-truth owner
 - docs updated or intentionally not applicable
+- exact docs target inventory
+- diff/check command or explicit human-review rationale
 - validation or review command
 - downstream stale-artifact sweep result
 
@@ -32,6 +35,25 @@ routed away. Allowed artifact families are:
 - `maintained-artifact-sweep`
 - `ordinary-doc-sync`
 
+## Allowed Docs Artifact Classes
+
+Use the class as the task's script-facing contract:
+
+- `feature-doc-refresh`: refresh a bounded `docs/features/` artifact from
+  approved feature source truth.
+- `readme-index-sync`: update README or index/navigation artifacts from a
+  bounded source inventory.
+- `runbook-update`: update operational runbook content from approved runtime,
+  lifecycle, support, or operational truth.
+- `implementation-status-note`: update current-state/status wording after an
+  approved implementation or planning artifact changed truth.
+- `workspace-summary-artifact`: maintain a bounded workspace summary from named
+  source artifacts.
+- `stale-artifact-sweep`: inspect a bounded artifact set and record residual
+  ordinary docs updates plus route-away outcomes for specialized artifacts.
+- `template-or-example-sync`: update examples or templates to match approved
+  task/harness truth without changing standards authority.
+
 ## Deep Delivery Standard
 
 - one artifact family or source-truth alignment target per queued task
@@ -39,6 +61,9 @@ routed away. Allowed artifact families are:
   the audit may change scope
 - name the exact source files inspected, docs updated, and validation or review
   output
+- fill the Docs Artifact Contract with class, scriptable source inventory,
+  exact docs targets, route-away notes, diff/check command, and human review
+  boundary
 - record every specialized documentation or governance concern that was routed
   away before queueing the docs-artifact task
 
@@ -74,6 +99,8 @@ matching task type:
 ## Required Check IDs
 
 - `docs-source-truth-reviewed`
+- `docs-artifact-class`
+- `docs-scriptable-source-inventory`
 - `docs-stale-artifact-sweep`
 - `docs-status-posture`
 - `docs-validation-command`

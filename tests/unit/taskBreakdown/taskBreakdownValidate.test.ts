@@ -322,8 +322,8 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 ## Docs Artifact Contract
 
-| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Standards Compliance Contract
 
@@ -1167,7 +1167,7 @@ describe("task breakdown validation", () => {
 
   it("blocks docs artifact tasks that try to own specialized API contract docs", () => {
     const docsArtifactContractRow =
-      "| T-S001-01 | ordinary-doc-sync | approved API route contract and backend implementation | docs/api-contracts/tenant-configuration.md | partial | stale API contract identified | DOC:api-contract split required for route contract truth | manual docs review |";
+      "| T-S001-01 | ordinary-doc-sync | feature-doc-refresh | src/features/tenantConfiguration/transport/rootAdminRoutes.ts; docs/api-contracts/tenant-configuration.md | approved API route contract and backend implementation | docs/api-contracts/tenant-configuration.md | partial | stale API contract identified | DOC:api-contract split required for route contract truth | git diff -- docs/api-contracts/tenant-configuration.md | human review limited to confirming specialized route-away | manual docs review plus npm run task-breakdown:validate -- packet.md --story story.md |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1177,8 +1177,8 @@ describe("task breakdown validation", () => {
           "docs/api-contracts/tenant-configuration.md",
         )
         .replace(
-          "## Docs Artifact Contract\n\n| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-          `## Docs Artifact Contract\n\n| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n${docsArtifactContractRow}\n\n`,
+          "## Docs Artifact Contract\n\n| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Docs Artifact Contract\n\n| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${docsArtifactContractRow}\n\n`,
         ),
       sourceStoryPacket,
     );
@@ -1189,7 +1189,7 @@ describe("task breakdown validation", () => {
 
   it("allows docs artifact tasks for residual feature docs with route-away decisions recorded", () => {
     const docsArtifactContractRow =
-      "| T-S001-01 | feature-doc | approved backend implementation and source story artifact ledger | docs/features/tenant-configuration.md | updated | API contract, data dictionary, permission mapping, standards, QA evidence, and architecture artifacts reviewed for route-away impact | not-applicable: no specialized doc changes in this residual feature-doc refresh | manual docs review plus npm run task-breakdown:validate -- packet.md --story story.md |";
+      "| T-S001-01 | feature-doc | feature-doc-refresh | src/features/tenantConfiguration/domain/updateBranding.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts; docs/features/tenant-configuration.md | approved backend implementation and source story artifact ledger | docs/features/tenant-configuration.md | updated | API contract, data dictionary, permission mapping, standards, QA evidence, and architecture artifacts reviewed for route-away impact | not-applicable: no specialized doc changes in this residual feature-doc refresh | git diff -- docs/features/tenant-configuration.md | human review limited to wording against approved source truth | manual docs review plus npm run task-breakdown:validate -- packet.md --story story.md |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1199,14 +1199,63 @@ describe("task breakdown validation", () => {
           "docs/features/tenant-configuration.md",
         )
         .replace(
-          "## Docs Artifact Contract\n\n| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-          `## Docs Artifact Contract\n\n| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n${docsArtifactContractRow}\n\n`,
+          "## Docs Artifact Contract\n\n| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Docs Artifact Contract\n\n| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${docsArtifactContractRow}\n\n`,
         ),
       sourceStoryPacket,
     );
 
     expect(result.errors).not.toContain("T-S001-01 has no Docs Artifact Contract row");
     expect(result.errors).not.toContain("T-S001-01 DOC:docs-artifact must route this specialized artifact work to DOC:api-contract");
+  });
+
+  it("blocks docs artifact tasks with an unsupported docs artifact class", () => {
+    const docsArtifactContractRow =
+      "| T-S001-01 | feature-doc | broad-docs-cleanup | src/features/tenantConfiguration/domain/updateBranding.ts; docs/features/tenant-configuration.md | approved backend implementation | docs/features/tenant-configuration.md | updated | specialized artifact sweep complete | not-applicable: no specialized doc changes in this residual feature-doc refresh | git diff -- docs/features/tenant-configuration.md | human review limited to wording against approved source truth | manual docs review plus npm run task-breakdown:validate -- packet.md --story story.md |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:docs-artifact |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/features/tenant-configuration.md",
+        )
+        .replace(
+          "## Docs Artifact Contract\n\n| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Docs Artifact Contract\n\n| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${docsArtifactContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has invalid Docs Artifact Class: broad-docs-cleanup");
+  });
+
+  it("blocks docs artifact tasks without scriptable inventory or a diff command", () => {
+    const docsArtifactContractRow =
+      "| T-S001-01 | feature-doc | feature-doc-refresh | source truth | approved backend implementation | docs/features/tenant-configuration.md | updated | specialized artifact sweep complete | not-applicable: no specialized doc changes in this residual feature-doc refresh | compare manually | human review limited to wording against approved source truth | manual docs review plus npm run task-breakdown:validate -- packet.md --story story.md |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:docs-artifact |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/features/tenant-configuration.md",
+        )
+        .replace(
+          "## Docs Artifact Contract\n\n| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Docs Artifact Contract\n\n| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${docsArtifactContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "T-S001-01 DOC:docs-artifact must name concrete source paths, globs, artifacts, or command output for scriptable inventory",
+    );
+    expect(result.errors).toContain(
+      "T-S001-01 DOC:docs-artifact diff/check command must name an executable command or explicit manual-review rationale",
+    );
   });
 
   it("blocks standards compliance tasks without a compliance contract", () => {

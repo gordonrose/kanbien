@@ -756,13 +756,28 @@ Allowed artifact families:
 - `maintained-artifact-sweep`
 - `ordinary-doc-sync`
 
+Allowed docs artifact classes:
+
+- `feature-doc-refresh`
+- `readme-index-sync`
+- `runbook-update`
+- `implementation-status-note`
+- `workspace-summary-artifact`
+- `stale-artifact-sweep`
+- `template-or-example-sync`
+
 `DOC:docs-artifact` is the residual docs-sync lane. Route API contracts, data
 dictionaries, permission mappings, standards/compliance artifacts, governance
 authority, design-system signoff/seams, QA evidence, and test-suite alignment
 to their specialized task types.
 
-| Task ID | Artifact Family | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Validation / Review Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+For script-first execution, record concrete source paths, globs, generated
+artifact paths, or command output that can be inspected mechanically. The
+`Diff / Check Command` should be executable whenever possible; use an explicit
+manual-review rationale only when the docs change depends on human judgment.
+
+| Task ID | Artifact Family | Docs Artifact Class | Scriptable Source Inventory | Source Truth Reviewed | Docs Target | Status Posture | Stale Artifact Sweep | Specialized Routing / Split Decisions | Diff / Check Command | Human Review Boundary | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Standards Compliance Contract
 
