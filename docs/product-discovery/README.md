@@ -237,6 +237,24 @@ broadly useful, whether the product already has settings or builders for it,
 whether it should be adjustable without engineering help, or whether different
 customers need different behavior.
 
+## Product Request Handoff
+
+When a discovery request is part of the chat/backlog flow, create or update a
+thin Product Request cover sheet using
+`docs/templates/product-request-template.md`.
+
+The Product Request is the human-readable summary and artifact index for the
+requested body of work. It should name the target users, requested change type,
+routing layer, goal, current status, next step, and links to the Product
+Discovery packet, Technical Steering packet, Story Breakdown, Task Breakdown,
+Loop Runs, PRs, and evidence as those artifacts exist.
+
+Do not duplicate or replace the Product Discovery packet in the Product
+Request. Product Discovery remains the source of product intent. The Product
+Request should stay thin, point to the right artifacts, and avoid introducing
+schema, API, UI, or automation behavior until a later governed implementation
+step approves those seams.
+
 ## Draft Fast Path
 
 When a user explicitly asks for a draft Product Discovery packet, draft

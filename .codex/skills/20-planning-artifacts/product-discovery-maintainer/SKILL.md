@@ -405,11 +405,31 @@ feature manifests, generated artifacts, and implementation work.
    - evidence expectation
    - routing blockers
 
-8. Select a product template.
+8. Create or update a Product Request cover sheet when applicable.
+   When the request is part of the chat/backlog flow, or when the user asks for
+   Product Request tracking, create or update a thin Product Request using
+   `docs/templates/product-request-template.md`.
+
+   The Product Request should summarize:
+   - target users
+   - requested change type
+   - routing layer
+   - goal
+   - current status
+   - next step
+   - links to Product Discovery, Technical Steering, Story Breakdown, Task
+     Breakdown, Loop Runs, PRs, and evidence as those artifacts exist
+
+   Keep the Product Request as a cover sheet and artifact index. Do not use it
+   to replace the Product Discovery packet, duplicate detailed discovery
+   answers, or introduce schema, API, UI, automation, or execution behavior
+   before a later governed implementation step approves those seams.
+
+9. Select a product template.
    Use a specific template only when it clearly fits. Otherwise use
    `generic-feature-template.md`.
 
-9. Build the multi-actor journey-to-capability trace.
+10. Build the multi-actor journey-to-capability trace.
    Capture the main journey, every implied actor perspective, job-to-be-done
    bridge, use case statements, context variations, unhappy paths, and
    product-level capability implications.
@@ -419,7 +439,7 @@ feature manifests, generated artifacts, and implementation work.
    - support, root, or governance actors when relevant
    - system or external-provider actors when they affect product behavior
 
-10. Build the state-based journey matrix.
+11. Build the state-based journey matrix.
    For authentication/access, permission-sensitive, tenant-boundary,
    lifecycle-heavy, or configuration-driven requests, do not consider the
    packet ready for Technical Steering unless the state matrix is completed or
@@ -445,29 +465,29 @@ feature manifests, generated artifacts, and implementation work.
    - `defer-to-technical-steering`
    - `out-of-scope`
 
-11. Apply specialized product-template rigor.
+12. Apply specialized product-template rigor.
    When taxonomy classification points to a specialized product template, use
    that template instead of adding feature-family-specific checklist content to
    the generic packet template. For authentication/access requests, use
    `docs/product-discovery/templates/authentication-access-template.md`.
 
-12. Record open decisions by owner.
+13. Record open decisions by owner.
     Separate business questions, requester-approved business deferrals, and
     technical stakeholder questions. Business questions cannot be treated as
     safe for handoff unless the Layer 1 requester explicitly signed them off as
     deferred until later.
 
-13. Detect reuse gaps.
+14. Detect reuse gaps.
     If existing families/templates do not fit, complete the New Family Candidate
     section and set status to `blocked-new-family-steering` when family creation
     must be decided before requirements lock.
 
-14. Detect UX/design-system gaps.
+15. Detect UX/design-system gaps.
     If the request may need a new UX pattern, governed design-system extension,
     or first-consumer app adoption decision, complete the UX / Design-System
     Extension Signal section.
 
-15. Set the handoff status.
+16. Set the handoff status.
     Use `ready-for-technical-steering` only when product intent is clear enough
     for Technical Steering to evaluate architecture, seams, and artifact gates,
     packet confidence is at least 95%, every remaining business question has
