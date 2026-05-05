@@ -57,6 +57,15 @@ Use for task type: `DEV:backend`
 Queued DEV:backend tasks must specify the feature-local implementation approach
 before Delivery starts:
 
+- classify the backend change as one of:
+  `domain-behavior`, `contract-schema`, `transport-route`,
+  `repository-consumer`, `persistence-adapter`, `feature-wiring`,
+  `integration-dependency`, `manifest-public-seam`, `authz-enforcement`,
+  `lifecycle-behavior`, `audit-event`, `error-resilience`,
+  `transaction-consistency`, `projection-read-model`,
+  `background-job-handler`, or `observability-event`
+- name approved source authority, exact write envelope, split routing, scaffold
+  or script command posture, and focused proof commands
 - prefer the established feature structure:
   `contract/`, `domain/`, `persistence/`, `transport/`, `integration.ts`,
   `index.ts`, and `feature.manifest.json`
@@ -74,9 +83,11 @@ before Delivery starts:
   when public seams or cross-feature dependencies change
 
 The task packet should name exact expected files/layers, the capability file
-strategy, public seam or manifest impact, and formatting/generated-artifact
-expectations. Do not copy this whole section into each packet; apply it through
-the `Backend Implementation Approach` row.
+strategy, contract/API posture, authz/tenant/lifecycle posture,
+persistence/migration posture, public seam or manifest impact, artifact
+obligations, scaffold/script posture, split routing, proof commands, and
+formatting/generated-artifact expectations. Do not copy this whole section into
+each packet; apply it through the `Backend Implementation Approach` row.
 
 ## Source Authority And Split Rules
 
@@ -155,11 +166,15 @@ enough unless the task also names the focused proof command for the behavior.
 ## Required Check IDs
 
 - `backend-source-authority`
+- `backend-change-class`
 - `backend-owning-feature`
+- `backend-exact-write-envelope`
 - `backend-layer-responsibilities`
 - `backend-cross-feature-seams`
 - `backend-authz-tenant-lifecycle`
 - `backend-api-contract-boundary`
 - `backend-persistence-migration-boundary`
+- `backend-scripted-scaffold-posture`
 - `backend-artifact-obligations`
+- `backend-split-routing`
 - `backend-proof-commands`

@@ -175,6 +175,25 @@ export const layer4BackendCapabilityFileStrategies = [
   "not-applicable-with-rationale",
 ] as const;
 
+export const layer4BackendChangeClasses = [
+  "domain-behavior",
+  "contract-schema",
+  "transport-route",
+  "repository-consumer",
+  "persistence-adapter",
+  "feature-wiring",
+  "integration-dependency",
+  "manifest-public-seam",
+  "authz-enforcement",
+  "lifecycle-behavior",
+  "audit-event",
+  "error-resilience",
+  "transaction-consistency",
+  "projection-read-model",
+  "background-job-handler",
+  "observability-event",
+] as const;
+
 export const layer4MigrationPersistenceChangeTypes = [
   "live-schema-inspection",
   "new-migration",
@@ -199,13 +218,17 @@ export const layer4SuspiciousCoarseScopePhrases = [
 export const layer4RequiredCheckIdsByTaskType = {
   "DEV:backend": [
     "backend-source-authority",
+    "backend-change-class",
     "backend-owning-feature",
+    "backend-exact-write-envelope",
     "backend-layer-responsibilities",
     "backend-cross-feature-seams",
     "backend-authz-tenant-lifecycle",
     "backend-api-contract-boundary",
     "backend-persistence-migration-boundary",
+    "backend-scripted-scaffold-posture",
     "backend-artifact-obligations",
+    "backend-split-routing",
     "backend-proof-commands",
   ],
   "DEV:frontend": [

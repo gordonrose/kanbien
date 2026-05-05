@@ -3,6 +3,7 @@ import path from "node:path";
 
 import {
   layer4BackendCapabilityFileStrategies,
+  layer4BackendChangeClasses,
   layer4CapabilityCoverageStatuses,
   layer4DesignSystemSeamPostures,
   layer4FoundationBlockerTypes,
@@ -135,6 +136,7 @@ const allowedFrontendDesignSystemSubStandards: Set<string> = new Set(layer4Front
 const allowedFrontendPerformancePostures: Set<string> = new Set(layer4FrontendPerformancePostures);
 const allowedDesignSystemSeamPostures: Set<string> = new Set(layer4DesignSystemSeamPostures);
 const allowedBackendCapabilityFileStrategies: Set<string> = new Set(layer4BackendCapabilityFileStrategies);
+const allowedBackendChangeClasses: Set<string> = new Set(layer4BackendChangeClasses);
 const allowedMigrationPersistenceChangeTypes: Set<string> = new Set(layer4MigrationPersistenceChangeTypes);
 const allowedPlatformSeamKinds: Set<string> = new Set(layer4PlatformSeamKinds);
 const allowedPlatformCompatibilityModes: Set<string> = new Set(layer4PlatformCompatibilityModes);
@@ -606,11 +608,21 @@ type FrontendAdoptionContractRow = {
 
 type BackendImplementationApproachRow = {
   taskId: string;
+  changeClass: string;
+  approvedSourceAuthority: string;
   featureOwner: string;
   capabilityFileStrategy: string;
+  exactWriteEnvelope: string;
   expectedFilesLayers: string;
   layerResponsibilities: string;
+  contractApiPosture: string;
+  authzTenantLifecyclePosture: string;
+  persistenceMigrationPosture: string;
   publicSeamManifestImpact: string;
+  artifactObligations: string;
+  scaffoldScriptCommand: string;
+  splitBlockedFollowUp: string;
+  proofCommands: string;
   formattingGeneratedArtifactExpectations: string;
 };
 
@@ -2051,11 +2063,21 @@ function validateBackendImplementationApproach(
   }
 
   for (const row of rows) {
+    validateAllowedValue(task.taskId, "Backend Change Class", row.changeClass, allowedBackendChangeClasses, errors);
+    validateRequiredField(task.taskId, "Approved Source Authority", row.approvedSourceAuthority, errors);
     validateRequiredField(task.taskId, "Backend Feature Owner", row.featureOwner, errors);
     validateRequiredField(task.taskId, "Backend Capability File Strategy", row.capabilityFileStrategy, errors);
+    validateRequiredField(task.taskId, "Exact Write Envelope", row.exactWriteEnvelope, errors);
     validateRequiredField(task.taskId, "Expected Files / Layers", row.expectedFilesLayers, errors);
     validateRequiredField(task.taskId, "Layer Responsibilities", row.layerResponsibilities, errors);
+    validateRequiredField(task.taskId, "Contract / API Posture", row.contractApiPosture, errors);
+    validateRequiredField(task.taskId, "Authz / Tenant / Lifecycle Posture", row.authzTenantLifecyclePosture, errors);
+    validateRequiredField(task.taskId, "Persistence / Migration Posture", row.persistenceMigrationPosture, errors);
     validateRequiredField(task.taskId, "Public Seam / Manifest Impact", row.publicSeamManifestImpact, errors);
+    validateRequiredField(task.taskId, "Artifact Obligations", row.artifactObligations, errors);
+    validateRequiredField(task.taskId, "Scaffold / Script Command", row.scaffoldScriptCommand, errors);
+    validateRequiredField(task.taskId, "Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
+    validateRequiredField(task.taskId, "Proof Commands", row.proofCommands, errors);
     validateRequiredField(
       task.taskId,
       "Formatting / Generated Artifact Expectations",
@@ -2071,10 +2093,202 @@ function validateBackendImplementationApproach(
       errors.push(`${task.taskId} DEV:backend feature owner should name a src/features/<featureName> owner`);
     }
 
+    const authority = row.approvedSourceAuthority.toLowerCase();
+    if (!mentionsApprovedBackendSourceAuthority(authority)) {
+      errors.push(`${task.taskId} DEV:backend needs approved source authority from story, PRD, capability, Technical Steering, ADR, API contract, permission mapping, data dictionary, standard, or implementation blueprint`);
+    }
+
+    const writeEnvelope = row.exactWriteEnvelope.replace(/\\/g, "/").toLowerCase();
+    if (mentionsBroadBackendWriteEnvelope(writeEnvelope)) {
+      errors.push(`${task.taskId} DEV:backend must use an exact or narrow feature-local write envelope, not broad backend/source edits`);
+    }
+    if (!writeEnvelope.includes("src/features/") && !writeEnvelope.includes("tests/") && !writeEnvelope.includes("exact") && !writeEnvelope.includes("narrow")) {
+      errors.push(`${task.taskId} DEV:backend write envelope must name exact files or narrow src/features/tests path patterns`);
+    }
+
     if (row.capabilityFileStrategy === "not-applicable-with-rationale" && !mentionsNotApplicableRationale(row.expectedFilesLayers, row.layerResponsibilities)) {
       errors.push(`${task.taskId} DEV:backend not-applicable capability strategy needs rationale`);
     }
+
+    const apiPosture = row.contractApiPosture.toLowerCase();
+    if (requiresBackendApiContractPosture(row.changeClass) && !mentionsApiContractPosture(apiPosture)) {
+      errors.push(`${task.taskId} DEV:backend ${row.changeClass} must name approved API/contract posture or DOC:api-contract split`);
+    }
+
+    const authzPosture = row.authzTenantLifecyclePosture.toLowerCase();
+    if (requiresBackendAuthzPosture(row.changeClass, task.scope, task.allowedWriteSet) && !mentionsBackendAuthzPosture(authzPosture)) {
+      errors.push(`${task.taskId} DEV:backend protected/authz/lifecycle work must name authz, tenant, lifecycle, allow/deny, or not-applicable posture`);
+    }
+
+    const persistencePosture = row.persistenceMigrationPosture.toLowerCase();
+    if (requiresBackendPersistencePosture(row.changeClass) && !mentionsBackendPersistencePosture(persistencePosture)) {
+      errors.push(`${task.taskId} DEV:backend ${row.changeClass} must name persistence/repository posture or DEV:migration-persistence split`);
+    }
+
+    const scaffold = row.scaffoldScriptCommand.toLowerCase();
+    if (!mentionsScriptCommandOrRationale(scaffold)) {
+      errors.push(`${task.taskId} DEV:backend scaffold/script command must name a generator/check command or not-applicable rationale`);
+    }
+
+    const followUp = row.splitBlockedFollowUp.toLowerCase();
+    const followUpRequiresRouting = !followUp.includes("not-applicable") && !followUp.includes("unchanged") && !followUp.includes("already split");
+    if (followUpRequiresRouting) {
+      validateBackendSplitRouting(task.taskId, followUp, errors);
+    }
+
+    if (apiPosture.includes("changing") && !followUp.includes("doc:api-contract")) {
+      errors.push(`${task.taskId} DEV:backend API contract changes must route to DOC:api-contract`);
+    }
+    if (persistencePosture.includes("schema") || persistencePosture.includes("migration") || persistencePosture.includes("index")) {
+      if (!followUp.includes("dev:migration-persistence") && !persistencePosture.includes("not-applicable") && !persistencePosture.includes("no schema")) {
+        errors.push(`${task.taskId} DEV:backend schema, migration, or index work must route to DEV:migration-persistence`);
+      }
+    }
+
+    const proof = row.proofCommands.toLowerCase();
+    if (!mentionsExecutableFocusedProof(proof)) {
+      errors.push(`${task.taskId} DEV:backend proof commands must include focused behavior, route, repository, authz, lifecycle, manifest, or consumer proof`);
+    }
   }
+}
+
+function mentionsApprovedBackendSourceAuthority(value: string): boolean {
+  return (
+    value.includes("story") ||
+    value.includes("prd") ||
+    value.includes("capability") ||
+    value.includes("technical steering") ||
+    value.includes("adr") ||
+    value.includes("api contract") ||
+    value.includes("permission mapping") ||
+    value.includes("data dictionary") ||
+    value.includes("standard") ||
+    value.includes("implementation blueprint")
+  );
+}
+
+function mentionsBroadBackendWriteEnvelope(value: string): boolean {
+  return (
+    value === "src/" ||
+    value === "src/*" ||
+    value === "src/features/" ||
+    value === "src/features/*" ||
+    value.includes("broad src") ||
+    value.includes("broad backend") ||
+    value.includes("all backend") ||
+    value.includes("as needed") ||
+    value.includes("etc.")
+  );
+}
+
+function requiresBackendApiContractPosture(changeClass: string): boolean {
+  return changeClass === "contract-schema" || changeClass === "transport-route" || changeClass === "projection-read-model";
+}
+
+function mentionsApiContractPosture(value: string): boolean {
+  return (
+    value.includes("api contract") ||
+    value.includes("contract approved") ||
+    value.includes("approved contract") ||
+    value.includes("doc:api-contract")
+  );
+}
+
+function requiresBackendAuthzPosture(changeClass: string, ...values: string[]): boolean {
+  const context = values.join(" ").toLowerCase();
+  return (
+    changeClass === "authz-enforcement" ||
+    changeClass === "lifecycle-behavior" ||
+    context.includes("authz") ||
+    context.includes("permission") ||
+    context.includes("tenant") ||
+    context.includes("root") ||
+    context.includes("protected")
+  );
+}
+
+function mentionsBackendAuthzPosture(value: string): boolean {
+  return (
+    value.includes("authz") ||
+    value.includes("permission") ||
+    value.includes("tenant") ||
+    value.includes("root") ||
+    value.includes("allow") ||
+    value.includes("deny") ||
+    value.includes("lifecycle")
+  );
+}
+
+function requiresBackendPersistencePosture(changeClass: string): boolean {
+  return (
+    changeClass === "repository-consumer" ||
+    changeClass === "persistence-adapter" ||
+    changeClass === "transaction-consistency" ||
+    changeClass === "projection-read-model" ||
+    changeClass === "background-job-handler"
+  );
+}
+
+function mentionsBackendPersistencePosture(value: string): boolean {
+  return (
+    value.includes("repository") ||
+    value.includes("persistence") ||
+    value.includes("schema") ||
+    value.includes("migration") ||
+    value.includes("existing storage") ||
+    value.includes("dev:migration-persistence")
+  );
+}
+
+function mentionsScriptCommandOrRationale(value: string): boolean {
+  return (
+    value.includes("npm run") ||
+    value.includes("npx ") ||
+    value.includes("node ") ||
+    value.includes("tsx ") ||
+    value.includes("not-applicable") ||
+    value.includes("manual logic only")
+  );
+}
+
+function validateBackendSplitRouting(taskId: string, followUp: string, errors: string[]): void {
+  if ((followUp.includes("api") || followUp.includes("openapi") || followUp.includes("postman")) && !followUp.includes("doc:api-contract")) {
+    errors.push(`${taskId} DEV:backend API contract work must route to DOC:api-contract`);
+  }
+  if ((followUp.includes("permission") || followUp.includes("authz") || followUp.includes("grant")) && !followUp.includes("doc:permission-mapping")) {
+    errors.push(`${taskId} DEV:backend permission mapping work must route to DOC:permission-mapping`);
+  }
+  if ((followUp.includes("data dictionary") || followUp.includes("durable fact") || followUp.includes("classification")) && !followUp.includes("doc:data-dictionary")) {
+    errors.push(`${taskId} DEV:backend data dictionary work must route to DOC:data-dictionary`);
+  }
+  if ((followUp.includes("schema") || followUp.includes("migration") || followUp.includes("index") || followUp.includes("live data")) && !followUp.includes("dev:migration-persistence")) {
+    errors.push(`${taskId} DEV:backend migration/persistence work must route to DEV:migration-persistence`);
+  }
+  if ((followUp.includes("platform seam") || followUp.includes("shared platform") || followUp.includes("middleware")) && !followUp.includes("dev:platform-seam")) {
+    errors.push(`${taskId} DEV:backend platform seam work must route to DEV:platform-seam`);
+  }
+  if ((followUp.includes("test") || followUp.includes("executable proof")) && !followUp.includes("test:test-only")) {
+    errors.push(`${taskId} DEV:backend executable proof-only work must route to TEST:test-only`);
+  }
+  if ((followUp.includes("evidence sweep") || followUp.includes("artifact sweep")) && !followUp.includes("evidence:qa-evidence")) {
+    errors.push(`${taskId} DEV:backend evidence or artifact sweep work must route to EVIDENCE:qa-evidence`);
+  }
+}
+
+function mentionsExecutableFocusedProof(value: string): boolean {
+  return (
+    (value.includes("npm run") || value.includes("npx ") || value.includes("vitest") || value.includes("playwright") || value.includes("node ")) &&
+    (value.includes("tests/") ||
+      value.includes("route") ||
+      value.includes("domain") ||
+      value.includes("repository") ||
+      value.includes("persistence") ||
+      value.includes("authz") ||
+      value.includes("lifecycle") ||
+      value.includes("manifest") ||
+      value.includes("dependency") ||
+      value.includes("consumer"))
+  );
 }
 
 function validateMigrationPersistenceApproach(
@@ -5409,12 +5623,22 @@ function parsePlatformSeamContractRows(content: string): PlatformSeamContractRow
 function parseBackendImplementationApproachRows(content: string): BackendImplementationApproachRow[] {
   return parseTableRows(section(content, "## Backend Implementation Approach")).map((cells) => ({
     taskId: cells[0] ?? "",
-    featureOwner: cells[1] ?? "",
-    capabilityFileStrategy: cells[2] ?? "",
-    expectedFilesLayers: cells[3] ?? "",
-    layerResponsibilities: cells[4] ?? "",
-    publicSeamManifestImpact: cells[5] ?? "",
-    formattingGeneratedArtifactExpectations: cells[6] ?? "",
+    changeClass: cells[1] ?? "",
+    approvedSourceAuthority: cells[2] ?? "",
+    featureOwner: cells[3] ?? "",
+    capabilityFileStrategy: cells[4] ?? "",
+    exactWriteEnvelope: cells[5] ?? "",
+    expectedFilesLayers: cells[6] ?? "",
+    layerResponsibilities: cells[7] ?? "",
+    contractApiPosture: cells[8] ?? "",
+    authzTenantLifecyclePosture: cells[9] ?? "",
+    persistenceMigrationPosture: cells[10] ?? "",
+    publicSeamManifestImpact: cells[11] ?? "",
+    artifactObligations: cells[12] ?? "",
+    scaffoldScriptCommand: cells[13] ?? "",
+    splitBlockedFollowUp: cells[14] ?? "",
+    proofCommands: cells[15] ?? "",
+    formattingGeneratedArtifactExpectations: cells[16] ?? "",
   }));
 }
 

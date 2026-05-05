@@ -2,6 +2,21 @@ import { describe, expect, it } from "vitest";
 
 import { validateTaskBreakdownContent } from "../../../src/scripts/taskBreakdownValidate";
 
+const backendGuardrailEvidenceRows =
+  "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n" +
+  "| T-S001-01 | backend-change-class | pass | Backend change class is domain-behavior. |\n" +
+  "| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n" +
+  "| T-S001-01 | backend-exact-write-envelope | pass | Exact feature-local domain, transport, and persistence test files are named. |\n" +
+  "| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n" +
+  "| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n" +
+  "| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n" +
+  "| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n" +
+  "| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n" +
+  "| T-S001-01 | backend-scripted-scaffold-posture | pass | Scaffold posture is not-applicable for task-specific manual domain logic. |\n" +
+  "| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n" +
+  "| T-S001-01 | backend-split-routing | pass | API, permission, data dictionary, migration, platform, test-only, and evidence work are unchanged or already split. |\n" +
+  "| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |";
+
 const sourceStoryPacket = `# Story Breakdown Packet: Tenant Branding
 
 ## Status
@@ -243,9 +258,9 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 ## Backend Implementation Approach
 
-| Task ID | Feature Owner | Capability File Strategy | Expected Files / Layers | Layer Responsibilities | Public Seam / Manifest Impact | Formatting / Generated Artifact Expectations |
-| --- | --- | --- | --- | --- | --- | --- |
-| T-S001-01 | src/features/tenantConfiguration | new-capability-file | domain/updateBranding.ts; transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | domain owns branding rule, transport routes, persistence test proves repository behavior | no new public seam; manifest unchanged unless export changes | repo formatter and no generated graph change expected |
+| Task ID | Backend Change Class | Approved Source Authority | Feature Owner | Capability File Strategy | Exact Write Envelope | Expected Files / Layers | Layer Responsibilities | Contract / API Posture | Authz / Tenant / Lifecycle Posture | Persistence / Migration Posture | Public Seam / Manifest Impact | Artifact Obligations | Scaffold / Script Command | Split / Blocked Follow-Up | Proof Commands | Formatting / Generated Artifact Expectations |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| T-S001-01 | domain-behavior | Story S-001, capability CAP-BRANDING-001, API contract, permission mapping, and data dictionary authorize this backend behavior. | src/features/tenantConfiguration | new-capability-file | exact files: src/features/tenantConfiguration/domain/updateBranding.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | domain/updateBranding.ts; transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | domain owns branding rule, transport routes, persistence test proves repository behavior | approved API contract; no wire change invented in DEV:backend | root authz required; tenant context from route; allow and deny proof required; lifecycle not-applicable | existing repository and persistence behavior consumed; no schema, migration, or index change | no new public seam; manifest unchanged unless export changes | API contract, permission mapping, data dictionary, feature docs, generated artifacts reviewed or split | not-applicable: manual logic only for task-specific domain behavior | not-applicable: API, permission, data dictionary, migration, platform, test-only, and evidence work unchanged or already split | npx vitest run tests/integration/tenantConfiguration/persistence.test.ts | repo formatter and no generated graph change expected |
 
 ## Migration / Persistence Approach
 
@@ -341,14 +356,7 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 | Task ID | Guardrail Check ID | Status | Evidence |
 | --- | --- | --- | --- |
-| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |
-| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |
-| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |
-| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |
-| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |
-| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |
-| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |
-| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |
+${backendGuardrailEvidenceRows}
 
 ## Code Placement And Extraction Review
 
@@ -644,7 +652,7 @@ function testSuiteAlignmentTaskPacketWith(input: {
       "| T-S001-01 | TEST:test-suite-alignment | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/test-suite-alignment-task-guardrail.md | approved | Test suite alignment guardrail reviewed for source map, mismatch class, edit envelope, split decision, and traceability command. |",
     )
     .replace(
-      "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+      backendGuardrailEvidenceRows,
       "| T-S001-01 | test-alignment-source-authority | pass | Traceability output and PRD test-case docs authorize the alignment. |\n| T-S001-01 | test-alignment-source-map | pass | Docs and executable test targets are named. |\n| T-S001-01 | test-alignment-mismatch-class | pass | Mismatch class is missing-documented-test-case. |\n| T-S001-01 | test-alignment-edit-envelope | pass | Edits are limited to docs and test labels. |\n| T-S001-01 | test-alignment-no-production-change | pass | No production behavior change is allowed. |\n| T-S001-01 | test-alignment-split-new-proof | pass | Newly required proof splits to TEST:test-only. |\n| T-S001-01 | test-alignment-traceability-command | pass | npm run test:traceability is required. |\n| T-S001-01 | test-alignment-coverage-strength | pass | npm run test:coverage-strength records whether coverage posture changed. |\n| T-S001-01 | test-alignment-source-truth-boundary | pass | Alignment does not rewrite PRD, API, permission, data, architecture, or standards truth to match incomplete implementation. |",
     );
 }
@@ -685,7 +693,7 @@ function evidenceTaskPacketWith(input: {
       "| T-S001-01 | EVIDENCE:qa-evidence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/qa-evidence-task-guardrail.md | approved | QA evidence guardrail reviewed for runtime proof, command plan, mock honesty, evidence status, and coverage-strength summary. |",
     )
     .replace(
-      "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+      backendGuardrailEvidenceRows,
       "| T-S001-01 | qa-proof-target | pass | Tenant branding runtime evidence artifact and payload shape are named. |\n| T-S001-01 | qa-command-plan | pass | Focused runtime proof command is named. |\n| T-S001-01 | qa-evidence-instruments | pass | Instrument summary selects coverage-strength, browser proof, live payload, and mock-honesty comparison. |\n| T-S001-01 | qa-runtime-evidence | pass | Live API/projection evidence source is named. |\n| T-S001-01 | qa-mock-honesty | pass | Mock fixture is compared against live payload shape. |\n| T-S001-01 | qa-evidence-status | pass | Evidence status is recorded as passing, partial, or blocked. |\n| T-S001-01 | qa-coverage-strength-summary | pass | npm run test:coverage-strength summary is required for QA evidence inventory impact. |",
     )
     .replace(
@@ -2085,7 +2093,7 @@ describe("task breakdown validation", () => {
   it("blocks queued DEV:backend tasks without DEV:backend implementation approach", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket.replace(
-        "## Backend Implementation Approach\n\n| Task ID | Feature Owner | Capability File Strategy | Expected Files / Layers | Layer Responsibilities | Public Seam / Manifest Impact | Formatting / Generated Artifact Expectations |\n| --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | src/features/tenantConfiguration | new-capability-file | domain/updateBranding.ts; transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | domain owns branding rule, transport routes, persistence test proves repository behavior | no new public seam; manifest unchanged unless export changes | repo formatter and no generated graph change expected |\n\n",
+        "## Backend Implementation Approach\n\n| Task ID | Backend Change Class | Approved Source Authority | Feature Owner | Capability File Strategy | Exact Write Envelope | Expected Files / Layers | Layer Responsibilities | Contract / API Posture | Authz / Tenant / Lifecycle Posture | Persistence / Migration Posture | Public Seam / Manifest Impact | Artifact Obligations | Scaffold / Script Command | Split / Blocked Follow-Up | Proof Commands | Formatting / Generated Artifact Expectations |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | domain-behavior | Story S-001, capability CAP-BRANDING-001, API contract, permission mapping, and data dictionary authorize this backend behavior. | src/features/tenantConfiguration | new-capability-file | exact files: src/features/tenantConfiguration/domain/updateBranding.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | domain/updateBranding.ts; transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts | domain owns branding rule, transport routes, persistence test proves repository behavior | approved API contract; no wire change invented in DEV:backend | root authz required; tenant context from route; allow and deny proof required; lifecycle not-applicable | existing repository and persistence behavior consumed; no schema, migration, or index change | no new public seam; manifest unchanged unless export changes | API contract, permission mapping, data dictionary, feature docs, generated artifacts reviewed or split | not-applicable: manual logic only for task-specific domain behavior | not-applicable: API, permission, data dictionary, migration, platform, test-only, and evidence work unchanged or already split | npx vitest run tests/integration/tenantConfiguration/persistence.test.ts | repo formatter and no generated graph change expected |\n\n",
         "",
       ),
       sourceStoryPacket,
@@ -2104,6 +2112,86 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 has invalid DEV:backend capability file strategy: whatever-is-easy");
+  });
+
+  it("blocks queued DEV:backend tasks with an invalid backend change class", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket.replace("| T-S001-01 | domain-behavior |", "| T-S001-01 | magic-backend |"),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has invalid Backend Change Class: magic-backend");
+  });
+
+  it("blocks queued DEV:backend tasks with broad backend write envelopes", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket.replace(
+        "exact files: src/features/tenantConfiguration/domain/updateBranding.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts; tests/integration/tenantConfiguration/persistence.test.ts",
+        "src/ as needed",
+      ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 DEV:backend must use an exact or narrow feature-local write envelope, not broad backend/source edits");
+  });
+
+  it("blocks transport-route DEV:backend tasks without API contract posture", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | domain-behavior |", "| T-S001-01 | transport-route |")
+        .replace("approved API contract; no wire change invented in DEV:backend", "internal behavior only"),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 DEV:backend transport-route must name approved API/contract posture or DOC:api-contract split");
+  });
+
+  it("blocks authz-enforcement DEV:backend tasks without authz, tenant, lifecycle, allow, or deny posture", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | domain-behavior |", "| T-S001-01 | authz-enforcement |")
+        .replace("root authz required; tenant context from route; allow and deny proof required; lifecycle not-applicable", ""),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 missing Authz / Tenant / Lifecycle Posture");
+    expect(result.errors).toContain("T-S001-01 DEV:backend protected/authz/lifecycle work must name authz, tenant, lifecycle, allow/deny, or not-applicable posture");
+  });
+
+  it("blocks repository DEV:backend tasks without persistence or migration posture", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | domain-behavior |", "| T-S001-01 | repository-consumer |")
+        .replace("existing repository and persistence behavior consumed; no schema, migration, or index change", ""),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 missing Persistence / Migration Posture");
+    expect(result.errors).toContain("T-S001-01 DEV:backend repository-consumer must name persistence/repository posture or DEV:migration-persistence split");
+  });
+
+  it("blocks DEV:backend follow-up work that is not routed to the owning task types", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket.replace(
+        "not-applicable: API, permission, data dictionary, migration, platform, test-only, and evidence work unchanged or already split",
+        "OpenAPI, permission mapping, data dictionary, migration, platform seam, test proof, and evidence sweep follow-up needed",
+      ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 DEV:backend API contract work must route to DOC:api-contract");
+    expect(result.errors).toContain("T-S001-01 DEV:backend permission mapping work must route to DOC:permission-mapping");
+    expect(result.errors).toContain("T-S001-01 DEV:backend data dictionary work must route to DOC:data-dictionary");
+    expect(result.errors).toContain("T-S001-01 DEV:backend migration/persistence work must route to DEV:migration-persistence");
+    expect(result.errors).toContain("T-S001-01 DEV:backend platform seam work must route to DEV:platform-seam");
+    expect(result.errors).toContain("T-S001-01 DEV:backend executable proof-only work must route to TEST:test-only");
+    expect(result.errors).toContain("T-S001-01 DEV:backend evidence or artifact sweep work must route to EVIDENCE:qa-evidence");
   });
 
   it("blocks queued DEV:migration-persistence tasks without migration approach", () => {
@@ -2369,7 +2457,7 @@ describe("task breakdown validation", () => {
         "| T-S001-01 | DEV:platform-seam | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/platform-seam-task-guardrail.md | approved | Platform seam guardrail reviewed for shared route registration consumers and compatibility proof. |",
       )
       .replace(
-        "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+        backendGuardrailEvidenceRows,
         "| T-S001-01 | platform-source-authority | pass | Story classification and existing v1 router architecture approve the shared route registration seam. |\n| T-S001-01 | platform-seam-kind | pass | Seam kind is router-route-mounting. |\n| T-S001-01 | platform-seam-owner | pass | Shared route registration is owned by src/routes/v1. |\n| T-S001-01 | platform-not-feature-local | pass | Route registration helper is shared platform wiring, not feature-local logic. |\n| T-S001-01 | platform-exact-write-envelope | pass | Exact route registration and route-registration test files are named. |\n| T-S001-01 | platform-consumer-inventory | pass | Current feature routes remain registered through the v1 router and unsupported consumers are not in scope. |\n| T-S001-01 | platform-compatibility-mode | pass | Compatibility mode is no-behavior-change. |\n| T-S001-01 | platform-compatibility-contract | pass | Existing route registration behavior and feature route mounting remain backwards compatible. |\n| T-S001-01 | platform-representative-consumer-proof | pass | Representative route consumer proof is named. |\n| T-S001-01 | platform-runtime-restart-impact | pass | Runtime restart posture is not-required for the helper-only proof loop. |\n| T-S001-01 | platform-rollout-backout | pass | Helper-only route registration adjustment has no staged rollout and can be reverted as one seam change. |\n| T-S001-01 | platform-artifact-materialization | pass | Feature dependency artifacts are checked by existing commands. |\n| T-S001-01 | platform-architecture-boundary | pass | No ADR change needed for helper-only route registration adjustment. |\n| T-S001-01 | platform-split-routing | pass | API, permission, migration, feature-local, architecture, standards, and evidence-sweep work are unchanged or split. |\n| T-S001-01 | platform-proof-commands | pass | Route registration regression and dependency artifact checks prove the shared seam. |",
       )
       .replace(

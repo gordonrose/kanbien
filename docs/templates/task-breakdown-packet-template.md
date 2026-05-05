@@ -417,8 +417,27 @@ Allowed capability file strategies:
 - `transport-only`
 - `not-applicable-with-rationale`
 
-| Task ID | Feature Owner | Capability File Strategy | Expected Files / Layers | Layer Responsibilities | Public Seam / Manifest Impact | Formatting / Generated Artifact Expectations |
-| --- | --- | --- | --- | --- | --- | --- |
+Allowed backend change classes:
+
+- `domain-behavior`
+- `contract-schema`
+- `transport-route`
+- `repository-consumer`
+- `persistence-adapter`
+- `feature-wiring`
+- `integration-dependency`
+- `manifest-public-seam`
+- `authz-enforcement`
+- `lifecycle-behavior`
+- `audit-event`
+- `error-resilience`
+- `transaction-consistency`
+- `projection-read-model`
+- `background-job-handler`
+- `observability-event`
+
+| Task ID | Backend Change Class | Approved Source Authority | Feature Owner | Capability File Strategy | Exact Write Envelope | Expected Files / Layers | Layer Responsibilities | Contract / API Posture | Authz / Tenant / Lifecycle Posture | Persistence / Migration Posture | Public Seam / Manifest Impact | Artifact Obligations | Scaffold / Script Command | Split / Blocked Follow-Up | Proof Commands | Formatting / Generated Artifact Expectations |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 Use this to name whether the task adds or updates
 `domain/<capabilityName>.ts`, keeps `domain/service.ts` as composition,
