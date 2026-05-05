@@ -85,25 +85,47 @@ Split or block when:
 
 Queued platform-seam tasks must name:
 
+- the seam kind: router route mounting, middleware/auth/request context,
+  scheduler/job runtime, bootstrap runtime, generated-artifact
+  materialization, tooling/harness, shared runtime helper, or cross-feature
+  seam infrastructure
+- the compatibility mode: no behavior change, additive compatible, dual-path
+  rollout, or compatibility-sensitive blocked
+- the exact write envelope; broad `src/` or platform edits are blocked unless
+  routed to a separate approved architecture or standards task first
 - the compatibility contract for existing consumers
 - the representative consumer set to prove
 - any generated artifacts or manifests that must be refreshed
+- the generator, preview/apply, materialization, or check command when the seam
+  owns generated output
 - whether old and new seam behavior coexist during rollout
 - rollback or fallback posture for runtime/platform changes
+- runtime restart, reload, redeploy, or not-required posture for runtime seams
 - focused unit, integration, generated-artifact, route registration,
   dependency-graph, bootstrap, or harness commands that prove the seam
 
 Broad suite commands may supplement this proof, but they cannot replace a
 focused command tied to the shared seam and its representative consumers.
 
+The task packet must also fill the `Platform Seam Contract` table. Leave
+feature-local behavior, API contract truth, permission mapping, migrations,
+architecture authority, standards authority, and evidence sweeps out of the
+`DEV:platform-seam` task and route each to its owning task type.
+
 ## Required Check IDs
 
 - `platform-source-authority`
+- `platform-seam-kind`
 - `platform-seam-owner`
 - `platform-not-feature-local`
+- `platform-exact-write-envelope`
 - `platform-consumer-inventory`
+- `platform-compatibility-mode`
 - `platform-compatibility-contract`
+- `platform-representative-consumer-proof`
+- `platform-runtime-restart-impact`
 - `platform-rollout-backout`
 - `platform-artifact-materialization`
 - `platform-architecture-boundary`
+- `platform-split-routing`
 - `platform-proof-commands`

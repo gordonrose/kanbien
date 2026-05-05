@@ -15,6 +15,8 @@ import {
   layer4ImplementationTaskTypes,
   layer4MigrationPersistenceChangeTypes,
   layer4PlacementDecisions,
+  layer4PlatformCompatibilityModes,
+  layer4PlatformSeamKinds,
   layer4ProceedIfTriggerHitValues,
   layer4ProofSpecificityStatuses,
   layer4RequiredCheckIdsByTaskType,
@@ -66,6 +68,7 @@ const requiredHeadings = [
   "## Frontend Permission Rendering Evidence",
   "## Frontend Runtime Data And Mock Honesty",
   "## Vertical Slice Coupling",
+  "## Platform Seam Contract",
   "## Backend Implementation Approach",
   "## Migration / Persistence Approach",
   "## Tight Allowed Write Envelope",
@@ -133,6 +136,8 @@ const allowedFrontendPerformancePostures: Set<string> = new Set(layer4FrontendPe
 const allowedDesignSystemSeamPostures: Set<string> = new Set(layer4DesignSystemSeamPostures);
 const allowedBackendCapabilityFileStrategies: Set<string> = new Set(layer4BackendCapabilityFileStrategies);
 const allowedMigrationPersistenceChangeTypes: Set<string> = new Set(layer4MigrationPersistenceChangeTypes);
+const allowedPlatformSeamKinds: Set<string> = new Set(layer4PlatformSeamKinds);
+const allowedPlatformCompatibilityModes: Set<string> = new Set(layer4PlatformCompatibilityModes);
 const suspiciousCoarseScopePhrases: string[] = [...layer4SuspiciousCoarseScopePhrases];
 const requiredCheckIdsByTaskType: Map<string, readonly string[]> = new Map(Object.entries(layer4RequiredCheckIdsByTaskType));
 const sharedCodePlacementCheckIds: string[] = [...layer4SharedCodePlacementCheckIds];
@@ -556,6 +561,27 @@ type VerticalSliceCouplingRow = {
   splitRejectionRationale: string;
 };
 
+type PlatformSeamContractRow = {
+  taskId: string;
+  seamKind: string;
+  compatibilityMode: string;
+  approvedAuthoritySource: string;
+  seamOwnerLocation: string;
+  seamChangeScope: string;
+  exactWriteEnvelope: string;
+  whyNotFeatureLocal: string;
+  currentFutureUnsupportedConsumers: string;
+  compatibilityContract: string;
+  representativeConsumerProof: string;
+  runtimeRestartImpact: string;
+  rolloutBackoutPosture: string;
+  artifactMaterializationImpact: string;
+  generatedApplyCheckCommand: string;
+  architectureStandardsBoundary: string;
+  splitBlockedFollowUp: string;
+  proofCommands: string;
+};
+
 type DesignSystemSeamContractRow = {
   taskId: string;
   seamPosture: string;
@@ -958,6 +984,7 @@ export function validateTaskBreakdownContent(
   const frontendPermissionRenderingEvidence = parseFrontendPermissionRenderingEvidenceRows(taskContent);
   const frontendRuntimeDataMockHonesty = parseFrontendRuntimeDataMockHonestyRows(taskContent);
   const verticalSliceCouplings = parseVerticalSliceCouplingRows(taskContent);
+  const platformSeamContracts = parsePlatformSeamContractRows(taskContent);
   const backendImplementationApproaches = parseBackendImplementationApproachRows(taskContent);
   const migrationPersistenceApproaches = parseMigrationPersistenceApproachRows(taskContent);
   const tightWriteEnvelopes = parseTightWriteEnvelopeRows(taskContent);
@@ -1037,6 +1064,7 @@ export function validateTaskBreakdownContent(
   const frontendPermissionRenderingEvidenceByTask = groupBy(frontendPermissionRenderingEvidence, (row) => row.taskId);
   const frontendRuntimeDataMockHonestyByTask = groupBy(frontendRuntimeDataMockHonesty, (row) => row.taskId);
   const verticalSliceCouplingsByTask = groupBy(verticalSliceCouplings, (row) => row.taskId);
+  const platformSeamContractsByTask = groupBy(platformSeamContracts, (row) => row.taskId);
   const backendImplementationApproachesByTask = groupBy(backendImplementationApproaches, (row) => row.taskId);
   const migrationPersistenceApproachesByTask = groupBy(migrationPersistenceApproaches, (row) => row.taskId);
   const tightWriteEnvelopesByTask = groupBy(tightWriteEnvelopes, (row) => row.taskId);
@@ -1115,6 +1143,7 @@ export function validateTaskBreakdownContent(
     validatePermissionMappingContract(task, permissionMappingContractsByTask.get(task.taskId) ?? [], errors);
     validateApiContract(task, apiContractsByTask.get(task.taskId) ?? [], errors);
     validateDataDictionaryContract(task, dataDictionaryContractsByTask.get(task.taskId) ?? [], errors);
+    validatePlatformSeamContract(task, platformSeamContractsByTask.get(task.taskId) ?? [], errors);
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
     validateWriteSetClassification(task, writeSetClassificationsByTask.get(task.taskId) ?? [], errors);
     validateForbiddenWork(task, forbiddenWorkByTask.get(task.taskId) ?? [], errors);
@@ -1142,6 +1171,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Frontend Permission Rendering Evidence", frontendPermissionRenderingEvidence.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Frontend Runtime Data And Mock Honesty", frontendRuntimeDataMockHonesty.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Vertical Slice Coupling", verticalSliceCouplings.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Platform Seam Contract", platformSeamContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Backend Implementation Approach", backendImplementationApproaches.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Migration / Persistence Approach", migrationPersistenceApproaches.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Tight Allowed Write Envelope", tightWriteEnvelopes.map((row) => row.taskId), taskIds, errors);
@@ -3172,6 +3202,280 @@ function validateDataDictionaryContract(
   }
 }
 
+function validatePlatformSeamContract(
+  task: TaskRow,
+  rows: PlatformSeamContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DEV:platform-seam") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has Platform Seam Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} has no Platform Seam Contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateAllowedValue(task.taskId, "Seam Kind", row.seamKind, allowedPlatformSeamKinds, errors);
+    validateAllowedValue(task.taskId, "Compatibility Mode", row.compatibilityMode, allowedPlatformCompatibilityModes, errors);
+    validateRequiredField(task.taskId, "Approved Authority Source", row.approvedAuthoritySource, errors);
+    validateRequiredField(task.taskId, "Seam Owner / Location", row.seamOwnerLocation, errors);
+    validateRequiredField(task.taskId, "Seam Change Scope", row.seamChangeScope, errors);
+    validateRequiredField(task.taskId, "Exact Write Envelope", row.exactWriteEnvelope, errors);
+    validateRequiredField(task.taskId, "Why Not Feature-Local", row.whyNotFeatureLocal, errors);
+    validateRequiredField(task.taskId, "Current / Future / Unsupported Consumers", row.currentFutureUnsupportedConsumers, errors);
+    validateRequiredField(task.taskId, "Compatibility Contract", row.compatibilityContract, errors);
+    validateRequiredField(task.taskId, "Representative Consumer Proof", row.representativeConsumerProof, errors);
+    validateRequiredField(task.taskId, "Runtime / Restart Impact", row.runtimeRestartImpact, errors);
+    validateRequiredField(task.taskId, "Rollout / Backout Posture", row.rolloutBackoutPosture, errors);
+    validateRequiredField(task.taskId, "Artifact / Materialization Impact", row.artifactMaterializationImpact, errors);
+    validateRequiredField(task.taskId, "Generated / Apply / Check Command", row.generatedApplyCheckCommand, errors);
+    validateRequiredField(task.taskId, "Architecture / Standards Boundary", row.architectureStandardsBoundary, errors);
+    validateRequiredField(task.taskId, "Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
+    validateRequiredField(task.taskId, "Proof Commands", row.proofCommands, errors);
+
+    const authority = row.approvedAuthoritySource.toLowerCase();
+    if (
+      !authority.includes("technical steering") &&
+      !authority.includes("adr") &&
+      !authority.includes("standard") &&
+      !authority.includes("implementation blueprint") &&
+      !authority.includes("story") &&
+      !authority.includes("architecture") &&
+      !authority.includes("capability")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract needs approved authority from Technical Steering, ADR, standard, implementation blueprint, story classification, architecture docs, or capability rows`);
+    }
+
+    const ownerScope = `${row.seamOwnerLocation} ${row.seamChangeScope}`.replace(/\\/g, "/").toLowerCase();
+    if (
+      !ownerScope.includes("src/routes") &&
+      !ownerScope.includes("src/lib") &&
+      !ownerScope.includes("src/scripts") &&
+      !ownerScope.includes("src/server") &&
+      !ownerScope.includes("middleware") &&
+      !ownerScope.includes("router") &&
+      !ownerScope.includes("scheduler") &&
+      !ownerScope.includes("bootstrap") &&
+      !ownerScope.includes("generated") &&
+      !ownerScope.includes("materialization") &&
+      !ownerScope.includes("platform")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract must name a shared platform, runtime, tooling, generated-artifact, or materialization seam`);
+    }
+
+    const writeEnvelope = row.exactWriteEnvelope.replace(/\\/g, "/").toLowerCase();
+    if (
+      (writeEnvelope === "src/" ||
+        writeEnvelope === "src/*" ||
+        writeEnvelope.includes("broad src") ||
+        writeEnvelope.includes("broad platform") ||
+        writeEnvelope.includes("as needed") ||
+        writeEnvelope.includes("etc.")) &&
+      !writeEnvelope.includes("blocked")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract must use an exact or narrow write envelope, not broad platform/source edits`);
+    }
+    if (
+      !writeEnvelope.includes(".ts") &&
+      !writeEnvelope.includes(".json") &&
+      !writeEnvelope.includes(".md") &&
+      !writeEnvelope.includes("exact") &&
+      !writeEnvelope.includes("narrow") &&
+      !writeEnvelope.includes("not-applicable") &&
+      !writeEnvelope.includes("blocked")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract must name exact files or narrow path patterns`);
+    }
+
+    const featureLocal = row.whyNotFeatureLocal.toLowerCase();
+    if (
+      !featureLocal.includes("not feature-local") &&
+      !featureLocal.includes("shared") &&
+      !featureLocal.includes("multiple") &&
+      !featureLocal.includes("platform") &&
+      !featureLocal.includes("cross-feature")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract must explain why the work is not feature-local`);
+    }
+
+    const consumers = row.currentFutureUnsupportedConsumers.toLowerCase();
+    if (!consumers.includes("current") || !consumers.includes("future") || !consumers.includes("unsupported")) {
+      errors.push(`${task.taskId} Platform Seam Contract must name current, future, and unsupported consumers`);
+    }
+
+    const compatibility = row.compatibilityContract.toLowerCase();
+    if (
+      !compatibility.includes("backwards") &&
+      !compatibility.includes("compatible") &&
+      !compatibility.includes("compatibility") &&
+      !compatibility.includes("blocked")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract must name backwards-compatibility expectations or a compatibility blocker`);
+    }
+
+    const representativeProof = row.representativeConsumerProof.toLowerCase();
+    if (
+      !representativeProof.includes("consumer") &&
+      !representativeProof.includes("route") &&
+      !representativeProof.includes("harness") &&
+      !representativeProof.includes("generated") &&
+      !representativeProof.includes("test") &&
+      !representativeProof.includes("check")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract must name representative consumer proof`);
+    }
+
+    const runtimeImpact = row.runtimeRestartImpact.toLowerCase();
+    if (isRuntimePlatformSeamKind(row.seamKind)) {
+      if (
+        !runtimeImpact.includes("restart") &&
+        !runtimeImpact.includes("reload") &&
+        !runtimeImpact.includes("redeploy") &&
+        !runtimeImpact.includes("not-required") &&
+        !runtimeImpact.includes("not required")
+      ) {
+        errors.push(`${task.taskId} Platform Seam Contract runtime seams must name restart, reload, redeploy, or not-required posture`);
+      }
+    }
+
+    const rollout = row.rolloutBackoutPosture.toLowerCase();
+    if (
+      !rollout.includes("rollout") &&
+      !rollout.includes("backout") &&
+      !rollout.includes("rollback") &&
+      !rollout.includes("revert") &&
+      !rollout.includes("not-applicable")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract must name rollout, rollback, backout, revert, or not-applicable posture`);
+    }
+
+    const materializationCommand = row.generatedApplyCheckCommand.toLowerCase();
+    if (row.seamKind === "generated-artifact-materialization") {
+      if (
+        materializationCommand.includes("not-applicable") ||
+        (!materializationCommand.includes("npm run") &&
+          !materializationCommand.includes("npx ") &&
+          !materializationCommand.includes("node ") &&
+          !materializationCommand.includes("tsx ") &&
+          !materializationCommand.includes("apply") &&
+          !materializationCommand.includes("check") &&
+          !materializationCommand.includes("generate"))
+      ) {
+        errors.push(`${task.taskId} Platform Seam Contract generated/materialized seams must name generator, preview/apply, or check command`);
+      }
+    }
+
+    const boundary = row.architectureStandardsBoundary.toLowerCase();
+    const followUp = row.splitBlockedFollowUp.toLowerCase();
+    const followUpRequiresRouting = !followUp.includes("not-applicable") && !followUp.includes("unchanged");
+    if (row.compatibilityMode === "compatibility-sensitive-blocked") {
+      if (
+        !followUp.includes("blocked") &&
+        !followUp.includes("approval") &&
+        !followUp.includes("compatibility") &&
+        !followUp.includes("gov:architecture-update")
+      ) {
+        errors.push(`${task.taskId} Platform Seam Contract compatibility-sensitive mode must name blocked, approval, compatibility, or GOV:architecture-update follow-up`);
+      }
+    }
+    if (
+      (boundary.includes("architecture changes") ||
+        boundary.includes("authority changes") ||
+        boundary.includes("policy changes") ||
+        boundary.includes("new architecture")) &&
+      !boundary.includes("no authority changes") &&
+      !boundary.includes("no architecture changes") &&
+      !followUp.includes("gov:architecture-update")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract architecture authority changes must route to GOV:architecture-update`);
+    }
+    if (
+      (boundary.includes("standard changes") || boundary.includes("standards changes")) &&
+      !boundary.includes("no standard changes") &&
+      !boundary.includes("no standards changes") &&
+      !followUp.includes("gov:standards-update")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract standards authority changes must route to GOV:standards-update`);
+    }
+    if (
+      followUpRequiresRouting &&
+      (followUp.includes("feature-local") || followUp.includes("feature behavior")) &&
+      !followUp.includes("dev:backend") &&
+      !followUp.includes("dev:frontend") &&
+      !followUp.includes("dev:vertical-slice")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract feature-local behavior must route to DEV:backend, DEV:frontend, or DEV:vertical-slice`);
+    }
+    if (
+      followUpRequiresRouting &&
+      (followUp.includes("api") || followUp.includes("openapi") || followUp.includes("postman")) &&
+      !followUp.includes("doc:api-contract")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract API contract changes must route to DOC:api-contract`);
+    }
+    if (
+      followUpRequiresRouting &&
+      (followUp.includes("permission") || followUp.includes("authz") || followUp.includes("capability key")) &&
+      !followUp.includes("doc:permission-mapping")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract permission mapping changes must route to DOC:permission-mapping`);
+    }
+    if (
+      followUpRequiresRouting &&
+      (followUp.includes("schema") || followUp.includes("migration") || followUp.includes("persistence")) &&
+      !followUp.includes("dev:migration-persistence")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract schema, migration, or persistence changes must route to DEV:migration-persistence`);
+    }
+    if (
+      followUpRequiresRouting &&
+      (followUp.includes("evidence sweep") || followUp.includes("artifact sweep")) &&
+      !followUp.includes("evidence:qa-evidence")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract evidence or artifact sweeps must route to EVIDENCE:qa-evidence`);
+    }
+
+    const proofCommands = row.proofCommands.toLowerCase();
+    if (
+      !proofCommands.includes("npm run") &&
+      !proofCommands.includes("npx ") &&
+      !proofCommands.includes("vitest") &&
+      !proofCommands.includes("playwright") &&
+      !proofCommands.includes("node ") &&
+      !proofCommands.includes("tsx ")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract must name executable focused proof commands`);
+    }
+    if (
+      (proofCommands.trim() === "npm test" ||
+        proofCommands.trim() === "npm run test" ||
+        proofCommands.trim() === "npm run typecheck") &&
+      !proofCommands.includes("tests/") &&
+      !proofCommands.includes("feature-dependencies") &&
+      !proofCommands.includes("route") &&
+      !proofCommands.includes("consumer")
+    ) {
+      errors.push(`${task.taskId} Platform Seam Contract proof commands must include focused seam or representative consumer proof, not only broad suite commands`);
+    }
+  }
+}
+
+function isRuntimePlatformSeamKind(seamKind: string): boolean {
+  return (
+    seamKind === "router-route-mounting" ||
+    seamKind === "middleware-auth-request-context" ||
+    seamKind === "scheduler-job-runtime" ||
+    seamKind === "bootstrap-runtime" ||
+    seamKind === "shared-runtime-helper" ||
+    seamKind === "cross-feature-seam-infrastructure"
+  );
+}
+
 function validateCodePlacement(
   task: TaskRow,
   rows: CodePlacementRow[],
@@ -5076,6 +5380,29 @@ function parseVerticalSliceCouplingRows(content: string): VerticalSliceCouplingR
     browserProofStory: cells[5] ?? "",
     inseparableProofRationale: cells[6] ?? "",
     splitRejectionRationale: cells[7] ?? "",
+  }));
+}
+
+function parsePlatformSeamContractRows(content: string): PlatformSeamContractRow[] {
+  return parseTableRows(section(content, "## Platform Seam Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    seamKind: cells[1] ?? "",
+    compatibilityMode: cells[2] ?? "",
+    approvedAuthoritySource: cells[3] ?? "",
+    seamOwnerLocation: cells[4] ?? "",
+    seamChangeScope: cells[5] ?? "",
+    exactWriteEnvelope: cells[6] ?? "",
+    whyNotFeatureLocal: cells[7] ?? "",
+    currentFutureUnsupportedConsumers: cells[8] ?? "",
+    compatibilityContract: cells[9] ?? "",
+    representativeConsumerProof: cells[10] ?? "",
+    runtimeRestartImpact: cells[11] ?? "",
+    rolloutBackoutPosture: cells[12] ?? "",
+    artifactMaterializationImpact: cells[13] ?? "",
+    generatedApplyCheckCommand: cells[14] ?? "",
+    architectureStandardsBoundary: cells[15] ?? "",
+    splitBlockedFollowUp: cells[16] ?? "",
+    proofCommands: cells[17] ?? "",
   }));
 }
 

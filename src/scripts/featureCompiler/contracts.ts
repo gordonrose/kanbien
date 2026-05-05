@@ -116,6 +116,24 @@ export const layer4ProofSpecificityStatuses = [
   "blocked",
 ] as const;
 
+export const layer4PlatformSeamKinds = [
+  "router-route-mounting",
+  "middleware-auth-request-context",
+  "scheduler-job-runtime",
+  "bootstrap-runtime",
+  "generated-artifact-materialization",
+  "tooling-harness",
+  "shared-runtime-helper",
+  "cross-feature-seam-infrastructure",
+] as const;
+
+export const layer4PlatformCompatibilityModes = [
+  "no-behavior-change",
+  "additive-compatible",
+  "dual-path-rollout",
+  "compatibility-sensitive-blocked",
+] as const;
+
 export const layer4FrontendDesignSystemSubStandards = [
   "not-applicable",
   "fixture-data-contract",
@@ -299,13 +317,19 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "DEV:platform-seam": [
     "platform-source-authority",
+    "platform-seam-kind",
     "platform-seam-owner",
     "platform-not-feature-local",
+    "platform-exact-write-envelope",
     "platform-consumer-inventory",
+    "platform-compatibility-mode",
     "platform-compatibility-contract",
+    "platform-representative-consumer-proof",
+    "platform-runtime-restart-impact",
     "platform-rollout-backout",
     "platform-artifact-materialization",
     "platform-architecture-boundary",
+    "platform-split-routing",
     "platform-proof-commands",
   ],
   "DEV:migration-persistence": [

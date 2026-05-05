@@ -371,6 +371,38 @@ delivered and proven separately.
 | Task ID | Journey Behavior | Backend Seam | Frontend Seam | API / Data Contract | Browser Proof Story | Why Backend And Frontend Proof Are Inseparable | Split Rejection Rationale |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Platform Seam Contract
+
+Required for `DEV:platform-seam` tasks. Leave empty when no
+`DEV:platform-seam` task is queued.
+
+Allowed seam kinds:
+
+- `router-route-mounting`
+- `middleware-auth-request-context`
+- `scheduler-job-runtime`
+- `bootstrap-runtime`
+- `generated-artifact-materialization`
+- `tooling-harness`
+- `shared-runtime-helper`
+- `cross-feature-seam-infrastructure`
+
+Allowed compatibility modes:
+
+- `no-behavior-change`
+- `additive-compatible`
+- `dual-path-rollout`
+- `compatibility-sensitive-blocked`
+
+Use `DEV:platform-seam` only for implementation changes to shared platform,
+runtime, tooling, generated-artifact, materialization, bootstrap, middleware,
+router, scheduler, or harness seams. Feature-local behavior, API contract
+truth, permission mapping, migrations, architecture authority, standards
+authority, and evidence sweeps must split to their owning task types.
+
+| Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Backend Implementation Approach
 
 Queued `DEV:backend` tasks must translate repo-wide architecture law into the
