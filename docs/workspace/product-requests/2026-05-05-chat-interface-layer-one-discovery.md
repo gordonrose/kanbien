@@ -48,6 +48,8 @@
   `docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md`
 - Capability Matrix:
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
+- Layer 1 Runtime Contract:
+  `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md`
 - Work runs / Loop Runs:
   none yet
 - Pull requests, config changes, or extension changes:
