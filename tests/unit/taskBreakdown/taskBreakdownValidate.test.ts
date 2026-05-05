@@ -256,6 +256,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | Task ID | Journey Behavior | Backend Seam | Frontend Seam | API / Data Contract | Browser Proof Story | Why Backend And Frontend Proof Are Inseparable | Split Rejection Rationale |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Vertical Slice Split Pressure
+
+| Task ID | Concern | Split Decision | Coupling / Not-Applicable Rationale | Owning Task If Split |
+| --- | --- | --- | --- | --- |
+
 ## Platform Seam Contract
 
 | Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands |
@@ -522,6 +527,16 @@ function frontendTaskPacketWith(decisionRow: string): string {
 const verticalSliceCouplingRow =
   "| T-S001-01 | journey behavior campaign publish workflow | DEV:backend API service seam src/features/campaigns/contract/updateCampaign.ts | DEV:frontend route render seam src/frontend/rootAdminShell/assets/modules/marketing/campaignManagement/page.mjs | API contract docs/api-contracts/root-admin-campaigns.md projection payload | browser journey scenario campaign publish workflow shows saved DEV:backend state in route | inseparable because the same journey proof must confirm DEV:backend mutation and DEV:frontend render consume the same response payload | split rejection rationale: DEV:backend and DEV:frontend proof are inseparable for this one journey behavior; separate tasks would not prove the cross-boundary payload together |";
 
+const verticalSliceSplitPressureRows =
+  "| T-S001-01 | backend-behavior | inseparable-in-slice | inseparable backend-to-frontend response payload must be proven in the same browser journey | not-applicable: kept in vertical slice |\n" +
+  "| T-S001-01 | frontend-behavior | inseparable-in-slice | inseparable frontend render must consume the same backend response payload in browser proof | not-applicable: kept in vertical slice |\n" +
+  "| T-S001-01 | api-data-contract | approved-preexisting | API contract projection payload is approved before the slice and consumed by both seams. | not-applicable: no split needed |\n" +
+  "| T-S001-01 | design-system-seam | approved-preexisting | Signed-off design-system seam already exists and is consumed without local reconstruction. | not-applicable: no split needed |\n" +
+  "| T-S001-01 | permission-truth | approved-preexisting | Permission truth already exists and the slice carries allowed and denied rendering proof. | not-applicable: no split needed |\n" +
+  "| T-S001-01 | migration-persistence | not-applicable | not-applicable: no schema, index, or data migration in this vertical slice. | not-applicable: no split needed |\n" +
+  "| T-S001-01 | executable-proof | inseparable-in-slice | inseparable browser regression proof covers the backend response and frontend render together. | not-applicable: kept in vertical slice |\n" +
+  "| T-S001-01 | qa-evidence | approved-preexisting | Runtime evidence is part of implementation proof and not evidence-only screenshot capture. | not-applicable: no split needed |";
+
 function verticalSliceStoryPacketWith(frontendRow: string): string {
   return frontendStoryPacketWith(frontendRow)
     .replace(
@@ -554,6 +569,10 @@ function verticalSliceTaskPacketWith(couplingRow: string): string {
     .replace(
       "## Vertical Slice Coupling\n\n| Task ID | Journey Behavior | Backend Seam | Frontend Seam | API / Data Contract | Browser Proof Story | Why Backend And Frontend Proof Are Inseparable | Split Rejection Rationale |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
       `## Vertical Slice Coupling\n\n| Task ID | Journey Behavior | Backend Seam | Frontend Seam | API / Data Contract | Browser Proof Story | Why Backend And Frontend Proof Are Inseparable | Split Rejection Rationale |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n${couplingRow ? `${couplingRow}\n` : ""}\n`,
+    )
+    .replace(
+      "## Vertical Slice Split Pressure\n\n| Task ID | Concern | Split Decision | Coupling / Not-Applicable Rationale | Owning Task If Split |\n| --- | --- | --- | --- | --- |\n\n",
+      `## Vertical Slice Split Pressure\n\n| Task ID | Concern | Split Decision | Coupling / Not-Applicable Rationale | Owning Task If Split |\n| --- | --- | --- | --- | --- |\n${verticalSliceSplitPressureRows}\n\n`,
     );
 }
 
@@ -2095,6 +2114,15 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 queued DEV:vertical-slice task has no vertical slice coupling row");
   });
 
+  it("blocks queued DEV:vertical-slice tasks without split-pressure rows", () => {
+    const packet = verticalSliceTaskPacketWith(verticalSliceCouplingRow).replace(verticalSliceSplitPressureRows, "");
+
+    const result = validateTaskBreakdownContent(packet, verticalSliceStoryPacketWith(frontendSourceRow));
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 queued DEV:vertical-slice task has no split-pressure rows");
+  });
+
   it("blocks DEV:vertical-slice coupling without inseparable DEV:backend/DEV:frontend proof rationale", () => {
     const packet = verticalSliceTaskPacketWith(
       verticalSliceCouplingRow.replace(
@@ -2144,6 +2172,18 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 vertical slice cannot be used as a shortcut around separable task types");
+  });
+
+  it("blocks DEV:vertical-slice tasks with split-before-delivery pressure", () => {
+    const packet = verticalSliceTaskPacketWith(verticalSliceCouplingRow).replace(
+      "| T-S001-01 | design-system-seam | approved-preexisting | Signed-off design-system seam already exists and is consumed without local reconstruction. | not-applicable: no split needed |",
+      "| T-S001-01 | design-system-seam | split-before-delivery | Design-system seam still needs GOV:design-system work. | GOV:design-system task required first |",
+    );
+
+    const result = validateTaskBreakdownContent(packet, verticalSliceStoryPacketWith(frontendSourceRow));
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 vertical slice split pressure design-system-seam is split-before-delivery and blocks delivery");
   });
 
   it("blocks queued TEST:test-only tasks without a coverage contract row", () => {

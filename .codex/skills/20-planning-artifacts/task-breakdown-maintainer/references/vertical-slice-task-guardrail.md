@@ -41,6 +41,12 @@ Use for task type: `DEV:vertical-slice`
   proof, and explicit split rejection rationale that names the backend-to-frontend
   seam risk: payload/projection compatibility, persistence-to-render behavior,
   permission rendering, browser workflow state, or equivalent runtime coupling
+- queued vertical slices must also fill Vertical Slice Split Pressure rows for
+  backend behavior, frontend behavior, API/data contract, design-system seam,
+  permission truth, migration/persistence, executable proof, and QA evidence.
+  Any concern marked `blocked` or `split-before-delivery` blocks the vertical
+  slice from entering Layer 5; if a concern is evidence-only, route it to
+  `EVIDENCE:qa-evidence` instead of keeping it in `DEV:vertical-slice`.
 - split DEV:backend persistence/API work from DEV:frontend render or interaction work
   when they can be proven independently
 - name one journey proof story and the exact API/data/browser evidence needed
@@ -79,6 +85,7 @@ Use for task type: `DEV:vertical-slice`
 - `vertical-frontend-seam`
 - `vertical-api-data-shape`
 - `vertical-browser-workflow`
+- `vertical-split-pressure`
 - `vertical-security-evidence`
 - `vertical-permission-rendering`
 - `vertical-runtime-data-mock-honesty`

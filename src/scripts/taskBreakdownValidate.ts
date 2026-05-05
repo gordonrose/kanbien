@@ -70,6 +70,7 @@ const requiredHeadings = [
   "## Frontend Permission Rendering Evidence",
   "## Frontend Runtime Data And Mock Honesty",
   "## Vertical Slice Coupling",
+  "## Vertical Slice Split Pressure",
   "## Platform Seam Contract",
   "## Backend Implementation Approach",
   "## Migration / Persistence Approach",
@@ -173,6 +174,24 @@ const allowedFrontendChangeClasses = new Set([
   "accessibility-semantics",
   "visual-rendering",
   "evidence-sweep-route-away",
+]);
+const allowedVerticalSliceSplitConcerns = new Set([
+  "backend-behavior",
+  "frontend-behavior",
+  "api-data-contract",
+  "design-system-seam",
+  "permission-truth",
+  "migration-persistence",
+  "executable-proof",
+  "qa-evidence",
+]);
+const requiredVerticalSliceSplitConcerns = [...allowedVerticalSliceSplitConcerns];
+const allowedVerticalSliceSplitDecisions = new Set([
+  "inseparable-in-slice",
+  "approved-preexisting",
+  "split-before-delivery",
+  "not-applicable",
+  "blocked",
 ]);
 const allowedRefactorTriggers = new Set([
   "over-broad-write-set",
@@ -582,6 +601,14 @@ type VerticalSliceCouplingRow = {
   browserProofStory: string;
   inseparableProofRationale: string;
   splitRejectionRationale: string;
+};
+
+type VerticalSliceSplitPressureRow = {
+  taskId: string;
+  concern: string;
+  splitDecision: string;
+  rationale: string;
+  owningTaskIfSplit: string;
 };
 
 type PlatformSeamContractRow = {
@@ -1020,6 +1047,7 @@ export function validateTaskBreakdownContent(
   const frontendPermissionRenderingEvidence = parseFrontendPermissionRenderingEvidenceRows(taskContent);
   const frontendRuntimeDataMockHonesty = parseFrontendRuntimeDataMockHonestyRows(taskContent);
   const verticalSliceCouplings = parseVerticalSliceCouplingRows(taskContent);
+  const verticalSliceSplitPressures = parseVerticalSliceSplitPressureRows(taskContent);
   const platformSeamContracts = parsePlatformSeamContractRows(taskContent);
   const backendImplementationApproaches = parseBackendImplementationApproachRows(taskContent);
   const migrationPersistenceApproaches = parseMigrationPersistenceApproachRows(taskContent);
@@ -1101,6 +1129,7 @@ export function validateTaskBreakdownContent(
   const frontendPermissionRenderingEvidenceByTask = groupBy(frontendPermissionRenderingEvidence, (row) => row.taskId);
   const frontendRuntimeDataMockHonestyByTask = groupBy(frontendRuntimeDataMockHonesty, (row) => row.taskId);
   const verticalSliceCouplingsByTask = groupBy(verticalSliceCouplings, (row) => row.taskId);
+  const verticalSliceSplitPressuresByTask = groupBy(verticalSliceSplitPressures, (row) => row.taskId);
   const platformSeamContractsByTask = groupBy(platformSeamContracts, (row) => row.taskId);
   const backendImplementationApproachesByTask = groupBy(backendImplementationApproaches, (row) => row.taskId);
   const migrationPersistenceApproachesByTask = groupBy(migrationPersistenceApproaches, (row) => row.taskId);
@@ -1159,6 +1188,7 @@ export function validateTaskBreakdownContent(
       frontendRuntimeDataMockHonestyByTask.get(task.taskId) ?? [],
       proofsByTask.get(task.taskId) ?? [],
       verticalSliceCouplingsByTask.get(task.taskId) ?? [],
+      verticalSliceSplitPressuresByTask.get(task.taskId) ?? [],
       backendImplementationApproachesByTask.get(task.taskId) ?? [],
       migrationPersistenceApproachesByTask.get(task.taskId) ?? [],
       tightWriteEnvelopesByTask.get(task.taskId) ?? [],
@@ -1210,6 +1240,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Frontend Permission Rendering Evidence", frontendPermissionRenderingEvidence.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Frontend Runtime Data And Mock Honesty", frontendRuntimeDataMockHonesty.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Vertical Slice Coupling", verticalSliceCouplings.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Vertical Slice Split Pressure", verticalSliceSplitPressures.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Platform Seam Contract", platformSeamContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Backend Implementation Approach", backendImplementationApproaches.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Migration / Persistence Approach", migrationPersistenceApproaches.map((row) => row.taskId), taskIds, errors);
@@ -1297,6 +1328,7 @@ function validateDeepDeliveryReadiness(
   runtimeDataRows: FrontendRuntimeDataMockHonestyRow[],
   proofRowsForRuntime: ProofCommandRow[],
   verticalSliceCouplingRows: VerticalSliceCouplingRow[],
+  verticalSliceSplitPressureRows: VerticalSliceSplitPressureRow[],
   backendApproachRows: BackendImplementationApproachRow[],
   migrationApproachRows: MigrationPersistenceApproachRow[],
   envelopeRows: TightWriteEnvelopeRow[],
@@ -1337,6 +1369,7 @@ function validateDeepDeliveryReadiness(
   validateFrontendPermissionRenderingEvidence(task, frontendArchitectureRows, securityEvidenceRows, permissionRenderingRows, errors);
   validateFrontendRuntimeDataMockHonesty(task, frontendArchitectureRows, runtimeDataRows, proofRowsForRuntime, errors);
   validateVerticalSliceCoupling(task, verticalSliceCouplingRows, errors);
+  validateVerticalSliceSplitPressure(task, verticalSliceSplitPressureRows, errors);
   validateBackendImplementationApproach(task, backendApproachRows, errors);
   validateMigrationPersistenceApproach(task, migrationApproachRows, errors);
   validateTightWriteEnvelope(task, envelopeRows, errors);
@@ -2219,6 +2252,63 @@ function validateVerticalSliceCoupling(
 
     if (mentionsShortcutScope(task.scope, row.splitRejectionRationale)) {
       errors.push(`${task.taskId} vertical slice cannot be used as a shortcut around separable task types`);
+    }
+  }
+}
+
+function validateVerticalSliceSplitPressure(
+  task: TaskRow,
+  rows: VerticalSliceSplitPressureRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DEV:vertical-slice") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has Vertical Slice Split Pressure rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued DEV:vertical-slice task has no split-pressure rows`);
+    return;
+  }
+
+  const concerns = new Set(rows.map((row) => row.concern));
+  for (const concern of requiredVerticalSliceSplitConcerns) {
+    if (!concerns.has(concern)) {
+      errors.push(`${task.taskId} vertical slice split pressure is missing concern ${concern}`);
+    }
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Vertical Slice Split Concern", row.concern, errors);
+    validateRequiredField(task.taskId, "Vertical Slice Split Decision", row.splitDecision, errors);
+    validateRequiredField(task.taskId, "Vertical Slice Coupling / Not-Applicable Rationale", row.rationale, errors);
+    validateRequiredField(task.taskId, "Vertical Slice Owning Task If Split", row.owningTaskIfSplit, errors);
+    validateAllowedValue(task.taskId, "Vertical Slice Split Concern", row.concern, allowedVerticalSliceSplitConcerns, errors);
+    validateAllowedValue(task.taskId, "Vertical Slice Split Decision", row.splitDecision, allowedVerticalSliceSplitDecisions, errors);
+
+    if (row.splitDecision === "blocked" || row.splitDecision === "split-before-delivery") {
+      errors.push(`${task.taskId} vertical slice split pressure ${row.concern} is ${row.splitDecision} and blocks delivery`);
+    }
+
+    if (
+      ["backend-behavior", "frontend-behavior", "api-data-contract"].includes(row.concern) &&
+      !["inseparable-in-slice", "approved-preexisting"].includes(row.splitDecision)
+    ) {
+      errors.push(`${task.taskId} vertical slice ${row.concern} must be inseparable-in-slice or approved-preexisting`);
+    }
+
+    if (row.splitDecision === "not-applicable" && !mentionsNotApplicableRationale(row.rationale, row.owningTaskIfSplit)) {
+      errors.push(`${task.taskId} vertical slice split pressure ${row.concern} needs concrete not-applicable rationale`);
+    }
+
+    if (row.splitDecision === "inseparable-in-slice" && !mentionsVerticalSliceCouplingRationale(row.rationale)) {
+      errors.push(`${task.taskId} vertical slice split pressure ${row.concern} must explain the backend-to-frontend coupling`);
+    }
+
+    if (row.concern === "qa-evidence" && row.splitDecision === "inseparable-in-slice" && mentionsEvidenceOnlyFrontendWork(row.rationale)) {
+      errors.push(`${task.taskId} evidence-only vertical slice work must route to EVIDENCE:qa-evidence`);
     }
   }
 }
@@ -4795,6 +4885,10 @@ function mentionsBackendToFrontendSeamRisk(...values: string[]): boolean {
   return hasBackendFrontend && hasBrowserRuntime && hasSeamRisk;
 }
 
+function mentionsVerticalSliceCouplingRationale(value: string): boolean {
+  return mentionsInseparable(value) || mentionsBackendToFrontendSeamRisk(value);
+}
+
 function mentionsShortcutScope(...values: string[]): boolean {
   const normalized = values.join(" ").toLowerCase();
   return (
@@ -5908,6 +6002,16 @@ function parseVerticalSliceCouplingRows(content: string): VerticalSliceCouplingR
     browserProofStory: cells[5] ?? "",
     inseparableProofRationale: cells[6] ?? "",
     splitRejectionRationale: cells[7] ?? "",
+  }));
+}
+
+function parseVerticalSliceSplitPressureRows(content: string): VerticalSliceSplitPressureRow[] {
+  return parseTableRows(section(content, "## Vertical Slice Split Pressure")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    concern: cells[1] ?? "",
+    splitDecision: cells[2] ?? "",
+    rationale: cells[3] ?? "",
+    owningTaskIfSplit: cells[4] ?? "",
   }));
 }
 

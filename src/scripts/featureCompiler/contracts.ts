@@ -255,6 +255,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "vertical-frontend-seam",
     "vertical-api-data-shape",
     "vertical-browser-workflow",
+    "vertical-split-pressure",
     "vertical-security-evidence",
     "vertical-permission-rendering",
     "vertical-runtime-data-mock-honesty",

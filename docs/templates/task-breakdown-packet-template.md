@@ -418,6 +418,38 @@ delivered and proven separately.
 | Task ID | Journey Behavior | Backend Seam | Frontend Seam | API / Data Contract | Browser Proof Story | Why Backend And Frontend Proof Are Inseparable | Split Rejection Rationale |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Vertical Slice Split Pressure
+
+Required for queued `DEV:vertical-slice` tasks. Leave empty when no
+`DEV:vertical-slice` task is queued.
+
+Allowed concerns:
+
+- `backend-behavior`
+- `frontend-behavior`
+- `api-data-contract`
+- `design-system-seam`
+- `permission-truth`
+- `migration-persistence`
+- `executable-proof`
+- `qa-evidence`
+
+Allowed split decisions:
+
+- `inseparable-in-slice`
+- `approved-preexisting`
+- `split-before-delivery`
+- `not-applicable`
+- `blocked`
+
+Queued vertical slices must not use `blocked` or `split-before-delivery`.
+Backend behavior, frontend behavior, and API/data contract pressure must be
+recorded as either `inseparable-in-slice` or `approved-preexisting`, with the
+coupling rationale explaining why separate proof would be dishonest.
+
+| Task ID | Concern | Split Decision | Coupling / Not-Applicable Rationale | Owning Task If Split |
+| --- | --- | --- | --- | --- |
+
 ## Platform Seam Contract
 
 Required for `DEV:platform-seam` tasks. Leave empty when no
