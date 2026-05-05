@@ -351,11 +351,14 @@ export const layer4RequiredCheckIdsByTaskType = {
   "DECISION:refactor-first": [
     "refactor-trigger",
     "refactor-type",
+    "refactor-target-inventory",
+    "refactor-detection-hints",
     "refactor-existing-behavior",
     "refactor-affected-consumers",
     "refactor-compatibility-proof",
     "refactor-downstream-unblocker",
     "refactor-no-product-change",
+    "refactor-human-review-boundary",
     "refactor-routing-check",
   ],
   "DECISION:architecture-foundation": [

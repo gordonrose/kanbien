@@ -666,8 +666,13 @@ Allowed routing check values:
 - `blocked-route-to-DOC:permission-mapping`
 - `blocked-route-to-GOV:design-system`
 
-| Task ID | Refactor Trigger | Refactor Type | Unchanged Behavior | Affected Consumers | Downstream Task Unblocked | Compatibility Proof | Routing Check | Forbidden Behavior / Authority Change |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+Record concrete target inventory and detection hints so Delivery can inspect
+the exact existing code shape before editing. Keep human review limited to
+whether the refactor pressure is real, behavior-preserving, and correctly
+routed.
+
+| Task ID | Refactor Trigger | Refactor Type | Refactor Target Inventory | Detection Hints | Unchanged Behavior | Affected Consumers | Downstream Task Unblocked | Compatibility Proof | Routing Check | Human Review Boundary | Forbidden Behavior / Authority Change |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Architecture Foundation Contract
 

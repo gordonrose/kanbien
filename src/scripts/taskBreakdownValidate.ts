@@ -755,11 +755,14 @@ type RefactorFirstContractRow = {
   taskId: string;
   trigger: string;
   refactorType: string;
+  refactorTargetInventory: string;
+  detectionHints: string;
   unchangedBehavior: string;
   affectedConsumers: string;
   downstreamTaskUnblocked: string;
   compatibilityProof: string;
   routingCheck: string;
+  humanReviewBoundary: string;
   forbiddenBehaviorOrAuthorityChange: string;
 };
 
@@ -3322,11 +3325,23 @@ function validateRefactorFirstContract(
     validateAllowedValue(task.taskId, "Refactor Trigger", row.trigger, allowedRefactorTriggers, errors);
     validateAllowedValue(task.taskId, "Refactor Type", row.refactorType, allowedRefactorTypes, errors);
     validateAllowedValue(task.taskId, "Routing Check", row.routingCheck, allowedRefactorRoutingChecks, errors);
+    validateRequiredField(task.taskId, "Refactor Target Inventory", row.refactorTargetInventory, errors);
+    validateRequiredField(task.taskId, "Detection Hints", row.detectionHints, errors);
     validateRequiredField(task.taskId, "Unchanged Behavior", row.unchangedBehavior, errors);
     validateRequiredField(task.taskId, "Affected Consumers", row.affectedConsumers, errors);
     validateRequiredField(task.taskId, "Downstream Task Unblocked", row.downstreamTaskUnblocked, errors);
     validateRequiredField(task.taskId, "Compatibility Proof", row.compatibilityProof, errors);
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
     validateRequiredField(task.taskId, "Forbidden Behavior / Authority Change", row.forbiddenBehaviorOrAuthorityChange, errors);
+
+    if (!mentionsScriptableInventory(row.refactorTargetInventory)) {
+      errors.push(`${task.taskId} Refactor-First Contract must name concrete refactor target inventory paths, artifacts, or command output`);
+    }
+
+    const detectionHints = row.detectionHints.toLowerCase();
+    if (!mentionsScriptCommandOrRationale(detectionHints) && !detectionHints.includes("rg ") && !detectionHints.includes("git diff")) {
+      errors.push(`${task.taskId} Refactor-First Contract detection hints must name a command or explicit manual-review rationale`);
+    }
 
     if (!mentionsCompatibilityEvidence(row.compatibilityProof)) {
       errors.push(`${task.taskId} Refactor-First Contract needs existing-consumer compatibility proof`);
@@ -7057,12 +7072,15 @@ function parseRefactorFirstContractRows(content: string): RefactorFirstContractR
     taskId: cells[0] ?? "",
     trigger: cells[1] ?? "",
     refactorType: cells[2] ?? "",
-    unchangedBehavior: cells[3] ?? "",
-    affectedConsumers: cells[4] ?? "",
-    downstreamTaskUnblocked: cells[5] ?? "",
-    compatibilityProof: cells[6] ?? "",
-    routingCheck: cells[7] ?? "",
-    forbiddenBehaviorOrAuthorityChange: cells[8] ?? "",
+    refactorTargetInventory: cells[3] ?? "",
+    detectionHints: cells[4] ?? "",
+    unchangedBehavior: cells[5] ?? "",
+    affectedConsumers: cells[6] ?? "",
+    downstreamTaskUnblocked: cells[7] ?? "",
+    compatibilityProof: cells[8] ?? "",
+    routingCheck: cells[9] ?? "",
+    humanReviewBoundary: cells[10] ?? "",
+    forbiddenBehaviorOrAuthorityChange: cells[11] ?? "",
   }));
 }
 

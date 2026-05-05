@@ -72,11 +72,15 @@ design-system seams, block the refactor task and route to the owning type:
 
 - approved trigger
 - approved refactor type
+- concrete refactor target inventory
+- detection hints or command output showing the current code-shape pressure
 - existing behavior protected
 - affected consumers
 - compatibility proof commands
 - downstream task dependency
 - routing check showing the task remains behavior-preserving refactor work
+- human-review boundary for deciding whether the pressure is real and
+  behavior-preserving
 - rollback or staged-delivery note when relevant
 
 ## Deep Delivery Standard
@@ -87,14 +91,21 @@ design-system seams, block the refactor task and route to the owning type:
   architecture invention
 - name the downstream task unblocked and the exact compatibility proof for
   existing consumers
+- name concrete source paths, files, globs, or command output for the existing
+  code shape being refactored
+- include detection hints for duplicated behavior, wrong owner/layer, broad
+  write-set pressure, test-seam pressure, or other approved trigger evidence
 
 ## Required Check IDs
 
 - `refactor-trigger`
 - `refactor-type`
+- `refactor-target-inventory`
+- `refactor-detection-hints`
 - `refactor-existing-behavior`
 - `refactor-affected-consumers`
 - `refactor-compatibility-proof`
 - `refactor-downstream-unblocker`
 - `refactor-no-product-change`
+- `refactor-human-review-boundary`
 - `refactor-routing-check`
