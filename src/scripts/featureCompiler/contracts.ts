@@ -116,6 +116,14 @@ export const layer4ApiContractClasses = [
   "generated-docs-sync",
 ] as const;
 
+export const layer4PermissionMappingClasses = [
+  "runtime-enforced-row",
+  "documentation-only-row",
+  "grant-source-row",
+  "future-authz-model-row",
+  "ui-eligibility-review",
+] as const;
+
 export const layer4TaskGrainClassifications = [
   "single-behavior",
   "single-decision",
@@ -451,12 +459,14 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "DOC:permission-mapping": [
     "permission-authz-model-source",
+    "permission-mapping-class",
     "permission-capability-rows",
     "permission-boundary",
     "permission-grant-source-ui",
     "permission-mapping-row-posture",
     "permission-denial-audit",
     "permission-allow-deny",
+    "permission-evidence-inventory",
     "permission-grants-migration",
     "permission-split-routing",
     "permission-authz-proof",

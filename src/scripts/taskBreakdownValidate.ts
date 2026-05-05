@@ -20,6 +20,7 @@ import {
   layer4ImplementationTaskTypes,
   layer4MigrationPersistenceChangeTypes,
   layer4PlacementDecisions,
+  layer4PermissionMappingClasses,
   layer4PlatformCompatibilityModes,
   layer4PlatformSeamKinds,
   layer4ProceedIfTriggerHitValues,
@@ -348,6 +349,7 @@ const allowedPermissionMappingRowPostures = new Set([
   "architecture-target",
   "blocked",
 ]);
+const allowedPermissionMappingClasses: Set<string> = new Set(layer4PermissionMappingClasses);
 const allowedApiCompatibilityPostures = new Set([
   "no-wire-change",
   "additive",
@@ -844,6 +846,7 @@ type StandardsUpdateContractRow = {
 
 type PermissionMappingContractRow = {
   taskId: string;
+  permissionMappingClass: string;
   approvedAuthzSource: string;
   capabilityRouteSurface: string;
   authorityWorldActorBoundary: string;
@@ -853,8 +856,10 @@ type PermissionMappingContractRow = {
   allowDenyExpectations: string;
   uiEligibility: string;
   denialAuditProofExpectation: string;
+  evidenceMappingInventory: string;
   migrationImpact: string;
   splitBlockedFollowUp: string;
+  humanReviewBoundary: string;
 };
 
 type ApiContractRow = {
@@ -3903,6 +3908,7 @@ function validatePermissionMappingContract(
   }
 
   for (const row of rows) {
+    validateAllowedValue(task.taskId, "Permission Mapping Class", row.permissionMappingClass, allowedPermissionMappingClasses, errors);
     validateRequiredField(task.taskId, "Approved Authz Source", row.approvedAuthzSource, errors);
     validateRequiredField(task.taskId, "Capability / Route / Surface", row.capabilityRouteSurface, errors);
     validateRequiredField(task.taskId, "Authority World / Actor Boundary", row.authorityWorldActorBoundary, errors);
@@ -3912,8 +3918,10 @@ function validatePermissionMappingContract(
     validateRequiredField(task.taskId, "Allow / Deny Expectations", row.allowDenyExpectations, errors);
     validateRequiredField(task.taskId, "UI Eligibility", row.uiEligibility, errors);
     validateRequiredField(task.taskId, "Denial / Audit / Proof Expectation", row.denialAuditProofExpectation, errors);
+    validateRequiredField(task.taskId, "Evidence Mapping Inventory", row.evidenceMappingInventory, errors);
     validateRequiredField(task.taskId, "Migration Impact", row.migrationImpact, errors);
     validateRequiredField(task.taskId, "Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
 
     const source = row.approvedAuthzSource.toLowerCase();
     if (
@@ -3955,7 +3963,15 @@ function validatePermissionMappingContract(
 
     const migrationImpact = row.migrationImpact.toLowerCase();
     const followUp = row.splitBlockedFollowUp.toLowerCase();
+    const evidenceInventory = row.evidenceMappingInventory.toLowerCase();
+    if (!mentionsScriptableInventory(evidenceInventory)) {
+      errors.push(`${task.taskId} Permission Mapping Contract must name concrete permission evidence inventory paths, artifacts, or command output`);
+    }
+
+    validatePermissionMappingClassPosture(task.taskId, row.permissionMappingClass, row.grantSourcePosture, row.mappingRowPosture, row.uiEligibility, errors);
+
     const authzModelText = [
+      row.permissionMappingClass,
       row.approvedAuthzSource,
       row.capabilityRouteSurface,
       row.authorityWorldActorBoundary,
@@ -4003,6 +4019,43 @@ function validatePermissionMappingContract(
     ) {
       errors.push(`${task.taskId} Permission Mapping Contract authz model changes must route to GOV:architecture-update`);
     }
+  }
+}
+
+function validatePermissionMappingClassPosture(
+  taskId: string,
+  mappingClass: string,
+  grantSourcePosture: string,
+  mappingRowPosture: string,
+  uiEligibility: string,
+  errors: string[],
+): void {
+  const normalizedUi = uiEligibility.toLowerCase();
+
+  if (mappingClass === "runtime-enforced-row" && grantSourcePosture !== "runtime-enforced") {
+    errors.push(`${taskId} Permission Mapping Contract runtime-enforced-row class must use runtime-enforced grant source posture`);
+  }
+
+  if (mappingClass === "documentation-only-row" && grantSourcePosture !== "documentation-only") {
+    errors.push(`${taskId} Permission Mapping Contract documentation-only-row class must use documentation-only grant source posture`);
+  }
+
+  if (mappingClass === "grant-source-row" && !["seed-backed", "corrective-migration-backed"].includes(grantSourcePosture)) {
+    errors.push(`${taskId} Permission Mapping Contract grant-source-row class must use seed-backed or corrective-migration-backed grant posture`);
+  }
+
+  if (mappingClass === "future-authz-model-row" && !["architecture-target", "blocked"].includes(mappingRowPosture)) {
+    errors.push(`${taskId} Permission Mapping Contract future-authz-model-row class must be architecture-target or blocked`);
+  }
+
+  if (
+    mappingClass === "ui-eligibility-review" &&
+    !normalizedUi.includes("selectable") &&
+    !normalizedUi.includes("usable") &&
+    !normalizedUi.includes("hidden") &&
+    !normalizedUi.includes("blocked")
+  ) {
+    errors.push(`${taskId} Permission Mapping Contract ui-eligibility-review class must name selectable, usable, hidden, or blocked UI posture`);
   }
 }
 
@@ -7107,17 +7160,20 @@ function parseStandardsUpdateContractRows(content: string): StandardsUpdateContr
 function parsePermissionMappingContractRows(content: string): PermissionMappingContractRow[] {
   return parseTableRows(section(content, "## Permission Mapping Contract")).map((cells) => ({
     taskId: cells[0] ?? "",
-    approvedAuthzSource: cells[1] ?? "",
-    capabilityRouteSurface: cells[2] ?? "",
-    authorityWorldActorBoundary: cells[3] ?? "",
-    grantSourcePosture: cells[4] ?? "",
-    mappingRowPosture: cells[5] ?? "",
-    tenantObjectBoundary: cells[6] ?? "",
-    allowDenyExpectations: cells[7] ?? "",
-    uiEligibility: cells[8] ?? "",
-    denialAuditProofExpectation: cells[9] ?? "",
-    migrationImpact: cells[10] ?? "",
-    splitBlockedFollowUp: cells[11] ?? "",
+    permissionMappingClass: cells[1] ?? "",
+    approvedAuthzSource: cells[2] ?? "",
+    capabilityRouteSurface: cells[3] ?? "",
+    authorityWorldActorBoundary: cells[4] ?? "",
+    grantSourcePosture: cells[5] ?? "",
+    mappingRowPosture: cells[6] ?? "",
+    tenantObjectBoundary: cells[7] ?? "",
+    allowDenyExpectations: cells[8] ?? "",
+    uiEligibility: cells[9] ?? "",
+    denialAuditProofExpectation: cells[10] ?? "",
+    evidenceMappingInventory: cells[11] ?? "",
+    migrationImpact: cells[12] ?? "",
+    splitBlockedFollowUp: cells[13] ?? "",
+    humanReviewBoundary: cells[14] ?? "",
   }));
 }
 

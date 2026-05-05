@@ -885,6 +885,14 @@ Allowed mapping row postures:
 - `architecture-target`
 - `blocked`
 
+Allowed permission mapping classes:
+
+- `runtime-enforced-row`
+- `documentation-only-row`
+- `grant-source-row`
+- `future-authz-model-row`
+- `ui-eligibility-review`
+
 `DOC:permission-mapping` records permission truth only. Runtime enforcement,
 grant migrations, API denial contract changes, executable proof, and authz
 model changes must split to the owning task type.
@@ -894,8 +902,13 @@ authorization, any configuration-based, relationship-based, ABAC, or ReBAC row
 must be `architecture-target` or `blocked`, UI-ineligible, and routed to
 `GOV:architecture-update`.
 
-| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+Record permission evidence inventory as concrete permission-mapping docs,
+capability rows, API contracts, grant/migration sources, UI eligibility sources,
+test/evidence outputs, or command output. Keep human review limited to approved
+authz-source interpretation and mapping judgment.
+
+| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## API Contract
 

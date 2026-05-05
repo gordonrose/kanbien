@@ -21,6 +21,7 @@ Use for task type: `DOC:permission-mapping`
 
 ## Approval Evidence
 
+- permission mapping class
 - approved authz model source reviewed, such as ADR-0036, the platform
   authorization Technical Steering packet, or a route/feature-specific
   Technical Steering packet
@@ -31,8 +32,24 @@ Use for task type: `DOC:permission-mapping`
 - safe denial category and audit/proof expectation
 - allow and deny expectations, including object/relationship/attribute posture
   when relevant
+- evidence mapping inventory linking capability, route, UI, audit, and proof
+  sources
 - seed or corrective migration impact
 - security/authz proof command
+- human-review boundary for authz-source interpretation and mapping judgment
+
+## Permission Mapping Classes
+
+- `runtime-enforced-row`: current mapping for runtime-enforced authorization.
+- `documentation-only-row`: docs-only mapping that must not become selectable
+  or usable.
+- `grant-source-row`: seed-backed or corrective-migration-backed grant source
+  mapping that must route migration work separately.
+- `future-authz-model-row`: configuration-based, relationship-based, ABAC, or
+  ReBAC posture that must remain `architecture-target` or `blocked` until
+  Layer 2 approves the model.
+- `ui-eligibility-review`: task focused on whether mapped capabilities are
+  selectable, usable, hidden, or blocked in UI surfaces.
 
 ## Deep Delivery Standard
 
@@ -42,6 +59,8 @@ Use for task type: `DOC:permission-mapping`
   they have distinct write sets or proof
 - name the exact role/capability rows, approved authz model source, safe denial
   category, grant-source posture, and allow/deny proof
+- name concrete mapping/evidence inventory paths or command output before
+  queueing
 - do not use `DOC:permission-mapping` to approve a new authorization model. If
   the task changes evaluator order, authority-world policy, grant-source
   vocabulary, role-family policy, tenant lifecycle policy, or ABAC/ReBAC
@@ -157,12 +176,14 @@ Split or block the task when:
 ## Required Check IDs
 
 - `permission-authz-model-source`
+- `permission-mapping-class`
 - `permission-capability-rows`
 - `permission-boundary`
 - `permission-grant-source-ui`
 - `permission-mapping-row-posture`
 - `permission-denial-audit`
 - `permission-allow-deny`
+- `permission-evidence-inventory`
 - `permission-grants-migration`
 - `permission-split-routing`
 - `permission-authz-proof`

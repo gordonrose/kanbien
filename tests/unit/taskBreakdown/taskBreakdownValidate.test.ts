@@ -337,8 +337,8 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 ## Permission Mapping Contract
 
-| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## API Contract
 
@@ -1419,7 +1419,7 @@ describe("task breakdown validation", () => {
 
   it("allows permission mapping tasks with explicit authz source, boundary, UI posture, and split routing", () => {
     const permissionContractRow =
-      "| T-S001-01 | ADR-0036 layered authorization and root-admin tenant branding capability matrix row CAP-BRANDING-001 | CAP-BRANDING-001 / PATCH /v1/root-admin/tenants/:tenantId/branding | root actor boundary; tenant-scoped object selected by route param | runtime-enforced | current | exactly one tenant context; cross-tenant deny; active tenant object only | allow root admin with CAP-BRANDING-001; deny tenant actor and root actor without grant | selectable only for runtime-enforced root-admin roles | denial audit event and allow/deny proof required | not-applicable: no grant seed or corrective migration | not-applicable: mapping-only docs update; runtime and tests already enforced |";
+      "| T-S001-01 | runtime-enforced-row | ADR-0036 layered authorization and root-admin tenant branding capability matrix row CAP-BRANDING-001 | CAP-BRANDING-001 / PATCH /v1/root-admin/tenants/:tenantId/branding | root actor boundary; tenant-scoped object selected by route param | runtime-enforced | current | exactly one tenant context; cross-tenant deny; active tenant object only | allow root admin with CAP-BRANDING-001; deny tenant actor and root actor without grant | selectable only for runtime-enforced root-admin roles | denial audit event and allow/deny proof required | docs/architecture/permission-mappings/tenant-branding-permission-mapping.md; docs/api-contracts/tenant-configuration.md; tests/security/tenantConfiguration/authz.test.ts | not-applicable: no grant seed or corrective migration | not-applicable: mapping-only docs update; runtime and tests already enforced | human review limited to approved authz-source interpretation and mapping judgment |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1429,8 +1429,8 @@ describe("task breakdown validation", () => {
           "docs/architecture/permission-mappings/tenant-branding-permission-mapping.md",
         )
         .replace(
-          "## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-          `## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${permissionContractRow}\n\n`,
+          "## Permission Mapping Contract\n\n| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Permission Mapping Contract\n\n| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${permissionContractRow}\n\n`,
         ),
       sourceStoryPacket,
     );
@@ -1441,7 +1441,7 @@ describe("task breakdown validation", () => {
 
   it("blocks permission mapping tasks that expose documentation-only grants as usable", () => {
     const permissionContractRow =
-      "| T-S001-01 | ADR-0036 layered authorization and root-admin tenant branding capability matrix row CAP-BRANDING-001 | CAP-BRANDING-001 / PATCH /v1/root-admin/tenants/:tenantId/branding | root actor boundary; tenant-scoped object selected by route param | documentation-only | target | exactly one tenant context; cross-tenant deny; active tenant object only | allow target root admin; deny tenant actor and root actor without grant | selectable in root-admin role UI immediately | denial audit event and allow/deny proof required | not-applicable: no grant seed or corrective migration | TEST:test-only follow-up for target allow/deny proof |";
+      "| T-S001-01 | documentation-only-row | ADR-0036 layered authorization and root-admin tenant branding capability matrix row CAP-BRANDING-001 | CAP-BRANDING-001 / PATCH /v1/root-admin/tenants/:tenantId/branding | root actor boundary; tenant-scoped object selected by route param | documentation-only | target | exactly one tenant context; cross-tenant deny; active tenant object only | allow target root admin; deny tenant actor and root actor without grant | selectable in root-admin role UI immediately | denial audit event and allow/deny proof required | docs/architecture/permission-mappings/tenant-branding-permission-mapping.md; docs/api-contracts/tenant-configuration.md | not-applicable: no grant seed or corrective migration | TEST:test-only follow-up for target allow/deny proof | human review limited to docs-only mapping judgment |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1451,8 +1451,8 @@ describe("task breakdown validation", () => {
           "docs/architecture/permission-mappings/tenant-branding-permission-mapping.md",
         )
         .replace(
-          "## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-          `## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${permissionContractRow}\n\n`,
+          "## Permission Mapping Contract\n\n| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Permission Mapping Contract\n\n| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${permissionContractRow}\n\n`,
         ),
       sourceStoryPacket,
     );
@@ -1463,7 +1463,7 @@ describe("task breakdown validation", () => {
 
   it("blocks permission mapping tasks that try to change the authz model without architecture routing", () => {
     const permissionContractRow =
-      "| T-S001-01 | ADR-0036 layered authorization and root-admin tenant branding capability matrix row CAP-BRANDING-001 | CAP-BRANDING-001 / relationship-based tenant branding grant | tenant actor boundary; relationship scoped object | blocked | architecture-target | relationship-based tenant object rule not yet approved | allow related tenant admin; deny unrelated tenant admin | blocked until architecture approved | denial audit event and proof required | not-applicable: no grant seed or corrective migration | blocked authz model change for relationship-based authorization |";
+      "| T-S001-01 | future-authz-model-row | ADR-0036 layered authorization and root-admin tenant branding capability matrix row CAP-BRANDING-001 | CAP-BRANDING-001 / relationship-based tenant branding grant | tenant actor boundary; relationship scoped object | blocked | architecture-target | relationship-based tenant object rule not yet approved | allow related tenant admin; deny unrelated tenant admin | blocked until architecture approved | denial audit event and proof required | docs/architecture/permission-mappings/tenant-branding-permission-mapping.md; docs/architecture/adr/ | not-applicable: no grant seed or corrective migration | blocked authz model change for relationship-based authorization | human review limited to future authz model blocker routing |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1473,8 +1473,8 @@ describe("task breakdown validation", () => {
           "docs/architecture/permission-mappings/tenant-branding-permission-mapping.md",
         )
         .replace(
-          "## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-          `## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${permissionContractRow}\n\n`,
+          "## Permission Mapping Contract\n\n| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Permission Mapping Contract\n\n| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${permissionContractRow}\n\n`,
         ),
       sourceStoryPacket,
     );
@@ -1485,7 +1485,7 @@ describe("task breakdown validation", () => {
 
   it("blocks future authz model permission rows that are not architecture-target or blocked", () => {
     const permissionContractRow =
-      "| T-S001-01 | ADR-0036 layered authorization and root-admin tenant branding capability matrix row CAP-BRANDING-001 | CAP-BRANDING-001 / configuration-based tenant branding grant | tenant actor boundary; configuration scoped object | documentation-only | target | configuration-based tenant object rule not yet approved | allow configured tenant admin; deny tenant admin without configuration | blocked until Layer 2 architecture approved | denial audit event and proof required | not-applicable: no grant seed or corrective migration | GOV:architecture-update follow-up for configuration-based authorization model approval |";
+      "| T-S001-01 | future-authz-model-row | ADR-0036 layered authorization and root-admin tenant branding capability matrix row CAP-BRANDING-001 | CAP-BRANDING-001 / configuration-based tenant branding grant | tenant actor boundary; configuration scoped object | documentation-only | target | configuration-based tenant object rule not yet approved | allow configured tenant admin; deny tenant admin without configuration | blocked until Layer 2 architecture approved | denial audit event and proof required | docs/architecture/permission-mappings/tenant-branding-permission-mapping.md; docs/architecture/adr/ | not-applicable: no grant seed or corrective migration | GOV:architecture-update follow-up for configuration-based authorization model approval | human review limited to future authz model blocker routing |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1495,8 +1495,8 @@ describe("task breakdown validation", () => {
           "docs/architecture/permission-mappings/tenant-branding-permission-mapping.md",
         )
         .replace(
-          "## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-          `## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${permissionContractRow}\n\n`,
+          "## Permission Mapping Contract\n\n| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Permission Mapping Contract\n\n| Task ID | Permission Mapping Class | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Evidence Mapping Inventory | Migration Impact | Split / Blocked Follow-Up | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${permissionContractRow}\n\n`,
         ),
       sourceStoryPacket,
     );
