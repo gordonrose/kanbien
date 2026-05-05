@@ -272,6 +272,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "backend-source-authority",
     "backend-change-class",
     "backend-owning-feature",
+    "backend-source-inventory",
     "backend-exact-write-envelope",
     "backend-layer-responsibilities",
     "backend-cross-feature-seams",
@@ -280,8 +281,10 @@ export const layer4RequiredCheckIdsByTaskType = {
     "backend-persistence-migration-boundary",
     "backend-scripted-scaffold-posture",
     "backend-artifact-obligations",
+    "backend-expected-output",
     "backend-split-routing",
     "backend-proof-commands",
+    "backend-human-review-boundary",
   ],
   "DEV:frontend": [
     "frontend-architecture-classification",

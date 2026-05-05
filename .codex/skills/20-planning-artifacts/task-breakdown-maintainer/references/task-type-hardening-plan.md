@@ -50,7 +50,7 @@ Ratings:
 
 | Task Type | Class Contract | Validator Backing | Scriptable Inventory | Command / Output Contract | Route-Away Strength | Examples Needed | Improvisation Risk | Priority | Next Hardening Move |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `DEV:backend` | strong | strong | medium | strong | strong | yes | medium | P2 | Add generator-ready contracts for common backend classes: transport-route, domain-behavior, repository-consumer, authz-enforcement, lifecycle-behavior, audit-event, manifest-public-seam. |
+| `DEV:backend` | strong | strong | strong | strong | strong | yes | medium | P3 | Add worked examples for common backend classes now that source inventory, expected backend output, and human-review boundary are validator-backed. |
 | `DEV:frontend` | strong | strong | medium | strong | strong | yes | medium | P3 | Add worked examples for each frontend change class and clarify which source inventories can be script-collected before browser proof. |
 | `DEV:vertical-slice` | medium | strong | medium | strong | strong | yes | medium | P3 | Add valid and invalid examples showing inseparable backend-to-frontend proof versus convenience grouping. |
 | `DEV:platform-seam` | strong | strong | strong | strong | strong | yes | medium | P3 | Add worked examples for route mounting, generated-artifact materialization, auth middleware helpers, schedulers, and cases that must split to `GOV:architecture-update` now that seam source inventory, expected output, and human-review boundary are validator-backed. |

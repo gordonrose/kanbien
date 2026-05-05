@@ -713,6 +713,7 @@ type BackendImplementationApproachRow = {
   approvedSourceAuthority: string;
   featureOwner: string;
   capabilityFileStrategy: string;
+  backendSourceInventory: string;
   exactWriteEnvelope: string;
   expectedFilesLayers: string;
   layerResponsibilities: string;
@@ -722,9 +723,11 @@ type BackendImplementationApproachRow = {
   publicSeamManifestImpact: string;
   artifactObligations: string;
   scaffoldScriptCommand: string;
+  expectedBackendOutput: string;
   splitBlockedFollowUp: string;
   proofCommands: string;
   formattingGeneratedArtifactExpectations: string;
+  humanReviewBoundary: string;
 };
 
 type MigrationPersistenceApproachRow = {
@@ -2526,6 +2529,7 @@ function validateBackendImplementationApproach(
     validateRequiredField(task.taskId, "Approved Source Authority", row.approvedSourceAuthority, errors);
     validateRequiredField(task.taskId, "Backend Feature Owner", row.featureOwner, errors);
     validateRequiredField(task.taskId, "Backend Capability File Strategy", row.capabilityFileStrategy, errors);
+    validateRequiredField(task.taskId, "Backend Source Inventory", row.backendSourceInventory, errors);
     validateRequiredField(task.taskId, "Exact Write Envelope", row.exactWriteEnvelope, errors);
     validateRequiredField(task.taskId, "Expected Files / Layers", row.expectedFilesLayers, errors);
     validateRequiredField(task.taskId, "Layer Responsibilities", row.layerResponsibilities, errors);
@@ -2535,6 +2539,7 @@ function validateBackendImplementationApproach(
     validateRequiredField(task.taskId, "Public Seam / Manifest Impact", row.publicSeamManifestImpact, errors);
     validateRequiredField(task.taskId, "Artifact Obligations", row.artifactObligations, errors);
     validateRequiredField(task.taskId, "Scaffold / Script Command", row.scaffoldScriptCommand, errors);
+    validateRequiredField(task.taskId, "Expected Backend Output", row.expectedBackendOutput, errors);
     validateRequiredField(task.taskId, "Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
     validateRequiredField(task.taskId, "Proof Commands", row.proofCommands, errors);
     validateRequiredField(
@@ -2543,6 +2548,7 @@ function validateBackendImplementationApproach(
       row.formattingGeneratedArtifactExpectations,
       errors,
     );
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
 
     if (!allowedBackendCapabilityFileStrategies.has(row.capabilityFileStrategy)) {
       errors.push(`${task.taskId} has invalid DEV:backend capability file strategy: ${row.capabilityFileStrategy || "(blank)"}`);
@@ -2558,6 +2564,9 @@ function validateBackendImplementationApproach(
     }
 
     const writeEnvelope = row.exactWriteEnvelope.replace(/\\/g, "/").toLowerCase();
+    if (!mentionsScriptableInventory(row.backendSourceInventory)) {
+      errors.push(`${task.taskId} DEV:backend needs scriptable backend source inventory`);
+    }
     if (mentionsBroadBackendWriteEnvelope(writeEnvelope)) {
       errors.push(`${task.taskId} DEV:backend must use an exact or narrow feature-local write envelope, not broad backend/source edits`);
     }
@@ -2587,6 +2596,21 @@ function validateBackendImplementationApproach(
     const scaffold = row.scaffoldScriptCommand.toLowerCase();
     if (!mentionsScriptCommandOrRationale(scaffold)) {
       errors.push(`${task.taskId} DEV:backend scaffold/script command must name a generator/check command or not-applicable rationale`);
+    }
+
+    const expectedOutput = row.expectedBackendOutput.toLowerCase();
+    if (
+      !expectedOutput.includes("behavior") &&
+      !expectedOutput.includes("route") &&
+      !expectedOutput.includes("response") &&
+      !expectedOutput.includes("repository") &&
+      !expectedOutput.includes("manifest") &&
+      !expectedOutput.includes("audit") &&
+      !expectedOutput.includes("event") &&
+      !expectedOutput.includes("lifecycle") &&
+      !expectedOutput.includes("not-applicable")
+    ) {
+      errors.push(`${task.taskId} DEV:backend must name expected backend output or behavior target`);
     }
 
     const followUp = row.splitBlockedFollowUp.toLowerCase();
@@ -7130,18 +7154,21 @@ function parseBackendImplementationApproachRows(content: string): BackendImpleme
     approvedSourceAuthority: cells[2] ?? "",
     featureOwner: cells[3] ?? "",
     capabilityFileStrategy: cells[4] ?? "",
-    exactWriteEnvelope: cells[5] ?? "",
-    expectedFilesLayers: cells[6] ?? "",
-    layerResponsibilities: cells[7] ?? "",
-    contractApiPosture: cells[8] ?? "",
-    authzTenantLifecyclePosture: cells[9] ?? "",
-    persistenceMigrationPosture: cells[10] ?? "",
-    publicSeamManifestImpact: cells[11] ?? "",
-    artifactObligations: cells[12] ?? "",
-    scaffoldScriptCommand: cells[13] ?? "",
-    splitBlockedFollowUp: cells[14] ?? "",
-    proofCommands: cells[15] ?? "",
-    formattingGeneratedArtifactExpectations: cells[16] ?? "",
+    backendSourceInventory: cells[5] ?? "",
+    exactWriteEnvelope: cells[6] ?? "",
+    expectedFilesLayers: cells[7] ?? "",
+    layerResponsibilities: cells[8] ?? "",
+    contractApiPosture: cells[9] ?? "",
+    authzTenantLifecyclePosture: cells[10] ?? "",
+    persistenceMigrationPosture: cells[11] ?? "",
+    publicSeamManifestImpact: cells[12] ?? "",
+    artifactObligations: cells[13] ?? "",
+    scaffoldScriptCommand: cells[14] ?? "",
+    expectedBackendOutput: cells[15] ?? "",
+    splitBlockedFollowUp: cells[16] ?? "",
+    proofCommands: cells[17] ?? "",
+    formattingGeneratedArtifactExpectations: cells[18] ?? "",
+    humanReviewBoundary: cells[19] ?? "",
   }));
 }
 

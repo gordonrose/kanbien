@@ -21,6 +21,8 @@ Use for task type: `DEV:backend`
   ADR, API contract, permission mapping, data dictionary, or standard that
   governs the backend behavior
 - owning feature and allowed write set
+- scriptable backend source inventory naming exact source, test, contract,
+  manifest, generated-artifact, or command-output targets to inspect
 - one backend behavior or seam and the exact feature-local layers it touches
 - public seams used or changed, including feature manifest and dependency graph
   impact when a public seam or cross-feature dependency changes
@@ -33,6 +35,8 @@ Use for task type: `DEV:backend`
   semantics to `DEV:migration-persistence`
 - data dictionary, permission mapping, feature docs, generated artifact, and
   maintained-artifact obligations carried from the source artifact ledger
+- expected backend output or behavior target
+- human-review boundary for backend behavior sufficiency and split routing
 - proof layers and commands tied to the behavior being implemented
 
 ## Deep Delivery Standard
@@ -46,6 +50,10 @@ Use for task type: `DEV:backend`
   EVIDENCE:qa-evidence
 - name the exact repository, service, route, migration, and test context to
   inspect before editing
+- name exact source inventory and expected backend output for common change
+  classes such as transport routes, domain behavior, repository consumers,
+  authz enforcement, lifecycle behavior, audit events, and manifest public
+  seams
 - do not queue a backend task that requires product, architecture, authz,
   lifecycle, cleanup, API, migration, or artifact decisions the source artifacts
   have not made
@@ -168,6 +176,7 @@ enough unless the task also names the focused proof command for the behavior.
 - `backend-source-authority`
 - `backend-change-class`
 - `backend-owning-feature`
+- `backend-source-inventory`
 - `backend-exact-write-envelope`
 - `backend-layer-responsibilities`
 - `backend-cross-feature-seams`
@@ -176,5 +185,7 @@ enough unless the task also names the focused proof command for the behavior.
 - `backend-persistence-migration-boundary`
 - `backend-scripted-scaffold-posture`
 - `backend-artifact-obligations`
+- `backend-expected-output`
 - `backend-split-routing`
 - `backend-proof-commands`
+- `backend-human-review-boundary`
