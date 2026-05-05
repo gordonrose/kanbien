@@ -7,6 +7,11 @@ Use this as the first routing reference when deciding which task type owns a
 piece of work. Then load the matching task-type guardrail file for the exact
 approval evidence and required check IDs.
 
+Use `task-type-hardening-plan.md` before choosing the next task-type refinement
+slice. The manifest routes work; the hardening plan records the audit-derived
+sequence for reducing Layer 5 rework, drift, contamination, gaps, bloat, and
+manual improvisation.
+
 The "98% first-pass gap" column records what is still missing or still needs
 hardening to reduce rework, drift, contamination, gaps, and bloat. These notes
 are not permission to broaden a queued task; they are prompts for future
@@ -53,6 +58,7 @@ governed refinement.
 | Reference | Applies When | Input Contract | Job | Output Contract | 98% First-Pass Gap |
 | --- | --- | --- | --- | --- | --- |
 | `shared-code-placement-task-guardrail.md` | Any task may move, extract, newly share, or reuse code across feature/platform/shared-lib boundaries. | Current owner, proposed owner, affected consumers, placement pressure, and compatibility expectation. | Prevent wrong-code placement and force extraction or shared-seam work into the right owner before dependent delivery. | Placement decision, compatibility proof, and separate extraction dependency when required. | Clarify examples for `shared-lib` versus owning-feature public seam versus `DEV:platform-seam` so reusable code does not become accidental architecture drift. |
+| `task-type-hardening-plan.md` | Before selecting the next Layer 4 task-type refinement slice. | Current manifest, guardrail references, packet template, validator, tests, harness KPIs, and any promoted/pending hardening work. | Rank task types by script-first maturity, validator backing, route-away strength, examples, and Layer 5 improvisation risk. | Prioritized hardening sequence and operating rules for choosing the next refinement based on audit evidence instead of conversational momentum. | Keep the plan current after each hardening slice and consider validator-backed plan freshness checks if it starts drifting. |
 
 ## Current Hardening Backlog
 
