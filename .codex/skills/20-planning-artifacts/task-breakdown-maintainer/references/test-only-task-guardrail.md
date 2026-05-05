@@ -37,6 +37,9 @@ Use for task type: `TEST:test-only`
 - permission/state matrix or concrete not-applicable rationale
 - split decision when missing product, API, authz, lifecycle, data, UI,
   migration, or platform behavior is discovered
+- test change class: `prd-test-case`, `proof-gap`,
+  `permission-state-matrix`, `security-boundary`, `e2e-journey`,
+  `regression-lock`, or `fixture-honesty`
 
 ## Deep Delivery Standard
 
@@ -82,12 +85,16 @@ Allowed coverage sources:
 
 For each queued task, name whether the test is:
 
-- PRD-derived `TC-*` implementation
-- isolated proof-gap coverage
-- security or permission permutation matrix
-- persistence-backed proof
-- browser/e2e journey proof
-- regression test from issue reconciliation
+- `prd-test-case`: PRD-derived `TC-*` implementation
+- `proof-gap`: isolated approved proof-gap coverage
+- `permission-state-matrix`: actor/permission/object/boundary permutation
+  coverage
+- `security-boundary`: explicit security, authn/authz, tenant, asset, or
+  sensitive-data boundary proof
+- `e2e-journey`: browser or end-to-end journey proof
+- `regression-lock`: escaped-defect or issue-reconciliation regression proof
+- `fixture-honesty`: fixture, mock, or test-harness honesty proof against
+  production contracts
 
 If the expected assertion cannot be stated without inventing product behavior,
 block the test task and route the missing decision to the owning artifact or
@@ -148,6 +155,7 @@ Split or block when:
 ## Required Check IDs
 
 - `test-source-authority`
+- `test-change-class`
 - `test-traceability`
 - `test-proof-layer`
 - `test-permission-state-matrix`

@@ -337,8 +337,8 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 ## Test-Only Coverage Contract
 
-| Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Task ID | Test Change Class | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command | Split / Blocked Follow-Up |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Test Suite Alignment Contract
 
@@ -577,7 +577,7 @@ function verticalSliceTaskPacketWith(couplingRow: string): string {
 }
 
 const testOnlyCoverageRow =
-  "| T-S001-01 | docs/prd/test_cases/root-admin-test-cases.md | AC-ROOT-ADMIN-E2E-001 | e2e journey test | root-admin allowed and denied operator journey | seeded root-auth/root-admin runtime data | mock-honesty: runtime harness data mirrors production root session and root-user API contracts | no-production-change | npx vitest run tests/e2e/rootAdmin/operator-journeys.test.ts |";
+  "| T-S001-01 | e2e-journey | docs/prd/test_cases/root-admin-test-cases.md | AC-ROOT-ADMIN-E2E-001 | e2e journey test | root-admin allowed and denied operator e2e journey with runtime browser proof | seeded root-auth/root-admin runtime data | mock-honesty: runtime harness data mirrors production root session and root-user API contracts | no-production-change | npx vitest run tests/e2e/rootAdmin/operator-journeys.test.ts | not-applicable: no split needed; proof-only e2e journey remains test-harness-only |";
 
 const testOnlyMatrixRow =
   "| T-S001-01 | /root-admin and /v1/root-users root-admin object | root actor allowed; expired session denied; unauthenticated actor denied | RootUserAdmin capability allowed; missing capability denied | active object visible; deleted object denied through normal path | root boundary only; tenant actor denied; cross-tenant not-applicable: root-owned surface | denied unauthenticated, expired, and missing capability states | not-applicable: no tenant-scoped object in this root-owned task | none: required allowed and denied states covered |";
@@ -617,8 +617,8 @@ function testOnlyTaskPacketWith(input: {
       "| T-S001-01 | task-specific | root-admin allowed and denied operator e2e journey | not-applicable: task-specific proof is named |",
     )
     .replace(
-      "## Test-Only Coverage Contract\n\n| Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
-      `## Test-Only Coverage Contract\n\n| Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${coverageRow ? `${coverageRow}\n` : ""}\n`,
+      "## Test-Only Coverage Contract\n\n| Task ID | Test Change Class | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+      `## Test-Only Coverage Contract\n\n| Task ID | Test Change Class | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${coverageRow ? `${coverageRow}\n` : ""}\n`,
     )
     .replace(
       "## Capability Permission / State Matrix\n\n| Task ID | Capability / Route / Object | Actor States Covered | Permission States Covered | Object Lifecycle States Covered | Boundary States Covered | Required Negative Cases | Not Applicable Rationale | Missing Coverage / Follow-Up Task |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
@@ -634,7 +634,7 @@ function testOnlyTaskPacketWith(input: {
     )
     .replace(
       "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
-      "| T-S001-01 | test-source-authority | pass | Approved story proof obligation and AC-ROOT-ADMIN-E2E-001 authorize the test. |\n| T-S001-01 | test-traceability | pass | AC-ROOT-ADMIN-E2E-001 is named. |\n| T-S001-01 | test-proof-layer | pass | e2e journey test layer is named. |\n| T-S001-01 | test-permission-state-matrix | pass | Root-admin actor, permission, object, and boundary states are covered. |\n| T-S001-01 | test-mock-honesty | pass | Runtime harness data mirrors production contracts. |\n| T-S001-01 | test-no-behavior-change | pass | No production behavior change allowed. |\n| T-S001-01 | test-sensitive-state-coverage | pass | Allowed, denied, expired, and boundary states are named for the privileged proof. |\n| T-S001-01 | test-focused-command | pass | Focused vitest command is named. |\n| T-S001-01 | test-coverage-strength | pass | npm run test:coverage-strength summary is required. |\n| T-S001-01 | test-split-boundary | pass | Missing behavior splits to implementation; stale docs split to TEST:test-suite-alignment. |",
+      "| T-S001-01 | test-source-authority | pass | Approved story proof obligation and AC-ROOT-ADMIN-E2E-001 authorize the test. |\n| T-S001-01 | test-change-class | pass | Test change class is e2e-journey. |\n| T-S001-01 | test-traceability | pass | AC-ROOT-ADMIN-E2E-001 is named. |\n| T-S001-01 | test-proof-layer | pass | e2e journey test layer is named. |\n| T-S001-01 | test-permission-state-matrix | pass | Root-admin actor, permission, object, and boundary states are covered. |\n| T-S001-01 | test-mock-honesty | pass | Runtime harness data mirrors production contracts. |\n| T-S001-01 | test-no-behavior-change | pass | No production behavior change allowed. |\n| T-S001-01 | test-sensitive-state-coverage | pass | Allowed, denied, expired, and boundary states are named for the privileged proof. |\n| T-S001-01 | test-focused-command | pass | Focused vitest command is named. |\n| T-S001-01 | test-coverage-strength | pass | npm run test:coverage-strength summary is required. |\n| T-S001-01 | test-split-boundary | pass | Missing behavior splits to implementation; stale docs split to TEST:test-suite-alignment. |",
     );
 }
 
@@ -2216,6 +2216,45 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 TEST:test-only task cannot queue when production behavior changes are required");
+  });
+
+  it("blocks TEST:test-only tasks with an invalid test change class", () => {
+    const result = validateTaskBreakdownContent(
+      testOnlyTaskPacketWith({
+        coverageRow: testOnlyCoverageRow.replace("e2e-journey", "journey-proof"),
+      }),
+      testOnlyStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has invalid Test Change Class: journey-proof");
+  });
+
+  it("blocks PRD-derived TEST:test-only tasks that do not name TC source coverage", () => {
+    const result = validateTaskBreakdownContent(
+      testOnlyTaskPacketWith({
+        coverageRow: testOnlyCoverageRow.replace("e2e-journey", "prd-test-case"),
+      }),
+      testOnlyStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 prd-test-case TEST:test-only task must name TC-* source coverage");
+  });
+
+  it("blocks TEST:test-only split follow-ups that hide implementation work", () => {
+    const result = validateTaskBreakdownContent(
+      testOnlyTaskPacketWith({
+        coverageRow: testOnlyCoverageRow.replace(
+          "not-applicable: no split needed; proof-only e2e journey remains test-harness-only",
+          "production behavior is missing and should be fixed later",
+        ),
+      }),
+      testOnlyStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 TEST:test-only implementation behavior changes must route to DEV:*");
   });
 
   it("blocks privileged TEST:test-only matrices that are happy-path only", () => {

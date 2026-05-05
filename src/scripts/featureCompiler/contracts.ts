@@ -272,6 +272,7 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "TEST:test-only": [
     "test-source-authority",
+    "test-change-class",
     "test-traceability",
     "test-proof-layer",
     "test-permission-state-matrix",

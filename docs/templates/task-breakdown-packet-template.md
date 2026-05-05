@@ -882,14 +882,24 @@ Use this task type for PRD-derived `TC-*` implementation, isolated proof-gap
 tests, security/permutation matrix tests, or e2e journey tests. Do not use it
 when production behavior must change.
 
+Allowed test change classes:
+
+- `prd-test-case`
+- `proof-gap`
+- `permission-state-matrix`
+- `security-boundary`
+- `e2e-journey`
+- `regression-lock`
+- `fixture-honesty`
+
 Allowed production behavior change postures:
 
 - `no-production-change`
 - `test-harness-only`
 - `blocked-production-change-required`
 
-| Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Task ID | Test Change Class | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command | Split / Blocked Follow-Up |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Test Suite Alignment Contract
 

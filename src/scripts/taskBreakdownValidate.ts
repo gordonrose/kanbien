@@ -193,6 +193,15 @@ const allowedVerticalSliceSplitDecisions = new Set([
   "not-applicable",
   "blocked",
 ]);
+const allowedTestOnlyChangeClasses = new Set([
+  "prd-test-case",
+  "proof-gap",
+  "permission-state-matrix",
+  "security-boundary",
+  "e2e-journey",
+  "regression-lock",
+  "fixture-honesty",
+]);
 const allowedRefactorTriggers = new Set([
   "over-broad-write-set",
   "shared-logic-before-behavior",
@@ -831,6 +840,7 @@ type DataDictionaryContractRow = {
 
 type TestOnlyCoverageContractRow = {
   taskId: string;
+  testChangeClass: string;
   coverageSource: string;
   traceabilityIds: string;
   testLayer: string;
@@ -839,6 +849,7 @@ type TestOnlyCoverageContractRow = {
   mockRuntimeHonesty: string;
   productionBehaviorChangePosture: string;
   focusedCommand: string;
+  splitBlockedFollowUp: string;
 };
 
 type TestSuiteAlignmentContractRow = {
@@ -2664,6 +2675,7 @@ function validateTestOnlyCoverage(
   const matrixRequired = isPermissionStateMatrixRequired(task, coverageRows);
 
   for (const row of coverageRows) {
+    validateRequiredField(task.taskId, "Test Change Class", row.testChangeClass, errors);
     validateRequiredField(task.taskId, "Test-Only Coverage Source", row.coverageSource, errors);
     validateRequiredField(task.taskId, "Test-Only Traceability IDs", row.traceabilityIds, errors);
     validateRequiredField(task.taskId, "Test-Only Test Layer", row.testLayer, errors);
@@ -2677,10 +2689,14 @@ function validateTestOnlyCoverage(
       errors,
     );
     validateRequiredField(task.taskId, "Focused Command", row.focusedCommand, errors);
+    validateRequiredField(task.taskId, "Test-Only Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
+    validateAllowedValue(task.taskId, "Test Change Class", row.testChangeClass, allowedTestOnlyChangeClasses, errors);
 
     if (!mentionsTraceabilityId(row.traceabilityIds)) {
       errors.push(`${task.taskId} TEST:test-only task must name approved TC-* or AC-* traceability IDs`);
     }
+
+    validateTestOnlyChangeClassSpecifics(task.taskId, row, errors);
 
     if (!mentionsConcreteTestLayer(row.testLayer)) {
       errors.push(`${task.taskId} TEST:test-only task must name a concrete test layer`);
@@ -2699,6 +2715,8 @@ function validateTestOnlyCoverage(
     if (isBroadOnlyCommand(row.focusedCommand)) {
       errors.push(`${task.taskId} TEST:test-only task must name a focused test command, not only a broad suite`);
     }
+
+    validateTestOnlySplitBoundary(task.taskId, row.splitBlockedFollowUp, errors);
   }
 
   if (matrixRequired && matrixRows.length === 0) {
@@ -2727,6 +2745,74 @@ function validateTestOnlyCoverage(
     if (matrixRequired && isHappyPathOnly(row.requiredNegativeCases)) {
       errors.push(`${task.taskId} permission/state matrix cannot be happy-path only`);
     }
+  }
+}
+
+function validateTestOnlyChangeClassSpecifics(taskId: string, row: TestOnlyCoverageContractRow, errors: string[]): void {
+  const combined = [
+    row.coverageSource,
+    row.traceabilityIds,
+    row.testLayer,
+    row.proofTarget,
+    row.fixtureDataSource,
+    row.mockRuntimeHonesty,
+    row.focusedCommand,
+    row.splitBlockedFollowUp,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  if (row.testChangeClass === "prd-test-case" && !combined.includes("tc-")) {
+    errors.push(`${taskId} prd-test-case TEST:test-only task must name TC-* source coverage`);
+  }
+
+  if (row.testChangeClass === "proof-gap" && !combined.includes("proof gap") && !combined.includes("proof-gap")) {
+    errors.push(`${taskId} proof-gap TEST:test-only task must name the approved proof gap`);
+  }
+
+  if (row.testChangeClass === "permission-state-matrix" && !mentionsPermissionMatrixProof(combined)) {
+    errors.push(`${taskId} permission-state-matrix TEST:test-only task must name actor, permission, object, and boundary proof`);
+  }
+
+  if (row.testChangeClass === "security-boundary" && !mentionsSecurityBoundaryProof(combined)) {
+    errors.push(`${taskId} security-boundary TEST:test-only task must name allowed and denied security boundary proof`);
+  }
+
+  if (row.testChangeClass === "e2e-journey" && !mentionsE2eJourneyProof(combined)) {
+    errors.push(`${taskId} e2e-journey TEST:test-only task must name the journey and runtime/browser proof`);
+  }
+
+  if (row.testChangeClass === "regression-lock" && !mentionsRegressionLockProof(combined)) {
+    errors.push(`${taskId} regression-lock TEST:test-only task must name issue reconciliation or escaped defect source`);
+  }
+
+  if (row.testChangeClass === "fixture-honesty" && !mentionsMockHonesty(combined)) {
+    errors.push(`${taskId} fixture-honesty TEST:test-only task must name mock-honesty or fixture/runtime contract proof`);
+  }
+}
+
+function validateTestOnlySplitBoundary(taskId: string, followUp: string, errors: string[]): void {
+  const normalized = followUp.toLowerCase();
+  if (
+    (normalized.includes("production behavior") ||
+      normalized.includes("runtime behavior") ||
+      normalized.includes("implementation") ||
+      normalized.includes("src/")) &&
+    !normalized.includes("dev:")
+  ) {
+    errors.push(`${taskId} TEST:test-only implementation behavior changes must route to DEV:*`);
+  }
+
+  if ((normalized.includes("api contract") || normalized.includes("route contract")) && !normalized.includes("doc:api-contract")) {
+    errors.push(`${taskId} TEST:test-only API contract changes must route to DOC:api-contract`);
+  }
+
+  if ((normalized.includes("permission") || normalized.includes("authz")) && !normalized.includes("doc:permission-mapping")) {
+    errors.push(`${taskId} TEST:test-only permission truth changes must route to DOC:permission-mapping`);
+  }
+
+  if ((normalized.includes("test case") || normalized.includes("traceability") || normalized.includes("alignment")) && !normalized.includes("test:test-suite-alignment")) {
+    errors.push(`${taskId} TEST:test-only test-case alignment changes must route to TEST:test-suite-alignment`);
   }
 }
 
@@ -4846,6 +4932,42 @@ function mentionsMockHonesty(value: string): boolean {
   return normalized.includes("mock-honesty") || (normalized.includes("fixture") && !normalized.includes("invent"));
 }
 
+function mentionsPermissionMatrixProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("actor") &&
+    normalized.includes("permission") &&
+    normalized.includes("object") &&
+    normalized.includes("boundary")
+  );
+}
+
+function mentionsSecurityBoundaryProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("security") || normalized.includes("authn") || normalized.includes("authz") || normalized.includes("tenant")) &&
+    normalized.includes("allowed") &&
+    (normalized.includes("denied") || normalized.includes("forbidden") || normalized.includes("unauthorized"))
+  );
+}
+
+function mentionsE2eJourneyProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    (normalized.includes("e2e") || normalized.includes("end-to-end") || normalized.includes("browser")) &&
+    (normalized.includes("journey") || normalized.includes("workflow") || normalized.includes("scenario")) &&
+    (normalized.includes("runtime") || normalized.includes("browser"))
+  );
+}
+
+function mentionsRegressionLockProof(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("regression") &&
+    (normalized.includes("issue reconciliation") || normalized.includes("escaped defect") || normalized.includes("defect"))
+  );
+}
+
 function mentionsJourneyBehavior(...values: string[]): boolean {
   const normalized = values.join(" ").toLowerCase();
   return normalized.includes("journey") && (normalized.includes("behavior") || normalized.includes("workflow") || normalized.includes("scenario"));
@@ -5249,6 +5371,7 @@ function isPermissionStateMatrixRequired(task: TaskRow, coverageRows: TestOnlyCo
     task.nonGoals,
     ...coverageRows.flatMap((row) => [
       row.coverageSource,
+      row.testChangeClass,
       row.testLayer,
       row.proofTarget,
       row.fixtureDataSource,
@@ -6242,14 +6365,16 @@ function parseDataDictionaryContractRows(content: string): DataDictionaryContrac
 function parseTestOnlyCoverageContractRows(content: string): TestOnlyCoverageContractRow[] {
   return parseTableRows(section(content, "## Test-Only Coverage Contract")).map((cells) => ({
     taskId: cells[0] ?? "",
-    coverageSource: cells[1] ?? "",
-    traceabilityIds: cells[2] ?? "",
-    testLayer: cells[3] ?? "",
-    proofTarget: cells[4] ?? "",
-    fixtureDataSource: cells[5] ?? "",
-    mockRuntimeHonesty: cells[6] ?? "",
-    productionBehaviorChangePosture: cells[7] ?? "",
-    focusedCommand: cells[8] ?? "",
+    testChangeClass: cells[1] ?? "",
+    coverageSource: cells[2] ?? "",
+    traceabilityIds: cells[3] ?? "",
+    testLayer: cells[4] ?? "",
+    proofTarget: cells[5] ?? "",
+    fixtureDataSource: cells[6] ?? "",
+    mockRuntimeHonesty: cells[7] ?? "",
+    productionBehaviorChangePosture: cells[8] ?? "",
+    focusedCommand: cells[9] ?? "",
+    splitBlockedFollowUp: cells[10] ?? "",
   }));
 }
 
