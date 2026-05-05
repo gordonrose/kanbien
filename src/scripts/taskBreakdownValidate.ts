@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
+  layer4ArchitectureUpdateClasses,
   layer4BackendCapabilityFileStrategies,
   layer4BackendChangeClasses,
   layer4CapabilityCoverageStatuses,
@@ -290,6 +291,7 @@ const allowedArchitectureUpdateDecisionSources = new Set([
   "approved-architecture-foundation-output",
   "explicit-recorded-human-approval",
 ]);
+const allowedArchitectureUpdateClasses: Set<string> = new Set(layer4ArchitectureUpdateClasses);
 const allowedStandardsUpdateChangeSources = new Set([
   "Layer-2-technical-steering",
   "standards-compliance-audit",
@@ -776,14 +778,17 @@ type ArchitectureFoundationContractRow = {
 
 type ArchitectureUpdateContractRow = {
   taskId: string;
+  architectureUpdateClass: string;
   approvedDecisionSource: string;
   decisionSourcePathReference: string;
   decisionSummary: string;
   architectureArtifactTarget: string;
   consistencySweepTargets: string;
+  authorityConsistencyInventory: string;
   downstreamImpact: string;
   compatibilityPosture: string;
   forbiddenImplementationStandardsWork: string;
+  humanReviewBoundary: string;
   validationReviewEvidence: string;
 };
 
@@ -3461,14 +3466,17 @@ function validateArchitectureUpdateContract(
   }
 
   for (const row of rows) {
+    validateAllowedValue(task.taskId, "Architecture Update Class", row.architectureUpdateClass, allowedArchitectureUpdateClasses, errors);
     validateAllowedValue(task.taskId, "Approved Decision Source", row.approvedDecisionSource, allowedArchitectureUpdateDecisionSources, errors);
     validateRequiredField(task.taskId, "Decision Source Path / Reference", row.decisionSourcePathReference, errors);
     validateRequiredField(task.taskId, "Decision Summary", row.decisionSummary, errors);
     validateRequiredField(task.taskId, "Architecture Artifact Target", row.architectureArtifactTarget, errors);
     validateRequiredField(task.taskId, "Consistency Sweep Targets", row.consistencySweepTargets, errors);
+    validateRequiredField(task.taskId, "Authority / Consistency Inventory", row.authorityConsistencyInventory, errors);
     validateRequiredField(task.taskId, "Downstream Impact", row.downstreamImpact, errors);
     validateRequiredField(task.taskId, "Compatibility Posture", row.compatibilityPosture, errors);
     validateRequiredField(task.taskId, "Forbidden Implementation / Standards Work", row.forbiddenImplementationStandardsWork, errors);
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
     validateRequiredField(task.taskId, "Validation / Review Evidence", row.validationReviewEvidence, errors);
 
     const source = `${row.approvedDecisionSource} ${row.decisionSourcePathReference}`.toLowerCase();
@@ -3486,10 +3494,48 @@ function validateArchitectureUpdateContract(
       errors.push(`${task.taskId} Architecture Update Contract target must be an architecture-owned artifact`);
     }
 
+    const inventory = row.authorityConsistencyInventory.toLowerCase();
+    if (!mentionsScriptableInventory(inventory)) {
+      errors.push(`${task.taskId} Architecture Update Contract must name concrete architecture authority, consistency sweep, or source inventory`);
+    }
+
+    validateArchitectureUpdateClassTarget(task.taskId, row.architectureUpdateClass, row.architectureArtifactTarget, row.decisionSummary, errors);
+
     const forbidden = row.forbiddenImplementationStandardsWork.toLowerCase();
     if (!forbidden.includes("implementation") || !forbidden.includes("standards")) {
       errors.push(`${task.taskId} Architecture Update Contract must forbid implementation and standards work`);
     }
+  }
+}
+
+function validateArchitectureUpdateClassTarget(
+  taskId: string,
+  updateClass: string,
+  target: string,
+  summary: string,
+  errors: string[],
+): void {
+  const normalizedTarget = target.replace(/\\/g, "/").toLowerCase();
+  const normalizedText = `${normalizedTarget} ${summary}`.toLowerCase();
+
+  if ((updateClass === "adr-create" || updateClass === "adr-amendment") && !normalizedTarget.includes("docs/architecture/adr/")) {
+    errors.push(`${taskId} Architecture Update Contract ${updateClass} must target docs/architecture/adr/`);
+  }
+
+  if (updateClass === "system-overview-update" && !normalizedTarget.includes("docs/architecture/system-overview.md")) {
+    errors.push(`${taskId} Architecture Update Contract system-overview-update must target docs/architecture/system-overview.md`);
+  }
+
+  if (updateClass === "frontend-topology-authority" && !normalizedText.includes("topology")) {
+    errors.push(`${taskId} Architecture Update Contract frontend-topology-authority must name topology authority`);
+  }
+
+  if (updateClass === "architecture-template-update" && !normalizedTarget.includes("docs/templates/")) {
+    errors.push(`${taskId} Architecture Update Contract architecture-template-update must target docs/templates/`);
+  }
+
+  if (updateClass === "architecture-map-update" && !normalizedText.includes("map")) {
+    errors.push(`${taskId} Architecture Update Contract architecture-map-update must target an architecture map`);
   }
 }
 
@@ -6939,15 +6985,18 @@ function parseArchitectureFoundationContractRows(content: string): ArchitectureF
 function parseArchitectureUpdateContractRows(content: string): ArchitectureUpdateContractRow[] {
   return parseTableRows(section(content, "## Architecture Update Contract")).map((cells) => ({
     taskId: cells[0] ?? "",
-    approvedDecisionSource: cells[1] ?? "",
-    decisionSourcePathReference: cells[2] ?? "",
-    decisionSummary: cells[3] ?? "",
-    architectureArtifactTarget: cells[4] ?? "",
-    consistencySweepTargets: cells[5] ?? "",
-    downstreamImpact: cells[6] ?? "",
-    compatibilityPosture: cells[7] ?? "",
-    forbiddenImplementationStandardsWork: cells[8] ?? "",
-    validationReviewEvidence: cells[9] ?? "",
+    architectureUpdateClass: cells[1] ?? "",
+    approvedDecisionSource: cells[2] ?? "",
+    decisionSourcePathReference: cells[3] ?? "",
+    decisionSummary: cells[4] ?? "",
+    architectureArtifactTarget: cells[5] ?? "",
+    consistencySweepTargets: cells[6] ?? "",
+    authorityConsistencyInventory: cells[7] ?? "",
+    downstreamImpact: cells[8] ?? "",
+    compatibilityPosture: cells[9] ?? "",
+    forbiddenImplementationStandardsWork: cells[10] ?? "",
+    humanReviewBoundary: cells[11] ?? "",
+    validationReviewEvidence: cells[12] ?? "",
   }));
 }
 

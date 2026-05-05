@@ -317,8 +317,8 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 
 ## Architecture Update Contract
 
-| Task ID | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Validation / Review Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Task ID | Architecture Update Class | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Authority / Consistency Inventory | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Human Review Boundary | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Docs Artifact Contract
 
@@ -1133,6 +1133,63 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 has no Architecture Update Contract row");
+  });
+
+  it("allows architecture update tasks with classed ADR authority and consistency inventory", () => {
+    const architectureUpdateRow =
+      "| T-S001-01 | adr-create | Layer-2-technical-steering | docs/workspace/technical-steering/tenant-branding-ownership.md | Record tenant branding ownership architecture decision. | docs/architecture/adr/0042-tenant-branding-ownership.md | docs/architecture/system-overview.md; docs/architecture/priniciples.md; docs/templates/task-breakdown-packet-template.md | docs/workspace/technical-steering/tenant-branding-ownership.md; docs/architecture/adr/; docs/architecture/system-overview.md | DEV:backend and DOC follow-up tasks must consume the ADR after merge. | backwards compatibility required; no route, persistence, or permission behavior changes in this task | implementation and standards work are forbidden and split to owning task types | human review limited to architecture decision completeness and consistency | npm run task-breakdown:validate -- packet.md --story story.md |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:architecture-update |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/architecture/adr/0042-tenant-branding-ownership.md",
+        )
+        .replace(
+          "| T-S001-01 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Feature-local DEV:backend guardrail reviewed for tenantConfiguration route, persistence, authz, and artifact obligations. |",
+          "| T-S001-01 | GOV:architecture-update | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/architecture-update-task-guardrail.md | approved | Architecture update guardrail reviewed for approved decision source and artifact target. |",
+        )
+        .replace(
+          "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
+          "| T-S001-01 | architecture-approved-decision-source | pass | Layer 2 Technical Steering approved the ownership decision. |\n| T-S001-01 | architecture-update-class | pass | adr-create class targets docs/architecture/adr/. |\n| T-S001-01 | architecture-authority-reviewed | pass | ADRs and architecture docs reviewed. |\n| T-S001-01 | architecture-change-owner | pass | Technical Steering owns the architecture change. |\n| T-S001-01 | architecture-output-artifact | pass | ADR output artifact is named. |\n| T-S001-01 | architecture-consistency-inventory | pass | Architecture consistency inventory is named. |\n| T-S001-01 | architecture-downstream-impact | pass | DEV:backend and DOC task impacts are named. |\n| T-S001-01 | architecture-validation | pass | Technical steering and task breakdown validation required. |",
+        )
+        .replace(
+          "## Architecture Update Contract\n\n| Task ID | Architecture Update Class | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Authority / Consistency Inventory | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Architecture Update Contract\n\n| Task ID | Architecture Update Class | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Authority / Consistency Inventory | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${architectureUpdateRow}\n\n`,
+        )
+        .replace(
+          "| T-S001-01 | src/features/tenantConfiguration/domain/updateBranding.ts | feature-local | Owning feature domain capability file. |",
+          "| T-S001-01 | docs/architecture/adr/0042-tenant-branding-ownership.md | docs-artifact | Architecture ADR output. |",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.errors).not.toContain("T-S001-01 has no Architecture Update Contract row");
+    expect(result.errors).not.toContain("T-S001-01 Architecture Update Contract target must be an architecture-owned artifact");
+  });
+
+  it("blocks architecture update tasks with class-target mismatches or unscriptable inventory", () => {
+    const architectureUpdateRow =
+      "| T-S001-01 | adr-create | Layer-2-technical-steering | docs/workspace/technical-steering/tenant-branding-ownership.md | Record tenant branding ownership architecture decision. | docs/architecture/system-overview.md | docs/architecture/system-overview.md | architecture truth | DEV:backend and DOC follow-up tasks must consume the ADR after merge. | backwards compatibility required | implementation and standards work are forbidden and split to owning task types | human review limited to architecture decision completeness | npm run task-breakdown:validate -- packet.md --story story.md |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:architecture-update |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/architecture/system-overview.md",
+        )
+        .replace(
+          "## Architecture Update Contract\n\n| Task ID | Architecture Update Class | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Authority / Consistency Inventory | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Architecture Update Contract\n\n| Task ID | Architecture Update Class | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Authority / Consistency Inventory | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Human Review Boundary | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${architectureUpdateRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 Architecture Update Contract must name concrete architecture authority, consistency sweep, or source inventory");
+    expect(result.errors).toContain("T-S001-01 Architecture Update Contract adr-create must target docs/architecture/adr/");
   });
 
   it("blocks standards compliance tasks that try to change standards authority", () => {

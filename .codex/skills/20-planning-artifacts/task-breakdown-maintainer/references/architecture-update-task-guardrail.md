@@ -14,9 +14,10 @@ Use for task type: `GOV:architecture-update`
 
 - approved decision source from Layer 2, ADR, existing architecture authority,
   or explicit recorded human approval
-- architecture source of authority reviewed
+- architecture update class and architecture source of authority reviewed
 - architecture artifact path being created or changed
-- rationale, compatibility posture, and downstream task impact
+- rationale, compatibility posture, downstream task impact, and consistency
+  sweep inventory
 - validation or review command
 
 ## Approved Decision Sources
@@ -43,6 +44,36 @@ alternatives, or signoff are unresolved, route back to
 - split dependent implementation into the owning `DEV:*` task type
 - name downstream tasks or artifact families affected by the architecture
   update
+- fill the Architecture Update Contract with the update class, concrete
+  authority/consistency inventory, human-review boundary, and exact validation
+  or review evidence
+
+## Architecture Update Classes
+
+Use the class as the task's script-facing contract:
+
+- `adr-create`: create a new ADR from an approved decision source.
+- `adr-amendment`: amend an existing ADR from an approved decision source.
+- `system-overview-update`: update `docs/architecture/system-overview.md`.
+- `frontend-topology-authority`: update durable frontend topology authority,
+  route-family authority, locator policy, or materialization policy.
+- `architecture-template-update`: update an architecture-owned template without
+  changing standards authority.
+- `architecture-map-update`: update architecture maps, dependency maps, or
+  generated architecture summaries from approved authority.
+
+Worked examples:
+
+- ADR creation/amendment: target `docs/architecture/adr/`, review adjacent ADRs,
+  and split implementation to `DEV:*`.
+- system overview update: target `docs/architecture/system-overview.md`, sweep
+  principles/change-control/ADR consistency, and preserve compatibility notes.
+- frontend topology authority: target the architecture source that owns durable
+  topology, route moves, locator policy, or materialization policy; route real
+  app implementation to `DEV:frontend` or `DEV:platform-seam`.
+- architecture-owned template change: target `docs/templates/`; route standards
+  requirements to `GOV:standards-update` when the template change creates or
+  changes a repo standard.
 
 ## Ownership Boundary
 
@@ -58,8 +89,10 @@ task.
 ## Required Check IDs
 
 - `architecture-approved-decision-source`
+- `architecture-update-class`
 - `architecture-authority-reviewed`
 - `architecture-change-owner`
 - `architecture-output-artifact`
+- `architecture-consistency-inventory`
 - `architecture-downstream-impact`
 - `architecture-validation`

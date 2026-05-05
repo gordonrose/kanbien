@@ -99,6 +99,15 @@ export const layer4StandardsUpdateClasses = [
   "artifact-invalidation-sweep",
 ] as const;
 
+export const layer4ArchitectureUpdateClasses = [
+  "adr-create",
+  "adr-amendment",
+  "system-overview-update",
+  "frontend-topology-authority",
+  "architecture-template-update",
+  "architecture-map-update",
+] as const;
+
 export const layer4TaskGrainClassifications = [
   "single-behavior",
   "single-decision",
@@ -368,9 +377,11 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "GOV:architecture-update": [
     "architecture-approved-decision-source",
+    "architecture-update-class",
     "architecture-authority-reviewed",
     "architecture-change-owner",
     "architecture-output-artifact",
+    "architecture-consistency-inventory",
     "architecture-downstream-impact",
     "architecture-validation",
   ],

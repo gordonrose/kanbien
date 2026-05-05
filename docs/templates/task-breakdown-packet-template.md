@@ -737,8 +737,21 @@ Allowed approved decision sources:
 - `approved-architecture-foundation-output`
 - `explicit-recorded-human-approval`
 
-| Task ID | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Validation / Review Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+Allowed architecture update classes:
+
+- `adr-create`
+- `adr-amendment`
+- `system-overview-update`
+- `frontend-topology-authority`
+- `architecture-template-update`
+- `architecture-map-update`
+
+Record concrete authority sources, consistency sweep targets, downstream
+impacts, and human-review boundaries. If decision analysis is incomplete, route
+to `DECISION:architecture-foundation` instead of queueing this task.
+
+| Task ID | Architecture Update Class | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Authority / Consistency Inventory | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Human Review Boundary | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Docs Artifact Contract
 

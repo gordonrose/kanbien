@@ -66,7 +66,7 @@ Ratings:
 | `DECISION:architecture-foundation` | medium | strong | medium | medium | strong | yes | medium | P2 | Add examples across architecture concern areas and make decision-analysis completeness easier to inspect before downstream task queueing. |
 | `EVIDENCE:qa-evidence` | medium | strong | medium | strong | strong | yes | medium | P2 | Add narrower script instruments for live payload sampling, served asset verification, and mock-honesty comparison. |
 | `GOV:standards-update` | strong | strong | strong | strong | strong | yes | medium | P3 | Add more worked examples for enforced-now, advisory-with-approved-debt-route, script-reported-debt, and existing-artifact invalidation sweeps now that update class, enforcement posture, and artifact invalidation sweep are validator-backed. |
-| `GOV:architecture-update` | weak | medium | medium | medium | strong | yes | high | P1 | Add examples for ADR creation/amendment, system overview updates, frontend topology authority, and architecture-owned template changes. |
+| `GOV:architecture-update` | strong | strong | strong | strong | strong | yes | medium | P3 | Add more worked examples for ADR creation/amendment, system overview updates, frontend topology authority, and architecture-owned template changes now that update class, authority inventory, consistency sweep, and human-review boundary are validator-backed. |
 | `GOV:design-system` | strong | strong | medium | strong | strong | yes | medium | P3 | Add worked examples for seam-producing tasks, app-adoption contamination, and evidence-only split to `EVIDENCE:qa-evidence`. |
 
 ## Priority Sequence
