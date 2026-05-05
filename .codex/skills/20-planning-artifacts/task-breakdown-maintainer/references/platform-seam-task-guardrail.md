@@ -89,6 +89,9 @@ Queued platform-seam tasks must name:
   scheduler/job runtime, bootstrap runtime, generated-artifact
   materialization, tooling/harness, shared runtime helper, or cross-feature
   seam infrastructure
+- the platform seam class row matching that seam kind, with class-specific
+  proof, consumer coverage, runtime or materialization expectations, and
+  forbidden contamination/split notes
 - the compatibility mode: no behavior change, additive compatible, dual-path
   rollout, or compatibility-sensitive blocked
 - the exact write envelope; broad `src/` or platform edits are blocked unless
@@ -112,10 +115,33 @@ feature-local behavior, API contract truth, permission mapping, migrations,
 architecture authority, standards authority, and evidence sweeps out of the
 `DEV:platform-seam` task and route each to its owning task type.
 
+The task packet must also fill the `Platform Seam Class Contract` table:
+
+- `router-route-mounting` must prove route registration or mounting and at
+  least one existing route consumer.
+- `middleware-auth-request-context` must prove middleware/request-context or
+  auth helper behavior and at least one existing middleware or route-family
+  consumer.
+- `scheduler-job-runtime` must prove scheduler/job runtime behavior, timing or
+  retry posture, and at least one existing job/runtime consumer.
+- `bootstrap-runtime` must prove startup/bootstrap behavior and restart,
+  reload, or deployment posture.
+- `generated-artifact-materialization` must prove the generator,
+  preview/apply/check command, generated artifact output, and maintained
+  artifact consumer.
+- `tooling-harness` must prove the tool, script, or harness command and the
+  repo workflow or test consumer that relies on it.
+- `shared-runtime-helper` must prove the runtime helper contract and at least
+  one existing consumer.
+- `cross-feature-seam-infrastructure` must prove the cross-feature seam
+  mechanism, owning feature public seam or manifest dependency posture, and
+  existing/future/unsupported consumer boundaries.
+
 ## Required Check IDs
 
 - `platform-source-authority`
 - `platform-seam-kind`
+- `platform-seam-class`
 - `platform-seam-owner`
 - `platform-not-feature-local`
 - `platform-exact-write-envelope`

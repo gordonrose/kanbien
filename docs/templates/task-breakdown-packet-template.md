@@ -482,6 +482,18 @@ authority, and evidence sweeps must split to their owning task types.
 | Task ID | Seam Kind | Compatibility Mode | Approved Authority Source | Seam Owner / Location | Seam Change Scope | Exact Write Envelope | Why Not Feature-Local | Current / Future / Unsupported Consumers | Compatibility Contract | Representative Consumer Proof | Runtime / Restart Impact | Rollout / Backout Posture | Artifact / Materialization Impact | Generated / Apply / Check Command | Architecture / Standards Boundary | Split / Blocked Follow-Up | Proof Commands |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Platform Seam Class Contract
+
+Queued `DEV:platform-seam` tasks must also record class-specific expectations
+for the selected seam kind. The platform seam class must match the Platform
+Seam Contract `Seam Kind`. This prevents shared platform tasks from using a
+generic compatibility row while skipping the proof shape expected for router,
+middleware, scheduler, bootstrap, generated-artifact, tooling, runtime-helper,
+or cross-feature seam work.
+
+| Task ID | Platform Seam Class | Class-Specific Required Proof | Required Consumer Coverage | Runtime / Materialization Expectation | Forbidden Contamination / Split Notes |
+| --- | --- | --- | --- | --- | --- |
+
 ## Backend Implementation Approach
 
 Queued `DEV:backend` tasks must translate repo-wide architecture law into the

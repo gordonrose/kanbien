@@ -344,6 +344,7 @@ export const layer4RequiredCheckIdsByTaskType = {
   "DEV:platform-seam": [
     "platform-source-authority",
     "platform-seam-kind",
+    "platform-seam-class",
     "platform-seam-owner",
     "platform-not-feature-local",
     "platform-exact-write-envelope",

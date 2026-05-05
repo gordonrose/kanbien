@@ -72,6 +72,7 @@ const requiredHeadings = [
   "## Vertical Slice Coupling",
   "## Vertical Slice Split Pressure",
   "## Platform Seam Contract",
+  "## Platform Seam Class Contract",
   "## Backend Implementation Approach",
   "## Migration / Persistence Approach",
   "## Tight Allowed Write Envelope",
@@ -641,6 +642,15 @@ type PlatformSeamContractRow = {
   proofCommands: string;
 };
 
+type PlatformSeamClassContractRow = {
+  taskId: string;
+  platformSeamClass: string;
+  classSpecificRequiredProof: string;
+  requiredConsumerCoverage: string;
+  runtimeMaterializationExpectation: string;
+  forbiddenContaminationSplitNotes: string;
+};
+
 type DesignSystemSeamContractRow = {
   taskId: string;
   seamPosture: string;
@@ -1060,6 +1070,7 @@ export function validateTaskBreakdownContent(
   const verticalSliceCouplings = parseVerticalSliceCouplingRows(taskContent);
   const verticalSliceSplitPressures = parseVerticalSliceSplitPressureRows(taskContent);
   const platformSeamContracts = parsePlatformSeamContractRows(taskContent);
+  const platformSeamClassContracts = parsePlatformSeamClassContractRows(taskContent);
   const backendImplementationApproaches = parseBackendImplementationApproachRows(taskContent);
   const migrationPersistenceApproaches = parseMigrationPersistenceApproachRows(taskContent);
   const tightWriteEnvelopes = parseTightWriteEnvelopeRows(taskContent);
@@ -1142,6 +1153,7 @@ export function validateTaskBreakdownContent(
   const verticalSliceCouplingsByTask = groupBy(verticalSliceCouplings, (row) => row.taskId);
   const verticalSliceSplitPressuresByTask = groupBy(verticalSliceSplitPressures, (row) => row.taskId);
   const platformSeamContractsByTask = groupBy(platformSeamContracts, (row) => row.taskId);
+  const platformSeamClassContractsByTask = groupBy(platformSeamClassContracts, (row) => row.taskId);
   const backendImplementationApproachesByTask = groupBy(backendImplementationApproaches, (row) => row.taskId);
   const migrationPersistenceApproachesByTask = groupBy(migrationPersistenceApproaches, (row) => row.taskId);
   const tightWriteEnvelopesByTask = groupBy(tightWriteEnvelopes, (row) => row.taskId);
@@ -1223,6 +1235,12 @@ export function validateTaskBreakdownContent(
     validateApiContract(task, apiContractsByTask.get(task.taskId) ?? [], errors);
     validateDataDictionaryContract(task, dataDictionaryContractsByTask.get(task.taskId) ?? [], errors);
     validatePlatformSeamContract(task, platformSeamContractsByTask.get(task.taskId) ?? [], errors);
+    validatePlatformSeamClassContract(
+      task,
+      platformSeamContractsByTask.get(task.taskId) ?? [],
+      platformSeamClassContractsByTask.get(task.taskId) ?? [],
+      errors,
+    );
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
     validateWriteSetClassification(task, writeSetClassificationsByTask.get(task.taskId) ?? [], errors);
     validateForbiddenWork(task, forbiddenWorkByTask.get(task.taskId) ?? [], errors);
@@ -1253,6 +1271,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Vertical Slice Coupling", verticalSliceCouplings.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Vertical Slice Split Pressure", verticalSliceSplitPressures.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Platform Seam Contract", platformSeamContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Platform Seam Class Contract", platformSeamClassContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Backend Implementation Approach", backendImplementationApproaches.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Migration / Persistence Approach", migrationPersistenceApproaches.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Tight Allowed Write Envelope", tightWriteEnvelopes.map((row) => row.taskId), taskIds, errors);
@@ -4126,6 +4145,169 @@ function validatePlatformSeamContract(
   }
 }
 
+function validatePlatformSeamClassContract(
+  task: TaskRow,
+  seamRows: PlatformSeamContractRow[],
+  classRows: PlatformSeamClassContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DEV:platform-seam") {
+    if (classRows.length > 0) {
+      errors.push(`${task.taskId} has Platform Seam Class Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (classRows.length === 0) {
+    errors.push(`${task.taskId} has no Platform Seam Class Contract row`);
+    return;
+  }
+
+  for (const row of classRows) {
+    validateAllowedValue(task.taskId, "Platform Seam Class", row.platformSeamClass, allowedPlatformSeamKinds, errors);
+    validateRequiredField(task.taskId, "Class-Specific Required Proof", row.classSpecificRequiredProof, errors);
+    validateRequiredField(task.taskId, "Required Consumer Coverage", row.requiredConsumerCoverage, errors);
+    validateRequiredField(task.taskId, "Runtime / Materialization Expectation", row.runtimeMaterializationExpectation, errors);
+    validateRequiredField(task.taskId, "Forbidden Contamination / Split Notes", row.forbiddenContaminationSplitNotes, errors);
+
+    if (seamRows.length > 0 && !seamRows.some((seamRow) => seamRow.seamKind === row.platformSeamClass)) {
+      errors.push(`${task.taskId} Platform Seam Class Contract class must match the Platform Seam Contract seam kind`);
+    }
+
+    validatePlatformSeamClassSpecifics(task.taskId, row, errors);
+  }
+}
+
+function validatePlatformSeamClassSpecifics(taskId: string, row: PlatformSeamClassContractRow, errors: string[]): void {
+  const proof = row.classSpecificRequiredProof.toLowerCase();
+  const consumers = row.requiredConsumerCoverage.toLowerCase();
+  const runtime = row.runtimeMaterializationExpectation.toLowerCase();
+  const splitNotes = row.forbiddenContaminationSplitNotes.toLowerCase();
+  const combined = `${proof} ${consumers} ${runtime} ${splitNotes}`;
+  const splitNotesRequireRouting = !splitNotes.includes("not-applicable") && !splitNotes.includes("unchanged");
+
+  if (row.platformSeamClass === "router-route-mounting" && !mentionsRouterMountingClassProof(combined)) {
+    errors.push(`${taskId} router-route-mounting platform seam class must prove route registration/mounting and an existing route consumer`);
+  }
+
+  if (row.platformSeamClass === "middleware-auth-request-context" && !mentionsMiddlewareRequestContextClassProof(combined)) {
+    errors.push(`${taskId} middleware-auth-request-context platform seam class must prove middleware/auth/request-context behavior and a route-family consumer`);
+  }
+
+  if (row.platformSeamClass === "scheduler-job-runtime" && !mentionsSchedulerJobClassProof(combined)) {
+    errors.push(`${taskId} scheduler-job-runtime platform seam class must prove job scheduling/runtime behavior, timing or retry posture, and a job consumer`);
+  }
+
+  if (row.platformSeamClass === "bootstrap-runtime" && !mentionsBootstrapRuntimeClassProof(combined)) {
+    errors.push(`${taskId} bootstrap-runtime platform seam class must prove startup/bootstrap behavior and restart, reload, or deploy posture`);
+  }
+
+  if (row.platformSeamClass === "generated-artifact-materialization" && !mentionsGeneratedArtifactClassProof(combined)) {
+    errors.push(`${taskId} generated-artifact-materialization platform seam class must prove generator/apply/check behavior and generated artifact consumers`);
+  }
+
+  if (row.platformSeamClass === "tooling-harness" && !mentionsToolingHarnessClassProof(combined)) {
+    errors.push(`${taskId} tooling-harness platform seam class must prove the tool/script/harness command and repo workflow or test consumer`);
+  }
+
+  if (row.platformSeamClass === "shared-runtime-helper" && !mentionsSharedRuntimeHelperClassProof(combined)) {
+    errors.push(`${taskId} shared-runtime-helper platform seam class must prove helper/runtime behavior and existing consumer compatibility`);
+  }
+
+  if (row.platformSeamClass === "cross-feature-seam-infrastructure" && !mentionsCrossFeatureSeamClassProof(combined)) {
+    errors.push(`${taskId} cross-feature-seam-infrastructure platform seam class must prove cross-feature seam mechanics, public seam or manifest posture, and consumer boundaries`);
+  }
+
+  if (
+    splitNotesRequireRouting &&
+    (splitNotes.includes("api") || splitNotes.includes("openapi") || splitNotes.includes("postman")) &&
+    !splitNotes.includes("doc:api-contract")
+  ) {
+    errors.push(`${taskId} Platform Seam Class Contract API contamination must route to DOC:api-contract`);
+  }
+
+  if (
+    splitNotesRequireRouting &&
+    (splitNotes.includes("permission") || splitNotes.includes("authz") || splitNotes.includes("capability")) &&
+    !splitNotes.includes("doc:permission-mapping")
+  ) {
+    errors.push(`${taskId} Platform Seam Class Contract permission contamination must route to DOC:permission-mapping`);
+  }
+
+  if (
+    splitNotesRequireRouting &&
+    (splitNotes.includes("feature behavior") || splitNotes.includes("feature-local")) &&
+    !splitNotes.includes("dev:backend") &&
+    !splitNotes.includes("dev:frontend") &&
+    !splitNotes.includes("dev:vertical-slice")
+  ) {
+    errors.push(`${taskId} Platform Seam Class Contract feature behavior contamination must route to DEV:backend, DEV:frontend, or DEV:vertical-slice`);
+  }
+}
+
+function mentionsRouterMountingClassProof(value: string): boolean {
+  return (
+    (value.includes("route registration") || value.includes("route mounting") || value.includes("router mounting")) &&
+    value.includes("consumer")
+  );
+}
+
+function mentionsMiddlewareRequestContextClassProof(value: string): boolean {
+  return (
+    (value.includes("middleware") || value.includes("auth") || value.includes("request-context") || value.includes("request context")) &&
+    (value.includes("route-family") || value.includes("route family") || value.includes("consumer"))
+  );
+}
+
+function mentionsSchedulerJobClassProof(value: string): boolean {
+  return (
+    (value.includes("scheduler") || value.includes("job")) &&
+    (value.includes("runtime") || value.includes("scheduling")) &&
+    (value.includes("timing") || value.includes("retry")) &&
+    value.includes("consumer")
+  );
+}
+
+function mentionsBootstrapRuntimeClassProof(value: string): boolean {
+  return (
+    (value.includes("bootstrap") || value.includes("startup")) &&
+    (value.includes("restart") || value.includes("reload") || value.includes("deploy") || value.includes("redeploy"))
+  );
+}
+
+function mentionsGeneratedArtifactClassProof(value: string): boolean {
+  return (
+    (value.includes("generated artifact") || value.includes("materialization")) &&
+    (value.includes("generator") || value.includes("apply") || value.includes("check")) &&
+    value.includes("consumer")
+  );
+}
+
+function mentionsToolingHarnessClassProof(value: string): boolean {
+  return (
+    (value.includes("tool") || value.includes("script") || value.includes("harness")) &&
+    (value.includes("command") || value.includes("check")) &&
+    (value.includes("workflow") || value.includes("test consumer") || value.includes("consumer"))
+  );
+}
+
+function mentionsSharedRuntimeHelperClassProof(value: string): boolean {
+  return (
+    value.includes("helper") &&
+    value.includes("runtime") &&
+    value.includes("consumer") &&
+    value.includes("compat")
+  );
+}
+
+function mentionsCrossFeatureSeamClassProof(value: string): boolean {
+  return (
+    (value.includes("cross-feature") || value.includes("cross feature")) &&
+    (value.includes("public seam") || value.includes("manifest")) &&
+    value.includes("consumer")
+  );
+}
+
 function isRuntimePlatformSeamKind(seamKind: string): boolean {
   return (
     seamKind === "router-route-mounting" ||
@@ -6158,6 +6340,17 @@ function parsePlatformSeamContractRows(content: string): PlatformSeamContractRow
     architectureStandardsBoundary: cells[15] ?? "",
     splitBlockedFollowUp: cells[16] ?? "",
     proofCommands: cells[17] ?? "",
+  }));
+}
+
+function parsePlatformSeamClassContractRows(content: string): PlatformSeamClassContractRow[] {
+  return parseTableRows(section(content, "## Platform Seam Class Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    platformSeamClass: cells[1] ?? "",
+    classSpecificRequiredProof: cells[2] ?? "",
+    requiredConsumerCoverage: cells[3] ?? "",
+    runtimeMaterializationExpectation: cells[4] ?? "",
+    forbiddenContaminationSplitNotes: cells[5] ?? "",
   }));
 }
 
