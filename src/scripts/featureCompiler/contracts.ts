@@ -345,9 +345,11 @@ export const layer4RequiredCheckIdsByTaskType = {
     "permission-capability-rows",
     "permission-boundary",
     "permission-grant-source-ui",
+    "permission-mapping-row-posture",
     "permission-denial-audit",
     "permission-allow-deny",
     "permission-grants-migration",
+    "permission-split-routing",
     "permission-authz-proof",
   ],
   "DOC:data-dictionary": [

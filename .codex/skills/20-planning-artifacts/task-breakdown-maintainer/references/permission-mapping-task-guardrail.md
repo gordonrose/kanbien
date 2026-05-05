@@ -94,6 +94,12 @@ Before queueing, the task packet should name:
   feature docs, and capability catalog materialization posture
 - allow/deny proof command, review workflow, or explicit blocked reason
 
+The task packet must also fill the Permission Mapping Contract. If the mapping
+row is not currently runtime-enforced, the contract must say whether it is
+documentation-only, seed-backed, corrective-migration-backed, target,
+architecture-target, or blocked, and must name the split or blocker that keeps
+the permission from becoming usable prematurely.
+
 ## Split Conditions
 
 Split or block the task when:
@@ -137,7 +143,9 @@ Split or block the task when:
 - `permission-capability-rows`
 - `permission-boundary`
 - `permission-grant-source-ui`
+- `permission-mapping-row-posture`
 - `permission-denial-audit`
 - `permission-allow-deny`
 - `permission-grants-migration`
+- `permission-split-routing`
 - `permission-authz-proof`

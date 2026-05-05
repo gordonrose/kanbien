@@ -647,6 +647,33 @@ Allowed enforcement postures:
 | Task ID | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Permission Mapping Contract
+
+Required for `DOC:permission-mapping` tasks. Leave empty when no
+`DOC:permission-mapping` task is queued.
+
+Allowed grant source postures:
+
+- `documentation-only`
+- `seed-backed`
+- `corrective-migration-backed`
+- `runtime-enforced`
+- `blocked`
+
+Allowed mapping row postures:
+
+- `current`
+- `target`
+- `architecture-target`
+- `blocked`
+
+`DOC:permission-mapping` records permission truth only. Runtime enforcement,
+grant migrations, API denial contract changes, executable proof, and authz
+model changes must split to the owning task type.
+
+| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 Queued `TEST:test-only` tasks must say exactly what kind of test work they perform.
