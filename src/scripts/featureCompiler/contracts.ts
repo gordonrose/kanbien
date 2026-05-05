@@ -108,6 +108,14 @@ export const layer4ArchitectureUpdateClasses = [
   "architecture-map-update",
 ] as const;
 
+export const layer4ApiContractClasses = [
+  "no-wire-change-refresh",
+  "additive-route-contract",
+  "compatibility-sensitive-contract",
+  "openapi-postman-sync",
+  "generated-docs-sync",
+] as const;
+
 export const layer4TaskGrainClassifications = [
   "single-behavior",
   "single-decision",
@@ -431,10 +439,12 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "DOC:api-contract": [
     "api-route-family",
+    "api-contract-class",
     "api-contract-source",
     "api-request-response",
     "api-authz-validation",
     "api-compatibility",
+    "api-maintained-artifact-inventory",
     "api-maintained-artifacts",
     "api-split-routing",
     "api-validation-command",

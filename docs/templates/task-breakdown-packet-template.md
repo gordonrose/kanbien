@@ -918,12 +918,24 @@ Allowed maintained artifact postures:
 - `generated-docs-maintained`
 - `not-maintained-with-rationale`
 
+Allowed API contract classes:
+
+- `no-wire-change-refresh`
+- `additive-route-contract`
+- `compatibility-sensitive-contract`
+- `openapi-postman-sync`
+- `generated-docs-sync`
+
 `DOC:api-contract` records API-facing contract truth only. Runtime route
 implementation, transport schemas, domain behavior, persistence, permission
 mapping, migrations, and executable tests must split to the owning task type.
 
-| Task ID | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Split / Blocked Follow-Up | Validation / Review Evidence |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+Record the maintained-artifact inventory as concrete contract docs, OpenAPI,
+Postman, generated docs, traceability artifacts, or command output. Keep human
+review limited to contract wording and compatibility judgment.
+
+| Task ID | API Contract Class | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Maintained Artifact Inventory | Split / Blocked Follow-Up | Human Review Boundary | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Data Dictionary Contract
 

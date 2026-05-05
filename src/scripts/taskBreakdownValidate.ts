@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 import {
+  layer4ApiContractClasses,
   layer4ArchitectureUpdateClasses,
   layer4BackendCapabilityFileStrategies,
   layer4BackendChangeClasses,
@@ -361,6 +362,7 @@ const allowedApiMaintainedArtifactPostures = new Set([
   "generated-docs-maintained",
   "not-maintained-with-rationale",
 ]);
+const allowedApiContractClasses: Set<string> = new Set(layer4ApiContractClasses);
 const allowedDataCompatibilityPostures = new Set([
   "docs-only-alignment",
   "no-schema-change",
@@ -857,6 +859,7 @@ type PermissionMappingContractRow = {
 
 type ApiContractRow = {
   taskId: string;
+  apiContractClass: string;
   routeFamily: string;
   contractSourceAuthority: string;
   methodsPaths: string;
@@ -866,7 +869,9 @@ type ApiContractRow = {
   validationPaginationSortingSystemFields: string;
   compatibilityPosture: string;
   maintainedApiArtifacts: string;
+  maintainedArtifactInventory: string;
   splitBlockedFollowUp: string;
+  humanReviewBoundary: string;
   validationReviewEvidence: string;
 };
 
@@ -4019,6 +4024,7 @@ function validateApiContract(
   }
 
   for (const row of rows) {
+    validateAllowedValue(task.taskId, "API Contract Class", row.apiContractClass, allowedApiContractClasses, errors);
     validateRequiredField(task.taskId, "Route Family", row.routeFamily, errors);
     validateRequiredField(task.taskId, "Contract Source / Authority", row.contractSourceAuthority, errors);
     validateRequiredField(task.taskId, "Methods / Paths", row.methodsPaths, errors);
@@ -4028,7 +4034,9 @@ function validateApiContract(
     validateRequiredField(task.taskId, "Validation / Pagination / Sorting / System Fields", row.validationPaginationSortingSystemFields, errors);
     validateAllowedValue(task.taskId, "Compatibility Posture", row.compatibilityPosture, allowedApiCompatibilityPostures, errors);
     validateAllowedValue(task.taskId, "Maintained API Artifacts", row.maintainedApiArtifacts, allowedApiMaintainedArtifactPostures, errors);
+    validateRequiredField(task.taskId, "Maintained Artifact Inventory", row.maintainedArtifactInventory, errors);
     validateRequiredField(task.taskId, "Split / Blocked Follow-Up", row.splitBlockedFollowUp, errors);
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
     validateRequiredField(task.taskId, "Validation / Review Evidence", row.validationReviewEvidence, errors);
 
     const source = row.contractSourceAuthority.toLowerCase();
@@ -4082,6 +4090,13 @@ function validateApiContract(
       errors.push(`${task.taskId} API Contract must include rationale when OpenAPI/Postman/generated docs are not maintained`);
     }
 
+    const inventory = row.maintainedArtifactInventory.toLowerCase();
+    if (!mentionsScriptableInventory(inventory)) {
+      errors.push(`${task.taskId} API Contract must name concrete maintained artifact inventory paths, artifacts, or command output`);
+    }
+
+    validateApiContractClassPosture(task.taskId, row.apiContractClass, row.compatibilityPosture, row.maintainedApiArtifacts, row.maintainedArtifactInventory, errors);
+
     const compatibility = row.compatibilityPosture.toLowerCase();
     const followUp = row.splitBlockedFollowUp.toLowerCase();
     if (compatibility === "compatibility-sensitive" || compatibility === "blocked-pending-migration-or-approval") {
@@ -4107,6 +4122,41 @@ function validateApiContract(
     if (followUp.includes("test") && !followUp.includes("test:test-only")) {
       errors.push(`${task.taskId} API Contract executable proof must route to TEST:test-only`);
     }
+  }
+}
+
+function validateApiContractClassPosture(
+  taskId: string,
+  apiContractClass: string,
+  compatibilityPosture: string,
+  artifactPosture: string,
+  inventory: string,
+  errors: string[],
+): void {
+  const normalizedInventory = inventory.toLowerCase();
+
+  if (apiContractClass === "no-wire-change-refresh" && compatibilityPosture !== "no-wire-change") {
+    errors.push(`${taskId} API Contract no-wire-change-refresh class must use no-wire-change compatibility posture`);
+  }
+
+  if (apiContractClass === "additive-route-contract" && compatibilityPosture !== "additive") {
+    errors.push(`${taskId} API Contract additive-route-contract class must use additive compatibility posture`);
+  }
+
+  if (apiContractClass === "compatibility-sensitive-contract" && !["compatibility-sensitive", "blocked-pending-migration-or-approval"].includes(compatibilityPosture)) {
+    errors.push(`${taskId} API Contract compatibility-sensitive-contract class must use compatibility-sensitive or blocked-pending-migration-or-approval posture`);
+  }
+
+  if (apiContractClass === "openapi-postman-sync" && !["openapi-maintained", "postman-maintained", "openapi-and-postman-maintained"].includes(artifactPosture)) {
+    errors.push(`${taskId} API Contract openapi-postman-sync class must use OpenAPI/Postman maintained artifact posture`);
+  }
+
+  if (apiContractClass === "generated-docs-sync" && artifactPosture !== "generated-docs-maintained") {
+    errors.push(`${taskId} API Contract generated-docs-sync class must use generated-docs-maintained posture`);
+  }
+
+  if ((apiContractClass === "openapi-postman-sync" || apiContractClass === "generated-docs-sync") && !normalizedInventory.includes("openapi") && !normalizedInventory.includes("postman") && !normalizedInventory.includes("generated")) {
+    errors.push(`${taskId} API Contract maintained-artifact sync classes must name OpenAPI, Postman, or generated-docs inventory`);
   }
 }
 
@@ -7074,17 +7124,20 @@ function parsePermissionMappingContractRows(content: string): PermissionMappingC
 function parseApiContractRows(content: string): ApiContractRow[] {
   return parseTableRows(section(content, "## API Contract")).map((cells) => ({
     taskId: cells[0] ?? "",
-    routeFamily: cells[1] ?? "",
-    contractSourceAuthority: cells[2] ?? "",
-    methodsPaths: cells[3] ?? "",
-    paramsQueryBody: cells[4] ?? "",
-    responseStatusErrorShape: cells[5] ?? "",
-    authnAuthzTenantBoundary: cells[6] ?? "",
-    validationPaginationSortingSystemFields: cells[7] ?? "",
-    compatibilityPosture: cells[8] ?? "",
-    maintainedApiArtifacts: cells[9] ?? "",
-    splitBlockedFollowUp: cells[10] ?? "",
-    validationReviewEvidence: cells[11] ?? "",
+    apiContractClass: cells[1] ?? "",
+    routeFamily: cells[2] ?? "",
+    contractSourceAuthority: cells[3] ?? "",
+    methodsPaths: cells[4] ?? "",
+    paramsQueryBody: cells[5] ?? "",
+    responseStatusErrorShape: cells[6] ?? "",
+    authnAuthzTenantBoundary: cells[7] ?? "",
+    validationPaginationSortingSystemFields: cells[8] ?? "",
+    compatibilityPosture: cells[9] ?? "",
+    maintainedApiArtifacts: cells[10] ?? "",
+    maintainedArtifactInventory: cells[11] ?? "",
+    splitBlockedFollowUp: cells[12] ?? "",
+    humanReviewBoundary: cells[13] ?? "",
+    validationReviewEvidence: cells[14] ?? "",
   }));
 }
 

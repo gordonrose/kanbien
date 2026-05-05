@@ -11,10 +11,27 @@ Use for task type: `DOC:api-contract`
 
 ## Approval Evidence
 
+- API contract class
 - route family and contract path
+- maintained artifact inventory for docs, OpenAPI, Postman, generated docs, or
+  not-maintained rationale
 - changed or unchanged API behavior
 - compatibility posture
 - validation command or review workflow
+- human-review boundary for contract wording and compatibility judgment
+
+## API Contract Classes
+
+- `no-wire-change-refresh`: refresh contract docs without changing wire
+  behavior; compatibility posture must be `no-wire-change`.
+- `additive-route-contract`: document an approved additive method, route, field,
+  status, or error shape; compatibility posture must be `additive`.
+- `compatibility-sensitive-contract`: document or block a breaking or
+  compatibility-sensitive contract change with approval or migration routing.
+- `openapi-postman-sync`: update maintained OpenAPI and/or Postman artifacts for
+  an already-approved route contract.
+- `generated-docs-sync`: update generated API docs or generated API summaries
+  through the approved generation/materialization workflow.
 
 ## Deep Delivery Standard
 
@@ -23,6 +40,8 @@ Use for task type: `DOC:api-contract`
   distinct proof target or artifact owner
 - name the exact contract file, route shape, and validation command or review
   output
+- fill the API Contract table with class, maintained-artifact inventory,
+  exact target artifacts, split routing, and human-review boundary
 
 ## Ownership Boundary
 
@@ -76,10 +95,12 @@ compatibility evidence.
 ## Required Check IDs
 
 - `api-route-family`
+- `api-contract-class`
 - `api-contract-source`
 - `api-request-response`
 - `api-authz-validation`
 - `api-compatibility`
+- `api-maintained-artifact-inventory`
 - `api-maintained-artifacts`
 - `api-split-routing`
 - `api-validation-command`
