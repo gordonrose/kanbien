@@ -182,6 +182,45 @@ Gate checks:
 
 Canonical Technical Steering field definitions live in the template.
 
+### Layer 2 To Layer 3 Blocker-Resolution Loop
+
+Before moving from Technical Steering into Story Breakdown, the harness must
+proactively inspect the Technical Steering packet's Blockers, Artifact
+Obligations, Architecture Decision Analysis rows, Browser Security Posture, and
+Layer 3 Handoff rows.
+
+When any blocker, blocking artifact obligation, blocked handoff row,
+incomplete architecture decision, or required security/design artifact remains,
+the harness must not merely report the list and wait. It must start a guided
+blocker-resolution conversation before creating the Story Breakdown packet.
+
+The conversation should:
+
+- classify each item as requester-answerable product policy,
+  architecture/security/design-system decision, required planning artifact,
+  implementation prerequisite, future-scope deferral, or non-blocking
+  technical follow-up
+- pick the next smallest requester-answerable blocker first
+- ask one plain-language question at a time
+- update the owning artifact after each answer
+- re-run the relevant validator after changes
+- continue until no requester-answerable blocker remains, or the requester
+  explicitly signs off that a blocker is deferred to a named owner/layer
+
+The harness may move into Story Breakdown only when:
+
+- all requester-answerable blockers are answered, cut from scope, or explicitly
+  deferred with owner and layer
+- architecture/security/design-system blockers are represented as named Layer 3
+  unblock stories or blocking artifact obligations
+- blocked Layer 3 handoff rows are either removed from the active Story
+  Breakdown scope or represented in a Layer 3 unblock queue
+- the Technical Steering packet validates, or the remaining validation blocker
+  is explicitly accepted by the requester with a named owner and next artifact
+
+This loop is conversational by default. Do not dump a checklist of all blockers
+when one focused question can resolve the next useful item.
+
 ## Story Breakdown Gate
 
 For material work that has an approved Technical Steering packet, create or

@@ -9,7 +9,7 @@ Draft safety label:
 
 ## Status
 
-- Discovery status: `blocked-product-intent`
+- Discovery status: `ready-for-technical-steering`
 - Draft posture: `draft-fast-path`
 - Original request: "i would like to build a chat interface, like slack that
   my app can consume"
@@ -43,6 +43,18 @@ Draft safety label:
   - Stable panel actions are Reporting, Support, and Build.
   - Build opens the chat.
   - Build is where the user engages in Level 1 Product Discovery.
+  - For MVP, Build is the only active panel workflow; Reporting and Support are
+    visible as intentional coming-soon actions.
+  - First rollout is root admin only.
+  - For MVP, chat creators can see their own history, and root builders can see
+    root-admin discovery histories for review/support.
+  - For MVP, chat history and generated PDFs are retained indefinitely until a
+    broader retention policy exists; newer packets from the same conversation
+    mark earlier packets as superseded.
+  - For MVP, the downloadable PDF contains the Product Discovery packet itself;
+    there is no separate internal-only notes layer.
+  - For MVP, there is no explicit final review or confirmation step before PDF
+    generation; later refinements can add that.
   - Two builder audiences exist: root builders and tenant builders.
   - Root builders build for the whole platform.
   - Tenant builders build for tenant-specific configurations or repos, limited
@@ -58,7 +70,8 @@ Draft safety label:
   - Tenant builders must only download tenant-scoped packet context; root
     builders may include platform-wide context.
   - Chat conversation history must remain visible later.
-- Business questions explicitly signed off as deferred until later: none yet
+- Business questions explicitly signed off as deferred until later: none for
+  the draft MVP scope
 - Technical questions packaged for technical stakeholder:
   - Which existing harness seam should own the chat orchestration?
   - Which PDF generation path should be used and how should packets be rendered
@@ -67,19 +80,12 @@ Draft safety label:
     exist, and which must be extended before app UI work?
   - Which persistence model should retain chat transcripts and generated
     packet revisions without leaking tenant context?
-- Questions still blocking packet confidence:
-  - What should Reporting and Support do in the MVP, beyond appearing as panel
-    actions?
-  - Which pages/modules should get the panel first?
-  - Who may see chat history and PDF downloads after creation?
-  - How long should histories and generated PDFs remain visible or recoverable?
-  - Should tenant-side packets hide internal implementation notes entirely, or
-    present them in a separate internal-only section?
-  - What exactly counts as enough information for the chat to offer the PDF?
+- Questions still blocking packet confidence: none for the draft MVP scope;
+  remaining details are packaged for Technical Steering or later iteration.
 - Scope cuts used to reach confidence: MVP stops at chat history plus
   downloadable PDF; no in-app build task creation, no downstream loop execution,
   no support/reporting workflow beyond panel entry points.
-- Confidence for chosen status: `70%; below ready-for-technical-steering`
+- Confidence for chosen status: `95%; draft-ready for Technical Steering`
 
 ## Discovery Complexity And Completion Gate
 
@@ -110,20 +116,20 @@ Draft safety label:
 | Primary users and actors | answered | Root builders and tenant builders were named explicitly. | no |
 | Normal first-version workflow | answered | Open panel, choose Build or type freely, complete Layer 1 chat, download packet PDF, keep history. | no |
 | Authority and responsibility boundaries | answered | Root builders can act platform-wide; tenant builders are tenant-scoped by permission. | no |
-| Data created, changed, viewed, retained, or deleted | deferred-open | Chat transcript, contextual prompt selections, packet content, PDF export, and history records are implied; retention and deletion are not settled. | yes |
-| Lifecycle states and transitions | deferred-open | Conversation draft, packet-ready, PDF-generated, downloaded, history-visible are implied; abandoned and superseded behavior is not settled. | yes |
-| Exceptions, reversals, and recovery | deferred-open | Need decisions for abandoned chats, mistaken context selection, regenerated PDFs, and access changes while a chat is in progress. | yes |
-| Visibility, notifications, and user feedback | deferred-open | Chat and history visibility is required, but who can see prior conversations/downloads is not settled. | yes |
+| Data created, changed, viewed, retained, or deleted | answered | Chat transcript, contextual prompt selections, packet content, PDF export, and history records are retained indefinitely for MVP until a broader policy exists. | no |
+| Lifecycle states and transitions | answered | Conversation draft, packet-ready, PDF-generated, downloaded, history-visible, abandoned, and superseded states are implied; newer packets mark earlier ones as superseded. | no |
+| Exceptions, reversals, and recovery | deferred-with-known-direction | MVP skips final review/confirmation; mistaken context selection, PDF failure, and access changes are packaged for Technical Steering. | no |
+| Visibility, notifications, and user feedback | answered | Chat creators can see their own history; root builders can see root-admin discovery histories for review/support. | no |
 | Security, privacy, audit, compliance, and abuse baseline | assumed-baseline | Required because the feature touches roles, tenant context, generated discovery records, and downloadable files. | no |
-| Business policy decisions | deferred-open | PDF audience-specific content, history visibility, and MVP behavior of Reporting/Support still need product answers. | yes |
+| Business policy decisions | answered | MVP skips explicit final review/confirmation before PDF generation; later refinement can add review behavior. | no |
 | Configuration or customization | deferred-with-known-direction | Tenant builders may use this for tenant-specific configurations or repos later; MVP only captures discovery packet output. | yes |
 | Billing, plan, quota, or entitlement impact | deferred-open | No billing decision was discussed; future tenant builder availability may need entitlement rules. | yes |
-| Operational and support needs | deferred-open | Support appears as a panel action; operational ownership and support escalation are not defined. | yes |
-| Reporting, history, and evidence needs | answered | History must remain visible; PDF download should be available. Exact retention remains open. | yes |
-| Compatibility with existing behavior | assumed-baseline | Must preserve existing app page behavior and existing Product Discovery process; no full delivery-loop automation in MVP. | no |
+| Operational and support needs | deferred-with-known-direction | Support appears as a coming-soon action for MVP; a later support workflow still needs discovery. | no |
+| Reporting, history, and evidence needs | answered | History must remain visible to the creator and root builders for root-admin MVP; PDF download should be available; records are retained indefinitely for MVP. | no |
+| Compatibility with existing behavior | assumed-baseline | Must preserve existing root-admin behavior and existing Product Discovery process; no full delivery-loop automation in MVP. | no |
 | Future extensibility pressure | answered | Future in-app build task creation and loop continuation are expected but out of MVP. | no |
 | Explicit out of scope | answered | No in-app build task creation or continuation through the full loop for MVP. | no |
-| Open blockers | answered | Several business and technical questions block ready-for-steering status. | yes |
+| Open blockers | answered | No product blockers remain for the draft MVP scope; technical decisions are packaged for Technical Steering. | no |
 
 ## Triggered Overlay Coverage
 
@@ -137,29 +143,29 @@ Draft safety label:
 | access / authorization | feature/configuration/flag gate posture | deferred-open | MVP rollout audience and gating are not settled. | yes |
 | access / authorization | allow and deny proof expectations | assumed-baseline | Required for root versus tenant boundaries. | no |
 | access / authorization | object/entity-level rule direction | deferred-open | Exact object model for conversations and packets is not defined. | no |
-| access / authorization | support/operator access posture | deferred-open | Whether support can view builder histories is not decided. | yes |
+| access / authorization | support/operator access posture | answered | Root builders can see root-admin discovery histories for review/support in the MVP. | no |
 | access / authorization | onboarding, offboarding, and role-change lifecycle | deferred-open | Need behavior when access changes during or after a chat. | yes |
-| access / authorization | audit/history visibility and retention expectations | deferred-open | History is required; visibility and retention are open. | yes |
+| access / authorization | audit/history visibility and retention expectations | answered | Visibility is settled for MVP; records are retained indefinitely until a broader policy exists. | no |
 | tenant boundary | owning tenant context | answered | Tenant builder packets are scoped to the relevant tenant. | no |
 | tenant boundary | cross-tenant deny rule | answered | Tenant builders must not download platform-wide or other-tenant context. | no |
 | tenant boundary | root/operator exception posture | answered | Root builders may include platform-wide context. | no |
-| tenant boundary | tenant-scoped audit and reporting visibility | deferred-open | Tenant-facing history/report visibility is not defined. | yes |
+| tenant boundary | tenant-scoped audit and reporting visibility | deferred-with-known-direction | Tenant-builder history is deferred until tenant-builder rollout; root-admin MVP uses root-builder review visibility. | no |
 | frontend / UX | primary user value | answered | Give builders a contextual way to start discovery from where they already are. | no |
 | frontend / UX | surface and management location | answered | Persistent right panel; mobile floating button; Build opens chat. | no |
 | frontend / UX | list size, search, comparison, and review needs | not-applicable | MVP is chat and contextual starter prompts, not a large selectable list. | no |
-| frontend / UX | mistake recovery and confirmation needs | deferred-open | Need confirmation behavior before PDF generation and context changes. | yes |
+| frontend / UX | mistake recovery and confirmation needs | deferred-with-known-direction | No explicit final confirmation for MVP; later refinements can add review/correction behavior. | no |
 | frontend / UX | empty, denied, loading, failed, and degraded states | deferred-open | Not yet explored. | yes |
 | frontend / UX | customer-facing wording and confidence needs | answered | PDF must be well presented for internal and tenant-side readers. | no |
 | frontend / UX | governed design-system or frontend topology signal | assumed-baseline | Side panel, floating mobile action, and chat UI are governed frontend patterns. | no |
-| data lifecycle and retention | lifecycle states and transitions | deferred-open | Chat/PDF lifecycle requires decisions. | yes |
-| data lifecycle and retention | retained history and user-visible history | answered | Conversation must remain visible as history. | yes |
+| data lifecycle and retention | lifecycle states and transitions | answered | MVP uses draft/in-progress/packet-generated/downloaded/abandoned/superseded lifecycle language. | no |
+| data lifecycle and retention | retained history and user-visible history | answered | Creator and root-builder visibility are settled; records are retained indefinitely for MVP until a broader policy exists. | no |
 | user-managed assets | rendering or delivery posture | answered | MVP includes downloadable PDF packet. | no |
 | user-managed assets | allowed asset kinds and visibility | answered | MVP asset kind is generated PDF packet only. | no |
-| user-managed assets | quota, cleanup, retention, export, and legal-hold expectations | deferred-open | PDF retention and cleanup are not decided. | yes |
-| compliance / reporting | customer-visible versus operator-only evidence | deferred-open | Both audiences read packets; internal-only content rules are not settled. | yes |
-| operations / support | support/operator access posture | deferred-open | Support action exists; details are not defined. | yes |
+| user-managed assets | quota, cleanup, retention, export, and legal-hold expectations | deferred-with-known-direction | PDF retention is indefinite for MVP; quota/legal-hold posture remains technical/governance follow-up. | no |
+| compliance / reporting | customer-visible versus operator-only evidence | answered | MVP PDF contains the Product Discovery packet itself, with scope controlling what context is included. | no |
+| operations / support | support/operator access posture | deferred-with-known-direction | Support is not an active MVP flow; later support behavior needs separate discovery. | no |
 | integration / API | consumer and provider actors | defer-to-technical-steering | The app consumes a chat harness; exact seams are technical. | no |
-| workflow / approval | approval posture | deferred-open | Need to decide whether PDF generation requires explicit final confirmation. | yes |
+| workflow / approval | approval posture | answered | MVP does not require explicit final review/confirmation before PDF generation. | no |
 
 ## Known Questions Gate
 
@@ -169,20 +175,15 @@ Draft safety label:
 - First one question asked before drafting: "Who is the first version mainly
   for, and what should they be able to talk about in it?"
 - Requester answered, corrected, or explicitly deferred first question: `yes`
-- Known important product questions left unasked:
-  - MVP behavior for Reporting and Support actions.
-  - History and PDF retention/visibility rules.
-  - Exact threshold for when the chat should offer PDF creation.
-  - Initial page/module rollout scope.
-  - Internal-only versus shared PDF content boundaries.
+- Known important product questions left unasked: none for the draft MVP scope
 - For each unasked business question, requester signoff for "deferred until
-  later": none
+  later": none needed for the draft MVP scope
 - Technical questions not asked of business owner and packaged for technical
   stakeholder: chat orchestration seam, PDF generation/rendering path, storage
   model, design-system adoption path.
 - If any known question was not asked, why was it safe to defer or package:
-  The packet is explicitly `blocked-product-intent`; it is not ready for
-  Technical Steering.
+  Remaining questions are technical or later-iteration refinement concerns, not
+  blockers to the draft MVP product intent.
 - Packet status allowed: `yes`, draft only.
 
 ## Change Routing
@@ -203,15 +204,15 @@ Draft safety label:
 - Core platform check: Required for shared app surface, harness integration,
   access rules, history, and generated PDF behavior.
 - Backlog item shape: Foundational platform feature with governed frontend
-  design-system work before app adoption.
+  design-system work before root-admin app adoption.
 - Approval posture: Product intent still needs additional answers before
   Technical Steering.
 - Evidence expectation: Future implementation will need allow/deny access
   tests, tenant-scope tests, chat lifecycle tests, PDF generation tests,
   browser scenarios for desktop/mobile panel behavior, and design-system
   signoff evidence.
-- Routing blockers: Product answers for retention, visibility, support/reporting
-  MVP scope, PDF content boundaries, and first rollout surface.
+- Routing blockers: access-change/failure behavior is packaged for Technical
+  Steering; no remaining product blocker for the draft MVP scope.
 
 ## Product Intent
 
@@ -303,7 +304,7 @@ Draft safety label:
 - Existing UX pattern likely needs extension: yes
 - New UX pattern may be needed: yes
 - Design-system extension may be needed: yes
-- Affected surfaces: app-wide right-side panel, mobile floating button, chat
+- Affected surfaces: root-admin right-side panel, mobile floating button, chat
   view, contextual starter prompts, PDF preview/download affordance, history
   view.
 - User workflow reason: The panel must be reusable across pages while preserving
@@ -328,14 +329,14 @@ Draft safety label:
   reviewing the PDF
 - Configuration / governance actors: root builder, tenant builder with
   permission-limited scope
-- Support / root / operator actors: support and root operators may need history
-  access; exact visibility is open
+- Support / root / operator actors: root builders can see root-admin discovery
+  histories for review/support in the MVP
 - System or external-provider actors: harness chat orchestrator; PDF generator
-- Affected modules / surfaces: app-wide panel, current page, current module,
+- Affected modules / surfaces: root-admin panel, current root-admin page/module,
   role context display, Product Discovery packet output
 - Root / tenant / public posture: root and tenant; not public
-- Permission-sensitive decisions still open: history visibility, support access,
-  tenant builder role mapping, rollout gating
+- Permission-sensitive decisions still open: tenant builder role mapping, rollout
+  gating, access-change behavior
 - Current context: current page, current module, logged-in roles, and tenant or
   platform scope
 - Trigger event: user opens Build from the right-side panel or mobile floating
@@ -345,7 +346,7 @@ Draft safety label:
 
 ### Primary Journey
 
-1. User starts from: any app page with the shared panel available.
+1. User starts from: a root-admin page with the shared panel available.
 2. User wants to: modify something, get support, or begin a build/discovery
    conversation from current context.
 3. System helps by: showing contextual starter prompts for current page, module,
@@ -439,7 +440,7 @@ Examples involve:
 | UC-001 | JTBD-001 | root builder | create/export | Generate platform-scoped discovery packet | Root builders build for the whole platform. | Must support platform-wide scope. |
 | UC-002 | JTBD-002 | tenant builder | create/export | Generate tenant-scoped discovery packet | Tenant builders limited by permission level. | Must enforce tenant boundary and deny cross-tenant context. |
 | UC-003 | JTBD-001/JTBD-002 | builder | guide | Start from contextual starter prompt or free text | Page/module/roles starter examples. | Must capture context without forcing a rigid wizard. |
-| UC-004 | JTBD-003 | reviewer | read/history | Revisit conversation after packet generation | History must remain visible. | Must retain transcript and packet relationship. |
+| UC-004 | JTBD-003 | creator/root builder | read/history | Revisit conversation after packet generation | History must remain visible to creator and root builders. | Must retain transcript and packet relationship with scoped visibility. |
 
 ## State-Based Journey Matrix
 
@@ -470,8 +471,8 @@ Examples involve:
 | ST-001 | builder | new | in progress | conversation | first chat message or starter selection | conversation captures scope and context | ready-for-signoff |
 | ST-002 | builder/system | in progress | packet-ready | conversation | enough discovery information captured | user can review/generate packet | needs-product-answer |
 | ST-003 | system | packet-ready | packet-generated | packet PDF | user requests download | scoped PDF is generated | ready-for-signoff |
-| ST-004 | builder | in progress | abandoned | conversation | user stops before packet | history/cleanup behavior follows retention rule | needs-product-answer |
-| ST-005 | system | packet-generated | superseded | packet PDF | user changes discovery content later | prior packet remains or is marked superseded per retention rule | needs-product-answer |
+| ST-004 | builder | in progress | abandoned | conversation | user stops before packet | retained in history for MVP | ready-for-signoff |
+| ST-005 | system | packet-generated | superseded | packet PDF | user changes discovery content later | prior packet remains and is marked superseded | ready-for-signoff |
 
 ## Context Variation And Unhappy Path Coverage
 
@@ -479,14 +480,14 @@ Examples involve:
 | --- | --- | --- | --- |
 | Root builder creates platform-wide packet | in-scope | no | Confirmed. |
 | Tenant builder creates tenant-scoped packet | in-scope | no | Confirmed. |
-| Tenant builder attempts cross-tenant/platform scope | in-scope | yes | Denial/correction behavior needs final product wording. |
+| Tenant builder attempts cross-tenant/platform scope | in-scope | no | Product rule is deny cross-tenant/platform scope for tenant builders; exact UX wording can be refined later. |
 | User starts free-form chat | in-scope | no | Confirmed. |
 | User uses contextual starter prompt | in-scope | no | Confirmed. |
-| Reporting panel action | in-scope | yes | Action exists, but MVP behavior is undefined. |
-| Support panel action | in-scope | yes | Action exists, but MVP behavior is undefined. |
-| PDF generation failure | in-scope | yes | Recovery behavior needed. |
-| Chat abandoned before packet | in-scope | yes | Retention and cleanup needed. |
-| User access changes during chat | in-scope | yes | Product behavior needed. |
+| Reporting panel action | out-of-scope | no | Visible as coming soon for MVP; no active reporting flow. |
+| Support panel action | out-of-scope | no | Visible as coming soon for MVP; no active support flow. |
+| PDF generation failure | in-scope | no | Recovery behavior should be defined in Technical Steering/product refinement, but does not block MVP product intent. |
+| Chat abandoned before packet | in-scope | no | Retained indefinitely for MVP until a broader policy exists. |
+| User access changes during chat | in-scope | no | Product behavior should recheck current access and scope; exact technical enforcement is packaged for Technical Steering. |
 | Full in-app build task creation | out-of-scope | no | Explicitly replaced by PDF download for MVP. |
 
 ## Specialized Product Template / Checklist Reference
@@ -502,7 +503,7 @@ Examples involve:
 
 | Capability | Derived from JTBD/use case | Derived from state journey / transition | User outcome | Actor | Surface | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Open shared work panel | JTBD-001, JTBD-002 | JY-STATE-001, JY-STATE-002 | Access Reporting, Support, and Build from each page | builder | app-wide panel | Governed frontend family likely needed. |
+| Open shared work panel | JTBD-001, JTBD-002 | JY-STATE-001, JY-STATE-002 | Access Reporting, Support, and Build from root admin | builder | root-admin panel | Governed frontend family likely needed. |
 | Collapse to mobile action | JTBD-001, JTBD-002 | JY-STATE-001 | Use same entry point on mobile | builder | mobile app UI | Must preserve active conversation access. |
 | Start Build chat | UC-001, UC-002 | ST-001 | Begin Level 1 discovery | builder | Build panel | Initial MVP primary action. |
 | Show contextual starters | UC-003 | ST-001 | Start with page/module/role context | builder | Build chat | Prompt suggestions, not hard gates. |
@@ -510,19 +511,17 @@ Examples involve:
 | Enforce root/tenant scope | UC-001, UC-002 | JY-STATE-003 | Prevent scope leaks | builder/system | Build chat and PDF | Permission-sensitive. |
 | Generate Product Discovery packet | UC-001, UC-002 | ST-002, ST-003 | Produce real packet content | builder/system | Build chat | Should map to Layer 1 format. |
 | Download well-presented PDF | UC-001, UC-002 | ST-003 | Share packet with internal and tenant readers | builder | packet output | Generated PDF is MVP endpoint. |
-| Preserve conversation history | UC-004 | JY-STATE-004 | Revisit the chat later | builder/reviewer | history view | Retention rules still open. |
+| Preserve conversation history | UC-004 | JY-STATE-004 | Revisit the chat later | builder/reviewer | history view | Retained indefinitely for MVP until broader policy exists. |
 
 ## Business Questions Before Requirements Lock
 
 | Question | Why it matters in plain language | Required before steering? | Current answer / owner | Deferred until later signed off by requester? |
 | --- | --- | --- | --- | --- |
-| What should Reporting do in the MVP? | It is a persistent action in the panel, but it may be a placeholder, a support path, or a real reporting request flow. | yes | requester | no |
-| What should Support do in the MVP? | The action may create a support chat, link to support, or start a different harness path. | yes | requester | no |
-| Which pages/modules get the panel first? | App-wide behavior may be too large for a first implementation slice. | yes | requester | no |
-| Who can see chat history and downloaded/generated packets later? | History can contain sensitive tenant or platform change intent. | yes | requester | no |
-| How long should chat history and PDFs remain visible/recoverable? | Retention affects privacy, storage, audit, and user trust. | yes | requester | no |
-| Should tenant-facing PDFs include only shared business language, or also internal notes? | The same packet must work for internal and tenant readers without leaking internal details. | yes | requester | no |
-| What exactly should happen before PDF generation? | The user may need a final summary and confirmation rather than automatic output. | yes | requester | no |
+| What should Reporting do after the MVP? | Reporting is visible but inactive in the MVP; later behavior needs its own product answer. | no | deferred; likely separate discovery | yes |
+| What should Support do after the MVP? | Support is visible but inactive in the MVP; later behavior needs its own product answer. | no | deferred; likely separate discovery | yes |
+| What should replace indefinite retention later? | MVP keeps records indefinitely, but a production retention policy should eventually decide archive/delete/legal-hold behavior. | no | deferred; future governance | yes |
+| Should tenant-facing PDFs include only shared business language, or also internal notes? | The MVP uses the Product Discovery packet only, with no separate internal-only notes layer. | no | answered by requester | not-applicable |
+| What exactly should happen before PDF generation? | MVP skips explicit final review/confirmation; later refinement can add a review step. | no | answered by requester | not-applicable |
 
 ## Technical Questions For Technical Stakeholders
 
@@ -549,14 +548,14 @@ Examples involve:
 
 | Item | Assumption | Confidence | Risk if wrong | Decision needed | Owner / signoff |
 | --- | --- | --- | --- | --- | --- |
-| Panel availability | Shared panel appears across relevant app pages. | medium | Scope may be too large for MVP. | yes | requester |
+| Panel availability | Shared panel appears in root admin for MVP. | high | If later treated as app-wide, governance scope may expand. | no | confirmed |
 | PDF output | MVP output is a downloadable PDF, not a build task. | high | Could overbuild downstream workflow. | no | confirmed |
-| History | Conversations remain visible later. | high | Retention/visibility may be underspecified. | yes | requester |
+| History | Conversations remain visible to their creator and root builders for root-admin MVP and are retained indefinitely until broader policy exists. | high | Later policy could require archival or deletion rules. | no | confirmed |
 | Tenant scope | Tenant builders see/download only tenant-specific context. | high | Cross-tenant data leakage. | no | confirmed |
 | Root scope | Root builders can create platform-wide packets. | high | Platform-wide requests might be blocked incorrectly. | no | confirmed |
 | Starter prompts | Prompts tailor the conversation but do not block free text. | high | Wizard may become too rigid. | no | confirmed |
-| PDF audience | Both internal and tenant readers should be able to read it. | high | Content may leak internal details or be too technical. | yes | requester |
-| Reporting/Support | Actions exist in panel for MVP. | medium | Empty actions could confuse users. | yes | requester |
+| PDF audience | Both internal and tenant readers receive the Product Discovery packet itself, scoped to their allowed context, with no separate internal notes layer for MVP. | high | Packet wording must be well presented because it is the shared output. | no | confirmed |
+| Reporting/Support | Actions are visible but inactive/coming soon for MVP; Build is the only working flow. | high | If shown poorly, inactive actions could still confuse users. | no | confirmed |
 
 ## Discovery Feedback Loop
 
@@ -575,6 +574,12 @@ Examples involve:
 | Feedback ID | Source | Observation | Affects JTBD / journey / capability / out-of-scope / assumption? | Decision | Follow-up |
 | --- | --- | --- | --- | --- | --- |
 | FDBK-001 | user interview | MVP should stop at downloadable PDF and history, not downstream task creation. | out-of-scope / capability | accept | Keep build task creation out of MVP. |
+| FDBK-002 | user interview | Reporting and Support should be visible but inactive/coming soon for MVP; Build is the only active workflow. | journey / capability / out-of-scope | accept | Update MVP scope and unblock Reporting/Support ambiguity. |
+| FDBK-003 | user interview | First rollout should be root admin only. | scope / surface | accept | Remove app-wide rollout from MVP. |
+| FDBK-004 | user interview | For MVP, chat creators can see their own history and root builders can see root-admin discovery histories for review/support. | visibility / history | accept | Defer tenant-builder history rules until tenant-builder rollout. |
+| FDBK-005 | user interview | For MVP, retain chat history and generated PDFs indefinitely; mark earlier packets superseded when a newer packet is generated from the same conversation. | lifecycle / retention | accept | Defer broader retention policy to later governance. |
+| FDBK-006 | user interview | For MVP, the downloadable PDF should just contain the Product Discovery packet, with no separate internal-only notes layer. | PDF content / evidence | accept | Treat scope filtering as the privacy boundary for MVP. |
+| FDBK-007 | user interview | For MVP, skip the explicit final review/confirmation step before PDF generation; refinements can happen later. | workflow / approval | accept | Treat PDF generation as direct once the chat has enough packet content. |
 
 ## Discovery Revision Ledger
 
@@ -587,17 +592,28 @@ Examples involve:
 - Product decisions locked:
   - Shared panel includes Reporting, Support, and Build.
   - Build opens the chat.
+  - For MVP, Build is the only active workflow; Reporting and Support are
+    visible as coming-soon actions.
+  - First rollout is root admin only.
+  - Chat creators can see their own history, and root builders can see
+    root-admin discovery histories for review/support.
+  - Chat history and generated PDFs are retained indefinitely for MVP until a
+    broader policy exists; newer packets mark earlier packets from the same
+    conversation as superseded.
+  - The downloadable PDF contains the Product Discovery packet itself, with no
+    separate internal-only notes layer for MVP.
+  - MVP skips explicit final review/confirmation before PDF generation.
   - Build starts Level 1 Product Discovery.
   - Root and tenant builder audiences exist.
   - Tenant builder packets must be tenant-scoped.
   - Root builder packets may be platform-wide.
   - MVP output is downloadable PDF packet plus retained chat history.
 - Business decisions intentionally deferred until later with requester signoff:
-  none
+  none for the draft MVP scope
 - Technical questions packaged for technical stakeholder:
   chat orchestration seam, PDF generation, storage/history model, design-system
   adoption, asset governance.
-- Packet confidence for handoff: `70%; blocked-product-intent`
+- Packet confidence for handoff: `95%; draft-ready for Technical Steering`
 - Scope cuts made to reach confidence:
   MVP excludes in-app build task creation and downstream loop continuation.
 - Risk flags for Technical Steering:
@@ -613,8 +629,7 @@ Examples involve:
   - async/job: possible for PDF generation
   - external provider: no current external provider
   - privacy/compliance: yes
-- Recommended next artifact: continue Product Discovery to answer blockers,
-  then Technical Steering. Design-system governance should precede app UI
-  implementation.
-- Stop condition triggered: Product intent is clear enough for a draft but not
-  ready for Technical Steering.
+- Recommended next artifact: Technical Steering, then design-system governance
+  before app UI implementation.
+- Stop condition triggered: Product intent is ready for Technical Steering for
+  the draft MVP scope.

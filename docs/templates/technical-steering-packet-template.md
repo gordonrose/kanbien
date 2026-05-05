@@ -312,6 +312,39 @@ approved exception.
 | Blocker ID | Blocks | Blocker Type | Required Output | Owner |
 | --- | --- | --- | --- | --- |
 
+## Layer 2 To Layer 3 Blocker-Resolution Loop
+
+Use this section before Story Breakdown. The harness must inspect Blockers,
+Artifact Obligations, Browser Security Posture, Architecture Decision Analysis,
+and Layer 3 Handoff rows, then proactively work through requester-answerable
+blockers instead of merely reporting them.
+
+| Item ID | Source Row / Artifact | Classification | Requester-Facing Question Or Action | Owner / Layer | Resolution Status | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+
+Allowed classifications:
+
+- `requester-answerable-product-policy`
+- `architecture-security-design-decision`
+- `required-planning-artifact`
+- `implementation-prerequisite`
+- `future-scope-deferral`
+- `non-blocking-technical-follow-up`
+
+Allowed resolution statuses:
+
+- `answered`
+- `queued-as-layer-3-unblock-story`
+- `deferred-with-owner`
+- `out-of-scope`
+- `not-started`
+- `blocked`
+
+Story Breakdown may start only when requester-answerable blockers are answered,
+cut from scope, or explicitly deferred with an owner/layer, and every remaining
+blocking artifact or blocked handoff row is represented as a Layer 3 unblock
+story or explicit blocker.
+
 ## Layer 3 Handoff
 
 | Story Scope Element | Handoff Status | Required Classification IDs | Notes |

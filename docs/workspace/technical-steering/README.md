@@ -23,4 +23,19 @@ harness law unless promoted to architecture, standards, templates, or skills.
 - deterministic signal checks
 - risk flags with required Layer 3 and Layer 4 signals
 - steering decisions and blockers
+- a proactive Layer 2 to Layer 3 blocker-resolution loop when blockers,
+  blocking artifacts, or blocked handoff rows remain
 - handoff status for Story Breakdown
+
+## Layer 2 To Layer 3 Blocker Resolution
+
+Before Story Breakdown starts, the harness should inspect the steering packet
+for blockers, blocking artifact obligations, incomplete architecture decisions,
+browser-security stops, and blocked Layer 3 handoff rows.
+
+If any remain, the harness should proactively guide the requester through the
+next smallest requester-answerable decision in plain language, update the
+owning artifact, and re-run validation. Technical, design-system, security, or
+artifact work that the requester should not answer directly should be queued as
+Layer 3 unblock stories or named blockers rather than hidden inside delivery
+tasks.
