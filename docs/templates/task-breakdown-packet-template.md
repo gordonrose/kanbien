@@ -568,6 +568,31 @@ Allowed approved decision sources:
 | Task ID | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Validation / Review Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Standards Update Contract
+
+Required for `GOV:standards-update` tasks. Leave empty when no
+`GOV:standards-update` task is queued.
+
+Allowed approved standards change sources:
+
+- `Layer-2-technical-steering`
+- `standards-compliance-audit`
+- `issue-reconciliation`
+- `escaped-defect-reconciliation`
+- `harness-retrospective`
+- `existing-standards-contradiction`
+- `explicit-recorded-human-approval`
+
+Allowed enforcement postures:
+
+- `validator-or-gate-enforced-now`
+- `template-required-now`
+- `script-reported-debt`
+- `advisory-with-approved-debt-route`
+
+| Task ID | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 Queued `TEST:test-only` tasks must say exactly what kind of test work they perform.

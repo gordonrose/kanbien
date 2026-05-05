@@ -278,9 +278,11 @@ export const layer4RequiredCheckIdsByTaskType = {
     "standards-status-artifact",
   ],
   "GOV:standards-update": [
+    "standards-approved-change-source",
     "standards-change-owner",
     "standards-rationale",
     "standards-affected-surfaces",
+    "standards-enforcement-plan",
     "standards-rollout-compatibility",
     "standards-validation",
   ],

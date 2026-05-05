@@ -73,6 +73,7 @@ const requiredHeadings = [
   "## Refactor-First Contract",
   "## Architecture Foundation Contract",
   "## Architecture Update Contract",
+  "## Standards Update Contract",
   "## Test-Only Coverage Contract",
   "## Test Suite Alignment Contract",
   "## Capability Permission / State Matrix",
@@ -227,6 +228,21 @@ const allowedArchitectureUpdateDecisionSources = new Set([
   "existing-architecture-source",
   "approved-architecture-foundation-output",
   "explicit-recorded-human-approval",
+]);
+const allowedStandardsUpdateChangeSources = new Set([
+  "Layer-2-technical-steering",
+  "standards-compliance-audit",
+  "issue-reconciliation",
+  "escaped-defect-reconciliation",
+  "harness-retrospective",
+  "existing-standards-contradiction",
+  "explicit-recorded-human-approval",
+]);
+const allowedStandardsUpdateEnforcementPostures = new Set([
+  "validator-or-gate-enforced-now",
+  "template-required-now",
+  "script-reported-debt",
+  "advisory-with-approved-debt-route",
 ]);
 
 const vaguePhrases = [
@@ -566,6 +582,20 @@ type ArchitectureUpdateContractRow = {
   validationReviewEvidence: string;
 };
 
+type StandardsUpdateContractRow = {
+  taskId: string;
+  approvedStandardsChangeSource: string;
+  sourcePathReference: string;
+  standardsChangeSummary: string;
+  standardsArtifactTarget: string;
+  affectedSurfacesConsistencySweep: string;
+  enforcementPosture: string;
+  compatibilityRolloutPosture: string;
+  debtRouteIfNotEnforcedNow: string;
+  forbiddenImplementationArchitectureComplianceWork: string;
+  validationReviewEvidence: string;
+};
+
 type TestOnlyCoverageContractRow = {
   taskId: string;
   coverageSource: string;
@@ -790,6 +820,7 @@ export function validateTaskBreakdownContent(
   const refactorFirstContracts = parseRefactorFirstContractRows(taskContent);
   const architectureFoundationContracts = parseArchitectureFoundationContractRows(taskContent);
   const architectureUpdateContracts = parseArchitectureUpdateContractRows(taskContent);
+  const standardsUpdateContracts = parseStandardsUpdateContractRows(taskContent);
   const testOnlyCoverageContracts = parseTestOnlyCoverageContractRows(taskContent);
   const testSuiteAlignmentContracts = parseTestSuiteAlignmentContractRows(taskContent);
   const capabilityPermissionStateMatrices = parseCapabilityPermissionStateMatrixRows(taskContent);
@@ -863,6 +894,7 @@ export function validateTaskBreakdownContent(
   const refactorFirstContractsByTask = groupBy(refactorFirstContracts, (row) => row.taskId);
   const architectureFoundationContractsByTask = groupBy(architectureFoundationContracts, (row) => row.taskId);
   const architectureUpdateContractsByTask = groupBy(architectureUpdateContracts, (row) => row.taskId);
+  const standardsUpdateContractsByTask = groupBy(standardsUpdateContracts, (row) => row.taskId);
   const testOnlyCoverageContractsByTask = groupBy(testOnlyCoverageContracts, (row) => row.taskId);
   const testSuiteAlignmentContractsByTask = groupBy(testSuiteAlignmentContracts, (row) => row.taskId);
   const capabilityPermissionStateMatricesByTask = groupBy(capabilityPermissionStateMatrices, (row) => row.taskId);
@@ -922,6 +954,7 @@ export function validateTaskBreakdownContent(
     validateRefactorFirstContract(task, refactorFirstContractsByTask.get(task.taskId) ?? [], tasks, errors);
     validateArchitectureFoundationContract(task, architectureFoundationContractsByTask.get(task.taskId) ?? [], tasks, errors);
     validateArchitectureUpdateContract(task, architectureUpdateContractsByTask.get(task.taskId) ?? [], errors);
+    validateStandardsUpdateContract(task, standardsUpdateContractsByTask.get(task.taskId) ?? [], errors);
     validateCodePlacement(task, placementsByTask.get(task.taskId) ?? [], tasks, dependenciesByTask.get(task.taskId) ?? [], errors);
     validateWriteSetClassification(task, writeSetClassificationsByTask.get(task.taskId) ?? [], errors);
     validateForbiddenWork(task, forbiddenWorkByTask.get(task.taskId) ?? [], errors);
@@ -956,6 +989,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Refactor-First Contract", refactorFirstContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Architecture Foundation Contract", architectureFoundationContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Architecture Update Contract", architectureUpdateContracts.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Standards Update Contract", standardsUpdateContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test-Only Coverage Contract", testOnlyCoverageContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Test Suite Alignment Contract", testSuiteAlignmentContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Capability Permission / State Matrix", capabilityPermissionStateMatrices.map((row) => row.taskId), taskIds, errors);
@@ -2442,6 +2476,81 @@ function validateArchitectureUpdateContract(
   }
 }
 
+function validateStandardsUpdateContract(
+  task: TaskRow,
+  rows: StandardsUpdateContractRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "GOV:standards-update") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has Standards Update Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} has no Standards Update Contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateAllowedValue(task.taskId, "Approved Standards Change Source", row.approvedStandardsChangeSource, allowedStandardsUpdateChangeSources, errors);
+    validateRequiredField(task.taskId, "Source Path / Reference", row.sourcePathReference, errors);
+    validateRequiredField(task.taskId, "Standards Change Summary", row.standardsChangeSummary, errors);
+    validateRequiredField(task.taskId, "Standards Artifact Target", row.standardsArtifactTarget, errors);
+    validateRequiredField(task.taskId, "Affected Surfaces / Consistency Sweep", row.affectedSurfacesConsistencySweep, errors);
+    validateAllowedValue(task.taskId, "Enforcement Posture", row.enforcementPosture, allowedStandardsUpdateEnforcementPostures, errors);
+    validateRequiredField(task.taskId, "Compatibility / Rollout Posture", row.compatibilityRolloutPosture, errors);
+    validateRequiredField(task.taskId, "Debt Route If Not Enforced Now", row.debtRouteIfNotEnforcedNow, errors);
+    validateRequiredField(task.taskId, "Forbidden Implementation / Architecture / Compliance Work", row.forbiddenImplementationArchitectureComplianceWork, errors);
+    validateRequiredField(task.taskId, "Validation / Review Evidence", row.validationReviewEvidence, errors);
+
+    const source = `${row.approvedStandardsChangeSource} ${row.sourcePathReference}`.toLowerCase();
+    if (
+      !source.includes("approval") &&
+      !source.includes("audit") &&
+      !source.includes("reconciliation") &&
+      !source.includes("retrospective") &&
+      !source.includes("technical") &&
+      !source.includes("contradiction")
+    ) {
+      errors.push(`${task.taskId} Standards Update Contract needs an approved standards change source`);
+    }
+
+    const target = row.standardsArtifactTarget.replace(/\\/g, "/").toLowerCase();
+    if (
+      !target.includes("agents.md") &&
+      !target.includes("docs/standards/") &&
+      !target.includes("docs/templates/") &&
+      !target.includes(".codex/skills/") &&
+      !target.includes("src/scripts/")
+    ) {
+      errors.push(`${task.taskId} Standards Update Contract target must be a standards-owned artifact`);
+    }
+
+    const enforcement = row.enforcementPosture.toLowerCase();
+    const debtRoute = row.debtRouteIfNotEnforcedNow.toLowerCase();
+    if (enforcement === "advisory-with-approved-debt-route") {
+      if (
+        !debtRoute.includes("docs/workspace/") &&
+        !debtRoute.includes("follow-up") &&
+        !debtRoute.includes("task") &&
+        !debtRoute.includes("cleanup") &&
+        !debtRoute.includes("debt")
+      ) {
+        errors.push(`${task.taskId} Standards Update Contract advisory posture needs an explicit approved debt route`);
+      }
+    } else if (!debtRoute.includes("not-applicable") && !debtRoute.includes("enforced now")) {
+      errors.push(`${task.taskId} Standards Update Contract enforced posture should mark debt route not-applicable or enforced now`);
+    }
+
+    const forbidden = row.forbiddenImplementationArchitectureComplianceWork.toLowerCase();
+    if (!forbidden.includes("implementation") || !forbidden.includes("architecture") || !forbidden.includes("compliance")) {
+      errors.push(`${task.taskId} Standards Update Contract must forbid implementation, architecture, and compliance work`);
+    }
+  }
+}
+
 function validateCodePlacement(
   task: TaskRow,
   rows: CodePlacementRow[],
@@ -3740,6 +3849,7 @@ function mentionsAuthorityWritePath(...values: string[]): boolean {
 function mentionsStandardsAuthorityWritePath(...values: string[]): boolean {
   const normalized = values.join(" ").replace(/\\/g, "/").toLowerCase();
   return (
+    normalized.includes("agents.md") ||
     (normalized.includes("docs/standards/") && !normalized.includes("docs/standards/platform-status/")) ||
     normalized.includes("docs/templates/") ||
     normalized.includes(".codex/skills/") ||
@@ -4312,6 +4422,22 @@ function parseArchitectureUpdateContractRows(content: string): ArchitectureUpdat
     compatibilityPosture: cells[7] ?? "",
     forbiddenImplementationStandardsWork: cells[8] ?? "",
     validationReviewEvidence: cells[9] ?? "",
+  }));
+}
+
+function parseStandardsUpdateContractRows(content: string): StandardsUpdateContractRow[] {
+  return parseTableRows(section(content, "## Standards Update Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    approvedStandardsChangeSource: cells[1] ?? "",
+    sourcePathReference: cells[2] ?? "",
+    standardsChangeSummary: cells[3] ?? "",
+    standardsArtifactTarget: cells[4] ?? "",
+    affectedSurfacesConsistencySweep: cells[5] ?? "",
+    enforcementPosture: cells[6] ?? "",
+    compatibilityRolloutPosture: cells[7] ?? "",
+    debtRouteIfNotEnforcedNow: cells[8] ?? "",
+    forbiddenImplementationArchitectureComplianceWork: cells[9] ?? "",
+    validationReviewEvidence: cells[10] ?? "",
   }));
 }
 

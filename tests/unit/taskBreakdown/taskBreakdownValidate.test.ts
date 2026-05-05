@@ -275,6 +275,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | Task ID | Approved Decision Source | Decision Source Path / Reference | Decision Summary | Architecture Artifact Target | Consistency Sweep Targets | Downstream Impact | Compatibility Posture | Forbidden Implementation / Standards Work | Validation / Review Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
+## Standards Update Contract
+
+| Task ID | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
 ## Test-Only Coverage Contract
 
 | Task ID | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command |
@@ -946,6 +951,43 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 DOC:standards-compliance must not change standards authority; use GOV:standards-update");
+  });
+
+  it("blocks standards update tasks without an approved standards-change contract", () => {
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:standards-update |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/standards/change-artifact-requirements.md",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 has no Standards Update Contract row");
+  });
+
+  it("blocks advisory standards updates without an approved debt route", () => {
+    const standardsContractRow =
+      "| T-S001-01 | explicit-recorded-human-approval | chat approval 2026-05-05 | Require standards updates to record enforcement or debt posture. | docs/standards/change-artifact-requirements.md | task-breakdown template; validator; tests | advisory-with-approved-debt-route | applies to new task packets; existing packets reviewed later | not-applicable: decide later | implementation and architecture and compliance work are forbidden and split to owning task types | npx vitest run tests/unit/taskBreakdown/taskBreakdownValidate.test.ts |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | GOV:standards-update |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/standards/change-artifact-requirements.md",
+        )
+        .replace(
+          "## Standards Update Contract\n\n| Task ID | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Standards Update Contract\n\n| Task ID | Approved Standards Change Source | Source Path / Reference | Standards Change Summary | Standards Artifact Target | Affected Surfaces / Consistency Sweep | Enforcement Posture | Compatibility / Rollout Posture | Debt Route If Not Enforced Now | Forbidden Implementation / Architecture / Compliance Work | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${standardsContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 Standards Update Contract advisory posture needs an explicit approved debt route");
   });
 
   it("blocks broad DEV:frontend write envelopes without approved broad-scope rationale", () => {
