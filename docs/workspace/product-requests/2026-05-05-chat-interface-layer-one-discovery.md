@@ -44,6 +44,10 @@
   `docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md`
 - Task Breakdown:
   pending
+- PRD:
+  `docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md`
+- Capability Matrix:
+  `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
 - Work runs / Loop Runs:
   none yet
 - Pull requests, config changes, or extension changes:
@@ -56,14 +60,16 @@
 - Status:
   Story planning blocked on artifact unblocks
 - Short update:
-  Product intent, architecture direction, and story queue are captured. Next we
-  need to create the PRD and capability matrix, resolve generated PDF delivery,
-  pick the design-system path, and define root-builder review permission before
+  Product intent, architecture direction, story queue, PRD, and first-draft
+  capability matrix are captured. Next we need to resolve generated PDF
+  delivery, pick the design-system path, define root-builder review permission,
+  and create the remaining API, permission, data, and test artifacts before
   implementation tasks can begin.
 - Waiting next:
   Layer 3 unblock work
 - User action needed:
-  decide generated PDF delivery posture and root-builder review permission
+  decide generated PDF delivery posture, design-system path, and root-builder
+  review permission
 
 ## Source-Of-Truth Boundary
 

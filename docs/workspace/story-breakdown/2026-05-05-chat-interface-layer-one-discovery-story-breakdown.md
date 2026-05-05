@@ -15,9 +15,9 @@
 - Source Technical Steering packet:
   `docs/workspace/technical-steering/2026-05-05-chat-interface-layer-one-discovery-steering.md`
 - Related PRD:
-  pending
+  `docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md`
 - Related capability matrix:
-  pending
+  `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
 - Related GOV:design-system, asset, ADR, or architecture artifacts:
   pending design-system governance and generated PDF asset decision
 - Validation command:
@@ -36,9 +36,10 @@
   actions only; tenant-builder active rollout is future scoped; MVP does not
   execute downstream build work from the chat.
 - Steering stop conditions resolved or carried as blockers:
-  Carried as blockers for PRD, capability matrix, PRD-derived test cases,
-  design-system governance, generated PDF asset/download decision, API
-  contract, permission mapping, data dictionary, and runtime/browser evidence.
+  PRD and first-draft capability matrix are now linked. Remaining blockers are
+  PRD-derived test cases, design-system governance, generated PDF
+  asset/download decision, API contract, permission mapping, data dictionary,
+  and runtime/browser evidence.
 - Architecture invention check:
   `consumes-steering-only`
 - Governed DEV:frontend seam posture:
@@ -48,10 +49,10 @@
   durable conversation and packet records, PDF delivery posture, retention,
   and browser security proof before implementation.
 - Missing source-of-truth artifacts:
-  PRD, capability matrix, PRD-derived test cases, asset consumer decision
-  record, design-system behavior/reference/verification/adoption artifacts,
-  API contract, data dictionary, permission mapping, feature manifest, feature
-  dependency graph refresh, and runtime/browser QA evidence plan.
+  PRD-derived test cases, asset consumer decision record, design-system
+  behavior/reference/verification/adoption artifacts, API contract, data
+  dictionary, permission mapping, feature manifest, feature dependency graph
+  refresh, and runtime/browser QA evidence plan.
 
 ## Steering Architecture Classification Snapshot
 
@@ -134,8 +135,8 @@
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | needs-capability-matrix | harness-value | DOC:docs-artifact | Capability matrix control | As the delivery harness, I need approved capability rows for every story acceptance criterion so Task Breakdown can avoid vague implementation scope. | harness | Capability matrix coverage exists for chat intake, history, packet generation, PDF delivery, authorization, denial, and artifact evidence. | Blocks all delivery stories |
-| S-001 | needs-prd-refinement | system-value | DOC:docs-artifact | Root-admin MVP PRD | As a planning owner, I need a PRD that locks the root-admin MVP behavior, lifecycle, non-goals, and failure states so downstream stories share one product contract. | planning system | PRD describes the MVP workflow, root-builder visibility, coming-soon actions, retention and supersession posture, and excluded future rollout. | Blocks S-004, S-005, S-006, S-007, S-008 |
+| S-000 | superseded | harness-value | DOC:docs-artifact | Capability matrix control | As the delivery harness, I need approved capability rows for every story acceptance criterion so Task Breakdown can avoid vague implementation scope. | harness | Capability matrix coverage exists for chat intake, history, packet generation, PDF delivery, authorization, denial, and artifact evidence. | Created in this Layer 3 unblock slice; refresh if downstream decisions change rows |
+| S-001 | superseded | system-value | DOC:docs-artifact | Root-admin MVP PRD | As a planning owner, I need a PRD that locks the root-admin MVP behavior, lifecycle, non-goals, and failure states so downstream stories share one product contract. | planning system | PRD describes the MVP workflow, root-builder visibility, coming-soon actions, retention and supersession posture, and excluded future rollout. | Created in this Layer 3 unblock slice; refresh if downstream decisions change requirements |
 | S-002 | blocked | system-value | GOV:design-system | Work panel and chat design-system governance | As the design-system owner, I need signed-off work panel, mobile action, chat thread, starter prompt, history, and PDF action seams before root-admin app adoption. | design-system owner | Governed render/controller/reference/verification/adoption artifacts exist and can be consumed by app UI. | Blocks S-007 |
 | S-003 | blocked | system-value | DECISION:architecture-foundation | Generated packet PDF asset decision | As the architecture and security owner, I need an approved generated PDF delivery posture before packet download behavior is implemented. | architecture/security owner | Transient versus stored delivery, authorization, retention, scanning, quota, audit, and cleanup posture are decided. | Blocks S-005 and S-007 PDF action |
 | S-004 | needs-prd-refinement | system-value | DEV:backend | Chat domain and persistence planning | As the chat domain owner, I need durable conversation, packet version, supersession, scope, actor, download evidence, and retention facts defined before migrations or repositories exist. | chat feature owner | A feature-owned domain shape and data dictionary plan preserve required durable facts without depending on mutable external context. | Depends on S-000 and S-001 |
@@ -274,8 +275,8 @@
 
 | Unblock ID | Blocks Story / AC | Blocker Source | Unblock Type | Human Decision Needed | Options / Safe Defaults | Recommended Next Action | Can Auto-Create Artifact | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| U-CHAT-001 | S-000 | BLK-SB-001; ART-CHAT-001 | capability-matrix-required | No human decision required unless capability matrix reveals scope conflict. | Safe default: create matrix from this Story Breakdown and Technical Steering. | Run capability matrix workflow for chat-interface root-admin MVP. | yes | ready-to-create-artifact |
-| U-CHAT-002 | S-001 | BLK-SB-002; ART-CHAT-002 | prd-required | No human decision required unless PRD exposes a business-visible policy conflict. | Safe default: create PRD preserving root-admin MVP and future-scope exclusions. | Run PRD workflow for chat-interface root-admin MVP. | yes | ready-to-create-artifact |
+| U-CHAT-001 | S-000 | BLK-SB-001; ART-CHAT-001 | capability-matrix-required | No human decision required unless capability matrix reveals scope conflict. | Safe default used: matrix created from Story Breakdown and Technical Steering. | Prove current during the next artifact sweep and refresh if downstream decisions change rows. | yes | resolved |
+| U-CHAT-002 | S-001 | BLK-SB-002; ART-CHAT-002 | prd-required | No human decision required unless PRD exposes a business-visible policy conflict. | Safe default used: PRD preserves root-admin MVP and future-scope exclusions. | Prove current during the next artifact sweep and refresh if human decisions alter requirements. | yes | resolved |
 | U-CHAT-003 | S-002, S-007 | BLK-SB-003; Q-CHAT-003; ART-CHAT-004 | design-system-governance | Which existing DS family should be extended, or should this become a new family candidate? | Extend existing side-panel/chat family if one exists; create new governed family candidate if no consumable seam exists. | Run design-system governance discovery before root-admin app UI tasks. | no | needs-human-answer |
 | U-CHAT-004 | S-003, S-005, S-007 | BLK-SB-004; Q-CHAT-001; ART-CHAT-005 | human-decision | Should generated Product Discovery packet PDFs be transient downloads only, stored generated assets, or transient first and stored later? | transient MVP; stored generated asset; transient first then stored later | Decide PDF delivery posture and create asset consumer decision record. | no | needs-human-answer |
 | U-CHAT-005 | S-005 | BLK-SB-005; Q-CHAT-002; ART-CHAT-007; ART-CHAT-008 | permission-mapping-required | Which named root-builder role or permission may review root-admin discovery histories beyond the creator? | platform root builder permission; root operator permission; creator-only until explicit review role exists | Decide review permission label, then create permission mapping and API contract. | no | needs-human-answer |
@@ -289,8 +290,8 @@
 
 | Artifact ID | Story ID | Artifact Type | Required Action | Owner Skill Or Workflow | Blocks Task Breakdown |
 | --- | --- | --- | --- | --- | --- |
-| ART-CHAT-001 | S-000 | capability matrix | create | capability matrix workflow | yes |
-| ART-CHAT-002 | S-001 | PRD | create | PRD workflow | yes |
+| ART-CHAT-001 | S-000 | capability matrix | prove-current | capability matrix workflow | no |
+| ART-CHAT-002 | S-001 | PRD | prove-current | PRD workflow | no |
 | ART-CHAT-003 | S-008 | PRD-derived test cases | create | prd-test-case-planner | yes |
 | ART-CHAT-004 | S-002 | design-system governance | create | frontend-design-system-loop-maintainer | yes |
 | ART-CHAT-005 | S-003 | asset consumer decision record | create | asset decision workflow | yes |
@@ -308,10 +309,12 @@
   none
 - Blocked stories:
   S-002, S-003, S-007
+- Completed Layer 3 unblock stories:
+  S-000, S-001
 - Stories needing capability matrix:
-  S-000
+  none
 - Stories needing PRD refinement:
-  S-001, S-004, S-005, S-006, S-008
+  S-004, S-005, S-006, S-008
 - Stories needing Technical Steering revisit:
   none
 - Broad cleanup or shortcut risk:
@@ -335,12 +338,12 @@ A story may hand off to Task Breakdown only when:
 
 | Story ID | Handoff Status | Reason |
 | --- | --- | --- |
-| S-000 | blocked | Capability matrix artifact does not exist yet; unblock row is ready to create it. |
-| S-001 | blocked | PRD artifact does not exist yet; unblock row is ready to create it. |
+| S-000 | not-needed | Capability matrix now exists; refresh only if later decisions change capability rows. |
+| S-001 | not-needed | PRD now exists; refresh only if later decisions change requirements. |
 | S-002 | blocked | Design-system family/seam decision and governance artifacts are missing. |
 | S-003 | blocked | Generated PDF delivery posture needs a human decision and asset record. |
-| S-004 | blocked | PRD, capability matrix, data dictionary, and persistence plan are missing. |
+| S-004 | blocked | Data dictionary and persistence plan are missing. |
 | S-005 | blocked | API contract, permission mapping, root-builder review permission decision, and PDF asset decision are missing. |
-| S-006 | blocked | PRD, capability matrix, protected API/permission contract, and implementation blueprint are missing. |
+| S-006 | blocked | Protected API/permission contract and implementation blueprint are missing. |
 | S-007 | blocked | DS seams, API/permission contracts, PDF asset decision, adapter contract, and evidence plan are missing. |
-| S-008 | blocked | PRD and capability matrix must exist before detailed test-case planning. |
+| S-008 | blocked | PRD-derived test cases and runtime/browser evidence plan are missing. |
