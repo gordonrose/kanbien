@@ -182,6 +182,9 @@ Discovery is draft-ready only when:
 
 - every universal coverage area is classified
 - every triggered overlay area is classified
+- the packet's Change Routing section identifies the likely delivery path,
+  routing rationale, approval posture, evidence expectation, and blockers when
+  routing is not yet safe
 - `deferred-open` items are either resolved, accepted as blockers, or
   explicitly signed off as deferred by the requester
 - normal first-version behavior and authority boundaries are clear
@@ -198,6 +201,41 @@ packet. Say what will happen next, roughly how long it may take, and what the
 requester should expect to see. Ask for confirmation only when there is a real
 unresolved business decision, scope cut, explicit deferral signoff, or repo
 write permission boundary.
+
+## Change Routing
+
+Layer 1 Product Discovery also classifies the likely delivery path before a
+request enters backlog, story planning, task planning, or harness execution.
+
+Change Routing is not implementation planning. It is an early product-level
+classification of the safest path that can satisfy the request.
+
+Allowed delivery paths:
+
+- `config-builder`:
+  the request can likely be represented as structured product configuration.
+- `tenant-extension-pr`:
+  the request is tenant-specific, cannot be expressed by existing
+  configuration, and fits an approved extension point.
+- `core-platform-pr`:
+  the request creates or changes reusable platform behavior, source code,
+  migrations, API behavior, permissions, billing, tenant boundaries, auth,
+  security, shared design-system behavior, extension points, or config-builder
+  capabilities.
+- `needs-routing-decision`:
+  Product Discovery cannot safely classify the path without a human or
+  Technical Steering decision.
+
+Routing should usually be inferred through the normal Product Discovery
+conversation. Do not ask the requester to choose between these delivery paths
+unless they are intentionally acting as a technical stakeholder. Ask explicit
+routing questions only when the path would otherwise be risky, ambiguous, or
+likely to create the wrong kind of backlog item.
+
+Use plain-language questions such as whether the need is for one customer or
+broadly useful, whether the product already has settings or builders for it,
+whether it should be adjustable without engineering help, or whether different
+customers need different behavior.
 
 ## Draft Fast Path
 
