@@ -335,13 +335,15 @@ For the first implementation model, keep these boundaries:
   `docs/templates/product-request-template.md`
 - Workspace template seed:
   `docs/workspace/harness-audits/product-request-template.md`
+- Current Product Request:
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery.md`
 - First example:
   `docs/workspace/harness-audits/2026-05-06-product-request-example-chat-interface.md`
 
 ## Immediate Next Step
 
-Use the durable template on one more real Product Request before creating
-schema, API, UI, or automation.
+Use the current chat-interface Product Request through Story Breakdown and Task
+Breakdown before creating schema, API, UI, or automation.
 
-Do not create schema, API, UI, or automation until at least one more example
-confirms the thin cover-sheet shape is stable.
+Do not create schema, API, UI, or automation until the cover-sheet shape has
+been checked against real Story Breakdown and Task Breakdown links.
