@@ -61,6 +61,7 @@ const requiredHeadings = [
   "## Decision Escalation / Stop Conditions",
   "## Exact Starting Context",
   "## Frontend Architecture Decision Reconciliation",
+  "## Frontend Change Class Contract",
   "## Frontend / Design-System Sub-Standard",
   "## Frontend Performance Posture",
   "## Design-System Seam Contract",
@@ -161,6 +162,18 @@ const allowedFrontendSourcePlacements: Set<string> = new Set(frontendSourcePlace
 const allowedFrontendBrowserSecurityAreas: Set<string> = new Set(frontendBrowserSecurityAreas);
 const allowedSecurityPresence = new Set(["yes", "no", "blocked"]);
 const allowedYesNo = new Set(["yes", "no"]);
+const allowedFrontendChangeClasses = new Set([
+  "app-adoption",
+  "route-module-behavior",
+  "interaction-behavior",
+  "permission-rendering",
+  "api-projection-consumer",
+  "topology-materialization-consumer",
+  "runtime-defect-fix",
+  "accessibility-semantics",
+  "visual-rendering",
+  "evidence-sweep-route-away",
+]);
 const allowedRefactorTriggers = new Set([
   "over-broad-write-set",
   "shared-logic-before-behavior",
@@ -523,6 +536,14 @@ type FrontendPerformancePostureRow = {
   posture: string;
   proofPlan: string;
   rationale: string;
+};
+
+type FrontendChangeClassContractRow = {
+  taskId: string;
+  changeClass: string;
+  requiredContractRows: string;
+  runtimeBrowserEvidence: string;
+  routeAwaySplitNotes: string;
 };
 
 type FrontendSecurityEvidenceRow = {
@@ -990,6 +1011,7 @@ export function validateTaskBreakdownContent(
   const stopConditions = parseStopConditionRows(taskContent);
   const startingContexts = parseStartingContextRows(taskContent);
   const frontendArchitectureDecisions = parseFrontendArchitectureDecisionRows(taskContent);
+  const frontendChangeClassContracts = parseFrontendChangeClassContractRows(taskContent);
   const frontendSubStandards = parseFrontendSubStandardRows(taskContent);
   const frontendPerformancePostures = parseFrontendPerformancePostureRows(taskContent);
   const designSystemSeamContracts = parseDesignSystemSeamContractRows(taskContent);
@@ -1070,6 +1092,7 @@ export function validateTaskBreakdownContent(
   const stopConditionsByTask = groupBy(stopConditions, (row) => row.taskId);
   const startingContextsByTask = groupBy(startingContexts, (row) => row.taskId);
   const frontendArchitectureDecisionsByTask = groupBy(frontendArchitectureDecisions, (row) => row.taskId);
+  const frontendChangeClassContractsByTask = groupBy(frontendChangeClassContracts, (row) => row.taskId);
   const frontendSubStandardsByTask = groupBy(frontendSubStandards, (row) => row.taskId);
   const frontendPerformancePosturesByTask = groupBy(frontendPerformancePostures, (row) => row.taskId);
   const designSystemSeamContractsByTask = groupBy(designSystemSeamContracts, (row) => row.taskId);
@@ -1124,6 +1147,7 @@ export function validateTaskBreakdownContent(
       stopConditionsByTask.get(task.taskId) ?? [],
       startingContextsByTask.get(task.taskId) ?? [],
       frontendArchitectureDecisionsByTask.get(task.taskId) ?? [],
+      frontendChangeClassContractsByTask.get(task.taskId) ?? [],
       sourceFrontendArchitectureByScope,
       frontendSubStandardsByTask.get(task.taskId) ?? [],
       frontendPerformancePosturesByTask.get(task.taskId) ?? [],
@@ -1177,6 +1201,7 @@ export function validateTaskBreakdownContent(
   validateUnknownTaskReferences("Decision Escalation / Stop Conditions", stopConditions.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Exact Starting Context", startingContexts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Frontend Architecture Decision Reconciliation", frontendArchitectureDecisions.map((row) => row.taskId), taskIds, errors);
+  validateUnknownTaskReferences("Frontend Change Class Contract", frontendChangeClassContracts.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Frontend / Design-System Sub-Standard", frontendSubStandards.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Frontend Performance Posture", frontendPerformancePostures.map((row) => row.taskId), taskIds, errors);
   validateUnknownTaskReferences("Design-System Seam Contract", designSystemSeamContracts.map((row) => row.taskId), taskIds, errors);
@@ -1260,6 +1285,7 @@ function validateDeepDeliveryReadiness(
   stopRows: StopConditionRow[],
   contextRows: StartingContextRow[],
   frontendArchitectureRows: FrontendArchitectureDecisionRow[],
+  frontendChangeClassRows: FrontendChangeClassContractRow[],
   sourceFrontendArchitectureByScope: Map<string, SourceFrontendArchitectureClassificationRow>,
   subStandardRows: FrontendSubStandardRow[],
   performancePostureRows: FrontendPerformancePostureRow[],
@@ -1290,6 +1316,19 @@ function validateDeepDeliveryReadiness(
   validateStopConditions(task, stopRows, errors);
   validateStartingContext(task, contextRows, errors);
   validateFrontendArchitectureDecision(task, frontendArchitectureRows, sourceFrontendArchitectureByScope, contextRows, envelopeRows, errors);
+  validateFrontendChangeClassContract(
+    task,
+    frontendChangeClassRows,
+    frontendArchitectureRows,
+    subStandardRows,
+    seamContractRows,
+    adoptionContractRows,
+    permissionRenderingRows,
+    runtimeDataRows,
+    proofRowsForRuntime,
+    envelopeRows,
+    errors,
+  );
   validateFrontendSubStandard(task, subStandardRows, errors);
   validateFrontendPerformancePosture(task, performancePostureRows, errors);
   validateDesignSystemSeamContract(task, seamContractRows, errors);
@@ -1582,6 +1621,140 @@ function validateFrontendArchitectureMatchesSource(
         `${taskId} DEV:frontend architecture ${label} does not match Layer 2/3 snapshot for ${sourceRow.scopeElement}`,
       );
     }
+  }
+}
+
+function validateFrontendChangeClassContract(
+  task: TaskRow,
+  rows: FrontendChangeClassContractRow[],
+  frontendArchitectureRows: FrontendArchitectureDecisionRow[],
+  subStandardRows: FrontendSubStandardRow[],
+  seamRows: DesignSystemSeamContractRow[],
+  adoptionRows: FrontendAdoptionContractRow[],
+  permissionRows: FrontendPermissionRenderingEvidenceRow[],
+  runtimeRows: FrontendRuntimeDataMockHonestyRow[],
+  proofRows: ProofCommandRow[],
+  envelopeRows: TightWriteEnvelopeRow[],
+  errors: string[],
+): void {
+  if (task.taskType !== "DEV:frontend") {
+    if (rows.length > 0) {
+      errors.push(`${task.taskId} has Frontend Change Class Contract rows but is ${task.taskType}`);
+    }
+    return;
+  }
+
+  if (rows.length === 0) {
+    errors.push(`${task.taskId} queued DEV:frontend task has no Frontend Change Class Contract row`);
+    return;
+  }
+
+  for (const row of rows) {
+    validateRequiredField(task.taskId, "Frontend Change Class", row.changeClass, errors);
+    validateRequiredField(task.taskId, "Primary Contract Rows Required", row.requiredContractRows, errors);
+    validateRequiredField(task.taskId, "Runtime / Browser Evidence Required", row.runtimeBrowserEvidence, errors);
+    validateRequiredField(task.taskId, "Route-Away / Split Notes", row.routeAwaySplitNotes, errors);
+    validateAllowedValue(task.taskId, "Frontend Change Class", row.changeClass, allowedFrontendChangeClasses, errors);
+
+    if (row.changeClass === "evidence-sweep-route-away") {
+      errors.push(`${task.taskId} evidence-sweep-route-away must route to EVIDENCE:qa-evidence, not DEV:frontend`);
+    }
+
+    validateFrontendChangeClassSpecifics(
+      task,
+      row,
+      frontendArchitectureRows,
+      subStandardRows,
+      seamRows,
+      adoptionRows,
+      permissionRows,
+      runtimeRows,
+      proofRows,
+      envelopeRows,
+      errors,
+    );
+  }
+}
+
+function validateFrontendChangeClassSpecifics(
+  task: TaskRow,
+  row: FrontendChangeClassContractRow,
+  frontendArchitectureRows: FrontendArchitectureDecisionRow[],
+  subStandardRows: FrontendSubStandardRow[],
+  seamRows: DesignSystemSeamContractRow[],
+  adoptionRows: FrontendAdoptionContractRow[],
+  permissionRows: FrontendPermissionRenderingEvidenceRow[],
+  runtimeRows: FrontendRuntimeDataMockHonestyRow[],
+  proofRows: ProofCommandRow[],
+  envelopeRows: TightWriteEnvelopeRow[],
+  errors: string[],
+): void {
+  const contractText = row.requiredContractRows.toLowerCase();
+  const evidenceText = row.runtimeBrowserEvidence.toLowerCase();
+  const routeAwayText = row.routeAwaySplitNotes.toLowerCase();
+  const proofText = proofRows.map((proof) => `${proof.requiredProofLayers} ${proof.requiredCommands} ${proof.mockHonestyNotes}`).join(" ").toLowerCase();
+  const writeText = `${task.allowedWriteSet} ${envelopeRows.map((envelope) => envelope.exactFilesOrPatterns).join(" ")}`.toLowerCase();
+
+  if (row.changeClass === "app-adoption") {
+    const consumesExistingSeam = seamRows.some((seam) => seam.seamPosture === "consumes-existing-seam" || seam.seamPosture === "approved-exception");
+    if (!consumesExistingSeam || adoptionRows.length === 0 || !contractText.includes("frontend adoption contract")) {
+      errors.push(`${task.taskId} app-adoption frontend change class requires a consumed GOV:design-system seam and Frontend Adoption Contract`);
+    }
+  }
+
+  if (row.changeClass === "route-module-behavior") {
+    const approvedModulePlacement = frontendArchitectureRows.some((architecture) => architecture.sourcePlacement === "module-journey-files");
+    if (!approvedModulePlacement || mentionsRootAdminShellEntry(writeText)) {
+      errors.push(`${task.taskId} route-module-behavior frontend change class must use approved module/journey files and avoid shell entry behavior`);
+    }
+  }
+
+  if (row.changeClass === "interaction-behavior") {
+    const hasInteractionSubStandard = subStandardRows.some((subStandard) => subStandard.primarySubStandard === "interaction-behavior");
+    if (!hasInteractionSubStandard || !mentionsInteractionScenario(`${evidenceText} ${proofText}`)) {
+      errors.push(`${task.taskId} interaction-behavior frontend change class requires exact interaction/state-transition proof`);
+    }
+  }
+
+  if (row.changeClass === "permission-rendering") {
+    if (permissionRows.length === 0 || !contractText.includes("permission")) {
+      errors.push(`${task.taskId} permission-rendering frontend change class requires permission rendering evidence`);
+    }
+  }
+
+  if (row.changeClass === "api-projection-consumer") {
+    if (runtimeRows.length === 0 || !contractText.includes("runtime data") || !contractText.includes("mock")) {
+      errors.push(`${task.taskId} api-projection-consumer frontend change class requires runtime data and mock-honesty contract rows`);
+    }
+  }
+
+  if (row.changeClass === "topology-materialization-consumer") {
+    const materialized = frontendArchitectureRows.some((architecture) => architecture.materializationModel === "preview-apply-required");
+    if (!materialized || !mentionsPreviewApplyOrMaterializationText(`${evidenceText} ${routeAwayText}`)) {
+      errors.push(`${task.taskId} topology-materialization-consumer frontend change class requires approved preview/apply materialization evidence`);
+    }
+  }
+
+  if (row.changeClass === "runtime-defect-fix" && !mentionsRuntimeDefectEvidence(`${evidenceText} ${proofText}`)) {
+    errors.push(`${task.taskId} runtime-defect-fix frontend change class requires live process, served asset/module, runtime payload, and regression proof`);
+  }
+
+  if (row.changeClass === "accessibility-semantics") {
+    const hasAccessibilitySubStandard = subStandardRows.some((subStandard) => subStandard.primarySubStandard === "accessibility-semantics");
+    if (!hasAccessibilitySubStandard || !mentionsAccessibilitySemanticsProof(`${evidenceText} ${proofText}`)) {
+      errors.push(`${task.taskId} accessibility-semantics frontend change class requires role/name/state/focus proof`);
+    }
+  }
+
+  if (row.changeClass === "visual-rendering") {
+    const hasVisualSubStandard = subStandardRows.some((subStandard) => subStandard.primarySubStandard === "visual-rendering");
+    if (!hasVisualSubStandard || !mentionsScreenshotOrEvidenceArtifact(`${evidenceText} ${proofText}`)) {
+      errors.push(`${task.taskId} visual-rendering frontend change class requires rendered browser/canonical screenshot evidence`);
+    }
+  }
+
+  if (mentionsEvidenceOnlyFrontendWork(`${task.scope} ${row.routeAwaySplitNotes}`) && !routeAwayText.includes("evidence:qa-evidence")) {
+    errors.push(`${task.taskId} evidence-only frontend work must route to EVIDENCE:qa-evidence`);
   }
 }
 
@@ -4831,6 +5004,39 @@ function mentionsPreviewApplyOrMaterializationSeam(
   );
 }
 
+function mentionsPreviewApplyOrMaterializationText(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("preview/apply") ||
+    normalized.includes("preview-apply") ||
+    normalized.includes("apply seam") ||
+    normalized.includes("preview seam") ||
+    normalized.includes("materialization seam") ||
+    normalized.includes("materialization")
+  );
+}
+
+function mentionsRuntimeDefectEvidence(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("live process") &&
+    (normalized.includes("served asset") || normalized.includes("served module")) &&
+    normalized.includes("runtime payload") &&
+    (normalized.includes("regression") || normalized.includes("regression proof"))
+  );
+}
+
+function mentionsEvidenceOnlyFrontendWork(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("evidence-only") ||
+    normalized.includes("screenshot capture") ||
+    normalized.includes("payload sampling") ||
+    normalized.includes("served asset check") ||
+    normalized.includes("mock-honesty comparison")
+  );
+}
+
 function mentionsGeneratedOutputHandEdit(...values: string[]): boolean {
   const normalized = values.join(" ").replace(/\\/g, "/").toLowerCase();
   return (
@@ -5620,6 +5826,16 @@ function parseFrontendPerformancePostureRows(content: string): FrontendPerforman
     posture: cells[1] ?? "",
     proofPlan: cells[2] ?? "",
     rationale: cells[3] ?? "",
+  }));
+}
+
+function parseFrontendChangeClassContractRows(content: string): FrontendChangeClassContractRow[] {
+  return parseTableRows(section(content, "## Frontend Change Class Contract")).map((cells) => ({
+    taskId: cells[0] ?? "",
+    changeClass: cells[1] ?? "",
+    requiredContractRows: cells[2] ?? "",
+    runtimeBrowserEvidence: cells[3] ?? "",
+    routeAwaySplitNotes: cells[4] ?? "",
   }));
 }
 

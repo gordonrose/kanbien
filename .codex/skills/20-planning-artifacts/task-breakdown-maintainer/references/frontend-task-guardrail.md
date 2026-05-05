@@ -22,6 +22,11 @@ Use for task type: `DEV:frontend`
 - Browser Security Posture evidence copied from Layer 2/3 without invention
 - permission-aware rendering proof when privileged, tenant, user, role, asset,
   lifecycle, or sensitive data is rendered
+- Frontend Change Class Contract, using one of `app-adoption`,
+  `route-module-behavior`, `interaction-behavior`, `permission-rendering`,
+  `api-projection-consumer`, `topology-materialization-consumer`,
+  `runtime-defect-fix`, `accessibility-semantics`, `visual-rendering`, or
+  `evidence-sweep-route-away`
 - API/projection contract, runtime payload evidence, and mock-honesty statement
   when rendered proof uses fixtures or mocks
 - Frontend Performance Posture row with allowed posture and posture-matched
@@ -78,6 +83,19 @@ Use for task type: `DEV:frontend`
   migration, generated/canonical sweep, or evidence sweep task
 - do not combine app adoption, component rendering, interaction behavior, and
   visual proof into one implementation task
+- change class must match the primary delivery job and required contract rows:
+  app adoption needs Design-System Seam and Frontend Adoption contracts;
+  route/module behavior needs approved module/journey placement; interaction
+  behavior needs exact state-transition proof; permission rendering needs
+  permission-aware rendering proof; API/projection consumption needs runtime
+  data and mock-honesty proof; topology materialization consumption needs the
+  approved preview/apply seam; runtime defect fixes need live process, served
+  asset or module, runtime payload, and regression proof; accessibility
+  semantics need role/name/state/focus proof; visual rendering needs browser or
+  canonical screenshot proof
+- `evidence-sweep-route-away` is a blocking classification for `DEV:frontend`;
+  route evidence-only screenshot capture, live payload sampling, served asset
+  checks, and mock-honesty comparisons to `EVIDENCE:qa-evidence`
 
 ## Split / Route Rules
 
@@ -100,6 +118,7 @@ Use for task type: `DEV:frontend`
 ## Required Check IDs
 
 - `frontend-architecture-classification`
+- `frontend-change-class`
 - `frontend-source-placement`
 - `frontend-state-owner`
 - `frontend-route-topology`

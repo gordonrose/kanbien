@@ -209,6 +209,11 @@ const validTaskPacket = `# Task Breakdown Packet: Tenant Branding
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S001-01 | tenant branding DEV:backend update | not-applicable | not-applicable: DEV:backend task | not-applicable: DEV:backend task | not-applicable | not-applicable | not-applicable | not-applicable | not-topology | none | not-applicable: no DEV:frontend locator | not-applicable: no compatibility locator | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | not-governed | none | not-applicable | not-applicable | Layer 2 classified this as backend-only. |
 
+## Frontend Change Class Contract
+
+| Task ID | Frontend Change Class | Primary Contract Rows Required | Runtime / Browser Evidence Required | Route-Away / Split Notes |
+| --- | --- | --- | --- | --- |
+
 ## Frontend / Design-System Sub-Standard
 
 | Task ID | Primary Sub-Standard | Additional Sub-Standards | Split Rationale | Required Compliance Proof |
@@ -473,6 +478,10 @@ function frontendTaskPacketWith(decisionRow: string): string {
     )
     .replace(backendFrontendDecisionRow, decisionRow)
     .replace(
+      "## Frontend Change Class Contract\n\n| Task ID | Frontend Change Class | Primary Contract Rows Required | Runtime / Browser Evidence Required | Route-Away / Split Notes |\n| --- | --- | --- | --- | --- |",
+      "## Frontend Change Class Contract\n\n| Task ID | Frontend Change Class | Primary Contract Rows Required | Runtime / Browser Evidence Required | Route-Away / Split Notes |\n| --- | --- | --- | --- | --- |\n| T-S001-01 | visual-rendering | Frontend / Design-System Sub-Standard; Design-System Seam Contract; Frontend Adoption Contract; Frontend Runtime Data And Mock Honesty | canonical screenshot/evidence artifact root-admin-marketing-campaign-default.png and browser visual proof | not-applicable: implementation task is not evidence-only screenshot capture |",
+    )
+    .replace(
       "| T-S001-01 | not-applicable | not-applicable: DEV:backend task | not-applicable: no DEV:frontend or GOV:design-system work | not-applicable: DEV:backend task has no DEV:frontend or GOV:design-system sub-standard proof |",
       "| T-S001-01 | visual-rendering | not-applicable: visual rendering only | Single app adoption proof story. | canonical screenshot/evidence artifact root-admin-marketing-campaign-default.png |",
     )
@@ -506,7 +515,7 @@ function frontendTaskPacketWith(decisionRow: string): string {
     )
     .replace(
       "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n| T-S001-01 | backend-owning-feature | pass | Owning feature is src/features/tenantConfiguration. |\n| T-S001-01 | backend-layer-responsibilities | pass | Layer responsibilities are explicit across contract, domain, persistence, transport, integration, and manifest impact. |\n| T-S001-01 | backend-cross-feature-seams | pass | Uses tenants public read seam instead of private persistence imports. |\n| T-S001-01 | backend-authz-tenant-lifecycle | pass | CAP-BRANDING-001 is root-scoped, tenant actors are denied, and lifecycle posture is not applicable for this root-admin route. |\n| T-S001-01 | backend-api-contract-boundary | pass | Route contract behavior is approved or split to DOC:api-contract when changed. |\n| T-S001-01 | backend-persistence-migration-boundary | pass | No schema, migration, index, live-data transform, or repository query-semantics task is required. |\n| T-S001-01 | backend-artifact-obligations | pass | API contract, permission mapping, data dictionary, feature docs, and generated-artifact obligations are carried or split when required. |\n| T-S001-01 | backend-proof-commands | pass | Persistence integration test and typecheck are required. |",
-      "| T-S001-01 | frontend-architecture-classification | pass | Layer 2 DEV:frontend classification is copied by source scope element. |\n| T-S001-01 | frontend-source-placement | pass | Work stays in approved module/journey files. |\n| T-S001-01 | frontend-state-owner | pass | State owner is feature-local-state-machine and no URL replay state is introduced. |\n| T-S001-01 | frontend-route-topology | pass | Route/topology posture follows Layer 2 locator and authority decisions. |\n| T-S001-01 | frontend-design-system-seam | pass | Signed-off visual seam is named. |\n| T-S001-01 | frontend-adoption-contract | pass | Adoption contract names consumed render, behavior, accessibility, and CSS seams. |\n| T-S001-01 | frontend-no-app-css | pass | No app CSS is allowed. |\n| T-S001-01 | frontend-no-copied-behavior | pass | No copied controller behavior is allowed. |\n| T-S001-01 | frontend-accessibility-state | pass | Accessibility state remains unchanged. |\n| T-S001-01 | frontend-rendered-proof | pass | Visual rendering proof is required. |\n| T-S001-01 | frontend-security-evidence | pass | Browser security posture evidence is copied from Layer 2. |\n| T-S001-01 | frontend-permission-rendering | pass | Allowed, denied, expired, and unauthenticated states are required. |\n| T-S001-01 | frontend-runtime-data-mock-honesty | pass | Contract, runtime payload, and mock-honesty proof are required. |\n| T-S001-01 | frontend-runtime-evidence | pass | Served asset evidence is required. |\n| T-S001-01 | frontend-artifacts | pass | Frontend architecture artifact obligations are carried. |",
+      "| T-S001-01 | frontend-architecture-classification | pass | Layer 2 DEV:frontend classification is copied by source scope element. |\n| T-S001-01 | frontend-change-class | pass | Frontend change class is visual-rendering. |\n| T-S001-01 | frontend-source-placement | pass | Work stays in approved module/journey files. |\n| T-S001-01 | frontend-state-owner | pass | State owner is feature-local-state-machine and no URL replay state is introduced. |\n| T-S001-01 | frontend-route-topology | pass | Route/topology posture follows Layer 2 locator and authority decisions. |\n| T-S001-01 | frontend-design-system-seam | pass | Signed-off visual seam is named. |\n| T-S001-01 | frontend-adoption-contract | pass | Adoption contract names consumed render, behavior, accessibility, and CSS seams. |\n| T-S001-01 | frontend-no-app-css | pass | No app CSS is allowed. |\n| T-S001-01 | frontend-no-copied-behavior | pass | No copied controller behavior is allowed. |\n| T-S001-01 | frontend-accessibility-state | pass | Accessibility state remains unchanged. |\n| T-S001-01 | frontend-rendered-proof | pass | Visual rendering proof is required. |\n| T-S001-01 | frontend-security-evidence | pass | Browser security posture evidence is copied from Layer 2. |\n| T-S001-01 | frontend-permission-rendering | pass | Allowed, denied, expired, and unauthenticated states are required. |\n| T-S001-01 | frontend-runtime-data-mock-honesty | pass | Contract, runtime payload, and mock-honesty proof are required. |\n| T-S001-01 | frontend-runtime-evidence | pass | Served asset evidence is required. |\n| T-S001-01 | frontend-artifacts | pass | Frontend architecture artifact obligations are carried. |",
     );
 }
 
@@ -535,7 +544,11 @@ function verticalSliceTaskPacketWith(couplingRow: string): string {
       "| T-S001-01 | DEV:vertical-slice | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/vertical-slice-task-guardrail.md | approved | Vertical slice guardrail reviewed for inseparable DEV:backend/DEV:frontend journey proof. |",
     )
     .replace(
-      "| T-S001-01 | frontend-architecture-classification | pass | Layer 2 DEV:frontend classification is copied by source scope element. |\n| T-S001-01 | frontend-source-placement | pass | Work stays in approved module/journey files. |\n| T-S001-01 | frontend-state-owner | pass | State owner is feature-local-state-machine and no URL replay state is introduced. |\n| T-S001-01 | frontend-route-topology | pass | Route/topology posture follows Layer 2 locator and authority decisions. |\n| T-S001-01 | frontend-design-system-seam | pass | Signed-off visual seam is named. |\n| T-S001-01 | frontend-adoption-contract | pass | Adoption contract names consumed render, behavior, accessibility, and CSS seams. |\n| T-S001-01 | frontend-no-app-css | pass | No app CSS is allowed. |\n| T-S001-01 | frontend-no-copied-behavior | pass | No copied controller behavior is allowed. |\n| T-S001-01 | frontend-accessibility-state | pass | Accessibility state remains unchanged. |\n| T-S001-01 | frontend-rendered-proof | pass | Visual rendering proof is required. |\n| T-S001-01 | frontend-security-evidence | pass | Browser security posture evidence is copied from Layer 2. |\n| T-S001-01 | frontend-permission-rendering | pass | Allowed, denied, expired, and unauthenticated states are required. |\n| T-S001-01 | frontend-runtime-data-mock-honesty | pass | Contract, runtime payload, and mock-honesty proof are required. |\n| T-S001-01 | frontend-runtime-evidence | pass | Served asset evidence is required. |\n| T-S001-01 | frontend-artifacts | pass | Frontend architecture artifact obligations are carried. |",
+      "| T-S001-01 | visual-rendering | Frontend / Design-System Sub-Standard; Design-System Seam Contract; Frontend Adoption Contract; Frontend Runtime Data And Mock Honesty | canonical screenshot/evidence artifact root-admin-marketing-campaign-default.png and browser visual proof | not-applicable: implementation task is not evidence-only screenshot capture |\n",
+      "",
+    )
+    .replace(
+      "| T-S001-01 | frontend-architecture-classification | pass | Layer 2 DEV:frontend classification is copied by source scope element. |\n| T-S001-01 | frontend-change-class | pass | Frontend change class is visual-rendering. |\n| T-S001-01 | frontend-source-placement | pass | Work stays in approved module/journey files. |\n| T-S001-01 | frontend-state-owner | pass | State owner is feature-local-state-machine and no URL replay state is introduced. |\n| T-S001-01 | frontend-route-topology | pass | Route/topology posture follows Layer 2 locator and authority decisions. |\n| T-S001-01 | frontend-design-system-seam | pass | Signed-off visual seam is named. |\n| T-S001-01 | frontend-adoption-contract | pass | Adoption contract names consumed render, behavior, accessibility, and CSS seams. |\n| T-S001-01 | frontend-no-app-css | pass | No app CSS is allowed. |\n| T-S001-01 | frontend-no-copied-behavior | pass | No copied controller behavior is allowed. |\n| T-S001-01 | frontend-accessibility-state | pass | Accessibility state remains unchanged. |\n| T-S001-01 | frontend-rendered-proof | pass | Visual rendering proof is required. |\n| T-S001-01 | frontend-security-evidence | pass | Browser security posture evidence is copied from Layer 2. |\n| T-S001-01 | frontend-permission-rendering | pass | Allowed, denied, expired, and unauthenticated states are required. |\n| T-S001-01 | frontend-runtime-data-mock-honesty | pass | Contract, runtime payload, and mock-honesty proof are required. |\n| T-S001-01 | frontend-runtime-evidence | pass | Served asset evidence is required. |\n| T-S001-01 | frontend-artifacts | pass | Frontend architecture artifact obligations are carried. |",
       "| T-S001-01 | vertical-inseparable-journey | pass | One journey proof requires DEV:backend and DEV:frontend evidence together. |\n| T-S001-01 | vertical-backend-seam | pass | Backend API seam is named. |\n| T-S001-01 | vertical-frontend-seam | pass | Frontend route/render seam is named. |\n| T-S001-01 | vertical-api-data-shape | pass | API/data contract is named. |\n| T-S001-01 | vertical-browser-workflow | pass | Browser journey proof is named. |\n| T-S001-01 | vertical-security-evidence | pass | Browser security posture evidence is carried. |\n| T-S001-01 | vertical-permission-rendering | pass | Permission rendering evidence is carried when sensitive. |\n| T-S001-01 | vertical-runtime-data-mock-honesty | pass | Runtime data/mock honesty is carried. |\n| T-S001-01 | vertical-mock-honesty | pass | Fixtures match live API/persistence shape. |\n| T-S001-01 | vertical-artifacts | pass | Artifact ledger is carried. |\n| T-S001-01 | vertical-proof-commands | pass | API and browser proof commands are named. |",
     )
     .replace(
@@ -1594,6 +1607,44 @@ describe("task breakdown validation", () => {
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain(
       "T-S001-01 DEV:frontend architecture Product Module does not match Layer 2/3 snapshot for root-admin marketing journey",
+    );
+  });
+
+  it("blocks queued DEV:frontend tasks without a frontend change class row", () => {
+    const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
+      "| T-S001-01 | visual-rendering | Frontend / Design-System Sub-Standard; Design-System Seam Contract; Frontend Adoption Contract; Frontend Runtime Data And Mock Honesty | canonical screenshot/evidence artifact root-admin-marketing-campaign-default.png and browser visual proof | not-applicable: implementation task is not evidence-only screenshot capture |\n",
+      "",
+    );
+
+    const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 queued DEV:frontend task has no Frontend Change Class Contract row");
+  });
+
+  it("blocks evidence-only frontend work from staying in DEV:frontend", () => {
+    const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
+      "| T-S001-01 | visual-rendering | Frontend / Design-System Sub-Standard; Design-System Seam Contract; Frontend Adoption Contract; Frontend Runtime Data And Mock Honesty | canonical screenshot/evidence artifact root-admin-marketing-campaign-default.png and browser visual proof | not-applicable: implementation task is not evidence-only screenshot capture |",
+      "| T-S001-01 | evidence-sweep-route-away | EVIDENCE:qa-evidence owns screenshot capture and mock-honesty comparison | screenshot capture only; no implementation behavior | EVIDENCE:qa-evidence follow-up for evidence-only screenshot capture |",
+    );
+
+    const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 evidence-sweep-route-away must route to EVIDENCE:qa-evidence, not DEV:frontend");
+  });
+
+  it("blocks runtime defect frontend tasks without live runtime evidence", () => {
+    const packet = frontendTaskPacketWith(frontendDecisionRow).replace(
+      "| T-S001-01 | visual-rendering | Frontend / Design-System Sub-Standard; Design-System Seam Contract; Frontend Adoption Contract; Frontend Runtime Data And Mock Honesty | canonical screenshot/evidence artifact root-admin-marketing-campaign-default.png and browser visual proof | not-applicable: implementation task is not evidence-only screenshot capture |",
+      "| T-S001-01 | runtime-defect-fix | Frontend Runtime Data And Mock Honesty; Task-Specific Proof Plan | source diff and unit test only | not-applicable: behavior fix remains DEV:frontend |",
+    );
+
+    const result = validateTaskBreakdownContent(packet, frontendStoryPacketWith(frontendSourceRow));
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "T-S001-01 runtime-defect-fix frontend change class requires live process, served asset/module, runtime payload, and regression proof",
     );
   });
 

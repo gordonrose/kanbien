@@ -233,6 +233,7 @@ export const layer4RequiredCheckIdsByTaskType = {
   ],
   "DEV:frontend": [
     "frontend-architecture-classification",
+    "frontend-change-class",
     "frontend-source-placement",
     "frontend-state-owner",
     "frontend-route-topology",

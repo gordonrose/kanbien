@@ -208,6 +208,53 @@ Source placement defaults:
   no hand edits unless the task is an explicitly approved generated/canonical
   sweep
 
+## Frontend Change Class Contract
+
+Required for queued `DEV:frontend` tasks. Leave empty when no `DEV:frontend`
+task is queued.
+
+Allowed change classes:
+
+- `app-adoption`
+- `route-module-behavior`
+- `interaction-behavior`
+- `permission-rendering`
+- `api-projection-consumer`
+- `topology-materialization-consumer`
+- `runtime-defect-fix`
+- `accessibility-semantics`
+- `visual-rendering`
+- `evidence-sweep-route-away`
+
+Class expectations:
+
+- `app-adoption` must consume a signed-off `GOV:design-system` seam or record
+  an approved exception, fill the Frontend Adoption Contract, and prohibit
+  local markup, controller, ARIA/state, or CSS reconstruction.
+- `route-module-behavior` must use approved module/journey files and must not
+  add behavior to shell entry files.
+- `interaction-behavior` must name the exact state transition or interaction
+  scenario and matching proof.
+- `permission-rendering` must carry permission truth and permission-aware
+  rendering proof.
+- `api-projection-consumer` must name the governing API/projection contract,
+  fixture source, live/runtime payload evidence or explicit unavailable
+  reason, and mock-honesty statement.
+- `topology-materialization-consumer` must use the approved topology
+  materialization, preview, or apply seam and must not hand-edit generated
+  truth.
+- `runtime-defect-fix` must carry live process, served asset or module,
+  runtime payload, and regression proof. Source-only proof is not enough.
+- `accessibility-semantics` must carry role, name, state, and focus proof.
+- `visual-rendering` must carry rendered browser/canonical screenshot or
+  visual evidence.
+- `evidence-sweep-route-away` blocks `DEV:frontend`; route evidence-only
+  screenshot capture, live payload sampling, served asset checks, or
+  mock-honesty comparison to `EVIDENCE:qa-evidence`.
+
+| Task ID | Frontend Change Class | Primary Contract Rows Required | Runtime / Browser Evidence Required | Route-Away / Split Notes |
+| --- | --- | --- | --- | --- |
+
 ## Frontend / Design-System Sub-Standard
 
 For `DEV:frontend`, `GOV:design-system`, and frontend-affecting `DEV:vertical-slice` tasks,
