@@ -441,8 +441,8 @@ ${backendGuardrailEvidenceRows}
 
 ## QA Evidence Instrument Summary
 
-| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |
-| --- | --- | --- | --- | --- |
+| Task ID | QA Evidence Class | Evidence Source Inventory | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Expected Evidence Output | Evidence Status / Remaining Gap | Human Review Boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 ## Debt Health Summary Commands
 
@@ -741,7 +741,7 @@ function evidenceTaskPacketWith(input: {
     )
     .replace(
       backendGuardrailEvidenceRows,
-      "| T-S001-01 | qa-proof-target | pass | Tenant branding runtime evidence artifact and payload shape are named. |\n| T-S001-01 | qa-command-plan | pass | Focused runtime proof command is named. |\n| T-S001-01 | qa-evidence-instruments | pass | Instrument summary selects coverage-strength, browser proof, live payload, and mock-honesty comparison. |\n| T-S001-01 | qa-runtime-evidence | pass | Live API/projection evidence source is named. |\n| T-S001-01 | qa-mock-honesty | pass | Mock fixture is compared against live payload shape. |\n| T-S001-01 | qa-evidence-status | pass | Evidence status is recorded as passing, partial, or blocked. |\n| T-S001-01 | qa-coverage-strength-summary | pass | npm run test:coverage-strength summary is required for QA evidence inventory impact. |",
+      "| T-S001-01 | qa-proof-target | pass | Tenant branding runtime evidence artifact and payload shape are named. |\n| T-S001-01 | qa-command-plan | pass | Focused runtime proof command is named. |\n| T-S001-01 | qa-evidence-class | pass | live-payload-sample is the primary evidence class. |\n| T-S001-01 | qa-evidence-source-inventory | pass | Evidence source inventory names route, browser scenario, and fixture files. |\n| T-S001-01 | qa-evidence-instruments | pass | Instrument summary selects coverage-strength, browser proof, live payload, and mock-honesty comparison. |\n| T-S001-01 | qa-runtime-evidence | pass | Live API/projection evidence source is named. |\n| T-S001-01 | qa-mock-honesty | pass | Mock fixture is compared against live payload shape. |\n| T-S001-01 | qa-expected-output | pass | Expected evidence artifact output is named. |\n| T-S001-01 | qa-evidence-status | pass | Evidence status is recorded as passing, partial, or blocked. |\n| T-S001-01 | qa-coverage-strength-summary | pass | npm run test:coverage-strength summary is required for QA evidence inventory impact. |\n| T-S001-01 | qa-human-review-boundary | pass | Human review is limited to evidence sufficiency and accepted remaining gaps. |",
     )
     .replace(
       "| T-S001-01 | src/features/tenantConfiguration/domain/updateBranding.ts | feature-local | Owning feature domain capability file. |\n| T-S001-01 | src/features/tenantConfiguration/transport/rootAdminRoutes.ts | feature-local | Owning feature root-admin transport seam. |\n| T-S001-01 | tests/integration/tenantConfiguration/persistence.test.ts | test | Persistence regression for approved story AC. |",
@@ -752,8 +752,8 @@ function evidenceTaskPacketWith(input: {
       "| T-S001-01 | runtime-level, mock-honesty | npm run test:coverage-strength; npx playwright test tests/visual/tenant-branding-runtime.spec.ts | runtime payload evidence must match production API/projection shape; mocks may not invent fallback behavior |",
     )
     .replace(
-      "## QA Evidence Instrument Summary\n\n| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |\n| --- | --- | --- | --- | --- |\n\n",
-      "## QA Evidence Instrument Summary\n\n| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |\n| --- | --- | --- | --- | --- |\n| T-S001-01 | npm run test:coverage-strength; Playwright browser proof; live API payload sample | live API/projection payload must be captured for tenant branding route before completion | fixture fields compared with live payload shape; no invented fallback behavior | partial: broader suite-strength debt accepted with owner |\n\n",
+      "## QA Evidence Instrument Summary\n\n| Task ID | QA Evidence Class | Evidence Source Inventory | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Expected Evidence Output | Evidence Status / Remaining Gap | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+      "## QA Evidence Instrument Summary\n\n| Task ID | QA Evidence Class | Evidence Source Inventory | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Expected Evidence Output | Evidence Status / Remaining Gap | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | live-payload-sample | /v1/root-admin/tenants/:tenantId/branding payload; tests/visual/tenant-branding-runtime.spec.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts | npm run test:coverage-strength; Playwright browser proof; live API payload sample | live API/projection payload must be captured for tenant branding route before completion | fixture fields compared with live payload shape; no invented fallback behavior | docs/workspace/qa/tenant-branding-runtime-evidence.md with payload sample and mock-honesty note | partial: broader suite-strength debt accepted with owner | human review limited to evidence sufficiency and accepted remaining gaps |\n\n",
     )
     .replace(
       "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n\n",
@@ -1068,8 +1068,8 @@ describe("task breakdown validation", () => {
   it("blocks EVIDENCE task types without QA evidence instrument summary", () => {
     const result = validateTaskBreakdownContent(
       evidenceTaskPacketWith().replace(
-        "## QA Evidence Instrument Summary\n\n| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |\n| --- | --- | --- | --- | --- |\n| T-S001-01 | npm run test:coverage-strength; Playwright browser proof; live API payload sample | live API/projection payload must be captured for tenant branding route before completion | fixture fields compared with live payload shape; no invented fallback behavior | partial: broader suite-strength debt accepted with owner |\n\n",
-        "## QA Evidence Instrument Summary\n\n| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |\n| --- | --- | --- | --- | --- |\n\n",
+        "## QA Evidence Instrument Summary\n\n| Task ID | QA Evidence Class | Evidence Source Inventory | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Expected Evidence Output | Evidence Status / Remaining Gap | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n| T-S001-01 | live-payload-sample | /v1/root-admin/tenants/:tenantId/branding payload; tests/visual/tenant-branding-runtime.spec.ts; src/features/tenantConfiguration/transport/rootAdminRoutes.ts | npm run test:coverage-strength; Playwright browser proof; live API payload sample | live API/projection payload must be captured for tenant branding route before completion | fixture fields compared with live payload shape; no invented fallback behavior | docs/workspace/qa/tenant-branding-runtime-evidence.md with payload sample and mock-honesty note | partial: broader suite-strength debt accepted with owner | human review limited to evidence sufficiency and accepted remaining gaps |\n\n",
+        "## QA Evidence Instrument Summary\n\n| Task ID | QA Evidence Class | Evidence Source Inventory | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Expected Evidence Output | Evidence Status / Remaining Gap | Human Review Boundary |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
       ),
       evidenceStoryPacket(),
     );

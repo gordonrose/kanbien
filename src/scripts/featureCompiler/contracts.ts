@@ -494,11 +494,15 @@ export const layer4RequiredCheckIdsByTaskType = {
   "EVIDENCE:qa-evidence": [
     "qa-proof-target",
     "qa-command-plan",
+    "qa-evidence-class",
+    "qa-evidence-source-inventory",
     "qa-evidence-instruments",
     "qa-runtime-evidence",
     "qa-mock-honesty",
+    "qa-expected-output",
     "qa-evidence-status",
     "qa-coverage-strength-summary",
+    "qa-human-review-boundary",
   ],
 } as const satisfies Record<Layer4TaskType, readonly string[]>;
 

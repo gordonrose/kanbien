@@ -1227,8 +1227,21 @@ and contextual evidence instruments the task will use and what remains unproven.
 Scripts are instruments inside the evidence task; they do not replace the
 task-specific proof story.
 
-| Task ID | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Evidence Status / Remaining Gap |
-| --- | --- | --- | --- | --- |
+Allowed QA evidence classes:
+
+- `live-payload-sample`
+- `served-asset-verification`
+- `mock-honesty-comparison`
+- `runtime-process-check`
+- `browser-proof`
+- `coverage-strength-summary`
+- `evidence-sweep`
+
+Record exact evidence sources, expected artifacts, and the human-review boundary
+so scripts can gather the target evidence before a person judges sufficiency.
+
+| Task ID | QA Evidence Class | Evidence Source Inventory | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Expected Evidence Output | Evidence Status / Remaining Gap | Human Review Boundary |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
 
 For non-`EVIDENCE:qa-evidence` tasks, use `not-applicable: <reason>`.
 

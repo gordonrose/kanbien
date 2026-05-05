@@ -15,13 +15,21 @@ Use for task type: `EVIDENCE:qa-evidence`
 ## Approval Evidence
 
 - proof target and commands
+- approved QA evidence class: `live-payload-sample`,
+  `served-asset-verification`, `mock-honesty-comparison`,
+  `runtime-process-check`, `browser-proof`, `coverage-strength-summary`, or
+  `evidence-sweep`
+- exact evidence source inventory naming files, URLs/routes, commands, ports,
+  processes, screenshots, traces, persistence snapshots, or payload targets
 - evidence instruments selected for the scoped risk, such as focused test
   commands, coverage-strength summaries, runtime/process checks, served asset
   checks, live API or projection payload samples, live persistence snapshots,
   browser screenshots/traces, accessibility evidence, or audit outputs
 - live data/API/browser evidence plan when relevant
 - mock-honesty comparison
+- expected evidence artifact or output
 - blocked, partial, or passing evidence status
+- human-review boundary for evidence sufficiency and accepted unavailable proof
 - `npm run test:coverage-strength` summary row, with `not-run: <reason>` only
   when the summary is genuinely unavailable or not applicable to the scoped
   evidence proof
@@ -31,6 +39,10 @@ Use for task type: `EVIDENCE:qa-evidence`
 - evidence capture, mock-honesty review, visual sweep, and runtime proof should
   normally be separate from implementation for complex work
 - name exact evidence artifacts, scenarios, payload shapes, or audit outputs
+- prefer class-specific script instruments: live payload samples name the route,
+  response/projection, and capture command; served-asset verification names the
+  active process, port, asset, and served check; mock-honesty comparison names
+  fixture/mock sources and the live or contract shape compared
 - treat deterministic scripts as evidence instruments, not as the evidence task
   itself; the task must still state why each instrument is relevant, how to
   interpret the result, and what remains unproven
@@ -62,8 +74,12 @@ Use for task type: `EVIDENCE:qa-evidence`
 
 - `qa-proof-target`
 - `qa-command-plan`
+- `qa-evidence-class`
+- `qa-evidence-source-inventory`
 - `qa-evidence-instruments`
 - `qa-runtime-evidence`
 - `qa-mock-honesty`
+- `qa-expected-output`
 - `qa-evidence-status`
 - `qa-coverage-strength-summary`
+- `qa-human-review-boundary`

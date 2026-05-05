@@ -204,6 +204,15 @@ const allowedVerticalSliceSplitDecisions = new Set([
   "not-applicable",
   "blocked",
 ]);
+const allowedQaEvidenceClasses = new Set([
+  "live-payload-sample",
+  "served-asset-verification",
+  "mock-honesty-comparison",
+  "runtime-process-check",
+  "browser-proof",
+  "coverage-strength-summary",
+  "evidence-sweep",
+]);
 const allowedTestOnlyChangeClasses = new Set([
   "prd-test-case",
   "proof-gap",
@@ -1029,10 +1038,14 @@ type ProofCommandRow = {
 
 type QaEvidenceInstrumentSummaryRow = {
   taskId: string;
+  qaEvidenceClass: string;
+  evidenceSourceInventory: string;
   selectedEvidenceInstruments: string;
   liveRuntimePayloadEvidence: string;
   mockHonestyComparison: string;
+  expectedEvidenceOutput: string;
   evidenceStatusRemainingGap: string;
+  humanReviewBoundary: string;
 };
 
 type DebtHealthSummaryRow = {
@@ -5348,11 +5361,67 @@ function validateQaEvidenceInstrumentSummaries(
   }
 
   for (const row of rows) {
+    validateAllowedValue(task.taskId, "QA Evidence Class", row.qaEvidenceClass, allowedQaEvidenceClasses, errors);
+    validateRequiredField(task.taskId, "Evidence Source Inventory", row.evidenceSourceInventory, errors);
     validateRequiredField(task.taskId, "Selected Evidence Instruments", row.selectedEvidenceInstruments, errors);
     validateRequiredField(task.taskId, "Live Runtime / Payload Evidence", row.liveRuntimePayloadEvidence, errors);
     validateRequiredField(task.taskId, "Mock Honesty Comparison", row.mockHonestyComparison, errors);
+    validateRequiredField(task.taskId, "Expected Evidence Output", row.expectedEvidenceOutput, errors);
     validateRequiredField(task.taskId, "Evidence Status / Remaining Gap", row.evidenceStatusRemainingGap, errors);
+    validateRequiredField(task.taskId, "Human Review Boundary", row.humanReviewBoundary, errors);
+
+    if (!mentionsQaEvidenceSourceInventory(row.evidenceSourceInventory)) {
+      errors.push(`${task.taskId} QA Evidence Instrument Summary needs scriptable evidence source inventory or exact runtime target`);
+    }
+
+    const runtime = row.liveRuntimePayloadEvidence.toLowerCase();
+    const mockHonesty = row.mockHonestyComparison.toLowerCase();
+    if (
+      row.qaEvidenceClass === "live-payload-sample" &&
+      !runtime.includes("payload") &&
+      !runtime.includes("api") &&
+      !runtime.includes("projection") &&
+      !runtime.includes("persistence")
+    ) {
+      errors.push(`${task.taskId} live-payload-sample QA evidence must name live API, projection, payload, or persistence evidence`);
+    }
+    if (
+      row.qaEvidenceClass === "served-asset-verification" &&
+      !runtime.includes("served") &&
+      !runtime.includes("asset") &&
+      !runtime.includes("browser") &&
+      !runtime.includes("process") &&
+      !runtime.includes("port")
+    ) {
+      errors.push(`${task.taskId} served-asset-verification QA evidence must name served asset, browser, process, or port evidence`);
+    }
+    if (
+      row.qaEvidenceClass === "mock-honesty-comparison" &&
+      (isNotApplicableValue(row.mockHonestyComparison) ||
+        (!mockHonesty.includes("mock") && !mockHonesty.includes("fixture")) ||
+        (!mockHonesty.includes("live") && !mockHonesty.includes("contract") && !mockHonesty.includes("payload")))
+    ) {
+      errors.push(`${task.taskId} mock-honesty-comparison QA evidence must compare mocks or fixtures with live, payload, or contract shape`);
+    }
   }
+}
+
+function mentionsQaEvidenceSourceInventory(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    mentionsScriptableInventory(value) ||
+    normalized.includes("api") ||
+    normalized.includes("payload") ||
+    normalized.includes("projection") ||
+    normalized.includes("browser") ||
+    normalized.includes("screenshot") ||
+    normalized.includes("trace") ||
+    normalized.includes("served asset") ||
+    normalized.includes("process") ||
+    normalized.includes("port") ||
+    normalized.includes("postgres") ||
+    normalized.includes("database")
+  );
 }
 
 function validateDebtHealthSummaries(task: TaskRow, rows: DebtHealthSummaryRow[], errors: string[]): void {
@@ -7422,10 +7491,14 @@ function parseProofCommandRows(content: string): ProofCommandRow[] {
 function parseQaEvidenceInstrumentSummaryRows(content: string): QaEvidenceInstrumentSummaryRow[] {
   return parseTableRows(section(content, "## QA Evidence Instrument Summary")).map((cells) => ({
     taskId: cells[0] ?? "",
-    selectedEvidenceInstruments: cells[1] ?? "",
-    liveRuntimePayloadEvidence: cells[2] ?? "",
-    mockHonestyComparison: cells[3] ?? "",
-    evidenceStatusRemainingGap: cells[4] ?? "",
+    qaEvidenceClass: cells[1] ?? "",
+    evidenceSourceInventory: cells[2] ?? "",
+    selectedEvidenceInstruments: cells[3] ?? "",
+    liveRuntimePayloadEvidence: cells[4] ?? "",
+    mockHonestyComparison: cells[5] ?? "",
+    expectedEvidenceOutput: cells[6] ?? "",
+    evidenceStatusRemainingGap: cells[7] ?? "",
+    humanReviewBoundary: cells[8] ?? "",
   }));
 }
 
