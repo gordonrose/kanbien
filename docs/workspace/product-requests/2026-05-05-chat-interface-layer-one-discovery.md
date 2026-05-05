@@ -7,7 +7,7 @@
 - Date:
   2026-05-06
 - Current status:
-  `ready-for-story-breakdown`
+  `story-breakdown`
 - Requester-facing status:
   Ready for story planning
 - Source channel:
@@ -41,7 +41,7 @@
 - Technical Steering packet:
   `docs/workspace/technical-steering/2026-05-05-chat-interface-layer-one-discovery-steering.md`
 - Story Breakdown:
-  pending
+  `docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md`
 - Task Breakdown:
   pending
 - Work runs / Loop Runs:
@@ -54,15 +54,16 @@
 - Title:
   Chat interface for Layer One Product Discovery
 - Status:
-  Ready for story planning
+  Story planning blocked on artifact unblocks
 - Short update:
-  Product intent and architecture direction are captured. Next we need to split
-  the work into stories and identify the planning, design-system, data,
-  security, and evidence artifacts needed before implementation.
+  Product intent, architecture direction, and story queue are captured. Next we
+  need to create the PRD and capability matrix, resolve generated PDF delivery,
+  pick the design-system path, and define root-builder review permission before
+  implementation tasks can begin.
 - Waiting next:
-  Story Breakdown
+  Layer 3 unblock work
 - User action needed:
-  none right now
+  decide generated PDF delivery posture and root-builder review permission
 
 ## Source-Of-Truth Boundary
 
