@@ -35,3 +35,14 @@ For persistence-backed entities, pages should include as appropriate:
 - mutation semantics
 - migration compatibility notes
 - cross-feature read seams
+- compliance classification and governance notes
+- compliance and enforcement trace rows that link repo rules, enforcement
+  posture, and evidence
+
+Health check:
+
+- `npm run data:compliance-health`
+
+The health check summarizes whether entity pages include the compliance
+classification/governance and enforcement trace sections, and whether trace
+rows expose missing or manual-review evidence posture.
