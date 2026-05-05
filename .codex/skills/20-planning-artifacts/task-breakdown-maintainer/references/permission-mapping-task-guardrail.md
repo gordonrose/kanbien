@@ -14,6 +14,10 @@ Use for task type: `DOC:permission-mapping`
   cannot become usable before runtime enforcement exists
 - safe denial category, audit/proof expectation, and authority-world separation
   remain visible for protected surfaces
+- current mapping work may document approved RBAC, root, tenant, and
+  capability-grant truth; configuration-based, relationship-based, ABAC, and
+  ReBAC rows must remain `architecture-target` or `blocked` until Layer 2 has
+  approved the model
 
 ## Approval Evidence
 
@@ -43,6 +47,11 @@ Use for task type: `DOC:permission-mapping`
   vocabulary, role-family policy, tenant lifecycle policy, or ABAC/ReBAC
   extension rules, route that governance change to `GOV:architecture-update`
   for now.
+- if a mapping row names configuration-based authorization,
+  relationship-based authorization, ABAC, or ReBAC before Layer 2 approval,
+  the row must be `architecture-target` or `blocked`, UI-ineligible, and routed
+  to `GOV:architecture-update`; it must not be recorded as `current`,
+  `target`, seed-backed, or runtime-enforced truth
 
 ## Ownership Boundary
 
@@ -100,6 +109,11 @@ documentation-only, seed-backed, corrective-migration-backed, target,
 architecture-target, or blocked, and must name the split or blocker that keeps
 the permission from becoming usable prematurely.
 
+Until Layer 2 approves configuration-based and relationship-based
+authorization, rows that mention configuration-based, relationship-based, ABAC,
+or ReBAC posture must be marked `architecture-target` or `blocked`, must remain
+UI-ineligible, and must route model approval to `GOV:architecture-update`.
+
 ## Split Conditions
 
 Split or block the task when:
@@ -117,6 +131,9 @@ Split or block the task when:
   an approved decision
 - UI eligibility would expose a capability that is not runtime-enforced or is
   blocked/documentation-only
+- configuration-based, relationship-based, ABAC, or ReBAC posture is recorded
+  as current, target, seed-backed, corrective-migration-backed, or
+  runtime-enforced without approved Layer 2 authority
 - support, emergency, system/job, lifecycle, object, relationship, or attribute
   rules lack safe denial and audit/proof expectations
 

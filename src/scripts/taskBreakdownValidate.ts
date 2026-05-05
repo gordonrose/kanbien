@@ -3168,6 +3168,28 @@ function validatePermissionMappingContract(
 
     const migrationImpact = row.migrationImpact.toLowerCase();
     const followUp = row.splitBlockedFollowUp.toLowerCase();
+    const authzModelText = [
+      row.approvedAuthzSource,
+      row.capabilityRouteSurface,
+      row.authorityWorldActorBoundary,
+      row.tenantObjectBoundary,
+      row.allowDenyExpectations,
+      row.uiEligibility,
+      row.denialAuditProofExpectation,
+      row.migrationImpact,
+      row.splitBlockedFollowUp,
+    ]
+      .join(" ")
+      .toLowerCase();
+    const futureAuthzModelSignal =
+      authzModelText.includes("configuration-based") ||
+      authzModelText.includes("relationship-based") ||
+      authzModelText.includes("abac") ||
+      authzModelText.includes("rebac");
+    if (futureAuthzModelSignal && !["architecture-target", "blocked"].includes(row.mappingRowPosture)) {
+      errors.push(`${task.taskId} Permission Mapping Contract future authz model rows must be architecture-target or blocked until Layer 2 approval`);
+    }
+
     if (
       (migrationImpact.includes("seed") || migrationImpact.includes("migration") || migrationImpact.includes("repair")) &&
       !followUp.includes("dev:migration-persistence") &&
@@ -3186,13 +3208,10 @@ function validatePermissionMappingContract(
       errors.push(`${task.taskId} Permission Mapping Contract API-visible authz contract changes must route to DOC:api-contract`);
     }
     if (
-      (followUp.includes("authz model") ||
+      (futureAuthzModelSignal ||
+        followUp.includes("authz model") ||
         followUp.includes("evaluator order") ||
-        followUp.includes("authority-world policy") ||
-        followUp.includes("relationship-based") ||
-        followUp.includes("configuration-based") ||
-        followUp.includes("abac") ||
-        followUp.includes("rebac")) &&
+        followUp.includes("authority-world policy")) &&
       !followUp.includes("gov:architecture-update")
     ) {
       errors.push(`${task.taskId} Permission Mapping Contract authz model changes must route to GOV:architecture-update`);

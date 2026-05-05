@@ -722,6 +722,11 @@ Allowed mapping row postures:
 grant migrations, API denial contract changes, executable proof, and authz
 model changes must split to the owning task type.
 
+Until Layer 2 approves configuration-based and relationship-based
+authorization, any configuration-based, relationship-based, ABAC, or ReBAC row
+must be `architecture-target` or `blocked`, UI-ineligible, and routed to
+`GOV:architecture-update`.
+
 | Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 

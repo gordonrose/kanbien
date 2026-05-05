@@ -1207,6 +1207,28 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 Permission Mapping Contract authz model changes must route to GOV:architecture-update");
   });
 
+  it("blocks future authz model permission rows that are not architecture-target or blocked", () => {
+    const permissionContractRow =
+      "| T-S001-01 | ADR-0036 layered authorization and root-admin tenant branding capability matrix row CAP-BRANDING-001 | CAP-BRANDING-001 / configuration-based tenant branding grant | tenant actor boundary; configuration scoped object | documentation-only | target | configuration-based tenant object rule not yet approved | allow configured tenant admin; deny tenant admin without configuration | blocked until Layer 2 architecture approved | denial audit event and proof required | not-applicable: no grant seed or corrective migration | GOV:architecture-update follow-up for configuration-based authorization model approval |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:permission-mapping |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/architecture/permission-mappings/tenant-branding-permission-mapping.md",
+        )
+        .replace(
+          "## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Permission Mapping Contract\n\n| Task ID | Approved Authz Source | Capability / Route / Surface | Authority World / Actor Boundary | Grant Source Posture | Mapping Row Posture | Tenant / Object Boundary | Allow / Deny Expectations | UI Eligibility | Denial / Audit / Proof Expectation | Migration Impact | Split / Blocked Follow-Up |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${permissionContractRow}\n\n`,
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 Permission Mapping Contract future authz model rows must be architecture-target or blocked until Layer 2 approval");
+  });
+
   it("blocks API contract tasks without an API contract row", () => {
     const result = validateTaskBreakdownContent(
       validTaskPacket
