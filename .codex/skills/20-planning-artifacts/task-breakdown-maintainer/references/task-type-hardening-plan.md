@@ -76,16 +76,13 @@ a real delivery blocker changes the risk profile:
 
 1. `DOC:permission-mapping`: revisit after Layer 2 approves any
    configuration-based, relationship-based, ABAC, or ReBAC authorization model.
-2. `shared-code-placement-task-guardrail.md`: add supplemental worked examples
-   for owning-feature public seams, `src/lib`, stay-put, and
-   `DEV:platform-seam` placement.
-3. Data dictionary policy: decide when scoped retention/export/delete/legal-hold
+2. Data dictionary policy: decide when scoped retention/export/delete/legal-hold
    review rows have enough approved cleanup or exception posture to enable
    fail-on-debt behavior.
-4. Coverage-strength policy: decide when escaped-defect, mock-honesty,
+3. Coverage-strength policy: decide when escaped-defect, mock-honesty,
    assertionless debug visual, single-layer, and e2e/browser-tier debt classes
    have approved cleanup or exception posture to enable scoped fail-on-debt.
-5. Manifest/validator policy: decide whether
+4. Manifest/validator policy: decide whether
    `task-type-contract-manifest.md` remains a human routing reference or becomes
    validator-required in task packets.
 

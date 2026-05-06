@@ -84,7 +84,7 @@ example coverage does not erase why the task types were hardened.
 
 | Reference | Applies When | Input Contract | Job | Output Contract | 98% First-Pass Gap |
 | --- | --- | --- | --- | --- | --- |
-| `shared-code-placement-task-guardrail.md` | Any task may move, extract, newly share, or reuse code across feature/platform/shared-lib boundaries. | Current owner, proposed owner, affected consumers, placement pressure, and compatibility expectation. | Prevent wrong-code placement and force extraction or shared-seam work into the right owner before dependent delivery. | Placement decision, compatibility proof, and separate extraction dependency when required. | Add worked examples for `shared-lib` versus owning-feature public seam versus `DEV:platform-seam` in a separate supplemental-reference slice. |
+| `shared-code-placement-task-guardrail.md` | Any task may move, extract, newly share, or reuse code across feature/platform/shared-lib boundaries. | Current owner, proposed owner, affected consumers, placement pressure, and compatibility expectation. | Prevent wrong-code placement and force extraction or shared-seam work into the right owner before dependent delivery. | Placement decision, compatibility proof, and separate extraction dependency when required. | Worked examples now cover owning-feature public seams, feature-neutral `src/lib`, stay-put compatibility, `DEV:platform-seam`, and blocked architecture-authority extractions. |
 | `task-type-hardening-plan.md` | Before selecting the next Layer 4 task-type refinement slice. | Current manifest, guardrail references, packet template, validator, tests, harness KPIs, and any promoted/pending hardening work. | Rank task types by script-first maturity, validator backing, route-away strength, examples, and Layer 5 improvisation risk. | Prioritized hardening sequence and operating rules for choosing the next refinement based on audit evidence instead of conversational momentum. | Keep the plan current after each hardening slice and consider validator-backed plan freshness checks if it starts drifting. |
 
 ## Current Hardening Backlog
@@ -99,8 +99,6 @@ not folded into unrelated delivery tasks.
    strength once current repo debt has approved cleanup or exception posture.
 3. Decide whether this manifest should remain a human routing reference only or
    become a validator-backed required reference in task packets.
-4. Add worked examples to the supplemental shared-code-placement guardrail so
-   reusable code does not become accidental architecture drift.
-5. Account for stranded task-breakdown work from sibling branches during repo
+4. Account for stranded task-breakdown work from sibling branches during repo
    cleanup with `npm run git:branch-stack-audit`, so restored references and
    scripts cannot be left behind silently.
