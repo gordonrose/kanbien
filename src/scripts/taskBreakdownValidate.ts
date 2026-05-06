@@ -1842,7 +1842,7 @@ function validateFrontendChangeClassSpecifics(
   const contractText = row.requiredContractRows.toLowerCase();
   const evidenceText = row.runtimeBrowserEvidence.toLowerCase();
   const routeAwayText = row.routeAwaySplitNotes.toLowerCase();
-  const proofText = proofRows.map((proof) => `${proof.requiredProofLayers} ${proof.requiredCommands} ${proof.mockHonestyNotes}`).join(" ").toLowerCase();
+  const proofText = proofRows.map((proof) => `${proof.proofLayers} ${proof.commands} ${proof.evidenceNotes}`).join(" ").toLowerCase();
   const writeText = `${task.allowedWriteSet} ${envelopeRows.map((envelope) => envelope.exactFilesOrPatterns).join(" ")}`.toLowerCase();
 
   if (row.changeClass === "app-adoption") {
