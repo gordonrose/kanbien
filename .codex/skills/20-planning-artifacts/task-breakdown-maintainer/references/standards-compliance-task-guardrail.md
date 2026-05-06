@@ -67,6 +67,16 @@ Worked routing examples:
   inventory names the exact repo standard, gate command, affected packet, and
   evidence artifact.
 
+## Worked Examples
+
+| Scenario | Compliance Target | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| A release slice needs a repo-only QA gate review against `docs/standards/QA-RELEASE-GATE.md`. | `repo-standard-gate` or `task-slice-gate-review` | Source path names the gate; inventory names the task packet, proof commands, test output, and evidence artifact; review method is the focused gate or manual standards review; coverage summary names `npm run test:coverage-strength` when test strength is in scope; posture records pass, partial, fail, or blocked. | Do not add missing tests or change release standards in this task; route missing executable proof to `TEST:test-only` and standards language changes to `GOV:standards-update`. |
+| A platform status snapshot such as `docs/standards/platform-status/OWASP-ASVS-STATUS.md` must be refreshed from current security evidence. | `platform-status-snapshot` | Inventory names `docs/standards/OWASP-ASVS-GATE.md`, security tests, relevant architecture/security docs, and command output; evidence target is the status file; follow-up routing records any partial/fail posture with owning task types. | Do not change authz, routing, middleware, or tests; route implementation to `DEV:*`, proof capture to `EVIDENCE:qa-evidence`, and missing tests to `TEST:test-only`. |
+| An adopted external standard needs a control map under `docs/standards/control-maps/`, such as GDPR, ISO, NIST, OWASP, or WCAG. | `external-standard-control-map` | Source reference names the external authoritative source and repo gate; inventory links repo standards, data dictionary, permission mapping, tests, evidence, and decision sources; evidence target is one control-map file; human review owns applicability and compliance judgment. | Do not copy the external standard text or change repo standards; route standards changes to `GOV:standards-update` and architecture authority gaps to `GOV:architecture-update`. |
+| A compliance review finds a known gap that has an approved waiver or blocker. | `waiver-or-blocker-review` | Inventory names the standard, waiver/blocker source, evidence artifact, and affected scope; posture is `waived-with-approval` or `blocked`; follow-up routing names the approved waiver, owning follow-up task, or blocker owner. | Do not present the gate as passing and do not implement the missing control inside the compliance task. |
+| A task proposes to edit `docs/standards/change-artifact-requirements.md` while recording whether a slice complied. | blocked route-away | Compliance evidence can record that the current standard was reviewed, but changing standards authority is not allowed in `DOC:standards-compliance`. | Route standards language, gates, templates, validators, check IDs, or rollout rules to `GOV:standards-update`. |
+
 ## Deep Delivery Standard
 
 - one standards gate, posture snapshot, or compliance evidence target per queued
