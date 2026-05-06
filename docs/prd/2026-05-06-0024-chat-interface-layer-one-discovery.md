@@ -10,7 +10,7 @@
   - no durable conversation or packet history persistence yet
   - no generated Product Discovery packet PDF delivery yet
 - Not yet implemented:
-  - API contracts
+  - API route implementation
   - data dictionary
   - implementation blueprint
   - executable tests
@@ -18,8 +18,8 @@
 
 This PRD preserves the root-admin MVP behavior and planning obligations. It is
 not an implementation-ready artifact until the unresolved PDF configuration
-implementation, root-admin design-system parity, data, API, blueprint, and
-evidence blockers are resolved.
+implementation, root-admin design-system parity, data, blueprint, and evidence
+blockers are resolved.
 
 ## Source Artifacts
 
@@ -39,6 +39,8 @@ evidence blockers are resolved.
   `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`
 - Permission Mapping:
   `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
+- API Contract:
+  `docs/api-contracts/chat-interface-layer-one-discovery.md`
 
 ## Summary
 
@@ -295,7 +297,6 @@ Runtime/browser evidence must include:
 The PRD does not resolve these blockers:
 
 - root-admin first-consumer design-system parity proof
-- API contract details
 - data dictionary
 - implementation blueprint
 - runtime/browser QA evidence plan

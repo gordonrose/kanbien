@@ -57,10 +57,10 @@
   runtime and rendered evidence required; source-only proof is insufficient
 - Notes:
   this file is a planning artifact, not executable proof. Root-builder review
-  permission, API contract, data dictionary, implementation blueprint, and
-  runtime evidence remain open blockers before implementation tasking. PDF
-  numeric thresholds are captured as configurable MVP defaults in the asset
-  consumer decision record.
+  permission and API contract are captured. Data dictionary, implementation
+  blueprint, and runtime evidence remain open blockers before implementation
+  tasking. PDF numeric thresholds are captured as configurable MVP defaults in
+  the asset consumer decision record.
 
 ## Existing Test Impact
 
@@ -199,8 +199,8 @@
   Cleanup Expectation: n/a
   Mock / Runtime Honesty: PDF fixtures must render from durable packet data,
   not transcript-only or browser state
-  Traceability / Execution Posture: implementation-blocked until API contract
-  and configuration ownership are named
+  Traceability / Execution Posture: implementation-blocked until implementation blueprint names
+  configuration ownership
   Coverage Strength Signal: delivery-policy branch coverage
   Coverage:
   allows transient attachment/download generation only for authorized current
@@ -242,8 +242,7 @@
   messages, packet revisions, and audit rows
   Mock / Runtime Honesty: integration fixture payloads must match API contract
   examples once created
-  Traceability / Execution Posture: implementation-blocked until API contract
-  exists
+  Traceability / Execution Posture: implementation-blocked until implementation blueprint and data dictionary exist
   Coverage Strength Signal: route plus persistence proof
   Features:
   harness chat feature, root session/authz, v1 router, persistence
@@ -263,8 +262,7 @@
   Cleanup Expectation: reset-first database cleanup
   Mock / Runtime Honesty: expected rows must be built through the repository or
   API helper used by production
-  Traceability / Execution Posture: implementation-blocked until API contract
-  exists
+  Traceability / Execution Posture: implementation-blocked until implementation blueprint and data dictionary exist
   Coverage Strength Signal: root-boundary allow/deny proof
   Features:
   harness chat feature, root authz, persistence
@@ -330,8 +328,7 @@
   removed if the implementation creates them
   Mock / Runtime Honesty: renderer stub must expose the same success/failure
   envelope as the real renderer
-  Traceability / Execution Posture: blocked until API contract and
-  configuration ownership exist
+  Traceability / Execution Posture: blocked until implementation blueprint and configuration ownership exist
   Coverage Strength Signal: authz plus generated-document delivery proof
   Features:
   harness chat feature, generated-document seam, asset/download policy, root
@@ -416,7 +413,7 @@
 
 | Journey ID | Journey Name | Tier | Related TC IDs | Planned Executable Path | Required Permutations | Execution Gate | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| JY-CHAT-L1-ROOT-BUILD-001 | Root-admin Build chat | critical | TC-CHAT-L1-E2E-001, TC-CHAT-L1-SEC-001, TC-CHAT-L1-EDGE-002 | tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | desktop/mobile, empty/history, packet-ready/failed | vertical-slice | Requires DS parity and API contracts. |
+| JY-CHAT-L1-ROOT-BUILD-001 | Root-admin Build chat | critical | TC-CHAT-L1-E2E-001, TC-CHAT-L1-SEC-001, TC-CHAT-L1-EDGE-002 | tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | desktop/mobile, empty/history, packet-ready/failed | vertical-slice | Requires DS parity and implemented APIs. |
 | JY-CHAT-L1-HISTORY-001 | Root-builder history | high-risk | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | tests/e2e/harnessChat/rootAdminHistory.spec.ts | creator root builder, other root builder, non-root denied, future tenant denied | broader validation | Root-builder-wide visibility is approved for root-admin MVP. |
 | JY-CHAT-L1-PACKET-PDF-001 | Packet PDF download | high-risk | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | tests/e2e/harnessChat/packetPdfDownload.spec.ts | authorized, denied, renderer failure, threshold timeout | broader validation | Configurable MVP thresholds are captured; API/config ownership still needed. |
 
@@ -445,8 +442,7 @@
     per future API contract without leaking sensitive history existence
   Mock / Runtime Honesty: use the same auth/session helper as other protected
   root-admin route tests
-  Traceability / Execution Posture: implementation-blocked until API contract
-  exists
+  Traceability / Execution Posture: implementation-blocked until implementation blueprint and data dictionary exist
   Coverage Strength Signal: allow/deny matrix proof
   Coverage:
   proves server-side authz gates create, read, append, generate, history, and
@@ -502,8 +498,7 @@
     data leak
   Mock / Runtime Honesty: renderer/delivery test double must preserve the real
   delivery envelope
-  Traceability / Execution Posture: blocked until API contract and
-  configuration ownership exist
+  Traceability / Execution Posture: blocked until implementation blueprint and configuration ownership exist
   Coverage Strength Signal: asset/download security proof
   Coverage:
   proves transient generated PDF delivery stays authorized, attachment-only,
@@ -540,7 +535,7 @@
   Cleanup Expectation: reset-first database cleanup
   Mock / Runtime Honesty: denial audit fixture must match API denial contract
   categories
-  Traceability / Execution Posture: blocked until API contract exists
+  Traceability / Execution Posture: blocked until implementation blueprint and runtime evidence plan exist
   Coverage Strength Signal: sensitive-denial evidence proof
   Coverage:
   records root-builder history access, unauthorized access, future cross-tenant
@@ -580,8 +575,7 @@
   Cleanup Expectation: reset-first database cleanup
   Mock / Runtime Honesty: no invented idempotency key unless API contract
   approves it
-  Traceability / Execution Posture: blocked until API contract defines retry
-  semantics
+  Traceability / Execution Posture: blocked until implementation blueprint confirms retry semantics
   Coverage Strength Signal: duplicate-write proof
   Coverage:
   validates the approved retry behavior for message append and packet
@@ -601,8 +595,7 @@
   Cleanup Expectation: temporary generated output cleanup
   Mock / Runtime Honesty: test data must use approved packet size/output size
   thresholds once defined
-  Traceability / Execution Posture: executable once API contract and
-  implementation blueprint name the threshold configuration keys
+  Traceability / Execution Posture: executable once implementation blueprint names the threshold configuration keys
   Coverage Strength Signal: latency/burst threshold proof
   Coverage:
   proves accepted packet size, output size, concurrency, burst, timeout,
@@ -659,8 +652,7 @@
   Cleanup Expectation: reset-first database and temporary output cleanup
   Mock / Runtime Honesty: fixture must follow approved fallback timeout once
   defined
-  Traceability / Execution Posture: executable once API contract and
-  implementation blueprint name the threshold configuration keys
+  Traceability / Execution Posture: executable once implementation blueprint names the threshold configuration keys
   Coverage Strength Signal: failure-state and retry proof
   Coverage:
   failed or timed-out PDF generation records delivery failure, preserves packet
@@ -753,7 +745,7 @@
 
 | Test Case ID | Fixture Source | Contract / Runtime Source | Mock-Honesty Expectation | Runtime Evidence Needed Later |
 | --- | --- | --- | --- | --- |
-| TC-CHAT-L1-INT-001 | API fixture created after contract | API contract and persistence rows | no client-generated system fields or authority fields | live API create/append payload captured |
+| TC-CHAT-L1-INT-001 | API fixture created after contract | API contract and future persistence rows | no client-generated system fields or authority fields | live API create/append payload captured |
 | TC-CHAT-L1-INT-003 | deterministic Product Discovery adapter double | canonical Product Discovery packet validator | adapter double must not invent packet schema | generated packet payload compared to packet contract |
 | TC-CHAT-L1-INT-005 | generated-document renderer stub | PDF delivery contract and asset decision | stub must preserve success/failure/download envelope | served download headers and authorization denial checked |
 | TC-CHAT-L1-E2E-001 | seeded root-admin browser data | live root-admin API/projection payload | screenshots trusted only after live payload comparison | active server, served assets, and browser proof captured |
@@ -763,13 +755,13 @@
 
 | Test Case ID | Traceability / Execution Posture | Expected Downstream Task Type | Coverage Strength Signal | Alignment Needed Before Proof |
 | --- | --- | --- | --- | --- |
-| TC-CHAT-L1-UNIT-001 | blocked until API/data artifacts | TEST:test-only | validation branch coverage | API contract and data dictionary |
+| TC-CHAT-L1-UNIT-001 | blocked until data dictionary and implementation blueprint | TEST:test-only | validation branch coverage | API contract and future data dictionary |
 | TC-CHAT-L1-UNIT-003 | blocked until adapter contract | TEST:test-only | packet validator compatibility | Product Discovery adapter contract |
-| TC-CHAT-L1-INT-002 | blocked until API contract | TEST:test-only | root-boundary allow/deny proof | API contract and permission mapping |
-| TC-CHAT-L1-INT-005 | blocked until API/config ownership | TEST:test-only | generated-document security proof | API contract and threshold configuration keys |
-| TC-CHAT-L1-E2E-001 | blocked until journey/API/DS adoption | EVIDENCE:qa-evidence | browser runtime evidence | journey inventory, DS parity, APIs |
+| TC-CHAT-L1-INT-002 | blocked until implemented API | TEST:test-only | root-boundary allow/deny proof | implemented API and permission mapping |
+| TC-CHAT-L1-INT-005 | blocked until implementation blueprint/config ownership | TEST:test-only | generated-document security proof | threshold configuration keys and implemented API |
+| TC-CHAT-L1-E2E-001 | blocked until journey/implemented API/DS adoption | EVIDENCE:qa-evidence | browser runtime evidence | journey inventory, DS parity, implemented APIs |
 | TC-CHAT-L1-CONC-001 | blocked until persistence plan | TEST:test-only | race-condition proof | migration/data dictionary |
-| TC-CHAT-L1-PERF-001 | blocked until API/config ownership | EVIDENCE:qa-evidence | latency/burst proof | threshold configuration keys and runtime evidence plan |
+| TC-CHAT-L1-PERF-001 | blocked until implementation blueprint/config ownership | EVIDENCE:qa-evidence | latency/burst proof | threshold configuration keys and runtime evidence plan |
 | TC-CHAT-L1-RES-003 | executable with app adoption | TEST:test-suite-alignment | adoption drift proof | DS first-consumer parity proof |
 
 ## E2E Traceability Plan
@@ -777,8 +769,8 @@
 | Journey ID | Related TC IDs | Journey Inventory Path | Executable Test Path | Traceability Posture | Deferred / Missing Work |
 | --- | --- | --- | --- | --- | --- |
 | JY-CHAT-L1-ROOT-BUILD-001 | TC-CHAT-L1-E2E-001, TC-CHAT-L1-EDGE-002, TC-CHAT-L1-PERF-002 | docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md | tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | planned | inventory, APIs, DS parity, app adoption |
-| JY-CHAT-L1-HISTORY-001 | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | same as above | tests/e2e/harnessChat/rootAdminHistory.spec.ts | planned | API contract and runtime evidence plan |
-| JY-CHAT-L1-PACKET-PDF-001 | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | same as above | tests/e2e/harnessChat/packetPdfDownload.spec.ts | planned | API contract, configuration ownership, and runtime evidence plan |
+| JY-CHAT-L1-HISTORY-001 | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | same as above | tests/e2e/harnessChat/rootAdminHistory.spec.ts | planned | implemented APIs and runtime evidence plan |
+| JY-CHAT-L1-PACKET-PDF-001 | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | same as above | tests/e2e/harnessChat/packetPdfDownload.spec.ts | planned | implementation blueprint, configuration ownership, and runtime evidence plan |
 
 ## Coverage Gaps Or Open Questions
 
@@ -787,11 +779,10 @@
   tenant-layer review remains unresolved and must not gain a happy path until
   object and relationship-based permissions are designed.
 - Item:
-  PDF numeric thresholds are captured as MVP defaults, but the API contract and
-  implementation blueprint still need to name the owning configuration keys or
+  PDF numeric thresholds are captured as MVP defaults, but the implementation blueprint still needs to name the owning configuration keys or
   module.
 - Item:
-  API contracts, data dictionary, journey inventory, implementation blueprint,
+  Data dictionary, journey inventory, implementation blueprint,
   and root-admin first-consumer parity proof must exist before executable test
   implementation can be considered complete.
 - Item:
@@ -827,6 +818,6 @@
   payload capture, screenshot/browser proof, mock-honesty note, and final
   post-change gate run.
 - Owning implementation / artifact task candidates:
-  API contract, data dictionary, generated-document configuration ownership,
+  Data dictionary, generated-document configuration ownership,
   implementation blueprint, feature manifest, generated dependency graph, and
   root-admin first-consumer parity proof.

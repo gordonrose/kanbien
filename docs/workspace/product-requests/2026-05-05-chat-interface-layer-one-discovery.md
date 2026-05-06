@@ -54,6 +54,8 @@
   `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md`
 - Permission Mapping:
   `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
+- API Contract:
+  `docs/api-contracts/chat-interface-layer-one-discovery.md`
 - Work runs / Loop Runs:
   none yet
 - Pull requests, config changes, or extension changes:
@@ -70,10 +72,11 @@
   capability matrix, generated PDF direction, design-system path, and
   PRD-derived test cases are captured. Root-builder review is approved for all
   root builders in the root-admin MVP, while tenant-layer object and
-  relationship permissions remain deferred. Next we need to create the
-  remaining API, data, journey/evidence, and blueprint artifacts before
-  implementation tasks can begin. The PDF numeric thresholds are captured as
-  configurable MVP defaults.
+  relationship permissions remain deferred. The API contract is captured for
+  conversations, history, packet generation, packet revisions, and PDF
+  download. Next we need to create the remaining data, journey/evidence, and
+  blueprint artifacts before implementation tasks can begin. The PDF numeric
+  thresholds are captured as configurable MVP defaults.
 - Waiting next:
   Layer 3 unblock work
 - User action needed:
