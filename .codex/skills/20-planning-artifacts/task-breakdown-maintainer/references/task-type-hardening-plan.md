@@ -56,7 +56,7 @@ Ratings:
 | `DEV:platform-seam` | strong | strong | strong | strong | strong | partial | medium | P3 | Initial worked examples added for route mounting, generated-artifact materialization, auth request-context helpers, and scheduler policy blockers; add more examples later for bootstrap/runtime, tooling harnesses, shared helpers, and cross-feature infrastructure. |
 | `DEV:migration-persistence` | strong | strong | strong | strong | strong | yes | low | P3 | Add worked examples for each migration/persistence class and script-shaped routing to data dictionary and test-only follow-up. |
 | `DOC:api-contract` | strong | strong | strong | strong | strong | partial | medium | P3 | Initial worked examples added for no-wire-change refresh, additive route contracts, compatibility-sensitive changes, and non-maintained OpenAPI/Postman rationale; add examples later for generated docs and OpenAPI/Postman sync. |
-| `DOC:docs-artifact` | strong | strong | strong | strong | strong | yes | medium | P3 | Add worked examples for feature-doc refresh, README sync, runbook update, implementation-status note, and stale-artifact sweep now that classes, scriptable source inventory, exact docs targets, diff/check command, and human-review boundary are validator-backed. |
+| `DOC:docs-artifact` | strong | strong | strong | strong | strong | yes | medium | P3 | Add worked examples from real recent slices first: Build Work Panel artifact refresh, Layer 4 task-reference/status refresh, and stale docs-artifact branch reconciliation. Cover feature-doc refresh, README/status sync, runbook or operator note, implementation-status note, stale-artifact sweep, and synthetic invalid route-away only where real slices do not cover the case. |
 | `DOC:permission-mapping` | strong | strong | strong | strong | strong | partial | medium | P3 | Initial worked examples added for runtime-enforced rows, documentation-only rows, future-authz-model blockers, and UI eligibility; revisit after Layer 2 authz model expansion for configuration/relationship examples. |
 | `DOC:data-dictionary` | medium | strong | strong | strong | strong | yes | low | P3 | Resolve retention/export/delete/legal-hold gaps and later add scoped fail-on-debt once debt has approved cleanup or exception posture. |
 | `DOC:standards-compliance` | medium | strong | strong | strong | strong | yes | medium | P3 | Add more worked examples for GDPR, ISO, OWASP, and repo-only gate reviews after control/evidence inventory, coverage summary command, and human-review boundary are validator-backed. |
@@ -87,6 +87,51 @@ Use this order unless a real delivery blocker changes the risk profile:
    `DOC:data-dictionary`, `TEST:test-only`, `TEST:test-suite-alignment`, and
    `GOV:design-system`: comparatively mature; revisit mainly for worked
    examples, calibration, or debt-policy changes.
+
+## Worked Example Program
+
+Use real repo slices as the primary source for examples. Synthetic examples are
+allowed only to cover a missing invalid/routing case that the recent repo
+history does not show cleanly.
+
+For each task type example slice:
+
+1. Pick one recent promoted or audited repo slice with a clear source trail.
+2. Extract the reusable task pattern instead of copying the full project
+   history:
+   - source inventory reviewed
+   - exact allowed write targets
+   - expected output artifact or behavior
+   - required commands and expected output posture
+   - route-away decisions to neighboring task types
+   - human-review boundary
+3. Compress the pattern into a compact worked example in the matching guardrail
+   reference.
+4. Add a synthetic invalid example only when a high-risk route-away case is not
+   represented by the real slice.
+5. Update this plan after the slice so the next move reflects completed example
+   coverage and any remaining synthetic-only gap.
+
+Suggested first real-slice sources:
+
+| Example Source | Use For | Why It Helps |
+| --- | --- | --- |
+| Build Work Panel canonical/artifact refresh | `DOC:docs-artifact`, `GOV:design-system`, `EVIDENCE:qa-evidence`, `DEV:frontend` | Shows generated/canonical artifacts, adoption docs, verification docs, browser/visual proof, and app-adoption route-away pressure. |
+| Layer 4 task-type hardening/status refresh | `DOC:docs-artifact`, `GOV:standards-update`, `GOV:architecture-update`, `DECISION:*` | Shows maintained reference updates, plan freshness, validator/template surfaces, and governance route-away boundaries. |
+| Stale `DOC:docs-artifact` branch reconciliation | `DOC:docs-artifact`, `TEST:test-suite-alignment`, `EVIDENCE:qa-evidence` | Shows stale-artifact sweep, patch-accounted branch handling, and proof that stale changes should be retired rather than replayed. |
+| Backend/API contract slices from recent route families | `DEV:backend`, `DOC:api-contract`, `DOC:permission-mapping`, `TEST:test-only` | Shows route/domain split, contract update boundaries, permission mapping route-away, and executable proof separation. |
+
+### `DOC:docs-artifact` Example Queue
+
+Start here before broadening to other task types.
+
+| Example | Real Source Preference | Must Demonstrate | Synthetic Fill Allowed |
+| --- | --- | --- | --- |
+| Feature-doc refresh | Build Work Panel docs or another promoted feature-doc refresh | approved source truth, exact docs targets, source inventory, diff/check command, human-review boundary | only for an invalid case that tries to change API, standards, or architecture authority |
+| README/status sync | Layer 4 status/reference refresh or a promoted repo-status update | status posture, exact status target, stale-artifact sweep, validation/review command | only if no real status example includes a stale downstream artifact |
+| Runbook/operator note | Recent operational or verification-note update | operational source truth, target doc, command/log evidence, human review | only if no real slice shows an operator-facing target |
+| Implementation-status note | Layer 4 hardening plan/status update | current-state wording, source trail, allowed status edit envelope, route-away for implementation work | only for invalid "mark complete without proof" posture |
+| Stale-artifact sweep | Stale docs-artifact branch reconciliation | source inventory, branch/worktree evidence, retired-versus-replayed rationale, no hidden patch proof | only for an invalid specialized-artifact ownership case |
 
 ## Operating Rules
 
