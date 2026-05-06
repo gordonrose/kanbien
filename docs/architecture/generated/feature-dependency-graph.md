@@ -226,7 +226,7 @@ Rule: Cross-feature imports in src/features must go through target feature index
 ### webAppHierarchyBuilder
 
 - Manifest: `src/features/webAppHierarchyBuilder/feature.manifest.json`
-- Source files: 29
+- Source files: 30
 - Declared dependencies: webAppSurfaceDiscovery, designSystemCanonicals
 - Current public dependencies: designSystemCanonicals, webAppSurfaceDiscovery
 - Private seam violations: 0

@@ -5,7 +5,8 @@
 - Component or pattern family:
   `build-work-panel`
 - Status:
-  app adoption blocked; upstream pattern signed off
+  UI-only app adoption proved with temporary local handlers; real harness/API
+  integration deferred
 - First consumer surface:
   root-admin shell
 - Route or shell owner:
@@ -25,9 +26,9 @@
 - Why is this the right first consumer?
   The MVP is explicitly root-admin only.
 - Why is adoption happening now instead of remaining design-system-only?
-  Adoption is still not approved. This contract records the conditions
-  root-admin must satisfy after the signed-off pattern is converted into shared
-  render/controller/style seams and canonical proof.
+  Root-admin now proves the first governed consumer can use the shared
+  `conversationPanel` seam without copied markup, copied CSS, or local panel
+  behavior. Real Layer 1/harness integration remains a separate slice.
 
 ## Capability And Workflow Mapping
 
@@ -56,7 +57,7 @@
 - Required behavior-lock IDs:
   `BWP-*`
 - Required canonical reference states:
-  `BWP-R-001` through `BWP-R-012`, or approved replacements.
+  `BWP-R-001` through `BWP-R-020`, or approved replacements.
 - Which parts of the pattern are mandatory for parity?
   launcher, panel attachment, action list, inactive actions, Build chat,
   visible history, composer tools menu, message copy/edit/reply actions, packet
@@ -74,12 +75,17 @@
 - Exact reference pack or canonical source:
   signed-off reference direction and generated canonical routes exist.
 - Shared CSS seam:
-  provisional: `/design-system/assets/buildWorkPanelDemo.css`; harden the
-  app-consumable entrypoint name before root-admin adoption.
+  `/design-system/assets/conversationPanel.css`.
 - Shared render seam:
-  `/design-system/assets/buildWorkPanel.mjs`.
+  `/design-system/assets/conversationPanel.mjs`.
 - Shared controller seam:
-  `/design-system/assets/buildWorkPanel.mjs`.
+  `/design-system/assets/conversationPanel.mjs`.
+- Shared configuration seam:
+  `createBuildConversationPanelConfig(overrides)`.
+- Required handler seam:
+  `createConversationPanelController(root, { config, handlers })`, with
+  handlers for send, mode selection, open-state changes, packet download,
+  copy/edit/reply message actions, and composer tool actions.
 - Family-owned visible regions:
   launcher, panel surface, action list, Build chat anatomy, conversation
   history, transcript, composer, packet status/action, close control.
@@ -89,7 +95,11 @@
 - Approved intentional deviations before implementation:
   none.
 - Shared-entrypoint parity expectation:
-  not yet decided.
+  root-admin must consume the neutral `/design-system/assets/conversationPanel.mjs`
+  render/controller seam directly, not the Build-specific compatibility
+  wrapper. The Build configuration may be supplied as consumer data, but
+  renderer structure, ARIA/data hooks, class names, and interaction behavior
+  remain design-system-owned.
 - Stop condition if a required seam is missing:
   Do not implement root-admin app UI by copying design-system markup, controller
   behavior, or CSS. Return to the design-system loop or seek an explicit
@@ -155,7 +165,7 @@
 ## Adoption Boundary
 
 - What existing local UI is being replaced?
-  none in MVP; new root-admin adoption is blocked.
+  none in MVP; root-admin adds a new UI-only governed shell consumer.
 - What backend seams or APIs must remain untouched?
   design-system adoption must not invent backend API contracts or permissions.
 - What page-local behavior is allowed for the POC?
@@ -169,23 +179,30 @@
 - Required rendered checks:
   signed-off design-system states plus root-admin parity states.
 - Required executable tests:
-  design-system visual/browser checks, root-admin adoption source guard, and
+  design-system visual/browser checks, `check:governed-ui-adoption`,
+  `check:governed-root-admin-ui`, root-admin adoption source guard, and
   root-admin browser scenarios after implementation.
 - Required manual sign-off steps:
-  full canonical review, app-consumable style-entrypoint decision, verification
-  checklist refresh, and first-consumer parity review.
+  first-consumer UI parity review using the neutral `conversationPanel` seams;
+  real harness integration requires a later review.
 - Required consumer-level route proof:
   root-admin shell after implementation only.
 - Required shared-entrypoint parity proof:
-  required before marking adoption complete.
+  root-admin source must import `/design-system/assets/conversationPanel.mjs`
+  and use `renderConversationPanel` plus
+  `createConversationPanelController` with a Build config and explicit
+  handlers; app-local Build panel classes, data hooks, controller copies, and
+  `/design-system/assets/buildWorkPanel.mjs` imports are drift.
 - Known blockers or environment constraints:
-  no shared render seam, controller seam, style seam, or canonical states exist
-  yet.
+  shared render/controller/style seams and canonical states now exist;
+  root-admin UI-only parity proof now exists; real harness/API integration,
+  server-backed history, and permission-backed packet download remain
+  unresolved.
 
 ## Canonical And Consumer Truth
 
 - Canonical states this consumer depends on:
-  `BWP-R-001` through `BWP-R-012`, or approved replacements.
+  `BWP-R-001` through `BWP-R-020`, or approved replacements.
 - Consumer-specific states not fully proven by canonicals alone:
   live root-admin page/module/role context, API denied states, real generated
   packet availability, permission mapping.
@@ -196,8 +213,9 @@
 ## Promotion Decision
 
 - Adoption result:
-  blocked until shared seams and canonical proof exist
+  UI-only root-admin consumer adopted; real harness/API integration blocked
 - Follow-up work required before wider reuse:
-  create shared seams and prove a first root-admin consumer.
+  connect the first root-admin consumer to real Layer 1/harness behavior and
+  prove server-backed history plus permission-backed packet generation/download.
 - Follow-up work required before extraction into a shared primitive:
   prove a second governed consumer or active Reporting/Support payload.

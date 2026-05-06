@@ -91,6 +91,7 @@ test("root-admin authenticated shell uses the same shell stylesheet entrypoints 
   expect(appStylesheetHrefs).toContain("/design-system/assets/hierarchy-tree-shared.css");
   expect(appStylesheetHrefs).toContain("/design-system/assets/form-template-shared.css");
   expect(appStylesheetHrefs).toContain("/design-system/assets/hierarchyTree.css");
+  expect(appStylesheetHrefs.some((href) => href?.startsWith("/design-system/assets/conversationPanel.css"))).toBe(true);
   expect(appStylesheetHrefs).not.toContain("/root-admin/assets/login.css");
   expect(appStylesheetHrefs).not.toContain("/root-admin/assets/styles.css");
 
@@ -123,7 +124,7 @@ test("root-admin authenticated shell uses the same shell stylesheet entrypoints 
       properties: ["min-height", "padding-top", "padding-right", "padding-bottom", "padding-left", "border-top-width", "border-right-width", "border-bottom-width", "border-left-width"],
     },
     {
-      appSelector: "#shell-view > .context-nav",
+      appSelector: "#root-admin-context-nav-mount > .context-nav",
       designSelector: ".design-system-shell > .context-nav",
       properties: ["width", "padding-top", "padding-right", "padding-bottom", "padding-left", "border-right-width"],
     },
@@ -146,6 +147,142 @@ test("root-admin authenticated shell uses the same shell stylesheet entrypoints 
   }
 
   await designSystemPage.close();
+});
+
+test("root-admin Build panel consumes the shared conversation panel seam with local adoption handlers", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await bootstrapAuthenticatedOverview(page);
+
+  const mount = page.locator("#root-admin-conversation-panel-mount.conversation-panel-shell-mount");
+  await expect(mount).toBeVisible();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeVisible();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-action-nav")).toBeVisible();
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-build-action]")).toHaveAttribute("aria-pressed", "true");
+  const shellPanelGeometry = await page.locator(".conversation-panel-shell-mount").evaluate((mount) => {
+    const panel = mount.querySelector(".build-work-panel-demo-panel");
+    const thread = mount.querySelector(".build-work-panel-demo-thread");
+    const message = mount.querySelector(".build-work-panel-demo-message");
+    if (!(mount instanceof HTMLElement) || !(panel instanceof HTMLElement) || !(thread instanceof HTMLElement) || !(message instanceof HTMLElement)) {
+      return { issues: ["missing panel elements"] };
+    }
+
+    const mountRect = mount.getBoundingClientRect();
+    const panelRect = panel.getBoundingClientRect();
+    const threadRect = thread.getBoundingClientRect();
+    const messageRect = message.getBoundingClientRect();
+    const panelStyle = window.getComputedStyle(panel);
+    const issues = [];
+    if (panelRect.left < mountRect.left - 1 || panelRect.right > mountRect.right + 1) {
+      issues.push("panel escapes shell mount");
+    }
+    if (messageRect.left < threadRect.left - 1 || messageRect.right > threadRect.right + 1) {
+      issues.push("message escapes thread column");
+    }
+    if (panelStyle.backgroundColor === "rgba(0, 0, 0, 0)" || panelStyle.backgroundColor === "transparent") {
+      issues.push("panel surface is transparent");
+    }
+
+    return {
+      issues,
+      mountWidth: mountRect.width,
+      panelWidth: panelRect.width,
+      panelBackground: panelStyle.backgroundColor,
+    };
+  });
+  expect(shellPanelGeometry.issues).toEqual([]);
+  expect(shellPanelGeometry.mountWidth).toBeGreaterThan(600);
+  expect(shellPanelGeometry.panelWidth).toBeGreaterThan(500);
+
+  const mainBefore = await page.locator("#root-admin-main").boundingBox();
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-build-action]").click();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeHidden();
+  const closedPanelGeometry = await page.locator(".conversation-panel-shell-mount").evaluate((mount) => {
+    const actionNav = mount.querySelector(".build-work-panel-demo-action-nav");
+    const mountRect = mount.getBoundingClientRect();
+    const mountStyle = window.getComputedStyle(mount);
+    return {
+      mountWidth: mountRect.width,
+      background: mountStyle.backgroundColor,
+      actionNavVisible: actionNav instanceof HTMLElement && window.getComputedStyle(actionNav).display !== "none",
+    };
+  });
+  expect(closedPanelGeometry.mountWidth).toBeLessThanOrEqual(80);
+  expect(closedPanelGeometry.background).toBe("rgba(0, 0, 0, 0)");
+  expect(closedPanelGeometry.actionNavVisible).toBe(true);
+  const closedRailClearance = await page.evaluate(() => {
+    const actionNav = document.querySelector(".conversation-panel-shell-mount .build-work-panel-demo-action-nav");
+    const cards = [...document.querySelectorAll("#root-admin-main .component-catalog-card")];
+
+    if (!(actionNav instanceof HTMLElement) || cards.length === 0) {
+      return { gap: -1 };
+    }
+
+    const actionNavLeft = actionNav.getBoundingClientRect().left;
+    const maxCardRight = Math.max(...cards.map((card) => card.getBoundingClientRect().right));
+    return {
+      actionNavLeft,
+      maxCardRight,
+      gap: actionNavLeft - maxCardRight,
+    };
+  });
+  expect(closedRailClearance.gap).toBeGreaterThanOrEqual(8);
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-build-action]").click();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeVisible();
+  const mainAfter = await page.locator("#root-admin-main").boundingBox();
+  expect(mainAfter?.x).toBe(mainBefore?.x);
+  expect(mainAfter?.y).toBe(mainBefore?.y);
+  await expect(page.locator("#shell-message")).toBeHidden();
+
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-message]").fill("Please capture this local adoption request.");
+  await page.locator(".conversation-panel-shell-mount .build-work-panel-demo-send").click();
+  await expect(page.locator("#shell-message")).toBeHidden();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").last()).toContainText("Real Layer 1 harness delivery is intentionally deferred");
+
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-download]").first().click();
+  await expect(page.locator("#shell-message")).toBeHidden();
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-packet]")).toHaveCount(0);
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").last()).toContainText("Product Discovery packet downloaded");
+
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-edit-message]").first().click();
+  await expect(page.locator("#shell-message")).toBeHidden();
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-edit-box]")).toBeVisible();
+
+  await page.locator("#display-settings-button").click();
+  await page.locator('[data-theme-option="dark"]').click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  const darkPanelColors = await page.locator(".conversation-panel-shell-mount").evaluate((mount) => {
+    const panel = mount.querySelector(".build-work-panel-demo-panel");
+    const history = mount.querySelector(".build-work-panel-demo-history");
+    const message = mount.querySelector(".build-work-panel-demo-message");
+    if (!(panel instanceof HTMLElement) || !(history instanceof HTMLElement) || !(message instanceof HTMLElement)) {
+      return { issues: ["missing panel elements"] };
+    }
+
+    return {
+      issues: [],
+      panelBackground: window.getComputedStyle(panel).backgroundColor,
+      historyBackground: window.getComputedStyle(history).backgroundColor,
+      messageBackground: window.getComputedStyle(message).backgroundColor,
+      panelColor: window.getComputedStyle(panel).color,
+    };
+  });
+  expect(darkPanelColors.issues).toEqual([]);
+  expect(darkPanelColors.panelBackground).not.toBe("rgb(255, 255, 255)");
+  expect(darkPanelColors.historyBackground).not.toBe("rgb(248, 251, 255)");
+  expect(darkPanelColors.messageBackground).not.toBe("rgb(255, 255, 255)");
+});
+
+test("root-admin Build panel keeps the mobile floating action path reachable", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 820 });
+  await bootstrapAuthenticatedOverview(page);
+
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeVisible();
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-close]").click();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeHidden();
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-open]")).toBeVisible();
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-open]").click();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeVisible();
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-message]")).toBeVisible();
 });
 
 test("root-admin login consumes the governed login template and switches into SSH challenge state", async ({ page }) => {

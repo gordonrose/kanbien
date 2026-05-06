@@ -1,17 +1,17 @@
 import {
-  buildWorkPanelCanonicalRefs,
-  createBuildWorkPanelController,
-  getBuildWorkPanelCanonicalRef,
-} from "./buildWorkPanel.mjs";
+  conversationPanelCanonicalRefs,
+  createConversationPanelController,
+  getConversationPanelCanonicalRef,
+} from "./conversationPanel.mjs";
 
 const pathRefMatch = window.location.pathname.match(
   /^\/design-system\/(?:canonical-renderings|components)\/build-work-panel\/([^/]+)$/,
 );
-const activeRef = getBuildWorkPanelCanonicalRef(pathRefMatch?.[1] ?? "BWP-R-002");
-const activeIndex = buildWorkPanelCanonicalRefs.findIndex((entry) => entry.ref === activeRef.ref);
-const prevRef = activeIndex > 0 ? buildWorkPanelCanonicalRefs[activeIndex - 1] : null;
-const nextRef = activeIndex >= 0 && activeIndex < buildWorkPanelCanonicalRefs.length - 1
-  ? buildWorkPanelCanonicalRefs[activeIndex + 1]
+const activeRef = getConversationPanelCanonicalRef(pathRefMatch?.[1] ?? "BWP-R-002");
+const activeIndex = conversationPanelCanonicalRefs.findIndex((entry) => entry.ref === activeRef.ref);
+const prevRef = activeIndex > 0 ? conversationPanelCanonicalRefs[activeIndex - 1] : null;
+const nextRef = activeIndex >= 0 && activeIndex < conversationPanelCanonicalRefs.length - 1
+  ? conversationPanelCanonicalRefs[activeIndex + 1]
   : null;
 
 const page = document.querySelector("[data-build-work-panel-canonical-page]");
@@ -39,7 +39,7 @@ if (stage instanceof HTMLElement) {
 }
 
 if (root instanceof HTMLElement) {
-  createBuildWorkPanelController(root, { ref: activeRef });
+  createConversationPanelController(root, { ref: activeRef });
   root.dataset.buildWorkPanelViewport = activeRef.mobile ? "mobile" : "desktop";
   root.dataset.renderStatus = "ready";
 }

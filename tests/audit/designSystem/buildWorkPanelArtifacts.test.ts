@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 describe("build work panel artifact chain", () => {
-  it("keeps the root-admin Build panel blocked on design-system proof before app adoption", () => {
+  it("keeps the root-admin Build panel governed through UI-only adoption before real harness wiring", () => {
     const requiredFiles = [
       "docs/workspace/design-system/behavior-locks/build-work-panel-behavior-lock.md",
       "docs/workspace/design-system/reference-packs/build-work-panel-reference-pack.md",
@@ -13,6 +13,9 @@ describe("build work panel artifact chain", () => {
       "src/frontend/designSystem/patterns/build-work-panel-demo/index.html",
       "src/frontend/designSystem/components/build-work-panel.html",
       "src/frontend/designSystem/canonicals/build-work-panel/index.html",
+      "src/frontend/designSystem/assets/conversationPanel.mjs",
+      "src/frontend/designSystem/assets/conversationPanel.css",
+      "src/frontend/designSystem/assets/conversationPanelDemo.mjs",
       "src/frontend/designSystem/assets/buildWorkPanel.mjs",
       "src/frontend/designSystem/assets/buildWorkPanelCanonical.mjs",
       "src/frontend/designSystem/assets/buildWorkPanelDemo.css",
@@ -55,17 +58,19 @@ describe("build work panel artifact chain", () => {
       resolve(process.cwd(), "src/frontend/designSystem/canonicals/build-work-panel/index.html"),
       "utf8",
     );
-    const seam = readFileSync(resolve(process.cwd(), "src/frontend/designSystem/assets/buildWorkPanel.mjs"), "utf8");
+    const seam = readFileSync(resolve(process.cwd(), "src/frontend/designSystem/assets/conversationPanel.mjs"), "utf8");
+    const buildWrapper = readFileSync(resolve(process.cwd(), "src/frontend/designSystem/assets/buildWorkPanel.mjs"), "utf8");
     const canonicalController = readFileSync(
       resolve(process.cwd(), "src/frontend/designSystem/assets/buildWorkPanelCanonical.mjs"),
       "utf8",
     );
     const catalog = readFileSync(resolve(process.cwd(), "src/frontend/designSystem/patterns/index.html"), "utf8");
-    const demoCss = readFileSync(resolve(process.cwd(), "src/frontend/designSystem/assets/buildWorkPanelDemo.css"), "utf8");
+    const demoCss = readFileSync(resolve(process.cwd(), "src/frontend/designSystem/assets/conversationPanel.css"), "utf8");
+    const buildCssWrapper = readFileSync(resolve(process.cwd(), "src/frontend/designSystem/assets/buildWorkPanelDemo.css"), "utf8");
 
     expect(behaviorLock).toContain("BWP-000");
     expect(behaviorLock).toContain("Reporting, Support, and Build");
-    expect(behaviorLock).toContain("Root-admin app adoption is blocked");
+    expect(behaviorLock).toContain("root-admin now consumes that seam for UI-only adoption proof");
     expect(referencePack).toContain("BWP-R-001");
     expect(referencePack).toContain("BWP-R-020");
     expect(referencePack).toContain("canonical-created");
@@ -73,9 +78,10 @@ describe("build work panel artifact chain", () => {
     expect(pattern).toContain("page-local CSS implementation");
     expect(pattern).toContain("/design-system/patterns/build-work-panel-demo");
     expect(verification).toContain("Real-app adoption now allowed:");
-    expect(verification).toContain("no");
+    expect(verification).toContain("UI-only root-admin adoption: yes; real harness/API behavior: no");
     expect(adoption).toContain("Shared render seam:");
-    expect(adoption).toContain("missing");
+    expect(adoption).toContain("/design-system/assets/conversationPanel.mjs");
+    expect(adoption).toContain("/design-system/assets/conversationPanel.css");
     expect(adoption).toContain("Do not implement root-admin app UI by copying design-system markup");
     expect(demo).toContain("data-build-work-panel-demo");
     expect(demo).toContain("data-build-work-panel-demo-history-toggle");
@@ -84,7 +90,7 @@ describe("build work panel artifact chain", () => {
     expect(demo).toContain("data-build-work-panel-demo-theme");
     expect(demo).toContain("data-build-work-panel-demo-scale");
     expect(demo).toContain("data-build-work-panel-demo-direction");
-    expect(demo).toContain("/design-system/assets/buildWorkPanelDemo.css");
+    expect(demo).toContain("/design-system/assets/conversationPanel.css");
     expect(demo).toContain("Signed-off pattern");
     expect(demo).toContain("Signed off");
     expect(demo).toContain("Pattern surface");
@@ -100,15 +106,30 @@ describe("build work panel artifact chain", () => {
     expect(canonicalLauncher).toContain("Build Work Panel Canonicals");
     expect(canonicalLauncher).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-001");
     expect(canonicalLauncher).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-020");
-    expect(seam).toContain("export function renderBuildWorkPanel");
-    expect(seam).toContain("export function createBuildWorkPanelController");
+    expect(seam).toContain("export function renderConversationPanel");
+    expect(seam).toContain("export function createConversationPanelController");
+    expect(seam).toContain("export function createBuildConversationPanelConfig");
+    expect(seam).toContain("export const buildConversationPanelConfig");
+    expect(seam).toContain("export const renderBuildWorkPanel = renderConversationPanel");
+    expect(buildWrapper).toContain("./conversationPanel.mjs");
+    expect(buildWrapper).toContain("createBuildConversationPanelConfig");
     expect(seam).toContain("buildWorkPanelCanonicalRefs");
+    expect(seam).toContain("conversationPanelCanonicalRefs");
     expect(seam).toContain("BWP-R-013");
     expect(seam).toContain("BWP-R-020");
     expect(seam).toContain("toolsOpen");
     expect(seam).toContain("replyToMessageIndex");
     expect(seam).toContain("forceHistoryTooltip");
-    expect(canonicalController).toContain("createBuildWorkPanelController");
+    expect(seam).toContain("handlers.onSendMessage");
+    expect(seam).toContain("handlers.onDownloadPacket");
+    expect(seam).toContain("handlers.onToolAction");
+    expect(seam).toContain("handlers.onCopyMessage");
+    expect(seam).toContain("handlers.onEditMessage");
+    expect(seam).toContain("handlers.onReplyToMessage");
+    expect(seam).toContain("data-build-work-panel-tool-action");
+    expect(seam).toContain("data-build-work-panel-mode");
+    expect(canonicalController).toContain("createConversationPanelController");
+    expect(canonicalController).toContain("./conversationPanel.mjs");
     expect(canonicalController).toContain("/design-system/canonical-renderings/build-work-panel/");
     expect(demoCss).toContain("--bwp-raised-surface");
     expect(demoCss).toContain("--bwp-panel-surface");
@@ -117,6 +138,7 @@ describe("build work panel artifact chain", () => {
     expect(demoCss).not.toContain("background: #f8fbff;");
     expect(demoCss).not.toContain("background: #eff6ff;");
     expect(demoCss).not.toContain("background: #e6f5f2;");
+    expect(buildCssWrapper).toContain("/design-system/assets/conversationPanel.css");
     expect(catalog).toContain('href="/design-system/patterns/build-work-panel-demo"');
   });
 });

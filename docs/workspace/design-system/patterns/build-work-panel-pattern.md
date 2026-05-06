@@ -177,15 +177,23 @@
 
 - Should this become a reusable component now?
   The shared design-system renderer/controller seam now exists at
-  `/design-system/assets/buildWorkPanel.mjs`, with canonical render routes
-  under `/design-system/canonical-renderings/build-work-panel/*`. It is still
-  not app-adoption complete until the app style-entrypoint decision and
-  first-consumer parity review are complete.
+  `/design-system/assets/conversationPanel.mjs`, with the Build-specific
+  configured canonical render routes under
+  `/design-system/canonical-renderings/build-work-panel/*`. The legacy
+  `/design-system/assets/buildWorkPanel.mjs` wrapper remains only for
+  compatibility. It is still not app-adoption complete until the
+  real Layer 1/harness API boundary is connected and verified.
 - If yes, proposed public API:
-  deferred.
+  `renderConversationPanel(root, { config, ref, messages, history })`,
+  `createConversationPanelController(root, { config, ref, messages, history,
+  handlers })`, and `createBuildConversationPanelConfig(overrides)`.
+  Handlers cover send, mode select, panel/history/tools open changes, packet
+  download, copy, edit, reply, and composer tool actions.
 - If no, what must stabilize first?
-  app-consumable style-entrypoint naming, full Playwright canonical coverage,
-  first-consumer root-admin parity, and live data/API boundaries.
+  live data/API boundaries. Full Playwright canonical coverage now exists for
+  `BWP-R-001` through `BWP-R-020`, the neutral app-consumable style entrypoint
+  is `/design-system/assets/conversationPanel.css`, and root-admin UI-only
+  parity now consumes the shared seam.
 
 ## Adoption Plan
 
@@ -194,8 +202,9 @@
 - Existing pages that should migrate later:
   none in MVP.
 - Partial-adoption note:
-  root-admin adoption is blocked until design-system signoff and shared seams
-  exist. Reporting and Support remain inactive actions.
+  root-admin UI-only adoption now exists with temporary local handlers. Real
+  Layer 1/harness integration, persisted history, and permission-backed packet
+  download remain downstream; Reporting and Support remain inactive actions.
 
 ## Verification
 
@@ -219,6 +228,7 @@
 - Design-system route update required:
   yes, before signoff.
 - Architecture-map or guide updates required:
-  not yet; revisit when the render/controller seam is created.
+  not yet; revisit after the first app consumer proves the shared seam.
 - Follow-up component artifact:
-  required only after the pattern has rendered proof and a stable shared seam.
+  required only if the pattern is promoted beyond the current configured
+  conversation-panel seam.

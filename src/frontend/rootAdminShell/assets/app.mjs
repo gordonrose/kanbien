@@ -29,6 +29,11 @@ import {
 import { createPageShellBannerRuntimeController } from "/design-system/assets/pageShellBanner.mjs";
 import { createRootAdminDirectoryWorkspaceController } from "/design-system/assets/rootAdminDirectoryWorkspace.mjs";
 import {
+  createBuildConversationPanelConfig,
+  createConversationPanelController,
+  renderConversationPanel,
+} from "/design-system/assets/conversationPanel.mjs";
+import {
   buildPageShellBreadcrumbMarkup,
   createPageShellBreadcrumbController,
   createPageShellChromeController,
@@ -176,6 +181,7 @@ const rootAdminContextNavMount = document.getElementById("root-admin-context-nav
 if (rootAdminContextNavMount instanceof HTMLElement) {
   rootAdminContextNavMount.innerHTML = renderRootAdminContextNavShell();
 }
+const rootAdminConversationPanelMount = document.getElementById("root-admin-conversation-panel-mount");
 
 const topNav = document.querySelector(".top-nav");
 const primaryNav = document.querySelector(".primary-nav");
@@ -440,6 +446,93 @@ const webAppHierarchyPageController = createWebAppHierarchyPageController({
   refreshTopNav,
   refreshContextNav: refreshContextNavForCurrentPage,
 });
+
+const rootAdminConversationPanelState = {
+  ref: "BWP-R-002",
+  messages: [
+    {
+      author: "Harness",
+      text: "I can help shape a Product Discovery packet before anything moves further through the build loop.",
+    },
+    {
+      author: "Builder",
+      text: "I want the root admin to start discovery from here and keep the packet history visible.",
+      user: true,
+    },
+    {
+      author: "Harness",
+      text: "This root-admin consumer is using temporary local handlers while we prove design-system adoption. Server-side context and authority are not inferred from this panel.",
+    },
+  ],
+  history: [
+    {
+      title: "Root-admin adoption",
+      summary: "Temporary local handlers prove the root-admin shell consumes the shared conversationPanel seam without copied markup or app CSS.",
+    },
+    {
+      title: "Product Discovery packet",
+      summary: "MVP Build mode keeps the approved packet download journey visible before real harness integration.",
+    },
+    {
+      title: "Future modes",
+      summary: "Reporting and Support remain visible as coming-soon actions while Build is the only active mode.",
+    },
+  ],
+};
+let rootAdminConversationPanelController = null;
+
+function mountRootAdminConversationPanel() {
+  if (!(rootAdminConversationPanelMount instanceof HTMLElement)) {
+    return;
+  }
+
+  rootAdminConversationPanelController?.destroy?.();
+  renderConversationPanel(rootAdminConversationPanelMount, {
+    ref: rootAdminConversationPanelState.ref,
+    messages: rootAdminConversationPanelState.messages,
+    history: rootAdminConversationPanelState.history,
+    config: createBuildConversationPanelConfig(),
+  });
+  rootAdminConversationPanelController = createConversationPanelController(rootAdminConversationPanelMount, {
+    ref: rootAdminConversationPanelState.ref,
+    messages: rootAdminConversationPanelState.messages,
+    history: rootAdminConversationPanelState.history,
+    config: createBuildConversationPanelConfig(),
+    handlers: {
+      onSendMessage({ value }) {
+        const text = String(value ?? "").trim();
+        if (!text) {
+          return;
+        }
+
+        rootAdminConversationPanelState.ref = "BWP-R-004";
+        rootAdminConversationPanelState.messages = [
+          ...rootAdminConversationPanelState.messages,
+          { author: "Builder", text, user: true },
+          {
+            author: "Harness",
+            text: "Captured locally for the root-admin adoption proof. Real Layer 1 harness delivery is intentionally deferred to the next slice.",
+          },
+        ];
+        mountRootAdminConversationPanel();
+      },
+      onDownloadPacket() {
+        rootAdminConversationPanelState.ref = "BWP-R-015";
+        mountRootAdminConversationPanel();
+      },
+      onToolAction() {},
+      onCopyMessage() {},
+      onEditMessage() {
+        rootAdminConversationPanelState.ref = "BWP-R-017";
+        mountRootAdminConversationPanel();
+      },
+      onReplyToMessage() {
+        rootAdminConversationPanelState.ref = "BWP-R-018";
+        mountRootAdminConversationPanel();
+      },
+    },
+  });
+}
 
 function renderPageLinkIcon(iconHost, iconKey) {
   if (!(iconHost instanceof HTMLElement)) {
@@ -1148,6 +1241,7 @@ function render() {
   if (flags.showShellView) {
     rootAdminDirectoryController.syncPageState();
     webAppHierarchyPageController.syncPageState();
+    mountRootAdminConversationPanel();
   }
 
   if (flags.showShellView) {

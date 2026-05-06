@@ -556,7 +556,7 @@
     {
       "featureName": "webAppHierarchyBuilder",
       "manifestPath": "src/features/webAppHierarchyBuilder/feature.manifest.json",
-      "fileCount": 29,
+      "fileCount": 30,
       "publicSeams": [
         {
           "seamId": "feature-factory",

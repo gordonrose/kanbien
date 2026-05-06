@@ -49,6 +49,7 @@ const governedSourcePaths = [
   "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
   "src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs",
   "src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs",
+  "src/frontend/designSystem/assets/conversationPanel.mjs",
 ];
 
 const cssOnlyRules: CssOnlyRule[] = [
@@ -160,6 +161,30 @@ const cssOnlyRules: CssOnlyRule[] = [
       },
     ],
   },
+  {
+    family: "conversation panel",
+    cssHref: "/design-system/assets/conversationPanel.css",
+    requiredTokens: [
+      {
+        path: "src/frontend/rootAdminShell/assets/app.mjs",
+        token: "/design-system/assets/conversationPanel.mjs",
+        rationale:
+          "Root-admin must adopt the reusable conversation panel render/controller seam instead of the Build-specific wrapper or copied panel markup.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/assets/app.mjs",
+        token: "renderConversationPanel",
+        rationale:
+          "Conversation panel markup must come from the shared design-system renderer.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/assets/app.mjs",
+        token: "createConversationPanelController",
+        rationale:
+          "Conversation panel interaction behavior must come from the shared design-system controller.",
+      },
+    ],
+  },
 ];
 
 const forbiddenLocalReconstructions: ForbiddenPattern[] = [
@@ -210,6 +235,36 @@ const forbiddenLocalReconstructions: ForbiddenPattern[] = [
     pattern: /\bfunction\s+mountHierarchyResponse\s*\(/,
     rationale:
       "Hierarchy workspace mount behavior must remain owned by the shared hierarchy workspace controller.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/index.html",
+    pattern: /\bbuild-work-panel-demo-/,
+    rationale:
+      "Root-admin must not copy Build work panel canonical/demo classes into app HTML; render through conversationPanel instead.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/index.html",
+    pattern: /\bdata-build-work-panel(?:-[a-z0-9-]+)?\b/,
+    rationale:
+      "Root-admin must not hardcode Build work panel data hooks in app HTML; render through conversationPanel instead.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/assets/app.mjs",
+    pattern: /\/design-system\/assets\/buildWorkPanel\.mjs/,
+    rationale:
+      "Root-admin must import the reusable conversationPanel seam directly; buildWorkPanel.mjs is a design-system compatibility wrapper.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/assets/app.mjs",
+    pattern: /\bbuild-work-panel-demo-/,
+    rationale:
+      "Root-admin must not reconstruct Build work panel markup or class names locally; render through conversationPanel instead.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/assets/app.mjs",
+    pattern: /\bdata-build-work-panel(?:-[a-z0-9-]+)?\b/,
+    rationale:
+      "Root-admin must not reconstruct Build work panel data hooks locally; render through conversationPanel instead.",
   },
 ];
 
@@ -284,7 +339,8 @@ function runSelfTest(): GuardResult {
   const syntheticSources: SourceFile[] = [
     {
       path: "src/frontend/rootAdminShell/index.html",
-      source: '<link rel="stylesheet" href="/design-system/assets/list-page-shared.css"><div id="root-users-list-page"></div>',
+      source:
+        '<link rel="stylesheet" href="/design-system/assets/list-page-shared.css"><link rel="stylesheet" href="/design-system/assets/conversationPanel.css"><div id="root-users-list-page"></div><div class="build-work-panel-demo-panel"></div>',
     },
     {
       path: "src/frontend/rootAdminShell/assets/app.mjs",
@@ -302,12 +358,19 @@ function runSelfTest(): GuardResult {
       path: "src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs",
       source: "export function createRootAdminDirectoryWorkspaceController() {}",
     },
+    {
+      path: "src/frontend/designSystem/assets/conversationPanel.mjs",
+      source: "export function renderConversationPanel() {}\nexport function createConversationPanelController() {}",
+    },
   ];
   const contractSource = requiredContractPhrases.join("\n");
   const result = runGuard(syntheticSources, contractSource, []);
   const expectedFragments = [
     "without required DS seam token /design-system/assets/rootAdminDirectoryWorkspace.mjs",
     "without required DS seam token createRootAdminDirectoryWorkspaceController",
+    "without required DS seam token /design-system/assets/conversationPanel.mjs",
+    "without required DS seam token renderConversationPanel",
+    "without required DS seam token createConversationPanelController",
     "forbidden governed UI reconstruction",
   ];
   const missingExpectedFailures = expectedFragments.filter(
