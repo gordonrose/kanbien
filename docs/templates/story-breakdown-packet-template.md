@@ -9,6 +9,11 @@ capability matrices, PRD-derived test cases, implementation blueprints, API
 contracts, data dictionaries, permission mappings, GOV:design-system governance,
 or Delivery.
 
+A Layer 3 story must be an executive-readable system story first and a
+machine-readable planning record second. A reader should understand the
+situation, goal, decisions, following work, and evidence before they reach the
+structured tables.
+
 Do not describe a packet as ready for Task Breakdown unless
 `npm run story-breakdown:validate -- <packet-path>` passes, or every blocker is
 explicitly accepted by the requester.
@@ -116,6 +121,42 @@ Use `yes`, `no`, or `blocked` for `Present`.
 - Epic dependency summary:
 - Epic-level proof target:
   `source-level | contract-level | persistence-level | runtime-api | rendered-browser | human-visible-parity | deployment-runtime-process | mixed`
+
+## Story Narratives
+
+Use one narrative block for each active story. Superseded stories may keep
+their old table rows without a narrative block when they are preserved only for
+history.
+
+If the narrative uses an internal product, repo, or domain term, explain it in
+plain language before relying on the term. Prefer `system`, `person`,
+`operator`, `reviewer`, `stakeholder`, and `work`. Avoid `team` unless the
+story is genuinely about a human team workflow. Avoid layer, artifact, route,
+API, permission, storage, validator, and implementation jargon in the
+narrative block unless the term is introduced in everyday language first.
+
+### S-000: Capability matrix normalization
+
+**Situation**
+The system needs a clear list of what this epic must be able to do before
+follow-on work is split further. Without that list, planning can drift from
+broad intent into unclear work.
+
+**Goal**
+Reviewers can see that every story has explicit behavior or a clear reason why
+it is only governance work.
+
+**Decisions Needed**
+We need to confirm which story outcomes must become explicit behavior and which
+ones are only planning or review controls.
+
+**Work That Follows**
+The work will establish the approved behavior list and connect it to the story
+outcomes before delivery planning begins.
+
+**Evidence Of Success**
+A reviewer can trace each story outcome to an approved behavior row or to a
+plain explanation that no behavior row is needed.
 
 ## Story Queue
 

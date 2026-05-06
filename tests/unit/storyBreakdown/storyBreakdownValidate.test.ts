@@ -54,6 +54,42 @@ const validPacket = `# Story Breakdown Packet: Tenant Branding
 - Epic-level proof target:
   \`mixed\`
 
+## Story Narratives
+
+### S-000: Capability matrix normalization
+
+**Situation**
+The system needs a clear list of what tenant branding must be able to do before follow-on work is split further. Without that list, planning can drift from broad intent into unclear work.
+
+**Goal**
+Reviewers can see that every story has explicit behavior or a clear reason why it is only planning work.
+
+**Decisions Needed**
+We need to confirm which story outcomes must become explicit behavior and which ones are only planning or review controls.
+
+**Work That Follows**
+The work will establish the approved behavior list and connect it to the story outcomes before delivery planning begins.
+
+**Evidence Of Success**
+A reviewer can trace each story outcome to an approved behavior row or to a plain explanation that no behavior row is needed.
+
+### S-001: Root admin updates branding
+
+**Situation**
+People using a tenant workspace need to see the approved tenant name, but today that visible name can be unclear or mixed with other tenant facts.
+
+**Goal**
+A root admin can save the display name for one selected tenant, and tenant users can trust that the approved name appears after reload.
+
+**Decisions Needed**
+We need to confirm the visible name is separate from the tenant's legal or internal name and that only the selected tenant is changed.
+
+**Work That Follows**
+The work will establish the save path, the read path, validation for unacceptable values, and review records for sensitive changes.
+
+**Evidence Of Success**
+A reviewer can confirm the selected tenant shows the approved name, other tenants are unchanged, invalid values are rejected, and sensitive changes leave a reviewable record.
+
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
@@ -400,5 +436,72 @@ describe("story breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("U-001 needs-human-answer must list options or explain no safe default");
+  });
+
+  it("blocks active stories without executive-readable narrative blocks", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        /## Story Narratives[\s\S]*?\n## Story Queue/,
+        "## Story Narratives\n\n## Story Queue",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("S-000 missing Story Narrative block");
+    expect(result.errors).toContain("S-001 missing Story Narrative block");
+  });
+
+  it("blocks narrative sections with placeholder filler", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "A root admin can save the display name for one selected tenant, and tenant users can trust that the approved name appears after reload.",
+        "TBD",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("S-001 Story Narrative Goal contains placeholder filler");
+  });
+
+  it("blocks backticked internal terms in story narratives", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "The work will establish the save path, the read path, validation for unacceptable values, and review records for sensitive changes.",
+        "The work will establish the `tenantBranding` path for sensitive changes.",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "S-001 Story Narrative Work That Follows contains unexplained internal term markup: `tenantBranding`",
+    );
+  });
+
+  it("blocks defaulting narrative language to team instead of system or work", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "The work will establish the save path, the read path, validation for unacceptable values, and review records for sensitive changes.",
+        "The team will establish the save path and review records for sensitive changes.",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "S-001 Story Narrative Work That Follows should prefer system/person/work language over team language",
+    );
+  });
+
+  it("blocks technical jargon in story narratives", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "The work will establish the save path, the read path, validation for unacceptable values, and review records for sensitive changes.",
+        "The work will establish the API route and backend persistence for sensitive changes.",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "S-001 Story Narrative Work That Follows should avoid unexplained technical terms: api, backend, persistence, route",
+    );
   });
 });

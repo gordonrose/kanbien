@@ -29,6 +29,7 @@ const requiredHeadings = [
   "## Browser Security Posture Snapshot",
   "## Task-Type Signal Matrix",
   "## Epic Summary",
+  "## Story Narratives",
   "## Story Queue",
   "## Acceptance Criteria",
   "## Capability Mapping",
@@ -157,6 +158,35 @@ const technicalContextTerms = [
   "seam",
 ];
 
+const narrativeHeadings = [
+  "Situation",
+  "Goal",
+  "Decisions Needed",
+  "Work That Follows",
+  "Evidence Of Success",
+];
+
+const narrativeFillerPhrases = [
+  "tbd",
+  "to be determined",
+  "fill this in",
+  "needs more detail",
+  "same as above",
+  "not sure yet",
+];
+
+const technicalNarrativeTerms = [
+  ...technicalContextTerms,
+  "artifact",
+  "capability matrix",
+  "layer 2",
+  "layer 3",
+  "layer 4",
+  "layer 5",
+  "migration",
+  "validator",
+];
+
 export type StoryBreakdownValidationResult = {
   status: "PASS" | "BLOCKED";
   errors: string[];
@@ -172,6 +202,11 @@ type StoryRow = {
   jobToBeDone: string;
   perspective: string;
   outcome: string;
+};
+
+type StoryNarrative = {
+  storyId: string;
+  sections: Map<string, string>;
 };
 
 type AcceptanceCriterionRow = {
@@ -311,6 +346,7 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   validateArchitectureInvention(content, errors);
 
   const stories = parseStoryRows(content);
+  const narratives = parseStoryNarratives(content);
   const acceptanceCriteria = parseAcceptanceCriteriaRows(content);
   const capabilities = parseCapabilityRows(content);
   const dependencies = parseDependencyRows(content);
@@ -332,6 +368,7 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   }
 
   const storiesById = new Map(stories.map((story) => [story.storyId, story]));
+  const narrativesByStory = new Map(narratives.map((narrative) => [narrative.storyId, narrative]));
   const acByStory = groupBy(acceptanceCriteria, (row) => row.storyId);
   const capabilityByAc = groupBy(capabilities, (row) => row.acId);
   const dependencyByStoryOrAc = dependencies;
@@ -340,6 +377,7 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
 
   for (const story of stories) {
     validateStoryRow(story, errors);
+    validateStoryNarrative(story, narrativesByStory.get(story.storyId), errors);
 
     const storyAcs = acByStory.get(story.storyId) ?? [];
     if (story.status !== "superseded" && storyAcs.length === 0) {
@@ -448,6 +486,45 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
     status: errors.length === 0 ? "PASS" : "BLOCKED",
     errors,
   };
+}
+
+function validateStoryNarrative(story: StoryRow, narrative: StoryNarrative | undefined, errors: string[]): void {
+  if (story.status === "superseded") {
+    return;
+  }
+
+  if (!narrative) {
+    errors.push(`${story.storyId} missing Story Narrative block`);
+    return;
+  }
+
+  for (const heading of narrativeHeadings) {
+    const value = narrative.sections.get(heading) ?? "";
+    validateRequiredField(story.storyId, `Story Narrative ${heading}`, value, errors);
+
+    const normalized = value.trim().toLowerCase();
+    if (narrativeFillerPhrases.some((phrase) => normalized === phrase || normalized.includes(`[${phrase}]`))) {
+      errors.push(`${story.storyId} Story Narrative ${heading} contains placeholder filler`);
+    }
+
+    const backtickedTerms = value.match(/`[^`]+`/g) ?? [];
+    if (backtickedTerms.length > 0) {
+      errors.push(`${story.storyId} Story Narrative ${heading} contains unexplained internal term markup: ${backtickedTerms.join(", ")}`);
+    }
+
+    if (/\bteam\b/i.test(value)) {
+      errors.push(`${story.storyId} Story Narrative ${heading} should prefer system/person/work language over team language`);
+    }
+
+    const matchedTerms = technicalNarrativeTerms.filter((term) => {
+      const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      return new RegExp(`\\b${escaped}\\b`, "i").test(value);
+    });
+
+    if (matchedTerms.length > 0) {
+      errors.push(`${story.storyId} Story Narrative ${heading} should avoid unexplained technical terms: ${matchedTerms.join(", ")}`);
+    }
+  }
 }
 
 function validateLayer3UnblockQueue(
@@ -803,6 +880,34 @@ function parseStoryRows(content: string): StoryRow[] {
     perspective: cells[7] ?? "",
     outcome: cells[8] ?? "",
   }));
+}
+
+function parseStoryNarratives(content: string): StoryNarrative[] {
+  const storyNarratives = section(content, "## Story Narratives");
+  const blocks = storyNarratives.split(/\n###\s+/).slice(1);
+
+  return blocks.map((block) => {
+    const lines = block.split(/\r?\n/);
+    const heading = lines.shift()?.trim() ?? "";
+    const storyId = heading.match(/\bS-\d+\b/)?.[0] ?? heading.split(/[:\s]/)[0] ?? "";
+    const body = lines.join("\n");
+    const sections = new Map<string, string>();
+
+    for (const sectionHeading of narrativeHeadings) {
+      const escaped = sectionHeading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const match = body.match(
+        new RegExp(`\\*\\*${escaped}\\*\\*\\s*\\n([\\s\\S]*?)(?=\\n\\*\\*(?:${narrativeHeadings
+          .map((item) => item.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+          .join("|")})\\*\\*|$)`, "i"),
+      );
+      sections.set(sectionHeading, match?.[1]?.trim() ?? "");
+    }
+
+    return {
+      storyId,
+      sections,
+    };
+  });
 }
 
 function parseAcceptanceCriteriaRows(content: string): AcceptanceCriterionRow[] {

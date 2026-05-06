@@ -158,6 +158,267 @@
 - Epic-level proof target:
   mixed
 
+## Story Narratives
+
+### S-001: MVP PRD, capability matrix, and test-case planning
+
+**Situation**
+The system needs a clear first version of Build chat before work starts. Today,
+the idea is understood, but the approved scope, proof expectations, and open
+questions are spread across planning notes.
+
+**Goal**
+Reviewers can see exactly what the first Build chat version includes, what it
+does not include, and what must be proven before the work is considered safe to
+start.
+
+**Decisions Needed**
+We need to confirm the first version is root-admin only, Build is the only
+active action, Reporting and Support stay inactive, and future tenant-builder
+work remains separate.
+
+**Work That Follows**
+The work will establish the approved product plan, the explicit behavior list,
+and the proof expectations for the first version.
+
+**Evidence Of Success**
+A reviewer can trace every first-version promise to a clear expected behavior,
+see that out-of-scope work is named, and confirm the proof expectations are not
+left as broad prose.
+
+### S-002: Work panel and chat design-system governance
+
+**Situation**
+The root builder needs one clear place to use Build chat, but the system must
+not invent a one-off panel that later product areas cannot reuse or trust.
+
+**Goal**
+The system has an approved panel and chat pattern for the first Build
+experience, including desktop, mobile, history, starter prompts, inactive
+actions, and the planning-document download action.
+
+**Decisions Needed**
+We need to confirm which shared panel and conversation pattern owns the
+experience and what proof is required before the real root-admin screen uses
+it.
+
+**Work That Follows**
+The work will establish the shared visual and interaction pattern, then prove
+the root-admin screen uses that pattern instead of rebuilding it locally.
+
+**Evidence Of Success**
+Stakeholders can review the sample experience, understand how it behaves, and
+trust the real root-admin screen to match it across desktop, mobile, empty,
+denied, failed, and degraded states.
+
+### S-003: Generated packet PDF delivery decision
+
+**Situation**
+Today, a builder can use the app to shape a short planning document that
+explains what someone wants to build, why it matters, what is in scope, and
+what decisions are still open. But there is no safe, official way to turn that
+approved document into a PDF for a meeting, approval, or long-term record. If
+we rush this, we could create files that include draft conversation, show the
+wrong version, or expose information to the wrong person.
+
+**Goal**
+A builder can download a clean PDF of the approved planning document, and
+everyone can trust that it represents the right version.
+
+**Decisions Needed**
+We need to agree what the PDF includes, who can download it, whether older
+approved versions remain available, what happens when PDF creation fails, and
+what limits keep the process reliable.
+
+**Work That Follows**
+The work will establish the download path, connect it to document history,
+protect access, and record success or failure without exposing private details.
+
+**Evidence Of Success**
+A reviewer can download the right document, see that older versions are handled
+clearly, confirm draft chat text is not included, and verify that unauthorized
+users cannot get the file.
+
+### S-004: Product Discovery harness adapter
+
+**Situation**
+Build chat should create the same short planning document that the existing
+discovery process already produces. Without that connection, the app could
+create a lookalike document that sounds familiar but does not follow the
+approved planning rules.
+
+**Goal**
+The system can turn a Build chat conversation into the approved planning
+document format without inventing a second version of the discovery process.
+
+**Decisions Needed**
+We need to confirm which approved discovery rules and document fields the chat
+must use, and what happens when the system cannot create a valid document.
+
+**Work That Follows**
+The work will establish a narrow connection from Build chat to the existing
+discovery process and define recoverable failure behavior.
+
+**Evidence Of Success**
+A reviewer can confirm the generated planning document follows the approved
+format, failure does not create a bad document, and the user can recover from a
+failed attempt.
+
+### S-005: Conversation and packet history foundation
+
+**Situation**
+People need confidence that their Build chat conversations and generated
+planning documents are not lost, mixed together, or silently overwritten.
+Without trustworthy history, approvals and later reviews become hard to rely
+on.
+
+**Goal**
+The system keeps clear conversation and document history, including who created
+it, what scope it belongs to, which version is current, and what older versions
+mean.
+
+**Decisions Needed**
+We need to agree what history is kept, who can see it, how long it remains
+available, when a newer document replaces an older one, and what failed or
+abandoned work means.
+
+**Work That Follows**
+The work will establish durable history, version behavior, retention rules, and
+safe visibility for creators and reviewers.
+
+**Evidence Of Success**
+A reviewer can find the right conversation and document version, see when a
+newer version replaced an older one, and confirm history is not visible outside
+the approved audience.
+
+### S-006: Protected chat, history, generation, and download APIs
+
+**Situation**
+Starting a chat, returning to history, generating a planning document, and
+downloading a PDF are separate actions that people expect to work reliably. If
+access is loose or unclear, the wrong person could see, change, or download
+planning information.
+
+**Goal**
+Only the right root-admin users can start chats, view allowed history, generate
+approved documents, and download the correct PDFs.
+
+**Decisions Needed**
+We need to agree who can create, review, generate, and download; how denied
+actions are explained; and how the system prevents page context or links from
+becoming authority.
+
+**Work That Follows**
+The work will establish protected entry points for chat, history, document
+generation, and download, with clear validation and denial behavior.
+
+**Evidence Of Success**
+A reviewer can confirm allowed users can complete the expected actions,
+unauthorized users are denied, cross-scope access is blocked, and helpful page
+context never grants access by itself.
+
+### S-007: Root-admin Build panel adoption
+
+**Situation**
+Root builders need a clear Build entry point inside the root-admin workspace,
+while Reporting and Support remain visible but inactive. If this screen
+rebuilds the approved panel locally, the real app can drift away from the
+approved experience.
+
+**Goal**
+The root-admin workspace shows Build as the active chat flow and presents
+Reporting and Support as coming-soon actions through the approved shared
+pattern.
+
+**Decisions Needed**
+We need to confirm the approved panel behavior is ready for first use and that
+the root-admin screen will use it without local reinvention.
+
+**Work That Follows**
+The work will connect the root-admin workspace to the approved panel and chat
+experience, including desktop, mobile, history, starter prompts, inactive
+actions, and PDF download states.
+
+**Evidence Of Success**
+Stakeholders can use the root-admin screen, see Build as the active path,
+understand Reporting and Support are not active, and verify the screen matches
+the approved shared experience.
+
+### S-008: Runtime and mock-honesty evidence plan
+
+**Situation**
+A simplified example can make Build chat look correct even when the real
+workspace, protected actions, history, and PDF download path behave
+differently. The system needs proof based on realistic shapes, not convenient
+fixtures.
+
+**Goal**
+Reviewers can trust that the Build chat experience works in the real
+root-admin workspace, not only in simplified examples.
+
+**Decisions Needed**
+We need to agree which live-like states must be covered, including desktop,
+mobile, empty history, denied access, failed document creation, failed
+download, and degraded service behavior.
+
+**Work That Follows**
+The work will establish proof coverage for the saved records, protected
+actions, PDF behavior, browser states, and fixture honesty.
+
+**Evidence Of Success**
+A reviewer can compare test fixtures with the real shapes the system serves
+and confirm the proof covers realistic success, denial, failure, and recovery
+states.
+
+### S-009: Data, permissions, API, and feature-manifest artifact sweep
+
+**Situation**
+When the Build chat work lands, the written source of truth must still match
+the system. If the records, access rules, behavior descriptions, and dependency
+notes drift, future work will start from stale promises.
+
+**Goal**
+The system's source-independent records stay aligned with the finished Build
+chat behavior before follow-on work starts.
+
+**Decisions Needed**
+We need to confirm which written records are affected by saved history,
+document generation, downloads, access decisions, root-admin adoption, and
+future reuse.
+
+**Work That Follows**
+The work will refresh the relevant written records and generated summaries once
+the implementation scope is known.
+
+**Evidence Of Success**
+A reviewer can compare the finished behavior with the written records and see
+that access rules, saved facts, public promises, dependencies, and proof
+expectations are current.
+
+### S-010: Future tenant-builder rollout deferral
+
+**Situation**
+The first Build chat version is for root-admin use. Tenant-builder rollout is a
+separate product decision, and it could accidentally leak into the first
+version if it is not named clearly.
+
+**Goal**
+Tenant-builder rollout stays out of the first version until it has its own
+approved planning path.
+
+**Decisions Needed**
+We need to confirm that tenant-builder activation, tenant-scoped behavior, and
+customer-facing rollout are not part of this first root-admin version.
+
+**Work That Follows**
+The work will keep future tenant-builder behavior visible as a separate scope
+without turning it into first-version delivery work.
+
+**Evidence Of Success**
+A reviewer can see that tenant-builder rollout is intentionally deferred and
+that no first-version story, proof expectation, or follow-on work depends on
+quietly activating it.
+
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |

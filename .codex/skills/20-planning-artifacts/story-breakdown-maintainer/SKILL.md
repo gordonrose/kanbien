@@ -12,6 +12,10 @@ independently deliverable and verifiable stories. It does not replace
 capability matrices, PRDs, PRD-derived test cases, implementation blueprints,
 Task Breakdown, or Delivery.
 
+A Story Breakdown story is an executive-readable system story first and a
+machine-readable planning record second. The structured rows support the story;
+they do not replace it.
+
 ## Inputs
 
 - Product Discovery packet
@@ -35,6 +39,24 @@ Task Breakdown, or Delivery.
 
 3. Split into stories.
    Create the smallest independently deliverable and verifiable stories.
+   Start each active story with a plain-language narrative that a
+   non-implementation stakeholder could follow aloud:
+   - Situation: what is happening today, what is missing, or what risk exists
+   - Goal: what a person, operator, reviewer, stakeholder, or the system should
+     be able to trust afterward
+   - Decisions Needed: what business, policy, design, or technical-direction
+     decisions must be settled before work can proceed safely
+   - Work That Follows: what kind of work follows, without implementation-task
+     detail
+   - Evidence Of Success: what will prove the story was handled correctly
+
+   Explain internal product, repo, or domain terms in plain language before
+   relying on them. Prefer "system", "person", "operator", "reviewer",
+   "stakeholder", and "work". Avoid "team" unless the story is genuinely about
+   a human team workflow. Avoid layer, artifact, route, API, permission,
+   storage, validator, and implementation jargon in the narrative unless the
+   term is introduced in everyday language first.
+
    Assign each story:
    - stable story ID
    - short human-readable title
@@ -129,6 +151,13 @@ Task Breakdown, or Delivery.
 - Do not use vague planning shorthand in story context, such as promises or
   visual work. Explain what a person can understand, such as what they can do,
   see, decide, trust, avoid, recover from, review, or plan.
+- Do not let story narratives collapse into artifact lists or task lists.
+  A narrative should have a beginning, middle, and end: situation, goal,
+  decisions, following work, and evidence.
+- Use "system" for product behavior and durable capability. Use "person",
+  "operator", "reviewer", and "stakeholder" for humans in the story. Use
+  "work" for what follows. Use "team" only when the story is truly about a
+  human team workflow.
 - Do not leave a validated blocked packet as a dead end. Record the unblock
   queue and surface the smallest human decision set or artifact creation path
   needed to advance.
