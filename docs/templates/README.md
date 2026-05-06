@@ -137,6 +137,21 @@ For Story Breakdown packet checks, use:
 npm run story-breakdown:validate -- <packet-path>
 ```
 
+Story Breakdown supports both the legacy single-file packet and folder packet
+shapes:
+
+```text
+docs/workspace/story-breakdown/<epic-slug>.md
+docs/workspace/story-breakdown/<epic-slug>/epic.md
+docs/workspace/story-breakdown/<epic-slug>/stories/S-001-<story-slug>.md
+docs/workspace/story-breakdown/<epic-slug>/stories/S-001-<story-slug>/story.md
+docs/workspace/story-breakdown/<epic-slug>/stories/S-001-<story-slug>/tasks/T-S001-01-<task-slug>.md
+```
+
+Use `story-breakdown-packet-template.md` for the single-file shape. Use
+`story-breakdown-epic-template.md` and `story-breakdown-story-template.md` when
+the epic summary and story details should be separated for readability.
+
 For Task Breakdown packet checks, use:
 
 ```sh

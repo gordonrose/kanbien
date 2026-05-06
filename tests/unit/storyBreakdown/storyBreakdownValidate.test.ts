@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 
-import { validateStoryBreakdownContent } from "../../../src/scripts/storyBreakdownValidate";
+import { validateStoryBreakdownContent, validateStoryBreakdownPath } from "../../../src/scripts/storyBreakdownValidate";
 
 const validPacket = `# Story Breakdown Packet: Tenant Branding
 
@@ -503,5 +506,59 @@ describe("story breakdown validation", () => {
     expect(result.errors).toContain(
       "S-001 Story Narrative Work That Follows should avoid unexplained technical terms: api, backend, persistence, route",
     );
+  });
+
+  it("validates folder packets with story files", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "story-breakdown-folder-"));
+    mkdirSync(path.join(dir, "stories"));
+    writeFileSync(path.join(dir, "epic.md"), validPacket);
+    writeFileSync(path.join(dir, "stories", "S-000-capability-matrix-normalization.md"), "# Story S-000\n");
+    writeFileSync(path.join(dir, "stories", "S-001-root-admin-updates-branding.md"), "# Story S-001\n");
+
+    try {
+      expect(validateStoryBreakdownPath(dir)).toEqual({
+        status: "PASS",
+        errors: [],
+      });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("validates folder packets with story directories", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "story-breakdown-story-dirs-"));
+    mkdirSync(path.join(dir, "stories", "S-000-capability-matrix-normalization"), { recursive: true });
+    mkdirSync(path.join(dir, "stories", "S-001-root-admin-updates-branding"), { recursive: true });
+    writeFileSync(path.join(dir, "epic.md"), validPacket);
+    writeFileSync(path.join(dir, "stories", "S-000-capability-matrix-normalization", "story.md"), "# Story S-000\n");
+    writeFileSync(path.join(dir, "stories", "S-001-root-admin-updates-branding", "story.md"), "# Story S-001\n");
+
+    try {
+      expect(validateStoryBreakdownPath(dir)).toEqual({
+        status: "PASS",
+        errors: [],
+      });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("blocks story directories without story.md", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "story-breakdown-missing-story-md-"));
+    mkdirSync(path.join(dir, "stories", "S-000-capability-matrix-normalization"), { recursive: true });
+    mkdirSync(path.join(dir, "stories", "S-001-root-admin-updates-branding"), { recursive: true });
+    writeFileSync(path.join(dir, "epic.md"), validPacket);
+    writeFileSync(path.join(dir, "stories", "S-000-capability-matrix-normalization", "story.md"), "# Story S-000\n");
+
+    try {
+      const result = validateStoryBreakdownPath(dir);
+
+      expect(result.status).toBe("BLOCKED");
+      expect(result.errors).toContain(
+        `folder story breakdown missing story.md: ${path.join(dir, "stories", "S-001-root-admin-updates-branding", "story.md")}`,
+      );
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

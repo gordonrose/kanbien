@@ -139,6 +139,178 @@
 - Epic-level proof target:
   `mixed`
 
+## Story Narratives
+
+### S-000: Capability matrix normalization
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-001: V1 `adminOwner` PRD
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-002: Route-family API denial adoption plan
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-003: Tenant role and grant storage foundation
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-004: Central evaluator v1 implementation slice
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-005: Tenant lifecycle compatibility for authz
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-006: `adminOwner` tenant account management capabilities
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-007: `adminOwner` tenant data and log export capabilities
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-008: Authorization audit/proof persistence
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-009: Maintained artifact and catalog alignment
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |

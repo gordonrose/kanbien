@@ -260,3 +260,12 @@ Write packets under:
 Use:
 
 - `docs/templates/task-breakdown-packet-template.md`
+
+Or keep Layer 4 directly under the selected story when using the hierarchical
+Story Breakdown folder shape:
+
+- `docs/workspace/story-breakdown/<epic-slug>/stories/S-001-<story-slug>/task-breakdown.md`
+- `docs/workspace/story-breakdown/<epic-slug>/stories/S-001-<story-slug>/tasks/T-S001-01-<task-slug>.md`
+
+The validator accepts both the legacy single-file task packet and a story task
+folder containing `task-breakdown.md` plus `tasks/T-*.md` files.

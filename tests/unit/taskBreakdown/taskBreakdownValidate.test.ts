@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 
-import { validateTaskBreakdownContent } from "../../../src/scripts/taskBreakdownValidate";
+import { validateTaskBreakdownContent, validateTaskBreakdownPath } from "../../../src/scripts/taskBreakdownValidate";
 
 const backendGuardrailEvidenceRows =
   "| T-S001-01 | backend-source-authority | pass | Source story, capability row, and approved route/authz artifacts govern the backend behavior. |\n" +
@@ -3671,5 +3674,44 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 is queued-for-delivery with blockers remaining");
+  });
+
+  it("validates folder task breakdowns under a story", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "task-breakdown-folder-"));
+    const taskDir = path.join(dir, "story", "tasks");
+    const storyPath = path.join(dir, "source-story.md");
+    mkdirSync(taskDir, { recursive: true });
+    writeFileSync(storyPath, sourceStoryPacket);
+    writeFileSync(path.join(dir, "story", "task-breakdown.md"), validTaskPacket);
+    writeFileSync(path.join(taskDir, "T-S001-01-root-admin-branding-update.md"), "# Task T-S001-01\n");
+
+    try {
+      expect(validateTaskBreakdownPath(path.join(dir, "story"), storyPath)).toEqual({
+        status: "PASS",
+        errors: [],
+      });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("blocks folder task files that are not listed in task-breakdown.md", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "task-breakdown-extra-task-"));
+    const taskDir = path.join(dir, "story", "tasks");
+    const storyPath = path.join(dir, "source-story.md");
+    mkdirSync(taskDir, { recursive: true });
+    writeFileSync(storyPath, sourceStoryPacket);
+    writeFileSync(path.join(dir, "story", "task-breakdown.md"), validTaskPacket);
+    writeFileSync(path.join(taskDir, "T-S001-01-root-admin-branding-update.md"), "# Task T-S001-01\n");
+    writeFileSync(path.join(taskDir, "T-S001-99-extra-task.md"), "# Task T-S001-99\n");
+
+    try {
+      const result = validateTaskBreakdownPath(path.join(dir, "story"), storyPath);
+
+      expect(result.status).toBe("BLOCKED");
+      expect(result.errors).toContain("tasks/T-S001-99-*.md is not listed in task-breakdown.md Task Queue");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

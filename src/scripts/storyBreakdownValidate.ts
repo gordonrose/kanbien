@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
 import {
@@ -192,6 +192,11 @@ export type StoryBreakdownValidationResult = {
   errors: string[];
 };
 
+type StoryBreakdownLoadResult = {
+  content: string;
+  errors: string[];
+};
+
 type StoryRow = {
   storyId: string;
   status: string;
@@ -333,6 +338,16 @@ type TaskTypeSignalRow = {
   evidence: string;
   impliedTaskType: string;
 };
+
+export function validateStoryBreakdownPath(packetPath: string): StoryBreakdownValidationResult {
+  const loaded = loadStoryBreakdownPath(packetPath);
+  const result = validateStoryBreakdownContent(loaded.content);
+
+  return {
+    status: loaded.errors.length === 0 && result.errors.length === 0 ? "PASS" : "BLOCKED",
+    errors: [...loaded.errors, ...result.errors],
+  };
+}
 
 export function validateStoryBreakdownContent(content: string): StoryBreakdownValidationResult {
   const errors: string[] = [];
@@ -525,6 +540,88 @@ function validateStoryNarrative(story: StoryRow, narrative: StoryNarrative | und
       errors.push(`${story.storyId} Story Narrative ${heading} should avoid unexplained technical terms: ${matchedTerms.join(", ")}`);
     }
   }
+}
+
+function loadStoryBreakdownPath(packetPath: string): StoryBreakdownLoadResult {
+  if (!existsSync(packetPath)) {
+    return {
+      content: "",
+      errors: [`Packet not found: ${packetPath}`],
+    };
+  }
+
+  if (!statSync(packetPath).isDirectory()) {
+    return {
+      content: readFileSync(packetPath, "utf8"),
+      errors: [],
+    };
+  }
+
+  const errors: string[] = [];
+  const epicPath = path.join(packetPath, "epic.md");
+  const storiesPath = path.join(packetPath, "stories");
+
+  if (!existsSync(epicPath)) {
+    errors.push(`folder story breakdown missing epic.md: ${epicPath}`);
+  }
+
+  if (!existsSync(storiesPath) || !statSync(storiesPath).isDirectory()) {
+    errors.push(`folder story breakdown missing stories directory: ${storiesPath}`);
+  }
+
+  const epicContent = existsSync(epicPath) ? readFileSync(epicPath, "utf8") : "";
+  const storyEntries =
+    existsSync(storiesPath) && statSync(storiesPath).isDirectory()
+      ? readdirSync(storiesPath)
+          .filter((entry) => /^S-\d+/.test(entry))
+          .sort()
+      : [];
+
+  if (existsSync(storiesPath) && statSync(storiesPath).isDirectory() && storyEntries.length === 0) {
+    errors.push(`folder story breakdown has no stories/S-* entries: ${storiesPath}`);
+  }
+
+  const storyEntryIds = new Set(storyEntries.map((entry) => entry.match(/^(S-\d+)/)?.[1] ?? ""));
+  const epicStoryIds = parseStoryRows(epicContent).map((story) => story.storyId).filter(Boolean);
+
+  for (const storyId of epicStoryIds) {
+    if (!storyEntryIds.has(storyId)) {
+      errors.push(`${storyId} is listed in epic.md but has no stories/${storyId}-* entry`);
+    }
+  }
+
+  for (const storyId of storyEntryIds) {
+    if (storyId && !epicStoryIds.includes(storyId)) {
+      errors.push(`stories/${storyId}-* is not listed in epic.md Story Queue`);
+    }
+  }
+
+  const storyContents = storyEntries.map((entry) => {
+    const entryPath = path.join(storiesPath, entry);
+    const entryStat = statSync(entryPath);
+
+    if (entryStat.isDirectory()) {
+      const storyPath = path.join(entryPath, "story.md");
+      if (!existsSync(storyPath)) {
+        errors.push(`folder story breakdown missing story.md: ${storyPath}`);
+        return "";
+      }
+
+      return readFileSync(storyPath, "utf8");
+    }
+
+    if (!entryStat.isFile() || !entry.endsWith(".md")) {
+      errors.push(`folder story breakdown story entry must be a .md file or directory: ${entryPath}`);
+      return "";
+    }
+
+    return readFileSync(entryPath, "utf8");
+  });
+
+  return {
+    content: [epicContent, ...storyContents].join("\n\n"),
+    errors,
+  };
 }
 
 function validateLayer3UnblockQueue(
@@ -1060,14 +1157,29 @@ function parseTaskTypeSignalRows(content: string): TaskTypeSignalRow[] {
 }
 
 function section(content: string, heading: string): string {
-  const start = content.indexOf(heading);
-  if (start === -1) {
-    return "";
+  const sections: string[] = [];
+  let searchFrom = 0;
+
+  while (searchFrom < content.length) {
+    const start = content.indexOf(heading, searchFrom);
+    if (start === -1) {
+      break;
+    }
+
+    const before = start === 0 ? "\n" : content[start - 1];
+    const after = content[start + heading.length] ?? "";
+    if (before !== "\n" || (after && after !== "\n" && after !== "\r")) {
+      searchFrom = start + heading.length;
+      continue;
+    }
+
+    const rest = content.slice(start + heading.length);
+    const next = rest.search(/\n##\s/);
+    sections.push(next === -1 ? rest : rest.slice(0, next));
+    searchFrom = next === -1 ? content.length : start + heading.length + next;
   }
 
-  const rest = content.slice(start + heading.length);
-  const next = rest.search(/\n##\s/);
-  return next === -1 ? rest : rest.slice(0, next);
+  return sections.join("\n");
 }
 
 function parseTableRows(sectionContent: string): string[][] {
@@ -1108,8 +1220,7 @@ function main(): void {
     process.exit(1);
   }
 
-  const content = readFileSync(packetPath, "utf8");
-  const result = validateStoryBreakdownContent(content);
+  const result = validateStoryBreakdownPath(packetPath);
 
   console.log("Story Breakdown Validation");
   console.log(`- status: ${result.status}`);

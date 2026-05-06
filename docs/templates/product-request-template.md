@@ -30,6 +30,32 @@
 - Work runs / Loop Runs:
 - Pull requests, config changes, or extension changes:
 
+## End-To-End Hierarchy
+
+Use this when the request is organized as a folder instead of a single cover
+sheet:
+
+```text
+docs/workspace/product-requests/<request-slug>/
+  request.md
+  discovery.md
+  steering.md
+  epics/
+    EPIC-001-<epic-slug>/
+      epic.md
+      stories/
+        S-001-<story-slug>/
+          story.md
+          task-breakdown.md
+          tasks/
+            T-S001-01-<task-slug>.md
+```
+
+The hierarchy should make containment obvious, but the owning artifact still
+keeps its normal responsibility. Product Request summarizes; Discovery owns
+intent; Technical Steering owns architecture; Story Breakdown owns stories;
+Task Breakdown owns isolated delivery tasks.
+
 ## What The Chat Widget Should Show
 
 - Title:

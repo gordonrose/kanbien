@@ -7,6 +7,17 @@ Task Breakdown converts one approved story, or a small explicitly related
 story set, into isolated delivery tasks. It does not redefine story scope,
 acceptance criteria, product intent, or Technical Steering architecture.
 
+This single-file packet shape remains valid. When tasks should sit directly
+under their parent story, use a story folder with:
+
+```text
+stories/S-001-<story-slug>/
+  story.md
+  task-breakdown.md
+  tasks/
+    T-S001-01-<task-slug>.md
+```
+
 Do not describe a task as queued for Delivery unless
 `npm run task-breakdown:validate -- <packet-path> --story <story-packet-path>`
 passes, or every blocker is explicitly accepted by the requester.

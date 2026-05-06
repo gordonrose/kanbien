@@ -21,6 +21,8 @@ they do not replace it.
 - Product Discovery packet
 - Technical Steering packet
 - `docs/templates/story-breakdown-packet-template.md`
+- `docs/templates/story-breakdown-epic-template.md`
+- `docs/templates/story-breakdown-story-template.md`
 - `docs/architecture/guides/story-breakdown-test-design-guide.md`
 - relevant architecture, ADR, design-system, asset, permission, tenant,
   persistence, standards, and testing guidance named by Technical Steering
@@ -171,3 +173,25 @@ Write packets under:
 Use:
 
 - `docs/templates/story-breakdown-packet-template.md`
+
+Or use the folder format when a packet should read as an epic summary plus
+contained story details:
+
+- `docs/templates/story-breakdown-epic-template.md` for `epic.md`
+- `docs/templates/story-breakdown-story-template.md` for each story file or
+  `story.md`
+
+Folder packets may use either:
+
+- `docs/workspace/story-breakdown/<epic-slug>/epic.md`
+- `docs/workspace/story-breakdown/<epic-slug>/stories/S-001-<story-slug>.md`
+
+Or, when Layer 4 task files should sit directly under their parent story:
+
+- `docs/workspace/story-breakdown/<epic-slug>/stories/S-001-<story-slug>/story.md`
+- `docs/workspace/story-breakdown/<epic-slug>/stories/S-001-<story-slug>/task-breakdown.md`
+- `docs/workspace/story-breakdown/<epic-slug>/stories/S-001-<story-slug>/tasks/T-S001-01-<task-slug>.md`
+
+The validator accepts the legacy single-file packet, folder packets with story
+files, and folder packets with story directories. Do not migrate existing
+packets just to change format unless the migration is explicitly in scope.

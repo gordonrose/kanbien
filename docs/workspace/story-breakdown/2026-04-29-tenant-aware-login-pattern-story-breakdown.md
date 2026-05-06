@@ -72,6 +72,16 @@
 | C-006 | Tenant login governed frontend pattern | design-system-seam | Design-system login render/controller/style seams | deferred-with-owner | Design-system and frontend tasks after behavior lock, reference pack, verification checklist, and adoption path exist |
 | C-007 | Security, audit, privacy, and artifact conformance | feature-local | Tenant auth, audit, permission, API, data, and test planning artifacts | deferred-with-owner | Permission-mapping, data-dictionary, API-contract, QA/evidence, and docs-artifact tasks after source-of-truth artifacts exist |
 
+## Frontend Architecture Classification Snapshot
+
+| Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+
+## Browser Security Posture Snapshot
+
+| Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |
+| --- | --- | --- | --- | --- |
+
 ## Task-Type Signal Matrix
 
 | Story ID | Signal | Present | Evidence | Implied Task Type |
@@ -123,21 +133,210 @@
 - Epic-level proof target:
   `mixed`
 
+## Story Narratives
+
+### S-000: Capability matrix normalization
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-001: Auth scope and feature-boundary lock
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-002: Root-managed tenant auth configuration
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-003: Pre-auth email and tenant resolution
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-004: Tenant selection and method choice
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-005: Email-password and password-reset policy
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-006: SSO unavailable and fallback posture
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-007: Session interruption and authority refresh
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-008: Audit, privacy, and replay-state controls
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-009: Governed tenant login pattern
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-010: Maintained artifact conformance
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | needs-capability-matrix | harness-value | docs-artifact | Capability matrix normalization | This is needed to break down what tenant-aware login needs to be able to do into individual capabilities, so we can plan the implementation more accurately. | As the delivery harness, I need tenant-aware login stories translated into capability rows so security-sensitive work starts from explicit obligations. | harness | Approved capability rows cover every acceptance criterion and identity/security boundary. | Blocks all delivery stories |
-| S-001 | needs-prd-refinement | system-value | architecture-foundation | Auth scope and feature-boundary lock | This is needed to settle what tenant-aware login includes before splitting the sign-in journey into smaller pieces. | As architecture governance, I need root-managed tenant auth configuration, tenantAuth boundaries, identities, memberships, provider references, and session authority seams decided. | architecture governance | Downstream contracts can describe tenant-aware login without inventing auth architecture during delivery. | Blocks S-002 through S-010 |
-| S-002 | needs-capability-matrix | user-value | backend | Root-managed tenant auth configuration | This is its own story because operators need a clear way to decide which sign-in methods each tenant can use. | As a root operator, I need to configure enabled auth methods for exactly one tenant. | root operator | Tenant auth method policy is durable, permissioned, auditable, and separate from mutable provider state. | Depends on S-000 and S-001 |
-| S-003 | needs-capability-matrix | user-value | backend | Pre-auth email and tenant resolution | This is its own story because the first sign-in question should guide people safely without revealing too much. | As a tenant user, I need email entry and tenant resolution to reveal only safe next steps. | tenant user | Email is normalized, no-match outcomes are generic, and multi-tenant choices appear only after approved resolution. | Depends on S-000 and S-001 |
-| S-004 | needs-capability-matrix | user-value | backend | Tenant selection and method choice | This is its own story because people who belong to more than one tenant need to choose the right place before signing in. | As a tenant user, I need to select exactly one tenant and choose among that tenant's enabled methods. | tenant user | Auth method execution is bound to one selected tenant context and disabled methods redirect safely. | Depends on S-003 |
-| S-005 | needs-capability-matrix | user-value | backend | Email-password and password-reset policy | This is its own story because password sign-in and reset are familiar user moments with their own safety expectations. | As a tenant user, I need email-password login and reset only when enabled for the selected tenant. | tenant user | Password reset cannot bypass tenant method policy and tokens remain tenant-bound, short-lived, and secret-safe. | Depends on S-002 through S-004 |
-| S-006 | needs-capability-matrix | system-value | backend | SSO unavailable and fallback posture | This is its own story because people need a predictable path when a company sign-in provider is unavailable. | As the auth system, I need SSO outage or misconfiguration outcomes to fall back only when another enabled method exists. | auth/session system and SSO provider | SSO unavailability blocks or routes to an enabled fallback without becoming a broad provider platform. | Depends on S-002 through S-004 |
-| S-007 | needs-capability-matrix | system-value | backend | Session interruption and authority refresh | This is its own story because access should change promptly when a person's membership or tenant status changes. | As the auth/session system, I need removed users, membership changes, disabled tenants, deleted tenants, and forced-login policy changes to affect active sessions. | auth/session system | Active access reflects current tenant, membership, user, and auth-policy state with audit evidence. | Depends on S-001 through S-004 |
-| S-008 | needs-capability-matrix | system-value | backend | Audit, privacy, and replay-state controls | This is its own story because sign-in history must be reviewable without exposing secrets or granting accidental access. | As security and operations governance, I need mandatory audit events without credentials, tokens, provider secrets, or authority-bearing replay payloads. | security, audit, operations | Auth events are reviewable and privacy-safe, and debug/replay state cannot grant tenant access. | Depends on S-001 through S-007 |
-| S-009 | needs-capability-matrix | user-value | frontend | Governed tenant login pattern | This is its own story because the visible login journey should be signed off before customers depend on it. | As a tenant user, I need signed-off login, tenant selection, method choice, recovery, unavailable-provider, disabled-method, and forced-login states. | tenant user | Tenant login UI consumes governed render/controller/style seams instead of copying root login. | Depends on S-001 through S-008 |
-| S-010 | needs-capability-matrix | harness-value | standards-compliance | Maintained artifact conformance | This is needed to keep the written rules, examples, and tests aligned with the login experience before the work is treated as ready. | As repo governance, I need API, data, permission, design-system, feature-manifest, and test-case artifacts to reflect the approved story set before Task Breakdown. | repo governance | Delivery begins from coherent contracts and traceable proof obligations. | Depends on S-000 through S-009 |
+| S-000 | needs-capability-matrix | harness-value | DOC:docs-artifact | Capability matrix normalization | This is needed to break down what tenant-aware login needs to be able to do into individual capabilities, so we can plan the implementation more accurately. | As the delivery harness, I need tenant-aware login stories translated into capability rows so security-sensitive work starts from explicit obligations. | harness | Approved capability rows cover every acceptance criterion and identity/security boundary. | Blocks all delivery stories |
+| S-001 | needs-prd-refinement | system-value | DECISION:architecture-foundation | Auth scope and feature-boundary lock | This is needed to settle what tenant-aware login includes before splitting the sign-in journey into smaller pieces. | As architecture governance, I need root-managed tenant auth configuration, tenantAuth boundaries, identities, memberships, provider references, and session authority seams decided. | architecture governance | Downstream contracts can describe tenant-aware login without inventing auth architecture during delivery. | Blocks S-002 through S-010 |
+| S-002 | needs-capability-matrix | user-value | DEV:backend | Root-managed tenant auth configuration | This is its own story because operators need a clear way to decide which sign-in methods each tenant can use. | As a root operator, I need to configure enabled auth methods for exactly one tenant. | root operator | Tenant auth method policy is durable, permissioned, auditable, and separate from mutable provider state. | Depends on S-000 and S-001 |
+| S-003 | needs-capability-matrix | user-value | DEV:backend | Pre-auth email and tenant resolution | This is its own story because the first sign-in question should guide people safely without revealing too much. | As a tenant user, I need email entry and tenant resolution to reveal only safe next steps. | tenant user | Email is normalized, no-match outcomes are generic, and multi-tenant choices appear only after approved resolution. | Depends on S-000 and S-001 |
+| S-004 | needs-capability-matrix | user-value | DEV:backend | Tenant selection and method choice | This is its own story because people who belong to more than one tenant need to choose the right place before signing in. | As a tenant user, I need to select exactly one tenant and choose among that tenant's enabled methods. | tenant user | Auth method execution is bound to one selected tenant context and disabled methods redirect safely. | Depends on S-003 |
+| S-005 | needs-capability-matrix | user-value | DEV:backend | Email-password and password-reset policy | This is its own story because password sign-in and reset are familiar user moments with their own safety expectations. | As a tenant user, I need email-password login and reset only when enabled for the selected tenant. | tenant user | Password reset cannot bypass tenant method policy and tokens remain tenant-bound, short-lived, and secret-safe. | Depends on S-002 through S-004 |
+| S-006 | needs-capability-matrix | system-value | DEV:backend | SSO unavailable and fallback posture | This is its own story because people need a predictable path when a company sign-in provider is unavailable. | As the auth system, I need SSO outage or misconfiguration outcomes to fall back only when another enabled method exists. | auth/session system and SSO provider | SSO unavailability blocks or routes to an enabled fallback without becoming a broad provider platform. | Depends on S-002 through S-004 |
+| S-007 | needs-capability-matrix | system-value | DEV:backend | Session interruption and authority refresh | This is its own story because access should change promptly when a person's membership or tenant status changes. | As the auth/session system, I need removed users, membership changes, disabled tenants, deleted tenants, and forced-login policy changes to affect active sessions. | auth/session system | Active access reflects current tenant, membership, user, and auth-policy state with audit evidence. | Depends on S-001 through S-004 |
+| S-008 | needs-capability-matrix | system-value | DEV:backend | Audit, privacy, and replay-state controls | This is its own story because sign-in history must be reviewable without exposing secrets or granting accidental access. | As security and operations governance, I need mandatory audit events without credentials, tokens, provider secrets, or authority-bearing replay payloads. | security, audit, operations | Auth events are reviewable and privacy-safe, and debug/replay state cannot grant tenant access. | Depends on S-001 through S-007 |
+| S-009 | needs-capability-matrix | user-value | DEV:frontend | Governed tenant login pattern | This is its own story because the visible login journey should be signed off before customers depend on it. | As a tenant user, I need signed-off login, tenant selection, method choice, recovery, unavailable-provider, disabled-method, and forced-login states. | tenant user | Tenant login UI consumes governed render/controller/style seams instead of copying root login. | Depends on S-001 through S-008 |
+| S-010 | needs-capability-matrix | harness-value | DOC:standards-compliance | Maintained artifact conformance | This is needed to keep the written rules, examples, and tests aligned with the login experience before the work is treated as ready. | As repo governance, I need API, data, permission, design-system, feature-manifest, and test-case artifacts to reflect the approved story set before Task Breakdown. | repo governance | Delivery begins from coherent contracts and traceable proof obligations. | Depends on S-000 through S-009 |
 
 ## Acceptance Criteria
 

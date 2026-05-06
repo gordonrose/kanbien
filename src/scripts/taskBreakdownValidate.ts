@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
 import {
@@ -405,6 +405,11 @@ const vaguePhrases = [
 
 export type TaskBreakdownValidationResult = {
   status: "PASS" | "BLOCKED";
+  errors: string[];
+};
+
+type TaskBreakdownLoadResult = {
+  content: string;
   errors: string[];
 };
 
@@ -1087,6 +1092,17 @@ type DeliveryHandoffRow = {
   handoffStatus: string;
   blockersRemaining: string;
 };
+
+export function validateTaskBreakdownPath(taskPath: string, storyPath: string): TaskBreakdownValidationResult {
+  const task = loadTaskBreakdownPath(taskPath);
+  const story = loadStoryBreakdownSourcePath(storyPath);
+  const result = validateTaskBreakdownContent(task.content, story.content);
+
+  return {
+    status: task.errors.length === 0 && story.errors.length === 0 && result.errors.length === 0 ? "PASS" : "BLOCKED",
+    errors: [...task.errors, ...story.errors, ...result.errors],
+  };
+}
 
 export function validateTaskBreakdownContent(
   taskContent: string,
@@ -6795,6 +6811,117 @@ function splitIds(value: string): string[] {
     .filter(Boolean);
 }
 
+function loadTaskBreakdownPath(packetPath: string): TaskBreakdownLoadResult {
+  if (!existsSync(packetPath)) {
+    return {
+      content: "",
+      errors: [`Task Breakdown packet not found: ${packetPath}`],
+    };
+  }
+
+  if (!statSync(packetPath).isDirectory()) {
+    return {
+      content: readFileSync(packetPath, "utf8"),
+      errors: [],
+    };
+  }
+
+  const errors: string[] = [];
+  const summaryPath = path.join(packetPath, "task-breakdown.md");
+  const tasksPath = path.join(packetPath, "tasks");
+
+  if (!existsSync(summaryPath)) {
+    errors.push(`folder task breakdown missing task-breakdown.md: ${summaryPath}`);
+  }
+
+  if (!existsSync(tasksPath) || !statSync(tasksPath).isDirectory()) {
+    errors.push(`folder task breakdown missing tasks directory: ${tasksPath}`);
+  }
+
+  const summaryContent = existsSync(summaryPath) ? readFileSync(summaryPath, "utf8") : "";
+  const taskFiles =
+    existsSync(tasksPath) && statSync(tasksPath).isDirectory()
+      ? readdirSync(tasksPath)
+          .filter((entry) => /^T-[A-Za-z0-9]+-\d+.*\.md$/.test(entry))
+          .sort()
+      : [];
+
+  if (existsSync(tasksPath) && statSync(tasksPath).isDirectory() && taskFiles.length === 0) {
+    errors.push(`folder task breakdown has no tasks/T-*.md files: ${tasksPath}`);
+  }
+
+  const taskFileIds = new Set(taskFiles.map((entry) => entry.match(/^(T-[A-Za-z0-9]+-\d+)/)?.[1] ?? ""));
+  const summaryTaskIds = parseTaskRows(summaryContent).map((task) => task.taskId).filter(Boolean);
+
+  for (const taskId of summaryTaskIds) {
+    if (!taskFileIds.has(taskId)) {
+      errors.push(`${taskId} is listed in task-breakdown.md but has no tasks/${taskId}-*.md file`);
+    }
+  }
+
+  for (const taskId of taskFileIds) {
+    if (taskId && !summaryTaskIds.includes(taskId)) {
+      errors.push(`tasks/${taskId}-*.md is not listed in task-breakdown.md Task Queue`);
+    }
+  }
+
+  const taskContents = taskFiles.map((entry) => readFileSync(path.join(tasksPath, entry), "utf8"));
+
+  return {
+    content: [summaryContent, ...taskContents].join("\n\n"),
+    errors,
+  };
+}
+
+function loadStoryBreakdownSourcePath(storyPath: string): TaskBreakdownLoadResult {
+  if (!existsSync(storyPath)) {
+    return {
+      content: "",
+      errors: [`Source Story Breakdown packet not found: ${storyPath}`],
+    };
+  }
+
+  if (!statSync(storyPath).isDirectory()) {
+    return {
+      content: readFileSync(storyPath, "utf8"),
+      errors: [],
+    };
+  }
+
+  const epicPath = path.join(storyPath, "epic.md");
+  const storiesPath = path.join(storyPath, "stories");
+  const directStoryPath = path.join(storyPath, "story.md");
+
+  if (existsSync(epicPath) && existsSync(storiesPath) && statSync(storiesPath).isDirectory()) {
+    const storyContents = readdirSync(storiesPath)
+      .filter((entry) => /^S-\d+/.test(entry))
+      .sort()
+      .map((entry) => {
+        const entryPath = path.join(storiesPath, entry);
+        return statSync(entryPath).isDirectory()
+          ? readFileSync(path.join(entryPath, "story.md"), "utf8")
+          : readFileSync(entryPath, "utf8");
+      });
+
+    return {
+      content: [readFileSync(epicPath, "utf8"), ...storyContents].join("\n\n"),
+      errors: [],
+    };
+  }
+
+  if (existsSync(directStoryPath)) {
+    return {
+      content: readFileSync(directStoryPath, "utf8"),
+      errors: [],
+    };
+  }
+
+  return {
+    content: "",
+    errors: [`Source Story Breakdown folder must contain epic.md or story.md: ${storyPath}`],
+  };
+}
+
 function parseSourceStoryRows(content: string): StoryRow[] {
   return parseTableRows(section(content, "## Story Queue")).map((cells) => ({
     storyId: cells[0] ?? "",
@@ -7636,14 +7763,29 @@ function parseDeliveryHandoffRows(content: string): DeliveryHandoffRow[] {
 }
 
 function section(content: string, heading: string): string {
-  const start = content.indexOf(heading);
-  if (start === -1) {
-    return "";
+  const sections: string[] = [];
+  let searchFrom = 0;
+
+  while (searchFrom < content.length) {
+    const start = content.indexOf(heading, searchFrom);
+    if (start === -1) {
+      break;
+    }
+
+    const before = start === 0 ? "\n" : content[start - 1];
+    const after = content[start + heading.length] ?? "";
+    if (before !== "\n" || (after && after !== "\n" && after !== "\r")) {
+      searchFrom = start + heading.length;
+      continue;
+    }
+
+    const rest = content.slice(start + heading.length);
+    const next = rest.search(/\n##\s/);
+    sections.push(next === -1 ? rest : rest.slice(0, next));
+    searchFrom = next === -1 ? content.length : start + heading.length + next;
   }
 
-  const rest = content.slice(start + heading.length);
-  const next = rest.search(/\n##\s/);
-  return next === -1 ? rest : rest.slice(0, next);
+  return sections.join("\n");
 }
 
 function parseTableRows(sectionContent: string): string[][] {
@@ -7698,8 +7840,8 @@ function main(): void {
     process.exit(1);
   }
 
-  const taskContent = readFileSync(packetPath, "utf8");
-  const storyPathValue = storyArg ?? parseBulletValue(taskContent, "Source Story Breakdown packet");
+  const taskLoad = loadTaskBreakdownPath(packetPath);
+  const storyPathValue = storyArg ?? parseBulletValue(taskLoad.content, "Source Story Breakdown packet");
 
   if (!storyPathValue) {
     console.error("Source Story Breakdown packet path is required. Pass --story <story-packet-path>.");
@@ -7713,7 +7855,7 @@ function main(): void {
     process.exit(1);
   }
 
-  const result = validateTaskBreakdownContent(taskContent, readFileSync(storyPath, "utf8"));
+  const result = validateTaskBreakdownPath(packetPath, storyPath);
 
   console.log("Task Breakdown Validation");
   console.log(`- status: ${result.status}`);

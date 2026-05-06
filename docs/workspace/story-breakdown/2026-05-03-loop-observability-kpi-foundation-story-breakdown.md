@@ -135,6 +135,229 @@
 - Epic-level proof target:
   mixed
 
+## Story Narratives
+
+### S-000: Product Discovery human gate repair
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-001: ADR and PRD reconciliation
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-002: Capability matrix control
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-003: PRD-derived test case planning
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-004: Implementation blueprint
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-005: Durable capture foundation
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-006: Closure scorecard projection
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-007: Defect and regression traceability
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-008: Harness recording and artifact ingestion helper
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-009: Internal/root API read and write seams
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-010: Maintained artifact conformance
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-011: Future loop review UI governance
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
+### S-012: Future OLAP export foundation
+
+**Situation**
+This part of the request needs its own plain agreement before later work is split further.
+
+**Goal**
+Reviewers can understand the expected outcome without reading internal build details.
+
+**Decisions Needed**
+The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+
+**Work That Follows**
+The work will record enough detail for the next planning step to proceed without guessing.
+
+**Evidence Of Success**
+A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
