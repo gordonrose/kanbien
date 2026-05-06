@@ -1120,6 +1120,19 @@ describe("task breakdown validation", () => {
     expect(result.errors).toContain("T-S001-01 EVIDENCE:qa-evidence task has no debt health summary command row");
   });
 
+  it("blocks coverage-strength debt that is marked as no debt", () => {
+    const result = validateTaskBreakdownContent(
+      evidenceTaskPacketWith({
+        debtSummaryRow:
+          "| T-S001-01 | npm run test:coverage-strength | debt-found | mock-only risk and e2e/browser tier gaps remain | none | not-applicable: no follow-up |",
+      }),
+      evidenceStoryPacket(),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 debt health summary found debt but does not resolve, split, accept, or block it");
+  });
+
   it("blocks EVIDENCE task types without QA evidence instrument summary", () => {
     const result = validateTaskBreakdownContent(
       evidenceTaskPacketWith().replace(

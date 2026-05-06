@@ -58,6 +58,9 @@ Use for task type: `TEST:test-suite-alignment`
 - use `npm run test:coverage-strength` to summarize whether alignment improved,
   weakened, or merely relabeled coverage strength; do not treat traceability
   cleanup as proof of deeper coverage
+- when coverage-strength reports debt, record whether the alignment resolved it
+  in scope, split it to `TEST:test-only` or `EVIDENCE:qa-evidence`, accepted it
+  with a named QA owner, or blocked; do not use `none` for discovered debt
 - if the reconciliation reveals missing product, design, architecture,
   permission, lifecycle, or security behavior, stop and create the owning task
   type rather than continuing alignment
@@ -136,6 +139,7 @@ Split or block when:
 | Scenario | Mismatch Class | Valid Task Shape | Route-Away Boundary |
 | --- | --- | --- | --- |
 | `npm run test:traceability` reports an executable test missing its documented `TC-*` label, but the assertion already exists. | missing or malformed ID | Update test metadata/label or test-case trace row only, run traceability and focused suite, and record coverage-strength impact as relabeled/honest rather than new proof. | Do not add assertions; new proof routes to `TEST:test-only`. |
+| Coverage-strength output changes after relabeling or moving tests. | proof-layer drift or fixture documentation drift | Record whether coverage-strength improved, weakened, or became more honest; classify debug visual, mock-only, escaped-defect, and e2e/browser-tier signals separately. | Do not claim alignment created new proof; missing assertions route to `TEST:test-only` and evidence-only sweeps route to `EVIDENCE:qa-evidence`. |
 | A PRD test-case row is marked active but the source story superseded it. | lifecycle/status mismatch | Update lifecycle/status and traceability fields from approved source, preserve PRD intent, and run traceability. | Do not rewrite acceptance criteria to match current implementation. |
 | A test file moved and QA backlog paths are stale. | renamed or moved test file | Align docs/backlog/status paths and executable labels while proving the moved tests still execute. | Do not change production behavior or test semantics. |
 | Alignment reveals the documented behavior has no executable proof. | proof does not exist blocked | Record the mismatch and split new proof to `TEST:test-only`. | Do not mark the docs aligned by weakening the documented behavior. |

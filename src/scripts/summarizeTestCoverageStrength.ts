@@ -3,6 +3,7 @@ import { extname, join, relative } from "node:path";
 
 const repoRoot = process.cwd();
 const testsRoot = join(repoRoot, "tests");
+const issueReconciliationRoot = join(repoRoot, "docs", "workspace", "issue-reconciliations");
 const failOnDebt = process.argv.includes("--fail-on-debt");
 
 const layerNames = [
@@ -32,6 +33,8 @@ interface TestFileSummary {
   tcIdCount: number;
   usesRuntimeHarness: boolean;
   usesMocking: boolean;
+  hasRegressionSignal: boolean;
+  isDebugVisual: boolean;
 }
 
 function walkFiles(root: string, acc: string[] = []): string[] {
@@ -132,6 +135,9 @@ function summarizeFile(path: string): TestFileSummary {
       /\bvi\.(fn|mock|spyOn)\b/.test(source) ||
       /\bmock(?:Implementation|ResolvedValue|RejectedValue|ReturnValue)\b/.test(source) ||
       /\bstub(?:bed|s)?\b/i.test(source),
+    hasRegressionSignal:
+      /regression|escaped defect|issue[- ]reconciliation|would have failed/i.test(source),
+    isDebugVisual: relative(repoRoot, path).replace(/\\/g, "/").includes("/debug/"),
   };
 }
 
@@ -152,8 +158,21 @@ function printMap(title: string, map: Map<string, number>): void {
   }
 }
 
+function issueReconciliationFiles(): string[] {
+  if (!existsSync(issueReconciliationRoot)) {
+    return [];
+  }
+
+  return readdirSync(issueReconciliationRoot)
+    .filter((entry) => entry.endsWith(".md"))
+    .filter((entry) => entry !== "README.md")
+    .map((entry) => join(issueReconciliationRoot, entry))
+    .sort();
+}
+
 function main(): void {
   const summaries = walkFiles(testsRoot).map(summarizeFile);
+  const reconciliationFiles = issueReconciliationFiles();
   const layerFileCounts = new Map<string, number>();
   const featureFileCounts = new Map<string, number>();
   const featureLayerCounts = new Map<string, Set<LayerName>>();
@@ -177,7 +196,16 @@ function main(): void {
   const skippedFiles = summaries.filter((summary) => summary.skippedCount > 0);
   const focusedFiles = summaries.filter((summary) => summary.focusedCount > 0);
   const weakAssertionFiles = summaries.filter((summary) => summary.testCount > 0 && summary.assertionCount === 0);
+  const weakAssertionDebugVisualFiles = weakAssertionFiles.filter((summary) => summary.isDebugVisual);
+  const weakAssertionNonDebugFiles = weakAssertionFiles.filter((summary) => !summary.isDebugVisual);
   const mockOnlyRiskFiles = summaries.filter((summary) => summary.usesMocking && !summary.usesRuntimeHarness);
+  const regressionSignalFiles = summaries.filter((summary) => summary.hasRegressionSignal);
+  const e2eJourneyFiles = summaries.filter((summary) => summary.layers.has("e2e"));
+  const visualJourneyFiles = summaries.filter((summary) => summary.layers.has("visual"));
+  const browserTierFeatures = [...featureLayerCounts.entries()]
+    .filter(([, layers]) => layers.has("e2e") || layers.has("visual"))
+    .map(([feature]) => feature)
+    .sort();
   const singleLayerFeatures = [...featureLayerCounts.entries()]
     .filter(([, layers]) => layers.size <= 1)
     .map(([feature]) => feature)
@@ -191,7 +219,14 @@ function main(): void {
   console.log(`- Files with skipped tests: ${skippedFiles.length}`);
   console.log(`- Files with focused .only tests: ${focusedFiles.length}`);
   console.log(`- Files with tests but no expect() assertions: ${weakAssertionFiles.length}`);
+  console.log(`- Assertionless debug visual files: ${weakAssertionDebugVisualFiles.length}`);
+  console.log(`- Assertionless non-debug files: ${weakAssertionNonDebugFiles.length}`);
   console.log(`- Mock/stub-heavy files without obvious runtime harness: ${mockOnlyRiskFiles.length}`);
+  console.log(`- Test files with regression or issue-reconciliation signal: ${regressionSignalFiles.length}`);
+  console.log(`- Issue reconciliation docs: ${reconciliationFiles.length}`);
+  console.log(`- E2E/browser journey files: ${e2eJourneyFiles.length}`);
+  console.log(`- Visual/browser proof files: ${visualJourneyFiles.length}`);
+  console.log(`- Features with e2e or visual browser tier: ${browserTierFeatures.length}`);
   console.log(`- Features with only one detected coverage layer: ${singleLayerFeatures.length}`);
 
   printMap("Coverage Layer File Counts", layerFileCounts);
@@ -203,11 +238,44 @@ function main(): void {
     console.log(`- ${feature}: ${[...layers].sort().join(", ") || "unclassified"}`);
   }
 
+  console.log("\nEscaped Defect / Regression Calibration");
+  console.log(`- Issue reconciliation docs: ${reconciliationFiles.length}`);
+  console.log(`- Test files with regression or issue-reconciliation signal: ${regressionSignalFiles.length}`);
+  if (regressionSignalFiles.length === 0) {
+    console.log("- regression-lock signal: none detected");
+  } else {
+    for (const summary of regressionSignalFiles.slice(0, 15)) {
+      console.log(`- ${relative(repoRoot, summary.path)}`);
+    }
+  }
+
+  console.log("\nE2E / Browser Journey Tier Calibration");
+  console.log(`- E2E journey files: ${e2eJourneyFiles.length}`);
+  console.log(`- Visual proof files: ${visualJourneyFiles.length}`);
+  console.log(`- Features with e2e or visual browser tier: ${browserTierFeatures.length}`);
+  if (browserTierFeatures.length === 0) {
+    console.log("- browser-tier features: none");
+  } else {
+    for (const feature of browserTierFeatures.slice(0, 20)) {
+      console.log(`- ${feature}`);
+    }
+  }
+
+  console.log("\nMock Honesty Risk Signals");
+  if (mockOnlyRiskFiles.length === 0) {
+    console.log("- none");
+  } else {
+    for (const summary of mockOnlyRiskFiles.slice(0, 15)) {
+      console.log(`- ${relative(repoRoot, summary.path)}`);
+    }
+  }
+
   console.log("\nCoverage Debt Signals");
   const debtSignals = [
     ...focusedFiles.map((summary) => `${relative(repoRoot, summary.path)} uses .only`),
     ...skippedFiles.map((summary) => `${relative(repoRoot, summary.path)} has ${summary.skippedCount} skipped test block(s)`),
-    ...weakAssertionFiles.map((summary) => `${relative(repoRoot, summary.path)} has tests but no expect() assertions`),
+    ...weakAssertionNonDebugFiles.map((summary) => `${relative(repoRoot, summary.path)} has tests but no expect() assertions`),
+    ...weakAssertionDebugVisualFiles.map((summary) => `${relative(repoRoot, summary.path)} is a debug visual file with no expect() assertions`),
     ...mockOnlyRiskFiles.map((summary) => `${relative(repoRoot, summary.path)} uses mocks/stubs without an obvious runtime harness`),
     ...singleLayerFeatures.slice(0, 20).map((feature) => `${feature} has one detected coverage layer`),
   ];

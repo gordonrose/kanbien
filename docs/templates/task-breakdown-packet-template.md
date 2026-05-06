@@ -1292,6 +1292,9 @@ also include `npm run qa:evidence-summary -- <task-packet-path>` after their
 instrument summary is filled. Use `not-run: <reason>` only when the summary is
 genuinely unavailable or not applicable to the scoped proof. These commands
 summarize debt; they do not prove the task behavior by themselves.
+When a summary result is `debt-found`, the disposition must be
+`in-scope-resolved`, `split-follow-up`, `accepted-deferred`, or `blocked`; do
+not use `none` or `not-applicable` for discovered debt.
 
 ## Branch Worktree Bootstrap Strategy
 

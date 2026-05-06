@@ -60,11 +60,11 @@ Ratings:
 | `DOC:permission-mapping` | strong | strong | strong | strong | strong | partial | low | P3 | Worked examples now cover runtime-enforced rows, documentation-only rows, grant-source rows, object/lifecycle boundaries, future-authz-model blockers, and UI eligibility. Revisit after Layer 2 authz model expansion for approved configuration/relationship examples. |
 | `DOC:data-dictionary` | strong | strong | strong | strong | strong | partial | low | P3 | Data compliance health now classifies manual-review and retention/export/delete/legal-hold review rows, and task validation requires those rows to be resolved, split, accepted with owner, or blocked. Remaining hardening is policy work for scoped fail-on-debt once debt has approved cleanup or exception posture. |
 | `DOC:standards-compliance` | medium | strong | strong | strong | strong | partial | low | P3 | Initial worked examples added for repo-only gate reviews, platform status snapshots, external control maps, waiver/blocker reviews, and standards-authority route-away. Add framework-specific examples later only when real GDPR, ISO, OWASP, NIST, or WCAG control-map slices expose new ambiguity. |
-| `TEST:test-only` | strong | strong | medium | strong | strong | partial | low | P3 | Initial worked examples added for PRD test cases, permission/security matrices, regression locks, and fixture honesty. Remaining hardening is empirical coverage-strength calibration against escaped-defect history and e2e journey tiers. |
-| `TEST:test-suite-alignment` | strong | strong | medium | strong | strong | partial | low | P3 | Initial worked examples added for traceability labels, lifecycle/status mismatch, moved test files, and route-away when proof does not exist. Add examples later only for new mismatch classes. |
+| `TEST:test-only` | strong | strong | strong | strong | strong | partial | low | P3 | Coverage-strength now reports escaped-defect/regression context, e2e/browser tier breadth, debug visual assertion debt, and mock-honesty risk. Validator blocks `debt-found` summaries that claim no disposition. Add examples later only when new proof-gap classes recur. |
+| `TEST:test-suite-alignment` | strong | strong | strong | strong | strong | partial | low | P3 | Coverage-strength now helps distinguish relabeled coverage from deeper proof by classifying regression, e2e/browser, debug visual, and mock-honesty signals. Add examples later only for new mismatch classes. |
 | `DECISION:refactor-first` | strong | strong | strong | strong | strong | partial | low | P3 | Worked examples now cover duplicate consolidation, over-broad decomposition, test seams, wrong-owner moves, extraction before reuse, performance-preserving refactors, and architecture-route blockers. Add examples later only when new trigger/type pairings recur. |
 | `DECISION:architecture-foundation` | medium | strong | strong | strong | strong | partial | low | P3 | Worked examples now cover authz boundary, frontend topology authority, lifecycle cleanup, approved-source-exists, persistence model, dependency selection, and testing-strategy architecture gaps. Add concern-area examples later only when real slices expose new ambiguity. |
-| `EVIDENCE:qa-evidence` | strong | strong | strong | strong | strong | partial | low | P3 | Worked examples now cover served asset verification, mock-honesty comparison, live payload/browser proof, evidence sweeps, runtime process checks, and coverage-strength interpretation. Add examples later for new evidence instruments only. |
+| `EVIDENCE:qa-evidence` | strong | strong | strong | strong | strong | partial | low | P3 | Coverage-strength interpretation now separates escaped-defect/regression context, e2e/browser tier breadth, debug visual assertion debt, and mock-honesty risk, with validator-backed debt disposition. Add examples later for new evidence instruments only. |
 | `GOV:standards-update` | strong | strong | strong | strong | strong | partial | low | P3 | Initial worked examples added for enforced-now, template-required, script-reported-debt, advisory-approved-debt, artifact-invalidation sweeps, and compliance route-away. Add examples later only when new standards-authority classes or rollout/debt postures create ambiguity. |
 | `GOV:architecture-update` | strong | strong | strong | strong | strong | partial | low | P3 | Initial worked examples added for ADR creation/amendment, system overview updates, frontend topology authority, architecture-owned template updates, architecture-map updates, and unresolved-decision route-away. Add examples later only when new architecture authority surfaces or compatibility postures create ambiguity. |
 | `GOV:design-system` | strong | strong | medium | strong | strong | partial | low | P3 | Initial worked examples added for render seams, behavior/controller seams, accessibility semantics, canonical/evidence updates, and app-adoption contamination blockers. Add examples later only for new seam classes. |
@@ -74,18 +74,17 @@ Ratings:
 The initial example-hardening pass is complete. Use this remaining order unless
 a real delivery blocker changes the risk profile:
 
-1. `TEST:test-only`, `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence`:
-   empirically calibrate `npm run test:coverage-strength` interpretation
-   against escaped-defect history and e2e journey tiers before making it fail
-   on debt.
-2. `DOC:permission-mapping`: revisit after Layer 2 approves any
+1. `DOC:permission-mapping`: revisit after Layer 2 approves any
    configuration-based, relationship-based, ABAC, or ReBAC authorization model.
-3. `shared-code-placement-task-guardrail.md`: add supplemental worked examples
+2. `shared-code-placement-task-guardrail.md`: add supplemental worked examples
    for owning-feature public seams, `src/lib`, stay-put, and
    `DEV:platform-seam` placement.
-4. Data dictionary policy: decide when scoped retention/export/delete/legal-hold
+3. Data dictionary policy: decide when scoped retention/export/delete/legal-hold
    review rows have enough approved cleanup or exception posture to enable
    fail-on-debt behavior.
+4. Coverage-strength policy: decide when escaped-defect, mock-honesty,
+   assertionless debug visual, single-layer, and e2e/browser-tier debt classes
+   have approved cleanup or exception posture to enable scoped fail-on-debt.
 5. Manifest/validator policy: decide whether
    `task-type-contract-manifest.md` remains a human routing reference or becomes
    validator-required in task packets.
@@ -157,8 +156,11 @@ hardened and what kind of future work should reopen it.
   fail-on-debt behavior.
 - `TEST:test-only`, `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence`:
   examples now distinguish executable proof, metadata/traceability alignment,
-  and evidence capture. Remaining work is empirical coverage-strength
-  calibration against escaped-defect history and e2e journey tiers.
+  and evidence capture. Coverage-strength now reports escaped-defect/regression
+  context, e2e/browser tier breadth, debug visual assertion debt, and
+  mock-honesty risk separately, and the validator blocks discovered debt from
+  being marked as `none`. Remaining work is policy/cleanup before scoped
+  fail-on-debt behavior.
 - `GOV:design-system`: examples now cover seam-producing tasks, downstream
   adoption contamination, canonical/evidence updates, and evidence-only
   route-away. Reopen for new seam classes or first-consumer adoption ambiguity.

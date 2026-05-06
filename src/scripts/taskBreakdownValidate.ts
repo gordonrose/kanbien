@@ -5525,6 +5525,13 @@ function validateDebtHealthSummaries(task: TaskRow, rows: DebtHealthSummaryRow[]
     }
 
     if (
+      row.summaryResult === "debt-found" &&
+      (row.debtDisposition === "none" || row.debtDisposition.startsWith("not-applicable"))
+    ) {
+      errors.push(`${task.taskId} debt health summary found debt but does not resolve, split, accept, or block it`);
+    }
+
+    if (
       (row.debtDisposition === "split-follow-up" || row.debtDisposition === "accepted-deferred") &&
       isNotApplicableValue(row.followUpTaskOrOwner)
     ) {

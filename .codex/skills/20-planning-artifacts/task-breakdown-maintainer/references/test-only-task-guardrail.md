@@ -59,6 +59,11 @@ Use for task type: `TEST:test-only`
 - use `npm run test:coverage-strength` as a non-traceability coverage-health
   summary after adding or materially changing tests; traceability alone does not
   prove coverage strength
+- interpret coverage-strength output by class: skipped/focused tests block,
+  mock/stub-only signals require mock-honesty review, assertionless debug
+  visual files require evidence-sweep ownership rather than automatic failure,
+  escaped-defect signals should route to regression-lock proof, and e2e/browser
+  tier gaps require a journey owner before being accepted
 - if the test reveals missing production behavior, stop and split the required
   implementation into the owning `DEV:backend`, `DEV:frontend`, `DEV:vertical-slice`, or
   other task type before continuing
@@ -159,6 +164,7 @@ Split or block when:
 | Approved PRD `TC-*` rows need executable coverage for an existing backend behavior. | `prd-test-case` | Name exact test-case doc, `TC-*` IDs, target test file, expected assertions, focused command, traceability, mock-honesty, and coverage-strength summary. | Missing behavior routes to owning DEV task; stale `TC-*` status routes to suite alignment. |
 | A tenant-boundary permission matrix lacks denied and cross-tenant proof. | `permission-state-matrix` or `security-boundary` | Cover allowed, denied, expired/unauthenticated, cross-tenant, and object-level states with fixture/runtime honesty and safe denial expectations. | Missing permission mapping routes to `DOC:permission-mapping`; missing runtime denial routes to backend/platform work. |
 | An escaped defect needs a regression lock. | `regression-lock` | Source is issue reconciliation; test fails or would have failed for the defect, names fixture/live shape, focused command, and no behavior-change posture. | Do not patch production code or weaken assertions inside the test-only task. |
+| Coverage-strength output reports mock-only risk or single-layer e2e/browser breadth debt after the focused test passes. | `proof-gap` or `fixture-honesty` | Record the focused proof result plus coverage-strength class, decide whether the scoped debt is resolved, split, or accepted with owner, and name any e2e/browser journey tier owner. | Do not mark `debt-found` as `none`; coverage-strength debt is not behavior proof and cannot replace the focused test. |
 | Fixture behavior may invent fallback fields production does not provide. | `fixture-honesty` | Compare fixture/mock source against API contract or live payload, update only approved test fixture/test harness expectations, and record honesty evidence. | If production contract is unclear, split to `DOC:api-contract` or `EVIDENCE:qa-evidence`. |
 
 ## Required Check IDs

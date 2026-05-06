@@ -49,6 +49,11 @@ Use for task type: `EVIDENCE:qa-evidence`
 - `npm run test:coverage-strength` measures test-suite strength beyond
   traceability; it does not replace slice-specific runtime, payload, browser,
   persistence, or mock-honesty proof when those risks are present
+- interpret coverage-strength as a debt classifier: skipped/focused tests block,
+  assertionless debug visual files usually require evidence-sweep ownership,
+  mock/stub-only signals require a mock-honesty comparison, escaped-defect
+  signals require regression-lock ownership, and e2e/browser tier gaps need a
+  journey owner before being accepted
 - for user-visible runtime proof, name the active process or served surface to
   inspect, whether a restart is required, and the live API, projection,
   persistence, served-asset, or browser evidence needed before completion
@@ -80,6 +85,7 @@ Use for task type: `EVIDENCE:qa-evidence`
 | Broad proof sweep after a feature loop. | `evidence-sweep` | Name exact evidence targets, commands, coverage-strength summary, artifact outputs, and accepted residual gaps. | Do not change standards, architecture, or add missing tests inside the evidence sweep. |
 | Backend/runtime code changed and the visible surface may still be served by an old process. | `runtime-process-check` | Name process lookup command, port, start time, restart requirement, expected runtime identity, and evidence artifact; status is blocked if the active process predates required runtime changes. | Do not restart, patch, or claim the fix is visible unless the owning implementation/runtime task authorizes that action. |
 | A task needs a coverage-strength summary to understand residual proof debt after focused tests pass. | `coverage-strength-summary` | Run `npm run test:coverage-strength`, record score/output path, interpret it as debt signal rather than behavior proof, and name any accepted residual gaps or follow-up owner. | Do not replace task-specific payload/browser/security proof with coverage-strength output. |
+| Coverage-strength output includes assertionless debug visual files, mock-only risk, escaped-defect history, or e2e/browser tier gaps. | `coverage-strength-summary` or `evidence-sweep` | Classify each signal, attach the command output, and record whether each gap is resolved in scope, split, accepted with owner, or blocked. | Do not mark `debt-found` as `none`; evidence tasks may summarize and route debt but do not add missing tests. |
 
 ## Required Check IDs
 
