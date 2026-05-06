@@ -79,6 +79,17 @@ Worked examples:
 - existing-artifact invalidation sweep: review affected maintained artifacts
   and split specialized rewrites to their owning task types.
 
+## Worked Examples
+
+| Scenario | Update Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| A harness retrospective approves a new required Layer 4 check ID that can be validated immediately. | `enforced-now` | Source is the retrospective or recorded approval; target names the guardrail reference, `src/scripts/taskBreakdownValidate.ts`, `src/scripts/featureCompiler/contracts.ts`, and focused unit tests; enforcement posture is `validator-or-gate-enforced-now`; invalidation sweep names affected packet template/examples. | Do not update existing task packets for compliance inside this task; route packet remediation to `DOC:standards-compliance`, `DOC:docs-artifact`, or the owning task type. |
+| A task-breakdown template field becomes mandatory for new packets but does not need runtime validator logic yet. | `template-required` | Source is Layer 2, standards audit, or explicit approval; target is `docs/templates/task-breakdown-packet-template.md` plus matching guardrail reference; enforcement posture is `template-required-now`; rollout says existing packets are reviewed or unaffected. | Do not change implementation behavior or architecture authority; route architecture-template authority changes to `GOV:architecture-update`. |
+| A standards audit approves a debt summary command that reports residual gaps without failing current work. | `script-reported-debt` | Target names the reporting script and docs/standards guidance; enforcement posture is `script-reported-debt`; artifact invalidation sweep explains that current debt is surfaced but not blocking; validation names the report command and tests. | Do not silently turn reported debt into a failing gate until cleanup or exception posture is approved. |
+| A new rule is correct but existing artifacts need cleanup before it can fail the gate. | `advisory-approved-debt` | Source records explicit approval and debt owner; target is the standard or guardrail reference; debt route names a follow-up task, cleanup artifact, or approved debt record; rollout says when enforcement can become validator-backed. | Do not label the rule enforced now; do not bury cleanup in the standards update. |
+| A standards change may invalidate existing templates, validators, examples, generated artifacts, or status snapshots. | `artifact-invalidation-sweep` | Target is a bounded sweep note or standards-owned artifact; affected surfaces name exact paths; invalidation sweep records reviewed, invalidated, routed-away, or not-applicable outcomes; validation names `rg`, `git diff --check`, and any focused tests. | Do not rewrite specialized artifacts discovered by the sweep; route API, data, permission, architecture, design-system, test, and evidence updates to their owners. |
+| A compliance review finds that a feature does not satisfy an existing gate. | blocked route-away | `GOV:standards-update` is not needed unless the standard itself is wrong or incomplete. | Record compliance posture in `DOC:standards-compliance`; route missing behavior, tests, or evidence to `DEV:*`, `TEST:*`, or `EVIDENCE:qa-evidence`. |
+
 ## Deep Delivery Standard
 
 - one standard family, gate, checklist, or validator contract per queued task
