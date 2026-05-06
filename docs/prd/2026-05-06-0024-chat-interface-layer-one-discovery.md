@@ -10,18 +10,17 @@
   - no durable conversation or packet history persistence yet
   - no generated Product Discovery packet PDF delivery yet
 - Not yet implemented:
-  - generated packet PDF asset/download decision
-  - design-system work panel and chat seams
   - API contracts
   - permission mapping
   - data dictionary
   - implementation blueprint
-  - PRD-derived test cases
+  - executable tests
   - runtime/browser QA evidence
 
 This PRD preserves the root-admin MVP behavior and planning obligations. It is
-not an implementation-ready artifact until the unresolved asset, permission,
-design-system, data, API, and evidence blockers are resolved.
+not an implementation-ready artifact until the unresolved permission, PDF
+numeric-threshold, root-admin design-system parity, data, API, blueprint, and
+evidence blockers are resolved.
 
 ## Source Artifacts
 
@@ -37,6 +36,8 @@ design-system, data, API, and evidence blockers are resolved.
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
 - Capability Matrix Notes:
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft-notes.md`
+- PRD-derived test cases:
+  `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`
 
 ## Summary
 
@@ -64,7 +65,8 @@ The MVP includes:
 - canonical Product Discovery packet data generation through a narrow adapter
 - packet revision supersession when a newer packet is generated from the same
   conversation
-- generated packet PDF delivery after an approved asset/download decision
+- generated packet PDF delivery after approved numeric thresholds and route
+  contracts exist
 - server-side authority for actor, root or tenant scope, context, history, and
   downloads
 - runtime/browser evidence requirements before user-visible completion claims
@@ -271,14 +273,13 @@ Runtime/browser evidence must include:
 
 The PRD does not resolve these blockers:
 
-- generated packet PDF delivery posture
 - exact root-builder review role or permission
-- design-system family extension versus new governed family decision
+- generated packet PDF numeric implementation thresholds
+- root-admin first-consumer design-system parity proof
 - API contract details
 - permission mapping details
 - data dictionary
 - implementation blueprint
-- PRD-derived test cases
 - runtime/browser QA evidence plan
 
 ## Acceptance Summary

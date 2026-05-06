@@ -18,6 +18,8 @@
   docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md
 - Related capability matrix:
   docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv
+- Related PRD-derived test cases:
+  docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md
 - Related GOV:design-system, asset, ADR, or architecture artifacts:
   Build work panel design-system governance exists at
   docs/workspace/design-system/behavior-locks/build-work-panel-behavior-lock.md,
@@ -53,12 +55,12 @@
   implementation.
 - Steering stop conditions resolved or carried as blockers:
   The Layer 2 to Layer 3 blocker-resolution loop found no requester-answerable
-  product blocker for the MVP. PRD, first-draft capability matrix, generated
-  PDF direction, and design-system path are now captured. Remaining blockers
-  are PRD-derived test cases, API contract, permission mapping, data dictionary,
-  persistence planning, runtime evidence, implementation blueprint, root-builder
-  review permission, PDF numeric thresholds, and root-admin first-consumer
-  parity proof.
+  product blocker for the MVP. PRD, first-draft capability matrix,
+  PRD-derived test cases, generated PDF direction, and design-system path are
+  now captured. Remaining blockers are API contract, permission mapping, data
+  dictionary, persistence planning, runtime evidence, implementation blueprint,
+  root-builder review permission, PDF numeric thresholds, and root-admin
+  first-consumer parity proof.
 - First-pass story-map posture:
   This packet is a first-pass blocked story map. It identifies the story queue
   and structural unblock work, but it does not authorize Task Breakdown,
@@ -75,10 +77,10 @@
   sensitive transcript rendering, durable retention, supersession, and
   design-system governed app adoption.
 - Missing source-of-truth artifacts:
-  PRD-derived test cases, API contract, permission mapping, data dictionary,
-  implementation blueprint, feature manifest plan, generated dependency graph
-  plan, runtime/browser evidence plan, root-admin first-consumer parity proof,
-  and PDF numeric-threshold decisions.
+  API contract, permission mapping, data dictionary, implementation blueprint,
+  feature manifest plan, generated dependency graph plan, runtime/browser
+  evidence plan, root-admin first-consumer parity proof, and PDF
+  numeric-threshold decisions.
 
 ## Steering Architecture Classification Snapshot
 
@@ -162,7 +164,7 @@
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-001 | blocked | harness-value | DOC:docs-artifact | MVP PRD, capability matrix, and test-case planning | This is needed to break down the first chat version into individual capabilities and proof expectations, so we can plan the implementation more accurately. | As the delivery harness, I need the root-admin MVP captured in PRD, capability rows, and test-case obligations before implementation tasks are cut. | harness/planning | PRD, capability matrix, and PRD-derived test cases exist for every MVP capability and acceptance criterion. | none |
+| S-001 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | MVP PRD, capability matrix, and test-case planning | This is needed to break down the first chat version into individual capabilities and proof expectations, so we can plan the implementation more accurately. | As the delivery harness, I need the root-admin MVP captured in PRD, capability rows, and test-case obligations before implementation tasks are cut. | harness/planning | PRD, capability matrix, and PRD-derived test cases exist for every MVP capability and acceptance criterion. | none |
 | S-002 | blocked | user-value | GOV:design-system | Work panel and chat design-system governance | This is needed to define how the chat experience should look and behave before it appears in the real workspace. | As a root builder, I need the panel, mobile action, chat thread, starter prompts, history, and PDF action to use signed-off design-system seams. | root builder / design-system owner | The design-system path is answered as `build-work-panel` over the shared `conversationPanel` seam; root-admin app adoption remains blocked on first-consumer parity proof. | S-001 |
 | S-003 | blocked | system-value | DECISION:architecture-foundation | Generated packet PDF delivery decision | This is its own story because creating a downloadable packet affects trust, privacy, storage, retention, and what people can safely share. | As architecture governance, I need a decision record for generated packet PDF delivery, storage, retention, access, MVP rendering scope, future reuse boundary, scale, latency, failure, operations, and reversibility before PDF implementation. | architecture/security | Delivery/storage/rendering direction is approved; numeric implementation thresholds remain deferred before implementation. | docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md |
 | S-004 | blocked | harness-value | DEV:backend | Product Discovery harness adapter | This is its own story because the chat should create the same discovery packet people already expect, not a lookalike version. | As the Build chat, I need a narrow adapter that produces canonical Product Discovery packet data through the existing Layer 1 process. | harness/system | Chat orchestration can create packet data without inventing a parallel discovery format. | API contract and implementation blueprint |
@@ -201,7 +203,7 @@
 | --- | --- | --- | --- | --- | --- |
 | S-001 | AC-S001-01 | chatInterface.mvpPlanning | planning | create-or-refresh-required | PRD does not exist yet. |
 | S-001 | AC-S001-02 | chatInterface.capabilityTrace | planning | create-or-refresh-required | Capability matrix does not exist yet. |
-| S-001 | AC-S001-03 | chatInterface.testPlanning | planning | create-or-refresh-required | PRD-derived test cases do not exist yet. |
+| S-001 | AC-S001-03 | chatInterface.testPlanning | planning | prove-current | PRD-derived test cases exist at `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`. |
 | S-002 | AC-S002-01 | chatInterface.designSystemWorkPanel | design-system | create-or-refresh-required | Design-system artifacts do not exist yet. |
 | S-002 | AC-S002-02 | chatInterface.designSystemAdoption | design-system | create-or-refresh-required | Adoption artifact required before app UI. |
 | S-003 | AC-S003-01 | chatInterface.packetPdfDeliveryDecision | asset/download governance | not-capability-backed | Architecture foundation decision, not a runtime capability row. |
@@ -328,7 +330,7 @@
 | --- | --- | --- | --- | --- | --- |
 | ART-CHAT-001 | S-001 | PRD | prove-current | PRD maintainer workflow | no |
 | ART-CHAT-002 | S-001 | capability matrix | prove-current | capability-matrix maintainer workflow | no |
-| ART-CHAT-003 | S-001 | PRD-derived test cases | create | prd-test-case-planner | yes |
+| ART-CHAT-003 | S-001 | PRD-derived test cases | prove-current | prd-test-case-planner | yes |
 | ART-CHAT-004 | S-002 and S-007 | GOV:design-system artifacts | prove-current | frontend-design-system-loop-maintainer | no |
 | ART-CHAT-005 | S-003 | asset consumer decision record | prove-current | docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md | no |
 | ART-CHAT-006 | S-006 | API contract docs | create | api-contract-maintainer | yes |
@@ -359,13 +361,13 @@
 
 | Story ID | Handoff Status | Reason |
 | --- | --- | --- |
-| S-001 | blocked | PRD and capability matrix exist; PRD-derived test cases must still be created before Task Breakdown. |
+| S-001 | ready-for-task-breakdown | PRD, capability matrix, and PRD-derived test cases exist; downstream implementation remains blocked by later stories and artifact decisions. |
 | S-002 | control-story-only | Design-system path is answered as `build-work-panel` over shared `conversationPanel` seams; root-admin first-consumer parity proof remains part of S-007. |
 | S-003 | blocked | Asset consumer decision record captures approved transient generated download, simple structured export rendering, preferred Playwright/Chromium renderer, and future-usable generated-document boundary; implementation remains blocked until numeric limits and alert thresholds are set in PRD/API contract or implementation blueprint. |
 | S-004 | blocked | API contract and implementation blueprint must define adapter behavior before Task Breakdown. |
 | S-005 | blocked | Data dictionary and persistence plan are missing. |
 | S-006 | blocked | API contract and permission mapping are missing. |
 | S-007 | blocked | Root-admin first-consumer parity proof, APIs, permissions, and evidence plan are missing. |
-| S-008 | blocked | PRD-derived test cases and QA evidence plan are missing. |
+| S-008 | blocked | PRD-derived test cases exist; QA evidence plan and runtime/browser proof are still missing. |
 | S-009 | blocked | Source-independent artifact set is not created yet. |
 | S-010 | control-story-only | Future tenant-builder rollout is intentionally deferred from MVP. |

@@ -48,6 +48,8 @@
   `docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md`
 - Capability Matrix:
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
+- PRD-derived test cases:
+  `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`
 - Layer 1 Runtime Contract:
   `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md`
 - Work runs / Loop Runs:
@@ -63,11 +65,11 @@
   Story planning blocked on artifact unblocks
 - Short update:
   Product intent, architecture direction, story queue, PRD, first-draft
-  capability matrix, generated PDF direction, and design-system path are
-  captured. Next we need to define root-builder review permission, set the PDF
-  numeric implementation thresholds, and create the remaining API, permission,
-  data, test, evidence, and blueprint artifacts before implementation tasks can
-  begin.
+  capability matrix, generated PDF direction, design-system path, and
+  PRD-derived test cases are captured. Next we need to define root-builder
+  review permission, set the PDF numeric implementation thresholds, and create
+  the remaining API, permission, data, journey/evidence, and blueprint
+  artifacts before implementation tasks can begin.
 - Waiting next:
   Layer 3 unblock work
 - User action needed:
