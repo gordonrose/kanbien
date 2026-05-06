@@ -69,24 +69,25 @@ Ratings:
 | `GOV:architecture-update` | strong | strong | strong | strong | strong | partial | low | P3 | Initial worked examples added for ADR creation/amendment, system overview updates, frontend topology authority, architecture-owned template updates, architecture-map updates, and unresolved-decision route-away. Add examples later only when new architecture authority surfaces or compatibility postures create ambiguity. |
 | `GOV:design-system` | strong | strong | medium | strong | strong | partial | low | P3 | Initial worked examples added for render seams, behavior/controller seams, accessibility semantics, canonical/evidence updates, and app-adoption contamination blockers. Add examples later only for new seam classes. |
 
-## Priority Sequence
+## Remaining Priority Sequence
 
-Use this order unless a real delivery blocker changes the risk profile:
+The initial example-hardening pass is complete. Use this remaining order unless
+a real delivery blocker changes the risk profile:
 
-1. `DOC:docs-artifact`: weakest script-first contract and easiest place for
-   vague "update docs" drift to return.
-2. `DOC:standards-compliance`, `GOV:standards-update`, and
-   `GOV:architecture-update`: governance lanes need stronger examples and
-   deterministic source/control inventories before higher delivery pace.
-3. `DOC:api-contract`, `DOC:permission-mapping`, `DECISION:refactor-first`,
-   `DECISION:architecture-foundation`, `EVIDENCE:qa-evidence`,
-   `DEV:platform-seam`, and `DEV:backend`: medium-risk lanes where the main
-   remaining value is class-specific examples, script-shaped inventory, and
-   generator/readiness contracts.
-4. `DEV:frontend`, `DEV:vertical-slice`, `DEV:migration-persistence`,
-   `DOC:data-dictionary`, `TEST:test-only`, `TEST:test-suite-alignment`, and
-   `GOV:design-system`: comparatively mature; revisit mainly for worked
-   examples, calibration, or debt-policy changes.
+1. `DOC:data-dictionary`: resolve scoped retention/export/delete/legal-hold
+   review rows surfaced by `npm run data:compliance-health`.
+2. `TEST:test-only`, `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence`:
+   empirically calibrate `npm run test:coverage-strength` interpretation
+   against escaped-defect history and e2e journey tiers before making it fail
+   on debt.
+3. `DOC:permission-mapping`: revisit after Layer 2 approves any
+   configuration-based, relationship-based, ABAC, or ReBAC authorization model.
+4. `shared-code-placement-task-guardrail.md`: add supplemental worked examples
+   for owning-feature public seams, `src/lib`, stay-put, and
+   `DEV:platform-seam` placement.
+5. Manifest/validator policy: decide whether
+   `task-type-contract-manifest.md` remains a human routing reference or becomes
+   validator-required in task packets.
 
 ## Worked Example Program
 
