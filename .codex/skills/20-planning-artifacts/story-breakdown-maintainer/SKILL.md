@@ -37,6 +37,9 @@ Task Breakdown, or Delivery.
    Create the smallest independently deliverable and verifiable stories.
    Assign each story:
    - stable story ID
+   - short human-readable title
+   - plain-language context that explains why the story is meaningful on its
+     own to someone who does not know how the software is built
    - value type: `user-value`, `system-value`, or `harness-value`
    - delivery shape
    - job to be done
@@ -119,6 +122,13 @@ Task Breakdown, or Delivery.
   control story is queued to create or refresh them.
 - Do not treat missing design-system render/controller seams as a frontend
   implementation detail.
+- Match story context to the kind of story. User-facing stories should explain
+  the recognizable user or business moment. Planning and control stories should
+  explain the planning purpose directly, such as breaking the epic into
+  capabilities, clarifying scope, or planning implementation more accurately.
+- Do not use vague planning shorthand in story context, such as promises or
+  visual work. Explain what a person can understand, such as what they can do,
+  see, decide, trust, avoid, recover from, review, or plan.
 - Do not leave a validated blocked packet as a dead end. Record the unblock
   queue and surface the smallest human decision set or artifact creation path
   needed to advance.

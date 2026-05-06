@@ -149,9 +149,21 @@ Allowed delivery shapes:
 - `GOV:architecture-update`
 - `GOV:design-system`
 
-| Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | needs-capability-matrix | harness-value | DOC:docs-artifact | Capability matrix normalization | As the delivery harness, I need approved stories translated into explicit capability rows so implementation cannot proceed from vague value statements. | harness | Approved capability rows exist for every story acceptance criterion. |  |
+| Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| S-000 | needs-capability-matrix | harness-value | DOC:docs-artifact | Capability matrix normalization | This is needed to break down what the epic needs to be able to do into individual capabilities, so we can plan the implementation more accurately. | As the delivery harness, I need approved stories translated into explicit capability rows so implementation cannot proceed from vague value statements. | harness | Approved capability rows exist for every story acceptance criterion. |  |
+
+Story titles and context must be readable by non-engineering stakeholders.
+
+- `Title` is the recognizable user, business, or planning moment.
+- `Context` explains why this story is meaningful on its own in everyday
+  product or business language. It should sound natural to a non-engineer.
+- Avoid implementation reasons unless the detail directly changes what the
+  user, operator, or business can see, decide, trust, or recover from.
+- For planning or control stories, explain the planning purpose directly. It is
+  okay to say that the story breaks work into capabilities, clarifies scope, or
+  helps plan implementation more accurately.
+- Avoid vague planning shorthand such as promises or visual work.
 
 ## Acceptance Criteria
 

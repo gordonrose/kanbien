@@ -142,6 +142,21 @@ const vaguePhrases = [
   "etc.",
 ];
 
+const technicalContextTerms = [
+  "api",
+  "authz",
+  "backend",
+  "contract",
+  "controller",
+  "css",
+  "database",
+  "frontend",
+  "migration",
+  "persistence",
+  "route",
+  "seam",
+];
+
 export type StoryBreakdownValidationResult = {
   status: "PASS" | "BLOCKED";
   errors: string[];
@@ -153,6 +168,7 @@ type StoryRow = {
   valueType: string;
   deliveryShape: string;
   title: string;
+  context: string;
   jobToBeDone: string;
   perspective: string;
   outcome: string;
@@ -308,6 +324,8 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   const browserSecurityPostureSnapshots = parseBrowserSecurityPostureSnapshotRows(content);
   const taskTypeSignals = parseTaskTypeSignalRows(content);
   const packetStatus = parsePacketStatus(content);
+
+  validateStoryQueueShape(content, errors);
 
   if (stories.length === 0) {
     errors.push("Story Queue has no story rows");
@@ -530,9 +548,53 @@ function validateStoryRow(story: StoryRow, errors: string[]): void {
   }
 
   validateRequiredField(story.storyId, "Title", story.title, errors);
+  validateRequiredField(story.storyId, "Context", story.context, errors);
+  validatePlainLanguageStoryContext(story, errors);
   validateRequiredField(story.storyId, "Job To Be Done", story.jobToBeDone, errors);
   validateRequiredField(story.storyId, "Actor / System Perspective", story.perspective, errors);
   validateRequiredField(story.storyId, "Outcome", story.outcome, errors);
+}
+
+function validateStoryQueueShape(content: string, errors: string[]): void {
+  const storyQueue = section(content, "## Story Queue");
+  const header = storyQueue
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .find((line) => line.startsWith("| Story ID |"));
+
+  if (!header) {
+    return;
+  }
+
+  const columns = header.slice(1, -1).split("|").map((cell) => cell.trim());
+  const titleIndex = columns.indexOf("Title");
+  const contextIndex = columns.indexOf("Context");
+  const jobIndex = columns.indexOf("Job To Be Done");
+
+  if (contextIndex === -1) {
+    errors.push("Story Queue missing Context column");
+    return;
+  }
+
+  if (titleIndex === -1 || jobIndex === -1 || contextIndex !== titleIndex + 1 || jobIndex !== contextIndex + 1) {
+    errors.push("Story Queue Context column must appear between Title and Job To Be Done");
+  }
+}
+
+function validatePlainLanguageStoryContext(story: StoryRow, errors: string[]): void {
+  const lowered = story.context.toLowerCase();
+  const matchedTerms = technicalContextTerms.filter((term) => {
+    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`\\b${escaped}\\b`, "i").test(story.context);
+  });
+
+  if (matchedTerms.length > 0) {
+    errors.push(`${story.storyId} Context should be plain language; avoid technical terms: ${matchedTerms.join(", ")}`);
+  }
+
+  if (!lowered.includes("because") && !lowered.includes("needed to") && !lowered.includes("needed so")) {
+    errors.push(`${story.storyId} Context should explain why this story is meaningful on its own`);
+  }
 }
 
 function validateStoryTestInputRow(row: StoryTestInputRow, errors: string[]): void {
@@ -736,9 +798,10 @@ function parseStoryRows(content: string): StoryRow[] {
     valueType: cells[2] ?? "",
     deliveryShape: cells[3] ?? "",
     title: cells[4] ?? "",
-    jobToBeDone: cells[5] ?? "",
-    perspective: cells[6] ?? "",
-    outcome: cells[7] ?? "",
+    context: cells[5] ?? "",
+    jobToBeDone: cells[6] ?? "",
+    perspective: cells[7] ?? "",
+    outcome: cells[8] ?? "",
   }));
 }
 

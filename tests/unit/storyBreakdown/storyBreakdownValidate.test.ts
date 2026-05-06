@@ -56,10 +56,10 @@ const validPacket = `# Story Breakdown Packet: Tenant Branding
 
 ## Story Queue
 
-| Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Capability matrix normalization | As the delivery harness, I need approved stories translated into capability rows so implementation starts from explicit obligations. | harness | Approved capability rows exist for every acceptance criterion. | Technical Steering packet |
-| S-001 | ready-for-task-breakdown | user-value | DEV:backend | Root admin updates branding | As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload. | root admin | Branding display name is persisted for the selected tenant. | S-000 |
+| Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| S-000 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Capability matrix normalization | This is needed to break down what tenant branding needs to be able to do into individual capabilities, so we can plan the implementation more accurately. | As the delivery harness, I need approved stories translated into capability rows so implementation starts from explicit obligations. | harness | Approved capability rows exist for every acceptance criterion. | Technical Steering packet |
+| S-001 | ready-for-task-breakdown | user-value | DEV:backend | Root admin updates branding | This is its own story because changing the name people see is a clear business action that can be reviewed separately from logo work. | As a root admin, I need to update a tenant branding display name so tenant users see the approved value after reload. | root admin | Branding display name is persisted for the selected tenant. | S-000 |
 
 ## Acceptance Criteria
 
@@ -155,6 +155,43 @@ describe("story breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("S-001 missing Job To Be Done");
+  });
+
+  it("blocks a story queue without human-readable context", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "This is its own story because changing the name people see is a clear business action that can be reviewed separately from logo work.",
+        "",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("S-001 missing Context");
+  });
+
+  it("blocks technical implementation terms in story context", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "This is its own story because changing the name people see is a clear business action that can be reviewed separately from logo work.",
+        "This is its own story because the backend API route can be implemented separately.",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "S-001 Context should be plain language; avoid technical terms: api, backend, route",
+    );
+  });
+
+  it("allows direct planning language for control stories", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "This is its own story because changing the name people see is a clear business action that can be reviewed separately from logo work.",
+        "This is needed to break down what the dashboard needs to be able to do into individual capabilities, so we can plan the implementation more accurately.",
+      ),
+    );
+
+    expect(result.errors).not.toContain("S-001 missing Context");
   });
 
   it("blocks missing acceptance criteria", () => {
