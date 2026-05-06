@@ -66,6 +66,14 @@ This pack is governed by:
 | `BWP-R-010` | `/design-system/canonical-renderings/build-work-panel/BWP-R-010` | RTL desktop panel open | Proves shell attachment, action order, conversation history, and close behavior mirror correctly. | canonical-created | Direction is encoded in the canonical reference. |
 | `BWP-R-011` | `/design-system/canonical-renderings/build-work-panel/BWP-R-011` | Dark theme with magnification and long labels | Proves contrast, focus indicators, wrapping, and message readability under accessibility stress. | canonical-created | Rendered smoke check passed after dark-theme correction. |
 | `BWP-R-012` | `/design-system/canonical-renderings/build-work-panel/BWP-R-012` | Reporting and Support inactive actions | Proves inactive actions are visible as future affordances without acting like broken buttons. | canonical-created | MVP non-goal guard. |
+| `BWP-R-013` | `/design-system/canonical-renderings/build-work-panel/BWP-R-013` | Long typed input | Proves the composer textarea grows naturally while the send button stays fixed. | canonical-created | Covers scrollbar-at-max-height risk. |
+| `BWP-R-014` | `/design-system/canonical-renderings/build-work-panel/BWP-R-014` | Tools menu open | Proves attachment, screen capture, and log capture actions expand without squeezing the composer. | canonical-created | Covers expandable menu placement. |
+| `BWP-R-015` | `/design-system/canonical-renderings/build-work-panel/BWP-R-015` | Download completed journey | Proves the initial packet block can disappear after download while the transcript records a repeatable event. | canonical-created | Covers completed export journey. |
+| `BWP-R-016` | `/design-system/canonical-renderings/build-work-panel/BWP-R-016` | History summary tooltip | Proves slim conversation-history rows can reveal a bounded summary without making the list bulky. | canonical-created | Tooltip copy stays capped at 140 characters. |
+| `BWP-R-017` | `/design-system/canonical-renderings/build-work-panel/BWP-R-017` | Message edit state | Proves builder messages can enter edit mode without collapsing transcript spacing. | canonical-created | Covers user-authored message editing. |
+| `BWP-R-018` | `/design-system/canonical-renderings/build-work-panel/BWP-R-018` | Harness reply prefill | Proves replying to a harness message pre-fills the composer while preserving the compact action row. | canonical-created | Covers harness response workflow. |
+| `BWP-R-019` | `/design-system/canonical-renderings/build-work-panel/BWP-R-019` | Mobile long-content stress | Proves long mobile messages, packet status, and composer remain reachable without clipping. | canonical-created | Highest-risk mobile overflow state. |
+| `BWP-R-020` | `/design-system/canonical-renderings/build-work-panel/BWP-R-020` | Dark mobile preparing download | Proves dark mobile rendering keeps the preparing state readable while preserving panel structure. | canonical-created | Covers prior dark-theme and mobile-frame regressions together. |
 
 ## High-Risk Review Batch
 
@@ -76,6 +84,10 @@ The highest-risk review states are:
 - `BWP-R-005` packet available with download action
 - `BWP-R-009` mobile panel open, Build selected
 - `BWP-R-011` dark theme with magnification and long labels
+- `BWP-R-013` long typed input
+- `BWP-R-015` download completed journey
+- `BWP-R-019` mobile long-content stress
+- `BWP-R-020` dark mobile preparing download
 
 These states prove the core workflow, responsive shape, accessibility stress,
 and PDF action posture.
@@ -108,7 +120,7 @@ and PDF action posture.
   `/design-system/canonicals/build-work-panel`
 - Dedicated canonical render states:
   `/design-system/canonical-renderings/build-work-panel/BWP-R-001` through
-  `/design-system/canonical-renderings/build-work-panel/BWP-R-012`
+  `/design-system/canonical-renderings/build-work-panel/BWP-R-020`
 - Browser verification:
   rendered smoke checks passed for current review surface; full canonical
   browser suite pending

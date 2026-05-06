@@ -134,9 +134,9 @@
 - Promotion decision:
   promote to canonical-created design-system family; keep app adoption blocked
 - Open follow-ups:
-  Add the full Playwright canonical scenario batch, prove root-admin first
-  consumer parity, decide the hardened app style-entrypoint name, and refresh
-  this checklist before root-admin adoption.
+  Add the full Playwright canonical scenario batch for `BWP-R-001` through
+  `BWP-R-020`, prove root-admin first consumer parity, decide the hardened app
+  style-entrypoint name, and refresh this checklist before root-admin adoption.
 
 ## Traceability And Sync
 

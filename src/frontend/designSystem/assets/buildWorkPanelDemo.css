@@ -314,7 +314,8 @@
 }
 
 .build-work-panel-demo-history-item:hover span,
-.build-work-panel-demo-history-item:focus-visible span {
+.build-work-panel-demo-history-item:focus-visible span,
+.build-work-panel-demo-history-item.is-tooltip-visible span {
   display: block;
 }
 

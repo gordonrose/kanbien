@@ -162,14 +162,29 @@ function resizeMessageInput() {
     return;
   }
 
-  const maxHeight = Number.parseFloat(window.getComputedStyle(messageInput).maxHeight);
-  messageInput.style.height = "auto";
-  const minHeight = Number.parseFloat(window.getComputedStyle(messageInput).minHeight);
+  const computedStyle = window.getComputedStyle(messageInput);
+  const maxHeight = Number.parseFloat(computedStyle.maxHeight);
+  const minHeight = Number.parseFloat(computedStyle.minHeight);
   const emptyHeight = Number.isFinite(minHeight) ? minHeight : 40;
-  const measuredHeight = messageInput.value.trim().length === 0 ? emptyHeight : messageInput.scrollHeight;
+  if (messageInput.value.trim().length === 0) {
+    messageInput.style.height = `${emptyHeight}px`;
+    messageInput.style.overflowY = "hidden";
+    return;
+  }
+
+  const lineHeight = Number.parseFloat(computedStyle.lineHeight) || 20;
+  const horizontalPadding =
+    (Number.parseFloat(computedStyle.paddingLeft) || 0) + (Number.parseFloat(computedStyle.paddingRight) || 0);
+  const averageCharacterWidth = Math.max(8, lineHeight * 0.48);
+  const usableWidth = Math.max(1, messageInput.clientWidth - horizontalPadding);
+  const charactersPerLine = Math.max(16, Math.floor(usableWidth / averageCharacterWidth));
+  const measuredLines = messageInput.value
+    .split("\n")
+    .reduce((lineCount, line) => lineCount + Math.max(1, Math.ceil(line.length / charactersPerLine)), 0);
+  const measuredHeight = emptyHeight + Math.max(0, measuredLines - 1) * lineHeight;
   const nextHeight = Number.isFinite(maxHeight) ? Math.min(measuredHeight, maxHeight) : measuredHeight;
   messageInput.style.height = `${nextHeight}px`;
-  messageInput.style.overflowY = messageInput.value.trim().length > 0 && Number.isFinite(maxHeight) && messageInput.scrollHeight > maxHeight ? "auto" : "hidden";
+  messageInput.style.overflowY = Number.isFinite(maxHeight) && measuredHeight > maxHeight ? "auto" : "hidden";
 }
 
 function enforceHistorySummaryLimit() {

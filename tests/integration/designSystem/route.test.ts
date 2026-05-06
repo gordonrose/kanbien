@@ -142,7 +142,7 @@ describe("design system route", () => {
     expectShellTrio(launcher.text);
     expect(launcher.text).toContain("Build Work Panel Canonicals");
     expect(launcher.text).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-001");
-    expect(launcher.text).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-012");
+    expect(launcher.text).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-020");
 
     expect(render.status).toBe(200);
     expectShellTrio(render.text);

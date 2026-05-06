@@ -127,6 +127,81 @@ export const buildWorkPanelCanonicalRefs = [
     historyOpen: true,
     packetState: "ready",
   },
+  {
+    ref: "BWP-R-013",
+    title: "Long typed input",
+    note: "Composer text grows naturally without stretching the send button and scrolls only after max height.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "ready",
+    inputValue:
+      "I need the Build panel to capture a fairly detailed change request with several sentences, enough line wrapping to prove the textarea expands naturally, and enough content to show that the send button stays fixed while the input owns the extra height.",
+  },
+  {
+    ref: "BWP-R-014",
+    title: "Tools menu open",
+    note: "Attachment, screen capture, and log capture tools expand from the composer without squeezing the input row.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "ready",
+    toolsOpen: true,
+  },
+  {
+    ref: "BWP-R-015",
+    title: "Download completed journey",
+    note: "The initial packet block disappears after download and the completed event remains in conversation history with repeat download.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "completed",
+  },
+  {
+    ref: "BWP-R-016",
+    title: "History summary tooltip",
+    note: "Slim conversation history rows expose a bounded summary without making the list bulky.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "ready",
+    forceHistoryTooltip: true,
+  },
+  {
+    ref: "BWP-R-017",
+    title: "Message edit state",
+    note: "A builder message can enter edit mode without collapsing message actions or transcript spacing.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "ready",
+    editMessageIndex: 1,
+  },
+  {
+    ref: "BWP-R-018",
+    title: "Harness reply prefill",
+    note: "Replying to a harness message pre-fills the composer while preserving the compact action row.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "ready",
+    replyToMessageIndex: 2,
+  },
+  {
+    ref: "BWP-R-019",
+    title: "Mobile long-content stress",
+    note: "Mobile panel keeps long messages, packet status, and composer reachable without clipping.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "ready",
+    mobile: true,
+    longMessages: true,
+    inputValue: "Mobile follow-up with enough text to wrap cleanly.",
+  },
+  {
+    ref: "BWP-R-020",
+    title: "Dark mobile preparing download",
+    note: "Dark mobile mode keeps the preparing state readable while preserving composer and panel structure.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "preparing",
+    mobile: true,
+    theme: "dark",
+  },
 ];
 
 export function getBuildWorkPanelCanonicalRef(refId = "BWP-R-002") {
@@ -164,6 +239,22 @@ const defaultMessages = [
   },
 ];
 
+const longStressMessages = [
+  {
+    author: "Harness",
+    text: "I can help shape a Product Discovery packet before anything moves further through the build loop. I will keep blockers visible and ask for decisions before the work advances.",
+  },
+  {
+    author: "Builder",
+    text: "I want this mobile panel to handle a longer request where someone explains the current page, the blocker, the desired packet outcome, and what they expect to download afterwards.",
+    user: true,
+  },
+  {
+    author: "Harness",
+    text: "Got it. I will keep the chain visible, preserve approved packet data, and make sure the export journey remains clear even when the conversation gets long.",
+  },
+];
+
 function renderMessageActions(message) {
   const secondary = message.user
     ? `<button class="build-work-panel-demo-message-action" type="button" data-build-work-panel-edit-message aria-label="Edit message" title="Edit message">${svg(iconPaths.edit)}</button>`
@@ -177,6 +268,25 @@ function renderMessageActions(message) {
 }
 
 function renderPacket(packetState) {
+  if (packetState === "completed") {
+    return "";
+  }
+
+  if (packetState === "preparing") {
+    return `
+      <section class="build-work-panel-demo-packet" data-build-work-panel-packet aria-label="Product Discovery packet status">
+        <div class="build-work-panel-demo-packet-row">
+          <div>
+            <strong>Product Discovery packet</strong>
+            <p class="build-work-panel-demo-review-note"><span class="build-work-panel-demo-status-dot" aria-hidden="true"></span><span data-build-work-panel-download-status>Preparing download</span></p>
+            <p class="build-work-panel-demo-review-note">Approved packet data only. Version 1 of 1.</p>
+          </div>
+          <button class="build-work-panel-demo-download" type="button" data-build-work-panel-download disabled>Preparing...</button>
+        </div>
+      </section>
+    `;
+  }
+
   if (packetState === "denied") {
     return `
       <section class="build-work-panel-demo-packet" data-build-work-panel-packet aria-label="Product Discovery packet status">
@@ -220,6 +330,37 @@ function renderPacket(packetState) {
   `;
 }
 
+function resolveMessages(state, messages) {
+  if (state.longMessages) {
+    return longStressMessages;
+  }
+
+  if (state.packetState === "completed") {
+    return [
+      ...messages,
+      {
+        author: "Harness",
+        text: "Product Discovery packet downloaded from approved packet version 1. This event is now part of the conversation history.",
+        repeatDownload: true,
+      },
+    ];
+  }
+
+  return messages;
+}
+
+function renderEditBox(message) {
+  return `
+    <div class="build-work-panel-demo-edit-box" data-build-work-panel-edit-box>
+      <textarea aria-label="Edit message">${escapeHtml(message.text)}</textarea>
+      <div class="build-work-panel-demo-edit-actions">
+        <button type="button" data-build-work-panel-save-edit>Save</button>
+        <button type="button" data-build-work-panel-cancel-edit>Cancel</button>
+      </div>
+    </div>
+  `;
+}
+
 export function renderBuildWorkPanel(
   root,
   {
@@ -235,6 +376,11 @@ export function renderBuildWorkPanel(
   const state = typeof ref === "string" ? getBuildWorkPanelCanonicalRef(ref) : ref;
   const panelOpen = state.panelOpen !== false;
   const historyOpen = state.historyOpen !== false;
+  const resolvedMessages = resolveMessages(state, messages);
+  const replyMessage = Number.isInteger(state.replyToMessageIndex) ? resolvedMessages[state.replyToMessageIndex] : null;
+  const inputValue = replyMessage
+    ? `Replying to: "${replyMessage.text}"\n\n`
+    : state.inputValue ?? "";
 
   root.classList.add("build-work-panel-demo-app");
   root.dataset.buildWorkPanelMounted = "true";
@@ -265,7 +411,7 @@ export function renderBuildWorkPanel(
         <aside id="build-work-panel-history" class="build-work-panel-demo-history" aria-label="Conversation history">
           <div class="build-work-panel-demo-history-header"><strong>Conversation history</strong><span>${history.length} items</span></div>
           ${history.map((item, index) => `
-            <button class="build-work-panel-demo-history-item${index === 0 ? " is-active" : ""}" type="button" title="${escapeHtml(item.summary.slice(0, 140))}">
+            <button class="build-work-panel-demo-history-item${index === 0 ? " is-active" : ""}${state.forceHistoryTooltip && index === 0 ? " is-tooltip-visible" : ""}" type="button" title="${escapeHtml(item.summary.slice(0, 140))}">
               <strong>${escapeHtml(item.title)}</strong>
               <span>${escapeHtml(item.summary.slice(0, 140))}</span>
             </button>
@@ -273,24 +419,25 @@ export function renderBuildWorkPanel(
         </aside>
         <div class="build-work-panel-demo-chat-column">
           <div class="build-work-panel-demo-thread" data-build-work-panel-thread aria-label="Discovery chat history">
-            ${messages.map((message) => `
+            ${resolvedMessages.map((message, index) => `
               <div class="build-work-panel-demo-message${message.user ? " is-user" : ""}">
                 <strong>${escapeHtml(message.author)}</strong>
-                <span data-build-work-panel-message-copy>${escapeHtml(message.text)}</span>
-                ${renderMessageActions(message)}
+                <span data-build-work-panel-message-copy${state.editMessageIndex === index ? " hidden" : ""}>${escapeHtml(message.text)}</span>
+                ${state.editMessageIndex === index ? renderEditBox(message) : ""}
+                ${message.repeatDownload ? `<button class="build-work-panel-demo-repeat" type="button" data-build-work-panel-download aria-label="Download packet again">${svg(iconPaths.retry)}</button>` : renderMessageActions(message)}
               </div>
             `).join("")}
           </div>
           ${renderPacket(state.packetState)}
           <div class="build-work-panel-demo-input-area">
-            <div class="build-work-panel-demo-tools-menu" data-build-work-panel-tools-menu role="menu" aria-label="Chat input tools">
+            <div class="build-work-panel-demo-tools-menu${state.toolsOpen ? " is-open" : ""}" data-build-work-panel-tools-menu role="menu" aria-label="Chat input tools">
               <button class="build-work-panel-demo-tools-menu-item" type="button" role="menuitem">${svg(iconPaths.attach)}<span>Attach file</span></button>
               <button class="build-work-panel-demo-tools-menu-item" type="button" role="menuitem">${svg(iconPaths.screen)}<span>Capture screen</span></button>
               <button class="build-work-panel-demo-tools-menu-item" type="button" role="menuitem">${svg(iconPaths.logs)}<span>Capture logs</span></button>
             </div>
             <form class="build-work-panel-demo-composer" data-build-work-panel-composer>
-              <button class="build-work-panel-demo-tools-toggle" type="button" data-build-work-panel-tools-toggle aria-label="Open chat tools" aria-expanded="false">+</button>
-              <textarea data-build-work-panel-message rows="1" aria-label="Message the harness" placeholder="Ask the harness or describe a change"></textarea>
+              <button class="build-work-panel-demo-tools-toggle" type="button" data-build-work-panel-tools-toggle aria-label="Open chat tools" aria-expanded="${state.toolsOpen ? "true" : "false"}">+</button>
+              <textarea data-build-work-panel-message rows="1" aria-label="Message the harness" placeholder="Ask the harness or describe a change">${escapeHtml(inputValue)}</textarea>
               <button class="build-work-panel-demo-send" type="submit" aria-label="Send message">${svg("m5 12 14-7-4 7 4 7z")}</button>
             </form>
           </div>
@@ -346,14 +493,29 @@ export function createBuildWorkPanelController(root, options = {}) {
     if (!(input instanceof HTMLTextAreaElement)) {
       return;
     }
-    const maxHeight = Number.parseFloat(window.getComputedStyle(input).maxHeight);
-    input.style.height = "auto";
-    const minHeight = Number.parseFloat(window.getComputedStyle(input).minHeight);
+    const computedStyle = window.getComputedStyle(input);
+    const maxHeight = Number.parseFloat(computedStyle.maxHeight);
+    const minHeight = Number.parseFloat(computedStyle.minHeight);
     const emptyHeight = Number.isFinite(minHeight) ? minHeight : 40;
-    const measuredHeight = input.value.trim().length === 0 ? emptyHeight : input.scrollHeight;
+    if (input.value.trim().length === 0) {
+      input.style.height = `${emptyHeight}px`;
+      input.style.overflowY = "hidden";
+      return;
+    }
+
+    const lineHeight = Number.parseFloat(computedStyle.lineHeight) || 20;
+    const horizontalPadding =
+      (Number.parseFloat(computedStyle.paddingLeft) || 0) + (Number.parseFloat(computedStyle.paddingRight) || 0);
+    const averageCharacterWidth = Math.max(8, lineHeight * 0.48);
+    const usableWidth = Math.max(1, input.clientWidth - horizontalPadding);
+    const charactersPerLine = Math.max(16, Math.floor(usableWidth / averageCharacterWidth));
+    const measuredLines = input.value
+      .split("\n")
+      .reduce((lineCount, line) => lineCount + Math.max(1, Math.ceil(line.length / charactersPerLine)), 0);
+    const measuredHeight = emptyHeight + Math.max(0, measuredLines - 1) * lineHeight;
     const nextHeight = Number.isFinite(maxHeight) ? Math.min(measuredHeight, maxHeight) : measuredHeight;
     input.style.height = `${nextHeight}px`;
-    input.style.overflowY = input.value.trim().length > 0 && Number.isFinite(maxHeight) && input.scrollHeight > maxHeight ? "auto" : "hidden";
+    input.style.overflowY = Number.isFinite(maxHeight) && measuredHeight > maxHeight ? "auto" : "hidden";
   }
 
   openButton?.addEventListener("click", () => setPanelOpen(true));

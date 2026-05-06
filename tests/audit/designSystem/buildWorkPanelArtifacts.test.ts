@@ -67,7 +67,7 @@ describe("build work panel artifact chain", () => {
     expect(behaviorLock).toContain("Reporting, Support, and Build");
     expect(behaviorLock).toContain("Root-admin app adoption is blocked");
     expect(referencePack).toContain("BWP-R-001");
-    expect(referencePack).toContain("BWP-R-012");
+    expect(referencePack).toContain("BWP-R-020");
     expect(referencePack).toContain("canonical-created");
     expect(pattern).toContain("root-admin shell Build panel");
     expect(pattern).toContain("page-local CSS implementation");
@@ -99,10 +99,15 @@ describe("build work panel artifact chain", () => {
     expect(component).toContain("/design-system/assets/buildWorkPanelCanonical.mjs");
     expect(canonicalLauncher).toContain("Build Work Panel Canonicals");
     expect(canonicalLauncher).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-001");
-    expect(canonicalLauncher).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-012");
+    expect(canonicalLauncher).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-020");
     expect(seam).toContain("export function renderBuildWorkPanel");
     expect(seam).toContain("export function createBuildWorkPanelController");
     expect(seam).toContain("buildWorkPanelCanonicalRefs");
+    expect(seam).toContain("BWP-R-013");
+    expect(seam).toContain("BWP-R-020");
+    expect(seam).toContain("toolsOpen");
+    expect(seam).toContain("replyToMessageIndex");
+    expect(seam).toContain("forceHistoryTooltip");
     expect(canonicalController).toContain("createBuildWorkPanelController");
     expect(canonicalController).toContain("/design-system/canonical-renderings/build-work-panel/");
     expect(demoCss).toContain("--bwp-raised-surface");
