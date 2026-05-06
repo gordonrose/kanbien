@@ -48,8 +48,12 @@
   `docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md`
 - Capability Matrix:
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
+- PRD-derived test cases:
+  `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`
 - Layer 1 Runtime Contract:
   `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md`
+- Permission Mapping:
+  `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
 - Work runs / Loop Runs:
   none yet
 - Pull requests, config changes, or extension changes:
@@ -63,16 +67,17 @@
   Story planning blocked on artifact unblocks
 - Short update:
   Product intent, architecture direction, story queue, PRD, first-draft
-  capability matrix, generated PDF direction, and design-system path are
-  captured. Next we need to define root-builder review permission, set the PDF
-  numeric implementation thresholds, and create the remaining API, permission,
-  data, test, evidence, and blueprint artifacts before implementation tasks can
-  begin.
+  capability matrix, generated PDF direction, design-system path, and
+  PRD-derived test cases are captured. Root-builder review is approved for all
+  root builders in the root-admin MVP, while tenant-layer object and
+  relationship permissions remain deferred. Next we need to create the
+  remaining API, data, journey/evidence, and blueprint artifacts before
+  implementation tasks can begin. The PDF numeric thresholds are captured as
+  configurable MVP defaults.
 - Waiting next:
   Layer 3 unblock work
 - User action needed:
-  decide root-builder review permission and PDF numeric thresholds before
-  implementation planning
+  none for the current root-builder review rule
 
 ## Source-Of-Truth Boundary
 

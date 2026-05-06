@@ -73,7 +73,7 @@
 ## Architecture Interview Status
 
 - Interview status:
-  incomplete
+  complete for MVP implementation planning
 - Answered so far:
   transient regenerated download, simple structured export, and future-usable
   generated-document boundary. Typical generation/download should complete in
@@ -99,31 +99,45 @@
   PDF must include a header page with compact packet metadata before the packet
   body. User-visible cancellation is out of scope for the MVP; cancellation is
   handled through server-side timeout and cleanup behavior. Every generation
-  failure must create audit and metrics evidence; alerting should trigger only
-  after repeated failures cross a threshold defined in the PRD, API contract,
-  or implementation blueprint. Support/root-builder diagnostics may expose safe
-  failure reason categories, but not stack traces or renderer internals. The
+  failure must create audit and metrics evidence; alerting should trigger on
+  the approved MVP thresholds named below. Support/root-builder diagnostics may
+  expose safe failure reason categories, but not stack traces or renderer
+  internals. The
   renderer contract should carry locale context now, while MVP PDF content is
   English-only until the planned localization layer exists. Migration and
   reversibility are handled by keeping Playwright/Chromium behind the
   provider-neutral generated-document seam; a second renderer fallback is not
   implemented or tested in the MVP. Product Discovery owns packet data and maps
   approved packet versions into a renderer-neutral document shape; the generic
-  renderer seam must not accept Product Discovery-specific fields directly.
+  renderer seam must not accept Product Discovery-specific fields directly. MVP
+  numeric limits are approved as conservative defaults: 250 KB maximum
+  structured packet source data, 750 KB maximum rendered HTML, 5 MB maximum PDF
+  output with warning at 3 MB, 10-second soft timeout, 20-second hard timeout,
+  one active render per root or future tenant context, three active renders
+  platform-wide, five generations per actor per 10 minutes, three generations
+  per conversation per 10 minutes, 30 generations per root/platform context per
+  hour, one automatic retry only for renderer startup/crash/timeout failures,
+  and alerts for failure rate above 10 percent over 30 minutes, any hard
+  timeout, or a full platform render queue lasting more than 5 minutes.
 - Still requiring explicit review before implementation planning treats this
   as complete:
-  no remaining PDF architecture questions except the deferred numeric limit and
-  alert-threshold gate.
+  no remaining PDF architecture questions for the root-admin MVP. Broader
+  tenant/customer rollout, stored PDFs, public delivery, customer-shareable
+  exports, or substantially higher-volume document generation require a
+  refreshed decision.
 - Explicitly deferred with owner:
-  expected packet size and output size, exact concurrency and burst limits,
-  exact fallback timeout threshold, and rate-limit tuning are deferred to the
-  PRD, API contract, or implementation blueprint owner. No generated-document
-  implementation task may start until those numeric limits are defined.
+  tenant/package-specific overrides, dynamic quotas, paid-tier limits, and
+  asynchronous export queue tuning are deferred to a future configuration
+  owner. The MVP may start with fixed configuration defaults, but
+  implementation must keep the values named and centralized so they can move
+  behind tenant-level or package-level configuration without changing route
+  contracts.
 - Current blocker posture:
-  The delivery/storage/rendering direction is approved, but the generated-
-  document architecture decision is not complete enough for implementation
-  blueprinting until the remaining interview dimensions are answered or
-  explicitly deferred with owners.
+  The delivery/storage/rendering direction and numeric MVP thresholds are
+  approved for implementation blueprinting. The remaining chat-interface
+  blockers live outside this PDF decision, especially permission mapping, API
+  contract, data dictionary, root-admin parity proof, runtime evidence, and the
+  implementation blueprint itself.
 
 ## Asset Class
 
@@ -132,7 +146,9 @@
 - Exact MIME allowlist:
   `application/pdf`
 - Maximum file size:
-  10 MB generated response cap for MVP.
+  5 MB generated response cap for MVP. A rendered PDF at or above 3 MB should
+  record a warning metric so the team can watch for packets that are becoming
+  too large for the simple export path.
 - Maximum count or storage footprint:
   Rendered PDF bytes are not stored as durable assets in the MVP. Packet data,
   packet versions, and download audit events are retained by the owning feature.
@@ -185,8 +201,27 @@
 - Scale and concurrency posture:
   Option 2 light. The generated-document seam should be reusable by future
   features and should enforce explicit concurrency, timeout, fallback, and
-  rate-limit controls. Exact numeric limits must be set in the PRD/API
-  contract or implementation blueprint before delivery.
+  rate-limit controls. MVP defaults are one active render per root or future
+  tenant context and three active renders platform-wide.
+- MVP size, timeout, and rate defaults:
+  These are conservative implementation defaults, not permanent business tier
+  limits. Maximum structured packet source data is 250 KB. Maximum rendered
+  HTML is 750 KB. Maximum PDF output is 5 MB, with a 3 MB warning metric. The
+  soft render timeout is 10 seconds. The hard render timeout is 20 seconds.
+  Rate limits are five PDF generations per actor per 10 minutes, three PDF
+  generations per conversation per 10 minutes, and 30 PDF generations per
+  root/platform context per hour.
+- Retry and non-retry defaults:
+  One automatic retry is allowed only for renderer startup, renderer crash, or
+  render timeout before the hard timeout. Do not automatically retry
+  authorization denials, invalid packet state, oversized packet data, unsafe
+  input, inaccessible packet data, or data-integrity failures.
+- Configuration posture:
+  The first implementation may ship these as central static configuration
+  defaults. Do not scatter the values as route-local literals. The
+  implementation blueprint should name the configuration keys or module that
+  owns them and preserve a future path to tenant-level, package-level, or
+  platform-level overrides after a separate configuration decision.
 - Future async posture:
   A high-volume asynchronous export pipeline is explicitly deferred but should
   remain compatible with the MVP seam. The MVP should not require a rewrite to
@@ -335,11 +370,17 @@
 ## Abuse And Cost Controls
 
 - Per-actor rate limit:
-  20 packet PDF generations or downloads per hour until a broader rate-limit
-  policy is defined.
+  5 packet PDF generations per 10 minutes. Downloads of an already generated
+  response are transient in the MVP and should still be audited; if a future
+  cached or stored response exists, download-specific limits must be revisited.
 - Per-tenant rate limit:
-  not applicable for the root-admin MVP. Future tenant rollout must define a
-  tenant-scoped limit before activation.
+  not applicable for active tenant workflows in the root-admin MVP. The
+  generated-document seam should still support one active render per future
+  tenant context and a tenant-level override path before tenant rollout.
+- Per-conversation rate limit:
+  3 packet PDF generations per 10 minutes.
+- Per-root/platform context rate limit:
+  30 packet PDF generations per hour.
 - Per-tenant storage quota:
   not applicable for transient rendered PDFs.
 - Pending upload limit:
@@ -358,11 +399,10 @@
   Audit repeated denied downloads, repeated generation failures, and
   rate-limited actors.
 - Operational signal for generation failures:
-  every generation failure must produce audit and metrics evidence. Alerting
-  should trigger only when repeated failures cross a threshold defined in the
-  PRD, API contract, or implementation blueprint. Exact alert thresholds are
-  part of the deferred numeric limit gate and must be defined before
-  implementation starts.
+  every generation failure must produce audit and metrics evidence. Alert if
+  PDF generation failure rate exceeds 10 percent over a rolling 30-minute
+  window, if any render reaches the 20-second hard timeout, or if the
+  platform-wide render queue remains full for more than 5 minutes.
 - Support diagnostics:
   support/root-builder views may show safe failure reason categories for failed
   PDF generation, such as `render_timeout`, `packet_unavailable`,
@@ -470,8 +510,8 @@ implementation continues.
 Approval status:
 Approved for the root-admin MVP. The requester explicitly accepted transient
 generated download from durable packet data and simple structured export in
-chat on 2026-05-06. The broader reusable generated-document architecture
-interview remains incomplete.
+chat on 2026-05-06, and accepted conservative configurable MVP numeric
+threshold defaults on 2026-05-07.
 
 ## Final Decision
 

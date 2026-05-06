@@ -10,18 +10,16 @@
   - no durable conversation or packet history persistence yet
   - no generated Product Discovery packet PDF delivery yet
 - Not yet implemented:
-  - generated packet PDF asset/download decision
-  - design-system work panel and chat seams
   - API contracts
-  - permission mapping
   - data dictionary
   - implementation blueprint
-  - PRD-derived test cases
+  - executable tests
   - runtime/browser QA evidence
 
 This PRD preserves the root-admin MVP behavior and planning obligations. It is
-not an implementation-ready artifact until the unresolved asset, permission,
-design-system, data, API, and evidence blockers are resolved.
+not an implementation-ready artifact until the unresolved PDF configuration
+implementation, root-admin design-system parity, data, API, blueprint, and
+evidence blockers are resolved.
 
 ## Source Artifacts
 
@@ -37,6 +35,10 @@ design-system, data, API, and evidence blockers are resolved.
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
 - Capability Matrix Notes:
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft-notes.md`
+- PRD-derived test cases:
+  `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`
+- Permission Mapping:
+  `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
 
 ## Summary
 
@@ -59,12 +61,14 @@ The MVP includes:
 - Build as the only active workflow
 - contextual starter prompts based on current page, module, and role context
 - free-form chat for Layer 1 Product Discovery
-- durable conversation history for the creator
-- root-builder review visibility once the approved permission is named
+- durable conversation history for root builders
+- root-builder review visibility for other root builders' root-admin discovery
+  work
 - canonical Product Discovery packet data generation through a narrow adapter
 - packet revision supersession when a newer packet is generated from the same
   conversation
-- generated packet PDF delivery after an approved asset/download decision
+- generated packet PDF delivery after approved numeric thresholds and route
+  contracts exist
 - server-side authority for actor, root or tenant scope, context, history, and
   downloads
 - runtime/browser evidence requirements before user-visible completion claims
@@ -92,8 +96,8 @@ The MVP does not include:
 - Chat creator:
   The actor who created a conversation and may later view their own history.
 - Root-builder reviewer:
-  A root-level actor who may review root-admin discovery histories after the
-  permission mapping names the exact role or capability.
+  Any authenticated root builder in the root-admin MVP. Root builders may
+  review other root builders' root-admin discovery histories.
 - Future tenant builder:
   A known future actor. Active tenant-builder workflows are out of MVP scope.
 - Product Discovery adapter:
@@ -122,9 +126,8 @@ The MVP does not include:
     packet revision.
 12. After PDF delivery posture is approved, the root builder can download a
     well-presented packet PDF.
-13. The creator can later see the conversation history.
-14. The approved root-builder reviewer can review root-admin discovery
-    histories after the permission mapping is resolved.
+13. Root builders can later see root-admin conversation history, including
+    root-admin discovery histories created by other root builders.
 
 ## Lifecycle States
 
@@ -188,27 +191,47 @@ preserving historical truth.
 - Client-provided page/module/role context can influence starter prompts but
   must not grant authority.
 - Chat creators can read their own histories.
-- Root-builder review visibility is required, but the exact role/capability is
-  unresolved and blocks implementation.
+- Any authenticated root builder may review other root builders' root-admin
+  Build chat histories and generated packet versions in the MVP.
+- Tenant-layer review and history access are deferred and must use explicit
+  object and relationship-based permissions before activation.
 - Tenant-scoped future work must deny cross-tenant access by default.
 - Downloads must enforce current actor authorization at request time.
 
 ## Generated PDF Delivery Requirements
 
-Generated packet PDF delivery is blocked until the asset/download decision
-record is approved.
+Generated packet PDF delivery uses the approved asset/download decision record
+at
+`docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md`.
 
-The decision must define:
+MVP delivery posture:
 
-- transient versus stored generated PDF posture
-- storage and delivery model
-- authorization at download time
-- retention and cleanup
-- quota or cost posture
-- audit events
-- failure and retry behavior
-- public delivery denial
-- whether scanning or processing is required
+- transient generated attachment/download from durable packet data
+- no stored rendered PDF bytes as durable assets
+- current actor authorization at request time
+- public delivery and generic file-hosting denied
+- approved Product Discovery packet data only; raw transcript and internal
+  notes excluded
+- self-hosted Playwright/Chromium behind a provider-neutral generated-document
+  seam
+- packet source data capped at 250 KB
+- rendered HTML capped at 750 KB
+- PDF output capped at 5 MB, with warning metric at 3 MB
+- soft render timeout of 10 seconds and hard timeout of 20 seconds
+- one active render per root or future tenant context
+- three active renders platform-wide
+- five generations per actor per 10 minutes
+- three generations per conversation per 10 minutes
+- 30 generations per root/platform context per hour
+- one automatic retry only for renderer startup, crash, or timeout failures
+- alert if generation failure rate exceeds 10 percent over 30 minutes, any
+  render reaches hard timeout, or the platform render queue remains full for
+  more than 5 minutes
+
+These are central configurable defaults for the MVP, not permanent business
+tier limits. The implementation blueprint must name the owning configuration
+keys or module and preserve a future path to tenant-level, package-level, or
+platform-level overrides.
 
 Public delivery and generic file-hosting behavior remain denied by default.
 
@@ -241,7 +264,7 @@ The implementation must define behavior for:
 - packet generation failure
 - PDF delivery failure
 - unavailable design-system seam during development
-- missing root-builder review permission mapping
+- denied tenant-layer review or cross-scope access
 
 Failures must preserve durable evidence and return safe public responses.
 
@@ -271,14 +294,10 @@ Runtime/browser evidence must include:
 
 The PRD does not resolve these blockers:
 
-- generated packet PDF delivery posture
-- exact root-builder review role or permission
-- design-system family extension versus new governed family decision
+- root-admin first-consumer design-system parity proof
 - API contract details
-- permission mapping details
 - data dictionary
 - implementation blueprint
-- PRD-derived test cases
 - runtime/browser QA evidence plan
 
 ## Acceptance Summary
@@ -287,5 +306,5 @@ This PRD is accepted for the current planning layer when:
 
 - it preserves Product Discovery and Technical Steering scope
 - the capability matrix maps the MVP capabilities
-- unresolved policy choices remain explicit blockers
+- unresolved implementation artifacts remain explicit blockers
 - no implementation task is allowed to proceed from this PRD alone

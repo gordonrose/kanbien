@@ -18,7 +18,8 @@ requires first-consumer parity proof.
   signed-off reference direction with dedicated canonical render surface
 - Intended source surface:
   `/design-system/patterns/build-work-panel-demo`, shared render/controller
-  seam in `/design-system/assets/buildWorkPanel.mjs`, and generated canonical
+  seam in `/design-system/assets/conversationPanel.mjs`, shared style seam in
+  `/design-system/assets/conversationPanel.css`, and generated canonical
   family under `/design-system/canonical-renderings/build-work-panel`
 - Related behavior lock:
   `docs/workspace/design-system/behavior-locks/build-work-panel-behavior-lock.md`
@@ -54,7 +55,7 @@ This pack is governed by:
 
 | Ref ID | Proposed review route | State | Why it exists | Evidence status | Notes |
 | --- | --- | --- | --- | --- | --- |
-| `BWP-R-001` | `/design-system/canonical-renderings/build-work-panel/BWP-R-001` | Desktop closed launcher | Proves the work-panel entry is visible in shell chrome without stealing page layout. | canonical-created | Uses the shared `buildWorkPanel.mjs` renderer. |
+| `BWP-R-001` | `/design-system/canonical-renderings/build-work-panel/BWP-R-001` | Desktop closed launcher | Proves the work-panel entry is visible in shell chrome without stealing page layout. | canonical-created | Uses the shared `conversationPanel.mjs` renderer. |
 | `BWP-R-002` | `/design-system/canonical-renderings/build-work-panel/BWP-R-002` | Desktop panel open, Build selected, empty chat | Proves the right-side panel, icon toolbar, history lane, chat composition box, and opening chat state fit in the baseline desktop frame. | canonical-created | MVP primary state. |
 | `BWP-R-003` | `/design-system/canonical-renderings/build-work-panel/BWP-R-003` | Active chat with conversation history collapsed | Proves the active chat remains usable when the history lane is hidden. | canonical-created | Replaces the rejected starter-prompt state. |
 | `BWP-R-004` | `/design-system/canonical-renderings/build-work-panel/BWP-R-004` | Active chat with visible history | Proves mixed user and harness messages preserve scanability and history continuity. | canonical-created | Include generated-packet-ready status. |
@@ -105,8 +106,8 @@ and PDF action posture.
 - PDF download is an authorized attachment action, not inline preview or public
   delivery.
 - Mobile uses a reachable floating action and governed panel surface.
-- Root-admin adoption waits for shared design-system render, controller, and
-  style seams.
+- Root-admin UI-only adoption now consumes the shared design-system render,
+  controller, and style seams; real harness/API behavior remains deferred.
 
 ## Evidence Status
 
@@ -123,11 +124,12 @@ and PDF action posture.
   `/design-system/canonical-renderings/build-work-panel/BWP-R-020`
 - Browser verification:
   rendered smoke checks passed for current review surface; full canonical
-  browser suite pending
+  browser suite exists in
+  `tests/visual/designSystem/canonicals/shell/buildWorkPanel.spec.ts`
 - Human signoff:
   received for the current pattern direction
 - Root-admin adoption:
-  blocked
+  UI-only consumer parity proved; real harness/API integration blocked
 
 ## Exit Condition
 
@@ -138,6 +140,11 @@ This pack becomes operational when:
 - the verification checklist names passing rendered evidence
 - a root-admin adoption contract names the shared render, controller, and style
   seams to consume
+- the root-admin consumer proves it uses `renderConversationPanel`,
+  `createConversationPanelController`, and a Build config instead of copied
+  markup, CSS, or local behavior
 
-Until shared app adoption proof exists, this pack is signed-off design-system
-truth but not root-admin app adoption evidence.
+This pack is signed-off design-system truth and root-admin UI-only adoption
+evidence. It is not evidence for real Layer 1/harness API integration,
+server-backed history, permission-backed packet generation, or durable packet
+download behavior.

@@ -11,13 +11,13 @@ type LockedFile = {
 const lockedRootAdminUiFiles: LockedFile[] = [
   {
     path: "src/frontend/rootAdminShell/index.html",
-    sha256: "e38f4891b69307b4c86c33dbcd87111623506ac6066be6bf3caf6eba8593dffb",
+    sha256: "58d774c16eb9d136f6e85d2a362394b2c27a9210730f4ee12c97c0aecae33db5",
     rationale:
-      "Authenticated root-admin shell markup remains locally hosted, but governed route families such as web-app-hierarchy must no longer duplicate their workspace host markup in this file once a shared design-system render seam exists.",
+      "Authenticated root-admin shell markup remains locally hosted and may mount the signed-off conversation panel seam, but governed route families must not duplicate their workspace host markup once a shared design-system render seam exists.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "da9a8f3e8603f6ad505bf1612e2772f77819573d7cf7a463d45d57df0f2c3fc2",
+    sha256: "c98324145755fe0e9175865330c4e48a187eebebb0e3907e2e40964a659b3a78",
     rationale:
       "Root-admin authenticated shell behavior remains locally composed, but approved route-topology migrations may update path resolution and canonical-location syncing as long as shared design-system shell behavior does not regress back into app-local ownership.",
   },
@@ -41,6 +41,7 @@ const requiredRootAdminShellStylesheets = [
   '/design-system/assets/hierarchy-tree-shared.css',
   '/design-system/assets/form-template-shared.css',
   '/design-system/assets/hierarchyTree.css',
+  '/design-system/assets/conversationPanel.css',
 ];
 
 const requiredRootAdminHierarchyImports = [
@@ -236,6 +237,37 @@ const forbiddenRootAdminIndexPatterns: Array<{ pattern: RegExp; rationale: strin
     pattern: /\bid="hierarchy-tree-nav-button"\b/,
     rationale: "The governed root-admin context-nav launcher host must render through the shared design-system context-nav seam instead of being hardcoded in root-admin HTML.",
   },
+  {
+    pattern: /\bbuild-work-panel-demo-/,
+    rationale: "The governed conversation panel must render through the shared design-system conversationPanel seam instead of copied Build work panel classes in root-admin HTML.",
+  },
+  {
+    pattern: /\bdata-build-work-panel(?:-[a-z0-9-]+)?\b/,
+    rationale: "The governed conversation panel must render through the shared design-system conversationPanel seam instead of hardcoded Build work panel data hooks in root-admin HTML.",
+  },
+];
+
+const forbiddenRootAdminConversationPanelOwnershipPatterns: Array<{ pattern: RegExp; rationale: string }> = [
+  {
+    pattern: /\/design-system\/assets\/buildWorkPanel\.mjs/,
+    rationale: "Root-admin must import the reusable conversationPanel seam directly; buildWorkPanel.mjs is a design-system compatibility wrapper.",
+  },
+  {
+    pattern: /\bbuild-work-panel-demo-/,
+    rationale: "Root-admin must not reconstruct Build work panel markup or class names locally; render through conversationPanel instead.",
+  },
+  {
+    pattern: /\bdata-build-work-panel(?:-[a-z0-9-]+)?\b/,
+    rationale: "Root-admin must not reconstruct Build work panel data hooks locally; render through conversationPanel instead.",
+  },
+  {
+    pattern: /\bfunction\s+createBuildWorkPanelController\s*\(/,
+    rationale: "Conversation panel behavior must stay owned by the shared design-system conversationPanel controller.",
+  },
+  {
+    pattern: /\bfunction\s+renderBuildWorkPanel\s*\(/,
+    rationale: "Conversation panel markup must stay owned by the shared design-system conversationPanel renderer.",
+  },
 ];
 
 function sha256ForFile(path: string): string {
@@ -296,6 +328,13 @@ function main() {
       rationale: entry.rationale,
       pattern: entry.pattern,
     }));
+  const conversationPanelOwnershipViolations = forbiddenRootAdminConversationPanelOwnershipPatterns
+    .filter((entry) => entry.pattern.test(shellAppSource))
+    .map((entry) => ({
+      path: shellAppSourcePath,
+      rationale: entry.rationale,
+      pattern: entry.pattern,
+    }));
 
   if (
     driftedFiles.length === 0
@@ -306,6 +345,7 @@ function main() {
     && indexOwnershipViolations.length === 0
     && localOwnershipViolations.length === 0
     && hierarchyOwnershipViolations.length === 0
+    && conversationPanelOwnershipViolations.length === 0
   ) {
     console.log("Governed root-admin UI guard: passed.");
     console.log("");
@@ -388,6 +428,15 @@ function main() {
   if (hierarchyOwnershipViolations.length > 0) {
     console.error("The root-admin hierarchy page still locally owns forbidden workspace behavior:");
     for (const entry of hierarchyOwnershipViolations) {
+      console.error(`- ${entry.path}`);
+      console.error(`  matched: ${entry.pattern}`);
+      console.error(`  why blocked: ${entry.rationale}`);
+    }
+  }
+
+  if (conversationPanelOwnershipViolations.length > 0) {
+    console.error("The root-admin shell still locally owns forbidden conversation-panel behavior:");
+    for (const entry of conversationPanelOwnershipViolations) {
       console.error(`- ${entry.path}`);
       console.error(`  matched: ${entry.pattern}`);
       console.error(`  why blocked: ${entry.rationale}`);
