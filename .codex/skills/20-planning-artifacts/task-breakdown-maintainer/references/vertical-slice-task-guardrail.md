@@ -78,6 +78,15 @@ Use for task type: `DEV:vertical-slice`
   if the main work is runtime evidence capture or evidence collation, split it
   to `EVIDENCE:qa-evidence`.
 
+## Worked Examples
+
+| Scenario | Coupling Shape | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| One browser journey must prove a persisted backend projection appears correctly after the same user action. | valid vertical slice | Name backend persistence/projection seam, frontend rendering seam, API/data contract, journey proof, mock-honesty comparison, and split-pressure rows showing backend/frontend proof is inseparable. | API contract, permission truth, migration, and design-system seam must already be approved or split before queueing. |
+| A feature has both backend and frontend tasks, but backend behavior can be proven by API/integration tests first. | invalid convenience grouping | Block vertical slice and split backend behavior to `DEV:backend`, frontend consumption to `DEV:frontend`, and final runtime evidence to `EVIDENCE:qa-evidence` if needed. | Do not use vertical slice to avoid coordination between ordinary backend/frontend tasks. |
+| Permission-aware rendering depends on runtime allow/deny behavior and browser state in one journey. | valid only with completed prerequisites | Carry approved permission mapping, API denial contract, backend authz seam, frontend rendering seam, allowed/denied/expired/cross-tenant browser proof, and runtime evidence. | Missing permission mapping or allow/deny tests block/split before vertical delivery. |
+| First app adoption of a governed design-system family is bundled with backend route work. | blocked route-away | Split design-system seam to `GOV:design-system`, app adoption to `DEV:frontend`, backend route behavior to `DEV:backend`, and final evidence if needed. | Do not use vertical slice to copy design-system markup or skip adoption contract. |
+
 ## Required Check IDs
 
 - `vertical-inseparable-journey`

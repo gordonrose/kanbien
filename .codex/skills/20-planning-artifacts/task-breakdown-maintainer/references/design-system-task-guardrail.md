@@ -110,6 +110,16 @@ match.
   seam for downstream consumption, keep the task blocked rather than producing
   only a visually similar canonical.
 
+## Worked Examples
+
+| Scenario | Seam Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| A new governed family needs a consumable renderer before app adoption. | `render-structure-seam` | Name behavior lock, canonical route, renderer/component export, fixture contract, screenshot proof, and downstream adoption contract. | App-page implementation routes to `DEV:frontend`; CSS sharing alone is insufficient. |
+| Interaction behavior exists in the canonical but app pages would otherwise copy controller logic. | `behavior-controller-seam` | Produce or refine shared controller/state/event seam, prove keyboard/pointer state transitions, and document how DEV:frontend consumes it. | Do not duplicate controller logic in app code. |
+| Accessibility semantics are the primary gap for a signed-off visual family. | `accessibility-semantics-seam` | Name role/name/state/focus/keyboard semantics, canonical proof, and downstream app adoption prohibition on local ARIA reconstruction. | Evidence-only a11y sweep routes to `EVIDENCE:qa-evidence` when the seam already exists. |
+| Canonicals and reference packs need screenshot/evidence refresh after a seam exists. | `canonical-evidence-update` | Name canonical route, behavior lock, screenshot or visual command, reference pack/adoption artifact, and exact evidence output. | If no seam changes are needed, route pure evidence collation to `EVIDENCE:qa-evidence`. |
+| A real app page wants to use a family before a shared render/controller seam exists. | blocked route-away | Keep GOV task focused on producing the missing seam first. | Do not satisfy adoption by copying HTML, CSS, ARIA, state behavior, or controller logic into the app. |
+
 ## Required Check IDs
 
 - `design-system-family`

@@ -131,6 +131,15 @@ Split or block when:
 - evidence capture, runtime proof collation, screenshots, or coverage-health
   reporting is the main work; create `EVIDENCE:qa-evidence`
 
+## Worked Examples
+
+| Scenario | Mismatch Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| `npm run test:traceability` reports an executable test missing its documented `TC-*` label, but the assertion already exists. | missing or malformed ID | Update test metadata/label or test-case trace row only, run traceability and focused suite, and record coverage-strength impact as relabeled/honest rather than new proof. | Do not add assertions; new proof routes to `TEST:test-only`. |
+| A PRD test-case row is marked active but the source story superseded it. | lifecycle/status mismatch | Update lifecycle/status and traceability fields from approved source, preserve PRD intent, and run traceability. | Do not rewrite acceptance criteria to match current implementation. |
+| A test file moved and QA backlog paths are stale. | renamed or moved test file | Align docs/backlog/status paths and executable labels while proving the moved tests still execute. | Do not change production behavior or test semantics. |
+| Alignment reveals the documented behavior has no executable proof. | proof does not exist blocked | Record the mismatch and split new proof to `TEST:test-only`. | Do not mark the docs aligned by weakening the documented behavior. |
+
 ## Required Check IDs
 
 - `test-alignment-source-authority`

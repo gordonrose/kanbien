@@ -115,6 +115,16 @@ Use for task type: `DEV:frontend`
   evidence requirements rather than claiming source edits or mock-only tests as
   sufficient completion proof.
 
+## Worked Examples
+
+| Scenario | Change Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| A root-admin app page consumes an already signed-off design-system family. | `app-adoption` | Inventory signed-off render, controller, accessibility, and CSS seams; write only module composition/data binding; prohibit copied markup/ARIA/controller/CSS; prove adoption with browser scenario. | Missing seam blocks to `GOV:design-system`; evidence-only screenshots route to `EVIDENCE:qa-evidence`. |
+| A route module needs local journey state and interaction behavior with no new design-system seam. | `route-module-behavior` plus `interaction-behavior` | Name Layer 2 route/module placement, state owner, exact state transition, focused browser/unit proof, and performance posture. | New topology/materialization authority routes to architecture/platform; broad shell edits are blocked. |
+| UI renders API projection data from fixtures. | `api-projection-consumer` | Name API contract, fixture source, live/runtime payload evidence or unavailable reason, mock-honesty statement, rendered proof, and denied-state proof if sensitive. | Missing API contract routes to `DOC:api-contract`; fixture honesty gaps route to `TEST:test-suite-alignment` or `EVIDENCE:qa-evidence`. |
+| A browser-visible defect is fixed in frontend code. | `runtime-defect-fix` | Name active process/port, served asset or module check, live payload if relevant, regression proof, and restart posture. | Do not claim visibility from source edits only; evidence capture may split to `EVIDENCE:qa-evidence`. |
+| A task only needs post-implementation screenshots or mock-honesty review. | `evidence-sweep-route-away` blocked | Keep DEV:frontend blocked because no frontend behavior is changing. | Route to `EVIDENCE:qa-evidence`. |
+
 ## Required Check IDs
 
 - `frontend-architecture-classification`

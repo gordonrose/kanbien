@@ -155,6 +155,15 @@ other sensitive persisted data, the task must name focused proof for:
 - safe handling of manually corrupted, duplicate, orphaned, or non-compliant
   live data before mutation
 
+## Worked Examples
+
+| Scenario | Change Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| A new nullable column is approved and existing rows require no backfill. | `new-migration` | Name sortable migration, live start-state check, SQL semantics, representative read/write path, index posture, and persistence test command. | API/data dictionary/backend consumption split unless already approved and in scope. |
+| Existing environments may contain duplicate normalized values before adding a uniqueness constraint. | `normalization-or-uniqueness` plus `index-or-constraint` | Inspect source data shape, per-row eligibility, duplicate/rejected-row behavior, compatibility repair path, and create/update/read proof. | Do not silently pick skip/quarantine behavior without approved repair posture. |
+| Repository filtering must exclude soft-deleted rows without schema changes. | `repository-query-semantics` | Inventory repository query, lifecycle source truth, representative read paths, tenant/security proof, and no-migration rationale. | Data dictionary lifecycle wording and API list contract updates split to `DOC:*` tasks. |
+| Shared Postgres test harness migration loading needs a compatibility fix. | `postgres-harness-update` | Name harness files, affected persistence scripts, representative consuming tests, and expected harness output. | Production migrations or repository behavior remain out of scope unless separately approved. |
+
 ## Required Check IDs
 
 - `migration-source-authority`

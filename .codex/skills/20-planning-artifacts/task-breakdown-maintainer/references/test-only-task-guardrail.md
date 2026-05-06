@@ -152,6 +152,15 @@ Split or block when:
 - evidence capture, screenshots, runtime proof collation, or coverage-strength
   reporting is the main work; create `EVIDENCE:qa-evidence`
 
+## Worked Examples
+
+| Scenario | Test Change Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| Approved PRD `TC-*` rows need executable coverage for an existing backend behavior. | `prd-test-case` | Name exact test-case doc, `TC-*` IDs, target test file, expected assertions, focused command, traceability, mock-honesty, and coverage-strength summary. | Missing behavior routes to owning DEV task; stale `TC-*` status routes to suite alignment. |
+| A tenant-boundary permission matrix lacks denied and cross-tenant proof. | `permission-state-matrix` or `security-boundary` | Cover allowed, denied, expired/unauthenticated, cross-tenant, and object-level states with fixture/runtime honesty and safe denial expectations. | Missing permission mapping routes to `DOC:permission-mapping`; missing runtime denial routes to backend/platform work. |
+| An escaped defect needs a regression lock. | `regression-lock` | Source is issue reconciliation; test fails or would have failed for the defect, names fixture/live shape, focused command, and no behavior-change posture. | Do not patch production code or weaken assertions inside the test-only task. |
+| Fixture behavior may invent fallback fields production does not provide. | `fixture-honesty` | Compare fixture/mock source against API contract or live payload, update only approved test fixture/test harness expectations, and record honesty evidence. | If production contract is unclear, split to `DOC:api-contract` or `EVIDENCE:qa-evidence`. |
+
 ## Required Check IDs
 
 - `test-source-authority`

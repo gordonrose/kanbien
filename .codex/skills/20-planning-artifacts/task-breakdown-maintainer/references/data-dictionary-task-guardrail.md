@@ -111,6 +111,15 @@ Split or block the task when:
 - Executable persistence, migration, or regression coverage belongs to
   `TEST:test-only` when no product behavior is changing.
 
+## Worked Examples
+
+| Scenario | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- |
+| A migration-backed field already exists and the dictionary lacks normalized value, index, and lifecycle truth. | Inventory migration, repository, domain/contract sources, live/schema evidence when available, exact dictionary target, compatibility posture, and `npm run data:compliance-health`. | Do not change schema, repository behavior, or API wording inside the dictionary task. |
+| Retention/export/delete/legal-hold posture is missing for an entity that stores durable domain facts. | Record current known posture, standards/control trace, missing/blocked rows, evidence gaps, and follow-up owner. | If retention or legal-hold policy is undecided, route to architecture/standards before implementation. |
+| Data compliance health reports debt after a docs-only alignment. | Use the health output as a summary row, record whether debt is accepted, blocked, or routed, and keep validation evidence attached to the dictionary artifact. | Do not add fail-on-debt behavior until current debt has approved cleanup or exception posture. |
+| Live schema and migration files disagree. | Block dictionary promotion until the approved source of truth is identified; record source inventory and split to migration/persistence or architecture as needed. | Do not rewrite dictionary truth to match accidental live drift. |
+
 ## Required Check IDs
 
 - `data-entity-table`
