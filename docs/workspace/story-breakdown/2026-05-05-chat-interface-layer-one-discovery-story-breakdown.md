@@ -15,24 +15,26 @@
 - Source Technical Steering packet:
   docs/workspace/technical-steering/2026-05-05-chat-interface-layer-one-discovery-steering.md
 - Related PRD:
-  not created yet
+  docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md
 - Related capability matrix:
-  not created yet
+  docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv
 - Related GOV:design-system, asset, ADR, or architecture artifacts:
-  Draft Build work panel design-system governance exists at
+  Build work panel design-system governance exists at
   docs/workspace/design-system/behavior-locks/build-work-panel-behavior-lock.md,
   docs/workspace/design-system/reference-packs/build-work-panel-reference-pack.md,
   docs/workspace/design-system/patterns/build-work-panel-pattern.md,
   docs/workspace/design-system/verification/build-work-panel-verification-checklist.md,
   and
   docs/workspace/design-system/adoption/root-admin-build-work-panel-adoption-contract.md.
-  These artifacts are not signed off yet. Generated packet PDF delivery is
-  approved at
+  The design-system path is answered as the `build-work-panel` family consuming
+  the neutral `conversationPanel.mjs` render/controller seam and
+  `conversationPanel.css` style seam. Root-admin app adoption remains blocked
+  on first-consumer parity proof. Generated packet PDF delivery is approved at
   docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md.
   That decision includes a reusable generated-document boundary posture so
   future features can use the generation path without copying Product
-  Discovery-specific code, but the full architecture interview remains
-  incomplete.
+  Discovery-specific code. The remaining PDF blocker is numeric implementation
+  thresholds before implementation planning.
 - Validation command:
   npm run story-breakdown:validate -- docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md
 - Validation status:
@@ -51,33 +53,32 @@
   implementation.
 - Steering stop conditions resolved or carried as blockers:
   The Layer 2 to Layer 3 blocker-resolution loop found no requester-answerable
-  product blocker for the MVP. It carried PRD, capability matrix, PRD-derived
-  test cases, design-system signoff, API contract, permission mapping, data
-  dictionary, persistence planning, runtime evidence, and artifact sweep work as
-  Layer 3 unblock stories and artifact blockers. The generated packet PDF asset
-  consumer decision record is approved. The Build work panel design-system
-  governance artifacts are only draft and remain an open human review blocker
-  before later frontend and QA work can treat them as source truth.
+  product blocker for the MVP. PRD, first-draft capability matrix, generated
+  PDF direction, and design-system path are now captured. Remaining blockers
+  are PRD-derived test cases, API contract, permission mapping, data dictionary,
+  persistence planning, runtime evidence, implementation blueprint, root-builder
+  review permission, PDF numeric thresholds, and root-admin first-consumer
+  parity proof.
 - First-pass story-map posture:
   This packet is a first-pass blocked story map. It identifies the story queue
   and structural unblock work, but it does not authorize Task Breakdown,
-  implementation blueprinting, or Delivery while the design-system,
-  asset/download, API/permission, persistence/data, and evidence artifacts are
-  missing.
+  implementation blueprinting, or Delivery while API/permission,
+  persistence/data, evidence, root-admin parity, and PDF numeric-threshold
+  artifacts are missing.
 - Architecture invention check:
   consumes-steering-only
 - Governed DEV:frontend seam posture:
-  missing-seam
+  ready-seam
 - Asset/security/tenant/authz/persistence/migration/compliance risks:
   generated PDF delivery, creator and root-builder history visibility,
   platform versus tenant scope, cross-tenant deny posture, browser mutations,
   sensitive transcript rendering, durable retention, supersession, and
   design-system governed app adoption.
 - Missing source-of-truth artifacts:
-  PRD, capability matrix, PRD-derived test cases, signed-off design-system
-  canonicals/render surface, API contract, permission mapping, data dictionary,
+  PRD-derived test cases, API contract, permission mapping, data dictionary,
   implementation blueprint, feature manifest plan, generated dependency graph
-  plan, runtime/browser evidence plan.
+  plan, runtime/browser evidence plan, root-admin first-consumer parity proof,
+  and PDF numeric-threshold decisions.
 
 ## Steering Architecture Classification Snapshot
 
@@ -162,13 +163,13 @@
 | Story ID | Status | Value Type | Delivery Shape | Title | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | S-001 | blocked | harness-value | DOC:docs-artifact | MVP PRD, capability matrix, and test-case planning | As the delivery harness, I need the root-admin MVP captured in PRD, capability rows, and test-case obligations before implementation tasks are cut. | harness/planning | PRD, capability matrix, and PRD-derived test cases exist for every MVP capability and acceptance criterion. | none |
-| S-002 | blocked | user-value | GOV:design-system | Work panel and chat design-system governance | As a root builder, I need the panel, mobile action, chat thread, starter prompts, history, and PDF action to use signed-off design-system seams. | root builder / design-system owner | Draft design-system artifacts exist; signed-off render/canonical seams are still missing before root-admin app UI adoption. | S-001 |
-| S-003 | blocked | system-value | DECISION:architecture-foundation | Generated packet PDF delivery decision | As architecture governance, I need a decision record for generated packet PDF delivery, storage, retention, access, MVP rendering scope, future reuse boundary, scale, latency, failure, operations, and reversibility before PDF implementation. | architecture/security | Delivery/storage/rendering direction is approved, but generated-document architecture interview remains incomplete. | docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md |
-| S-004 | needs-capability-matrix | harness-value | DEV:backend | Product Discovery harness adapter | As the Build chat, I need a narrow adapter that produces canonical Product Discovery packet data through the existing Layer 1 process. | harness/system | Chat orchestration can create packet data without inventing a parallel discovery format. | S-001 and S-003 |
-| S-005 | needs-capability-matrix | system-value | DEV:backend | Conversation and packet history foundation | As the platform, I need durable conversations, packet versions, history visibility, retention, and supersession owned by a feature seam. | chat feature | Root-admin discovery history and packet state are stored with actor and scope facts. | S-001 and S-003 |
-| S-006 | needs-capability-matrix | system-value | DEV:backend | Protected chat, history, generation, and download APIs | As the root-admin browser, I need protected API contracts for conversation, history, packet generation, and PDF download. | root-admin API consumer | Routes enforce validation, session, CSRF, creator/root-builder visibility, and tenant-scope deny posture. | S-004 and S-005 |
+| S-002 | blocked | user-value | GOV:design-system | Work panel and chat design-system governance | As a root builder, I need the panel, mobile action, chat thread, starter prompts, history, and PDF action to use signed-off design-system seams. | root builder / design-system owner | The design-system path is answered as `build-work-panel` over the shared `conversationPanel` seam; root-admin app adoption remains blocked on first-consumer parity proof. | S-001 |
+| S-003 | blocked | system-value | DECISION:architecture-foundation | Generated packet PDF delivery decision | As architecture governance, I need a decision record for generated packet PDF delivery, storage, retention, access, MVP rendering scope, future reuse boundary, scale, latency, failure, operations, and reversibility before PDF implementation. | architecture/security | Delivery/storage/rendering direction is approved; numeric implementation thresholds remain deferred before implementation. | docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md |
+| S-004 | blocked | harness-value | DEV:backend | Product Discovery harness adapter | As the Build chat, I need a narrow adapter that produces canonical Product Discovery packet data through the existing Layer 1 process. | harness/system | Chat orchestration can create packet data without inventing a parallel discovery format. | API contract and implementation blueprint |
+| S-005 | blocked | system-value | DEV:backend | Conversation and packet history foundation | As the platform, I need durable conversations, packet versions, history visibility, retention, and supersession owned by a feature seam. | chat feature | Root-admin discovery history and packet state are stored with actor and scope facts. | data dictionary and persistence planning |
+| S-006 | blocked | system-value | DEV:backend | Protected chat, history, generation, and download APIs | As the root-admin browser, I need protected API contracts for conversation, history, packet generation, and PDF download. | root-admin API consumer | Routes enforce validation, session, CSRF, creator/root-builder visibility, and tenant-scope deny posture. | API contract and permission mapping |
 | S-007 | blocked | user-value | DEV:frontend | Root-admin Build panel adoption | As a root builder, I need the root-admin panel to expose Reporting and Support as coming-soon actions and Build as the active chat flow. | root builder | Root-admin consumes design-system seams and chat APIs without app-local CSS or copied controller behavior. | S-002 and S-006 |
-| S-008 | needs-capability-matrix | harness-value | TEST:test-suite-alignment | Runtime and mock-honesty evidence plan | As QA governance, I need tests and browser scenarios that prove the live root-admin panel, APIs, permissions, PDF flow, and fixtures match production shapes. | QA governance | Test obligations cover persistence, API, permission, generated PDF, browser states, and mock honesty. | S-001 through S-007 |
+| S-008 | blocked | harness-value | TEST:test-suite-alignment | Runtime and mock-honesty evidence plan | As QA governance, I need tests and browser scenarios that prove the live root-admin panel, APIs, permissions, PDF flow, and fixtures match production shapes. | QA governance | Test obligations cover persistence, API, permission, generated PDF, browser states, and mock honesty. | PRD-derived test cases and QA evidence plan |
 | S-009 | blocked | harness-value | DOC:docs-artifact | Data, permissions, API, and feature-manifest artifact sweep | As repo governance, I need source-independent artifacts aligned with the implemented seams before delivery can close. | repo governance | Data dictionary, permission mapping, API contracts, feature manifest, dependency graph, and status docs are current. | S-004 through S-008 |
 | S-010 | blocked | system-value | DOC:docs-artifact | Future tenant-builder rollout deferral | As product governance, I need tenant-builder active rollout kept separate until it has its own Product Discovery and Technical Steering. | product/architecture | Tenant-builder work remains a named future scope and cannot leak into MVP tasks. | future scope only |
 
@@ -281,8 +282,8 @@
 
 | Blocker ID | Blocks Story | Blocker Type | Reason | Required Output | Stop Condition |
 | --- | --- | --- | --- | --- | --- |
-| BLK-SB-CHAT-001 | S-003 | asset-decision | Generated PDF delivery cannot be implemented without an approved delivery/storage/access posture, MVP rendering scope, future reuse boundary, and completed architecture interview. | Human-reviewed asset consumer decision record for generated packet PDF delivery. | Open: delivery/storage/rendering direction is approved, but scale, concurrency, latency, provider/runtime, failure/retry, operations, localization, cost, and reversibility questions remain. |
-| BLK-SB-CHAT-002 | S-002 and S-007 | design-system-foundation | Governed panel/chat UI cannot be implemented through root-admin-local CSS or copied controller behavior. | DS behavior lock, reference pack, verification, adoption artifacts, render surface, canonicals, and shared seams. | Draft DS artifacts exist; stop condition remains open until DS seams are signed off and the adoption artifact names consumable render/controller/style seams. |
+| BLK-SB-CHAT-001 | S-003 | asset-decision | Generated PDF delivery cannot be implemented until approved delivery/storage/access posture, MVP rendering scope, future reuse boundary, and numeric implementation thresholds are carried into the implementation artifacts. | Human-reviewed asset consumer decision record plus PRD/API/blueprint numeric thresholds. | Open: delivery/storage/rendering direction is approved; exact packet size, output size, numeric concurrency, burst limits, fallback timeout, rate limits, and alert thresholds remain deferred to PRD/API contract or implementation blueprint ownership. |
+| BLK-SB-CHAT-002 | S-002 and S-007 | design-system-foundation | Governed panel/chat UI cannot be implemented through root-admin-local CSS or copied controller behavior. | DS behavior lock, reference pack, verification, adoption artifacts, render surface, canonicals, shared seams, and first-consumer parity proof. | Open: `build-work-panel` and shared `conversationPanel` seams are the selected path; root-admin app adoption remains blocked until first-consumer parity proof exists. |
 | BLK-SB-CHAT-003 | S-001 through S-009 | capability-matrix | Stories cannot enter Task Breakdown without capability rows or explicit non-capability rationale. | Capability matrix for the root-admin MVP. | Matrix maps every acceptance criterion. |
 | BLK-SB-CHAT-004 | S-006 and S-009 | permission-model | Protected APIs and history access require explicit capability and deny mapping. | Permission mapping artifact. | Allow/deny and tenant-scope rules are documented and testable. |
 
@@ -307,7 +308,7 @@
 | Q-CHAT-001N | BLK-SB-CHAT-001 | Should generated PDFs be locale-aware now or English-only with no locale contract? | yes | Answered: include locale context in the renderer contract now, but ship English-only MVP PDF content. Translation, localized copy management, locale-specific formatting, and fallback-language behavior are deferred to the planned repo localization layer before non-English PDF output is enabled. |
 | Q-CHAT-001O | BLK-SB-CHAT-001 | Should migration/reversibility be seam-only for MVP, or should a second renderer fallback be implemented and tested now? | yes | Answered: use seam-only reversibility for MVP. Keep Playwright/Chromium behind the provider-neutral generated-document seam, and do not implement or test a second renderer fallback in MVP. Future replacement may move rendering to a worker, another self-hosted renderer, or a paid provider without changing the Product Discovery packet contract. |
 | Q-CHAT-001P | BLK-SB-CHAT-001 | Should the generated-document seam accept a generic structured document model, or feature-owned packet data plus a mapper? | yes | Answered: Product Discovery owns approved packet data and maps it into a renderer-neutral document shape. The generated-document seam accepts only generic rendering primitives, metadata, locale context, and delivery options. It must not accept Product Discovery-specific fields directly. |
-| Q-CHAT-002 | BLK-SB-CHAT-002 | Which design-system family owns the work panel, chat thread, starter prompts, history, and PDF action? | yes | Updated loop direction: start with a labeled `/design-system` demo rendering for the proposed `build-work-panel` family so visual feedback and behavior can be checked immediately. Behavior lock, reference/canonical review, verification, and adoption artifacts follow after demo feedback and remain required before app UI adoption. |
+| Q-CHAT-002 | BLK-SB-CHAT-002 | Which design-system family owns the work panel, chat thread, starter prompts, history, and PDF action? | yes | Answered: use the `build-work-panel` configured family over the neutral shared `conversationPanel.mjs` render/controller seam and `conversationPanel.css` style seam. Consumer is `/home/gordon/kanbien`, root-admin shell, right-side desktop panel plus mobile floating action, first active mode Build. Root-admin adoption remains blocked on first-consumer parity proof and must not copy DS markup/controller behavior or app-page CSS. |
 | Q-CHAT-003 | BLK-SB-CHAT-004 | Which exact root-builder capability keys govern creator history, root-builder review, packet generation, and PDF download? | no | Backend/security owner in permission mapping. |
 
 ## Layer 3 Unblock Queue
@@ -315,7 +316,7 @@
 | Unblock ID | Blocks Story / AC | Blocker Source | Unblock Type | Human Decision Needed | Options / Safe Defaults | Recommended Next Action | Can Auto-Create Artifact | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | U-CHAT-001 | S-001 AC-S001-01 through AC-S001-03 | ART-CHAT-001; ART-CHAT-002; ART-CHAT-003; BLK-SB-CHAT-003 | prd-required | No requester answer needed for MVP scope. | Safe default: create PRD from Product Discovery and Technical Steering; keep future tenant-builder rollout deferred. | Run PRD, capability matrix, and test-case planning workflows for root-admin MVP. | yes | ready-to-create-artifact |
-| U-CHAT-002 | S-002 AC-S002-01 and AC-S002-02; S-007 AC-S007-01 | Q-CHAT-002; ART-CHAT-004; BLK-SB-CHAT-002 | design-system-governance | No further behavior-lock-first question needed before the first visual pass. | Safe default: create a labeled `/design-system` demo rendering for the Build work panel as review material, then capture feedback into behavior lock/reference/canonical/verification artifacts before app UI adoption. | Create the demo rendering and ask for visual/behavior feedback from the browser result. | yes | ready-to-create-artifact |
+| U-CHAT-002 | S-002 AC-S002-01 and AC-S002-02; S-007 AC-S007-01 | Q-CHAT-002; ART-CHAT-004; BLK-SB-CHAT-002 | design-system-governance | No further design-system path decision is needed. | Safe default used: `build-work-panel` configured family consumes the neutral shared `conversationPanel` seam. | Complete root-admin first-consumer parity proof before app adoption. | yes | deferred-with-owner |
 | U-CHAT-003 | S-003 AC-S003-01 | Q-CHAT-001; Q-CHAT-001A; Q-CHAT-001B; Q-CHAT-001C; Q-CHAT-001D; Q-CHAT-001E; Q-CHAT-001F; Q-CHAT-001G; Q-CHAT-001H; Q-CHAT-001I; Q-CHAT-001J; Q-CHAT-001K; Q-CHAT-001L; Q-CHAT-001M; Q-CHAT-001N; Q-CHAT-001O; Q-CHAT-001P; ART-CHAT-005; BLK-SB-CHAT-001 | technical-steering-revisit | Exact packet size, output size, numeric concurrency, burst, fallback timeout, rate-limit tuning, and alert thresholds remain undefined. | Deferred to PRD/API contract or implementation blueprint owner. No generated-document implementation task may start until these numeric limits are defined. Approved PDF source is Product Discovery packet data only. Approved packet versions are immutable and superseded versions remain downloadable history with previous/next links. Transient generation failures can be retried immediately from the same approved packet version with failed-attempt evidence. Preferred MVP renderer is self-hosted Playwright/Chromium behind a provider-neutral generated-document seam. Natural pagination is allowed, with no avoidable image/table-row cuts and no broad-table clipping. PDF includes a compact header page with packet/version/generation metadata, but no visible approved-packet-data-only explanatory note. User-visible cancellation is out of scope for MVP. Every generation failure records audit/metrics; alerting starts only after repeated failures cross a later-defined threshold. Support/root builders can see safe failure reason categories, while internals stay internal-only. Renderer contract is locale-aware, but MVP PDF content is English-only until the planned localization layer exists. Reversibility is seam-only; no second renderer fallback is implemented or tested in MVP. Product Discovery maps packet data into renderer-neutral document primitives; the renderer seam must not accept Product Discovery-specific fields directly. | Carry the hard implementation gate, PDF source-content rule, immutable packet-version rule, historical download chain, retry rule, renderer choice, pagination-quality rule, header-page metadata rule, server-side cancellation rule, failure-signal rule, support-diagnostics rule, localization-contract rule, seam-only reversibility rule, and source-mapper rule into PRD, API contract, and implementation blueprint work. No further requester answer is needed for the PDF architecture decision except the deferred numeric limit and alert-threshold gate. | yes | deferred-with-owner |
 | U-CHAT-004 | S-006 AC-S006-01 and AC-S006-02 | ART-CHAT-006; ART-CHAT-007; BLK-SB-CHAT-004 | api-contract-required | No requester answer needed. | Safe default: protected root-admin APIs with server-side authorization and no URL authority. | Create API contract and permission mapping artifacts. | yes | ready-to-create-artifact |
 | U-CHAT-005 | S-005 AC-S005-01 and AC-S005-02; S-009 AC-S009-01 | ART-CHAT-008; ART-CHAT-010 | data-dictionary-required | No requester answer needed. | Safe default: persist durable actor, scope, lifecycle, retention, and supersession facts. | Create data dictionary and persistence planning artifacts. | yes | ready-to-create-artifact |
@@ -325,11 +326,11 @@
 
 | Artifact ID | Story ID | Artifact Type | Required Action | Owner Skill Or Workflow | Blocks Task Breakdown |
 | --- | --- | --- | --- | --- | --- |
-| ART-CHAT-001 | S-001 | PRD | create | PRD maintainer workflow | yes |
-| ART-CHAT-002 | S-001 | capability matrix | create | capability-matrix maintainer workflow | yes |
+| ART-CHAT-001 | S-001 | PRD | prove-current | PRD maintainer workflow | no |
+| ART-CHAT-002 | S-001 | capability matrix | prove-current | capability-matrix maintainer workflow | no |
 | ART-CHAT-003 | S-001 | PRD-derived test cases | create | prd-test-case-planner | yes |
-| ART-CHAT-004 | S-002 and S-007 | GOV:design-system artifacts | update | frontend-design-system-loop-maintainer | yes |
-| ART-CHAT-005 | S-003 | asset consumer decision record | update | docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md | yes |
+| ART-CHAT-004 | S-002 and S-007 | GOV:design-system artifacts | prove-current | frontend-design-system-loop-maintainer | no |
+| ART-CHAT-005 | S-003 | asset consumer decision record | prove-current | docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md | no |
 | ART-CHAT-006 | S-006 | API contract docs | create | api-contract-maintainer | yes |
 | ART-CHAT-007 | S-006 | permission mapping | create | permission mapping workflow | yes |
 | ART-CHAT-008 | S-005 | data dictionary | create | data-dictionary-maintainer | yes |
@@ -341,13 +342,14 @@
 - Ready stories:
   none
 - Blocked stories:
-  S-001, S-002, S-003, S-007, S-009, S-010
+  S-001, S-002, S-003, S-004, S-005, S-006, S-007, S-008, S-009, S-010
 - Stories needing capability matrix:
-  S-004, S-005, S-006, S-008
+  none
 - Stories needing PRD refinement:
   none
 - Stories needing Technical Steering revisit:
-  generated-document architecture interview remains incomplete for S-003.
+  none; PDF numeric thresholds remain deferred to PRD/API contract or
+  implementation blueprint ownership before implementation tasks.
 - Broad cleanup or shortcut risk:
   none
 - Architecture invention risk:
@@ -357,13 +359,13 @@
 
 | Story ID | Handoff Status | Reason |
 | --- | --- | --- |
-| S-001 | blocked | PRD, capability matrix, and PRD-derived test cases must be created before Task Breakdown. |
-| S-002 | blocked | Draft design-system governance artifacts exist; rendered `/design-system` proof, canonical states, and shared seams must be created before app UI tasks. |
-| S-003 | blocked | Asset consumer decision record exists and captures approved direction for transient generated download, simple structured export rendering, and future-usable generated-document boundary, but implementation remains blocked until the architecture interview covers scale, concurrency, latency, provider/runtime, deterministic output, failure/retry, operations, cost, localization, and reversibility. |
-| S-004 | blocked | Capability matrix and PRD must define adapter behavior before Task Breakdown. |
-| S-005 | blocked | Capability matrix, data dictionary, and persistence plan are missing. |
+| S-001 | blocked | PRD and capability matrix exist; PRD-derived test cases must still be created before Task Breakdown. |
+| S-002 | control-story-only | Design-system path is answered as `build-work-panel` over shared `conversationPanel` seams; root-admin first-consumer parity proof remains part of S-007. |
+| S-003 | blocked | Asset consumer decision record captures approved transient generated download, simple structured export rendering, preferred Playwright/Chromium renderer, and future-usable generated-document boundary; implementation remains blocked until numeric limits and alert thresholds are set in PRD/API contract or implementation blueprint. |
+| S-004 | blocked | API contract and implementation blueprint must define adapter behavior before Task Breakdown. |
+| S-005 | blocked | Data dictionary and persistence plan are missing. |
 | S-006 | blocked | API contract and permission mapping are missing. |
-| S-007 | blocked | DS seams, APIs, permissions, and evidence plan are missing. |
+| S-007 | blocked | Root-admin first-consumer parity proof, APIs, permissions, and evidence plan are missing. |
 | S-008 | blocked | PRD-derived test cases and QA evidence plan are missing. |
 | S-009 | blocked | Source-independent artifact set is not created yet. |
 | S-010 | control-story-only | Future tenant-builder rollout is intentionally deferred from MVP. |

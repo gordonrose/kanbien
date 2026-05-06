@@ -62,16 +62,17 @@
 - Status:
   Story planning blocked on artifact unblocks
 - Short update:
-  Product intent, architecture direction, story queue, PRD, and first-draft
-  capability matrix are captured. Next we need to resolve generated PDF
-  delivery, pick the design-system path, define root-builder review permission,
-  and create the remaining API, permission, data, and test artifacts before
-  implementation tasks can begin.
+  Product intent, architecture direction, story queue, PRD, first-draft
+  capability matrix, generated PDF direction, and design-system path are
+  captured. Next we need to define root-builder review permission, set the PDF
+  numeric implementation thresholds, and create the remaining API, permission,
+  data, test, evidence, and blueprint artifacts before implementation tasks can
+  begin.
 - Waiting next:
   Layer 3 unblock work
 - User action needed:
-  decide generated PDF delivery posture, design-system path, and root-builder
-  review permission
+  decide root-builder review permission and PDF numeric thresholds before
+  implementation planning
 
 ## Source-Of-Truth Boundary
 
