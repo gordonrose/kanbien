@@ -58,7 +58,7 @@ Ratings:
 | `DOC:api-contract` | strong | strong | strong | strong | strong | partial | low | P3 | Worked examples now cover no-wire-change refresh, additive route contracts, compatibility-sensitive changes, non-maintained OpenAPI/Postman rationale, maintained OpenAPI/Postman sync, and generated docs sync. Add examples later only when generated API materialization changes. |
 | `DOC:docs-artifact` | strong | strong | strong | strong | strong | partial | low | P3 | Initial worked examples added for README/status sync, runbook updates, implementation-status notes, stale-artifact sweeps, and Build Work Panel design-system route-away. Replace the placeholder feature-doc-refresh shape with a real `docs/features/` slice when the repo has one, and add further examples only when new residual docs classes show ambiguity. |
 | `DOC:permission-mapping` | strong | strong | strong | strong | strong | partial | low | P3 | Worked examples now cover runtime-enforced rows, documentation-only rows, grant-source rows, object/lifecycle boundaries, future-authz-model blockers, and UI eligibility. Revisit after Layer 2 authz model expansion for approved configuration/relationship examples. |
-| `DOC:data-dictionary` | medium | strong | strong | strong | strong | partial | low | P3 | Initial worked examples added for dictionary alignment, retention/export/delete/legal-hold gaps, compliance-health debt posture, and live-schema mismatch blockers. Remaining hardening is policy work for scoped fail-on-debt once debt has approved cleanup or exception posture. |
+| `DOC:data-dictionary` | strong | strong | strong | strong | strong | partial | low | P3 | Data compliance health now classifies manual-review and retention/export/delete/legal-hold review rows, and task validation requires those rows to be resolved, split, accepted with owner, or blocked. Remaining hardening is policy work for scoped fail-on-debt once debt has approved cleanup or exception posture. |
 | `DOC:standards-compliance` | medium | strong | strong | strong | strong | partial | low | P3 | Initial worked examples added for repo-only gate reviews, platform status snapshots, external control maps, waiver/blocker reviews, and standards-authority route-away. Add framework-specific examples later only when real GDPR, ISO, OWASP, NIST, or WCAG control-map slices expose new ambiguity. |
 | `TEST:test-only` | strong | strong | medium | strong | strong | partial | low | P3 | Initial worked examples added for PRD test cases, permission/security matrices, regression locks, and fixture honesty. Remaining hardening is empirical coverage-strength calibration against escaped-defect history and e2e journey tiers. |
 | `TEST:test-suite-alignment` | strong | strong | medium | strong | strong | partial | low | P3 | Initial worked examples added for traceability labels, lifecycle/status mismatch, moved test files, and route-away when proof does not exist. Add examples later only for new mismatch classes. |
@@ -74,17 +74,18 @@ Ratings:
 The initial example-hardening pass is complete. Use this remaining order unless
 a real delivery blocker changes the risk profile:
 
-1. `DOC:data-dictionary`: resolve scoped retention/export/delete/legal-hold
-   review rows surfaced by `npm run data:compliance-health`.
-2. `TEST:test-only`, `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence`:
+1. `TEST:test-only`, `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence`:
    empirically calibrate `npm run test:coverage-strength` interpretation
    against escaped-defect history and e2e journey tiers before making it fail
    on debt.
-3. `DOC:permission-mapping`: revisit after Layer 2 approves any
+2. `DOC:permission-mapping`: revisit after Layer 2 approves any
    configuration-based, relationship-based, ABAC, or ReBAC authorization model.
-4. `shared-code-placement-task-guardrail.md`: add supplemental worked examples
+3. `shared-code-placement-task-guardrail.md`: add supplemental worked examples
    for owning-feature public seams, `src/lib`, stay-put, and
    `DEV:platform-seam` placement.
+4. Data dictionary policy: decide when scoped retention/export/delete/legal-hold
+   review rows have enough approved cleanup or exception posture to enable
+   fail-on-debt behavior.
 5. Manifest/validator policy: decide whether
    `task-type-contract-manifest.md` remains a human routing reference or becomes
    validator-required in task packets.
@@ -149,8 +150,11 @@ hardened and what kind of future work should reopen it.
   relationship-based, ABAC, or ReBAC authorization models.
 - `DOC:data-dictionary`: examples now cover dictionary alignment,
   retention/export/delete/legal-hold gaps, compliance-health debt posture, and
-  live-schema mismatch blockers. Remaining work is policy/cleanup before any
-  scoped fail-on-debt behavior.
+  live-schema mismatch blockers. The health command now exposes
+  manual-review-required and retention/export/delete/legal-hold review counts,
+  and the validator prevents task packets from marking those rows as no debt
+  without a named owner. Remaining work is policy/cleanup before any scoped
+  fail-on-debt behavior.
 - `TEST:test-only`, `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence`:
   examples now distinguish executable proof, metadata/traceability alignment,
   and evidence capture. Remaining work is empirical coverage-strength

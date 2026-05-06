@@ -1281,7 +1281,11 @@ Allowed debt dispositions:
 - `not-applicable: <reason>`
 
 `DOC:data-dictionary` tasks should normally include
-`npm run data:compliance-health`. `TEST:test-only`,
+`npm run data:compliance-health`. When that command reports
+retention/export/delete/legal-hold or `manual-review-required` rows, the task
+must record whether the review debt was resolved in scope, split to another
+task, accepted with a named data/standards/governance owner, or blocked.
+`TEST:test-only`,
 `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence` tasks should include a
 `npm run test:coverage-strength` summary row. `EVIDENCE:qa-evidence` tasks may
 also include `npm run qa:evidence-summary -- <task-packet-path>` after their

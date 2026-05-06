@@ -1664,7 +1664,7 @@ describe("task breakdown validation", () => {
       "| T-S001-01 | tenantConfiguration tenant_branding displayName durable fact | docs/data-dictionary/tenant-configuration.md | Source story AC-S001-01, capability CAP-BRANDING-001, migration 0001, live schema snapshot, repository and domain contract reviewed. | field displayName is normalized; uniqueness not-applicable; lifecycle follows tenant soft-delete posture; index unchanged | durable fact retained on owning tenant configuration record; retention and cleanup not-applicable to docs-only alignment | data classification internal; privacy low; security, audit, retention, and compliance posture recorded | repo durable data rule and retention control apply; external standard controls not-applicable with rationale | artifact-documented | docs/data-dictionary/tenant-configuration.md plus npm run data:compliance-health evidence | existing persistence test path, TC-BRANDING-001, and data:compliance-health evidence recorded | docs-only-alignment | not-applicable: docs-only data dictionary update; schema, repository/domain runtime, API, permission mapping, standards, and tests unchanged | manual dictionary review plus npm run data:compliance-health |";
 
     const guardrailRows =
-      "| T-S001-01 | data-entity-table | pass | tenantConfiguration tenant_branding displayName durable fact documented. |\n| T-S001-01 | data-source-reviewed | pass | Story, capability row, migration, live schema snapshot, repository, and domain contract reviewed. |\n| T-S001-01 | data-field-index-lifecycle | pass | Field, normalization, lifecycle, soft-delete, uniqueness, and index posture recorded. |\n| T-S001-01 | data-durable-facts | pass | Durable fact and retention posture recorded. |\n| T-S001-01 | data-classification-compliance | pass | Data classification, privacy, security, audit, retention, and compliance posture recorded. |\n| T-S001-01 | data-standards-control-trace | pass | Repo durable data and retention control trace recorded with external-control rationale. |\n| T-S001-01 | data-enforcement-trace | pass | Enforcement posture is artifact-documented with existing persistence proof. |\n| T-S001-01 | data-enforcement-evidence | pass | Enforcement evidence names data dictionary artifact and data compliance health command. |\n| T-S001-01 | data-test-evidence-trace | pass | Test case, persistence test path, and data compliance health evidence recorded. |\n| T-S001-01 | data-split-routing | pass | Schema, runtime, API, permission, standards, and test work are unchanged or split. |\n| T-S001-01 | data-compliance-health | pass | npm run data:compliance-health required as debt summary. |\n| T-S001-01 | data-validation-proof | pass | Manual dictionary review and data compliance health summary required. |";
+      "| T-S001-01 | data-entity-table | pass | tenantConfiguration tenant_branding displayName durable fact documented. |\n| T-S001-01 | data-source-reviewed | pass | Story, capability row, migration, live schema snapshot, repository, and domain contract reviewed. |\n| T-S001-01 | data-field-index-lifecycle | pass | Field, normalization, lifecycle, soft-delete, uniqueness, and index posture recorded. |\n| T-S001-01 | data-durable-facts | pass | Durable fact and retention posture recorded. |\n| T-S001-01 | data-classification-compliance | pass | Data classification, privacy, security, audit, retention, and compliance posture recorded. |\n| T-S001-01 | data-standards-control-trace | pass | Repo durable data and retention control trace recorded with external-control rationale. |\n| T-S001-01 | data-enforcement-trace | pass | Enforcement posture is artifact-documented with existing persistence proof. |\n| T-S001-01 | data-enforcement-evidence | pass | Enforcement evidence names data dictionary artifact and data compliance health command. |\n| T-S001-01 | data-test-evidence-trace | pass | Test case, persistence test path, and data compliance health evidence recorded. |\n| T-S001-01 | data-split-routing | pass | Schema, runtime, API, permission, standards, and test work are unchanged or split. |\n| T-S001-01 | data-compliance-health | pass | npm run data:compliance-health required as debt summary. |\n| T-S001-01 | data-retention-review-disposition | pass | Scoped retention/export/delete/legal-hold review debt is resolved or owned when reported. |\n| T-S001-01 | data-validation-proof | pass | Manual dictionary review and data compliance health summary required. |";
 
     const result = validateTaskBreakdownContent(
       validTaskPacket
@@ -1812,6 +1812,33 @@ describe("task breakdown validation", () => {
 
     expect(result.status).toBe("BLOCKED");
     expect(result.errors).toContain("T-S001-01 Data Dictionary Contract standards/control follow-up must route to DOC:standards-compliance or GOV:standards-update");
+  });
+
+  it("blocks data dictionary retention review debt without a disposition owner", () => {
+    const dataDictionaryRow =
+      "| T-S001-01 | tenantConfiguration tenant_branding displayName durable fact | docs/data-dictionary/tenant-configuration.md | Source story AC-S001-01 and migration/schema reviewed. | field displayName and index posture recorded | durable fact retained; retention posture recorded | data classification internal; audit and retention posture recorded | repo durable data standard applies | manual-review | docs/data-dictionary/tenant-configuration.md evidence; npm run data:compliance-health | existing persistence test evidence recorded | docs-only-alignment | not-applicable: docs-only data dictionary update; schema, repository/domain runtime, API, permission mapping, standards, and tests unchanged | manual dictionary review plus npm run data:compliance-health |";
+
+    const result = validateTaskBreakdownContent(
+      validTaskPacket
+        .replace("| T-S001-01 | S-001 | DEV:backend |", "| T-S001-01 | S-001 | DOC:data-dictionary |")
+        .replace(
+          "src/features/tenantConfiguration/domain/updateBranding.ts, src/features/tenantConfiguration/transport/rootAdminRoutes.ts, tests/integration/tenantConfiguration/persistence.test.ts",
+          "docs/data-dictionary/tenant-configuration.md",
+        )
+        .replace(
+          "## Data Dictionary Contract\n\n| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Standards / Control Trace | Enforcement Trace | Enforcement Evidence | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n\n",
+          `## Data Dictionary Contract\n\n| Task ID | Entity / Table / Fact Group | Dictionary Artifact Target | Source Truth Reviewed | Field / Index / Lifecycle Truth | Durable Fact / Retention Truth | Classification / Compliance Posture | Standards / Control Trace | Enforcement Trace | Enforcement Evidence | Test / Evidence Trace | Compatibility Posture | Split / Blocked Follow-Up | Validation / Review Evidence |\n| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |\n${dataDictionaryRow}\n\n`,
+        )
+        .replace(
+          "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n\n",
+          "## Debt Health Summary Commands\n\n| Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |\n| --- | --- | --- | --- | --- | --- |\n| T-S001-01 | npm run data:compliance-health | debt-found | 53 manual-review-required retention/export/delete/legal-hold rows remain | none | not-applicable: no follow-up |\n\n",
+        ),
+      sourceStoryPacket,
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("T-S001-01 DOC:data-dictionary retention/export/delete/legal-hold review debt must be resolved in scope, split, accepted with owner, or blocked");
+    expect(result.errors).toContain("T-S001-01 DOC:data-dictionary retention/export/delete/legal-hold review debt must name a data, standards, or governance owner");
   });
 
   it("blocks standards update tasks without an approved standards-change contract", () => {

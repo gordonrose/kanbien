@@ -13,6 +13,13 @@ const riskyPostures = new Set([
   "planned",
 ]);
 
+const manualReviewPostures = new Set([
+  "manual-review-required",
+  "manual-review",
+]);
+
+const retentionReviewPattern = /retention|cleanup|export|delete|legal-hold/;
+
 interface TraceRow {
   standard: string;
   applies: string;
@@ -28,6 +35,8 @@ interface EntityComplianceSummary {
   hasTraceSection: boolean;
   traceRows: TraceRow[];
   riskyRows: TraceRow[];
+  manualReviewRows: TraceRow[];
+  retentionReviewRows: TraceRow[];
   missingEvidenceRows: TraceRow[];
 }
 
@@ -99,6 +108,10 @@ function readSummary(path: string): EntityComplianceSummary {
   const traceSection = extractSection(source, "Compliance And Enforcement Trace");
   const traceRows = parseMarkdownTable(traceSection);
   const riskyRows = traceRows.filter((row) => riskyPostures.has(row.enforcement));
+  const manualReviewRows = traceRows.filter((row) => manualReviewPostures.has(row.enforcement));
+  const retentionReviewRows = manualReviewRows.filter((row) =>
+    retentionReviewPattern.test(`${row.standard} ${row.notes}`.toLowerCase()),
+  );
   const missingEvidenceRows = traceRows.filter(isMissingEvidence);
 
   return {
@@ -108,6 +121,8 @@ function readSummary(path: string): EntityComplianceSummary {
     hasTraceSection: traceSection.trim().length > 0,
     traceRows,
     riskyRows,
+    manualReviewRows,
+    retentionReviewRows,
     missingEvidenceRows,
   };
 }
@@ -141,6 +156,12 @@ function main(): void {
   const riskyRows = summaries.flatMap((summary) =>
     summary.riskyRows.map((row) => ({ summary, row })),
   );
+  const manualReviewRows = summaries.flatMap((summary) =>
+    summary.manualReviewRows.map((row) => ({ summary, row })),
+  );
+  const retentionReviewRows = summaries.flatMap((summary) =>
+    summary.retentionReviewRows.map((row) => ({ summary, row })),
+  );
   const missingEvidenceRows = summaries.flatMap((summary) =>
     summary.missingEvidenceRows.map((row) => ({ summary, row })),
   );
@@ -153,6 +174,8 @@ function main(): void {
   console.log(`- Pages missing enforcement trace section: ${missingTrace.length}`);
   console.log(`- Enforcement trace rows: ${allRows.length}`);
   console.log(`- Risky or incomplete enforcement rows: ${riskyRows.length}`);
+  console.log(`- Manual-review-required enforcement rows: ${manualReviewRows.length}`);
+  console.log(`- Retention/export/delete/legal-hold review rows: ${retentionReviewRows.length}`);
   console.log(`- Applicable rows with missing evidence: ${missingEvidenceRows.length}`);
 
   printCountMap("Enforcement Posture Counts", countBy(allRows.map((row) => row.enforcement)));
@@ -186,6 +209,18 @@ function main(): void {
     console.log("- none");
   } else {
     for (const { summary, row } of sampleDebt) {
+      console.log(
+        `- ${relative(repoRoot, summary.path)} :: ${row.standard} :: enforcement=${row.enforcement || "(blank)"} evidence=${row.evidence || "(blank)"}`,
+      );
+    }
+  }
+
+  console.log("\nSample Retention / Export / Delete / Legal-Hold Review Rows");
+  const sampleRetentionReviewRows = retentionReviewRows.slice(0, 15);
+  if (sampleRetentionReviewRows.length === 0) {
+    console.log("- none");
+  } else {
+    for (const { summary, row } of sampleRetentionReviewRows) {
       console.log(
         `- ${relative(repoRoot, summary.path)} :: ${row.standard} :: enforcement=${row.enforcement || "(blank)"} evidence=${row.evidence || "(blank)"}`,
       );

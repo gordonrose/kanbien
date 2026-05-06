@@ -495,6 +495,7 @@ export const layer4RequiredCheckIdsByTaskType = {
     "data-test-evidence-trace",
     "data-split-routing",
     "data-compliance-health",
+    "data-retention-review-disposition",
     "data-validation-proof",
   ],
   "EVIDENCE:qa-evidence": [

@@ -5501,6 +5501,16 @@ function validateDebtHealthSummaries(task: TaskRow, rows: DebtHealthSummaryRow[]
       errors.push(`${task.taskId} DOC:data-dictionary task must include npm run data:compliance-health`);
     }
 
+    if (task.taskType === "DOC:data-dictionary" && mentionsDataRetentionReviewDebt(row)) {
+      if (row.debtDisposition === "none" || row.debtDisposition.startsWith("not-applicable")) {
+        errors.push(`${task.taskId} DOC:data-dictionary retention/export/delete/legal-hold review debt must be resolved in scope, split, accepted with owner, or blocked`);
+      }
+
+      if (!mentionsDataRetentionReviewOwner(row.followUpTaskOrOwner) && row.debtDisposition !== "in-scope-resolved") {
+        errors.push(`${task.taskId} DOC:data-dictionary retention/export/delete/legal-hold review debt must name a data, standards, or governance owner`);
+      }
+    }
+
     if (
       (task.taskType === "TEST:test-only" ||
         task.taskType === "TEST:test-suite-alignment" ||
@@ -6557,6 +6567,28 @@ function mentionsTraceabilityCommand(value: string): boolean {
 
 function mentionsDataComplianceHealthCommand(value: string): boolean {
   return value.toLowerCase().includes("npm run data:compliance-health");
+}
+
+function mentionsDataRetentionReviewDebt(row: DebtHealthSummaryRow): boolean {
+  const normalized = `${row.debtFound} ${row.summaryResult} ${row.debtDisposition}`.toLowerCase();
+  return (
+    normalized.includes("manual-review-required") ||
+    normalized.includes("retention") ||
+    normalized.includes("export/delete") ||
+    normalized.includes("legal-hold")
+  );
+}
+
+function mentionsDataRetentionReviewOwner(value: string): boolean {
+  const normalized = value.toLowerCase();
+  return (
+    normalized.includes("doc:data-dictionary") ||
+    normalized.includes("data-dictionary-maintainer") ||
+    normalized.includes("doc:standards-compliance") ||
+    normalized.includes("gov:standards-update") ||
+    normalized.includes("compliance") ||
+    normalized.includes("governance")
+  );
 }
 
 function mentionsCoverageStrengthCommand(value: string): boolean {
