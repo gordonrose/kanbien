@@ -148,6 +148,15 @@ route; it does not fill in the architecture decision.
 - do not update implementation, API behavior, persistence behavior, permission
   behavior, route behavior, or design-system seams inside this decision task
 
+## Worked Examples
+
+| Scenario | Concern / Trigger | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| A task needs tenant-scoped object-level authorization, but approved sources only define root and tenant context broadly. | `authorization-boundary` / `authz-boundary` | Record the exact authorization question, reviewed ADRs/steering docs, missing decision-analysis fields, owner, output route, blocked downstream tasks, and compatibility concerns. | Do not infer object-level rules or update permission mapping as current truth. |
+| A generated frontend topology route might become durable product topology. | `frontend-architecture-boundary` / `topology-authority` | Inventory topology authority sources, classify missing route/state/replay decisions, and route to Layer 2 or `GOV:architecture-update`. | Do not materialize route files or edit generated routing in this task. |
+| A cleanup lifecycle for abandoned uploads has no retry, quota, or ownership decision. | `resilience-consistency` / `lifecycle-cleanup` | Capture cleanup decision gap, required owner, retry/failure/quota questions, artifact target, and downstream implementation blockers. | Do not implement jobs, migrations, or retention docs until the decision is durable. |
+| Existing architecture source already answers platform-vs-feature ownership. | `ownership-boundary` / `approved-source-exists` | Cite exact source paths, checklist evidence, and final authority route as existing source; unblock downstream with human-review boundary limited to sufficiency. | Do not rewrite architecture authority when the existing source is enough. |
+
 ## Required Check IDs
 
 - `architecture-concern-area`

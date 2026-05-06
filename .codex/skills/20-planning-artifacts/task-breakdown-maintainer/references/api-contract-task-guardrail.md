@@ -92,6 +92,15 @@ a broader artifact sweep. Actual route-contract updates should route to
 `DOC:api-contract` so the task carries route shape, authz, validation, and
 compatibility evidence.
 
+## Worked Examples
+
+| Scenario | Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| Human-readable contract says `pageSize` defaults to `50`, but route and tests prove the repo default is `25`. | `no-wire-change-refresh` | Update one `docs/api-contracts/<route-family>.md` file; source inventory names route handler, schema, tests, and current contract; proof command is the focused route/contract test plus `git diff --check`; human review confirms wording matches existing behavior. | Do not change handler defaults, OpenAPI, or Postman unless they are maintained and stale for the same route seam. |
+| Approved story adds `GET /v1/root-admin/tenants/:tenantId/logo` with existing authz and no schema change. | `additive-route-contract` | Document method/path, required route param, response/status/error shape, root authz, tenant boundary, and maintained artifact inventory before the backend task queues. | Runtime route, transport schema, permission row, and executable tests split to `DEV:backend`, `DOC:permission-mapping`, and `TEST:test-only` when not already complete. |
+| A route would rename `tenantId` to `id` or remove a response field. | `compatibility-sensitive-contract` | Record compatibility-sensitive posture, approved migration/alias requirement, affected consumers, and blocked follow-up before any contract text presents the new shape as current. | Do not implement the rename or delete consumers; block to architecture/product approval or owning DEV task. |
+| Route family has no maintained OpenAPI/Postman artifacts. | `no-wire-change-refresh` or `additive-route-contract` | Maintained artifact inventory says `OpenAPI not maintained: <rationale>` and `Postman not maintained: <rationale>`; validation evidence uses contract review and focused tests. | Do not create ad hoc OpenAPI/Postman files inside this task unless a standards/governance task approves maintaining them. |
+
 ## Required Check IDs
 
 - `api-route-family`

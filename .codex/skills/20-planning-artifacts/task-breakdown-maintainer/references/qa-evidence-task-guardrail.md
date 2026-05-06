@@ -70,6 +70,15 @@ Use for task type: `EVIDENCE:qa-evidence`
   matching `DOC:*` task, and changed standards or architecture authority to the
   matching `GOV:*` task
 
+## Worked Examples
+
+| Scenario | Evidence Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| User-visible page fix must prove the served bundle contains the patched module. | `served-asset-verification` | Name active process, port, asset URL, source module, served-content check command, restart posture, expected evidence output, and what remains manually reviewed. | Do not patch frontend source or tests; route source fixes to `DEV:frontend` and executable proof to `TEST:test-only`. |
+| API projection fixture may have invented fallback fields. | `mock-honesty-comparison` | Inventory fixture/mock source, API contract or live payload route, comparison command/output, mismatch posture, and evidence artifact. | Do not rewrite fixtures in this task unless routed to test-suite alignment or test-only work. |
+| Runtime bug involves persisted rows and browser rendering. | `live-payload-sample` plus `browser-proof` | Capture live DB/API/projection shape, browser scenario/screenshot, active runtime process, and focused commands with pass/partial/blocked posture. | Do not call the defect fixed unless the evidence state is passing; route missing behavior to owning DEV task. |
+| Broad proof sweep after a feature loop. | `evidence-sweep` | Name exact evidence targets, commands, coverage-strength summary, artifact outputs, and accepted residual gaps. | Do not change standards, architecture, or add missing tests inside the evidence sweep. |
+
 ## Required Check IDs
 
 - `qa-proof-target`

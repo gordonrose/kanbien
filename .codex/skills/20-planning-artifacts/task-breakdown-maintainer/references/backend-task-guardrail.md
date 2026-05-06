@@ -171,6 +171,15 @@ Queued DEV:backend tasks must name focused proof for the implemented behavior:
 Broad commands such as `npm test` may be supporting evidence, but they are not
 enough unless the task also names the focused proof command for the behavior.
 
+## Worked Examples
+
+| Scenario | Change Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| Approved route handler must normalize and persist one tenant-owned setting through existing schema and permission model. | `transport-route` plus `domain-behavior` | Prefer splitting if route parsing and domain behavior have separate proof; otherwise name exact contract/domain/transport/test files, expected output, authz/tenant posture, and focused integration/security tests. | Missing API contract, permission row, or schema change blocks/splits before backend implementation. |
+| Existing repository read model needs an approved projection field from already-persisted data. | `projection-read-model` | Inventory repository, domain-safe return shape, contract consumer, tests, expected projection output, and no-migration posture. | API response docs and frontend rendering split unless they are already approved and only consumed. |
+| Lifecycle transition changes soft-delete update behavior. | `lifecycle-behavior` | Copy approved lifecycle source, name allowed/denied states, durable timestamp behavior, audit proof, exact domain/repository files, and focused unit/persistence/security tests. | Retention/export/legal-hold or cleanup policy gaps route to architecture/data dictionary/governance before implementation. |
+| Backend task discovers only missing executable proof for existing behavior. | blocked | Route to `TEST:test-only` with fixture/source inventory and focused command; backend task remains unchanged. | Do not edit production code just to make a proof task easier. |
+
 ## Required Check IDs
 
 - `backend-source-authority`

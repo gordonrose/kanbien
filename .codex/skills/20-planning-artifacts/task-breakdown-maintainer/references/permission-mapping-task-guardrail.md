@@ -173,6 +173,15 @@ Split or block the task when:
   permission mapping schema as a durable governance authority belong to
   `GOV:architecture-update` for now.
 
+## Worked Examples
+
+| Scenario | Class | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| Existing root capability is enforced in middleware, but the permission mapping doc lacks the route-to-capability row. | `runtime-enforced-row` | Update the exact mapping artifact row with capability key, root authority world, actor boundary, safe denial category, audit/proof expectation, evidence inventory, and allow/deny proof command. | Do not change middleware, grants, route code, or tests; split missing executable proof to `TEST:test-only`. |
+| New permission is approved for future UI planning but has no runtime enforcement or grant source. | `documentation-only-row` | Record row posture as documentation-only, UI-ineligible, grant source blocked/not-applicable, and split/runtime blocker so the capability cannot become selectable. | Do not seed grants or expose UI eligibility. |
+| Feature needs relationship-based access before Layer 2 approves ReBAC/relationship posture. | `future-authz-model-row` | Mark the row `architecture-target` or `blocked`, keep UI eligibility `no`, name the missing Layer 2/GOV architecture decision, and block dependent backend/frontend work. | Do not record as current, target, seed-backed, corrective-migration-backed, or runtime-enforced truth. |
+| A UI selector might show a capability that is seed-backed but not runtime-proven. | `ui-eligibility-review` | Review mapping docs, grant source, UI surface, and allow/deny evidence; output eligibility as blocked or hidden until runtime proof exists. | Do not patch the UI; route UI changes to `DEV:frontend` after permission truth is settled. |
+
 ## Required Check IDs
 
 - `permission-authz-model-source`

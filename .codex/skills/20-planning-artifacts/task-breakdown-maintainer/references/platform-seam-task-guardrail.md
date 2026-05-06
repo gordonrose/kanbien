@@ -144,6 +144,15 @@ The task packet must also fill the `Platform Seam Class Contract` table:
   mechanism, owning feature public seam or manifest dependency posture, and
   existing/future/unsupported consumer boundaries.
 
+## Worked Examples
+
+| Scenario | Seam Kind | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| Add a new approved feature router to the shared v1 router. | `router-route-mounting` | Source inventory names `src/routes/v1/index.ts`, feature `integration.ts`, manifest, and representative existing route tests; expected output is registered route mounting; proof includes focused route smoke for new and existing route families. | API contract truth, permission mapping, and feature behavior stay in owning tasks. |
+| Materialization script must emit a generated artifact consumed by docs/tests. | `generated-artifact-materialization` | Inventory generator, preview/apply/check command, generated output path, consumer artifacts, exact write envelope, and expected generated diff. | Do not hand-edit generated output unless the materialization seam explicitly owns that output. |
+| Shared auth request-context helper gains an additive compatible field. | `middleware-auth-request-context` | Name existing middleware/route consumers, compatibility mode, old/new coexistence posture, runtime restart impact, and focused consumer proof. | New capability keys, denial policy, or authority-world changes split to permission/architecture tasks. |
+| Scheduler retry behavior needs a new durable policy. | `scheduler-job-runtime` blocked | Block until architecture/standards authority defines retry/ownership policy; platform seam can later implement the approved mechanism. | Do not invent retry semantics inside implementation. |
+
 ## Required Check IDs
 
 - `platform-source-authority`

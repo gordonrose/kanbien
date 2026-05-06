@@ -96,6 +96,15 @@ design-system seams, block the refactor task and route to the owning type:
 - include detection hints for duplicated behavior, wrong owner/layer, broad
   write-set pressure, test-seam pressure, or other approved trigger evidence
 
+## Worked Examples
+
+| Scenario | Trigger / Type | Valid Task Shape | Route-Away Boundary |
+| --- | --- | --- | --- |
+| Two feature modules copy the same request-normalization helper, and a downstream backend task would otherwise edit both copies. | `duplicated-equivalent-behavior` / `consolidate` | Inventory both copies, name unchanged behavior, affected consumers, focused compatibility tests, and the downstream task unblocked. | Do not add new validation rules or route contract behavior; split those to `DEV:backend` or `DOC:api-contract`. |
+| A large service file mixes existing read-model projection with mutation behavior, blocking a focused mutation task. | `over-broad-write-set` / `decompose` | Extract or isolate only the existing projection behavior with characterization proof, then let the downstream task touch the mutation seam. | Do not change projection output or persistence queries beyond behavior-preserving movement. |
+| A browser regression cannot be honestly tested because route initialization is hidden behind global startup side effects. | `test-seam-needed` / `test-seam` | Expose an existing initialization seam for tests, prove existing route behavior still loads, and name the exact downstream proof task. | Do not add the missing regression test here unless the task is also `TEST:test-only`. |
+| Refactor would move a shared auth helper into a platform policy with new evaluator order. | `decision-guess-risk` / blocked | Block as not behavior-preserving and route to `GOV:architecture-update` or `DEV:platform-seam` after authority exists. | Do not use refactor-first to approve new shared auth architecture. |
+
 ## Required Check IDs
 
 - `refactor-trigger`
