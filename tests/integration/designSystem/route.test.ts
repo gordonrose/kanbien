@@ -56,7 +56,8 @@ describe("design system route", () => {
 
     expect(response.status).toBe(200);
     expectShellTrio(response.text);
-    expect(response.text).toContain("Logo Placeholder");
+    expect(response.text).toContain("brand-lockup");
+    expect(response.text).toContain("Kanbien Design System");
     expect(response.text).toContain("primary-nav-overflow-button");
     expect(response.text).toContain("profile-menu-button");
     expect(response.text).toContain("mobile-nav-button");
@@ -270,7 +271,7 @@ describe("design system route", () => {
     expect(response.text).toContain("date-picker-canonical-match-list");
     expect(response.text).toContain("date-picker-preview-frame");
     expect(response.text).toContain("Date Picker Hosted Field");
-    expect(response.text).toContain("href=\"/design-system/canonicals/date-picker\"");
+    expect(response.text).toContain("href=\"/design-system/canonical-renderings/date-picker\"");
     expect(response.text).toContain("data-date-picker-surface=\"canonical\"");
   });
 
@@ -298,7 +299,8 @@ describe("design system route", () => {
     expect(response.text).not.toContain("Component and pattern navigation");
     expect(response.text).toContain("Reusable Component Artifacts");
     expect(response.text).not.toContain("Governed Pattern Families");
-    expect(response.text).toContain("/design-system/patterns");
+    expect(response.text).toContain("/design-system/canonicals/top-nav");
+    expect(response.text).toContain("/design-system/canonical-renderings/async-activity-drawer");
     expectShellTrio(response.text);
     expect(response.text).toContain("Design-system section navigation");
     expectSingleItemContextNav(response.text, "Components");
@@ -328,13 +330,13 @@ describe("design system route", () => {
     expect(response.text).toContain("data-brochure-preview");
     expect(response.text).toContain("brochure-display-settings-drawer");
     expect(response.text).toContain("data-brochure-density");
-    expect(response.text).toContain("data-brochure-media-balance");
-    expect(response.text).toContain("data-brochure-mosaic-copy");
+    expect(response.text).toContain("brochure-media-band");
+    expect(response.text).toContain("brochure-mosaic-copy");
     expect(response.text).toContain("data-brochure-color=\"background\"");
     expect(response.text).toContain("data-brochure-color=\"font\"");
-    expect(response.text).toContain("data-brochure-font-family");
-    expect(response.text).toContain("data-brochure-font-weight");
-    expect(response.text).toContain("data-brochure-font-size");
+    expect(response.text).toContain("data-brochure-editable-toggle");
+    expect(response.text).toContain("brochure-edit-drawer");
+    expect(response.text).toContain("data-brochure-edit-target");
     expect(response.text).not.toContain("INTERNAL_ERROR");
   });
 
@@ -402,13 +404,13 @@ describe("design system route", () => {
     expect(launcher.text).toContain("/design-system/components/context-nav?width=1120&height=620&stack=tall");
   });
 
-  it("frames sub-nav and context-nav canonical launchers under patterns", async () => {
+  it("frames sub-nav and context-nav canonical launchers under their governed sections", async () => {
     const subNav = await request(createApp()).get("/design-system/canonicals/sub-nav").set("host", "admin.example.test");
     const contextNav = await request(createApp()).get("/design-system/canonicals/context-nav").set("host", "admin.example.test");
 
     expect(subNav.status).toBe(200);
-    expect(subNav.text).toContain("href=\"/design-system/patterns\"");
-    expect(subNav.text).toContain(">Patterns<");
+    expect(subNav.text).toContain("href=\"/design-system/components\"");
+    expect(subNav.text).toContain(">Components<");
     expect(subNav.text).toContain(">Sub Nav<");
     expect(subNav.text).not.toContain("href=\"/design-system/canonicals\">Canonicals<");
 
