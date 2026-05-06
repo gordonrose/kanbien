@@ -131,6 +131,25 @@ describe("design system route", () => {
     expect(response.text).not.toContain("/design-system/templates/page-shell?ref=PSBR-");
   });
 
+  it("serves the Build work panel canonical launcher and generated render route", async () => {
+    const launcher = await request(createApp()).get("/design-system/canonicals/build-work-panel").set("host", "admin.example.test");
+    const render = await request(createApp())
+      .get("/design-system/canonical-renderings/build-work-panel/BWP-R-002")
+      .set("host", "admin.example.test");
+
+    expect(launcher.status).toBe(200);
+    expectShellTrio(launcher.text);
+    expect(launcher.text).toContain("Build Work Panel Canonicals");
+    expect(launcher.text).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-001");
+    expect(launcher.text).toContain("/design-system/canonical-renderings/build-work-panel/BWP-R-012");
+
+    expect(render.status).toBe(200);
+    expectShellTrio(render.text);
+    expect(render.text).toContain("data-build-work-panel-surface=\"canonical\"");
+    expect(render.text).toContain("id=\"build-work-panel-preview-shell\"");
+    expect(render.text).toContain("/design-system/assets/buildWorkPanelCanonical.mjs");
+  });
+
   it("serves the generated canonical-renderings family launcher page shell", async () => {
     const response = await request(createApp())
       .get("/design-system/canonical-renderings/page-shell-banner")

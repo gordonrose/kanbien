@@ -204,10 +204,70 @@ The conversation should:
 - ask one plain-language question at a time
 - update the owning artifact after each answer
 - re-run the relevant validator after changes
-- continue until no requester-answerable blocker remains, or the requester
-  explicitly signs off that a blocker is deferred to a named owner/layer
+- after recording and validating an answer, immediately ask the next smallest
+  unresolved question for the same blocker when one remains
+- continue without waiting for the requester to ask "what next" until no
+  requester-answerable blocker remains, the blocker is explicitly deferred to a
+  named owner/layer, or the requester asks to pause
 
-The harness may move into Story Breakdown only when:
+Creating a draft artifact is not the same as resolving a blocker. For
+architecture/security/asset or design-system blockers, the harness must ask for
+human review before changing the blocker to answered, resolved, approved,
+ready-for-task-breakdown, or non-blocking. A proposed record may be created only
+as review material, and its status must stay proposed, draft, needs-review, or
+blocked until feedback is recorded.
+
+For asset/download blockers, the review question must name the business-visible
+posture being proposed, such as transient download, stored generated file,
+inline rendering, public delivery, retention, access, or audit behavior.
+
+For architecture-foundation decisions, the harness must run a structured
+Architecture Decision Interview before marking the decision answered. The
+interview is not a checklist dump; ask one question at a time, but do not mark
+the decision resolved until the owning artifact records the answers or explicit
+deferrals for:
+
+- future consumers and reuse expectations
+- expected volume, size, concurrency, and burst behavior
+- expected response time, timeout, synchronous versus asynchronous posture, and
+  user-visible waiting states
+- deterministic output requirements, idempotency, versioning, and regeneration
+  compatibility
+- source data contract, schema ownership, validation, and rendering boundary
+- dependency or provider choice, including local/server runtime constraints and
+  upgrade/patch posture
+- failure modes, partial output rules, retry behavior, cancellation, and
+  recovery
+- security, privacy, tenant/scope isolation, logging redaction, and permission
+  boundaries
+- audit events, operational metrics, alerting, runbook expectations, and
+  support diagnostics
+- accessibility, localization, long-content handling, and user-visible quality
+  bar
+- cost limits, quota/rate limits, abuse controls, and cleanup/retention
+- migration, reversibility, compatibility with future broader rollout, and
+  explicitly deferred behavior
+
+If any answer is unknown, record it as a named blocker, assumption, or deferred
+owner/layer. Do not convert the architecture decision to approved, answered, or
+ready-for-task-breakdown while these dimensions are blank or silently assumed.
+After each architecture interview answer, update the owning artifact and then
+ask the next unanswered interview dimension immediately. Do not require a
+separate "next?" prompt from the requester.
+
+For new visual or interaction design-system blockers, start with a labeled
+demo rendering in the `/design-system` proving ground so visual feedback and
+behavior can be checked immediately. The demo is review material only. It must
+not be treated as signed off, approved, resolved, or app-consumable.
+
+After demo feedback, the required governance order is behavior-lock review,
+then reference-pack or canonical review, then verification checklist refresh,
+then adoption contract refresh. Do not generate downstream design-system
+artifacts as if they are signed off before the earlier review gate is complete.
+If draft downstream artifacts are created as scaffolding, mark them explicitly
+as draft review material and keep the blocker open.
+
+The harness may create a first-pass blocked Story Breakdown map only when:
 
 - all requester-answerable blockers are answered, cut from scope, or explicitly
   deferred with owner and layer
@@ -217,6 +277,12 @@ The harness may move into Story Breakdown only when:
   Breakdown scope or represented in a Layer 3 unblock queue
 - the Technical Steering packet validates, or the remaining validation blocker
   is explicitly accepted by the requester with a named owner and next artifact
+
+When structural questions remain, the Story Breakdown packet is a map of the
+work and unblock queue, not permission to continue toward Task Breakdown,
+implementation blueprinting, or Delivery. The harness must describe it as a
+first pass and immediately move to the named architecture, security,
+design-system, or artifact questions that unblock the work.
 
 This loop is conversational by default. Do not dump a checklist of all blockers
 when one focused question can resolve the next useful item.

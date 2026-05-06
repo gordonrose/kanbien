@@ -39,3 +39,33 @@ owning artifact, and re-run validation. Technical, design-system, security, or
 artifact work that the requester should not answer directly should be queued as
 Layer 3 unblock stories or named blockers rather than hidden inside delivery
 tasks.
+
+After each answer, the harness should immediately ask the next smallest
+unresolved question for the active blocker when one remains. It should not wait
+for the requester to ask "what next" unless the requester pauses, defers the
+blocker, or the blocker is complete.
+
+Draft artifacts are review material, not approval. The harness must not mark an
+asset/download, architecture/security, or design-system blocker resolved merely
+because it drafted a record. It must ask the human to review the proposed
+posture or behavior, record the feedback, and only then move the blocker toward
+answered or approved.
+
+Architecture-foundation blockers need a senior-architecture interview before
+approval. Work through one question at a time, but cover future consumers,
+scale/concurrency, latency, deterministic output, data contracts, dependency
+choice, failures/retries, security/privacy, audit/operations, accessibility,
+cost/quotas, migration/reversibility, and explicitly deferred behavior. Unknown
+answers stay visible as blockers, assumptions, or deferred owner/layer rows.
+
+New visual or interaction design-system work should start with a labeled demo
+rendering in `/design-system` so visual feedback and behavior can be checked
+immediately. The demo is review material only. After demo feedback,
+design-system work must ask for behavior-lock review before treating reference
+packs, canonicals, verification, or adoption artifacts as meaningful signoff.
+
+When those structural questions remain, Story Breakdown is only a first-pass
+blocked story map. The harness should say that plainly and move next to the
+named architecture, security, design-system, or artifact workflow needed to
+unblock the stories. It must not describe the packet as normal forward progress
+toward Task Breakdown or implementation.

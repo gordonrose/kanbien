@@ -25,14 +25,14 @@
   Give builders a shared in-app chat surface that can start a Layer 1 Product
   Discovery conversation from inside the product, preserve the conversation
   history, use page/module/role context to offer helpful starter prompts, and
-  export a well-presented Product Discovery packet as a PDF.
+  export a simple structured Product Discovery packet as a PDF.
 
 ## Current Backlog State
 
 - Current status:
-  `ready-for-story-breakdown`
+  `first-pass-story-map-blocked`
 - Requester-facing status:
-  Ready for story planning
+  First-pass story map created; structural questions must be resolved next
 - Source channel:
   `chat`
 - Owning context:
@@ -47,7 +47,20 @@
 - Technical Steering packet:
   `docs/workspace/technical-steering/2026-05-05-chat-interface-layer-one-discovery-steering.md`
 - Story Breakdown:
-  not created yet
+  `docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md`
+- Generated packet PDF decision:
+  approved for transient generated download and simple structured export:
+  `docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md`
+- Design-system behavior lock:
+  `docs/workspace/design-system/behavior-locks/build-work-panel-behavior-lock.md`
+- Design-system reference pack:
+  `docs/workspace/design-system/reference-packs/build-work-panel-reference-pack.md`
+- Design-system pattern:
+  `docs/workspace/design-system/patterns/build-work-panel-pattern.md`
+- Design-system verification checklist:
+  `docs/workspace/design-system/verification/build-work-panel-verification-checklist.md`
+- Root-admin adoption contract:
+  `docs/workspace/design-system/adoption/root-admin-build-work-panel-adoption-contract.md`
 - Task Breakdown:
   not created yet
 - Work runs / Loop Runs:
@@ -60,13 +73,17 @@
 - Title:
   Chat interface for Layer One Product Discovery
 - Status:
-  Ready for story planning
+  First-pass story map blocked
 - Short update:
-  Product intent and architecture direction are captured. Next we need to split
-  the work into stories and identify the planning, design-system, data,
-  security, and evidence artifacts needed before implementation.
+  Product intent, architecture direction, a first-pass story map, and the
+  generated packet PDF decision are captured. The PDF is approved as a
+  transient regenerated download with simple structured export rendering. Draft
+  design-system governance now names the Build work panel family, required
+  states, verification needs, and root-admin adoption stop conditions, but the
+  design behavior still needs explicit human review before rendered
+  `/design-system` proof treats that blocker as resolved.
 - Waiting next:
-  Story Breakdown
+  behavior-lock review
 - User action needed:
   none right now
 

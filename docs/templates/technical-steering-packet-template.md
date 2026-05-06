@@ -340,10 +340,57 @@ Allowed resolution statuses:
 - `not-started`
 - `blocked`
 
-Story Breakdown may start only when requester-answerable blockers are answered,
-cut from scope, or explicitly deferred with an owner/layer, and every remaining
-blocking artifact or blocked handoff row is represented as a Layer 3 unblock
-story or explicit blocker.
+A first-pass blocked Story Breakdown map may be created only when
+requester-answerable blockers are answered, cut from scope, or explicitly
+deferred with an owner/layer, and every remaining blocking artifact or blocked
+handoff row is represented as a Layer 3 unblock story or explicit blocker.
+
+Creating a proposed artifact does not resolve a blocker. For
+architecture/security/asset or design-system blockers, keep the resolution
+status as `blocked` or `not-started` until explicit human review is recorded.
+The requester-facing question must name the proposed decision or behavior being
+reviewed.
+
+Architecture-foundation decisions require an interview before approval. Ask one
+question at a time, but do not mark the decision answered until the owning
+artifact records answers or explicit deferrals for:
+
+- future consumers and reuse expectations
+- expected volume, size, concurrency, and burst behavior
+- response time, timeout, synchronous/asynchronous posture, and waiting states
+- deterministic output, idempotency, versioning, and regeneration compatibility
+- source data contract, validation, schema ownership, and rendering boundary
+- dependency/provider choice and runtime/upgrade constraints
+- failure modes, partial output, retry, cancellation, and recovery
+- security, privacy, tenant/scope isolation, logging redaction, and permissions
+- audit events, metrics, alerting, runbook, and support diagnostics
+- accessibility, localization, long-content handling, and quality bar
+- cost, quota/rate limits, abuse controls, cleanup, and retention
+- migration, reversibility, future rollout compatibility, and explicitly
+  deferred behavior
+
+Unknown answers must remain visible as blockers, assumptions, or deferred
+owner/layer rows. Do not silently convert them into approved architecture.
+After each answer, update the owning artifact, re-run validation, and ask the
+next smallest unanswered question for the same blocker immediately. Do not wait
+for a separate "what next?" prompt unless the requester explicitly pauses,
+defers the blocker, or the blocker is complete.
+
+New visual or interaction design-system blockers should start with a labeled
+demo rendering in `/design-system` so visual feedback and behavior can be
+checked immediately. The demo is review material only, not signoff.
+
+After demo feedback, design-system blockers must move in governance order:
+behavior lock, reference pack or canonical review, verification checklist, then
+adoption contract. Draft downstream artifacts may be scaffolded only as review
+material; they must not be described as signed off, approved, resolved, or
+implementation ready before the earlier human review gate is complete.
+
+When architecture, security, design-system, or other structural questions
+remain, the Story Breakdown packet is not permission to continue toward Task
+Breakdown or implementation. The harness should frame it as a first-pass map
+and immediately guide the requester or owning specialist workflow into the
+structural unblock questions.
 
 ## Layer 3 Handoff
 

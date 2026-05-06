@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Build Work Panel Canonical</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/assets/buildWorkPanelDemo.css" />
+  </head>
+  <body data-build-work-panel-surface="canonical" data-render-status="settling">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/canonical-renderings" aria-current="page">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonical-renderings">Canonical Renderings</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonical-renderings/build-work-panel">Build Work Panel</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Canonical Render</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search build work panel refs" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Build work panel family navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/canonical-renderings/build-work-panel" data-tooltip="Canonicals" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+      </nav>
+
+      <main class="design-system-page-main canonical-render-page build-work-panel-demo-page" data-build-work-panel-canonical-page>
+        <div class="canonical-render-layout">
+          <section class="canonical-render-intro">
+            <h1>Build Work Panel</h1>
+            <p class="canonical-launcher-copy">
+              This route is the generated canonical render surface for the shared `build-work-panel` seam. Real app adoption must consume the shared renderer and controller rather than copying this page.
+            </p>
+            <dl class="canonical-render-meta" aria-label="Canonical metadata">
+              <div class="canonical-render-meta-row">
+                <dt>Matched canonical</dt>
+                <dd id="build-work-panel-canonical-match-list">Resolving canonical reference...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewing circumstances</dt>
+                <dd id="build-work-panel-canonical-circumstances">Loading panel circumstances...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Panel state</dt>
+                <dd id="build-work-panel-meta-state">Loading panel state...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Review note</dt>
+                <dd id="build-work-panel-meta-notes">Loading review note...</dd>
+              </div>
+            </dl>
+            <div class="canonical-render-footer">
+              <nav class="canonical-stepper" aria-label="Canonical navigation">
+                <span id="build-work-panel-canonical-current" class="canonical-stepper-current">Resolving current canonical...</span>
+                <a id="build-work-panel-canonical-prev" class="canonical-stepper-link" href="#" aria-disabled="true">Previous</a>
+                <a id="build-work-panel-canonical-next" class="canonical-stepper-link" href="#" aria-disabled="true">Next</a>
+              </nav>
+            </div>
+          </section>
+
+          <section class="top-nav-preview-stage-section" aria-labelledby="build-work-panel-stage-title">
+            <div class="top-nav-preview-stage-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Canonical Surface</p>
+                <h2 id="build-work-panel-stage-title">Build Work Panel State</h2>
+              </div>
+              <p id="build-work-panel-preview-summary" class="top-nav-preview-stage-note">
+                Canonical state loading from the URL.
+              </p>
+            </div>
+            <div class="build-work-panel-demo-stage" data-canonical-build-work-panel-host="true">
+              <div id="build-work-panel-preview-shell" data-render-status="settling"></div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/buildWorkPanelCanonical.mjs"></script>
+  </body>
+</html>

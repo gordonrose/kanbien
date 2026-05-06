@@ -62,6 +62,45 @@ problem appears to come from:
 - a family adapter seam
 - or a justified local exception
 
+## Demo-First Review Rule
+
+For new visual or interaction families, start the design-system loop with a
+clearly labeled demo rendering before asking the requester to sign off a
+behavior lock.
+
+The first demo is review material, not governed truth. It may use provisional
+copy, representative data, and temporary local implementation inside the
+`/design-system` proving ground so visual feedback and behavior concerns can
+be checked in the browser immediately.
+
+Before a demo is presented as locally ready for feedback, run a rendered smoke
+check for the variant dimensions exposed by that demo. If a demo includes
+display settings, theme switching, direction switching, magnification, drawers,
+or responsive collapse behavior, the smoke check must exercise those controls
+in the browser and inspect the resulting rendered regions. Static source checks
+or assertions that only confirm a state attribute changed are not enough.
+
+Minimum rendered smoke evidence for demo surfaces with display settings:
+
+- dark theme backgrounds and foreground colors across every newly introduced
+  region
+- largest available magnification without overlap, clipping, or premature
+  scrollbars
+- RTL direction when direction controls exist
+- mobile or collapsed state when a mobile/collapsed affordance exists
+
+The demo-first step must not be used to bypass governance. Before the family is
+treated as signed off or adopted by a real app surface, the reviewed demo must
+be converted into the normal artifact chain:
+
+- behavior lock capturing the agreed rules
+- reference pack or canonical review set covering representative states
+- verification checklist and executable browser evidence
+- adoption artifact when a real app surface begins consuming the family
+
+Real app UI remains blocked until the signed-off design-system chain exists or
+the requester explicitly approves a one-off exception for that app surface.
+
 ## Required Artifact Chain
 
 For a material design-system change, create or refresh:

@@ -26,6 +26,10 @@ export const generatedCanonicalRenderRouteRegistry = {
     htmlPath: ["components", "async-activity-drawer.html"],
     surfaceSignature: 'id="async-activity-drawer-preview-shell"',
   },
+  "build-work-panel": {
+    htmlPath: ["components", "build-work-panel.html"],
+    surfaceSignature: 'id="build-work-panel-preview-shell"',
+  },
   "drawer-select": {
     htmlPath: ["components", "drawer-select.html"],
     surfaceSignature: 'id="drawer-select-preview-shell"',

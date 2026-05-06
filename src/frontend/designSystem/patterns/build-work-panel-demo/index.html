@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Build Work Panel Pattern</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/assets/buildWorkPanelDemo.css" />
+  </head>
+  <body>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy">
+            <strong>Kanbien Design System</strong>
+          </span>
+        </a>
+
+        <nav class="primary-nav" aria-label="Primary">
+          <div id="primary-nav-links" class="primary-nav-links">
+            <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol id="breadcrumb-list" class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Build Work Panel Pattern</span></li>
+          </ol>
+        </nav>
+      </section>
+
+      <nav class="context-nav" aria-label="Design-system section navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/patterns" data-tooltip="Patterns" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" />
+              </svg>
+            </span>
+            <span class="context-nav-label">Patterns</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/canonicals" data-tooltip="Canonicals">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" />
+              </svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+      </nav>
+
+      <main class="design-system-page-main build-work-panel-demo-page" data-build-work-panel-demo>
+        <section class="build-work-panel-demo-intro" aria-labelledby="build-work-panel-demo-title">
+          <p class="top-nav-preview-eyebrow" data-build-work-panel-demo-review>Signed-off pattern</p>
+          <h1 id="build-work-panel-demo-title">Build Work Panel</h1>
+          <p class="build-work-panel-demo-copy">
+            Signed-off design-system pattern surface for the root-admin Build work panel. App adoption remains blocked until shared render, controller, style, and canonical proof are created.
+          </p>
+          <ul class="build-work-panel-demo-status" aria-label="Demo status">
+            <li>Signed off</li>
+            <li>Pattern surface</li>
+            <li>Not app-consumable</li>
+            <li>/design-system/patterns/build-work-panel-demo</li>
+          </ul>
+          <button
+            class="build-work-panel-demo-settings-button"
+            type="button"
+            data-build-work-panel-demo-settings-open
+            aria-controls="build-work-panel-demo-settings-drawer"
+            aria-expanded="false"
+          >
+            Display settings
+          </button>
+        </section>
+
+        <section class="build-work-panel-demo-stage" aria-label="Rendered Build work panel demo">
+          <div class="build-work-panel-demo-app" data-build-work-panel-demo-app data-panel-open="false">
+            <aside
+              id="build-work-panel-demo-panel"
+              class="build-work-panel-demo-panel"
+              data-build-work-panel-demo-panel
+              data-history-open="true"
+              aria-label="Build work panel"
+            >
+              <header class="build-work-panel-demo-panel-header">
+                <div>
+                  <p class="top-nav-preview-eyebrow">Layer 1</p>
+                  <h2>Build work panel</h2>
+                </div>
+                <div class="build-work-panel-demo-header-actions">
+                  <button
+                    class="build-work-panel-demo-history-toggle"
+                    type="button"
+                    data-build-work-panel-demo-history-toggle
+                    aria-controls="build-work-panel-demo-history"
+                    aria-expanded="true"
+                  >
+                    <span class="build-work-panel-demo-history-toggle-icon" aria-hidden="true">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </span>
+                    <span data-build-work-panel-demo-history-toggle-label>Hide history</span>
+                    <span class="build-work-panel-demo-history-toggle-caret" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="m9 6 6 6-6 6-1.4-1.4 4.6-4.6-4.6-4.6z" />
+                      </svg>
+                    </span>
+                  </button>
+                  <button class="build-work-panel-demo-close" type="button" data-build-work-panel-demo-close aria-label="Close Build work panel">×</button>
+                </div>
+              </header>
+
+              <div class="build-work-panel-demo-body">
+                <aside id="build-work-panel-demo-history" class="build-work-panel-demo-history" aria-label="Conversation history">
+                  <div class="build-work-panel-demo-history-header">
+                    <strong>Conversation history</strong>
+                    <span>3 items</span>
+                  </div>
+                  <button class="build-work-panel-demo-history-item is-active" type="button">
+                    <strong>Build panel MVP</strong>
+                    <span>Product Discovery packet ready. Current thread covers root-admin Build panel discovery, packet history, and download journey review.</span>
+                  </button>
+                  <button class="build-work-panel-demo-history-item" type="button">
+                    <strong>PDF export journey</strong>
+                    <span>Download behavior under review, including prepared state, completed chat event, repeat download, and approved packet version trace.</span>
+                  </button>
+                  <button class="build-work-panel-demo-history-item" type="button">
+                    <strong>Design-system blockers</strong>
+                    <span>Open questions remain around governed panel layout, action nav placement, history lane behavior, and app adoption readiness.</span>
+                  </button>
+                </aside>
+
+                <div class="build-work-panel-demo-chat-column">
+                  <div class="build-work-panel-demo-thread" data-build-work-panel-demo-thread aria-label="Discovery chat history">
+                    <div class="build-work-panel-demo-message">
+                      <strong>Harness</strong>
+                      <span data-build-work-panel-demo-message-copy>I can help shape a Product Discovery packet before anything moves further through the build loop.</span>
+                      <div class="build-work-panel-demo-message-actions" aria-label="Message actions">
+                        <button class="build-work-panel-demo-message-action" type="button" data-build-work-panel-demo-copy-message aria-label="Copy message" title="Copy message">
+                          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                            <path d="M8 7h9a2 2 0 0 1 2 2v10H8zm2 2v8h7V9zM5 4h10v2H7v9H5z" />
+                          </svg>
+                        </button>
+                        <button class="build-work-panel-demo-message-action" type="button" data-build-work-panel-demo-reply-message aria-label="Reply to message" title="Reply">
+                          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                            <path d="M10 7V4L4 10l6 6v-3h4.5A4.5 4.5 0 0 1 19 17.5V20h2v-2.5A6.5 6.5 0 0 0 14.5 11H10z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="build-work-panel-demo-message is-user">
+                      <strong>Builder</strong>
+                      <span data-build-work-panel-demo-message-copy>I want the root admin to start discovery from here and keep the packet history visible.</span>
+                      <div class="build-work-panel-demo-message-actions" aria-label="Message actions">
+                        <button class="build-work-panel-demo-message-action" type="button" data-build-work-panel-demo-copy-message aria-label="Copy message" title="Copy message">
+                          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                            <path d="M8 7h9a2 2 0 0 1 2 2v10H8zm2 2v8h7V9zM5 4h10v2H7v9H5z" />
+                          </svg>
+                        </button>
+                        <button class="build-work-panel-demo-message-action" type="button" data-build-work-panel-demo-edit-message aria-label="Edit message" title="Edit message">
+                          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                            <path d="M5 17.5V20h2.5L18.1 9.4l-2.5-2.5zm14.8-9.9-2.4-2.4 1.1-1.1a1.7 1.7 0 0 1 2.4 2.4z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="build-work-panel-demo-message">
+                      <strong>Harness</strong>
+                      <span data-build-work-panel-demo-message-copy>Got it. I will keep the page, module, role context, open blockers, and packet chain visible while we work through the first pass.</span>
+                      <div class="build-work-panel-demo-message-actions" aria-label="Message actions">
+                        <button class="build-work-panel-demo-message-action" type="button" data-build-work-panel-demo-copy-message aria-label="Copy message" title="Copy message">
+                          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                            <path d="M8 7h9a2 2 0 0 1 2 2v10H8zm2 2v8h7V9zM5 4h10v2H7v9H5z" />
+                          </svg>
+                        </button>
+                        <button class="build-work-panel-demo-message-action" type="button" data-build-work-panel-demo-reply-message aria-label="Reply to message" title="Reply">
+                          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                            <path d="M10 7V4L4 10l6 6v-3h4.5A4.5 4.5 0 0 1 19 17.5V20h2v-2.5A6.5 6.5 0 0 0 14.5 11H10z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <section class="build-work-panel-demo-packet" data-build-work-panel-demo-packet aria-label="Product Discovery packet status">
+                    <div class="build-work-panel-demo-packet-row">
+                      <div>
+                        <strong>Product Discovery packet</strong>
+                        <p class="build-work-panel-demo-review-note">
+                          <span class="build-work-panel-demo-status-dot" aria-hidden="true"></span>
+                          <span data-build-work-panel-demo-download-status>Ready to download</span>
+                        </p>
+                        <p class="build-work-panel-demo-review-note">Approved packet data only. Version 1 of 1.</p>
+                      </div>
+                      <button class="build-work-panel-demo-download" type="button" data-build-work-panel-demo-download>Download PDF</button>
+                    </div>
+                  </section>
+
+                  <div class="build-work-panel-demo-input-area">
+                    <div
+                      id="build-work-panel-demo-tools-menu"
+                      class="build-work-panel-demo-tools-menu"
+                      data-build-work-panel-demo-tools-menu
+                      role="menu"
+                      aria-label="Chat input tools"
+                    >
+                      <button class="build-work-panel-demo-tools-menu-item" type="button" role="menuitem">
+                        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                          <path d="M8.5 18.5a5 5 0 0 1 0-7.07l6.36-6.36a3.5 3.5 0 1 1 4.95 4.95l-7.07 7.07a2 2 0 0 1-2.83-2.83l6.36-6.36 1.41 1.41-6.36 6.36a.5.5 0 0 0 .71.71l7.07-7.07a1.5 1.5 0 0 0-2.12-2.12l-6.36 6.36a3 3 0 0 0 4.24 4.24l5.66-5.66 1.41 1.41-5.66 5.66a5 5 0 0 1-7.07 0z" />
+                        </svg>
+                        <span>Attach file</span>
+                      </button>
+                      <button class="build-work-panel-demo-tools-menu-item" type="button" role="menuitem">
+                        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                          <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5h-4v2h3v2h-9v-2h3v-2h-4A2.5 2.5 0 0 1 4 14.5zm2.5-.5a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5z" />
+                        </svg>
+                        <span>Capture screen</span>
+                      </button>
+                      <button class="build-work-panel-demo-tools-menu-item" type="button" role="menuitem">
+                        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                          <path d="M6 4h12a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 2v12h12V6zm2 2h8v2H8zm0 4h8v2H8zm0 4h5v2H8z" />
+                        </svg>
+                        <span>Capture logs</span>
+                      </button>
+                    </div>
+                    <form class="build-work-panel-demo-composer" data-build-work-panel-demo-composer>
+                      <button
+                        class="build-work-panel-demo-tools-toggle"
+                        type="button"
+                        data-build-work-panel-demo-tools-toggle
+                        aria-label="Open chat tools"
+                        aria-controls="build-work-panel-demo-tools-menu"
+                        aria-expanded="false"
+                        title="Chat tools"
+                      >
+                        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                          <path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z" />
+                        </svg>
+                      </button>
+                      <label class="visually-hidden" for="build-work-panel-demo-message">Message</label>
+                      <textarea
+                        id="build-work-panel-demo-message"
+                        name="message"
+                        rows="1"
+                        autocomplete="off"
+                        data-build-work-panel-demo-message
+                        placeholder="Ask the harness or describe the change"
+                      ></textarea>
+                      <button class="build-work-panel-demo-send" type="submit" aria-label="Send message" title="Send">
+                        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                          <path d="M4 5.5 20 12 4 18.5V14l8-2-8-2z" />
+                        </svg>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </aside>
+
+            <nav class="build-work-panel-demo-action-nav" aria-label="Page work actions">
+              <button class="build-work-panel-demo-action" type="button" aria-disabled="true" aria-label="Reporting" data-tooltip="Reporting">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path d="M5 19h14v2H5zm1-9h3v7H6zm5-5h3v12h-3zm5 8h3v4h-3z" />
+                </svg>
+              </button>
+              <button class="build-work-panel-demo-action" type="button" aria-disabled="true" aria-label="Support" data-tooltip="Support">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path d="M12 3.5a8.5 8.5 0 1 1 0 17 8.5 8.5 0 0 1 0-17zm-2.2 6a2.2 2.2 0 1 1 3.75 1.56c-.65.64-1.55 1.12-1.55 2.35h-2c0-1.95 1.22-2.78 2.1-3.62A.75.75 0 1 0 10.8 9.5zm1.2 6h2v2h-2z" />
+                </svg>
+              </button>
+              <button
+                class="build-work-panel-demo-action"
+                type="button"
+                aria-pressed="true"
+                aria-label="Build"
+                data-tooltip="Build"
+                data-build-work-panel-demo-build-action
+              >
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                  <path d="m12 3 8 4.5v9L12 21l-8-4.5v-9zm0 2.3L6 8.7v6.6l6 3.4 6-3.4V8.7zm-3.2 6.2 2.2 2.2 4.3-4.3 1.4 1.4-5.7 5.7-3.6-3.6z" />
+                </svg>
+              </button>
+            </nav>
+
+            <button
+              class="build-work-panel-demo-fab"
+              type="button"
+              data-build-work-panel-demo-open
+              aria-controls="build-work-panel-demo-panel"
+              aria-expanded="false"
+            >
+              Build
+            </button>
+          </div>
+        </section>
+
+        <div
+          id="build-work-panel-demo-settings-drawer"
+          class="build-work-panel-demo-settings-drawer"
+          data-build-work-panel-demo-settings-drawer
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="build-work-panel-demo-settings-title"
+        >
+          <div class="build-work-panel-demo-settings-header">
+            <div>
+              <p class="top-nav-preview-eyebrow">Display</p>
+              <h2 id="build-work-panel-demo-settings-title">Display settings</h2>
+            </div>
+            <button
+              class="build-work-panel-demo-close"
+              type="button"
+              data-build-work-panel-demo-settings-close
+              aria-label="Close display settings"
+            >
+              ×
+            </button>
+          </div>
+
+          <section class="build-work-panel-demo-settings-group" aria-labelledby="build-work-panel-demo-theme-title">
+            <h3 id="build-work-panel-demo-theme-title">Theme</h3>
+            <div class="build-work-panel-demo-settings-options">
+              <button class="is-active" type="button" data-build-work-panel-demo-theme="normal">Normal</button>
+              <button type="button" data-build-work-panel-demo-theme="dark">Dark</button>
+              <button type="button" data-build-work-panel-demo-theme="desert">Desert</button>
+            </div>
+          </section>
+
+          <section class="build-work-panel-demo-settings-group" aria-labelledby="build-work-panel-demo-size-title">
+            <h3 id="build-work-panel-demo-size-title">Text size</h3>
+            <div class="build-work-panel-demo-settings-options">
+              <button type="button" data-build-work-panel-demo-scale="100">100%</button>
+              <button class="is-active" type="button" data-build-work-panel-demo-scale="115">115%</button>
+              <button type="button" data-build-work-panel-demo-scale="135">135%</button>
+            </div>
+          </section>
+
+          <section class="build-work-panel-demo-settings-group" aria-labelledby="build-work-panel-demo-direction-title">
+            <h3 id="build-work-panel-demo-direction-title">Direction</h3>
+            <div class="build-work-panel-demo-settings-options">
+              <button class="is-active" type="button" data-build-work-panel-demo-direction="ltr">LTR</button>
+              <button type="button" data-build-work-panel-demo-direction="rtl">RTL</button>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/buildWorkPanelDemo.mjs"></script>
+  </body>
+</html>

@@ -120,9 +120,47 @@ should already have an honest:
 If one of those is missing, stay in the design-system loop and create or
 refresh the upstream artifacts first.
 
-### 0A. Do Not Skip Behavior-Lock And Reference-Pack Signoff
+### 0A. Start New Visual Families With A Demo Rendering
 
-For every governed family or child seam, the sign-off order is:
+For new visual or interaction families, start with a clearly labeled
+`/design-system` demo rendering so the requester can check the visual direction
+and behavior in the browser before signing off a behavior lock.
+
+The first demo is review material, not governed truth. It may use provisional
+copy, representative data, and temporary local implementation inside the
+`/design-system` proving ground. Do not present it as signed off, canonical,
+adoption-ready, or real-app-consumable.
+
+Before showing a demo as locally ready for feedback, run a rendered smoke check
+for the variant dimensions the demo exposes. At minimum, if the demo has
+display settings or any theme, direction, or magnification affordance, verify
+the actual rendered browser state for:
+
+- normal and dark theme surface backgrounds and text contrast across every new
+  visible region
+- RTL attachment/alignment when direction controls exist
+- largest available magnification without text overlap, clipping, or accidental
+  scrollbars
+
+Do not rely on source inspection, static artifact checks, or a single theme
+attribute assertion for these dimensions. The smoke check must inspect the
+rendered surface after the controls have been used.
+
+After demo feedback, capture the agreed behavior in the governed chain:
+
+1. behavior lock review and sign-off
+2. reference pack review and sign-off
+3. canonical review and sign-off
+4. verification checklist refresh
+5. adoption artifact only when real-app usage begins
+
+Real app UI remains blocked until the signed-off design-system chain exists or
+the user explicitly approves a one-off exception for that app surface.
+
+### 0B. Do Not Skip Behavior-Lock And Reference-Pack Signoff
+
+For every governed family or child seam after the initial demo-feedback step,
+the sign-off order is:
 
 1. behavior lock review and sign-off
 2. reference pack review and sign-off
@@ -148,7 +186,7 @@ instead of silently relying on the parent artifacts.
 Do not ask the user to sign off child canonicals while either of these is still
 missing or still implicitly bundled into the parent family.
 
-### 0B. Child Canonical Launchers Must Target Dedicated Render Surfaces
+### 0C. Child Canonical Launchers Must Target Dedicated Render Surfaces
 
 For child seams, a canonical launcher is not sign-off-grade unless its links
 target a dedicated child canonical render surface.
@@ -174,7 +212,7 @@ If the launcher still points at `/design-system/templates/...` or another
 parent host page for a child seam, stop and record that the child render
 surface is still missing instead of presenting the launcher as complete.
 
-### 0C. Generated Canonical Render Pages Must Match The Established Page Contract
+### 0D. Generated Canonical Render Pages Must Match The Established Page Contract
 
 Before creating or materially changing a generated canonical render page, open
 at least one adjacent signed-off generated render page for the same ownership
@@ -200,7 +238,7 @@ shell unless the family is explicitly a page-level shell state.
 If a generated render page lacks any of these pieces, classify it as
 implementation-only or incomplete. Do not call it sign-off-ready.
 
-### 0D. Child Render Pages Must Consume Parent Seams
+### 0E. Child Render Pages Must Consume Parent Seams
 
 When a child family is reviewed inside an already signed-off parent shell,
 first identify the literal parent render/controller seam that owns the shell

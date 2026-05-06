@@ -28,8 +28,8 @@
 - Product intent preserved: yes. The root-admin MVP must expose a reusable
   right-side work panel with Reporting, Support, and Build actions; Build is
   the only active workflow; Build opens a contextual Layer 1 Product Discovery
-  chat; the chat generates a well-presented Product Discovery packet PDF and
-  preserves history.
+  chat; the chat generates a simple structured Product Discovery packet PDF
+  export and preserves history.
 - Product questions resolved or carried as blockers:
   - root-admin is the first rollout surface.
   - Reporting and Support are visible coming-soon actions in the MVP.
@@ -40,6 +40,54 @@
   - regenerated packets supersede earlier packets from the same conversation.
   - PDF output contains the Product Discovery packet itself, with no separate
     internal-only notes layer.
+  - PDF generation uses approved Product Discovery packet data only; raw chat
+    transcript and conversation history remain in app history and are excluded
+    from the PDF unless later explicitly approved.
+  - Approved packet versions are immutable. Material changes must move back up
+    the loop through a change request or review path and create a new approved
+    packet version.
+  - Superseded approved packet versions remain accessible and downloadable to
+    authorized root builders as history, with clear previous and next packet
+    links.
+  - Transient PDF generation failures can be retried immediately from the same
+    approved packet version, with failed attempts recorded. Permission,
+    inaccessible-data, and data-integrity failures are not treated as normal
+    retry states.
+  - Preferred MVP PDF renderer is self-hosted Playwright/Chromium behind a
+    provider-neutral generated-document seam, avoiding paid provider
+    dependency while preserving future renderer replacement.
+  - Long PDF content may paginate naturally. The renderer must avoid avoidable
+    image and table-row cuts across page boundaries, and broad tables must use
+    an approved wider or fit layout rather than clipping columns.
+  - Generated PDFs start with a compact header page containing packet version,
+    generated timestamp, generating actor, approval status, and previous/next
+    packet links where those links exist.
+  - The header page should not include a visible explanatory note that the PDF
+    was generated from approved packet data only.
+  - User-visible cancellation is out of scope for MVP; cancellation is handled
+    by server-side timeout, request abort, cleanup, or future worker lifecycle
+    behavior.
+  - Every PDF generation failure records audit and metrics evidence. Alerting
+    starts only after repeated failures cross a threshold defined in PRD, API
+    contract, or implementation blueprint work.
+  - Support/root-builder views may show safe failed-generation reason
+    categories. Stack traces, renderer internals, raw payloads, storage paths,
+    session identifiers, and infrastructure details remain internal-only.
+  - Renderer contracts carry locale context now, but MVP PDF content is
+    English-only until the planned repo localization layer is introduced.
+  - Migration/reversibility is seam-only for MVP: no second renderer fallback
+    is implemented or tested now.
+  - Product Discovery maps approved packet data into renderer-neutral document
+    primitives; the generated-document seam must not accept Product
+    Discovery-specific fields directly.
+  - MVP PDF rendering is a simple structured export, not a polished branded
+    document with custom presentation rules.
+  - PDF generation should be usable by other features in future, so Product
+    Discovery is the first consumer of a reusable generated-document boundary,
+    not a hard-coded one-off renderer.
+  - Scale posture is Option 2 light: a moderate shared export seam with bounded
+    concurrency, timeout, fallback, and rate-limit controls, while preserving a
+    path to a future high-volume async export pipeline.
   - explicit final review before PDF generation is not required for MVP.
   - tenant-builder rollout is a future expansion but tenant scope and
     cross-tenant deny remain required design constraints.
@@ -71,8 +119,8 @@
 | authz or permission change | yes | Creator history, root-builder review access, and future tenant-scope deny behavior require explicit rules. | Permission mapping story required. | `DOC:permission-mapping` |
 | DEV:frontend rendered surface | yes | Root-admin side panel, mobile floating action, chat thread, starter prompts, history, and PDF download UI are rendered browser surfaces. | Frontend adoption story required after design-system prerequisites. | `DEV:frontend` |
 | governed GOV:design-system seam | yes | Panel, mobile action, chat thread, prompt starters, history view, and packet download affordance are governed shared UI. | Design-system behavior-lock and adoption stories required before app UI. | `GOV:design-system` |
-| shared platform/runtime seam | yes | Chat must call the Product Discovery harness and may use PDF rendering/download machinery. | Platform seam story required. | `DEV:platform-seam` |
-| reusable logic or extraction pressure | yes | Chat orchestration and packet rendering may become reusable for Support and Reporting flows later. | Keep MVP feature-owned until second active consumer proves extraction. | `DECISION:refactor-first` |
+| shared platform/runtime seam | yes | Chat must call the Product Discovery harness and PDF generation should use a reusable generated-document boundary with Product Discovery as the first consumer. | Platform seam story required. | `DEV:platform-seam` |
+| reusable logic or extraction pressure | yes | Chat orchestration may remain feature-owned, but generated-document rendering should be shaped for future feature consumers without exposing a broad document platform in the MVP. | Define a narrow reusable rendering seam now; defer generic document platform behavior until a second feature proves it. | `DECISION:refactor-first` |
 | data dictionary impact | yes | New durable records and retention/supersession behavior require source-independent documentation. | Data dictionary story required. | `DOC:data-dictionary` |
 | QA/runtime evidence need | yes | Permission boundaries, PDF generation, retention, browser behavior, and mock honesty require layered evidence. | PRD-derived test cases and runtime/browser scenarios required. | `EVIDENCE:qa-evidence` |
 | source-independent docs impact | yes | Product Discovery, Technical Steering, future PRD, capability matrix, API, data, permissions, DS, and asset/download decisions must align. | Artifact sweep story required. | `DOC:docs-artifact` |
@@ -86,6 +134,7 @@
 | ADA-CHAT-003 | Governed frontend path | Can root-admin implement the panel directly, or must design-system seams exist first? | approved | DS-owned panel/chat seams before app adoption; one-off root-admin implementation; app-local CSS and controller logic. | Shared shell chrome and reusable chat/panel behavior should come from a governed design system before broad app adoption. | Repo prohibits app-page CSS for governed app pages and requires DS-owned render/controller seams for governed app adoption. | DS-first increases upfront work but prevents copied markup and inconsistent behavior. | Direct implementation would likely violate shell, page CSS, and adoption rules. | Adds a design-system story before root-admin UI implementation. | DS governance improves accessibility, keyboard, mobile, and denied-state consistency. | Canonicals and browser scenarios provide repeatable evidence. | Additive DS seams; app adoption can target root-admin only. | Visual, accessibility, and browser evidence can be verified before app wiring. | DS seams can evolve while preserving app consumption contract. | Run design-system governance for the work panel, mobile button, chat thread, starters, history, and PDF action before app UI. | One-off app-local implementation rejected unless explicitly approved later. | Technical Steering owner; frontend/design-system owner. | Design-system behavior locks, reference packs, verification, adoption docs. |
 | ADA-CHAT-004 | PDF delivery governance | Should generated PDFs be treated as transient downloads or governed generated assets? | approved | Transient generated response; stored generated asset; stored packet data with regenerated PDF on demand. | Downloadable generated files need clear retention, access, audit, and delivery posture; generated source-of-truth data should not depend on mutable rendering output alone. | Asset upload/read rules require a decision before file delivery behavior that stores, links, displays, downloads, or publishes user-managed assets; generated PDFs still need security and retention classification. | Storing rendered PDFs simplifies history but adds file lifecycle and access surface; regenerating from packet data reduces stored file risk but requires stable rendering. | Treating PDFs as casual downloads risks unclear retention, stale artifacts, and permission leaks. | Layer 3 must create the decision record before implementation, but Story Breakdown may proceed by making that a blocking story. | Must avoid public URLs and cross-tenant leakage; downloads should be actor/scope-authorized. | Download failures and regeneration need recoverable evidence. | Additive; no public delivery approved. | Tests must prove authorization, scope, supersession, and rendering integrity. | Regeneration model is easier to change before production adoption. | Approve Story Breakdown with a required asset/download decision story before any PDF implementation task. | Public delivery and generic file hosting rejected for MVP. | Architecture/security owner. | Asset consumer decision record, API contract, data dictionary. |
 | ADA-CHAT-005 | Authorization model | Should MVP model tenant builders now or root-admin only with future tenant constraints? | approved | Root-admin active MVP plus future tenant constraints; full root/tenant implementation now; root-only with no tenant model. | MVP should implement the smallest active audience while preserving known future security boundaries. | Product Discovery set root-admin first, but durable defaults require tenant boundary protection when future tenant builders are known. | Root-admin-only implementation is smaller; carrying tenant constraints avoids incompatible data and route shapes. | Ignoring tenant scope now could create incompatible history and packet records. | Moderate modeling cost, lower migration risk. | Records need platform/tenant scope fields even if tenant UI is deferred. | Future tenant support can reuse history and packet constraints. | Additive scope model; tenant routes remain out of MVP. | Allow/deny tests can cover root-admin now and tenant-deny invariants later. | Tenant-builder rollout remains separately steerable. | Build root-admin MVP while modeling platform versus tenant scope and denying tenant cross-scope behavior by default. | Full tenant UI now rejected as out of MVP; root-only records rejected for future incompatibility. | Technical Steering owner; security owner. | Permission mapping, data dictionary, API contract. |
+| ADA-CHAT-006 | Generated-document reuse | Should PDF generation be a narrow Product Discovery renderer only, or a reusable generated-document seam for future features? | approved | One-off Product Discovery renderer; reusable generated-document boundary with Product Discovery first; broad document-generation platform. | Export generation should separate feature-owned source data and authorization from generic document rendering and delivery handoff so future exports can reuse safe primitives. | Repo anti-drift rules favor explicit platform seams, but broad shared abstractions should not be overbuilt before a second consumer. | A reusable boundary adds a little architecture work now; a broad platform would overreach; a one-off renderer would likely force future duplication. | One-off rendering could bake Product Discovery fields into document infrastructure; broad generic rendering could introduce unsafe arbitrary document behavior. | Moderate MVP cost for a narrow boundary; avoids later rewrite if other features need structured exports. | Keeps authorization with owning features and avoids exposing a generic document API to app pages. | Render failures and audit events can become consistent across future exports. | Additive; future consumers still need their own planning, authz, data, and asset decisions. | Tests can target the generic renderer boundary and Product Discovery packet mapping separately. | Reversible by keeping the boundary internal until another feature adopts it. | Use a reusable generated-document boundary with Product Discovery as the first consumer; defer generic document platform behavior. | One-off renderer rejected for future duplication risk; broad document platform rejected for MVP overreach. | Requester confirmed future feature reuse on 2026-05-06; architecture/security owner. | PRD, API contract, implementation blueprint, data dictionary. |
 
 ## Frontend Architecture Classification
 
@@ -117,7 +166,7 @@
 | PRD | create | Layer 3 | yes | Required for MVP capability details, lifecycle, permissions, error states, and non-goals. |
 | Capability matrix | create | Layer 3 | yes | Required for chat, history, packet generation, PDF download, authorization, and denial behavior. |
 | PRD-derived test cases | create | Layer 3 | yes | Required before implementation tasks. |
-| Asset consumer decision record for generated packet PDF delivery | create | Layer 3 | yes | Required before generated PDF delivery/storage implementation. |
+| Asset consumer decision record for generated packet PDF delivery | prove-current | Layer 3 | yes | Approved at docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md for transient generated download, simple structured export rendering, approved-packet-data-only PDF source content, immutable approved packet versions, downloadable superseded history with previous/next links, immediate retry for transient generation failures, self-hosted Playwright/Chromium as preferred MVP renderer, natural pagination with image/table-row break protection and broad-table fit handling, compact header page metadata, audit/metrics for every generation failure, threshold-based repeated-failure alerting, safe support-visible failure reason categories, locale-aware renderer contract with English-only MVP content, seam-only renderer reversibility with no second MVP renderer fallback, feature-owned packet-to-document mapper, future reusable generated-document boundary posture, and Option 2 light scale posture. Exact numeric limits and alert thresholds are intentionally deferred to downstream PRD/API/blueprint ownership, with a hard rule that generated-document implementation cannot start until those limits are defined. |
 | Design-system behavior lock/reference/verification/adoption artifacts | create | Layer 3/4 | yes | Required before root-admin app UI adoption. |
 | API contract docs and OpenAPI/Postman maintained artifacts | create | Layer 4 | yes | Required when routes are introduced. |
 | Data dictionary | create | Layer 4 | yes | Required for conversation, packet, PDF/download, scope, retention, and supersession records. |
@@ -173,8 +222,8 @@
 | Item ID | Source Row / Artifact | Classification | Requester-Facing Question Or Action | Owner / Layer | Resolution Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | L2L3-CHAT-001 | BLK-CHAT-001 | required-planning-artifact | Queue PRD, capability matrix, and PRD-derived test cases as Layer 3 unblock stories for the root-admin MVP. | Planning / Layer 3 | queued-as-layer-3-unblock-story | The requester has already resolved MVP product scope. |
-| L2L3-CHAT-002 | BLK-CHAT-002 | architecture-security-design-decision | Queue design-system governance for the panel, mobile action, chat thread, starters, history, and PDF action before root-admin app UI implementation. | Frontend design-system / Layer 3 | queued-as-layer-3-unblock-story | Do not ask the requester to choose widgets; design-system loop owns pattern decisions. |
-| L2L3-CHAT-003 | BLK-CHAT-003 and ADA-CHAT-004 | architecture-security-design-decision | Queue an asset/download decision record for generated packet PDFs before PDF implementation. | Architecture/security / Layer 3 | queued-as-layer-3-unblock-story | The requester should only be asked if the technical decision exposes a business-visible trade-off. |
+| L2L3-CHAT-002 | BLK-CHAT-002 | architecture-security-design-decision | Queue a labeled `/design-system` demo rendering for the panel, mobile action, chat thread, starters, history, and PDF action before behavior-lock signoff, then convert reviewed behavior into the normal behavior-lock/reference/canonical/verification/adoption chain before root-admin app UI implementation. | Frontend design-system / Layer 3 | queued-as-layer-3-unblock-story | The first design-system review should be rendered visual/behavior feedback, not behavior-lock document signoff. Do not ask the requester to choose widgets; design-system loop owns pattern decisions. |
+| L2L3-CHAT-003 | BLK-CHAT-003, ADA-CHAT-004, and ADA-CHAT-006 | architecture-security-design-decision | Reference the approved generated packet PDF delivery/storage/download, rendering, source-content, versioning, retry, renderer, pagination, metadata, operations, support diagnostics, localization, reversibility, source mapping, and reuse posture before PDF implementation. | Architecture/security / Layer 3 | answered | Approved at docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md: transient generated download from durable approved packet data, simple structured export rendering, immutable approved packet versions, superseded versions downloadable as authorized history with previous/next links, immediate retry for transient generation failures, self-hosted Playwright/Chromium as preferred MVP renderer behind provider-neutral seam, natural pagination with image/table-row break protection and broad-table fit handling, compact header page metadata, audit/metrics for every generation failure with threshold-based repeated-failure alerting, safe support-visible failure reason categories with internals hidden, locale-aware renderer contract with English-only MVP PDF content, seam-only reversibility with no second MVP renderer fallback, Product Discovery packet-to-document mapper with no Product Discovery-specific fields in the generic renderer seam, no raw transcript/history content in PDF, no stored rendered bytes, reusable generated-document boundary for future features. |
 | L2L3-CHAT-004 | BLK-CHAT-004 | required-planning-artifact | Queue API contract and permission mapping work for protected routes, creator history, root-builder review, tenant-scope deny, and PDF download. | Backend/security / Layer 3-4 | queued-as-layer-3-unblock-story | Permission details should not be invented in Story Breakdown. |
 | L2L3-CHAT-005 | BLK-CHAT-005 | required-planning-artifact | Queue data dictionary and persistence planning for conversations, packet versions, scope, download evidence, retention, and supersession. | Backend/data / Layer 3-4 | queued-as-layer-3-unblock-story | Must preserve durable domain facts and migration safety. |
 | L2L3-CHAT-006 | BLK-CHAT-006 and TS-CHAT-010 | future-scope-deferral | Keep tenant-builder active rollout out of the MVP and require separate Product Discovery/Technical Steering later. | Product/architecture / future Layer 1-2 | deferred-with-owner | No requester question needed unless the MVP scope changes. |
@@ -189,6 +238,6 @@
 | Product Discovery harness adapter | ready-for-story-breakdown | TS-CHAT-002 | Adapter should produce canonical Product Discovery packet data. |
 | Conversation/history persistence | ready-for-story-breakdown | TS-CHAT-001, TS-CHAT-008 | Includes retention, supersession, scope, actor, and root-builder review access. |
 | Protected API contracts and permissions | ready-for-story-breakdown | TS-CHAT-005, TS-CHAT-006 | Must include creator/root-builder visibility and tenant-scope deny posture. |
-| Generated PDF delivery decision | ready-for-story-breakdown | TS-CHAT-007 | Decide transient versus stored generated PDF before implementation. |
+| Generated PDF delivery decision | ready-for-story-breakdown | TS-CHAT-007 | Decision record exists at docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md and is approved for transient generated download, simple structured export rendering, and a future-usable generated-document boundary; implementation still must wait for PRD, API, permission, data, and QA artifacts. |
 | Root-admin app adoption | blocked | TS-CHAT-003, TS-CHAT-004, TS-CHAT-009 | Blocked until DS seams, API contracts, permissions, and runtime/browser evidence plan exist. |
 | Future tenant-builder rollout | blocked | TS-CHAT-010 | Out of MVP; requires separate product and steering path. |
