@@ -67,14 +67,13 @@
   Product intent, architecture direction, story queue, PRD, first-draft
   capability matrix, generated PDF direction, design-system path, and
   PRD-derived test cases are captured. Next we need to define root-builder
-  review permission, set the PDF numeric implementation thresholds, and create
-  the remaining API, permission, data, journey/evidence, and blueprint
-  artifacts before implementation tasks can begin.
+  review permission and create the remaining API, permission, data,
+  journey/evidence, and blueprint artifacts before implementation tasks can
+  begin. The PDF numeric thresholds are captured as configurable MVP defaults.
 - Waiting next:
   Layer 3 unblock work
 - User action needed:
-  decide root-builder review permission and PDF numeric thresholds before
-  implementation planning
+  decide root-builder review permission before implementation planning
 
 ## Source-Of-Truth Boundary
 

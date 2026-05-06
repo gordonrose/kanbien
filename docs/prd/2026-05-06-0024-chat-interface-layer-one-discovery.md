@@ -19,8 +19,8 @@
 
 This PRD preserves the root-admin MVP behavior and planning obligations. It is
 not an implementation-ready artifact until the unresolved permission, PDF
-numeric-threshold, root-admin design-system parity, data, API, blueprint, and
-evidence blockers are resolved.
+configuration implementation, root-admin design-system parity, data, API,
+blueprint, and evidence blockers are resolved.
 
 ## Source Artifacts
 
@@ -197,20 +197,38 @@ preserving historical truth.
 
 ## Generated PDF Delivery Requirements
 
-Generated packet PDF delivery is blocked until the asset/download decision
-record is approved.
+Generated packet PDF delivery uses the approved asset/download decision record
+at
+`docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md`.
 
-The decision must define:
+MVP delivery posture:
 
-- transient versus stored generated PDF posture
-- storage and delivery model
-- authorization at download time
-- retention and cleanup
-- quota or cost posture
-- audit events
-- failure and retry behavior
-- public delivery denial
-- whether scanning or processing is required
+- transient generated attachment/download from durable packet data
+- no stored rendered PDF bytes as durable assets
+- current actor authorization at request time
+- public delivery and generic file-hosting denied
+- approved Product Discovery packet data only; raw transcript and internal
+  notes excluded
+- self-hosted Playwright/Chromium behind a provider-neutral generated-document
+  seam
+- packet source data capped at 250 KB
+- rendered HTML capped at 750 KB
+- PDF output capped at 5 MB, with warning metric at 3 MB
+- soft render timeout of 10 seconds and hard timeout of 20 seconds
+- one active render per root or future tenant context
+- three active renders platform-wide
+- five generations per actor per 10 minutes
+- three generations per conversation per 10 minutes
+- 30 generations per root/platform context per hour
+- one automatic retry only for renderer startup, crash, or timeout failures
+- alert if generation failure rate exceeds 10 percent over 30 minutes, any
+  render reaches hard timeout, or the platform render queue remains full for
+  more than 5 minutes
+
+These are central configurable defaults for the MVP, not permanent business
+tier limits. The implementation blueprint must name the owning configuration
+keys or module and preserve a future path to tenant-level, package-level, or
+platform-level overrides.
 
 Public delivery and generic file-hosting behavior remain denied by default.
 
@@ -274,7 +292,6 @@ Runtime/browser evidence must include:
 The PRD does not resolve these blockers:
 
 - exact root-builder review role or permission
-- generated packet PDF numeric implementation thresholds
 - root-admin first-consumer design-system parity proof
 - API contract details
 - permission mapping details

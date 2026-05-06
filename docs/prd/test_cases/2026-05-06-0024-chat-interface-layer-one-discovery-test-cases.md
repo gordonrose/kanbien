@@ -57,8 +57,10 @@
   runtime and rendered evidence required; source-only proof is insufficient
 - Notes:
   this file is a planning artifact, not executable proof. Root-builder review
-  permission and generated PDF numeric thresholds remain open blockers before
-  implementation tasking.
+  permission, API contract, data dictionary, implementation blueprint, and
+  runtime evidence remain open blockers before implementation tasking. PDF
+  numeric thresholds are captured as configurable MVP defaults in the asset
+  consumer decision record.
 
 ## Existing Test Impact
 
@@ -197,8 +199,8 @@
   Cleanup Expectation: n/a
   Mock / Runtime Honesty: PDF fixtures must render from durable packet data,
   not transcript-only or browser state
-  Traceability / Execution Posture: implementation-blocked until numeric
-  thresholds are set
+  Traceability / Execution Posture: implementation-blocked until API contract
+  and configuration ownership are named
   Coverage Strength Signal: delivery-policy branch coverage
   Coverage:
   allows transient attachment/download generation only for authorized current
@@ -328,8 +330,8 @@
   removed if the implementation creates them
   Mock / Runtime Honesty: renderer stub must expose the same success/failure
   envelope as the real renderer
-  Traceability / Execution Posture: blocked until PDF numeric thresholds and
-  API contract exist
+  Traceability / Execution Posture: blocked until API contract and
+  configuration ownership exist
   Coverage Strength Signal: authz plus generated-document delivery proof
   Features:
   harness chat feature, generated-document seam, asset/download policy, root
@@ -495,8 +497,8 @@
     data leak
   Mock / Runtime Honesty: renderer/delivery test double must preserve the real
   delivery envelope
-  Traceability / Execution Posture: blocked until numeric thresholds and API
-  contract exist
+  Traceability / Execution Posture: blocked until API contract and
+  configuration ownership exist
   Coverage Strength Signal: asset/download security proof
   Coverage:
   proves transient generated PDF delivery stays authorized, attachment-only,
@@ -595,7 +597,8 @@
   Cleanup Expectation: temporary generated output cleanup
   Mock / Runtime Honesty: test data must use approved packet size/output size
   thresholds once defined
-  Traceability / Execution Posture: blocked until numeric thresholds are set
+  Traceability / Execution Posture: executable once API contract and
+  implementation blueprint name the threshold configuration keys
   Coverage Strength Signal: latency/burst threshold proof
   Coverage:
   proves accepted packet size, output size, concurrency, burst, timeout,
@@ -652,7 +655,8 @@
   Cleanup Expectation: reset-first database and temporary output cleanup
   Mock / Runtime Honesty: fixture must follow approved fallback timeout once
   defined
-  Traceability / Execution Posture: blocked until numeric thresholds exist
+  Traceability / Execution Posture: executable once API contract and
+  implementation blueprint name the threshold configuration keys
   Coverage Strength Signal: failure-state and retry proof
   Coverage:
   failed or timed-out PDF generation records delivery failure, preserves packet
@@ -758,10 +762,10 @@
 | TC-CHAT-L1-UNIT-001 | blocked until API/data artifacts | TEST:test-only | validation branch coverage | API contract and data dictionary |
 | TC-CHAT-L1-UNIT-003 | blocked until adapter contract | TEST:test-only | packet validator compatibility | Product Discovery adapter contract |
 | TC-CHAT-L1-INT-002 | blocked until permission mapping | TEST:test-only | object-rule allow/deny proof | root-builder review permission |
-| TC-CHAT-L1-INT-005 | blocked until PDF thresholds/API | TEST:test-only | generated-document security proof | numeric thresholds and API contract |
+| TC-CHAT-L1-INT-005 | blocked until API/config ownership | TEST:test-only | generated-document security proof | API contract and threshold configuration keys |
 | TC-CHAT-L1-E2E-001 | blocked until journey/API/DS adoption | EVIDENCE:qa-evidence | browser runtime evidence | journey inventory, DS parity, APIs |
 | TC-CHAT-L1-CONC-001 | blocked until persistence plan | TEST:test-only | race-condition proof | migration/data dictionary |
-| TC-CHAT-L1-PERF-001 | blocked until thresholds | EVIDENCE:qa-evidence | latency/burst proof | PDF numeric thresholds |
+| TC-CHAT-L1-PERF-001 | blocked until API/config ownership | EVIDENCE:qa-evidence | latency/burst proof | threshold configuration keys and runtime evidence plan |
 | TC-CHAT-L1-RES-003 | executable with app adoption | TEST:test-suite-alignment | adoption drift proof | DS first-consumer parity proof |
 
 ## E2E Traceability Plan
@@ -770,7 +774,7 @@
 | --- | --- | --- | --- | --- | --- |
 | JY-CHAT-L1-ROOT-BUILD-001 | TC-CHAT-L1-E2E-001, TC-CHAT-L1-EDGE-002, TC-CHAT-L1-PERF-002 | docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md | tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | planned | inventory, APIs, DS parity, app adoption |
 | JY-CHAT-L1-HISTORY-001 | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | same as above | tests/e2e/harnessChat/rootAdminHistory.spec.ts | planned | root-builder review permission |
-| JY-CHAT-L1-PACKET-PDF-001 | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | same as above | tests/e2e/harnessChat/packetPdfDownload.spec.ts | planned | PDF numeric thresholds and API contract |
+| JY-CHAT-L1-PACKET-PDF-001 | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | same as above | tests/e2e/harnessChat/packetPdfDownload.spec.ts | planned | API contract, configuration ownership, and runtime evidence plan |
 
 ## Coverage Gaps Or Open Questions
 
@@ -779,8 +783,9 @@
   allow tests stay blocked and deny-by-default tests should prevent accidental
   broad access.
 - Item:
-  PDF numeric thresholds are still needed for packet size, output size,
-  concurrency, burst, timeout, fallback, rate limits, and alerting.
+  PDF numeric thresholds are captured as MVP defaults, but the API contract and
+  implementation blueprint still need to name the owning configuration keys or
+  module.
 - Item:
   API contracts, data dictionary, permission mapping, journey inventory,
   implementation blueprint, and root-admin first-consumer parity proof must
@@ -818,6 +823,6 @@
   payload capture, screenshot/browser proof, mock-honesty note, and final
   post-change gate run.
 - Owning implementation / artifact task candidates:
-  API contract, data dictionary, permission mapping, PDF numeric thresholds,
-  implementation blueprint, feature manifest, generated dependency graph, and
-  root-admin first-consumer parity proof.
+  API contract, data dictionary, permission mapping, generated-document
+  configuration ownership, implementation blueprint, feature manifest,
+  generated dependency graph, and root-admin first-consumer parity proof.
