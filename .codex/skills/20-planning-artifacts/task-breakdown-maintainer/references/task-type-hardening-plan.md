@@ -89,6 +89,76 @@ a real delivery blocker changes the risk profile:
    `task-type-contract-manifest.md` remains a human routing reference or becomes
    validator-required in task packets.
 
+## Completed Example-Hardening Context
+
+This section preserves the context from the original priority sequence. The
+matrix above records current status; these notes explain why each lane was
+hardened and what kind of future work should reopen it.
+
+### Initial Priority Rationale
+
+1. `DOC:docs-artifact` was first because vague "update docs" tasks are the
+   easiest place for source-independent docs, maintained summaries, and stale
+   artifact sweeps to drift. The initial example pass covered residual docs
+   sync and route-away cases, but the feature-doc example remains a placeholder
+   until the repo has a real `docs/features/` slice.
+2. `DOC:standards-compliance`, `GOV:standards-update`, and
+   `GOV:architecture-update` came next because governance lanes need clear
+   separation between assessing existing authority, changing durable standards
+   authority, and changing durable architecture authority. The example pass
+   made the route-away boundaries explicit.
+3. `DOC:api-contract`, `DOC:permission-mapping`, `DECISION:refactor-first`,
+   `DECISION:architecture-foundation`, `EVIDENCE:qa-evidence`,
+   `DEV:platform-seam`, and `DEV:backend` were medium-risk lanes where the
+   remaining value was class-specific examples, script-shaped inventory, and
+   generator/readiness contracts.
+4. `DEV:frontend`, `DEV:vertical-slice`, `DEV:migration-persistence`,
+   `DOC:data-dictionary`, `TEST:test-only`, `TEST:test-suite-alignment`, and
+   `GOV:design-system` were already comparatively mature. The example pass
+   added calibration examples and clarified route-away behavior, but some
+   future policy work remains.
+
+### Coverage Notes
+
+- `DEV:backend`: examples now cover common route/domain, projection,
+  lifecycle, audit-event, transaction-consistency, background-job, observability,
+  and proof-only route-away shapes. Reopen only for new backend classes or
+  repeated confusion around feature-local layer ownership.
+- `DEV:frontend`: examples now cover app adoption, route/module interaction,
+  API/projection consumption, runtime defect fixes, and evidence-only route-away.
+  Reopen with real frontend slices when browser/visual coverage-strength
+  interpretation needs sharper guidance.
+- `DEV:vertical-slice`: examples now separate valid inseparable journey proof
+  from convenience grouping. Reopen only when a real vertical slice exposes new
+  split-pressure ambiguity.
+- `DEV:platform-seam`: examples now cover route mounting, generated artifact
+  materialization, auth/request-context helpers, scheduler blockers,
+  bootstrap/runtime, tooling harnesses, shared helpers, and cross-feature seam
+  infrastructure. Reopen for new seam classes or compatibility postures.
+- `DEV:migration-persistence`: examples now cover new migrations,
+  normalization/uniqueness, repository query semantics, and Postgres harness
+  updates. Corrective migration, backfill, and live-data repair examples should
+  come from real repair slices.
+- `DOC:api-contract`: examples now cover no-wire-change refreshes, additive
+  route contracts, compatibility-sensitive changes, non-maintained artifact
+  rationale, maintained OpenAPI/Postman sync, and generated docs sync. Reopen
+  when generated API materialization changes.
+- `DOC:permission-mapping`: examples now cover runtime-enforced,
+  documentation-only, grant-source, object/lifecycle, future-authz-model, and
+  UI eligibility rows. Revisit after Layer 2 approves configuration-based,
+  relationship-based, ABAC, or ReBAC authorization models.
+- `DOC:data-dictionary`: examples now cover dictionary alignment,
+  retention/export/delete/legal-hold gaps, compliance-health debt posture, and
+  live-schema mismatch blockers. Remaining work is policy/cleanup before any
+  scoped fail-on-debt behavior.
+- `TEST:test-only`, `TEST:test-suite-alignment`, and `EVIDENCE:qa-evidence`:
+  examples now distinguish executable proof, metadata/traceability alignment,
+  and evidence capture. Remaining work is empirical coverage-strength
+  calibration against escaped-defect history and e2e journey tiers.
+- `GOV:design-system`: examples now cover seam-producing tasks, downstream
+  adoption contamination, canonical/evidence updates, and evidence-only
+  route-away. Reopen for new seam classes or first-consumer adoption ambiguity.
+
 ## Worked Example Program
 
 Use real repo slices as the primary source for examples. Synthetic examples are
