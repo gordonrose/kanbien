@@ -52,6 +52,8 @@
   `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`
 - Layer 1 Runtime Contract:
   `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md`
+- Permission Mapping:
+  `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
 - Work runs / Loop Runs:
   none yet
 - Pull requests, config changes, or extension changes:
@@ -66,14 +68,16 @@
 - Short update:
   Product intent, architecture direction, story queue, PRD, first-draft
   capability matrix, generated PDF direction, design-system path, and
-  PRD-derived test cases are captured. Next we need to define root-builder
-  review permission and create the remaining API, permission, data,
-  journey/evidence, and blueprint artifacts before implementation tasks can
-  begin. The PDF numeric thresholds are captured as configurable MVP defaults.
+  PRD-derived test cases are captured. Root-builder review is approved for all
+  root builders in the root-admin MVP, while tenant-layer object and
+  relationship permissions remain deferred. Next we need to create the
+  remaining API, data, journey/evidence, and blueprint artifacts before
+  implementation tasks can begin. The PDF numeric thresholds are captured as
+  configurable MVP defaults.
 - Waiting next:
   Layer 3 unblock work
 - User action needed:
-  decide root-builder review permission before implementation planning
+  none for the current root-builder review rule
 
 ## Source-Of-Truth Boundary
 

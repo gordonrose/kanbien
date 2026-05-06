@@ -11,16 +11,15 @@
   - no generated Product Discovery packet PDF delivery yet
 - Not yet implemented:
   - API contracts
-  - permission mapping
   - data dictionary
   - implementation blueprint
   - executable tests
   - runtime/browser QA evidence
 
 This PRD preserves the root-admin MVP behavior and planning obligations. It is
-not an implementation-ready artifact until the unresolved permission, PDF
-configuration implementation, root-admin design-system parity, data, API,
-blueprint, and evidence blockers are resolved.
+not an implementation-ready artifact until the unresolved PDF configuration
+implementation, root-admin design-system parity, data, API, blueprint, and
+evidence blockers are resolved.
 
 ## Source Artifacts
 
@@ -38,6 +37,8 @@ blueprint, and evidence blockers are resolved.
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft-notes.md`
 - PRD-derived test cases:
   `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`
+- Permission Mapping:
+  `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
 
 ## Summary
 
@@ -60,8 +61,9 @@ The MVP includes:
 - Build as the only active workflow
 - contextual starter prompts based on current page, module, and role context
 - free-form chat for Layer 1 Product Discovery
-- durable conversation history for the creator
-- root-builder review visibility once the approved permission is named
+- durable conversation history for root builders
+- root-builder review visibility for other root builders' root-admin discovery
+  work
 - canonical Product Discovery packet data generation through a narrow adapter
 - packet revision supersession when a newer packet is generated from the same
   conversation
@@ -94,8 +96,8 @@ The MVP does not include:
 - Chat creator:
   The actor who created a conversation and may later view their own history.
 - Root-builder reviewer:
-  A root-level actor who may review root-admin discovery histories after the
-  permission mapping names the exact role or capability.
+  Any authenticated root builder in the root-admin MVP. Root builders may
+  review other root builders' root-admin discovery histories.
 - Future tenant builder:
   A known future actor. Active tenant-builder workflows are out of MVP scope.
 - Product Discovery adapter:
@@ -124,9 +126,8 @@ The MVP does not include:
     packet revision.
 12. After PDF delivery posture is approved, the root builder can download a
     well-presented packet PDF.
-13. The creator can later see the conversation history.
-14. The approved root-builder reviewer can review root-admin discovery
-    histories after the permission mapping is resolved.
+13. Root builders can later see root-admin conversation history, including
+    root-admin discovery histories created by other root builders.
 
 ## Lifecycle States
 
@@ -190,8 +191,10 @@ preserving historical truth.
 - Client-provided page/module/role context can influence starter prompts but
   must not grant authority.
 - Chat creators can read their own histories.
-- Root-builder review visibility is required, but the exact role/capability is
-  unresolved and blocks implementation.
+- Any authenticated root builder may review other root builders' root-admin
+  Build chat histories and generated packet versions in the MVP.
+- Tenant-layer review and history access are deferred and must use explicit
+  object and relationship-based permissions before activation.
 - Tenant-scoped future work must deny cross-tenant access by default.
 - Downloads must enforce current actor authorization at request time.
 
@@ -261,7 +264,7 @@ The implementation must define behavior for:
 - packet generation failure
 - PDF delivery failure
 - unavailable design-system seam during development
-- missing root-builder review permission mapping
+- denied tenant-layer review or cross-scope access
 
 Failures must preserve durable evidence and return safe public responses.
 
@@ -291,10 +294,8 @@ Runtime/browser evidence must include:
 
 The PRD does not resolve these blockers:
 
-- exact root-builder review role or permission
 - root-admin first-consumer design-system parity proof
 - API contract details
-- permission mapping details
 - data dictionary
 - implementation blueprint
 - runtime/browser QA evidence plan
@@ -305,5 +306,5 @@ This PRD is accepted for the current planning layer when:
 
 - it preserves Product Discovery and Technical Steering scope
 - the capability matrix maps the MVP capabilities
-- unresolved policy choices remain explicit blockers
+- unresolved implementation artifacts remain explicit blockers
 - no implementation task is allowed to proceed from this PRD alone

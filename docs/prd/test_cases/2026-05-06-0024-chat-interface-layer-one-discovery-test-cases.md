@@ -252,7 +252,7 @@
   receives server-generated ids/timestamps/states, and stores durable context
   without trusting client-supplied authority fields.
 
-- Flow: own-history read returns only creator-scoped conversations
+- Flow: root-builder history read returns root-admin conversations
   Test Case ID: `TC-CHAT-L1-INT-002`
   Source Authority: PRD Authorization; AC-S006-02
   Related Story / AC: S-005, S-006 / AC-S005-01, AC-S006-02
@@ -263,15 +263,15 @@
   Cleanup Expectation: reset-first database cleanup
   Mock / Runtime Honesty: expected rows must be built through the repository or
   API helper used by production
-  Traceability / Execution Posture: implementation-blocked until permission
-  mapping exists
-  Coverage Strength Signal: object-rule proof
+  Traceability / Execution Posture: implementation-blocked until API contract
+  exists
+  Coverage Strength Signal: root-boundary allow/deny proof
   Features:
   harness chat feature, root authz, persistence
   Coverage:
-  creator can read their own conversation history; another root actor without
-  approved review permission cannot read it; responses filter by root scope and
-  object ownership.
+  creator can read their own conversation history; another authenticated root
+  builder can read root-admin discovery history created by that creator; tenant
+  and non-root actors remain denied.
 
 - Flow: generate packet through canonical Layer 1 adapter
   Test Case ID: `TC-CHAT-L1-INT-003`
@@ -391,12 +391,12 @@
   root Build chat is critical; review history and PDF download are high-risk
   permission/document flows
 - Behavior-changing dimensions:
-  actor, review permission, root/future tenant scope, desktop/mobile,
+  actor, root-builder review, root/future tenant scope, desktop/mobile,
   conversation state, packet revision state, adapter/PDF failure, and served
   design-system seam availability
 - Equivalence classes:
-  creator allowed, unauthorized root actor denied, root reviewer pending
-  permission, future tenant actor denied/deferred, packet-ready, failed,
+  creator allowed, other root builder allowed, non-root actor denied, future
+  tenant actor denied/deferred, packet-ready, failed,
   superseded, downloaded, empty history, and existing history
 - Required coverage level:
   pairwise for actor/state/browser posture after MVP implementation; single
@@ -417,8 +417,8 @@
 | Journey ID | Journey Name | Tier | Related TC IDs | Planned Executable Path | Required Permutations | Execution Gate | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | JY-CHAT-L1-ROOT-BUILD-001 | Root-admin Build chat | critical | TC-CHAT-L1-E2E-001, TC-CHAT-L1-SEC-001, TC-CHAT-L1-EDGE-002 | tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | desktop/mobile, empty/history, packet-ready/failed | vertical-slice | Requires DS parity and API contracts. |
-| JY-CHAT-L1-HISTORY-001 | Creator and reviewer history | high-risk | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | tests/e2e/harnessChat/rootAdminHistory.spec.ts | creator, unauthorized, approved reviewer after mapping | broader validation | Reviewer route blocked until permission is named. |
-| JY-CHAT-L1-PACKET-PDF-001 | Packet PDF download | high-risk | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | tests/e2e/harnessChat/packetPdfDownload.spec.ts | authorized, denied, renderer failure, threshold timeout | broader validation | Numeric thresholds required before implementation. |
+| JY-CHAT-L1-HISTORY-001 | Root-builder history | high-risk | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | tests/e2e/harnessChat/rootAdminHistory.spec.ts | creator root builder, other root builder, non-root denied, future tenant denied | broader validation | Root-builder-wide visibility is approved for root-admin MVP. |
+| JY-CHAT-L1-PACKET-PDF-001 | Packet PDF download | high-risk | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | tests/e2e/harnessChat/packetPdfDownload.spec.ts | authorized, denied, renderer failure, threshold timeout | broader validation | Configurable MVP thresholds are captured; API/config ownership still needed. |
 
 ## NFR Security Tests
 
@@ -433,26 +433,28 @@
   Requires Manifest Tracking: yes
   Cleanup Expectation: reset-first database cleanup
   Permission / State Matrix:
-  - Allowed state: authenticated root builder creating/reading own
-    conversation
+  - Allowed state: authenticated root builder creating, reading, reviewing,
+    generating, and downloading root-admin Build chat work
   - Denied / forbidden state: authenticated root actor without required
     permission
   - Unauthenticated / expired state: no session or expired root session
   - Cross-tenant denial state: future tenant-scoped request denied by default
-  - Object / entity denial state: conversation owned by another creator
+  - Object / entity denial state: future tenant conversation outside approved
+    object/relationship permission model
   - Expected public denial or safe fallback: safe 401/403/404-style denial
     per future API contract without leaking sensitive history existence
   Mock / Runtime Honesty: use the same auth/session helper as other protected
   root-admin route tests
-  Traceability / Execution Posture: blocked until permission mapping exists
+  Traceability / Execution Posture: implementation-blocked until API contract
+  exists
   Coverage Strength Signal: allow/deny matrix proof
   Coverage:
   proves server-side authz gates create, read, append, generate, history, and
   download actions; client context never grants authority.
 
-- Scenario: root-builder review permission is deny-by-default until mapped
+- Scenario: tenant-layer review is deny-by-default until object permissions exist
   Test Case ID: `TC-CHAT-L1-SEC-002`
-  Source Authority: PRD unresolved root-builder review permission; AC-S006-02
+  Source Authority: PRD tenant-layer deferral; AC-S006-02
   Related Story / AC: S-006 / AC-S006-02
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/harnessChat/`
@@ -460,21 +462,24 @@
   Requires Manifest Tracking: yes
   Cleanup Expectation: reset-first database cleanup
   Permission / State Matrix:
-  - Allowed state: creator reads own history
-  - Denied / forbidden state: root reviewer without named capability is denied
+  - Allowed state: root builder reads root-admin Build chat history
+  - Denied / forbidden state: tenant actor or non-root actor tries to review
+    root-admin history; tenant-layer review route not approved
   - Unauthenticated / expired state: denied
   - Cross-tenant denial state: future tenant history outside current tenant
-    denied
-  - Object / entity denial state: other creator conversation hidden
-  - Expected public denial or safe fallback: no broad review response until
-    permission mapping exists
-  Mock / Runtime Honesty: fixtures must not assign an invented reviewer grant
-  Traceability / Execution Posture: executable denial now; allow case waits for
-  permission mapping
-  Coverage Strength Signal: sensitive default-deny proof
+    denied by default
+  - Object / entity denial state: tenant work without approved relationship to
+    actor denied
+  - Expected public denial or safe fallback: no tenant-layer review response
+    until object and relationship permissions exist
+  Mock / Runtime Honesty: fixtures must not invent tenant review grants
+  Traceability / Execution Posture: executable with API/security
+  implementation
+  Coverage Strength Signal: tenant default-deny proof
   Coverage:
-  documents and tests the blocker: reviewer visibility is required but cannot
-  be allowed until the exact permission is approved.
+  documents and tests the boundary: root-builder review is allowed in the
+  root-admin MVP, while tenant-layer review remains denied until object and
+  relationship permissions are approved.
 
 - Scenario: generated PDF delivery denies public and stale access
   Test Case ID: `TC-CHAT-L1-SEC-003`
@@ -535,13 +540,12 @@
   Cleanup Expectation: reset-first database cleanup
   Mock / Runtime Honesty: denial audit fixture must match API denial contract
   categories
-  Traceability / Execution Posture: blocked until permission mapping/API
-  contract exist
+  Traceability / Execution Posture: blocked until API contract exists
   Coverage Strength Signal: sensitive-denial evidence proof
   Coverage:
-  records history access, reviewer access, unauthorized access, future
-  cross-tenant denial, PDF download request, download denial, and delivery
-  failure without leaking sensitive data in public responses.
+  records root-builder history access, unauthorized access, future cross-tenant
+  denial, PDF download request, download denial, and delivery failure without
+  leaking sensitive data in public responses.
 
 ## NFR Concurrency And Idempotency Tests
 
@@ -739,8 +743,8 @@
 
 | Scope | Allowed State | Denied / Forbidden State | Unauthenticated / Expired State | Cross-Tenant Denial State | Object / Entity Denial State | Public Denial / Safe Fallback | Source Authority |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Root creator conversation | creator can create/read/append/generate own Build chat | other root actor without approved review permission | denied | future tenant scope not active | conversation owned by another creator hidden or denied | safe API denial without transcript leak | PRD Authorization; AC-S006-02 |
-| Root-builder reviewer | allowed only after exact permission is mapped | no named review permission means deny-by-default | denied | future tenant review denied unless separately approved | history outside review authority denied | no broad history listing | PRD blocker; AC-S006-02 |
+| Root creator conversation | creator can create/read/append/generate own Build chat | non-root actor denied | denied | future tenant scope not active | tenant work remains outside root MVP object model | safe API denial without transcript leak | PRD Authorization; permission mapping; AC-S006-02 |
+| Root-builder review | any authenticated root builder can review root-admin Build chat history and packet versions | non-root actor denied; tenant actor denied | denied | future tenant review denied until separately approved | tenant history outside object/relationship permission model denied | no tenant-layer broad history listing | permission mapping; AC-S006-02 |
 | Generated packet PDF | authorized current packet revision can be transiently downloaded | public URL, raw bucket URL, generic file hosting, stale/superseded/failed revision | denied at request time | future tenant packet outside current tenant denied | packet not owned or reviewable denied | attachment/download denial without packet leak | PDF decision; AC-S003-01 |
 | Contextual starters | context may influence suggested prompts | context cannot grant authority | session still required | body/URL tenant context ignored | page/module/role mismatch does not grant object access | prompt omitted or safe fallback | AC-S007-02 |
 | Reporting/Support actions | visible as coming-soon only | active workflow creation denied | session required for panel exposure | not applicable in MVP | not applicable | no tasks, Loop Runs, PRs, or downstream execution | PRD Non-Goals |
@@ -761,7 +765,7 @@
 | --- | --- | --- | --- | --- |
 | TC-CHAT-L1-UNIT-001 | blocked until API/data artifacts | TEST:test-only | validation branch coverage | API contract and data dictionary |
 | TC-CHAT-L1-UNIT-003 | blocked until adapter contract | TEST:test-only | packet validator compatibility | Product Discovery adapter contract |
-| TC-CHAT-L1-INT-002 | blocked until permission mapping | TEST:test-only | object-rule allow/deny proof | root-builder review permission |
+| TC-CHAT-L1-INT-002 | blocked until API contract | TEST:test-only | root-boundary allow/deny proof | API contract and permission mapping |
 | TC-CHAT-L1-INT-005 | blocked until API/config ownership | TEST:test-only | generated-document security proof | API contract and threshold configuration keys |
 | TC-CHAT-L1-E2E-001 | blocked until journey/API/DS adoption | EVIDENCE:qa-evidence | browser runtime evidence | journey inventory, DS parity, APIs |
 | TC-CHAT-L1-CONC-001 | blocked until persistence plan | TEST:test-only | race-condition proof | migration/data dictionary |
@@ -773,23 +777,23 @@
 | Journey ID | Related TC IDs | Journey Inventory Path | Executable Test Path | Traceability Posture | Deferred / Missing Work |
 | --- | --- | --- | --- | --- | --- |
 | JY-CHAT-L1-ROOT-BUILD-001 | TC-CHAT-L1-E2E-001, TC-CHAT-L1-EDGE-002, TC-CHAT-L1-PERF-002 | docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md | tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | planned | inventory, APIs, DS parity, app adoption |
-| JY-CHAT-L1-HISTORY-001 | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | same as above | tests/e2e/harnessChat/rootAdminHistory.spec.ts | planned | root-builder review permission |
+| JY-CHAT-L1-HISTORY-001 | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | same as above | tests/e2e/harnessChat/rootAdminHistory.spec.ts | planned | API contract and runtime evidence plan |
 | JY-CHAT-L1-PACKET-PDF-001 | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | same as above | tests/e2e/harnessChat/packetPdfDownload.spec.ts | planned | API contract, configuration ownership, and runtime evidence plan |
 
 ## Coverage Gaps Or Open Questions
 
 - Item:
-  exact root-builder review role or capability remains unresolved; reviewer
-  allow tests stay blocked and deny-by-default tests should prevent accidental
-  broad access.
+  root-builder review is approved for all root builders in the root-admin MVP;
+  tenant-layer review remains unresolved and must not gain a happy path until
+  object and relationship-based permissions are designed.
 - Item:
   PDF numeric thresholds are captured as MVP defaults, but the API contract and
   implementation blueprint still need to name the owning configuration keys or
   module.
 - Item:
-  API contracts, data dictionary, permission mapping, journey inventory,
-  implementation blueprint, and root-admin first-consumer parity proof must
-  exist before executable test implementation can be considered complete.
+  API contracts, data dictionary, journey inventory, implementation blueprint,
+  and root-admin first-consumer parity proof must exist before executable test
+  implementation can be considered complete.
 - Item:
   tenant-builder active workflow remains out of MVP and needs separate Product
   Discovery before happy-path tests are added.
@@ -811,7 +815,7 @@
 
 - TEST:test-only candidates:
   unit, integration, security, audit, concurrency, and resilience cases once
-  API/data/permission/PDF threshold blockers are resolved.
+  API/data/configuration blockers are resolved.
 - TEST:test-suite-alignment candidates:
   fixture/live-payload reconciliation, root-admin browser fixture alignment,
   Product Discovery adapter fixture honesty, and design-system adoption guard
@@ -823,6 +827,6 @@
   payload capture, screenshot/browser proof, mock-honesty note, and final
   post-change gate run.
 - Owning implementation / artifact task candidates:
-  API contract, data dictionary, permission mapping, generated-document
-  configuration ownership, implementation blueprint, feature manifest,
-  generated dependency graph, and root-admin first-consumer parity proof.
+  API contract, data dictionary, generated-document configuration ownership,
+  implementation blueprint, feature manifest, generated dependency graph, and
+  root-admin first-consumer parity proof.
