@@ -65,6 +65,8 @@
   `docs/data-dictionary/harness-chat-pdf-attempt.md`
 - Implementation Blueprint:
   `docs/workspace/implementation-blueprints/2026-05-07-chat-interface-layer-one-discovery-root-admin-mvp.md`
+- Layer 5 delivery pilot:
+  `docs/workspace/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md`
 - Work runs / Loop Runs:
   none yet
 - Pull requests, config changes, or extension changes:
@@ -94,11 +96,12 @@
   blueprint now maps the root-admin MVP into repo-shaped backend, persistence,
   authz, adapter, PDF, verification, and artifact work. The journey/evidence
   plan now defines the runtime proof, browser scenarios, and mock-honesty
-  checks future tasks must satisfy. Next we need Task Breakdown before
-  implementation tasks can begin. The PDF numeric thresholds are captured as
-  configurable MVP defaults.
+  checks future tasks must satisfy. Story-local Task Breakdowns now exist for
+  S-001 through S-010. A Layer 5 delivery pilot defines the full task queue,
+  dependency status, KPI contract, and execution order for the root-admin MVP.
+  The PDF numeric thresholds are captured as configurable MVP defaults.
 - Waiting next:
-  Task Breakdown
+  Start Layer 5 delivery from the first queued task in the pilot sequence
 - User action needed:
   none for the current root-builder review rule
 
