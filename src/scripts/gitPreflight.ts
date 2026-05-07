@@ -209,7 +209,7 @@ export function parseWriteSetPaths(value: string): string[] {
 }
 
 export function parseDirtyPaths(statusLine: string): string[] {
-  const value = statusLine.slice(3).trim();
+  const value = statusLine.slice(2).trim();
   if (!value) {
     return [];
   }

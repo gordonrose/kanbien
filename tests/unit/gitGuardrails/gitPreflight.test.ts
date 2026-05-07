@@ -69,6 +69,12 @@ describe("git preflight dirty write-set collision detection", () => {
     ]);
   });
 
+  it("does not drop the first character from modified dirty paths", () => {
+    expect(parseDirtyPaths(" M docs/architecture/frontend-overview.md")).toEqual([
+      "docs/architecture/frontend-overview.md",
+    ]);
+  });
+
   it("allows unrelated dirty paths to stay disjoint from the current chat write set", () => {
     const collisions = findDirtyWriteSetCollisions({
       dirtyPaths: ["docs/workspace/product-discovery/reporting-dashboard.md"],

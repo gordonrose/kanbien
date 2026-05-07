@@ -46,6 +46,27 @@ Canonical Layer 1 stop condition:
   How to implement root-owned configuration, force-login semantics, in-flight membership refresh, method disablement handling, and tenant deletion/disablement propagation.
 - Confidence for chosen status: `high`
 
+## Known Questions Gate
+
+- Plain-language summary shown before drafting:
+  Create a reusable tenant-facing login pattern where tenant-specific authentication methods, tenant selection, email uniqueness within a tenant, and lifecycle/configuration changes produce safe login outcomes.
+- First one question asked before drafting:
+  Historical packet predates the current one-question gate; discovery summary records the requester-confirmed tenant login scope.
+- Requester answered, corrected, or explicitly deferred first question:
+  `yes`
+- Known important product questions left unasked:
+  none for Layer 1 handoff
+- For each unasked business question, requester signoff for "deferred until
+  later":
+  exact technical mechanisms for session revocation, forced re-login, policy evaluation timing, provider integration, and audit logging are deferred to Technical Steering.
+- Technical questions not asked of business owner and packaged for technical
+  stakeholder:
+  root-owned configuration implementation, force-login semantics, in-flight membership refresh, disabled-method handling, and tenant deletion/disablement propagation.
+- If any known question was not asked, why was it safe to defer or package:
+  Remaining questions are technical implementation questions for Technical Steering, not Layer 1 product-intent blockers.
+- Packet status allowed:
+  `yes`
+
 ## Product Intent
 
 - Problem to solve:

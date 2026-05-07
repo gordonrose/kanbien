@@ -64,7 +64,7 @@ function parseStatusPath(statusLine: string): string | null {
     return null;
   }
 
-  const payload = statusLine.slice(3).trim();
+  const payload = statusLine.slice(2).trim();
   if (!payload) {
     return null;
   }

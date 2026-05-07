@@ -85,6 +85,8 @@ Current role:
 - provide signed-off reference truth before governed real-app adoption
 - expose file-routed HTML pages whose route topology comes from the folder
   structure
+- expose generated canonical render routes through an explicit router registry
+  when canonical truth is backed by design-system canonical metadata
 
 Current route model:
 
@@ -92,6 +94,9 @@ Current route model:
 - a router that resolves request paths directly to matching HTML files
 - discovery logic that walks the HTML tree and reports implemented routes as
   discovered frontend truth
+- generated canonical route entries for approved component or pattern families
+  that need stable canonical launcher/detail URLs in addition to their review
+  route, such as `kanban-column`
 
 ### `rootAdminShell`
 
@@ -204,6 +209,13 @@ Current audit of the active governed adoption seams:
   - root-admin directory create/edit flows now consume the shared
     `rootAdminDirectoryWorkspace.mjs` controller/render seam rather than
     adding app-local form markup
+- `kanban-column`
+  - shared source seam exists through
+    `/design-system/assets/kanbanColumnSeam.mjs`
+  - design-system review and canonical routes consume the shared
+    render/controller seam
+  - no real app consumer is approved yet; future app adoption requires a named
+    first-consumer adoption contract and product data/API integration plan
 
 ## Target Governed Adoption Model
 
@@ -329,6 +341,8 @@ Typical update triggers:
 - changing how frontend code is built, copied, or served
 - introducing a new durable frontend discovery or topology-management seam
 - changing the boundary between frontend runtime and backend feature seams
+- adding generated canonical route registry entries for governed design-system
+  component or pattern families
 
 When the change is an enduring architectural decision rather than only a
 current-state refresh, also create or update an ADR in `docs/architecture/adr/`.

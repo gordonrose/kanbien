@@ -59,6 +59,27 @@ Canonical Layer 1 stop condition:
   How to expose the governed design-system render/controller seams, how to model dashboard data inputs, how future app pages should bind internal API responses to the template, and how to choose the chart rendering approach after visual confirmation.
 - Confidence for chosen status: `high`
 
+## Known Questions Gate
+
+- Plain-language summary shown before drafting:
+  Create a governed design-system page template for reporting dashboards with configurable layout containers, common reporting widgets, hover detail behavior, and one-at-a-time category filter intent.
+- First one question asked before drafting:
+  Historical packet predates the current one-question gate; discovery summary records the requester-confirmed first-slice scope.
+- Requester answered, corrected, or explicitly deferred first question:
+  `yes`
+- Known important product questions left unasked:
+  none for Layer 1 handoff
+- For each unasked business question, requester signoff for "deferred until
+  later":
+  charting library, durable dashboard persistence, data contract, and app adoption details are deferred to Technical Steering or downstream planning.
+- Technical questions not asked of business owner and packaged for technical
+  stakeholder:
+  chart rendering approach, design-system seam shape, data contract, filter event contract, accessibility behavior, responsive rules, and app adoption contract.
+- If any known question was not asked, why was it safe to defer or package:
+  Remaining questions are implementation and architecture questions for Technical Steering, not Layer 1 product-intent blockers.
+- Packet status allowed:
+  `yes`
+
 ## Product Intent
 
 - Problem to solve:
