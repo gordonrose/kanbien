@@ -11,14 +11,13 @@
   - no generated Product Discovery packet PDF delivery yet
 - Not yet implemented:
   - API route implementation
-  - implementation blueprint
   - executable tests
   - runtime/browser QA evidence
 
 This PRD preserves the root-admin MVP behavior and planning obligations. It is
 not an implementation-ready artifact until the unresolved PDF configuration
-implementation, root-admin design-system parity, blueprint, and evidence
-blockers are resolved.
+implementation, root-admin design-system parity, route implementation, and
+evidence blockers are resolved.
 
 ## Source Artifacts
 
@@ -45,6 +44,8 @@ blockers are resolved.
   `docs/data-dictionary/harness-chat-message.md`,
   `docs/data-dictionary/harness-chat-packet-revision.md`,
   `docs/data-dictionary/harness-chat-pdf-attempt.md`
+- Implementation Blueprint:
+  `docs/workspace/implementation-blueprints/2026-05-07-chat-interface-layer-one-discovery-root-admin-mvp.md`
 
 ## Summary
 
@@ -301,7 +302,8 @@ Runtime/browser evidence must include:
 The PRD does not resolve these blockers:
 
 - root-admin first-consumer design-system parity proof
-- implementation blueprint
+- API route implementation
+- executable tests
 - runtime/browser QA evidence plan
 
 ## Acceptance Summary
