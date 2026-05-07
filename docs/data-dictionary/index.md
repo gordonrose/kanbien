@@ -37,6 +37,10 @@ and approved cross-feature read seams.
 | Capability Catalog Field | `capabilityContractCatalog` | Durable normalized request or response field row owned by one capability record. | [capability-catalog-field.md](./capability-catalog-field.md) |
 | Capability Catalog Constraint | `capabilityContractCatalog` | Durable normalized cross-field or capability-level constraint row owned by one capability record. | [capability-catalog-constraint.md](./capability-catalog-constraint.md) |
 | Capability Catalog Source Reference | `capabilityContractCatalog` | Durable provenance row linking one capability record to one approved source artifact. | [capability-catalog-source-reference.md](./capability-catalog-source-reference.md) |
+| Harness Chat Conversation | `harnessChat` | Planned durable root-admin Build chat conversation for Layer 1 Product Discovery. | [harness-chat-conversation.md](./harness-chat-conversation.md) |
+| Harness Chat Message | `harnessChat` | Planned append-only message turn preserving Build chat transcript history. | [harness-chat-message.md](./harness-chat-message.md) |
+| Harness Chat Packet Revision | `harnessChat` | Planned durable generated Product Discovery packet version with supersession and PDF readiness metadata. | [harness-chat-packet-revision.md](./harness-chat-packet-revision.md) |
+| Harness Chat PDF Attempt | `harnessChat` | Planned durable evidence record for transient generated packet PDF attempts, denials, retries, and safe failure categories. | [harness-chat-pdf-attempt.md](./harness-chat-pdf-attempt.md) |
 | Root Authz Capability | `rootRoles` | Catalog entry for a root-platform authorization capability key. | [root-authz-capability.md](./root-authz-capability.md) |
 | System Root Role | `rootRoles` | Durable definition of a system root role such as `RootUserAdmin`. | [system-root-role.md](./system-root-role.md) |
 | Root Role Capability Grant | `rootRoles` | Durable assignment of one authz capability to one system root role. | [root-role-capability-grant.md](./root-role-capability-grant.md) |

@@ -35,10 +35,10 @@
   runtime evidence, mock-honesty, audit/proof, resilience, compatibility, and
   performance-threshold planning
 - Harness gates triggered:
-  data dictionary, API contract, permission mapping, generated PDF numeric
+  API contract, permission mapping, generated PDF numeric
   threshold decision, design-system first-consumer parity proof, feature
-  manifest, generated dependency graph, runtime/browser evidence, and
-  maintained artifact sweep
+  manifest, generated dependency graph, runtime/browser evidence, data
+  dictionary, and maintained artifact sweep
 - Journey inventory required:
   yes before browser or release-gate evidence
 - Journey inventory posture:
@@ -119,10 +119,9 @@
   Requires Shared Test Helper: fake clock
   Requires Manifest Tracking: no
   Cleanup Expectation: n/a
-  Mock / Runtime Honesty: lifecycle states must match the data dictionary once
-  created
-  Traceability / Execution Posture: implementation-blocked until data
-  dictionary exists
+  Mock / Runtime Honesty: lifecycle states must match the data dictionary
+  Traceability / Execution Posture: implementation-blocked until
+  implementation blueprint exists
   Coverage Strength Signal: state-transition branch coverage
   Coverage:
   creates `draft` or `active` conversations with durable creator, root/future
@@ -242,7 +241,7 @@
   messages, packet revisions, and audit rows
   Mock / Runtime Honesty: integration fixture payloads must match API contract
   examples once created
-  Traceability / Execution Posture: implementation-blocked until implementation blueprint and data dictionary exist
+  Traceability / Execution Posture: implementation-blocked until implementation blueprint exists
   Coverage Strength Signal: route plus persistence proof
   Features:
   harness chat feature, root session/authz, v1 router, persistence
@@ -262,7 +261,7 @@
   Cleanup Expectation: reset-first database cleanup
   Mock / Runtime Honesty: expected rows must be built through the repository or
   API helper used by production
-  Traceability / Execution Posture: implementation-blocked until implementation blueprint and data dictionary exist
+  Traceability / Execution Posture: implementation-blocked until implementation blueprint exists
   Coverage Strength Signal: root-boundary allow/deny proof
   Features:
   harness chat feature, root authz, persistence
@@ -442,7 +441,7 @@
     per future API contract without leaking sensitive history existence
   Mock / Runtime Honesty: use the same auth/session helper as other protected
   root-admin route tests
-  Traceability / Execution Posture: implementation-blocked until implementation blueprint and data dictionary exist
+  Traceability / Execution Posture: implementation-blocked until implementation blueprint exists
   Coverage Strength Signal: allow/deny matrix proof
   Coverage:
   proves server-side authz gates create, read, append, generate, history, and
@@ -755,12 +754,12 @@
 
 | Test Case ID | Traceability / Execution Posture | Expected Downstream Task Type | Coverage Strength Signal | Alignment Needed Before Proof |
 | --- | --- | --- | --- | --- |
-| TC-CHAT-L1-UNIT-001 | blocked until data dictionary and implementation blueprint | TEST:test-only | validation branch coverage | API contract and future data dictionary |
+| TC-CHAT-L1-UNIT-001 | blocked until implementation blueprint | TEST:test-only | validation branch coverage | API contract and data dictionary |
 | TC-CHAT-L1-UNIT-003 | blocked until adapter contract | TEST:test-only | packet validator compatibility | Product Discovery adapter contract |
 | TC-CHAT-L1-INT-002 | blocked until implemented API | TEST:test-only | root-boundary allow/deny proof | implemented API and permission mapping |
 | TC-CHAT-L1-INT-005 | blocked until implementation blueprint/config ownership | TEST:test-only | generated-document security proof | threshold configuration keys and implemented API |
 | TC-CHAT-L1-E2E-001 | blocked until journey/implemented API/DS adoption | EVIDENCE:qa-evidence | browser runtime evidence | journey inventory, DS parity, implemented APIs |
-| TC-CHAT-L1-CONC-001 | blocked until persistence plan | TEST:test-only | race-condition proof | migration/data dictionary |
+| TC-CHAT-L1-CONC-001 | blocked until migration plan | TEST:test-only | race-condition proof | data dictionary plus implementation blueprint migration plan |
 | TC-CHAT-L1-PERF-001 | blocked until implementation blueprint/config ownership | EVIDENCE:qa-evidence | latency/burst proof | threshold configuration keys and runtime evidence plan |
 | TC-CHAT-L1-RES-003 | executable with app adoption | TEST:test-suite-alignment | adoption drift proof | DS first-consumer parity proof |
 
