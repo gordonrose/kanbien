@@ -83,3 +83,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S005-01 | tenant user; notification system; active membership; reset requested; reset expired; email-password enabled; method disabled; token active; token used | tenant-login.email-password.authenticate | runtime-api | TC obligation: cover auth; lifecycle; validation for Email-password login and password reset are available only when email-password is enabled for the selected tenant and the user membership is active. | yes |
+| AC-S005-02 | tenant user; notification system; active membership; reset requested; reset expired; email-password enabled; method disabled; token active; token used | tenant-login.password-reset.request | persistence-level | TC obligation: cover token lifecycle; privacy; audit for Password reset tokens are tenant-bound, method-policy-bound, short-lived, single-use, audit-visible, and never logged or serialized into replay URLs. | yes |

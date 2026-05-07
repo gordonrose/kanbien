@@ -84,3 +84,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S008-01 | security/audit owner; system job; request-bound; job-bound; support/emergency; allow; deny; support; emergency; lifecycle; job event | platform-authz.audit-proof.storage | persistence-level | TC obligation: cover audit; security for Authz audit/proof storage captures actor, authority world, tenant context, capability, decision, reason, policy source, grant source posture, request/job id, visibility class, severity, and occurredAt where required. | yes |
+| AC-S008-02 | security/audit owner; system job; request-bound; job-bound; support/emergency; allow; deny; support; emergency; lifecycle; job event | platform-authz.audit-taxonomy.events | persistence-level | TC obligation: cover audit; integration for Support, emergency, cross-tenant denial, lifecycle denial, grant-source denial, sensitive object denial, and system job authority events follow the audit taxonomy. | yes |

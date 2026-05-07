@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S002-01 | API owner; existing route contract; future route contract; denial categories; compatibility exceptions | platform-authz.denial-contract.adoption | contract-level | TC obligation: cover API contract review for Tenant-admin route-family contracts consume `platform-authorization-denials.md` for unauthenticated, tenant selection, tenant context, lifecycle, feature, role, cross-tenant, object, attribute, and sensitive fallback denial categories. | yes |
+| AC-S002-02 | API owner; existing route contract; future route contract; denial categories; compatibility exceptions | platform-authz.compatibility.root-tenant-auth | contract-level | TC obligation: cover compatibility review for Existing root and tenant-auth route-family codes remain backwards compatible unless a route-family contract records an explicit migration. | yes |

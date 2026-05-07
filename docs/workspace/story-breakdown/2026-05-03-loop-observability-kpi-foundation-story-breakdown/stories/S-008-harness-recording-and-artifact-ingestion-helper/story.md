@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S008-01 | story actor; story states; story object states | loopObservability.recordHarnessEvidence | mixed | TC obligation: cover helper integration; contract; persistence for Harness helper opens loops, updates tasks, appends events and metrics, and closes loops through the feature public seam. | yes |
+| AC-S008-02 | story actor; story states; story object states | loopObservability.importChangedArtifacts | source-level | TC obligation: cover classifier; fixture; integration for Changed artifacts are derived from git or PR metadata before harness enrichment. | yes |

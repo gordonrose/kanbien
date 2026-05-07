@@ -78,3 +78,4 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S011-01 | story actor; story states; story object states | Future loop review UI | source-level | TC obligation: cover design-system governance review for Future UI remains blocked until a design-system scorecard/timeline/trace posture is approved. | no |

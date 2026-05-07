@@ -85,5 +85,5 @@ methods and accessibility paths.
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
-| AC-S004-01 | dashboard viewer; pointer, keyboard, touch, assistive paths | accessible detail row | rendered-browser | TC obligation: non-hover data access scenarios | yes |
-| AC-S004-02 | dashboard viewer; focus and dismissal | detail focus row | rendered-browser | TC obligation: focus return and dismissal scenarios | yes |
+| AC-S004-01 | dashboard viewer; pointer user; keyboard user; touch user; screen-reader path; chart mark; data summary; detail panel | reporting-dashboard.widget.detail.accessible | rendered-browser | TC obligation: cover accessibility; keyboard; touch for Detail inspection works through pointer, keyboard, and touch-equivalent interaction, with screen-reader names or data-summary access for chart values. | yes |
+| AC-S004-02 | dashboard viewer; pointer user; keyboard user; touch user; screen-reader path; chart mark; data summary; detail panel | reporting-dashboard.widget.detail.focus | rendered-browser | TC obligation: cover focus management; screen-reader review for Detail dismissal, focus return, and chart-region naming are recorded so detail panels do not become mouse-only hover bubbles. | yes |

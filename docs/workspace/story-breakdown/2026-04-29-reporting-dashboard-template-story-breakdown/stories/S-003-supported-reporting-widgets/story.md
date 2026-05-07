@@ -88,5 +88,5 @@ states are represented rather than hidden.
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
-| AC-S003-01 | dashboard author; required widgets | widget render row | rendered-browser | TC obligation: required widget visual matrix | yes |
-| AC-S003-02 | dashboard author; degraded data states | widget state matrix row | human-visible-parity | TC obligation: empty, incompatible, dense, outlier scenarios | yes |
+| AC-S003-01 | dashboard template author; widget picker active; number, pie, histogram, line, bar, box plot; empty; incompatible | reporting-dashboard.widget.render | rendered-browser | TC obligation: cover widget visual matrix; fixture contract for Number tile, pie chart, histogram, line chart, bar chart, and box plot widgets each render from local sample fixtures with approved title, value, label, and unit semantics. | yes |
+| AC-S003-02 | dashboard template author; widget picker active; number, pie, histogram, line, bar, box plot; empty; incompatible | reporting-dashboard.widget.state-matrix | human-visible-parity | TC obligation: cover state matrix; accessibility review for Widget examples include empty, loading, no-data, incompatible-data, too-many-category, long-label, null-value, negative-value, and outlier states. | yes |

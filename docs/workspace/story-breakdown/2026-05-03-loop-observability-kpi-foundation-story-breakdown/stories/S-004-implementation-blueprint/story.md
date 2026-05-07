@@ -79,3 +79,4 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S004-01 | implementation planner; active; blueprint absent | Implementation blueprint control rows | source-level | TC obligation: cover blueprint review for Implementation blueprint sequences feature scaffold, migrations, domain, transport, helper, tests, and artifacts without starting UI or OLAP. | no |

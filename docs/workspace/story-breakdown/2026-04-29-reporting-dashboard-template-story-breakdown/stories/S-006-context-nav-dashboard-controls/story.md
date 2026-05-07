@@ -87,5 +87,5 @@ control area is enough.
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
-| AC-S006-01 | design-system maintainer; context-nav seam | context-nav controls row | source-level | TC obligation: drawer seam alignment review | yes |
-| AC-S006-02 | design-system maintainer; drawer states | drawer states row | rendered-browser | TC obligation: drawer behavior and focus scenarios | yes |
+| AC-S006-01 | design-system maintainer; drawer closed; drawer open; mobile state; available control; invalid control; unavailable control | reporting-dashboard.controls.context-nav | source-level | TC obligation: cover design-system seam review; source inspection for Dashboard-level controls are composed through the existing context-nav drawer family or a recorded design-system blocker names the missing drawer seam. | yes |
+| AC-S006-02 | design-system maintainer; drawer closed; drawer open; mobile state; available control; invalid control; unavailable control | reporting-dashboard.controls.drawer-states | rendered-browser | TC obligation: cover browser interaction; accessibility for Drawer control states include open, close, invalid selection, unavailable control, focus return, and responsive behavior within the dashboard template. | yes |

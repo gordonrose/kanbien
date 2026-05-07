@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S001-01 | architecture maintainer; active; PRD/ADR absent or stale | Loop observability architecture foundation | source-level | TC obligation: cover architecture review for ADR states that loopObservability owns durable loop evidence while platform helpers consume its public seam. | yes |
+| AC-S001-02 | architecture maintainer; active; PRD/ADR absent or stale | PRD reconciliation | source-level | TC obligation: cover docs alignment review for PRD proposal records Technical Steering decisions, v0 scope, deferred UI and OLAP posture, and required artifact chain. | yes |

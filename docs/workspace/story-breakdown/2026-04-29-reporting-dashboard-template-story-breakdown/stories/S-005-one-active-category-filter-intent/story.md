@@ -89,5 +89,5 @@ unsupported and no-result states.
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
-| AC-S005-01 | dashboard viewer; filter state transitions | filter intent row | rendered-browser | TC obligation: set, replace, clear, no-result scenarios | yes |
-| AC-S005-02 | dashboard viewer; unsupported targets | unsupported filter state row | human-visible-parity | TC obligation: unsupported target messaging review | yes |
+| AC-S005-01 | dashboard viewer; no filter; active filter; unsupported target; category mark; number tile; no-result dashboard | reporting-dashboard.filter.intent | rendered-browser | TC obligation: cover browser interaction; state transition for Category-bearing chart marks can set exactly one active filter intent, applying a new filter replaces the previous one, and clearing restores the unfiltered sample state. | yes |
+| AC-S005-02 | dashboard viewer; no filter; active filter; unsupported target; category mark; number tile; no-result dashboard | reporting-dashboard.filter.unsupported-state | human-visible-parity | TC obligation: cover unsupported-state review; no-result review for Number tiles and unsupported chart marks communicate that they are not filter targets, and no-result filtered states are represented honestly. | yes |

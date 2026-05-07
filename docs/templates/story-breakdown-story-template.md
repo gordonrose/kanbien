@@ -82,5 +82,11 @@ for this story.
 
 ## Acceptance Criteria To Test Obligation Matrix
 
+Every active acceptance criterion must appear here. This table is the story's
+proof coverage check: it shows which actors and states are covered, which
+behavior row the proof traces to, what proof layer will satisfy the promise,
+what later test-case work must be created, and whether integration evidence is
+needed.
+
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |

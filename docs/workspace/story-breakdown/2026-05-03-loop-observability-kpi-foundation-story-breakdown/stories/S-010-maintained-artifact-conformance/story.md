@@ -79,3 +79,4 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S010-01 | story actor; story states; story object states | Maintained artifact conformance | source-level | TC obligation: cover artifact sweep; generated artifact verification for Data dictionary, permission mapping, API contracts, feature manifest, and generated dependency graph are aligned with implemented seams. | yes |

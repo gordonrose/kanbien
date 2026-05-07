@@ -85,3 +85,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S006-01 | `adminOwner`; root actor; active admin; pending admin; removed admin; setting enabled/disabled; root-owned control | admin.tenant-account.manage | runtime-api | TC obligation: cover integration; security; audit for `adminOwner` can manage only tenant-owned day-to-day settings, approved flags/options, payment details, billing contacts, and usage choices within root-approved availability. | yes |
+| AC-S006-02 | `adminOwner`; root actor; active admin; pending admin; removed admin; setting enabled/disabled; root-owned control | admin-owner.root-owned-deny | runtime-api | TC obligation: cover security; cross-boundary deny for `adminOwner` cannot manage tenant admins, root-owned branding/setup, pricing, tiers, limits, entitlements, support, emergency powers, or blocked/deferred capability families. | yes |

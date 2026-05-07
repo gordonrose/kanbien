@@ -81,3 +81,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S007-01 | tenant user; auth/session system; logged in; removed; role changed; forced-login flagged; tenant active; tenant disabled; membership active; membership removed | tenant-session.invalidate | mixed | TC obligation: cover session lifecycle; audit; resilience for Removed users, removed memberships, disabled or deleted tenants, and forced-login policy changes interrupt active sessions by the approved mechanism and record audit evidence. | no |
+| AC-S007-02 | tenant user; auth/session system; logged in; removed; role changed; forced-login flagged; tenant active; tenant disabled; membership active; membership removed | tenant-session.authority.refresh | mixed | TC obligation: cover tenant authz; session refresh; compatibility for Membership and role changes are reflected in active access according to the approved refresh seam without granting broad implicit access across tenants. | no |

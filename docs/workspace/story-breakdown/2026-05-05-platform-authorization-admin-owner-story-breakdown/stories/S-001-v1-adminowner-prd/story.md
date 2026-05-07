@@ -84,3 +84,6 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S001-01 | product owner; architect; PRD absent; PRD drafted; role scope unresolved; exclusions unresolved | admin-owner.role.global-consistency | contract-level | TC obligation: cover product-scope review for The PRD states v1 has one globally consistent tenant role named `adminOwner` and forbids tenant-specific divergence. | yes |
+| AC-S001-02 | product owner; architect; PRD absent; PRD drafted; role scope unresolved; exclusions unresolved | root-owned.tenant-controls | contract-level | TC obligation: cover product-scope review; security review for The PRD preserves root-owned tenant branding/setup, tenant-admin management, commercial entitlement, support, and emergency controls as outside tenant authority. | yes |
+| AC-S001-03 | product owner; architect; PRD absent; PRD drafted; role scope unresolved; exclusions unresolved | admin-owner.v1.non-goals | contract-level | TC obligation: cover non-goal review for The PRD records v1 non-goals: custom tenant roles, tenant self-service tenant-admin management, root impersonation, broad ABAC/ReBAC runtime, and tenant admin UI before implementation. | yes |

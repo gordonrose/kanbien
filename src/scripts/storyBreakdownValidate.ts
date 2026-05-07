@@ -284,6 +284,15 @@ type StoryTestInputRow = {
   nfrs: string;
 };
 
+type AcceptanceCriteriaTestObligationRow = {
+  acId: string;
+  actorsStatesCovered: string;
+  capabilityRows: string;
+  proofLayer: string;
+  testObligation: string;
+  integrationNeeded: string;
+};
+
 type BlockerRow = {
   blockerId: string;
   blocksStory: string;
@@ -366,6 +375,7 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   const capabilities = parseCapabilityRows(content);
   const dependencies = parseDependencyRows(content);
   const testInputs = parseStoryTestInputRows(content);
+  const testObligations = parseAcceptanceCriteriaTestObligationRows(content);
   const blockers = parseBlockerRows(content);
   const followUpQuestions = parseFollowUpDecisionQuestionRows(content);
   const unblockRows = parseLayer3UnblockRows(content);
@@ -386,6 +396,7 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
   const narrativesByStory = new Map(narratives.map((narrative) => [narrative.storyId, narrative]));
   const acByStory = groupBy(acceptanceCriteria, (row) => row.storyId);
   const capabilityByAc = groupBy(capabilities, (row) => row.acId);
+  const testObligationsByAc = groupBy(testObligations, (row) => row.acId);
   const dependencyByStoryOrAc = dependencies;
   const testInputsByStory = new Map(testInputs.map((row) => [row.storyId, row]));
   const taskTypeSignalsByStory = groupBy(taskTypeSignals, (row) => row.storyId);
@@ -468,6 +479,39 @@ export function validateStoryBreakdownContent(content: string): StoryBreakdownVa
 
     if (!capabilityByAc.has(ac.acId)) {
       errors.push(`${ac.acId} has no capability mapping row`);
+    }
+
+    const story = storiesById.get(ac.storyId);
+    if (story?.status !== "superseded" && !testObligationsByAc.has(ac.acId)) {
+      errors.push(`${ac.acId} has no Acceptance Criteria To Test Obligation Matrix row`);
+    }
+  }
+
+  for (const obligation of testObligations) {
+    const ac = acceptanceCriteria.find((row) => row.acId === obligation.acId);
+    if (!ac) {
+      errors.push(`${obligation.acId || "(blank)"} test obligation references unknown acceptance criterion`);
+      continue;
+    }
+
+    validateRequiredField(obligation.acId, "Actors / States Covered", obligation.actorsStatesCovered, errors);
+    validateRequiredField(obligation.acId, "Capability Row(s)", obligation.capabilityRows, errors);
+    validateRequiredField(obligation.acId, "Required TC IDs Or TC Obligation", obligation.testObligation, errors);
+    validateAllowedValue(obligation.acId, "Proof Layer", obligation.proofLayer, allowedProofLayers, errors);
+    validateAllowedValue(obligation.acId, "Integration Needed", obligation.integrationNeeded, allowedYesNo, errors);
+
+    if (obligation.proofLayer !== ac.proofLayer) {
+      errors.push(`${obligation.acId} test obligation proof layer does not match acceptance criterion proof layer`);
+    }
+
+    const normalizedTestObligation = obligation.testObligation.trim().toLowerCase();
+    if (
+      narrativeFillerPhrases.some((phrase) => normalizedTestObligation === phrase) ||
+      normalizedTestObligation === "tc obligation" ||
+      normalizedTestObligation === "create tc" ||
+      normalizedTestObligation === "test"
+    ) {
+      errors.push(`${obligation.acId} test obligation is not concrete`);
     }
   }
 
@@ -1072,6 +1116,17 @@ function parseStoryTestInputRows(content: string): StoryTestInputRow[] {
     transitions: cells[6] ?? "",
     systemErrors: cells[7] ?? "",
     nfrs: cells[8] ?? "",
+  }));
+}
+
+function parseAcceptanceCriteriaTestObligationRows(content: string): AcceptanceCriteriaTestObligationRow[] {
+  return parseTableRows(section(content, "## Acceptance Criteria To Test Obligation Matrix")).map((cells) => ({
+    acId: cells[0] ?? "",
+    actorsStatesCovered: cells[1] ?? "",
+    capabilityRows: cells[2] ?? "",
+    proofLayer: cells[3] ?? "",
+    testObligation: cells[4] ?? "",
+    integrationNeeded: cells[5] ?? "",
   }));
 }
 

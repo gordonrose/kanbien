@@ -89,5 +89,5 @@ normal, narrow, and crowded screen states.
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
-| AC-S002-01 | dashboard author; layout states | layout compose row | rendered-browser | TC obligation: row and column interaction scenarios | yes |
-| AC-S002-02 | dashboard author; responsive states | layout responsive row | rendered-browser | TC obligation: mobile and magnified geometry scenarios | yes |
+| AC-S002-01 | dashboard template author; empty dashboard; row editing; empty row; empty column; populated container | reporting-dashboard.layout.compose | rendered-browser | TC obligation: cover browser interaction; responsive states for The template supports adding and removing rows, adding columns within rows, and showing empty row, empty column, and empty container states without durable persistence. | yes |
+| AC-S002-02 | dashboard template author; empty dashboard; row editing; empty row; empty column; populated container | reporting-dashboard.layout.responsive | rendered-browser | TC obligation: cover visual regression; responsive geometry for Responsive behavior defines how columns stack, compress, or overflow across mobile, magnified, and dense states without app-page CSS. | yes |

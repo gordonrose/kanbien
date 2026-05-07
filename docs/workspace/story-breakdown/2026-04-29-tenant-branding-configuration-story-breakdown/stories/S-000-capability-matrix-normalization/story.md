@@ -81,3 +81,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S000-01 | harness reviewer; capability matrix absent; story packet drafted; acceptance criteria unmapped; capability rows missing | Tenant branding capability matrix control rows | contract-level | TC obligation: cover capability-matrix coverage; traceability review for The capability matrix names root-admin branding read, root-admin branding manage, logo relationship create or replace, logo read or content read, tenant-dashboard branding read, fallback projection, cross-tenant denial, and audit evidence rows. | no |
+| AC-S000-02 | harness reviewer; capability matrix absent; story packet drafted; acceptance criteria unmapped; capability rows missing | Tenant branding capability matrix traceability rows | contract-level | TC obligation: cover traceability review for Every acceptance criterion in this packet maps to an approved capability row or records why the criterion is governance-only. | no |

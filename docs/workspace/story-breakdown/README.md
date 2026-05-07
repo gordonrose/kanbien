@@ -27,6 +27,8 @@ harness law unless promoted to architecture, standards, templates, or skills.
 - dependency and feature-seam map
 - capability-matrix posture
 - proof-layer and test-family obligations
+- acceptance-criterion-to-test-obligation coverage for every active acceptance
+  criterion
 - artifact ledger
 - blockers that prevent Task Breakdown
 

@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S004-01 | tenant user; no tenant selected; one tenant selected; stale selection; method enabled; method disabled; method unavailable | tenant-login.tenant.select | runtime-api | TC obligation: cover tenant authz; state transition; replay security for Tenant selection binds exactly one selected tenant context before method execution and rejects request-body tenant inference where server-side selection state should own authority. | yes |
+| AC-S004-02 | tenant user; no tenant selected; one tenant selected; stale selection; method enabled; method disabled; method unavailable | tenant-login.method.choose | runtime-api | TC obligation: cover state matrix; lifecycle transition for Method choice shows only enabled methods for the selected tenant, and a method disabled during login redirects to login with an approved next-step state. | yes |

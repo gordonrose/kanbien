@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S009-01 | governance reviewer; implementation slice complete; artifacts stale; mappings; catalog; API; data dictionary; tests | platform-authz.artifact-sweep | source-level | TC obligation: cover standards review for Permission mappings, capability catalog source registry/materialization, API contracts, data dictionaries, feature manifests, and generated dependency graph are updated only when runtime implementation changes their source truth. | yes |
+| AC-S009-02 | governance reviewer; implementation slice complete; artifacts stale; mappings; catalog; API; data dictionary; tests | platform-authz.ui-eligibility.runtime-enforced | mixed | TC obligation: cover security; frontend-gate when UI exists for No UI or admin workflow exposes a capability as usable until the mapping/catalog posture is `runtime-enforced` and route tests prove enforcement. | yes |

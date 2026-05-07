@@ -79,3 +79,4 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S003-01 | QA planner; active; TC packet absent | PRD-derived TC planning rows | contract-level | TC obligation: cover TC planning review for Test-case packet records persistence, validation, lifecycle, append-only, projection, authz, helper, API, and traceability test obligations. | no |

@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S000-01 | harness reviewer; mapping missing; mapping present; ACs unmapped; rows stale | platform-authz.admin-owner-v1.capability-matrix | contract-level | TC obligation: cover traceability review for The capability matrix names every v1 `adminOwner`, root-owned, support/emergency, lifecycle, denial, audit, and blocked/deferred capability family from this packet. | yes |
+| AC-S000-02 | harness reviewer; mapping missing; mapping present; ACs unmapped; rows stale | platform-authz.admin-owner-v1.traceability | contract-level | TC obligation: cover traceability review for Every acceptance criterion in this story packet maps to an approved capability row or records why the criterion is governance-only. | yes |

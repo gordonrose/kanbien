@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S006-01 | tenant user; SSO provider; provider available; provider unavailable; fallback available; fallback absent; provider reference active; provider misconfigured | tenant-login.sso.start; tenant-login.sso.complete | runtime-api | TC obligation: cover provider-state matrix; security for SSO handoff and return are scoped to exactly one selected tenant and one provider reference, with provider outage or misconfiguration producing approved fallback or blocked states. | yes |
+| AC-S006-02 | tenant user; SSO provider; provider available; provider unavailable; fallback available; fallback absent; provider reference active; provider misconfigured | tenant-login.sso.fallback | runtime-api | TC obligation: cover fallback state; privacy for SSO unavailable falls back only when another enabled method exists for the selected tenant; otherwise login is blocked with approved generic messaging. | yes |

@@ -81,3 +81,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S000-01 | harness reviewer; matrix absent; packet drafted; ACs unmapped; capability rows missing | Tenant-aware login capability matrix control rows | contract-level | TC obligation: cover capability-matrix coverage; traceability review for The capability matrix names root tenant-auth configuration, pre-auth resolution, tenant selection, method choice, password reset, SSO fallback, session interruption, audit evidence, and governed UI rows. | no |
+| AC-S000-02 | harness reviewer; matrix absent; packet drafted; ACs unmapped; capability rows missing | Tenant-aware login traceability rows | contract-level | TC obligation: cover traceability review for Every acceptance criterion in this packet maps to an approved capability row or records why the criterion is governance-only. | no |

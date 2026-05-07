@@ -83,3 +83,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S003-01 | tenant authz platform; invited; setup complete; removed; suspended; grants absent; grant active; grant revoked | admin-owner.grant.storage | persistence-level | TC obligation: cover persistence; security for Tenant role/grant storage distinguishes tenant `adminOwner` grants from root roles and records tenant context, grant source posture, and lifecycle-safe revocation behavior. | yes |
+| AC-S003-02 | tenant authz platform; invited; setup complete; removed; suspended; grants absent; grant active; grant revoked | admin-owner.authority.lifecycle | persistence-level | TC obligation: cover integration; audit; lifecycle for Pending invited tenant admins have no authority until accepted and setup is complete; removal or suspension revokes authority immediately while preserving historical action records. | yes |

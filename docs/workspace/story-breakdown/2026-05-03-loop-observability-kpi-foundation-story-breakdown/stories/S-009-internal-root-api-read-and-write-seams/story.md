@@ -81,3 +81,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S009-01 | story actor; story states; story object states | loopObservability.rootInternalWrite | runtime-api | TC obligation: cover API contract; validation; authz for Internal/root APIs reject client-supplied system-managed fields and follow pagination, sorting, timestamp, and exact route param defaults. | yes |
+| AC-S009-02 | story actor; story states; story object states | loopObservability.rootInternalRead | runtime-api | TC obligation: cover API integration; projection for Scorecard and artifact-trace reads return stable shapes for future UI and tooling without requiring OLAP. | yes |

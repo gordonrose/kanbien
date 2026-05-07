@@ -97,8 +97,11 @@ they do not replace it.
    Use `docs/architecture/guides/story-breakdown-test-design-guide.md` to
    decide actor, permission, state, object, value, validation, lifecycle,
    system-error, and NFR obligations.
-   Record obligations for later `TC-*` authoring. Do not write detailed
-   PRD-derived test cases in this packet.
+   Record obligations for later `TC-*` authoring. Every active acceptance
+   criterion must have a row in the Acceptance Criteria To Test Obligation
+   Matrix that names actors/states covered, capability rows, proof layer,
+   concrete TC obligation, and whether integration evidence is needed. Do not
+   write detailed PRD-derived test cases in this packet.
 
 8. Build the artifact ledger.
    Name required PRD, capability matrix, API, data, permission, design-system,

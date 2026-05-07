@@ -88,5 +88,5 @@ pattern or mix sample behavior with production reporting promises.
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
-| AC-S007-01 | future app owner; adoption gate | adoption guardrail row | source-level | TC obligation: governed adoption source review | no |
-| AC-S007-02 | future app owner; app/API planning | future production boundary row | contract-level | TC obligation: future app boundary planning review | no |
+| AC-S007-01 | repo governance reviewer; future app owner; design-system-only now; future app pending; signed-off seam; missing adoption contract | reporting-dashboard.app-adoption.guardrail | source-level | TC obligation: cover governed adoption review; standards review for Future app dashboard adoption requires a signed-off render/controller/style seam and an adoption contract before any real app consumer reconstructs dashboard UI. | yes |
+| AC-S007-02 | repo governance reviewer; future app owner; design-system-only now; future app pending; signed-off seam; missing adoption contract | reporting-dashboard.future-production-boundary | contract-level | TC obligation: cover architecture review; artifact ledger review for Future production dashboard work is marked as separate planning for API/read-model contracts, root or tenant boundary, authorization, privacy, reporting freshness, and saved-layout lifecycle. | yes |

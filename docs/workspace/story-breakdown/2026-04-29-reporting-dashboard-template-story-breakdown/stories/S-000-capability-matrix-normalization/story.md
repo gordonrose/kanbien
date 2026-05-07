@@ -86,5 +86,5 @@ reason that no behavior entry is needed.
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | harness reviewer; matrix absent | reporting dashboard control rows | contract-level | TC obligation: matrix coverage review | no |
-| AC-S000-02 | harness reviewer; unmapped ACs | reporting dashboard traceability rows | contract-level | TC obligation: AC-to-row review | no |
+| AC-S000-01 | harness reviewer; matrix absent; packet drafted; ACs unmapped; capability rows missing | Reporting dashboard template capability matrix control rows | contract-level | TC obligation: cover capability-matrix coverage; traceability review for The capability matrix names the template scope, composition behavior, required widgets, detail behavior, filter intent, context controls, canonical states, and adoption guardrail rows. | no |
+| AC-S000-02 | harness reviewer; matrix absent; packet drafted; ACs unmapped; capability rows missing | Reporting dashboard template traceability rows | contract-level | TC obligation: cover traceability review for Every acceptance criterion in this packet maps to an approved capability row or records why the criterion is governance-only. | no |

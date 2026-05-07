@@ -81,3 +81,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S005-01 | story actor; story states; story object states | loopObservability.captureLoopEvidence | persistence-level | TC obligation: cover persistence integration; validation; lifecycle for Capture foundation persists loop run, task, event, metric snapshot, change set, and changed artifact records with system-managed fields. | yes |
+| AC-S005-02 | story actor; story states; story object states | loopObservability.appendEvidence | persistence-level | TC obligation: cover lifecycle; audit; regression for Events and metric snapshots are append-only and corrections are represented as new evidence records rather than silent overwrites. | yes |

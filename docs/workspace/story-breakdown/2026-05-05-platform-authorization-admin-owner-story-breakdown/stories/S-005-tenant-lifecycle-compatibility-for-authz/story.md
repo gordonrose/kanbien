@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S005-01 | tenant lifecycle owner; tenant draft/live/disabled/inactive; active/softDeleted/hardDeletePending/hardDeleted | tenant-lifecycle.authz-facts.compatibility | persistence-level | TC obligation: cover migration; compatibility for Tenant lifecycle/deletion facts follow ADR-0037 and do not silently overload current tenant `status` or `deleted_at`. | yes |
+| AC-S005-02 | tenant lifecycle owner; tenant draft/live/disabled/inactive; active/softDeleted/hardDeletePending/hardDeleted | tenant-lifecycle.authz-denials | runtime-api | TC obligation: cover lifecycle; security for Tenant-admin login/use is denied or restricted for `inactive`, `softDeleted`, `hardDeletePending`, and `hardDeleted` states according to approved lifecycle/deletion posture. | yes |

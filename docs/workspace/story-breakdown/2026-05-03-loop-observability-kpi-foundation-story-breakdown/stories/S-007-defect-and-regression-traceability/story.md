@@ -81,3 +81,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S007-01 | story actor; story states; story object states | loopObservability.recordDefect | persistence-level | TC obligation: cover persistence; validation for Defect records classify layer, severity, status, and detected time. | yes |
+| AC-S007-02 | story actor; story states; story object states | loopObservability.linkRegressionTrace | persistence-level | TC obligation: cover lifecycle; regression for Regression traces keep suspected and confirmed causing loop, task, change set, and artifact links separate. | yes |

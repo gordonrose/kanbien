@@ -138,6 +138,7 @@ A reviewer can confirm the selected tenant shows the approved name, other tenant
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S000-01 | harness active planning packet | CAP-BRANDING-000 | contract-level | create TC for capability row coverage and non-capability rationale | no |
 | AC-S001-01 | root admin active and denied | CAP-BRANDING-001 | persistence-level | create TC for update and deny path | yes |
 
 ## Refactor-First And Architecture-Foundation Queue
@@ -533,6 +534,44 @@ describe("story breakdown validation", () => {
     expect(result.errors).toContain(
       "S-001 Story Narrative Work That Follows should avoid unexplained technical terms: api, backend, persistence, route",
     );
+  });
+
+  it("blocks acceptance criteria without test obligation matrix rows", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| AC-S001-01 | root admin active and denied | CAP-BRANDING-001 | persistence-level | create TC for update and deny path | yes |\n",
+        "",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("AC-S001-01 has no Acceptance Criteria To Test Obligation Matrix row");
+  });
+
+  it("blocks test obligation rows with mismatched proof layers", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| AC-S001-01 | root admin active and denied | CAP-BRANDING-001 | persistence-level | create TC for update and deny path | yes |",
+        "| AC-S001-01 | root admin active and denied | CAP-BRANDING-001 | contract-level | create TC for update and deny path | yes |",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain(
+      "AC-S001-01 test obligation proof layer does not match acceptance criterion proof layer",
+    );
+  });
+
+  it("blocks vague test obligations", () => {
+    const result = validateStoryBreakdownContent(
+      validPacket.replace(
+        "| AC-S001-01 | root admin active and denied | CAP-BRANDING-001 | persistence-level | create TC for update and deny path | yes |",
+        "| AC-S001-01 | root admin active and denied | CAP-BRANDING-001 | persistence-level | test | yes |",
+      ),
+    );
+
+    expect(result.status).toBe("BLOCKED");
+    expect(result.errors).toContain("AC-S001-01 test obligation is not concrete");
   });
 
   it("validates folder packets with story files", () => {

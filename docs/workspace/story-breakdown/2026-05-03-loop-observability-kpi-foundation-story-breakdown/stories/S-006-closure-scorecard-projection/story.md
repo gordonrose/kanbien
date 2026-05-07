@@ -81,3 +81,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S006-01 | story actor; story states; story object states | loopObservability.readScorecard | contract-level | TC obligation: cover projection; rubric; contract for Scorecard read model distinguishes measured, assessed, and improvement KPIs and includes standards maintenance plus explicit deferrals. | yes |
+| AC-S006-02 | story actor; story states; story object states | loopObservability.readScorecard | persistence-level | TC obligation: cover state matrix; projection; regression for Scorecard behavior covers complete, blocked, reopened, and partially verified loop states. | yes |

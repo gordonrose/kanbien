@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S002-01 | planning maintainer; active; matrix absent | Capability matrix control rows | contract-level | TC obligation: cover capability traceability review for Capability matrix covers loop run, task, event, metric, change set, changed artifact, scorecard, defect, regression, improvement, helper, and API capabilities. | yes |
+| AC-S002-02 | planning maintainer; active; matrix absent | Capability matrix traceability rows | contract-level | TC obligation: cover capability traceability review for Every story acceptance criterion maps to a capability row or a non-capability governance rationale. | yes |

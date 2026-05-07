@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S008-01 | security reviewer; audit reviewer; success; denial; fallback; forced logout; event stored; forbidden field absent | tenant-auth.audit.record | persistence-level | TC obligation: cover audit integration; privacy log review for Audit events cover root configuration changes, login attempts, tenant selection, method choice, reset requests, SSO provider failures, fallback/block outcomes, forced logout, and membership-change effects. | yes |
+| AC-S008-02 | security reviewer; audit reviewer; success; denial; fallback; forced logout; event stored; forbidden field absent | tenant-auth.privacy.redact-sensitive-proof | source-level | TC obligation: cover privacy; replay security; source inspection for Credentials, reset tokens, provider secrets, raw assertions, bearer/session tokens, and sensitive proof material are excluded from logs, replay payloads, URLs, and browser-visible diagnostics. | yes |

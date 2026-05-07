@@ -85,3 +85,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S007-01 | `adminOwner`; active tenant; disabled tenant; inactive tenant; deletion posture; data export; log export; approved report | admin.tenant-data.export | runtime-api | TC obligation: cover integration; security; audit for `adminOwner` data/log export is tenant-scoped, lifecycle-aware, audit-visible, and limited to approved reporting/export layers rather than raw system logs. | yes |
+| AC-S007-02 | `adminOwner`; active tenant; disabled tenant; inactive tenant; deletion posture; data export; log export; approved report | admin.tenant-data.export.lifecycle | contract-level | TC obligation: cover lifecycle; compatibility for Export behavior preserves the baseline that tenants can export their data while respecting root-mediated recovery/export rules for deletion posture. | yes |

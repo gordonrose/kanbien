@@ -82,3 +82,5 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S000-01 | requester and Product Discovery owner; active; human gate pending | Product Discovery human gate | source-level | TC obligation: cover docs alignment review for Product Discovery packet records that prior context is available but human refresh/signoff is required before promotion. | yes |
+| AC-S000-02 | requester and Product Discovery owner; active; human gate pending | Product Discovery human gate | source-level | TC obligation: cover human signoff review for Requester either confirms the prior-context summary is accurate enough to proceed or requests a renewed Product Discovery interview. | yes |

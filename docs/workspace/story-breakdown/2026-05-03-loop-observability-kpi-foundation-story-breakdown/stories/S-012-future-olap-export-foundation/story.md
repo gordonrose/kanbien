@@ -78,3 +78,4 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
+| AC-S012-01 | story actor; story states; story object states | Future OLAP export | source-level | TC obligation: cover architecture review for Future OLAP export remains blocked until app-owned capture/read model stabilizes and export mechanism is selected. | no |
