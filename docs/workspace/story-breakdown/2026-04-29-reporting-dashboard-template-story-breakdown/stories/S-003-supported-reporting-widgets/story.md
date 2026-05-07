@@ -30,6 +30,28 @@ Story titles and context must be readable by non-engineering stakeholders.
 - For planning or control stories, explain the planning purpose directly, such as breaking the epic into capabilities or helping plan implementation more accurately.
 - Avoid vague planning shorthand such as promises or visual work.
 
+## Story Narrative
+
+**Situation**
+The dashboard is only useful if its approved example widgets behave clearly
+with realistic sample data.
+
+**Goal**
+A dashboard author can place the approved widget types and see honest examples
+for normal, empty, crowded, and unusual data.
+
+**Decisions Needed**
+The work needs agreement on the required widget set and the sample situations
+each widget must show.
+
+**Work That Follows**
+The work will prepare the widget examples that later detail and filter behavior
+can use.
+
+**Evidence Of Success**
+A reviewer can inspect every approved widget type and see that difficult data
+states are represented rather than hidden.
+
 ## Acceptance Criteria
 
 | AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |

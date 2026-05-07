@@ -38,6 +38,23 @@ Story titles and context must be readable by non-engineering stakeholders.
   accurately.
 - Avoid vague planning shorthand such as promises or visual work.
 
+## Story Narrative
+
+Use this block to make the individual story file readable on its own. The same
+story may also appear in the epic-level narrative index, but a reviewer should
+not need to open `epic.md` to understand the beginning, middle, and evidence
+for this story.
+
+**Situation**
+
+**Goal**
+
+**Decisions Needed**
+
+**Work That Follows**
+
+**Evidence Of Success**
+
 ## Acceptance Criteria
 
 | AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |

@@ -30,6 +30,28 @@ Story titles and context must be readable by non-engineering stakeholders.
 - For planning or control stories, explain the planning purpose directly, such as breaking the epic into capabilities or helping plan implementation more accurately.
 - Avoid vague planning shorthand such as promises or visual work.
 
+## Story Narrative
+
+**Situation**
+Dashboard-level settings and filters need an approved home before the pattern
+grows.
+
+**Goal**
+A dashboard author can find dashboard controls in a consistent side area
+instead of scattered across the page.
+
+**Decisions Needed**
+The work needs agreement on whether the existing side-control pattern supports
+dashboard settings and filter controls.
+
+**Work That Follows**
+The work will either reuse the existing side-control behavior or clearly record
+what is missing before delivery planning.
+
+**Evidence Of Success**
+A reviewer can see where dashboard controls belong and whether the existing
+control area is enough.
+
 ## Acceptance Criteria
 
 | AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |

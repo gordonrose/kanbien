@@ -582,7 +582,9 @@ function loadStoryBreakdownPath(packetPath: string): StoryBreakdownLoadResult {
   }
 
   const storyEntryIds = new Set(storyEntries.map((entry) => entry.match(/^(S-\d+)/)?.[1] ?? ""));
-  const epicStoryIds = parseStoryRows(epicContent).map((story) => story.storyId).filter(Boolean);
+  const epicStories = parseStoryRows(epicContent);
+  const epicStoryIds = epicStories.map((story) => story.storyId).filter(Boolean);
+  const epicStoryStatusById = new Map(epicStories.map((story) => [story.storyId, story.status]));
 
   for (const storyId of epicStoryIds) {
     if (!storyEntryIds.has(storyId)) {
@@ -599,6 +601,9 @@ function loadStoryBreakdownPath(packetPath: string): StoryBreakdownLoadResult {
   const storyContents = storyEntries.map((entry) => {
     const entryPath = path.join(storiesPath, entry);
     const entryStat = statSync(entryPath);
+    const storyId = entry.match(/^(S-\d+)/)?.[1] ?? "";
+    const storyStatus = epicStoryStatusById.get(storyId);
+    const mustHaveNarrative = storyId !== "" && storyStatus !== "superseded";
 
     if (entryStat.isDirectory()) {
       const storyPath = path.join(entryPath, "story.md");
@@ -607,7 +612,12 @@ function loadStoryBreakdownPath(packetPath: string): StoryBreakdownLoadResult {
         return "";
       }
 
-      return readFileSync(storyPath, "utf8");
+      const storyContent = readFileSync(storyPath, "utf8");
+      if (mustHaveNarrative && !hasStandaloneStoryNarrative(storyContent)) {
+        errors.push(`${storyId} story file is missing standalone Story Narrative block`);
+      }
+
+      return storyContent;
     }
 
     if (!entryStat.isFile() || !entry.endsWith(".md")) {
@@ -615,13 +625,26 @@ function loadStoryBreakdownPath(packetPath: string): StoryBreakdownLoadResult {
       return "";
     }
 
-    return readFileSync(entryPath, "utf8");
+    const storyContent = readFileSync(entryPath, "utf8");
+    if (mustHaveNarrative && !hasStandaloneStoryNarrative(storyContent)) {
+      errors.push(`${storyId} story file is missing standalone Story Narrative block`);
+    }
+
+    return storyContent;
   });
 
   return {
     content: [epicContent, ...storyContents].join("\n\n"),
     errors,
   };
+}
+
+function hasStandaloneStoryNarrative(content: string): boolean {
+  const narrative = section(content, "## Story Narrative");
+  return narrativeHeadings.every((heading) => {
+    const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    return new RegExp(`\\*\\*${escaped}\\*\\*\\s*\\n\\S`, "i").test(narrative);
+  });
 }
 
 function validateLayer3UnblockQueue(

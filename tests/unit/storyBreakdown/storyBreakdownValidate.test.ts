@@ -176,6 +176,33 @@ A reviewer can confirm the selected tenant shows the approved name, other tenant
 | S-001 | ready-for-task-breakdown | Capability and proof obligations are mapped. |
 `;
 
+const validStandaloneStory = (storyId: string, title: string) => `# Story Breakdown Story: ${title}
+
+## Story Detail
+
+- Story ID:
+  \`${storyId}\`
+- Title:
+  ${title}
+
+## Story Narrative
+
+**Situation**
+The system needs this story to be understandable without opening the full epic summary.
+
+**Goal**
+Reviewers can understand what should be true after this story.
+
+**Decisions Needed**
+The work needs any remaining business or planning decisions to be named clearly.
+
+**Work That Follows**
+The work will move into detailed planning only after the story boundary is clear.
+
+**Evidence Of Success**
+A reviewer can confirm the story has a clear outcome and proof target.
+`;
+
 describe("story breakdown validation", () => {
   it("passes a packet with concrete stories, acceptance criteria, proof, dependencies, and capability mapping", () => {
     expect(validateStoryBreakdownContent(validPacket)).toEqual({
@@ -512,8 +539,14 @@ describe("story breakdown validation", () => {
     const dir = mkdtempSync(path.join(tmpdir(), "story-breakdown-folder-"));
     mkdirSync(path.join(dir, "stories"));
     writeFileSync(path.join(dir, "epic.md"), validPacket);
-    writeFileSync(path.join(dir, "stories", "S-000-capability-matrix-normalization.md"), "# Story S-000\n");
-    writeFileSync(path.join(dir, "stories", "S-001-root-admin-updates-branding.md"), "# Story S-001\n");
+    writeFileSync(
+      path.join(dir, "stories", "S-000-capability-matrix-normalization.md"),
+      validStandaloneStory("S-000", "Capability matrix normalization"),
+    );
+    writeFileSync(
+      path.join(dir, "stories", "S-001-root-admin-updates-branding.md"),
+      validStandaloneStory("S-001", "Root admin updates branding"),
+    );
 
     try {
       expect(validateStoryBreakdownPath(dir)).toEqual({
@@ -530,8 +563,14 @@ describe("story breakdown validation", () => {
     mkdirSync(path.join(dir, "stories", "S-000-capability-matrix-normalization"), { recursive: true });
     mkdirSync(path.join(dir, "stories", "S-001-root-admin-updates-branding"), { recursive: true });
     writeFileSync(path.join(dir, "epic.md"), validPacket);
-    writeFileSync(path.join(dir, "stories", "S-000-capability-matrix-normalization", "story.md"), "# Story S-000\n");
-    writeFileSync(path.join(dir, "stories", "S-001-root-admin-updates-branding", "story.md"), "# Story S-001\n");
+    writeFileSync(
+      path.join(dir, "stories", "S-000-capability-matrix-normalization", "story.md"),
+      validStandaloneStory("S-000", "Capability matrix normalization"),
+    );
+    writeFileSync(
+      path.join(dir, "stories", "S-001-root-admin-updates-branding", "story.md"),
+      validStandaloneStory("S-001", "Root admin updates branding"),
+    );
 
     try {
       expect(validateStoryBreakdownPath(dir)).toEqual({
@@ -548,7 +587,10 @@ describe("story breakdown validation", () => {
     mkdirSync(path.join(dir, "stories", "S-000-capability-matrix-normalization"), { recursive: true });
     mkdirSync(path.join(dir, "stories", "S-001-root-admin-updates-branding"), { recursive: true });
     writeFileSync(path.join(dir, "epic.md"), validPacket);
-    writeFileSync(path.join(dir, "stories", "S-000-capability-matrix-normalization", "story.md"), "# Story S-000\n");
+    writeFileSync(
+      path.join(dir, "stories", "S-000-capability-matrix-normalization", "story.md"),
+      validStandaloneStory("S-000", "Capability matrix normalization"),
+    );
 
     try {
       const result = validateStoryBreakdownPath(dir);
@@ -557,6 +599,26 @@ describe("story breakdown validation", () => {
       expect(result.errors).toContain(
         `folder story breakdown missing story.md: ${path.join(dir, "stories", "S-001-root-admin-updates-branding", "story.md")}`,
       );
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("blocks active folder story files without standalone narratives", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "story-breakdown-missing-story-narrative-"));
+    mkdirSync(path.join(dir, "stories"));
+    writeFileSync(path.join(dir, "epic.md"), validPacket);
+    writeFileSync(
+      path.join(dir, "stories", "S-000-capability-matrix-normalization.md"),
+      validStandaloneStory("S-000", "Capability matrix normalization"),
+    );
+    writeFileSync(path.join(dir, "stories", "S-001-root-admin-updates-branding.md"), "# Story S-001\n");
+
+    try {
+      const result = validateStoryBreakdownPath(dir);
+
+      expect(result.status).toBe("BLOCKED");
+      expect(result.errors).toContain("S-001 story file is missing standalone Story Narrative block");
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

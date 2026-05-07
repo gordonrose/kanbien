@@ -30,6 +30,28 @@ Story titles and context must be readable by non-engineering stakeholders.
 - For planning or control stories, explain the planning purpose directly, such as breaking the epic into capabilities or helping plan implementation more accurately.
 - Avoid vague planning shorthand such as promises or visual work.
 
+## Story Narrative
+
+**Situation**
+Choosing a category should have a clear and reversible effect before more
+complex filtering exists.
+
+**Goal**
+A dashboard viewer can choose one eligible category, replace it with another,
+and clear it.
+
+**Decisions Needed**
+The work needs agreement on which marks can filter, how the active choice is
+shown, and how unsupported choices behave.
+
+**Work That Follows**
+The work will define a local sample filtering behavior that future product
+pages can connect to real data only after separate planning.
+
+**Evidence Of Success**
+A reviewer can set, replace, and clear one category choice and see honest
+unsupported and no-result states.
+
 ## Acceptance Criteria
 
 | AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |

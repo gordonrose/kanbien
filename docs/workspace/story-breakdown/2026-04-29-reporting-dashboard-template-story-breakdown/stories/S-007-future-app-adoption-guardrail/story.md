@@ -30,6 +30,28 @@ Story titles and context must be readable by non-engineering stakeholders.
 - For planning or control stories, explain the planning purpose directly, such as breaking the epic into capabilities or helping plan implementation more accurately.
 - Avoid vague planning shorthand such as promises or visual work.
 
+## Story Narrative
+
+**Situation**
+Future product pages should reuse the approved dashboard pattern instead of
+recreating it in slightly different ways.
+
+**Goal**
+Future app builders know when they may consume the dashboard pattern and what
+planning must happen first.
+
+**Decisions Needed**
+The work needs agreement that real reporting pages, customer data, permissions,
+saved layouts, and data freshness are separate product planning concerns.
+
+**Work That Follows**
+The work will make future adoption wait for the approved pattern and a clear
+product boundary.
+
+**Evidence Of Success**
+A reviewer can confirm future dashboard work does not bypass the approved
+pattern or mix sample behavior with production reporting promises.
+
 ## Acceptance Criteria
 
 | AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |

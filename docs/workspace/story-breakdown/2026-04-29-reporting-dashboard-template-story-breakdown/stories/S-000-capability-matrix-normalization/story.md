@@ -30,6 +30,28 @@ Story titles and context must be readable by non-engineering stakeholders.
 - For planning or control stories, explain the planning purpose directly, such as breaking the epic into capabilities or helping plan implementation more accurately.
 - Avoid vague planning shorthand such as promises or visual work.
 
+## Story Narrative
+
+**Situation**
+The dashboard idea needs a clear behavior list before people can plan the work
+with confidence.
+
+**Goal**
+Reviewers can see what the dashboard must let someone arrange, inspect, filter,
+and reuse before delivery planning begins.
+
+**Decisions Needed**
+The work needs agreement on which dashboard behaviors are required now and
+which future product concerns stay outside this first pass.
+
+**Work That Follows**
+The work will turn the dashboard stories into an approved behavior list that
+can guide later planning without broad guesses.
+
+**Evidence Of Success**
+A reviewer can trace each story outcome to an approved behavior or to a clear
+reason that no behavior entry is needed.
+
 ## Acceptance Criteria
 
 | AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |

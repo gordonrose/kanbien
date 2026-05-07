@@ -30,6 +30,26 @@ Story titles and context must be readable by non-engineering stakeholders.
 - For planning or control stories, explain the planning purpose directly, such as breaking the epic into capabilities or helping plan implementation more accurately.
 - Avoid vague planning shorthand such as promises or visual work.
 
+## Story Narrative
+
+**Situation**
+People need more than hover behavior to understand exact chart values.
+
+**Goal**
+A dashboard viewer can inspect values using pointer, keyboard, touch-style, and
+assistive paths.
+
+**Decisions Needed**
+The work needs agreement on how detail opens, closes, names values, and returns
+focus.
+
+**Work That Follows**
+The work will define detail behavior that is not limited to mouse users.
+
+**Evidence Of Success**
+A reviewer can confirm chart values remain available across different input
+methods and accessibility paths.
+
 ## Acceptance Criteria
 
 | AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |

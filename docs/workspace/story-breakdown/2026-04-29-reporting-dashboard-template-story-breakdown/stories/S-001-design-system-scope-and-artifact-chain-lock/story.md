@@ -30,6 +30,28 @@ Story titles and context must be readable by non-engineering stakeholders.
 - For planning or control stories, explain the planning purpose directly, such as breaking the epic into capabilities or helping plan implementation more accurately.
 - Avoid vague planning shorthand such as promises or visual work.
 
+## Story Narrative
+
+**Situation**
+The dashboard pattern needs agreed boundaries before sample screens and chart
+examples are made.
+
+**Goal**
+Reviewers can tell what belongs in this first dashboard pattern and what is
+intentionally left for later product work.
+
+**Decisions Needed**
+The work needs agreement on the dashboard family, sample states, review
+checklist, and chart comparison posture.
+
+**Work That Follows**
+The work will give later screen examples a clear boundary so they do not grow
+into real reporting, saved layouts, or customer data access.
+
+**Evidence Of Success**
+A reviewer can confirm the first pass stays focused on a reusable dashboard
+pattern and does not pretend to be a production reporting page.
+
 ## Acceptance Criteria
 
 | AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |

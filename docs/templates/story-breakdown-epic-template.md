@@ -23,8 +23,10 @@ docs/workspace/story-breakdown/<epic-slug>/
         T-S001-01-<task-slug>.md
 ```
 
-The folder format is additive. Single-file Story Breakdown packets remain
-valid.
+Use the folder format by default when the packet has multiple active stories,
+when individual stories need to be reviewed separately, or when Layer 4 task
+files should sit directly under their parent story. Single-file Story Breakdown
+packets remain valid for small packets where one file stays readable.
 
 ## Status
 
@@ -99,6 +101,9 @@ Story titles and context must be readable by non-engineering stakeholders.
   as breaking the epic into capabilities or helping plan implementation more
   accurately.
 - Avoid vague planning shorthand such as promises or visual work.
+- Each active story file under `stories/` must also include a standalone
+  `## Story Narrative` block so the story can be understood without opening
+  `epic.md`.
 
 ## Refactor-First And Architecture-Foundation Queue
 
