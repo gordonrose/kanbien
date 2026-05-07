@@ -145,142 +145,175 @@
 
 ## Story Narratives
 
+### S-000: Capability matrix normalization
+
+**Situation**
+This is needed to break down what tenant branding needs to be able to do into individual capabilities, so we can plan the implementation more accurately.
+
+**Goal**
+Reviewers can understand what should be true afterward: Approved capability rows cover every acceptance criterion and identify non-capability-backed criteria.
+
+**Decisions Needed**
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
+
+**Work That Follows**
+The work will carry behavior list normalization into the next planning step with the expected result, checks, and stopping point made clear.
+
+**Evidence Of Success**
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
+
+### S-001: Scope and fallback decision lock
+
+**Situation**
+This is needed to settle what happens when branding is missing, replaced, or only partly configured before the work is split further.
+
+**Goal**
+Reviewers can understand what should be true afterward: Downstream contracts can describe exact behavior without inventing architecture during implementation.
+
+**Decisions Needed**
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
+
+**Work That Follows**
+The work will carry Scope and fallback decision lock into the next planning step with the expected result, checks, and stopping point made clear.
+
+**Evidence Of Success**
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
+
 ### S-002: Governed design-system seam readiness
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to define the shared branding screens before root admins and tenant users rely on them.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: App implementation can consume shared seams without app-page page styling or copied governed composition.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Governed design-system reusable connection readiness into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-003: Root-admin branding configuration record
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because changing the display name and color is the simplest recognizable branding action for a root admin.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Durable tenant branding facts are stored, validated, permissioned, and auditable.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Root-admin branding configuration record into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-004: Tenant logo relationship management
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because logo handling has safety, ownership, and accessibility expectations beyond text and color.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Tenant branding owns the logo relationship while assets owns file safety, storage policy, and content delivery invariants.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Tenant logo relationship management into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-005: Tenant dashboard branding projection
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because tenant users should see the approved branding after login or reload without needing admin context.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: The dashboard consumes authorized tenant branding without live push behavior or cross-tenant leakage.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Tenant dashboard branding projection into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-006: Authorization, audit, and lifecycle evidence
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because branding and logo changes are sensitive enough to need reviewable decisions and cleanup behavior.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Permission-sensitive and asset-sensitive behavior has durable evidence and retryable failure visibility.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Authorization, audit, and lifecycle evidence into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-007: Root-admin governed branding screen
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because root admins need one clear place to manage branding and understand validation or preview results.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Root-admin users can manage branding through signed-off design-system seams.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Root-admin governed branding screen into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-008: Tenant dashboard governed branding consumption
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because the customer-facing dashboard is where branding value becomes visible to tenant users.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Tenant users see configured branding or approved fallback using signed-off dashboard seams.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Tenant dashboard governed branding consumption into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-009: Maintained artifact conformance
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to keep the written rules, examples, and tests aligned with the approved branding behavior before follow-on work starts.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Downstream Task Breakdown starts from coherent source-independent planning records.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Maintained planning record conformance into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
-
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
@@ -295,152 +328,6 @@ A reviewer can connect the story outcome to clear checks and know what remains o
 | S-007 | ready-for-task-breakdown | user-value | DEV:frontend | Root-admin governed branding screen | This is its own story because root admins need one clear place to manage branding and understand validation or preview results. | As a root admin, I need a governed root-admin surface for branding values, logo status, accessibility metadata, validation, and preview. | root admin | Root-admin users can manage branding through signed-off design-system seams. | Depends on S-002, S-003, S-004, and S-006 delivery order |
 | S-008 | ready-for-task-breakdown | user-value | DEV:frontend | Tenant dashboard governed branding consumption | This is its own story because the customer-facing dashboard is where branding value becomes visible to tenant users. | As a tenant user, I need the tenant dashboard shell to apply branding from the authenticated projection after login or reload with explicit fallback states. | tenant user | Tenant users see configured branding or approved fallback using signed-off dashboard seams. | Depends on S-002, S-005, and S-006 delivery order |
 | S-009 | ready-for-task-breakdown | harness-value | DOC:standards-compliance | Maintained artifact conformance | This is needed to keep the written rules, examples, and tests aligned with the approved branding behavior before follow-on work starts. | As repo governance, I need API, data, permission, feature-manifest, dependency graph, design-system, asset, and test-case artifacts to reflect the approved story set before Task Breakdown. | repo governance | Downstream Task Breakdown starts from coherent source-independent artifacts. | Tracks delivery-time artifact sweep |
-
-## Acceptance Criteria
-
-| AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |
-| --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | S-000 | The capability matrix names root-admin branding read, root-admin branding manage, logo relationship create or replace, logo read or content read, tenant-dashboard branding read, fallback projection, cross-tenant denial, and audit evidence rows. | contract-level | capability-matrix coverage; traceability review | capability matrix |
-| AC-S000-02 | S-000 | Every acceptance criterion in this packet maps to an approved capability row or records why the criterion is governance-only. | contract-level | traceability review | capability matrix |
-| AC-S001-01 | S-001 | The PRD selects tenant branding as either a new feature bundle or an approved tenant-configuration extension and records the public seams each affected feature will expose or consume. | source-level | architecture decision review; feature-seam review | PRD; feature manifest plan |
-| AC-S001-02 | S-001 | The PRD defines exact fallback values for missing display name, missing primary colour, missing logo, not-ready logo, invalid logo metadata, and cross-tenant-denied logo states. | contract-level | state matrix review; fallback contract review | PRD; capability matrix; API contract |
-| AC-S001-03 | S-001 | The PRD decides whether v1 supports logo clear or only replacement and defines prior-logo retention, dereference, cleanup, quota, and audit behavior. | contract-level | lifecycle review; asset-consumer alignment review | PRD; asset alignment note; data dictionary |
-| AC-S002-01 | S-002 | Design-system governance identifies signed-off seams or records a blocker for root-admin form composition, upload status, colour preview, accessibility metadata control, validation states, and fallback messaging. | human-visible-parity | design-system canonical review; accessibility review | design-system behavior lock; reference pack; verification checklist |
-| AC-S002-02 | S-002 | Design-system governance identifies signed-off seams or records a blocker for tenant dashboard branding consumption across missing, partial, invalid, not-ready, cross-tenant-denied, mobile, magnified, RTL, light, and dark states. | human-visible-parity | visual scenario review; accessibility review | design-system behavior lock; canonical scenarios |
-| AC-S003-01 | S-003 | Root-admin read returns exactly one selected tenant branding record or the approved absence state while excluding soft-deleted records from normal reads. | runtime-api | API contract; persistence integration; authz allow and deny | PRD; capability matrix; API contract; data dictionary |
-| AC-S003-02 | S-003 | Root-admin save rejects client-supplied system-managed fields, empty display names, invalid primary-colour values, missing selected tenant, and unauthorized actors. | runtime-api | validation; authz; boundary values; API contract | PRD; capability matrix; API contract; permission mapping |
-| AC-S003-03 | S-003 | Successful root-admin save persists durable display name and primary colour as tenant branding facts, refreshes `updatedAt`, records audit evidence, and does not overwrite the canonical tenant name. | persistence-level | persistence integration; audit; regression for canonical tenant isolation | data dictionary; API contract; audit artifact |
-| AC-S004-01 | S-004 | Logo upload or replacement creates a short-lived, single-use, actor-bound, scope-bound, storage-key-bound intent for exactly one selected tenant using only the approved MIME and size limits. | runtime-api | asset contract; validation; quota; authz | asset alignment note; capability matrix; API contract |
-| AC-S004-02 | S-004 | The logo relationship can become consumer-ready only when the asset is ready, tenant scope matches, lifecycle state is allowed, and contextual alt text or decorative posture is recorded. | persistence-level | asset readiness; state transition; accessibility metadata | data dictionary; asset alignment note; capability matrix |
-| AC-S004-03 | S-004 | Dashboard logo delivery uses same-origin authenticated streaming with `nosniff`, never raw bucket URLs, never public delivery, and never direct DOM injection of uploaded SVG markup. | runtime-api | asset content read; security headers; SVG safety | API contract; asset docs; security notes |
-| AC-S004-04 | S-004 | Replacement uses a new asset or version with a new storage key and leaves prior bytes governed by approved retention, cleanup, quota, and audit behavior. | persistence-level | lifecycle transition; cleanup evidence; audit | data dictionary; asset alignment note; runbook note |
-| AC-S005-01 | S-005 | Tenant dashboard branding read evaluates exactly one current tenant context and denies reads when the current tenant does not match the branding owner and asset tenant. | runtime-api | tenant authz; cross-tenant deny; integration | permission mapping; API contract; capability matrix |
-| AC-S005-02 | S-005 | The projection returns display name, primary colour, logo URL or null, logo accessibility posture, fallback indicators, and reload/login timing metadata using approved fallback behavior. | contract-level | API contract; state matrix; compatibility | PRD; API contract; OpenAPI/Postman artifacts |
-| AC-S005-03 | S-005 | Branding changes are visible after next login or dashboard reload and no v1 behavior promises live updates to already-open dashboards. | runtime-api | session or projection refresh; compatibility | PRD; API contract; frontend test-case plan |
-| AC-S006-01 | S-006 | Permission mapping defines root-admin manage and read capabilities, tenant-dashboard branding read capability, required asset capabilities, and cross-tenant deny rules. | contract-level | permission allow and deny; policy review | permission mapping; capability matrix |
-| AC-S006-02 | S-006 | Audit evidence covers branding create, read deny, update, logo intent creation, upload completion, mismatch or failure, link or replacement, delete if approved, cleanup failure, quota denial, and cross-tenant denial without logging forbidden fields. | persistence-level | audit integration; privacy log review | audit docs; privacy note; capability matrix |
-| AC-S006-03 | S-006 | Expired, abandoned, rejected, orphaned, and failed-cleanup logo states have owner, retry, quota, cost, and operational visibility semantics before implementation begins. | contract-level | lifecycle matrix; operational evidence review | PRD; asset alignment note; runbook note |
-| AC-S007-01 | S-007 | The root-admin branding screen consumes signed-off design-system render, controller, style, and accessibility seams for form layout, upload status, colour preview, validation, and fallback messaging. | rendered-browser | browser visual; accessibility; governed adoption | design-system adoption artifact; frontend test-case plan |
-| AC-S007-02 | S-007 | The root-admin screen supports root-admin read, partial value edits that preserve untouched values, invalid colour feedback, empty display-name rejection, logo pending, ready, rejected, replacement, and consumer-not-ready states. | rendered-browser | browser interaction; validation; state matrix | PRD; capability matrix; frontend scenarios |
-| AC-S007-03 | S-007 | The root-admin screen does not add app-page CSS, reconstruct governed markup, or duplicate governed controller behavior unless an explicit exception is recorded. | source-level | governed adoption review; source inspection | design-system adoption artifact |
-| AC-S008-01 | S-008 | Tenant dashboard shell consumes the approved projection and signed-off design-system seams to render configured display name, primary colour, ready logo, and accessibility posture after login or reload. | rendered-browser | browser visual; accessibility; projection integration | frontend scenarios; design-system adoption artifact |
-| AC-S008-02 | S-008 | Tenant dashboard shell renders approved fallback states for missing branding, partial branding, invalid or not-ready logo, missing accessibility metadata, and cross-tenant-denied logo access. | rendered-browser | browser state matrix; accessibility; authz deny | frontend scenarios; PRD fallback table |
-| AC-S008-03 | S-008 | Dashboard branding rendering does not infer asset authority from asset ownership alone and uses tenant branding authorization before asset content is requested. | mixed | authz integration; browser/API integration | permission mapping; API contract; capability matrix |
-| AC-S009-01 | S-009 | API contracts, OpenAPI/Postman artifacts, data dictionary, permission mappings, feature manifests, and generated dependency graph artifacts reflect every approved public seam and cross-feature dependency. | source-level | artifact consistency; generated artifact verification | API contracts; data dictionary; permission mappings; feature manifests; generated graph |
-| AC-S009-02 | S-009 | PRD-derived test-case planning records actor, permission, state, object, value, validation, lifecycle, system-error, accessibility, privacy, audit, performance, resilience, and compatibility obligations for each delivery story. | contract-level | TC planning review; traceability review | PRD-derived test-case packet |
-
-## Capability Mapping
-
-| Story ID | AC ID | Capability Matrix Row(s) | Boundary | Capability Posture | Notes |
-| --- | --- | --- | --- | --- | --- |
-| S-000 | AC-S000-01 | Tenant branding capability matrix control rows | planning | create-or-refresh-required | Default harness-value control story because no approved matrix exists. |
-| S-000 | AC-S000-02 | Tenant branding capability matrix traceability rows | planning | create-or-refresh-required | Must cover this story queue before Task Breakdown. |
-| S-001 | AC-S001-01 | Governance-only PRD scope row | planning | create-or-refresh-required | Capability matrix should identify feature-boundary decision as a prerequisite. |
-| S-001 | AC-S001-02 | Branding fallback behavior | tenant dashboard projection | create-or-refresh-required | Fallback behavior must be capability-backed. |
-| S-001 | AC-S001-03 | Logo clear or replacement lifecycle | tenant logo relationship | create-or-refresh-required | Must align with asset decision. |
-| S-002 | AC-S002-01 | Root-admin branding form design-system readiness | governed frontend | create-or-refresh-required | Matrix should block app work until signed-off seams exist. |
-| S-002 | AC-S002-02 | Tenant dashboard branding design-system readiness | governed frontend | create-or-refresh-required | Matrix should cover visible fallback and accessibility states. |
-| S-003 | AC-S003-01 | root-admin.tenant-branding.read | root-admin selected tenant | create-or-refresh-required | Exact key may change in permission planning. |
-| S-003 | AC-S003-02 | root-admin.tenant-branding.manage | root-admin selected tenant | create-or-refresh-required | Includes validation deny behavior. |
-| S-003 | AC-S003-03 | root-admin.tenant-branding.manage; tenant-branding.audit.record | persistence and audit | create-or-refresh-required | Durable branding facts must not mutate tenant canonical name. |
-| S-004 | AC-S004-01 | root-admin.tenant-branding.logo.update; asset.create | asset relationship | create-or-refresh-required | Uses approved asset use case. |
-| S-004 | AC-S004-02 | root-admin.tenant-branding.logo.update; asset.link | asset relationship | create-or-refresh-required | Consumer readiness includes accessibility metadata. |
-| S-004 | AC-S004-03 | tenant-branding.logo.read; asset.content.read | asset delivery | create-or-refresh-required | Same-origin private content delivery only. |
-| S-004 | AC-S004-04 | root-admin.tenant-branding.logo.update; asset.lifecycle.cleanup | asset lifecycle | create-or-refresh-required | Replacement and old-asset lifecycle need explicit rows. |
-| S-005 | AC-S005-01 | tenant-branding.dashboard.read | tenant current context | create-or-refresh-required | Cross-tenant denial must be covered. |
-| S-005 | AC-S005-02 | tenant-branding.dashboard.read; tenant-branding.fallback.read | tenant dashboard projection | create-or-refresh-required | Projection shape and fallback indicators need rows. |
-| S-005 | AC-S005-03 | tenant-branding.dashboard.read | tenant dashboard projection | create-or-refresh-required | Apply timing is reload/login, not live push. |
-| S-006 | AC-S006-01 | root-admin.tenant-branding.read; root-admin.tenant-branding.manage; tenant-branding.dashboard.read; asset.create; asset.link; asset.read; asset.content.read | authz | create-or-refresh-required | Exact grants need permission mapping. |
-| S-006 | AC-S006-02 | tenant-branding.audit.record | audit | create-or-refresh-required | Forbidden logged fields are part of proof. |
-| S-006 | AC-S006-03 | asset.lifecycle.cleanup; tenant-branding.logo.lifecycle | lifecycle | create-or-refresh-required | Cleanup semantics block delivery planning. |
-| S-007 | AC-S007-01 | root-admin.tenant-branding.manage | governed frontend | create-or-refresh-required | App screen depends on design-system seams. |
-| S-007 | AC-S007-02 | root-admin.tenant-branding.read; root-admin.tenant-branding.manage; root-admin.tenant-branding.logo.update | governed frontend | create-or-refresh-required | UI state matrix must map to backend rows. |
-| S-007 | AC-S007-03 | Governed frontend adoption compliance | governed frontend | create-or-refresh-required | Compliance criterion is standards-backed. |
-| S-008 | AC-S008-01 | tenant-branding.dashboard.read; tenant-branding.logo.read | tenant dashboard frontend | create-or-refresh-required | Browser proof must consume projection. |
-| S-008 | AC-S008-02 | tenant-branding.dashboard.read; tenant-branding.fallback.read | tenant dashboard frontend | create-or-refresh-required | Fallback states need explicit coverage. |
-| S-008 | AC-S008-03 | tenant-branding.dashboard.read; asset.content.read | cross-feature authz | create-or-refresh-required | Authorization order must be explicit. |
-| S-009 | AC-S009-01 | Artifact conformance control row | repo governance | create-or-refresh-required | Governance-only but matrix should track. |
-| S-009 | AC-S009-02 | PRD-derived test-case planning control row | test planning | create-or-refresh-required | Detailed TC IDs come later. |
-
-## Dependency And Seam Map
-
-| Dependency ID | Needed By Story / AC | Provider Feature Or Seam | Dependency Type | Existing Or New | Required Contract Proof | Integration Test Obligation |
-| --- | --- | --- | --- | --- | --- | --- |
-| D-001 | S-001 / AC-S001-01 | tenant branding or tenantConfiguration feature boundary | new-capability | new | PRD records owning feature and public seams. | Feature manifest and dependency graph proof when implemented. |
-| D-002 | S-001 / AC-S001-02 | tenants canonical tenant name | pre-existing-capability | existing | PRD states fallback may read canonical name without overwriting it. | Projection tests prove branding display name remains separate from canonical tenant name. |
-| D-003 | S-002 / AC-S002-01 | design-system root-admin form/upload/colour seams | design-system-seam | existing or new | Behavior lock names consumable render and controller seams. | Browser canonical tests cover form, upload, validation, and accessibility states. |
-| D-004 | S-002 / AC-S002-02 | design-system tenant dashboard shell branding seams | design-system-seam | existing or new | Behavior lock names dashboard render and controller seams. | Browser canonical tests cover configured and fallback dashboard states. |
-| D-005 | S-003 / AC-S003-01 | selected tenant lookup from tenants/root-admin | cross-feature-read | existing | API contract requires exact selected tenant parameter or context. | Runtime API tests cover missing, unauthorized, and valid selected tenant. |
-| D-006 | S-003 / AC-S003-03 | tenant branding persistence table and indexes | persistence-table-or-index | new | Data dictionary and migration plan define durable fields, timestamps, soft delete, and uniqueness. | Persistence tests cover create, update, soft delete exclusion, and normalized validation. |
-| D-007 | S-004 / AC-S004-01 | assets upload-intent seam | feature-public-seam | existing or narrow extension | API contract proves actor, tenant scope, storage key, expiry, MIME, and size binding. | Asset integration tests cover allowed and denied upload-intent creation. |
-| D-008 | S-004 / AC-S004-02 | assets readiness and lifecycle seam | feature-public-seam | existing or narrow extension | Contract proves ready, rejected, pending, deleted, tenant mismatch, and sanitizer states. | Integration tests cover consumer-ready and consumer-not-ready logo states. |
-| D-009 | S-004 / AC-S004-03 | same-origin asset content-read route | feature-public-seam | existing or narrow extension | API contract proves authenticated content read, headers, and no raw bucket URL. | Runtime tests cover content-read authorization, headers, SVG image-resource posture. |
-| D-010 | S-005 / AC-S005-01 | tenant auth current-tenant context | pre-existing-capability | existing | API contract requires exactly one current tenant context. | Runtime API tests cover current-tenant allow and cross-tenant deny. |
-| D-011 | S-005 / AC-S005-02 | tenant dashboard branding projection route | new-capability | new | API contract defines projection shape and fallback indicators. | Projection integration tests cover complete, partial, absent, and invalid states. |
-| D-012 | S-006 / AC-S006-01 | rootRoles or central authz policy evaluation | authz-capability | existing or changed | Permission mapping names grants and deny rules. | Authz tests cover root read/manage, tenant read, non-root deny, cross-tenant deny. |
-| D-013 | S-006 / AC-S006-02 | audit event writer | feature-public-seam | existing or changed | Audit artifact defines event names, fields, and forbidden fields. | Audit integration tests cover success and denial evidence. |
-| D-014 | S-006 / AC-S006-03 | asset cleanup command or future scheduler seam | job-queue-or-worker | existing or future | Lifecycle plan defines owner, retry, quota, and failure evidence. | Cleanup tests cover expired, abandoned, orphaned, and failed-delete states. |
-| D-015 | S-007 / AC-S007-01 | root-admin path-backed topology | frontend-topology-route | existing or new | Frontend topology decision names canonical route and avoids new hash destination. | Browser route tests cover canonical path and compatibility if alias exists. |
-| D-016 | S-008 / AC-S008-01 | tenant dashboard shell route and projection consumer | frontend-topology-route | existing or changed | Frontend contract names dashboard surface scope. | Browser integration tests cover login or reload consumption. |
-| D-017 | S-009 / AC-S009-01 | feature manifests and generated dependency graph | feature-public-seam | existing maintained artifact | Manifest and generated graph list public seams and dependencies. | Standards gate verifies generated artifacts after manifest changes. |
-
-## Downstream Capability Impact
-
-| New Or Changed Capability / Seam | Future Consumer | Contract Promise | Must Not Depend On | Integration Coverage |
-| --- | --- | --- | --- | --- |
-| Tenant branding configuration seam | root-admin transport; tenant dashboard projection | Durable display name, primary colour, current logo relationship, fallback status, validation, timestamps | Canonical tenant name as branding fact; mutable external lookup for durable branding values | Root-admin read/save and dashboard projection integration |
-| Tenant branding logo relationship seam | assets feature; dashboard logo display | Tenant branding authorizes relationship before assets content read and requires consumer-ready metadata | Asset ownership alone; raw bucket URLs; public delivery | Asset readiness, relationship authorization, content-read integration |
-| Tenant dashboard branding projection seam | tenant dashboard shell | Current-tenant read returns safe branding values and fallback indicators after login or reload | Live update promise; broad tenant portal theming; cross-tenant implicit access | Tenant-authenticated projection and browser consumption |
-| Tenant branding authz capabilities | rootRoles or central authz | Root manage/read and tenant dashboard read are distinct and deny cross-tenant by default | Request body tenant inference; broad root session as tenant authority | Allow and deny policy tests |
-| Governed frontend adoption seams | root-admin branding page; tenant dashboard shell | App consumes design-system-owned render/controller/style behavior | App-page CSS; copied governed markup; copied controller behavior | Canonical visual scenarios and app adoption browser proof |
-
-## Story Test Input Matrix
-
-| Story ID | Actors | Actor Permissions | Actor States | Object States | Value Types / Validation Rules | Lifecycle Transitions | System Errors | NFRs |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | harness reviewer | repo artifact author | capability matrix absent; story packet drafted | acceptance criteria unmapped; capability rows missing | stable AC IDs; capability posture values | draft story queue to matrix-covered story queue | missing matrix row; stale traceability | compatibility: downstream traceability; auditability: planning evidence |
-| S-001 | product owner; architect | planning approval | steering accepted; PRD absent | feature boundary undecided; fallback undecided; clear behavior undecided | selected tenant; fallback values; clear versus replacement | discovery/steering to PRD-ready scope | source-of-truth conflict; missing asset alignment | compatibility: avoids breaking tenant/dashboard contracts; privacy/security: preserves private asset stance |
-| S-002 | design-system maintainer; frontend architect | design-system governance approval | governed seams absent or partial | root-admin form states; dashboard branding states | colour preview; upload state; alt/decorative posture; fallback messages | no seam to signed-off seam or explicit blocker | app-page CSS gap; missing controller seam | accessibility; human-visible parity; compatibility with governed adoption rules |
-| S-003 | root admin; unauthorized actor | root-admin read/manage; denied non-root | selected tenant present; missing selected tenant; unauthorized actor | no branding; active branding; soft-deleted branding | non-empty display name; approved hex; reject system fields | create branding; update branding; soft delete exclusion | persistence conflict; invalid tenant; authz denial | security; audit; compatibility with tenant canonical name |
-| S-004 | root admin; asset system; tenant user as logo reader | root logo update; asset create/link/read/content-read; denied mismatch | authorized root; unauthorized actor; tenant user current context | pending asset; ready asset; rejected asset; deleted asset; tenant mismatch; missing alt metadata | approved MIME; size limit; SVG sanitizer; alt text or decorative posture | create intent; complete upload; link; replace; dereference prior logo; cleanup | quota denial; sanitizer failure; content-read deny; cleanup failure | security; privacy; accessibility; resilience; operational evidence |
-| S-005 | tenant user; unauthorized tenant actor | tenant dashboard branding read | current tenant selected; no tenant context; wrong tenant context | complete branding; partial branding; no branding; not-ready logo; denied logo | projection fields; fallback indicators; reload/login timing | branding saved to projection consumed after login or reload | stale projection; cross-tenant deny; asset provider failure | security; compatibility; performance for dashboard load |
-| S-006 | security reviewer; audit reviewer; operations reviewer | policy review; audit read if approved | root actor; tenant actor; unauthorized actor | success event; denial event; failed cleanup; quota denial | forbidden log fields; event names; tenant IDs; asset IDs without secret values | allowed request; denied request; retryable cleanup failure | audit writer failure; policy misconfiguration; quota service failure | security; privacy; audit; resilience; operational evidence |
-| S-007 | root admin | root-admin branding read/manage/logo update | selected tenant; form loaded; validation failure; save success | active branding; partial values; pending logo; rejected logo; consumer-not-ready logo | display name; hex colour; upload metadata; alt/decorative control | load; edit; save; replace logo; show fallback | API validation failure; upload failure; authz denial; projection stale until reload | accessibility; rendered-browser; governed adoption; mobile and RTL |
-| S-008 | tenant user | tenant dashboard branding read; logo read | current tenant; reload; next login; already-open dashboard | complete branding; partial branding; absent branding; denied logo; not-ready logo | display name rendering; primary colour token; logo URL/null; alt/decorative posture | login; reload; no live update while open | projection failure; asset content read denial; stale cache | accessibility; rendered-browser; privacy; compatibility |
-| S-009 | repo governance reviewer | artifact governance | artifacts absent; artifacts refreshed | API/data/permission/design/test artifacts stale or aligned | stable story IDs; AC IDs; capability rows; seam names | story packet to coherent downstream artifacts | validation failure; generated graph drift; missing test-case obligations | standards compliance; rebuild readiness; traceability |
-
-## Acceptance Criteria To Test Obligation Matrix
-
-| AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
-| --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | harness reviewer; matrix absent | Tenant branding capability matrix control rows | contract-level | TC obligation: matrix coverage review | no |
-| AC-S000-02 | harness reviewer; unmapped ACs | Tenant branding capability matrix traceability rows | contract-level | TC obligation: AC-to-row traceability review | no |
-| AC-S001-01 | architect; feature boundary undecided | Governance-only PRD scope row | source-level | TC obligation: architecture source review | yes, later manifest proof |
-| AC-S001-02 | tenant user; fallback states | Branding fallback behavior | contract-level | TC obligation: fallback state matrix | yes |
-| AC-S001-03 | root admin; logo lifecycle states | Logo clear or replacement lifecycle | contract-level | TC obligation: asset lifecycle matrix | yes |
-| AC-S002-01 | root admin; governed form states | Root-admin branding form design-system readiness | human-visible-parity | TC obligation: canonical form visual and accessibility scenarios | yes |
-| AC-S002-02 | tenant user; dashboard fallback states | Tenant dashboard branding design-system readiness | human-visible-parity | TC obligation: dashboard branding canonical scenarios | yes |
-| AC-S003-01 | root admin; selected tenant; soft-deleted record | root-admin.tenant-branding.read | runtime-api | TC obligation: root read allow and soft-delete exclusion | yes |
-| AC-S003-02 | root admin and unauthorized actor; invalid values | root-admin.tenant-branding.manage | runtime-api | TC obligation: validation and authz deny cases | yes |
-| AC-S003-03 | root admin; update success | root-admin.tenant-branding.manage; tenant-branding.audit.record | persistence-level | TC obligation: durable facts and audit persistence | yes |
-| AC-S004-01 | root admin; upload intent | root-admin.tenant-branding.logo.update; asset.create | runtime-api | TC obligation: upload intent binding and limits | yes |
-| AC-S004-02 | asset system; consumer readiness states | root-admin.tenant-branding.logo.update; asset.link | persistence-level | TC obligation: readiness and accessibility metadata | yes |
-| AC-S004-03 | tenant user; logo read | tenant-branding.logo.read; asset.content.read | runtime-api | TC obligation: same-origin stream and header proof | yes |
-| AC-S004-04 | root admin; replacement | root-admin.tenant-branding.logo.update; asset.lifecycle.cleanup | persistence-level | TC obligation: replacement and prior asset lifecycle | yes |
-| AC-S005-01 | tenant user; current and wrong tenant | tenant-branding.dashboard.read | runtime-api | TC obligation: current-tenant allow and deny | yes |
-| AC-S005-02 | tenant user; complete and fallback states | tenant-branding.dashboard.read; tenant-branding.fallback.read | contract-level | TC obligation: projection shape matrix | yes |
-| AC-S005-03 | tenant user; login/reload/open dashboard | tenant-branding.dashboard.read | runtime-api | TC obligation: refresh timing behavior | yes |
-| AC-S006-01 | root admin; tenant user; unauthorized actor | authz capability rows | contract-level | TC obligation: permission mapping allow and deny | yes |
-| AC-S006-02 | audit reviewer; success and deny events | tenant-branding.audit.record | persistence-level | TC obligation: audit events and forbidden fields | yes |
-| AC-S006-03 | operations reviewer; cleanup states | asset.lifecycle.cleanup; tenant-branding.logo.lifecycle | contract-level | TC obligation: cleanup lifecycle and retry semantics | yes |
-| AC-S007-01 | root admin; governed form | root-admin.tenant-branding.manage | rendered-browser | TC obligation: app adoption visual proof | yes |
-| AC-S007-02 | root admin; form state matrix | root-admin.tenant-branding.read; root-admin.tenant-branding.manage; root-admin.tenant-branding.logo.update | rendered-browser | TC obligation: browser interaction matrix | yes |
-| AC-S007-03 | frontend governance; source inspection | Governed frontend adoption compliance | source-level | TC obligation: no app-page CSS or copied governed controller review | no |
-| AC-S008-01 | tenant user; configured branding | tenant-branding.dashboard.read; tenant-branding.logo.read | rendered-browser | TC obligation: dashboard configured branding visual proof | yes |
-| AC-S008-02 | tenant user; fallback states | tenant-branding.dashboard.read; tenant-branding.fallback.read | rendered-browser | TC obligation: dashboard fallback visual matrix | yes |
-| AC-S008-03 | tenant user; asset authority ordering | tenant-branding.dashboard.read; asset.content.read | mixed | TC obligation: authorization-before-asset-read proof | yes |
-| AC-S009-01 | repo governance; artifact refresh | Artifact conformance control row | source-level | TC obligation: standards and generated artifact verification | yes |
-| AC-S009-02 | test planner; story obligations | PRD-derived test-case planning control row | contract-level | TC obligation: PRD-derived TC planning packet | no |
 
 ## Refactor-First And Architecture-Foundation Queue
 

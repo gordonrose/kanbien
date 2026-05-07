@@ -144,173 +144,172 @@
 ### S-000: Capability matrix normalization
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to break down what the admin owner role needs to be able to do into individual capabilities, so we can plan the implementation more accurately.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Capability rows cover every story acceptance criterion or record non-capability rationale.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry behavior list normalization into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-001: V1 `adminOwner` PRD
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to define the business meaning of the tenant admin role before splitting it into detailed work.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: A PRD defines v1 the tenant admin owner role, root-owned exclusions, lifecycle behavior, and non-goals.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry V1 the tenant admin owner role PRD into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-002: Route-family API denial adoption plan
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to make sure future tenant admin screens give consistent no-access answers.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: service answer contracts name status/code/reason behavior for tenant selection, lifecycle, feature, role, cross-tenant, and sensitive denials.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry service entry point-family service answer denial adoption plan into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-003: Tenant role and grant storage foundation
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because the role should mean the same thing for every tenant and remain reviewable over time.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: the tenant admin owner role grants can be resolved durably and audited without mixing with root roles.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Tenant role and grant storage foundation into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-004: Central evaluator v1 implementation slice
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because every protected tenant action should be judged by the same clear rule set.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Evaluator supports tenant context, lifecycle/deletion, feature/config/entitlement, the tenant admin owner role, denial mapping, and proof.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Central evaluator v1 implementation slice into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-005: Tenant lifecycle compatibility for authz
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because suspended, deleted, or changing tenants need predictable access behavior before role powers expand.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: access checking can deny or restrict by ADR-0037 lifecycle/deletion posture with a compatibility plan.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Tenant lifecycle compatibility for access checking into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-006: `adminOwner` tenant account management capabilities
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because day-to-day tenant settings are the first recognizable responsibility for this role.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Tenant account actions are allowed, denied, audited, and feature-gated consistently.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry the tenant admin owner role tenant account management capabilities into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-007: `adminOwner` tenant data and log export capabilities
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because exporting tenant information is more sensitive than changing settings and needs separate business review.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Export actions are tenant-scoped, lifecycle-aware, audit-visible, and denied cross-tenant by default.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry the tenant admin owner role tenant data and log export capabilities into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-008: Authorization audit/proof persistence
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because sensitive access decisions need durable evidence that reviewers can trust later.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: access checking events carry actor, tenant, capability, decision, reason, policy source, visibility, and severity.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Authorization audit/proof saved data into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-009: Maintained artifact and catalog alignment
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to keep the written rules, examples, and tests aligned with how the role actually works.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: No implementation slice is treated complete while downstream planning records remain stale.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Maintained planning record and catalog alignment into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
-
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
@@ -325,129 +324,6 @@ A reviewer can connect the story outcome to clear checks and know what remains o
 | S-007 | blocked | user-value | DEV:backend | `adminOwner` tenant data and log export capabilities | This is its own story because exporting tenant information is more sensitive than changing settings and needs separate business review. | As an `adminOwner`, I need to export tenant-owned data/logs through approved surfaces while lifecycle and reporting-layer rules are respected. | `adminOwner` | Export actions are tenant-scoped, lifecycle-aware, audit-visible, and denied cross-tenant by default. | Depends on S-000 through S-005 |
 | S-008 | blocked | system-value | DEV:backend | Authorization audit/proof persistence | This is its own story because sensitive access decisions need durable evidence that reviewers can trust later. | As security and compliance reviewers, we need durable proof for sensitive allows, denials, lifecycle restrictions, and job authority. | security/audit owner | Authz events carry actor, tenant, capability, decision, reason, policy source, visibility, and severity. | Depends on S-000, S-001, S-004 |
 | S-009 | blocked | harness-value | DOC:docs-artifact | Maintained artifact and catalog alignment | This is needed to keep the written rules, examples, and tests aligned with how the role actually works. | As repo governance, I need permission mappings, capability catalog materialization, API contracts, data dictionaries, and tests to stay aligned after runtime slices land. | governance harness | No implementation slice is treated complete while downstream artifacts remain stale. | Depends on S-000 through S-008 |
-
-## Acceptance Criteria
-
-| AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |
-| --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | S-000 | The capability matrix names every v1 `adminOwner`, root-owned, support/emergency, lifecycle, denial, audit, and blocked/deferred capability family from this packet. | contract-level | traceability review | capability matrix |
-| AC-S000-02 | S-000 | Every acceptance criterion in this story packet maps to an approved capability row or records why the criterion is governance-only. | contract-level | traceability review | capability matrix |
-| AC-S001-01 | S-001 | The PRD states v1 has one globally consistent tenant role named `adminOwner` and forbids tenant-specific divergence. | contract-level | product-scope review | PRD |
-| AC-S001-02 | S-001 | The PRD preserves root-owned tenant branding/setup, tenant-admin management, commercial entitlement, support, and emergency controls as outside tenant authority. | contract-level | product-scope review; security review | PRD |
-| AC-S001-03 | S-001 | The PRD records v1 non-goals: custom tenant roles, tenant self-service tenant-admin management, root impersonation, broad ABAC/ReBAC runtime, and tenant admin UI before implementation. | contract-level | non-goal review | PRD |
-| AC-S002-01 | S-002 | Tenant-admin route-family contracts consume `platform-authorization-denials.md` for unauthenticated, tenant selection, tenant context, lifecycle, feature, role, cross-tenant, object, attribute, and sensitive fallback denial categories. | contract-level | API contract review | API contracts |
-| AC-S002-02 | S-002 | Existing root and tenant-auth route-family codes remain backwards compatible unless a route-family contract records an explicit migration. | contract-level | compatibility review | API contracts |
-| AC-S003-01 | S-003 | Tenant role/grant storage distinguishes tenant `adminOwner` grants from root roles and records tenant context, grant source posture, and lifecycle-safe revocation behavior. | persistence-level | persistence; security | data dictionary; migration plan |
-| AC-S003-02 | S-003 | Pending invited tenant admins have no authority until accepted and setup is complete; removal or suspension revokes authority immediately while preserving historical action records. | persistence-level | integration; audit; lifecycle | PRD; data dictionary |
-| AC-S004-01 | S-004 | The evaluator v1 slice enforces exactly one tenant context before tenant-scoped authorization and denies cross-tenant access by default. | runtime-api | security; integration | implementation blueprint; API contracts |
-| AC-S004-02 | S-004 | The evaluator v1 slice produces allow/deny decisions with denial category, public code/status mapping, internal reason, proof, and audit recommendation. | runtime-api | unit; integration; audit | implementation blueprint; API contracts |
-| AC-S004-03 | S-004 | ABAC/ReBAC/object inputs are typed extension points only and are skipped explicitly unless a feature supplies approved facts. | source-level | unit; architecture review | implementation blueprint |
-| AC-S005-01 | S-005 | Tenant lifecycle/deletion facts follow ADR-0037 and do not silently overload current tenant `status` or `deleted_at`. | persistence-level | migration; compatibility | data dictionary; migration plan |
-| AC-S005-02 | S-005 | Tenant-admin login/use is denied or restricted for `inactive`, `softDeleted`, `hardDeletePending`, and `hardDeleted` states according to approved lifecycle/deletion posture. | runtime-api | lifecycle; security | API contracts; PRD-derived tests |
-| AC-S006-01 | S-006 | `adminOwner` can manage only tenant-owned day-to-day settings, approved flags/options, payment details, billing contacts, and usage choices within root-approved availability. | runtime-api | integration; security; audit | PRD; capability matrix; API contracts |
-| AC-S006-02 | S-006 | `adminOwner` cannot manage tenant admins, root-owned branding/setup, pricing, tiers, limits, entitlements, support, emergency powers, or blocked/deferred capability families. | runtime-api | security; cross-boundary deny | PRD; permission mapping; tests |
-| AC-S007-01 | S-007 | `adminOwner` data/log export is tenant-scoped, lifecycle-aware, audit-visible, and limited to approved reporting/export layers rather than raw system logs. | runtime-api | integration; security; audit | PRD; API contracts; data dictionary |
-| AC-S007-02 | S-007 | Export behavior preserves the baseline that tenants can export their data while respecting root-mediated recovery/export rules for deletion posture. | contract-level | lifecycle; compatibility | PRD; API contracts |
-| AC-S008-01 | S-008 | Authz audit/proof storage captures actor, authority world, tenant context, capability, decision, reason, policy source, grant source posture, request/job id, visibility class, severity, and occurredAt where required. | persistence-level | audit; security | data dictionary; migration plan |
-| AC-S008-02 | S-008 | Support, emergency, cross-tenant denial, lifecycle denial, grant-source denial, sensitive object denial, and system job authority events follow the audit taxonomy. | persistence-level | audit; integration | data dictionary; PRD-derived tests |
-| AC-S009-01 | S-009 | Permission mappings, capability catalog source registry/materialization, API contracts, data dictionaries, feature manifests, and generated dependency graph are updated only when runtime implementation changes their source truth. | source-level | standards review | artifact sweep |
-| AC-S009-02 | S-009 | No UI or admin workflow exposes a capability as usable until the mapping/catalog posture is `runtime-enforced` and route tests prove enforcement. | mixed | security; frontend-gate when UI exists | permission mapping; capability catalog; tests |
-
-## Capability Mapping
-
-| Story ID | AC ID | Capability Matrix Row(s) | Boundary | Capability Posture | Notes |
-| --- | --- | --- | --- | --- | --- |
-| S-000 | AC-S000-01 | platform-authz.admin-owner-v1.capability-matrix | planning | create-or-refresh-required | Default control story. |
-| S-000 | AC-S000-02 | platform-authz.admin-owner-v1.traceability | planning | create-or-refresh-required | Must map every AC. |
-| S-001 | AC-S001-01 | admin-owner.role.global-consistency | tenant authz | create-or-refresh-required | v1 role invariant. |
-| S-001 | AC-S001-02 | root-owned.tenant-controls | root authz | create-or-refresh-required | Root-owned exclusion set. |
-| S-001 | AC-S001-03 | admin-owner.v1.non-goals | governance | create-or-refresh-required | Blocked/deferred families. |
-| S-002 | AC-S002-01 | platform-authz.denial-contract.adoption | API | create-or-refresh-required | Route-family adoption. |
-| S-002 | AC-S002-02 | platform-authz.compatibility.root-tenant-auth | API | create-or-refresh-required | Existing code preservation. |
-| S-003 | AC-S003-01 | admin-owner.grant.storage | persistence | create-or-refresh-required | Tenant role/grant truth. |
-| S-003 | AC-S003-02 | admin-owner.authority.lifecycle | tenant authz | create-or-refresh-required | Pending/removal rules. |
-| S-004 | AC-S004-01 | evaluator.tenant-context.cross-tenant-deny | platform seam | create-or-refresh-required | Central evaluator. |
-| S-004 | AC-S004-02 | evaluator.decision-proof | platform seam | create-or-refresh-required | Denial/proof output. |
-| S-004 | AC-S004-03 | evaluator.abac-rebac.typed-extension | platform seam | create-or-refresh-required | Extension only. |
-| S-005 | AC-S005-01 | tenant-lifecycle.authz-facts.compatibility | tenant lifecycle | create-or-refresh-required | ADR-0037 storage plan. |
-| S-005 | AC-S005-02 | tenant-lifecycle.authz-denials | tenant lifecycle | create-or-refresh-required | Runtime denies. |
-| S-006 | AC-S006-01 | admin.tenant-account.manage | tenant authz | create-or-refresh-required | Architecture-target mapping exists, detailed rows needed. |
-| S-006 | AC-S006-02 | admin-owner.root-owned-deny | tenant authz | create-or-refresh-required | Root/tenant boundary deny. |
-| S-007 | AC-S007-01 | admin.tenant-data.export | tenant authz | create-or-refresh-required | Architecture-target mapping exists, detailed rows needed. |
-| S-007 | AC-S007-02 | admin.tenant-data.export.lifecycle | tenant lifecycle | create-or-refresh-required | Deletion/recovery export posture. |
-| S-008 | AC-S008-01 | platform-authz.audit-proof.storage | audit | create-or-refresh-required | Concrete storage. |
-| S-008 | AC-S008-02 | platform-authz.audit-taxonomy.events | audit | create-or-refresh-required | Event family coverage. |
-| S-009 | AC-S009-01 | platform-authz.artifact-sweep | governance | create-or-refresh-required | Maintained artifacts. |
-| S-009 | AC-S009-02 | platform-authz.ui-eligibility.runtime-enforced | security/frontend governance | create-or-refresh-required | UI blocked until runtime-enforced. |
-
-## Dependency And Seam Map
-
-| Dependency ID | Needed By Story / AC | Provider Feature Or Seam | Dependency Type | Existing Or New | Required Contract Proof | Integration Test Obligation |
-| --- | --- | --- | --- | --- | --- | --- |
-| D-001 | S-003/S-004/S-006/S-007 | `tenantAuth` session and tenant selection | pre-existing-capability | existing | Tenant session/current tenant context contract. | Tenant selection and invalid context integration tests. |
-| D-010 | S-000 | story breakdown AC and capability mapping sections | new-capability | new | Capability matrix can be generated from stable story, AC, and capability row IDs in this packet. | Traceability review confirms every AC is represented. |
-| D-011 | S-001 | Product Discovery and Technical Steering packets | pre-existing-capability | existing | PRD consumes approved v1 role, root-owned exclusion, lifecycle, denial, audit, and non-goal decisions. | PRD review confirms no silent product policy invention. |
-| D-012 | S-002 | `platform-authorization-denials.md` | pre-existing-capability | existing | Route-family API contract work adopts the shared denial status/code/category contract or records an explicit exception. | API contract review now; route integration tests when runtime routes change. |
-| D-002 | S-004/S-005 | `tenants` lifecycle/deletion facts | feature-public-seam | changed | ADR-0037-compatible data/API contract. | Lifecycle/deletion deny integration tests. |
-| D-003 | S-004/S-006/S-007 | central authorization evaluator | feature-public-seam | new | Input/output and denial/proof contract. | Evaluator allow/deny unit and route integration tests. |
-| D-004 | S-006/S-007 | feature/config/entitlement resolver | feature-public-seam | new | Root-approved availability and tenant activation facts. | Feature unavailable and allowed-option tests. |
-| D-005 | S-003/S-006/S-007 | tenant role/grant storage | persistence-table-or-index | new | Data dictionary and migration proof. | Persistence and revocation tests. |
-| D-006 | S-008 | authz audit/proof sink | persistence-table-or-index | new or existing | Storage posture and event taxonomy contract. | Audit persistence tests. |
-| D-007 | S-004/S-008 | platform authorization denial contract | pre-existing-capability | existing | Shared API denial contract adoption. | Route-family denial tests. |
-| D-008 | S-009 | capability contract catalog materialization | feature-public-seam | changed | Expanded source posture materialization contract. | Drift/materialization tests when implemented. |
-| D-009 | S-008 | job processing authority attribution | job-queue-or-worker | existing or changed | Job context/proof contract. | Job authority audit tests. |
-
-## Downstream Capability Impact
-
-| New Or Changed Capability / Seam | Future Consumer | Contract Promise | Must Not Depend On | Integration Coverage |
-| --- | --- | --- | --- | --- |
-| Central evaluator v1 seam | Tenant-admin route families | One ordered allow/deny path with proof and safe denial mapping. | Feature-local hidden policy stacks. | Unit, integration, security, audit. |
-| Tenant role/grant resolver | Evaluator and tenant-admin APIs | Resolves globally consistent `adminOwner` authority in exactly one tenant context. | Root roles or tenant-specific role divergence. | Persistence and tenant authz integration. |
-| Tenant lifecycle authz facts | Evaluator and tenant-admin APIs | Supplies ADR-0037 lifecycle/deletion posture for authz decisions. | Overloaded status-only behavior without compatibility plan. | Lifecycle/security tests. |
-| Authz audit/proof sink | Security/audit review and future support tooling | Durable proof for sensitive allows/denies and job authority. | Ordinary logs or caller-visible denial messages. | Audit persistence tests. |
-| Expanded permission mapping source posture | Capability catalog and future UI | UI eligibility only after runtime enforcement proof. | Docs-only or seeded grants. | Catalog drift/materialization and security tests. |
-
-## Story Test Input Matrix
-
-| Story ID | Actors | Actor Permissions | Actor States | Object States | Value Types / Validation Rules | Lifecycle Transitions | System Errors | NFRs |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | harness reviewer | artifact author | mapping missing; mapping present | ACs unmapped; rows stale | stable story and AC IDs | draft to matrix-covered | missing row; duplicate row | traceability; standards compliance |
-| S-001 | product owner; architect | artifact author | PRD absent; PRD drafted | role scope unresolved; exclusions unresolved | role name; non-goal list | draft to approved PRD | stale steering source | security; compatibility |
-| S-002 | API owner | contract author | existing route contract; future route contract | denial categories; compatibility exceptions | status code; public code; internal reason | no adoption to adoption | stale API contract | security; privacy; compatibility |
-| S-003 | tenant authz platform | migration author | invited; setup complete; removed; suspended | grants absent; grant active; grant revoked | tenant ID; role key; grant posture | invited to active; active to revoked | migration conflict; stale grant read | audit; persistence; compatibility |
-| S-004 | protected route; evaluator | authenticated tenant actor | selected tenant; selection required; wrong world | lifecycle states; feature unavailable; role missing | capability key; operation; proof fields | allow to deny by state change | resolver failure; stale policy | security; audit; resilience |
-| S-005 | tenant lifecycle owner | data contract author | tenant draft/live/disabled/inactive | active/softDeleted/hardDeletePending/hardDeleted | reason codes; recovery policy | status/posture transition | missing lifecycle facts | security; compatibility; audit |
-| S-006 | `adminOwner`; root actor | tenant admin; root admin | active admin; pending admin; removed admin | setting enabled/disabled; root-owned control | flags; payment details; billing contact; usage settings | allowed option toggled; root-owned denied | feature resolver unavailable | security; privacy; audit |
-| S-007 | `adminOwner` | tenant admin | active tenant; disabled tenant; inactive tenant; deletion posture | data export; log export; approved report | export size; report layer; lifecycle state | export requested; export denied | export job failure; reporting unavailable | privacy; audit; cost awareness |
-| S-008 | security/audit owner; system job | audit writer | request-bound; job-bound; support/emergency | allow; deny; support; emergency; lifecycle; job event | reasonReference; severity; visibilityClass | event appended | audit sink failure | compliance; operational evidence |
-| S-009 | governance reviewer | artifact author | implementation slice complete; artifacts stale | mappings; catalog; API; data dictionary; tests | source paths; generated graph | current to stale to refreshed | generated artifact drift | standards compliance; recoverability |
-
-## Acceptance Criteria To Test Obligation Matrix
-
-| AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
-| --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | harness; missing matrix | platform-authz.admin-owner-v1.capability-matrix | contract-level | TC obligation: matrix row coverage | no |
-| AC-S000-02 | harness; unmapped ACs | platform-authz.admin-owner-v1.traceability | contract-level | TC obligation: AC-to-row traceability | no |
-| AC-S001-01 | product/architecture; role invariant | admin-owner.role.global-consistency | contract-level | TC obligation: PRD role invariant review | no |
-| AC-S001-02 | root/adminOwner boundary | root-owned.tenant-controls | contract-level | TC obligation: root-owned exclusion review | no |
-| AC-S001-03 | blocked/deferred families | admin-owner.v1.non-goals | contract-level | TC obligation: non-goal review | no |
-| AC-S002-01 | API owner; denial categories | platform-authz.denial-contract.adoption | contract-level | TC obligation: API denial contract adoption review | no |
-| AC-S002-02 | root/tenant auth compatibility | platform-authz.compatibility.root-tenant-auth | contract-level | TC obligation: compatibility review | yes when route changes |
-| AC-S003-01 | tenant admin grant states | admin-owner.grant.storage | persistence-level | TC obligation: grant persistence/security tests | yes |
-| AC-S003-02 | pending/active/removed admins | admin-owner.authority.lifecycle | persistence-level | TC obligation: authority lifecycle and audit tests | yes |
-| AC-S004-01 | tenant context and cross-tenant | evaluator.tenant-context.cross-tenant-deny | runtime-api | TC obligation: tenant context and cross-tenant deny tests | yes |
-| AC-S004-02 | allow/deny proof | evaluator.decision-proof | runtime-api | TC obligation: evaluator decision mapping tests | yes |
-| AC-S004-03 | ABAC/ReBAC skipped | evaluator.abac-rebac.typed-extension | source-level | TC obligation: extension skipped proof | yes |
-| AC-S005-01 | lifecycle storage compatibility | tenant-lifecycle.authz-facts.compatibility | persistence-level | TC obligation: migration/data compatibility tests | yes |
-| AC-S005-02 | lifecycle/deletion denial states | tenant-lifecycle.authz-denials | runtime-api | TC obligation: lifecycle deny tests | yes |
-| AC-S006-01 | adminOwner allowed account actions | admin.tenant-account.manage | runtime-api | TC obligation: allow and feature-gate tests | yes |
-| AC-S006-02 | root-owned deny | admin-owner.root-owned-deny | runtime-api | TC obligation: root-owned deny tests | yes |
-| AC-S007-01 | tenant export/reporting | admin.tenant-data.export | runtime-api | TC obligation: export/reporting authz tests | yes |
-| AC-S007-02 | export lifecycle posture | admin.tenant-data.export.lifecycle | contract-level | TC obligation: export lifecycle contract tests | yes |
-| AC-S008-01 | audit/proof fields | platform-authz.audit-proof.storage | persistence-level | TC obligation: audit persistence field coverage | yes |
-| AC-S008-02 | event families | platform-authz.audit-taxonomy.events | persistence-level | TC obligation: event-family audit tests | yes |
-| AC-S009-01 | maintained artifacts | platform-authz.artifact-sweep | source-level | TC obligation: artifact sweep review | no |
-| AC-S009-02 | UI eligibility | platform-authz.ui-eligibility.runtime-enforced | mixed | TC obligation: catalog posture and frontend gate tests when UI exists | yes when UI/catalog changes |
 
 ## Refactor-First And Architecture-Foundation Queue
 

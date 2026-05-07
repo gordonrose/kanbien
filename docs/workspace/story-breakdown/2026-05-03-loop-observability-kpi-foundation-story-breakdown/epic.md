@@ -140,224 +140,223 @@
 ### S-000: Product Discovery human gate repair
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to confirm whether the existing discovery notes are reliable enough before using them for planning.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: The product packet can be honestly promoted or revised.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Product Discovery human gate repair into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-001: ADR and PRD reconciliation
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to make sure the long-term decision and the product plan describe the same version of loop evidence.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: ADR exists and PRD reflects Technical Steering decisions.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry ADR and PRD reconciliation into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-002: Capability matrix control
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to break down what loop evidence needs to capture into individual capabilities, so we can plan the implementation more accurately.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: behavior list covers capture, scorecard, traceability, helper, service answer, and governance criteria.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry behavior list control into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-003: PRD-derived test case planning
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to decide what evidence will prove the loop record is trustworthy before building the record.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Test-case packet covers saved data, service answer, helper, scorecard, and traceability behavior.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry PRD-derived test case planning into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-004: Implementation blueprint
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to turn the approved direction into an ordered build plan before implementation starts.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Blueprint is ready for task breakdown.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Implementation blueprint into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-005: Durable capture foundation
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because one completed work loop needs a trustworthy record before scorecards or later reviews can mean anything.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: One loop can be captured durably from open to closure.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Durable capture foundation into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-006: Closure scorecard projection
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because maintainers need a readable summary of completion confidence before digging into details.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Closure confidence is derived from persisted records.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Closure scorecard projection into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-007: Defect and regression traceability
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because later problems should be connectable to the work that may have caused or prevented them.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Issue investigation can trace loop, task, change set, and planning record.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Defect and regression traceability into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-008: Harness recording and artifact ingestion helper
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed so evidence can be recorded consistently during normal work, instead of each workflow inventing its own recording steps.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Harness can record loop evidence through the feature public reusable connection.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Harness recording and planning record ingestion helper into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-009: Internal/root API read and write seams
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed so trusted tools have stable ways to add and review loop evidence.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: service answer reads and writes follow repo service entry point, validation, access checking, pagination, and sorting defaults.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Internal/root service answer read and write seams into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-010: Maintained artifact conformance
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to keep the written rules, examples, and tests aligned with the recorded loop evidence before the feature is treated as ready.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: The feature loop can close without stale source-independent planning records.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Maintained planning record conformance into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-011: Future loop review UI governance
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to keep a future review screen separate from the first version, which is only about recording and reading loop evidence.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: UI work remains blocked until capture/read model and design-system posture exist.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Future loop review UI governance into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-012: Future OLAP export foundation
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because analytics exports are a later reporting concern and should not complicate the first evidence record.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: OLAP export remains derived from app-owned persistent truth.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Future OLAP export foundation into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
-
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
@@ -375,118 +374,6 @@ A reviewer can connect the story outcome to clear checks and know what remains o
 | S-010 | blocked | harness-value | DOC:standards-compliance | Maintained artifact conformance | This is needed to keep the written rules, examples, and tests aligned with the recorded loop evidence before the feature is treated as ready. | As repo governance, I need docs, contracts, feature manifest, data dictionary, permission mapping, and generated graph artifacts aligned. | repo governance | The feature loop can close without stale source-independent artifacts. | S-001 through S-009 |
 | S-011 | blocked | user-value | GOV:design-system | Future loop review UI governance | This is needed to keep a future review screen separate from the first version, which is only about recording and reading loop evidence. | As a maintainer, I need future scorecard and trace views to use governed design-system seams. | future frontend governance | UI work remains blocked until capture/read model and design-system posture exist. | Future scope only |
 | S-012 | blocked | system-value | DOC:docs-artifact | Future OLAP export foundation | This is its own story because analytics exports are a later reporting concern and should not complicate the first evidence record. | As analytics tooling, I need exported loop facts to be derived, idempotent, and retryable. | future export worker | OLAP export remains derived from app-owned persistent truth. | Future scope only |
-
-## Acceptance Criteria
-
-| AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |
-| --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | S-000 | Product Discovery packet records that prior context is available but human refresh/signoff is required before promotion. | source-level | docs alignment review | Product Discovery packet |
-| AC-S000-02 | S-000 | Requester either confirms the prior-context summary is accurate enough to proceed or requests a renewed Product Discovery interview. | source-level | human signoff review | Product Discovery packet |
-| AC-S001-01 | S-001 | ADR states that loopObservability owns durable loop evidence while platform helpers consume its public seam. | source-level | architecture review | ADR |
-| AC-S001-02 | S-001 | PRD proposal records Technical Steering decisions, v0 scope, deferred UI and OLAP posture, and required artifact chain. | source-level | docs alignment review | PRD proposal |
-| AC-S002-01 | S-002 | Capability matrix covers loop run, task, event, metric, change set, changed artifact, scorecard, defect, regression, improvement, helper, and API capabilities. | contract-level | capability traceability review | capability matrix |
-| AC-S002-02 | S-002 | Every story acceptance criterion maps to a capability row or a non-capability governance rationale. | contract-level | capability traceability review | capability matrix |
-| AC-S003-01 | S-003 | Test-case packet records persistence, validation, lifecycle, append-only, projection, authz, helper, API, and traceability test obligations. | contract-level | TC planning review | PRD-derived test cases |
-| AC-S004-01 | S-004 | Implementation blueprint sequences feature scaffold, migrations, domain, transport, helper, tests, and artifacts without starting UI or OLAP. | source-level | blueprint review | implementation blueprint |
-| AC-S005-01 | S-005 | Capture foundation persists loop run, task, event, metric snapshot, change set, and changed artifact records with system-managed fields. | persistence-level | persistence integration; validation; lifecycle | data dictionary; migration plan |
-| AC-S005-02 | S-005 | Events and metric snapshots are append-only and corrections are represented as new evidence records rather than silent overwrites. | persistence-level | lifecycle; audit; regression | data dictionary; test cases |
-| AC-S006-01 | S-006 | Scorecard read model distinguishes measured, assessed, and improvement KPIs and includes standards maintenance plus explicit deferrals. | contract-level | projection; rubric; contract | PRD; capability matrix; API contract |
-| AC-S006-02 | S-006 | Scorecard behavior covers complete, blocked, reopened, and partially verified loop states. | persistence-level | state matrix; projection; regression | test cases |
-| AC-S007-01 | S-007 | Defect records classify layer, severity, status, and detected time. | persistence-level | persistence; validation | data dictionary; test cases |
-| AC-S007-02 | S-007 | Regression traces keep suspected and confirmed causing loop, task, change set, and artifact links separate. | persistence-level | lifecycle; regression | data dictionary; test cases |
-| AC-S008-01 | S-008 | Harness helper opens loops, updates tasks, appends events and metrics, and closes loops through the feature public seam. | mixed | helper integration; contract; persistence | implementation blueprint; test cases |
-| AC-S008-02 | S-008 | Changed artifacts are derived from git or PR metadata before harness enrichment. | source-level | classifier; fixture; integration | implementation blueprint |
-| AC-S009-01 | S-009 | Internal/root APIs reject client-supplied system-managed fields and follow pagination, sorting, timestamp, and exact route param defaults. | runtime-api | API contract; validation; authz | API contract; permission mapping |
-| AC-S009-02 | S-009 | Scorecard and artifact-trace reads return stable shapes for future UI and tooling without requiring OLAP. | runtime-api | API integration; projection | API contract; test cases |
-| AC-S010-01 | S-010 | Data dictionary, permission mapping, API contracts, feature manifest, and generated dependency graph are aligned with implemented seams. | source-level | artifact sweep; generated artifact verification | data dictionary; permission mapping; feature manifest; generated graph |
-| AC-S011-01 | S-011 | Future UI remains blocked until a design-system scorecard/timeline/trace posture is approved. | source-level | design-system governance review | future GOV:design-system artifact |
-| AC-S012-01 | S-012 | Future OLAP export remains blocked until app-owned capture/read model stabilizes and export mechanism is selected. | source-level | architecture review | future export artifact |
-
-## Capability Mapping
-
-| Story ID | AC ID | Capability Matrix Row(s) | Boundary | Capability Posture | Notes |
-| --- | --- | --- | --- | --- | --- |
-| S-000 | AC-S000-01 | Product Discovery human gate | planning | not-capability-backed | Gate repair criterion. |
-| S-000 | AC-S000-02 | Product Discovery human gate | planning | not-capability-backed | Human signoff criterion. |
-| S-001 | AC-S001-01 | Loop observability architecture foundation | architecture | not-capability-backed | ADR governance criterion. |
-| S-001 | AC-S001-02 | PRD reconciliation | planning | not-capability-backed | Docs alignment criterion. |
-| S-002 | AC-S002-01 | Capability matrix control rows | planning | create-or-refresh-required | Matrix does not exist yet. |
-| S-002 | AC-S002-02 | Capability matrix traceability rows | planning | create-or-refresh-required | Matrix does not exist yet. |
-| S-003 | AC-S003-01 | PRD-derived TC planning rows | test planning | create-or-refresh-required | TC packet does not exist yet. |
-| S-004 | AC-S004-01 | Implementation blueprint control rows | planning | create-or-refresh-required | Blueprint does not exist yet. |
-| S-005 | AC-S005-01 | loopObservability.captureLoopEvidence | loopObservability | create-or-refresh-required | Core durable capture capability. |
-| S-005 | AC-S005-02 | loopObservability.appendEvidence | loopObservability | create-or-refresh-required | Append-only behavior. |
-| S-006 | AC-S006-01 | loopObservability.readScorecard | loopObservability | create-or-refresh-required | Scorecard projection. |
-| S-006 | AC-S006-02 | loopObservability.readScorecard | loopObservability | create-or-refresh-required | State coverage. |
-| S-007 | AC-S007-01 | loopObservability.recordDefect | loopObservability | create-or-refresh-required | Defect capture. |
-| S-007 | AC-S007-02 | loopObservability.linkRegressionTrace | loopObservability | create-or-refresh-required | Regression trace. |
-| S-008 | AC-S008-01 | loopObservability.recordHarnessEvidence | platform helper | create-or-refresh-required | Helper consumes public seam. |
-| S-008 | AC-S008-02 | loopObservability.importChangedArtifacts | platform helper | create-or-refresh-required | Git/PR-derived path truth. |
-| S-009 | AC-S009-01 | loopObservability.rootInternalWrite | API | create-or-refresh-required | Exact capability key deferred to permission mapping. |
-| S-009 | AC-S009-02 | loopObservability.rootInternalRead | API | create-or-refresh-required | Read model for future UI/tooling. |
-| S-010 | AC-S010-01 | Maintained artifact conformance | governance | not-capability-backed | Artifact sweep control criterion. |
-| S-011 | AC-S011-01 | Future loop review UI | future UI | not-capability-backed | Deferred future scope. |
-| S-012 | AC-S012-01 | Future OLAP export | future export | not-capability-backed | Deferred future scope. |
-
-## Dependency And Seam Map
-
-| Dependency ID | Needed By Story / AC | Provider Feature Or Seam | Dependency Type | Existing Or New | Required Contract Proof | Integration Test Obligation |
-| --- | --- | --- | --- | --- | --- | --- |
-| DEP-000 | S-000 AC-S000-01 | requester Product Discovery gate | pre-existing-capability | existing | explicit requester response | not-applicable: human gate |
-| DEP-000A | S-001 AC-S001-01 | Product Discovery, Technical Steering, and PRD proposal | pre-existing-capability | existing | source artifact references | not-applicable: docs-only architecture task |
-| DEP-000B | S-002 AC-S002-01 | Product Discovery, Technical Steering, and PRD proposal | pre-existing-capability | existing | source artifact references | not-applicable: docs-only capability planning task |
-| DEP-001 | S-005 AC-S005-01 | loopObservability persistence | persistence-table-or-index | new | migration and data dictionary | persistence integration tests |
-| DEP-002 | S-006 AC-S006-01 | loopObservability scorecard seam | feature-public-seam | new | API/read model contract | projection integration tests |
-| DEP-003 | S-007 AC-S007-02 | loopObservability regression trace seam | feature-public-seam | new | lifecycle and link contract | persistence integration tests |
-| DEP-004 | S-008 AC-S008-01 | platform harness helper | new-capability | new | helper contract | helper integration tests |
-| DEP-005 | S-008 AC-S008-02 | git or PR metadata | external-provider | existing | changed path source proof | classifier fixture tests |
-| DEP-006 | S-009 AC-S009-01 | root/internal authorization | authz-capability | new | permission mapping | API authz allow and deny tests |
-| DEP-007 | S-010 AC-S010-01 | feature manifest and dependency graph | feature-public-seam | new | manifest and generated graph proof | artifact validation commands |
-
-## Downstream Capability Impact
-
-| New Or Changed Capability / Seam | Future Consumer | Contract Promise | Must Not Depend On | Integration Coverage |
-| --- | --- | --- | --- | --- |
-| loopObservability public evidence recording seam | harness helper | Records loop evidence without direct database writes. | Direct SQL, mutable external records only, unsafe payload material. | helper and persistence integration tests |
-| loopObservability scorecard read seam | future UI and tooling | Returns scorecard sections from persisted evidence. | OLAP, narrative-only summaries, invented fallback values. | scorecard projection and API tests |
-| loopObservability artifact trace read seam | future defect triage and UI | Answers which loop and task touched an artifact path. | Manual artifact declaration alone. | artifact ingestion and read tests |
-| loopObservability regression trace seam | issue reconciliation | Separates suspected from confirmed causes. | Automatic blame or unproven causation. | lifecycle and regression tests |
-
-## Story Test Input Matrix
-
-| Story ID | Actors | Actor Permissions | Actor States | Object States | Value Types / Validation Rules | Lifecycle Transitions | System Errors | NFRs |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | requester and Product Discovery owner | repo planning authority | active | human gate pending | confirm prior context or re-run Product Discovery | pending to confirmed or interview-reopened | missing explicit requester response | governance integrity |
-| S-001 | architecture maintainer | repo planning authority | active | PRD/ADR absent or stale | not-applicable: docs governance | draft to accepted ADR; PRD stale to reconciled | missing source file; contradictory steering | auditability; compatibility |
-| S-002 | planning maintainer | repo planning authority | active | matrix absent | capability rows, non-capability rationale | absent to drafted matrix | missing AC mapping | traceability |
-| S-003 | QA planner | repo test planning authority | active | TC packet absent | TC obligations per AC | absent to drafted packet | missing story or AC reference | test strength; traceability |
-| S-004 | implementation planner | repo planning authority | active | blueprint absent | story sequence; dependency order | absent to drafted blueprint | missing artifact prerequisite | compatibility; operational evidence |
-
-## Acceptance Criteria To Test Obligation Matrix
-
-| AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
-| --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | Product Discovery owner; human gate pending | not-capability-backed | source-level | TC obligation: Product Discovery gate repair review | no |
-| AC-S000-02 | requester; human gate pending | not-capability-backed | source-level | TC obligation: requester signoff evidence | no |
-| AC-S001-01 | architecture maintainer active; ADR absent/stale | not-capability-backed | source-level | TC obligation: ADR decision review | no |
-| AC-S001-02 | planning maintainer active; PRD stale | not-capability-backed | source-level | TC obligation: docs alignment review | no |
-| AC-S002-01 | planning maintainer active; matrix absent | create matrix rows | contract-level | TC obligation: capability traceability review | no |
-| AC-S002-02 | planning maintainer active; AC mapping incomplete | create matrix rows | contract-level | TC obligation: capability coverage review | no |
-| AC-S003-01 | QA planner active; TC packet absent | create TC rows | contract-level | TC obligation: PRD-derived test-case planning | no |
-| AC-S004-01 | implementation planner active; blueprint absent | blueprint rows | source-level | TC obligation: blueprint consistency review | no |
-| AC-S005-01 | harness/system actor; loop open | loopObservability.captureLoopEvidence | persistence-level | TC obligation: persistence create/read/update validation | yes |
-| AC-S005-02 | harness/system actor; evidence appended/corrected | loopObservability.appendEvidence | persistence-level | TC obligation: append-only evidence lifecycle | yes |
-| AC-S006-01 | maintainer; loop completed/partial | loopObservability.readScorecard | contract-level | TC obligation: scorecard projection groups | yes |
-| AC-S006-02 | maintainer; loop complete/blocked/reopened/partial | loopObservability.readScorecard | persistence-level | TC obligation: loop state projection matrix | yes |
-| AC-S007-01 | operator; defect raised | loopObservability.recordDefect | persistence-level | TC obligation: defect classification | yes |
-| AC-S007-02 | operator; regression suspected/confirmed | loopObservability.linkRegressionTrace | persistence-level | TC obligation: causation lifecycle | yes |
-| AC-S008-01 | harness actor active | loopObservability.recordHarnessEvidence | mixed | TC obligation: helper-to-feature integration | yes |
-| AC-S008-02 | harness actor active; git paths available | loopObservability.importChangedArtifacts | source-level | TC obligation: git/PR classifier fixtures | yes |
-| AC-S009-01 | root/internal actor active | loopObservability.rootInternalWrite | runtime-api | TC obligation: route validation and authz | yes |
-| AC-S009-02 | root/internal actor active | loopObservability.rootInternalRead | runtime-api | TC obligation: route read model | yes |
-| AC-S010-01 | repo governance active | not-capability-backed | source-level | TC obligation: artifact sweep evidence | yes |
-| AC-S011-01 | future frontend governance | not-capability-backed | source-level | TC obligation: future design-system gate | no |
-| AC-S012-01 | future export governance | not-capability-backed | source-level | TC obligation: future export gate | no |
 
 ## Refactor-First And Architecture-Foundation Queue
 

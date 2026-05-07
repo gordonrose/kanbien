@@ -138,190 +138,189 @@
 ### S-000: Capability matrix normalization
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to break down what tenant-aware login needs to be able to do into individual capabilities, so we can plan the implementation more accurately.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Approved capability rows cover every acceptance criterion and identity/security boundary.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry behavior list normalization into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-001: Auth scope and feature-boundary lock
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to settle what tenant-aware login includes before splitting the sign-in journey into smaller pieces.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Downstream contracts can describe tenant-aware login without inventing auth architecture during delivery.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Auth scope and feature-boundary lock into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-002: Root-managed tenant auth configuration
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because operators need a clear way to decide which sign-in methods each tenant can use.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Tenant auth method policy is durable, permissioned, auditable, and separate from mutable provider state.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Root-managed tenant auth configuration into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-003: Pre-auth email and tenant resolution
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because the first sign-in question should guide people safely without revealing too much.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Email is normalized, no-match outcomes are generic, and multi-tenant choices appear only after approved resolution.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Pre-auth email and tenant resolution into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-004: Tenant selection and method choice
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because people who belong to more than one tenant need to choose the right place before signing in.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Auth method execution is bound to one selected tenant context and disabled methods redirect safely.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Tenant selection and method choice into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-005: Email-password and password-reset policy
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because password sign-in and reset are familiar user moments with their own safety expectations.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Password reset cannot bypass tenant method policy and tokens remain tenant-bound, short-lived, and secret-safe.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Email-password and password-reset policy into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-006: SSO unavailable and fallback posture
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because people need a predictable path when a company sign-in provider is unavailable.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: SSO unavailability blocks or routes to an enabled fallback without becoming a broad provider platform.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry SSO unavailable and fallback posture into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-007: Session interruption and authority refresh
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because access should change promptly when a person's membership or tenant status changes.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Active access reflects current tenant, membership, user, and auth-policy state with audit evidence.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Session interruption and authority refresh into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-008: Audit, privacy, and replay-state controls
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because sign-in history must be reviewable without exposing secrets or granting accidental access.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Auth events are reviewable and privacy-safe, and debug/replay state cannot grant tenant access.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Audit, privacy, and replay-state controls into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-009: Governed tenant login pattern
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is its own story because the visible login journey should be signed off before customers depend on it.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Tenant login UI consumes governed render/interaction behavior/style seams instead of copying root login.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Governed tenant login pattern into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 
 ### S-010: Maintained artifact conformance
 
 **Situation**
-This part of the request needs its own plain agreement before later work is split further.
+This is needed to keep the written rules, examples, and tests aligned with the login experience before the work is treated as ready.
 
 **Goal**
-Reviewers can understand the expected outcome without reading internal build details.
+Reviewers can understand what should be true afterward: Delivery begins from coherent contracts and traceable proof obligations.
 
 **Decisions Needed**
-The work needs agreement on the expected behavior, visible result, and stopping point for this story.
+The work needs agreement on the story boundary, the required checks, and any blocker named in the larger request before the next step starts.
 
 **Work That Follows**
-The work will record enough detail for the next planning step to proceed without guessing.
+The work will carry Maintained planning record conformance into the next planning step with the expected result, checks, and stopping point made clear.
 
 **Evidence Of Success**
-A reviewer can connect the story outcome to clear checks and know what remains outside this story.
-
+A reviewer can read this story by itself, see what should be true afterward, and connect the result to the checks listed below.
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
@@ -337,135 +336,6 @@ A reviewer can connect the story outcome to clear checks and know what remains o
 | S-008 | needs-capability-matrix | system-value | DEV:backend | Audit, privacy, and replay-state controls | This is its own story because sign-in history must be reviewable without exposing secrets or granting accidental access. | As security and operations governance, I need mandatory audit events without credentials, tokens, provider secrets, or authority-bearing replay payloads. | security, audit, operations | Auth events are reviewable and privacy-safe, and debug/replay state cannot grant tenant access. | Depends on S-001 through S-007 |
 | S-009 | needs-capability-matrix | user-value | DEV:frontend | Governed tenant login pattern | This is its own story because the visible login journey should be signed off before customers depend on it. | As a tenant user, I need signed-off login, tenant selection, method choice, recovery, unavailable-provider, disabled-method, and forced-login states. | tenant user | Tenant login UI consumes governed render/controller/style seams instead of copying root login. | Depends on S-001 through S-008 |
 | S-010 | needs-capability-matrix | harness-value | DOC:standards-compliance | Maintained artifact conformance | This is needed to keep the written rules, examples, and tests aligned with the login experience before the work is treated as ready. | As repo governance, I need API, data, permission, design-system, feature-manifest, and test-case artifacts to reflect the approved story set before Task Breakdown. | repo governance | Delivery begins from coherent contracts and traceable proof obligations. | Depends on S-000 through S-009 |
-
-## Acceptance Criteria
-
-| AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |
-| --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | S-000 | The capability matrix names root tenant-auth configuration, pre-auth resolution, tenant selection, method choice, password reset, SSO fallback, session interruption, audit evidence, and governed UI rows. | contract-level | capability-matrix coverage; traceability review | capability matrix |
-| AC-S000-02 | S-000 | Every acceptance criterion in this packet maps to an approved capability row or records why the criterion is governance-only. | contract-level | traceability review | capability matrix |
-| AC-S001-01 | S-001 | The PRD selects whether tenant-aware login extends tenantAuth, tenantConfiguration, or a narrower auth-method configuration seam and records public seams for every affected feature. | source-level | architecture decision review; feature-seam review | PRD; feature manifest plan |
-| AC-S001-02 | S-001 | The PRD defines durable identities, tenant memberships, per-tenant normalized email uniqueness, provider references, session policy/version facts, and exact current-tenant authority timing. | contract-level | data model review; tenant-boundary review | PRD; data dictionary; API contracts |
-| AC-S001-03 | S-001 | The PRD decides active-session invalidation mechanics for removed users, membership changes, disabled or deleted tenants, and forced new login after auth configuration changes. | contract-level | lifecycle matrix; session authority review | PRD; capability matrix; runbook note |
-| AC-S002-01 | S-002 | Root configuration writes require root authorization, exactly one target tenant, normalized configuration values, no client-supplied system-managed fields, and audit evidence. | runtime-api | authz; validation; audit | API contract; permission mapping; data dictionary |
-| AC-S002-02 | S-002 | Tenant auth configuration persists enabled method set, provider reference metadata, policy version, timestamps, lifecycle state, and force-login posture without depending only on mutable provider state. | persistence-level | persistence integration; lifecycle review | data dictionary; migration plan |
-| AC-S003-01 | S-003 | Email entry trims and lowercases email, rejects empty strings and invalid email format, and preserves generic no-match messaging for absent user, tenant, or membership states. | runtime-api | validation; security; enumeration resistance | API contract; capability matrix |
-| AC-S003-02 | S-003 | Single-tenant and multi-tenant outcomes expose only approved tenant choice information after the pre-auth resolution threshold and never grant authority before method execution succeeds. | runtime-api | privacy; auth flow; tenant boundary | API contract; permission mapping |
-| AC-S004-01 | S-004 | Tenant selection binds exactly one selected tenant context before method execution and rejects request-body tenant inference where server-side selection state should own authority. | runtime-api | tenant authz; state transition; replay security | API contract; data dictionary |
-| AC-S004-02 | S-004 | Method choice shows only enabled methods for the selected tenant, and a method disabled during login redirects to login with an approved next-step state. | runtime-api | state matrix; lifecycle transition | PRD; API contract; frontend scenarios |
-| AC-S005-01 | S-005 | Email-password login and password reset are available only when email-password is enabled for the selected tenant and the user membership is active. | runtime-api | auth; lifecycle; validation | API contract; capability matrix |
-| AC-S005-02 | S-005 | Password reset tokens are tenant-bound, method-policy-bound, short-lived, single-use, audit-visible, and never logged or serialized into replay URLs. | persistence-level | token lifecycle; privacy; audit | data dictionary; API contract; runbook note |
-| AC-S006-01 | S-006 | SSO handoff and return are scoped to exactly one selected tenant and one provider reference, with provider outage or misconfiguration producing approved fallback or blocked states. | runtime-api | provider-state matrix; security | PRD; API contract; capability matrix |
-| AC-S006-02 | S-006 | SSO unavailable falls back only when another enabled method exists for the selected tenant; otherwise login is blocked with approved generic messaging. | runtime-api | fallback state; privacy | PRD; frontend scenarios |
-| AC-S007-01 | S-007 | Removed users, removed memberships, disabled or deleted tenants, and forced-login policy changes interrupt active sessions by the approved mechanism and record audit evidence. | mixed | session lifecycle; audit; resilience | PRD; API contract; runbook note |
-| AC-S007-02 | S-007 | Membership and role changes are reflected in active access according to the approved refresh seam without granting broad implicit access across tenants. | mixed | tenant authz; session refresh; compatibility | permission mapping; API contract |
-| AC-S008-01 | S-008 | Audit events cover root configuration changes, login attempts, tenant selection, method choice, reset requests, SSO provider failures, fallback/block outcomes, forced logout, and membership-change effects. | persistence-level | audit integration; privacy log review | audit docs; capability matrix |
-| AC-S008-02 | S-008 | Credentials, reset tokens, provider secrets, raw assertions, bearer/session tokens, and sensitive proof material are excluded from logs, replay payloads, URLs, and browser-visible diagnostics. | source-level | privacy; replay security; source inspection | security notes; API contract |
-| AC-S009-01 | S-009 | Design-system governance identifies signed-off render, controller, style, accessibility, and verification seams for email entry, tenant selection, method choice, recovery, unavailable provider, disabled method, and forced re-login states. | human-visible-parity | design-system canonical review; accessibility review | behavior lock; reference pack; verification checklist |
-| AC-S009-02 | S-009 | Tenant login app UI consumes governed seams and does not copy root-login markup, controller behavior, or app-page CSS unless an explicit exception is approved. | source-level | governed adoption review; source inspection | adoption artifact |
-| AC-S010-01 | S-010 | API contracts, OpenAPI/Postman artifacts, data dictionaries, permission mappings, feature manifests, generated dependency graph artifacts, design-system artifacts, and test-case planning reflect every approved seam and dependency. | source-level | artifact consistency; generated artifact verification | maintained artifacts |
-| AC-S010-02 | S-010 | PRD-derived test-case planning records actor, permission, state, object, value, validation, lifecycle, system-error, accessibility, privacy, audit, performance, resilience, and compatibility obligations for each delivery story. | contract-level | TC planning review; traceability review | PRD-derived test-case packet |
-
-## Capability Mapping
-
-| Story ID | AC ID | Capability Matrix Row(s) | Boundary | Capability Posture | Notes |
-| --- | --- | --- | --- | --- | --- |
-| S-000 | AC-S000-01 | Tenant-aware login capability matrix control rows | planning | create-or-refresh-required | Default control story because no approved matrix exists. |
-| S-000 | AC-S000-02 | Tenant-aware login traceability rows | planning | create-or-refresh-required | Must cover AC-to-row mapping. |
-| S-001 | AC-S001-01 | tenant-auth.feature-boundary | architecture governance | create-or-refresh-required | Owning feature and public seams. |
-| S-001 | AC-S001-02 | tenant-auth.identity-and-session-model | tenant auth | create-or-refresh-required | Durable facts and uniqueness. |
-| S-001 | AC-S001-03 | tenant-auth.session-invalidation-policy | tenant auth | create-or-refresh-required | Active-session interruption. |
-| S-002 | AC-S002-01 | root.tenant-auth-configuration.manage | root selected tenant | create-or-refresh-required | Root-only configuration write. |
-| S-002 | AC-S002-02 | tenant-auth-configuration.persist | tenant configuration | create-or-refresh-required | Durable method and provider policy facts. |
-| S-003 | AC-S003-01 | tenant-login.pre-auth-email.resolve | public pre-auth | create-or-refresh-required | Normalization and generic no-match. |
-| S-003 | AC-S003-02 | tenant-login.tenant-choice.list | public pre-auth | create-or-refresh-required | Safe tenant choice disclosure. |
-| S-004 | AC-S004-01 | tenant-login.tenant.select | pre-auth selected tenant | create-or-refresh-required | Exactly one selected tenant context. |
-| S-004 | AC-S004-02 | tenant-login.method.choose | selected tenant | create-or-refresh-required | Enabled-method choice and disabled-method redirect. |
-| S-005 | AC-S005-01 | tenant-login.email-password.authenticate | selected tenant | create-or-refresh-required | Email-password policy binding. |
-| S-005 | AC-S005-02 | tenant-login.password-reset.request | selected tenant | create-or-refresh-required | Tenant-bound reset token lifecycle. |
-| S-006 | AC-S006-01 | tenant-login.sso.start; tenant-login.sso.complete | selected tenant and provider | create-or-refresh-required | Provider handoff and return. |
-| S-006 | AC-S006-02 | tenant-login.sso.fallback | selected tenant | create-or-refresh-required | Fallback or blocked posture. |
-| S-007 | AC-S007-01 | tenant-session.invalidate | active tenant session | create-or-refresh-required | Forced logout and lifecycle interruption. |
-| S-007 | AC-S007-02 | tenant-session.authority.refresh | active tenant session | create-or-refresh-required | Membership and role refresh. |
-| S-008 | AC-S008-01 | tenant-auth.audit.record | audit | create-or-refresh-required | Event inventory. |
-| S-008 | AC-S008-02 | tenant-auth.privacy.redact-sensitive-proof | security/privacy | create-or-refresh-required | Forbidden fields and replay posture. |
-| S-009 | AC-S009-01 | tenant-login.design-system.pattern | governed frontend | create-or-refresh-required | Login pattern signoff. |
-| S-009 | AC-S009-02 | tenant-login.governed-adoption | governed frontend | create-or-refresh-required | No copied root login. |
-| S-010 | AC-S010-01 | tenant-aware-login.artifact-conformance | repo governance | create-or-refresh-required | Maintained artifact sweep. |
-| S-010 | AC-S010-02 | tenant-aware-login.test-case-planning | test planning | create-or-refresh-required | Detailed TC IDs come later. |
-
-## Dependency And Seam Map
-
-| Dependency ID | Needed By Story / AC | Provider Feature Or Seam | Dependency Type | Existing Or New | Required Contract Proof | Integration Test Obligation |
-| --- | --- | --- | --- | --- | --- | --- |
-| D-001 | S-001 / AC-S001-01 | tenantAuth feature boundary | feature-public-seam | existing or changed | PRD and manifest plan name owned public seams. | Feature manifest and dependency graph proof when implemented. |
-| D-002 | S-001 / AC-S001-02 | tenant principals and memberships | pre-existing-capability | existing | Data dictionary defines normalized email uniqueness within tenant. | Persistence tests prove cross-tenant email reuse and within-tenant uniqueness. |
-| D-003 | S-001 / AC-S001-03 | session authority and invalidation seam | new-capability | new | PRD records request-time, push, polling, job, or support-command mechanism. | Runtime tests prove removed or disabled access interruption. |
-| D-004 | S-002 / AC-S002-01 | root authz policy evaluation | authz-capability | existing or changed | Permission mapping names root manage/read grants and denies. | Authz tests cover root allow and non-root deny. |
-| D-005 | S-002 / AC-S002-02 | tenant auth configuration persistence | persistence-table-or-index | existing or new | Migration and data dictionary define durable method and provider facts. | Persistence tests cover lifecycle, timestamps, and policy version. |
-| D-006 | S-003 / AC-S003-01 | pre-auth identity resolution seam | new-capability | new | API contract proves generic no-match and email normalization. | API tests cover invalid, absent, and eligible outcomes. |
-| D-007 | S-004 / AC-S004-01 | selected tenant state seam | new-capability | new | API contract binds method execution to one server-side selected tenant. | Runtime tests cover tenant mismatch and replay attempts. |
-| D-008 | S-005 / AC-S005-02 | one-time token library | feature-public-seam | existing or changed | Token contract proves tenant, method, expiry, single-use, and audit binding. | Token lifecycle tests cover expiry, reuse, wrong tenant, disabled method. |
-| D-009 | S-005 / AC-S005-02 | notification delivery | feature-public-seam | existing or changed | Contract proves password reset delivery without token logging. | Integration tests cover reset request and delivery failure evidence. |
-| D-010 | S-006 / AC-S006-01 | SSO provider reference seam | external-provider | future | PRD/API contract names provider state and callback posture. | Provider-state tests cover outage, mismatch, and blocked states. |
-| D-011 | S-008 / AC-S008-01 | audit event writer | feature-public-seam | existing or changed | Audit artifact defines events, fields, and forbidden fields. | Audit integration tests cover success, deny, fallback, forced logout. |
-| D-012 | S-009 / AC-S009-01 | tenant login design-system pattern | design-system-seam | new | Behavior lock names render/controller/style/accessibility seams. | Browser canonical tests cover login, choice, recovery, and forced states. |
-| D-013 | S-009 / AC-S009-02 | governed frontend adoption seam | feature-public-seam | future | Adoption artifact confirms app consumes shared seam. | Source review and browser proof block copied root-login implementation. |
-| D-014 | S-010 / AC-S010-01 | feature manifests and generated dependency graph | feature-public-seam | existing maintained artifact | Manifests list public seams and cross-feature dependencies. | Standards gate verifies generated artifacts after manifest changes. |
-
-## Downstream Capability Impact
-
-| New Or Changed Capability / Seam | Future Consumer | Contract Promise | Must Not Depend On | Integration Coverage |
-| --- | --- | --- | --- | --- |
-| Tenant auth configuration seam | root configuration transport; tenant login policy resolution | Root-managed tenant method policy, provider references, policy version, lifecycle state | Mutable provider state as the only durable fact | Root configuration API and policy-resolution integration |
-| Pre-auth identity resolution seam | tenant login transport | Normalized email validation and generic no-match behavior before safe tenant choice | Tenant membership disclosure before approved threshold | API security and privacy tests |
-| Selected tenant method execution seam | email-password, password reset, SSO flows | Exactly one selected tenant context governs method execution | Request body tenant inference or broad membership grant | Runtime tenant mismatch and replay tests |
-| Session authority refresh and invalidation seam | active tenant sessions | Removed, changed, disabled, deleted, or force-login states affect access | Long-lived stale session assumptions | Session lifecycle and audit tests |
-| Tenant login design-system seam | tenant login app route | Shared render/controller/style behavior for login states | Copied root login markup, app-page CSS, local controller reconstruction | Canonical visual and future adoption proof |
-
-## Story Test Input Matrix
-
-| Story ID | Actors | Actor Permissions | Actor States | Object States | Value Types / Validation Rules | Lifecycle Transitions | System Errors | NFRs |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | harness reviewer | repo artifact author | matrix absent; packet drafted | ACs unmapped; capability rows missing | stable story and AC IDs | draft queue to matrix-covered queue | missing matrix row; stale traceability | traceability; standards compliance |
-| S-001 | architect; security reviewer | architecture approval | steering accepted; PRD absent | feature boundary undecided; session seam undecided | normalized email; tenant ID; provider reference; policy version | steering to PRD-ready scope | source-of-truth conflict; missing auth guide alignment | security; privacy; compatibility |
-| S-002 | root operator; unauthorized actor | root manage grant; denied non-root | active root session; expired session | tenant active; tenant disabled; config active; config soft-deleted | enabled method set; provider reference; force-login flag | create config; change config; force login | tenant missing; authz denial; persistence conflict | audit; security; durability |
-| S-003 | unauthenticated user | public pre-auth only | invalid email; valid email; no match; eligible single tenant; eligible multi-tenant | user active; user removed; membership active; tenant disabled | trimmed lowercase email; empty string rejection | email entry to tenant choice | enumeration attempt; identity seam unavailable | privacy; security; performance |
-| S-004 | tenant user | public pre-auth with selected tenant | no tenant selected; one tenant selected; stale selection | method enabled; method disabled; method unavailable | tenant selector; method key | select tenant; choose method; redirect on disabled method | replay attempt; tenant mismatch | security; compatibility |
-| S-005 | tenant user; notification system | selected tenant auth method | active membership; reset requested; reset expired | email-password enabled; method disabled; token active; token used | password credential; reset token; email value | login; request reset; consume reset; expire token | delivery failure; token reuse; wrong tenant | privacy; audit; resilience |
-| S-006 | tenant user; SSO provider | selected tenant SSO method | provider available; provider unavailable; fallback available; fallback absent | provider reference active; provider misconfigured | provider state; callback state | start SSO; return; fallback; block login | provider outage; callback mismatch | security; resilience; audit |
-| S-007 | tenant user; auth/session system | active tenant session | logged in; removed; role changed; forced-login flagged | tenant active; tenant disabled; membership active; membership removed | session ID; policy version; membership version | continue session; refresh authority; invalidate session | invalidation failure; stale cache | security; operational evidence; compatibility |
-| S-008 | security reviewer; audit reviewer | policy review; audit read if approved | success; denial; fallback; forced logout | event stored; forbidden field absent | event names; tenant IDs; user IDs; provider IDs without secrets | record event; redact field; inspect replay payload | audit writer failure; sensitive field leak | privacy; auditability; compliance |
-| S-009 | tenant user; frontend governance reviewer | not-applicable: design-system sample and future adoption approval | login; tenant choice; method choice; recovery; disabled method; forced-login | empty state; unavailable provider; blocked state; generic no-match | screen copy; focus target; control state | enter email; select tenant; choose method; redirect; forced-login return | focus loss; copied root markup; missing seam | accessibility; rendered-browser; governed adoption |
-| S-010 | repo governance reviewer | artifact governance | artifacts absent; artifacts refreshed | API/data/permission/design/test artifacts stale or aligned | stable story IDs; AC IDs; seam names | story packet to coherent downstream artifacts | validation failure; generated graph drift | standards compliance; rebuild readiness |
-
-## Acceptance Criteria To Test Obligation Matrix
-
-| AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
-| --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | harness reviewer; matrix absent | tenant-aware login control rows | contract-level | TC obligation: matrix coverage review | no |
-| AC-S000-02 | harness reviewer; unmapped ACs | tenant-aware login traceability rows | contract-level | TC obligation: AC-to-row review | no |
-| AC-S001-01 | architect; feature boundary undecided | feature-boundary row | source-level | TC obligation: feature-seam source review | yes |
-| AC-S001-02 | architect; identity and session model | identity-and-session row | contract-level | TC obligation: data model and tenant-boundary review | yes |
-| AC-S001-03 | auth/session reviewer; lifecycle states | session-invalidation-policy row | contract-level | TC obligation: lifecycle matrix and authority review | yes |
-| AC-S002-01 | root operator; unauthorized actor | root manage config row | runtime-api | TC obligation: root allow and deny cases | yes |
-| AC-S002-02 | root operator; config persistence states | config persist row | persistence-level | TC obligation: persistence and lifecycle cases | yes |
-| AC-S003-01 | unauthenticated user; invalid and absent states | pre-auth email row | runtime-api | TC obligation: validation and generic no-match cases | yes |
-| AC-S003-02 | unauthenticated user; single and multi-tenant outcomes | tenant-choice row | runtime-api | TC obligation: safe tenant disclosure cases | yes |
-| AC-S004-01 | tenant user; selected tenant states | tenant select row | runtime-api | TC obligation: selected-tenant binding and replay cases | yes |
-| AC-S004-02 | tenant user; enabled and disabled methods | method choose row | runtime-api | TC obligation: method state transition cases | yes |
-| AC-S005-01 | tenant user; email-password states | email-password authenticate row | runtime-api | TC obligation: method-policy-bound auth cases | yes |
-| AC-S005-02 | tenant user; reset token lifecycle | password-reset row | persistence-level | TC obligation: token lifecycle and privacy cases | yes |
-| AC-S006-01 | tenant user; SSO provider states | SSO start and complete rows | runtime-api | TC obligation: provider handoff and return cases | yes |
-| AC-S006-02 | tenant user; fallback states | SSO fallback row | runtime-api | TC obligation: fallback and blocked state cases | yes |
-| AC-S007-01 | active tenant user; lifecycle interruption | session invalidate row | mixed | TC obligation: forced logout and audit cases | yes |
-| AC-S007-02 | active tenant user; membership and role change | session authority refresh row | mixed | TC obligation: current authority refresh cases | yes |
-| AC-S008-01 | audit reviewer; success and deny events | audit record row | persistence-level | TC obligation: event inventory and forbidden field review | yes |
-| AC-S008-02 | security reviewer; replay and log surfaces | privacy redact row | source-level | TC obligation: forbidden secret surface review | yes |
-| AC-S009-01 | tenant user; login visual states | design-system pattern row | human-visible-parity | TC obligation: canonical visual and accessibility scenarios | yes |
-| AC-S009-02 | frontend governance reviewer; adoption state | governed adoption row | source-level | TC obligation: no copied root-login source review | no |
-| AC-S010-01 | repo governance; artifact refresh | artifact conformance row | source-level | TC obligation: standards and generated artifact verification | yes |
-| AC-S010-02 | test planner; story obligations | test-case planning row | contract-level | TC obligation: PRD-derived TC planning packet | no |
 
 ## Refactor-First And Architecture-Foundation Queue
 
