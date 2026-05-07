@@ -42,7 +42,7 @@ page-specific right-side icon toolbar, chat, conversation history, and packet ex
 - Source steering artifact:
   `docs/workspace/technical-steering/2026-05-05-chat-interface-layer-one-discovery-steering.md`
 - Source story artifact:
-  `docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md`
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 - Related asset decision:
   `docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md`
 - Related downstream artifacts:

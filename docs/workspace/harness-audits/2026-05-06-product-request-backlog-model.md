@@ -336,7 +336,7 @@ For the first implementation model, keep these boundaries:
 - Workspace template seed:
   `docs/workspace/harness-audits/product-request-template.md`
 - Current Product Request:
-  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery.md`
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/request.md`
 - First example:
   `docs/workspace/harness-audits/2026-05-06-product-request-example-chat-interface.md`
 

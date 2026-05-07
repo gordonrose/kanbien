@@ -33,6 +33,7 @@
     "product-discovery:draft": "node --import tsx src/scripts/productDiscoveryDraft.ts",
     "product-discovery:validate": "node --import tsx src/scripts/productDiscoveryValidate.ts",
     "product-discovery:audit-harness": "node --import tsx src/scripts/productDiscoveryHarnessAudit.ts",
+    "product-request:validate": "node --import tsx src/scripts/productRequestValidate.ts",
     "technical-steering:validate": "node --import tsx src/scripts/technicalSteeringValidate.ts",
     "story-breakdown:validate": "node --import tsx src/scripts/storyBreakdownValidate.ts",
     "task-breakdown:validate": "node --import tsx src/scripts/taskBreakdownValidate.ts",

@@ -41,7 +41,7 @@
 - Technical Steering packet:
   `docs/workspace/technical-steering/2026-05-05-chat-interface-layer-one-discovery-steering.md`
 - Story Breakdown:
-  `docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md`
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 - Task Breakdown:
   pending
 - PRD:
@@ -56,11 +56,6 @@
   `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
 - API Contract:
   `docs/api-contracts/chat-interface-layer-one-discovery.md`
-- Data Dictionary:
-  `docs/data-dictionary/harness-chat-conversation.md`,
-  `docs/data-dictionary/harness-chat-message.md`,
-  `docs/data-dictionary/harness-chat-packet-revision.md`,
-  `docs/data-dictionary/harness-chat-pdf-attempt.md`
 - Work runs / Loop Runs:
   none yet
 - Pull requests, config changes, or extension changes:
@@ -79,11 +74,9 @@
   root builders in the root-admin MVP, while tenant-layer object and
   relationship permissions remain deferred. The API contract is captured for
   conversations, history, packet generation, packet revisions, and PDF
-  download. The data dictionary now captures planned durable conversations,
-  messages, packet revisions, and PDF attempt evidence. Next we need to create
-  the implementation blueprint plus journey/evidence artifacts before
-  implementation tasks can begin. The PDF numeric thresholds are captured as
-  configurable MVP defaults.
+  download. Next we need to create the remaining data, journey/evidence, and
+  blueprint artifacts before implementation tasks can begin. The PDF numeric
+  thresholds are captured as configurable MVP defaults.
 - Waiting next:
   Layer 3 unblock work
 - User action needed:

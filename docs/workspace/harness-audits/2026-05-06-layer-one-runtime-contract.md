@@ -7,7 +7,7 @@
 - Date:
   2026-05-06
 - Related Product Request:
-  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery.md`
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/request.md`
 - Related PRD:
   `docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md`
 - Related capability matrix:

@@ -8,13 +8,13 @@
   `docs/workspace/product-discovery/2026-05-05-chat-interface-layer-one-discovery.md`,
   `docs/workspace/technical-steering/2026-05-05-chat-interface-layer-one-discovery-steering.md`,
   and
-  `docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md`
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 - Capability matrix:
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
 - Implementation blueprint:
   pending
 - Story Breakdown:
-  `docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md`
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 - Journey inventory:
   pending; required before end-to-end root-admin browser proof is treated as
   release-gate evidence

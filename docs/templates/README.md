@@ -119,6 +119,12 @@ For explicit draft Product Discovery packet requests, use:
 npm run product-discovery:draft -- --slug <slug> --title "<title>"
 ```
 
+For Product Request cover-sheet checks, use:
+
+```sh
+npm run product-request:validate -- <request-path>
+```
+
 For structure checks, keep validation separate:
 
 ```sh

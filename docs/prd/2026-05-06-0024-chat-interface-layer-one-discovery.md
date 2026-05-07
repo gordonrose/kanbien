@@ -23,13 +23,13 @@ blockers are resolved.
 ## Source Artifacts
 
 - Product Request:
-  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery.md`
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/request.md`
 - Product Discovery:
   `docs/workspace/product-discovery/2026-05-05-chat-interface-layer-one-discovery.md`
 - Technical Steering:
   `docs/workspace/technical-steering/2026-05-05-chat-interface-layer-one-discovery-steering.md`
 - Story Breakdown:
-  `docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md`
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 - Capability Matrix:
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
 - Capability Matrix Notes:

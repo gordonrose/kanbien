@@ -11,7 +11,7 @@
 - Source PRD:
   `docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md`
 - Source Story Breakdown:
-  `docs/workspace/story-breakdown/2026-05-05-chat-interface-layer-one-discovery-story-breakdown.md`
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 
 ## Scope
 
