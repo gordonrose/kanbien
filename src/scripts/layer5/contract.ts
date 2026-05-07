@@ -108,6 +108,28 @@ export type WriteSetResult = {
   ambiguousEntries: string[];
 };
 
+export type ArtifactObligationStatus = "pass" | "blocked" | "routed";
+
+export type ArtifactObligation = {
+  obligation: string;
+  status: ArtifactObligationStatus;
+  reason: string;
+  evidence: string[];
+};
+
+export type ArtifactObligationResult = {
+  status: "pass" | "blocked" | "skipped";
+  reason: string;
+  changedFiles: string[];
+  obligations: ArtifactObligation[];
+};
+
+export type ContractTableRow = {
+  section: string;
+  taskId: string;
+  values: Record<string, string>;
+};
+
 export type RunnerStatus = "ready" | "blocked" | "refused";
 
 export type Layer5TaskContext = {
@@ -120,6 +142,7 @@ export type Layer5TaskContext = {
   guardrailEvidence: GuardrailEvidenceRow[];
   platformSeamContracts: PlatformSeamContractRow[];
   platformSeamClassContracts: PlatformSeamClassContractRow[];
+  contractRows: ContractTableRow[];
   routeAwayRows: string[][];
   status: RunnerStatus;
 };
@@ -133,4 +156,21 @@ export type PluginCheckResult = {
 export type Layer5TaskPlugin = {
   taskType: string;
   check(context: Layer5TaskContext): PluginCheckResult;
+};
+
+export type CloseoutResultCode =
+  | "pass"
+  | "blocked-pre-edit-record"
+  | "blocked-task-status"
+  | "blocked-plugin"
+  | "blocked-write-set"
+  | "blocked-artifact-obligation"
+  | "blocked-validation"
+  | "blocked-proof";
+
+export type CloseoutResult = {
+  code: CloseoutResultCode;
+  status: "pass" | "blocked";
+  exitCode: 0 | 1 | 2;
+  reason: string;
 };

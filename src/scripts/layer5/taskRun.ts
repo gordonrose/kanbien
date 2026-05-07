@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 import type { CliOptions } from "./contract";
+import { checkArtifactObligations } from "./artifactObligations";
 import { runProofCommands, runValidationCommand } from "./commandRunner";
 import { extractBulletValue, loadLayer5TaskContext, readTaskBreakdownContent } from "./parseTaskBreakdown";
 import { runPluginChecks } from "./plugins";
@@ -17,6 +18,7 @@ function main(): void {
   const proofResults = runProofCommands(context.proofRows, options.runProofs, context.status);
   const pluginResults = runPluginChecks(context);
   const writeSetResult = checkWriteSet(context, options.enforceWriteSet ? "enforced" : "report");
+  const artifactObligationResult = checkArtifactObligations(context, writeSetResult.changedFiles);
 
   const recordPath = makeRecordPath(options.recordRoot, context.task.parentStoryId, options.taskId);
   const record = renderRunRecord({
@@ -25,6 +27,7 @@ function main(): void {
     proofResults,
     pluginResults,
     writeSetResult,
+    artifactObligationResult,
   });
 
   if (options.writeRecord) {
@@ -40,6 +43,7 @@ function main(): void {
     console.log(`- ${result.status}: ${result.plugin} (${result.notes.join("; ")})`);
   }
   console.log(`- ${writeSetResult.status}: write-set ${writeSetResult.mode} (${writeSetResult.reason})`);
+  console.log(`- ${artifactObligationResult.status}: artifact obligations (${artifactObligationResult.reason})`);
   for (const result of [validationResult, ...proofResults]) {
     console.log(`- ${result.status}: ${result.command} (${result.reason})`);
   }

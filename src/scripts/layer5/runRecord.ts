@@ -1,6 +1,12 @@
 import path from "node:path";
 
-import type { CommandResult, Layer5TaskContext, PluginCheckResult, WriteSetResult } from "./contract";
+import type {
+  ArtifactObligationResult,
+  CommandResult,
+  Layer5TaskContext,
+  PluginCheckResult,
+  WriteSetResult,
+} from "./contract";
 
 export function makeRecordPath(root: string, storyId: string, taskId: string): string {
   const date = new Date().toISOString().slice(0, 10);
@@ -13,6 +19,7 @@ export function renderRunRecord(input: {
   proofResults: CommandResult[];
   pluginResults: PluginCheckResult[];
   writeSetResult?: WriteSetResult;
+  artifactObligationResult?: ArtifactObligationResult;
 }): string {
   const { context } = input;
   const allCommandResults = [input.validationResult, ...input.proofResults];
@@ -96,6 +103,10 @@ ${renderTable(["Plugin", "Status", "Notes"], input.pluginResults.map((row) => [
 
 ${renderWriteSetResult(input.writeSetResult)}
 
+## Artifact Obligation Check
+
+${renderArtifactObligationResult(input.artifactObligationResult)}
+
 ## Route-Away / Split Notes
 
 ${renderTable(["Task ID", "Route-Away Source", "Notes"], context.routeAwayRows.map((row) => row.slice(0, 3)))}
@@ -109,6 +120,35 @@ ${renderTable(["Command", "Status", "Reason", "Output Summary"], allCommandResul
     row.output || "not-applicable",
   ]))}
 `;
+}
+
+function renderArtifactObligationResult(result: ArtifactObligationResult | undefined): string {
+  if (!result) {
+    return renderTable(["Field", "Value"], [["Status", "skipped"], ["Reason", "artifact-obligation check was not run"]]);
+  }
+
+  return [
+    renderTable([
+      "Field",
+      "Value",
+    ], [
+      ["Status", result.status],
+      ["Reason", result.reason],
+      ["Changed files", result.changedFiles.join("; ") || "not-applicable"],
+    ]),
+    "",
+    renderTable([
+      "Obligation",
+      "Status",
+      "Reason",
+      "Evidence",
+    ], result.obligations.map((obligation) => [
+      obligation.obligation,
+      obligation.status,
+      obligation.reason,
+      obligation.evidence.join("; ") || "not-applicable",
+    ])),
+  ].join("\n");
 }
 
 function renderTable(headers: string[], rows: string[][]): string {
