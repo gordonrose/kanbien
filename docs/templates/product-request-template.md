@@ -27,13 +27,27 @@
 - Technical Steering packet:
 - Story Breakdown:
 - Task Breakdown:
+- PRD:
+- Capability Matrix:
+- PRD-derived test cases:
+- Layer 1 Runtime Contract:
+- Permission Mapping:
+- API Contract:
 - Work runs / Loop Runs:
 - Pull requests, config changes, or extension changes:
 
+## Epic Index
+
+Use this for folder-style Product Requests. List every `epics/EPIC-*` folder
+and keep the `Epic ID` exactly the same as the folder name.
+
+| Epic ID | Title | Status | Epic Artifact | Summary |
+| --- | --- | --- | --- | --- |
+| EPIC-001-<epic-slug> | <Human-readable epic title> | <status> | `docs/workspace/product-requests/<request-slug>/epics/EPIC-001-<epic-slug>` | <Plain-language summary of what this epic contains.> |
+
 ## End-To-End Hierarchy
 
-Use this when the request is organized as a folder instead of a single cover
-sheet:
+New Product Requests should use this folder shape by default:
 
 ```text
 docs/workspace/product-requests/<request-slug>/

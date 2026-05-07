@@ -43,7 +43,38 @@ export function validateProductRequestPath(requestPath: string): ProductRequestV
   const errors = [...loaded.errors, ...validateProductRequestContent(loaded.requestContent, loaded.requestPath)];
 
   if (loaded.isFolder) {
-    errors.push(...validateProductRequestFolder(loaded.rootPath));
+    errors.push(...validateProductRequestFolder(loaded.rootPath, loaded.requestContent));
+  }
+
+  return {
+    status: errors.length === 0 ? "PASS" : "BLOCKED",
+    errors,
+  };
+}
+
+export function validateAllProductRequests(rootPath = path.resolve(process.cwd(), "docs/workspace/product-requests")): ProductRequestValidationResult {
+  const errors: string[] = [];
+
+  if (!existsSync(rootPath) || !statSync(rootPath).isDirectory()) {
+    return {
+      status: "BLOCKED",
+      errors: [`Product Request directory not found: ${rootPath}`],
+    };
+  }
+
+  for (const entry of readdirSync(rootPath).sort()) {
+    const requestPath = path.join(rootPath, entry);
+    const stats = statSync(requestPath);
+    if (stats.isDirectory()) {
+      const result = validateProductRequestPath(requestPath);
+      errors.push(...result.errors.map((error) => `${entry}: ${error}`));
+      continue;
+    }
+
+    if (stats.isFile() && entry.endsWith(".md") && entry !== "README.md") {
+      const result = validateProductRequestPath(requestPath);
+      errors.push(...result.errors.map((error) => `${entry}: ${error}`));
+    }
   }
 
   return {
@@ -137,7 +168,7 @@ function loadProductRequestPath(requestPath: string): ProductRequestLoadResult {
   };
 }
 
-function validateProductRequestFolder(rootPath: string): string[] {
+function validateProductRequestFolder(rootPath: string, requestContent: string): string[] {
   const errors: string[] = [];
   const epicsPath = path.join(rootPath, "epics");
 
@@ -153,6 +184,8 @@ function validateProductRequestFolder(rootPath: string): string[] {
   if (epicFolders.length === 0) {
     errors.push(`folder Product Request has no epics/EPIC-* directories: ${epicsPath}`);
   }
+
+  validateEpicIndex(rootPath, requestContent, epicFolders, errors);
 
   for (const epicFolder of epicFolders) {
     const epicPath = path.join(epicsPath, epicFolder);
@@ -175,6 +208,109 @@ function validateProductRequestFolder(rootPath: string): string[] {
   }
 
   return errors;
+}
+
+function validateEpicIndex(rootPath: string, content: string, epicFolders: string[], errors: string[]): void {
+  if (!content.includes("## Epic Index")) {
+    errors.push("folder Product Request missing heading: ## Epic Index");
+    return;
+  }
+
+  const rows = parseTableRows(content, "## Epic Index");
+  if (rows.length === 0) {
+    errors.push("folder Product Request Epic Index must list each epic");
+    return;
+  }
+
+  const indexedFolders = new Set<string>();
+  const actualFolders = new Set(epicFolders);
+
+  for (const row of rows) {
+    const epicId = row["Epic ID"] ?? "";
+    const artifact = row["Epic Artifact"] ?? "";
+
+    if (!epicId) {
+      errors.push("Epic Index row missing Epic ID");
+    }
+    if (!artifact) {
+      errors.push(`${epicId || "Epic Index row"} missing Epic Artifact`);
+      continue;
+    }
+
+    const artifactPath = path.resolve(process.cwd(), stripTicks(artifact));
+    const epicFolder = path.basename(artifactPath) === "epic.md" ? path.dirname(artifactPath) : artifactPath;
+    const folderName = path.basename(epicFolder);
+    indexedFolders.add(folderName);
+
+    if (!existsSync(epicFolder) || !statSync(epicFolder).isDirectory()) {
+      errors.push(`${epicId || "Epic Index row"} Epic Artifact does not exist as a directory: ${artifact}`);
+      continue;
+    }
+
+    const epicFile = path.join(epicFolder, "epic.md");
+    if (!existsSync(epicFile)) {
+      errors.push(`${epicId || "Epic Index row"} Epic Artifact missing epic.md: ${epicFolder}`);
+    }
+
+    if (!epicFolder.startsWith(path.join(rootPath, "epics") + path.sep)) {
+      errors.push(`${epicId || "Epic Index row"} Epic Artifact must be inside the Product Request epics directory: ${artifact}`);
+    }
+
+    if (epicId && epicId !== folderName) {
+      errors.push(`${epicId} Epic Index ID must match epic folder name: ${folderName}`);
+    }
+
+    if (!actualFolders.has(folderName)) {
+      errors.push(`${epicId || folderName} Epic Index entry does not match an epics/EPIC-* folder`);
+    }
+  }
+
+  for (const epicFolder of epicFolders) {
+    if (!indexedFolders.has(epicFolder)) {
+      errors.push(`Epic Index missing Product Request epic: ${epicFolder}`);
+    }
+  }
+}
+
+function parseTableRows(content: string, heading: string): Record<string, string>[] {
+  const section = sectionAfterHeading(content, heading);
+  const tableLines = section
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("|") && line.endsWith("|"));
+
+  if (tableLines.length < 3) {
+    return [];
+  }
+
+  const headers = splitMarkdownRow(tableLines[0]);
+  return tableLines.slice(2).map((line) => {
+    const cells = splitMarkdownRow(line);
+    const row: Record<string, string> = {};
+    headers.forEach((header, index) => {
+      row[header] = stripTicks(cells[index] ?? "");
+    });
+    return row;
+  });
+}
+
+function sectionAfterHeading(content: string, heading: string): string {
+  const start = content.indexOf(heading);
+  if (start < 0) {
+    return "";
+  }
+
+  const afterHeading = content.slice(start + heading.length);
+  const nextHeading = afterHeading.search(/\n## /);
+  return nextHeading >= 0 ? afterHeading.slice(0, nextHeading) : afterHeading;
+}
+
+function splitMarkdownRow(line: string): string[] {
+  return line
+    .replace(/^\|/, "")
+    .replace(/\|$/, "")
+    .split("|")
+    .map((cell) => cell.trim());
 }
 
 function validateRequiredBullet(content: string, label: string, errors: string[]): void {
@@ -220,19 +356,22 @@ function isPending(value: string): boolean {
 }
 
 function main(): void {
-  const requestArg = process.argv.slice(2).find((arg) => !arg.startsWith("--"));
+  const args = process.argv.slice(2);
+  const validateAll = args.includes("--all");
+  const requestArg = args.find((arg) => !arg.startsWith("--"));
 
-  if (!requestArg) {
+  if (!requestArg && !validateAll) {
     console.error("Usage: npm run product-request:validate -- <request-path>");
+    console.error("   or: npm run product-request:validate -- --all");
     process.exit(1);
   }
 
-  const requestPath = path.resolve(process.cwd(), requestArg);
-  const result = validateProductRequestPath(requestPath);
+  const requestPath = requestArg ? path.resolve(process.cwd(), requestArg) : path.resolve(process.cwd(), "docs/workspace/product-requests");
+  const result = validateAll ? validateAllProductRequests(requestPath) : validateProductRequestPath(requestPath);
 
   console.log("Product Request Validation");
   console.log(`- status: ${result.status}`);
-  console.log(`- request: ${requestPath}`);
+  console.log(`- ${validateAll ? "root" : "request"}: ${requestPath}`);
 
   if (result.errors.length > 0) {
     console.log("- blockers:");

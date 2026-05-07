@@ -1,16 +1,15 @@
 # Product Requests
 
-This directory holds workspace Product Request cover sheets.
+This directory holds workspace Product Requests.
 
 A Product Request is a thin parent summary for a requested body of work. It
 links Product Discovery, Technical Steering, Story Breakdown, Task Breakdown,
 Loop Runs, evidence, and PRs without replacing those artifacts.
 
 Use `docs/templates/product-request-template.md` when creating a new Product
-Request.
+Request. New requests should use the folder shape by default.
 
-Requests may also be organized as folders when the work needs a clear
-end-to-end hierarchy:
+Requests use folders when the work needs a clear end-to-end hierarchy:
 
 ```text
 docs/workspace/product-requests/<request-slug>/
@@ -30,3 +29,13 @@ docs/workspace/product-requests/<request-slug>/
 
 Keep each layer honest: the folder shows containment, but each artifact still
 owns its normal decisions and validation gates.
+
+Folder requests must include an `## Epic Index` in `request.md`. The index is
+the human summary of the request's epics, and the validator checks that every
+listed epic exists and every `epics/EPIC-*` folder is listed.
+
+Validate the whole workspace with:
+
+```sh
+npm run product-request:validate -- --all
+```

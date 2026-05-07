@@ -3,7 +3,11 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-import { validateProductRequestContent, validateProductRequestPath } from "../../../src/scripts/productRequestValidate";
+import {
+  validateAllProductRequests,
+  validateProductRequestContent,
+  validateProductRequestPath,
+} from "../../../src/scripts/productRequestValidate";
 
 const validStoryBreakdown = `# Story Breakdown Packet: Example
 
@@ -193,6 +197,12 @@ const requestContent = `# Product Request: Example
 - Pull requests, config changes, or extension changes:
   none yet
 
+## Epic Index
+
+| Epic ID | Title | Status | Epic Artifact | Summary |
+| --- | --- | --- | --- | --- |
+| EPIC-001-example | Example epic | ready-for-task-breakdown | pending | Proves folder hierarchy validation. |
+
 ## What The Chat Widget Should Show
 
 - Title:
@@ -227,7 +237,7 @@ describe("product request validation", () => {
     const dir = mkdtempSync(path.join(tmpdir(), "product-request-folder-"));
     const epicDir = path.join(dir, "epics", "EPIC-001-example");
     mkdirSync(path.join(epicDir, "stories", "S-001-example-story"), { recursive: true });
-    writeFileSync(path.join(dir, "request.md"), requestContent.replace("pending", path.join(epicDir, "epic.md")));
+    writeFileSync(path.join(dir, "request.md"), requestContent.replace(/pending/g, path.join(epicDir, "epic.md")));
     writeFileSync(path.join(epicDir, "epic.md"), validStoryBreakdown);
     writeFileSync(
       path.join(epicDir, "stories", "S-001-example-story", "story.md"),
@@ -273,6 +283,88 @@ The story folder validates from the parent request.
       expect(result.errors).toContain(`folder Product Request missing epics directory: ${path.join(dir, "epics")}`);
     } finally {
       rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("blocks folder requests when an epic is missing from the index", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "product-request-missing-index-"));
+    const epicDir = path.join(dir, "epics", "EPIC-002-unlisted");
+    const listedEpicDir = path.join(dir, "epics", "EPIC-001-example");
+    mkdirSync(path.join(epicDir, "stories", "S-001-example-story"), { recursive: true });
+    writeFileSync(path.join(dir, "request.md"), requestContent.replace(/pending/g, path.join(listedEpicDir, "epic.md")));
+    writeFileSync(path.join(epicDir, "epic.md"), validStoryBreakdown);
+    writeFileSync(
+      path.join(epicDir, "stories", "S-001-example-story", "story.md"),
+      `# Story S-001
+
+## Story Narrative
+
+**Situation**
+This story needs a local explanation inside its own folder.
+
+**Goal**
+Reviewers can read the story without opening the parent epic.
+
+**Decisions Needed**
+The work needs agreement that this remains planning-only.
+
+**Work That Follows**
+The work will continue into task planning only after validation.
+
+**Evidence Of Success**
+The story folder validates from the parent request.
+`,
+    );
+
+    try {
+      const result = validateProductRequestPath(dir);
+
+      expect(result.status).toBe("BLOCKED");
+      expect(result.errors).toContain("Epic Index missing Product Request epic: EPIC-002-unlisted");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("validates all product requests under a workspace directory", () => {
+    const root = mkdtempSync(path.join(tmpdir(), "product-request-all-"));
+    const requestDir = path.join(root, "2026-05-07-example");
+    const epicDir = path.join(requestDir, "epics", "EPIC-001-example");
+    mkdirSync(path.join(epicDir, "stories", "S-001-example-story"), { recursive: true });
+    writeFileSync(path.join(root, "README.md"), "# Product Requests\n");
+    writeFileSync(path.join(root, "2026-05-07-flat.md"), requestContent.replace("## Epic Index", "## Flat-Only Epic Index"));
+    writeFileSync(path.join(requestDir, "request.md"), requestContent.replace(/pending/g, path.join(epicDir, "epic.md")));
+    writeFileSync(path.join(epicDir, "epic.md"), validStoryBreakdown);
+    writeFileSync(
+      path.join(epicDir, "stories", "S-001-example-story", "story.md"),
+      `# Story S-001
+
+## Story Narrative
+
+**Situation**
+This story needs a local explanation inside its own folder.
+
+**Goal**
+Reviewers can read the story without opening the parent epic.
+
+**Decisions Needed**
+The work needs agreement that this remains planning-only.
+
+**Work That Follows**
+The work will continue into task planning only after validation.
+
+**Evidence Of Success**
+The story folder validates from the parent request.
+`,
+    );
+
+    try {
+      expect(validateAllProductRequests(root)).toEqual({
+        status: "PASS",
+        errors: [],
+      });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
     }
   });
 });

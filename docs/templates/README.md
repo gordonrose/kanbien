@@ -17,11 +17,11 @@ be implemented or rebuilt with lower ambiguity and lower drift risk.
   changes product intent before downstream artifacts or implementation scope
   move.
 - `product-request-template.md`
-  Thin cover-sheet template for the durable Product Request backlog object. A
+  Folder-first template for the durable Product Request backlog object. A
   Product Request gives humans the target users, change type, routing layer,
-  current status, and links to source-of-truth artifacts without replacing
-  Product Discovery, Technical Steering, Story Breakdown, Task Breakdown, Loop
-  Runs, or PR evidence.
+  current status, an Epic Index, and links to source-of-truth artifacts without
+  replacing Product Discovery, Technical Steering, Story Breakdown, Task
+  Breakdown, Loop Runs, or PR evidence.
 - `technical-steering-packet-template.md`
   Layer 2 packet for deciding architectural posture before Story Breakdown,
   including feature-local versus shared/platform, GOV:design-system, public-seam,
@@ -123,6 +123,12 @@ For Product Request cover-sheet checks, use:
 
 ```sh
 npm run product-request:validate -- <request-path>
+```
+
+For the maintained Product Request workspace sweep, use:
+
+```sh
+npm run product-request:validate -- --all
 ```
 
 For structure checks, keep validation separate:

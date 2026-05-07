@@ -68,6 +68,12 @@
 - Pull requests, config changes, or extension changes:
   none yet
 
+## Epic Index
+
+| Epic ID | Title | Status | Epic Artifact | Summary |
+| --- | --- | --- | --- | --- |
+| EPIC-chat-interface-layer-one-discovery | Chat interface for Layer One Product Discovery | story-breakdown | `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery` | Breaks the chat interface request into readable planning stories, including design-system work, generated packet delivery, conversation history, APIs, root-admin adoption, runtime evidence, artifact sweeps, and future tenant-builder rollout deferral. |
+
 ## What The Chat Widget Should Show
 
 - Title:
