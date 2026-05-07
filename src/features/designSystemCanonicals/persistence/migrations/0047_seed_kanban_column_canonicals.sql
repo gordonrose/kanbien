@@ -1,0 +1,157 @@
+INSERT INTO design_system_canonical_families (
+  design_system_canonical_family_id,
+  family_key,
+  normalized_family_key,
+  display_label,
+  family_kind,
+  launcher_title,
+  launcher_description,
+  launcher_category,
+  generated_launcher_route_path,
+  generated_root_route_path,
+  legacy_launcher_route_path,
+  source_surface_route_path,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+VALUES (
+  '9dbbb084-23f7-4417-8e0a-b0869fb0b3a0',
+  'kanban-column',
+  'kanban-column',
+  'Kanban Column',
+  'pattern',
+  'Kanban Column Canonical Renderings',
+  'Persistence-backed launcher for the signed-off kanban-column board seam states.',
+  'patterns',
+  '/design-system/canonical-renderings/kanban-column',
+  '/design-system/canonical-renderings',
+  NULL,
+  '/design-system/patterns/kanban-column',
+  'live',
+  72,
+  FALSE,
+  NOW(),
+  NOW()
+)
+ON CONFLICT (normalized_family_key)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  family_kind = EXCLUDED.family_kind,
+  launcher_title = EXCLUDED.launcher_title,
+  launcher_description = EXCLUDED.launcher_description,
+  launcher_category = EXCLUDED.launcher_category,
+  generated_launcher_route_path = EXCLUDED.generated_launcher_route_path,
+  generated_root_route_path = EXCLUDED.generated_root_route_path,
+  legacy_launcher_route_path = EXCLUDED.legacy_launcher_route_path,
+  source_surface_route_path = EXCLUDED.source_surface_route_path,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();
+
+WITH kanban_column_family AS (
+  SELECT design_system_canonical_family_id
+  FROM design_system_canonical_families
+  WHERE normalized_family_key = 'kanban-column'
+),
+reference_rows (
+  reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  theme,
+  direction,
+  zoom,
+  state_variant_key,
+  specimen_payload,
+  sort_order,
+  featured
+) AS (
+  VALUES
+    ('KCR-001', 'Desktop baseline board', 'Default board with visible columns, cards, drawer-select column manager, and bottom add-card affordances.', '/design-system/canonical-renderings/kanban-column/KCR-001', '/design-system/components/kanban-column?ref=KCR-001&width=1180&state=baseline&theme=normal&dir=ltr&zoom=0', 'Desktop board lane', 1180, 'normal', 'ltr', 0, 'baseline', '{"state":"baseline"}'::jsonb, 10, TRUE),
+    ('KCR-002', 'Column create insertion lines', 'Create mode exposes visible insertion rails with centered plus glyphs between visible columns.', '/design-system/canonical-renderings/kanban-column/KCR-002', '/design-system/components/kanban-column?ref=KCR-002&width=1180&state=create-mode&theme=normal&dir=ltr&zoom=0', 'Desktop create-mode lane', 1180, 'normal', 'ltr', 0, 'create-mode', '{"state":"create-mode"}'::jsonb, 20, TRUE),
+    ('KCR-003', 'Draft column inline naming', 'Clicking an insertion rail creates an in-place draft column with the column name field focused.', '/design-system/canonical-renderings/kanban-column/KCR-003', '/design-system/components/kanban-column?ref=KCR-003&width=1180&state=draft-column&theme=normal&dir=ltr&zoom=0', 'Desktop draft-column lane', 1180, 'normal', 'ltr', 0, 'draft-column', '{"state":"draft-column"}'::jsonb, 30, TRUE),
+    ('KCR-004', 'Add-card draft control', 'The subtle bottom add-card control keeps its SVG plus centered and opens an inline draft card.', '/design-system/canonical-renderings/kanban-column/KCR-004', '/design-system/components/kanban-column?ref=KCR-004&width=1180&state=draft-card&theme=normal&dir=ltr&zoom=0', 'Desktop add-card lane', 1180, 'normal', 'ltr', 0, 'draft-card', '{"state":"draft-card"}'::jsonb, 40, TRUE),
+    ('KCR-005', 'Archived column drawer recovery', 'Archived columns appear below the active available-column catalog without overlapping drawer options.', '/design-system/canonical-renderings/kanban-column/KCR-005', '/design-system/components/kanban-column?ref=KCR-005&width=1180&state=archived-drawer&theme=normal&dir=ltr&zoom=0', 'Desktop drawer recovery lane', 1180, 'normal', 'ltr', 0, 'archived-drawer', '{"state":"archived-drawer"}'::jsonb, 50, TRUE),
+    ('KCR-006', 'Desktop drag landing marker', 'Dragging shows source state, active drop column, and a visible landing marker.', '/design-system/canonical-renderings/kanban-column/KCR-006', '/design-system/components/kanban-column?ref=KCR-006&width=1180&state=drag-marker&theme=normal&dir=ltr&zoom=0', 'Desktop drag lane', 1180, 'normal', 'ltr', 0, 'drag-marker', '{"state":"drag-marker"}'::jsonb, 60, FALSE),
+    ('KCR-007', 'Dark theme count contrast', 'Dark theme keeps column count badges high contrast without changing board anatomy.', '/design-system/canonical-renderings/kanban-column/KCR-007', '/design-system/components/kanban-column?ref=KCR-007&width=1180&state=dark-theme&theme=dark&dir=ltr&zoom=0', 'Dark theme board lane', 1180, 'dark', 'ltr', 0, 'dark-theme', '{"state":"dark-theme"}'::jsonb, 70, FALSE),
+    ('KCR-008', 'Dense long-copy strain', 'Dense and long-copy card content remains bounded while the add and movement controls stay usable.', '/design-system/canonical-renderings/kanban-column/KCR-008', '/design-system/components/kanban-column?ref=KCR-008&width=1180&state=dense-long&theme=normal&dir=ltr&zoom=0', 'Dense long-copy lane', 1180, 'normal', 'ltr', 0, 'dense-long', '{"state":"dense-long"}'::jsonb, 80, FALSE),
+    ('KCR-009', 'Mobile stacked board', 'Mobile review stacks columns and keeps non-drag movement controls available.', '/design-system/canonical-renderings/kanban-column/KCR-009', '/design-system/components/kanban-column?ref=KCR-009&width=390&state=mobile-stack&theme=normal&dir=ltr&zoom=0', 'Mobile stacked lane', 390, 'normal', 'ltr', 0, 'mobile-stack', '{"state":"mobile-stack"}'::jsonb, 90, FALSE)
+)
+INSERT INTO design_system_canonical_references (
+  design_system_canonical_reference_id,
+  design_system_canonical_family_id,
+  reference_id,
+  normalized_reference_id,
+  display_label,
+  description,
+  render_route_path,
+  legacy_render_route_path,
+  viewport,
+  width,
+  height,
+  theme,
+  direction,
+  zoom,
+  locale_fixture,
+  label_density_fixture,
+  state_variant_key,
+  specimen_payload,
+  status,
+  sort_order,
+  featured,
+  created_at,
+  updated_at
+)
+SELECT
+  gen_random_uuid(),
+  kanban_column_family.design_system_canonical_family_id,
+  reference_rows.reference_id,
+  lower(reference_rows.reference_id),
+  reference_rows.display_label,
+  reference_rows.description,
+  reference_rows.render_route_path,
+  reference_rows.legacy_render_route_path,
+  reference_rows.viewport,
+  reference_rows.width,
+  NULL,
+  reference_rows.theme,
+  reference_rows.direction,
+  reference_rows.zoom,
+  NULL,
+  NULL,
+  reference_rows.state_variant_key,
+  reference_rows.specimen_payload,
+  'live',
+  reference_rows.sort_order,
+  reference_rows.featured,
+  NOW(),
+  NOW()
+FROM reference_rows
+CROSS JOIN kanban_column_family
+ON CONFLICT (design_system_canonical_family_id, normalized_reference_id)
+DO UPDATE SET
+  display_label = EXCLUDED.display_label,
+  description = EXCLUDED.description,
+  render_route_path = EXCLUDED.render_route_path,
+  legacy_render_route_path = EXCLUDED.legacy_render_route_path,
+  viewport = EXCLUDED.viewport,
+  width = EXCLUDED.width,
+  height = EXCLUDED.height,
+  theme = EXCLUDED.theme,
+  direction = EXCLUDED.direction,
+  zoom = EXCLUDED.zoom,
+  locale_fixture = EXCLUDED.locale_fixture,
+  label_density_fixture = EXCLUDED.label_density_fixture,
+  state_variant_key = EXCLUDED.state_variant_key,
+  specimen_payload = EXCLUDED.specimen_payload,
+  status = EXCLUDED.status,
+  sort_order = EXCLUDED.sort_order,
+  featured = EXCLUDED.featured,
+  updated_at = NOW();

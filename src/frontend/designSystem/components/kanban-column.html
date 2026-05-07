@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Kanban Column Canonical</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/assets/formControls.css" />
+    <link rel="stylesheet" href="/design-system/assets/kanbanColumn.css" />
+  </head>
+  <body data-kanban-column-surface="canonical" data-render-status="settling">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link" href="/design-system">Overview</a>
+            <a class="nav-link active" href="/design-system/canonical-renderings" aria-current="page">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">KC</span>
+            <span class="profile-meta"><strong>Kanban Column</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonical-renderings">Canonical Renderings</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonical-renderings/kanban-column">Kanban Column</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Canonical Render</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search kanban-column canonical refs" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Kanban-column family navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/canonical-renderings" data-tooltip="Canonical Renderings">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v3H5zm0 5h14v3H5zm0 5h9v3H5z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonical Renderings</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/canonical-renderings/kanban-column" data-tooltip="Kanban Column" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v4H4zm0 6h10v3H4zm12 0h4v3h-4zM4 16h16v3H4z" /></svg>
+            </span>
+            <span class="context-nav-label">Kanban Column</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main canonical-render-page">
+        <div class="canonical-render-layout">
+          <section class="canonical-render-intro">
+            <h1>Kanban Column</h1>
+            <p class="canonical-launcher-copy">
+              This route is the dedicated canonical render surface for `KanbanColumn`. Use the
+              <a href="/design-system/canonical-renderings/kanban-column">generated canonical launcher</a>
+              for ref selection and keep this page for focused review of one state at a time.
+            </p>
+            <dl class="canonical-render-meta" aria-label="Canonical metadata">
+              <div class="canonical-render-meta-row">
+                <dt>Matched canonical</dt>
+                <dd id="kanban-column-canonical-match-list">Resolving canonical reference...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewing circumstances</dt>
+                <dd id="kanban-column-canonical-circumstances">Loading width, direction, and magnification...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Board state</dt>
+                <dd id="kanban-column-meta-state">Loading board state...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewport contract</dt>
+                <dd id="kanban-column-meta-viewport">Loading viewport contract...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Review note</dt>
+                <dd id="kanban-column-meta-notes">Loading review note...</dd>
+              </div>
+            </dl>
+            <div class="canonical-render-footer">
+              <nav class="canonical-stepper" aria-label="Canonical navigation">
+                <span id="kanban-column-canonical-current" class="canonical-stepper-current">Resolving current canonical...</span>
+                <a id="kanban-column-canonical-prev" class="canonical-stepper-link" href="#" aria-disabled="true">Previous</a>
+                <a id="kanban-column-canonical-next" class="canonical-stepper-link" href="#" aria-disabled="true">Next</a>
+              </nav>
+            </div>
+          </section>
+
+          <section class="top-nav-preview-stage-section" aria-labelledby="kanban-column-stage-title">
+            <div class="top-nav-preview-stage-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Canonical Surface</p>
+                <h2 id="kanban-column-stage-title">Kanban Column Canonical State</h2>
+              </div>
+              <p id="kanban-column-preview-summary" class="top-nav-preview-stage-note">
+                Canonical state loading from the URL.
+              </p>
+            </div>
+
+            <div id="kanban-column-preview-frame" class="canonical-render-frame kanban-column-preview-frame">
+              <div id="kanban-column-preview-shell" class="kanban-column-preview-shell" data-render-status="settling">
+                <div id="kanban-column-render-root"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/kanbanColumnCanonical.mjs"></script>
+  </body>
+</html>

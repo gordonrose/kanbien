@@ -92,6 +92,10 @@ behavior, or page-local controller logic into the app.
   `/design-system/assets/loginTemplate.mjs`
   exports `renderLoginTemplate()`, `renderRootAdminLoginTemplate()`, and
   `createLoginTemplateController(...)`
+- `kanban-column`
+  `/design-system/assets/kanbanColumnSeam.mjs`
+  exports board/card/drawer render helpers and
+  `createKanbanColumnController(...)`; no real app consumer is approved yet
 
 ### Current Duplication In App Consumers
 

@@ -54,6 +54,10 @@ export const generatedCanonicalRenderRouteRegistry = {
     htmlPath: ["patterns", "hierarchy-tree", "render", "index.html"],
     surfaceSignature: 'id="hierarchy-tree-canonical-current"',
   },
+  "kanban-column": {
+    htmlPath: ["components", "kanban-column.html"],
+    surfaceSignature: 'id="kanban-column-preview-shell"',
+  },
   "list-detail-panel": {
     htmlPath: ["components", "list-detail-panel.html"],
     surfaceSignature: 'id="list-detail-panel-preview-shell"',
