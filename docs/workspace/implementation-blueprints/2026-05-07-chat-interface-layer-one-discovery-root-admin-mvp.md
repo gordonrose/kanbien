@@ -76,9 +76,7 @@
 - Asset/download decision:
   `docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md`
 - Journey inventory:
-  planned at
-  `docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md`;
-  must exist before browser or release-gate evidence.
+  `docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md`
 - QA coverage matrix classification:
   permission-sensitive root workflow, persistence-backed conversation and
   packet lifecycle, privileged harness adapter, generated-document delivery,
@@ -444,8 +442,11 @@ This blueprint does not implement:
   use reset-first Postgres test harness; include migration/schema/index checks
   and live row shape matching API fixture shape.
 - End-to-end:
-  create journey inventory before browser proof. Planned route:
-  `tests/e2e/harnessChat/rootAdminBuildChat.spec.ts`.
+  use the journey inventory before browser proof. Planned routes include
+  `tests/e2e/harnessChat/rootAdminBuildChat.spec.ts`,
+  `tests/e2e/harnessChat/rootAdminHistory.spec.ts`,
+  `tests/e2e/harnessChat/packetPdfDownload.spec.ts`, and
+  `tests/e2e/harnessChat/rootAdminDeniedAccess.spec.ts`.
 - Concurrency / idempotency:
   sequence number allocation, duplicate append protection, simultaneous packet
   generation/supersession, PDF render concurrency/rate windows.
@@ -468,7 +469,7 @@ This blueprint does not implement:
   posture; PDF failure reason categories; long packet table/page break spot
   checks.
 - QA checklist:
-  create/update a QA evidence plan before claiming the user-visible loop is
+  use/update the QA evidence plan before claiming the user-visible loop is
   complete.
 - Curated test-run summary:
   required after implementation, including static, unit, integration,

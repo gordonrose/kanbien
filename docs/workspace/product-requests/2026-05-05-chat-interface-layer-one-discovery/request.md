@@ -50,6 +50,8 @@
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
 - PRD-derived test cases:
   `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`
+- Journey Inventory / QA Evidence Plan:
+  `docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md`
 - Layer 1 Runtime Contract:
   `docs/workspace/harness-audits/2026-05-06-layer-one-runtime-contract.md`
 - Permission Mapping:
@@ -90,12 +92,13 @@
   download. The data dictionary now captures planned durable conversations,
   messages, packet revisions, and PDF attempt evidence. The implementation
   blueprint now maps the root-admin MVP into repo-shaped backend, persistence,
-  authz, adapter, PDF, verification, and artifact work. Next we need the
-  journey/evidence plan and then Task Breakdown before implementation tasks
-  can begin. The PDF numeric thresholds are captured as configurable MVP
-  defaults.
+  authz, adapter, PDF, verification, and artifact work. The journey/evidence
+  plan now defines the runtime proof, browser scenarios, and mock-honesty
+  checks future tasks must satisfy. Next we need Task Breakdown before
+  implementation tasks can begin. The PDF numeric thresholds are captured as
+  configurable MVP defaults.
 - Waiting next:
-  QA evidence plan and Task Breakdown
+  Task Breakdown
 - User action needed:
   none for the current root-builder review rule
 

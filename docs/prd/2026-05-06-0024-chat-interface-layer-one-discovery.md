@@ -35,6 +35,8 @@ evidence blockers are resolved.
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft-notes.md`
 - PRD-derived test cases:
   `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`
+- Journey Inventory / QA Evidence Plan:
+  `docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md`
 - Permission Mapping:
   `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
 - API Contract:
@@ -304,7 +306,7 @@ The PRD does not resolve these blockers:
 - root-admin first-consumer design-system parity proof
 - API route implementation
 - executable tests
-- runtime/browser QA evidence plan
+- runtime/browser QA evidence from implemented code
 
 ## Acceptance Summary
 

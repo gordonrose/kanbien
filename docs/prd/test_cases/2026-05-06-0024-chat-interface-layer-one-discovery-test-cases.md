@@ -12,12 +12,11 @@
 - Capability matrix:
   `docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv`
 - Implementation blueprint:
-  pending
+  `docs/workspace/implementation-blueprints/2026-05-07-chat-interface-layer-one-discovery-root-admin-mvp.md`
 - Story Breakdown:
   `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 - Journey inventory:
-  pending; required before end-to-end root-admin browser proof is treated as
-  release-gate evidence
+  `docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md`
 - Primary features involved:
   future `harnessChat` or chat feature bundle, root-admin shell, Product
   Discovery adapter, generated-document/PDF delivery seam, root authorization,
@@ -42,7 +41,7 @@
 - Journey inventory required:
   yes before browser or release-gate evidence
 - Journey inventory posture:
-  needs-create
+  created; runtime/browser proof remains implementation-time evidence
 - Required human QA artifacts:
   QA checklist, structured exploratory QA note, browser/runtime evidence
   summary, mock-honesty note, and curated final test-run summary before the
@@ -57,10 +56,10 @@
   runtime and rendered evidence required; source-only proof is insufficient
 - Notes:
   this file is a planning artifact, not executable proof. Root-builder review
-  permission and API contract are captured. Data dictionary, implementation
-  blueprint, and runtime evidence remain open blockers before implementation
-  tasking. PDF numeric thresholds are captured as configurable MVP defaults in
-  the asset consumer decision record.
+  permission, API contract, data dictionary, implementation blueprint, and
+  journey/evidence plan are captured. Runtime evidence from implemented code
+  remains an implementation-time blocker. PDF numeric thresholds are captured
+  as configurable MVP defaults in the asset consumer decision record.
 
 ## Existing Test Impact
 
@@ -346,8 +345,9 @@
   Test Case ID: `TC-CHAT-L1-E2E-001`
   Source Authority: PRD Core Workflow; AC-S007-01, AC-S008-01
   Related Story / AC: S-007, S-008 / AC-S007-01, AC-S008-01
-  Related Journey ID: pending `JY-CHAT-L1-ROOT-BUILD-001`
-  Journey Inventory: needs-create
+  Related Journey ID: `JY-CHAT-L1-ROOT-BUILD-001`
+  Journey Inventory:
+  `docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md`
   Journey Tier: critical root-admin workflow
   E2E Execution Gate: vertical-slice and release gate
   Planned Executable Path: `tests/e2e/harnessChat/rootAdminBuildChat.spec.ts`
@@ -367,8 +367,8 @@
   Cleanup Expectation: reset-first database cleanup
   Mock / Runtime Honesty: must compare browser projection/API payload against
   fixture shape before trusting screenshots
-  Traceability / Execution Posture: blocked until journey inventory, APIs, DS
-  parity proof, and runtime evidence plan exist
+  Traceability / Execution Posture: blocked until APIs, DS parity proof,
+  root-admin app adoption, and implementation-time runtime evidence exist
   Coverage Strength Signal: browser journey plus runtime evidence summary
   Coverage:
   root builder can open the governed panel, see Reporting and Support as
@@ -382,10 +382,11 @@
 - Journey inventory path:
   `docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md`
 - Inventory action:
-  create
+  prove-current
 - Related `JY-*` IDs:
   `JY-CHAT-L1-ROOT-BUILD-001`, `JY-CHAT-L1-HISTORY-001`,
-  `JY-CHAT-L1-PACKET-PDF-001`
+  `JY-CHAT-L1-PACKET-PDF-001`, `JY-CHAT-L1-DENIALS-001`,
+  `JY-CHAT-L1-DS-ADOPTION-001`
 - Tiering:
   root Build chat is critical; review history and PDF download are high-risk
   permission/document flows
@@ -407,7 +408,10 @@
   test fixtures must not use Product Discovery packet shortcuts, must not rely
   on app-local CSS, and must not treat page/module/role context as authority
 - Planned executable `tests/e2e/` paths:
-  `tests/e2e/harnessChat/rootAdminBuildChat.spec.ts`
+  `tests/e2e/harnessChat/rootAdminBuildChat.spec.ts`,
+  `tests/e2e/harnessChat/rootAdminHistory.spec.ts`,
+  `tests/e2e/harnessChat/packetPdfDownload.spec.ts`, and
+  `tests/e2e/harnessChat/rootAdminDeniedAccess.spec.ts`
 - Execution gates:
   vertical-slice, broader validation, and production gate
 - Curated run summary expectation:
@@ -418,6 +422,8 @@
 | JY-CHAT-L1-ROOT-BUILD-001 | Root-admin Build chat | critical | TC-CHAT-L1-E2E-001, TC-CHAT-L1-SEC-001, TC-CHAT-L1-EDGE-002 | tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | desktop/mobile, empty/history, packet-ready/failed | vertical-slice | Requires DS parity and implemented APIs. |
 | JY-CHAT-L1-HISTORY-001 | Root-builder history | high-risk | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | tests/e2e/harnessChat/rootAdminHistory.spec.ts | creator root builder, other root builder, non-root denied, future tenant denied | broader validation | Root-builder-wide visibility is approved for root-admin MVP. |
 | JY-CHAT-L1-PACKET-PDF-001 | Packet PDF download | high-risk | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | tests/e2e/harnessChat/packetPdfDownload.spec.ts | authorized, denied, renderer failure, threshold timeout | broader validation | Configurable MVP thresholds are captured; API/config ownership still needed. |
+| JY-CHAT-L1-DENIALS-001 | Protected action denials | critical | TC-CHAT-L1-SEC-001, TC-CHAT-L1-SEC-002, TC-CHAT-L1-SEC-003, TC-CHAT-L1-SEC-004 | tests/e2e/harnessChat/rootAdminDeniedAccess.spec.ts | unauthenticated, unauthorized, non-root, future tenant denied | vertical-slice | Deny posture must remain separate from future tenant rollout. |
+| JY-CHAT-L1-DS-ADOPTION-001 | Root-admin DS adoption | high-risk | TC-CHAT-L1-FRONTEND-001, TC-CHAT-L1-FRONTEND-002, TC-CHAT-L1-PERF-001 | design-system adoption gate plus tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | desktop, mobile, served assets, no app CSS drift | broader validation | Blocked until root-admin first-consumer parity proof exists. |
 
 ## NFR Security Tests
 
@@ -767,18 +773,20 @@
 | TC-CHAT-L1-UNIT-003 | blocked until adapter contract | TEST:test-only | packet validator compatibility | Product Discovery adapter contract |
 | TC-CHAT-L1-INT-002 | blocked until implemented API | TEST:test-only | root-boundary allow/deny proof | implemented API and permission mapping |
 | TC-CHAT-L1-INT-005 | blocked until implemented API/config module | TEST:test-only | generated-document security proof | threshold configuration keys and implemented API |
-| TC-CHAT-L1-E2E-001 | blocked until journey/implemented API/DS adoption | EVIDENCE:qa-evidence | browser runtime evidence | journey inventory, DS parity, implemented APIs |
+| TC-CHAT-L1-E2E-001 | blocked until implemented API/DS adoption | EVIDENCE:qa-evidence | browser runtime evidence | DS parity, implemented APIs, root-admin app adoption |
 | TC-CHAT-L1-CONC-001 | blocked until migration plan | TEST:test-only | race-condition proof | data dictionary plus implementation blueprint migration plan |
-| TC-CHAT-L1-PERF-001 | blocked until implemented config module/runtime evidence plan | EVIDENCE:qa-evidence | latency/burst proof | threshold configuration keys and runtime evidence plan |
+| TC-CHAT-L1-PERF-001 | blocked until implemented config module/runtime evidence | EVIDENCE:qa-evidence | latency/burst proof | threshold configuration keys and implementation-time runtime evidence |
 | TC-CHAT-L1-RES-003 | executable with app adoption | TEST:test-suite-alignment | adoption drift proof | DS first-consumer parity proof |
 
 ## E2E Traceability Plan
 
 | Journey ID | Related TC IDs | Journey Inventory Path | Executable Test Path | Traceability Posture | Deferred / Missing Work |
 | --- | --- | --- | --- | --- | --- |
-| JY-CHAT-L1-ROOT-BUILD-001 | TC-CHAT-L1-E2E-001, TC-CHAT-L1-EDGE-002, TC-CHAT-L1-PERF-002 | docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md | tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | planned | inventory, APIs, DS parity, app adoption |
-| JY-CHAT-L1-HISTORY-001 | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | same as above | tests/e2e/harnessChat/rootAdminHistory.spec.ts | planned | implemented APIs and runtime evidence plan |
-| JY-CHAT-L1-PACKET-PDF-001 | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | same as above | tests/e2e/harnessChat/packetPdfDownload.spec.ts | planned | implemented PDF configuration module and runtime evidence plan |
+| JY-CHAT-L1-ROOT-BUILD-001 | TC-CHAT-L1-E2E-001, TC-CHAT-L1-EDGE-002, TC-CHAT-L1-PERF-002 | docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md | tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | planned | APIs, DS parity, app adoption, runtime evidence |
+| JY-CHAT-L1-HISTORY-001 | TC-CHAT-L1-INT-002, TC-CHAT-L1-SEC-002, TC-CHAT-L1-AUD-002 | same as above | tests/e2e/harnessChat/rootAdminHistory.spec.ts | planned | implemented APIs and runtime evidence |
+| JY-CHAT-L1-PACKET-PDF-001 | TC-CHAT-L1-INT-005, TC-CHAT-L1-SEC-003, TC-CHAT-L1-RES-002 | same as above | tests/e2e/harnessChat/packetPdfDownload.spec.ts | planned | implemented PDF configuration module and runtime evidence |
+| JY-CHAT-L1-DENIALS-001 | TC-CHAT-L1-SEC-001, TC-CHAT-L1-SEC-002, TC-CHAT-L1-SEC-003, TC-CHAT-L1-SEC-004 | same as above | tests/e2e/harnessChat/rootAdminDeniedAccess.spec.ts | planned | implemented APIs and runtime denial evidence |
+| JY-CHAT-L1-DS-ADOPTION-001 | TC-CHAT-L1-FRONTEND-001, TC-CHAT-L1-FRONTEND-002, TC-CHAT-L1-PERF-001 | same as above | design-system adoption gate plus tests/e2e/harnessChat/rootAdminBuildChat.spec.ts | planned | root-admin first-consumer parity proof and served asset evidence |
 
 ## Coverage Gaps Or Open Questions
 
@@ -790,9 +798,10 @@
   PDF numeric thresholds are captured as MVP defaults, and the implementation
   blueprint names the expected owning configuration module/key posture.
 - Item:
-  Data dictionary and implementation blueprint exist. Journey inventory,
-  implemented APIs, and root-admin first-consumer parity proof must exist
-  before executable test implementation can be considered complete.
+  Data dictionary, implementation blueprint, and journey inventory exist.
+  Implemented APIs, root-admin first-consumer parity proof, and
+  implementation-time runtime evidence must exist before executable test
+  implementation can be considered complete.
 - Item:
   tenant-builder active workflow remains out of MVP and needs separate Product
   Discovery before happy-path tests are added.
@@ -819,8 +828,9 @@
   fixture/live-payload reconciliation, root-admin browser fixture alignment,
   Product Discovery adapter fixture honesty, and design-system adoption guard
   alignment.
-- Journey inventory candidates:
-  create the chat-interface journey inventory before E2E implementation.
+- Journey inventory posture:
+  created; Task Breakdown should reference the existing `JY-*` IDs instead of
+  creating a competing journey list.
 - EVIDENCE:qa-evidence candidates:
   active runtime process proof, served frontend asset proof, live API/projection
   payload capture, screenshot/browser proof, mock-honesty note, and final
