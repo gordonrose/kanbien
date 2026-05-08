@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type Route } from "@playwright/test";
 
 const mockSession = {
   rootUserId: "root_user_001",
@@ -8,12 +8,140 @@ const mockSession = {
   expiresAt: "9999-04-16T18:00:00.000Z",
 };
 
+function requestBodyOrNull(route: Route) {
+  try {
+    return route.request().postDataJSON();
+  } catch {
+    return null;
+  }
+}
+
 async function bootstrapAuthenticatedOverview(page: Page) {
+  const conversationId = "00000000-0000-4000-8000-000000000101";
+  const packetRevisionId = "00000000-0000-4000-8000-000000000102";
+  const harnessChatRequests: Array<{ method: string; url: string; body: unknown }> = [];
+  const messages = [
+    {
+      messageId: "00000000-0000-4000-8000-000000000103",
+      role: "user",
+      body: "I want the root admin to start discovery from here and keep the packet history visible.",
+      createdAt: "2026-05-08T00:00:00.000Z",
+    },
+    {
+      messageId: "00000000-0000-4000-8000-000000000104",
+      role: "assistant",
+      body: "Captured by protected harness API. Page context remains helpful context only.",
+      createdAt: "2026-05-08T00:00:01.000Z",
+    },
+  ];
+  const conversationPayload = (overrides: Record<string, unknown> = {}) => ({
+    conversationId,
+    productRequestId: null,
+    state: "active",
+    sourceChannel: "app",
+    rootScope: true,
+    createdByRootUserId: mockSession.rootUserId,
+    createdAt: "2026-05-08T00:00:00.000Z",
+    updatedAt: "2026-05-08T00:00:01.000Z",
+    latestPacketRevisionId: null,
+    latestPacketState: null,
+    title: "Root-admin discovery request",
+    messages,
+    surfaceContext: {
+      moduleKey: "root-admin",
+      pageKey: "overview",
+      roleContext: "root-builder",
+    },
+    structuredDiscoveryState: {},
+    ...overrides,
+  });
+
   await page.route("**/v1/root-auth/browser/session", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify(mockSession),
+    });
+  });
+
+  await page.route("**/v1/root-admin/harness-chat/conversations", async (route) => {
+    harnessChatRequests.push({
+      method: route.request().method(),
+      url: route.request().url(),
+      body: requestBodyOrNull(route),
+    });
+    if (route.request().method() === "POST") {
+      await route.fulfill({
+        status: 201,
+        contentType: "application/json",
+        body: JSON.stringify(conversationPayload()),
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        items: [conversationPayload()],
+        page: 1,
+        pageSize: 25,
+        totalCount: 1,
+      }),
+    });
+  });
+
+  await page.route(`**/v1/root-admin/harness-chat/conversations/${conversationId}/messages`, async (route) => {
+    harnessChatRequests.push({
+      method: route.request().method(),
+      url: route.request().url(),
+      body: requestBodyOrNull(route),
+    });
+    await route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({
+        conversation: conversationPayload(),
+      }),
+    });
+  });
+
+  await page.route(`**/v1/root-admin/harness-chat/conversations/${conversationId}/packet-generations`, async (route) => {
+    harnessChatRequests.push({
+      method: route.request().method(),
+      url: route.request().url(),
+      body: requestBodyOrNull(route),
+    });
+    await route.fulfill({
+      status: 201,
+      contentType: "application/json",
+      body: JSON.stringify({
+        packet: {
+          packetRevisionId,
+          conversationId,
+          state: "generated",
+          version: 1,
+          pdf: { downloadAvailable: true },
+        },
+        conversation: conversationPayload({
+          state: "packet-ready",
+          latestPacketRevisionId: packetRevisionId,
+          latestPacketState: "generated",
+        }),
+      }),
+    });
+  });
+
+  await page.route(`**/v1/root-admin/harness-chat/packet-revisions/${packetRevisionId}/pdf`, async (route) => {
+    harnessChatRequests.push({
+      method: route.request().method(),
+      url: route.request().url(),
+      body: null,
+    });
+    await route.fulfill({
+      status: 200,
+      contentType: "application/pdf",
+      body: "%PDF-1.4\n% mocked packet\n%%EOF\n",
     });
   });
 
@@ -48,6 +176,8 @@ async function bootstrapAuthenticatedOverview(page: Page) {
   await page.locator("#shell-view").waitFor({ state: "visible" });
   await page.locator(".sub-nav").waitFor({ state: "visible" });
   await page.locator(".context-nav").waitFor({ state: "visible" });
+
+  return { harnessChatRequests };
 }
 
 async function bootstrapUnauthenticatedRootAdmin(page: Page) {
@@ -149,7 +279,7 @@ test("root-admin authenticated shell uses the same shell stylesheet entrypoints 
   await designSystemPage.close();
 });
 
-test("root-admin Build panel consumes the shared conversation panel seam with local adoption handlers", async ({ page }) => {
+test("root-admin Build panel consumes the shared conversation panel seam with protected API handlers", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await bootstrapAuthenticatedOverview(page);
 
@@ -233,10 +363,10 @@ test("root-admin Build panel consumes the shared conversation panel seam with lo
   expect(mainAfter?.y).toBe(mainBefore?.y);
   await expect(page.locator("#shell-message")).toBeHidden();
 
-  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-message]").fill("Please capture this local adoption request.");
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-message]").fill("Please capture this protected API request.");
   await page.locator(".conversation-panel-shell-mount .build-work-panel-demo-send").click();
   await expect(page.locator("#shell-message")).toBeHidden();
-  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").last()).toContainText("Real Layer 1 harness delivery is intentionally deferred");
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").last()).toContainText("Captured by protected harness API");
 
   await page.locator(".conversation-panel-shell-mount [data-build-work-panel-download]").first().click();
   await expect(page.locator("#shell-message")).toBeHidden();
@@ -283,6 +413,50 @@ test("root-admin Build panel keeps the mobile floating action path reachable", a
   await page.locator(".conversation-panel-shell-mount [data-build-work-panel-open]").click();
   await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeVisible();
   await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-message]")).toBeVisible();
+});
+
+test("root-admin Build panel treats page context as prompt data rather than URL or download authority", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const { harnessChatRequests } = await bootstrapAuthenticatedOverview(page);
+  await page.evaluate(() => {
+    window.history.replaceState(null, "", "/root-admin?tenantId=tenant_evil&role=superuser#tenant-admins");
+  });
+
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").first()).toContainText(
+    "prompt context only",
+  );
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-message]").fill("Use the visible page context only as context.");
+  await page.locator(".conversation-panel-shell-mount .build-work-panel-demo-send").click();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").last()).toContainText("Captured by protected harness API");
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-download]").first().click();
+
+  const createRequest = harnessChatRequests.find((request) =>
+    request.method === "POST" && request.url.endsWith("/v1/root-admin/harness-chat/conversations")
+  );
+  expect(createRequest?.body).toMatchObject({
+    sourceChannel: "app",
+    surfaceContext: {
+      moduleKey: "root-admin",
+      pageKey: "overview",
+      pageLabel: "Overview",
+      pathname: "/root-admin",
+      roleContext: "root-builder",
+    },
+  });
+  expect(JSON.stringify(createRequest?.body)).not.toContain("tenant_evil");
+  expect(JSON.stringify(createRequest?.body)).not.toContain("superuser");
+
+  await expect.poll(() =>
+    harnessChatRequests.find((request) =>
+      request.method === "GET" && request.url.includes("/packet-revisions/")
+    )
+  ).not.toBeUndefined();
+  const pdfRequest = harnessChatRequests.find((request) =>
+    request.method === "GET" && request.url.includes("/packet-revisions/")
+  );
+  expect(pdfRequest?.url).toContain("/v1/root-admin/harness-chat/packet-revisions/");
+  expect(pdfRequest?.url).not.toContain("tenantId=");
+  expect(pdfRequest?.url).not.toContain("role=");
 });
 
 test("root-admin login consumes the governed login template and switches into SSH challenge state", async ({ page }) => {

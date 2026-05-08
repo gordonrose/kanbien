@@ -1018,7 +1018,7 @@ test.describe("design-system list page", () => {
     const lazyLoadPlacement = await page.evaluate(() => {
       const visibleItems = Array.from(document.querySelectorAll("[data-selectable-list-card]"))
         .filter((item) => item instanceof HTMLElement && !item.classList.contains("hidden"));
-      const lastItem = visibleItems.at(-1);
+      const lastItem = visibleItems[visibleItems.length - 1];
       const status = document.querySelector("[data-selectable-list-status]");
 
       if (!(lastItem instanceof HTMLElement) || !(status instanceof HTMLElement)) {

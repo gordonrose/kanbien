@@ -418,6 +418,8 @@ const buildBacklogPageController = createRootAdminBuildBacklogPageController({
 
 const rootAdminConversationPanelState = {
   ref: "BWP-R-002",
+  conversationId: null,
+  latestPacketRevisionId: null,
   messages: [
     {
       author: "Harness",
@@ -450,6 +452,177 @@ const rootAdminConversationPanelState = {
 };
 let rootAdminConversationPanelController = null;
 
+function buildPanelSurfaceContext() {
+  const currentPage = state.navigation.currentPage;
+  return {
+    moduleKey: "root-admin",
+    pageKey: currentPage,
+    pageLabel: pageMetadata[currentPage]?.title ?? currentPage,
+    pathname: window.location.pathname,
+    roleContext: "root-builder",
+  };
+}
+
+function buildPanelContextMessage() {
+  const context = buildPanelSurfaceContext();
+  return {
+    author: "Harness",
+    text: `Context: ${context.pageLabel} in Root Admin for a root builder. This is prompt context only; permissions and packet downloads are checked by the server.`,
+  };
+}
+
+function mapHarnessChatMessages(messages = []) {
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return rootAdminConversationPanelState.messages;
+  }
+
+  return messages.map((message) => ({
+    author: message.role === "user" ? "Builder" : "Harness",
+    text: String(message.body ?? ""),
+    user: message.role === "user",
+  }));
+}
+
+function mapHarnessChatHistory(conversation) {
+  const title = conversation?.title || "Product Discovery conversation";
+  const stateLabel = conversation?.latestPacketRevisionId
+    ? "Packet revision is ready for authorized PDF download."
+    : "Conversation is saved in the root-admin discovery history.";
+
+  return [
+    {
+      title,
+      summary: stateLabel,
+    },
+    ...rootAdminConversationPanelState.history.filter((item) => item.title !== title).slice(0, 2),
+  ];
+}
+
+function applyHarnessChatConversation(conversation) {
+  if (!conversation) {
+    return;
+  }
+
+  rootAdminConversationPanelState.conversationId = conversation.conversationId ?? rootAdminConversationPanelState.conversationId;
+  rootAdminConversationPanelState.latestPacketRevisionId =
+    conversation.latestPacketRevisionId ?? rootAdminConversationPanelState.latestPacketRevisionId;
+  rootAdminConversationPanelState.messages = mapHarnessChatMessages(conversation.messages);
+  rootAdminConversationPanelState.history = mapHarnessChatHistory(conversation);
+  rootAdminConversationPanelState.ref = rootAdminConversationPanelState.latestPacketRevisionId ? "BWP-R-005" : "BWP-R-004";
+}
+
+function addHarnessChatStatusMessage(text, { user = false } = {}) {
+  rootAdminConversationPanelState.messages = [
+    ...rootAdminConversationPanelState.messages,
+    {
+      author: user ? "Builder" : "Harness",
+      text,
+      user,
+    },
+  ];
+}
+
+function rootAdminConversationPanelMessagesForRender() {
+  const contextMessage = buildPanelContextMessage();
+  const messages = rootAdminConversationPanelState.messages.filter((message) =>
+    !(message.author === "Harness" && String(message.text ?? "").startsWith("Context: ")),
+  );
+  return [contextMessage, ...messages];
+}
+
+async function submitHarnessChatMessage(text) {
+  if (!rootAdminConversationPanelState.conversationId) {
+    const conversation = await fetchJson("/v1/root-admin/harness-chat/conversations", {
+      method: "POST",
+      body: JSON.stringify({
+        sourceChannel: "app",
+        initialMessage: text,
+        surfaceContext: buildPanelSurfaceContext(),
+      }),
+    });
+    applyHarnessChatConversation(conversation);
+    return;
+  }
+
+  const response = await fetchJson(
+    `/v1/root-admin/harness-chat/conversations/${encodeURIComponent(rootAdminConversationPanelState.conversationId)}/messages`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        message: text,
+        surfaceContext: buildPanelSurfaceContext(),
+      }),
+    },
+  );
+  applyHarnessChatConversation(response.conversation);
+}
+
+async function ensureHarnessChatPacketRevision() {
+  if (rootAdminConversationPanelState.latestPacketRevisionId) {
+    return rootAdminConversationPanelState.latestPacketRevisionId;
+  }
+
+  if (!rootAdminConversationPanelState.conversationId) {
+    throw new ApiError(409, "HARNESS_CHAT_CONVERSATION_REQUIRED", "Start a discovery conversation before downloading a packet.");
+  }
+
+  const response = await fetchJson(
+    `/v1/root-admin/harness-chat/conversations/${encodeURIComponent(rootAdminConversationPanelState.conversationId)}/packet-generations`,
+    {
+      method: "POST",
+      body: JSON.stringify({
+        reason: "user-requested",
+      }),
+    },
+  );
+  applyHarnessChatConversation(response.conversation);
+  rootAdminConversationPanelState.latestPacketRevisionId =
+    response.packet?.packetRevisionId ?? rootAdminConversationPanelState.latestPacketRevisionId;
+  return rootAdminConversationPanelState.latestPacketRevisionId;
+}
+
+async function fetchHarnessChatPacketPdf(packetRevisionId) {
+  const response = await fetch(
+    `/v1/root-admin/harness-chat/packet-revisions/${encodeURIComponent(packetRevisionId)}/pdf`,
+    {
+      headers: {
+        accept: "application/pdf",
+      },
+    },
+  );
+
+  if (response.status === 401) {
+    Object.assign(state, markSessionExpired(state));
+    clearShellMessage();
+    render();
+    throw new ApiError(response.status, "UNAUTHORIZED", "Your session has expired.");
+  }
+
+  if (!response.ok) {
+    const contentType = response.headers.get("content-type") ?? "";
+    const body = contentType.includes("application/json") ? await response.json() : null;
+    throw new ApiError(
+      response.status,
+      body?.code ?? "REQUEST_FAILED",
+      body?.message ?? "The packet PDF could not be downloaded.",
+      body?.details,
+    );
+  }
+
+  return response.blob();
+}
+
+function downloadHarnessChatPdf(blob, packetRevisionId) {
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `product-discovery-${packetRevisionId}.pdf`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+}
+
 function mountRootAdminConversationPanel() {
   if (!(rootAdminConversationPanelMount instanceof HTMLElement)) {
     return;
@@ -458,36 +631,51 @@ function mountRootAdminConversationPanel() {
   rootAdminConversationPanelController?.destroy?.();
   renderConversationPanel(rootAdminConversationPanelMount, {
     ref: rootAdminConversationPanelState.ref,
-    messages: rootAdminConversationPanelState.messages,
+    messages: rootAdminConversationPanelMessagesForRender(),
     history: rootAdminConversationPanelState.history,
     config: createBuildConversationPanelConfig(),
   });
   rootAdminConversationPanelController = createConversationPanelController(rootAdminConversationPanelMount, {
     ref: rootAdminConversationPanelState.ref,
-    messages: rootAdminConversationPanelState.messages,
+    messages: rootAdminConversationPanelMessagesForRender(),
     history: rootAdminConversationPanelState.history,
     config: createBuildConversationPanelConfig(),
     handlers: {
-      onSendMessage({ value }) {
+      async onSendMessage({ value }) {
         const text = String(value ?? "").trim();
         if (!text) {
           return;
         }
 
-        rootAdminConversationPanelState.ref = "BWP-R-004";
-        rootAdminConversationPanelState.messages = [
-          ...rootAdminConversationPanelState.messages,
-          { author: "Builder", text, user: true },
-          {
-            author: "Harness",
-            text: "Captured locally for the root-admin adoption proof. Real Layer 1 harness delivery is intentionally deferred to the next slice.",
-          },
-        ];
-        mountRootAdminConversationPanel();
+        try {
+          rootAdminConversationPanelState.ref = "BWP-R-004";
+          addHarnessChatStatusMessage(text, { user: true });
+          mountRootAdminConversationPanel();
+          await submitHarnessChatMessage(text);
+          clearShellMessage();
+        } catch (error) {
+          rootAdminConversationPanelState.ref = error instanceof ApiError && error.status === 403 ? "BWP-R-007" : "BWP-R-006";
+          addHarnessChatStatusMessage(messageForError(error, "The harness could not capture that message."));
+          setShellMessage(messageForError(error, "The harness could not capture that message."), "error");
+        } finally {
+          mountRootAdminConversationPanel();
+        }
       },
-      onDownloadPacket() {
-        rootAdminConversationPanelState.ref = "BWP-R-015";
-        mountRootAdminConversationPanel();
+      async onDownloadPacket() {
+        try {
+          rootAdminConversationPanelState.ref = "BWP-R-020";
+          mountRootAdminConversationPanel();
+          const packetRevisionId = await ensureHarnessChatPacketRevision();
+          const pdf = await fetchHarnessChatPacketPdf(packetRevisionId);
+          downloadHarnessChatPdf(pdf, packetRevisionId);
+          rootAdminConversationPanelState.ref = "BWP-R-015";
+          clearShellMessage();
+        } catch (error) {
+          rootAdminConversationPanelState.ref = error instanceof ApiError && error.status === 403 ? "BWP-R-007" : "BWP-R-006";
+          setShellMessage(messageForError(error, "The packet PDF could not be downloaded."), "error");
+        } finally {
+          mountRootAdminConversationPanel();
+        }
       },
       onToolAction() {},
       onCopyMessage() {},
