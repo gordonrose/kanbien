@@ -1,5 +1,6 @@
 import type { Pool } from "pg";
 import type { RootCapabilityChecker } from "../../lib/authz/middleware";
+import { createDefaultProductDiscoveryConversationAdapter } from "../../lib/productDiscovery/conversationAdapter";
 import type { PlatformSecurityRepository } from "../../lib/security/repository";
 import { createHarnessChatService } from "./domain/service";
 import { createPostgresHarnessChatRepository } from "./persistence/postgresRepository";
@@ -15,6 +16,6 @@ export function createHarnessChatFeature(
   platformSecurityRepository: PlatformSecurityRepository,
 ) {
   const repository = createPostgresHarnessChatRepository(dbPool);
-  const service = createHarnessChatService(repository);
+  const service = createHarnessChatService(repository, createDefaultProductDiscoveryConversationAdapter());
   return createHarnessChatRouter(service, capabilityChecker, platformSecurityRepository);
 }

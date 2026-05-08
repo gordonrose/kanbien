@@ -3,6 +3,11 @@ import {
   createProductDiscoveryPacketData,
   renderProductDiscoveryPacketMarkdown,
 } from "../../../lib/productDiscovery/packetAdapter";
+import {
+  createDefaultProductDiscoveryConversationAdapter,
+  type ProductDiscoveryConversationAdapter,
+  type ProductDiscoveryConversationTurn,
+} from "../../../lib/productDiscovery/conversationAdapter";
 import { HarnessChatNotFoundError, HarnessChatPacketNotFoundError } from "../contract/errors";
 import type { HarnessChatRepository } from "../persistence/repository";
 import type {
@@ -20,7 +25,10 @@ function conversationTitle(messages: HarnessChatMessageData[]): string {
   return firstUserMessage?.body.slice(0, 80) || "Product Discovery conversation";
 }
 
-export function createHarnessChatService(repository: HarnessChatRepository) {
+export function createHarnessChatService(
+  repository: HarnessChatRepository,
+  conversationAdapter: ProductDiscoveryConversationAdapter = createDefaultProductDiscoveryConversationAdapter(),
+) {
   function summarizeConversation(
     conversation: HarnessChatConversationData,
     messages: HarnessChatMessageData[] = [],
@@ -89,6 +97,7 @@ export function createHarnessChatService(repository: HarnessChatRepository) {
           acceptedByHarness: true,
           createdByRootUserId: input.rootUserId,
         });
+        await appendAssistantTurn(conversation.conversationId);
       }
       return this.readConversation({ conversationId: conversation.conversationId, includeMessages: true });
     },
@@ -138,13 +147,7 @@ export function createHarnessChatService(repository: HarnessChatRepository) {
         acceptedByHarness: true,
         createdByRootUserId: input.rootUserId,
       });
-      const assistantMessage = await repository.appendMessage({
-        messageId: randomUUID(),
-        conversationId: input.conversationId,
-        role: "assistant",
-        body: "Captured for Product Discovery. I will keep page context as helpful context, not authority.",
-        acceptedByHarness: true,
-      });
+      const assistantMessage = await appendAssistantTurn(input.conversationId);
       return {
         userMessage,
         assistantMessage,
@@ -263,4 +266,52 @@ export function createHarnessChatService(repository: HarnessChatRepository) {
       return Buffer.from(`%PDF-1.4\n% Harness chat packet export\n${markdown}\n%%EOF\n`, "utf8");
     },
   };
+
+  async function appendAssistantTurn(conversationId: string) {
+    const conversation = await getConversationOrThrow(conversationId);
+    const messages = await repository.listMessages(conversationId);
+    const turn = await generateSafeAssistantTurn(conversation, messages);
+    return repository.appendMessage({
+      messageId: randomUUID(),
+      conversationId,
+      role: "assistant",
+      body: turn.assistantMessage,
+      acceptedByHarness: turn.acceptedByHarness,
+      metadata: {
+        source: turn.source,
+        summary: turn.summary,
+        nextQuestion: turn.nextQuestion,
+        confidencePercent: turn.confidencePercent,
+        readyForPacket: turn.readyForPacket,
+        assumptions: turn.assumptions,
+        packagedTechnicalQuestions: turn.packagedTechnicalQuestions,
+      },
+    });
+  }
+
+  async function generateSafeAssistantTurn(
+    conversation: HarnessChatConversationData,
+    messages: HarnessChatMessageData[],
+  ): Promise<ProductDiscoveryConversationTurn & { acceptedByHarness: boolean; source: string }> {
+    try {
+      return {
+        ...(await conversationAdapter.generateTurn({ conversation, messages })),
+        acceptedByHarness: true,
+        source: "product-discovery-conversation-adapter",
+      };
+    } catch {
+      return {
+        assistantMessage:
+          "I saved that message, but the discovery assistant is temporarily unavailable. Your transcript is still safe, and you can try again shortly.",
+        summary: conversationTitle(messages),
+        nextQuestion: "What should the first successful version let the requester do?",
+        confidencePercent: 0,
+        readyForPacket: false,
+        assumptions: [],
+        packagedTechnicalQuestions: ["Discovery assistant adapter failed before producing validated output."],
+        acceptedByHarness: false,
+        source: "product-discovery-conversation-adapter-fallback",
+      };
+    }
+  }
 }

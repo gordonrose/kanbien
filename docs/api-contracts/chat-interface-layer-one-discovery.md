@@ -358,6 +358,11 @@ does not grant authority.
 - Cross-feature reads:
   Product Discovery adapter and packet validation seam only. The chat feature
   must not create a parallel Product Discovery packet format.
+- LLM adapter:
+  server-side Product Discovery conversation turns use the configured
+  `OPENAI_API_KEY` and `OPENAI_MODEL` through the provider adapter. The browser
+  never receives model credentials, and Codex session credentials are not an
+  application runtime credential source.
 
 ## Route: List Packet Revisions For Conversation
 
