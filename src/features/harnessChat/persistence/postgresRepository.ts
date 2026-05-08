@@ -2,10 +2,13 @@ import type { Pool } from "pg";
 import type { HarnessChatRepository } from "./repository";
 import type {
   AppendHarnessChatMessageInput,
+  CompleteHarnessChatLlmUsageAttemptInput,
   CreateHarnessChatConversationInput,
   CreateHarnessChatPacketRevisionInput,
   HarnessChatConversationData,
   HarnessChatConversationRecord,
+  HarnessChatLlmUsageAttemptData,
+  HarnessChatLlmUsageAttemptRecord,
   HarnessChatPdfAttemptData,
   HarnessChatPdfAttemptRecord,
   HarnessChatMessageData,
@@ -13,6 +16,7 @@ import type {
   HarnessChatPacketRevisionData,
   HarnessChatPacketRevisionRecord,
   RecordHarnessChatPdfAttemptInput,
+  ReserveHarnessChatLlmUsageAttemptInput,
 } from "./types";
 
 function toJsonObject(value: unknown): Record<string, unknown> {
@@ -92,6 +96,27 @@ function toPdfAttemptData(record: HarnessChatPdfAttemptRecord): HarnessChatPdfAt
     startedAt: record.started_at,
     completedAt: record.completed_at,
     createdAt: record.created_at,
+  };
+}
+
+function toLlmUsageAttemptData(record: HarnessChatLlmUsageAttemptRecord): HarnessChatLlmUsageAttemptData {
+  return {
+    llmUsageAttemptId: record.llm_usage_attempt_id,
+    conversationId: record.conversation_id,
+    provider: record.provider,
+    model: record.model,
+    state: record.state,
+    safeFailureReason: record.safe_failure_reason,
+    requestDay: record.request_day,
+    requestMonth: record.request_month,
+    dailyRequestLimit: record.daily_request_limit,
+    monthlyRequestLimit: record.monthly_request_limit,
+    inputChars: record.input_chars,
+    transcriptMessageCount: record.transcript_message_count,
+    outputChars: record.output_chars,
+    errorCode: record.error_code,
+    createdAt: record.created_at,
+    completedAt: record.completed_at,
   };
 }
 
@@ -418,6 +443,164 @@ export function createPostgresHarnessChatRepository(dbPool: Pool): HarnessChatRe
         [packetRevisionId],
       );
       return result.rows.map(toPdfAttemptData);
+    },
+
+    async reserveLlmUsageAttempt(input: ReserveHarnessChatLlmUsageAttemptInput) {
+      const client = await dbPool.connect();
+      const requestedAt = input.requestedAt ?? new Date();
+
+      try {
+        await client.query("BEGIN");
+        await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [
+          `harness_chat_llm_usage:${input.provider}:${input.model}`,
+        ]);
+
+        const usage = await client.query<{
+          daily_count: string;
+          monthly_count: string;
+          request_day: Date;
+          request_month: Date;
+        }>(
+          `
+            WITH request_window AS (
+              SELECT
+                ($1::timestamptz AT TIME ZONE 'UTC')::date AS request_day,
+                date_trunc('month', $1::timestamptz AT TIME ZONE 'UTC')::date AS request_month
+            )
+            SELECT
+              request_window.request_day,
+              request_window.request_month,
+              COUNT(*) FILTER (
+                WHERE attempts.request_day = request_window.request_day
+                  AND attempts.state IN ('reserved', 'succeeded', 'failed')
+              ) AS daily_count,
+              COUNT(*) FILTER (
+                WHERE attempts.request_month = request_window.request_month
+                  AND attempts.state IN ('reserved', 'succeeded', 'failed')
+              ) AS monthly_count
+            FROM request_window
+            LEFT JOIN harness_chat_llm_usage_attempts attempts
+              ON attempts.provider = $2
+             AND attempts.model = $3
+             AND attempts.request_month = request_window.request_month
+            GROUP BY request_window.request_day, request_window.request_month
+          `,
+          [requestedAt, input.provider, input.model],
+        );
+        const counts = usage.rows[0];
+        const dailyCount = Number.parseInt(counts.daily_count, 10);
+        const monthlyCount = Number.parseInt(counts.monthly_count, 10);
+        const state = dailyCount >= input.dailyRequestLimit || monthlyCount >= input.monthlyRequestLimit
+          ? "blocked"
+          : "reserved";
+        const safeFailureReason = dailyCount >= input.dailyRequestLimit
+          ? "daily_request_limit"
+          : monthlyCount >= input.monthlyRequestLimit
+            ? "monthly_request_limit"
+            : null;
+
+        const inserted = await client.query<HarnessChatLlmUsageAttemptRecord>(
+          `
+            INSERT INTO harness_chat_llm_usage_attempts (
+              llm_usage_attempt_id,
+              conversation_id,
+              provider,
+              model,
+              state,
+              safe_failure_reason,
+              request_day,
+              request_month,
+              daily_request_limit,
+              monthly_request_limit,
+              input_chars,
+              transcript_message_count,
+              output_chars,
+              error_code,
+              created_at,
+              completed_at
+            )
+            VALUES (
+              $1,
+              $2,
+              $3,
+              $4,
+              $5,
+              $6,
+              $7,
+              $8,
+              $9,
+              $10,
+              $11,
+              $12,
+              NULL,
+              NULL,
+              $13::timestamptz,
+              CASE WHEN $5 = 'blocked' THEN $13::timestamptz ELSE NULL END
+            )
+            RETURNING *
+          `,
+          [
+            input.llmUsageAttemptId,
+            input.conversationId,
+            input.provider,
+            input.model,
+            state,
+            safeFailureReason,
+            counts.request_day,
+            counts.request_month,
+            input.dailyRequestLimit,
+            input.monthlyRequestLimit,
+            input.inputChars,
+            input.transcriptMessageCount,
+            requestedAt,
+          ],
+        );
+        await client.query("COMMIT");
+        return toLlmUsageAttemptData(inserted.rows[0]);
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+    },
+
+    async completeLlmUsageAttempt(input: CompleteHarnessChatLlmUsageAttemptInput) {
+      const result = await dbPool.query<HarnessChatLlmUsageAttemptRecord>(
+        `
+          UPDATE harness_chat_llm_usage_attempts
+          SET state = $2,
+              safe_failure_reason = $3,
+              output_chars = $4,
+              error_code = $5,
+              completed_at = $6
+          WHERE llm_usage_attempt_id = $1
+            AND state = 'reserved'
+          RETURNING *
+        `,
+        [
+          input.llmUsageAttemptId,
+          input.state,
+          input.safeFailureReason ?? null,
+          input.outputChars ?? null,
+          input.errorCode ?? null,
+          input.completedAt ?? new Date(),
+        ],
+      );
+      return toLlmUsageAttemptData(result.rows[0]);
+    },
+
+    async listLlmUsageAttempts(conversationId: string) {
+      const result = await dbPool.query<HarnessChatLlmUsageAttemptRecord>(
+        `
+          SELECT *
+          FROM harness_chat_llm_usage_attempts
+          WHERE conversation_id = $1
+          ORDER BY created_at ASC
+        `,
+        [conversationId],
+      );
+      return result.rows.map(toLlmUsageAttemptData);
     },
   };
 }

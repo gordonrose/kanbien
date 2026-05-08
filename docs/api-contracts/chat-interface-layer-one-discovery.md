@@ -369,7 +369,10 @@ does not grant authority.
   `OPENAI_MAX_OUTPUT_TOKENS`, `OPENAI_MAX_INPUT_CHARS`, and
   `OPENAI_MAX_TRANSCRIPT_MESSAGES`. When local guardrails block a call, the
   chat service preserves the user message and stores the safe deterministic
-  fallback assistant turn instead of retrying externally.
+  fallback assistant turn instead of retrying externally. Provider-backed
+  attempts are durably recorded in `harness_chat_llm_usage_attempts` as
+  `reserved`, `succeeded`, `failed`, or `blocked` so daily and monthly local
+  request limits survive server restarts.
 
 ## Route: List Packet Revisions For Conversation
 

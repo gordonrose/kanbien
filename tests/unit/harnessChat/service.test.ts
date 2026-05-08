@@ -3,13 +3,16 @@ import { createHarnessChatService } from "../../../src/features/harnessChat/doma
 import type { HarnessChatRepository } from "../../../src/features/harnessChat/persistence/repository";
 import type {
   AppendHarnessChatMessageInput,
+  CompleteHarnessChatLlmUsageAttemptInput,
   CreateHarnessChatConversationInput,
   CreateHarnessChatPacketRevisionInput,
   HarnessChatConversationData,
+  HarnessChatLlmUsageAttemptData,
   HarnessChatMessageData,
   HarnessChatPacketRevisionData,
   HarnessChatPdfAttemptData,
   RecordHarnessChatPdfAttemptInput,
+  ReserveHarnessChatLlmUsageAttemptInput,
 } from "../../../src/features/harnessChat/persistence/types";
 import type { ProductDiscoveryConversationAdapter } from "../../../src/lib/productDiscovery/conversationAdapter";
 
@@ -22,6 +25,7 @@ function createRepository(): HarnessChatRepository {
   const messages = new Map<string, HarnessChatMessageData[]>();
   const packetRevisions = new Map<string, HarnessChatPacketRevisionData[]>();
   const pdfAttempts = new Map<string, HarnessChatPdfAttemptData[]>();
+  const llmUsageAttempts = new Map<string, HarnessChatLlmUsageAttemptData[]>();
 
   return {
     async createConversation(input: CreateHarnessChatConversationInput) {
@@ -127,6 +131,66 @@ function createRepository(): HarnessChatRepository {
     async listPdfAttempts(packetRevisionId: string) {
       return pdfAttempts.get(packetRevisionId) ?? [];
     },
+    async reserveLlmUsageAttempt(input: ReserveHarnessChatLlmUsageAttemptInput) {
+      const attempts = [...llmUsageAttempts.values()].flat();
+      const providerModelAttempts = attempts.filter((attempt) =>
+        attempt.provider === input.provider &&
+        attempt.model === input.model &&
+        ["reserved", "succeeded", "failed"].includes(attempt.state),
+      );
+      const dayCount = providerModelAttempts.filter((attempt) =>
+        attempt.requestDay.toISOString().slice(0, 10) === NOW.toISOString().slice(0, 10),
+      ).length;
+      const monthCount = providerModelAttempts.filter((attempt) =>
+        attempt.requestMonth.toISOString().slice(0, 7) === NOW.toISOString().slice(0, 7),
+      ).length;
+      const state = dayCount >= input.dailyRequestLimit || monthCount >= input.monthlyRequestLimit
+        ? "blocked"
+        : "reserved";
+      const attempt: HarnessChatLlmUsageAttemptData = {
+        llmUsageAttemptId: input.llmUsageAttemptId,
+        conversationId: input.conversationId,
+        provider: input.provider,
+        model: input.model,
+        state,
+        safeFailureReason: dayCount >= input.dailyRequestLimit
+          ? "daily_request_limit"
+          : monthCount >= input.monthlyRequestLimit
+            ? "monthly_request_limit"
+            : null,
+        requestDay: new Date("2026-05-08T00:00:00.000Z"),
+        requestMonth: new Date("2026-05-01T00:00:00.000Z"),
+        dailyRequestLimit: input.dailyRequestLimit,
+        monthlyRequestLimit: input.monthlyRequestLimit,
+        inputChars: input.inputChars,
+        transcriptMessageCount: input.transcriptMessageCount,
+        outputChars: null,
+        errorCode: null,
+        createdAt: NOW,
+        completedAt: state === "blocked" ? NOW : null,
+      };
+      const conversationAttempts = llmUsageAttempts.get(input.conversationId) ?? [];
+      conversationAttempts.push(attempt);
+      llmUsageAttempts.set(input.conversationId, conversationAttempts);
+      return attempt;
+    },
+    async completeLlmUsageAttempt(input: CompleteHarnessChatLlmUsageAttemptInput) {
+      for (const attempts of llmUsageAttempts.values()) {
+        const attempt = attempts.find((item) => item.llmUsageAttemptId === input.llmUsageAttemptId);
+        if (attempt) {
+          attempt.state = input.state;
+          attempt.safeFailureReason = input.safeFailureReason ?? null;
+          attempt.outputChars = input.outputChars ?? null;
+          attempt.errorCode = input.errorCode ?? null;
+          attempt.completedAt = input.completedAt ?? NOW;
+          return attempt;
+        }
+      }
+      throw new Error("usage attempt not found");
+    },
+    async listLlmUsageAttempts(conversationId: string) {
+      return llmUsageAttempts.get(conversationId) ?? [];
+    },
   };
 }
 
@@ -191,5 +255,75 @@ describe("harness chat service Product Discovery conversation adapter", () => {
         source: "product-discovery-conversation-adapter-fallback",
       }),
     });
+  });
+
+  it("records durable usage attempts around adapter calls", async () => {
+    const repository = createRepository();
+    const adapter: ProductDiscoveryConversationAdapter = {
+      generateTurn: vi.fn(async () => ({
+        assistantMessage: "Who is this discovery request for?",
+        summary: "Builder wants guided discovery.",
+        nextQuestion: "Who is this for?",
+        confidencePercent: 64,
+        readyForPacket: false,
+        assumptions: [],
+        packagedTechnicalQuestions: [],
+      })),
+    };
+    const service = createHarnessChatService(repository, adapter, {
+      enabled: true,
+      provider: "openai",
+      model: "gpt-test",
+      dailyRequestLimit: 20,
+      monthlyRequestLimit: 300,
+    });
+
+    await service.createConversation({
+      rootUserId: ROOT_USER_ID,
+      initialMessage: "Help me shape a request.",
+    });
+
+    await expect(repository.listLlmUsageAttempts(CONVERSATION_ID)).resolves.toMatchObject([
+      {
+        provider: "openai",
+        model: "gpt-test",
+        state: "succeeded",
+        outputChars: expect.any(Number),
+        transcriptMessageCount: 1,
+      },
+    ]);
+  });
+
+  it("does not call the adapter when durable usage limits are reached", async () => {
+    const repository = createRepository();
+    const adapter: ProductDiscoveryConversationAdapter = {
+      generateTurn: vi.fn(async () => {
+        throw new Error("should not be called");
+      }),
+    };
+    const service = createHarnessChatService(repository, adapter, {
+      enabled: true,
+      provider: "openai",
+      model: "gpt-test",
+      dailyRequestLimit: 0 as unknown as number,
+      monthlyRequestLimit: 300,
+    });
+
+    const created = await service.createConversation({
+      rootUserId: ROOT_USER_ID,
+      initialMessage: "Help me shape a request.",
+    });
+
+    expect(adapter.generateTurn).not.toHaveBeenCalled();
+    expect(created.messages[1]).toMatchObject({
+      role: "assistant",
+      body: expect.stringContaining("local usage limit"),
+    });
+    await expect(repository.listLlmUsageAttempts(CONVERSATION_ID)).resolves.toMatchObject([
+      {
+        state: "blocked",
+        safeFailureReason: "daily_request_limit",
+      },
+    ]);
   });
 });

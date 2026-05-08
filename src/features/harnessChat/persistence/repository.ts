@@ -2,11 +2,14 @@ import type {
   AppendHarnessChatMessageInput,
   CreateHarnessChatConversationInput,
   CreateHarnessChatPacketRevisionInput,
+  CompleteHarnessChatLlmUsageAttemptInput,
   HarnessChatConversationData,
+  HarnessChatLlmUsageAttemptData,
   HarnessChatMessageData,
   HarnessChatPacketRevisionData,
   HarnessChatPdfAttemptData,
   RecordHarnessChatPdfAttemptInput,
+  ReserveHarnessChatLlmUsageAttemptInput,
 } from "./types";
 
 export interface HarnessChatRepository {
@@ -20,4 +23,7 @@ export interface HarnessChatRepository {
   listPacketRevisions(conversationId: string): Promise<HarnessChatPacketRevisionData[]>;
   recordPdfAttempt(input: RecordHarnessChatPdfAttemptInput): Promise<HarnessChatPdfAttemptData>;
   listPdfAttempts(packetRevisionId: string): Promise<HarnessChatPdfAttemptData[]>;
+  reserveLlmUsageAttempt(input: ReserveHarnessChatLlmUsageAttemptInput): Promise<HarnessChatLlmUsageAttemptData>;
+  completeLlmUsageAttempt(input: CompleteHarnessChatLlmUsageAttemptInput): Promise<HarnessChatLlmUsageAttemptData>;
+  listLlmUsageAttempts(conversationId: string): Promise<HarnessChatLlmUsageAttemptData[]>;
 }

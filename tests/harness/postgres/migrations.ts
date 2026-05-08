@@ -216,6 +216,10 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     group: "harnessChat",
     relativePath: "harnessChat/persistence/migrations/0049_seed_harness_chat_root_capabilities.sql",
   },
+  {
+    group: "harnessChat",
+    relativePath: "harnessChat/persistence/migrations/0050_create_harness_chat_llm_usage_attempts.sql",
+  },
 ];
 
 function escapeSqlLiteral(value: string): string {

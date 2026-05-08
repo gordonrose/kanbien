@@ -5,6 +5,12 @@ export type HarnessChatRetentionPosture = "indefinite";
 export type HarnessChatMessageRole = "user" | "assistant" | "system";
 export type HarnessChatPacketRevisionState = "draft" | "generated" | "pdf-ready" | "downloaded" | "superseded" | "failed";
 export type HarnessChatPdfAttemptState = "requested" | "preparing" | "succeeded" | "failed" | "denied" | "rate-limited";
+export type HarnessChatLlmUsageAttemptState = "reserved" | "succeeded" | "failed" | "blocked";
+export type HarnessChatLlmUsageSafeFailureReason =
+  | "daily_request_limit"
+  | "monthly_request_limit"
+  | "provider_error"
+  | "guardrail_error";
 
 export interface HarnessChatConversationRecord {
   conversation_id: string;
@@ -71,6 +77,25 @@ export interface HarnessChatPdfAttemptRecord {
   created_at: Date;
 }
 
+export interface HarnessChatLlmUsageAttemptRecord {
+  llm_usage_attempt_id: string;
+  conversation_id: string;
+  provider: string;
+  model: string;
+  state: HarnessChatLlmUsageAttemptState;
+  safe_failure_reason: HarnessChatLlmUsageSafeFailureReason | null;
+  request_day: Date;
+  request_month: Date;
+  daily_request_limit: number;
+  monthly_request_limit: number;
+  input_chars: number;
+  transcript_message_count: number;
+  output_chars: number | null;
+  error_code: string | null;
+  created_at: Date;
+  completed_at: Date | null;
+}
+
 export interface CreateHarnessChatConversationInput {
   conversationId: string;
   productRequestId?: string | null;
@@ -116,6 +141,27 @@ export interface RecordHarnessChatPdfAttemptInput {
   retryOfAttemptId?: string | null;
   startedAt?: Date | null;
   completedAt?: Date | null;
+}
+
+export interface ReserveHarnessChatLlmUsageAttemptInput {
+  llmUsageAttemptId: string;
+  conversationId: string;
+  provider: string;
+  model: string;
+  dailyRequestLimit: number;
+  monthlyRequestLimit: number;
+  inputChars: number;
+  transcriptMessageCount: number;
+  requestedAt?: Date;
+}
+
+export interface CompleteHarnessChatLlmUsageAttemptInput {
+  llmUsageAttemptId: string;
+  state: "succeeded" | "failed";
+  safeFailureReason?: Extract<HarnessChatLlmUsageSafeFailureReason, "provider_error" | "guardrail_error"> | null;
+  outputChars?: number | null;
+  errorCode?: string | null;
+  completedAt?: Date;
 }
 
 export interface HarnessChatConversationData {
@@ -181,4 +227,23 @@ export interface HarnessChatPdfAttemptData {
   startedAt: Date | null;
   completedAt: Date | null;
   createdAt: Date;
+}
+
+export interface HarnessChatLlmUsageAttemptData {
+  llmUsageAttemptId: string;
+  conversationId: string;
+  provider: string;
+  model: string;
+  state: HarnessChatLlmUsageAttemptState;
+  safeFailureReason: HarnessChatLlmUsageSafeFailureReason | null;
+  requestDay: Date;
+  requestMonth: Date;
+  dailyRequestLimit: number;
+  monthlyRequestLimit: number;
+  inputChars: number;
+  transcriptMessageCount: number;
+  outputChars: number | null;
+  errorCode: string | null;
+  createdAt: Date;
+  completedAt: Date | null;
 }

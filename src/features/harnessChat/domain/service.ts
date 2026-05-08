@@ -5,6 +5,7 @@ import {
 } from "../../../lib/productDiscovery/packetAdapter";
 import {
   createDefaultProductDiscoveryConversationAdapter,
+  ProductDiscoveryConversationGuardrailError,
   type ProductDiscoveryConversationAdapter,
   type ProductDiscoveryConversationTurn,
 } from "../../../lib/productDiscovery/conversationAdapter";
@@ -25,9 +26,28 @@ function conversationTitle(messages: HarnessChatMessageData[]): string {
   return firstUserMessage?.body.slice(0, 80) || "Product Discovery conversation";
 }
 
+export interface HarnessChatLlmUsageGuardrailConfig {
+  enabled: boolean;
+  provider: string;
+  model: string;
+  dailyRequestLimit: number;
+  monthlyRequestLimit: number;
+}
+
+export function createDefaultHarnessChatLlmUsageGuardrailConfig(): HarnessChatLlmUsageGuardrailConfig {
+  return {
+    enabled: Boolean(process.env.OPENAI_API_KEY?.trim()) && parseBooleanEnv(process.env.OPENAI_ENABLED, true),
+    provider: "openai",
+    model: process.env.OPENAI_MODEL?.trim() || "gpt-5.2",
+    dailyRequestLimit: parsePositiveIntegerEnv(process.env.OPENAI_DAILY_REQUEST_LIMIT) ?? 20,
+    monthlyRequestLimit: parsePositiveIntegerEnv(process.env.OPENAI_MONTHLY_REQUEST_LIMIT) ?? 300,
+  };
+}
+
 export function createHarnessChatService(
   repository: HarnessChatRepository,
   conversationAdapter: ProductDiscoveryConversationAdapter = createDefaultProductDiscoveryConversationAdapter(),
+  llmUsageGuardrailConfig: HarnessChatLlmUsageGuardrailConfig = createDefaultHarnessChatLlmUsageGuardrailConfig(),
 ) {
   function summarizeConversation(
     conversation: HarnessChatConversationData,
@@ -293,13 +313,68 @@ export function createHarnessChatService(
     conversation: HarnessChatConversationData,
     messages: HarnessChatMessageData[],
   ): Promise<ProductDiscoveryConversationTurn & { acceptedByHarness: boolean; source: string }> {
-    try {
+    const usageAttempt = llmUsageGuardrailConfig.enabled
+      ? await repository.reserveLlmUsageAttempt({
+        llmUsageAttemptId: randomUUID(),
+        conversationId: conversation.conversationId,
+        provider: llmUsageGuardrailConfig.provider,
+        model: llmUsageGuardrailConfig.model,
+        dailyRequestLimit: llmUsageGuardrailConfig.dailyRequestLimit,
+        monthlyRequestLimit: llmUsageGuardrailConfig.monthlyRequestLimit,
+        inputChars: Buffer.byteLength(JSON.stringify({
+          conversationId: conversation.conversationId,
+          surfaceContext: conversation.surfaceContext,
+          structuredDiscoveryState: conversation.structuredDiscoveryState,
+          transcript: messages.map((message) => ({
+            role: message.role,
+            body: message.body,
+            createdAt: message.createdAt.toISOString(),
+          })),
+        }), "utf8"),
+        transcriptMessageCount: messages.length,
+      })
+      : null;
+
+    if (usageAttempt?.state === "blocked") {
       return {
-        ...(await conversationAdapter.generateTurn({ conversation, messages })),
+        assistantMessage:
+          "I saved that message, but the discovery assistant is paused by the local usage limit. Your transcript is still safe, and scripted discovery can continue.",
+        summary: conversationTitle(messages),
+        nextQuestion: "What should the first successful version let the requester do?",
+        confidencePercent: 0,
+        readyForPacket: false,
+        assumptions: [],
+        packagedTechnicalQuestions: [`OpenAI usage blocked by ${usageAttempt.safeFailureReason ?? "local guardrail"}.`],
+        acceptedByHarness: false,
+        source: "product-discovery-conversation-usage-guardrail",
+      };
+    }
+
+    try {
+      const adapterTurn = await conversationAdapter.generateTurn({ conversation, messages });
+      if (usageAttempt) {
+        await repository.completeLlmUsageAttempt({
+          llmUsageAttemptId: usageAttempt.llmUsageAttemptId,
+          state: "succeeded",
+          outputChars: Buffer.byteLength(adapterTurn.assistantMessage, "utf8"),
+        });
+      }
+      return {
+        ...adapterTurn,
         acceptedByHarness: true,
         source: "product-discovery-conversation-adapter",
       };
-    } catch {
+    } catch (error) {
+      if (usageAttempt) {
+        await repository.completeLlmUsageAttempt({
+          llmUsageAttemptId: usageAttempt.llmUsageAttemptId,
+          state: "failed",
+          safeFailureReason: error instanceof ProductDiscoveryConversationGuardrailError
+            ? "guardrail_error"
+            : "provider_error",
+          errorCode: error instanceof Error ? error.name : "unknown_error",
+        });
+      }
       return {
         assistantMessage:
           "I saved that message, but the discovery assistant is temporarily unavailable. Your transcript is still safe, and you can try again shortly.",
@@ -314,4 +389,19 @@ export function createHarnessChatService(
       };
     }
   }
+}
+
+function parseBooleanEnv(value: string | undefined, fallback: boolean) {
+  if (value === undefined || value.trim() === "") {
+    return fallback;
+  }
+  return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
+}
+
+function parsePositiveIntegerEnv(value: string | undefined) {
+  if (value === undefined || value.trim() === "") {
+    return undefined;
+  }
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
 }

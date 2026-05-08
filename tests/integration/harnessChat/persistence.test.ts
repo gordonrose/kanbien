@@ -27,8 +27,40 @@ describeIfPostgres("harnessChat postgres repository", () => {
       "platformSecurity",
       "rootAuth",
       "rootRoles",
+      "assets",
       "harnessChat",
     ]);
+    await pool.query(
+      `
+        INSERT INTO root_users (
+          root_user_id,
+          email,
+          normalized_email,
+          first_name,
+          normalized_first_name,
+          last_name,
+          normalized_last_name,
+          status,
+          created_at,
+          updated_at,
+          deleted_at
+        )
+        VALUES (
+          '00000000-0000-0000-0000-000000000001',
+          'harness-chat-test-root@example.com',
+          'harness-chat-test-root@example.com',
+          'Harness',
+          'harness',
+          'Root',
+          'root',
+          'active',
+          NOW(),
+          NOW(),
+          NULL
+        )
+        ON CONFLICT (root_user_id) DO NOTHING
+      `,
+    );
   });
 
   afterAll(async () => {
@@ -196,5 +228,51 @@ describeIfPostgres("harnessChat postgres repository", () => {
     expect(conversation?.latestPacketRevisionId).toBe(second.packetRevisionId);
     expect(pdfAttempt.safeFailureReason).toBe("render_timeout");
     expect(attempts).toHaveLength(1);
+  });
+
+  it("TC-CHAT-L1-INT-003 durably reserves, completes, and blocks LLM usage attempts", async () => {
+    const repository = createPostgresHarnessChatRepository(pool);
+
+    const conversation = await repository.createConversation({
+      conversationId: "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
+      createdByRootUserId: "00000000-0000-0000-0000-000000000001",
+    });
+    const first = await repository.reserveLlmUsageAttempt({
+      llmUsageAttemptId: "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee",
+      conversationId: conversation.conversationId,
+      provider: "openai",
+      model: "gpt-test",
+      dailyRequestLimit: 1,
+      monthlyRequestLimit: 10,
+      inputChars: 120,
+      transcriptMessageCount: 1,
+      requestedAt: new Date("2026-05-08T00:00:00.000Z"),
+    });
+    const completed = await repository.completeLlmUsageAttempt({
+      llmUsageAttemptId: first.llmUsageAttemptId,
+      state: "succeeded",
+      outputChars: 64,
+      completedAt: new Date("2026-05-08T00:00:01.000Z"),
+    });
+    const blocked = await repository.reserveLlmUsageAttempt({
+      llmUsageAttemptId: "ffffffff-ffff-4fff-8fff-ffffffffffff",
+      conversationId: conversation.conversationId,
+      provider: "openai",
+      model: "gpt-test",
+      dailyRequestLimit: 1,
+      monthlyRequestLimit: 10,
+      inputChars: 140,
+      transcriptMessageCount: 2,
+      requestedAt: new Date("2026-05-08T00:00:02.000Z"),
+    });
+
+    const attempts = await repository.listLlmUsageAttempts(conversation.conversationId);
+
+    expect(first.state).toBe("reserved");
+    expect(completed.state).toBe("succeeded");
+    expect(completed.outputChars).toBe(64);
+    expect(blocked.state).toBe("blocked");
+    expect(blocked.safeFailureReason).toBe("daily_request_limit");
+    expect(attempts.map((attempt) => attempt.state)).toEqual(["succeeded", "blocked"]);
   });
 });
