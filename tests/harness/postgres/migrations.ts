@@ -19,7 +19,8 @@ type MigrationGroup =
   | "tenantAdmins"
   | "tenantAuth"
   | "tenantConfiguration"
-  | "assets";
+  | "assets"
+  | "harnessChat";
 
 interface TestMigrationFile {
   filename: string;
@@ -203,6 +204,18 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     relativePath:
       "tenantAdmins/persistence/migrations/0046_add_tenant_admin_profile_picture_asset.sql",
   },
+  {
+    group: "harnessChat",
+    relativePath: "harnessChat/persistence/migrations/0047_create_harness_chat_conversations.sql",
+  },
+  {
+    group: "harnessChat",
+    relativePath: "harnessChat/persistence/migrations/0048_create_harness_chat_packet_revisions.sql",
+  },
+  {
+    group: "harnessChat",
+    relativePath: "harnessChat/persistence/migrations/0049_seed_harness_chat_root_capabilities.sql",
+  },
 ];
 
 function escapeSqlLiteral(value: string): string {
@@ -316,6 +329,7 @@ export async function applyPostgresTestMigrations(
     "tenantAdmins",
     "tenantAuth",
     "tenantConfiguration",
+    "harnessChat",
   ],
 ): Promise<void> {
   await ensureMigrationsTable(pool);

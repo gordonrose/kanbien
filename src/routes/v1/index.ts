@@ -4,6 +4,7 @@ import { createRootRolesFeature } from "../../features/rootRoles";
 import { createRootUserFeature } from "../../features/rootUsers";
 import { createTenantsFeature } from "../../features/tenants";
 import { createNotificationDeliveryFeature } from "../../features/notificationDelivery";
+import { createHarnessChatFeature } from "../../features/harnessChat";
 import { createTenantAdminsFeature } from "../../features/tenantAdmins";
 import { createTenantAuthFeature } from "../../features/tenantAuth";
 import { createTenantConfigurationFeature } from "../../features/tenantConfiguration";
@@ -221,6 +222,16 @@ v1Router.use(
   requireRootSession,
   authenticatedGeneralRateLimit,
   createCapabilityContractCatalogFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/root-admin/harness-chat",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createHarnessChatFeature(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,

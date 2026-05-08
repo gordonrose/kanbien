@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "featureName": "harnessChat",
+  "publicSeams": [
+    {
+      "seamId": "postgres-repository-factory",
+      "symbol": "createPostgresHarnessChatRepository",
+      "path": "index.ts",
+      "kind": "repository-factory",
+      "stability": "experimental",
+      "description": "Feature-local persistence seam for durable harness chat conversations and transcript messages."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing conversation actor, scope, lifecycle, or context persistence can affect Product Discovery packet traceability and root-admin history correctness.",
+    "Changing transcript ordering or append-only semantics can affect generated packet evidence and auditability.",
+    "Harness chat persistence stores root-user identifiers as durable actor facts; root-user table compatibility is a migration/data-dictionary concern rather than a public feature seam dependency."
+  ]
+}
