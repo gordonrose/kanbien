@@ -17,6 +17,30 @@ interface TestCaseSourceSummary {
   skippedCaseIdsByStatus: Record<string, string[]>;
 }
 
+interface CliOptions {
+  docs: string[];
+}
+
+function parseArgs(args: string[]): CliOptions {
+  const docs: string[] = [];
+
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    const next = args[index + 1];
+
+    if (arg === "--doc" && next) {
+      docs.push(next);
+      index += 1;
+      continue;
+    }
+
+    console.error(`Unknown or incomplete argument: ${arg}`);
+    process.exit(1);
+  }
+
+  return { docs };
+}
+
 function walkFiles(root: string, predicate: (path: string) => boolean, acc: string[] = []): string[] {
   for (const entry of readdirSync(root)) {
     const fullPath = join(root, entry);
@@ -39,11 +63,13 @@ function walkFiles(root: string, predicate: (path: string) => boolean, acc: stri
   return acc;
 }
 
-function readTestCaseSourceSummary(): TestCaseSourceSummary {
-  const markdownFiles = walkFiles(
-    testCaseDir,
-    (path) => path.endsWith(".md") && !path.endsWith("README.md"),
-  );
+function readTestCaseSourceSummary(options: CliOptions): TestCaseSourceSummary {
+  const markdownFiles = options.docs.length > 0
+    ? options.docs.map((path) => join(repoRoot, path))
+    : walkFiles(
+        testCaseDir,
+        (path) => path.endsWith(".md") && !path.endsWith("README.md"),
+      );
   const activeIds = new Set<string>();
   const deferredIds = new Set<string>();
   const deferredDocumentPaths: string[] = [];
@@ -98,10 +124,20 @@ function readSearchCorpus(): string {
 }
 
 function main() {
-  const sourceSummary = readTestCaseSourceSummary();
+  const options = parseArgs(process.argv.slice(2));
+  const sourceSummary = readTestCaseSourceSummary(options);
   const ids = sourceSummary.activeIds;
 
   if (ids.length === 0) {
+    if (sourceSummary.deferredDocumentPaths.length > 0) {
+      console.log(`Deferred PRD test-case docs skipped: ${sourceSummary.deferredDocumentPaths.length}`);
+      for (const path of sourceSummary.deferredDocumentPaths) {
+        console.log(`- ${path}`);
+      }
+      console.log("No active enforced `TC-*` test case IDs were found in the scoped document set.");
+      return;
+    }
+
     console.error("No active enforced `TC-*` test case IDs were found under docs/prd/test_cases.");
     process.exit(1);
   }

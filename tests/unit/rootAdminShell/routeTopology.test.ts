@@ -16,6 +16,7 @@ describe("root admin shell route topology", () => {
     expect(deriveShellPageKeyFromPathname("/root-admin/tenants")).toBe("tenants");
     expect(deriveShellPageKeyFromPathname("/root-admin/tenant-admins")).toBe("tenant-admins");
     expect(deriveShellPageKeyFromPathname("/root-admin/roles")).toBe("roles");
+    expect(deriveShellPageKeyFromPathname("/root-admin/build/backlog")).toBe("build-backlog");
 
     expect(normalizeRootAdminShellPageKey("unknown-suite")).toBeNull();
     expect(deriveShellPageKeyFromPathname("/root-admin/unknown-suite", null)).toBeNull();
@@ -31,6 +32,7 @@ describe("root admin shell route topology", () => {
     expect(deriveShellPageKeyFromRoutePath("/root-admin#tenant-admins")).toBe("tenant-admins");
     expect(deriveShellPageKeyFromRoutePath("/root-admin#roles")).toBe("roles");
     expect(deriveShellPageKeyFromRoutePath("/root-admin#root-roles")).toBe("roles");
+    expect(deriveShellPageKeyFromRoutePath("/root-admin#build-backlog")).toBe("build-backlog");
 
     expect(normalizeRootAdminShellPageKey("unsupported-alias")).toBeNull();
     expect(deriveShellPageKeyFromRoutePath("/root-admin#unsupported-alias", null)).toBeNull();
@@ -45,5 +47,6 @@ describe("root admin shell route topology", () => {
     expect(buildCanonicalRootAdminPath("tenants")).toBe("/root-admin/tenants");
     expect(buildCanonicalRootAdminPath("tenant-admins")).toBe("/root-admin/tenant-admins");
     expect(buildCanonicalRootAdminPath("web-app-hierarchy")).toBe("/root-admin/web-app-hierarchy");
+    expect(buildCanonicalRootAdminPath("build-backlog")).toBe("/root-admin/build/backlog");
   });
 });

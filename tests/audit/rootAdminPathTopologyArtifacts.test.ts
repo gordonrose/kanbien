@@ -50,4 +50,21 @@ describe("root admin path topology maintained artifacts", () => {
     expect(journeyInventory).toContain("hash aliases");
     expect(adr).toContain("hash aliases");
   });
+
+  it("TC-ROOT-PATH-COMPAT-003 requires nested root-admin routes to expose breadcrumb hierarchy as separate nodes", () => {
+    const appSource = readRepoFile("src/frontend/rootAdminShell/assets/app.mjs");
+    const metadataSource = readRepoFile("src/frontend/rootAdminShell/assets/pageMetadata.mjs");
+    const visualProof = readRepoFile("tests/visual/app/rootAdminShell/rootAdminBuildBacklog.spec.ts");
+
+    expect(appSource).toContain('"build-backlog"');
+    expect(metadataSource).toContain("breadcrumbChain");
+    expect(metadataSource).toContain('label: "Build"');
+    expect(metadataSource).toContain('label: "Backlog"');
+    expect(metadataSource).not.toMatch(/breadcrumbCurrent:\s*["'][^"']*\/[^"']*["']/);
+    expect(visualProof).toContain('#breadcrumb-page-minus-one-link');
+    expect(visualProof).toContain('toHaveText("Build")');
+    expect(visualProof).toContain('#breadcrumb-current-label');
+    expect(visualProof).toContain('toHaveText("Backlog")');
+    expect(visualProof).not.toContain('Build / Backlog');
+  });
 });

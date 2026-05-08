@@ -186,6 +186,8 @@ describe("root admin shell browser auth integration", () => {
     const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
     const frontendAppSource = readFileSync("src/frontend/rootAdminShell/assets/app.mjs", "utf8");
     const loginTemplateSource = readFileSync("src/frontend/designSystem/assets/loginTemplate.mjs", "utf8");
+    const buildBacklogPageSource = readFileSync("src/frontend/rootAdminShell/assets/buildBacklogPage.mjs", "utf8");
+    const floatingTabHeaderSource = readFileSync("src/frontend/designSystem/assets/floatingTabHeader.mjs", "utf8");
     const hierarchyPageSource = readFileSync("src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs", "utf8");
     const hierarchyWorkspaceSource = readFileSync("src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs", "utf8");
     const hierarchyTreeSource = readFileSync("src/frontend/designSystem/assets/hierarchyTree.mjs", "utf8");
@@ -205,6 +207,7 @@ describe("root admin shell browser auth integration", () => {
     expect(frontendMarkup).toContain('<section id="page-tenants" class="hidden"></section>');
     expect(frontendMarkup).toContain('<section id="page-tenant-admins" class="hidden"></section>');
     expect(frontendMarkup).toContain('<section id="page-web-app-hierarchy" class="hidden"></section>');
+    expect(frontendMarkup).toContain('<section id="page-build-backlog" class="hidden"></section>');
     expect(frontendMarkup).not.toContain('id="root-users-list-page"');
     expect(frontendMarkup).not.toContain('id="root-users-detail-panel"');
     expect(frontendMarkup).not.toContain('id="root-users-record-card-template"');
@@ -213,12 +216,18 @@ describe("root admin shell browser auth integration", () => {
     expect(frontendAppSource).toContain("/design-system/assets/pageShellController.mjs");
     expect(frontendAppSource).toContain("/design-system/assets/loginTemplate.mjs");
     expect(frontendAppSource).toContain("/design-system/assets/rootAdminDirectoryWorkspace.mjs");
+    expect(frontendAppSource).toContain("./buildBacklogPage.mjs");
     expect(frontendMarkup).toContain("data-root-admin-login-template-host");
     expect(frontendMarkup).not.toContain("/root-admin/assets/login.css");
     expect(frontendMarkup).not.toContain('class="auth-panel"');
     expect(loginTemplateSource).toContain("export function renderRootAdminLoginTemplate");
     expect(loginTemplateSource).toContain('id="login-form"');
     expect(loginTemplateSource).toContain('id="ssh-stage"');
+    expect(buildBacklogPageSource).toContain("/design-system/assets/floatingTabHeader.mjs");
+    expect(buildBacklogPageSource).toContain("renderFloatingTabHeader");
+    expect(buildBacklogPageSource).toContain("mountFloatingTabHeader");
+    expect(floatingTabHeaderSource).toContain("export function renderFloatingTabHeader");
+    expect(floatingTabHeaderSource).toContain("export function mountFloatingTabHeader");
     expect(hierarchyPageSource).toContain("/design-system/assets/webAppHierarchyWorkspace.mjs");
     expect(hierarchyWorkspaceSource).toContain("renderHierarchyTreeDrawerHost");
     expect(hierarchyWorkspaceSource).toContain("${renderHierarchyTreeDrawerHost()}");

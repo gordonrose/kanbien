@@ -30,6 +30,8 @@ type GuardResult = {
 
 const adoptionContractPath =
   "docs/workspace/design-system/adoption/governed-app-component-adoption-contract.md";
+const floatingTabHeaderAdoptionContractPath =
+  "docs/workspace/design-system/adoption/floating-tab-header-adoption-contract.md";
 
 const requiredContractPhrases = [
   "shared CSS seam",
@@ -41,15 +43,30 @@ const requiredContractPhrases = [
   "/design-system/assets/webAppHierarchyWorkspace.mjs",
   "/design-system/assets/loginTemplate.mjs",
   "/design-system/assets/pageShellController.mjs",
+  "/design-system/assets/floatingTabHeader.mjs",
+  "docs/workspace/design-system/adoption/floating-tab-header-adoption-contract.md",
+];
+
+const requiredFloatingTabHeaderContractPhrases = [
+  "renderFloatingTabHeader(...)",
+  "mountFloatingTabHeader(...)",
+  "copied `.floating-tab-card`",
+  "app-local `.floating-tab-*` CSS",
+  "tooltip controller logic",
+  "native `title` attributes are absent",
+  "/design-system/assets/floatingTabHeader.mjs?v=2026-05-08-overflow-tooltip-contract",
+  "tests/visual/app/rootAdminShell/rootAdminBuildBacklog.spec.ts",
 ];
 
 const governedSourcePaths = [
   "src/frontend/rootAdminShell/index.html",
   "src/frontend/rootAdminShell/assets/app.mjs",
+  "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
   "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
   "src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs",
   "src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs",
   "src/frontend/designSystem/assets/conversationPanel.mjs",
+  "src/frontend/designSystem/assets/floatingTabHeader.mjs",
 ];
 
 const cssOnlyRules: CssOnlyRule[] = [
@@ -162,6 +179,30 @@ const cssOnlyRules: CssOnlyRule[] = [
     ],
   },
   {
+    family: "floating tab header",
+    cssHref: "/design-system/assets/styles.css",
+    requiredTokens: [
+      {
+        path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+        token: "/design-system/assets/floatingTabHeader.mjs",
+        rationale:
+          "Floating tab header styling must be paired with the DS-owned floatingTabHeader render/controller seam.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+        token: "renderFloatingTabHeader",
+        rationale:
+          "Floating tab header markup must come from the shared design-system renderer.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+        token: "mountFloatingTabHeader",
+        rationale:
+          "Floating tab header interaction behavior must come from the shared design-system controller.",
+      },
+    ],
+  },
+  {
     family: "conversation panel",
     cssHref: "/design-system/assets/conversationPanel.css",
     requiredTokens: [
@@ -193,6 +234,36 @@ const forbiddenLocalReconstructions: ForbiddenPattern[] = [
     pattern: /\bid="root-users-list-page"/,
     rationale:
       "Root users list-page markup must render through the DS-owned directory workspace seam.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/index.html",
+    pattern: /\bfloating-tab-card\b/,
+    rationale:
+      "Root-admin must not copy floating tab header card markup into app HTML; render through floatingTabHeader instead.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/index.html",
+    pattern: /\bdata-floating-tab-seam-mount\b/,
+    rationale:
+      "Root-admin index may only expose a page mount section; floating tab seam hooks belong in the page adapter that invokes the shared renderer.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/assets/app.mjs",
+    pattern: /\bfloating-tab-card\b/,
+    rationale:
+      "Root-admin shell app must not reconstruct floating tab header markup or class names locally; render through the Build Backlog page adapter.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+    pattern: /\bfunction\s+mountFloatingTabHeader\s*\(/,
+    rationale:
+      "Build Backlog must import the shared floatingTabHeader controller instead of defining local floating tab behavior.",
+  },
+  {
+    path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+    pattern: /\baddEventListener\("click"/,
+    rationale:
+      "Floating tab click, overflow, drawer, sub-tab, and collapse behavior must stay inside the shared floatingTabHeader controller.",
   },
   {
     path: "src/frontend/rootAdminShell/index.html",
@@ -283,7 +354,12 @@ function getSource(sourceFiles: SourceFile[], path: string): string {
   return sourceFiles.find((file) => file.path === path)?.source ?? "";
 }
 
-function runGuard(sourceFiles: SourceFile[], contractSource: string, rootAdminCssFiles: string[]): GuardResult {
+function runGuard(
+  sourceFiles: SourceFile[],
+  contractSource: string,
+  floatingTabHeaderContractSource: string,
+  rootAdminCssFiles: string[],
+): GuardResult {
   const errors: string[] = [];
   const allConsumerSource = sourceFiles.map((file) => file.source).join("\n");
 
@@ -291,6 +367,14 @@ function runGuard(sourceFiles: SourceFile[], contractSource: string, rootAdminCs
     if (!contractSource.includes(phrase)) {
       errors.push(
         `${adoptionContractPath} is missing required governed adoption contract phrase: ${phrase}`,
+      );
+    }
+  }
+
+  for (const phrase of requiredFloatingTabHeaderContractPhrases) {
+    if (!floatingTabHeaderContractSource.includes(phrase)) {
+      errors.push(
+        `${floatingTabHeaderAdoptionContractPath} is missing required floating-tab adoption contract phrase: ${phrase}`,
       );
     }
   }
@@ -364,7 +448,8 @@ function runSelfTest(): GuardResult {
     },
   ];
   const contractSource = requiredContractPhrases.join("\n");
-  const result = runGuard(syntheticSources, contractSource, []);
+  const floatingTabHeaderContractSource = requiredFloatingTabHeaderContractPhrases.join("\n");
+  const result = runGuard(syntheticSources, contractSource, floatingTabHeaderContractSource, []);
   const expectedFragments = [
     "without required DS seam token /design-system/assets/rootAdminDirectoryWorkspace.mjs",
     "without required DS seam token createRootAdminDirectoryWorkspaceController",
@@ -414,6 +499,7 @@ function main() {
   const result = runGuard(
     loadRepositorySources(),
     readSource(adoptionContractPath),
+    readSource(floatingTabHeaderAdoptionContractPath),
     listRootAdminCssFiles(),
   );
 

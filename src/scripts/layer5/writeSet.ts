@@ -2,8 +2,12 @@ import { spawnSync } from "node:child_process";
 
 import type { Layer5TaskContext, WriteSetResult } from "./contract";
 
-export function checkWriteSet(context: Layer5TaskContext, mode: "report" | "enforced" = "report"): WriteSetResult {
-  return analyzeWriteSet(context.task.allowedWriteSet, collectChangedFiles(), mode);
+export function checkWriteSet(
+  context: Layer5TaskContext,
+  mode: "report" | "enforced" = "report",
+  changedFiles = collectChangedFiles(),
+): WriteSetResult {
+  return analyzeWriteSet(context.task.allowedWriteSet, changedFiles, mode);
 }
 
 export function analyzeWriteSet(

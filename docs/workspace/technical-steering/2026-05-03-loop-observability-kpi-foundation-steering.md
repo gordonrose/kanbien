@@ -2,7 +2,7 @@
 
 ## Status
 
-- Packet status: `blocked`
+- Packet status: `ready-for-story-breakdown`
 - Packet date: 2026-05-03
 - Steering ID: `TS-2026-05-03-loop-observability-kpi-foundation`
 - Source Product Discovery packet:
@@ -15,13 +15,13 @@
 
 ## Product Handoff
 
-- Product Discovery status: `discovery-only`
+- Product Discovery status: `ready-for-technical-steering`
 - Product intent preserved: yes. The architecture must support durable loop
   evidence, task/change/artifact traceability, scorecard KPIs, improvement
   records, and future API/UI/OLAP paths without turning v0 into a generic
   project management tool.
 - Product questions resolved or carried as blockers:
-  - Human refresh/signoff gate is unresolved in Product Discovery.
+  - Human refresh/signoff gate was resolved on 2026-05-08.
   - v0 tracks internal harness/Codex loops first.
   - customer/tenant visibility is out of scope.
   - durable capture and scorecard reads come before UI and OLAP.
@@ -113,6 +113,13 @@
 | TSIG-QA-RUNTIME | Does the change require runtime/browser/live-data/mock-honesty evidence or change QA release-gate posture? | yes | Scorecards and traceability must be proven by persistence-backed tests and helper/API tests. | feature-public-seam | EVIDENCE:qa-evidence | Browser runtime evidence not needed until UI. |
 | TSIG-DOCS-ARTIFACT | Does the change alter source-independent docs, maintained artifacts, standards snapshots, reconstruction docs, bootstrap docs, or template/skill contracts? | yes | PRD, ADR, API contracts, data dictionary, standards/harness docs. | feature-local | DOC:docs-artifact | Artifact sweep required before implementation completion. |
 
+## Architecture Decision Analysis
+
+| Decision ID | Concern Area | Architecture Question | Analysis Status | Options Considered | Industry / Best-Practice Baseline | Local Repo Constraints | Trade-Offs | Risk Review | Cost / Delivery Impact | Security / Privacy / Compliance Impact | Operability Impact | Migration / Compatibility Impact | Testability / Evidence Impact | Reversibility | Recommended Option | Rejected Alternatives | Decision Owner / Signoff | Durable Authority Target |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| ADA-LOOP-001 | Evidence ownership | Should loop evidence live in a feature-owned domain or in harness-local files/scripts? | approved | Feature-owned `loopObservability`; harness-local files; direct SQL from helpers. | Durable operational evidence should have a clear owning domain, lifecycle, validation, and stable read seams. | Repo feature architecture requires durable behavior to live in feature bundles with manifests, contracts, persistence, and public seams. | Feature ownership adds planning and migration work, but prevents harness scripts from becoming ungoverned truth. | Harness-local evidence would be hard to validate, query, secure, replay, or export honestly. | Higher v0 setup cost; lower cost for future scorecards, APIs, traceability, and OLAP. | Root/internal evidence may include sensitive operational summaries, so feature-owned access control and redaction posture are required. | Centralized evidence supports repeatable closeout, repair, and audit workflows. | Additive new feature; no existing loop records are migrated in v0. | Persistence-backed tests can prove append-only evidence, scoring projections, and traceability. | Reversible before production adoption; persisted evidence later needs retention/export strategy. | Create `loopObservability` as the app-owned OLTP source of truth, with harness helpers consuming public seams. | Harness-local files and direct SQL rejected for drift, weak validation, and poor auditability. | Requester approved v0 scope on 2026-05-08; Technical Steering owner. | ADR, PRD, capability matrix, data dictionary, feature manifest, API contract. |
+| ADA-LOOP-002 | OLAP posture | Should OLAP be built in v0 or derived later from app-owned loop evidence? | approved | Defer OLAP export until capture/read model stabilizes; build OLAP warehouse now; dashboard-local reporting only. | Analytics stores should be derived from trusted operational records, use idempotent export, and remain replayable. | ADR 0034 already establishes a job/outbox foundation; repo guardrails require durable domain facts to remain app-owned. | Deferring OLAP delays executive dashboards but avoids building fast reports over unstable or incomplete evidence. | Building OLAP first could make analytics the accidental source of truth and create hard-to-reconcile metric drift. | Lower v0 implementation cost; planned future export story for scale and reporting. | Export payloads need redaction, root/internal visibility rules, and no customer/tenant exposure in v0. | Outbox/job export can make failed exports visible and retryable later. | Additive future projection; OLAP facts can be regenerated from source records. | Future export tests can verify idempotency, replay, source ids, schema versions, and no duplicate facts. | Highly reversible while deferred; export schema can be changed before adoption. | Keep v0 OLTP evidence and scorecard reads first; later publish derived facts through the approved job/outbox seam. | Full warehouse now and dashboard-local truth rejected for premature complexity and drift risk. | Requester approved v0 scope on 2026-05-08; Technical Steering owner. | Future OLAP export/runbook docs, implementation blueprint, job/outbox contract. |
+
 ## Steering Decisions
 
 | Decision ID | Decision | Rationale | Compatibility / Migration Strategy | Downstream Owner |
@@ -130,7 +137,6 @@
 
 | Blocker ID | Blocks | Blocker Type | Required Output | Owner |
 | --- | --- | --- | --- | --- |
-| BLK-LOOP-000 | Technical Steering promotion | product gate | Requester confirms prior context is enough to proceed or re-runs Product Discovery interview | Requester / Product Discovery owner |
 | BLK-LOOP-001 | Implementation task breakdown | architecture artifact | ADR for loop observability/evidence foundation | Architecture owner |
 | BLK-LOOP-002 | Implementation task breakdown | planning artifact | Capability matrix and implementation blueprint | Planning owner |
 | BLK-LOOP-003 | Exposed API routes | security/contract artifact | API contract docs and permission mapping | Backend/API owner |
@@ -140,11 +146,11 @@
 
 | Story Scope Element | Handoff Status | Required Classification IDs | Notes |
 | --- | --- | --- | --- |
-| ADR and PRD reconciliation | blocked | TS-LOOP-012 | Blocked until Product Discovery human refresh/signoff gate is resolved. |
-| Durable capture foundation | blocked | TS-LOOP-001 | Blocked until Product Discovery human refresh/signoff gate is resolved. |
-| Scorecard projection | blocked | TS-LOOP-003 | Blocked until Product Discovery human refresh/signoff gate is resolved. |
-| Traceability/regression linking | blocked | TS-LOOP-001, TS-LOOP-003 | Blocked until Product Discovery human refresh/signoff gate is resolved. |
-| Harness recording helper | blocked | TS-LOOP-002, TS-LOOP-004 | Blocked until Product Discovery human refresh/signoff gate is resolved. |
-| Internal/root APIs | blocked | TS-LOOP-005, TS-LOOP-006 | Blocked until Product Discovery human refresh/signoff gate is resolved. |
-| Future UI | blocked | TS-LOOP-010 | Blocked until Product Discovery human refresh/signoff gate is resolved and future UI scope is approved. |
-| Future OLAP export | blocked | TS-LOOP-011 | Blocked until Product Discovery human refresh/signoff gate is resolved and export scope is approved. |
+| ADR and PRD reconciliation | ready-for-story-breakdown | TS-LOOP-012 | Product Discovery human refresh/signoff gate is resolved; ADR remains the next required architecture artifact. |
+| Durable capture foundation | blocked | TS-LOOP-001 | Blocked until ADR, capability matrix, PRD-derived test cases, and implementation blueprint exist. |
+| Scorecard projection | blocked | TS-LOOP-003 | Blocked until durable capture foundation and scoring/rubric planning artifacts exist. |
+| Traceability/regression linking | blocked | TS-LOOP-001, TS-LOOP-003 | Blocked until durable capture foundation and scorecard projection are planned. |
+| Harness recording helper | blocked | TS-LOOP-002, TS-LOOP-004 | Blocked until feature public seam and implementation blueprint exist. |
+| Internal/root APIs | blocked | TS-LOOP-005, TS-LOOP-006 | Blocked until API contract docs and permission mapping exist. |
+| Future UI | blocked | TS-LOOP-010 | Deferred until capture/read model is stable and future UI scope plus design-system posture are approved. |
+| Future OLAP export | blocked | TS-LOOP-011 | Deferred until app-owned capture/read model stabilizes and export mechanism is selected. |

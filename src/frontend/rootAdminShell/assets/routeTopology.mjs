@@ -5,6 +5,7 @@ export const rootAdminCanonicalPaths = {
   tenants: "/root-admin/tenants",
   "tenant-admins": "/root-admin/tenant-admins",
   "web-app-hierarchy": "/root-admin/web-app-hierarchy",
+  "build-backlog": "/root-admin/build/backlog",
 };
 
 const pageAliases = {
@@ -13,6 +14,30 @@ const pageAliases = {
 };
 
 const knownPageKeys = new Set(Object.keys(rootAdminCanonicalPaths));
+
+function normalizeRootAdminPathSegments(pathname) {
+  return String(pathname ?? "")
+    .replace(/\/+$/, "")
+    .split("/")
+    .filter(Boolean);
+}
+
+function deriveNestedPageKeyFromRootAdminPath(pathname) {
+  const segments = normalizeRootAdminPathSegments(pathname);
+  if (segments[0] !== "root-admin" || segments.length < 2) {
+    return null;
+  }
+
+  for (let size = segments.length - 1; size >= 1; size -= 1) {
+    const candidate = segments.slice(1, 1 + size).join("-");
+    const normalized = normalizeRootAdminShellPageKey(candidate);
+    if (normalized) {
+      return normalized;
+    }
+  }
+
+  return null;
+}
 
 export function normalizeRootAdminShellPageKey(pageKey) {
   if (typeof pageKey !== "string" || pageKey.trim().length === 0) {
@@ -51,7 +76,12 @@ export function deriveShellPageKeyFromRoutePath(routePath, fallbackPageKey = "ov
     return fallbackPageKey;
   }
 
-  const segments = normalizedPath.split("/").filter(Boolean);
+  const nestedPageKey = deriveNestedPageKeyFromRootAdminPath(normalizedPath);
+  if (nestedPageKey) {
+    return nestedPageKey;
+  }
+
+  const segments = normalizeRootAdminPathSegments(normalizedPath);
   return normalizeRootAdminShellPageKey(segments.at(-1)) ?? fallbackPageKey;
 }
 
@@ -65,7 +95,12 @@ export function deriveShellPageKeyFromPathname(pathname, fallbackPageKey = "over
     return "overview";
   }
 
-  const segments = normalizedPath.split("/").filter(Boolean);
+  const nestedPageKey = deriveNestedPageKeyFromRootAdminPath(normalizedPath);
+  if (nestedPageKey) {
+    return nestedPageKey;
+  }
+
+  const segments = normalizeRootAdminPathSegments(normalizedPath);
   if (segments[0] !== "root-admin") {
     return fallbackPageKey;
   }

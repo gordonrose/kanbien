@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Floating Tab Header Canonical</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-floating-tab-header-surface="canonical" data-render-status="settling">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">FT</span>
+            <span class="profile-meta"><strong>Floating Tab</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonical-renderings">Canonical Renderings</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/canonical-renderings/floating-tab-header">Floating Tab Header</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Canonical Render</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search floating-tab canonical refs" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Floating tab header family navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/exploration/floating-tab-header" data-tooltip="Explore">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6h16v4H4zm0 7h5v5H4zm7 0h4v5h-4zm6 0h3v5h-3z" /></svg>
+            </span>
+            <span class="context-nav-label">Explore</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/canonical-renderings/floating-tab-header" data-tooltip="Canonicals" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v4H4zm0 6h10v3H4zm12 0h4v3h-4zM4 16h16v3H4z" /></svg>
+            </span>
+            <span class="context-nav-label">Canonicals</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main canonical-render-page">
+        <div class="canonical-render-layout" id="floating-tab-canonical-layout">
+          <section class="canonical-render-intro">
+            <h1>Floating Tab Header</h1>
+            <p class="canonical-launcher-copy">
+              This route is the dedicated canonical render surface for `Floating Tab Header`. Use the
+              <a href="/design-system/canonical-renderings/floating-tab-header">canonical launcher</a> for ref selection and keep this
+              page for focused review of one state at a time.
+            </p>
+            <dl class="canonical-render-meta" aria-label="Canonical metadata">
+              <div class="canonical-render-meta-row">
+                <dt>Matched canonical</dt>
+                <dd id="floating-tab-canonical-match-list">Resolving canonical reference...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewing circumstances</dt>
+                <dd id="floating-tab-canonical-circumstances">Loading width, direction, and magnification...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>State</dt>
+                <dd id="floating-tab-meta-state">Loading tab state...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Viewport contract</dt>
+                <dd id="floating-tab-meta-viewport">Loading viewport contract...</dd>
+              </div>
+              <div class="canonical-render-meta-row">
+                <dt>Review note</dt>
+                <dd id="floating-tab-meta-notes">Loading review note...</dd>
+              </div>
+            </dl>
+            <div class="canonical-render-footer">
+              <nav class="canonical-stepper" aria-label="Canonical navigation">
+                <span id="floating-tab-canonical-current" class="canonical-stepper-current">Resolving current canonical...</span>
+                <a id="floating-tab-canonical-prev" class="canonical-stepper-link" href="#" aria-disabled="true">Previous</a>
+                <a id="floating-tab-canonical-next" class="canonical-stepper-link" href="#" aria-disabled="true">Next</a>
+              </nav>
+            </div>
+          </section>
+
+          <section class="top-nav-preview-stage-section" aria-labelledby="floating-tab-stage-title">
+            <div class="top-nav-preview-stage-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Canonical Surface</p>
+                <h2 id="floating-tab-stage-title">Floating Tab Header Canonical State</h2>
+              </div>
+              <p id="floating-tab-readout" class="top-nav-preview-stage-note">
+                Canonical state loading from the URL.
+              </p>
+            </div>
+
+            <div id="floating-tab-preview-frame" class="floating-tab-browser-frame canonical-render-frame" data-render-status="settling">
+              <div id="floating-tab-preview-shell" class="floating-tab-project-shell">
+                <header class="floating-tab-project-heading">
+                  <div>
+                    <p class="floating-tab-project-kicker">Renewal workspace</p>
+                    <h3>Customer onboarding board</h3>
+                  </div>
+                  <button class="accessibility-chip floating-tab-primary-action" type="button">New item</button>
+                </header>
+                <div id="floating-tab-workspace" class="floating-tab-workspace" data-floating-tab-layout="horizontal" data-floating-tab-seam-mount="true"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/floatingTabHeaderCanonical.mjs"></script>
+  </body>
+</html>

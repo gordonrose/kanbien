@@ -226,12 +226,12 @@ export const rootAdminShellDiscoveryProvider: WebAppSurfaceDiscoveryProvider = {
         routePath:
           state.pageKey === "overview"
             ? "/root-admin"
-            : normalizeCanonicalLocator(`/root-admin/${state.pageKey}`),
+            : normalizeCanonicalLocator(state.routePath ?? `/root-admin/${state.pageKey}`),
         routeHash: null,
         canonicalLocator:
           state.pageKey === "overview"
             ? "/root-admin"
-            : normalizeCanonicalLocator(`/root-admin/${state.pageKey}`),
+            : normalizeCanonicalLocator(state.routePath ?? `/root-admin/${state.pageKey}`),
         displayLabel: state.displayLabel,
         userFacingDisposition: "user-facing" as const,
         providerKey: "root-admin-shell",

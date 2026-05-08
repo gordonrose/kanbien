@@ -2,7 +2,7 @@
 
 ## Status
 
-- Discovery status: `discovery-only`
+- Discovery status: `ready-for-technical-steering`
 - Draft posture: `governed-discovery`
 - Original request: "we've been working around this idea of 98% chance there
   is no rework required upon the completion of a loop. I would like to give my
@@ -21,7 +21,7 @@
 
 ## Human-In-The-Loop Gate
 
-- Gate status: `required-before-promotion`
+- Gate status: `resolved`
 - Why this gate exists: This packet was assembled from prior conversation and
   the draft PRD proposal before the requester was given the required Product
   Discovery refresh/signoff choice.
@@ -42,8 +42,12 @@
   harness/Codex loops first, with broader human-driven delivery loops deferred,
   or would you like to walk through that scope again before we promote this
   packet?"
-- Requester response: `pending`
-- Promotion allowed before requester response: `no`
+- Requester response: approved on 2026-05-08. The requester accepted the
+  recommendation to scope v0 to internal harness/Codex loop evidence and
+  scorecards first, with broader human-driven work loops, UI dashboards, and
+  full OLAP export deferred until the durable capture and scorecard model is
+  stable.
+- Promotion allowed before requester response: `not-applicable-resolved`
 
 ## Discovery Interview Summary
 
@@ -53,8 +57,8 @@
   maintenance, and improvement evidence so the no-rework confidence claim is
   measurable.
 - Interview cadence: `exception-approved`
-- If interview cadence exception was approved, why: not yet approved. This
-  packet must pass the Human-In-The-Loop Gate before it can be promoted.
+- If interview cadence exception was approved, why: approved on 2026-05-08
+  when the requester accepted the prior-context summary and v0 scope cut.
 - Coverage areas tracked internally:
   - product intent: make loop completion measurable, traceable, auditable, and
     improvable.
@@ -125,13 +129,14 @@
 - First one question asked before drafting: "Should v0 track only
   Codex/harness-driven repo loops, or should it also be designed from day one
   to track human-driven tasks and future app/product delivery loops?"
-- Requester answered, corrected, or explicitly deferred first question: `no`.
-  The assistant inferred this from prior context; that inference must be
-  replaced with explicit requester confirmation before promotion.
+- Requester answered, corrected, or explicitly deferred first question: `yes`.
+  The requester approved the recommendation to use internal harness/Codex
+  loops as the v0 scope before broader human-driven loop adoption.
 - Known important product questions left unasked: none for v0.
 - For each unasked business question, requester signoff for "deferred until
-  later": pending. Broader human-driven loop adoption is only a recommended
-  v0 scope cut until the requester confirms it.
+  later": approved for v0 on 2026-05-08. Broader human-driven loop adoption,
+  UI dashboards, and full OLAP export remain deferred until durable capture
+  and scorecard reads are stable.
 - Technical questions not asked of business owner and packaged for technical
   stakeholder: feature boundary, schema, route contracts, retention, actor
   model, redaction policy, OLAP export mechanics, and scoring rubric mechanics.
@@ -588,8 +593,8 @@ Examples involve:
   - Commit trailer policy.
   - OLAP export mechanism.
   - ADR requirement.
-- Packet confidence for handoff: 90% until human refresh/signoff gate is
-  resolved.
+- Packet confidence for handoff: 95% after requester signoff resolved the
+  human refresh/signoff gate.
 - Scope cuts made to reach confidence:
   - v0 internal harness/Codex loops only.
   - UI and OLAP deferred until capture/read model exists.
@@ -607,7 +612,8 @@ Examples involve:
   - async/job: later for OLAP export
   - external provider: git/GitHub/CI and future OLAP
   - privacy/compliance: yes
-- Recommended next artifact: resolve the Human-In-The-Loop Gate, then promote
-  or revise this packet before Technical Steering.
-- Stop condition triggered: human refresh/signoff required before Product
-  Discovery promotion.
+- Recommended next artifact: proceed with Technical Steering promotion,
+  then ADR, PRD reconciliation, capability matrix, PRD-derived test cases, and
+  implementation blueprint before implementation.
+- Stop condition triggered: none for Product Discovery promotion. Downstream
+  architecture and planning blockers still apply.

@@ -29,17 +29,17 @@
 ## Handoff Validation
 
 - Product Discovery status:
-  discovery-only
+  ready-for-technical-steering
 - Technical Steering status:
-  blocked
+  ready-for-layer-3-planning
 - Steering non-goals preserved:
   no customer-facing loop evidence, no tenant-facing visibility, no generic
   project management behavior, no automatic root-cause proof, no UI in v0, no
   OLAP implementation before durable capture and read models exist.
 - Steering stop conditions resolved or carried as blockers:
-  Product Discovery human refresh/signoff gate is unresolved. ADR, PRD
-  reconciliation, capability matrix, PRD-derived test cases, and
-  implementation blueprint remain blocking control stories after the human
+  Product Discovery human refresh/signoff gate was resolved on 2026-05-08.
+  ADR, PRD reconciliation, capability matrix, PRD-derived test cases, and
+  implementation blueprint remain blocking control stories after that human
   gate is resolved. API contracts, data dictionary, permission mapping, feature
   manifest, and dependency graph updates are delivery-time blockers for
   exposed routes and source changes.
@@ -379,7 +379,6 @@ A reviewer can read this story by itself, see what should be true afterward, and
 
 | Blocker ID | Blocks Story | Blocker Type | Reason | Required Output | Stop Condition |
 | --- | --- | --- | --- | --- | --- |
-| BLK-SB-000 | S-001 through S-012 | artifact-drift | Product Discovery human refresh/signoff gate is unresolved. | Requester response and Product Discovery packet promotion or revision | Do not mark downstream stories ready before human gate is resolved. |
 | BLK-SB-001 | S-003 through S-010 | DECISION:architecture-foundation | Technical Steering requires an ADR before implementation blueprint signoff. | ADR for loop observability evidence foundation | Do not mark implementation stories ready before ADR exists. |
 | BLK-SB-002 | S-005 through S-010 | capability-matrix | Capability rows do not exist yet. | Capability matrix for loop observability v0 | Do not cut delivery tasks before matrix exists. |
 | BLK-SB-003 | S-004 through S-010 | test-harness | PRD-derived test cases do not exist yet. | Test-case packet for loop observability v0 | Do not cut delivery tasks before TC obligations are planned. |

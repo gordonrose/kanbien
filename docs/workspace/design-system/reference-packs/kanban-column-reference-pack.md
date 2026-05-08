@@ -36,6 +36,16 @@ This pack inherits the approved rules from:
 - `KCBL-001` through `KCBL-014` in
   `docs/workspace/design-system/behavior-locks/kanban-column-behavior-lock.md`
 
+## Quality Gate Profile
+
+- Complexity: `standard`
+- Minimum reference states required by harness: `12`
+- Required posture: every behavior lock ID must map to at least one
+  deterministic reference state, and every production-relevant design dimension
+  must be covered or explicitly marked not applicable.
+- Harness:
+  `tests/audit/designSystem/artifactQualityGate.test.ts`
+
 ## Current Surface Truth
 
 - the board renders visible columns as a horizontal lane set on desktop and
@@ -56,6 +66,42 @@ This pack inherits the approved rules from:
 - drawer-only visibility management, hidden-column preservation, archive
   education, restore outcomes, non-drag move outcomes, RTL, magnification, and
   accent/long-copy strain each have dedicated canonical states
+
+## Required Dimensions
+
+| Dimension | Coverage posture | Reference states |
+| --- | --- | --- |
+| responsive | Covered across desktop and mobile horizontal board scrolling. | `KCR-001`, `KCR-009` |
+| theme | Covered for normal and dark readability. | `KCR-001`, `KCR-007` |
+| direction | Covered through RTL board review. | `KCR-015` |
+| magnification | Covered through magnified board review. | `KCR-016` |
+| density | Covered through dense cards and long-copy strain. | `KCR-008`, `KCR-017` |
+| overflow | Covered for horizontal mobile lanes, hidden-column preservation, and drawer archive overflow. | `KCR-005`, `KCR-009`, `KCR-011` |
+| interaction | Covered for create, draft, archive, drag/drop, restore, and non-drag movement. | `KCR-002`, `KCR-003`, `KCR-004`, `KCR-005`, `KCR-006`, `KCR-013`, `KCR-014` |
+| accessibility | Covered by drawer-select reuse, non-drag movement, visible counts, and recovery states. | `KCR-010`, `KCR-014`, `KCR-013` |
+| keyboard | Covered through non-drag movement controls and inline draft controls. | `KCR-003`, `KCR-004`, `KCR-014` |
+| focus | Covered through inline draft column and card focus states. | `KCR-003`, `KCR-004` |
+| attention | Covered through archive education and drag/drop landing marker states. | `KCR-006`, `KCR-012` |
+| disabled | Covered by boundary-sensitive non-drag controls and drawer visibility management. | `KCR-010`, `KCR-014` |
+
+## Behavior Coverage Matrix
+
+| Behavior ID | Covered by reference states | Verification expectation |
+| --- | --- | --- |
+| `KCBL-001` | `KCR-001`, `KCR-009` | Board lanes remain horizontal on desktop and mobile. |
+| `KCBL-002` | `KCR-001`, `KCR-010` | Visible-column management continues to use the drawer-select seam. |
+| `KCBL-003` | `KCR-002` | Add-column mode exposes explicit insertion rails with centered plus controls. |
+| `KCBL-004` | `KCR-003` | Insertion creates a draft column in the selected position and focuses the name field. |
+| `KCBL-005` | `KCR-004` | Each visible column keeps the subtle bottom add-card affordance. |
+| `KCBL-006` | `KCR-004` | Adding a card creates an inline draft card and focuses its title field. |
+| `KCBL-007` | `KCR-005`, `KCR-013` | Removing a column archives it and keeps it restorable. |
+| `KCBL-008` | `KCR-005`, `KCR-010` | Archived columns remain separated below the active drawer catalog. |
+| `KCBL-009` | `KCR-012` | First archive action shows the explanatory callout and dismissal affordance. |
+| `KCBL-010` | `KCR-006` | Desktop drag/drop keeps source state, drag image, and landing marker visible. |
+| `KCBL-011` | `KCR-009`, `KCR-014` | Card movement remains available through non-drag move controls. |
+| `KCBL-012` | `KCR-011`, `KCR-013` | Hidden and archived columns preserve cards until visible or restored. |
+| `KCBL-013` | `KCR-007` | Count badges remain readable in dark and strained states. |
+| `KCBL-014` | `KCR-007`, `KCR-008`, `KCR-015`, `KCR-016`, `KCR-017` | Display settings strain remains available for theme, direction, magnification, density, and long copy. |
 
 ## Required Reference States
 

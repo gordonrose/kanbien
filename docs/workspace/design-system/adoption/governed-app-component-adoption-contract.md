@@ -96,6 +96,11 @@ behavior, or page-local controller logic into the app.
   `/design-system/assets/kanbanColumnSeam.mjs`
   exports board/card/drawer render helpers and
   `createKanbanColumnController(...)`; no real app consumer is approved yet
+- `floating-tab-header`
+  `/design-system/assets/floatingTabHeader.mjs`
+  exports `renderFloatingTabHeader(...)` and `mountFloatingTabHeader(...)`
+  with reusable app adoption rules in
+  `docs/workspace/design-system/adoption/floating-tab-header-adoption-contract.md`
 
 ### Current Duplication In App Consumers
 

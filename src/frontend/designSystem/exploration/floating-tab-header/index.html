@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Floating Tab Header Exploration</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-floating-tab-header-preview="true">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">FT</span>
+            <span class="profile-meta"><strong>Preview</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Floating Tab Header</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search floating tab header notes" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Floating tab header pattern navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/exploration/floating-tab-header" data-tooltip="Preview" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 6h16v4H4zm0 7h5v5H4zm7 0h4v5h-4zm6 0h3v5h-3z" /></svg>
+            </span>
+            <span class="context-nav-label">Preview</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/patterns" data-tooltip="Patterns">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 3.5a3.5 3.5 0 1 0 7 0 3.5 3.5 0 0 0-7 0z" /></svg>
+            </span>
+            <span class="context-nav-label">Patterns</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group">
+          <button
+            id="accessibility-button"
+            class="context-nav-item context-nav-item-button"
+            type="button"
+            data-tooltip="Display Settings"
+            aria-expanded="false"
+            aria-controls="accessibility-drawer"
+          >
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4.75 5.25h14.5a1.5 1.5 0 0 1 1.5 1.5v8.5a1.5 1.5 0 0 1-1.5 1.5H13.5l.9 2h2.35a.75.75 0 0 1 0 1.5H7.25a.75.75 0 0 1 0-1.5H9.6l.9-2H4.75a1.5 1.5 0 0 1-1.5-1.5v-8.5a1.5 1.5 0 0 1 1.5-1.5zm0 1.5v8.5h14.5v-8.5zm7.25 2a2.5 2.5 0 1 1-2.5 2.5 2.5 2.5 0 0 1 2.5-2.5z" />
+              </svg>
+            </span>
+            <span id="context-nav-access-label" class="context-nav-label">Display</span>
+          </button>
+        </div>
+      </nav>
+
+      <aside id="accessibility-drawer" class="side-panel accessibility-drawer hidden" aria-labelledby="accessibility-title" aria-hidden="true">
+        <div class="side-panel-header accessibility-drawer-header">
+          <div>
+            <p class="drawer-eyebrow" data-display-settings-copy="eyebrow">Display</p>
+            <h2 id="accessibility-title" data-display-settings-copy="title">Display Settings</h2>
+          </div>
+          <button
+            id="accessibility-close"
+            class="icon-button"
+            type="button"
+            aria-label="Close display settings"
+            data-display-settings-aria-label="close"
+          >
+            <span class="icon-button-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M6 6 18 18M18 6 6 18" /></svg></span>
+          </button>
+        </div>
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="theme-group">Theme</p>
+          <div class="chip-row" role="group" aria-label="Theme">
+            <button class="accessibility-chip active" type="button" data-theme-option="normal" data-display-settings-copy="theme-normal">Normal</button>
+            <button class="accessibility-chip" type="button" data-theme-option="dark" data-display-settings-copy="theme-dark">Dark</button>
+            <button class="accessibility-chip" type="button" data-theme-option="desert" data-display-settings-copy="theme-desert">Desert</button>
+          </div>
+        </div>
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="magnification-group">Magnification</p>
+          <div class="chip-row chip-row-single-line" role="group" aria-label="Magnification">
+            <button class="accessibility-chip" type="button" data-magnification-option="-100">-100%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="-50">-50%</button>
+            <button class="accessibility-chip active" type="button" data-magnification-option="0">0%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="50">+50%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="100">+100%</button>
+          </div>
+        </div>
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="accent-group">Primary Colour</p>
+          <div class="color-grid" role="group" aria-label="Primary colour">
+            <button class="color-swatch active" type="button" data-accent="#635bff" aria-label="Indigo"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#635bff" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#2563eb" aria-label="Blue"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2563eb" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#0891b2" aria-label="Cyan"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0891b2" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#0f766e" aria-label="Teal"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0f766e" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#2f855a" aria-label="Green"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2f855a" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#65a30d" aria-label="Lime"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#65a30d" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#ca8a04" aria-label="Gold"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ca8a04" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#ea580c" aria-label="Orange"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#ea580c" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#dc2626" aria-label="Red"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#dc2626" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#e11d48" aria-label="Rose"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#e11d48" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#c026d3" aria-label="Fuchsia"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#c026d3" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#7c3aed" aria-label="Violet"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#7c3aed" /></svg></button>
+          </div>
+        </div>
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="direction-group">Direction</p>
+          <div class="chip-row" role="group" aria-label="Direction">
+            <button class="accessibility-chip active" type="button" data-direction-option="ltr" data-display-settings-copy="direction-ltr">Left to right</button>
+            <button class="accessibility-chip" type="button" data-direction-option="rtl" data-display-settings-copy="direction-rtl">Right to left</button>
+          </div>
+        </div>
+        <div class="accessibility-group">
+          <p class="accessibility-label">Preview Variants</p>
+          <div class="floating-tab-drawer-control-stack">
+            <div>
+              <p class="floating-tab-drawer-control-label">Expandable</p>
+              <div class="chip-row" role="group" aria-label="Expandable floating tab header">
+                <button class="accessibility-chip active" type="button" data-floating-tab-expandable="off">Off</button>
+                <button class="accessibility-chip" type="button" data-floating-tab-expandable="on">On</button>
+              </div>
+            </div>
+            <div>
+              <p class="floating-tab-drawer-control-label">Category Switch</p>
+              <div class="chip-row" role="group" aria-label="Floating tab category switch">
+                <button class="accessibility-chip" type="button" data-floating-tab-category-switch="off">Off</button>
+                <button class="accessibility-chip active" type="button" data-floating-tab-category-switch="on">On</button>
+              </div>
+            </div>
+            <div>
+              <p class="floating-tab-drawer-control-label">Header State</p>
+              <div class="chip-row" role="group" aria-label="Floating tab header state">
+                <button class="accessibility-chip active" type="button" data-floating-tab-collapse-state="expanded">Expanded</button>
+                <button class="accessibility-chip" type="button" data-floating-tab-collapse-state="collapsed">Collapsed</button>
+              </div>
+            </div>
+            <div>
+              <p class="floating-tab-drawer-control-label">Sub-tabs</p>
+              <div class="chip-row" role="group" aria-label="Floating tab header sub-tabs">
+                <button class="accessibility-chip active" type="button" data-floating-tab-sub-tabs="off">Off</button>
+                <button class="accessibility-chip" type="button" data-floating-tab-sub-tabs="on">On</button>
+              </div>
+            </div>
+            <div>
+              <p class="floating-tab-drawer-control-label">Attention State</p>
+              <div class="chip-row" role="group" aria-label="Floating tab header attention state">
+                <button class="accessibility-chip active" type="button" data-floating-tab-attention="off">Off</button>
+                <button class="accessibility-chip" type="button" data-floating-tab-attention="on">On</button>
+              </div>
+            </div>
+            <div>
+              <p class="floating-tab-drawer-control-label">Layout</p>
+              <div class="chip-row" role="group" aria-label="Floating tab header layout">
+                <button class="accessibility-chip active" type="button" data-floating-tab-layout="horizontal">Horizontal</button>
+                <button class="accessibility-chip" type="button" data-floating-tab-layout="vertical">Vertical drawer</button>
+              </div>
+            </div>
+            <div>
+              <p class="floating-tab-drawer-control-label">Row Packing</p>
+              <div class="chip-row" role="group" aria-label="Floating tab horizontal row packing">
+                <button class="accessibility-chip active" type="button" data-floating-tab-row-packing="single">Single row</button>
+                <button class="accessibility-chip" type="button" data-floating-tab-row-packing="double">Double row</button>
+              </div>
+            </div>
+            <div>
+              <p class="floating-tab-drawer-control-label">Tab Count</p>
+              <div class="chip-row" role="group" aria-label="Floating tab fixture count">
+                <button class="accessibility-chip active" type="button" data-floating-tab-count="5">5 tabs</button>
+                <button class="accessibility-chip" type="button" data-floating-tab-count="10">10 tabs</button>
+                <button class="accessibility-chip" type="button" data-floating-tab-count="12">12 tabs</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="design-system-page-main floating-tab-preview-page">
+        <section class="floating-tab-preview-intro" aria-labelledby="floating-tab-title">
+          <p class="top-nav-preview-eyebrow">Provisional Demo</p>
+          <h1 id="floating-tab-title">Floating Tab Header</h1>
+          <p class="floating-tab-preview-copy">
+            A secondary navigation header for one list or project, where each destination carries a compact counter card.
+          </p>
+        </section>
+
+        <section class="floating-tab-preview-stage" aria-labelledby="floating-tab-stage-title">
+          <div class="floating-tab-stage-toolbar">
+            <div>
+              <p class="top-nav-preview-eyebrow">Preview Surface</p>
+              <h2 id="floating-tab-stage-title">Project Pipeline</h2>
+            </div>
+            <p id="floating-tab-readout" class="floating-tab-readout">Viewing Active, 12 records</p>
+          </div>
+
+          <div class="floating-tab-browser-frame">
+            <div class="floating-tab-project-shell">
+              <header class="floating-tab-project-heading">
+                <div>
+                  <p class="floating-tab-project-kicker">Renewal workspace</p>
+                  <h3>Customer onboarding board</h3>
+                </div>
+                <button class="accessibility-chip floating-tab-primary-action" type="button">New item</button>
+              </header>
+
+              <div id="floating-tab-workspace" class="floating-tab-workspace" data-floating-tab-layout="horizontal" data-floating-tab-seam-mount="true"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/floatingTabHeaderDemo.mjs"></script>
+  </body>
+</html>

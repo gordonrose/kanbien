@@ -13,7 +13,9 @@ import {
   normalizePage,
   normalizeRootAdminShellPageKey,
 } from "./routeTopology.mjs";
+import { rootAdminPageMetadata as pageMetadata } from "./pageMetadata.mjs";
 import { signLoginChallenge } from "./helperClient.mjs";
+import { createRootAdminBuildBacklogPageController } from "./buildBacklogPage.mjs?v=2026-05-08-floating-tab-tooltip-contract";
 import { createWebAppHierarchyPageController } from "./webAppHierarchyPage.mjs";
 import {
   partitionContextNavItems,
@@ -104,50 +106,12 @@ const rootAdminTopNavPageOrder = [
   "tenants",
   "tenant-admins",
   "web-app-hierarchy",
+  "build-backlog",
 ];
 
 const rootAdminTopNavPageOrderIndex = new Map(
   rootAdminTopNavPageOrder.map((pageKey, index) => [pageKey, index]),
 );
-
-const pageMetadata = {
-  overview: {
-    title: "Overview",
-    breadcrumbCurrent: null,
-    searchPlaceholder: "Search root admin sections",
-    searchKeywords: ["overview", "home", "session", "root admin"],
-  },
-  users: {
-    title: "Users",
-    breadcrumbCurrent: "Users",
-    searchPlaceholder: "Search root users by exact email or 3+ email prefix",
-    searchKeywords: ["users", "people", "accounts", "root users", "root user"],
-  },
-  roles: {
-    title: "Roles",
-    breadcrumbCurrent: "Roles",
-    searchPlaceholder: "Search roles, permissions, or shell guidance",
-    searchKeywords: ["roles", "permissions", "root roles", "system roles"],
-  },
-  tenants: {
-    title: "Tenants",
-    breadcrumbCurrent: "Tenants",
-    searchPlaceholder: "Search tenants by name or business ID prefix",
-    searchKeywords: ["tenants", "organizations", "workspaces", "accounts"],
-  },
-  "tenant-admins": {
-    title: "Tenant Admins",
-    breadcrumbCurrent: "Tenant Admins",
-    searchPlaceholder: "Search tenant admins by email prefix",
-    searchKeywords: ["tenant admins", "tenant admin", "admins", "administrators"],
-  },
-  "web-app-hierarchy": {
-    title: "Web App Hierarchy",
-    breadcrumbCurrent: "Web App Hierarchy",
-    searchPlaceholder: "Search hierarchy routes, modules, or shell guidance",
-    searchKeywords: ["hierarchy", "web app hierarchy", "tree", "modules", "pages", "routes"],
-  },
-};
 
 const state = createInitialState();
 state.navigation.currentPage = "overview";
@@ -258,6 +222,7 @@ const pageSections = {
   tenants: document.getElementById("page-tenants"),
   "tenant-admins": document.getElementById("page-tenant-admins"),
   "web-app-hierarchy": document.getElementById("page-web-app-hierarchy"),
+  "build-backlog": document.getElementById("page-build-backlog"),
 };
 
 const shellChromeController = createPageShellChromeController({
@@ -447,6 +412,11 @@ const webAppHierarchyPageController = createWebAppHierarchyPageController({
   refreshContextNav: refreshContextNavForCurrentPage,
 });
 
+const buildBacklogPageController = createRootAdminBuildBacklogPageController({
+  root: document.getElementById("page-build-backlog"),
+  getCurrentPage: () => state.navigation.currentPage,
+});
+
 const rootAdminConversationPanelState = {
   ref: "BWP-R-002",
   messages: [
@@ -562,6 +532,9 @@ function defaultDisplayIconKeyForPage(pageKey) {
     case "web-app-hierarchy":
     case "root-admin-web-app-hierarchy":
       return "hierarchy";
+    case "build-backlog":
+    case "root-admin-build-backlog":
+      return "list";
     default:
       return "grid";
   }
@@ -1163,7 +1136,9 @@ function syncSubNavState() {
   const currentPage = state.navigation.currentPage;
   const meta = pageMetaFor(currentPage);
   const isOverview = currentPage === "overview";
-  const breadcrumbChain = isOverview
+  const breadcrumbChain = Array.isArray(meta.breadcrumbChain)
+    ? meta.breadcrumbChain
+    : isOverview
     ? [{ href: buildCanonicalRootAdminPath("overview"), label: "Root Admin" }]
     : [
         { href: buildCanonicalRootAdminPath("overview"), label: "Root Admin" },
@@ -1241,6 +1216,7 @@ function render() {
   if (flags.showShellView) {
     rootAdminDirectoryController.syncPageState();
     webAppHierarchyPageController.syncPageState();
+    buildBacklogPageController.syncPageState();
     mountRootAdminConversationPanel();
   }
 
@@ -1317,6 +1293,7 @@ async function bootstrapSession() {
       clearShellMessage();
       rootAdminDirectoryController.reset();
       webAppHierarchyPageController.reset();
+      buildBacklogPageController.reset();
       renderContextNavItems([]);
       state.phase = "login";
       render();
@@ -1401,6 +1378,7 @@ async function handleLogout() {
   clearShellMessage();
   rootAdminDirectoryController.reset();
   webAppHierarchyPageController.reset();
+  buildBacklogPageController.reset();
   setTopNavLinkCollections(buildFallbackTopNavItems());
   renderContextNavItems([]);
   render();
@@ -1451,6 +1429,7 @@ returnToLogin?.addEventListener("click", () => {
   clearShellMessage();
   rootAdminDirectoryController.reset();
   webAppHierarchyPageController.reset();
+  buildBacklogPageController.reset();
   setTopNavLinkCollections(buildFallbackTopNavItems());
   renderContextNavItems([]);
   render();

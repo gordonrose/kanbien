@@ -11,13 +11,13 @@ type LockedFile = {
 const lockedRootAdminUiFiles: LockedFile[] = [
   {
     path: "src/frontend/rootAdminShell/index.html",
-    sha256: "58d774c16eb9d136f6e85d2a362394b2c27a9210730f4ee12c97c0aecae33db5",
+    sha256: "7875f1f8710a478a4f1287853cfbe7a46bb616b74525fdcc8c05a1afb0170ced",
     rationale:
       "Authenticated root-admin shell markup remains locally hosted and may mount the signed-off conversation panel seam, but governed route families must not duplicate their workspace host markup once a shared design-system render seam exists.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "c98324145755fe0e9175865330c4e48a187eebebb0e3907e2e40964a659b3a78",
+    sha256: "85db5515b4db021f6b28cfd1f1a37c9943ee7be7932fb19c4af44b94f79c2827",
     rationale:
       "Root-admin authenticated shell behavior remains locally composed, but approved route-topology migrations may update path resolution and canonical-location syncing as long as shared design-system shell behavior does not regress back into app-local ownership.",
   },
@@ -46,6 +46,10 @@ const requiredRootAdminShellStylesheets = [
 
 const requiredRootAdminHierarchyImports = [
   "/design-system/assets/webAppHierarchyWorkspace.mjs",
+];
+
+const requiredRootAdminBuildBacklogImports = [
+  "/design-system/assets/floatingTabHeader.mjs?v=2026-05-08-overflow-tooltip-contract",
 ];
 
 const allowedRootAdminCssFiles = new Set<string>();
@@ -245,6 +249,14 @@ const forbiddenRootAdminIndexPatterns: Array<{ pattern: RegExp; rationale: strin
     pattern: /\bdata-build-work-panel(?:-[a-z0-9-]+)?\b/,
     rationale: "The governed conversation panel must render through the shared design-system conversationPanel seam instead of hardcoded Build work panel data hooks in root-admin HTML.",
   },
+  {
+    pattern: /\bfloating-tab-card\b/,
+    rationale: "The governed floating tab header must render through the shared design-system floatingTabHeader seam instead of copied tab-card markup in root-admin HTML.",
+  },
+  {
+    pattern: /\bdata-floating-tab-seam-mount\b/,
+    rationale: "Root-admin index may only expose a page mount section; floating tab seam hooks belong in the page adapter that invokes the shared renderer.",
+  },
 ];
 
 const forbiddenRootAdminConversationPanelOwnershipPatterns: Array<{ pattern: RegExp; rationale: string }> = [
@@ -267,6 +279,21 @@ const forbiddenRootAdminConversationPanelOwnershipPatterns: Array<{ pattern: Reg
   {
     pattern: /\bfunction\s+renderBuildWorkPanel\s*\(/,
     rationale: "Conversation panel markup must stay owned by the shared design-system conversationPanel renderer.",
+  },
+];
+
+const forbiddenRootAdminFloatingTabHeaderOwnershipPatterns: Array<{ pattern: RegExp; rationale: string }> = [
+  {
+    pattern: /\bfunction\s+mountFloatingTabHeader\s*\(/,
+    rationale: "Build Backlog must import the shared floatingTabHeader controller instead of defining local floating tab behavior.",
+  },
+  {
+    pattern: /\baddEventListener\("click"/,
+    rationale: "Floating tab click, overflow, drawer, sub-tab, and collapse behavior must stay owned by the shared design-system floatingTabHeader controller.",
+  },
+  {
+    pattern: /\bfloating-tab-card\b/,
+    rationale: "Root-admin must not reconstruct floating tab header card markup or class names outside the shared renderer.",
   },
 ];
 
@@ -302,11 +329,14 @@ function main() {
   const shellIndexSource = readUtf8(shellIndexSourcePath);
   const hierarchyPageSourcePath = "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs";
   const hierarchyPageSource = readUtf8(hierarchyPageSourcePath);
+  const buildBacklogPageSourcePath = "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs";
+  const buildBacklogPageSource = readUtf8(buildBacklogPageSourcePath);
   const unexpectedCssFiles = listUnexpectedRootAdminCssFiles();
 
   const missingImports = requiredRootAdminShellImports.filter((specifier) => !shellAppSource.includes(specifier));
   const missingStylesheets = requiredRootAdminShellStylesheets.filter((href) => !shellIndexSource.includes(href));
   const missingHierarchyImports = requiredRootAdminHierarchyImports.filter((specifier) => !hierarchyPageSource.includes(specifier));
+  const missingBuildBacklogImports = requiredRootAdminBuildBacklogImports.filter((specifier) => !buildBacklogPageSource.includes(specifier));
   const indexOwnershipViolations = forbiddenRootAdminIndexPatterns
     .filter((entry) => entry.pattern.test(shellIndexSource))
     .map((entry) => ({
@@ -335,17 +365,26 @@ function main() {
       rationale: entry.rationale,
       pattern: entry.pattern,
     }));
+  const floatingTabHeaderOwnershipViolations = forbiddenRootAdminFloatingTabHeaderOwnershipPatterns
+    .filter((entry) => entry.pattern.test(buildBacklogPageSource))
+    .map((entry) => ({
+      path: buildBacklogPageSourcePath,
+      rationale: entry.rationale,
+      pattern: entry.pattern,
+    }));
 
   if (
     driftedFiles.length === 0
     && missingImports.length === 0
     && missingStylesheets.length === 0
     && missingHierarchyImports.length === 0
+    && missingBuildBacklogImports.length === 0
     && unexpectedCssFiles.length === 0
     && indexOwnershipViolations.length === 0
     && localOwnershipViolations.length === 0
     && hierarchyOwnershipViolations.length === 0
     && conversationPanelOwnershipViolations.length === 0
+    && floatingTabHeaderOwnershipViolations.length === 0
   ) {
     console.log("Governed root-admin UI guard: passed.");
     console.log("");
@@ -396,6 +435,13 @@ function main() {
     }
     console.error("");
   }
+  if (missingBuildBacklogImports.length > 0) {
+    console.error("The root-admin Build Backlog page is missing required design-system imports:");
+    for (const missing of missingBuildBacklogImports) {
+      console.error(`- ${missing}`);
+    }
+    console.error("");
+  }
 
   if (unexpectedCssFiles.length > 0) {
     console.error("Root-admin assets contain forbidden local CSS files:");
@@ -441,6 +487,13 @@ function main() {
       console.error(`  matched: ${entry.pattern}`);
       console.error(`  why blocked: ${entry.rationale}`);
     }
+  }
+  if (floatingTabHeaderOwnershipViolations.length > 0) {
+    console.error("The root-admin Build Backlog page owns behavior or markup that must stay in the design system:");
+    for (const entry of floatingTabHeaderOwnershipViolations) {
+      console.error(`- ${entry.path} matches ${entry.pattern}: ${entry.rationale}`);
+    }
+    console.error("");
   }
   console.error("");
   console.error("Required follow-up:");

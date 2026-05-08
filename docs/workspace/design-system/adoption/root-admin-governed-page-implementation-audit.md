@@ -140,3 +140,22 @@
   continue page-body work through the DS workspace seam; if new form host,
   drawer host, or workspace controller logic starts appearing locally in
   `rootAdminShell`, stop and move it upstream first
+
+## `/root-admin/build/backlog`
+
+- Current implementation status:
+  first-consumer proof surface for the DS-owned floating tab header seam;
+  route is path-backed and the page body is representative UI contract data,
+  not durable backlog persistence
+- Local implementation evidence:
+  `src/frontend/rootAdminShell/index.html` keeps only the empty route mount;
+  `src/frontend/rootAdminShell/assets/buildBacklogPage.mjs` supplies page copy
+  and representative tab/category/row data
+- Design-system sourced implementation evidence:
+  `src/frontend/designSystem/assets/floatingTabHeader.mjs` owns the floating
+  tab header render structure and controller behavior, consumed by
+  `src/frontend/rootAdminShell/assets/buildBacklogPage.mjs`
+- Required remediation before more page work:
+  connect real Build backlog behavior only after a product/API contract exists;
+  keep tab header visual, ARIA, overflow, category drawer, attention, sub-tab,
+  and collapsible-content behavior in `floatingTabHeader.mjs`

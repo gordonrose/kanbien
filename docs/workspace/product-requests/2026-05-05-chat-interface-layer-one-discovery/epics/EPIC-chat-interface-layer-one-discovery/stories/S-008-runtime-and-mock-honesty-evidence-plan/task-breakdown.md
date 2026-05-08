@@ -211,7 +211,7 @@
 
 | Task ID | Proof Specificity | Focused Proof Command Or Evidence | Mock-Honesty Note |
 | --- | --- | --- | --- |
-| T-S008-01 | task-specific | npm run test:traceability; npm run test:coverage-strength; task-breakdown validation | Alignment must describe fixture source honestly and not add assertions. |
+| T-S008-01 | task-specific | npm run test:traceability -- --doc docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md; npm run test:coverage-strength; npm run task-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-008-runtime-and-mock-honesty-evidence-plan --story docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-008-runtime-and-mock-honesty-evidence-plan/story.md | Alignment must describe fixture source honestly and not add assertions. |
 | T-S008-02 | task-specific | blocked: capture API/persistence payload and mock-honesty comparison after S-005/S-006 implementation | Compare mocks/fixtures with live payload or contract shape. |
 | T-S008-03 | task-specific | blocked: capture PDF success/denial/retry/failure evidence after PDF route exists | Compare PDF fixtures with approved packet data shape. |
 | T-S008-04 | task-specific | blocked: capture served browser/design-system evidence after S-007 | Compare browser fixtures with served app and DS canonical truth. |
@@ -419,7 +419,7 @@
 
 | Task ID | Required Proof Layers | Required Test Or Proof Commands | Mock Honesty / Runtime Evidence Notes |
 | --- | --- | --- | --- |
-| T-S008-01 | source-level | npm run test:traceability; npm run test:coverage-strength; task-breakdown validation | No runtime evidence claim. |
+| T-S008-01 | source-level | npm run test:traceability -- --doc docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md; npm run test:coverage-strength; npm run task-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-008-runtime-and-mock-honesty-evidence-plan --story docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-008-runtime-and-mock-honesty-evidence-plan/story.md | No runtime evidence claim. |
 | T-S008-02 | runtime-api; mock-honesty | blocked until live payload exists | Compare fixtures/mocks to live payload or contract. |
 | T-S008-03 | runtime-api; asset-delivery | blocked until PDF route exists | Compare PDF evidence with approved packet data. |
 | T-S008-04 | rendered-browser; served-assets | blocked until app adoption exists | Compare served browser output with DS canonical truth. |

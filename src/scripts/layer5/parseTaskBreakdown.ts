@@ -3,6 +3,7 @@ import path from "node:path";
 
 import type {
   BlockerRow,
+  ContractTableRow,
   DependencyRow,
   GuardrailEvidenceRow,
   HandoffRow,
@@ -15,6 +16,39 @@ import type {
 } from "./contract";
 
 const allowedTaskStatuses = new Set(["queued-for-delivery", "blocked", "draft", "superseded"]);
+
+const contractSectionHeadings = [
+  "## Backend Implementation Approach",
+  "## Migration / Persistence Approach",
+  "## Migration / Persistence Class Contract",
+  "## Docs Artifact Contract",
+  "## Standards Compliance Contract",
+  "## Standards Update Contract",
+  "## Permission Mapping Contract",
+  "## API Contract",
+  "## Data Dictionary Contract",
+  "## Test-Only Coverage Contract",
+  "## Test Suite Alignment Contract",
+  "## Capability Permission / State Matrix",
+  "## QA Evidence Instrument Summary",
+  "## Frontend Change Class Contract",
+  "## Frontend / Design-System Sub-Standard",
+  "## Design-System Seam Contract",
+  "## Design-System Seam Class Contract",
+  "## Frontend Adoption Contract",
+  "## Frontend Security Evidence",
+  "## Frontend Permission Rendering Evidence",
+  "## Frontend Runtime Data And Mock Honesty",
+  "## Vertical Slice Coupling",
+  "## Vertical Slice Split Pressure",
+  "## Architecture Foundation Contract",
+  "## Architecture Update Contract",
+  "## Refactor-First Contract",
+  "## Platform Seam Contract",
+  "## Platform Seam Class Contract",
+  "## Tight Allowed Write Envelope",
+  "## Task-Specific Proof Plan",
+];
 
 export function loadLayer5TaskContext(taskBreakdownInput: string, taskId: string): Layer5TaskContext {
   const packetPath = resolveTaskBreakdownPath(taskBreakdownInput);
@@ -33,6 +67,7 @@ export function loadLayer5TaskContext(taskBreakdownInput: string, taskId: string
     guardrailEvidence: parseGuardrailEvidenceRows(packet).filter((row) => row.taskId === taskId),
     platformSeamContracts: parsePlatformSeamContractRows(packet).filter((row) => row.taskId === taskId),
     platformSeamClassContracts: parsePlatformSeamClassContractRows(packet).filter((row) => row.taskId === taskId),
+    contractRows: parseContractRows(packet).filter((row) => row.taskId === taskId),
     routeAwayRows: [
       ...parseStopConditionRows(packet).filter((row) => row[0] === taskId),
       ...parseForbiddenWorkRows(packet).filter((row) => row[0] === taskId),
@@ -175,6 +210,40 @@ function parsePlatformSeamClassContractRows(content: string): PlatformSeamClassC
   }));
 }
 
+function parseContractRows(content: string): ContractTableRow[] {
+  return contractSectionHeadings.flatMap((heading) => parseTableRowsWithHeaders(content, heading));
+}
+
+function parseTableRowsWithHeaders(content: string, heading: string): ContractTableRow[] {
+  const rows = section(content, heading)
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("|") && line.endsWith("|"));
+
+  const headerLine = rows.find((line) => !/^\|\s*-+/.test(line));
+  if (!headerLine) {
+    return [];
+  }
+
+  const headers = splitMarkdownTableRow(headerLine);
+  const taskIdIndex = headers.findIndex((header) => normalizeHeader(header) === "task id");
+  if (taskIdIndex === -1) {
+    return [];
+  }
+
+  return rows
+    .filter((line) => line !== headerLine)
+    .filter((line) => !/^\|\s*-+/.test(line))
+    .map((line) => splitMarkdownTableRow(line))
+    .filter((cells) => cells.length > 0)
+    .map((cells) => ({
+      section: heading.replace(/^##\s*/, ""),
+      taskId: cells[taskIdIndex] ?? "",
+      values: Object.fromEntries(headers.map((header, index) => [normalizeHeader(header), cells[index] ?? ""])),
+    }))
+    .filter((row) => row.taskId && normalizeHeader(row.taskId) !== "task id");
+}
+
 function parseBlockerRows(content: string): BlockerRow[] {
   return parseTableRows(section(content, "## Blockers And Isolation Controls")).map((cells) => ({
     blockerId: cells[0] ?? "",
@@ -226,6 +295,10 @@ function splitMarkdownTableRow(line: string): string[] {
     .slice(1, -1)
     .split("|")
     .map((cell) => cell.trim().replace(/`/g, ""));
+}
+
+function normalizeHeader(value: string): string {
+  return value.trim().replace(/`/g, "").replace(/\s+/g, " ").toLowerCase();
 }
 
 function section(content: string, heading: string): string {

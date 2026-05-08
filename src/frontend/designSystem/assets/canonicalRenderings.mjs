@@ -1,3 +1,5 @@
+import { floatingTabHeaderCanonicalStates } from "./floatingTabHeaderCanonical.mjs";
+
 async function fetchJson(url) {
   const response = await fetch(url, {
     credentials: "same-origin",
@@ -11,6 +13,26 @@ async function fetchJson(url) {
   }
 
   return response.json();
+}
+
+function buildFloatingTabHeaderLauncherPayload() {
+  return {
+    family: {
+      familyKey: "floating-tab-header",
+      displayLabel: "Floating Tab Header",
+      launcherTitle: "Floating Tab Header Canonical Renderings",
+      launcherDescription:
+        "Generated canonical launcher fallback for the floating-tab-header reference set while local persistence catches up.",
+      generatedLauncherRoutePath: "/design-system/canonical-renderings/floating-tab-header",
+      legacyLauncherRoutePath: "/design-system/components/floating-tab-header",
+    },
+    references: floatingTabHeaderCanonicalStates.map((state, index) => ({
+      referenceId: state.refId,
+      displayLabel: state.label,
+      renderRoutePath: state.route,
+      featured: index < 9 || state.refId === "FTH-R-020" || state.refId === "FTH-R-024",
+    })),
+  };
 }
 
 function escapeHtml(value) {
@@ -126,13 +148,23 @@ async function main() {
     return;
   }
 
-  const payload = await fetchJson(
-    `/v1/design-system-canonicals/public/families/${encodeURIComponent(pathInfo.familyKey)}/launcher`,
-  );
+  let payload;
+  try {
+    payload = await fetchJson(
+      `/v1/design-system-canonicals/public/families/${encodeURIComponent(pathInfo.familyKey)}/launcher`,
+    );
+  } catch (error) {
+    if (pathInfo.familyKey !== "floating-tab-header") {
+      throw error;
+    }
+    payload = buildFloatingTabHeaderLauncherPayload();
+  }
+  if (pathInfo.familyKey === "floating-tab-header" && (!Array.isArray(payload.references) || payload.references.length === 0)) {
+    payload = buildFloatingTabHeaderLauncherPayload();
+  }
   renderFamilyLauncher(payload);
 }
 
 void main().catch((error) => {
   console.error("Failed to hydrate canonical renderings launcher", error);
 });
-

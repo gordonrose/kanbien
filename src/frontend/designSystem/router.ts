@@ -46,6 +46,10 @@ export const generatedCanonicalRenderRouteRegistry = {
     htmlPath: ["components", "form-image-card.html"],
     surfaceSignature: 'id="form-image-card-preview-shell"',
   },
+  "floating-tab-header": {
+    htmlPath: ["components", "floating-tab-header.html"],
+    surfaceSignature: 'id="floating-tab-preview-frame"',
+  },
   "icon-grid": {
     htmlPath: ["components", "icon-grid.html"],
     surfaceSignature: 'id="icon-grid-preview-shell"',

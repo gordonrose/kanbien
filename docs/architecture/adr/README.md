@@ -49,3 +49,5 @@ evolves.
 - `0035-adopt-object-storage-backed-asset-foundation.md`
 - `0036-adopt-layered-platform-authorization-evaluation.md`
 - `0037-separate-tenant-operational-lifecycle-from-deletion-posture.md`
+- `0038-use-explicit-generated-canonical-route-registry-for-design-system-canonicals.md`
+- `0039-defer-persistent-artifact-registry-until-product-surface-matures.md`

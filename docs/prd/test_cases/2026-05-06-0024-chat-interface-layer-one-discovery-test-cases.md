@@ -47,8 +47,10 @@
   summary, mock-honesty note, and curated final test-run summary before the
   user-visible root-admin workflow is called complete
 - Traceability posture:
-  planned; executable tests must carry these `TC-*` IDs in names or nearby
-  comments
+  deferred until the first implementation slice creates executable tests;
+  executable tests must carry these `TC-*` IDs in names or nearby comments
+- Traceability Enforcement:
+  deferred
 - Coverage-strength posture:
   downstream implementation must run `npm run test:coverage-strength` or an
   approved scoped equivalent once executable tests exist

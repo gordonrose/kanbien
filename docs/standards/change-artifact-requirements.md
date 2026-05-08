@@ -643,6 +643,15 @@ For material frontend and design-system work, also require:
 - machine-readable frontend quality-gate state manifest for the changed surface
 - frontend gate execution evidence, or an explicit environment blocker note
 - visual verification coverage for required viewport and direction states
+- for promoted design-system families, a behavior lock and reference pack that
+  pass `tests/audit/designSystem/artifactQualityGate.test.ts`, including the
+  complexity-based reference-state minimum and explicit coverage of responsive,
+  theme, direction, magnification, density, overflow, interaction,
+  accessibility, keyboard, focus, attention, and disabled dimensions
+- for any promoted design-system family claiming `system-ready`, app
+  consumption, or a consumable seam, dedicated canonical rendering launcher and
+  render routes under `/design-system/canonical-renderings/<family>` with
+  executable proof, unless an explicit approved exception artifact exists
 
 For first-consumer governed app adoption or materially changed governed
 adoption, also require:
@@ -683,6 +692,12 @@ Treat the frontend loop as incomplete when:
 - permission-aware rendering expectations were left implicit
 - accessibility expectations were omitted for a materially changed frontend
   surface
+- a promoted design-system family lacks the structural behavior/reference
+  matrix required by `tests/audit/designSystem/artifactQualityGate.test.ts`
+- a design-system family is presented as `system-ready`, app-consumable, or
+  ready for first-consumer adoption before dedicated canonical renderings and
+  executable canonical proof exist, unless an explicit approved exception
+  artifact exists
 - the loading strategy and performance posture were not reviewed
 - telemetry implications were silently deferred even though the slice changes
   a meaningful user journey, high-risk workflow, or production-critical module

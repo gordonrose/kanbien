@@ -81,7 +81,7 @@
 
 | Task ID | Parent Story ID | Task Type | Title / Execution Scope | Allowed Write Set | Non-Goals | Dependencies | Shared Seams | Delivery Handoff Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S002-01 | S-002 | GOV:design-system | Preserve or refresh the governed work panel and conversation-panel seam contract for Build chat adoption. | src/frontend/designSystem/assets/conversationPanel.*; src/frontend/designSystem/assets/buildWorkPanel*; docs/design-system/**/build-work-panel*; tests/visual/designSystem/*build*; tests/visual/designSystem/*conversation* | root-admin app adoption, API implementation, persistence changes, permission mapping changes, PDF renderer wiring, broad shared-lib extraction | approved Technical Steering design-system seam | design-system-owned work panel and conversation-panel render/controller/accessibility/style seam | queued-for-delivery |
+| T-S002-01 | S-002 | GOV:design-system | Preserve or refresh the governed work panel and conversation-panel seam contract for Build chat adoption. | src/frontend/designSystem/assets/conversationPanel.*; src/frontend/designSystem/assets/buildWorkPanel*; docs/workspace/design-system/**/*build-work-panel*; tests/visual/designSystem/*build*; tests/visual/designSystem/*conversation*; tests/visual/designSystem/canonicals/shell/buildWorkPanel.spec.ts; tests/audit/designSystem/buildWorkPanelArtifacts.test.ts; tests/audit/designSystem/conversationPanelAdoptionGuard.test.ts | root-admin app adoption routed to DEV:frontend S-007, API implementation routed to DEV:backend S-006, persistence changes routed to DEV:migration-persistence S-005, permission mapping changes routed to DOC:permission-mapping S-006, runtime/browser evidence sweep routed to EVIDENCE:qa-evidence S-008, PDF renderer wiring, broad shared-lib extraction | approved Technical Steering design-system seam | design-system-owned work panel and conversation-panel render/controller/accessibility/style seam | queued-for-delivery |
 
 ## Task Size Guardrail
 
@@ -129,13 +129,13 @@
 
 | Task ID | Seam Posture | Seam Name / Export / Route | Owned Render Structure | Owned Behavior Controller | Owned Accessibility Semantics | Canonical / Behavior Lock / Evidence | Frontend Consumption Contract |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S002-01 | proves-existing-seam | design-system work panel / conversationPanel seam | Design-system-owned panel, chat thread, starter prompts, inactive actions, history, and PDF affordance render structure | Design-system-owned controller or documented event/state contract for panel/chat affordances | Design-system-owned roles, labels, focus, disabled/inactive actions, empty/failed/degraded state semantics | behavior lock, canonical route, visual proof, adoption artifact | S-007 must consume the shared seam and must not copy markup, controller behavior, ARIA semantics, or CSS. |
+| T-S002-01 | proves-existing-seam | `src/frontend/designSystem/assets/conversationPanel.mjs` export seam, `src/frontend/designSystem/assets/conversationPanel.css` style seam, `/design-system/patterns/build-work-panel-demo` route, `/design-system/canonical-renderings/build-work-panel/BWP-R-002` route | Design-system-owned panel, chat thread, starter prompts, inactive actions, history, and PDF affordance render structure | Design-system-owned controller or documented event/state contract for panel/chat affordances | Design-system-owned roles, labels, focus, disabled/inactive actions, empty/failed/degraded state semantics | `docs/workspace/design-system/behavior-locks/build-work-panel-behavior-lock.md`; `docs/workspace/design-system/reference-packs/build-work-panel-reference-pack.md`; `docs/workspace/design-system/patterns/build-work-panel-pattern.md`; `docs/workspace/design-system/verification/build-work-panel-verification-checklist.md`; `docs/workspace/design-system/adoption/root-admin-build-work-panel-adoption-contract.md`; `tests/visual/designSystem/canonicals/shell/buildWorkPanel.spec.ts`; `tests/audit/designSystem/buildWorkPanelArtifacts.test.ts`; `tests/audit/designSystem/conversationPanelAdoptionGuard.test.ts` | S-007 must consume the shared seam and must not copy markup, controller behavior, ARIA semantics, or CSS. Runtime/browser QA evidence is routed to EVIDENCE:qa-evidence S-008 after protected APIs exist. |
 
 ## Design-System Seam Class Contract
 
 | Task ID | Design-System Seam Class | Class-Specific Required Proof | Downstream Consumption Boundary | Forbidden App / Evidence / Standards Work |
 | --- | --- | --- | --- | --- |
-| T-S002-01 | canonical-evidence-update | Named canonical route, behavior lock, screenshot/visual command, and adoption artifact prove the existing consumable seam. | S-007 consumes DS render/controller/accessibility/style seams. | No root-admin app-page CSS, no local reconstruction, no API implementation. |
+| T-S002-01 | canonical-evidence-update | Named canonical route, behavior lock, screenshot/visual command, and adoption artifact prove the existing consumable seam. | S-007 consumes DS render/controller/accessibility/style seams. | No root-admin app-page CSS or local reconstruction; root-admin app work routes to DEV:frontend S-007, API implementation routes to DEV:backend S-006, permission work routes to DOC:permission-mapping, and runtime/browser proof routes to EVIDENCE:qa-evidence S-008. |
 
 ## Frontend Adoption Contract
 
@@ -205,13 +205,13 @@
 
 | Task ID | Envelope Class | Exact Files Or Narrow Patterns | Broad Write Rationale |
 | --- | --- | --- | --- |
-| T-S002-01 | exact-files | src/frontend/designSystem/assets/conversationPanel.*; src/frontend/designSystem/assets/buildWorkPanel*; docs/design-system/**/build-work-panel*; tests/visual/designSystem/*build*; tests/visual/designSystem/*conversation* | Narrow governed design-system seam and proof paths only. |
+| T-S002-01 | exact-files | src/frontend/designSystem/assets/conversationPanel.*; src/frontend/designSystem/assets/buildWorkPanel*; docs/workspace/design-system/**/*build-work-panel*; tests/visual/designSystem/*build*; tests/visual/designSystem/*conversation*; tests/visual/designSystem/canonicals/shell/buildWorkPanel.spec.ts; tests/audit/designSystem/buildWorkPanelArtifacts.test.ts; tests/audit/designSystem/conversationPanelAdoptionGuard.test.ts | Narrow governed design-system seam and proof paths only. |
 
 ## Task-Specific Proof Plan
 
 | Task ID | Proof Specificity | Focused Proof Command Or Evidence | Mock-Honesty Note |
 | --- | --- | --- | --- |
-| T-S002-01 | task-specific | design-system canonical visual/browser proof for work panel/conversation panel; task-breakdown validation | Canonical fixtures must not encode production-only fallback behavior. |
+| T-S002-01 | task-specific | npx playwright test tests/visual/designSystem/canonicals/shell/buildWorkPanel.spec.ts; npx vitest run tests/audit/designSystem/buildWorkPanelArtifacts.test.ts tests/audit/designSystem/conversationPanelAdoptionGuard.test.ts; npm run task-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-002-work-panel-and-chat-design-system-governance --story docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-002-work-panel-and-chat-design-system-governance/story.md | Canonical fixtures must not encode production-only fallback behavior. |
 
 ## Refactor-First Contract
 
@@ -349,12 +349,13 @@
 | Task ID | Artifact | Required Action | Owner | Blocks Delivery |
 | --- | --- | --- | --- | --- |
 | T-S002-01 | behavior lock, canonical/reference evidence, adoption artifact | prove-current | frontend-design-system-loop-maintainer | yes |
+| T-S002-01 | runtime/browser QA evidence | routed-to-follow-up | EVIDENCE:qa-evidence S-008 | no |
 
 ## Proof And Command Plan
 
 | Task ID | Proof Layer | Command / Evidence | Mock-Honesty Note |
 | --- | --- | --- | --- |
-| T-S002-01 | rendered-browser | design-system canonical visual/browser proof; npm run task-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-002-work-panel-and-chat-design-system-governance --story docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-002-work-panel-and-chat-design-system-governance/story.md | Canonical fixtures must not imply runtime fallback behavior. |
+| T-S002-01 | rendered-browser | npx playwright test tests/visual/designSystem/canonicals/shell/buildWorkPanel.spec.ts; npx vitest run tests/audit/designSystem/buildWorkPanelArtifacts.test.ts tests/audit/designSystem/conversationPanelAdoptionGuard.test.ts; npm run task-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-002-work-panel-and-chat-design-system-governance --story docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-002-work-panel-and-chat-design-system-governance/story.md | Canonical fixtures must not imply runtime fallback behavior. |
 
 ## QA Evidence Instrument Summary
 

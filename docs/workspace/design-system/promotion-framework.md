@@ -138,6 +138,14 @@ Every governed design-system loop should preserve these feedback loops:
 Do not promote an artifact to `system-ready` until all of the following are
 true:
 
+- the structural artifact quality gate passes for the family, including
+  required dimensions, behavior-to-reference mapping, deterministic
+  `/design-system` reference URLs, and the complexity-based minimum reference
+  count enforced by
+  `tests/audit/designSystem/artifactQualityGate.test.ts`
+- dedicated canonical rendering launcher and render routes exist under
+  `/design-system/canonical-renderings/<family>`, with executable proof, unless
+  an explicit approved canonical-rendering exception artifact exists
 - the visual contract is written
 - behavior lock is complete
 - signed-off reference pack exists

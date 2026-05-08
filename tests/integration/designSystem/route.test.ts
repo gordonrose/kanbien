@@ -38,9 +38,11 @@ describe("design system route", () => {
       "/design-system/components/sub-nav",
       "/design-system/components/context-nav",
       "/design-system/components/page-shell-banner",
+      "/design-system/components/floating-tab-header",
       "/design-system/exploration/top-nav",
       "/design-system/exploration/sub-nav",
       "/design-system/exploration/context-nav",
+      "/design-system/exploration/floating-tab-header",
     ];
 
     for (const route of routes) {
@@ -49,6 +51,35 @@ describe("design system route", () => {
       expect(response.status).toBe(200);
       expectShellTrio(response.text);
     }
+  });
+
+  it("serves the promoted floating tab header component surface", async () => {
+    const response = await request(createApp())
+      .get("/design-system/components/floating-tab-header?tabs=12&layout=vertical&attention=on&expandable=on&categorySwitch=on")
+      .set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("Floating Tab Header");
+    expect(response.text).toContain("id=\"floating-tab-workspace\"");
+    expect(response.text).toContain("data-floating-tab-seam-mount=\"true\"");
+    expect(response.text).not.toContain("class=\"floating-tab-card");
+    expect(response.text).toContain("Canonical Render");
+    expect(response.text).toContain("floating-tab-canonical-match-list");
+    expect(response.text).toContain("floating-tab-preview-frame");
+    expect(response.text).toContain("/design-system/assets/floatingTabHeaderCanonical.mjs");
+  });
+
+  it("serves the generated floating tab header canonical rendering route", async () => {
+    const response = await request(createApp())
+      .get("/design-system/canonical-renderings/floating-tab-header/FTH-R-001")
+      .set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expectShellTrio(response.text);
+    expect(response.text).toContain("data-floating-tab-header-surface=\"canonical\"");
+    expect(response.text).toContain("id=\"floating-tab-preview-frame\"");
+    expect(response.text).toContain("/design-system/assets/floatingTabHeaderCanonical.mjs");
   });
 
   it("serves the public design-system page with the top-navigation primitive", async () => {

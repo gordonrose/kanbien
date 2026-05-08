@@ -711,6 +711,7 @@ Current root-admin migration posture:
   - `/root-admin/tenants`
   - `/root-admin/tenant-admins`
   - `/root-admin/roles`
+  - `/root-admin/build/backlog`
 - legacy hash URLs such as `/root-admin#users` and
   `/root-admin#web-app-hierarchy` are compatibility aliases during migration,
   not canonical route truth

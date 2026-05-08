@@ -38,6 +38,7 @@
     "story-breakdown:validate": "node --import tsx src/scripts/storyBreakdownValidate.ts",
     "task-breakdown:validate": "node --import tsx src/scripts/taskBreakdownValidate.ts",
     "layer5:task": "node --import tsx src/scripts/layer5/taskRun.ts",
+    "layer5:closeout": "node --import tsx src/scripts/layer5/closeout.ts",
     "check:governed-ui-adoption": "node --import tsx src/scripts/checkGovernedUiAdoption.ts",
     "check:governed-root-admin-page-audit": "node --import tsx src/scripts/checkGovernedRootAdminPageAudit.ts",
     "check:governed-root-admin-ui": "node --import tsx src/scripts/checkGovernedRootAdminUi.ts",
