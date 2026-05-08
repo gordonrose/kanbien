@@ -139,12 +139,11 @@
 - Human sign-off status:
   signed off for the current design-system pattern direction
 - Promotion decision:
-  promote to canonical-created design-system family; root-admin UI-only
-  adoption may consume the shared seam with temporary local handlers
+  promote to canonical-created design-system family; root-admin adoption now
+  consumes the shared seam with protected harness chat APIs
 - Open follow-ups:
-  Connect real Layer 1/harness APIs, persisted history, permission-backed
-  packet generation/download, and add formal axe/WCAG automation if the repo
-  adopts an accessibility scanner.
+  Add formal axe/WCAG automation if the repo adopts an accessibility scanner;
+  keep Reporting and Support inactive until product flows are approved.
 
 ## Traceability And Sync
 
@@ -160,7 +159,7 @@
 - Architecture-map update required:
   yes, when the family is promoted beyond draft.
 - Real-app adoption now allowed:
-  UI-only root-admin adoption: yes; real harness/API behavior: no
+  root-admin adoption: yes; real harness/API behavior: yes
 
 ## Consumable Seam Guard
 

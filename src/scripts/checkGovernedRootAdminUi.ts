@@ -17,9 +17,9 @@ const lockedRootAdminUiFiles: LockedFile[] = [
   },
   {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "85db5515b4db021f6b28cfd1f1a37c9943ee7be7932fb19c4af44b94f79c2827",
+    sha256: "055199ea0793eb75b5d17e0d19845824c01b7294526dfcddd94baca3ab06bccb",
     rationale:
-      "Root-admin authenticated shell behavior remains locally composed, but approved route-topology migrations may update path resolution and canonical-location syncing as long as shared design-system shell behavior does not regress back into app-local ownership.",
+      "Root-admin authenticated shell behavior remains locally composed, but approved route-topology and protected Build-panel integration changes may update orchestration as long as shared design-system shell and conversation-panel behavior does not regress back into app-local ownership.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",

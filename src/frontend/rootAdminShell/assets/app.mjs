@@ -420,35 +420,8 @@ const rootAdminConversationPanelState = {
   ref: "BWP-R-002",
   conversationId: null,
   latestPacketRevisionId: null,
-  messages: [
-    {
-      author: "Harness",
-      text: "I can help shape a Product Discovery packet before anything moves further through the build loop.",
-    },
-    {
-      author: "Builder",
-      text: "I want the root admin to start discovery from here and keep the packet history visible.",
-      user: true,
-    },
-    {
-      author: "Harness",
-      text: "This root-admin consumer is using temporary local handlers while we prove design-system adoption. Server-side context and authority are not inferred from this panel.",
-    },
-  ],
-  history: [
-    {
-      title: "Root-admin adoption",
-      summary: "Temporary local handlers prove the root-admin shell consumes the shared conversationPanel seam without copied markup or app CSS.",
-    },
-    {
-      title: "Product Discovery packet",
-      summary: "MVP Build mode keeps the approved packet download journey visible before real harness integration.",
-    },
-    {
-      title: "Future modes",
-      summary: "Reporting and Support remain visible as coming-soon actions while Build is the only active mode.",
-    },
-  ],
+  messages: [],
+  history: [],
 };
 let rootAdminConversationPanelController = null;
 
@@ -473,7 +446,7 @@ function buildPanelContextMessage() {
 
 function mapHarnessChatMessages(messages = []) {
   if (!Array.isArray(messages) || messages.length === 0) {
-    return rootAdminConversationPanelState.messages;
+    return [];
   }
 
   return messages.map((message) => ({

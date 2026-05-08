@@ -181,8 +181,8 @@
   configured canonical render routes under
   `/design-system/canonical-renderings/build-work-panel/*`. The legacy
   `/design-system/assets/buildWorkPanel.mjs` wrapper remains only for
-  compatibility. It is still not app-adoption complete until the
-  real Layer 1/harness API boundary is connected and verified.
+  compatibility. Root-admin app adoption now connects the real Layer 1/harness
+  API boundary and has live runtime evidence.
 - If yes, proposed public API:
   `renderConversationPanel(root, { config, ref, messages, history })`,
   `createConversationPanelController(root, { config, ref, messages, history,
@@ -202,9 +202,9 @@
 - Existing pages that should migrate later:
   none in MVP.
 - Partial-adoption note:
-  root-admin UI-only adoption now exists with temporary local handlers. Real
-  Layer 1/harness integration, persisted history, and permission-backed packet
-  download remain downstream; Reporting and Support remain inactive actions.
+  root-admin adoption now uses protected harness chat APIs, persisted
+  conversation state, and live assistant runtime evidence. Reporting and
+  Support remain inactive actions.
 
 ## Verification
 

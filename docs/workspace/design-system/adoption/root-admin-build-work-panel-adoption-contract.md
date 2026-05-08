@@ -5,8 +5,8 @@
 - Component or pattern family:
   `build-work-panel`
 - Status:
-  UI-only app adoption proved with temporary local handlers; real harness/API
-  integration deferred
+  app adoption proved with protected harness chat APIs and live assistant
+  runtime evidence
 - First consumer surface:
   root-admin shell
 - Route or shell owner:
@@ -28,7 +28,8 @@
 - Why is adoption happening now instead of remaining design-system-only?
   Root-admin now proves the first governed consumer can use the shared
   `conversationPanel` seam without copied markup, copied CSS, or local panel
-  behavior. Real Layer 1/harness integration remains a separate slice.
+  behavior. The first consumer now calls the protected harness chat APIs and
+  stores real conversation, assistant, and usage-attempt state.
 
 ## Capability And Workflow Mapping
 
@@ -195,9 +196,9 @@
   `/design-system/assets/buildWorkPanel.mjs` imports are drift.
 - Known blockers or environment constraints:
   shared render/controller/style seams and canonical states now exist;
-  root-admin UI-only parity proof now exists; real harness/API integration,
-  server-backed history, and permission-backed packet download remain
-  unresolved.
+  root-admin parity proof now exists; protected harness/API integration,
+  server-backed conversation state, and live assistant runtime evidence now
+  exist. Reporting and Support remain inactive MVP actions.
 
 ## Canonical And Consumer Truth
 
@@ -213,9 +214,9 @@
 ## Promotion Decision
 
 - Adoption result:
-  UI-only root-admin consumer adopted; real harness/API integration blocked
+  root-admin consumer adopted with protected harness/API integration
 - Follow-up work required before wider reuse:
-  connect the first root-admin consumer to real Layer 1/harness behavior and
-  prove server-backed history plus permission-backed packet generation/download.
+  prove a second governed consumer or active Reporting/Support payload, then
+  decide whether the shared primitive should broaden beyond Build.
 - Follow-up work required before extraction into a shared primitive:
   prove a second governed consumer or active Reporting/Support payload.

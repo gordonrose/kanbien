@@ -106,8 +106,9 @@ and PDF action posture.
 - PDF download is an authorized attachment action, not inline preview or public
   delivery.
 - Mobile uses a reachable floating action and governed panel surface.
-- Root-admin UI-only adoption now consumes the shared design-system render,
-  controller, and style seams; real harness/API behavior remains deferred.
+- Root-admin adoption now consumes the shared design-system render, controller,
+  and style seams with protected harness chat APIs and live assistant runtime
+  evidence.
 
 ## Evidence Status
 
@@ -129,7 +130,7 @@ and PDF action posture.
 - Human signoff:
   received for the current pattern direction
 - Root-admin adoption:
-  UI-only consumer parity proved; real harness/API integration blocked
+  consumer parity and real harness/API integration proved
 
 ## Exit Condition
 
@@ -144,7 +145,7 @@ This pack becomes operational when:
   `createConversationPanelController`, and a Build config instead of copied
   markup, CSS, or local behavior
 
-This pack is signed-off design-system truth and root-admin UI-only adoption
-evidence. It is not evidence for real Layer 1/harness API integration,
-server-backed history, permission-backed packet generation, or durable packet
-download behavior.
+This pack is signed-off design-system truth and root-admin adoption evidence.
+The first consumer now has live Layer 1/harness API integration, server-backed
+conversation state, persisted assistant usage attempts, and protected packet
+generation/download behavior.

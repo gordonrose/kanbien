@@ -38,13 +38,14 @@
 
 - Current implementation status:
   local placeholder page body inside a governed shell; the shell now also
-  consumes the DS-owned conversation panel seam for the Build panel adoption
-  proof; not a page-family DS adoption yet
+  consumes the DS-owned conversation panel seam for the live Build panel
+  assistant flow; not a page-family DS adoption yet
 - Local implementation evidence:
   placeholder overview content remains in
-  `src/frontend/rootAdminShell/index.html`; temporary local handler callbacks
-  for the Build panel live in `src/frontend/rootAdminShell/assets/app.mjs` and
-  intentionally stop before real harness/API behavior
+  `src/frontend/rootAdminShell/index.html`; protected Build-panel orchestration
+  lives in `src/frontend/rootAdminShell/assets/app.mjs`, starts with no seeded
+  placeholder transcript/history, and calls the real harness chat APIs for
+  conversation, assistant, packet generation, and PDF download behavior
 - Design-system sourced implementation evidence:
   governed shell chrome and root-admin context-nav host/render seams are now
   DS-owned, and the Build conversation panel consumes
