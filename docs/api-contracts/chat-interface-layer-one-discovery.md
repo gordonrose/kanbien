@@ -363,6 +363,13 @@ does not grant authority.
   `OPENAI_API_KEY` and `OPENAI_MODEL` through the provider adapter. The browser
   never receives model credentials, and Codex session credentials are not an
   application runtime credential source.
+- LLM spend guardrails:
+  provider calls are controlled by server-side `OPENAI_ENABLED`,
+  `OPENAI_DAILY_REQUEST_LIMIT`, `OPENAI_MONTHLY_REQUEST_LIMIT`,
+  `OPENAI_MAX_OUTPUT_TOKENS`, `OPENAI_MAX_INPUT_CHARS`, and
+  `OPENAI_MAX_TRANSCRIPT_MESSAGES`. When local guardrails block a call, the
+  chat service preserves the user message and stores the safe deterministic
+  fallback assistant turn instead of retrying externally.
 
 ## Route: List Packet Revisions For Conversation
 

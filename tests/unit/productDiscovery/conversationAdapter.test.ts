@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   createDeterministicProductDiscoveryConversationAdapter,
   createOpenAiProductDiscoveryConversationAdapter,
+  ProductDiscoveryConversationGuardrailError,
 } from "../../../src/lib/productDiscovery/conversationAdapter";
 
 const baseInput = {
@@ -81,6 +82,7 @@ describe("Product Discovery conversation adapter", () => {
     const body = JSON.parse(String(requestInit.body));
     expect(body).toMatchObject({
       model: "gpt-test",
+      max_output_tokens: 700,
       text: {
         format: {
           type: "json_schema",
@@ -91,6 +93,95 @@ describe("Product Discovery conversation adapter", () => {
     });
     expect(JSON.stringify(body)).toContain("root-admin");
     expect(JSON.stringify(body)).toContain("turns discovery into a packet");
+  });
+
+  it("does not call OpenAI when the adapter is disabled", async () => {
+    const fetchImpl = vi.fn();
+    const adapter = createOpenAiProductDiscoveryConversationAdapter({
+      apiKey: "sk-test-key",
+      enabled: false,
+      fetchImpl,
+    });
+
+    await expect(adapter.generateTurn(baseInput)).resolves.toMatchObject({
+      assistantMessage: expect.stringContaining("Captured for Product Discovery"),
+    });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("blocks requests after the local daily guardrail is reached", async () => {
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
+      output_text: JSON.stringify({
+        assistantMessage: "First reply.",
+        summary: "Summary.",
+        nextQuestion: "Next?",
+        confidencePercent: 50,
+        readyForPacket: false,
+        assumptions: [],
+        packagedTechnicalQuestions: [],
+      }),
+    }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    }));
+    const adapter = createOpenAiProductDiscoveryConversationAdapter({
+      apiKey: "sk-test-key",
+      dailyRequestLimit: 1,
+      monthlyRequestLimit: 10,
+      fetchImpl,
+      now: () => new Date("2026-05-08T00:00:00.000Z"),
+    });
+
+    await adapter.generateTurn(baseInput);
+    await expect(adapter.generateTurn(baseInput)).rejects.toThrow(ProductDiscoveryConversationGuardrailError);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+
+  it("trims transcript payloads before sending them to OpenAI", async () => {
+    const fetchImpl = vi.fn(async () => new Response(JSON.stringify({
+      output_text: JSON.stringify({
+        assistantMessage: "Trimmed reply.",
+        summary: "Summary.",
+        nextQuestion: "Next?",
+        confidencePercent: 50,
+        readyForPacket: false,
+        assumptions: [],
+        packagedTechnicalQuestions: [],
+      }),
+    }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    }));
+    const adapter = createOpenAiProductDiscoveryConversationAdapter({
+      apiKey: "sk-test-key",
+      maxTranscriptMessages: 1,
+      maxInputChars: 250,
+      maxOutputTokens: 123,
+      fetchImpl,
+    });
+
+    await adapter.generateTurn({
+      ...baseInput,
+      messages: [
+        {
+          role: "user",
+          body: "Older message",
+          createdAt: new Date("2026-05-08T00:00:00.000Z"),
+        },
+        {
+          role: "user",
+          body: "Latest message " + "x".repeat(500),
+          createdAt: new Date("2026-05-08T00:01:00.000Z"),
+        },
+      ],
+    });
+
+    const [, requestInit] = fetchImpl.mock.calls[0] as unknown as [string, RequestInit];
+    const body = JSON.parse(String(requestInit.body));
+    const payloadText = body.input[1].content[0].text;
+    expect(body.max_output_tokens).toBe(123);
+    expect(payloadText.length).toBeLessThanOrEqual(320);
+    expect(payloadText).not.toContain("Older message");
   });
 
   it("rejects model output that does not satisfy the Product Discovery turn schema", async () => {

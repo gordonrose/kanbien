@@ -31,10 +31,24 @@ export interface ProductDiscoveryConversationAdapter {
 
 export interface OpenAiProductDiscoveryConversationAdapterOptions {
   apiKey?: string;
+  enabled?: boolean;
   model?: string;
   endpoint?: string;
   timeoutMs?: number;
+  maxOutputTokens?: number;
+  maxInputChars?: number;
+  maxTranscriptMessages?: number;
+  dailyRequestLimit?: number;
+  monthlyRequestLimit?: number;
   fetchImpl?: typeof fetch;
+  now?: () => Date;
+}
+
+export class ProductDiscoveryConversationGuardrailError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ProductDiscoveryConversationGuardrailError";
+  }
 }
 
 const conversationTurnJsonSchema = {
@@ -93,17 +107,33 @@ export function createOpenAiProductDiscoveryConversationAdapter(
   options: OpenAiProductDiscoveryConversationAdapterOptions = {},
 ): ProductDiscoveryConversationAdapter {
   const apiKey = options.apiKey?.trim();
-  if (!apiKey) {
+  if (!apiKey || options.enabled === false) {
     return createDeterministicProductDiscoveryConversationAdapter();
   }
 
   const model = options.model?.trim() || "gpt-5.2";
   const endpoint = options.endpoint?.trim() || "https://api.openai.com/v1/responses";
   const timeoutMs = options.timeoutMs ?? 20_000;
+  const maxOutputTokens = options.maxOutputTokens ?? 700;
+  const maxInputChars = options.maxInputChars ?? 12_000;
+  const maxTranscriptMessages = options.maxTranscriptMessages ?? 24;
+  const usageCounter = createUsageCounter({
+    now: options.now ?? (() => new Date()),
+    dailyRequestLimit: options.dailyRequestLimit ?? 20,
+    monthlyRequestLimit: options.monthlyRequestLimit ?? 300,
+  });
   const fetchImpl = options.fetchImpl ?? fetch;
 
   return {
     async generateTurn(input) {
+      usageCounter.assertAndRecordRequest();
+      const transcript = trimTranscript(input.messages, maxTranscriptMessages);
+      const promptPayload = trimPromptPayload({
+        conversationId: input.conversation.conversationId,
+        surfaceContext: input.conversation.surfaceContext,
+        structuredDiscoveryState: input.conversation.structuredDiscoveryState,
+        transcript,
+      }, maxInputChars);
       const response = await fetchWithTimeout(fetchImpl, endpoint, {
         method: "POST",
         headers: {
@@ -112,6 +142,7 @@ export function createOpenAiProductDiscoveryConversationAdapter(
         },
         body: JSON.stringify({
           model,
+          max_output_tokens: maxOutputTokens,
           input: [
             {
               role: "system",
@@ -128,16 +159,7 @@ export function createOpenAiProductDiscoveryConversationAdapter(
               content: [
                 {
                   type: "input_text",
-                  text: JSON.stringify({
-                    conversationId: input.conversation.conversationId,
-                    surfaceContext: input.conversation.surfaceContext,
-                    structuredDiscoveryState: input.conversation.structuredDiscoveryState,
-                    transcript: input.messages.map((message) => ({
-                      role: message.role,
-                      body: message.body,
-                      createdAt: message.createdAt.toISOString(),
-                    })),
-                  }),
+                  text: JSON.stringify(promptPayload),
                 },
               ],
             },
@@ -166,8 +188,86 @@ export function createOpenAiProductDiscoveryConversationAdapter(
 export function createDefaultProductDiscoveryConversationAdapter(): ProductDiscoveryConversationAdapter {
   return createOpenAiProductDiscoveryConversationAdapter({
     apiKey: process.env.OPENAI_API_KEY,
+    enabled: parseBooleanEnv(process.env.OPENAI_ENABLED, true),
     model: process.env.OPENAI_MODEL,
+    maxOutputTokens: parsePositiveIntegerEnv(process.env.OPENAI_MAX_OUTPUT_TOKENS),
+    maxInputChars: parsePositiveIntegerEnv(process.env.OPENAI_MAX_INPUT_CHARS),
+    maxTranscriptMessages: parsePositiveIntegerEnv(process.env.OPENAI_MAX_TRANSCRIPT_MESSAGES),
+    dailyRequestLimit: parsePositiveIntegerEnv(process.env.OPENAI_DAILY_REQUEST_LIMIT),
+    monthlyRequestLimit: parsePositiveIntegerEnv(process.env.OPENAI_MONTHLY_REQUEST_LIMIT),
   });
+}
+
+function parseBooleanEnv(value: string | undefined, fallback: boolean) {
+  if (value === undefined || value.trim() === "") {
+    return fallback;
+  }
+  return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
+}
+
+function parsePositiveIntegerEnv(value: string | undefined) {
+  if (value === undefined || value.trim() === "") {
+    return undefined;
+  }
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+}
+
+function trimTranscript(
+  messages: ProductDiscoveryConversationAdapterInput["messages"],
+  maxTranscriptMessages: number,
+) {
+  return messages.slice(-maxTranscriptMessages).map((message) => ({
+    role: message.role,
+    body: message.body,
+    createdAt: message.createdAt.toISOString(),
+  }));
+}
+
+function trimPromptPayload(payload: Record<string, unknown>, maxInputChars: number) {
+  const serialized = JSON.stringify(payload);
+  if (serialized.length <= maxInputChars) {
+    return payload;
+  }
+  return {
+    truncated: true,
+    maxInputChars,
+    payloadExcerpt: serialized.slice(-maxInputChars),
+  };
+}
+
+function createUsageCounter(options: {
+  now: () => Date;
+  dailyRequestLimit: number;
+  monthlyRequestLimit: number;
+}) {
+  let dayKey = "";
+  let monthKey = "";
+  let dayCount = 0;
+  let monthCount = 0;
+  return {
+    assertAndRecordRequest() {
+      const now = options.now();
+      const nextDayKey = now.toISOString().slice(0, 10);
+      const nextMonthKey = nextDayKey.slice(0, 7);
+      if (nextDayKey !== dayKey) {
+        dayKey = nextDayKey;
+        dayCount = 0;
+      }
+      if (nextMonthKey !== monthKey) {
+        monthKey = nextMonthKey;
+        monthCount = 0;
+      }
+      if (dayCount >= options.dailyRequestLimit) {
+        throw new ProductDiscoveryConversationGuardrailError("OpenAI daily request limit reached.");
+      }
+      if (monthCount >= options.monthlyRequestLimit) {
+        throw new ProductDiscoveryConversationGuardrailError("OpenAI monthly request limit reached.");
+      }
+      dayCount += 1;
+      monthCount += 1;
+    },
+  };
 }
 
 async function fetchWithTimeout(
