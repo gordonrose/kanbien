@@ -27,6 +27,134 @@ test.describe("design-system list page", () => {
     expect(seamState.detailSeam).toBe("list-detail-panel");
   });
 
+  test("can switch the list-page record item presentation from cards to compact rows", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?listItemVariant=row");
+
+    const itemsContainer = page.locator("[data-selectable-list-items]");
+    const rowHeader = page.locator("[data-selectable-list-row-header]");
+    const firstItem = page.locator("[data-selectable-list-card]").first();
+
+    await expect(itemsContainer).toHaveAttribute("data-list-item-variant", "row");
+    await expect(rowHeader).toBeVisible();
+    await expect(rowHeader).toContainText("Selected View");
+    await expect(rowHeader).toContainText(/\d+ records/);
+    await expect(firstItem).toHaveClass(/list-page-record-row/);
+    await expect(firstItem.locator(".list-page-record-row-title")).toHaveText("Title Field");
+    await expect(firstItem.locator(".list-page-record-row-subtitle")).toHaveText("Subtitle Field");
+    await expect(firstItem.locator(".list-page-record-row-meta")).toHaveText("Meta Field");
+
+    const rowGeometry = await firstItem.evaluate((item) => {
+      const row = item.getBoundingClientRect();
+      const accent = item.querySelector(".list-page-record-row-accent")?.getBoundingClientRect();
+      const copy = item.querySelector(".list-page-record-row-copy")?.getBoundingClientRect();
+      const meta = item.querySelector(".list-page-record-row-meta")?.getBoundingClientRect();
+
+      return {
+        rowHeight: row.height,
+        accentContained: Boolean(accent && accent.left >= row.left && accent.right <= row.right),
+        copyBeforeMeta: Boolean(copy && meta && copy.right <= meta.left),
+        metaContained: Boolean(meta && meta.right <= row.right),
+      };
+    });
+
+    expect(rowGeometry.rowHeight).toBeGreaterThanOrEqual(70);
+    expect(rowGeometry.accentContained).toBe(true);
+    expect(rowGeometry.copyBeforeMeta).toBe(true);
+    expect(rowGeometry.metaContained).toBe(true);
+
+    await page.locator("#accessibility-button").click();
+    await page.locator("[data-list-item-variant-option='card']").click();
+    await expect(itemsContainer).toHaveAttribute("data-list-item-variant", "card");
+    await expect(rowHeader).toBeHidden();
+    await expect(firstItem).toHaveClass(/list-page-card/);
+    await expect(page).not.toHaveURL(/listItemVariant=row/);
+
+    await page.goto("/design-system/templates/list-page?listItemVariant=row&theme=dark&dir=rtl&zoom=100");
+    const stressedRow = page.locator("[data-selectable-list-card]").first();
+    const stressedGeometry = await stressedRow.evaluate((item) => {
+      const row = item.getBoundingClientRect();
+      const title = item.querySelector(".list-page-record-row-title")?.getBoundingClientRect();
+      const subtitle = item.querySelector(".list-page-record-row-subtitle")?.getBoundingClientRect();
+      const meta = item.querySelector(".list-page-record-row-meta")?.getBoundingClientRect();
+
+      return {
+        rowContainedHorizontally: row.left >= -1 && row.right <= window.innerWidth + 1,
+        titleInside: Boolean(title && title.left >= row.left && title.right <= row.right),
+        subtitleInside: Boolean(subtitle && subtitle.left >= row.left && subtitle.right <= row.right),
+        metaInside: Boolean(meta && meta.left >= row.left && meta.right <= row.right),
+      };
+    });
+
+    expect(stressedGeometry.rowContainedHorizontally).toBe(true);
+    expect(stressedGeometry.titleInside).toBe(true);
+    expect(stressedGeometry.subtitleInside).toBe(true);
+    expect(stressedGeometry.metaInside).toBe(true);
+  });
+
+  test("reorders list records with drag-and-drop and keyboard movement", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page?listItemVariant=row");
+
+    const items = page.locator("[data-selectable-list-card]");
+    const firstItem = items.first();
+    const thirdItem = items.nth(2);
+    const thirdBox = await thirdItem.boundingBox();
+
+    expect(thirdBox).not.toBeNull();
+    await expect(firstItem).toHaveAttribute("draggable", "true");
+
+    const dragAffordance = await page.evaluate(() => {
+      const records = Array.from(document.querySelectorAll("[data-selectable-list-card]"));
+      const source = records[0];
+      const target = records[2];
+      if (!(source instanceof HTMLElement) || !(target instanceof HTMLElement)) {
+        return null;
+      }
+
+      const transfer = new DataTransfer();
+      source.dispatchEvent(new DragEvent("dragstart", { bubbles: true, cancelable: true, dataTransfer: transfer }));
+      const targetBounds = target.getBoundingClientRect();
+      target.dispatchEvent(new DragEvent("dragover", {
+        bubbles: true,
+        cancelable: true,
+        clientY: targetBounds.bottom - 2,
+        dataTransfer: transfer,
+      }));
+      const marker = document.querySelector("[data-drag-drop-marker]");
+      const sourceStyle = getComputedStyle(source);
+      const markerBounds = marker instanceof HTMLElement ? marker.getBoundingClientRect() : null;
+      const sourceBounds = source.getBoundingClientRect();
+      const sourceOpacity = Number(sourceStyle.opacity);
+      const sourceOutlined = sourceStyle.outlineStyle !== "none";
+      source.dispatchEvent(new DragEvent("dragend", { bubbles: true, cancelable: true, dataTransfer: transfer }));
+
+      return {
+        markerVisible: markerBounds !== null && markerBounds.height > 0,
+        markerAfterSource: markerBounds !== null && markerBounds.top > sourceBounds.bottom,
+        sourceOpacity,
+        sourceOutlined,
+      };
+    });
+
+    expect(dragAffordance).not.toBeNull();
+    expect(dragAffordance?.markerVisible).toBe(true);
+    expect(dragAffordance?.markerAfterSource).toBe(true);
+    expect(dragAffordance?.sourceOpacity).toBeGreaterThanOrEqual(0.85);
+    expect(dragAffordance?.sourceOutlined).toBe(true);
+
+    await firstItem.dragTo(thirdItem, {
+      targetPosition: { x: 24, y: Math.max(1, (thirdBox?.height ?? 80) - 4) },
+    });
+
+    await expect(page.locator("[data-selectable-list-announcement]")).toContainText("Title Field moved to position 3.");
+    await expect(items.nth(2).locator(".list-page-record-row-title")).toHaveText("Title Field");
+
+    await items.nth(2).focus();
+    await page.keyboard.press("Alt+ArrowUp");
+
+    await expect(page.locator("[data-selectable-list-announcement]")).toContainText("Title Field moved to position 2.");
+    await expect(items.nth(1).locator(".list-page-record-row-title")).toHaveText("Title Field");
+  });
+
   test("shows a governed loading placeholder before initial list hydration when requested", async ({ page }) => {
     await page.goto("/design-system/templates/list-page?listLoading=initial");
 
@@ -855,7 +983,7 @@ test.describe("design-system list page", () => {
   });
 
   test("lazy-loads additional list items from browser scroll while the desktop list is closed", async ({ page }) => {
-    await page.goto("/design-system/templates/list-page");
+    await page.goto("/design-system/templates/list-page?listItemVariant=row");
 
     const listColumn = page.locator("[data-selectable-list-column]");
     const itemCards = page.locator("[data-selectable-list-card]");
@@ -886,6 +1014,31 @@ test.describe("design-system list page", () => {
     await expect(page.locator("[data-selectable-list-loading]")).toContainText("Loading more items...");
     await expect(itemCards).toHaveCount(initialCount + 6);
     await expect(page.locator("[data-selectable-list-status]")).toContainText("More placeholder items loaded");
+
+    const lazyLoadPlacement = await page.evaluate(() => {
+      const visibleItems = Array.from(document.querySelectorAll("[data-selectable-list-card]"))
+        .filter((item) => item instanceof HTMLElement && !item.classList.contains("hidden"));
+      const lastItem = visibleItems.at(-1);
+      const status = document.querySelector("[data-selectable-list-status]");
+
+      if (!(lastItem instanceof HTMLElement) || !(status instanceof HTMLElement)) {
+        return null;
+      }
+
+      const lastItemBounds = lastItem.getBoundingClientRect();
+      const statusBounds = status.getBoundingClientRect();
+
+      return {
+        statusAfterLastItem: statusBounds.top >= lastItemBounds.bottom,
+        lastItemText: lastItem.textContent ?? "",
+        statusText: status.textContent ?? "",
+      };
+    });
+
+    expect(lazyLoadPlacement).not.toBeNull();
+    expect(lazyLoadPlacement?.statusAfterLastItem).toBe(true);
+    expect(lazyLoadPlacement?.lastItemText).toContain("Placeholder Item");
+    expect(lazyLoadPlacement?.statusText).toContain("More placeholder items loaded");
   });
 
   test("uses a mobile overlay drawer that stays beneath shell menus and the design drawer", async ({ browser }) => {

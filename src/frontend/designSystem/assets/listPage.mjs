@@ -1,5 +1,8 @@
+import { createDragPreview, createDropMarker } from "./dragDropAffordance.mjs";
+
 const selectableList = document.querySelector("[data-selectable-list]");
 const recordCardTemplate = document.getElementById("list-page-record-card-template");
+const recordRowTemplate = document.getElementById("list-page-record-row-template");
 const splitLayout = selectableList?.matches("[data-selectable-list-layout]")
   ? selectableList
   : selectableList?.querySelector("[data-selectable-list-layout]");
@@ -30,6 +33,7 @@ const formDescription = selectableList?.querySelector("[data-selectable-list-for
 const formTags = selectableList?.querySelector("[data-selectable-list-form-tags]");
 const formStatus = selectableList?.querySelector("[data-selectable-list-form-status]");
 const lazyLoadStatusAction = selectableList?.querySelector("[data-selectable-list-status-action]");
+const lazyLoadStatus = selectableList?.querySelector("[data-selectable-list-status]");
 const lazyLoadSentinel = selectableList?.querySelector("[data-selectable-list-sentinel]");
 const loadingGroup = selectableList?.querySelector("[data-selectable-list-loading]");
 const loadingLabel = selectableList?.querySelector("[data-selectable-list-loading-label]");
@@ -43,10 +47,14 @@ const initialRetry = selectableList?.querySelector("[data-selectable-list-initia
 const appendError = selectableList?.querySelector("[data-selectable-list-append-error]");
 const appendRetry = selectableList?.querySelector("[data-selectable-list-append-retry]");
 const itemsContainer = selectableList?.querySelector("[data-selectable-list-items]");
+const rowHeader = selectableList?.querySelector("[data-selectable-list-row-header]");
+const rowCount = selectableList?.querySelector("[data-selectable-list-row-count]");
 const announcementRegion = selectableList?.querySelector("[data-selectable-list-announcement]");
 const detailError = selectableList?.querySelector("[data-selectable-list-detail-error]");
 const detailRetry = selectableList?.querySelector("[data-selectable-list-detail-retry]");
 const searchParams = new URLSearchParams(window.location.search);
+const listItemVariantOptions = Array.from(document.querySelectorAll("[data-list-item-variant-option]"));
+const initialListItemVariant = searchParams.get("listItemVariant") === "row" ? "row" : "card";
 const initialLoadingPreview = searchParams.get("listLoading") === "initial";
 const initialEmptyPreview = searchParams.get("listState") === "empty";
 const initialMissingAttributesPreview = searchParams.get("listState") === "missing-attributes";
@@ -80,6 +88,10 @@ let lastDetailRecord = null;
 let listColumnResizeObserver = null;
 let detailMode = "view";
 let activeFormIntent = null;
+let listItemVariant = initialListItemVariant;
+let draggedItem = null;
+let dragPreview = null;
+let dropMarker = null;
 
 function getItemButtons() {
   return Array.from(selectableList?.querySelectorAll("[data-selectable-list-card]") ?? []);
@@ -198,6 +210,49 @@ function syncLazyLoadStatusAction() {
   lazyLoadStatusAction.disabled = !canLoadMore;
 }
 
+function syncRowCount() {
+  if (!(rowCount instanceof HTMLElement)) {
+    return;
+  }
+
+  const visibleCount = getVisibleItemButtons().length;
+  rowCount.textContent = `${visibleCount} ${visibleCount === 1 ? "record" : "records"}`;
+}
+
+function getListAppendAnchor() {
+  if (lazyLoadStatus instanceof HTMLElement) {
+    return lazyLoadStatus;
+  }
+
+  return lazyLoadSentinel instanceof HTMLElement ? lazyLoadSentinel : null;
+}
+
+function clearDragPreview() {
+  dragPreview?.remove();
+  dragPreview = null;
+}
+
+function ensureDropMarker(height = "") {
+  if (dropMarker instanceof HTMLElement) {
+    if (height) {
+      dropMarker.style.setProperty("--drag-drop-marker-min-height", height);
+    }
+    return dropMarker;
+  }
+
+  dropMarker = createDropMarker({
+    className: "list-page-drop-marker",
+    label: "Drop here",
+    minHeight: height || "4.75rem",
+  });
+  return dropMarker;
+}
+
+function clearDropMarker() {
+  dropMarker?.remove();
+  dropMarker = null;
+}
+
 function setAppendErrorVisible(visible) {
   setStateVisibility(appendError, visible);
   setStateVisibility(lazyLoadStatusAction?.closest("[data-selectable-list-status]"), !visible);
@@ -223,6 +278,7 @@ function setItemsVisibility(visible) {
 
   itemsContainer.classList.toggle("hidden", !visible);
   syncLazyLoadStatusAction();
+  syncRowCount();
 }
 
 function setStateVisibility(element, visible) {
@@ -411,6 +467,57 @@ function setOptionalTags(container, tags) {
   }
 }
 
+function getButtonClassesForVariant(variant = listItemVariant) {
+  return variant === "row"
+    ? "list-page-record-row list-page-record-row-button"
+    : "list-page-card list-page-card-button";
+}
+
+function getRecordLabel(button) {
+  return getButtonRecord(button).listTitle || untitledRecordFallback;
+}
+
+function applyButtonVariantClasses(button) {
+  if (!(button instanceof HTMLElement)) {
+    return;
+  }
+
+  button.classList.remove(
+    "list-page-card",
+    "list-page-card-button",
+    "list-page-record-row",
+    "list-page-record-row-button",
+  );
+  button.classList.add(...getButtonClassesForVariant().split(" "));
+}
+
+function syncListItemVariantControls() {
+  for (const option of listItemVariantOptions) {
+    if (!(option instanceof HTMLButtonElement)) {
+      continue;
+    }
+
+    const isActive = option.dataset.listItemVariantOption === listItemVariant;
+    option.classList.toggle("active", isActive);
+    option.setAttribute("aria-pressed", String(isActive));
+  }
+}
+
+function syncListItemVariantShell() {
+  if (itemsContainer instanceof HTMLElement) {
+    itemsContainer.dataset.listItemVariant = listItemVariant;
+  }
+
+  if (rowHeader instanceof HTMLElement) {
+    const showRowHeader = listItemVariant === "row";
+    rowHeader.classList.toggle("hidden", !showRowHeader);
+    rowHeader.setAttribute("aria-hidden", String(!showRowHeader));
+  }
+
+  syncListItemVariantControls();
+  syncRowCount();
+}
+
 function setModeVisibility(mode) {
   const isForm = mode === "form";
   detailMode = mode;
@@ -532,12 +639,12 @@ function applyRecordToButton(button, values) {
   button.dataset.detailBody = values.description;
   button.dataset.detailMeta = activeFormIntent === "create" ? "Created placeholder" : "Edited placeholder";
   button.dataset.tags = values.tags.join("|");
-  renderCard(button);
+  renderItem(button);
 }
 
 function createFormRecord(values) {
   const button = document.createElement("button");
-  button.className = "list-page-card list-page-card-button";
+  button.className = getButtonClassesForVariant();
   button.type = "button";
   button.dataset.listItem = "";
   button.dataset.selectableListCard = "";
@@ -607,6 +714,8 @@ function renderCard(button) {
     return;
   }
 
+  applyButtonVariantClasses(button);
+
   if (recordCardTemplate instanceof HTMLTemplateElement) {
     button.replaceChildren(recordCardTemplate.content.cloneNode(true));
   }
@@ -634,10 +743,112 @@ function renderCard(button) {
   setOptionalTags(tags, record.tags);
 }
 
-function renderAllCards() {
-  for (const button of getItemButtons()) {
-    renderCard(button);
+function renderRow(button) {
+  if (!(button instanceof HTMLElement)) {
+    return;
   }
+
+  applyButtonVariantClasses(button);
+
+  if (recordRowTemplate instanceof HTMLTemplateElement) {
+    button.replaceChildren(recordRowTemplate.content.cloneNode(true));
+  }
+
+  const record = getButtonRecord(button);
+  const title = button.querySelector(".list-page-record-row-title");
+  const subtitle = button.querySelector(".list-page-record-row-subtitle");
+  const meta = button.querySelector(".list-page-record-row-meta");
+
+  if (title instanceof HTMLElement) {
+    title.classList.add("tooltip-anchor");
+    title.dataset.overflowTooltipSource = "";
+    title.textContent = record.listTitle;
+    title.dataset.fullValue = record.listTitle;
+  }
+
+  if (subtitle instanceof HTMLElement) {
+    subtitle.classList.add("tooltip-anchor");
+    subtitle.dataset.overflowTooltipSource = "";
+  }
+
+  if (meta instanceof HTMLElement) {
+    meta.classList.add("tooltip-anchor");
+    meta.dataset.overflowTooltipSource = "";
+  }
+
+  setOptionalText(subtitle, record.listSubtitle);
+  setOptionalText(meta, record.detailMetaValue);
+}
+
+function renderItem(button) {
+  button.draggable = true;
+  button.dataset.selectableListReorderItem = "";
+  button.setAttribute("aria-describedby", "list-page-reorder-instructions");
+
+  if (listItemVariant === "row") {
+    renderRow(button);
+    return;
+  }
+
+  renderCard(button);
+}
+
+function getReorderPosition(button) {
+  return getVisibleItemButtons().findIndex((item) => item === button) + 1;
+}
+
+function moveItemToPosition(button, referenceNode = null) {
+  if (!(itemsContainer instanceof HTMLElement) || !(button instanceof HTMLElement)) {
+    return;
+  }
+
+  const resolvedReference = referenceNode instanceof Node ? referenceNode : getListAppendAnchor();
+  itemsContainer.insertBefore(button, resolvedReference);
+  syncRowCount();
+  updateDetailNavigation();
+  scheduleListGeometrySync();
+  scheduleOverflowTooltipUpdate();
+}
+
+function moveItemByKeyboard(button, direction) {
+  const visibleItems = getVisibleItemButtons();
+  const currentIndex = visibleItems.findIndex((item) => item === button);
+  const nextIndex = currentIndex + direction;
+
+  if (currentIndex < 0 || nextIndex < 0 || nextIndex >= visibleItems.length) {
+    return;
+  }
+
+  const referenceNode = direction < 0
+    ? visibleItems[nextIndex]
+    : visibleItems[nextIndex + 1] ?? getListAppendAnchor();
+
+  moveItemToPosition(button, referenceNode);
+  button.focus({ preventScroll: true });
+  announce(`${getRecordLabel(button)} moved to position ${getReorderPosition(button)}.`);
+}
+
+function clearDragState() {
+  if (draggedItem instanceof HTMLElement) {
+    delete draggedItem.dataset.dragging;
+    draggedItem.classList.remove("drag-drop-source");
+  }
+
+  draggedItem = null;
+  clearDragPreview();
+  clearDropMarker();
+
+  for (const item of getItemButtons()) {
+    delete item.dataset.dropTarget;
+  }
+}
+
+function renderAllItems() {
+  syncListItemVariantShell();
+  for (const button of getItemButtons()) {
+    renderItem(button);
+  }
+  scheduleOverflowTooltipUpdate();
 }
 
 function applyMissingAttributesPreview() {
@@ -686,7 +897,7 @@ function applyLongAttributesPreview() {
 
 function createPlaceholderItem(index) {
   const button = document.createElement("button");
-  button.className = "list-page-card list-page-card-button";
+  button.className = getButtonClassesForVariant();
   button.type = "button";
   button.dataset.listItem = "";
   button.dataset.selectableListCard = "";
@@ -704,7 +915,7 @@ function createPlaceholderItem(index) {
   button.setAttribute("aria-controls", "list-page-detail-panel");
   button.setAttribute("aria-pressed", "false");
 
-  renderCard(button);
+  renderItem(button);
   return button;
 }
 
@@ -742,8 +953,8 @@ async function loadMoreItems(mode = "append") {
     fragment.append(createPlaceholderItem(index));
   }
 
-  if (itemsContainer instanceof HTMLElement && lazyLoadSentinel instanceof HTMLElement) {
-    itemsContainer.insertBefore(fragment, lazyLoadSentinel);
+  if (itemsContainer instanceof HTMLElement) {
+    itemsContainer.insertBefore(fragment, getListAppendAnchor());
   } else {
     listColumn.insertBefore(fragment, lazyLoadSentinel ?? null);
   }
@@ -944,6 +1155,8 @@ function syncQueryFilter(options = {}) {
     }
   }
 
+  syncRowCount();
+
   if (syncUrl) {
     updatePreviewUrl((params) => {
       if (normalizedQuery) {
@@ -1046,7 +1259,7 @@ if (getItemButtons().length > 0 && detailPanel instanceof HTMLElement) {
     applyLongAttributesPreview();
   }
 
-  renderAllCards();
+  renderAllItems();
   clearDetailTags();
   closeDetailPanel();
   scheduleOverflowTooltipUpdate();
@@ -1070,6 +1283,93 @@ if (getItemButtons().length > 0 && detailPanel instanceof HTMLElement) {
     if (button instanceof HTMLElement) {
       setDetailContent(button);
     }
+  });
+  listColumn?.addEventListener("keydown", (event) => {
+    if (!(event instanceof KeyboardEvent) || !event.altKey || (event.key !== "ArrowUp" && event.key !== "ArrowDown")) {
+      return;
+    }
+
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    const button = target.closest("[data-selectable-list-card]");
+    if (!(button instanceof HTMLElement)) {
+      return;
+    }
+
+    event.preventDefault();
+    moveItemByKeyboard(button, event.key === "ArrowUp" ? -1 : 1);
+  });
+  listColumn?.addEventListener("dragstart", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    const button = target.closest("[data-selectable-list-card]");
+    if (!(button instanceof HTMLElement)) {
+      return;
+    }
+
+    draggedItem = button;
+    button.dataset.dragging = "true";
+    button.classList.add("drag-drop-source");
+    dragPreview = createDragPreview(button, {
+      className: "list-page-drag-preview",
+      removeAttributes: ["data-selectable-list-card"],
+    });
+    event.dataTransfer?.setData("text/plain", getRecordLabel(button));
+    event.dataTransfer?.setData("application/x-list-record", getRecordLabel(button));
+    event.dataTransfer?.setDragImage(dragPreview ?? button, 24, 24);
+    announce(`Started moving ${getRecordLabel(button)}. Drop it on the highlighted landing position.`);
+  });
+  listColumn?.addEventListener("dragover", (event) => {
+    if (!(draggedItem instanceof HTMLElement) || !(itemsContainer instanceof HTMLElement)) {
+      return;
+    }
+
+    event.preventDefault();
+    const target = event.target;
+    const targetItem = target instanceof HTMLElement ? target.closest("[data-selectable-list-card]") : null;
+
+    for (const item of getItemButtons()) {
+      delete item.dataset.dropTarget;
+    }
+
+    if (targetItem instanceof HTMLElement && targetItem !== draggedItem) {
+      const targetBounds = targetItem.getBoundingClientRect();
+      const shouldPlaceAfter = event.clientY > targetBounds.top + targetBounds.height / 2;
+      const referenceNode = shouldPlaceAfter ? targetItem.nextElementSibling : targetItem;
+      targetItem.dataset.dropTarget = shouldPlaceAfter ? "after" : "before";
+      const marker = ensureDropMarker(`${Math.max(48, targetBounds.height)}px`);
+      itemsContainer.insertBefore(marker, referenceNode);
+      return;
+    }
+
+    if (target instanceof HTMLElement && target.closest("[data-selectable-list-status]")) {
+      itemsContainer.insertBefore(ensureDropMarker(), getListAppendAnchor());
+    }
+  });
+  listColumn?.addEventListener("drop", (event) => {
+    if (!(draggedItem instanceof HTMLElement)) {
+      return;
+    }
+
+    event.preventDefault();
+    const movedLabel = getRecordLabel(draggedItem);
+    if (dropMarker instanceof HTMLElement && itemsContainer instanceof HTMLElement) {
+      itemsContainer.insertBefore(draggedItem, dropMarker);
+    }
+    const movedPosition = getReorderPosition(draggedItem);
+    clearDragState();
+    syncRowCount();
+    updateDetailNavigation();
+    announce(`${movedLabel} moved to position ${movedPosition}.`);
+  });
+  listColumn?.addEventListener("dragend", () => {
+    clearDragState();
   });
   listColumn?.addEventListener("scroll", () => {
     void handleListScroll();
@@ -1108,6 +1408,24 @@ if (getItemButtons().length > 0 && detailPanel instanceof HTMLElement) {
   detailClose?.addEventListener("click", () => {
     closeDetailPanel({ restoreFocus: true });
   });
+  for (const option of listItemVariantOptions) {
+    option.addEventListener("click", () => {
+      const nextVariant = option instanceof HTMLElement && option.dataset.listItemVariantOption === "row"
+        ? "row"
+        : "card";
+      listItemVariant = nextVariant;
+      updatePreviewUrl((params) => {
+        if (nextVariant === "row") {
+          params.set("listItemVariant", "row");
+        } else {
+          params.delete("listItemVariant");
+        }
+      });
+      renderAllItems();
+      updateDetailNavigation();
+      announce(nextVariant === "row" ? "List item style changed to rows." : "List item style changed to cards.");
+    });
+  }
   createButton?.addEventListener("click", () => {
     openFormDrawer("create", createButton);
   });

@@ -274,6 +274,14 @@
             <button class="accessibility-chip" type="button" data-direction-option="rtl" data-display-settings-copy="direction-rtl">Right to left</button>
           </div>
         </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label">List Item Style</p>
+          <div class="chip-row" role="group" aria-label="List item style">
+            <button class="accessibility-chip active" type="button" data-list-item-variant-option="card">Cards</button>
+            <button class="accessibility-chip" type="button" data-list-item-variant-option="row">Rows</button>
+          </div>
+        </div>
       </aside>
 
       <main class="design-system-page-main">
@@ -292,6 +300,9 @@
               aria-atomic="true"
               data-selectable-list-announcement
             ></p>
+            <p id="list-page-reorder-instructions" class="visually-hidden">
+              Drag list records to reorder them, or focus a record and press Alt plus Arrow Up or Alt plus Arrow Down.
+            </p>
             <template id="list-page-record-card-template">
               <span class="list-page-card-header" data-list-record-card-slot="header">
                 <span class="list-page-card-copy" data-list-record-card-slot="copy">
@@ -301,6 +312,14 @@
               </span>
               <span class="list-page-card-description" data-list-record-card-slot="description">Short Description Field</span>
               <span class="list-page-card-tags" aria-label="Tags" data-list-record-card-slot="tags"></span>
+            </template>
+            <template id="list-page-record-row-template">
+              <span class="list-page-record-row-accent" aria-hidden="true" data-list-record-row-slot="accent"></span>
+              <span class="list-page-record-row-copy" data-list-record-row-slot="copy">
+                <span class="list-page-record-row-title tooltip-anchor" data-overflow-tooltip-source data-list-record-row-slot="title">Title Field</span>
+                <span class="list-page-record-row-subtitle tooltip-anchor" data-overflow-tooltip-source data-list-record-row-slot="subtitle">Subtitle Field</span>
+              </span>
+              <span class="list-page-record-row-meta tooltip-anchor" data-overflow-tooltip-source data-list-record-row-slot="meta">Meta Field</span>
             </template>
             <div
               class="list-page-list-column"
@@ -423,6 +442,13 @@
               </div>
 
               <div data-selectable-list-items>
+              <div class="list-page-record-list-header hidden" aria-hidden="true" data-selectable-list-row-header>
+                <div>
+                  <p class="list-page-record-list-eyebrow">Selected View</p>
+                  <h2 class="list-page-record-list-title">Active work</h2>
+                </div>
+                <p class="list-page-record-list-count" data-selectable-list-row-count>4 records</p>
+              </div>
               <button
                 class="list-page-card list-page-card-button"
                 type="button"

@@ -1,4 +1,5 @@
 @import url("/design-system/assets/list-page-shared.css");
+@import url("/design-system/assets/dragDropAffordance.css");
 
 :root {
   color-scheme: light;

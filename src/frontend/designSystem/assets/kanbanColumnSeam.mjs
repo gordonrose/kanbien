@@ -4,6 +4,7 @@ import {
   renderFormDrawerSelect,
   renderFormDrawerSelectOptions,
 } from "./formControls.mjs";
+import { createDragPreview, createDropMarker } from "./dragDropAffordance.mjs";
 
 export const kanbanColumnArchiveDismissStorageKey = "kanban-column-archive-callout-dismissed";
 
@@ -393,10 +394,12 @@ export function createKanbanColumnController({
     if (dropMarker instanceof HTMLElement) {
       return dropMarker;
     }
-    dropMarker = document.createElement("div");
-    dropMarker.className = "kanban-drop-marker";
+    dropMarker = createDropMarker({
+      className: "kanban-drop-marker",
+      label: "Drop here",
+      minHeight: "7.5rem",
+    });
     dropMarker.dataset.kanbanDropMarker = "true";
-    dropMarker.setAttribute("aria-hidden", "true");
     return dropMarker;
   }
 
@@ -411,22 +414,10 @@ export function createKanbanColumnController({
 
   function createDragImage(card) {
     clearDragImage();
-    const clone = card.cloneNode(true);
-    if (!(clone instanceof HTMLElement)) {
-      return null;
-    }
-    const rect = card.getBoundingClientRect();
-    clone.classList.add("kanban-card-drag-image");
-    clone.removeAttribute("id");
-    clone.removeAttribute("data-kanban-card-id");
-    clone.removeAttribute("data-dragging");
-    clone.style.width = `${rect.width}px`;
-    clone.style.position = "fixed";
-    clone.style.top = "-1000px";
-    clone.style.left = "-1000px";
-    clone.style.pointerEvents = "none";
-    clone.setAttribute("aria-hidden", "true");
-    document.body.append(clone);
+    const clone = createDragPreview(card, {
+      className: "kanban-card-drag-image",
+      removeAttributes: ["data-kanban-card-id"],
+    });
     dragImage = clone;
     return clone;
   }
@@ -474,6 +465,7 @@ export function createKanbanColumnController({
     }
     for (const card of board.querySelectorAll("[data-dragging]")) {
       delete card.dataset.dragging;
+      card.classList.remove("drag-drop-source");
     }
     for (const column of board.querySelectorAll("[data-kanban-drop-active]")) {
       delete column.dataset.kanbanDropActive;
@@ -852,6 +844,7 @@ export function createKanbanColumnController({
       }
       draggedCardId = card.dataset.kanbanCardId ?? "";
       card.dataset.dragging = "true";
+      card.classList.add("drag-drop-source");
       const dragPreview = createDragImage(card);
       event.dataTransfer?.setData("text/plain", draggedCardId);
       event.dataTransfer?.setData("application/x-kanban-card", draggedCardId);
