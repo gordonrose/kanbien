@@ -18,6 +18,7 @@
 | Desktop panel usability | pass | Browser geometry proof verifies the Build panel stays inside the shell mount and does not move the main root-admin content when opened/closed. |
 | Mobile action path | pass | Browser proof verifies the mobile floating action can close and reopen the Build panel and keep the message input reachable. |
 | Context-not-authority browser path | pass | Browser proof mutates URL query/hash with tenant-like values and verifies protected conversation/PDF requests do not use them as authority. |
+| Live Build panel assistant path | pass | Headless browser proof authenticated into `/root-admin`, submitted a real Build panel message through the shared conversation panel, waited for the OpenAI-backed assistant response to render, and verified the matching persisted usage attempt succeeded. |
 
 ## Mock Honesty
 
@@ -27,4 +28,3 @@ copy alone, and they do not invent URL authority or download scope.
 
 Residual gap: this is Playwright-served browser evidence, not a manually
 captured production-like deployment screenshot set.
-
