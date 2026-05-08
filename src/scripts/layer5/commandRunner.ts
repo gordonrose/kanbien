@@ -11,6 +11,7 @@ const allowedProofCommandPrefixes = [
   "npm run technical-steering:validate",
   "npm run check:feature-dependencies",
   "npm run check:frontend-architecture",
+  "npm run data:compliance-health",
   "npm run test:traceability",
   "npm run test:coverage-strength",
   "npm run qa:evidence-summary",

@@ -461,6 +461,30 @@ describe("Layer 5 harness modules", () => {
     });
   });
 
+  it("allows data dictionary compliance health as a deterministic proof command", () => {
+    const result = runProofCommands(
+      [
+        {
+          taskId: "T-S009-01",
+          proofLayers: "source-level",
+          commands: "npm run data:compliance-health",
+          mockHonesty: "not-applicable",
+        },
+      ],
+      false,
+      "ready",
+    );
+
+    expect(result).toEqual([
+      {
+        command: "npm run data:compliance-health",
+        status: "skipped",
+        reason: "use --run-proofs to execute focused proof commands",
+        output: "",
+      },
+    ]);
+  });
+
   it("runs the platform-seam plugin only for platform-seam tasks", () => {
     withPacket(readyTaskPacket, (packetPath) => {
       const context = loadLayer5TaskContext(packetPath, "T-S001-01");
