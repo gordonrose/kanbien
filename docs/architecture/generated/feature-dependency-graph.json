@@ -1,7 +1,7 @@
 {
   "ruleVersion": 2,
   "ruleSummary": "Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.",
-  "featureCount": 16,
+  "featureCount": 17,
   "edgeCount": 16,
   "violationCount": 0,
   "features": [
@@ -132,6 +132,29 @@
       "breakingChangeRisks": [
         "Removing or renaming exported entity definition response types can break downstream consumers that compile against this contract surface.",
         "Changing durable entity definition persistence or export semantics can invalidate snapshot tooling and compatibility assumptions."
+      ]
+    },
+    {
+      "featureName": "harnessChat",
+      "manifestPath": "src/features/harnessChat/feature.manifest.json",
+      "fileCount": 9,
+      "publicSeams": [
+        {
+          "seamId": "postgres-repository-factory",
+          "symbol": "createPostgresHarnessChatRepository",
+          "kind": "repository-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [],
+      "publicDependencies": [],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": [
+        "Changing conversation actor, scope, lifecycle, or context persistence can affect Product Discovery packet traceability and root-admin history correctness.",
+        "Changing transcript ordering or append-only semantics can affect generated packet evidence and auditability.",
+        "Harness chat persistence stores root-user identifiers as durable actor facts; root-user table compatibility is a migration/data-dictionary concern rather than a public feature seam dependency."
       ]
     },
     {

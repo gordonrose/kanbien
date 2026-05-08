@@ -3,29 +3,27 @@
 ## Summary
 
 - Description:
-  Planned append-only message turn for one Layer 1 Build chat conversation.
+  Append-only message turn for one Layer 1 Build chat conversation.
   Messages preserve the durable transcript without making raw LLM proposals the
   source of truth for accepted Product Discovery facts.
 - Owning feature:
-  planned `harnessChat`
+  `harnessChat`
 - Primary source tables or records:
-  planned `harness_chat_messages`, planned `HarnessChatMessageRecord`
+  `harness_chat_messages`, `HarnessChatMessageRecord`
 - Status:
-  planned first slice; this dictionary page records source-independent
-  persistence intent before implementation.
+  implemented first persistence slice for conversation/message storage.
 
 ## Storage Model
 
 - Primary table or durable record:
-  planned `harness_chat_messages`
+  `harness_chat_messages`
 - Related durable records:
-  planned `harness_chat_conversations`, planned
-  `harness_chat_packet_revisions`
+  `harness_chat_conversations`, planned `harness_chat_packet_revisions`
 - Primary key:
-  planned `message_id`
+  `message_id`
 - Foreign key relationships:
-  - planned `conversation_id -> harness_chat_conversations.conversation_id`
-  - planned `created_by_root_user_id -> root_user.root_user_id` for
+  - `conversation_id -> harness_chat_conversations.conversation_id`
+  - `created_by_root_user_id -> root_users.root_user_id` for
     requester-authored messages
 
 ## Capabilities That Rely On This Entity
@@ -92,17 +90,17 @@
 
 ## Indexes And Constraints
 
-- planned primary key on `message_id`
+- primary key on `message_id`
   Type: `primary key`
   Definition / Rule: one generated identifier per message.
   Why It Matters: Stable transcript and audit linkage.
   Source: API contract.
-- planned transcript order constraint
+- transcript order constraint
   Type: `unique`
   Definition / Rule: unique `conversation_id`, `sequence_number`.
   Why It Matters: Prevents ambiguous transcript order.
   Source: packet-generation source traceability.
-- planned conversation transcript index
+- conversation transcript index
   Type: `index`
   Definition / Rule: index `conversation_id`, `sequence_number`.
   Why It Matters: Supports detail reads and packet-generation replay.
@@ -186,6 +184,7 @@
 
 ## Migration Compatibility Notes
 
-- First implementation should use a new migration with stable sortable prefix.
+- First implementation uses
+  `src/features/harnessChat/persistence/migrations/0047_create_harness_chat_conversations.sql`.
 - Any future redaction, legal hold, or hard-delete behavior needs an explicit
   lifecycle and compatibility plan.

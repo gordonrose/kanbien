@@ -2,7 +2,7 @@
 
 ## Summary
 
-- Features analyzed: 16
+- Features analyzed: 17
 - Cross-feature edges: 16
 - Validation violations: 0
 
@@ -71,6 +71,21 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Breaking-change risks:
   - Removing or renaming exported entity definition response types can break downstream consumers that compile against this contract surface.
   - Changing durable entity definition persistence or export semantics can invalidate snapshot tooling and compatibility assumptions.
+
+### harnessChat
+
+- Manifest: `src/features/harnessChat/feature.manifest.json`
+- Source files: 9
+- Declared dependencies: none
+- Current public dependencies: none
+- Private seam violations: 0
+- Depended on by: none
+- Public seams:
+  - `postgres-repository-factory` via `createPostgresHarnessChatRepository` in `index.ts` (repository-factory, experimental)
+- Breaking-change risks:
+  - Changing conversation actor, scope, lifecycle, or context persistence can affect Product Discovery packet traceability and root-admin history correctness.
+  - Changing transcript ordering or append-only semantics can affect generated packet evidence and auditability.
+  - Harness chat persistence stores root-user identifiers as durable actor facts; root-user table compatibility is a migration/data-dictionary concern rather than a public feature seam dependency.
 
 ### jobProcessing
 

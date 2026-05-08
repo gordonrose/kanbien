@@ -86,7 +86,7 @@
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S006-01 | S-006 | DOC:api-contract | Refresh protected Build chat API contract for conversation create, append, history, generation, revision listing, and PDF download behavior. | docs/api-contracts/chat-interface-layer-one-discovery.md; docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md; docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md | backend implementation, permission mapping, migrations, UI, executable tests | not-applicable: consumes external S-004/S-005 source plans and existing API contract | not-applicable: documentation artifact | queued-for-delivery |
 | T-S006-02 | S-006 | DOC:permission-mapping | Refresh Build chat permission mapping for root-builder access, unauthenticated/unauthorized denial, tenant-scope denial, download authority, and audit proof. | docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md; docs/workspace/capability-matrices/2026-05-06-chat-interface-layer-one-discovery-capability-matrix-first-draft.csv; docs/api-contracts/chat-interface-layer-one-discovery.md | runtime authz implementation, grant migrations, UI eligibility changes, API shape changes | T-S006-01 contract source; Technical Steering TS-CHAT-006 | not-applicable: documentation artifact | queued-for-delivery |
-| T-S006-03 | S-006 | DEV:backend | Implement protected route behavior for create/read/history/generate/download only after persistence, API contract, and permission mapping source truth is complete. | src/features/harnessChat/**; src/routes/v1/**; tests/integration/harnessChat/**; tests/security/harnessChat/**; docs/architecture/generated/feature-dependency-graph.* | API contract authoring, permission mapping authoring, migrations, root-admin UI, PDF renderer design, evidence sweep | T-S006-01; T-S006-02 | feature-public transport seam | blocked |
+| T-S006-03 | S-006 | DEV:backend | Implement protected route behavior for create/read/history/generate/download after persistence, API contract, and permission mapping source truth is complete. | src/features/harnessChat/**; src/routes/v1/**; tests/integration/harnessChat/**; tests/security/harnessChat/**; docs/architecture/generated/feature-dependency-graph.* | API contract authoring, permission mapping authoring, migrations, root-admin UI, PDF renderer design, evidence sweep | T-S006-01; T-S006-02 | feature-public transport seam | queued-for-delivery |
 
 ## Task Size Guardrail
 
@@ -94,7 +94,7 @@
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S006-01 | single-proof-target | 1 | One AC covers API contract truth. | Protected chat API contract is current and compatibility posture is explicit. | docs/api-contracts | Contract review passes. | no runtime code | Route family kept together because the Build chat workflow contract is inseparable across create/read/history/generate/download. |
 | T-S006-02 | single-proof-target | 1 | One AC covers permission mapping truth. | Allow/deny and audit/proof posture are current. | permission mapping | Permission review passes. | no runtime code | Permission family kept together because the allow/deny matrix is inseparable across protected Build chat actions. |
-| T-S006-03 | single-behavior | 1 | Runtime API implementation is one backend seam but source truth is incomplete until dependencies land. | Protected route behavior consumes approved contract, permission, and persistence. | harness-chat transport/domain | Focused backend/security proof after unblock. | no frontend/evidence sweep | Blocked until source-truth tasks complete. |
+| T-S006-03 | single-behavior | 1 | Runtime API implementation is one backend seam and source truth is now available from dependencies. | Protected route behavior consumes approved contract, permission, and persistence. | harness-chat transport/domain | Focused backend/security proof after unblock. | no frontend/evidence sweep | Kept as one route-family task because create/read/history/generate/download share authz and lifecycle semantics. |
 
 ## Decision Escalation / Stop Conditions
 
@@ -102,7 +102,7 @@
 | --- | --- | --- | --- | --- | --- |
 | T-S006-01 | source-truth-mismatch | Stop if route paths, request/response shape, status code, or compatibility posture is missing or contradictory. | Return to API contract owner or Technical Steering. | no | Contract task must not invent wire truth. |
 | T-S006-02 | source-truth-mismatch | Stop if authority world, actor boundary, grant source, denial category, or tenant-scope posture is missing. | Return to permission mapping or Technical Steering owner. | no | Permission docs must not invent authorization policy. |
-| T-S006-03 | proof-gap | Stop until external prerequisites S-004 adapter, S-005 persistence, T-S006-01, and T-S006-02 are complete. | Route back to the blocked dependencies. | no | Runtime backend work must consume source truth. |
+| T-S006-03 | proof-gap | Stop if external prerequisites S-004 adapter, S-005 persistence, T-S006-01, or T-S006-02 are incomplete or contradictory. | Route back to the blocked dependencies. | no | Runtime backend work must consume source truth. |
 
 ## Exact Starting Context
 
@@ -118,7 +118,7 @@
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S006-01 | Protected chat API contract | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | feature-public-seam | not-topology | none | root-admin Build API calls | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | docs/api-contracts | Contract task only; no frontend implementation. |
 | T-S006-02 | Protected chat permission mapping | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | feature-public-seam | not-topology | none | root-admin Build API calls | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | docs/architecture/permission-mappings | Permission task only; no frontend implementation. |
-| T-S006-03 | Protected chat backend APIs | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | feature-public-seam | not-topology | none | root-admin Build API calls | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | src/features/harnessChat | Blocked backend task; frontend adoption waits for S-007. |
+| T-S006-03 | Protected chat backend APIs | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | feature-public-seam | not-topology | none | root-admin Build API calls | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | src/features/harnessChat | Backend task; frontend adoption waits for S-007. |
 
 ## Frontend Change Class Contract
 
@@ -131,7 +131,7 @@
 | --- | --- | --- | --- | --- |
 | T-S006-01 | not-applicable | not-applicable: DOC:api-contract task | no frontend work | not-applicable |
 | T-S006-02 | not-applicable | not-applicable: DOC:permission-mapping task | no frontend work | not-applicable |
-| T-S006-03 | not-applicable | not-applicable: blocked DEV:backend task | no frontend work | not-applicable |
+| T-S006-03 | not-applicable | not-applicable: DEV:backend task | no frontend work | not-applicable |
 
 ## Frontend Performance Posture
 
@@ -190,9 +190,9 @@
 
 ## Backend Implementation Approach
 
-| Task ID | Backend Change Class | Approved Source Authority | Backend Feature Owner | Backend Capability File Strategy | Backend Source Inventory | Exact Write Envelope | Expected Files / Layers | Layer Responsibilities | Contract / API Posture | Authz / Tenant / Lifecycle Posture | Persistence / Migration Posture | Public Seam / Manifest Impact | Artifact Obligations | Scaffold / Script Command | Expected Backend Output | Split / Blocked Follow-Up | Proof Commands | Formatting / Generated Artifact Expectations | Human Review Boundary |
+| Task ID | Backend Change Class | Approved Source Authority | Feature Owner | Backend Capability File Strategy | Backend Source Inventory | Exact Write Envelope | Expected Files / Layers | Layer Responsibilities | Contract / API Posture | Authz / Tenant / Lifecycle Posture | Persistence / Migration Posture | Public Seam / Manifest Impact | Artifact Obligations | Scaffold / Script Command | Expected Backend Output | Split / Blocked Follow-Up | Proof Commands | Formatting / Generated Artifact Expectations | Human Review Boundary |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S006-03 | transport-route; domain-behavior; authz-enforcement | S-006 story, completed API contract, completed permission mapping, S-005 persistence | harnessChat | capability-per-file domain files for create/read/generate/download, composed by domain/service.ts | src/features/harnessChat/**; src/routes/v1/index.ts; tests/integration/harnessChat/**; tests/security/harnessChat/** | src/features/harnessChat/**; src/routes/v1/**; tests/integration/harnessChat/**; tests/security/harnessChat/**; docs/architecture/generated/feature-dependency-graph.* | contract, transport, domain, persistence consumers, integration, manifest if public seam changes | transport parses/validates/authorizes; domain owns lifecycle; persistence consumes S-005 repository; integration wires feature | blocked until T-S006-01 is complete; do not invent route shape | blocked until T-S006-02 is complete; root authority and tenant deny must be copied | consumes S-005; no migration in this task | update manifest/graph only if public seam changes | API contract, permission mapping, feature manifest, generated dependency graph if affected | not-applicable until unblocked | Protected route behavior for conversation create/read/history/generate/download | Blocked until dependencies complete; split evidence to S-008 and closure sweeps to S-009. | npx vitest run tests/integration/harnessChat tests/security/harnessChat; npm run git:preflight | regenerate generated dependency graph only if manifest/dependency changes | Backend reviewer decides source-truth consumption and security proof sufficiency. |
+| T-S006-03 | transport-route | S-006 story, completed API contract, completed permission mapping, S-005 persistence | src/features/harnessChat | service-composition-only | src/features/harnessChat/**; src/routes/v1/index.ts; tests/integration/harnessChat/**; tests/security/harnessChat/** | src/features/harnessChat/**; src/routes/v1/**; tests/integration/harnessChat/**; tests/security/harnessChat/**; docs/architecture/generated/feature-dependency-graph.* | contract, transport, domain, persistence consumers, integration, manifest if public seam changes | transport parses/validates/authorizes; domain owns lifecycle; persistence consumes S-005 repository; integration wires feature | approved API contract from T-S006-01; do not invent route shape | consume completed T-S006-02 root authority and tenant-deny mapping | not-applicable: no schema change; consumes S-005 repository | update manifest/graph only if public seam changes | API contract, permission mapping, feature manifest, generated dependency graph if affected | not-applicable: implementation is unblocked by completed source truth | Protected route behavior for conversation create/read/history/generate/download | Dependencies resolved; evidence routes to EVIDENCE:qa-evidence S-008 and closure sweeps route to DOC:api-contract, DOC:permission-mapping, DOC:data-dictionary, and GOV:architecture-update S-009. | npx vitest run tests/integration/harnessChat tests/security/harnessChat; npm run check:feature-dependencies | regenerate generated dependency graph only if manifest/dependency changes | Backend reviewer decides source-truth consumption and security proof sufficiency. |
 
 ## Migration / Persistence Approach
 
@@ -218,7 +218,7 @@
 | --- | --- | --- | --- |
 | T-S006-01 | task-specific | npm run product-request:validate -- --all; npm run task-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-006-protected-chat-history-generation-and-download-apis --story docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-006-protected-chat-history-generation-and-download-apis/story.md | Contract docs must not invent runtime behavior not backed by source artifacts. |
 | T-S006-02 | task-specific | npm run product-request:validate -- --all; npm run task-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-006-protected-chat-history-generation-and-download-apis --story docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-006-protected-chat-history-generation-and-download-apis/story.md | Permission docs must not make blocked/future tenant authority selectable or runtime-enforced. |
-| T-S006-03 | task-specific | blocked: run npx vitest run tests/integration/harnessChat tests/security/harnessChat only after dependencies complete | Runtime mocks must match API contract, permission mapping, and S-005 persistence shapes. |
+| T-S006-03 | task-specific | npx vitest run tests/integration/harnessChat tests/security/harnessChat; npm run check:feature-dependencies | Runtime mocks must match API contract, permission mapping, and S-005 persistence shapes. |
 
 ## Refactor-First Contract
 
@@ -260,7 +260,7 @@
 
 | Task ID | API Contract Class | Route Family | Contract Source / Authority | Methods / Paths | Params / Query / Body | Response / Status / Error Shape | Authn / Authz / Tenant Boundary | Validation / Pagination / Sorting / System Fields | Compatibility Posture | Maintained API Artifacts | Maintained Artifact Inventory | Split / Blocked Follow-Up | Human Review Boundary | Validation / Review Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S006-01 | additive-route-contract | chat-interface-layer-one-discovery | S-006 story; PRD; Technical Steering TS-CHAT-005; existing docs/api-contracts/chat-interface-layer-one-discovery.md | POST /v1/harness-chat/conversations; POST /v1/harness-chat/conversations/:conversationId/messages; GET /v1/harness-chat/conversations; GET /v1/harness-chat/conversations/:conversationId/history; POST /v1/harness-chat/conversations/:conversationId/packets; GET /v1/harness-chat/conversations/:conversationId/packet-revisions; GET /v1/harness-chat/packet-revisions/:packetRevisionId/pdf | route params conversationId and packetRevisionId required; request body rejects system-managed fields; pagination uses repo defaults where listing applies | response shape includes conversation, message, history, packet revision, and PDF download result payloads; status/error posture covers created, ok, validation failure, unauthenticated, unauthorized, not found, conflict, and generation failure | session and CSRF required for browser mutations; root-builder authz; tenant boundary is denied by default until future tenant authority is approved; no tenant context comes from URL state | exact route params required; ISO timestamps; normalized inputs; default pagination/sorting where list endpoints apply; system-managed fields rejected | additive | docs-api-contract-only | docs/api-contracts/chat-interface-layer-one-discovery.md; docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md; docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md | runtime handlers to DEV:backend T-S006-03; permission rows to DOC:permission-mapping T-S006-02; persistence or migration changes to DEV:migration-persistence S-005; evidence to S-008 | API reviewer confirms route wording and compatibility. | npm run product-request:validate -- --all; task-breakdown validation |
+| T-S006-01 | additive-route-contract | chat-interface-layer-one-discovery | S-006 story; PRD; Technical Steering TS-CHAT-005; existing docs/api-contracts/chat-interface-layer-one-discovery.md | POST /v1/root-admin/harness-chat/conversations; POST /v1/root-admin/harness-chat/conversations/:conversationId/messages; GET /v1/root-admin/harness-chat/conversations; GET /v1/root-admin/harness-chat/conversations/:conversationId; POST /v1/root-admin/harness-chat/conversations/:conversationId/packet-generations; GET /v1/root-admin/harness-chat/conversations/:conversationId/packet-revisions; GET /v1/root-admin/harness-chat/packet-revisions/:packetRevisionId; GET /v1/root-admin/harness-chat/packet-revisions/:packetRevisionId/pdf | route params conversationId and packetRevisionId required; request body rejects system-managed fields; pagination uses repo defaults where listing applies | response shape includes conversation, message, history, packet revision, and PDF download result payloads; status/error posture covers created, ok, validation failure, unauthenticated, unauthorized, not found, conflict, and generation failure | session and CSRF required for browser mutations; root-builder authz; tenant boundary is denied by default until future tenant authority is approved; no tenant context comes from URL state | exact route params required; ISO timestamps; normalized inputs; default pagination/sorting where list endpoints apply; system-managed fields rejected | additive | docs-api-contract-only | docs/api-contracts/chat-interface-layer-one-discovery.md; docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md; docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md | runtime handlers to DEV:backend T-S006-03; permission rows to DOC:permission-mapping T-S006-02; persistence or migration changes to DEV:migration-persistence S-005; evidence to S-008 | API reviewer confirms route wording and compatibility. | npm run product-request:validate -- --all; task-breakdown validation |
 
 ## Data Dictionary Contract
 
@@ -282,7 +282,7 @@
 | Task ID | Capability / Permission | Allowed Actor / State | Denied Actor / State | Object / Lifecycle States | Required Proof |
 | --- | --- | --- | --- | --- | --- |
 | T-S006-02 | chatInterface.* Build chat capabilities | authenticated root builder with approved root-admin MVP authority | unauthenticated, unauthorized root user, future tenant builder until activated, cross-scope request | conversation and packet lifecycle states from S-005 | permission mapping review and later security tests |
-| T-S006-03 | chatInterface.protectedRuntimeApi | authenticated root builder with approved permission rows | unauthenticated, unauthorized, future tenant, cross-scope, missing/invalid object | conversation new/in-progress/generated/abandoned; packet generated/downloaded/failed/superseded | blocked until security/integration proof can run |
+| T-S006-03 | chatInterface.protectedRuntimeApi | authenticated root builder with approved permission rows | unauthenticated, unauthorized, future tenant, cross-scope, missing/invalid object | conversation new/in-progress/generated/abandoned; packet generated/downloaded/failed/superseded | security/integration proof required |
 
 ## Forbidden Assumptions
 
@@ -298,7 +298,7 @@
 | --- | --- | --- | --- | --- |
 | T-S006-01 | DOC:api-contract | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/api-contract-task-guardrail.md | approved | API contract guardrail reviewed for route family, request/response, authz, compatibility, maintained artifact inventory, split routing, and validation. |
 | T-S006-02 | DOC:permission-mapping | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/permission-mapping-task-guardrail.md | approved | Permission mapping guardrail reviewed for authz model source, capability rows, boundary, grant/UI posture, denial/audit, allow/deny proof, split routing, and grant migration boundaries. |
-| T-S006-03 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Backend guardrail reviewed, but delivery handoff remains blocked until dependencies provide source truth. |
+| T-S006-03 | DEV:backend | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/backend-task-guardrail.md | approved | Backend guardrail reviewed; delivery handoff is unblocked by completed source truth. |
 
 ## Task Guardrail Evidence
 
@@ -326,15 +326,15 @@
 | T-S006-02 | permission-grants-migration | pass | No grant migration in this task; split if grants change. |
 | T-S006-02 | permission-split-routing | pass | Runtime enforcement, frontend, and evidence are split. |
 | T-S006-02 | permission-authz-proof | pass | Review and later security proof are named. |
-| T-S006-03 | backend-source-authority | pass | Backend source authority is blocked until API, permission, adapter, and persistence tasks complete. |
-| T-S006-03 | backend-change-class | pass | Change class is transport-route/domain-behavior/authz-enforcement. |
+| T-S006-03 | backend-source-authority | pass | Backend source authority consumes completed API, permission, adapter, and persistence tasks. |
+| T-S006-03 | backend-change-class | pass | Change class is transport-route. |
 | T-S006-03 | backend-owning-feature | pass | Owner is harnessChat. |
 | T-S006-03 | backend-source-inventory | pass | Feature, route, contract, permission, and tests are inventoried. |
 | T-S006-03 | backend-exact-write-envelope | pass | Narrow feature, route, focused tests, and generated graph paths are named. |
 | T-S006-03 | backend-layer-responsibilities | pass | Transport/domain/persistence/integration responsibilities are named. |
 | T-S006-03 | backend-cross-feature-seams | pass | Consumes S-004 adapter and S-005 persistence; no direct persistence imports across features. |
 | T-S006-03 | backend-authz-tenant-lifecycle | pass | Root-builder, unauthenticated, unauthorized, future tenant, and cross-scope posture required. |
-| T-S006-03 | backend-api-contract-boundary | pass | Blocked until T-S006-01 completes. |
+| T-S006-03 | backend-api-contract-boundary | pass | Consumes completed T-S006-01 contract source truth. |
 | T-S006-03 | backend-persistence-migration-boundary | pass | Consumes S-005; no migration in backend task. |
 | T-S006-03 | backend-scripted-scaffold-posture | pass | No scaffold command required before unblock. |
 | T-S006-03 | backend-artifact-obligations | pass | Manifest/graph only if public seam changes; closure to S-009. |
@@ -376,7 +376,7 @@
 | --- | --- | --- |
 | T-S006-01 | AC-S006-01 | Covers API contract truth. |
 | T-S006-02 | AC-S006-02 | Covers permission mapping truth. |
-| T-S006-03 | AC-S006-02 | Records backend implementation as blocked until dependencies complete. |
+| T-S006-03 | AC-S006-02 | Covers runtime backend enforcement after dependencies complete. |
 
 ## Task Capability Coverage
 
@@ -384,7 +384,7 @@
 | --- | --- | --- | --- |
 | T-S006-01 | chatInterface.rootAdminApiContracts | approved | Contract coverage queued. |
 | T-S006-02 | chatInterface.enforceDiscoveryChatAccess | approved | Permission coverage queued. |
-| T-S006-03 | chatInterface.enforceDiscoveryChatAccess | approved | Handoff remains blocked until dependencies complete. |
+| T-S006-03 | chatInterface.enforceDiscoveryChatAccess | approved | Handoff is unblocked by completed dependencies. |
 
 ## Task Dependencies
 
@@ -416,7 +416,7 @@
 | --- | --- | --- | --- |
 | T-S006-01 | contract-level | npm run product-request:validate -- --all; task-breakdown validation | Contract must not claim runtime proof. |
 | T-S006-02 | permission-level | npm run product-request:validate -- --all; task-breakdown validation | Mapping must not claim runtime enforcement for blocked rows. |
-| T-S006-03 | integration; security | blocked: npx vitest run tests/integration/harnessChat tests/security/harnessChat after unblock | Runtime fixtures must match contract, permission, and persistence shapes. |
+| T-S006-03 | integration; security | npx vitest run tests/integration/harnessChat tests/security/harnessChat; npm run check:feature-dependencies | Runtime fixtures must match contract, permission, and persistence shapes. |
 
 ## QA Evidence Instrument Summary
 
@@ -424,7 +424,7 @@
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S006-01 | not-applicable: contract task | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | evidence capture split to S-008 | contract reviewer |
 | T-S006-02 | not-applicable: permission task | not-applicable | not-applicable | not-applicable | not-applicable | not-applicable | evidence capture split to S-008 | permission reviewer |
-| T-S006-03 | blocked runtime evidence | API contract, permission mapping, persistence rows, route tests | integration/security tests after unblock | required after implementation | required after implementation | route/security proof and later S-008 evidence | blocked | backend/security reviewer |
+| T-S006-03 | runtime evidence | API contract, permission mapping, persistence rows, route tests | integration/security tests | required after implementation | required after implementation | route/security proof and later S-008 evidence | backend proof available; broader evidence split to S-008 | backend/security reviewer |
 
 ## Debt Health Summary Commands
 
@@ -443,7 +443,7 @@
 
 | Blocker ID | Blocks Task ID | Blocker Type | Required Separate Task ID | Reason | Resolution / Owner |
 | --- | --- | --- | --- | --- | --- |
-| BLK-S006-01 | T-S006-03 | dependency | T-S004-01; T-S005-01; T-S005-02; T-S006-01; T-S006-02 | Runtime route behavior must consume adapter, persistence, API, and permission truth. | Complete dependencies before queueing backend. |
+| BLK-S006-01 | T-S006-03 | dependency | T-S004-01; T-S005-01; T-S005-02; T-S006-01; T-S006-02 | Runtime route behavior must consume adapter, persistence, API, and permission truth. | resolved: dependencies completed before queueing backend. |
 
 ## Layer 5 Delivery Handoff
 
@@ -451,4 +451,4 @@
 | --- | --- | --- | --- |
 | T-S006-01 | queued-for-delivery | none | API contract task can run after S-005 packet backfill. |
 | T-S006-02 | queued-for-delivery | none | Permission mapping task can run with API contract source inventory. |
-| T-S006-03 | blocked | T-S004-01, T-S005-01, T-S005-02, T-S006-01, T-S006-02 | Backend implementation is not queued until source-truth and persistence dependencies complete. |
+| T-S006-03 | queued-for-delivery | none | Backend implementation may run against completed source-truth and persistence dependencies; broader runtime evidence remains split to S-008. |

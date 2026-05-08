@@ -108,7 +108,7 @@ expectations are current.
 
 | Blocker ID | Blocks Story | Blocker Type | Reason | Required Output | Stop Condition |
 | --- | --- | --- | --- | --- | --- |
-| BLK-SB-CHAT-009 | S-009 closure execution | dependency | Closure artifacts cannot state shipped truth before implementation and evidence tasks produce source truth. | Complete S-004 through S-008 implementation/evidence dependencies or keep closure tasks blocked. | Stop if artifact closure would invent behavior not yet implemented. |
+| BLK-SB-CHAT-009 | S-009 closure execution | resolved-for-root-admin-mvp | Closure artifacts cannot state shipped truth before implementation and evidence tasks produce source truth. | S-004 through S-008 implementation/evidence runs now exist for the root-admin MVP; keep residual DB/renderer/E2E gaps explicit. | Stop if artifact closure would invent behavior not yet implemented. |
 
 ## Follow-Up Decision Questions
 
@@ -126,4 +126,4 @@ expectations are current.
 
 | Story ID | Handoff Status | Reason |
 | --- | --- | --- |
-| S-009 | ready-for-task-breakdown | Story has explicit Layer 5 closure tasks for data dictionary, API contract, permission mapping, feature manifest/generated graph, and final source-independent docs sweep; execution remains blocked until implementation/evidence dependencies exist. |
+| S-009 | ready-for-task-breakdown | Story has explicit Layer 5 closure tasks for data dictionary, API contract, permission mapping, feature manifest/generated graph, and final source-independent docs sweep; T-S009-01 through T-S009-04 have proof records and T-S009-05 is ready for final docs closure. |

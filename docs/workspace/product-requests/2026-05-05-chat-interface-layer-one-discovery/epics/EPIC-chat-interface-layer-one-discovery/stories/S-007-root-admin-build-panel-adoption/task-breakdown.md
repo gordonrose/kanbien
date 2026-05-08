@@ -75,8 +75,8 @@
 
 | Task ID | Parent Story ID | Task Type | Title / Execution Scope | Allowed Write Set | Non-Goals | Dependencies | Shared Seams | Delivery Handoff Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S007-01 | S-007 | DEV:frontend | Adopt the signed-off design-system Build panel in root admin without app-local CSS, copied markup, or copied controller behavior. | src/frontend/rootAdminShell/**; tests/visual/rootAdmin/**; tests/integration/rootAdmin/**; docs/workspace/design-system/adoption/root-admin-build-work-panel-adoption-contract.md | app-page CSS, copied DS markup, copied controller behavior, API implementation, evidence-only screenshots | T-S006-03; T-S008-01 | build-work-panel design-system render/controller/style/accessibility seams | blocked |
-| T-S007-02 | S-007 | DEV:frontend | Display page/module/role starter context as helpful context only, never authority for scope or download permission. | src/frontend/rootAdminShell/**; tests/visual/rootAdmin/**; tests/security/rootAdmin/** | API permission changes, backend implementation, URL authority, tenant activation, evidence-only screenshots | T-S007-01; T-S006-03 | protected chat API and permission mapping | blocked |
+| T-S007-01 | S-007 | DEV:frontend | Adopt the signed-off design-system Build panel in root admin without app-local CSS, copied markup, or copied controller behavior. | src/frontend/rootAdminShell/**; tests/visual/app/rootAdminShell/**; tests/visual/rootAdmin/**; tests/integration/rootAdmin/**; docs/workspace/design-system/adoption/root-admin-build-work-panel-adoption-contract.md | app-page CSS, copied DS markup, copied controller behavior, API implementation, evidence-only screenshots | T-S006-03; T-S008-01 | build-work-panel design-system render/controller/style/accessibility seams | queued-for-delivery |
+| T-S007-02 | S-007 | DEV:frontend | Display page/module/role starter context as helpful context only, never authority for scope or download permission. | src/frontend/rootAdminShell/**; tests/visual/app/rootAdminShell/**; tests/visual/rootAdmin/**; tests/security/rootAdmin/** | API permission changes, backend implementation, URL authority, tenant activation, evidence-only screenshots | T-S007-01; T-S006-03 | protected chat API and permission mapping | queued-for-delivery |
 
 ## Task Size Guardrail
 
@@ -90,7 +90,7 @@
 | Task ID | Trigger Type | Stop Condition / Do Not Guess Decision | Required Escalation | May Proceed If Hit | Rationale |
 | --- | --- | --- | --- | --- | --- |
 | T-S007-01 | design-system-seam-gap | Stop if signed-off render/controller/accessibility/style seams are missing or cannot be consumed without app-page CSS. | Return to design-system owner. | no | Governed app UI must not copy DS internals. |
-| T-S007-02 | proof-gap | Stop if API contract, permission mapping, or denied-state proof source is missing. | Return to S-006 or S-008 owner. | no | Frontend must not infer authority from UI context. |
+| T-S007-02 | proof-gap | Stop if API contract, permission mapping, or denied-state proof source is missing. | Return to S-006 or S-008 owner; route API/OpenAPI/Postman updates to DOC:api-contract and feature dependency graph maintenance to GOV:architecture-update. | no | Frontend must not infer authority from UI context. |
 
 ## Exact Starting Context
 
@@ -103,14 +103,14 @@
 
 | Task ID | Source Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Source Steering Decision |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S007-01 | Root-admin Build panel adoption | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | app-shell | app-adoption | ui-state | none | root-admin shell work panel | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | ui-local | DS-owned-shell-required | DS-task-required | shell-registry-update | module-journey-files | blocked-on-artifacts | Root-admin app adoption remains blocked until protected APIs and runtime evidence inputs exist. |
-| T-S007-02 | Page/module/role starter context display | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | journey | ui-state | none | root-admin Build panel state | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | module-journey-files | blocked-on-security | Context may render only as helpful context, never authority. |
+| T-S007-01 | Root-admin Build panel adoption | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | app-shell | app-adoption | ui-state | none | root-admin shell work panel | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | ui-local | DS-owned-shell-required | signed-off-seam-exists | shell-registry-update | shell-bootstrap | ready | Root-admin app adoption consumes the signed-off Build work panel seam and protected API handlers. |
+| T-S007-02 | Page/module/role starter context display | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | app-shell | journey | ui-state | none | root-admin Build panel state | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | ui-local | DS-owned-shell-required | signed-off-seam-exists | shell-registry-update | shell-bootstrap | ready | Context renders through the signed-off Build panel seam as helpful prompt data only; protected API proof exists for Layer 5 delivery. |
 
 ## Frontend Change Class Contract
 
 | Task ID | Frontend Change Class | Primary Contract Rows Required | Runtime / Browser Evidence Required | Route-Away / Split Notes |
 | --- | --- | --- | --- | --- |
-| T-S007-01 | app-adoption | Frontend Adoption Contract, Design-System Seam Contract, no app-page CSS, no copied behavior | Browser proof after T-S006-03; served asset proof routes to EVIDENCE:qa-evidence S-008 | Evidence-only screenshots route to EVIDENCE:qa-evidence; API changes route to S-006. |
+| T-S007-01 | app-adoption | Frontend Adoption Contract, Design-System Seam Contract, no app-page CSS, no copied behavior | Browser proof with protected API mock payloads after T-S006-03; served asset proof routes to EVIDENCE:qa-evidence S-008 | Evidence-only screenshots route to EVIDENCE:qa-evidence; API changes route to DEV:backend S-006. |
 | T-S007-02 | permission-rendering | Permission rendering evidence, runtime data and mock-honesty contract, API contract | Browser/security proof for allowed, denied, expired, and cross-scope states after T-S006-03 | Evidence-only screenshots route to EVIDENCE:qa-evidence; permission changes route to DOC:permission-mapping. |
 
 ## Frontend / Design-System Sub-Standard
@@ -118,7 +118,7 @@
 | Task ID | Primary Sub-Standard | Additional Sub-Standards | Split Rationale | Required Compliance Proof |
 | --- | --- | --- | --- | --- |
 | T-S007-01 | visual-rendering | accessibility-semantics; interaction-behavior | Inseparable app adoption requires render, behavior, and accessibility seams together while preserving DS ownership. | Browser/canonical screenshot evidence artifact proves signed-off DS adoption without copied markup or app-page CSS. |
-| T-S007-02 | fixture-data-contract | permission-rendering proof | Inseparable because context display must be tied to API/permission contract data shape. | Contract/fixture/live-payload proof shows page/module/role context is display-only and no URL authority exists. |
+| T-S007-02 | fixture-data-contract | permission-rendering proof | Inseparable because context display must be tied to API/permission contract data shape. | Contract/fixture/live/runtime payload proof shows page/module/role context is display-only and no URL authority exists. |
 
 ## Frontend Performance Posture
 
@@ -132,7 +132,7 @@
 | Task ID | Seam Posture | Seam Name / Export / Route | Owned Render Structure | Owned Behavior Controller | Owned Accessibility Semantics | Canonical / Behavior Lock / Evidence | Frontend Consumption Contract |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S007-01 | consumes-existing-seam | build-work-panel family consuming conversationPanel.mjs render/controller and conversationPanel.css style seam | DS owns panel/chat render structure | DS owns panel/chat controller behavior | DS owns roles, labels, state semantics, focus behavior | build-work-panel behavior lock, reference pack, pattern, verification checklist, adoption contract | Root-admin may compose data and invoke seams; it must not copy markup, controller, ARIA, or CSS. |
-| T-S007-02 | consumes-existing-seam | build-work-panel context/starter prompt display area | DS owns context/starter render structure | DS owns context/starter interaction behavior | DS owns roles, labels, state semantics, focus behavior | build-work-panel behavior lock and adoption contract | Root-admin may bind page/module/role context as display data only; authority stays server-side. |
+| T-S007-02 | consumes-existing-seam | build-work-panel context/starter render/controller seam | DS owns context/starter render structure | DS owns context/starter interaction behavior | DS owns roles, labels, state semantics, focus behavior | build-work-panel behavior lock and adoption contract | Root-admin may bind page/module/role context as display data only; authority stays server-side. |
 
 ## Design-System Seam Class Contract
 
@@ -150,25 +150,32 @@
 
 | Task ID | Security Area | Source Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Layer 4 Evidence Plan / Blocking Reason |
 | --- | --- | --- | --- | --- | --- |
-| T-S007-01 | session-cookie | yes | Root-admin calls use authenticated session. | allowed/denied browser proof after backend | blocked until T-S006-03 |
-| T-S007-01 | csp-assets | yes | DS assets served through approved entrypoints. | served asset evidence after implementation | blocked until T-S007-01 delivery |
-| T-S007-01 | sensitive-rendering | yes | Chat transcripts/history are sensitive. | denied/unauthorized/expired proof | blocked until runtime exists |
-| T-S007-02 | url-replay-state | yes | Helpful context is never authority. | prove no URL authority and server-side authz remains required | blocked until T-S006-03 |
-| T-S007-02 | asset-delivery | yes | PDF download uses authorized route only. | denied download proof | blocked until T-S006-03 |
+| T-S007-01 | session-cookie | yes | Root-admin browser calls must use existing authenticated session posture. | Frontend tasks must require allowed and denied browser proof. | protected API handler proof uses root-admin browser session context |
+| T-S007-01 | csp-assets | yes | Chat UI and PDF download affordance must use approved served assets and design-system entrypoints. | Frontend tasks must consume DS assets without app-local CSS. | browser proof checks shared conversationPanel stylesheet and render seam |
+| T-S007-01 | csrf-mutation | yes | Browser-triggered chat actions are protected mutations. | Frontend tasks must consume protected APIs; backend owns CSRF proof. | root-admin app consumes protected harness-chat APIs; backend CSRF proof remains with S-006/S-008 evidence |
+| T-S007-01 | url-replay-state | yes | Page/module/role context must not become authority or serialize sensitive replay state into URLs. | Frontend tasks must display context as helpful data only. | context is sent as display/prompt context only; explicit context rendering proof remains T-S007-02 |
+| T-S007-01 | sensitive-rendering | yes | Chat transcripts and packets may include platform or tenant change intent. | Frontend tasks must require denied/unauthorized/expired proof. | denied/expired evidence remains routed to EVIDENCE:qa-evidence S-008 |
+| T-S007-01 | asset-delivery | yes | PDF download action needs approved generated-document delivery posture. | Frontend tasks must consume authorized download API only. | browser proof exercises authorized packet PDF route only |
+| T-S007-02 | session-cookie | yes | Root-admin browser calls must use existing authenticated session posture. | Frontend tasks must require allowed and denied browser proof. | allowed browser proof runs under root-admin browser session context; denied/expired evidence remains routed to EVIDENCE:qa-evidence S-008 |
+| T-S007-02 | csp-assets | yes | Chat UI and PDF download affordance must use approved served assets and design-system entrypoints. | Frontend tasks must consume DS assets without app-local CSS. | browser proof uses shared conversationPanel assets and adds no app-local CSS |
+| T-S007-02 | csrf-mutation | yes | Browser-triggered chat actions are protected mutations. | Frontend tasks must consume protected APIs; backend owns CSRF proof. | browser proof exercises protected conversation and packet-generation API calls; backend CSRF proof remains with S-006/S-008 evidence |
+| T-S007-02 | url-replay-state | yes | Page/module/role context must not become authority or serialize sensitive replay state into URLs. | Frontend tasks must display context as helpful data only. | browser proof mutates query/hash with tenant-like values and verifies only pathname/page context reaches protected API |
+| T-S007-02 | sensitive-rendering | yes | Chat transcripts and packets may include platform or tenant change intent. | Frontend tasks must require denied/unauthorized/expired proof. | allowed browser proof verifies context is prompt data only; denied/unauthorized/expired evidence remains routed to EVIDENCE:qa-evidence S-008 |
+| T-S007-02 | asset-delivery | yes | PDF download action needs approved generated-document delivery posture. | Frontend tasks must consume authorized download API only. | browser proof verifies PDF fetch uses only the authorized packet-revision route and does not include URL replay parameters |
 
 ## Frontend Permission Rendering Evidence
 
 | Task ID | Sensitive Rendering Scope | Allowed State Proof | Denied / Unauthorized State Proof | Expired / Unauthenticated State Proof | Cross-Tenant Denial Proof |
 | --- | --- | --- | --- | --- | --- |
 | T-S007-01 | Build panel, history, inactive actions, PDF action | root-builder allowed browser scenario | unauthorized root user denied state | unauthenticated/expired session state | future tenant and cross-scope denied state |
-| T-S007-02 | page/module/role context and PDF action | root-builder sees context as display data | unauthorized user cannot gain scope from context | unauthenticated/expired session cannot use context | tenant/cross-scope context cannot authorize access |
+| T-S007-02 | page/module/role context and PDF action | allowed root-builder browser proof shows context as display data | unauthorized user cannot gain scope from context | unauthenticated/expired session cannot use context | tenant/cross-tenant denial context cannot authorize access |
 
 ## Frontend Runtime Data And Mock Honesty
 
 | Task ID | Governing API / Projection Contract | Fixture Source | Live / Runtime Payload Evidence | Runtime Evidence Unavailable Reason | Mock-Honesty Statement |
 | --- | --- | --- | --- | --- | --- |
-| T-S007-01 | docs/api-contracts/chat-interface-layer-one-discovery.md | journey inventory fixtures and DS reference data | required after T-S006-03 runtime exists | blocked until protected backend APIs exist | Mocks must match API contract and may not invent successful history/PDF fallback behavior. |
-| T-S007-02 | docs/api-contracts/chat-interface-layer-one-discovery.md and permission mapping | journey inventory context fixtures | required after T-S006-03 runtime exists | blocked until protected backend APIs exist | Mocks must prove context is data only and never authority. |
+| T-S007-01 | docs/api-contracts/chat-interface-layer-one-discovery.md | journey inventory fixtures, DS reference data, and protected harness-chat API payload mocks | Playwright route mocks match protected conversation, packet generation, and PDF download contract shape | not-applicable: protected backend APIs exist | Mock-honesty: mocks must match API contract and may not invent successful history/PDF fallback behavior. |
+| T-S007-02 | docs/api-contracts/chat-interface-layer-one-discovery.md and permission mapping | Playwright route mocks plus static root-admin source guard | captured protected conversation POST includes display-only surface context; captured PDF GET uses packet-revision route without URL replay parameters | not-applicable: protected backend APIs exist | Mock-honesty: mocks record request bodies/URLs and must not treat page context, query params, hash params, tenant-like values, or role-like values as authority. |
 
 ## Vertical Slice Coupling
 
@@ -209,15 +216,15 @@
 
 | Task ID | Envelope Class | Exact Files Or Narrow Patterns | Broad Write Rationale |
 | --- | --- | --- | --- |
-| T-S007-01 | narrow-pattern | src/frontend/rootAdminShell/**; tests/visual/rootAdmin/**; tests/integration/rootAdmin/**; docs/workspace/design-system/adoption/root-admin-build-work-panel-adoption-contract.md | Blocked frontend adoption envelope; no app-page CSS allowed. |
-| T-S007-02 | narrow-pattern | src/frontend/rootAdminShell/**; tests/visual/rootAdmin/**; tests/security/rootAdmin/** | Blocked frontend security-rendering envelope; no backend or permission mapping changes. |
+| T-S007-01 | narrow-pattern | src/frontend/rootAdminShell/**; tests/visual/app/rootAdminShell/**; tests/visual/rootAdmin/**; tests/integration/rootAdmin/**; docs/workspace/design-system/adoption/root-admin-build-work-panel-adoption-contract.md | Frontend adoption envelope; no app-page CSS allowed. |
+| T-S007-02 | narrow-pattern | src/frontend/rootAdminShell/**; tests/visual/app/rootAdminShell/**; tests/visual/rootAdmin/**; tests/security/rootAdmin/** | Frontend security-rendering envelope; no backend or permission mapping changes. |
 
 ## Task-Specific Proof Plan
 
 | Task ID | Proof Specificity | Focused Proof Command Or Evidence | Mock-Honesty Note |
 | --- | --- | --- | --- |
-| T-S007-01 | blocked | blocked: browser proof after T-S006-03 and T-S008-01 | Mocks must match API contract and DS canonical truth. |
-| T-S007-02 | blocked | blocked: browser/security proof after T-S006-03 and T-S007-01 | Mocks must prove context is display-only, not authority. |
+| T-S007-01 | task-specific | npx playwright test tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts --grep "root-admin Build panel" | Mocks must match API contract and DS canonical truth. |
+| T-S007-02 | task-specific | npx playwright test tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts --grep=root-admin.*context; npx vitest run tests/security/rootAdmin/buildPanelContextAuthority.test.ts; npm run check:feature-dependencies | Mocks record protected API request bodies/URLs and static source proof prevents URL/query/hash/tenant/authorization authority. |
 
 ## Refactor-First Contract
 
@@ -300,7 +307,7 @@
 | --- | --- | --- | --- |
 | T-S007-01 | frontend-architecture-classification | pass | Source architecture row copied from S-007. |
 | T-S007-01 | frontend-change-class | pass | app-adoption class selected. |
-| T-S007-01 | frontend-source-placement | pass | module-journey-files source placement named. |
+| T-S007-01 | frontend-source-placement | pass | shell-bootstrap source placement named. |
 | T-S007-01 | frontend-state-owner | pass | ui-local state owner copied. |
 | T-S007-01 | frontend-route-topology | pass | root-admin route family and non-topology UI state named. |
 | T-S007-01 | frontend-design-system-seam | pass | consumes existing build-work-panel/conversationPanel seams. |
@@ -343,16 +350,16 @@
 | Task ID | Path | Write Class | Reason |
 | --- | --- | --- | --- |
 | T-S007-01 | src/frontend/rootAdminShell/** | feature-local | Root-admin module adoption only; no app-page CSS. |
-| T-S007-01 | tests/visual/rootAdmin/**; tests/integration/rootAdmin/** | test | Browser/adoption proof. |
+| T-S007-01 | tests/visual/app/rootAdminShell/**; tests/visual/rootAdmin/**; tests/integration/rootAdmin/** | test | Browser/adoption proof. |
 | T-S007-02 | src/frontend/rootAdminShell/** | feature-local | Root-admin context display only; no backend changes. |
-| T-S007-02 | tests/visual/rootAdmin/**; tests/security/rootAdmin/** | test | Browser/security proof. |
+| T-S007-02 | tests/visual/app/rootAdminShell/**; tests/visual/rootAdmin/**; tests/security/rootAdmin/** | test | Browser/security proof. |
 
 ## Forbidden Work
 
 | Task ID | Forbidden Work | Reason |
 | --- | --- | --- |
 | T-S007-01 | app-page CSS, copied DS markup/controller/ARIA/state behavior, API implementation, evidence-only screenshots | Preserve governed DS adoption. |
-| T-S007-02 | backend authz changes, permission mapping changes, tenant activation, URL authority, evidence-only screenshots | Preserve server-side authority. |
+| T-S007-02 | backend authz changes, permission mapping changes, tenant activation, URL authority, evidence-only screenshots | Preserve server-side authority; route backend API artifact work to DOC:api-contract. |
 
 ## Task Acceptance Criteria Coverage
 
@@ -365,7 +372,7 @@
 
 | Task ID | Capability Matrix Row(s) | Coverage Status | Notes |
 | --- | --- | --- | --- |
-| T-S007-01 | chatInterface.rootAdminPanelAdoption | approved | Handoff remains blocked until dependencies complete. |
+| T-S007-01 | chatInterface.rootAdminPanelAdoption | approved | Handoff is unblocked by protected backend APIs and evidence placement. |
 | T-S007-02 | chatInterface.contextIsNotAuthority | approved | Handoff remains blocked until dependencies complete. |
 
 ## Task Dependencies
@@ -393,8 +400,8 @@
 
 | Task ID | Required Proof Layers | Required Test Or Proof Commands | Mock Honesty / Runtime Evidence Notes |
 | --- | --- | --- | --- |
-| T-S007-01 | rendered-browser; visual; accessibility; responsive | blocked: Playwright/browser proof after T-S006-03 and S-008 placement | Mock data must match API contract and DS canonical truth. |
-| T-S007-02 | runtime-api; browser; security; URL replay | blocked: browser/security proof after T-S007-01 and T-S006-03 | Mock data must prove context is display-only, not authority. |
+| T-S007-01 | rendered-browser; visual; accessibility; responsive | npx playwright test tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts --grep "root-admin Build panel" | Mock data must match API contract and DS canonical truth. |
+| T-S007-02 | runtime-api; browser; security; URL replay | npx playwright test tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts --grep=root-admin.*context; npx vitest run tests/security/rootAdmin/buildPanelContextAuthority.test.ts; npm run check:feature-dependencies | Mock data proves context is display-only by capturing protected API request bodies and rejecting URL replay values as authority. |
 
 ## QA Evidence Instrument Summary
 
@@ -417,12 +424,11 @@
 
 | Blocker ID | Blocks Task ID | Blocker Type | Required Separate Task ID | Reason | Resolution / Owner |
 | --- | --- | --- | --- | --- | --- |
-| BLK-S007-01 | T-S007-01 | dependency | T-S006-03; T-S008-01 | Frontend adoption needs protected APIs and proof placement. | Complete dependencies before queueing. |
-| BLK-S007-02 | T-S007-02 | dependency | T-S007-01; T-S006-03 | Context-not-authority proof needs app surface and protected API. | Complete dependencies before queueing. |
+| BLK-S007-01 | T-S007-01 | dependency | T-S006-03; T-S008-01 | Frontend adoption needs protected APIs and proof placement. | resolved: protected APIs and proof placement are available for app adoption. |
 
 ## Layer 5 Delivery Handoff
 
 | Task ID | Handoff Status | Blockers Remaining | Delivery Notes |
 | --- | --- | --- | --- |
-| T-S007-01 | blocked | T-S006-03; T-S008-01 | Do not implement root-admin app adoption until protected APIs and proof placement exist. |
-| T-S007-02 | blocked | T-S007-01; T-S006-03 | Do not implement context rendering until adoption surface and protected API exist. |
+| T-S007-01 | queued-for-delivery | none | Root-admin app adoption may consume the signed-off seam and protected API handlers; broader evidence remains routed to S-008. |
+| T-S007-02 | queued-for-delivery | none | Context rendering may proceed through the signed-off Build panel seam with page context treated as prompt data only; broader denied-state evidence remains routed to S-008. |

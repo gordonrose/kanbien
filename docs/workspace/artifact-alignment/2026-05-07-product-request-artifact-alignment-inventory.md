@@ -11,7 +11,10 @@
   Product Request, Product Discovery, Technical Steering, Story Breakdown,
   Task Breakdown, and linked downstream planning artifacts.
 - Validation evidence:
-  - `npm run product-request:validate -- --all` -> PASS
+  - `npm run product-request:validate -- --all` -> PASS on the original
+    2026-05-07 inventory pass; current 2026-05-08 Layer 5 closeout uses scoped
+    chat-interface validation because `--all` is blocked by an unrelated
+    legacy request.
   - `npm run story-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery` -> PASS
   - `npm run story-breakdown:validate -- docs/workspace/story-breakdown/2026-04-29-reporting-dashboard-template-story-breakdown` -> PASS
   - `npm run story-breakdown:validate -- docs/workspace/story-breakdown/2026-04-29-tenant-aware-login-pattern-story-breakdown` -> PASS
@@ -59,7 +62,7 @@ Breakdown under the parent story rather than as floating workspace packets.
 
 | Chain | Product Request Shape | Discovery | Steering | Story Breakdown | Task Breakdown | Downstream Artifacts | Alignment Classification | Recommendation |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Chat interface for Layer One Product Discovery | folder request exists | linked external workspace packet | linked external workspace packet | nested under Product Request epic | S-001 through S-010 have nested `task-breakdown.md` and `tasks/T-*` | PRD, capability matrix, test cases, journey inventory, runtime contract, permission mapping, API contract, data dictionaries, implementation blueprint linked | aligned active Layer 4 chain | `proceed-to-layer-5`: all active chat-interface stories prove story-local Task Breakdown; start delivery from the pilot sequence while keeping top-level Product Request `Task Breakdown` pending for validator-compatible link semantics. |
+| Chat interface for Layer One Product Discovery | folder request exists | linked external workspace packet | linked external workspace packet | nested under Product Request epic | S-001 through S-010 have nested `task-breakdown.md` and `tasks/T-*` | PRD, capability matrix, test cases, journey inventory, runtime contract, permission mapping, API contract, data dictionaries, implementation blueprint linked | active Layer 5 chain | `continue-layer-5-closeout`: root-admin MVP implementation and focused proof records exist; finish T-S009-05 scoped docs closure while keeping top-level Product Request `Task Breakdown` as story-local link semantics. |
 | Data compliance debt policy and fail-on-debt gate | single-file Product Request | pending | pending if policy/architecture owner needed | pending | pending | command evidence and hardening source linked | intake-only chain | `link-only-now`: keep as Product Request intake until Product Discovery determines whether policy work needs steering. |
 | QA coverage-strength debt policy and fail-on-debt gate | single-file Product Request | pending | pending if policy/architecture owner needed | pending | pending | command evidence and hardening source linked | intake-only chain | `link-only-now`: keep as Product Request intake until Product Discovery determines policy owner and blocking posture. |
 | Reporting dashboard template | no Product Request found | workspace packet exists | workspace packet exists | standalone folder Story Breakdown exists | none found | no Product Request index found in this pass | orphaned downstream chain | `needs-decision`: either create a Product Request wrapper or label as historical/reference planning chain. |
@@ -141,8 +144,9 @@ Remaining drift:
   KPI contract, and execution order:
   `docs/workspace/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md`
 
-This is a good first migration candidate because it already uses the Product
-Request folder and nested epic shape.
+This remains a good first migration candidate because it already uses the
+Product Request folder and nested epic shape, and the 2026-05-08 Layer 5 run
+records now prove the root-admin MVP delivery path.
 
 ### 2. Task-Under-Story Support Exists And Four Stories Are Materialized
 

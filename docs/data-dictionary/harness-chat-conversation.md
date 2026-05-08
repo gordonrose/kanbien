@@ -3,33 +3,32 @@
 ## Summary
 
 - Description:
-  Planned durable root-admin Build chat conversation for Layer 1 Product
+  Durable root-admin Build chat conversation for Layer 1 Product
   Discovery, including root scope, creator, lifecycle state, prompt context,
   structured discovery state, and current packet linkage.
 - Owning feature:
-  planned `harnessChat`
+  `harnessChat`
 - Primary source tables or records:
-  planned `harness_chat_conversations`, planned `HarnessChatConversationRecord`
+  `harness_chat_conversations`, `HarnessChatConversationRecord`
 - Status:
-  planned first slice; this dictionary page records source-independent
-  persistence intent before implementation.
+  implemented first persistence slice for conversation/message storage.
 
 ## Storage Model
 
 - Primary table or durable record:
-  planned `harness_chat_conversations`
+  `harness_chat_conversations`
 - Related durable records:
-  planned `harness_chat_messages`, planned `harness_chat_packet_revisions`,
-  planned `harness_chat_pdf_attempts`,
+  `harness_chat_messages`, `harness_chat_packet_revisions`,
+  `harness_chat_pdf_attempts`,
   Product Request artifact index, root user/session records
 - Primary key:
-  planned `conversation_id`
+  `conversation_id`
 - Foreign key relationships:
-  - planned `created_by_root_user_id -> root_user.root_user_id`
-  - planned `product_request_id -> product request record or artifact index`
-    when the Product Request backing model is implemented
-  - planned `latest_packet_revision_id -> harness_chat_packet_revisions.packet_revision_id`
-    if implementation chooses a direct current pointer
+  - `created_by_root_user_id -> root_users.root_user_id`
+  - `product_request_id` is a nullable text artifact/backing-record reference
+    until Product Request persistence is introduced
+  - `latest_packet_revision_id -> harness_chat_packet_revisions.packet_revision_id`
+    as a deferrable current packet pointer
 
 ## Capabilities That Rely On This Entity
 
@@ -138,22 +137,22 @@
 
 ## Indexes And Constraints
 
-- planned primary key on `conversation_id`
+- primary key on `conversation_id`
   Type: `primary key`
   Definition / Rule: one generated identifier per conversation.
   Why It Matters: Stable route and packet linkage.
   Source: API contract.
-- planned root history index
+- root history index
   Type: `index`
   Definition / Rule: index `scope_type`, `updated_at DESC`, and `state`.
   Why It Matters: Supports root-builder-wide history listing.
   Source: API contract list route.
-- planned creator index
+- creator history index
   Type: `index`
   Definition / Rule: index `created_by_root_user_id`, `updated_at DESC`.
   Why It Matters: Supports creator-specific history views and audit review.
   Source: PRD history requirements.
-- planned tenant guard constraint
+- tenant guard constraint
   Type: `check`
   Definition / Rule: `tenant_id IS NULL` when `scope_type = 'root'`.
   Why It Matters: Prevents accidental tenant authority in root MVP records.
@@ -257,6 +256,7 @@
 
 ## Migration Compatibility Notes
 
-- First implementation should use a new migration with stable sortable prefix.
+- First implementation uses
+  `src/features/harnessChat/persistence/migrations/0047_create_harness_chat_conversations.sql`.
 - Future tenant rollout should add tenant-scoped constraints through additive
   migration and compatibility plan, not by weakening root MVP authority rules.

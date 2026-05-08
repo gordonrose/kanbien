@@ -3,32 +3,29 @@
 ## Summary
 
 - Description:
-  Planned durable evidence record for each generated Product Discovery packet
+  Durable evidence record for each generated Product Discovery packet
   PDF request, including safe failure categories, limits evidence, retry
   linkage, and download outcome. Rendered PDF bytes are transient in the MVP
   and are not stored as durable assets.
 - Owning feature:
-  planned `harnessChat`
+  `harnessChat`
 - Primary source tables or records:
-  planned `harness_chat_pdf_attempts`, planned
-  `HarnessChatPdfAttemptRecord`
+  `harness_chat_pdf_attempts`, `HarnessChatPdfAttemptRecord`
 - Status:
-  planned first slice; this dictionary page records source-independent
-  persistence intent before implementation.
+  implemented packet persistence slice.
 
 ## Storage Model
 
 - Primary table or durable record:
-  planned `harness_chat_pdf_attempts`
+  `harness_chat_pdf_attempts`
 - Related durable records:
-  planned `harness_chat_packet_revisions`, planned
-  `harness_chat_conversations`
+  `harness_chat_packet_revisions`, `harness_chat_conversations`
 - Primary key:
-  planned `pdf_attempt_id`
+  `pdf_attempt_id`
 - Foreign key relationships:
-  - planned `packet_revision_id -> harness_chat_packet_revisions.packet_revision_id`
-  - planned `requested_by_root_user_id -> root_user.root_user_id`
-  - planned `retry_of_attempt_id -> harness_chat_pdf_attempts.pdf_attempt_id`
+  - `packet_revision_id -> harness_chat_packet_revisions.packet_revision_id`
+  - `requested_by_root_user_id -> root_users.root_user_id`
+  - `retry_of_attempt_id -> harness_chat_pdf_attempts.pdf_attempt_id`
 
 ## Capabilities That Rely On This Entity
 
@@ -114,22 +111,22 @@
 
 ## Indexes And Constraints
 
-- planned primary key on `pdf_attempt_id`
+- primary key on `pdf_attempt_id`
   Type: `primary key`
   Definition / Rule: one generated identifier per attempt.
   Why It Matters: Stable audit and retry linkage.
   Source: API contract.
-- planned packet attempt index
+- packet attempt index
   Type: `index`
   Definition / Rule: index `packet_revision_id`, `created_at DESC`.
   Why It Matters: Supports packet download history and retry review.
   Source: API contract.
-- planned actor rate-limit index
+- actor rate-limit index
   Type: `index`
   Definition / Rule: index `requested_by_root_user_id`, `created_at DESC`.
   Why It Matters: Supports five generations per actor per 10 minutes.
   Source: PDF decision record.
-- planned state/created index
+- state/created index
   Type: `index`
   Definition / Rule: index `state`, `created_at DESC`.
   Why It Matters: Supports operational failure review.

@@ -5,9 +5,11 @@
 Map the root-admin MVP permissions for the Build chat that creates and reviews
 Layer 1 Product Discovery work.
 
-This is a planning mapping for a not-yet-implemented feature. Rows marked
-`target` must be reconciled into the canonical backend and role mapping
-documents when implementation lands.
+This is the current root-admin MVP mapping for the implemented `harnessChat`
+route family. Rows marked `current` are enforced by root-session middleware,
+root capability checks, and focused router/security evidence. Broader
+canonical role-map materialization remains a closeout concern if those
+artifacts become the governing source for seeded grants.
 
 ## Roles
 
@@ -45,11 +47,11 @@ data, and permission mapping artifacts.
 
 | Feature | Capability | Status | Allowed Roles | Minimum Role | Denied Roles | Frontend Visibility Rule | Backend Enforcement Rule | Audit Role Capture |
 |---|---|---|---|---|---|---|---|---|
-| `harnessChat` | `harness-chat.root.conversation.create` | `target` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor | show Build chat create action only in authenticated root-admin shell when Build is active | root-session middleware plus harnessChat root capability check; server derives actor and root scope; client context is not authority | yes |
-| `harnessChat` | `harness-chat.root.conversation.read` | `target` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor; actor attempting tenant-scope history through root MVP route | root-admin history may show root-builder conversations and packet versions to authenticated root builders | root-session middleware plus root scope check; root builders may read root-admin discovery histories regardless of creator; future tenant scope denied | yes for history reads and denials |
-| `harnessChat` | `harness-chat.root.message.append` | `target` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor | message composer visible only to authenticated root builders for active Build conversations | root-session middleware plus conversation state check; appending must not rely on client-supplied actor, scope, or lifecycle fields | yes |
-| `harnessChat` | `harness-chat.root.packet.generate` | `target` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor; stale or wrong-scope conversation | generate action visible to authenticated root builders on eligible root-admin Build conversations | root-session middleware plus root conversation visibility and lifecycle check; Product Discovery adapter receives only authorized durable conversation data | yes |
-| `harnessChat` | `harness-chat.root.packet.downloadPdf` | `target` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor; public caller; wrong-scope or inaccessible packet | PDF action visible only for authorized root-visible packet versions and approved PDF states | root-session middleware plus packet visibility check and generated-document delivery policy; no public URLs, raw bucket URLs, or client context authority | yes |
+| `harnessChat` | `harness-chat.root.conversation.create` | `current` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor | show Build chat create action only in authenticated root-admin shell when Build is active | `requireRootSession` plus harnessChat root capability check; server derives actor and root scope; client context is not authority | yes |
+| `harnessChat` | `harness-chat.root.conversation.read` | `current` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor; actor attempting tenant-scope history through root MVP route | root-admin history may show root-builder conversations and packet versions to authenticated root builders | `requireRootSession` plus root capability and root scope checks; root builders may read root-admin discovery histories regardless of creator; future tenant scope denied | yes for history reads and denials |
+| `harnessChat` | `harness-chat.root.message.append` | `current` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor | message composer visible only to authenticated root builders for active Build conversations | `requireRootSession` plus message append capability and conversation state check; appending must not rely on client-supplied actor, scope, or lifecycle fields | yes |
+| `harnessChat` | `harness-chat.root.packet.generate` | `current` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor; stale or wrong-scope conversation | generate action visible to authenticated root builders on eligible root-admin Build conversations | `requireRootSession` plus packet generate capability, root conversation visibility, and lifecycle check; Product Discovery adapter receives only authorized durable conversation data | yes |
+| `harnessChat` | `harness-chat.root.packet.downloadPdf` | `current` | `RootUserAdmin` | `RootUserAdmin` | unauthenticated caller; non-root actor; future tenant actor; public caller; wrong-scope or inaccessible packet | PDF action visible only for authorized root-visible packet versions and approved PDF states | `requireRootSession` plus packet download capability and packet visibility check; no public URLs, raw bucket URLs, or client context authority | yes |
 | `harnessChat` | `harness-chat.tenant.conversation.review` | `blocked` | none in MVP | not applicable | all actors | no tenant review UI is shown in MVP | deny by default until tenant-layer object/relationship permissions are approved | yes for attempted access if a route exists |
 
 ## Tenant-Layer Deferral
@@ -73,8 +75,15 @@ define:
   root, tenant, history, generation, or download authority.
 - PDF download authorization follows the same root-visible packet rule plus the
   generated-document delivery policy.
-- When the feature is implemented, reconcile these target rows into:
+- Current proof sources:
+  - `tests/security/harnessChat/routerAuthz.test.ts`
+  - `tests/security/rootAdmin/buildPanelContextAuthority.test.ts`
+  - `tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts`
+  - `docs/workspace/qa-evidence/chat-interface-layer-one-discovery/`
+- Closeout follow-up:
+  reconcile these current rows into any canonical backend/role mapping
+  materialization source that governs seeded root grants:
   - `docs/architecture/permission-mappings/backend-to-authz-capability-mapping.md`
   - `docs/architecture/permission-mappings/role-to-authz-capability-mapping.md`
   - the root-role/capability catalog seed or materialization source, if that
-    is the governing implementation path at that time.
+    is the governing implementation path.

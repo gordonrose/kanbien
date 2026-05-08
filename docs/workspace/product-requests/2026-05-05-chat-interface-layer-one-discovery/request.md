@@ -7,9 +7,9 @@
 - Date:
   2026-05-06
 - Current status:
-  `story-breakdown`
+  `layer-5-delivery`
 - Requester-facing status:
-  Ready for story planning
+  Root-admin MVP implemented; closeout evidence in progress
 - Source channel:
   `chat`
 - Owning context:
@@ -43,7 +43,7 @@
 - Story Breakdown:
   `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 - Task Breakdown:
-  pending
+  `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 - PRD:
   `docs/prd/2026-05-06-0024-chat-interface-layer-one-discovery.md`
 - Capability Matrix:
@@ -68,7 +68,7 @@
 - Layer 5 delivery pilot:
   `docs/workspace/layer5-pilots/2026-05-07-chat-interface-delivery-pilot.md`
 - Work runs / Loop Runs:
-  none yet
+  `docs/workspace/layer5-task-runs/2026-05-08/`
 - Pull requests, config changes, or extension changes:
   none yet
 
@@ -76,14 +76,14 @@
 
 | Epic ID | Title | Status | Epic Artifact | Summary |
 | --- | --- | --- | --- | --- |
-| EPIC-chat-interface-layer-one-discovery | Chat interface for Layer One Product Discovery | story-breakdown | `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery` | Breaks the chat interface request into readable planning stories, including design-system work, generated packet delivery, conversation history, APIs, root-admin adoption, runtime evidence, artifact sweeps, and future tenant-builder rollout deferral. |
+| EPIC-chat-interface-layer-one-discovery | Chat interface for Layer One Product Discovery | layer-5-delivery | `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery` | Breaks the chat interface request into readable planning stories and now carries Layer 5 implementation/evidence runs for the root-admin MVP, including design-system work, generated packet delivery, conversation history, APIs, root-admin adoption, runtime evidence, artifact sweeps, and future tenant-builder rollout deferral. |
 
 ## What The Chat Widget Should Show
 
 - Title:
   Chat interface for Layer One Product Discovery
 - Status:
-  Story planning blocked on artifact unblocks
+  Layer 5 delivery closeout in progress
 - Short update:
   Product intent, architecture direction, story queue, PRD, first-draft
   capability matrix, generated PDF direction, design-system path, and
@@ -91,17 +91,21 @@
   root builders in the root-admin MVP, while tenant-layer object and
   relationship permissions remain deferred. The API contract is captured for
   conversations, history, packet generation, packet revisions, and PDF
-  download. The data dictionary now captures planned durable conversations,
-  messages, packet revisions, and PDF attempt evidence. The implementation
-  blueprint now maps the root-admin MVP into repo-shaped backend, persistence,
-  authz, adapter, PDF, verification, and artifact work. The journey/evidence
-  plan now defines the runtime proof, browser scenarios, and mock-honesty
-  checks future tasks must satisfy. Story-local Task Breakdowns now exist for
-  S-001 through S-010. A Layer 5 delivery pilot defines the full task queue,
-  dependency status, KPI contract, and execution order for the root-admin MVP.
-  The PDF numeric thresholds are captured as configurable MVP defaults.
+  download. The data dictionary now captures implemented durable
+  conversations, messages, packet revisions, and PDF attempt evidence. The
+  root-admin MVP implementation now includes the `harnessChat` feature,
+  protected API routes, root-admin Build panel adoption through design-system
+  seams, focused router/security tests, browser context-not-authority proof,
+  QA evidence notes, and Layer 5 run records. Story-local Task Breakdowns
+  exist for S-001 through S-010. A Layer 5 delivery pilot defines the full
+  task queue, dependency status, KPI contract, and execution order for the
+  root-admin MVP. The PDF numeric thresholds are captured as configurable MVP
+  defaults. Remaining gaps are full persistence-backed DB proof when a
+  Postgres config is available, deeper E2E/PDF runtime proof, and whole-repo
+  product validation blocked by an unrelated legacy request.
 - Waiting next:
-  Start Layer 5 delivery from the first queued task in the pilot sequence
+  Finish S-009 final docs closure and then choose the next deepest runtime/E2E
+  proof slice.
 - User action needed:
   none for the current root-builder review rule
 

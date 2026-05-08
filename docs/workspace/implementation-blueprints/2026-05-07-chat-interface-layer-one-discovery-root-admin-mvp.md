@@ -3,19 +3,20 @@
 ## Summary
 
 - Feature:
-  planned `harnessChat`
+  implemented `harnessChat` root-admin MVP
 - Capability:
   root-admin Build chat conversations, durable transcript/history, canonical
   Product Discovery packet generation, packet revision history, protected API
   routes, and transient packet PDF download.
 - Scope:
-  backend and feature-seam implementation blueprint for the root-admin MVP,
-  with frontend adoption constraints recorded but real app UI still blocked on
-  design-system first-consumer parity proof.
+  backend and feature-seam implementation blueprint for the root-admin MVP.
+  The first root-admin app adoption now consumes the signed-off design-system
+  panel/chat seams; deeper E2E, DB-backed runtime, and PDF renderer proof
+  remain follow-up evidence slices.
 - Phase:
-  build-ready planning for Task Breakdown. No `Task Breakdown` packet exists
-  yet, so this blueprint intentionally does not split delivery into isolated
-  task write sets.
+  implemented with Layer 5 run records and story-local Task Breakdown packets.
+  This blueprint remains the source-shape reference for residual proof and
+  hardening work rather than the current delivery queue.
 
 ## Inputs
 
@@ -436,8 +437,9 @@ This blueprint does not implement:
   PDF, stale/closed conversation, failed adapter output, duplicate generation,
   missing packet revision, superseded revision download, renderer unavailable.
 - Frontend:
-  blocked until DS parity and root-admin adoption. Later tests must prove
-  shared render/controller/style seam consumption, not copied markup or CSS.
+  root-admin adoption consumes the design-system conversation panel seam.
+  Focused browser proof exists; later deeper tests should keep proving shared
+  render/controller/style seam consumption, not copied markup or CSS.
 - Persistence-backed:
   use reset-first Postgres test harness; include migration/schema/index checks
   and live row shape matching API fixture shape.
@@ -482,14 +484,15 @@ This blueprint does not implement:
 ## Documentation Plan
 
 - PRD updates:
-  mark implementation blueprint as created; keep API implementation,
-  executable tests, root-admin parity, and runtime evidence as not implemented
-  until those slices land.
+  mark root-admin MVP implementation and focused proof as present; keep DB
+  runtime, deeper PDF renderer, and full E2E evidence as follow-up gaps until
+  those slices land.
 - PRD test-case updates:
   replace "blocked until implementation blueprint" with implementation or
   task-specific blockers; keep executable posture honest.
 - Feature docs:
-  add `src/features/harnessChat/README.md` during implementation.
+  add or refresh `src/features/harnessChat/README.md` only if this feature
+  starts maintaining feature-local human docs.
 - API contract docs:
   update `docs/api-contracts/chat-interface-layer-one-discovery.md` if route
   implementation chooses any approved detail not already reflected there.
@@ -503,8 +506,8 @@ This blueprint does not implement:
   refresh the four `harness-chat-*` pages after migrations choose exact table,
   column, and index names.
 - Feature manifests:
-  add `src/features/harnessChat/feature.manifest.json`; update consumers only
-  when they actually import `harnessChat` seams.
+  keep `src/features/harnessChat/feature.manifest.json` aligned; update
+  consumers only when they actually import `harnessChat` seams.
 - Dependency graph artifacts:
   regenerate `docs/architecture/generated/feature-dependency-graph.json` and
   `.md` after feature manifests/imports change.

@@ -74,9 +74,9 @@
 | Task ID | Parent Story ID | Task Type | Title / Execution Scope | Allowed Write Set | Non-Goals | Dependencies | Shared Seams | Delivery Handoff Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S008-01 | S-008 | TEST:test-suite-alignment | Convert journey inventory IDs into executable test placement, fixture-source rules, and traceability expectations. | docs/prd/journey_inventories/2026-05-06-0024-chat-interface-layer-one-discovery-journey-inventory.md; docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md; docs/workspace/qa-evidence/** | production behavior, new executable assertions, runtime evidence capture, frontend/browser implementation | not-applicable: source plan exists | not-applicable: test metadata planning | queued-for-delivery |
-| T-S008-02 | S-008 | EVIDENCE:qa-evidence | Capture persistence/API live-shape and mock-honesty evidence for conversation and history flows. | docs/workspace/qa-evidence/chat-interface-layer-one-discovery/**; test-results/** | production fixes, executable test additions, API contract changes, permission changes | T-S005-01; T-S006-03 | not-applicable: evidence artifact | blocked |
-| T-S008-03 | S-008 | EVIDENCE:qa-evidence | Capture generated PDF success, denial, retry, and failure evidence. | docs/workspace/qa-evidence/chat-interface-layer-one-discovery/**; test-results/** | PDF renderer changes, route implementation, permission mapping, executable test additions | T-S003-01; T-S005-02; T-S006-03 | not-applicable: evidence artifact | blocked |
-| T-S008-04 | S-008 | EVIDENCE:qa-evidence | Capture root-admin browser and design-system adoption evidence after first-consumer parity exists. | docs/workspace/qa-evidence/chat-interface-layer-one-discovery/**; test-results/** | app CSS, app UI implementation, DS seam changes, executable test additions | T-S002-01; T-S007-01; T-S007-02 | not-applicable: evidence artifact | blocked |
+| T-S008-02 | S-008 | EVIDENCE:qa-evidence | Capture persistence/API live-shape and mock-honesty evidence for conversation and history flows. | docs/workspace/qa-evidence/chat-interface-layer-one-discovery/**; test-results/** | production fixes, executable test additions, API contract changes, permission changes | T-S005-01; T-S006-03 | not-applicable: evidence artifact | queued-for-delivery |
+| T-S008-03 | S-008 | EVIDENCE:qa-evidence | Capture generated PDF success, denial, retry, and failure evidence. | docs/workspace/qa-evidence/chat-interface-layer-one-discovery/**; test-results/** | PDF renderer changes, route implementation, permission mapping, executable test additions | T-S003-01; T-S005-02; T-S006-03 | not-applicable: evidence artifact | queued-for-delivery |
+| T-S008-04 | S-008 | EVIDENCE:qa-evidence | Capture root-admin browser and design-system adoption evidence after first-consumer parity exists. | docs/workspace/qa-evidence/chat-interface-layer-one-discovery/**; test-results/** | app CSS, app UI implementation, DS seam changes, executable test additions | T-S002-01; T-S007-01; T-S007-02 | not-applicable: evidence artifact | queued-for-delivery |
 
 ## Task Size Guardrail
 
@@ -92,9 +92,9 @@
 | Task ID | Trigger Type | Stop Condition / Do Not Guess Decision | Required Escalation | May Proceed If Hit | Rationale |
 | --- | --- | --- | --- | --- | --- |
 | T-S008-01 | source-truth-mismatch | Stop if journey inventory and PRD test cases disagree on proof placement or fixture source. | Return to QA evidence plan owner. | no | Alignment must not rewrite product proof expectations. |
-| T-S008-02 | proof-gap | Stop until S-005 persistence and S-006 backend runtime exist. | Keep evidence task blocked. | no | Live-shape evidence cannot be captured before live shape exists. |
-| T-S008-03 | proof-gap | Stop until S-003 PDF decision, S-005 packet revisions, and S-006 backend runtime exist. | Keep evidence task blocked. | no | PDF evidence needs implemented route and packet state. |
-| T-S008-04 | proof-gap | Stop until S-002 DS seam and S-007 root-admin adoption exist. | Keep evidence task blocked. | no | Browser evidence needs served app adoption. |
+| T-S008-02 | proof-gap | Stop if API/persistence evidence cannot distinguish executable route proof from unavailable Postgres row proof. | Route API/OpenAPI/Postman updates to DOC:api-contract, permission mapping updates to DOC:permission-mapping, data dictionary updates to DOC:data-dictionary, and feature graph maintenance to GOV:architecture-update. | no | Live-shape evidence must not overclaim database proof when the Postgres harness is unavailable. |
+| T-S008-03 | proof-gap | Stop if PDF evidence cannot distinguish protected delivery proof from unavailable renderer retry/attempt-row proof. | Route API/OpenAPI/Postman updates to DOC:api-contract, permission mapping updates to DOC:permission-mapping, data dictionary updates to DOC:data-dictionary, and feature graph maintenance to GOV:architecture-update. | no | PDF evidence can prove protected delivery now while keeping renderer/attempt-row gaps explicit. |
+| T-S008-04 | proof-gap | Stop if browser evidence cannot distinguish Playwright-served proof from production-like deployment screenshots. | Route app implementation to DEV:frontend, design-system seam work to GOV:design-system, API/OpenAPI/Postman updates to DOC:api-contract, permission mapping updates to DOC:permission-mapping, and feature graph maintenance to GOV:architecture-update. | no | Browser evidence can prove served assets and DS adoption without claiming deployment signoff. |
 
 ## Exact Starting Context
 
@@ -110,9 +110,9 @@
 | Task ID | Source Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Source Steering Decision |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | T-S008-01 | Evidence placement map | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | evidence-plan | ui-state | none | root-admin Build panel state | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | docs/prd | Alignment task only; no frontend implementation. |
-| T-S008-02 | Live-shape evidence | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | evidence-plan | ui-state | none | root-admin Build API payloads | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | docs/workspace/qa-evidence | Blocked until runtime exists. |
-| T-S008-03 | PDF evidence | root-admin | in-app harness chat | packet export | hidden/internal | root-operator | browser-workflow | evidence-plan | ui-state | none | root-admin Build PDF action | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | never-serialize | DS-owned-shell-required | DS-task-required | shell-registry-update | docs/workspace/qa-evidence | Blocked until PDF route exists. |
-| T-S008-04 | Browser DS evidence | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | evidence-plan | ui-state | none | root-admin Build panel state | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | docs/workspace/qa-evidence | Blocked until app adoption exists. |
+| T-S008-02 | Live-shape evidence | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | evidence-plan | ui-state | none | root-admin Build API payloads | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | signed-off-seam-exists | shell-registry-update | docs/workspace/qa-evidence | Evidence artifact captures route/mock-honesty proof and explicitly records unavailable Postgres row proof. |
+| T-S008-03 | PDF evidence | root-admin | in-app harness chat | packet export | hidden/internal | root-operator | browser-workflow | evidence-plan | ui-state | none | root-admin Build PDF action | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | never-serialize | DS-owned-shell-required | signed-off-seam-exists | shell-registry-update | docs/workspace/qa-evidence | Evidence artifact captures protected PDF route proof and explicitly records renderer/attempt-row residual gaps. |
+| T-S008-04 | Browser DS evidence | root-admin | in-app harness chat | build discovery | hidden/internal | root-operator | browser-workflow | evidence-plan | ui-state | none | root-admin Build panel state | not-applicable | manual-shell-registry | manual-shell-registry | target-authority-current | feature-local-state-machine | DS-owned-shell-required | signed-off-seam-exists | shell-registry-update | docs/workspace/qa-evidence | Evidence artifact captures Playwright-served browser and DS adoption proof. |
 
 ## Frontend Change Class Contract
 
@@ -212,9 +212,9 @@
 | Task ID | Proof Specificity | Focused Proof Command Or Evidence | Mock-Honesty Note |
 | --- | --- | --- | --- |
 | T-S008-01 | task-specific | npm run test:traceability -- --doc docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md; npm run test:coverage-strength; npm run task-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-008-runtime-and-mock-honesty-evidence-plan --story docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-008-runtime-and-mock-honesty-evidence-plan/story.md | Alignment must describe fixture source honestly and not add assertions. |
-| T-S008-02 | task-specific | blocked: capture API/persistence payload and mock-honesty comparison after S-005/S-006 implementation | Compare mocks/fixtures with live payload or contract shape. |
-| T-S008-03 | task-specific | blocked: capture PDF success/denial/retry/failure evidence after PDF route exists | Compare PDF fixtures with approved packet data shape. |
-| T-S008-04 | task-specific | blocked: capture served browser/design-system evidence after S-007 | Compare browser fixtures with served app and DS canonical truth. |
+| T-S008-02 | task-specific | npx vitest run tests/integration/harnessChat tests/security/harnessChat tests/security/rootAdmin/buildPanelContextAuthority.test.ts | Compare mocks/fixtures with executable route payloads; evidence doc records unavailable Postgres row proof. |
+| T-S008-03 | task-specific | npx vitest run tests/integration/harnessChat/router.test.ts tests/security/harnessChat/routerAuthz.test.ts; npx playwright test tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts --grep=root-admin.*context | Compare PDF fixtures with approved packet delivery shape; evidence doc records renderer retry/attempt-row gaps. |
+| T-S008-04 | task-specific | npx playwright test tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts --grep=root-admin.*Build.*panel; npx vitest run tests/security/rootAdmin/buildPanelContextAuthority.test.ts | Compare browser fixtures with served app and DS canonical truth. |
 
 ## Refactor-First Contract
 
@@ -282,18 +282,18 @@
 | Task ID | Forbidden Assumption | Required Escalation |
 | --- | --- | --- |
 | T-S008-01 | Do not add assertions or change production behavior inside alignment work. | Split to TEST:test-only or DEV task. |
-| T-S008-02 | Do not claim live-shape evidence before S-005/S-006 runtime exists. | Keep task blocked. |
-| T-S008-03 | Do not claim PDF evidence before packet revision and download route exist. | Keep task blocked. |
-| T-S008-04 | Do not claim browser adoption evidence before root-admin adoption exists. | Keep task blocked. |
+| T-S008-02 | Do not claim database row evidence when the Postgres harness is unavailable. | Record partial evidence and keep the row-level residual gap explicit. |
+| T-S008-03 | Do not claim renderer retry or persisted PDF attempt-row evidence from protected-route byte proof alone. | Record partial evidence and keep renderer/attempt-row gaps explicit. |
+| T-S008-04 | Do not claim production deployment signoff from Playwright-served browser proof alone. | Record Playwright-served evidence and keep deployment screenshot review explicit. |
 
 ## Task-Type Approval Guardrails
 
 | Task ID | Task Type | Guardrail Reference | Approval Status | Notes |
 | --- | --- | --- | --- | --- |
 | T-S008-01 | TEST:test-suite-alignment | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/test-suite-alignment-task-guardrail.md | approved | Test-suite alignment guardrail reviewed for source map, mismatch class, edit envelope, no production change, traceability, and coverage-strength summary. |
-| T-S008-02 | EVIDENCE:qa-evidence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/qa-evidence-task-guardrail.md | approved | Evidence guardrail reviewed; delivery handoff remains blocked until live runtime exists. |
-| T-S008-03 | EVIDENCE:qa-evidence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/qa-evidence-task-guardrail.md | approved | Evidence guardrail reviewed; delivery handoff remains blocked until PDF route exists. |
-| T-S008-04 | EVIDENCE:qa-evidence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/qa-evidence-task-guardrail.md | approved | Evidence guardrail reviewed; delivery handoff remains blocked until browser adoption exists. |
+| T-S008-02 | EVIDENCE:qa-evidence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/qa-evidence-task-guardrail.md | approved | Evidence guardrail reviewed; partial route/mock-honesty evidence can be captured now with row-level residual gap explicit. |
+| T-S008-03 | EVIDENCE:qa-evidence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/qa-evidence-task-guardrail.md | approved | Evidence guardrail reviewed; protected PDF route evidence can be captured now with renderer/attempt-row residual gaps explicit. |
+| T-S008-04 | EVIDENCE:qa-evidence | .codex/skills/20-planning-artifacts/task-breakdown-maintainer/references/qa-evidence-task-guardrail.md | approved | Evidence guardrail reviewed; Playwright-served browser/DS adoption evidence can be captured now. |
 
 ## Task Guardrail Evidence
 
@@ -309,36 +309,36 @@
 | T-S008-01 | test-alignment-coverage-strength | pass | npm run test:coverage-strength named. |
 | T-S008-01 | test-alignment-source-truth-boundary | pass | Do not weaken PRD/test intent. |
 | T-S008-02 | qa-proof-target | pass | Live payload and mock-honesty proof target named. |
-| T-S008-02 | qa-command-plan | pass | Capture commands blocked until runtime exists. |
+| T-S008-02 | qa-command-plan | pass | Focused route/security/context proof commands named. |
 | T-S008-02 | qa-evidence-class | pass | mock-honesty-comparison evidence class selected. |
 | T-S008-02 | qa-evidence-source-inventory | pass | API contract, data dictionary, and runtime payload sources named. |
 | T-S008-02 | qa-evidence-instruments | pass | Live API/persistence payload and fixture comparison instruments named. |
-| T-S008-02 | qa-runtime-evidence | pass | Runtime evidence required after S-005/S-006. |
+| T-S008-02 | qa-runtime-evidence | pass | Runtime route evidence captured; Postgres row proof unavailable in this runtime. |
 | T-S008-02 | qa-mock-honesty | pass | Fixtures compared with live payload or contract shape. |
 | T-S008-02 | qa-expected-output | pass | Evidence artifact output named. |
-| T-S008-02 | qa-evidence-status | pass | Blocked until runtime exists. |
+| T-S008-02 | qa-evidence-status | pass | Partial evidence artifact created with residual Postgres row gap. |
 | T-S008-02 | qa-coverage-strength-summary | pass | Coverage-strength row included. |
 | T-S008-02 | qa-human-review-boundary | pass | QA reviewer boundary named. |
 | T-S008-03 | qa-proof-target | pass | PDF success/denial/retry/failure evidence target named. |
-| T-S008-03 | qa-command-plan | pass | PDF evidence commands blocked until route exists. |
+| T-S008-03 | qa-command-plan | pass | Focused PDF route/security/browser proof commands named. |
 | T-S008-03 | qa-evidence-class | pass | evidence-sweep evidence class selected. |
 | T-S008-03 | qa-evidence-source-inventory | pass | Asset decision, API contract, and packet revision sources named. |
 | T-S008-03 | qa-evidence-instruments | pass | PDF route, denial, retry, and failure instruments named. |
-| T-S008-03 | qa-runtime-evidence | pass | Runtime PDF evidence required after implementation. |
+| T-S008-03 | qa-runtime-evidence | pass | Protected PDF route evidence captured; renderer retry/attempt-row proof remains residual. |
 | T-S008-03 | qa-mock-honesty | pass | PDF fixtures compared with approved packet data shape. |
 | T-S008-03 | qa-expected-output | pass | Evidence artifact output named. |
-| T-S008-03 | qa-evidence-status | pass | Blocked until route exists. |
+| T-S008-03 | qa-evidence-status | pass | Partial evidence artifact created with renderer/attempt-row residual gaps. |
 | T-S008-03 | qa-coverage-strength-summary | pass | Coverage-strength row included. |
 | T-S008-03 | qa-human-review-boundary | pass | QA/security reviewer boundary named. |
 | T-S008-04 | qa-proof-target | pass | Browser and DS adoption proof target named. |
-| T-S008-04 | qa-command-plan | pass | Browser evidence commands blocked until S-007. |
+| T-S008-04 | qa-command-plan | pass | Focused browser/DS adoption proof commands named. |
 | T-S008-04 | qa-evidence-class | pass | browser-proof evidence class selected. |
 | T-S008-04 | qa-evidence-source-inventory | pass | DS adoption contract, served route, and browser targets named. |
 | T-S008-04 | qa-evidence-instruments | pass | Browser screenshot/served asset/DS comparison instruments named. |
-| T-S008-04 | qa-runtime-evidence | pass | Served browser evidence required after implementation. |
+| T-S008-04 | qa-runtime-evidence | pass | Playwright-served browser evidence captured. |
 | T-S008-04 | qa-mock-honesty | pass | Browser fixtures compared with served app and DS canonical truth. |
 | T-S008-04 | qa-expected-output | pass | Evidence artifact output named. |
-| T-S008-04 | qa-evidence-status | pass | Blocked until browser adoption exists. |
+| T-S008-04 | qa-evidence-status | pass | Evidence artifact created with deployment screenshot review residual gap. |
 | T-S008-04 | qa-coverage-strength-summary | pass | Coverage-strength row included. |
 | T-S008-04 | qa-human-review-boundary | pass | Frontend/QA reviewer boundary named. |
 
@@ -384,9 +384,9 @@
 | Task ID | Capability Matrix Row(s) | Coverage Status | Notes |
 | --- | --- | --- | --- |
 | T-S008-01 | chatInterface.qaEvidencePlan | approved | Alignment task queued. |
-| T-S008-02 | chatInterface.qaEvidencePlan | approved | Handoff remains blocked until live runtime exists. |
-| T-S008-03 | chatInterface.qaEvidencePlan | approved | Handoff remains blocked until PDF route exists. |
-| T-S008-04 | chatInterface.qaEvidencePlan | approved | Handoff remains blocked until browser adoption exists. |
+| T-S008-02 | chatInterface.qaEvidencePlan | approved | Route/mock-honesty evidence artifact created; row-level residual gap remains explicit. |
+| T-S008-03 | chatInterface.qaEvidencePlan | approved | Protected PDF evidence artifact created; renderer/attempt-row residual gaps remain explicit. |
+| T-S008-04 | chatInterface.qaEvidencePlan | approved | Browser/DS adoption evidence artifact created; deployment screenshot review residual gap remains explicit. |
 
 ## Task Dependencies
 
@@ -420,26 +420,26 @@
 | Task ID | Required Proof Layers | Required Test Or Proof Commands | Mock Honesty / Runtime Evidence Notes |
 | --- | --- | --- | --- |
 | T-S008-01 | source-level | npm run test:traceability -- --doc docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md; npm run test:coverage-strength; npm run task-breakdown:validate -- docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-008-runtime-and-mock-honesty-evidence-plan --story docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery/stories/S-008-runtime-and-mock-honesty-evidence-plan/story.md | No runtime evidence claim. |
-| T-S008-02 | runtime-api; mock-honesty | blocked until live payload exists | Compare fixtures/mocks to live payload or contract. |
-| T-S008-03 | runtime-api; asset-delivery | blocked until PDF route exists | Compare PDF evidence with approved packet data. |
-| T-S008-04 | rendered-browser; served-assets | blocked until app adoption exists | Compare served browser output with DS canonical truth. |
+| T-S008-02 | runtime-api; mock-honesty | npx vitest run tests/integration/harnessChat tests/security/harnessChat tests/security/rootAdmin/buildPanelContextAuthority.test.ts | Compare fixtures/mocks to executable route payloads; Postgres row proof remains unavailable. |
+| T-S008-03 | runtime-api; asset-delivery | npx vitest run tests/integration/harnessChat/router.test.ts tests/security/harnessChat/routerAuthz.test.ts; npx playwright test tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts --grep=root-admin.*context | Compare PDF evidence with approved protected packet delivery shape. |
+| T-S008-04 | rendered-browser; served-assets | npx playwright test tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts --grep=root-admin.*Build.*panel; npx vitest run tests/security/rootAdmin/buildPanelContextAuthority.test.ts | Compare served browser output with DS canonical truth. |
 
 ## QA Evidence Instrument Summary
 
 | Task ID | QA Evidence Class | Evidence Source Inventory | Selected Evidence Instruments | Live Runtime / Payload Evidence | Mock Honesty Comparison | Expected Evidence Output | Evidence Status / Remaining Gap | Human Review Boundary |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-S008-02 | mock-honesty-comparison | docs/api-contracts/chat-interface-layer-one-discovery.md; docs/data-dictionary/harness-chat-conversation.md; docs/workspace/qa-evidence/chat-interface-layer-one-discovery/ | live API payload capture, persistence row sample, fixture comparison command | Live API payload and persistence evidence required after S-005/S-006 implementation. | Compare mocks and fixtures with live payload or contract shape; invented fallback behavior is a gap. | QA evidence markdown with payload/fixture comparison and residual-risk notes. | blocked: runtime not implemented yet | QA reviewer decides evidence sufficiency and accepted unavailable proof. |
-| T-S008-03 | evidence-sweep | docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md; docs/api-contracts/chat-interface-layer-one-discovery.md; docs/workspace/qa-evidence/chat-interface-layer-one-discovery/ | PDF success, denial, retry, and failure capture commands | Live PDF route payload and generated artifact evidence required after implementation. | Compare PDF fixtures with approved packet data contract and avoid draft-chat fallback. | QA evidence markdown with PDF success/denial/retry/failure proof. | blocked: PDF route not implemented yet | QA/security reviewer decides evidence sufficiency. |
-| T-S008-04 | browser-proof | docs/workspace/design-system/adoption/root-admin-build-work-panel-adoption-contract.md; root-admin served route; docs/workspace/qa-evidence/chat-interface-layer-one-discovery/ | browser screenshots, served asset checks, DS canonical comparison | Served browser/process/asset evidence required after S-007 implementation. | Compare browser fixtures with served app and design-system canonical truth. | QA evidence markdown with browser, served asset, and DS adoption proof. | blocked: app adoption not implemented yet | Frontend/QA reviewer decides evidence sufficiency. |
+| T-S008-02 | mock-honesty-comparison | docs/api-contracts/chat-interface-layer-one-discovery.md; docs/data-dictionary/harness-chat-conversation.md; docs/workspace/qa-evidence/chat-interface-layer-one-discovery/2026-05-08-live-shape-mock-honesty.md | route payload proof, authorization proof, context-authority static proof, skipped persistence proof note | Route/runtime payload evidence captured; Postgres row evidence unavailable because no test database is configured. | Compare mocks and fixtures with executable route payload or contract shape; invented fallback behavior is a gap. | QA evidence markdown with payload/fixture comparison and residual-risk notes. | partial-pass: route evidence captured; row-level residual gap explicit | QA reviewer decides evidence sufficiency and accepted unavailable proof. |
+| T-S008-03 | evidence-sweep | docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md; docs/api-contracts/chat-interface-layer-one-discovery.md; docs/workspace/qa-evidence/chat-interface-layer-one-discovery/2026-05-08-pdf-evidence.md | PDF protected route, denial, and browser URL-authority proof commands | Protected PDF route payload captured; renderer retry and attempt-row evidence remain residual gaps. | Compare PDF fixtures with approved packet data contract and avoid draft-chat fallback. | QA evidence markdown with PDF protected route proof and residual-risk notes. | partial-pass: protected route evidence captured; renderer/attempt-row gaps explicit | QA/security reviewer decides evidence sufficiency. |
+| T-S008-04 | browser-proof | docs/workspace/design-system/adoption/root-admin-build-work-panel-adoption-contract.md; root-admin served route; docs/workspace/qa-evidence/chat-interface-layer-one-discovery/2026-05-08-browser-ds-evidence.md | browser served asset checks, DS comparison, desktop/mobile/context scenarios | Playwright-served browser and asset evidence captured. | Compare browser fixtures with served app and design-system canonical truth. | QA evidence markdown with browser, served asset, and DS adoption proof. | pass-with-residual: deployment screenshot review remains outside this proof | Frontend/QA reviewer decides evidence sufficiency. |
 
 ## Debt Health Summary Commands
 
 | Task ID | Summary Command | Summary Result | Debt Found | Debt Disposition | Follow-Up Task ID / Owner |
 | --- | --- | --- | --- | --- | --- |
 | T-S008-01 | npm run test:coverage-strength | not-run: delivery task must run during Layer 5 alignment | unknown until command runs | accepted-deferred | T-S008-01 delivery owner |
-| T-S008-02 | npm run test:coverage-strength | not-run: blocked until runtime exists | unknown until command runs | accepted-deferred | T-S008-02 delivery owner |
-| T-S008-03 | npm run test:coverage-strength | not-run: blocked until PDF route exists | unknown until command runs | accepted-deferred | T-S008-03 delivery owner |
-| T-S008-04 | npm run test:coverage-strength | not-run: blocked until browser adoption exists | unknown until command runs | accepted-deferred | T-S008-04 delivery owner |
+| T-S008-02 | npm run test:coverage-strength | pass | residual Postgres row evidence gap remains | accepted-deferred | evidence artifact records unavailable row proof |
+| T-S008-03 | npm run test:coverage-strength | pass | renderer retry/attempt-row evidence gap remains | accepted-deferred | evidence artifact records unavailable renderer/attempt-row proof |
+| T-S008-04 | npm run test:coverage-strength | pass | deployment screenshot review gap remains | accepted-deferred | evidence artifact records Playwright-served proof scope |
 
 ## Branch Worktree Bootstrap Strategy
 
@@ -454,15 +454,12 @@
 
 | Blocker ID | Blocks Task ID | Blocker Type | Required Separate Task ID | Reason | Resolution / Owner |
 | --- | --- | --- | --- | --- | --- |
-| BLK-S008-01 | T-S008-02 | dependency | S-005/S-006 implementation | Live-shape evidence needs runtime. | Complete runtime implementation first. |
-| BLK-S008-02 | T-S008-03 | dependency | S-003/S-005/S-006 implementation | PDF evidence needs packet and route behavior. | Complete runtime implementation first. |
-| BLK-S008-03 | T-S008-04 | dependency | S-007 implementation | Browser evidence needs root-admin adoption. | Complete frontend adoption first. |
 
 ## Layer 5 Delivery Handoff
 
 | Task ID | Handoff Status | Blockers Remaining | Delivery Notes |
 | --- | --- | --- | --- |
 | T-S008-01 | queued-for-delivery | none | Can run in parallel with early backend work. |
-| T-S008-02 | blocked | S-005/S-006 runtime implementation | Evidence capture only after live payload exists. |
-| T-S008-03 | blocked | S-003/S-005/S-006 runtime implementation | Evidence capture only after PDF route exists. |
-| T-S008-04 | blocked | S-007 frontend adoption | Evidence capture only after served browser adoption exists. |
+| T-S008-02 | queued-for-delivery | none | Capture route/mock-honesty evidence now; keep Postgres row proof as explicit residual gap. |
+| T-S008-03 | queued-for-delivery | none | Capture protected PDF route evidence now; keep renderer retry/attempt-row proof as explicit residual gap. |
+| T-S008-04 | queued-for-delivery | none | Capture Playwright-served browser/DS adoption evidence now; keep deployment screenshot review as explicit residual gap. |

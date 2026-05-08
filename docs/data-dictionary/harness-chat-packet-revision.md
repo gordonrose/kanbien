@@ -3,32 +3,30 @@
 ## Summary
 
 - Description:
-  Planned durable generated Product Discovery packet version created from one
+  Durable generated Product Discovery packet version created from one
   Build chat conversation, including immutable packet data linkage,
   supersession, lifecycle state, and PDF readiness metadata.
 - Owning feature:
-  planned `harnessChat`
+  `harnessChat`
 - Primary source tables or records:
-  planned `harness_chat_packet_revisions`, planned
-  `HarnessChatPacketRevisionRecord`
+  `harness_chat_packet_revisions`, `HarnessChatPacketRevisionRecord`
 - Status:
-  planned first slice; this dictionary page records source-independent
-  persistence intent before implementation.
+  implemented packet persistence slice.
 
 ## Storage Model
 
 - Primary table or durable record:
-  planned `harness_chat_packet_revisions`
+  `harness_chat_packet_revisions`
 - Related durable records:
-  planned `harness_chat_conversations`, planned `harness_chat_messages`,
-  planned `harness_chat_pdf_attempts`, Product Discovery packet artifacts
+  `harness_chat_conversations`, `harness_chat_messages`,
+  `harness_chat_pdf_attempts`, Product Discovery packet artifacts
 - Primary key:
-  planned `packet_revision_id`
+  `packet_revision_id`
 - Foreign key relationships:
-  - planned `conversation_id -> harness_chat_conversations.conversation_id`
-  - planned `generated_by_root_user_id -> root_user.root_user_id`
-  - planned `previous_packet_revision_id -> harness_chat_packet_revisions.packet_revision_id`
-  - planned `next_packet_revision_id -> harness_chat_packet_revisions.packet_revision_id`
+  - `conversation_id -> harness_chat_conversations.conversation_id`
+  - `generated_by_root_user_id -> root_users.root_user_id`
+  - `previous_packet_revision_id -> harness_chat_packet_revisions.packet_revision_id`
+  - `next_packet_revision_id -> harness_chat_packet_revisions.packet_revision_id`
 
 ## Capabilities That Rely On This Entity
 
@@ -123,23 +121,23 @@
 
 ## Indexes And Constraints
 
-- planned primary key on `packet_revision_id`
+- primary key on `packet_revision_id`
   Type: `primary key`
   Definition / Rule: one generated identifier per packet revision.
   Why It Matters: Stable route and PDF attempt linkage.
   Source: API contract.
-- planned revision order constraint
+- revision order constraint
   Type: `unique`
   Definition / Rule: unique `conversation_id`, `version`.
   Why It Matters: Prevents duplicate version labels.
   Source: packet history requirements.
-- planned current revision index
-  Type: `index or partial unique index`
+- current revision index
+  Type: `partial unique index`
   Definition / Rule: implementation must make current/non-superseded lookup
   deterministic for each conversation.
   Why It Matters: Avoids ambiguous current packet state.
   Source: API contract latest packet fields.
-- planned generation actor index
+- generation actor index
   Type: `index`
   Definition / Rule: index `generated_by_root_user_id`, `generated_at DESC`.
   Why It Matters: Supports audit and operational review.
@@ -236,6 +234,7 @@
 
 ## Migration Compatibility Notes
 
-- First implementation should use a new migration with stable sortable prefix.
+- Packet revision implementation uses
+  `src/features/harnessChat/persistence/migrations/0048_create_harness_chat_packet_revisions.sql`.
 - Future tenant rollout must add tenant-scoped indexes and deny rules through
   an explicit compatibility plan.

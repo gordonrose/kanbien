@@ -5,13 +5,15 @@
 - Contract name:
   `chat-interface-layer-one-discovery`
 - Feature:
-  planned `harnessChat` or chat feature bundle
+  `harnessChat`
 - Route family or capability group:
   root-admin Build chat for Layer 1 Product Discovery conversations, history,
   packet generation, packet revisions, and generated packet PDF download.
 - Implementation status:
-  target contract for Layer 3 / Layer 4 planning. No routes are implemented at
-  the time this contract is written.
+  implemented root-admin MVP route family under
+  `/v1/root-admin/harness-chat`, with focused router, authorization, browser,
+  and QA evidence captured on 2026-05-08. Postgres row-level runtime evidence
+  remains pending where the local Postgres test database is unavailable.
 - In-scope routes:
   - `POST /v1/root-admin/harness-chat/conversations`
   - `GET /v1/root-admin/harness-chat/conversations`
@@ -45,10 +47,9 @@
 - Required auth state:
   authenticated root-admin session.
 - Session transport(s):
-  - same-origin root-admin browser session cookie for the governed root-admin
-    panel
-  - bearer root session only if the protected root API family supports bearer
-    calls for this feature at implementation time
+  same-origin root-admin browser session context through the root-admin shell
+  and protected v1 router. Browser mutations are routed through the existing
+  authenticated root-admin middleware and root capability checks.
 
 Unauthenticated callers must fail before conversation, packet, tenant, PDF, or
 Product Discovery adapter behavior is evaluated.
@@ -70,22 +71,22 @@ Product Discovery adapter behavior is evaluated.
   API contract, data model, and object/relationship permission mapping approve
   them.
 - Enforcement point:
-  root-session middleware plus feature-owned root-scope, lifecycle, and packet
-  visibility checks. Client-provided page, module, role, route, or tenant
-  context is never authority.
+  `requireRootSession`, root capability middleware, and feature-owned root
+  scope/lifecycle/packet checks. Client-provided page, module, role, route, or
+  tenant context is never authority.
 
 ## Middleware And Platform Effects
 
 - Route protection middleware:
-  protected root-admin session middleware.
+  `requireRootSession`, `authenticatedGeneralRateLimit`, and per-route
+  `createRequireRootCapability` checks.
 - CSRF / browser mutation posture:
-  browser-triggered mutations must use the repo-standard root-admin protected
-  mutation posture. The implementation blueprint must name the exact CSRF or
-  trusted-origin mechanism used by these routes.
+  browser-triggered mutations use the existing protected root-admin same-origin
+  route posture. The feature does not add a separate public mutation surface.
 - Rate limiting / abuse controls:
-  message and conversation mutation limits are deferred to the implementation
-  blueprint. PDF generation uses the approved defaults from the packet PDF
-  decision record:
+  the mounted v1 route family uses `authenticatedGeneralRateLimit`. PDF
+  generation keeps the approved policy defaults from the packet PDF decision
+  record as artifact truth for production hardening:
   - five PDF generations per actor per 10 minutes
   - three PDF generations per conversation per 10 minutes
   - 30 PDF generations per root/platform context per hour
@@ -210,8 +211,10 @@ does not grant authority.
   - shared middleware:
     `UNAUTHORIZED`, `INVALID_SESSION`, `FORBIDDEN`, `RATE_LIMITED`
 - Persistence / side effects:
-  creates conversation, optional initial user message, Product Request link if
-  available or created by the Layer 1 runtime, and audit/evidence event.
+  creates a conversation row and optional initial user message row with
+  server-generated identifiers, root actor, lifecycle state, root scope,
+  context snapshot, and timestamps. Product Request linkage is nullable until
+  a persistent Product Request record is available.
 
 ## Route: List Conversations
 
@@ -306,9 +309,11 @@ does not grant authority.
   - shared middleware:
     `UNAUTHORIZED`, `INVALID_SESSION`, `FORBIDDEN`, `RATE_LIMITED`
 - Persistence / side effects:
-  persists user message, accepted assistant message, structured discovery state
-  updates, Product Request status summary updates, and audit/evidence events.
-  Invalid LLM proposals must not be persisted as accepted truth.
+  persists the user message, appends the current assistant response, refreshes
+  the parent conversation timestamp, and preserves structured discovery state.
+  Product Request status updates remain nullable/deferred until the persistent
+  Product Request backing model is available. Invalid LLM proposals must not be
+  persisted as accepted truth.
 
 ## Route: Generate Packet Revision
 
@@ -346,9 +351,10 @@ does not grant authority.
   - shared middleware:
     `UNAUTHORIZED`, `INVALID_SESSION`, `FORBIDDEN`, `RATE_LIMITED`
 - Persistence / side effects:
-  creates durable packet revision on success; marks prior current revision
-  superseded; updates conversation to `packet-ready`; records generation,
-  supersession, validation failure, and adapter failure evidence.
+  creates a durable packet revision on success, marks the prior current
+  revision superseded, updates the conversation to `packet-ready`, and records
+  generation/supersession state in harness chat persistence. Adapter failure
+  and packet validation failure evidence remains a planned hardening path.
 - Cross-feature reads:
   Product Discovery adapter and packet validation seam only. The chat feature
   must not create a parallel Product Discovery packet format.
@@ -454,9 +460,10 @@ does not grant authority.
   - shared middleware:
     `UNAUTHORIZED`, `INVALID_SESSION`, `FORBIDDEN`, `RATE_LIMITED`
 - Persistence / side effects:
-  records PDF download requested, download succeeded, download denied, render
-  failed, timeout, and retry evidence. Rendered PDF bytes are not stored as
-  durable assets in the MVP.
+  renders authenticated PDF bytes from the approved packet revision route. The
+  PDF attempt table exists for requested/succeeded/failed/denied/rate-limited
+  evidence, but renderer retry and full attempt-row recording remain residual
+  proof gaps. Rendered PDF bytes are not stored as durable assets in the MVP.
 - Generated-document limits:
   - maximum structured packet source data: 250 KB
   - maximum rendered HTML: 750 KB
@@ -530,8 +537,8 @@ or hidden tenant/object existence.
 
 ## Compatibility / Lifecycle Notes
 
-- Root-admin route paths are target contract paths and must be treated as
-  compatibility-sensitive once implemented.
+- Root-admin route paths are implemented contract paths and are now
+  compatibility-sensitive.
 - Hash or page/module UI context is not route authority and should not be
   serialized as permission-bearing state.
 - Tenant-builder activation requires a separate tenant-scoped contract rather
@@ -552,11 +559,18 @@ or hidden tenant/object existence.
   - `docs/architecture/permission-mappings/chat-interface-layer-one-discovery-permission-mapping.md`
   - `docs/workspace/asset-consumer-decisions/2026-05-06-product-discovery-packet-pdf.md`
 - OpenAPI:
-  not yet updated. OpenAPI and maintained Postman artifacts must be updated
-  when implementation lands if this route family is maintained there.
+  no route entries were added in this slice. The Layer 5 artifact router
+  records OpenAPI/Postman as routed to `DOC:api-contract`; if this route family
+  becomes maintained in OpenAPI/Postman, those artifacts must be synchronized
+  before production closeout.
 - Tests required or existing:
   planned in
-  `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`.
+  `docs/prd/test_cases/2026-05-06-0024-chat-interface-layer-one-discovery-test-cases.md`;
+  focused implementation evidence currently exists in
+  `tests/integration/harnessChat/`,
+  `tests/security/harnessChat/`,
+  `tests/security/rootAdmin/buildPanelContextAuthority.test.ts`, and
+  `tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts`.
 
 ## Tests Required
 
