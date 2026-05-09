@@ -144,6 +144,8 @@ Transport notes:
   production
 - browser sessions use sliding expiry on valid authenticated activity with a
   hard maximum lifetime
+- the root-admin browser shell automatically returns to the login flow when
+  the browser session expires or a protected same-origin request returns `401`
 - the root-admin helper path is intended to use workstation OpenSSH tooling for
   signing rather than depending on Node/OpenSSL to parse local private keys
 - linked `rootUsers` that are inactive, soft-deleted, or anonymized are blocked

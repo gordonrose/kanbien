@@ -35,12 +35,14 @@
 - Added a `markUnauthorizedAsSessionExpired` option to `fetchJson(...)`.
 - Login password and browser SSH login calls now pass
   `markUnauthorizedAsSessionExpired: false`.
-- Protected shell API calls keep the default session-expired behavior.
+- Protected shell API calls use the default expired-session handling, which now
+  returns the user to the login flow instead of leaving them behind a shell
+  overlay.
 - Added a Playwright regression test that verifies:
   - password-stage backend `401` stays on the password login template
   - SSH-stage backend `401` stays on the SSH challenge template
   - backend error messages are visible in `#auth-message`
-  - the authenticated shell and expiry overlay remain hidden
+  - the authenticated shell remains hidden
 
 ## Coverage Lesson
 

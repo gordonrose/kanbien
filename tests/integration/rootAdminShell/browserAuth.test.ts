@@ -106,6 +106,7 @@ describe("root admin shell browser auth integration", () => {
         authPrincipalId: identity.authPrincipalId,
         email: identity.loginEmail,
       });
+      expect(sshStage.body.expiresAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
 
       const bootstrap = await invokeJson<{
       rootUserId: string;
@@ -127,6 +128,7 @@ describe("root admin shell browser auth integration", () => {
         authPrincipalId: identity.authPrincipalId,
         email: identity.loginEmail,
       });
+      expect(bootstrap.body.expiresAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
 
       const rootUsersWithCookie = await invokeJson<{ items: Array<{ rootUserId: string }> }>(harness.app, {
         method: "GET",

@@ -2,7 +2,6 @@ import {
   createInitialState,
   deriveViewFlags,
   displayNameForSession,
-  markSessionExpired,
   resetToLoginState,
 } from "./state.mjs";
 import {
@@ -117,6 +116,8 @@ const state = createInitialState();
 state.navigation.currentPage = "overview";
 
 let activeLanguageCode = resolveInitialLanguageCode();
+let sessionExpiryTimerId = null;
+const maxBrowserTimeoutMs = 2_147_483_647;
 
 const authView = document.getElementById("auth-view");
 const rootAdminLoginTemplateHost = document.querySelector("[data-root-admin-login-template-host]");
@@ -131,14 +132,12 @@ const sshStage = document.getElementById("ssh-stage");
 const authMessage = document.getElementById("auth-message");
 const shellMessage = document.getElementById("shell-message");
 const sessionSummary = document.getElementById("session-summary");
-const expiryOverlay = document.getElementById("expiry-overlay");
 const sshInstructions = document.getElementById("ssh-instructions");
 const sshKeyChoiceList = document.getElementById("ssh-key-choice-list");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const loginForm = document.getElementById("login-form");
 const signSubmit = document.getElementById("sign-submit");
-const returnToLogin = document.getElementById("return-to-login");
 const refreshSessionButton = document.getElementById("refresh-session-button");
 
 const rootAdminContextNavMount = document.getElementById("root-admin-context-nav-mount");
@@ -1012,6 +1011,48 @@ function getActiveLanguage() {
   return languageMetaFor(activeLanguageCode);
 }
 
+function clearSessionExpiryTimer() {
+  if (sessionExpiryTimerId !== null) {
+    window.clearTimeout(sessionExpiryTimerId);
+    sessionExpiryTimerId = null;
+  }
+}
+
+function resetAuthenticatedShellForLogin({ authMessage = "" } = {}) {
+  clearSessionExpiryTimer();
+  window.history.replaceState(null, "", buildCanonicalRootAdminPath("overview"));
+  Object.assign(state, resetToLoginState(state));
+  state.authMessage = authMessage;
+  clearShellMessage();
+  rootAdminDirectoryController.reset();
+  webAppHierarchyPageController.reset();
+  buildBacklogPageController.reset();
+  setTopNavLinkCollections(buildFallbackTopNavItems());
+  renderContextNavItems([]);
+  render();
+}
+
+function returnToLoginAfterSessionExpiry() {
+  resetAuthenticatedShellForLogin({
+    authMessage: "Your session has expired. Please sign in again.",
+  });
+}
+
+function scheduleSessionExpiryLogout(session) {
+  clearSessionExpiryTimer();
+
+  const expiresAtMs = Date.parse(session?.expiresAt ?? "");
+  if (!Number.isFinite(expiresAtMs)) {
+    return;
+  }
+
+  const msUntilExpiry = Math.min(
+    Math.max(0, expiresAtMs - Date.now()),
+    maxBrowserTimeoutMs,
+  );
+  sessionExpiryTimerId = window.setTimeout(returnToLoginAfterSessionExpiry, msUntilExpiry);
+}
+
 async function fetchJson(path, options = {}) {
   const { markUnauthorizedAsSessionExpired = true, ...fetchOptions } = options;
   const response = await fetch(path, {
@@ -1027,9 +1068,7 @@ async function fetchJson(path, options = {}) {
   const body = contentType.includes("application/json") ? await response.json() : null;
 
   if (response.status === 401 && markUnauthorizedAsSessionExpired) {
-    Object.assign(state, markSessionExpired(state));
-    clearShellMessage();
-    render();
+    returnToLoginAfterSessionExpiry();
     throw new ApiError(response.status, body?.code ?? "UNAUTHORIZED", body?.message ?? "Your session has expired.");
   }
 
@@ -1066,9 +1105,7 @@ async function uploadFileBytes(path, file, options = {}) {
     : `The selected file could not be uploaded. (${response.status})`;
 
   if (response.status === 401 && markUnauthorizedAsSessionExpired) {
-    Object.assign(state, markSessionExpired(state));
-    clearShellMessage();
-    render();
+    returnToLoginAfterSessionExpiry();
     throw new ApiError(response.status, body?.code ?? "UNAUTHORIZED", body?.message ?? "Your session has expired.");
   }
 
@@ -1201,7 +1238,6 @@ function render() {
   shellView?.classList.toggle("hidden", !flags.showShellView);
   sshStage?.classList.toggle("hidden", !flags.showSshStage);
   rootAdminLoginTemplateController?.setVariant(flags.showSshStage ? "ssh-challenge" : "password");
-  expiryOverlay?.classList.toggle("hidden", !flags.showExpiryOverlay);
 
   setMessage(authMessage, state.authMessage, "danger");
   suspendSharedTooltipUntilPointerMove();
@@ -1284,19 +1320,13 @@ async function bootstrapSession() {
     state.phase = "authenticated";
     state.navigation.currentPage = resolvePageFromLocation();
     syncBrowserLocationForPage(state.navigation.currentPage, "replace");
+    scheduleSessionExpiryLogout(session);
     render();
     await refreshTopNav();
     await refreshContextNavForCurrentPage();
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
-      Object.assign(state, resetToLoginState(state));
-      clearShellMessage();
-      rootAdminDirectoryController.reset();
-      webAppHierarchyPageController.reset();
-      buildBacklogPageController.reset();
-      renderContextNavItems([]);
-      state.phase = "login";
-      render();
+      resetAuthenticatedShellForLogin();
       return;
     }
     state.phase = "login";
@@ -1373,21 +1403,14 @@ async function handleLogout() {
     // Session may already be expired. Reset locally either way.
   }
 
-  window.history.replaceState(null, "", buildCanonicalRootAdminPath("overview"));
-  Object.assign(state, resetToLoginState(state));
-  clearShellMessage();
-  rootAdminDirectoryController.reset();
-  webAppHierarchyPageController.reset();
-  buildBacklogPageController.reset();
-  setTopNavLinkCollections(buildFallbackTopNavItems());
-  renderContextNavItems([]);
-  render();
+  resetAuthenticatedShellForLogin();
 }
 
 async function handleRefreshSession() {
   try {
     const session = await fetchJson("/v1/root-auth/browser/session", { method: "GET" });
     state.session = session;
+    scheduleSessionExpiryLogout(session);
     render();
   } catch (error) {
     setShellMessage(messageForError(error, "Could not refresh the browser session."), "error");
@@ -1423,17 +1446,6 @@ async function handleShellSearchSubmit(event) {
 
 loginForm?.addEventListener("submit", handlePasswordSubmit);
 signSubmit?.addEventListener("click", handleSshSubmit);
-returnToLogin?.addEventListener("click", () => {
-  window.history.replaceState(null, "", buildCanonicalRootAdminPath("overview"));
-  Object.assign(state, resetToLoginState(state));
-  clearShellMessage();
-  rootAdminDirectoryController.reset();
-  webAppHierarchyPageController.reset();
-  buildBacklogPageController.reset();
-  setTopNavLinkCollections(buildFallbackTopNavItems());
-  renderContextNavItems([]);
-  render();
-});
 refreshSessionButton?.addEventListener("click", handleRefreshSession);
 shellSearchForm?.addEventListener("submit", handleShellSearchSubmit);
 profileLanguageButton?.addEventListener("click", () => setLanguageModalOpen(true, profileLanguageButton));
