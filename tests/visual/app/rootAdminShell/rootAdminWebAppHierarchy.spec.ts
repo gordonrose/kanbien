@@ -10,7 +10,7 @@ const mockSession = {
   authPrincipalId: "auth_principal_001",
   email: "root.admin@example.test",
   displayName: "Root Admin",
-  expiresAt: "2027-04-16T18:00:00.000Z",
+  expiresAt: "9999-04-16T18:00:00.000Z",
 };
 
 const MODULE_PATTERNS_ID = "11111111-1111-4111-8111-111111111111";

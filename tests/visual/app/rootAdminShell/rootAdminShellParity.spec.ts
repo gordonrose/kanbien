@@ -5,7 +5,7 @@ const mockSession = {
   authPrincipalId: "auth_principal_001",
   email: "root.admin@example.test",
   displayName: "Root Admin",
-  expiresAt: "2027-04-16T18:00:00.000Z",
+  expiresAt: "9999-04-16T18:00:00.000Z",
 };
 
 async function bootstrapAuthenticatedOverview(page: Page) {
@@ -354,7 +354,6 @@ test("root-admin login keeps backend auth errors inside the login template", asy
   await expect(page.locator("[data-login-template]")).toHaveAttribute("data-login-variant", "password");
   await expect(page.locator("#auth-message")).toContainText("Email or password is incorrect.");
   await expect(page.locator("#shell-view")).toBeHidden();
-  await expect(page.locator("#expiry-overlay")).toBeHidden();
 
   await page.unroute("**/v1/root-auth/login/password");
   await page.route("**/v1/root-auth/login/password", async (route) => {
@@ -406,7 +405,6 @@ test("root-admin login keeps backend auth errors inside the login template", asy
   await expect(page.locator("[data-login-template]")).toHaveAttribute("data-login-variant", "ssh-challenge");
   await expect(page.locator("#auth-message")).toContainText("The SSH signature could not be verified.");
   await expect(page.locator("#shell-view")).toBeHidden();
-  await expect(page.locator("#expiry-overlay")).toBeHidden();
 });
 
 test("root-admin users page keeps the same governed list-page header posture as the signed-off list-page route", async ({ page, context }) => {

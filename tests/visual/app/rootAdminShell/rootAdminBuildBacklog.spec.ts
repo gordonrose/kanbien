@@ -5,7 +5,7 @@ const mockSession = {
   authPrincipalId: "auth_principal_001",
   email: "root.admin@example.test",
   displayName: "Root Admin",
-  expiresAt: "2027-04-16T18:00:00.000Z",
+  expiresAt: "9999-04-16T18:00:00.000Z",
 };
 
 function createRootAdminBuildTree() {

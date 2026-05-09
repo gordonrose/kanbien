@@ -5,7 +5,7 @@ const mockSession = {
   authPrincipalId: "auth_principal_001",
   email: "root.admin@example.test",
   displayName: "Root Admin",
-  expiresAt: "2027-04-16T18:00:00.000Z",
+  expiresAt: "9999-04-16T18:00:00.000Z",
 };
 
 function createRootAdminTopNavTree() {
@@ -76,6 +76,27 @@ async function routeShellData(page: Page) {
       status: 200,
       contentType: "application/json",
       body: JSON.stringify(createRootAdminTopNavTree()),
+    });
+  });
+
+  await page.route(/.*\/v1\/web-app-page-settings\/pages\/[^/]+$/, async (route) => {
+    const webAppPageId = route.request().url().split("/").pop() ?? "";
+    const pageSettingsById: Record<
+      string,
+      { displayLabel: string; showInTopNav: boolean; topNavOrder: number }
+    > = {
+      "page-overview": { displayLabel: "Overview", showInTopNav: true, topNavOrder: 1 },
+      "page-users": { displayLabel: "Users", showInTopNav: true, topNavOrder: 2 },
+      "page-roles": { displayLabel: "Roles", showInTopNav: true, topNavOrder: 3 },
+    };
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(pageSettingsById[webAppPageId] ?? {
+        displayLabel: webAppPageId,
+        showInTopNav: false,
+        topNavOrder: 99,
+      }),
     });
   });
 
@@ -166,4 +187,30 @@ test("TC-ROOT-ADMIN-SHELL-E2E-001 keeps unauthenticated and expired bootstrap st
     await expect(page.getByRole("button", { name: /Sign in|Verify Password/ })).toBeVisible();
     await page.close();
   }
+});
+
+test("root-admin shell automatically returns to login when the active browser session expires", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await routeShellData(page);
+  const browserNow = await page.evaluate(() => Date.now());
+
+  await page.route("**/v1/root-auth/browser/session", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        ...mockSession,
+        expiresAt: new Date(browserNow + 2500).toISOString(),
+      }),
+    });
+  });
+
+  await page.goto("/root-admin");
+
+  await expect(page.locator("#shell-view")).toBeVisible();
+  await expect(page.locator("#auth-view")).toBeHidden();
+
+  await expect(page.locator("#auth-view")).toBeVisible({ timeout: 4000 });
+  await expect(page.locator("#shell-view")).toBeHidden();
+  await expect(page.locator("#auth-message")).toContainText("Your session has expired. Please sign in again.");
 });

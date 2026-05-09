@@ -7,7 +7,8 @@
 
 - all `20/20` root-admin-shell PRD test cases are traceable in executable test code
 - unit coverage is runtime-tested for helper client behavior, OpenSSH-native
-  backend signature verification compatibility, and session-expiry state logic
+  backend signature verification compatibility, and session-expiry login reset
+  state logic
 - integration coverage is runtime-tested for browser login, bootstrap, logout,
   same-origin shell mount shape, and OpenSSH-native helper signature acceptance
 - browser e2e coverage is runtime-tested for direct shell entry, active browser
@@ -35,7 +36,7 @@
   - Suggested Test Folder: `tests/unit/rootAdminShell/`
 
 - `TC-ROOT-ADMIN-SHELL-UNIT-003`
-  - Scenario: session-expiry UI state transitions blur the shell and show the expiry modal
+  - Scenario: session-expiry state transitions clear authenticated shell state and return to login
   - Recommended Test Layer: `service-unit`
   - Suggested Test Folder: `tests/unit/rootAdminShell/`
 
@@ -129,7 +130,7 @@
   - Suggested Test Folder: `tests/integration/rootAdminShell/`
 
 - `TC-ROOT-ADMIN-SHELL-EDGE-003`
-  - Scenario: expired browser session produces the expected shell-locking behavior in state logic
+  - Scenario: expired browser session produces the expected return-to-login behavior in state logic and browser flow
   - Recommended Test Layer: `service-unit`
   - Suggested Test Folder: `tests/unit/rootAdminShell/`
 

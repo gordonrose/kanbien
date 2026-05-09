@@ -171,14 +171,11 @@ It must return only:
 
 ### Session expiry UX
 
-There is no silent recovery in phase one.
-
 When a browser session expires:
 
 - authenticated shell state is cleared
-- visible shell content is blurred
-- a modal explains that the session expired
-- the user is returned to the login flow through an explicit CTA
+- the user is automatically returned to the login flow
+- the login template explains that the session expired and prompts sign-in
 
 ---
 
