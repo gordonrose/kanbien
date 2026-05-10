@@ -6,6 +6,7 @@ const tinyPngBuffer = Buffer.from(
   "base64",
 );
 const tinyPngDataUrl = `data:image/png;base64,${tinyPngBuffer.toString("base64")}`;
+const rootUserOneProfilePictureUrl = "/v1/assets/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/content";
 
 const mockSession = {
   rootUserId: "root_user_001",
@@ -183,7 +184,7 @@ function buildRootUsers(total = 30) {
       anonymized: false,
       status: number % 6 === 0 ? "inactive" : "active",
       profilePictureAssetId: number === 1 ? "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" : null,
-      profilePictureUrl: number === 1 ? tinyPngDataUrl : null,
+      profilePictureUrl: number === 1 ? rootUserOneProfilePictureUrl : null,
       profilePictureAltText: number === 1 ? "Root User 1 profile portrait" : null,
       profilePictureDecorative: false,
       createdAt: `2026-03-${String(((number - 1) % 28) + 1).padStart(2, "0")}T10:00:00.000Z`,
@@ -238,7 +239,12 @@ function buildTenantAdmins(): Record<string, Array<Record<string, string>>> {
 
 async function mockRootUsersRoutes(
   page: Page,
-  options: { failInitialOnce?: boolean; uploadBytesStatus?: number; uploadBytesContentType?: string } = {},
+  options: {
+    failInitialOnce?: boolean;
+    uploadBytesStatus?: number;
+    uploadBytesContentType?: string;
+    failProfilePictureContent?: boolean;
+  } = {},
 ) {
   let rootUsers = buildRootUsers();
   let tenants = buildTenants();
@@ -324,6 +330,25 @@ async function mockRootUsersRoutes(
     });
   });
 
+  await page.route("**/v1/assets/*/content", async (route) => {
+    if (options.failProfilePictureContent) {
+      await route.fulfill({
+        status: 404,
+        contentType: "application/json",
+        body: JSON.stringify({
+          code: "ASSET_CONTENT_NOT_FOUND",
+          message: "The asset bytes could not be found.",
+        }),
+      });
+      return;
+    }
+    await route.fulfill({
+      status: 200,
+      contentType: "image/png",
+      body: tinyPngBuffer,
+    });
+  });
+
   await page.route("**/v1/root-users**", async (route) => {
     const url = new URL(route.request().url());
     const method = route.request().method();
@@ -344,7 +369,9 @@ async function mockRootUsersRoutes(
         anonymized: false,
         status: "active",
         profilePictureAssetId: body.profilePictureAssetId ?? null,
-        profilePictureUrl: body.profilePictureAssetId ? tinyPngDataUrl : null,
+        profilePictureUrl: body.profilePictureAssetId
+          ? `/v1/assets/${body.profilePictureAssetId}/content`
+          : null,
         profilePictureAltText: body.profilePictureAltText ?? null,
         profilePictureDecorative: Boolean(body.profilePictureDecorative),
         createdAt: "2026-04-27T10:00:00.000Z",
@@ -656,8 +683,9 @@ test.describe("root-admin root-users list page adoption", () => {
     await expect(headerCard.locator(".form-image-card-copy strong")).toHaveText("Root User 1");
     await expect(headerCard.locator(".form-image-card-copy span")).toHaveText("root.user1@example.test");
     await expect(headerCard.locator(".form-image-card-copy small")).toHaveText("Active");
-    await expect(headerCard.locator("[data-form-image-card-image]")).toHaveAttribute("src", tinyPngDataUrl);
+    await expect(headerCard.locator("[data-form-image-card-image]")).toHaveAttribute("src", rootUserOneProfilePictureUrl);
     await expect(headerCard.locator("[data-form-image-card-image]")).toHaveAttribute("alt", "Root User 1 profile portrait");
+    await expect(headerCard.locator("[data-form-image-card-image]")).toHaveJSProperty("naturalWidth", 1);
 
     await headerCard.locator("[data-form-image-card-media]").hover();
     await headerCard.locator("[data-form-image-card-edit]").click();
@@ -667,6 +695,19 @@ test.describe("root-admin root-users list page adoption", () => {
     await expect(editForm.locator("[data-directory-profile-picture]")).toBeVisible();
     await expect(editForm.locator("[data-directory-profile-picture]")).toHaveJSProperty("previousElementSibling", null);
     await expect(editForm.locator("[data-form-upload-field]")).toHaveAttribute("data-form-upload-state", "complete");
+  });
+
+  test("root-user drawer header falls back to the image-card placeholder when asset bytes are missing", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapUsersPage(page, { failProfilePictureContent: true });
+
+    await page.locator('[data-selectable-list-card]').first().click();
+
+    const headerCard = page.locator("#root-users-detail-panel [data-directory-detail-identity-card] [data-form-image-card]");
+    await expect(headerCard).toHaveAttribute("data-form-image-card-image-state", "error");
+    await expect(headerCard.locator("[data-form-image-card-image]")).toBeHidden();
+    await expect(headerCard.locator("[data-form-image-card-placeholder]")).toBeVisible();
+    await expect(headerCard.locator("[data-form-image-card-placeholder]")).toContainText("Profile picture");
   });
 
   test("directory list cards keep the governed list-page stack gap", async ({ page }) => {

@@ -1,4 +1,5 @@
 import {
+  initializeFormImageCards,
   initializeFormUploadFields,
   renderFormImageCard,
   renderFormUploadField,
@@ -859,6 +860,7 @@ export function createRootAdminDirectoryWorkspaceController({
     setOptionalText(detailSubtitle, detail.subtitle);
     if (detailIdentityCard instanceof HTMLElement && typeof config.detailIdentityCard === "function") {
       detailIdentityCard.innerHTML = renderFormImageCard(config.detailIdentityCard(record));
+      initializeFormImageCards({ scope: detailIdentityCard });
     }
     setOptionalText(detailDescription, detail.description);
     setOptionalTags(detailTags, detail.tags);
@@ -1321,6 +1323,7 @@ export function createRootAdminDirectoryWorkspaceController({
     scope: root,
     onFileSelected: uploadProfilePictureFile,
   });
+  initializeFormImageCards({ scope: root });
 
   return {
     handleShellSearchSubmit,

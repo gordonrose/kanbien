@@ -546,6 +546,19 @@ export function renderFormImageCard({
   const cardTitle = name || title;
   const cardEmail = email || description;
   const cardJobTitle = jobTitle || meta;
+  const placeholderMarkup = `
+    <span
+      class="form-image-card-placeholder"
+      aria-hidden="true"
+      data-form-image-card-placeholder
+      ${hasImage ? "hidden" : ""}
+    >
+      <svg viewBox="0 0 24 24" focusable="false">
+        <path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v10A1.5 1.5 0 0 1 19 18.5H5A1.5 1.5 0 0 1 3.5 17V7A1.5 1.5 0 0 1 5 5.5zm1.5 9 3.1-3.2 2.4 2.35 1.65-1.75 3.85 3.6M8.25 9.25h.01" />
+      </svg>
+      <span>${escapeHtml(imageLabel)}</span>
+    </span>
+  `;
   const copyMarkup = [cardTitle, cardEmail, cardJobTitle].some(Boolean)
     ? `
       <div class="form-image-card-copy">
@@ -561,12 +574,8 @@ export function renderFormImageCard({
       <div class="form-image-card-media" data-form-image-card-media>
         ${hasImage
           ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(imageAlt)}" data-form-image-card-image />`
-          : `<span class="form-image-card-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M5 5.5h14a1.5 1.5 0 0 1 1.5 1.5v10A1.5 1.5 0 0 1 19 18.5H5A1.5 1.5 0 0 1 3.5 17V7A1.5 1.5 0 0 1 5 5.5zm1.5 9 3.1-3.2 2.4 2.35 1.65-1.75 3.85 3.6M8.25 9.25h.01" />
-              </svg>
-              <span>${escapeHtml(imageLabel)}</span>
-            </span>`}
+          : ""}
+        ${placeholderMarkup}
         <button class="form-image-card-edit" type="button" aria-label="${escapeHtml(editLabel)}" data-form-image-card-edit>
           <span aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false">
@@ -578,6 +587,48 @@ export function renderFormImageCard({
       ${copyMarkup}
     </article>
   `;
+}
+
+export function initializeFormImageCards({ scope = document } = {}) {
+  if (!(scope instanceof Document || scope instanceof HTMLElement)) {
+    return;
+  }
+
+  const handleImageFailure = (image) => {
+    if (!(image instanceof HTMLImageElement)) {
+      return;
+    }
+    const card = image.closest("[data-form-image-card]");
+    const placeholder = card?.querySelector("[data-form-image-card-placeholder]");
+    if (!(placeholder instanceof HTMLElement)) {
+      return;
+    }
+    image.hidden = true;
+    placeholder.hidden = false;
+    card.dataset.formImageCardImageState = "error";
+  };
+
+  for (const image of scope.querySelectorAll("[data-form-image-card-image]")) {
+    if (image instanceof HTMLImageElement && image.complete && image.naturalWidth === 0) {
+      handleImageFailure(image);
+    }
+  }
+
+  if (scope.dataset?.formImageCardsInitialized === "true") {
+    return;
+  }
+
+  scope.addEventListener(
+    "error",
+    (event) => {
+      handleImageFailure(event.target);
+    },
+    true,
+  );
+
+  if (scope.dataset) {
+    scope.dataset.formImageCardsInitialized = "true";
+  }
 }
 
 export function renderFormUploadField({
