@@ -245,12 +245,12 @@ Journey modules must not:
 
 | Current route | Target module | Classification | Notes |
 | --- | --- | --- | --- |
-| `/root-admin` | `routes/overview/` | `durable-page` | Page body still local placeholder; needs DS summary seam or explicit exception before more page behavior. |
-| `/root-admin/users` | `routes/users/` | `durable-page` | Page body should continue through `rootAdminDirectoryWorkspace.mjs`. |
-| `/root-admin/tenants` | `routes/tenants/` | `durable-page` | Page body should continue through `rootAdminDirectoryWorkspace.mjs`. |
-| `/root-admin/tenant-admins` | `routes/tenant-admins/` | `durable-page` | Page body should continue through `rootAdminDirectoryWorkspace.mjs` with selected-tenant context preserved. |
-| `/root-admin/roles` | `routes/roles/` | `durable-page` | Placeholder only; real behavior waits for a DS-owned roles workspace seam or explicit exception. |
-| `/root-admin/web-app-hierarchy` | `routes/web-app-hierarchy/` | `durable-page` | Page body should continue through `webAppHierarchyWorkspace.mjs`. |
+| `/root-admin` | `routes/overview/` | `durable-page` | Intentional placeholder for now; real page behavior needs DS summary seam or new explicit exception. |
+| `/root-admin/users` | `routes/users/` | `durable-page` | Extracted; page body mounts through `rootAdminDirectoryWorkspace.mjs`. |
+| `/root-admin/tenants` | `routes/tenants/` | `durable-page` | Extracted; page body mounts through `rootAdminDirectoryWorkspace.mjs`. |
+| `/root-admin/tenant-admins` | `routes/tenant-admins/` | `durable-page` | Extracted; page body mounts through `rootAdminDirectoryWorkspace.mjs` with selected-tenant context preserved. |
+| `/root-admin/roles` | `routes/roles/` | `durable-page` | Intentional placeholder for now; real behavior waits for a DS-owned roles workspace seam or new explicit exception. |
+| `/root-admin/web-app-hierarchy` | `routes/web-app-hierarchy/` | `durable-page` | Extracted; page body mounts through the thin `webAppHierarchyPage.mjs` adapter and `webAppHierarchyWorkspace.mjs`. |
 | `/root-admin/build/backlog` | `routes/build/backlog/` | `durable-page` | Proof route; floating-tab header is DS-owned, wrapper remains cleanup target. |
 | root-admin helper downloads | no page route module | `support-only` | Keep in router/support helper handling, not normal user-facing topology. |
 | legacy `#overview`, `#users`, etc. | `routeTopology.mjs` aliases | compatibility alias | Do not treat as canonical route truth. |
@@ -290,9 +290,10 @@ The preferred first extraction is `/root-admin/build/backlog` because:
 - its DS dependency is narrow: `floatingTabHeader.mjs`
 - it is a proof surface with limited backend coupling
 
-The second candidate is `/root-admin/web-app-hierarchy` because it already has
-a route adapter and a DS-owned workspace seam, but it has broader API and
-journey behavior and should follow after the registry pattern is proven.
+The remaining normal-page candidates are `/root-admin/overview` and
+`/root-admin/roles`, which are intentionally retained as placeholders for now
+and still need a DS-owned page body seam or new explicit exception before real
+route behavior is added.
 
 ## Stop Conditions
 

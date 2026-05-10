@@ -188,12 +188,39 @@ describe("root admin shell browser auth integration", () => {
     const routeRegistryModule = await request(createApp())
       .get("/root-admin/routes/registry.mjs")
       .set("host", "admin.example.test");
+    const usersPageModule = await request(createApp())
+      .get("/root-admin/routes/users/page.mjs")
+      .set("host", "admin.example.test");
+    const tenantsPageModule = await request(createApp())
+      .get("/root-admin/routes/tenants/page.mjs")
+      .set("host", "admin.example.test");
+    const tenantAdminsPageModule = await request(createApp())
+      .get("/root-admin/routes/tenant-admins/page.mjs")
+      .set("host", "admin.example.test");
+    const webAppHierarchyPageModule = await request(createApp())
+      .get("/root-admin/routes/web-app-hierarchy/page.mjs")
+      .set("host", "admin.example.test");
     const buildBacklogPageModule = await request(createApp())
       .get("/root-admin/routes/build/backlog/page.mjs")
       .set("host", "admin.example.test");
     const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
     const frontendAppSource = readFileSync("src/frontend/rootAdminShell/assets/app.mjs", "utf8");
+    const appShellSource = readFileSync("src/frontend/designSystem/assets/appShell.mjs", "utf8");
     const loginTemplateSource = readFileSync("src/frontend/designSystem/assets/loginTemplate.mjs", "utf8");
+    const usersPageSource = readFileSync("src/frontend/rootAdminShell/routes/users/page.mjs", "utf8");
+    const usersRouteSource = readFileSync("src/frontend/rootAdminShell/routes/users/route.mjs", "utf8");
+    const tenantsPageSource = readFileSync("src/frontend/rootAdminShell/routes/tenants/page.mjs", "utf8");
+    const tenantsRouteSource = readFileSync("src/frontend/rootAdminShell/routes/tenants/route.mjs", "utf8");
+    const tenantAdminsPageSource = readFileSync("src/frontend/rootAdminShell/routes/tenant-admins/page.mjs", "utf8");
+    const tenantAdminsRouteSource = readFileSync("src/frontend/rootAdminShell/routes/tenant-admins/route.mjs", "utf8");
+    const webAppHierarchyRoutePageSource = readFileSync(
+      "src/frontend/rootAdminShell/routes/web-app-hierarchy/page.mjs",
+      "utf8",
+    );
+    const webAppHierarchyRouteSource = readFileSync(
+      "src/frontend/rootAdminShell/routes/web-app-hierarchy/route.mjs",
+      "utf8",
+    );
     const buildBacklogPageSource = readFileSync("src/frontend/rootAdminShell/routes/build/backlog/page.mjs", "utf8");
     const buildBacklogRouteSource = readFileSync("src/frontend/rootAdminShell/routes/build/backlog/route.mjs", "utf8");
     const routeRegistrySource = readFileSync("src/frontend/rootAdminShell/routes/registry.mjs", "utf8");
@@ -204,33 +231,51 @@ describe("root admin shell browser auth integration", () => {
 
     expect(shell.status).toBe(200);
     expect(routeRegistryModule.status).toBe(200);
+    expect(routeRegistryModule.text).toContain("usersRoute");
+    expect(routeRegistryModule.text).toContain("tenantsRoute");
+    expect(routeRegistryModule.text).toContain("tenantAdminsRoute");
+    expect(routeRegistryModule.text).toContain("webAppHierarchyRoute");
     expect(routeRegistryModule.text).toContain("buildBacklogRoute");
+    expect(usersPageModule.status).toBe(200);
+    expect(usersPageModule.text).toContain("mountUsersPage");
+    expect(tenantsPageModule.status).toBe(200);
+    expect(tenantsPageModule.text).toContain("mountTenantsPage");
+    expect(tenantAdminsPageModule.status).toBe(200);
+    expect(tenantAdminsPageModule.text).toContain("mountTenantAdminsPage");
+    expect(webAppHierarchyPageModule.status).toBe(200);
+    expect(webAppHierarchyPageModule.text).toContain("mountWebAppHierarchyPage");
     expect(buildBacklogPageModule.status).toBe(200);
     expect(buildBacklogPageModule.text).toContain("mountBuildBacklogPage");
-    expect(shell.text).toContain("Root Admin Shell POC");
-    expect(frontendMarkup).toContain("Root Admin Shell POC");
-    expect(frontendMarkup).toContain("Overview");
-    expect(frontendMarkup).toContain("Roles");
-    expect(frontendMarkup).toContain('aria-label="Current page breadcrumb"');
-    expect(frontendMarkup).toContain('role="search"');
-    expect(frontendMarkup).toContain("Search root admin sections");
-    expect(frontendMarkup).toContain("Choose a language");
-    expect(frontendMarkup).toContain("Sign Out");
-    expect(frontendMarkup).toContain('id="root-admin-context-nav-mount"');
-    expect(frontendMarkup).toContain('<section id="page-users" class="hidden"></section>');
-    expect(frontendMarkup).toContain('<section id="page-tenants" class="hidden"></section>');
-    expect(frontendMarkup).toContain('<section id="page-tenant-admins" class="hidden"></section>');
-    expect(frontendMarkup).toContain('<section id="page-web-app-hierarchy" class="hidden"></section>');
-    expect(frontendMarkup).toContain('<section id="page-build-backlog" class="hidden"></section>');
+    expect(frontendMarkup).toContain('<div id="shell-view" class="design-system-shell hidden"></div>');
+    expect(frontendMarkup).not.toContain("Root Admin Shell POC");
+    expect(appShellSource).toContain("export function renderAppShell");
+    expect(appShellSource).toContain("export function createAppShellController");
+    expect(frontendAppSource).toContain("renderAppShell(rootAdminAppShellInput)");
+    expect(frontendAppSource).toContain("createAppShellController");
+    expect(frontendAppSource).toContain("Root Admin Shell POC");
+    expect(appShellSource).toContain('aria-label="Current page breadcrumb"');
+    expect(appShellSource).toContain('role="search"');
+    expect(frontendAppSource).toContain("Search root admin sections");
+    expect(appShellSource).toContain("Choose a language");
+    expect(appShellSource).toContain("Sign Out");
+    expect(appShellSource).toContain('id="root-admin-context-nav-mount"');
+    expect(frontendAppSource).toContain('sectionId: "page-users"');
+    expect(frontendAppSource).toContain('sectionId: "page-tenants"');
+    expect(frontendAppSource).toContain('sectionId: "page-tenant-admins"');
+    expect(frontendAppSource).toContain('sectionId: "page-web-app-hierarchy"');
+    expect(frontendAppSource).toContain('sectionId: "page-build-backlog"');
     expect(frontendMarkup).not.toContain('id="root-users-list-page"');
     expect(frontendMarkup).not.toContain('id="root-users-detail-panel"');
     expect(frontendMarkup).not.toContain('id="root-users-record-card-template"');
     expect(frontendMarkup).not.toContain('id="web-app-page-settings-form"');
     expect(frontendMarkup).not.toContain('id="web-app-hierarchy-page-title"');
-    expect(frontendAppSource).toContain("/design-system/assets/pageShellController.mjs");
+    expect(frontendAppSource).toContain("/design-system/assets/appShell.mjs");
     expect(frontendAppSource).toContain("/design-system/assets/loginTemplate.mjs");
-    expect(frontendAppSource).toContain("/design-system/assets/rootAdminDirectoryWorkspace.mjs");
     expect(frontendAppSource).toContain("../routes/registry.mjs");
+    expect(frontendAppSource).toContain('getRootAdminRouteDefinition("users")');
+    expect(frontendAppSource).toContain('getRootAdminRouteDefinition("tenants")');
+    expect(frontendAppSource).toContain('getRootAdminRouteDefinition("tenant-admins")');
+    expect(frontendAppSource).toContain('getRootAdminRouteDefinition("web-app-hierarchy")');
     expect(frontendAppSource).toContain('getRootAdminRouteDefinition("build-backlog")');
     expect(frontendAppSource).toMatch(/const rootAdminConversationPanelState = \{\s+ref: "BWP-R-001"/);
     expect(frontendMarkup).toContain("data-root-admin-login-template-host");
@@ -239,11 +284,30 @@ describe("root admin shell browser auth integration", () => {
     expect(loginTemplateSource).toContain("export function renderRootAdminLoginTemplate");
     expect(loginTemplateSource).toContain('id="login-form"');
     expect(loginTemplateSource).toContain('id="ssh-stage"');
+    expect(usersPageSource).toContain("/design-system/assets/rootAdminDirectoryWorkspace.mjs");
+    expect(usersPageSource).toContain("createRootAdminDirectoryWorkspaceController");
+    expect(usersRouteSource).toContain('key: "users"');
+    expect(usersRouteSource).toContain('canonicalPath: "/root-admin/users"');
+    expect(tenantsPageSource).toContain("/design-system/assets/rootAdminDirectoryWorkspace.mjs");
+    expect(tenantsPageSource).toContain("createRootAdminDirectoryWorkspaceController");
+    expect(tenantsRouteSource).toContain('key: "tenants"');
+    expect(tenantsRouteSource).toContain('canonicalPath: "/root-admin/tenants"');
+    expect(tenantAdminsPageSource).toContain("/design-system/assets/rootAdminDirectoryWorkspace.mjs");
+    expect(tenantAdminsPageSource).toContain("createRootAdminDirectoryWorkspaceController");
+    expect(tenantAdminsRouteSource).toContain('key: "tenant-admins"');
+    expect(tenantAdminsRouteSource).toContain('canonicalPath: "/root-admin/tenant-admins"');
+    expect(webAppHierarchyRoutePageSource).toContain("../../assets/webAppHierarchyPage.mjs");
+    expect(webAppHierarchyRoutePageSource).toContain("createWebAppHierarchyPageController");
+    expect(webAppHierarchyRouteSource).toContain('key: "web-app-hierarchy"');
+    expect(webAppHierarchyRouteSource).toContain('canonicalPath: "/root-admin/web-app-hierarchy"');
     expect(buildBacklogPageSource).toContain("/design-system/assets/floatingTabHeader.mjs");
     expect(buildBacklogPageSource).toContain("renderFloatingTabHeader");
     expect(buildBacklogPageSource).toContain("mountFloatingTabHeader");
     expect(buildBacklogRouteSource).toContain('key: "build-backlog"');
     expect(buildBacklogRouteSource).toContain('canonicalPath: "/root-admin/build/backlog"');
+    expect(routeRegistrySource).toContain("tenantsRoute");
+    expect(routeRegistrySource).toContain("tenantAdminsRoute");
+    expect(routeRegistrySource).toContain("webAppHierarchyRoute");
     expect(routeRegistrySource).toContain("buildBacklogRoute");
     expect(floatingTabHeaderSource).toContain("export function renderFloatingTabHeader");
     expect(floatingTabHeaderSource).toContain("export function mountFloatingTabHeader");

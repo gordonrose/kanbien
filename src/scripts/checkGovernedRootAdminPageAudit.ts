@@ -8,8 +8,13 @@ const AUDIT_DOC =
 const exactSensitiveFiles = new Set([
   "src/frontend/rootAdminShell/index.html",
   "src/frontend/rootAdminShell/assets/app.mjs",
+  "src/frontend/rootAdminShell/routes/users/page.mjs",
+  "src/frontend/rootAdminShell/routes/tenants/page.mjs",
+  "src/frontend/rootAdminShell/routes/tenant-admins/page.mjs",
+  "src/frontend/rootAdminShell/routes/web-app-hierarchy/page.mjs",
   "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
   "src/frontend/designSystem/assets/contextNav.mjs",
+  "src/frontend/designSystem/assets/appShell.mjs",
   "src/frontend/designSystem/assets/rootUsersListWorkspace.mjs",
   "src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs",
   "src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs",

@@ -39,10 +39,11 @@ describe("floating tab header governed adoption guard", () => {
     expect(reusableAdoptionContract).toContain("/design-system/assets/floatingTabHeader.mjs?v=2026-05-08-overflow-tooltip-contract");
     expect(reusableAdoptionContract).toContain("tests/visual/app/rootAdminShell/rootAdminBuildBacklog.spec.ts");
 
-    expect(rootAdminIndex).toContain('id="page-build-backlog"');
+    expect(rootAdminIndex).toContain('<div id="shell-view" class="design-system-shell hidden"></div>');
     expect(rootAdminIndex).toContain("app.mjs?v=2026-05-08-floating-tab-tooltip-contract");
     expect(rootAdminIndex).not.toContain("floating-tab-card");
     expect(rootAdminIndex).not.toContain("data-floating-tab-seam-mount");
+    expect(rootAdminApp).toContain('sectionId: "page-build-backlog"');
     expect(rootAdminApp).toContain("../routes/registry.mjs");
     expect(rootAdminApp).toContain('getRootAdminRouteDefinition("build-backlog")');
 

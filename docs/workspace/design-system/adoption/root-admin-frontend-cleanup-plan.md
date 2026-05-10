@@ -47,19 +47,31 @@ The root-admin frontend already consumes several design-system-owned seams:
 The cleanup work remains necessary because `src/frontend/rootAdminShell` still
 locally owns or orchestrates some governed frontend structure:
 
-- top nav and mobile nav markup
-- profile menu markup
-- sub-nav, breadcrumb host, and search host markup
-- context-nav, conversation-panel, and page-main mounting posture
-- display-settings drawer markup
-- language modal markup
 - `/root-admin` overview/session placeholder body
 - `/root-admin/roles` placeholder body
 - `/root-admin/build/backlog` page wrapper around the floating-tab header
-- shell-level DOM selection and orchestration against locally authored markup
-- large shared `index.html` and `assets/app.mjs` surfaces that still combine
-  shell markup, route registration, page composition, journey orchestration,
-  and business-data wiring
+- shell-level orchestration that still lives in a large `assets/app.mjs`
+  bootstrap module
+- page-local journey behavior that has not yet been split into
+  `routes/**/journeys/**`
+
+The following cleanup slices have now landed:
+
+- `src/frontend/rootAdminShell/index.html` keeps only mount hosts and no
+  protected page bodies.
+- Authenticated shell structure renders through
+  `src/frontend/designSystem/assets/appShell.mjs`.
+- Durable route modules now exist for:
+  - `/root-admin/users`
+  - `/root-admin/tenants`
+  - `/root-admin/tenant-admins`
+  - `/root-admin/web-app-hierarchy`
+  - `/root-admin/build/backlog`
+- The directory pages consume `rootAdminDirectoryWorkspace.mjs` through their
+  route modules.
+- `web-app-hierarchy` consumes `webAppHierarchyWorkspace.mjs` through a thin
+  route module and route adapter.
+- Build backlog consumes the floating-tab header seam through its route module.
 
 ## Governing Rules
 
@@ -180,6 +192,8 @@ Exit criteria:
   journeys.
 - No source code changes are required for this step.
 
+Status: complete for the current route-module/app-shell checkpoint.
+
 ### RAF-002: Define The Route Module Boundary
 
 Goal:
@@ -209,6 +223,9 @@ Exit criteria:
 - `rootAdminShell` has an approved route-module target before source moves.
 - The first code slice can move page composition out of `app.mjs` without
   changing rendered behavior.
+
+Status: complete. The durable route/page boundary is recorded in
+`root-admin-route-module-boundary-contract.md`.
 
 ### RAF-003: Define The DS-Owned Shell Render Seam
 
@@ -241,6 +258,9 @@ Exit criteria:
   seam, and explicit input contract.
 - Backend/session/auth behavior remains owned by `rootAdminShell`.
 
+Status: complete. The reusable app-shell seam lives in
+`src/frontend/designSystem/assets/appShell.mjs`.
+
 ### RAF-004: Adopt The Shell Render Seam In RootAdminShell
 
 Goal:
@@ -266,6 +286,9 @@ Exit criteria:
 - The visual shell output is intentionally unchanged except for approved parity
   corrections.
 
+Status: complete for the authenticated shell host. Root-admin still owns
+auth/session and route data inputs.
+
 ### RAF-005: Split Route And Page Modules
 
 Goal:
@@ -275,8 +298,11 @@ Move durable route/page composition out of the root `index.html` and
 
 Tasks:
 
-- Move overview, users, tenants, tenant-admins, roles, web-app hierarchy, and
-  Build backlog page composition behind route modules.
+- Move users, tenants, tenant-admins, web-app hierarchy, and Build backlog page
+  composition behind route modules.
+- Keep overview and roles as intentional placeholder page bodies for now. They
+  must not grow real product behavior until a DS-owned page body seam exists or
+  a new explicit exception is approved.
 - Keep `assets/app.mjs` as the bootstrap and registry orchestrator.
 - Keep durable route topology in `routeTopology.mjs`.
 - Keep journey-local state under page-owned `journeys/` modules unless a
@@ -290,6 +316,10 @@ Exit criteria:
   controller and page mount.
 - Each durable root-admin product place has a narrow route module.
 - Journey-local and UI-local state remain out of global topology.
+
+Status: substantially complete for real governed pages. Extracted routes:
+`users`, `tenants`, `tenant-admins`, `web-app-hierarchy`, and
+`build/backlog`. Intentional placeholders for now: `overview` and `roles`.
 
 ### RAF-006: Close Shell-Attached Surface Gaps
 
@@ -326,13 +356,14 @@ first-consumer surfaces.
 Tasks:
 
 - `/root-admin`
-  - decide whether the overview/session page becomes a signed-off DS summary
-    page, a directory-style page, or an explicit exception.
+  - keep the overview/session page as an intentional placeholder for now.
+  - decide later whether it becomes a signed-off DS summary page,
+    a directory-style page, or a longer-lived explicit exception.
   - do not extend the current placeholder as if it were governed adoption.
 - `/root-admin/roles`
+  - keep the roles page as an intentional placeholder for now.
   - wait for or define the DS-owned roles workspace seam before building real
     route behavior.
-  - remove or explicitly defer the local placeholder body.
 - `/root-admin/build/backlog`
   - decide whether the Build backlog wrapper needs a full DS workspace seam
     before durable backlog data is connected.
@@ -345,6 +376,10 @@ Exit criteria:
 - The governed page audit shows no unplanned local page-body implementation.
 - Placeholder content is either removed, replaced by a DS seam, or documented
   as an intentional exception.
+
+Status: placeholder posture decided for now. Do not build real overview or
+roles UI in root-admin until a DS-owned page body seam exists or a new explicit
+exception is approved.
 
 ### RAF-008: Update Verification And Gates
 
@@ -370,17 +405,35 @@ Exit criteria:
 - Tests catch app-local CSS/layout drift for governed root-admin surfaces.
 - `frontend-overview.md`, the governed page audit, and source all agree.
 
+## Seam Classification Boundary
+
+Use
+[frontend-seam-classification-audit.md](/home/gordon/kanbien/docs/workspace/design-system/adoption/frontend-seam-classification-audit.md)
+as the current boundary map before creating new frontend shared folders or
+moving governed UI code.
+
+Current rule:
+
+- visual truth remains in `/design-system` canonical, pattern, template, and
+  verification surfaces
+- app-consumable governed UI seams remain in
+  `src/frontend/designSystem/assets/`
+- root-admin durable page routing moves to
+  `src/frontend/rootAdminShell/routes/**`
+- root-admin-only non-governed helpers may move to
+  `src/frontend/rootAdminShell/shared/**` only after at least two route modules
+  need the same helper
+- generic `src/frontend/shared/**` should not be introduced without a new ADR
+  that explicitly classifies which existing seams move out of the design-system
+  asset layer
+
 ## Suggested Task Order
 
-1. RAF-001: Align The Baseline
-2. RAF-002: Define The Route Module Boundary
-3. RAF-003: Define The DS-Owned Shell Render Seam
-4. RAF-004: Adopt The Shell Render Seam In RootAdminShell
-5. RAF-005: Split Route And Page Modules
-6. RAF-006: Close Shell-Attached Surface Gaps
-7. RAF-008: Add the first shell parity/gate coverage
-8. RAF-007: Close Page-Body Gaps route by route
-9. RAF-008: Refresh final verification and audit evidence
+1. RAF-006: Close any remaining shell-attached surface gaps.
+2. RAF-007: Keep `/root-admin` overview and `/root-admin/roles` as placeholders
+   until their DS page-body seams or new exceptions are approved.
+3. RAF-008: Keep refreshing final verification and audit evidence after each
+   cleanup slice.
 
 This order intentionally defines route modules before the shell implementation
 slice, then fixes the shell before page bodies. Page-level adoption inside a
@@ -391,17 +444,19 @@ shell facade.
 
 ## Open Decisions
 
-- Should the root-admin shell render seam live in
-  `pageShellController.mjs`, a new `rootAdminShell.mjs`, or another
-  design-system module?
-- Should route modules live under `src/frontend/rootAdminShell/routes/**`
-  immediately, or should the first extraction use an intermediate registry
-  while the shell seam lands?
+- The reusable app shell render seam should live in
+  `src/frontend/designSystem/assets/appShell.mjs`. Use
+  [app-shell-render-seam-contract.md](/home/gordon/kanbien/docs/workspace/design-system/adoption/app-shell-render-seam-contract.md)
+  as the RAF-003 contract, including the expected
+  `renderAppShell(input)` and `createAppShellController(input)` public API.
+  Root-admin is the first governed consumer, not the owner of the shared shell
+  primitive.
 - Which existing local states should be classified as journey-local modules
   rather than durable route modules?
-- Should `/root-admin` overview/session become a small DS summary family or an
-  explicit exception?
-- Should `/root-admin/roles` wait for a real roles workspace seam?
+- What should the eventual signed-off DS page body be for `/root-admin`
+  overview/session when the placeholder is retired?
+- What should the eventual signed-off DS roles workspace seam be when the roles
+  placeholder is retired?
 - Should `/root-admin/build/backlog` get a full DS workspace seam before
   durable backlog data exists?
 - Should SSH key option row rendering move into `loginTemplate.mjs` or remain

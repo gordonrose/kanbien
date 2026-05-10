@@ -37,28 +37,31 @@
 ## `/root-admin`
 
 - Current implementation status:
-  local placeholder page body inside a governed shell; the shell now also
-  consumes the DS-owned conversation panel seam for the live Build panel
-  assistant flow; not a page-family DS adoption yet
+  local placeholder page body inside the DS-owned `appShell.mjs` authenticated
+  shell seam; the shell also consumes the DS-owned conversation panel seam for
+  the live Build panel assistant flow; intentionally kept as a placeholder for
+  now and not a page-family DS adoption yet
 - Local implementation evidence:
-  placeholder overview content remains in
-  `src/frontend/rootAdminShell/index.html`; protected Build-panel orchestration
-  lives in `src/frontend/rootAdminShell/assets/app.mjs`, starts with no seeded
-  placeholder transcript/history, displays only a personalized greeting before
-  the first conversation, suppresses unapproved composer actions and no-packet
-  download UI, and calls the real harness chat APIs for conversation,
-  assistant, packet generation, and PDF download behavior
+  placeholder overview content is supplied as root-admin route/body input in
+  `src/frontend/rootAdminShell/assets/app.mjs`; protected Build-panel
+  orchestration lives in `src/frontend/rootAdminShell/assets/app.mjs`, starts
+  with no seeded placeholder transcript/history, displays only a personalized
+  greeting before the first conversation, suppresses unapproved composer actions
+  and no-packet download UI, and calls the real harness chat APIs for
+  conversation, assistant, packet generation, and PDF download behavior
 - Design-system sourced implementation evidence:
-  governed shell chrome and root-admin context-nav host/render seams are now
-  DS-owned, and the Build conversation panel consumes
+  `src/frontend/designSystem/assets/appShell.mjs` owns authenticated shell
+  render structure and composes the shared page-shell controllers; governed
+  shell chrome and root-admin context-nav host/render seams are now DS-owned,
+  and the Build conversation panel consumes
   `src/frontend/designSystem/assets/conversationPanel.mjs` plus
   `src/frontend/designSystem/assets/conversationPanel.css`; the overview page
   body itself is not DS-owned
 - Required remediation before more page work:
-  do a governed page preflight first and either adopt a signed-off DS page
-  family or explicitly record an exception; keep further Build panel UI changes
-  in `conversationPanel.mjs`/`conversationPanel.css`, and do not extend the
-  local placeholder body as if it were already governed
+  keep the overview body as a placeholder until a signed-off DS page family or
+  a new explicit exception is approved; keep further Build panel UI changes in
+  `conversationPanel.mjs`/`conversationPanel.css`, and do not extend the local
+  placeholder body as if it were already governed
 
 ## `/root-admin/users`
 
@@ -67,11 +70,13 @@
   workspace seam with list-page and drawer-form create/edit behavior
 - Local implementation evidence:
   none for the users page body after removal of the old
-  `src/frontend/rootAdminShell/assets/rootUsersList.mjs` implementation
+  `src/frontend/rootAdminShell/assets/rootUsersList.mjs` implementation;
+  route-local mounting now lives in
+  `src/frontend/rootAdminShell/routes/users/page.mjs`
 - Design-system sourced implementation evidence:
   `src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs`
   owns the users workspace shell, list behavior, and create/edit drawer-form
-  behavior, mounted from `src/frontend/rootAdminShell/assets/app.mjs`
+  behavior, mounted from `src/frontend/rootAdminShell/routes/users/page.mjs`
 - Required remediation before more page work:
   continue page work through the DS workspace seam; if a new local wrapper,
   page shell, or controller branch appears in `rootAdminShell`, stop and
@@ -80,17 +85,20 @@
 ## `/root-admin/roles`
 
 - Current implementation status:
-  local placeholder page body; not a page-family DS adoption yet
+  local placeholder page body; intentionally kept as a placeholder for now and
+  not a page-family DS adoption yet
 - Local implementation evidence:
-  placeholder roles content remains in
-  `src/frontend/rootAdminShell/index.html`
+  placeholder roles content is supplied as root-admin route/body input in
+  `src/frontend/rootAdminShell/assets/app.mjs`
 - Design-system sourced implementation evidence:
-  governed root-admin shell chrome and context-nav are shared, but the roles
-  page body itself is not backed by a DS page seam
+  governed root-admin shell chrome renders through
+  `src/frontend/designSystem/assets/appShell.mjs`, but the roles page body
+  itself is not backed by a DS page seam
 - Required remediation before more page work:
-  audit the intended page family first, confirm the signed-off DS source truth,
-  and extract or adopt the shared render/controller seam before building real
-  route behavior on top of the placeholder
+  keep the roles body as a placeholder until a signed-off DS roles workspace
+  seam or a new explicit exception is approved; audit the intended page family
+  and confirm the signed-off DS source truth before building real route
+  behavior on top of the placeholder
 
 ## `/root-admin/tenants`
 
@@ -99,11 +107,12 @@
   workspace seam with list-page and drawer-form create/edit behavior
 - Local implementation evidence:
   none for the tenants page body; `src/frontend/rootAdminShell/index.html`
-  keeps only the empty route mount
+  keeps only the empty route mount; route-local mounting now lives in
+  `src/frontend/rootAdminShell/routes/tenants/page.mjs`
 - Design-system sourced implementation evidence:
   `src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs`
   owns the tenants workspace shell, list behavior, and create/edit drawer-form
-  behavior, mounted from `src/frontend/rootAdminShell/assets/app.mjs`
+  behavior, mounted from `src/frontend/rootAdminShell/routes/tenants/page.mjs`
 - Required remediation before more page work:
   continue page work through the DS workspace seam; if a new local wrapper,
   page shell, or controller branch appears in `rootAdminShell`, stop and
@@ -117,12 +126,13 @@
   selected tenant context
 - Local implementation evidence:
   none for the tenant-admins page body; `src/frontend/rootAdminShell/index.html`
-  keeps only the empty route mount
+  keeps only the empty route mount; route-local mounting now lives in
+  `src/frontend/rootAdminShell/routes/tenant-admins/page.mjs`
 - Design-system sourced implementation evidence:
   `src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs`
   owns the tenant-admins workspace shell, tenant selector, list behavior, and
   create/edit drawer-form behavior, mounted from
-  `src/frontend/rootAdminShell/assets/app.mjs`
+  `src/frontend/rootAdminShell/routes/tenant-admins/page.mjs`
 - Required remediation before more page work:
   continue page work through the DS workspace seam and preserve the explicit
   selected-tenant context for tenant-admin API calls
@@ -133,12 +143,14 @@
   page-body render and controller come from a DS-owned workspace seam
 - Local implementation evidence:
   no local page-body host markup remains in
-  `src/frontend/rootAdminShell/index.html`, but the route still lives inside
-  the broader root-admin shell host
+  `src/frontend/rootAdminShell/index.html`; route-local mounting now lives in
+  `src/frontend/rootAdminShell/routes/web-app-hierarchy/page.mjs`, which
+  delegates to the existing thin route adapter
 - Design-system sourced implementation evidence:
   `src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs`
   owns the workspace shell and controller behavior, consumed by
-  `src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs`
+  `src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs` through
+  `src/frontend/rootAdminShell/routes/web-app-hierarchy/page.mjs`
 - Required remediation before more page work:
   continue page-body work through the DS workspace seam; if new form host,
   drawer host, or workspace controller logic starts appearing locally in

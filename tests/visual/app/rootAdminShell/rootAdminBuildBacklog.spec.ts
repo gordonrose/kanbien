@@ -116,6 +116,21 @@ async function bootstrapAuthenticatedBuildBacklog(page: Page) {
     });
   });
 
+  await page.route(/.*\/v1\/root-admin\/harness-chat\/conversations(?:\?.*)?$/, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        items: [],
+        page: 1,
+        pageSize: 25,
+        totalPages: 0,
+        totalMatchingRecords: 0,
+        totalSearchableRecords: 0,
+      }),
+    });
+  });
+
   await page.route("**/v1/web-app-hierarchy/tree", async (route) => {
     await route.fulfill({
       status: 200,

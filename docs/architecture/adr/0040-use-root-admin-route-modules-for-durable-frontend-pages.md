@@ -111,7 +111,12 @@ and state grammar must still come from approved design-system seams.
 
 - Start with `/root-admin/build/backlog` because it already has a narrow page
   controller and limited backend coupling.
-- Follow with `web-app-hierarchy` after the route registry pattern is proven,
-  because that page has broader API and journey behavior.
+- The first follow-on extractions are the directory pages:
+  `/root-admin/users`, `/root-admin/tenants`, and
+  `/root-admin/tenant-admins`, which now mount through route modules while
+  continuing to consume the design-system-owned directory workspace seam.
+- `/root-admin/web-app-hierarchy` now also mounts through a route module after
+  the registry pattern was proven for both proof-route and directory-page
+  consumers; its page adapter still owns the broader API and journey callbacks.
 - Later work should define when the route registry is generated from curated
   topology instead of manually assembled.

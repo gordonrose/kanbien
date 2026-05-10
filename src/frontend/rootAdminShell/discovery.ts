@@ -27,7 +27,8 @@ export const ROOT_ADMIN_SHELL_DISCOVERED_STATES: RootAdminShellDiscoveredState[]
   {
     pageKey: "users",
     displayLabel: "Users",
-    implementationSourcePath: "src/frontend/rootAdminShell/assets/app.mjs",
+    routePath: "/root-admin/users",
+    implementationSourcePath: "src/frontend/rootAdminShell/routes/users/page.mjs",
   },
   {
     pageKey: "roles",
@@ -37,17 +38,20 @@ export const ROOT_ADMIN_SHELL_DISCOVERED_STATES: RootAdminShellDiscoveredState[]
   {
     pageKey: "tenants",
     displayLabel: "Tenants",
-    implementationSourcePath: "src/frontend/rootAdminShell/assets/app.mjs",
+    routePath: "/root-admin/tenants",
+    implementationSourcePath: "src/frontend/rootAdminShell/routes/tenants/page.mjs",
   },
   {
     pageKey: "tenant-admins",
     displayLabel: "Tenant Admins",
-    implementationSourcePath: "src/frontend/rootAdminShell/assets/app.mjs",
+    routePath: "/root-admin/tenant-admins",
+    implementationSourcePath: "src/frontend/rootAdminShell/routes/tenant-admins/page.mjs",
   },
   {
     pageKey: "web-app-hierarchy",
     displayLabel: "Web App Hierarchy",
-    implementationSourcePath: "src/frontend/rootAdminShell/assets/app.mjs",
+    routePath: "/root-admin/web-app-hierarchy",
+    implementationSourcePath: "src/frontend/rootAdminShell/routes/web-app-hierarchy/page.mjs",
   },
   {
     pageKey: "build-backlog",

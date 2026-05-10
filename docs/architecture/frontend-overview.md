@@ -130,11 +130,19 @@ Current implementation model:
   directory pages, web app hierarchy, and Build backlog proof routes
 - route modules are starting under `src/frontend/rootAdminShell/routes/*` for
   durable root-admin product places, beginning with `/root-admin/build/backlog`
-- current authenticated shell render structure and shell CSS are still locally
-  owned in `rootAdminShell`
+  and now including the directory pages: `/root-admin/users`,
+  `/root-admin/tenants`, and `/root-admin/tenant-admins`, plus
+  `/root-admin/web-app-hierarchy`
+- current authenticated shell render structure now flows through the
+  design-system-owned reusable `appShell.mjs` seam, with root-admin as the
+  first governed consumer
 
 Current governed-adoption posture inside `rootAdminShell` is not uniform yet:
 
+- the authenticated root-admin shell now consumes
+  `/design-system/assets/appShell.mjs` for shell render structure and shell
+  controller composition while root-admin still owns route, session, and page
+  body inputs
 - the `Users`, `Tenants`, and `Tenant Admins` routes now consume the
   design-system-owned `rootAdminDirectoryWorkspace.mjs` render/controller seam
   for list-page and drawer-form behavior
@@ -148,13 +156,12 @@ Current governed-adoption posture inside `rootAdminShell` is not uniform yet:
   `floatingTabHeader.mjs` seam, but still owns representative route wrapper
   copy and proof data locally
 - the `/root-admin` overview/session body and `/root-admin/roles` body remain
-  local placeholder page bodies rather than page-family design-system adoption
-- the authenticated root-admin shell itself does not yet consume the signed-off
-  `/design-system/templates/page-shell` source of truth, so page-level
-  governed adoption is currently happening inside a locally owned shell host
+  intentional local placeholder page bodies rather than page-family
+  design-system adoption
 - current governed adoption therefore proves partial behavior sharing in some
-  places, but not full design-system ownership of shell structure,
-  shell-attached surfaces, and remaining placeholder page bodies
+  places, but remaining placeholder page bodies still need either DS-backed
+  page-family adoption or a new explicit exception before real product UI is
+  added
 
 ADR `0028` governs the stronger current rule: governed app adoption must
 consume design-system-owned styling, render structure, and interaction seams.
@@ -167,6 +174,13 @@ artifact rather than a locally authored host.
 
 Current audit of the active governed adoption seams:
 
+- `app-shell`
+  - shared render/controller seam exists through
+    `/design-system/assets/appShell.mjs`
+  - current first consumer is `rootAdminShell`
+  - root-admin passes route, session, nav, breadcrumb, display, and page mount
+    inputs while shell structure and page-shell controller composition stay in
+    the design system
 - `list-page`
   - shared CSS seam exists:
     `/design-system/assets/list-page-shared.css`

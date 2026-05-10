@@ -254,6 +254,21 @@ async function mockRootUsersRoutes(
     });
   });
 
+  await page.route(/.*\/v1\/root-admin\/harness-chat\/conversations(?:\?.*)?$/, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        items: [],
+        page: 1,
+        pageSize: 25,
+        totalPages: 0,
+        totalMatchingRecords: 0,
+        totalSearchableRecords: 0,
+      }),
+    });
+  });
+
   await page.route("**/v1/assets/upload-intents", async (route) => {
     await route.fulfill({
       status: 201,

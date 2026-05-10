@@ -14,34 +14,28 @@ import {
 } from "./routeTopology.mjs";
 import { rootAdminPageMetadata as pageMetadata } from "./pageMetadata.mjs";
 import { signLoginChallenge } from "./helperClient.mjs";
-import { createWebAppHierarchyPageController } from "./webAppHierarchyPage.mjs";
 import { getRootAdminRouteDefinition } from "../routes/registry.mjs";
 import {
   partitionContextNavItems,
   renderContextNavItems as renderSharedContextNavItems,
   renderContextNavMenuItems,
-  renderRootAdminContextNavShell,
 } from "/design-system/assets/contextNav.mjs";
 import { renderDesignSystemIconSvg } from "/design-system/assets/formControls.mjs";
+import {
+  createAppShellController,
+  renderAppShell,
+} from "/design-system/assets/appShell.mjs";
 import {
   createLoginTemplateController,
   renderRootAdminLoginTemplate,
 } from "/design-system/assets/loginTemplate.mjs";
 import { createPageShellBannerRuntimeController } from "/design-system/assets/pageShellBanner.mjs";
-import { createRootAdminDirectoryWorkspaceController } from "/design-system/assets/rootAdminDirectoryWorkspace.mjs";
 import {
   createBuildConversationPanelConfig,
   createConversationPanelController,
   getConversationPanelCanonicalRef,
   renderConversationPanel,
 } from "/design-system/assets/conversationPanel.mjs";
-import {
-  buildPageShellBreadcrumbMarkup,
-  createPageShellBreadcrumbController,
-  createPageShellChromeController,
-  createPageShellLanguageController,
-  createPageShellTooltipController,
-} from "/design-system/assets/pageShellController.mjs";
 
 class ApiError extends Error {
   constructor(status, code, message, details) {
@@ -113,6 +107,168 @@ const rootAdminTopNavPageOrderIndex = new Map(
   rootAdminTopNavPageOrder.map((pageKey, index) => [pageKey, index]),
 );
 
+const rootAdminInitialNavItems = [
+  {
+    key: "overview",
+    label: pageMetadata.overview.title,
+    href: buildCanonicalRootAdminPath("overview"),
+    title: pageMetadata.overview.title,
+  },
+];
+
+const rootAdminOverviewPageHtml = `
+  <div class="component-catalog-section-header">
+    <div>
+      <h1 class="component-catalog-section-title">Root Admin Shell POC</h1>
+      <p class="component-catalog-meta">
+        This replaces the old authenticated root-admin frontend with the signed-off top-nav and sub-nav
+        patterns while preserving the real browser-auth journey.
+      </p>
+    </div>
+  </div>
+  <div class="component-catalog-section-actions">
+    <button id="refresh-session-button" class="accessibility-chip" type="button">Refresh Session</button>
+  </div>
+
+  <div class="component-catalog-grid">
+    <section class="component-catalog-card">
+      <div class="component-catalog-card-header">
+        <div class="top-nav-preview-eyebrow">Authenticated Session</div>
+        <h2 class="component-catalog-card-title">My Session</h2>
+      </div>
+      <dl id="session-summary" class="canonical-render-meta" aria-label="Current session"></dl>
+    </section>
+
+    <section class="component-catalog-card">
+      <div class="component-catalog-card-header">
+        <div class="top-nav-preview-eyebrow">Adoption Notes</div>
+        <h2 class="component-catalog-card-title">What This Proves</h2>
+      </div>
+      <p class="component-catalog-card-copy">\`/root-admin\` can adopt the governed top-nav without replacing the browser-auth seam.</p>
+      <p class="component-catalog-card-copy">The signed-off sub-nav row stays truthful while section pages change underneath it.</p>
+      <p class="component-catalog-card-copy">The signed-off context-nav can own real root-admin section routing instead of local one-off shell chrome.</p>
+      <p class="component-catalog-card-copy">New root-admin functions can be added in a controlled way before deeper page UIs are rebuilt later.</p>
+    </section>
+  </div>
+`;
+
+const rootAdminRolesPageHtml = `
+  <div class="component-catalog-section-header">
+    <div>
+      <h1 class="component-catalog-section-title">Roles</h1>
+      <p class="component-catalog-meta">
+        This placeholder keeps roles visible as a real root-admin section while the role-management surface is
+        rebuilt against the adopted shell chrome.
+      </p>
+    </div>
+  </div>
+
+  <div class="component-catalog-grid">
+    <section class="component-catalog-card">
+      <div class="component-catalog-card-header">
+        <h2 class="component-catalog-card-title">Route Intent</h2>
+      </div>
+      <p class="component-catalog-card-copy">This section will hold root-level role and permission management.</p>
+      <p class="component-catalog-card-copy">The route already participates in the same governed breadcrumb and shell search behavior as the other sections.</p>
+      <p class="component-catalog-card-copy">The deeper list and editor surfaces can be added later without changing the shell framing.</p>
+    </section>
+
+    <section class="component-catalog-card">
+      <div class="component-catalog-card-header">
+        <h2 class="component-catalog-card-title">Current Boundary</h2>
+      </div>
+      <p class="component-catalog-card-copy">
+        This page intentionally stops at route and shell proof so the navigation contract can be validated
+        first in the real consumer.
+      </p>
+    </section>
+  </div>
+`;
+
+const rootAdminAppShellInput = {
+  appLabel: "Root Admin",
+  brand: {
+    label: "Kanbien",
+    href: buildCanonicalRootAdminPath("overview"),
+    ariaLabel: "Kanbien root admin home",
+    mark: "K",
+  },
+  currentPageKey: "overview",
+  nav: {
+    ariaLabel: "Root admin primary",
+    mobileAriaLabel: "Mobile root admin primary",
+    mobileButtonLabel: "Open root admin navigation",
+    pageChromeLabel: "Root admin page chrome",
+    primary: rootAdminInitialNavItems,
+    mobile: "same-as-primary",
+  },
+  profile: {
+    label: "Profile",
+    initials: "RU",
+  },
+  breadcrumbs: [
+    { href: buildCanonicalRootAdminPath("overview"), label: "Root Admin" },
+  ],
+  search: {
+    enabled: true,
+    name: "q",
+    placeholder: "Search root admin sections",
+  },
+  contextNav: {
+    enabled: true,
+  },
+  displaySettings: {
+    enabled: true,
+  },
+  slots: {
+    shellMessage: true,
+    contextNav: true,
+    conversationPanel: true,
+    languageModal: true,
+  },
+  pages: [
+    {
+      key: "overview",
+      sectionId: "page-overview",
+      className: "component-catalog-section",
+      initiallyVisible: true,
+      html: rootAdminOverviewPageHtml,
+    },
+    {
+      key: "users",
+      sectionId: "page-users",
+      initiallyVisible: false,
+    },
+    {
+      key: "roles",
+      sectionId: "page-roles",
+      className: "component-catalog-section",
+      initiallyVisible: false,
+      html: rootAdminRolesPageHtml,
+    },
+    {
+      key: "tenants",
+      sectionId: "page-tenants",
+      initiallyVisible: false,
+    },
+    {
+      key: "tenant-admins",
+      sectionId: "page-tenant-admins",
+      initiallyVisible: false,
+    },
+    {
+      key: "web-app-hierarchy",
+      sectionId: "page-web-app-hierarchy",
+      initiallyVisible: false,
+    },
+    {
+      key: "build-backlog",
+      sectionId: "page-build-backlog",
+      initiallyVisible: false,
+    },
+  ],
+};
+
 const state = createInitialState();
 state.navigation.currentPage = "overview";
 
@@ -129,6 +285,9 @@ const rootAdminLoginTemplateController = rootAdminLoginTemplateHost instanceof H
   ? createLoginTemplateController(rootAdminLoginTemplateHost)
   : null;
 const shellView = document.getElementById("shell-view");
+if (shellView instanceof HTMLElement) {
+  shellView.innerHTML = renderAppShell(rootAdminAppShellInput);
+}
 const sshStage = document.getElementById("ssh-stage");
 const authMessage = document.getElementById("auth-message");
 const shellMessage = document.getElementById("shell-message");
@@ -142,9 +301,6 @@ const signSubmit = document.getElementById("sign-submit");
 const refreshSessionButton = document.getElementById("refresh-session-button");
 
 const rootAdminContextNavMount = document.getElementById("root-admin-context-nav-mount");
-if (rootAdminContextNavMount instanceof HTMLElement) {
-  rootAdminContextNavMount.innerHTML = renderRootAdminContextNavShell();
-}
 const rootAdminConversationPanelMount = document.getElementById("root-admin-conversation-panel-mount");
 
 const topNav = document.querySelector(".top-nav");
@@ -170,11 +326,6 @@ const profileLogoutButton = document.getElementById("profile-logout-button");
 const mobileLanguageButton = document.getElementById("mobile-language-button");
 const mobileLogoutButton = document.getElementById("mobile-logout-button");
 const breadcrumbNav = document.querySelector(".breadcrumb-nav");
-if (breadcrumbNav instanceof HTMLElement) {
-  breadcrumbNav.innerHTML = buildPageShellBreadcrumbMarkup([
-    { href: "/root-admin", label: "Root Admin" },
-  ]);
-}
 const breadcrumbHomeItem = document.getElementById("breadcrumb-home-item");
 const breadcrumbHomeLink = document.getElementById("breadcrumb-home-link");
 const breadcrumbCompact = document.getElementById("breadcrumb-compact");
@@ -225,33 +376,20 @@ const pageSections = {
   "build-backlog": document.getElementById("page-build-backlog"),
 };
 
-const shellChromeController = createPageShellChromeController({
-  topNav,
-  primaryNav,
-  primaryNavOverflow,
-  primaryNavOverflowButton,
-  primaryNavOverflowMenu,
-  primaryNavLinks,
-  mobileNavButton,
-  mobileNavMenu,
-  profileButton,
-  profileMenu,
-  navUtilities,
-  mobileProfileButton,
-  mobileProfileMenu,
-  contextNavMoreButton,
-  contextNavMoreMenu,
-  displaySettingsDrawer,
-  displaySettingsButton,
-  displaySettingsCloseButton,
-  displaySettingsPersistentRegions: [
-    document.getElementById("hierarchy-tree-drawer"),
-    document.getElementById("hierarchy-tree-drawer-scrim"),
-    document.getElementById("hierarchy-tree-nav-button"),
-  ],
-  shellSubNav,
-  contextNav: document.querySelector(".context-nav"),
+const appShellController = createAppShellController({
+  root: shellView,
+  displaySettingsCopy,
+  getActiveLanguageCode: () => activeLanguageCode,
+  languageOptions,
+  onShellGeometryChange: () => {
+    syncNavState();
+  },
+  setActiveLanguageCode: (languageCode) => {
+    activeLanguageCode = languageCode;
+  },
 });
+
+const shellChromeController = appShellController.chrome;
 
 const {
   closeTransientShellSurfaces,
@@ -272,24 +410,7 @@ const {
   updatePrimaryNavOverflow,
 } = shellChromeController;
 
-const shellBreadcrumbController = createPageShellBreadcrumbController({
-  row: shellSubNav,
-  breadcrumbNav,
-  breadcrumbList: document.getElementById("breadcrumb-list"),
-  breadcrumbHomeLink,
-  breadcrumbCompact,
-  breadcrumbCompactButton,
-  breadcrumbCompactMenu,
-  breadcrumbCollapseButton,
-  breadcrumbCollapseMenu,
-  breadcrumbCollapsedItem,
-  breadcrumbSeparatorBeforeCollapsed,
-  breadcrumbPageMinusOneItem,
-  breadcrumbSeparatorBeforePageMinusOne,
-  breadcrumbPageMinusOneLink,
-  breadcrumbCurrentItem,
-  breadcrumbCurrentLabel,
-});
+const shellBreadcrumbController = appShellController.breadcrumbs;
 
 const {
   closeBreadcrumbMenus,
@@ -297,36 +418,7 @@ const {
   scheduleBreadcrumbPresentation,
 } = shellBreadcrumbController;
 
-const shellLanguageController = createPageShellLanguageController({
-  displaySettingsButton,
-  displaySettingsCloseButton,
-  displaySettingsCopy,
-  displaySettingsEyebrow,
-  displaySettingsLabel,
-  displaySettingsMagnificationLabel,
-  displaySettingsThemeLabel,
-  displaySettingsTitle,
-  contextNavMoreButton,
-  contextNavMoreDisplaySettingsButton,
-  getActiveLanguageCode: () => activeLanguageCode,
-  languageModal,
-  languageModalCloseButton,
-  languageOptionList,
-  languageOptions,
-  magnificationButtons,
-  mobileLanguageButton,
-  onShellGeometryChange: () => {
-    updatePrimaryNavOverflow();
-    scheduleBreadcrumbPresentation();
-    syncNavState();
-    scheduleContextNavOffsetUpdate();
-  },
-  profileLanguageButton,
-  setActiveLanguageCode: (languageCode) => {
-    activeLanguageCode = languageCode;
-  },
-  themeButtons,
-});
+const shellLanguageController = appShellController.language;
 
 const {
   applyMagnification,
@@ -340,41 +432,65 @@ const {
   syncLanguageTriggers,
 } = shellLanguageController;
 
-const shellTooltipController = createPageShellTooltipController();
+const shellTooltipController = appShellController.tooltip;
 const { hideSharedTooltip, suspendSharedTooltipUntilPointerMove, wireSharedTooltipSystem } = shellTooltipController;
 const shellBannerController = createPageShellBannerRuntimeController(shellMessage, {
   ariaLabel: "Root-admin shell feedback",
 });
 const rootAdminShellBannerPolicyNames = new Set(["error", "blocked-action", "mutation-success"]);
 
+const usersRoute = getRootAdminRouteDefinition("users");
+const usersPageController = usersRoute?.mount?.({
+  root: document.getElementById("page-users"),
+  searchInput: shellSearchInput,
+  fetchJson,
+  uploadFileBytes,
+  setShellMessage,
+  getCurrentPage: () => state.navigation.currentPage,
+}) ?? {
+  async handleShellSearchSubmit() {
+    return false;
+  },
+  syncPageState() {},
+  reset() {},
+};
+
+const tenantsRoute = getRootAdminRouteDefinition("tenants");
+const tenantsPageController = tenantsRoute?.mount?.({
+  root: document.getElementById("page-tenants"),
+  searchInput: shellSearchInput,
+  fetchJson,
+  uploadFileBytes,
+  setShellMessage,
+  getCurrentPage: () => state.navigation.currentPage,
+}) ?? {
+  async handleShellSearchSubmit() {
+    return false;
+  },
+  syncPageState() {},
+  reset() {},
+};
+
+const tenantAdminsRoute = getRootAdminRouteDefinition("tenant-admins");
+const tenantAdminsPageController = tenantAdminsRoute?.mount?.({
+  root: document.getElementById("page-tenant-admins"),
+  searchInput: shellSearchInput,
+  fetchJson,
+  uploadFileBytes,
+  setShellMessage,
+  getCurrentPage: () => state.navigation.currentPage,
+}) ?? {
+  async handleShellSearchSubmit() {
+    return false;
+  },
+  syncPageState() {},
+  reset() {},
+};
+
 const rootAdminDirectoryControllers = [
-  createRootAdminDirectoryWorkspaceController({
-    pageKey: "users",
-    root: document.getElementById("page-users"),
-    searchInput: shellSearchInput,
-    fetchJson,
-    uploadFileBytes,
-    setShellMessage,
-    getCurrentPage: () => state.navigation.currentPage,
-  }),
-  createRootAdminDirectoryWorkspaceController({
-    pageKey: "tenants",
-    root: document.getElementById("page-tenants"),
-    searchInput: shellSearchInput,
-    fetchJson,
-    uploadFileBytes,
-    setShellMessage,
-    getCurrentPage: () => state.navigation.currentPage,
-  }),
-  createRootAdminDirectoryWorkspaceController({
-    pageKey: "tenant-admins",
-    root: document.getElementById("page-tenant-admins"),
-    searchInput: shellSearchInput,
-    fetchJson,
-    uploadFileBytes,
-    setShellMessage,
-    getCurrentPage: () => state.navigation.currentPage,
-  }),
+  usersPageController,
+  tenantsPageController,
+  tenantAdminsPageController,
 ];
 
 const rootAdminDirectoryController = {
@@ -398,7 +514,8 @@ const rootAdminDirectoryController = {
   },
 };
 
-const webAppHierarchyPageController = createWebAppHierarchyPageController({
+const webAppHierarchyRoute = getRootAdminRouteDefinition("web-app-hierarchy");
+const webAppHierarchyPageController = webAppHierarchyRoute?.mount?.({
   root: document.getElementById("page-web-app-hierarchy"),
   fetchJson,
   setShellMessage,
@@ -410,7 +527,10 @@ const webAppHierarchyPageController = createWebAppHierarchyPageController({
   setPageLinkIcon,
   refreshTopNav,
   refreshContextNav: refreshContextNavForCurrentPage,
-});
+}) ?? {
+  syncPageState() {},
+  reset() {},
+};
 
 const buildBacklogRoute = getRootAdminRouteDefinition("build-backlog");
 const buildBacklogPageController = buildBacklogRoute?.mount?.({

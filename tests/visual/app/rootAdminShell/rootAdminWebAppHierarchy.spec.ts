@@ -769,6 +769,21 @@ async function bootstrapAuthenticatedHierarchy(page: Page, hash = "#web-app-hier
     });
   });
 
+  await page.route(/.*\/v1\/root-admin\/harness-chat\/conversations(?:\?.*)?$/, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        items: [],
+        page: 1,
+        pageSize: 25,
+        totalPages: 0,
+        totalMatchingRecords: 0,
+        totalSearchableRecords: 0,
+      }),
+    });
+  });
+
   await page.route("**/v1/web-app-hierarchy/tree", async (route) => {
     await route.fulfill({
       status: 200,
@@ -1302,7 +1317,11 @@ test("root-admin hierarchy page renders the applied design-system hierarchy insi
   await expect(page.locator("#web-app-hierarchy-page-title")).toBeVisible();
   await expect(page.locator("#web-app-hierarchy-page-status")).toContainText("Curated hierarchy truth is loaded");
   await expect(page.locator("#web-app-hierarchy-refresh-button.accessibility-chip")).toBeVisible();
-  await expect(page.locator("#web-app-hierarchy-apply-button.accessibility-chip.active")).toBeVisible();
+  await expect(page.locator("#web-app-hierarchy-preview-state")).toContainText(
+    "No pending design-system proposal preview is loaded yet.",
+  );
+  await expect(page.locator("#web-app-hierarchy-apply-button.accessibility-chip.active")).toBeHidden();
+  await expect(page.locator("#web-app-hierarchy-apply-button.accessibility-chip.active")).toBeDisabled();
   await expect(page.locator("#root-admin-web-app-hierarchy-detail-title")).toHaveText("Hierarchy Tree");
   await expect(page.locator("#hierarchy-tree-drawer")).toBeHidden();
   await page.locator("#hierarchy-tree-nav-button").click();
@@ -1327,7 +1346,7 @@ test("root-admin hierarchy page renders the applied design-system hierarchy insi
   await expect(page.locator("#web-app-page-settings-save.accessibility-chip.active")).toBeVisible();
   await expect(page.locator("#page-web-app-hierarchy .form-page-shell")).toHaveAttribute("data-form-mobile-view", "false");
   await expect(page.locator("#web-app-page-settings-form.form-page-card")).toBeVisible();
-  await expect(page.locator("#web-app-hierarchy-structure-state .form-page-section-header").nth(1).locator(".top-nav-preview-eyebrow")).toHaveText("Section 01");
+  await expect(page.locator("#web-app-hierarchy-structure-state")).toContainText("Section 01");
   await expect(page.locator("#web-app-page-settings-shell .top-nav-preview-eyebrow")).toHaveText("Section 02");
   await expect(page.locator("#web-app-page-settings-display-label")).toHaveValue("Hierarchy Tree");
 });

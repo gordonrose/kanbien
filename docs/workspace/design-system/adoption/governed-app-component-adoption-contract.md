@@ -92,6 +92,11 @@ behavior, or page-local controller logic into the app.
   `/design-system/assets/loginTemplate.mjs`
   exports `renderLoginTemplate()`, `renderRootAdminLoginTemplate()`, and
   `createLoginTemplateController(...)`
+- `app-shell`
+  `/design-system/assets/appShell.mjs`
+  exports `renderAppShell(...)` and `createAppShellController(...)`; root-admin
+  is the first governed consumer, but the seam is reusable app-frame
+  infrastructure rather than a root-admin-only primitive
 - `kanban-column`
   `/design-system/assets/kanbanColumnSeam.mjs`
   exports board/card/drawer render helpers and
@@ -108,6 +113,10 @@ behavior, or page-local controller logic into the app.
   - imports shared list-page CSS
   - now consumes the DS-owned root-admin directory workspace render/controller
     seam from `rootAdminDirectoryWorkspace.mjs`
+  - `Users`, `Tenants`, and `Tenant Admins` now mount that seam through
+    `src/frontend/rootAdminShell/routes/users/page.mjs`,
+    `src/frontend/rootAdminShell/routes/tenants/page.mjs`, and
+    `src/frontend/rootAdminShell/routes/tenant-admins/page.mjs`
   - no longer duplicates list-page shell markup in `rootAdminShell/index.html`
   - no longer owns route-local list-page or drawer-form controller behavior
     inside `rootAdminShell`
@@ -117,12 +126,17 @@ behavior, or page-local controller logic into the app.
   - keeps route-specific page-settings fetch and current-page wiring in
     `rootAdminShell/assets/app.mjs`
 - `rootAdminShell` page shell
-  - imports the DS-owned page-shell controller seam from
-    `/design-system/assets/pageShellController.mjs`
-  - uses shared breadcrumb, chrome, language, and tooltip controllers instead
-    of re-owning those interaction grammars locally
+  - imports the DS-owned app-shell render/controller seam from
+    `/design-system/assets/appShell.mjs`
+  - renders authenticated shell structure through `renderAppShell(...)`
+  - uses `createAppShellController(...)`, which composes shared breadcrumb,
+    chrome, language, and tooltip controllers instead of requiring root-admin
+    to wire those interaction grammars locally
 - `rootAdminShell` `web-app-hierarchy`
   - imports shared hierarchy-tree and form-template CSS
+  - mounts through
+    `src/frontend/rootAdminShell/routes/web-app-hierarchy/page.mjs`, which
+    delegates to the thin root-admin page adapter
   - imports the DS-owned workspace render/controller seam from
     `webAppHierarchyWorkspace.mjs`
   - now mounts `icon-grid` through the DS-owned `renderFormIconGrid(...)`

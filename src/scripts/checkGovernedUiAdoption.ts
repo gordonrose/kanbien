@@ -42,7 +42,7 @@ const requiredContractPhrases = [
   "/design-system/assets/rootAdminDirectoryWorkspace.mjs",
   "/design-system/assets/webAppHierarchyWorkspace.mjs",
   "/design-system/assets/loginTemplate.mjs",
-  "/design-system/assets/pageShellController.mjs",
+  "/design-system/assets/appShell.mjs",
   "/design-system/assets/floatingTabHeader.mjs",
   "docs/workspace/design-system/adoption/floating-tab-header-adoption-contract.md",
 ];
@@ -61,8 +61,13 @@ const requiredFloatingTabHeaderContractPhrases = [
 const governedSourcePaths = [
   "src/frontend/rootAdminShell/index.html",
   "src/frontend/rootAdminShell/assets/app.mjs",
+  "src/frontend/rootAdminShell/routes/users/page.mjs",
+  "src/frontend/rootAdminShell/routes/tenants/page.mjs",
+  "src/frontend/rootAdminShell/routes/tenant-admins/page.mjs",
+  "src/frontend/rootAdminShell/routes/web-app-hierarchy/page.mjs",
   "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
   "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
+  "src/frontend/designSystem/assets/appShell.mjs",
   "src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs",
   "src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs",
   "src/frontend/designSystem/assets/conversationPanel.mjs",
@@ -76,9 +81,9 @@ const cssOnlyRules: CssOnlyRule[] = [
     requiredTokens: [
       {
         path: "src/frontend/rootAdminShell/assets/app.mjs",
-        token: "/design-system/assets/pageShellController.mjs",
+        token: "/design-system/assets/appShell.mjs",
         rationale:
-          "Governed shell adoption must consume the page-shell controller seam, not only the shared stylesheet.",
+          "Governed shell adoption must consume the app-shell render/controller seam, not only the shared stylesheet.",
       },
       {
         path: "src/frontend/rootAdminShell/assets/app.mjs",
@@ -93,16 +98,40 @@ const cssOnlyRules: CssOnlyRule[] = [
     cssHref: "/design-system/assets/list-page-shared.css",
     requiredTokens: [
       {
-        path: "src/frontend/rootAdminShell/assets/app.mjs",
+        path: "src/frontend/rootAdminShell/routes/users/page.mjs",
         token: "/design-system/assets/rootAdminDirectoryWorkspace.mjs",
         rationale:
-          "List-page styling must be paired with the DS-owned directory workspace render/controller seam.",
+          "Users list-page styling must be paired with the DS-owned directory workspace render/controller seam.",
       },
       {
-        path: "src/frontend/rootAdminShell/assets/app.mjs",
+        path: "src/frontend/rootAdminShell/routes/users/page.mjs",
         token: "createRootAdminDirectoryWorkspaceController",
         rationale:
-          "Directory pages must mount through the DS-owned controller instead of app-local list behavior.",
+          "Users must mount through the DS-owned controller instead of app-local list behavior.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/routes/tenants/page.mjs",
+        token: "/design-system/assets/rootAdminDirectoryWorkspace.mjs",
+        rationale:
+          "Tenants list-page styling must be paired with the DS-owned directory workspace render/controller seam.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/routes/tenants/page.mjs",
+        token: "createRootAdminDirectoryWorkspaceController",
+        rationale:
+          "Tenants must mount through the DS-owned controller instead of app-local list behavior.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/routes/tenant-admins/page.mjs",
+        token: "/design-system/assets/rootAdminDirectoryWorkspace.mjs",
+        rationale:
+          "Tenant Admins list-page styling must be paired with the DS-owned directory workspace render/controller seam.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/routes/tenant-admins/page.mjs",
+        token: "createRootAdminDirectoryWorkspaceController",
+        rationale:
+          "Tenant Admins must mount through the DS-owned controller instead of app-local list behavior.",
       },
     ],
   },
@@ -127,6 +156,12 @@ const cssOnlyRules: CssOnlyRule[] = [
         token: "createWebAppHierarchyWorkspaceController",
         rationale:
           "Hierarchy workspace behavior must come from the shared controller seam.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/routes/web-app-hierarchy/page.mjs",
+        token: "../../assets/webAppHierarchyPage.mjs",
+        rationale:
+          "Hierarchy route module must mount through the existing thin adapter that consumes the DS-owned workspace seam.",
       },
     ],
   },
