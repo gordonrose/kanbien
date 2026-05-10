@@ -10,10 +10,13 @@ import {
   appendMessageBodySchema,
   conversationParamsSchema,
   createConversationBodySchema,
+  editMessageBodySchema,
   generatePacketBodySchema,
   listConversationsQuerySchema,
+  messageParamsSchema,
   packetRevisionParamsSchema,
   readConversationQuerySchema,
+  updateConversationBodySchema,
 } from "../contract/schemas";
 import { HarnessChatError, HarnessChatInvalidRequestError } from "../contract/errors";
 import type { createHarnessChatService } from "../domain/service";
@@ -116,6 +119,20 @@ export function createHarnessChatRouter(
     }
   });
 
+  router.patch("/conversations/:conversationId", requireAppend, async (request, response, next) => {
+    try {
+      const params = parseOrThrow(conversationParamsSchema, request.params);
+      const body = parseOrThrow(updateConversationBodySchema, request.body);
+      response.status(200).json(await service.updateConversation({
+        conversationId: params.conversationId,
+        title: body.title,
+        state: body.state,
+      }));
+    } catch (error) {
+      next(error);
+    }
+  });
+
   router.post("/conversations/:conversationId/messages", requireAppend, async (request, response, next) => {
     try {
       const session = getRequiredRootSessionContext(request);
@@ -123,6 +140,22 @@ export function createHarnessChatRouter(
       const body = parseOrThrow(appendMessageBodySchema, request.body);
       response.status(201).json(await service.appendMessage({
         conversationId: params.conversationId,
+        rootUserId: session.rootUserId,
+        message: body.message,
+      }));
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.patch("/conversations/:conversationId/messages/:messageId", requireAppend, async (request, response, next) => {
+    try {
+      const session = getRequiredRootSessionContext(request);
+      const params = parseOrThrow(messageParamsSchema, request.params);
+      const body = parseOrThrow(editMessageBodySchema, request.body);
+      response.status(200).json(await service.editMessage({
+        conversationId: params.conversationId,
+        messageId: params.messageId,
         rootUserId: session.rootUserId,
         message: body.message,
       }));

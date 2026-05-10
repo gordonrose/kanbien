@@ -77,6 +77,44 @@ function createRepository(): HarnessChatRepository {
     async listMessages(conversationId: string) {
       return messages.get(conversationId) ?? [];
     },
+    async updateConversation(input) {
+      const conversation = conversations.get(input.conversationId);
+      if (!conversation) {
+        return null;
+      }
+      conversation.state = input.state ?? conversation.state;
+      conversation.compactTranscriptSummary = input.compactTranscriptSummary ?? conversation.compactTranscriptSummary;
+      conversation.updatedAt = NOW;
+      return conversation;
+    },
+    async updateUserMessageAndDeleteDownstream(input) {
+      const conversationMessages = messages.get(input.conversationId) ?? [];
+      const index = conversationMessages.findIndex((message) =>
+        message.messageId === input.messageId &&
+        message.role === "user" &&
+        message.createdByRootUserId === input.rootUserId,
+      );
+      if (index < 0) {
+        return null;
+      }
+      const existing = conversationMessages[index];
+      const updated = {
+        ...existing,
+        body: input.body,
+        metadata: {
+          ...(existing.metadata ?? {}),
+          ...(input.metadata ?? {}),
+        },
+      };
+      messages.set(input.conversationId, [...conversationMessages.slice(0, index), updated]);
+      const conversation = conversations.get(input.conversationId);
+      if (conversation) {
+        conversation.latestPacketRevisionId = null;
+        conversation.state = "active";
+        conversation.updatedAt = NOW;
+      }
+      return updated;
+    },
     async createPacketRevision(input: CreateHarnessChatPacketRevisionInput) {
       const revisions = packetRevisions.get(input.conversationId) ?? [];
       const revision: HarnessChatPacketRevisionData = {
@@ -98,6 +136,12 @@ function createRepository(): HarnessChatRepository {
       };
       revisions.push(revision);
       packetRevisions.set(input.conversationId, revisions);
+      const conversation = conversations.get(input.conversationId);
+      if (conversation) {
+        conversation.latestPacketRevisionId = revision.packetRevisionId;
+        conversation.state = "packet-ready";
+        conversation.updatedAt = NOW;
+      }
       return revision;
     },
     async findCurrentPacketRevision(conversationId: string) {
@@ -106,6 +150,17 @@ function createRepository(): HarnessChatRepository {
     },
     async listPacketRevisions(conversationId: string) {
       return packetRevisions.get(conversationId) ?? [];
+    },
+    async markPacketDownloaded(packetRevisionId: string) {
+      for (const revisions of packetRevisions.values()) {
+        const packet = revisions.find((item) => item.packetRevisionId === packetRevisionId);
+        if (packet) {
+          packet.state = "downloaded";
+          packet.updatedAt = NOW;
+          return packet;
+        }
+      }
+      return null;
     },
     async recordPdfAttempt(input: RecordHarnessChatPdfAttemptInput) {
       const attempts = pdfAttempts.get(input.packetRevisionId) ?? [];
@@ -202,6 +257,7 @@ describe("harness chat service Product Discovery conversation adapter", () => {
         assistantMessage: "Who is this discovery request for?",
         summary: "Builder wants guided discovery.",
         nextQuestion: "Who is this for?",
+        nextStep: "ask_business_question" as const,
         confidencePercent: 64,
         readyForPacket: false,
         assumptions: ["Root-admin context is prompt-only."],
@@ -220,13 +276,44 @@ describe("harness chat service Product Discovery conversation adapter", () => {
     expect(created.messages).toHaveLength(2);
     expect(created.messages[1]).toMatchObject({
       role: "assistant",
-      body: "Who is this discovery request for?",
+      body: "Who is this discovery request for?\n\nWho is this for?",
     });
     const storedMessages = await repository.listMessages(CONVERSATION_ID);
     expect(storedMessages[1]?.metadata).toMatchObject({
       source: "product-discovery-conversation-adapter",
       summary: "Builder wants guided discovery.",
+      nextStep: "ask_business_question",
       readyForPacket: false,
+    });
+  });
+
+  it("composes the visible assistant turn from the adapter summary and next question", async () => {
+    const repository = createRepository();
+    const adapter: ProductDiscoveryConversationAdapter = {
+      generateTurn: vi.fn(async () => ({
+        assistantMessage: "Got it. The user wants expired sessions to return them to sign-in instead of leaving them stranded.",
+        summary: "Session expiry should redirect to login.",
+        nextQuestion: "When the session expires, should the app preserve where they were trying to work so they can resume after signing in?",
+        nextStep: "ask_business_question" as const,
+        confidencePercent: 58,
+        readyForPacket: false,
+        assumptions: ["Rule: expired sessions should not leave users on the stale page."],
+        packagedTechnicalQuestions: [],
+      })),
+    };
+    const service = createHarnessChatService(repository, adapter);
+
+    const created = await service.createConversation({
+      rootUserId: ROOT_USER_ID,
+      initialMessage: "Fix automatic logout when the session expires.",
+    });
+
+    expect(created.messages[1]).toMatchObject({
+      role: "assistant",
+      body: [
+        "Got it. The user wants expired sessions to return them to sign-in instead of leaving them stranded.",
+        "When the session expires, should the app preserve where they were trying to work so they can resume after signing in?",
+      ].join("\n\n"),
     });
   });
 
@@ -253,8 +340,139 @@ describe("harness chat service Product Discovery conversation adapter", () => {
       acceptedByHarness: false,
       metadata: expect.objectContaining({
         source: "product-discovery-conversation-adapter-fallback",
+        nextStep: "ask_business_question",
       }),
     });
+  });
+
+  it("persists calibrated ready turns as final packet confirmation", async () => {
+    const repository = createRepository();
+    const adapter: ProductDiscoveryConversationAdapter = {
+      generateTurn: vi.fn(async () => ({
+        assistantMessage:
+          "That is enough to define the first version: the author edits their own message inline, saving rewrites the conversation from that point, and the corrected thread replaces downstream messages in place.",
+        summary: "Inline author-only message edits rewrite downstream chat in place.",
+        nextQuestion: "I think I have everything needed. Do you have any final follow-up, or should I produce the packet for download?",
+        nextStep: "ready_for_packet" as const,
+        confidencePercent: 88,
+        readyForPacket: true,
+        assumptions: [
+          "Rule: only the original author can edit their own message.",
+          "Rule: saving an edit rewrites the conversation from that point.",
+          "Usual case: low-risk labels use standard product wording unless corrected.",
+        ],
+        packagedTechnicalQuestions: ["Define durable regeneration and truncation behavior for downstream messages."],
+      })),
+    };
+    const service = createHarnessChatService(repository, adapter);
+
+    const created = await service.createConversation({
+      rootUserId: ROOT_USER_ID,
+      initialMessage: "When I edit a message, it should edit mine and regenerate later replies.",
+    });
+
+    expect(created.messages[1]).toMatchObject({
+      role: "assistant",
+      body: expect.stringContaining("should I produce the packet for download?"),
+    });
+    expect(created.messages[1]?.body).toContain("That is enough to define the first version");
+    const storedMessages = await repository.listMessages(CONVERSATION_ID);
+    expect(storedMessages[1]?.metadata).toMatchObject({
+      nextQuestion: "I think I have everything needed. Do you have any final follow-up, or should I produce the packet for download?",
+      nextStep: "ready_for_packet",
+      readyForPacket: true,
+    });
+  });
+
+  it("generates a packet after the ready confirmation when the requester has no follow-up", async () => {
+    const repository = createRepository();
+    const adapter: ProductDiscoveryConversationAdapter = {
+      generateTurn: vi.fn(async () => ({
+        assistantMessage:
+          "That is enough to define the first version: the author edits their own message inline, saving rewrites the conversation from that point, and the corrected thread replaces downstream messages in place.",
+        summary: "Inline author-only message edits rewrite downstream chat in place.",
+        nextQuestion: "I think I have everything needed. Do you have any final follow-up, or should I produce the packet for download?",
+        nextStep: "ready_for_packet" as const,
+        confidencePercent: 95,
+        readyForPacket: true,
+        assumptions: [
+          "Rule: only the original author can edit their own message.",
+          "Rule: saving an edit rewrites the conversation from that point.",
+        ],
+        packagedTechnicalQuestions: ["Define durable regeneration and truncation behavior for downstream messages."],
+      })),
+    };
+    const service = createHarnessChatService(repository, adapter);
+
+    await service.createConversation({
+      rootUserId: ROOT_USER_ID,
+      initialMessage: "When I edit a message, it should edit mine and regenerate later replies.",
+    });
+    const response = await service.appendMessage({
+      conversationId: CONVERSATION_ID,
+      rootUserId: ROOT_USER_ID,
+      message: "nope",
+    });
+
+    expect(adapter.generateTurn).toHaveBeenCalledTimes(1);
+    expect(response.assistantMessage).toMatchObject({
+      role: "assistant",
+      body: "Product Discovery packet is ready to download.",
+      metadata: expect.objectContaining({
+        source: "product-discovery-packet-confirmation",
+        packetRevisionId: expect.any(String),
+      }),
+    });
+    expect(response.packet).toMatchObject({
+      state: "generated",
+      pdf: {
+        downloadAvailable: true,
+      },
+    });
+    expect(response.conversation).toMatchObject({
+      state: "packet-ready",
+      latestPacketRevisionId: response.packet?.packetRevisionId,
+    });
+  });
+
+  it("renders generated packet downloads as valid PDF bytes", async () => {
+    const repository = createRepository();
+    const adapter: ProductDiscoveryConversationAdapter = {
+      generateTurn: vi.fn(async () => ({
+        assistantMessage: "I think I have everything needed.",
+        summary: "Root builder wants a downloadable discovery packet.",
+        nextQuestion: "I think I have everything needed. Do you have any final follow-up, or should I produce the packet for download?",
+        nextStep: "ready_for_packet" as const,
+        confidencePercent: 95,
+        readyForPacket: true,
+        assumptions: ["Rule: produce a downloadable packet after confirmation."],
+        packagedTechnicalQuestions: ["Confirm PDF rendering details during Technical Steering."],
+      })),
+    };
+    const service = createHarnessChatService(repository, adapter);
+
+    await service.createConversation({
+      rootUserId: ROOT_USER_ID,
+      initialMessage: "Create a packet I can download.",
+    });
+    const response = await service.appendMessage({
+      conversationId: CONVERSATION_ID,
+      rootUserId: ROOT_USER_ID,
+      message: "nope",
+    });
+    const pdf = await service.renderPacketPdf(response.packet?.packetRevisionId ?? "", ROOT_USER_ID);
+    const pdfText = pdf.toString("utf8");
+
+    expect(pdfText.startsWith("%PDF-1.4\n")).toBe(true);
+    expect(pdfText).toContain("/Type /Catalog");
+    expect(pdfText).toContain("xref\n");
+    expect(pdfText.trimEnd().endsWith("%%EOF")).toBe(true);
+    await expect(repository.listPdfAttempts(response.packet?.packetRevisionId ?? "")).resolves.toMatchObject([
+      {
+        state: "succeeded",
+        outputSizeBytes: pdf.length,
+      },
+    ]);
   });
 
   it("records durable usage attempts around adapter calls", async () => {
@@ -264,6 +482,7 @@ describe("harness chat service Product Discovery conversation adapter", () => {
         assistantMessage: "Who is this discovery request for?",
         summary: "Builder wants guided discovery.",
         nextQuestion: "Who is this for?",
+        nextStep: "ask_business_question" as const,
         confidencePercent: 64,
         readyForPacket: false,
         assumptions: [],

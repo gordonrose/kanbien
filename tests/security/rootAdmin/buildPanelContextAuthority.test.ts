@@ -10,7 +10,7 @@ describe("root-admin Build panel context authority", () => {
     );
     const surfaceContextFunction = appSource.slice(
       appSource.indexOf("function buildPanelSurfaceContext()"),
-      appSource.indexOf("function buildPanelContextMessage()"),
+      appSource.indexOf("function rootAdminBuilderFirstName()"),
     );
 
     expect(surfaceContextFunction).toContain("window.location.pathname");

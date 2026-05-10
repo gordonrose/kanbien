@@ -32,6 +32,11 @@ export const conversationParamsSchema = z.object({
   conversationId: uuidSchema,
 }).strict();
 
+export const messageParamsSchema = z.object({
+  conversationId: uuidSchema,
+  messageId: uuidSchema,
+}).strict();
+
 export const packetRevisionParamsSchema = z.object({
   packetRevisionId: uuidSchema,
 }).strict();
@@ -44,6 +49,15 @@ export const appendMessageBodySchema = z.object({
   message: z.string().trim().min(1),
   surfaceContext: jsonObjectSchema.optional(),
   clientContext: jsonObjectSchema.optional(),
+}).strict();
+
+export const editMessageBodySchema = z.object({
+  message: z.string().trim().min(1),
+}).strict();
+
+export const updateConversationBodySchema = z.object({
+  title: z.string().trim().min(1).max(120).optional(),
+  state: z.enum(["active", "closed"]).optional(),
 }).strict();
 
 export const generatePacketBodySchema = z.object({

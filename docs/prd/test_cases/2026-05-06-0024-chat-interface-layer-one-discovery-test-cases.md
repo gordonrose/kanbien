@@ -227,6 +227,31 @@
   or invalid context safely, and proves context influences copy only, not
   conversation scope, actor authority, reviewer access, or download rights.
 
+- Capability: deterministic Product Discovery conversation policy
+  Test Case ID: `TC-CHAT-L1-UNIT-008`
+  Source Authority: PRD In-App Product Discovery Conversation Policy
+  Related Story / AC: S-004, S-005 / AC-S004-01, AC-S005-02
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/productDiscovery/` and
+  `tests/unit/harnessChat/`
+  Requires Shared Test Helper: deterministic conversation catalogue fixtures
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Mock / Runtime Honesty: fixtures must represent accepted Product Discovery
+  coverage states, not convenience prompt-only behavior
+  Traceability / Execution Posture: executable with conversation policy
+  implementation
+  Coverage Strength Signal: deterministic branch coverage before provider use
+  Coverage:
+  proves the catalogue selects one next material business question, states safe
+  assumptions without asking granular implementation or microcopy questions,
+  packages technical details for later planning, suppresses repeated questions,
+  blocks readiness below 95 percent while business-visible decisions remain,
+  reaches `ready_for_packet` only when the deterministic 95 percent gate passes,
+  asks the final readiness confirmation only once, and routes disabled,
+  rate-limited, failed, or unnecessary provider calls to safe deterministic
+  responses.
+
 ## Integration Tests For Features Working Together
 
 - Flow: create conversation and append first messages through protected API
@@ -294,6 +319,32 @@
   authorized generation produces packet revision metadata and canonical packet
   data, marks the conversation `packet-ready`, records audit/proof, and keeps
   packet content traceable to the source conversation.
+
+- Flow: final readiness confirmation generates packet without another LLM turn
+  Test Case ID: `TC-CHAT-L1-INT-006`
+  Source Authority: PRD In-App Product Discovery Conversation Policy
+  Related Story / AC: S-004, S-005 / AC-S004-01, AC-S005-02
+  Recommended Test Layer: `feature-integration`
+  Suggested Test Folder: `tests/integration/harnessChat/`
+  Requires Shared Test Helper: ready conversation fixture, deterministic
+  confirmation phrase fixture, adapter spy or usage-attempt fixture
+  Requires Manifest Tracking: yes
+  Cleanup Expectation: reset-first database cleanup for conversations,
+  messages, packet revisions, and LLM usage attempts
+  Mock / Runtime Honesty: ready-state fixture must be created through persisted
+  conversation metadata and structured discovery state, not by directly
+  toggling response-only flags
+  Traceability / Execution Posture: executable with readiness-gate
+  implementation
+  Coverage Strength Signal: runtime policy and cost-control proof
+  Features:
+  harness chat feature, Product Discovery conversation policy, Product
+  Discovery adapter, LLM usage guardrail
+  Coverage:
+  when a persisted `ready_for_packet` turn has asked the one final readiness
+  confirmation, a no-final-follow-up reply creates the packet revision,
+  preserves the confirmation message, does not call the LLM for another turn,
+  and does not ask the same final confirmation again.
 
 - Flow: duplicate generation supersedes current revision deterministically
   Test Case ID: `TC-CHAT-L1-INT-004`
@@ -763,6 +814,8 @@
 | --- | --- | --- | --- | --- |
 | TC-CHAT-L1-INT-001 | API fixture created after contract | API contract and future persistence rows | no client-generated system fields or authority fields | live API create/append payload captured |
 | TC-CHAT-L1-INT-003 | deterministic Product Discovery adapter double | canonical Product Discovery packet validator | adapter double must not invent packet schema | generated packet payload compared to packet contract |
+| TC-CHAT-L1-UNIT-008 | deterministic conversation catalogue fixtures | PRD conversation policy and implementation blueprint catalogue contract | fixtures must not encode repeated-question, always-ask, or LLM-first fallback behavior | accepted conversation metadata compared with persisted structured state |
+| TC-CHAT-L1-INT-006 | ready-state conversation created through service/API helpers | persisted structured discovery state and assistant metadata | final confirmation fixture must prove no additional LLM/provider turn was needed | live append response and packet revision payload captured |
 | TC-CHAT-L1-INT-005 | generated-document renderer stub | PDF delivery contract and asset decision | stub must preserve success/failure/download envelope | served download headers and authorization denial checked |
 | TC-CHAT-L1-E2E-001 | seeded root-admin browser data | live root-admin API/projection payload | screenshots trusted only after live payload comparison | active server, served assets, and browser proof captured |
 | TC-CHAT-L1-RES-003 | governed UI adoption checker | design-system source seams | class-name-only parity is insufficient | served assets show shared seam consumption |
@@ -773,7 +826,9 @@
 | --- | --- | --- | --- | --- |
 | TC-CHAT-L1-UNIT-001 | executable once implementation exists | TEST:test-only | validation branch coverage | API contract, data dictionary, and implementation blueprint |
 | TC-CHAT-L1-UNIT-003 | blocked until adapter contract | TEST:test-only | packet validator compatibility | Product Discovery adapter contract |
+| TC-CHAT-L1-UNIT-008 | executable with conversation policy implementation | TEST:test-only | deterministic policy branch coverage | PRD conversation policy, API contract structured state, and implementation blueprint catalogue |
 | TC-CHAT-L1-INT-002 | blocked until implemented API | TEST:test-only | root-boundary allow/deny proof | implemented API and permission mapping |
+| TC-CHAT-L1-INT-006 | executable with readiness-gate implementation | TEST:test-only | final-confirmation and LLM-spend proof | persisted ready state and packet generation route |
 | TC-CHAT-L1-INT-005 | blocked until implemented API/config module | TEST:test-only | generated-document security proof | threshold configuration keys and implemented API |
 | TC-CHAT-L1-E2E-001 | blocked until implemented API/DS adoption | EVIDENCE:qa-evidence | browser runtime evidence | DS parity, implemented APIs, root-admin app adoption |
 | TC-CHAT-L1-CONC-001 | blocked until migration plan | TEST:test-only | race-condition proof | data dictionary plus implementation blueprint migration plan |

@@ -17,6 +17,8 @@ import type {
   HarnessChatPacketRevisionRecord,
   RecordHarnessChatPdfAttemptInput,
   ReserveHarnessChatLlmUsageAttemptInput,
+  UpdateHarnessChatConversationInput,
+  UpdateHarnessChatUserMessageInput,
 } from "./types";
 
 function toJsonObject(value: unknown): Record<string, unknown> {
@@ -261,6 +263,89 @@ export function createPostgresHarnessChatRepository(dbPool: Pool): HarnessChatRe
       return result.rows.map(toMessageData);
     },
 
+    async updateConversation(input: UpdateHarnessChatConversationInput) {
+      return queryConversation(
+        `
+          UPDATE harness_chat_conversations
+          SET state = COALESCE($2, state),
+              compact_transcript_summary = COALESCE($3, compact_transcript_summary),
+              updated_at = NOW()
+          WHERE conversation_id = $1
+            AND deleted_at IS NULL
+          RETURNING *
+        `,
+        [input.conversationId, input.state ?? null, input.compactTranscriptSummary ?? null],
+      );
+    },
+
+    async updateUserMessageAndDeleteDownstream(input: UpdateHarnessChatUserMessageInput) {
+      const client = await dbPool.connect();
+
+      try {
+        await client.query("BEGIN");
+        const existing = await client.query<HarnessChatMessageRecord>(
+          `
+            SELECT *
+            FROM harness_chat_messages
+            WHERE conversation_id = $1
+              AND message_id = $2
+              AND role = 'user'
+              AND created_by_root_user_id = $3
+            FOR UPDATE
+          `,
+          [input.conversationId, input.messageId, input.rootUserId],
+        );
+        const message = existing.rows[0] ?? null;
+        if (!message) {
+          await client.query("ROLLBACK");
+          return null;
+        }
+
+        await client.query(
+          `
+            DELETE FROM harness_chat_messages
+            WHERE conversation_id = $1
+              AND sequence_number > $2
+          `,
+          [input.conversationId, message.sequence_number],
+        );
+
+        const updated = await client.query<HarnessChatMessageRecord>(
+          `
+            UPDATE harness_chat_messages
+            SET body = $1,
+                metadata = COALESCE(metadata, '{}'::jsonb) || $2::jsonb
+            WHERE message_id = $3
+            RETURNING *
+          `,
+          [
+            input.body,
+            JSON.stringify(input.metadata ?? {}),
+            input.messageId,
+          ],
+        );
+
+        await client.query(
+          `
+            UPDATE harness_chat_conversations
+            SET latest_packet_revision_id = NULL,
+                state = 'active',
+                updated_at = NOW()
+            WHERE conversation_id = $1
+              AND deleted_at IS NULL
+          `,
+          [input.conversationId],
+        );
+        await client.query("COMMIT");
+        return toMessageData(updated.rows[0]);
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+    },
+
     async createPacketRevision(input: CreateHarnessChatPacketRevisionInput) {
       const client = await dbPool.connect();
 
@@ -391,6 +476,21 @@ export function createPostgresHarnessChatRepository(dbPool: Pool): HarnessChatRe
         [conversationId],
       );
       return result.rows.map(toPacketRevisionData);
+    },
+
+    async markPacketDownloaded(packetRevisionId: string) {
+      const result = await dbPool.query<HarnessChatPacketRevisionRecord>(
+        `
+          UPDATE harness_chat_packet_revisions
+          SET state = 'downloaded',
+              updated_at = NOW()
+          WHERE packet_revision_id = $1
+            AND state IN ('generated', 'pdf-ready', 'downloaded')
+          RETURNING *
+        `,
+        [packetRevisionId],
+      );
+      return result.rows[0] ? toPacketRevisionData(result.rows[0]) : null;
     },
 
     async recordPdfAttempt(input: RecordHarnessChatPdfAttemptInput) {

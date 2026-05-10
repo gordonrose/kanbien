@@ -20,6 +20,8 @@ const iconPaths = {
   attach: "M8.5 18.5a5 5 0 0 1 0-7.07l6.36-6.36a3.5 3.5 0 1 1 4.95 4.95l-7.07 7.07a2 2 0 0 1-2.83-2.83l6.36-6.36 1.41 1.41-6.36 6.36a.5.5 0 0 0 .71.71l7.07-7.07a1.5 1.5 0 0 0-2.12-2.12l-6.36 6.36a3 3 0 0 0 4.24 4.24l5.66-5.66 1.41 1.41-5.66 5.66a5 5 0 0 1-7.07 0z",
   screen: "M4 5h16v11H4zm2 2v7h12V7zm4 11h4v2h-4z",
   logs: "M6 4h12v16H6zm2 4h8V6H8zm0 3h8v2H8zm0 4h6v2H8z",
+  plus: "M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z",
+  archive: "M4 5h16v5H4zm2 2v1h12V7zm1 5h10v7H7zm3 2v2h4v-2z",
 };
 
 function svg(path) {
@@ -203,6 +205,25 @@ export const conversationPanelCanonicalRefs = [
     mobile: true,
     theme: "dark",
   },
+  {
+    ref: "BWP-R-021",
+    title: "History hover actions",
+    note: "Conversation history rows reveal rename and archive actions on hover or keyboard focus, with a new-chat action in the header.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "ready",
+    forceHistoryActions: true,
+    showArchiveUndo: true,
+  },
+  {
+    ref: "BWP-R-022",
+    title: "Archived history view",
+    note: "Archived conversations move out of the active list but remain recoverable from the history panel.",
+    panelOpen: true,
+    historyOpen: true,
+    packetState: "ready",
+    historyView: "archived",
+  },
 ];
 
 export function getBuildWorkPanelCanonicalRef(refId = "BWP-R-002") {
@@ -219,14 +240,17 @@ const defaultHistory = [
   {
     title: "Build panel MVP",
     summary: "Product Discovery packet ready. Current thread covers root-admin Build panel discovery, packet history, and download journey review.",
+    archived: false,
   },
   {
     title: "PDF export journey",
     summary: "Download behavior under review, including prepared state, completed chat event, repeat download, and approved packet version trace.",
+    archived: false,
   },
   {
     title: "Design-system blockers",
     summary: "Open questions remain around governed panel layout, action nav placement, history lane behavior, and app adoption readiness.",
+    archived: true,
   },
 ];
 
@@ -324,6 +348,10 @@ function renderMessageActions(message) {
 
 function renderPacket(packetState, config) {
   const packet = config.packet;
+  if (packetState === "none") {
+    return "";
+  }
+
   if (packetState === "completed") {
     return "";
   }
@@ -408,12 +436,65 @@ function resolveMessages(state, messages) {
 function renderEditBox(message) {
   return `
     <div class="build-work-panel-demo-edit-box" data-build-work-panel-edit-box>
-      <textarea aria-label="Edit message">${escapeHtml(message.text)}</textarea>
+      <textarea data-build-work-panel-edit-message-input aria-label="Edit message">${escapeHtml(message.text)}</textarea>
       <div class="build-work-panel-demo-edit-actions">
         <button type="button" data-build-work-panel-save-edit>Save</button>
         <button type="button" data-build-work-panel-cancel-edit>Cancel</button>
       </div>
     </div>
+  `;
+}
+
+function renderHistoryPanel(history, state, config) {
+  const historyView = state.historyView === "archived" ? "archived" : "active";
+  const activeHistory = history.filter((item) => !item.archived);
+  const archivedHistory = history.filter((item) => item.archived);
+  const visibleHistory = historyView === "archived" ? archivedHistory : activeHistory;
+  const itemCount = visibleHistory.length;
+
+  return `
+    <aside id="build-work-panel-history" class="build-work-panel-demo-history" aria-label="${escapeHtml(config.panel.historyLabel)}" data-build-work-panel-history-view="${escapeHtml(historyView)}">
+      <div class="build-work-panel-demo-history-header">
+        <div>
+          <strong>${escapeHtml(config.panel.historyLabel)}</strong>
+          <span>${itemCount} ${itemCount === 1 ? "item" : "items"}</span>
+        </div>
+        <button class="build-work-panel-demo-history-new" type="button" data-build-work-panel-new-conversation aria-label="Start new chat" title="Start new chat">${svg(iconPaths.plus)}</button>
+      </div>
+      <div class="build-work-panel-demo-history-view-tabs" role="tablist" aria-label="Conversation history view">
+        <button type="button" role="tab" aria-selected="${historyView === "active" ? "true" : "false"}" data-build-work-panel-history-view-action="active">Active</button>
+        <button type="button" role="tab" aria-selected="${historyView === "archived" ? "true" : "false"}" data-build-work-panel-history-view-action="archived">Archived</button>
+      </div>
+      <div class="build-work-panel-demo-history-list" role="list">
+        ${visibleHistory.map((item, index) => {
+          const isRenaming = state.renameConversationId && state.renameConversationId === item.conversationId;
+          return `
+          <div class="build-work-panel-demo-history-row${index === 0 && historyView === "active" ? " is-active" : ""}${state.forceHistoryTooltip && index === 0 ? " is-tooltip-visible" : ""}${state.forceHistoryActions && index === 0 ? " is-actions-visible" : ""}" role="listitem" data-build-work-panel-history-row data-build-work-panel-history-conversation-id="${escapeHtml(item.conversationId ?? "")}">
+            ${isRenaming ? `
+              <form class="build-work-panel-demo-history-rename" data-build-work-panel-history-rename>
+                <input data-build-work-panel-history-rename-input aria-label="Edit chat title" value="${escapeHtml(item.title)}">
+                <button type="submit" data-build-work-panel-save-rename>Save</button>
+                <button type="button" data-build-work-panel-cancel-rename>Cancel</button>
+              </form>
+            ` : `<button class="build-work-panel-demo-history-item" type="button" title="${escapeHtml(item.summary.slice(0, 140))}" data-build-work-panel-history-select>
+              <strong>${escapeHtml(item.title)}</strong>
+              <span>${escapeHtml(item.summary.slice(0, 140))}</span>
+            </button>`}
+            <div class="build-work-panel-demo-history-actions" aria-label="Conversation actions"${isRenaming ? " hidden" : ""}>
+              <button type="button" data-build-work-panel-rename-conversation aria-label="Edit chat title" title="Edit chat title">${svg(iconPaths.edit)}</button>
+              <button type="button" data-build-work-panel-archive-conversation aria-label="${historyView === "archived" ? "Restore chat" : "Archive chat"}" title="${historyView === "archived" ? "Restore chat" : "Archive chat"}">${svg(iconPaths.archive)}</button>
+            </div>
+          </div>
+        `;
+        }).join("") || `<p class="build-work-panel-demo-history-empty">No ${historyView} chats</p>`}
+      </div>
+      ${state.showArchiveUndo ? `
+        <div class="build-work-panel-demo-history-undo" role="status">
+          <span>Chat archived</span>
+          <button type="button" data-build-work-panel-undo-archive>Undo</button>
+        </div>
+      ` : ""}
+    </aside>
   `;
 }
 
@@ -434,6 +515,8 @@ export function renderConversationPanel(
   const state = typeof ref === "string" ? getConversationPanelCanonicalRef(ref) : ref;
   const panelOpen = state.panelOpen !== false;
   const historyOpen = state.historyOpen !== false;
+  const tools = Array.isArray(config.tools) ? config.tools : [];
+  const hasTools = tools.length > 0;
   const resolvedMessages = resolveMessages(state, messages);
   const replyMessage = Number.isInteger(state.replyToMessageIndex) ? resolvedMessages[state.replyToMessageIndex] : null;
   const inputValue = replyMessage
@@ -466,15 +549,7 @@ export function renderConversationPanel(
         </div>
       </header>
       <div class="build-work-panel-demo-body">
-        <aside id="build-work-panel-history" class="build-work-panel-demo-history" aria-label="${escapeHtml(config.panel.historyLabel)}">
-          <div class="build-work-panel-demo-history-header"><strong>${escapeHtml(config.panel.historyLabel)}</strong><span>${history.length} items</span></div>
-          ${history.map((item, index) => `
-            <button class="build-work-panel-demo-history-item${index === 0 ? " is-active" : ""}${state.forceHistoryTooltip && index === 0 ? " is-tooltip-visible" : ""}" type="button" title="${escapeHtml(item.summary.slice(0, 140))}">
-              <strong>${escapeHtml(item.title)}</strong>
-              <span>${escapeHtml(item.summary.slice(0, 140))}</span>
-            </button>
-          `).join("")}
-        </aside>
+        ${renderHistoryPanel(history, state, config)}
         <div class="build-work-panel-demo-chat-column">
           <div class="build-work-panel-demo-thread" data-build-work-panel-thread aria-label="${escapeHtml(config.panel.threadLabel)}">
             ${resolvedMessages.map((message, index) => `
@@ -486,15 +561,16 @@ export function renderConversationPanel(
               </div>
             `).join("")}
           </div>
+          ${state.copyNotice ? `<div class="build-work-panel-demo-copy-status" role="status">${escapeHtml(state.copyNotice)}</div>` : ""}
           ${renderPacket(state.packetState, config)}
           <div class="build-work-panel-demo-input-area">
-            <div id="build-work-panel-tools-menu" class="build-work-panel-demo-tools-menu${state.toolsOpen ? " is-open" : ""}" data-build-work-panel-tools-menu role="menu" aria-label="Chat input tools">
-              ${config.tools.map((tool) => `
+            ${hasTools ? `<div id="build-work-panel-tools-menu" class="build-work-panel-demo-tools-menu${state.toolsOpen ? " is-open" : ""}" data-build-work-panel-tools-menu role="menu" aria-label="Chat input tools">
+              ${tools.map((tool) => `
                 <button class="build-work-panel-demo-tools-menu-item" type="button" role="menuitem" data-build-work-panel-tool-action="${escapeHtml(tool.key)}">${svg(iconPaths[tool.icon] ?? iconPaths.logs)}<span>${escapeHtml(tool.label)}</span></button>
               `).join("")}
-            </div>
-            <form class="build-work-panel-demo-composer" data-build-work-panel-composer>
-              <button class="build-work-panel-demo-tools-toggle" type="button" data-build-work-panel-tools-toggle aria-label="Open chat tools" aria-controls="build-work-panel-tools-menu" aria-expanded="${state.toolsOpen ? "true" : "false"}">+</button>
+            </div>` : ""}
+            <form class="build-work-panel-demo-composer${hasTools ? "" : " is-tools-hidden"}" data-build-work-panel-composer>
+              ${hasTools ? `<button class="build-work-panel-demo-tools-toggle" type="button" data-build-work-panel-tools-toggle aria-label="Open chat tools" aria-controls="build-work-panel-tools-menu" aria-expanded="${state.toolsOpen ? "true" : "false"}">+</button>` : ""}
               <textarea data-build-work-panel-message rows="1" aria-label="${escapeHtml(config.panel.composerLabel)}" placeholder="${escapeHtml(config.panel.composerPlaceholder)}">${escapeHtml(inputValue)}</textarea>
               <button class="build-work-panel-demo-send" type="submit" aria-label="Send message">${svg("M4 5.5 20 12 4 18.5V14l8-2-8-2z")}</button>
             </form>
@@ -533,6 +609,7 @@ export function createConversationPanelController(root, options = {}) {
   const toolsMenu = root.querySelector("[data-build-work-panel-tools-menu]");
   const input = root.querySelector("[data-build-work-panel-message]");
   const composer = root.querySelector("[data-build-work-panel-composer]");
+  const thread = root.querySelector("[data-build-work-panel-thread]");
 
   function setPanelOpen(isOpen) {
     root.dataset.panelOpen = isOpen ? "true" : "false";
@@ -598,6 +675,13 @@ export function createConversationPanelController(root, options = {}) {
       value: input instanceof HTMLTextAreaElement ? input.value : "",
     });
   });
+  input?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" || event.shiftKey) {
+      return;
+    }
+    event.preventDefault();
+    composer?.requestSubmit();
+  });
   root.querySelectorAll("[data-build-work-panel-mode]").forEach((modeButton) => {
     modeButton.addEventListener("click", () => {
       if (!(modeButton instanceof HTMLElement) || modeButton.getAttribute("aria-disabled") === "true") {
@@ -614,6 +698,66 @@ export function createConversationPanelController(root, options = {}) {
       handlers.onToolAction?.({ action: toolButton.dataset.buildWorkPanelToolAction ?? "" });
       setToolsOpen(false);
     });
+  });
+  root.querySelector("[data-build-work-panel-new-conversation]")?.addEventListener("click", () => {
+    handlers.onNewConversation?.();
+  });
+  root.querySelectorAll("[data-build-work-panel-history-view-action]").forEach((viewButton) => {
+    viewButton.addEventListener("click", () => {
+      if (!(viewButton instanceof HTMLElement)) {
+        return;
+      }
+      handlers.onHistoryViewSelect?.({ view: viewButton.dataset.buildWorkPanelHistoryViewAction ?? "active" });
+    });
+  });
+  root.querySelectorAll("[data-build-work-panel-history-select]").forEach((historyButton) => {
+    historyButton.addEventListener("click", () => {
+      const row = historyButton.closest("[data-build-work-panel-history-row]");
+      handlers.onHistorySelect?.({
+        conversationId: row instanceof HTMLElement ? row.dataset.buildWorkPanelHistoryConversationId ?? "" : "",
+        index: row ? [...root.querySelectorAll("[data-build-work-panel-history-row]")].indexOf(row) : null,
+      });
+    });
+  });
+  root.querySelectorAll("[data-build-work-panel-rename-conversation]").forEach((renameButton) => {
+    renameButton.addEventListener("click", () => {
+      const row = renameButton.closest("[data-build-work-panel-history-row]");
+      handlers.onRenameConversation?.({
+        conversationId: row instanceof HTMLElement ? row.dataset.buildWorkPanelHistoryConversationId ?? "" : "",
+        index: row ? [...root.querySelectorAll("[data-build-work-panel-history-row]")].indexOf(row) : null,
+      });
+    });
+  });
+  root.querySelectorAll("[data-build-work-panel-history-rename]").forEach((renameForm) => {
+    renameForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const row = renameForm.closest("[data-build-work-panel-history-row]");
+      const input = renameForm.querySelector("[data-build-work-panel-history-rename-input]");
+      handlers.onSaveRenameConversation?.({
+        conversationId: row instanceof HTMLElement ? row.dataset.buildWorkPanelHistoryConversationId ?? "" : "",
+        title: input instanceof HTMLInputElement ? input.value : "",
+      });
+    });
+  });
+  root.querySelectorAll("[data-build-work-panel-cancel-rename]").forEach((cancelButton) => {
+    cancelButton.addEventListener("click", () => {
+      const row = cancelButton.closest("[data-build-work-panel-history-row]");
+      handlers.onCancelRenameConversation?.({
+        conversationId: row instanceof HTMLElement ? row.dataset.buildWorkPanelHistoryConversationId ?? "" : "",
+      });
+    });
+  });
+  root.querySelectorAll("[data-build-work-panel-archive-conversation]").forEach((archiveButton) => {
+    archiveButton.addEventListener("click", () => {
+      const row = archiveButton.closest("[data-build-work-panel-history-row]");
+      handlers.onArchiveConversation?.({
+        conversationId: row instanceof HTMLElement ? row.dataset.buildWorkPanelHistoryConversationId ?? "" : "",
+        index: row ? [...root.querySelectorAll("[data-build-work-panel-history-row]")].indexOf(row) : null,
+      });
+    });
+  });
+  root.querySelector("[data-build-work-panel-undo-archive]")?.addEventListener("click", () => {
+    handlers.onUndoArchive?.();
   });
   root.querySelectorAll("[data-build-work-panel-download]").forEach((downloadButton) => {
     downloadButton.addEventListener("click", () => {
@@ -632,6 +776,24 @@ export function createConversationPanelController(root, options = {}) {
     editButton.addEventListener("click", () => {
       const message = editButton.closest("[data-build-work-panel-message-index]");
       handlers.onEditMessage?.({
+        index: message instanceof HTMLElement ? Number.parseInt(message.dataset.buildWorkPanelMessageIndex ?? "", 10) : null,
+      });
+    });
+  });
+  root.querySelectorAll("[data-build-work-panel-save-edit]").forEach((saveButton) => {
+    saveButton.addEventListener("click", () => {
+      const message = saveButton.closest("[data-build-work-panel-message-index]");
+      const input = message?.querySelector("[data-build-work-panel-edit-message-input]");
+      handlers.onSaveEdit?.({
+        index: message instanceof HTMLElement ? Number.parseInt(message.dataset.buildWorkPanelMessageIndex ?? "", 10) : null,
+        value: input instanceof HTMLTextAreaElement ? input.value : "",
+      });
+    });
+  });
+  root.querySelectorAll("[data-build-work-panel-cancel-edit]").forEach((cancelButton) => {
+    cancelButton.addEventListener("click", () => {
+      const message = cancelButton.closest("[data-build-work-panel-message-index]");
+      handlers.onCancelEdit?.({
         index: message instanceof HTMLElement ? Number.parseInt(message.dataset.buildWorkPanelMessageIndex ?? "", 10) : null,
       });
     });
@@ -671,7 +833,15 @@ export function createConversationPanelController(root, options = {}) {
   root.ownerDocument.addEventListener("click", handleDocumentClick);
   root.ownerDocument.defaultView?.addEventListener("keydown", handleKeydown);
   input?.addEventListener("input", resizeInput);
+  const renameInput = root.querySelector("[data-build-work-panel-history-rename-input]");
+  if (renameInput instanceof HTMLInputElement) {
+    renameInput.focus();
+    renameInput.select();
+  }
   resizeInput();
+  if (thread instanceof HTMLElement) {
+    thread.scrollTop = thread.scrollHeight;
+  }
 
   return {
     setPanelOpen,

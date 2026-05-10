@@ -164,6 +164,20 @@ export interface CompleteHarnessChatLlmUsageAttemptInput {
   completedAt?: Date;
 }
 
+export interface UpdateHarnessChatConversationInput {
+  conversationId: string;
+  state?: HarnessChatConversationState;
+  compactTranscriptSummary?: string | null;
+}
+
+export interface UpdateHarnessChatUserMessageInput {
+  conversationId: string;
+  messageId: string;
+  rootUserId: string;
+  body: string;
+  metadata?: Record<string, unknown> | null;
+}
+
 export interface HarnessChatConversationData {
   conversationId: string;
   productRequestId: string | null;

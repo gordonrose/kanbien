@@ -3,6 +3,7 @@ import {
   createProductDiscoveryPacketData,
   renderProductDiscoveryPacketMarkdown,
 } from "../../../lib/productDiscovery/packetAdapter";
+import { renderProductDiscoveryPacketPdf } from "../../../lib/productDiscovery/pdfRenderer";
 import {
   createDefaultProductDiscoveryConversationAdapter,
   ProductDiscoveryConversationGuardrailError,
@@ -24,6 +25,64 @@ function toIso(value: Date | null): string | null {
 function conversationTitle(messages: HarnessChatMessageData[]): string {
   const firstUserMessage = messages.find((message) => message.role === "user");
   return firstUserMessage?.body.slice(0, 80) || "Product Discovery conversation";
+}
+
+function messageBody(message: HarnessChatMessageData | undefined): string {
+  return String(message?.body ?? "").trim();
+}
+
+function latestUserMessage(messages: HarnessChatMessageData[]): HarnessChatMessageData | undefined {
+  return [...messages].reverse().find((message) => message.role === "user");
+}
+
+function latestAssistantMessage(messages: HarnessChatMessageData[]): HarnessChatMessageData | undefined {
+  return [...messages].reverse().find((message) => message.role === "assistant");
+}
+
+function isReadyForPacketConfirmationPending(messages: HarnessChatMessageData[]): boolean {
+  const assistant = latestAssistantMessage(messages);
+  return assistant?.metadata?.readyForPacket === true && assistant.metadata.nextStep === "ready_for_packet";
+}
+
+function isPacketGenerationConfirmation(message: string): boolean {
+  const normalized = message.trim().toLowerCase().replace(/[.!?]+$/g, "");
+  if (!normalized) {
+    return false;
+  }
+
+  return [
+    "no",
+    "nope",
+    "no thanks",
+    "no thank you",
+    "no follow up",
+    "no follow ups",
+    "no follow-up",
+    "no follow-ups",
+    "nothing else",
+    "that's all",
+    "that is all",
+    "all good",
+    "produce the packet",
+    "generate the packet",
+    "create the packet",
+    "make the packet",
+    "download the packet",
+    "yes produce the packet",
+    "yes generate the packet",
+    "yes create the packet",
+    "go ahead",
+  ].includes(normalized);
+}
+
+function stringArrayMetadata(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+    : [];
+}
+
+function numberMetadata(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
 export interface HarnessChatLlmUsageGuardrailConfig {
@@ -52,6 +111,7 @@ export function createHarnessChatService(
   function summarizeConversation(
     conversation: HarnessChatConversationData,
     messages: HarnessChatMessageData[] = [],
+    latestPacket?: HarnessChatPacketRevisionData | null,
   ) {
     return {
       conversationId: conversation.conversationId,
@@ -63,8 +123,8 @@ export function createHarnessChatService(
       createdAt: conversation.createdAt.toISOString(),
       updatedAt: conversation.updatedAt.toISOString(),
       latestPacketRevisionId: conversation.latestPacketRevisionId,
-      latestPacketState: conversation.state === "packet-ready" ? "generated" : null,
-      title: conversationTitle(messages),
+      latestPacketState: latestPacket?.state ?? (conversation.state === "packet-ready" ? "generated" : null),
+      title: conversation.compactTranscriptSummary || conversationTitle(messages),
     };
   }
 
@@ -129,9 +189,13 @@ export function createHarnessChatService(
         : conversations;
       const start = (input.page - 1) * input.pageSize;
       const items = await Promise.all(
-        filtered.slice(start, start + input.pageSize).map(async (conversation) =>
-          summarizeConversation(conversation, await repository.listMessages(conversation.conversationId)),
-        ),
+        filtered.slice(start, start + input.pageSize).map(async (conversation) => {
+          const [messages, packet] = await Promise.all([
+            repository.listMessages(conversation.conversationId),
+            conversation.latestPacketRevisionId ? repository.findCurrentPacketRevision(conversation.conversationId) : Promise.resolve(null),
+          ]);
+          return summarizeConversation(conversation, messages, packet);
+        }),
       );
       return {
         items,
@@ -144,16 +208,57 @@ export function createHarnessChatService(
     async readConversation(input: { conversationId: string; includeMessages: boolean }) {
       const conversation = await getConversationOrThrow(input.conversationId);
       const messages = input.includeMessages ? await repository.listMessages(input.conversationId) : [];
+      const packet = conversation.latestPacketRevisionId ? await repository.findCurrentPacketRevision(input.conversationId) : null;
       return {
-        ...summarizeConversation(conversation, messages),
+        ...summarizeConversation(conversation, messages, packet),
         messages: messages.map((message) => ({
           messageId: message.messageId,
           role: message.role,
           body: message.body,
+          metadata: message.metadata,
           createdAt: message.createdAt.toISOString(),
         })),
         surfaceContext: conversation.surfaceContext,
         structuredDiscoveryState: conversation.structuredDiscoveryState,
+      };
+    },
+
+    async updateConversation(input: {
+      conversationId: string;
+      title?: string | null;
+      state?: "active" | "closed";
+    }) {
+      const conversation = await repository.updateConversation({
+        conversationId: input.conversationId,
+        state: input.state,
+        compactTranscriptSummary: input.title ?? undefined,
+      });
+      if (!conversation) {
+        throw new HarnessChatNotFoundError();
+      }
+      return this.readConversation({ conversationId: conversation.conversationId, includeMessages: true });
+    },
+
+    async editMessage(input: { conversationId: string; messageId: string; rootUserId: string; message: string }) {
+      const updated = await repository.updateUserMessageAndDeleteDownstream({
+        conversationId: input.conversationId,
+        messageId: input.messageId,
+        rootUserId: input.rootUserId,
+        body: input.message,
+        metadata: {
+          edited: true,
+          editedAt: new Date().toISOString(),
+          rewriteDownstream: true,
+        },
+      });
+      if (!updated) {
+        throw new HarnessChatNotFoundError();
+      }
+      const assistantMessage = await appendAssistantTurn(input.conversationId);
+      return {
+        userMessage: updated,
+        assistantMessage,
+        conversation: await this.readConversation({ conversationId: input.conversationId, includeMessages: true }),
       };
     },
 
@@ -167,6 +272,34 @@ export function createHarnessChatService(
         acceptedByHarness: true,
         createdByRootUserId: input.rootUserId,
       });
+
+      const messagesAfterUserReply = await repository.listMessages(input.conversationId);
+      if (
+        isReadyForPacketConfirmationPending(messagesAfterUserReply) &&
+        isPacketGenerationConfirmation(input.message)
+      ) {
+        const packet = await createPacketRevision(input.conversationId, input.rootUserId);
+        const assistantMessage = await repository.appendMessage({
+          messageId: randomUUID(),
+          conversationId: input.conversationId,
+          role: "assistant",
+          body: "Product Discovery packet is ready to download.",
+          acceptedByHarness: true,
+          metadata: {
+            source: "product-discovery-packet-confirmation",
+            packetRevisionId: packet.packetRevisionId,
+            readyForPacket: true,
+            nextStep: "ready_for_packet",
+          },
+        });
+        return {
+          userMessage,
+          assistantMessage,
+          packet: summarizePacket(packet),
+          conversation: await this.readConversation({ conversationId: input.conversationId, includeMessages: true }),
+        };
+      }
+
       const assistantMessage = await appendAssistantTurn(input.conversationId);
       return {
         userMessage,
@@ -177,72 +310,7 @@ export function createHarnessChatService(
 
     async generatePacket(input: { conversationId: string; rootUserId: string }) {
       const conversation = await getConversationOrThrow(input.conversationId);
-      const messages = await repository.listMessages(input.conversationId);
-      const packetData = createProductDiscoveryPacketData({
-        title: conversationTitle(messages),
-        originalRequest: messages.find((message) => message.role === "user")?.body ?? "Product Discovery request",
-        plainLanguageRequestSummary: "Root-admin Build chat discovery request.",
-        packetDate: new Date().toISOString().slice(0, 10),
-        ownerRequester: input.rootUserId,
-        initialUnderstanding: "The root builder wants to shape a Product Discovery packet from chat.",
-        interviewTurns: [{
-          question: "What should happen first?",
-          answer: messages.find((message) => message.role === "user")?.body ?? "Start discovery.",
-          disposition: "rule",
-        }],
-        assumptionsConfirmed: ["Root-admin context is prompt context only."],
-        technicalQuestionsPackaged: ["Connect runtime evidence after protected APIs are exercised."],
-        confidencePercent: 95,
-        problemToSolve: "Make Product Discovery capture available from root admin.",
-        businessOutcome: "A usable Product Discovery packet can be generated from the Build panel.",
-        primaryUserOutcome: "Root builders can preserve discovery work without leaving the app.",
-        whyNow: "The Build panel MVP needs durable packet handoff.",
-        successSignal: "A packet revision is generated and downloadable by an authorized root builder.",
-        nonGoalSummary: "Tenant rollout, public PDF delivery, and raw transcript export are out of scope.",
-        taxonomy: {
-          productFeatureType: "workflow",
-          uxPatterns: "chat-panel",
-          dataOwnershipShape: "feature-owned",
-          surfaceManagementLocation: "root-admin",
-          actorPermissionShape: "root-only",
-          relationshipShape: "conversation-to-packet",
-          reportingReadModelShape: "history-list",
-          lifecycleShape: "versioned",
-          integrationExternalityShape: "internal",
-          evidenceComplianceSensitivity: "sensitive-internal",
-        },
-        jobToBeDone: {
-          actor: "Root builder",
-          situation: "while reviewing app context",
-          motivation: "capture a request through discovery",
-          outcome: "produce a governed Product Discovery packet",
-        },
-        useCases: [{
-          id: "UC-CHAT-L1-001",
-          actor: "Root builder",
-          statement: "Generate a packet from chat.",
-          successOutcome: "A packet revision exists.",
-        }],
-        capabilityBreakdown: [{
-          id: "CAP-CHAT-L1-001",
-          capability: "Generate Product Discovery packet",
-          rationale: "Preserves discovery output.",
-          downstreamSignal: "packet revision",
-        }],
-        technicalSteeringHandoff: {
-          handoffStatus: "ready-for-technical-steering",
-          architectureSignals: ["root-admin", "harness-chat"],
-          riskFlags: ["runtime evidence still required"],
-          packagedQuestions: [],
-        },
-      });
-      const packet = await repository.createPacketRevision({
-        packetRevisionId: randomUUID(),
-        conversationId: input.conversationId,
-        generatedByRootUserId: input.rootUserId,
-        sourceMessageSequenceMax: messages.length > 0 ? messages[messages.length - 1].sequenceNumber : 0,
-        packetData,
-      });
+      const packet = await createPacketRevision(input.conversationId, input.rootUserId);
       return {
         packet: summarizePacket(packet),
         conversation: await this.readConversation({ conversationId: conversation.conversationId, includeMessages: true }),
@@ -273,19 +341,104 @@ export function createHarnessChatService(
 
     async renderPacketPdf(packetRevisionId: string, rootUserId: string) {
       const packet = await this.readPacketRevision(packetRevisionId);
+      const markdown = renderProductDiscoveryPacketMarkdown(packet.packetData as Parameters<typeof renderProductDiscoveryPacketMarkdown>[0]);
+      const pdf = await renderProductDiscoveryPacketPdf(markdown);
+      await repository.markPacketDownloaded(packetRevisionId);
       await repository.recordPdfAttempt({
         pdfAttemptId: randomUUID(),
         packetRevisionId,
         requestedByRootUserId: rootUserId,
         state: "succeeded",
         sourceDataSizeBytes: Buffer.byteLength(JSON.stringify(packet.packetData), "utf8"),
-        outputSizeBytes: 128,
+        outputSizeBytes: pdf.length,
         completedAt: new Date(),
       });
-      const markdown = renderProductDiscoveryPacketMarkdown(packet.packetData as Parameters<typeof renderProductDiscoveryPacketMarkdown>[0]);
-      return Buffer.from(`%PDF-1.4\n% Harness chat packet export\n${markdown}\n%%EOF\n`, "utf8");
+      return pdf;
     },
   };
+
+  async function createPacketRevision(conversationId: string, rootUserId: string) {
+    const messages = await repository.listMessages(conversationId);
+    const readyMessage = latestAssistantMessage(messages);
+    const readyMetadata = readyMessage?.metadata ?? {};
+    const firstUserMessage = messages.find((message) => message.role === "user");
+    const latestUser = latestUserMessage(messages);
+    const summary = typeof readyMetadata.summary === "string" && readyMetadata.summary.trim()
+      ? readyMetadata.summary
+      : "Root-admin Build chat discovery request.";
+    const assumptions = stringArrayMetadata(readyMetadata.assumptions);
+    const packagedTechnicalQuestions = stringArrayMetadata(readyMetadata.packagedTechnicalQuestions);
+    const confidencePercent = Math.max(95, numberMetadata(readyMetadata.confidencePercent, 95));
+    const packetData = createProductDiscoveryPacketData({
+      title: conversationTitle(messages),
+      originalRequest: messageBody(firstUserMessage) || "Product Discovery request",
+      plainLanguageRequestSummary: summary,
+      packetDate: new Date().toISOString().slice(0, 10),
+      ownerRequester: rootUserId,
+      initialUnderstanding: summary,
+      interviewTurns: [{
+        question: "What should the normal successful version do?",
+        answer: messageBody(latestUser) || messageBody(firstUserMessage) || "The requester confirmed the discovery direction.",
+        disposition: "rule",
+      }],
+      assumptionsConfirmed: assumptions.length > 0 ? assumptions : ["Root-admin context is prompt context only."],
+      technicalQuestionsPackaged: packagedTechnicalQuestions.length > 0
+        ? packagedTechnicalQuestions
+        : ["Technical implementation details should be handled after Product Discovery."],
+      confidencePercent,
+      problemToSolve: summary,
+      businessOutcome: "A Product Discovery packet can be generated from the Build panel conversation.",
+      primaryUserOutcome: "Root builders can preserve confirmed discovery work without leaving the app.",
+      whyNow: "The Build panel needs a deterministic handoff from conversation to downloadable packet.",
+      successSignal: "A packet revision is generated and downloadable by an authorized root builder.",
+      nonGoalSummary: "Public packet delivery and broad artifact migration are out of scope for this packet.",
+      taxonomy: {
+        productFeatureType: "workflow",
+        uxPatterns: "chat-panel",
+        dataOwnershipShape: "feature-owned",
+        surfaceManagementLocation: "root-admin",
+        actorPermissionShape: "root-only",
+        relationshipShape: "conversation-to-packet",
+        reportingReadModelShape: "history-list",
+        lifecycleShape: "versioned",
+        integrationExternalityShape: "internal",
+        evidenceComplianceSensitivity: "sensitive-internal",
+      },
+      jobToBeDone: {
+        actor: "Root builder",
+        situation: "while shaping a change request",
+        motivation: "capture enough discovery detail",
+        outcome: "produce a governed Product Discovery packet",
+      },
+      useCases: [{
+        id: "UC-CHAT-L1-001",
+        actor: "Root builder",
+        statement: "Generate a Product Discovery packet from a confirmed chat.",
+        successOutcome: "A packet revision exists and can be downloaded.",
+      }],
+      capabilityBreakdown: [{
+        id: "CAP-CHAT-L1-001",
+        capability: "Generate Product Discovery packet",
+        rationale: "Preserves confirmed discovery output.",
+        downstreamSignal: "packet revision",
+      }],
+      technicalSteeringHandoff: {
+        handoffStatus: "ready-for-technical-steering",
+        architectureSignals: ["root-admin", "harness-chat"],
+        riskFlags: ["runtime evidence still required"],
+        packagedQuestions: packagedTechnicalQuestions.length > 0
+          ? packagedTechnicalQuestions
+          : ["Confirm implementation details during Technical Steering."],
+      },
+    });
+    return repository.createPacketRevision({
+      packetRevisionId: randomUUID(),
+      conversationId,
+      generatedByRootUserId: rootUserId,
+      sourceMessageSequenceMax: messages.length > 0 ? messages[messages.length - 1].sequenceNumber : 0,
+      packetData,
+    });
+  }
 
   async function appendAssistantTurn(conversationId: string) {
     const conversation = await getConversationOrThrow(conversationId);
@@ -295,12 +448,13 @@ export function createHarnessChatService(
       messageId: randomUUID(),
       conversationId,
       role: "assistant",
-      body: turn.assistantMessage,
+      body: composeVisibleDiscoveryMessage(turn),
       acceptedByHarness: turn.acceptedByHarness,
       metadata: {
         source: turn.source,
         summary: turn.summary,
         nextQuestion: turn.nextQuestion,
+        nextStep: turn.nextStep,
         confidencePercent: turn.confidencePercent,
         readyForPacket: turn.readyForPacket,
         assumptions: turn.assumptions,
@@ -341,6 +495,7 @@ export function createHarnessChatService(
           "I saved that message, but the discovery assistant is paused by the local usage limit. Your transcript is still safe, and scripted discovery can continue.",
         summary: conversationTitle(messages),
         nextQuestion: "What should the first successful version let the requester do?",
+        nextStep: "ask_business_question",
         confidencePercent: 0,
         readyForPacket: false,
         assumptions: [],
@@ -380,6 +535,7 @@ export function createHarnessChatService(
           "I saved that message, but the discovery assistant is temporarily unavailable. Your transcript is still safe, and you can try again shortly.",
         summary: conversationTitle(messages),
         nextQuestion: "What should the first successful version let the requester do?",
+        nextStep: "ask_business_question",
         confidencePercent: 0,
         readyForPacket: false,
         assumptions: [],
@@ -404,4 +560,18 @@ function parsePositiveIntegerEnv(value: string | undefined) {
   }
   const parsed = Number.parseInt(value, 10);
   return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
+}
+
+function normalizeDiscoveryText(value: string) {
+  return value.trim().replace(/\s+/g, " ");
+}
+
+function composeVisibleDiscoveryMessage(turn: ProductDiscoveryConversationTurn) {
+  const assistantMessage = turn.assistantMessage.trim();
+  const nextQuestion = turn.nextQuestion.trim();
+  if (!nextQuestion || normalizeDiscoveryText(assistantMessage).includes(normalizeDiscoveryText(nextQuestion))) {
+    return assistantMessage;
+  }
+
+  return `${assistantMessage}\n\n${nextQuestion}`;
 }

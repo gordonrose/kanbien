@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const refs = Array.from({ length: 20 }, (_, index) => `BWP-R-${String(index + 1).padStart(3, "0")}`);
+const refs = Array.from({ length: 22 }, (_, index) => `BWP-R-${String(index + 1).padStart(3, "0")}`);
 
 function routeFor(ref: string): string {
   return `/design-system/canonical-renderings/build-work-panel/${ref}`;
@@ -242,7 +242,7 @@ test.describe("build work panel canonicals", () => {
     await page.goto("/design-system/canonicals/build-work-panel");
 
     const links = page.locator(".canonical-launcher-grid a[href*='/design-system/canonical-renderings/build-work-panel/']");
-    await expect(links).toHaveCount(20);
+    await expect(links).toHaveCount(22);
 
     const hrefs = await links.evaluateAll((elements) => elements.map((element) => element.getAttribute("href")));
     expect(hrefs).toEqual(refs.map((ref) => routeFor(ref)));
@@ -354,5 +354,22 @@ test.describe("build work panel canonicals", () => {
 
     await page.goto(routeFor("BWP-R-018"));
     await expect(page.getByRole("textbox", { name: "Message the harness" })).toContainText("Replying to:");
+  });
+
+  test("history management state exposes new chat, hover actions, archive undo, and archived view", async ({ page }) => {
+    await page.goto(routeFor("BWP-R-021"));
+
+    await expect(page.getByRole("button", { name: "Start new chat" })).toBeVisible();
+    await expect(page.getByRole("tab", { name: "Active" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("button", { name: "Edit chat title" }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Archive chat" }).first()).toBeVisible();
+    await expect(page.getByRole("status")).toContainText("Chat archived");
+    await expect(page.getByRole("button", { name: "Undo" })).toBeVisible();
+
+    await page.goto(routeFor("BWP-R-022"));
+
+    await expect(page.getByRole("tab", { name: "Archived" })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("button", { name: "Design-system blockers" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Restore chat" })).toBeVisible();
   });
 });

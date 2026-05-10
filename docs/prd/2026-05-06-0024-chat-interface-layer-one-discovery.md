@@ -70,6 +70,8 @@ The MVP includes:
 - Build as the only active workflow
 - contextual starter prompts based on current page, module, and role context
 - free-form chat for Layer 1 Product Discovery
+- deterministic in-app conversation policy for question selection,
+  assumptions, readiness, one final confirmation, and packet generation
 - durable conversation history for root builders
 - root-builder review visibility for other root builders' root-admin discovery
   work
@@ -96,6 +98,8 @@ The MVP does not include:
 - app-local CSS for governed root-admin UI
 - copied design-system markup or controller behavior in app pages
 - a parallel chat-only Product Discovery packet format
+- repeated final confirmation loops after the requester has already confirmed
+  that no final follow-up remains
 
 ## Actors
 
@@ -127,16 +131,157 @@ The MVP does not include:
    and role context.
 7. The root builder may use a starter prompt or type freely.
 8. The chat preserves the conversation transcript and contextual selections.
-9. The Product Discovery adapter generates canonical Product Discovery packet
-   data from the conversation.
-10. The generated packet becomes the current packet revision for that
+9. The chat asks one useful business-facing question at a time, states common
+   assumptions when a detail does not need a business decision, and packages
+   implementation details for later planning instead of asking the requester to
+   design the solution.
+10. When the chat reaches Product Discovery readiness, it says it thinks it has
+    everything needed, asks whether the requester has any final follow-up, and
+    explains that it will produce the packet for download if there is nothing
+    else.
+11. When the requester indicates there is no final follow-up, the Product
+    Discovery adapter generates canonical Product Discovery packet data.
+12. The generated packet becomes the current packet revision for that
     conversation.
-11. A newer generated packet from the same conversation supersedes the prior
+13. A newer generated packet from the same conversation supersedes the prior
     packet revision.
-12. After PDF delivery posture is approved, the root builder can download a
+14. After PDF delivery posture is approved, the root builder can download a
     well-presented packet PDF.
-13. Root builders can later see root-admin conversation history, including
+15. Root builders can later see root-admin conversation history, including
     root-admin discovery histories created by other root builders.
+
+## In-App Product Discovery Conversation Policy
+
+The Build chat must feel like a guided Product Discovery conversation, not a
+form, a generic support bot, or an implementation interview. Its normal loop is:
+
+1. reflect the request in plain language
+2. classify what is already known
+3. choose exactly one next action from the deterministic policy
+4. ask one material business question, state a safe assumption, block on a real
+   decision, or move to readiness confirmation
+5. generate the packet only after the one final readiness confirmation is
+   answered with no final follow-up
+
+The conversation should cover the Product Discovery topics needed for the chosen
+scope:
+
+- normal successful behavior and first-version outcome
+- primary user or actor
+- where the work happens in the product
+- what counts as done or successful
+- business-visible policy choices, including access, visibility, history,
+  recovery, rollout, compatibility, cost, or compliance when relevant
+- explicit non-goals, scope cuts, and deferred future work
+- common baseline assumptions for security, audit, accessibility, privacy,
+  tenant boundary, and operational evidence
+- technical questions packaged for later steering instead of asked as business
+  decisions
+
+### Confidence Gate
+
+The chat may claim packet readiness only when it has at least 95 percent
+confidence for the chosen scope. This is a deterministic readiness judgment, not
+model self-certification. The 95 percent threshold is met when:
+
+- the normal successful behavior is clear enough to describe without another
+  business answer
+- the primary actor and product surface are known or safely assumed
+- the value, success signal, non-goals, and major scope cuts are stated
+- every unanswered item is classified as a safe assumption, a deferred future
+  scope item, or a technical question for later planning
+- no unresolved business-visible decision would materially change product
+  meaning, permissions, history, recovery, rollout, cost, compliance, or major
+  UX direction
+- the next packet can be produced from canonical Product Discovery packet data
+  without inventing facts
+
+If confidence is below 95 percent, the chat asks the single next highest-value
+business question. If confidence is at least 95 percent, the chat asks the one
+final readiness confirmation. After that confirmation is answered with no final
+follow-up, the system generates the packet and must not ask the same final
+confirmation again.
+
+### Granularity Gate
+
+A question is too granular for Layer 1 when the answer would only affect:
+
+- labels, button copy, icons, microcopy, or minor visual polish
+- ordinary loading, empty, hover, focus, or helper-text wording
+- implementation mechanism, route shape, schema shape, migration details,
+  framework choice, component internals, or provider configuration
+- a reversible UI convention where the product has an established default
+- a technical trade-off better owned by Technical Steering, PRD, API contract,
+  design-system, or implementation planning
+
+The chat should ask the question only when the answer would materially change
+product meaning, user value, access or visibility policy, durable history,
+mistake recovery, rollout, compatibility, cost, compliance, risk, or a major UX
+pattern. Otherwise it should state the common assumption in plain language and
+let the requester correct it.
+
+### Repetition And Assumption Handling
+
+The chat must not ask repeated unnecessary questions. Before asking, it checks
+the conversation state for already answered, assumed, deferred, or packaged
+topics. A follow-up is unnecessary when:
+
+- the requester already answered the topic directly
+- the prior answer can be safely summarized as a rule or usual case
+- a common baseline assumption covers the detail
+- the detail was already deferred or marked out of scope
+- the detail is technical and can be packaged for later planning
+- the final readiness confirmation has already been asked and answered
+
+Assumptions are part of the conversation, not hidden model behavior. Each
+assumption should be classified as `rule`, `usual-case`, `exception`,
+`out-of-scope`, or `deferred`. The requester can correct any assumption; a
+correction updates the deterministic state and should prevent the old assumption
+from reappearing as if it were still accepted.
+
+### Deterministic Catalogue And LLM Use
+
+The implementation must maintain a deterministic catalogue of response patterns,
+assumptions, and follow-up decisions before relying on token-consuming LLM
+handling. The catalogue should include:
+
+- coverage topics and their states: `unknown`, `answered`, `assumed`,
+  `deferred`, `out-of-scope`, `technical-packaged`, and
+  `blocked-real-decision`
+- common Product Discovery assumptions with trigger conditions, confidence
+  contribution, and correction behavior
+- question templates for the next highest-value business question
+- technical-packaging rules for implementation details
+- readiness criteria for 95 percent confidence
+- one-time final confirmation state
+- safe fallback responses when LLM usage is disabled, rate-limited, or fails
+
+Deterministic handling runs first. It should update known coverage, suppress
+duplicate questions, choose safe assumptions, detect final confirmation replies,
+and decide whether an LLM call is needed. LLM handling is allowed only for the
+remaining language task: producing a warm, concise, schema-valid turn inside the
+deterministic decision envelope. LLM output is accepted only after schema
+validation and policy checks; invalid output becomes a recoverable adapter
+failure or safe deterministic fallback, not accepted Product Discovery truth.
+
+The accepted turn states are:
+
+- `ask_business_question`: one material product question remains
+- `state_assumption`: a safe assumption advances the conversation without a
+  question
+- `blocked_by_real_decision`: a non-trivial business decision must be answered
+  before packet readiness
+- `ready_for_packet`: 95 percent confidence is reached and the one final
+  readiness confirmation should be asked
+
+The packet-generation route must rely on the persisted structured discovery
+state and the final confirmation state, not on a fresh free-form LLM judgment.
+
+## Product Discovery Adapter Behavior
+
+The Product Discovery adapter generates canonical Product Discovery packet
+data from the conversation.
+It must not create a parallel chat-only packet format.
 
 ## Lifecycle States
 

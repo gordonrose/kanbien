@@ -82,9 +82,22 @@ function createService() {
           messageId: messageData.messageId,
           role: messageData.role,
           body: messageData.body,
+          metadata: messageData.metadata,
           createdAt: NOW_ISO,
         }]
         : [],
+    })),
+    updateConversation: vi.fn(async () => conversationResponse),
+    editMessage: vi.fn(async () => ({
+      userMessage: messageData,
+      assistantMessage: {
+        ...messageData,
+        messageId: "00000000-0000-4000-8000-000000000006",
+        sequenceNumber: 2,
+        role: "assistant" as const,
+        createdByRootUserId: null,
+      },
+      conversation: conversationResponse,
     })),
     appendMessage: vi.fn(async () => ({
       userMessage: messageData,

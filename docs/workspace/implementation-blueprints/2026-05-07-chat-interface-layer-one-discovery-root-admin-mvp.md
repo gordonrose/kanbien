@@ -266,6 +266,142 @@ This blueprint does not implement:
   packet-generation status route requires refreshed API contract and
   implementation planning.
 
+## In-App Conversation Policy Implementation Plan
+
+The Build chat conversation policy must be deterministic first and LLM-assisted
+second. The implementation should treat the LLM as a phrasing and synthesis
+helper inside a deterministic Product Discovery state machine, not as the source
+of readiness, authority, or packet truth.
+
+### Conversation Flow
+
+1. Normalize and persist the requester message.
+2. Update structured discovery coverage from the message and existing state.
+3. Match the state against the deterministic catalogue for answered topics,
+   safe assumptions, repeated-question suppression, real blockers, and packet
+   readiness.
+4. If a deterministic response is sufficient, persist that response without an
+   LLM call.
+5. If language synthesis is useful and local usage guardrails allow it, call the
+   provider with the deterministic state, transcript excerpt, and permitted
+   next-step envelope.
+6. Validate the returned turn against schema and policy.
+7. Persist the accepted assistant turn with metadata for summary, next step,
+   confidence, assumptions, packaged technical questions, and whether the final
+   confirmation is pending.
+8. When the user answers the final confirmation with no follow-up, generate the
+   packet revision from persisted structured state and accepted metadata without
+   asking the same confirmation again.
+
+### Deterministic Catalogue
+
+Maintain a feature-owned catalogue, either as code constants or a small typed
+module under the Product Discovery adapter seam. The catalogue must be
+deterministic, testable, and independent from prompt wording.
+
+Required catalogue entries:
+
+- `coverageTopics`: goal, primary actor, product surface, normal workflow,
+  success signal, visibility/access, history/evidence, recovery, rollout,
+  compatibility, cost/risk/compliance, non-goals, deferred future work, and
+  technical questions.
+- `coverageStates`: `unknown`, `answered`, `assumed`, `deferred`,
+  `out-of-scope`, `technical-packaged`, `blocked-real-decision`.
+- `assumptionPatterns`: common Product Discovery defaults with trigger
+  conditions, user-facing wording, state effect, confidence contribution, and
+  correction/removal behavior.
+- `questionPatterns`: one-question templates ranked by business value and
+  blocked coverage topic.
+- `technicalPackagingPatterns`: implementation-detail detectors for API,
+  persistence, migration, component, provider, routing, and design-system
+  mechanism questions that should move to later planning instead of being asked
+  of the requester.
+- `granularityRules`: rules that reject questions about microcopy, icons,
+  ordinary visual states, reversible UI conventions, and technical mechanisms
+  unless the answer changes business meaning or risk.
+- `readinessRules`: the deterministic 95 percent confidence gate.
+- `confirmationPatterns`: accepted no-final-follow-up replies such as
+  "no", "nothing else", "all good", "go ahead", or "produce the packet".
+- `fallbackResponses`: safe local responses when provider calls are disabled,
+  blocked by usage limits, unavailable, or schema-invalid.
+
+### Confidence Calculation
+
+Confidence is derived from coverage, not from an unreviewed model score. The
+initial heuristic may be a weighted deterministic score, but it must obey these
+hard gates:
+
+- below 95 percent while any business-visible blocker remains
+- below 95 percent when normal successful behavior is not specific enough to
+  draft packet data
+- below 95 percent when primary actor or product surface is unknown and cannot
+  be safely assumed
+- below 95 percent when access, visibility, history, recovery, rollout,
+  compatibility, cost, compliance, or major UX policy remains unresolved for
+  the chosen scope
+- at least 95 percent only when all remaining unknowns are safe assumptions,
+  explicitly deferred, out of scope, or packaged technical questions
+
+The persisted turn may include a model-proposed `confidencePercent`, but the
+service must clamp or reject it against the deterministic gate before setting
+`readyForPacket`.
+
+### Too-Granular Question Detection
+
+Before asking a question, run the candidate against the granularity rules. A
+question is too granular when it concerns labels, button text, icons, helper
+copy, routine visual states, implementation mechanisms, route or schema shape,
+provider configuration, or a reversible UI convention. Ask it only if the
+catalogue classifies the answer as changing product meaning, value, access,
+durable history, recovery, rollout, compatibility, cost, compliance, risk, or a
+major UX pattern. Otherwise persist a `state_assumption` turn or package the
+detail for later planning.
+
+### Repeated-Question Avoidance
+
+The structured discovery state must store enough stable decisions to suppress
+repeat questions:
+
+- topic id
+- current state
+- latest user-supported summary
+- assumption classification: `rule`, `usual-case`, `exception`,
+  `out-of-scope`, or `deferred`
+- source message id or sequence number
+- whether a correction superseded the prior value
+- whether the topic has been packaged for later planning
+- whether final readiness confirmation has already been asked and answered
+
+When the requester corrects an assumption, mark the prior assumption superseded
+and remove it from future packet-generation inputs. Do not leave rejected
+behavior in fixtures, generated packet data, or prompt context.
+
+### LLM Routing Rules
+
+Use deterministic handling without an LLM call when:
+
+- the next response is a known fallback
+- the message is a final confirmation that should generate the packet
+- the catalogue has a direct next question
+- the catalogue can state a safe assumption without a material question
+- provider usage is disabled, over limit, or unavailable
+
+Use an LLM call only when it adds value by summarizing messy requester language,
+selecting warm phrasing inside the approved next-step envelope, or producing a
+schema-valid turn from deterministic state. The LLM prompt must receive only
+bounded transcript/context and must be told the allowed `nextStep`. The service
+must validate output and may not accept model-created packet facts that were not
+present in persisted state, accepted assumptions, or explicit user answers.
+
+### Packet Readiness And Confirmation
+
+`ready_for_packet` means the deterministic gate has reached 95 percent
+confidence and the one final confirmation should be asked. It does not by
+itself create a packet. Packet creation occurs only after the requester confirms
+there is no final follow-up or explicitly asks to produce the packet. Once that
+confirmation has been answered, the service should generate the packet revision
+and should not ask the final confirmation again for the same ready state.
+
 ## Generated Document / PDF Plan
 
 - Own configuration in `src/features/harnessChat/domain/pdfConfig.ts` or an

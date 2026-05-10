@@ -142,8 +142,28 @@ Conversation detail extends the summary with:
     "selectedStarterPromptId": "starter_123"
   },
   "structuredDiscoveryState": {
-    "targetUsers": [],
-    "goals": [],
+    "coverage": {
+      "normalWorkflow": {
+        "state": "answered",
+        "summary": "Business-facing summary of the accepted rule",
+        "sourceMessageSequenceNumber": 1
+      }
+    },
+    "assumptions": [
+      {
+        "topicId": "baseline.audit",
+        "classification": "usual-case",
+        "summary": "Baseline audit evidence is assumed for sensitive workflow changes",
+        "superseded": false
+      }
+    ],
+    "packagedTechnicalQuestions": [],
+    "readiness": {
+      "confidencePercent": 95,
+      "readyForPacket": true,
+      "finalConfirmationAsked": true,
+      "finalConfirmationAnswered": false
+    },
     "routing": {
       "deliveryPath": "core-platform-pr",
       "confidence": 0.8
@@ -155,6 +175,9 @@ Conversation detail extends the summary with:
 
 `surfaceContext` is retained as historical input and prompt context only. It
 does not grant authority.
+`structuredDiscoveryState` is server-owned Product Discovery state. Clients may
+read it but must not supply or overwrite coverage, assumptions, readiness,
+confidence, lifecycle, actor, or packet-generation fields.
 
 ### Packet Revision Summary
 
@@ -311,6 +334,13 @@ does not grant authority.
 - Persistence / side effects:
   persists the user message, appends the current assistant response, refreshes
   the parent conversation timestamp, and preserves structured discovery state.
+  The assistant response must be selected through the deterministic in-app
+  Product Discovery conversation policy before any LLM phrasing is accepted.
+  The route must avoid repeated unnecessary questions by checking persisted
+  coverage, assumptions, deferred topics, packaged technical questions, and
+  final-confirmation state before asking another question. If the incoming
+  message answers the one final readiness confirmation with no follow-up, the
+  service may generate the packet revision instead of calling the LLM again.
   Product Request status updates remain nullable/deferred until the persistent
   Product Request backing model is available. Invalid LLM proposals must not be
   persisted as accepted truth.
@@ -355,6 +385,10 @@ does not grant authority.
   revision superseded, updates the conversation to `packet-ready`, and records
   generation/supersession state in harness chat persistence. Adapter failure
   and packet validation failure evidence remains a planned hardening path.
+  For `readiness-gate`, generation is allowed only after persisted
+  deterministic Product Discovery state reached 95 percent confidence and the
+  one final readiness confirmation has been answered with no final follow-up.
+  The generation route must not rely on a fresh free-form LLM judgment.
 - Cross-feature reads:
   Product Discovery adapter and packet validation seam only. The chat feature
   must not create a parallel Product Discovery packet format.
