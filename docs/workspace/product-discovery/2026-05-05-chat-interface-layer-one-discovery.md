@@ -53,8 +53,10 @@ Draft safety label:
     mark earlier packets as superseded.
   - For MVP, the downloadable PDF contains the Product Discovery packet itself;
     there is no separate internal-only notes layer.
-  - For MVP, there is no explicit final review or confirmation step before PDF
-    generation; later refinements can add that.
+  - The in-app POC uses one final readiness confirmation before packet
+    generation: when the chat believes it has enough information, it says so,
+    asks whether the requester has any final follow-up, and produces the packet
+    for download when the requester indicates there is nothing else.
   - Two builder audiences exist: root builders and tenant builders.
   - Root builders build for the whole platform.
   - Tenant builders build for tenant-specific configurations or repos, limited
@@ -118,10 +120,10 @@ Draft safety label:
 | Authority and responsibility boundaries | answered | Root builders can act platform-wide; tenant builders are tenant-scoped by permission. | no |
 | Data created, changed, viewed, retained, or deleted | answered | Chat transcript, contextual prompt selections, packet content, PDF export, and history records are retained indefinitely for MVP until a broader policy exists. | no |
 | Lifecycle states and transitions | answered | Conversation draft, packet-ready, PDF-generated, downloaded, history-visible, abandoned, and superseded states are implied; newer packets mark earlier ones as superseded. | no |
-| Exceptions, reversals, and recovery | deferred-with-known-direction | MVP skips final review/confirmation; mistaken context selection, PDF failure, and access changes are packaged for Technical Steering. | no |
+| Exceptions, reversals, and recovery | deferred-with-known-direction | The in-app POC uses one final readiness confirmation before packet generation; mistaken context selection, PDF failure, and access changes are packaged for Technical Steering. | no |
 | Visibility, notifications, and user feedback | answered | Chat creators can see their own history; root builders can see root-admin discovery histories for review/support. | no |
 | Security, privacy, audit, compliance, and abuse baseline | assumed-baseline | Required because the feature touches roles, tenant context, generated discovery records, and downloadable files. | no |
-| Business policy decisions | answered | MVP skips explicit final review/confirmation before PDF generation; later refinement can add review behavior. | no |
+| Business policy decisions | answered | The in-app POC uses one final readiness confirmation before packet generation; later refinements may add richer review/correction behavior. | no |
 | Configuration or customization | deferred-with-known-direction | Tenant builders may use this for tenant-specific configurations or repos later; MVP only captures discovery packet output. | yes |
 | Billing, plan, quota, or entitlement impact | deferred-open | No billing decision was discussed; future tenant builder availability may need entitlement rules. | yes |
 | Operational and support needs | deferred-with-known-direction | Support appears as a coming-soon action for MVP; a later support workflow still needs discovery. | no |
@@ -153,7 +155,7 @@ Draft safety label:
 | frontend / UX | primary user value | answered | Give builders a contextual way to start discovery from where they already are. | no |
 | frontend / UX | surface and management location | answered | Persistent right panel; mobile floating button; Build opens chat. | no |
 | frontend / UX | list size, search, comparison, and review needs | not-applicable | MVP is chat and contextual starter prompts, not a large selectable list. | no |
-| frontend / UX | mistake recovery and confirmation needs | deferred-with-known-direction | No explicit final confirmation for MVP; later refinements can add review/correction behavior. | no |
+| frontend / UX | mistake recovery and confirmation needs | answered | One final readiness confirmation is enough before packet generation; repeated final confirmations are not approved. | no |
 | frontend / UX | empty, denied, loading, failed, and degraded states | deferred-open | Not yet explored. | yes |
 | frontend / UX | customer-facing wording and confidence needs | answered | PDF must be well presented for internal and tenant-side readers. | no |
 | frontend / UX | governed design-system or frontend topology signal | assumed-baseline | Side panel, floating mobile action, and chat UI are governed frontend patterns. | no |
@@ -165,7 +167,7 @@ Draft safety label:
 | compliance / reporting | customer-visible versus operator-only evidence | answered | MVP PDF contains the Product Discovery packet itself, with scope controlling what context is included. | no |
 | operations / support | support/operator access posture | deferred-with-known-direction | Support is not an active MVP flow; later support behavior needs separate discovery. | no |
 | integration / API | consumer and provider actors | defer-to-technical-steering | The app consumes a chat harness; exact seams are technical. | no |
-| workflow / approval | approval posture | answered | MVP does not require explicit final review/confirmation before PDF generation. | no |
+| workflow / approval | approval posture | answered | MVP requires only one final readiness confirmation before PDF generation; it must not repeatedly ask the same final confirmation. | no |
 
 ## Known Questions Gate
 
@@ -521,7 +523,7 @@ Examples involve:
 | What should Support do after the MVP? | Support is visible but inactive in the MVP; later behavior needs its own product answer. | no | deferred; likely separate discovery | yes |
 | What should replace indefinite retention later? | MVP keeps records indefinitely, but a production retention policy should eventually decide archive/delete/legal-hold behavior. | no | deferred; future governance | yes |
 | Should tenant-facing PDFs include only shared business language, or also internal notes? | The MVP uses the Product Discovery packet only, with no separate internal-only notes layer. | no | answered by requester | not-applicable |
-| What exactly should happen before PDF generation? | MVP skips explicit final review/confirmation; later refinement can add a review step. | no | answered by requester | not-applicable |
+| What exactly should happen before PDF generation? | The chat asks one final readiness confirmation when it believes it has enough information; if the requester has no final follow-up, the packet is produced for download. | no | answered by requester | not-applicable |
 
 ## Technical Questions For Technical Stakeholders
 
@@ -579,7 +581,7 @@ Examples involve:
 | FDBK-004 | user interview | For MVP, chat creators can see their own history and root builders can see root-admin discovery histories for review/support. | visibility / history | accept | Defer tenant-builder history rules until tenant-builder rollout. |
 | FDBK-005 | user interview | For MVP, retain chat history and generated PDFs indefinitely; mark earlier packets superseded when a newer packet is generated from the same conversation. | lifecycle / retention | accept | Defer broader retention policy to later governance. |
 | FDBK-006 | user interview | For MVP, the downloadable PDF should just contain the Product Discovery packet, with no separate internal-only notes layer. | PDF content / evidence | accept | Treat scope filtering as the privacy boundary for MVP. |
-| FDBK-007 | user interview | For MVP, skip the explicit final review/confirmation step before PDF generation; refinements can happen later. | workflow / approval | accept | Treat PDF generation as direct once the chat has enough packet content. |
+| FDBK-007 | user interview | The POC should use one final readiness confirmation before packet generation and must not repeat that confirmation after the requester has no final follow-up. | workflow / approval | accept | Treat packet generation as direct after the one readiness confirmation is answered with no final follow-up. |
 
 ## Discovery Revision Ledger
 
@@ -602,7 +604,9 @@ Examples involve:
     conversation as superseded.
   - The downloadable PDF contains the Product Discovery packet itself, with no
     separate internal-only notes layer for MVP.
-  - MVP skips explicit final review/confirmation before PDF generation.
+  - The in-app POC uses one final readiness confirmation before packet
+    generation and must not repeat that confirmation after the requester has no
+    final follow-up.
   - Build starts Level 1 Product Discovery.
   - Root and tenant builder audiences exist.
   - Tenant builder packets must be tenant-scoped.

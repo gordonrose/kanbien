@@ -44,8 +44,10 @@
   placeholder overview content remains in
   `src/frontend/rootAdminShell/index.html`; protected Build-panel orchestration
   lives in `src/frontend/rootAdminShell/assets/app.mjs`, starts with no seeded
-  placeholder transcript/history, and calls the real harness chat APIs for
-  conversation, assistant, packet generation, and PDF download behavior
+  placeholder transcript/history, displays only a personalized greeting before
+  the first conversation, suppresses unapproved composer actions and no-packet
+  download UI, and calls the real harness chat APIs for conversation,
+  assistant, packet generation, and PDF download behavior
 - Design-system sourced implementation evidence:
   governed shell chrome and root-admin context-nav host/render seams are now
   DS-owned, and the Build conversation panel consumes
@@ -150,12 +152,12 @@
   not durable backlog persistence
 - Local implementation evidence:
   `src/frontend/rootAdminShell/index.html` keeps only the empty route mount;
-  `src/frontend/rootAdminShell/assets/buildBacklogPage.mjs` supplies page copy
+  `src/frontend/rootAdminShell/routes/build/backlog/page.mjs` supplies page copy
   and representative tab/category/row data
 - Design-system sourced implementation evidence:
   `src/frontend/designSystem/assets/floatingTabHeader.mjs` owns the floating
   tab header render structure and controller behavior, consumed by
-  `src/frontend/rootAdminShell/assets/buildBacklogPage.mjs`
+  `src/frontend/rootAdminShell/routes/build/backlog/page.mjs`
 - Required remediation before more page work:
   connect real Build backlog behavior only after a product/API contract exists;
   keep tab header visual, ARIA, overflow, category drawer, attention, sub-tab,

@@ -32,7 +32,8 @@
   The review surface now exists, has user signoff for the MVP direction, and
   has rendered smoke evidence for dark theme, RTL controls, high
   magnification, the right-side icon toolbar, conversation history, composer
-  menu, message actions, and packet download journey.
+  menu, message actions, packet download journey, and conversation history
+  management affordances.
 
 ## Source Verification
 
@@ -65,7 +66,8 @@
   conversation-history expand/collapse, conversation selection, typed message,
   expandable composer tools menu, copy/edit/reply message actions, packet
   available, packet preparing, completed packet history event, repeat-download
-  action, and mobile floating action.
+  action, mobile floating action, new-chat action, history row rename/archive
+  actions, archive undo, and archived-history recovery view.
 - Overflow or clipping checks:
   transcript scroll, long conversation titles, long page/module/role names,
   long packet title, composer reachability.
@@ -78,11 +80,11 @@
   align to shell gutters and avoid content reflow.
 - Screenshot or rendered evidence reference:
   `tests/visual/designSystem/canonicals/shell/buildWorkPanel.spec.ts`
-  verifies launcher links, `BWP-R-001` through `BWP-R-020`, geometry,
+  verifies launcher links, `BWP-R-001` through `BWP-R-022`, geometry,
   horizontal overflow, mobile framing, target sizes, accessible names, visible
   text contrast, tools-menu close/focus behavior, composer growth, completed
-  download history, RTL, dark mobile preparing state, edit state, and reply
-  state.
+  download history, RTL, dark mobile preparing state, edit state, reply state,
+  history hover actions, archive undo, and archived-history recovery.
 
 ## Accessibility Verification
 
@@ -99,7 +101,7 @@
   Playwright verifies visible controls expose accessible names and no visible
   control falls below the 24px minimum target-size smoke threshold.
 - Contrast or motion considerations:
-  visible text contrast smoke passes across `BWP-R-001` through `BWP-R-020`.
+  visible text contrast smoke passes across `BWP-R-001` through `BWP-R-022`.
   Formal WCAG audit and axe automation remain pending.
 - Localization or long-content considerations:
   RTL, high-magnification, long typed input, long mobile content, and dark
@@ -112,7 +114,8 @@
 - Default:
   review surface verified.
 - Hover / pressed / focus:
-  planned; not verified.
+  history row actions are covered by `BWP-R-021`; broader pressed/focus state
+  coverage remains a later app-adoption proof.
 - Selected / active:
   Build active verified in review surface.
 - Disabled:
@@ -171,8 +174,12 @@
   markup, data hooks, classes, controller behavior, or app-local CSS.
 - Root-admin parity coverage:
   `tests/visual/app/rootAdminShell/rootAdminShellParity.spec.ts` verifies
-  desktop shared-seam adoption, local send/download handler behavior, no page
-  reflow, and mobile close/floating-action recovery.
+  desktop shared-seam adoption, personalized empty greeting, hidden no-packet
+  state, no unapproved composer tools, local send/download handler behavior,
+  no page reflow, and mobile close/floating-action recovery.
 - Required handler coverage before app parity signoff:
-  send message, mode select, panel/history/tools open changes, packet download,
-  copy message, edit message, reply to message, and composer tool actions.
+  send message, mode select, panel/history open changes, packet download, copy
+  message, edit message, reply to message, new conversation, history view
+  select, rename conversation, archive conversation, and undo archive.
+  Tools-open and composer tool handlers are required only for consumers that
+  expose approved composer tools.

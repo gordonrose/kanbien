@@ -63,7 +63,7 @@ specifiers or an equivalent governed asset-versioning seam.
 For the root-admin Build Backlog first consumer, the required chain is:
 
 - `/root-admin/assets/app.mjs?v=2026-05-08-floating-tab-tooltip-contract`
-- `./buildBacklogPage.mjs?v=2026-05-08-floating-tab-tooltip-contract`
+- `../routes/registry.mjs` and `routes/build/backlog/page.mjs`
 - `/design-system/assets/floatingTabHeader.mjs?v=2026-05-08-overflow-tooltip-contract`
 
 ## Browser Proof Requirements

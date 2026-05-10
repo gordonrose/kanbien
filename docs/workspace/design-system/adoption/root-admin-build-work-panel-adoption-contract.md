@@ -44,7 +44,8 @@
   root-admin shell; exact route integration deferred.
 - Workflow states in scope:
   panel launcher, inactive Reporting/Support actions, active Build chat,
-  contextual starters, visible history, packet generated/download available,
+  contextual starters, visible history, new chat, editable conversation titles,
+  archive/restore history management, packet generated/download available,
   failed generation, denied access.
 - Workflow states explicitly deferred:
   active Reporting flow, active Support flow, tenant-builder rollout, in-app
@@ -58,15 +59,16 @@
 - Required behavior-lock IDs:
   `BWP-*`
 - Required canonical reference states:
-  `BWP-R-001` through `BWP-R-020`, or approved replacements.
+  `BWP-R-001` through `BWP-R-022`, or approved replacements.
 - Which parts of the pattern are mandatory for parity?
   launcher, panel attachment, action list, inactive actions, Build chat,
-  visible history, composer tools menu, message copy/edit/reply actions, packet
-  status/download affordance, denied state, mobile launcher, close/focus
-  behavior, RTL and magnification support.
+  visible history, new-chat and history archive/recovery actions, message
+  copy/edit/reply actions, packet status/download affordance when a real
+  packet is available, denied state, mobile launcher, close/focus behavior,
+  RTL and magnification support.
 - Which parts are intentionally deferred in this first consumer?
-  active Reporting/Support payloads, tenant-builder UI, stored rendered PDF
-  assets, public delivery, inline PDF preview.
+  active Reporting/Support payloads, composer tools/actions, tenant-builder UI,
+  stored rendered PDF assets, public delivery, inline PDF preview.
 
 ## Governed Adoption Preflight
 
@@ -85,14 +87,17 @@
   `createBuildConversationPanelConfig(overrides)`.
 - Required handler seam:
   `createConversationPanelController(root, { config, handlers })`, with
-  handlers for send, mode selection, open-state changes, packet download,
-  copy/edit/reply message actions, and composer tool actions.
+  handlers for send, mode selection, open-state changes, packet download, and
+  copy/edit/reply message actions. Composer tool actions are supplied only
+  when the consuming product surface has approved tools to expose.
 - Family-owned visible regions:
   launcher, panel surface, action list, Build chat anatomy, conversation
-  history, transcript, composer, packet status/action, close control.
+  history, history management controls, transcript, composer, packet
+  status/action, close control.
 - Host-owned visible regions:
   root-admin page content behind the panel, route/module labels supplied as
-  context, authenticated user/role display source.
+  server prompt context, authenticated user display source, initial greeting
+  copy, and whether no-packet/no-tools runtime states are exposed.
 - Approved intentional deviations before implementation:
   none.
 - Shared-entrypoint parity expectation:
@@ -203,7 +208,7 @@
 ## Canonical And Consumer Truth
 
 - Canonical states this consumer depends on:
-  `BWP-R-001` through `BWP-R-020`, or approved replacements.
+  `BWP-R-001` through `BWP-R-022`, or approved replacements.
 - Consumer-specific states not fully proven by canonicals alone:
   live root-admin page/module/role context, API denied states, real generated
   packet availability, permission mapping.

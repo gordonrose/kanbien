@@ -88,7 +88,11 @@
   - Scale posture is Option 2 light: a moderate shared export seam with bounded
     concurrency, timeout, fallback, and rate-limit controls, while preserving a
     path to a future high-volume async export pipeline.
-  - explicit final review before PDF generation is not required for MVP.
+  - one final readiness confirmation before packet generation is required for
+    the in-app POC. When the chat believes it has enough information, it asks
+    whether the requester has any final follow-up; if the requester says there
+    is nothing else, the system generates the packet for download. Repeating
+    the same final confirmation is not approved.
   - tenant-builder rollout is a future expansion but tenant scope and
     cross-tenant deny remain required design constraints.
 - New family or template decision: `approved-new-family`

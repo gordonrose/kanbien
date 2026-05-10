@@ -75,6 +75,8 @@ This pack is governed by:
 | `BWP-R-018` | `/design-system/canonical-renderings/build-work-panel/BWP-R-018` | Harness reply prefill | Proves replying to a harness message pre-fills the composer while preserving the compact action row. | canonical-created | Covers harness response workflow. |
 | `BWP-R-019` | `/design-system/canonical-renderings/build-work-panel/BWP-R-019` | Mobile long-content stress | Proves long mobile messages, packet status, and composer remain reachable without clipping. | canonical-created | Highest-risk mobile overflow state. |
 | `BWP-R-020` | `/design-system/canonical-renderings/build-work-panel/BWP-R-020` | Dark mobile preparing download | Proves dark mobile rendering keeps the preparing state readable while preserving panel structure. | canonical-created | Covers prior dark-theme and mobile-frame regressions together. |
+| `BWP-R-021` | `/design-system/canonical-renderings/build-work-panel/BWP-R-021` | History hover actions | Proves new-chat, rename, archive, and undo affordances fit inside the slim history lane without making rows bulky. | canonical-created | Covers hover/focus row action reveal and reversible archive. |
+| `BWP-R-022` | `/design-system/canonical-renderings/build-work-panel/BWP-R-022` | Archived history view | Proves archived chats leave the active list but remain recoverable inside the history panel. | canonical-created | Covers the first archived recovery view. |
 
 ## High-Risk Review Batch
 
@@ -89,6 +91,7 @@ The highest-risk review states are:
 - `BWP-R-015` download completed journey
 - `BWP-R-019` mobile long-content stress
 - `BWP-R-020` dark mobile preparing download
+- `BWP-R-021` history hover actions
 
 These states prove the core workflow, responsive shape, accessibility stress,
 and PDF action posture.
@@ -100,6 +103,8 @@ and PDF action posture.
 - Reporting and Support are visible inactive actions.
 - Large starter prompts are rejected for the MVP direction.
 - Conversation history is a collapsible adjacent lane.
+- Conversation history includes a fast new-chat action, editable titles,
+  hover/focus row actions, reversible archive, and an archived recovery view.
 - Chat action tools use an expandable composer menu.
 - Context display never grants access.
 - History remains visible and recoverable.
@@ -122,7 +127,7 @@ and PDF action posture.
   `/design-system/canonicals/build-work-panel`
 - Dedicated canonical render states:
   `/design-system/canonical-renderings/build-work-panel/BWP-R-001` through
-  `/design-system/canonical-renderings/build-work-panel/BWP-R-020`
+  `/design-system/canonical-renderings/build-work-panel/BWP-R-022`
 - Browser verification:
   rendered smoke checks passed for current review surface; full canonical
   browser suite exists in

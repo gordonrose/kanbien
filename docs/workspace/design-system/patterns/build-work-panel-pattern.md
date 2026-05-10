@@ -191,7 +191,7 @@
   download, copy, edit, reply, and composer tool actions.
 - If no, what must stabilize first?
   live data/API boundaries. Full Playwright canonical coverage now exists for
-  `BWP-R-001` through `BWP-R-020`, the neutral app-consumable style entrypoint
+  `BWP-R-001` through `BWP-R-022`, the neutral app-consumable style entrypoint
   is `/design-system/assets/conversationPanel.css`, and root-admin UI-only
   parity now consumes the shared seam.
 
