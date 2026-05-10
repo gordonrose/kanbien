@@ -149,7 +149,6 @@ async function bootstrapAuthenticatedBuildBacklog(page: Page) {
   await page.locator("#shell-view").waitFor({ state: "visible" });
   await page.locator("#page-build-backlog").waitFor({ state: "visible" });
   await page.locator("#floating-tab-header").waitFor({ state: "visible" });
-  await page.locator("[data-build-work-panel-close]").click();
   await expect(page.locator("[data-build-work-panel-panel]")).not.toHaveClass(/is-open/);
 }
 

@@ -65,16 +65,27 @@ async function bootstrapAuthenticatedOverview(page: Page) {
   });
 
   await page.route("**/v1/root-admin/harness-chat/conversations", async (route) => {
+    const body = requestBodyOrNull(route) as { initialMessage?: string } | null;
     harnessChatRequests.push({
       method: route.request().method(),
       url: route.request().url(),
-      body: requestBodyOrNull(route),
+      body,
     });
     if (route.request().method() === "POST") {
+      const shouldReturnPacket = body?.initialMessage?.includes("Use the visible page context") === true;
       await route.fulfill({
         status: 201,
         contentType: "application/json",
-        body: JSON.stringify(conversationPayload()),
+        body: JSON.stringify(
+          conversationPayload(
+            shouldReturnPacket
+              ? {
+                  latestPacketRevisionId: packetRevisionId,
+                  latestPacketState: "generated",
+                }
+              : {},
+          ),
+        ),
       });
       return;
     }
@@ -92,16 +103,25 @@ async function bootstrapAuthenticatedOverview(page: Page) {
   });
 
   await page.route(`**/v1/root-admin/harness-chat/conversations/${conversationId}/messages`, async (route) => {
+    const body = requestBodyOrNull(route) as { message?: string } | null;
     harnessChatRequests.push({
       method: route.request().method(),
       url: route.request().url(),
-      body: requestBodyOrNull(route),
+      body,
     });
+    const shouldReturnPacket = body?.message?.includes("Use the visible page context") === true;
     await route.fulfill({
       status: 201,
       contentType: "application/json",
       body: JSON.stringify({
-        conversation: conversationPayload(),
+        conversation: conversationPayload(
+          shouldReturnPacket
+            ? {
+                latestPacketRevisionId: packetRevisionId,
+                latestPacketState: "generated",
+              }
+            : {},
+        ),
       }),
     });
   });
@@ -156,6 +176,21 @@ async function bootstrapAuthenticatedOverview(page: Page) {
         totalPages: 0,
         totalMatchingRecords: 0,
         totalSearchableRecords: 0,
+      }),
+    });
+  });
+
+  await page.route("**/v1/web-app-hierarchy/tree", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        rootFamilies: [
+          {
+            rootFamilyId: "root-admin",
+            modules: [],
+          },
+        ],
       }),
     });
   });
@@ -285,9 +320,11 @@ test("root-admin Build panel consumes the shared conversation panel seam with pr
 
   const mount = page.locator("#root-admin-conversation-panel-mount.conversation-panel-shell-mount");
   await expect(mount).toBeVisible();
-  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeVisible();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeHidden();
   await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-action-nav")).toBeVisible();
   await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-build-action]")).toHaveAttribute("aria-pressed", "true");
+  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-build-action]").click();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeVisible();
   const shellPanelGeometry = await page.locator(".conversation-panel-shell-mount").evaluate((mount) => {
     const panel = mount.querySelector(".build-work-panel-demo-panel");
     const thread = mount.querySelector(".build-work-panel-demo-thread");
@@ -358,6 +395,29 @@ test("root-admin Build panel consumes the shared conversation panel seam with pr
   expect(closedRailClearance.gap).toBeGreaterThanOrEqual(8);
   await page.locator(".conversation-panel-shell-mount [data-build-work-panel-build-action]").click();
   await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-panel")).toBeVisible();
+  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").first()).toContainText(
+    "hello Root, what would you like us to work on today?",
+  );
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-tools-toggle]")).toHaveCount(0);
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-packet]")).toHaveCount(0);
+  const composerGeometry = await page.locator(".conversation-panel-shell-mount").evaluate((mount) => {
+    const composer = mount.querySelector(".build-work-panel-demo-composer");
+    const textarea = mount.querySelector("[data-build-work-panel-message]");
+    const send = mount.querySelector(".build-work-panel-demo-send");
+    if (!(composer instanceof HTMLElement) || !(textarea instanceof HTMLElement) || !(send instanceof HTMLElement)) {
+      return { inputShare: 0, gap: -1 };
+    }
+
+    const composerRect = composer.getBoundingClientRect();
+    const textareaRect = textarea.getBoundingClientRect();
+    const sendRect = send.getBoundingClientRect();
+    return {
+      inputShare: textareaRect.width / composerRect.width,
+      gap: sendRect.left - textareaRect.right,
+    };
+  });
+  expect(composerGeometry.inputShare).toBeGreaterThan(0.82);
+  expect(composerGeometry.gap).toBeGreaterThanOrEqual(6);
   const mainAfter = await page.locator("#root-admin-main").boundingBox();
   expect(mainAfter?.x).toBe(mainBefore?.x);
   expect(mainAfter?.y).toBe(mainBefore?.y);
@@ -367,11 +427,8 @@ test("root-admin Build panel consumes the shared conversation panel seam with pr
   await page.locator(".conversation-panel-shell-mount .build-work-panel-demo-send").click();
   await expect(page.locator("#shell-message")).toBeHidden();
   await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").last()).toContainText("Captured by protected harness API");
-
-  await page.locator(".conversation-panel-shell-mount [data-build-work-panel-download]").first().click();
-  await expect(page.locator("#shell-message")).toBeHidden();
   await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-packet]")).toHaveCount(0);
-  await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").last()).toContainText("Product Discovery packet downloaded");
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-download]")).toHaveCount(0);
 
   await page.locator(".conversation-panel-shell-mount [data-build-work-panel-edit-message]").first().click();
   await expect(page.locator("#shell-message")).toBeHidden();
@@ -423,11 +480,13 @@ test("root-admin Build panel treats page context as prompt data rather than URL 
   });
 
   await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").first()).toContainText(
-    "prompt context only",
+    "hello Root, what would you like us to work on today?",
   );
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-packet]")).toHaveCount(0);
   await page.locator(".conversation-panel-shell-mount [data-build-work-panel-message]").fill("Use the visible page context only as context.");
   await page.locator(".conversation-panel-shell-mount .build-work-panel-demo-send").click();
   await expect(page.locator(".conversation-panel-shell-mount .build-work-panel-demo-message").last()).toContainText("Captured by protected harness API");
+  await expect(page.locator(".conversation-panel-shell-mount [data-build-work-panel-packet]")).toBeVisible();
   await page.locator(".conversation-panel-shell-mount [data-build-work-panel-download]").first().click();
 
   const createRequest = harnessChatRequests.find((request) =>
