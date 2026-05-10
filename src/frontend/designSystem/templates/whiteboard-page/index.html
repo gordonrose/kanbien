@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Whiteboard Page Template</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body>
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div id="primary-nav-links" class="primary-nav-links">
+            <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+          <div id="primary-nav-overflow" class="primary-nav-overflow hidden">
+            <button
+              id="primary-nav-overflow-button"
+              class="nav-link primary-nav-overflow-button"
+              type="button"
+              aria-expanded="false"
+              aria-controls="primary-nav-overflow-menu"
+            >
+              More
+            </button>
+            <div
+              id="primary-nav-overflow-menu"
+              class="primary-nav-overflow-menu hidden"
+              role="menu"
+              aria-labelledby="primary-nav-overflow-button"
+            >
+              <span class="menu-item breadcrumb-structure-current" aria-current="page">Overview</span>
+              <a class="menu-item" href="/design-system/canonical-renderings" role="menuitem">Canonical Renderings</a>
+              <a class="menu-item" href="/design-system/canonicals" role="menuitem">Canonicals</a>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol id="breadcrumb-list" class="breadcrumb-list">
+            <li id="breadcrumb-home-item"><a id="breadcrumb-home-link" class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li id="breadcrumb-separator-before-page-minus-one"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-page-minus-one-item"><a id="breadcrumb-page-minus-one-link" class="breadcrumb-button" href="/design-system/templates">Templates</a></li>
+            <li id="breadcrumb-separator-before-current"><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li id="breadcrumb-current-item"><span class="breadcrumb-button breadcrumb-current" aria-current="page">Whiteboard Page</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input
+              id="design-system-search"
+              class="search-input"
+              type="search"
+              name="q"
+              placeholder="Search whiteboard template notes"
+            />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Whiteboard-page section navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/templates/whiteboard-page" data-tooltip="Whiteboard Page" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false">
+                <path d="M4 5h16v14H4zm2 2v10h12V7zm3 2h2v2H9zm4 0h2v2h-2zM9 13h6v2H9z" />
+              </svg>
+            </span>
+            <span class="context-nav-label">Whiteboard</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <main class="design-system-page-main whiteboard-template-main">
+        <section class="whiteboard-template-shell" aria-labelledby="whiteboard-template-title" data-whiteboard-template>
+          <header class="whiteboard-template-header">
+            <div>
+              <p class="top-nav-preview-eyebrow">Template Demo</p>
+              <h1 id="whiteboard-template-title" class="component-catalog-section-title">Whiteboard Page Template</h1>
+              <p class="component-catalog-meta">
+                A shell-contained whiteboard page with a full-screen review option for focused spatial editing.
+              </p>
+            </div>
+            <div class="whiteboard-template-header-actions">
+              <a class="accessibility-chip" href="/design-system/templates/whiteboard-page?fullscreen=true" data-whiteboard-fullscreen-link>Full screen</a>
+              <div class="whiteboard-template-status" aria-live="polite" data-whiteboard-status>Click anywhere to add to the board</div>
+            </div>
+          </header>
+
+          <section class="whiteboard-board-panel whiteboard-board-embed" aria-label="Interactive whiteboard demo">
+            <div class="whiteboard-zoom-controls" aria-label="Whiteboard zoom controls">
+              <label for="whiteboard-zoom-slider">Zoom</label>
+              <input
+                id="whiteboard-zoom-slider"
+                data-whiteboard-zoom-slider
+                type="range"
+                min="50"
+                max="200"
+                step="5"
+                value="100"
+              />
+              <output data-whiteboard-zoom-label for="whiteboard-zoom-slider">100%</output>
+            </div>
+            <div class="whiteboard-viewport" data-whiteboard-viewport tabindex="0" aria-label="Major and minor gridded whiteboard">
+              <div class="whiteboard-canvas" data-whiteboard-canvas>
+                <svg class="whiteboard-connectors" data-whiteboard-connectors aria-hidden="true"></svg>
+                <svg class="whiteboard-draft-connector hidden" data-whiteboard-draft-connector aria-hidden="true">
+                  <line x1="0" y1="0" x2="0" y2="0"></line>
+                </svg>
+                <div class="whiteboard-alignment-guide whiteboard-alignment-guide-vertical hidden" data-whiteboard-guide="vertical" aria-hidden="true"></div>
+                <div class="whiteboard-alignment-guide whiteboard-alignment-guide-horizontal hidden" data-whiteboard-guide="horizontal" aria-hidden="true"></div>
+
+                <div
+                  class="whiteboard-floating-toolbar hidden"
+                  data-whiteboard-floating-toolbar
+                  data-whiteboard-toolbar-mode="create"
+                  aria-label="Whiteboard contextual toolbar"
+                >
+                  <div class="whiteboard-create-tools" data-whiteboard-create-tools>
+                    <button class="whiteboard-tool-pill whiteboard-icon-button" type="button" data-whiteboard-create="note" data-tooltip="Post-it" aria-label="Post-it">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v11.5L14.5 20H5zm9.5 16v-4.5H19" /></svg>
+                      <span class="visually-hidden">Post-it</span>
+                    </button>
+                    <details class="whiteboard-menu" data-whiteboard-menu="shape">
+                      <summary class="whiteboard-icon-button" data-tooltip="Shape" aria-label="Shape">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h9v7H5zm12.5 1a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM6 16h13v3H6z" /></svg>
+                        <span class="visually-hidden">Shape</span>
+                      </summary>
+                      <div class="whiteboard-menu-panel">
+                        <button type="button" data-whiteboard-shape="rectangle">Rectangle</button>
+                        <button type="button" data-whiteboard-shape="square">Square</button>
+                        <button type="button" data-whiteboard-shape="circle">Circle</button>
+                      </div>
+                    </details>
+                    <button class="whiteboard-tool-pill whiteboard-icon-button" type="button" data-whiteboard-create="text" data-tooltip="Text" aria-label="Text">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h14v3h-5.5v11h-3V8H5z" /></svg>
+                      <span class="visually-hidden">Text</span>
+                    </button>
+                    <details class="whiteboard-menu" data-whiteboard-menu="colour">
+                      <summary class="whiteboard-icon-button" data-tooltip="Colour" aria-label="Colour">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 0 0 0 16h1.2a1.55 1.55 0 0 0 1.25-2.45 1.5 1.5 0 0 1 1.2-2.4H17a3 3 0 0 0 3-3A8.15 8.15 0 0 0 12 4zM7.9 12.2a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2zm3-3.1a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2zm4 0a1.1 1.1 0 1 1 0-2.2 1.1 1.1 0 0 1 0 2.2z" /></svg>
+                        <span class="visually-hidden">Colour</span>
+                      </summary>
+                      <div class="whiteboard-menu-panel whiteboard-menu-colours">
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-create-fill="#fff3a3" style="--swatch-color: #fff3a3" aria-label="Yellow"></button>
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-create-fill="#ffd6e7" style="--swatch-color: #ffd6e7" aria-label="Pink"></button>
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-create-fill="#c6f6d5" style="--swatch-color: #c6f6d5" aria-label="Green"></button>
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-create-fill="#bfdbfe" style="--swatch-color: #bfdbfe" aria-label="Blue"></button>
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-create-fill="#f8fafc" style="--swatch-color: #f8fafc" aria-label="White"></button>
+                      </div>
+                    </details>
+                  </div>
+
+                  <div class="whiteboard-edit-tools" data-whiteboard-edit-tools>
+                    <details class="whiteboard-menu" data-whiteboard-menu="fill">
+                      <summary class="whiteboard-icon-button" data-tooltip="Fill" aria-label="Fill">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 4 9 9-5 5-7-7zm9 9 2 2a2.8 2.8 0 0 1-4 4l-1-1zM4 20h16v2H4z" /></svg>
+                        <span class="visually-hidden">Fill</span>
+                      </summary>
+                      <div class="whiteboard-menu-panel whiteboard-menu-colours">
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-fill="#fff3a3" style="--swatch-color: #fff3a3" aria-label="Yellow fill"></button>
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-fill="#ffd6e7" style="--swatch-color: #ffd6e7" aria-label="Pink fill"></button>
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-fill="#c6f6d5" style="--swatch-color: #c6f6d5" aria-label="Green fill"></button>
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-fill="#bfdbfe" style="--swatch-color: #bfdbfe" aria-label="Blue fill"></button>
+                        <button class="whiteboard-swatch" type="button" data-whiteboard-fill="#f8fafc" style="--swatch-color: #f8fafc" aria-label="White fill"></button>
+                      </div>
+                    </details>
+                    <div class="whiteboard-toolbar-divider" aria-hidden="true"></div>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-format="bold" data-tooltip="Bold" aria-label="Bold">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h6.2a4.2 4.2 0 0 1 1.7 8.04A4.4 4.4 0 0 1 13.5 21H7zm4 7h2a1.8 1.8 0 0 0 0-3.6h-2zm0 6.6h2.4a2.1 2.1 0 0 0 0-4.2H11z" /></svg>
+                      <span class="visually-hidden">Bold</span>
+                    </button>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-format="italic" data-tooltip="Italic" aria-label="Italic">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4h8v3h-2.7l-3.6 10H14v3H6v-3h2.7l3.6-10H10z" /></svg>
+                      <span class="visually-hidden">Italic</span>
+                    </button>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-format="align-left" data-tooltip="Align left" aria-label="Align left">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4zm0 5h10v2H4zm0 5h16v2H4z" /></svg>
+                      <span class="visually-hidden">Align left</span>
+                    </button>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-format="align-center" data-tooltip="Align center" aria-label="Align center">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v2H4zm3 5h10v2H7zm-3 5h16v2H4z" /></svg>
+                      <span class="visually-hidden">Align center</span>
+                    </button>
+                    <div class="whiteboard-toolbar-divider" aria-hidden="true"></div>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-action="group" data-tooltip="Group" aria-label="Group">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h7v7H4zm9 0h7v7h-7zM4 14h7v5H4zm9 0h7v5h-7z" /></svg>
+                      <span class="visually-hidden">Group</span>
+                    </button>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-action="ungroup" data-tooltip="Ungroup" aria-label="Ungroup">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6v6H4zm10 0h6v6h-6zM4 15h6v4H4zm10 0h6v4h-6zM11 8h2v2h-2zm0 8h2v2h-2z" /></svg>
+                      <span class="visually-hidden">Ungroup</span>
+                    </button>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-action="back" data-tooltip="Move backward" aria-label="Move backward">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10H7zm-3 3h2v8h8v2H4z" /></svg>
+                      <span class="visually-hidden">Move backward</span>
+                    </button>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-action="forward" data-tooltip="Move forward" aria-label="Move forward">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v10H7zm3-3h10v10h-2V6h-8z" /></svg>
+                      <span class="visually-hidden">Move forward</span>
+                    </button>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-action="front" data-tooltip="Bring to front" aria-label="Bring to front">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h10v10H6zm4-4h10v10h-2V6h-8z" /></svg>
+                      <span class="visually-hidden">Bring to front</span>
+                    </button>
+                    <button class="whiteboard-format-button whiteboard-icon-button" type="button" data-whiteboard-action="send-back" data-tooltip="Send to back" aria-label="Send to back">
+                      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h10v10H8zm-4 4h10v10H4zm2 2v6h6v-6z" /></svg>
+                      <span class="visually-hidden">Send to back</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/whiteboardPageTemplate.mjs"></script>
+  </body>
+</html>
