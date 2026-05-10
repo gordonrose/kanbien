@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 describe("build work panel artifact chain", () => {
-  it("keeps the root-admin Build panel governed through UI-only adoption before real harness wiring", () => {
+  it("keeps the root-admin Build panel governed through shared-seam adoption and harness wiring", () => {
     const requiredFiles = [
       "docs/workspace/design-system/behavior-locks/build-work-panel-behavior-lock.md",
       "docs/workspace/design-system/reference-packs/build-work-panel-reference-pack.md",
@@ -70,7 +70,7 @@ describe("build work panel artifact chain", () => {
 
     expect(behaviorLock).toContain("BWP-000");
     expect(behaviorLock).toContain("Reporting, Support, and Build");
-    expect(behaviorLock).toContain("root-admin now consumes that seam for UI-only adoption proof");
+    expect(behaviorLock).toContain("root-admin now consumes that seam with protected harness chat APIs");
     expect(referencePack).toContain("BWP-R-001");
     expect(referencePack).toContain("BWP-R-020");
     expect(referencePack).toContain("canonical-created");
@@ -78,7 +78,7 @@ describe("build work panel artifact chain", () => {
     expect(pattern).toContain("page-local CSS implementation");
     expect(pattern).toContain("/design-system/patterns/build-work-panel-demo");
     expect(verification).toContain("Real-app adoption now allowed:");
-    expect(verification).toContain("UI-only root-admin adoption: yes; real harness/API behavior: no");
+    expect(verification).toContain("root-admin adoption: yes; real harness/API behavior: yes");
     expect(adoption).toContain("Shared render seam:");
     expect(adoption).toContain("/design-system/assets/conversationPanel.mjs");
     expect(adoption).toContain("/design-system/assets/conversationPanel.css");
