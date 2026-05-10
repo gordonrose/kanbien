@@ -68,6 +68,7 @@ const governedSourcePaths = [
   "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
   "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
   "src/frontend/designSystem/assets/appShell.mjs",
+  "src/frontend/designSystem/assets/loginTemplate.mjs",
   "src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs",
   "src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs",
   "src/frontend/designSystem/assets/conversationPanel.mjs",
@@ -210,6 +211,18 @@ const cssOnlyRules: CssOnlyRule[] = [
         token: "createLoginTemplateController",
         rationale:
           "Root-admin login behavior must come from the DS-owned login template controller.",
+      },
+      {
+        path: "src/frontend/designSystem/assets/loginTemplate.mjs",
+        token: "renderRootAdminSshKeyChoiceRows",
+        rationale:
+          "Root-admin SSH key choice row markup must stay owned by the DS login template seam.",
+      },
+      {
+        path: "src/frontend/rootAdminShell/assets/app.mjs",
+        token: "renderSshKeyChoices",
+        rationale:
+          "Root-admin should pass SSH key auth data into the DS login controller instead of building choice-row DOM locally.",
       },
     ],
   },

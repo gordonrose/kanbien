@@ -37,8 +37,54 @@ const loginVariantContent = {
   },
 };
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export function isLoginTemplateVariant(value) {
   return Object.prototype.hasOwnProperty.call(loginVariantContent, value);
+}
+
+export function renderRootAdminSshKeyChoiceRows(keys = [], { selectedFingerprint = "" } = {}) {
+  if (!Array.isArray(keys) || keys.length === 0) {
+    return `
+      <div class="form-choice-row" data-ssh-key-choice-empty>
+        <span class="login-template-key-copy">
+          <strong>No SSH keys available</strong>
+          <span class="login-template-key-fingerprint">Add or restore a root-admin SSH key before continuing.</span>
+        </span>
+      </div>
+    `;
+  }
+
+  return keys
+    .map((key, index) => {
+      const fingerprint = String(key?.fingerprint ?? "");
+      const label = String(key?.label ?? fingerprint);
+      const checked = selectedFingerprint ? fingerprint === selectedFingerprint : index === 0;
+
+      return `
+        <label class="form-choice-row">
+          <input
+            type="radio"
+            name="sshKeyFingerprint"
+            value="${escapeHtml(fingerprint)}"
+            required
+            ${checked ? "checked" : ""}
+          />
+          <span class="login-template-key-copy">
+            <strong>${escapeHtml(label)}</strong>
+            <span class="login-template-key-fingerprint" title="${escapeHtml(fingerprint)}">${escapeHtml(fingerprint)}</span>
+          </span>
+        </label>
+      `;
+    })
+    .join("");
 }
 
 export function renderLoginTemplate() {
@@ -193,6 +239,7 @@ export function createLoginTemplateController(root, options = {}) {
   const loginTitle = root.querySelector("[data-login-title]");
   const loginCopy = root.querySelector("[data-login-copy]");
   const loginPrimaryAction = root.querySelector("[data-login-primary-action]");
+  const sshKeyChoiceList = root.querySelector("[data-ssh-key-choice-list]");
 
   function setTextContent(node, text) {
     if (node instanceof HTMLElement) {
@@ -242,6 +289,12 @@ export function createLoginTemplateController(root, options = {}) {
     }
   }
 
+  function renderSshKeyChoices(keys = [], options = {}) {
+    if (sshKeyChoiceList instanceof HTMLElement) {
+      sshKeyChoiceList.innerHTML = renderRootAdminSshKeyChoiceRows(keys, options);
+    }
+  }
+
   for (const button of loginVariantButtons) {
     if (!(button instanceof HTMLButtonElement)) {
       continue;
@@ -265,6 +318,7 @@ export function createLoginTemplateController(root, options = {}) {
   setVariant(isLoginTemplateVariant(options.initialVariant) ? options.initialVariant : "password");
 
   return {
+    renderSshKeyChoices,
     setVariant,
   };
 }

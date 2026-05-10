@@ -28,15 +28,19 @@
 - Shared render seam:
   `renderRootAdminLoginTemplate()`
 - Shared controller seam:
-  `createLoginTemplateController(...)`
+  `createLoginTemplateController(...)`, including
+  `renderSshKeyChoices(...)`
+- Shared SSH key row seam:
+  `renderRootAdminSshKeyChoiceRows(...)`
 - Family-owned visible regions:
   centered card anatomy, password panel, SSH challenge panel, simple SSH key
   choice list, primary actions, field styling, status message styling, and
   stage hiding behavior
 - Host-owned behavior:
   API calls to `/v1/root-auth/login/password` and
-  `/v1/root-auth/browser/login/ssh`, signer-helper invocation, session
-  restoration, logout, and real auth error/status messages
+  `/v1/root-auth/browser/login/ssh`, SSH challenge data, selected fingerprint
+  reading, signer-helper invocation, session restoration, logout, and real auth
+  error/status messages
 - Approved intentional deviations:
   the root-admin consumer uses an SSH challenge panel rather than the generic
   SSL Login, access-code, SSO, or password-recovery demo variants
@@ -51,7 +55,8 @@
   root-auth route contracts, session/token semantics, SSH challenge signing,
   and audit behavior.
 - What page-local behavior is allowed?
-  Wiring design-system-owned fields and buttons to the existing auth flow.
+  Wiring design-system-owned fields, SSH key choices, and buttons to the
+  existing auth flow.
 - What is explicitly out of scope?
   New public auth flows, new token semantics, new login providers, account
   recovery, SSO provider discovery, certificate-auth changes, and generic auth

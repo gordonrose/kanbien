@@ -151,6 +151,9 @@ behavior, or page-local controller logic into the app.
 - `rootAdminShell` unauthenticated login
   - imports the DS-owned login-template render/controller seam from
     `loginTemplate.mjs`
+  - renders registered SSH key choice rows through
+    `renderRootAdminSshKeyChoiceRows(...)` and
+    `createLoginTemplateController(...).renderSshKeyChoices(...)`
   - uses design-system-owned styles from `/design-system/assets/styles.css`
   - no longer loads `src/frontend/rootAdminShell/assets/login.css`
   - keeps root-auth API calls, signer-helper invocation, and session behavior

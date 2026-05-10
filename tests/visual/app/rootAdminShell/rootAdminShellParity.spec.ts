@@ -64,7 +64,7 @@ async function bootstrapAuthenticatedOverview(page: Page) {
     });
   });
 
-  await page.route("**/v1/root-admin/harness-chat/conversations", async (route) => {
+  await page.route(/.*\/v1\/root-admin\/harness-chat\/conversations(?:\?.*)?$/, async (route) => {
     const body = requestBodyOrNull(route) as { initialMessage?: string } | null;
     harnessChatRequests.push({
       method: route.request().method(),

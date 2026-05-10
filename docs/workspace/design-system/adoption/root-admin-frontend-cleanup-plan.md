@@ -335,13 +335,14 @@ Tasks:
   covered by the shell render seam.
 - Confirm whether root-admin shell feedback/banner host ownership is fully
   DS-sourced.
-- Classify SSH key option row rendering as either:
-  - governed login UI that should move into the login template seam
-  - auth-data rendering that may remain app-owned under an explicit exception
+- Keep SSH key option row rendering inside the DS-owned login template seam
+  while root-admin owns challenge data, selected fingerprint reading, and auth
+  submission.
 
 Exit criteria:
 
-- `rootAdminShell` no longer creates governed shell-attached markup locally.
+- `rootAdminShell` no longer creates governed shell-attached or login choice
+  markup locally.
 - Any remaining local DOM creation is documented as business-data wiring,
   file-download mechanics, auth-data rendering, or non-governed
   infrastructure.
@@ -459,5 +460,3 @@ shell facade.
   placeholder is retired?
 - Should `/root-admin/build/backlog` get a full DS workspace seam before
   durable backlog data exists?
-- Should SSH key option row rendering move into `loginTemplate.mjs` or remain
-  auth-data rendering owned by root-admin auth?

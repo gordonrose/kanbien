@@ -216,8 +216,9 @@ Current guards already fail on the highest-risk regressions:
   - `src/frontend/rootAdminShell/assets/app.mjs`
   - `docs/workspace/design-system/adoption/login-template-app-adoption-contract.md`
 - Current classification:
-  DS owns login render/controller structure. Root-admin owns root-auth API
-  calls, signer-helper invocation, and session state.
+  DS owns login render/controller structure and SSH key choice-row markup.
+  Root-admin owns root-auth API calls, SSH challenge data, selected
+  fingerprint reading, signer-helper invocation, and session state.
 
 #### Conversation Panel
 

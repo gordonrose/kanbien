@@ -23,12 +23,14 @@
   entry surface
 - Local implementation evidence:
   root-auth API calls, session restoration, SSH signer-helper invocation, and
-  message wiring remain in `src/frontend/rootAdminShell/assets/app.mjs`
+  message wiring remain in `src/frontend/rootAdminShell/assets/app.mjs`;
+  root-admin passes SSH challenge key data into the DS login controller rather
+  than authoring SSH key choice-row DOM locally
 - Design-system sourced implementation evidence:
   `src/frontend/designSystem/assets/loginTemplate.mjs` owns the centered login
   card render structure, password panel, SSH challenge panel, helper action
-  layout, and panel-switching controller consumed by
-  `src/frontend/rootAdminShell/assets/app.mjs`
+  layout, SSH key choice-row markup, and panel-switching controller consumed
+  by `src/frontend/rootAdminShell/assets/app.mjs`
 - Required remediation before more page work:
   keep future login visual or interaction changes in the design-system
   `loginTemplate.mjs` seam; do not reintroduce root-admin-local login markup

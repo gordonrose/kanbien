@@ -1797,35 +1797,7 @@ function messageForError(error, fallback) {
 }
 
 function renderKeyOptions(keys) {
-  if (!(sshKeyChoiceList instanceof HTMLElement)) {
-    return;
-  }
-
-  sshKeyChoiceList.replaceChildren();
-  keys.forEach((key, index) => {
-    const label = document.createElement("label");
-    label.className = "form-choice-row";
-
-    const input = document.createElement("input");
-    input.type = "radio";
-    input.name = "sshKeyFingerprint";
-    input.value = key.fingerprint;
-    input.required = true;
-    input.checked = index === 0;
-
-    const copy = document.createElement("span");
-    copy.className = "login-template-key-copy";
-    const title = document.createElement("strong");
-    title.textContent = key.label;
-    const detail = document.createElement("span");
-    detail.className = "login-template-key-fingerprint";
-    detail.textContent = key.fingerprint;
-    detail.title = key.fingerprint;
-
-    copy.append(title, detail);
-    label.append(input, copy);
-    sshKeyChoiceList.append(label);
-  });
+  rootAdminLoginTemplateController?.renderSshKeyChoices(keys);
 }
 
 function selectedSshKeyFingerprint() {
