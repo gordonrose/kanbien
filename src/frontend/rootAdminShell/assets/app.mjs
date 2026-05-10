@@ -688,9 +688,7 @@ async function fetchHarnessChatPacketPdf(packetRevisionId) {
   );
 
   if (response.status === 401) {
-    Object.assign(state, markSessionExpired(state));
-    clearShellMessage();
-    render();
+    returnToLoginAfterSessionExpiry();
     throw new ApiError(response.status, "UNAUTHORIZED", "Your session has expired.");
   }
 
