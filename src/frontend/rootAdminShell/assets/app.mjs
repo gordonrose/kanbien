@@ -14,8 +14,8 @@ import {
 } from "./routeTopology.mjs";
 import { rootAdminPageMetadata as pageMetadata } from "./pageMetadata.mjs";
 import { signLoginChallenge } from "./helperClient.mjs";
-import { createRootAdminBuildBacklogPageController } from "./buildBacklogPage.mjs?v=2026-05-08-floating-tab-tooltip-contract";
 import { createWebAppHierarchyPageController } from "./webAppHierarchyPage.mjs";
+import { getRootAdminRouteDefinition } from "../routes/registry.mjs";
 import {
   partitionContextNavItems,
   renderContextNavItems as renderSharedContextNavItems,
@@ -412,10 +412,14 @@ const webAppHierarchyPageController = createWebAppHierarchyPageController({
   refreshContextNav: refreshContextNavForCurrentPage,
 });
 
-const buildBacklogPageController = createRootAdminBuildBacklogPageController({
+const buildBacklogRoute = getRootAdminRouteDefinition("build-backlog");
+const buildBacklogPageController = buildBacklogRoute?.mount?.({
   root: document.getElementById("page-build-backlog"),
   getCurrentPage: () => state.navigation.currentPage,
-});
+}) ?? {
+  syncPageState() {},
+  reset() {},
+};
 
 const rootAdminConversationPanelState = {
   ref: "BWP-R-001",

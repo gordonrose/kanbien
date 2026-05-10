@@ -17,7 +17,7 @@ const lockedRootAdminUiFiles: LockedFile[] = [
   },
   {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "055199ea0793eb75b5d17e0d19845824c01b7294526dfcddd94baca3ab06bccb",
+    sha256: "96cd09f72771e21d39faef5597a595dc8f524b51e269fc68b5c183806a09764d",
     rationale:
       "Root-admin authenticated shell behavior remains locally composed, but approved route-topology and protected Build-panel integration changes may update orchestration as long as shared design-system shell and conversation-panel behavior does not regress back into app-local ownership.",
   },
@@ -329,7 +329,7 @@ function main() {
   const shellIndexSource = readUtf8(shellIndexSourcePath);
   const hierarchyPageSourcePath = "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs";
   const hierarchyPageSource = readUtf8(hierarchyPageSourcePath);
-  const buildBacklogPageSourcePath = "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs";
+  const buildBacklogPageSourcePath = "src/frontend/rootAdminShell/routes/build/backlog/page.mjs";
   const buildBacklogPageSource = readUtf8(buildBacklogPageSourcePath);
   const unexpectedCssFiles = listUnexpectedRootAdminCssFiles();
 

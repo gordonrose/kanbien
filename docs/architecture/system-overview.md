@@ -81,10 +81,11 @@ Frontend current-state detail lives in `docs/architecture/frontend-overview.md`.
   governed app route families, the page shell itself is also now treated as a
   design-system-owned artifact rather than an app-local host.
 - `src/frontend/rootAdminShell/*`
-  Same-origin root-admin browser shell and helper-download surface. Current
-  state remains locally owned shell structure and styling; accepted target
-  architecture is migration toward a design-system-owned page shell for
-  non-exception authenticated surfaces.
+  Same-origin root-admin browser shell, browser assets, route modules, and
+  helper-download surface. Current state remains locally owned shell structure
+  and styling; accepted target architecture is migration toward route modules
+  for durable pages and a design-system-owned page shell for non-exception
+  authenticated surfaces.
 - `src/frontend/login/*`
   Reserved discovery seam for a later explicit login route family.
 

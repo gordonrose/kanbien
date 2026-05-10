@@ -16,7 +16,9 @@ describe("floating tab header governed adoption guard", () => {
     );
     const rootAdminIndex = read("src/frontend/rootAdminShell/index.html");
     const rootAdminApp = read("src/frontend/rootAdminShell/assets/app.mjs");
-    const buildBacklogPage = read("src/frontend/rootAdminShell/assets/buildBacklogPage.mjs");
+    const buildBacklogPage = read("src/frontend/rootAdminShell/routes/build/backlog/page.mjs");
+    const buildBacklogRoute = read("src/frontend/rootAdminShell/routes/build/backlog/route.mjs");
+    const routeRegistry = read("src/frontend/rootAdminShell/routes/registry.mjs");
     const floatingTabHeader = read("src/frontend/designSystem/assets/floatingTabHeader.mjs");
     const governedUiGuard = read("src/scripts/checkGovernedUiAdoption.ts");
     const rootAdminUiGuard = read("src/scripts/checkGovernedRootAdminUi.ts");
@@ -41,13 +43,17 @@ describe("floating tab header governed adoption guard", () => {
     expect(rootAdminIndex).toContain("app.mjs?v=2026-05-08-floating-tab-tooltip-contract");
     expect(rootAdminIndex).not.toContain("floating-tab-card");
     expect(rootAdminIndex).not.toContain("data-floating-tab-seam-mount");
-    expect(rootAdminApp).toContain("./buildBacklogPage.mjs?v=2026-05-08-floating-tab-tooltip-contract");
+    expect(rootAdminApp).toContain("../routes/registry.mjs");
+    expect(rootAdminApp).toContain('getRootAdminRouteDefinition("build-backlog")');
 
     expect(buildBacklogPage).toContain("/design-system/assets/floatingTabHeader.mjs?v=2026-05-08-overflow-tooltip-contract");
     expect(buildBacklogPage).toContain("renderFloatingTabHeader");
     expect(buildBacklogPage).toContain("mountFloatingTabHeader");
     expect(buildBacklogPage).toContain('data-floating-tab-seam-mount="true"');
     expect(buildBacklogPage).not.toContain("addEventListener(\"click\"");
+    expect(buildBacklogRoute).toContain('key: "build-backlog"');
+    expect(buildBacklogRoute).toContain('canonicalPath: "/root-admin/build/backlog"');
+    expect(routeRegistry).toContain("buildBacklogRoute");
     expect(floatingTabHeader).toContain("export function renderFloatingTabHeader");
     expect(floatingTabHeader).toContain("export function mountFloatingTabHeader");
 

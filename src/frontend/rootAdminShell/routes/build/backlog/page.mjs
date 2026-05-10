@@ -15,7 +15,7 @@ const buildBacklogInitialParams = new URLSearchParams({
   rowPacking: "single",
 });
 
-export function createRootAdminBuildBacklogPageController({
+export function mountBuildBacklogPage({
   root,
   getCurrentPage = () => "overview",
 } = {}) {
@@ -68,5 +68,6 @@ export function createRootAdminBuildBacklogPageController({
       }
     },
     reset() {},
+    destroy() {},
   };
 }

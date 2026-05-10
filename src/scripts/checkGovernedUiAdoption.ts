@@ -61,7 +61,7 @@ const requiredFloatingTabHeaderContractPhrases = [
 const governedSourcePaths = [
   "src/frontend/rootAdminShell/index.html",
   "src/frontend/rootAdminShell/assets/app.mjs",
-  "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+  "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
   "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
   "src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs",
   "src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs",
@@ -183,19 +183,19 @@ const cssOnlyRules: CssOnlyRule[] = [
     cssHref: "/design-system/assets/styles.css",
     requiredTokens: [
       {
-        path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+        path: "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
         token: "/design-system/assets/floatingTabHeader.mjs",
         rationale:
           "Floating tab header styling must be paired with the DS-owned floatingTabHeader render/controller seam.",
       },
       {
-        path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+        path: "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
         token: "renderFloatingTabHeader",
         rationale:
           "Floating tab header markup must come from the shared design-system renderer.",
       },
       {
-        path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+        path: "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
         token: "mountFloatingTabHeader",
         rationale:
           "Floating tab header interaction behavior must come from the shared design-system controller.",
@@ -254,13 +254,13 @@ const forbiddenLocalReconstructions: ForbiddenPattern[] = [
       "Root-admin shell app must not reconstruct floating tab header markup or class names locally; render through the Build Backlog page adapter.",
   },
   {
-    path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+    path: "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
     pattern: /\bfunction\s+mountFloatingTabHeader\s*\(/,
     rationale:
       "Build Backlog must import the shared floatingTabHeader controller instead of defining local floating tab behavior.",
   },
   {
-    path: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+    path: "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
     pattern: /\baddEventListener\("click"/,
     rationale:
       "Floating tab click, overflow, drawer, sub-tab, and collapse behavior must stay inside the shared floatingTabHeader controller.",

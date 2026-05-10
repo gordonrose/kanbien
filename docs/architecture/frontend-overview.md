@@ -50,7 +50,9 @@ The Express app is the same-origin composition point.
 Current mount posture:
 
 - `/design-system` serves governed HTML reference and canonical routes
-- `/root-admin` serves the root-admin browser shell and helper downloads
+- `/root-admin` serves the root-admin browser shell, helper downloads, static
+  app assets under `/root-admin/assets/*`, and route modules under
+  `/root-admin/routes/*`
 - `/v1` serves backend REST capabilities consumed by frontend surfaces
 
 Shared browser security is applied at the app layer through `helmet`, including
@@ -124,33 +126,35 @@ Current implementation model:
 
 - vanilla browser ES modules
 - shell-owned state, rendering, fetch/error handling, and navigation
-- feature-like page controllers for deeper surfaces such as root users and web
-  app hierarchy
+- feature-like page controllers for deeper surfaces such as root-admin
+  directory pages, web app hierarchy, and Build backlog proof routes
+- route modules are starting under `src/frontend/rootAdminShell/routes/*` for
+  durable root-admin product places, beginning with `/root-admin/build/backlog`
 - current authenticated shell render structure and shell CSS are still locally
   owned in `rootAdminShell`
 
 Current governed-adoption posture inside `rootAdminShell` is not uniform yet:
 
-- the `Users` route proves that a real app route can consume approved
-  design-system CSS through `/design-system/assets/list-page-shared.css`, but
-  it still owns local list-page markup and route-local controller behavior
-- the design system now also publishes shared app-consumption entrypoints for
-  `hierarchy-tree` and `form-template` under:
-  - `/design-system/assets/hierarchy-tree-shared.css`
-  - `/design-system/assets/form-template-shared.css`
-- the design system also owns reusable interaction helpers for governed
-  families through:
-  - `/design-system/assets/hierarchyTree.mjs`
-  - `/design-system/assets/formControls.mjs`
-- the `web-app-hierarchy` route currently imports those shared helpers, but it
-  still duplicates hosted `icon-grid`, `drawer-select`, and hierarchy-drawer
-  markup inside `rootAdminShell/index.html`
+- the `Users`, `Tenants`, and `Tenant Admins` routes now consume the
+  design-system-owned `rootAdminDirectoryWorkspace.mjs` render/controller seam
+  for list-page and drawer-form behavior
+- the `web-app-hierarchy` route now consumes the design-system-owned
+  `webAppHierarchyWorkspace.mjs` render/controller seam through a thin
+  root-admin route adapter
+- the root-admin Build panel consumes the design-system-owned
+  `conversationPanel.mjs` and `conversationPanel.css` seams for the live
+  Product Discovery chat panel
+- the `build/backlog` proof route consumes the design-system-owned
+  `floatingTabHeader.mjs` seam, but still owns representative route wrapper
+  copy and proof data locally
+- the `/root-admin` overview/session body and `/root-admin/roles` body remain
+  local placeholder page bodies rather than page-family design-system adoption
 - the authenticated root-admin shell itself does not yet consume the signed-off
   `/design-system/templates/page-shell` source of truth, so page-level
   governed adoption is currently happening inside a locally owned shell host
 - current governed adoption therefore proves partial behavior sharing in some
-  places, but not full design-system ownership of shell, structure, and
-  behavior
+  places, but not full design-system ownership of shell structure,
+  shell-attached surfaces, and remaining placeholder page bodies
 
 ADR `0028` governs the stronger current rule: governed app adoption must
 consume design-system-owned styling, render structure, and interaction seams.
@@ -176,9 +180,11 @@ Current audit of the active governed adoption seams:
     `/design-system/assets/hierarchy-tree-shared.css`
   - shared interaction/controller seam exists through
     `/design-system/assets/hierarchyTree.mjs`
-  - shared app-consumable drawer render seam does not exist yet
-  - current real consumer still duplicates drawer host markup in
-    `rootAdminShell/index.html`
+  - current web-app hierarchy route consumes the broader
+    `/design-system/assets/webAppHierarchyWorkspace.mjs` workspace seam instead
+    of duplicating its page body in `rootAdminShell/index.html`
+  - future hierarchy-tree-only app adoption should still confirm whether a
+    narrower tree/drawer render seam is needed outside that workspace seam
 - `icon-grid`
   - styling currently reaches the app through the parent
     `/design-system/assets/form-template-shared.css` family seam

@@ -51,3 +51,4 @@ evolves.
 - `0037-separate-tenant-operational-lifecycle-from-deletion-posture.md`
 - `0038-use-explicit-generated-canonical-route-registry-for-design-system-canonicals.md`
 - `0039-defer-persistent-artifact-registry-until-product-surface-matures.md`
+- `0040-use-root-admin-route-modules-for-durable-frontend-pages.md`

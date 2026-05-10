@@ -120,6 +120,13 @@ export function createRootAdminShellRouter(): Router {
     }),
   );
 
+  router.use(
+    "/routes",
+    express.static(join(frontendRoot, "routes"), {
+      fallthrough: false,
+    }),
+  );
+
   router.get(/.*/, (_request, response) => {
     response.sendFile(join(frontendRoot, "index.html"));
   });

@@ -185,16 +185,28 @@ describe("root admin shell browser auth integration", () => {
     const shell = await request(createApp())
       .get("/root-admin")
       .set("host", "admin.example.test");
+    const routeRegistryModule = await request(createApp())
+      .get("/root-admin/routes/registry.mjs")
+      .set("host", "admin.example.test");
+    const buildBacklogPageModule = await request(createApp())
+      .get("/root-admin/routes/build/backlog/page.mjs")
+      .set("host", "admin.example.test");
     const frontendMarkup = readFileSync("src/frontend/rootAdminShell/index.html", "utf8");
     const frontendAppSource = readFileSync("src/frontend/rootAdminShell/assets/app.mjs", "utf8");
     const loginTemplateSource = readFileSync("src/frontend/designSystem/assets/loginTemplate.mjs", "utf8");
-    const buildBacklogPageSource = readFileSync("src/frontend/rootAdminShell/assets/buildBacklogPage.mjs", "utf8");
+    const buildBacklogPageSource = readFileSync("src/frontend/rootAdminShell/routes/build/backlog/page.mjs", "utf8");
+    const buildBacklogRouteSource = readFileSync("src/frontend/rootAdminShell/routes/build/backlog/route.mjs", "utf8");
+    const routeRegistrySource = readFileSync("src/frontend/rootAdminShell/routes/registry.mjs", "utf8");
     const floatingTabHeaderSource = readFileSync("src/frontend/designSystem/assets/floatingTabHeader.mjs", "utf8");
     const hierarchyPageSource = readFileSync("src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs", "utf8");
     const hierarchyWorkspaceSource = readFileSync("src/frontend/designSystem/assets/webAppHierarchyWorkspace.mjs", "utf8");
     const hierarchyTreeSource = readFileSync("src/frontend/designSystem/assets/hierarchyTree.mjs", "utf8");
 
     expect(shell.status).toBe(200);
+    expect(routeRegistryModule.status).toBe(200);
+    expect(routeRegistryModule.text).toContain("buildBacklogRoute");
+    expect(buildBacklogPageModule.status).toBe(200);
+    expect(buildBacklogPageModule.text).toContain("mountBuildBacklogPage");
     expect(shell.text).toContain("Root Admin Shell POC");
     expect(frontendMarkup).toContain("Root Admin Shell POC");
     expect(frontendMarkup).toContain("Overview");
@@ -218,7 +230,9 @@ describe("root admin shell browser auth integration", () => {
     expect(frontendAppSource).toContain("/design-system/assets/pageShellController.mjs");
     expect(frontendAppSource).toContain("/design-system/assets/loginTemplate.mjs");
     expect(frontendAppSource).toContain("/design-system/assets/rootAdminDirectoryWorkspace.mjs");
-    expect(frontendAppSource).toContain("./buildBacklogPage.mjs");
+    expect(frontendAppSource).toContain("../routes/registry.mjs");
+    expect(frontendAppSource).toContain('getRootAdminRouteDefinition("build-backlog")');
+    expect(frontendAppSource).toMatch(/const rootAdminConversationPanelState = \{\s+ref: "BWP-R-001"/);
     expect(frontendMarkup).toContain("data-root-admin-login-template-host");
     expect(frontendMarkup).not.toContain("/root-admin/assets/login.css");
     expect(frontendMarkup).not.toContain('class="auth-panel"');
@@ -228,6 +242,9 @@ describe("root admin shell browser auth integration", () => {
     expect(buildBacklogPageSource).toContain("/design-system/assets/floatingTabHeader.mjs");
     expect(buildBacklogPageSource).toContain("renderFloatingTabHeader");
     expect(buildBacklogPageSource).toContain("mountFloatingTabHeader");
+    expect(buildBacklogRouteSource).toContain('key: "build-backlog"');
+    expect(buildBacklogRouteSource).toContain('canonicalPath: "/root-admin/build/backlog"');
+    expect(routeRegistrySource).toContain("buildBacklogRoute");
     expect(floatingTabHeaderSource).toContain("export function renderFloatingTabHeader");
     expect(floatingTabHeaderSource).toContain("export function mountFloatingTabHeader");
     expect(hierarchyPageSource).toContain("/design-system/assets/webAppHierarchyWorkspace.mjs");

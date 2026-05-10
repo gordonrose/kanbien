@@ -53,7 +53,7 @@ export const ROOT_ADMIN_SHELL_DISCOVERED_STATES: RootAdminShellDiscoveredState[]
     pageKey: "build-backlog",
     displayLabel: "Backlog",
     routePath: "/root-admin/build/backlog",
-    implementationSourcePath: "src/frontend/rootAdminShell/assets/buildBacklogPage.mjs",
+    implementationSourcePath: "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
   },
 ];
 
