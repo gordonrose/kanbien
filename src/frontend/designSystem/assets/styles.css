@@ -1229,11 +1229,11 @@ body[data-floating-tab-header-preview="true"] #accessibility-drawer {
 }
 
 .floating-tab-header[data-floating-tab-layout="horizontal"][data-floating-tab-row-packing="single"] .floating-tab-scroll {
-  grid-template-columns: repeat(10, minmax(4.5rem, 1fr));
+  grid-template-columns: repeat(var(--floating-tab-visible-slots, 10), minmax(8.5rem, 1fr));
 }
 
-.floating-tab-header[data-floating-tab-layout="horizontal"][data-floating-tab-row-packing="single"][data-floating-tab-count="5"] .floating-tab-scroll {
-  grid-template-columns: repeat(5, minmax(8.5rem, 1fr));
+.floating-tab-header[data-floating-tab-layout="horizontal"][data-floating-tab-row-packing="single"][data-floating-tab-crowded="true"] .floating-tab-scroll {
+  grid-template-columns: repeat(var(--floating-tab-visible-slots, 10), minmax(4.5rem, 1fr));
 }
 
 .floating-tab-header[data-floating-tab-layout="horizontal"][data-floating-tab-row-packing="double"] .floating-tab-scroll {

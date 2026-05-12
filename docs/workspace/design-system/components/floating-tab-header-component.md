@@ -34,7 +34,8 @@ yet.
 - `mountFloatingTabHeader(options)` wires the governed interaction behavior.
 - Supported inputs:
   category data, row data, subtab data, active category, active tab index,
-  accessible labels, tablist labels, subtab labels, and panel kicker copy.
+  scoped instance ID, category metadata, accessible labels, tablist labels,
+  subtab labels, and panel kicker copy.
 - Supported route/demo state:
   `tabs`, `layout`, `rowPacking`, `subTabs`, `attention`, `expandable`,
   `collapsed`, `categorySwitch`, `category`, `window`, `windowStart`,
@@ -49,10 +50,14 @@ yet.
 ## Behavior Contract
 
 - Tab cards expose title, meta, count, selected state, and optional attention.
-- Five tabs use the roomy full-width treatment.
-- Eight or more tabs use the compact crowded treatment.
-- Ten tabs can fit one single-row rail; double-row mode uses five tabs per row
-  and at most two rows.
+- Horizontal tab cards use roomy full-card treatment when their rendered title,
+  meta, count, and attention content fit inside the available rail.
+- When roomy cards do not fit, the controller switches to the compact card
+  treatment for that rendered space before it hides additional cards.
+- When compact cards still do not fit, overflow is paged through the same
+  hidden-count summaries and arrow controls used for over-limit tab sets.
+- Ten tabs can fit one single-row rail when the measured rail has enough room;
+  double-row mode uses five tabs per row and at most two rows.
 - Overflow is navigated by paging arrows and side-aware hidden-count summaries,
   not by a visible native scrollbar.
 - Optional subtabs render below the main rail without competing with the

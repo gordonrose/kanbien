@@ -447,6 +447,7 @@ const usersPageController = usersRoute?.mount?.({
   uploadFileBytes,
   setShellMessage,
   getCurrentPage: () => state.navigation.currentPage,
+  getCurrentSession: () => state.session,
 }) ?? {
   async handleShellSearchSubmit() {
     return false;

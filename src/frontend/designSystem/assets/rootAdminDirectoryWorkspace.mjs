@@ -5,6 +5,7 @@ import {
   renderFormUploadField,
   setFormUploadState,
 } from "./formControls.mjs";
+import { renderListDetailSectionIndex } from "./listDrawerShell.mjs";
 
 const PROFILE_PICTURE_MAX_BYTES = 5 * 1024 * 1024;
 
@@ -159,6 +160,10 @@ const directoryConfigs = {
         editLabel: "Edit profile picture",
       };
     },
+    detailSections: [
+      { key: "profile", label: "Profile", active: true },
+      { key: "session-information", label: "Session information" },
+    ],
   },
   tenants: {
     pageKey: "tenants",
@@ -391,6 +396,39 @@ function renderForm(mode, config) {
   `;
 }
 
+function renderDirectoryDetailViewBody(config, detailPanelId) {
+  if (Array.isArray(config.detailSections) && config.detailSections.length > 0) {
+    return renderListDetailSectionIndex({
+      panelId: detailPanelId,
+      ariaLabel: `${config.title} detail sections`,
+      sections: config.detailSections.map((section) => ({
+        ...section,
+        content: section.key === "session-information"
+          ? `
+            <div class="list-page-detail-aspect-card" data-directory-session-section>
+              <p class="list-page-detail-aspect-eyebrow">Session information</p>
+              <p class="list-page-detail-aspect-title" data-directory-session-title>Session status</p>
+              <p class="list-page-detail-aspect-copy" data-directory-session-description></p>
+              <div class="list-page-detail-tags" aria-label="${escapeHtml(config.title)} session fields" data-directory-session-tags></div>
+            </div>
+          `
+          : `
+            <div class="list-page-detail-aspect-card" data-directory-profile-section>
+              <p class="list-page-detail-aspect-eyebrow">Profile</p>
+              <p class="list-page-detail-description" data-directory-detail-description></p>
+              <div class="list-page-detail-tags" aria-label="${escapeHtml(config.title)} profile fields" data-directory-detail-tags></div>
+            </div>
+          `,
+      })),
+    });
+  }
+
+  return `
+    <p class="list-page-detail-description" data-directory-detail-description></p>
+    <div class="list-page-detail-tags" aria-label="${escapeHtml(config.title)} fields" data-directory-detail-tags></div>
+  `;
+}
+
 export function renderRootAdminDirectoryWorkspaceShell(pageKey) {
   const config = directoryConfigs[pageKey] ?? directoryConfigs.users;
   const createLabel = `Create ${config.entityLabel}`;
@@ -511,8 +549,7 @@ export function renderRootAdminDirectoryWorkspaceShell(pageKey) {
         </div>
         <div class="list-page-detail-body">
           <div data-directory-view-body>
-            <p class="list-page-detail-description" data-directory-detail-description></p>
-            <div class="list-page-detail-tags" aria-label="${escapeHtml(config.title)} fields" data-directory-detail-tags></div>
+            ${renderDirectoryDetailViewBody(config, detailPanelId)}
           </div>
           ${renderForm("create", config)}
           ${renderForm("edit", config)}
@@ -540,6 +577,7 @@ export function createRootAdminDirectoryWorkspaceController({
   uploadFileBytes,
   setShellMessage,
   getCurrentPage,
+  getCurrentSession = () => null,
 }) {
   const config = directoryConfigs[pageKey] ?? directoryConfigs.users;
   if (!(root instanceof HTMLElement)) {
@@ -560,6 +598,12 @@ export function createRootAdminDirectoryWorkspaceController({
   const detailDescription = root.querySelector("[data-directory-detail-description]");
   const detailMeta = root.querySelector("[data-directory-detail-meta]");
   const detailTags = root.querySelector("[data-directory-detail-tags]");
+  const detailAspectLayout = root.querySelector("[data-selectable-list-detail-index-layout]");
+  const detailAspectOptions = Array.from(root.querySelectorAll("[data-selectable-list-detail-aspect-option]"));
+  const detailAspectPanels = Array.from(root.querySelectorAll("[data-selectable-list-detail-aspect]"));
+  const sessionTitle = root.querySelector("[data-directory-session-title]");
+  const sessionDescription = root.querySelector("[data-directory-session-description]");
+  const sessionTags = root.querySelector("[data-directory-session-tags]");
   const viewBody = root.querySelector("[data-directory-view-body]");
   const viewActions = root.querySelector("[data-directory-view-actions]");
   const formActions = root.querySelector("[data-directory-form-actions]");
@@ -845,6 +889,64 @@ export function createRootAdminDirectoryWorkspaceController({
     editButton?.classList.toggle("hidden", isForm || !selectedId);
   }
 
+  function activateDetailAspect(nextAspect = "profile", { focus = false } = {}) {
+    const availableAspects = detailAspectOptions
+      .filter((option) => option instanceof HTMLElement)
+      .map((option) => option.dataset.selectableListDetailAspectOption)
+      .filter(Boolean);
+    const fallbackAspect = availableAspects[0] ?? "profile";
+    const resolvedAspect = availableAspects.includes(nextAspect) ? nextAspect : fallbackAspect;
+
+    for (const option of detailAspectOptions) {
+      if (!(option instanceof HTMLElement)) {
+        continue;
+      }
+
+      const isActive = option.dataset.selectableListDetailAspectOption === resolvedAspect;
+      option.classList.toggle("active", isActive);
+      option.setAttribute("aria-selected", String(isActive));
+      option.tabIndex = isActive ? 0 : -1;
+
+      if (isActive && focus) {
+        option.focus({ preventScroll: true });
+      }
+    }
+
+    for (const panel of detailAspectPanels) {
+      if (!(panel instanceof HTMLElement)) {
+        continue;
+      }
+
+      setStateVisibility(panel, panel.dataset.selectableListDetailAspect === resolvedAspect);
+    }
+  }
+
+  function syncSessionSection(record) {
+    if (!(detailAspectLayout instanceof HTMLElement)) {
+      return;
+    }
+
+    const session = getCurrentSession?.();
+    const isCurrentSessionUser = Boolean(session?.rootUserId && session.rootUserId === record?.rootUserId);
+    const sessionCopy = isCurrentSessionUser
+      ? `This is the currently signed-in root user. The browser session expires ${formatTimestamp(session.expiresAt)}.`
+      : "Session records for this root user are managed by root authentication and are not loaded in this list view.";
+    const sessionFieldTags = isCurrentSessionUser
+      ? [
+        `Root user ${session.rootUserId}`,
+        `Principal ${session.authPrincipalId}`,
+        `Expires ${formatTimestamp(session.expiresAt)}`,
+      ]
+      : [
+        "Session list not loaded",
+        `Root user ${record?.rootUserId ?? "Not recorded"}`,
+      ];
+
+    setOptionalText(sessionTitle, isCurrentSessionUser ? "Current browser session" : "Session information");
+    setOptionalText(sessionDescription, sessionCopy);
+    setOptionalTags(sessionTags, sessionFieldTags);
+  }
+
   function syncDetail(record, trigger = null) {
     if (!record) {
       return;
@@ -864,6 +966,8 @@ export function createRootAdminDirectoryWorkspaceController({
     }
     setOptionalText(detailDescription, detail.description);
     setOptionalTags(detailTags, detail.tags);
+    syncSessionSection(record);
+    activateDetailAspect("profile");
 
     for (const button of getCardButtons()) {
       const isActive = button.dataset.directoryRecordId === selectedId;
@@ -1219,6 +1323,11 @@ export function createRootAdminDirectoryWorkspaceController({
       syncDetail(record, card);
       return;
     }
+    const aspectOption = target?.closest("[data-selectable-list-detail-aspect-option]");
+    if (aspectOption instanceof HTMLElement) {
+      activateDetailAspect(aspectOption.dataset.selectableListDetailAspectOption || undefined);
+      return;
+    }
     if (target?.closest("[data-directory-create]")) {
       openCreateForm();
       return;
@@ -1289,6 +1398,29 @@ export function createRootAdminDirectoryWorkspaceController({
         });
       }
     }
+  });
+
+  root.addEventListener("keydown", (event) => {
+    if (!(event instanceof KeyboardEvent) || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) {
+      return;
+    }
+
+    const target = event.target instanceof HTMLElement ? event.target : null;
+    const option = target?.closest("[data-selectable-list-detail-aspect-option]");
+    if (!(option instanceof HTMLElement)) {
+      return;
+    }
+
+    event.preventDefault();
+    const optionIndex = detailAspectOptions.indexOf(option);
+    const nextIndex = event.key === "ArrowRight"
+      ? (optionIndex + 1) % detailAspectOptions.length
+      : (optionIndex - 1 + detailAspectOptions.length) % detailAspectOptions.length;
+    const nextOption = detailAspectOptions[nextIndex];
+    const nextAspect = nextOption instanceof HTMLElement
+      ? nextOption.dataset.selectableListDetailAspectOption
+      : undefined;
+    activateDetailAspect(nextAspect, { focus: true });
   });
 
   root.addEventListener("change", (event) => {

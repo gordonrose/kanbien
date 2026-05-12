@@ -205,6 +205,36 @@ Why:
 - consistency compounds over time
 - local exceptions create future maintenance cost
 
+## 10. Preserve Context Account Boundaries
+
+Durable context used by discovery, planning, or automation must distinguish
+official records, evidence-backed inference, and session working state.
+
+- Record accounts are official managed product truth and are owned by the
+  relevant feature or platform module.
+- Inference accounts are discovery-derived contextual intelligence. They may
+  suggest, qualify, challenge, or request reconciliation with records, but they
+  must not silently become official truth.
+- Session state is feature-owned working memory for the current workflow,
+  conversation, assumptions, blockers, next action, and readiness.
+- Discovery and assistant features may read record accounts only through
+  approved public seams.
+- Discovery and assistant features must not directly mutate record accounts
+  owned by other features.
+- Record truth supersedes inference for operational behavior.
+- Inference can coexist with record truth when it describes observed strain,
+  risk, workarounds, terminology, or contextual reality rather than official
+  managed fact.
+- Reconciliation between inference and record truth must happen through a
+  dedicated UX, approval flow, or governed feature seam.
+
+Why:
+
+- product intelligence needs durable memory without polluting official records
+- record owners stay accountable for operational truth
+- inference stays auditable, correctable, and confidence-scored
+- discovery can learn over time without becoming a backdoor mutation path
+
 ## Decision Heuristics
 
 When deciding whether a proposed change is architecturally acceptable:
@@ -215,3 +245,5 @@ When deciding whether a proposed change is architecturally acceptable:
   coupling.
 - Escalate if it changes public contracts, migration identity, security posture,
   startup behavior, or error semantics.
+- Escalate if it lets inference update official records without a governed
+  reconciliation path.

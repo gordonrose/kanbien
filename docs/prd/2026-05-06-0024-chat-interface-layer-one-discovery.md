@@ -27,6 +27,8 @@ evidence blockers are resolved.
   `docs/workspace/product-discovery/2026-05-05-chat-interface-layer-one-discovery.md`
 - Technical Steering:
   `docs/workspace/technical-steering/2026-05-05-chat-interface-layer-one-discovery-steering.md`
+- Context Account Architecture ADR:
+  `docs/architecture/adr/0041-adopt-context-account-architecture-for-discovery-intelligence.md`
 - Story Breakdown:
   `docs/workspace/product-requests/2026-05-05-chat-interface-layer-one-discovery/epics/EPIC-chat-interface-layer-one-discovery`
 - Capability Matrix:
@@ -45,7 +47,11 @@ evidence blockers are resolved.
   `docs/data-dictionary/harness-chat-conversation.md`,
   `docs/data-dictionary/harness-chat-message.md`,
   `docs/data-dictionary/harness-chat-packet-revision.md`,
-  `docs/data-dictionary/harness-chat-pdf-attempt.md`
+  `docs/data-dictionary/harness-chat-pdf-attempt.md`,
+  planned discovery intelligence dictionary pages for session state,
+  inference facts, evidence links, hard-restraint assessments, outcome graph
+  nodes/relationships, conversation decisions, packet readiness snapshots, and
+  learning backlog items.
 - Implementation Blueprint:
   `docs/workspace/implementation-blueprints/2026-05-07-chat-interface-layer-one-discovery-root-admin-mvp.md`
 
@@ -276,6 +282,379 @@ The accepted turn states are:
 
 The packet-generation route must rely on the persisted structured discovery
 state and the final confirmation state, not on a fresh free-form LLM judgment.
+
+## Persistence-Backed Discovery Intelligence Model
+
+Discovery Chat must operate on persisted structured state, not raw transcript
+memory or prompt-only model behavior. Transcript messages remain evidence, but
+the engine's working truth is structured session state, record-backed context,
+and evidence-backed inference.
+
+The governing architecture is Context Account Architecture:
+
+- Record Accounts are official managed product truth.
+- Inference Accounts are discovery-derived contextual intelligence.
+- Session State is current discovery working memory.
+
+Discovery Chat may read record accounts through approved seams. It must not
+directly mutate official organization, user, role, capability, entitlement,
+design-system, platform capability, feature capability, compliance, or outcome
+records owned by other features. Inference may challenge or qualify records, but
+reconciliation requires a governed UX or owning feature seam.
+
+### Context Layers
+
+The persisted discovery model is organized into these layers:
+
+- organization context:
+  record-backed tenant/organization facts plus discovery-derived signals about
+  operating reality, terminology, maturity, operational strain, informal
+  ownership, support dependency, commercial pressure, and change maturity.
+- actor context:
+  user/role/capability record facts plus profile inference about
+  responsibilities, technical fluency, confidence, authority, pressure,
+  communication style, risk sensitivity, decision style, workarounds, training
+  needs, escalation behavior, and success criteria.
+- workflow context:
+  operational workflow, current product workflow, design-system workflow fit,
+  platform workflow fit, feature workflow fit, handoffs, tools, data
+  inputs/outputs, processing profile, failure points, frequency, latency, risk,
+  emotional friction, and desired change.
+- problem context:
+  pain, impact, urgency, frequency, severity, business consequence, user
+  consequence, operational cost, workaround cost, root-cause hypotheses,
+  definition of good, non-goals, priority signals, emotional pressure, and
+  failure modes.
+- hard restraints:
+  non-negotiable limits from organization, role, workflow, request,
+  environment, compliance, design-system seams, platform boundaries, feature
+  ownership, commercial entitlements, support model, time/budget, reliability,
+  reversibility, auditability, or data handling.
+- outcome context:
+  outcome/OKR record facts if a future owner exists, plus inferred outcome
+  nodes, metric candidates, goal relationships, and opportunity economics
+  hypotheses.
+- solution routing:
+  classification of the request into existing feature usage/extension, new
+  feature capability, cross-feature coordination, design-system usage or
+  extension, platform seam usage or extension, authz/security/compliance/data
+  review, architecture decision, pricing/entitlement change, support-process
+  change, discovery-only, or blocked.
+- conversation control:
+  the next best action, question priority, assumption handling, repeated
+  question suppression, recommendation posture, review routing, execution tier,
+  and LLM-use decision.
+- packet readiness:
+  readiness state, blocking unknowns, safe assumptions, deferred items,
+  hard-restraint impact, solution-routing confidence, final confirmation state,
+  and packet recommendation.
+- learning backlog:
+  useful context to learn later without slowing the current packet.
+
+### Actor Context And Existing Role Ownership
+
+Actor Context must not create a parallel Discovery-owned role or authorization
+model. Existing role, capability, role-assignment, root/tenant authority, and
+future ABAC/ReBAC/object-rule ownership remain with the current role/RBAC/admin
+and authz architecture.
+
+Discovery Chat may read role data through public seams when needed:
+
+- what roles exist
+- what capabilities a role has
+- what scope the role applies to
+- which root/tenant boundary applies
+- which users are assigned
+
+Discovery Chat must not own or mutate roles, permissions, capabilities,
+assignments, or authority boundaries.
+
+Profile inference is separate from role records. A role is a functional
+capability or responsibility category; a profile is contextualized human or
+role-persona reality. Profile inference must use governed profile categories
+such as responsibility, authority, technical fluency, confidence, risk
+sensitivity, decision style, communication preference, pressure point, success
+criteria, workaround, avoidance, escalation, approval, dependency,
+emotional-driver, and training-support categories.
+
+Empty profile fields must not automatically trigger questions. Missing profile
+detail is asked only when it materially affects solution routing, risk, packet
+readiness, scope, or confidence.
+
+### Workflow Catalogue And Fit Assessment
+
+Workflow Context must bridge tenant reality to approved implementation paths.
+Discovery may infer workflow reality and map it to approved catalogues. It must
+not invent frontend journeys, platform behavior, feature ownership, or
+authorization behavior.
+
+The workflow catalogue should distinguish:
+
+- design-system workflow templates:
+  approved frontend journey patterns made from governed components, page
+  templates, states, transitions, accessibility rules, responsive rules,
+  forbidden adaptations, and verification references.
+- platform workflow capabilities:
+  shared reusable platform processes such as audit recording, notification
+  dispatch, approval state machines, job processing, file upload/scanning,
+  tenant configuration resolution, feature flag evaluation, permission checks,
+  idempotency, and retry handling.
+- feature workflow capabilities:
+  business-specific workflows owned by a feature, such as tenant onboarding,
+  role assignment, billing contact update, support access request, admin user
+  invitation, or entitlement change.
+
+Each workflow request should classify:
+
+- operational workflow understanding:
+  `clear`, `partial`, or `unknown`
+- design-system fit:
+  `fitsApprovedTemplate`, `fitsWithConfiguration`,
+  `requiresTemplateExtension`, `requiresNewTemplate`,
+  `violatesApprovedSeam`, or `unknown`
+- platform fit:
+  `usesExistingPlatformCapability`, `requiresPlatformExtension`,
+  `requiresNewPlatformCapability`, `violatesPlatformBoundary`, or `unknown`
+- feature fit:
+  `usesExistingFeatureCapability`, `extendsExistingFeatureCapability`,
+  `requiresNewFeatureCapability`, `requiresCrossFeatureCoordination`, or
+  `unknown`
+- required procedure:
+  `standardFeatureImplementation`, `designSystemChangeRequest`,
+  `platformChangeRequest`, `featureExtension`, `architectureReview`, or
+  `moreDiscoveryNeeded`
+
+The workflow processing profile must capture when a request involves
+validation, transformation, enrichment, calculation, routing, aggregation,
+synchronization, persistence, audit generation, or automation triggers. This is
+how the engine distinguishes frontend-only changes from feature-domain,
+platform, integration, background-job, audit/compliance, data-model, and
+architecture-review work.
+
+### Problem And Opportunity Economics
+
+Problem Context must be structured before jumping to solution routing. It
+captures what is painful, risky, costly, slow, confusing, fragile, or missing,
+and why that matters.
+
+Opportunity Economics is a derived inference layer above workflow, problem, and
+outcome context. It may infer:
+
+- workflow value:
+  value created by successful completion, who benefits, and which business,
+  revenue, retention, compliance, efficiency, or customer-value signal is
+  supported.
+- workflow cost:
+  labor, delay, support, error/rework, opportunity, compliance/risk, and
+  emotional/friction cost.
+- change ROI hypothesis:
+  current cost, expected cost after change, value unlocked, implementation
+  complexity, payback hypothesis, confidence, and assumptions.
+
+ROI is a hypothesis, not accounting truth. It must be evidence-backed,
+confidence-scored, and assumption-labelled. It should not block packet
+readiness unless prioritization, scope, or business-case approval depends on it.
+
+### Hard Restraint Evaluation
+
+Hard restraints override preference, convenience, and inferred ROI. If a
+solution violates a hard restraint, the packet must reroute the solution or mark
+the issue blocked.
+
+Hard restraint categories include tenant boundary, role authority, data
+handling, compliance, auditability, security, design-system seam, platform
+boundary, feature ownership, commercial entitlement, operational environment,
+availability/reliability, performance, reversibility, time/budget, and support
+model.
+
+Hard-restraint evaluation must:
+
+1. detect a candidate restraint
+2. classify category and source
+3. check confidence and severity
+4. align with existing repo authority
+5. choose enforcement mode: `block`, `reroute`, `requiresReview`, `warn`, or
+   `track`
+6. route to accountable owner such as architecture, security, data access,
+   compliance, design system, pricing/commercial, feature owner, platform
+   owner, tenant admin, or root operator
+7. persist outcome and reflect it in packet readiness
+
+Role-authority and data-handling restraints must reconcile with current and
+future authz architecture before implementation. Compliance restraints must
+reconcile with existing compliance gates and policy docs.
+
+### Outcome Relationship Graph
+
+Outcome Context should be graph-shaped rather than a flat KPI list. Official
+outcomes, objectives, key results, reporting periods, owners, and priority
+remain future Outcome Record Account data owned by a future planning/strategy
+feature if one is approved.
+
+Discovery may create Outcome Inference Account data such as inferred objectives,
+metric candidates, priority signals, business pressure, ROI hypotheses, and
+goal relationships.
+
+Outcome node types include strategic, business, department, team, workflow,
+user, customer, key result, metric candidate, risk reduction, efficiency,
+quality, compliance, revenue, retention, and cost-reduction outcomes.
+
+Relationship types include `supports`, `rollsUpTo`, `dependsOn`,
+`constrains`, `conflictsWith`, `tradesOffWith`, `measures`, `isProxyFor`,
+`isLeadingIndicatorFor`, `isLaggingIndicatorFor`, and `decomposesInto`.
+
+Outcome inference is contextual intelligence, not official strategy. It must be
+cautious, confidence-labelled, and asked about only when prioritization, scope,
+success criteria, or business case depends on it.
+
+### Conversation Control And Recommendations
+
+Conversation Control is inference-first and interruption-aware. It should not
+ask every interesting question. It asks only when the answer materially affects
+packet readiness, routing, risk, scope, or confidence.
+
+Supported modes:
+
+- `askNow`
+- `inferAndProceed`
+- `stateAssumption`
+- `recommendBestPractice`
+- `recommendWithTradeoff`
+- `recommendCheapestLowRiskPath`
+- `deferToLearningBacklog`
+- `summarizeAndConfirm`
+- `routeForReview`
+- `markBlocked`
+- `generatePacket`
+
+Recommendation source hierarchy:
+
+1. hard restraint
+2. governed source such as design-system, platform, authz, compliance, feature
+   ownership, or approved workflow template
+3. existing approved precedent
+4. cheapest low-risk implementation path
+5. ask or escalate
+
+When no governed source exists, the engine may steer toward the cheapest
+low-risk implementation path: reuse existing seams, keep scope narrow, prefer
+configuration over code, prefer existing components/templates/workflows,
+prefer existing platform seams, prefer feature extension over new feature,
+prefer manual/reversible paths over automation, avoid new abstractions without
+evidence, and minimize token usage, code churn, architectural novelty, and
+operational risk.
+
+If the cheapest path may violate security, compliance, authorization,
+design-system, platform, feature-ownership, or commercial boundaries, escalate
+instead of recommending.
+
+### Packet Readiness
+
+Packet readiness does not require everything to be known. It means enough is
+known, unknowns are labelled, risks are visible, assumptions are explicit, and
+next steps are routed.
+
+Readiness dimensions:
+
+- actor readiness
+- workflow readiness
+- problem readiness
+- restraint readiness
+- outcome readiness
+- solution-routing readiness
+- implementation-fit readiness
+- evidence readiness
+- assumption readiness
+- confirmation readiness
+
+Readiness states:
+
+- `notReady`
+- `partiallyReady`
+- `readyWithAssumptions`
+- `readyForReview`
+- `blocked`
+
+A packet is not ready if an unknown could invalidate the solution route,
+violate a hard restraint, change the primary actor, materially alter scope, or
+undermine packet usefulness.
+
+The packet output should separate request summary, actor context, current
+workflow, problem context, desired outcome, opportunity economics hypothesis,
+hard restraints, approved seam/catalogue fit, solution routing assessment,
+recommendation, assumptions, open questions, deferred learning items, required
+reviews, evidence summary, and packet readiness state.
+
+### Learning Backlog
+
+The learning backlog prevents discovery from becoming a bloated interrogation.
+It captures useful unknowns that should not block the current packet.
+
+Learning backlog subject types include organization, actor profile, workflow,
+problem, outcome, restraint, terminology, and preference. Items should capture
+subject id, question intent, what to learn, why it may matter, priority,
+ask-when policy, source session, evidence message ids, and status.
+
+Ask-when values include `nextRelevantSession`, `whenSameActorAppears`,
+`whenWorkflowRepeats`, `beforeImplementation`, `beforeRouting`, and
+`beforePacketApproval`.
+
+### Runtime And Token Governance
+
+Runtime and token governance is first-class. The engine should not load,
+reason over, or validate the whole discovery model on every turn.
+
+Execution tiers:
+
+- Tier 0 fast path:
+  simple acknowledgements or small clarifications use current session summary,
+  active hypothesis, last message, and next best action. No catalogue scans,
+  deep routing, or packet readiness.
+- Tier 1 focused discovery:
+  normal discovery turns load only the relevant context layer, matching
+  inference categories, active assumptions, and learning backlog.
+- Tier 2 routing/restraint evaluation:
+  triggered by permissions, data, compliance, frontend journeys, platform
+  tooling, feature ownership, pricing, imports/exports, destructive actions,
+  or other danger signals. Runs hard restraint, approved seam, fit, routing,
+  and review ownership checks.
+- Tier 3 packet generation:
+  explicit handoff action only. Uses structured session state, relevant record
+  facts, relevant inference facts, evidence, assumptions, blockers, routing
+  assessment, and deferred learning.
+
+Before any recommendation, the service must run a lightweight danger check for
+tenant boundary, authz/permissions, sensitive data, compliance, audit, pricing,
+destructive action, design-system seams, platform boundary, and feature
+ownership. A positive danger check escalates to Tier 2.
+
+### MVP Cut
+
+The next planning/implementation cut should not build the full intelligence
+platform.
+
+MVP scope for this model:
+
+- discovery session state
+- compact working state
+- record/inference/session separation
+- actor, workflow, and problem inference category catalogues
+- hard-restraint catalogue and evaluation skeleton
+- solution-routing skeleton
+- conversation-control modes
+- packet-readiness gate
+- learning backlog
+- runtime/token governance
+
+Out of scope for this cut:
+
+- full reconciliation UX
+- automated profile merge/split
+- OKR record management
+- advanced ROI calculations
+- full catalogue admin UI
+- cross-session intelligence automation beyond simple persisted inference
+- a microservice split without a follow-up ADR
 
 ## Product Discovery Adapter Behavior
 

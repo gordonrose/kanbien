@@ -74,7 +74,10 @@
   none for the users page body after removal of the old
   `src/frontend/rootAdminShell/assets/rootUsersList.mjs` implementation;
   route-local mounting now lives in
-  `src/frontend/rootAdminShell/routes/users/page.mjs`
+  `src/frontend/rootAdminShell/routes/users/page.mjs`; root-admin
+  `src/frontend/rootAdminShell/assets/app.mjs` only passes the current session
+  accessor into the route mount so the DS-owned profile-picture upload flow can
+  evaluate root-user context without reconstructing users-page UI locally
 - Design-system sourced implementation evidence:
   `src/frontend/designSystem/assets/rootAdminDirectoryWorkspace.mjs`
   owns the users workspace shell, list behavior, and create/edit drawer-form

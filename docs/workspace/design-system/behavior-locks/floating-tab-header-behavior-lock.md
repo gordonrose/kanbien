@@ -19,10 +19,10 @@ before it is adopted by an app surface.
 | --- | --- | --- |
 | `FTH-001` | The header is a sticky in-context secondary navigation surface for one list, board, or project. | `approved` |
 | `FTH-002` | Tabs render as counter cards with title, optional meta text, count, selected state, and theme/accent inheritance from the design-system tokens. | `approved` |
-| `FTH-003` | Five visible tabs use the roomier card layout and fill the full available tab rail width. | `approved` |
-| `FTH-004` | Crowded states at eight or more configured tabs switch to the compact card treatment. | `approved` |
+| `FTH-003` | Visible tabs use the roomier card layout when their rendered title, meta, count, and attention content fit the available tab rail. | `approved` |
+| `FTH-004` | Crowded states are based on rendered fit rather than configured tab count: if roomy cards do not fit, the rail switches to compact card treatment before hiding additional cards. | `approved` |
 | `FTH-005` | The horizontal rail supports up to ten row slots in single-row mode and five slots by two rows in double-row mode. | `approved` |
-| `FTH-006` | When the configured tab count exceeds available slots, paging arrows reveal hidden tabs and no native scrollbar is shown. | `approved` |
+| `FTH-006` | When the configured tab count or measured card fit exceeds available slots, paging arrows reveal hidden tabs and no native scrollbar is shown. | `approved` |
 | `FTH-007` | Hidden-tab summaries are side-aware: right-only at the beginning, both sides in the middle, and left-only at the end. Counts reflect the number hidden on that side. | `approved` |
 | `FTH-008` | Optional subtabs appear below the main card row without competing with paging controls or creating an empty vertical gutter. | `approved` |
 | `FTH-009` | Expand/collapse hides or shows the content panel, not the tab header itself. | `approved` |

@@ -82,9 +82,10 @@ describe("root admin shell browser auth integration", () => {
       helperArmoredSignature = readFileSync(`${challengePath}.sig`, "utf8");
 
       const sshStage = await invokeJson<{
-      rootUserId: string;
-      authPrincipalId: string;
-      email: string;
+        rootUserId: string;
+        authPrincipalId: string;
+        email: string;
+        expiresAt: string;
       }>(harness.app, {
       method: "POST",
       path: "/v1/root-auth/browser/login/ssh",
@@ -109,9 +110,10 @@ describe("root admin shell browser auth integration", () => {
       expect(sshStage.body.expiresAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);
 
       const bootstrap = await invokeJson<{
-      rootUserId: string;
-      authPrincipalId: string;
-      email: string;
+        rootUserId: string;
+        authPrincipalId: string;
+        email: string;
+        expiresAt: string;
       }>(harness.app, {
       method: "GET",
       path: "/v1/root-auth/browser/session",

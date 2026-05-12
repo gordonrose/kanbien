@@ -92,7 +92,7 @@ small set of hand-picked examples.
 | Ref ID | Route | Viewport | State | Primary assertions |
 | --- | --- | --- | --- | --- |
 | `FTH-R-001` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-001` | 1440 x 900 | Roomy five-tab horizontal baseline | Five cards fill full rail; meta visible; category control visible; expand hidden; no page overflow. |
-| `FTH-R-002` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-002` | 1440 x 900 | Crowded ten-tab compact baseline | Ten cards fit one row; compact card treatment; no hidden-count badge; arrows hidden. |
+| `FTH-R-002` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-002` | 1440 x 900 | Crowded ten-tab compact baseline | Ten cards fit one row when measured compact treatment is enough; no hidden-count badge; arrows hidden. |
 | `FTH-R-003` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-003` | 1440 x 900 | Over-limit start window | Right summary shows hidden count; left summary hidden; arrows visible; native scrollbar hidden. |
 | `FTH-R-004` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-004` | 1440 x 900 | Over-limit middle window | Left and right summaries both visible with side-specific counts. |
 | `FTH-R-005` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-005` | 1440 x 900 | Over-limit end window | Left summary visible; right summary hidden; right arrow disabled. |
@@ -107,7 +107,7 @@ small set of hand-picked examples.
 | `FTH-R-014` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-014` | 1440 x 900 | Dark theme | Surfaces, attention states, controls, and counts remain readable. |
 | `FTH-R-015` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-015` | 1440 x 900 | Desert theme | Theme variables apply without local one-off colour drift. |
 | `FTH-R-016` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-016` | 1440 x 900 | RTL horizontal | Control column, arrows, hidden-count sides, and drawer anchoring mirror correctly. |
-| `FTH-R-017` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-017` | 1024 x 900 | Magnified horizontal | Text remains contained; controls do not overlap subtabs or hidden counts. |
+| `FTH-R-017` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-017` | 1024 x 900 | Magnified horizontal | Text remains contained; measured compacting or paging prevents controls from overlapping subtabs or hidden counts. |
 | `FTH-R-018` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-018` | 420 x 900 | Magnified vertical | Long list remains scrollable; attention labels remain internal; control stack stays fixed. |
 | `FTH-R-019` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-019` | 390 x 900 | Mobile end paging | Left-only hidden summary and disabled right arrow are visible without native scrollbar. |
 | `FTH-R-020` | `/design-system/canonical-renderings/floating-tab-header/FTH-R-020` | 760 x 900 | Tooltip and focus review | Truncated labels expose shared tooltip; focus-visible treatment stays unclipped. |

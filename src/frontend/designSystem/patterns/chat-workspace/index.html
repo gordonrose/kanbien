@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Chat Workspace Pattern Variant</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/assets/conversationPanel.css" />
+    <link rel="stylesheet" href="/design-system/assets/chatWorkspacePattern.css" />
+  </head>
+  <body data-chat-workspace-owner="design-system">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/patterns">Patterns</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Chat Workspace</span></li>
+          </ol>
+        </nav>
+      </section>
+
+      <nav class="context-nav" aria-label="Chat workspace pattern navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/patterns/chat-workspace" data-tooltip="Pattern" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h7v14H4zm9 0h7v6h-7zm0 8h7v6h-7z" /></svg>
+            </span>
+            <span class="context-nav-label">Pattern</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/patterns/build-work-panel-demo" data-tooltip="Chat Panel">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v10H8l-4 4zm4 4h8v2H8z" /></svg>
+            </span>
+            <span class="context-nav-label">Chat Panel</span>
+          </a>
+        </div>
+      </nav>
+
+      <main class="design-system-page-main chat-workspace-pattern-page" data-chat-workspace-pattern>
+        <section class="chat-workspace-pattern-intro" aria-labelledby="chat-workspace-pattern-title">
+          <p class="top-nav-preview-eyebrow">Provisional pattern variant</p>
+          <h1 id="chat-workspace-pattern-title">Chat Workspace</h1>
+          <p class="chat-workspace-pattern-copy">
+            Demo rendering for an expanded chat view with the conversation anchored left and a build workspace on the right. This is review material, not canonical or app-consumable truth.
+          </p>
+          <ul class="build-work-panel-demo-status" aria-label="Pattern status">
+            <li>Demo rendering</li>
+            <li>Reuses chat panel seam</li>
+            <li>Workspace logic deferred</li>
+            <li>/design-system/patterns/chat-workspace</li>
+          </ul>
+        </section>
+
+        <section class="chat-workspace-shell" aria-label="Chat workspace preview" data-chat-workspace-shell data-chat-workspace-expanded="false">
+          <header class="chat-workspace-joint-header build-work-panel-demo-panel-header" data-chat-workspace-joint-header>
+            <div>
+              <p class="top-nav-preview-eyebrow">Layer 1</p>
+              <h2>Build work panel</h2>
+            </div>
+            <div class="build-work-panel-demo-header-actions">
+              <button class="build-work-panel-demo-history-toggle" type="button" data-chat-workspace-toggle aria-controls="chat-workspace-main" aria-expanded="false">
+                <span data-chat-workspace-toggle-label>Expand</span>
+              </button>
+              <button class="build-work-panel-demo-history-toggle" type="button" data-chat-workspace-history-toggle aria-controls="build-work-panel-history" aria-expanded="true">
+                <span class="build-work-panel-demo-history-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+                <span data-chat-workspace-history-toggle-label>Hide history</span>
+                <span class="build-work-panel-demo-history-toggle-caret" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m9 6 6 6-6 6-1.4-1.4 4.6-4.6-4.6-4.6z" /></svg>
+                </span>
+              </button>
+              <button class="build-work-panel-demo-close" type="button" data-chat-workspace-close aria-label="Close chat panel">
+                <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6z" /></svg>
+              </button>
+            </div>
+          </header>
+
+          <nav class="chat-workspace-layer-toolbar build-work-panel-demo-action-nav" aria-label="Workspace layers" data-chat-workspace-layer-toolbar></nav>
+
+          <div class="chat-workspace-chat-pane build-work-panel-demo-page" aria-label="Chat pane">
+            <div class="chat-workspace-chat-mount" data-chat-workspace-chat-mount></div>
+          </div>
+
+          <section id="chat-workspace-main" class="chat-workspace-main" aria-label="Workspace" data-chat-workspace-main aria-hidden="true">
+            <div class="chat-workspace-tab-zone" aria-label="Workspace navigation">
+              <div
+                id="chat-workspace-entity-workspace"
+                class="chat-workspace-entity-workspace"
+                data-chat-workspace-entity-workspace
+              ></div>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/chatWorkspacePattern.mjs"></script>
+  </body>
+</html>

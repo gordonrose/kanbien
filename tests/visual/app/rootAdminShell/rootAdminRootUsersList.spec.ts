@@ -584,6 +584,7 @@ async function bootstrapUsersPage(
   page: Page,
   options: {
     failInitialOnce?: boolean;
+    failProfilePictureContent?: boolean;
     search?: string;
     uploadBytesStatus?: number;
     uploadBytesContentType?: string;
@@ -708,6 +709,38 @@ test.describe("root-admin root-users list page adoption", () => {
     await expect(headerCard.locator("[data-form-image-card-image]")).toBeHidden();
     await expect(headerCard.locator("[data-form-image-card-placeholder]")).toBeVisible();
     await expect(headerCard.locator("[data-form-image-card-placeholder]")).toContainText("Profile picture");
+  });
+
+  test("root-user detail drawer adopts the indexed profile and session-information seam", async ({ page }) => {
+    await page.setViewportSize({ width: 1560, height: 1400 });
+    await bootstrapUsersPage(page);
+
+    await page.locator('[data-selectable-list-card]').first().click();
+
+    const detailPanel = page.locator("#root-users-detail-panel");
+    const profileOption = detailPanel.locator("[data-selectable-list-detail-aspect-option='profile']");
+    const sessionOption = detailPanel.locator("[data-selectable-list-detail-aspect-option='session-information']");
+    const profilePanel = detailPanel.locator("[data-selectable-list-detail-aspect='profile']");
+    const sessionPanel = detailPanel.locator("[data-selectable-list-detail-aspect='session-information']");
+
+    await expect(detailPanel.locator("[data-selectable-list-detail-index-layout]")).toBeVisible();
+    await expect(profileOption.locator(".list-page-detail-index-label")).toHaveText("Profile");
+    await expect(sessionOption.locator(".list-page-detail-index-label")).toHaveText("Session information");
+    await expect(profileOption.locator(".form-drawer-select-option-toggle")).toHaveCount(0);
+    await expect(sessionOption.locator(".form-drawer-select-option-copy")).toHaveCount(0);
+    await expect(profileOption).toHaveAttribute("aria-selected", "true");
+    await expect(profilePanel).toBeVisible();
+    await expect(profilePanel.locator("[data-directory-detail-description]")).toContainText("Root user ID:");
+    await expect(sessionPanel).toBeHidden();
+
+    await sessionOption.click();
+
+    await expect(sessionOption).toHaveAttribute("aria-selected", "true");
+    await expect(profilePanel).toBeHidden();
+    await expect(sessionPanel).toBeVisible();
+    await expect(sessionPanel.locator("[data-directory-session-title]")).toHaveText("Session information");
+    await expect(sessionPanel.locator("[data-directory-session-description]")).toContainText("not loaded in this list view");
+    await expect(sessionPanel.locator("[data-directory-session-tags]")).toContainText("Session list not loaded");
   });
 
   test("directory list cards keep the governed list-page stack gap", async ({ page }) => {

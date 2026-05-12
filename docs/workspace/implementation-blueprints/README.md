@@ -22,5 +22,13 @@ Typical blueprint contents:
 - verification plan
 - docs update plan
 
+## Draft Capability Blueprints
+
+- [2026-05-11 Organization Domain Foundation Capability Blueprint](./2026-05-11-organization-domain-foundation-capability-blueprint.md)
+  is a planning draft for the Organization domain record-account feature set.
+  It is not implementation-ready until the upstream Product Discovery, Technical
+  Steering, capability matrix, PRD, API contracts, data dictionary, permission
+  mapping, and test-case artifacts exist.
+
 These files are intended to be maintained with the
 `implementation-blueprint-maintainer` skill.

@@ -7,6 +7,7 @@
   `ListRecordCard`
   `ListDetailPanel`
   `ListDetailSplitLayout`
+  `ListDetailSectionIndex`
   `FormImageCard`
 - Status:
   active first-consumer adoption contract
@@ -24,6 +25,9 @@
   `docs/workspace/design-system/components/list-record-card-component.md`
   `docs/workspace/design-system/components/list-detail-panel-component.md`
   `docs/workspace/design-system/components/list-detail-split-layout-component.md`
+  `docs/workspace/design-system/components/list-detail-section-index-component.md`
+  `docs/workspace/design-system/behavior-locks/list-detail-section-index-behavior-lock.md`
+  `docs/workspace/design-system/reference-packs/list-detail-section-index-reference-pack.md`
   `docs/workspace/design-system/behavior-locks/form-image-card-behavior-lock.md`
   `docs/workspace/design-system/reference-packs/form-image-card-reference-pack.md`
 
@@ -83,8 +87,12 @@
   root-user identity: first and last name in the top row, normalized email in
   the second row, lifecycle status in the third row, and the linked profile
   image when available. The hidden detail title remains the accessible panel
-  label and focus target. Body and tags map current durable fields such as
-  identifiers and timestamps.
+  label and focus target. Body content now uses the signed-off
+  `ListDetailSectionIndex` seam with `Profile` and `Session information`
+  sections. `Profile` maps current durable fields such as identifiers and
+  timestamps. `Session information` shows current browser session details only
+  when available for the selected user, otherwise it states that selected-user
+  session records are not loaded in this list view.
 - Append source:
   additional pages of `GET /v1/root-users` load through the list boundary and
   footer `Next`
@@ -135,6 +143,9 @@
 - The root-user edit drawer places the profile-picture field before scalar
   identity fields so the header image-card edit affordance opens the form at
   the image relationship first.
+- The root-user detail drawer adopts the shared `ListDetailSectionIndex` seam
+  for `Profile` and `Session information` rather than adding local section-nav
+  markup in the app route.
 
 ## Adoption Boundary
 

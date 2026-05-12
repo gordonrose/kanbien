@@ -20,6 +20,8 @@
 - Related durable records:
   `harness_chat_messages`, `harness_chat_packet_revisions`,
   `harness_chat_pdf_attempts`,
+  planned discovery intelligence session/inference/evidence/readiness/backlog
+  records,
   Product Request artifact index, root user/session records
 - Primary key:
   `conversation_id`
@@ -101,7 +103,10 @@
   Description: Harness-validated structured Layer 1 discovery facts, routing,
   confidence, blockers, and readiness metadata.
   Constraints / Notes: Only server/harness accepted state is stored; raw LLM
-  proposals are not source of truth.
+  proposals are not source of truth. Future persistence-backed intelligence
+  should split official record references, evidence-backed inference, and
+  session working memory instead of expanding this field into an unbounded
+  transcript-derived catchall.
   Source: Layer One Runtime Contract.
 - `compact_transcript_summary`
   Type / Shape: `TEXT | NULL`

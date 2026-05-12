@@ -7,6 +7,7 @@ export function mountUsersPage({
   uploadFileBytes,
   setShellMessage,
   getCurrentPage = () => "overview",
+  getCurrentSession = () => null,
 } = {}) {
   return createRootAdminDirectoryWorkspaceController({
     pageKey: "users",
@@ -16,5 +17,6 @@ export function mountUsersPage({
     uploadFileBytes,
     setShellMessage,
     getCurrentPage,
+    getCurrentSession,
   });
 }

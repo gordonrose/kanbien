@@ -91,6 +91,110 @@ test.describe("design-system list page", () => {
     expect(stressedGeometry.metaInside).toBe(true);
   });
 
+  test("can use an indexed detail drawer variant to switch record aspects", async ({ page }) => {
+    await page.goto("/design-system/templates/list-page");
+
+    await expect(page.locator("[data-selectable-list-detail-index-layout]")).toHaveCount(0);
+    await page.locator("#accessibility-button").click();
+    await expect(page.locator("[data-drawer-variant-option='standard']")).toHaveClass(/active/);
+    await page.locator("[data-drawer-variant-option='indexed']").click();
+    await page.waitForURL(/drawerVariant=indexed/);
+    await page.locator("#accessibility-button").click();
+    await expect(page.locator("[data-drawer-variant-option='indexed']")).toHaveClass(/active/);
+
+    await page.locator("[data-selectable-list-card]").first().click();
+
+    const detailPanel = page.locator("[data-selectable-list-detail-panel]");
+    const indexLayout = page.locator("[data-selectable-list-detail-index-layout]");
+    const detailsTab = page.locator("[data-selectable-list-detail-aspect-option='details']");
+    const pictureTab = page.locator("[data-selectable-list-detail-aspect-option='picture']");
+    const descriptionTab = page.locator("[data-selectable-list-detail-aspect-option='description']");
+    const detailsPanel = page.locator("[data-selectable-list-detail-aspect='details']");
+    const picturePanel = page.locator("[data-selectable-list-detail-aspect='picture']");
+    const descriptionPanel = page.locator("[data-selectable-list-detail-aspect='description']");
+
+    await expect(detailPanel).toBeVisible();
+    await expect(indexLayout).toBeVisible();
+    await expect(detailsTab).toHaveClass(/form-drawer-select-option/);
+    await expect(detailsTab.locator(".form-drawer-select-option-toggle")).toHaveCount(0);
+    await expect(detailsTab.locator(".form-drawer-select-option-copy")).toHaveCount(0);
+    await expect(detailsTab.locator(".list-page-detail-index-label")).toHaveText("Details");
+    await expect(detailsTab).toHaveAttribute("aria-selected", "true");
+    await expect(detailsPanel).toBeVisible();
+    await expect(picturePanel).toBeHidden();
+    await expect(descriptionPanel).toBeHidden();
+    await expect(detailsPanel.locator("[data-selectable-list-detail-field='tags']")).toContainText("Tag Field 1");
+
+    await pictureTab.click();
+    await expect(pictureTab).toHaveAttribute("aria-selected", "true");
+    await expect(picturePanel).toBeVisible();
+    await expect(picturePanel.locator("[data-selectable-list-detail-field='picture-initials']")).toHaveText("TF");
+    await expect(detailsPanel).toBeHidden();
+
+    await descriptionTab.click();
+    await expect(descriptionTab).toHaveAttribute("aria-selected", "true");
+    await expect(descriptionPanel).toBeVisible();
+    await expect(descriptionPanel.locator("[data-selectable-list-detail-field='description']")).toContainText("Long Description Field.");
+
+    const containment = await detailPanel.evaluate((panel) => {
+      const tabs = panel.querySelector("[data-selectable-list-detail-index]");
+      const activePanel = panel.querySelector("[data-selectable-list-detail-aspect='description']");
+      if (!(panel instanceof HTMLElement) || !(tabs instanceof HTMLElement) || !(activePanel instanceof HTMLElement)) {
+        return null;
+      }
+
+      const panelBox = panel.getBoundingClientRect();
+      const tabsBox = tabs.getBoundingClientRect();
+      const activeBox = activePanel.getBoundingClientRect();
+
+      return {
+        tabsInside: tabsBox.left >= panelBox.left && tabsBox.right <= panelBox.right,
+        activeInside: activeBox.left >= panelBox.left && activeBox.right <= panelBox.right,
+        bodyCanScroll: (() => {
+          const body = panel.querySelector(".list-page-detail-body");
+          return body instanceof HTMLElement && body.scrollHeight >= body.clientHeight;
+        })(),
+      };
+    });
+
+    expect(containment).not.toBeNull();
+    expect(containment?.tabsInside).toBe(true);
+    expect(containment?.activeInside).toBe(true);
+    expect(containment?.bodyCanScroll).toBe(true);
+
+    await page.goto("/design-system/templates/list-page?drawerVariant=indexed&theme=dark&dir=rtl&zoom=100");
+    await page.locator("[data-selectable-list-card]").first().click();
+    await page.locator("[data-selectable-list-detail-aspect-option='description']").click();
+
+    const stressedContainment = await page.locator("[data-selectable-list-detail-panel]").evaluate((panel) => {
+      const index = panel.querySelector("[data-selectable-list-detail-index]");
+      const activePanel = panel.querySelector("[data-selectable-list-detail-aspect='description']");
+      if (!(panel instanceof HTMLElement) || !(index instanceof HTMLElement) || !(activePanel instanceof HTMLElement)) {
+        return null;
+      }
+
+      const panelBox = panel.getBoundingClientRect();
+      const indexBox = index.getBoundingClientRect();
+      const activeBox = activePanel.getBoundingClientRect();
+      const panelStyle = getComputedStyle(panel);
+
+      return {
+        direction: panelStyle.direction,
+        background: panelStyle.backgroundColor,
+        indexInside: indexBox.left >= panelBox.left && indexBox.right <= panelBox.right,
+        activeInside: activeBox.left >= panelBox.left && activeBox.right <= panelBox.right,
+        panelHasSize: panelBox.width > 0 && panelBox.height > 0,
+      };
+    });
+
+    expect(stressedContainment).not.toBeNull();
+    expect(stressedContainment?.direction).toBe("rtl");
+    expect(stressedContainment?.background).not.toBe("rgba(0, 0, 0, 0)");
+    expect(stressedContainment?.indexInside).toBe(true);
+    expect(stressedContainment?.activeInside).toBe(true);
+    expect(stressedContainment?.panelHasSize).toBe(true);
+  });
+
   test("reorders list records with drag-and-drop and keyboard movement", async ({ page }) => {
     await page.goto("/design-system/templates/list-page?listItemVariant=row");
 

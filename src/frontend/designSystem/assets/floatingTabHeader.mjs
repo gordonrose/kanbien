@@ -142,7 +142,6 @@ export const rowPackingRules = {
   double: { maxTabsPerRow: 5, maxRows: 2 },
 };
 
-export const crowdedTabThreshold = 8;
 const floatingTabThemeOptions = new Set(["normal", "dark", "desert"]);
 const floatingTabZoomOptions = new Set(["-100", "-50", "0", "50", "100"]);
 
@@ -199,8 +198,11 @@ function setActiveChip(buttons, activeButton) {
   }
 }
 
-function renderFloatingTabRows(label, rowsByLabel = floatingTabRows) {
-  const rows = rowsByLabel[label] ?? rowsByLabel.Active ?? [];
+function renderFloatingTabRows(label, rowsByLabel = floatingTabRows, category = "") {
+  const categoryRows = category && rowsByLabel?.[category] && typeof rowsByLabel[category] === "object"
+    ? rowsByLabel[category]
+    : null;
+  const rows = categoryRows?.[label] ?? rowsByLabel[label] ?? rowsByLabel.Active ?? [];
   return rows
     .map(
       ([title, owner, due]) => `
@@ -214,8 +216,8 @@ function renderFloatingTabRows(label, rowsByLabel = floatingTabRows) {
     .join("");
 }
 
-function renderRows(list, label, rowsByLabel = floatingTabRows) {
-  list.innerHTML = renderFloatingTabRows(label, rowsByLabel);
+function renderRows(list, label, rowsByLabel = floatingTabRows, category = "") {
+  list.innerHTML = renderFloatingTabRows(label, rowsByLabel, category);
 }
 
 function renderSubTabs(container, label, attentionEnabled = false, subTabsByLabel = floatingSubTabs) {
@@ -245,11 +247,34 @@ export function renderFloatingTabHeader({
   rowsByLabel = floatingTabRows,
   activeCategory = "status",
   activeIndex = 0,
+  instanceId = "floating-tab",
+  categoryMetadata = {},
   ariaLabel = "Project status views",
   tablistLabel = "Project status filters",
   subTabLabel = "Nested project status views",
   panelKicker = "Selected view",
 } = {}) {
+  const idBase = slugify(instanceId);
+  const ids = {
+    header: `${idBase}-header`,
+    categoryToggle: `${idBase}-category-toggle`,
+    collapseToggle: `${idBase}-collapse-toggle`,
+    mainRow: `${idBase}-main-row`,
+    scrollLeft: `${idBase}-scroll-left`,
+    tabs: `${idBase}-status-tabs`,
+    overflowLeft: `${idBase}-overflow-summary-left`,
+    overflowRight: `${idBase}-overflow-summary-right`,
+    scrollRight: `${idBase}-scroll-right`,
+    collapsedSummary: `${idBase}-collapsed-summary`,
+    collapsedTitle: `${idBase}-collapsed-title`,
+    collapsedCount: `${idBase}-collapsed-count`,
+    categoryDrawer: `${idBase}-category-drawer`,
+    subTabs: `${idBase}-sub-tabs`,
+    panel: `${idBase}-panel`,
+    list: `${idBase}-list`,
+    panelTitle: `${idBase}-panel-title`,
+    panelCount: `${idBase}-panel-count`,
+  };
   const categoryEntries = Object.entries(categories);
   const safeCategory = categories[activeCategory] ? activeCategory : categoryEntries[0]?.[0] ?? "status";
   const items = categories[safeCategory] ?? [];
@@ -263,7 +288,7 @@ export function renderFloatingTabHeader({
       const attentionMarkup = attention ? '<span class="floating-tab-attention-label">Needs attention</span>' : "";
 
       return `
-                    <button class="floating-tab-card${extendedClass}${overflowClass}${activeClass}" id="floating-tab-${slugify(label)}" type="button" role="tab" aria-selected="${index === activeIndex ? "true" : "false"}" aria-controls="floating-tab-panel" data-tab-label="${escapeHtml(label)}" data-tab-count="${escapeHtml(count)}"${attention ? ' data-tab-attention="true"' : ""}>
+                    <button class="floating-tab-card${extendedClass}${overflowClass}${activeClass}" id="${ids.header}-${slugify(label)}-${index + 1}" type="button" role="tab" aria-selected="${index === activeIndex ? "true" : "false"}" aria-controls="${ids.panel}" data-tab-label="${escapeHtml(label)}" data-tab-count="${escapeHtml(count)}"${attention ? ' data-tab-attention="true"' : ""}>
                       <span class="floating-tab-card-copy">
                         <span class="floating-tab-card-title">${escapeHtml(label)}</span>
                         <span class="floating-tab-card-meta">${escapeHtml(meta)}</span>
@@ -277,6 +302,7 @@ export function renderFloatingTabHeader({
     status: ["Status", "Work state"],
     priority: ["Priority", "Urgency bands"],
     owner: ["Owner", "Team handoffs"],
+    ...categoryMetadata,
   };
   const categoryButtons = categoryEntries
     .map(([key]) => {
@@ -291,13 +317,13 @@ export function renderFloatingTabHeader({
     .join("");
 
   return `
-              <nav id="floating-tab-header" class="floating-tab-header" aria-label="${escapeHtml(ariaLabel)}" data-floating-tab-expandable="false" data-floating-tab-content-collapsed="false" data-floating-tab-sub-tabs="false" data-floating-tab-attention="false" data-floating-tab-layout="horizontal" data-floating-tab-row-packing="single" data-floating-tab-overflow-count="0">
+              <nav id="${ids.header}" class="floating-tab-header" aria-label="${escapeHtml(ariaLabel)}" data-floating-tab-expandable="false" data-floating-tab-content-collapsed="false" data-floating-tab-sub-tabs="false" data-floating-tab-attention="false" data-floating-tab-layout="horizontal" data-floating-tab-row-packing="single" data-floating-tab-overflow-count="0">
                 <button
-                  id="floating-tab-category-toggle"
+                  id="${ids.categoryToggle}"
                   class="icon-button floating-tab-category-toggle tooltip-anchor"
                   type="button"
                   aria-expanded="false"
-                  aria-controls="floating-tab-category-drawer"
+                  aria-controls="${ids.categoryDrawer}"
                   aria-label="Choose tab category"
                   data-tooltip="Choose tab category"
                 >
@@ -306,11 +332,11 @@ export function renderFloatingTabHeader({
                   </span>
                 </button>
                 <button
-                  id="floating-tab-collapse-toggle"
+                  id="${ids.collapseToggle}"
                   class="icon-button floating-tab-collapse-toggle hidden"
                   type="button"
                   aria-expanded="true"
-                  aria-controls="floating-tab-panel"
+                  aria-controls="${ids.panel}"
                   aria-label="Hide floating tab content"
                 >
                   <span class="icon-button-glyph" aria-hidden="true">
@@ -318,41 +344,41 @@ export function renderFloatingTabHeader({
                   </span>
                 </button>
                 <div class="floating-tab-main-row">
-                  <button id="floating-tab-scroll-left" class="icon-button floating-tab-scroll-button floating-tab-scroll-button-left" type="button" aria-label="Scroll tabs left">
+                  <button id="${ids.scrollLeft}" class="icon-button floating-tab-scroll-button floating-tab-scroll-button-left" type="button" aria-label="Scroll tabs left">
                     <span class="icon-button-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m14.5 6-5.5 6 5.5 6" /></svg></span>
                   </button>
-                  <div id="floating-tab-status-tabs" class="floating-tab-scroll" role="tablist" aria-label="${escapeHtml(tablistLabel)}">
-                    <span id="floating-tab-overflow-summary-left" class="floating-tab-overflow-summary floating-tab-overflow-summary-left hidden" aria-live="polite">1 more</span>
+                  <div id="${ids.tabs}" class="floating-tab-scroll" role="tablist" aria-label="${escapeHtml(tablistLabel)}">
+                    <span id="${ids.overflowLeft}" class="floating-tab-overflow-summary floating-tab-overflow-summary-left hidden" aria-live="polite">1 more</span>
 ${tabButtons}
-                    <span id="floating-tab-overflow-summary-right" class="floating-tab-overflow-summary floating-tab-overflow-summary-right hidden" aria-live="polite">2 more</span>
+                    <span id="${ids.overflowRight}" class="floating-tab-overflow-summary floating-tab-overflow-summary-right hidden" aria-live="polite">2 more</span>
                   </div>
-                  <button id="floating-tab-scroll-right" class="icon-button floating-tab-scroll-button floating-tab-scroll-button-right" type="button" aria-label="Scroll tabs right">
+                  <button id="${ids.scrollRight}" class="icon-button floating-tab-scroll-button floating-tab-scroll-button-right" type="button" aria-label="Scroll tabs right">
                     <span class="icon-button-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m9.5 6 5.5 6-5.5 6" /></svg></span>
                   </button>
                 </div>
-                <div id="floating-tab-collapsed-summary" class="floating-tab-collapsed-summary hidden" aria-live="polite">
-                  <span id="floating-tab-collapsed-title">${escapeHtml(activeLabel)}</span>
-                  <span id="floating-tab-collapsed-count">Content hidden, ${escapeHtml(activeCount)} records</span>
+                <div id="${ids.collapsedSummary}" class="floating-tab-collapsed-summary hidden" aria-live="polite">
+                  <span id="${ids.collapsedTitle}">${escapeHtml(activeLabel)}</span>
+                  <span id="${ids.collapsedCount}">Content hidden, ${escapeHtml(activeCount)} records</span>
                 </div>
-                <aside id="floating-tab-category-drawer" class="floating-tab-category-drawer hidden" aria-label="Tab category selector">
+                <aside id="${ids.categoryDrawer}" class="floating-tab-category-drawer hidden" aria-label="Tab category selector">
                   <p class="floating-tab-category-drawer-label">Tab category</p>
                   <div class="floating-tab-category-options" role="radiogroup" aria-label="Tab category">
 ${categoryButtons}
                   </div>
                 </aside>
-                <div id="floating-tab-sub-tabs" class="floating-tab-sub-tabs hidden" role="tablist" aria-label="${escapeHtml(subTabLabel)}"></div>
+                <div id="${ids.subTabs}" class="floating-tab-sub-tabs hidden" role="tablist" aria-label="${escapeHtml(subTabLabel)}"></div>
               </nav>
 
-              <section id="floating-tab-panel" class="floating-tab-list-panel" role="tabpanel" aria-labelledby="floating-tab-${slugify(activeLabel)}" tabindex="0">
+              <section id="${ids.panel}" class="floating-tab-list-panel" role="tabpanel" aria-labelledby="${ids.header}-${slugify(activeLabel)}-${activeIndex + 1}" tabindex="0">
                 <div class="floating-tab-list-header">
                   <div>
                     <p class="floating-tab-project-kicker">${escapeHtml(panelKicker)}</p>
-                    <h4 id="floating-tab-panel-title">${escapeHtml(activeLabel)} work</h4>
+                    <h4 id="${ids.panelTitle}">${escapeHtml(activeLabel)} work</h4>
                   </div>
-                  <span id="floating-tab-panel-count" class="floating-tab-panel-count">${escapeHtml(activeCount)} records</span>
+                  <span id="${ids.panelCount}" class="floating-tab-panel-count">${escapeHtml(activeCount)} records</span>
                 </div>
-                <div id="floating-tab-list" class="floating-tab-list">
-                  ${renderFloatingTabRows(activeLabel, rowsByLabel)}
+                <div id="${ids.list}" class="floating-tab-list">
+                  ${renderFloatingTabRows(activeLabel, rowsByLabel, safeCategory)}
                 </div>
               </section>`;
 }
@@ -364,29 +390,35 @@ export function mountFloatingTabHeader({
   subTabsByLabel = floatingSubTabs,
   displayRoot = document.documentElement,
   initialParams = null,
+  instanceId = "floating-tab",
+  workspaceId = "floating-tab-workspace",
+  onCategoryChange = null,
+  onTabChange = null,
 } = {}) {
+  const idBase = slugify(instanceId);
+  const workspaceSelector = `#${CSS.escape(workspaceId)}`;
   const scope = root instanceof Document ? root : root.ownerDocument;
   const queryRoot = root instanceof Document ? root : root;
-  const header = queryRoot.querySelector("#floating-tab-header");
-  const workspace = queryRoot instanceof HTMLElement && queryRoot.id === "floating-tab-workspace"
+  const header = queryRoot.querySelector(`#${idBase}-header`);
+  const workspace = queryRoot instanceof HTMLElement && queryRoot.id === workspaceId
     ? queryRoot
-    : queryRoot.querySelector("#floating-tab-workspace");
+    : queryRoot.querySelector(workspaceSelector);
   const tabButtons = Array.from(queryRoot.querySelectorAll(".floating-tab-card"));
-  const panel = queryRoot.querySelector("#floating-tab-panel");
-  const panelTitle = queryRoot.querySelector("#floating-tab-panel-title");
-  const panelCount = queryRoot.querySelector("#floating-tab-panel-count");
+  const panel = queryRoot.querySelector(`#${idBase}-panel`);
+  const panelTitle = queryRoot.querySelector(`#${idBase}-panel-title`);
+  const panelCount = queryRoot.querySelector(`#${idBase}-panel-count`);
   const readout = scope.querySelector("#floating-tab-readout");
-  const list = queryRoot.querySelector("#floating-tab-list");
-  const collapsedSummary = queryRoot.querySelector("#floating-tab-collapsed-summary");
-  const collapsedTitle = queryRoot.querySelector("#floating-tab-collapsed-title");
-  const collapsedCount = queryRoot.querySelector("#floating-tab-collapsed-count");
-  const collapseToggle = queryRoot.querySelector("#floating-tab-collapse-toggle");
-  const subTabContainer = queryRoot.querySelector("#floating-tab-sub-tabs");
-  const tabScroller = queryRoot.querySelector("#floating-tab-status-tabs");
-  const scrollLeftButton = queryRoot.querySelector("#floating-tab-scroll-left");
-  const scrollRightButton = queryRoot.querySelector("#floating-tab-scroll-right");
-  const categoryToggle = queryRoot.querySelector("#floating-tab-category-toggle");
-  const categoryDrawer = queryRoot.querySelector("#floating-tab-category-drawer");
+  const list = queryRoot.querySelector(`#${idBase}-list`);
+  const collapsedSummary = queryRoot.querySelector(`#${idBase}-collapsed-summary`);
+  const collapsedTitle = queryRoot.querySelector(`#${idBase}-collapsed-title`);
+  const collapsedCount = queryRoot.querySelector(`#${idBase}-collapsed-count`);
+  const collapseToggle = queryRoot.querySelector(`#${idBase}-collapse-toggle`);
+  const subTabContainer = queryRoot.querySelector(`#${idBase}-sub-tabs`);
+  const tabScroller = queryRoot.querySelector(`#${idBase}-status-tabs`);
+  const scrollLeftButton = queryRoot.querySelector(`#${idBase}-scroll-left`);
+  const scrollRightButton = queryRoot.querySelector(`#${idBase}-scroll-right`);
+  const categoryToggle = queryRoot.querySelector(`#${idBase}-category-toggle`);
+  const categoryDrawer = queryRoot.querySelector(`#${idBase}-category-drawer`);
   const categoryButtons = Array.from(queryRoot.querySelectorAll("button[data-floating-tab-category]"));
   const expandableButtons = Array.from(scope.querySelectorAll("button[data-floating-tab-expandable]"));
   const categorySwitchButtons = Array.from(scope.querySelectorAll("button[data-floating-tab-category-switch]"));
@@ -396,8 +428,8 @@ export function mountFloatingTabHeader({
   const layoutButtons = Array.from(scope.querySelectorAll("button[data-floating-tab-layout]"));
   const rowPackingButtons = Array.from(scope.querySelectorAll("button[data-floating-tab-row-packing]"));
   const tabCountButtons = Array.from(scope.querySelectorAll("button[data-floating-tab-count]"));
-  const overflowSummaryLeft = queryRoot.querySelector("#floating-tab-overflow-summary-left");
-  const overflowSummaryRight = queryRoot.querySelector("#floating-tab-overflow-summary-right");
+  const overflowSummaryLeft = queryRoot.querySelector(`#${idBase}-overflow-summary-left`);
+  const overflowSummaryRight = queryRoot.querySelector(`#${idBase}-overflow-summary-right`);
   const displayScope = displayRoot instanceof HTMLElement ? displayRoot : document.documentElement;
 
   if (
@@ -407,7 +439,6 @@ export function mountFloatingTabHeader({
     !panel ||
     !panelTitle ||
     !panelCount ||
-    !readout ||
     !list ||
     !collapsedSummary ||
     !collapsedTitle ||
@@ -440,6 +471,10 @@ export function mountFloatingTabHeader({
   let shouldOpenCategoryDrawer = false;
   let initialFocusTarget = "";
   let category = "status";
+  let densityFrame = 0;
+  let measuredVisibleLimit = null;
+  let measuredCrowded = false;
+  let applyingMeasuredDensity = false;
 
   function getBooleanParam(params, name, fallback) {
     const value = params.get(name);
@@ -624,6 +659,84 @@ export function mountFloatingTabHeader({
     }
   }
 
+  function textOverflows(element) {
+    if (!(element instanceof HTMLElement)) {
+      return false;
+    }
+    return element.scrollWidth > element.clientWidth + 1 || element.scrollHeight > element.clientHeight + 1;
+  }
+
+  function syncMeasuredCardDensity() {
+    if (layout !== "horizontal") {
+      header.dataset.floatingTabCrowded = "false";
+      measuredVisibleLimit = null;
+      measuredCrowded = false;
+      return;
+    }
+
+    const visibleCards = tabButtons.filter(
+      (button) =>
+        !button.classList.contains("floating-tab-card-fixture-hidden")
+        && !button.classList.contains("floating-tab-card-overflow-hidden"),
+    );
+    if (!visibleCards.length) {
+      return;
+    }
+
+    let railOverflow = tabScroller.scrollWidth > tabScroller.clientWidth + 1;
+    const textOverflow = visibleCards.some((button) => {
+        const title = button.querySelector(".floating-tab-card-title");
+        const meta = button.querySelector(".floating-tab-card-meta");
+        const attention = button.querySelector(".floating-tab-attention-label");
+        return textOverflows(title) || textOverflows(meta) || (isAttentionTab(button) && textOverflows(attention));
+      });
+    if (measuredCrowded && railOverflow) {
+      const scrollerStyle = window.getComputedStyle(tabScroller);
+      const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
+      const compactMinWidth = 4.5 * rootFontSize;
+      const columnGap = Number.parseFloat(scrollerStyle.columnGap || scrollerStyle.gap) || 0;
+      const compactFitWidth = (visibleCards.length * compactMinWidth) + Math.max(0, visibleCards.length - 1) * columnGap;
+      railOverflow = compactFitWidth > tabScroller.clientWidth + 1;
+    }
+    const fittedOverflow = measuredCrowded ? railOverflow : railOverflow || textOverflow;
+
+    if (!fittedOverflow) {
+      return;
+    }
+
+    if (!measuredCrowded) {
+      measuredCrowded = true;
+      applyingMeasuredDensity = true;
+      applyVariantState();
+      applyingMeasuredDensity = false;
+      return;
+    }
+
+    if (visibleCards.length > 1) {
+      const currentSlotLimit = Number.parseInt(header.style.getPropertyValue("--floating-tab-visible-slots"), 10);
+      measuredVisibleLimit = Math.max(1, (Number.isFinite(currentSlotLimit) ? currentSlotLimit : visibleCards.length) - 1);
+      applyingMeasuredDensity = true;
+      applyVariantState();
+      applyingMeasuredDensity = false;
+      return;
+    }
+
+    header.dataset.floatingTabCrowded = "true";
+  }
+
+  function scheduleMeasuredCardDensity() {
+    if (densityFrame) {
+      window.cancelAnimationFrame(densityFrame);
+      densityFrame = 0;
+    }
+    densityFrame = window.requestAnimationFrame(() => {
+      densityFrame = 0;
+      syncMeasuredCardDensity();
+      syncScrollButtons();
+      syncTabOverflowTooltips();
+    });
+  }
+
   function setOverflowSummary(summary, count, side) {
     summary.classList.toggle("hidden", count === 0);
     summary.textContent = `${count} more`;
@@ -634,6 +747,7 @@ export function mountFloatingTabHeader({
   }
 
   function applyCategory(nextCategory) {
+    measuredVisibleLimit = null;
     category = categories[nextCategory] ? nextCategory : Object.keys(categories)[0] ?? "status";
     const items = categories[category];
     tabButtons.forEach((button, index) => {
@@ -652,19 +766,32 @@ export function mountFloatingTabHeader({
     panel.setAttribute("aria-labelledby", activeButton.id);
     panelTitle.textContent = `${activeLabel} work`;
     panelCount.textContent = `${activeCount} records`;
-    readout.textContent = `Viewing ${activeLabel}, ${activeCount} records${isAttentionTab(activeButton) ? ", needs attention" : ""}`;
-    renderRows(list, activeLabel, rowsByLabel);
+    if (readout instanceof HTMLElement) {
+      readout.textContent = `Viewing ${activeLabel}, ${activeCount} records${isAttentionTab(activeButton) ? ", needs attention" : ""}`;
+    }
+    renderRows(list, activeLabel, rowsByLabel, category);
+    if (typeof onCategoryChange === "function") {
+      onCategoryChange({ category, label: activeLabel, count: activeCount });
+    }
   }
 
   function applyVariantState() {
+    if (!applyingMeasuredDensity) {
+      measuredVisibleLimit = null;
+      measuredCrowded = false;
+    }
     const contentCollapsed = expandable && collapsed;
     const shouldShowSubTabs = subTabsEnabled;
     const rowRule = rowPackingRules[rowPacking] ?? rowPackingRules.single;
-    const fixtureLimit = layout === "vertical" ? tabButtons.length : tabCount;
+    const fixtureLimit = layout === "vertical" ? tabButtons.length : Math.min(tabCount, tabButtons.length);
     const rowCapacity = layout === "vertical" ? Number.POSITIVE_INFINITY : rowRule.maxTabsPerRow * rowRule.maxRows;
-    const exceedsRowCapacity = layout !== "vertical" && fixtureLimit > rowCapacity;
-    const singleSummaryVisibleLimit = exceedsRowCapacity ? rowCapacity - 1 : Math.min(fixtureLimit, rowCapacity);
-    const maxWindowStart = exceedsRowCapacity ? fixtureLimit - singleSummaryVisibleLimit : 0;
+    const measuredLimit = Number.isInteger(measuredVisibleLimit)
+      ? Math.max(1, Math.min(measuredVisibleLimit, fixtureLimit))
+      : null;
+    const baseVisibleLimit = Math.min(fixtureLimit, rowCapacity);
+    const slotLimit = measuredLimit ?? rowCapacity;
+    const exceedsRowCapacity = layout !== "vertical" && fixtureLimit > slotLimit;
+    const maxWindowStart = exceedsRowCapacity ? Math.max(0, fixtureLimit - Math.max(1, slotLimit - 1)) : 0;
     if (exceedsRowCapacity && requestedWindowPosition) {
       tabWindowStart = requestedWindowPosition === "end" ? maxWindowStart : Math.floor(maxWindowStart / 2);
       requestedWindowPosition = "";
@@ -672,9 +799,11 @@ export function mountFloatingTabHeader({
     tabWindowStart = exceedsRowCapacity ? Math.min(tabWindowStart, maxWindowStart) : 0;
     const showLeftSummary = exceedsRowCapacity && tabWindowStart > 0;
     const showRightSummary = exceedsRowCapacity && tabWindowStart < maxWindowStart;
+    const summarySlotCount = (showLeftSummary ? 1 : 0) + (showRightSummary ? 1 : 0);
     const visibleLimit = exceedsRowCapacity
-      ? rowCapacity - (showLeftSummary ? 1 : 0) - (showRightSummary ? 1 : 0)
-      : Math.min(fixtureLimit, rowCapacity);
+      ? Math.max(1, slotLimit - summarySlotCount)
+      : Math.min(fixtureLimit, slotLimit);
+    const visibleSlotCount = visibleLimit + summarySlotCount;
     const visibleWindowEnd = tabWindowStart + visibleLimit;
     const hiddenLeftCount = showLeftSummary ? tabWindowStart : 0;
     const hiddenRightCount = showRightSummary ? fixtureLimit - visibleWindowEnd : 0;
@@ -695,7 +824,8 @@ export function mountFloatingTabHeader({
     header.dataset.floatingTabOverflowRightCount = String(hiddenRightCount);
     header.dataset.floatingTabCount = String(tabCount);
     header.dataset.floatingTabCategory = category;
-    header.dataset.floatingTabCrowded = layout === "horizontal" && fixtureLimit >= crowdedTabThreshold ? "true" : "false";
+    header.dataset.floatingTabCrowded = measuredCrowded ? "true" : "false";
+    header.style.setProperty("--floating-tab-visible-slots", String(Math.max(1, visibleSlotCount)));
     workspace.dataset.floatingTabLayout = layout;
     workspace.dataset.floatingTabRowPacking = rowPacking;
     tabButtons.forEach((button, index) => {
@@ -728,8 +858,7 @@ export function mountFloatingTabHeader({
     syncAttentionLabels();
     syncCollapsedSummary();
     renderSubTabs(subTabContainer, activeLabel, attentionEnabled, subTabsByLabel);
-    window.requestAnimationFrame(syncScrollButtons);
-    window.requestAnimationFrame(syncTabOverflowTooltips);
+    scheduleMeasuredCardDensity();
   }
 
   function applyReferenceRoutePosture() {
@@ -762,8 +891,13 @@ export function mountFloatingTabHeader({
     panel.setAttribute("aria-labelledby", button.id);
     panelTitle.textContent = `${activeLabel} work`;
     panelCount.textContent = `${activeCount} records`;
-    readout.textContent = `Viewing ${activeLabel}, ${activeCount} records${isAttentionTab(button) ? ", needs attention" : ""}`;
-    renderRows(list, activeLabel, rowsByLabel);
+    if (readout instanceof HTMLElement) {
+      readout.textContent = `Viewing ${activeLabel}, ${activeCount} records${isAttentionTab(button) ? ", needs attention" : ""}`;
+    }
+    renderRows(list, activeLabel, rowsByLabel, category);
+    if (typeof onTabChange === "function") {
+      onTabChange({ category, label: activeLabel, count: activeCount });
+    }
     applyVariantState();
   }
 
@@ -838,6 +972,7 @@ export function mountFloatingTabHeader({
 
   layoutButtons.forEach((button) => {
     button.addEventListener("click", () => {
+      measuredVisibleLimit = null;
       layout = button.dataset.floatingTabLayout ?? "horizontal";
       setActiveChip(layoutButtons, button);
       tabScroller.scrollLeft = 0;
@@ -848,6 +983,7 @@ export function mountFloatingTabHeader({
 
   rowPackingButtons.forEach((button) => {
     button.addEventListener("click", () => {
+      measuredVisibleLimit = null;
       rowPacking = button.dataset.floatingTabRowPacking ?? "single";
       setActiveChip(rowPackingButtons, button);
       tabScroller.scrollLeft = 0;
@@ -858,6 +994,7 @@ export function mountFloatingTabHeader({
 
   tabCountButtons.forEach((button) => {
     button.addEventListener("click", () => {
+      measuredVisibleLimit = null;
       tabCount = Number(button.dataset.floatingTabCount ?? "5");
       setActiveChip(tabCountButtons, button);
       tabScroller.scrollLeft = 0;
@@ -882,6 +1019,7 @@ export function mountFloatingTabHeader({
         item.classList.toggle("active", active);
         item.setAttribute("aria-checked", active ? "true" : "false");
       });
+      measuredVisibleLimit = null;
       applyCategory(button.dataset.floatingTabCategory ?? "status");
       categoryDrawer.classList.add("hidden");
       categoryToggle.setAttribute("aria-expanded", "false");
@@ -910,7 +1048,9 @@ export function mountFloatingTabHeader({
     if (maxWindowStart > 0) {
       tabWindowStart = Math.max(0, Math.min(maxWindowStart, tabWindowStart + direction));
       tabScroller.scrollLeft = 0;
+      applyingMeasuredDensity = true;
       applyVariantState();
+      applyingMeasuredDensity = false;
       return;
     }
     tabScroller.scrollBy({
@@ -923,10 +1063,12 @@ export function mountFloatingTabHeader({
   scrollLeftButton.addEventListener("click", () => scrollTabs(-1));
   scrollRightButton.addEventListener("click", () => scrollTabs(1));
   tabScroller.addEventListener("scroll", syncScrollButtons, { passive: true });
-  window.addEventListener("resize", syncScrollButtons);
-  window.addEventListener("resize", syncTabOverflowTooltips);
+  window.addEventListener("resize", () => {
+    measuredVisibleLimit = null;
+    applyVariantState();
+  });
   if (document.fonts?.ready) {
-    document.fonts.ready.then(syncTabOverflowTooltips).catch(() => {});
+    document.fonts.ready.then(scheduleMeasuredCardDensity).catch(() => {});
   }
 
   subTabContainer.addEventListener("click", (event) => {

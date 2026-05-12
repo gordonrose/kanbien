@@ -99,6 +99,20 @@ test.describe("design-system floating tab header canonical states", () => {
     await expect(page.locator("#floating-tab-scroll-right")).toBeDisabled();
   });
 
+  test("card density follows rendered fit rather than tab count alone", async ({ page }) => {
+    await gotoFloatingTabCanonical(page, "/design-system/canonical-renderings/floating-tab-header/FTH-R-002");
+    await expect(page.locator("#floating-tab-header")).toHaveAttribute("data-floating-tab-crowded", "true");
+
+    const visibleCardState = await page.locator("#floating-tab-status-tabs").evaluate((scroller) => ({
+      visibleSlots: getComputedStyle(scroller.closest("#floating-tab-header") ?? scroller)
+        .getPropertyValue("--floating-tab-visible-slots")
+        .trim(),
+      scrollOverflow: scroller.scrollWidth - scroller.clientWidth,
+    }));
+    expect(visibleCardState.visibleSlots).toBe("10");
+    expect(visibleCardState.scrollOverflow).toBeLessThanOrEqual(2);
+  });
+
   test("collapse hides only content while keeping the navigation header visible", async ({ page }) => {
     await gotoFloatingTabCanonical(page, "/design-system/canonical-renderings/floating-tab-header/FTH-R-009");
 

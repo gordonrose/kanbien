@@ -86,6 +86,39 @@
   put fixture/runtime-shape reconciliation in TEST:test-suite-alignment, and
   keep browser/live-server proof in EVIDENCE:qa-evidence tasks.
 
+## Discovery Engine Test Harness Requirements
+
+Persistence-backed Discovery Chat needs a deterministic engine test harness
+before durable inference, routing, or cross-session learning is implemented.
+
+Required test groups:
+
+- Context Account Safety Tests:
+  prove Discovery creates evidence-backed inference without mutating official
+  record accounts.
+- Feature Ownership Tests:
+  prove role, authorization, design-system, compliance, platform, feature, and
+  outcome ownership stays with the existing or future owning features.
+- Hard Restraint Tests:
+  prove hard restraints are detected, classified, routed, and reflected in
+  packet readiness.
+- Catalogue / Seam Routing Tests:
+  prove approved design-system, platform, and feature seams are reused when
+  available and routed for review when absent.
+- Conversation Control Tests:
+  prove the engine asks only material questions, avoids repeated or granular
+  questions, and uses assumptions/deferred learning appropriately.
+- Packet Readiness Tests:
+  prove readiness can be `readyWithAssumptions` while safe unknowns remain,
+  and remains blocked when unknowns could invalidate route, restraint, actor,
+  scope, or packet usefulness.
+- Runtime / Token Governance Tests:
+  prove tier selection, catalogue loading, and LLM-call avoidance match the
+  runtime policy.
+- Recommendation Safety Tests:
+  prove the recommendation hierarchy obeys hard restraints, governed sources,
+  approved precedent, and cheapest low-risk fallback rules.
+
 ## Unit Tests For Individual Capabilities
 
 - Capability: conversation input validation and system-managed fields
@@ -251,6 +284,115 @@
   asks the final readiness confirmation only once, and routes disabled,
   rate-limited, failed, or unnecessary provider calls to safe deterministic
   responses.
+
+- Capability: context-account safety for discovery inference
+  Test Case ID: `TC-CHAT-L1-UNIT-009`
+  Source Authority: PRD Persistence-Backed Discovery Intelligence Model;
+  ADR-0041 Context Account Architecture
+  Related Story / AC: future discovery intelligence hardening / TBD
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/discoveryIntelligence/`
+  Requires Shared Test Helper: record-account fixture, inference repository
+  fixture, and evidence-link fixture
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Mock / Runtime Honesty: fixtures must distinguish official record accounts
+  from inference accounts and session state
+  Traceability / Execution Posture: planned before durable inference
+  implementation
+  Coverage Strength Signal: no-record-mutation proof
+  Coverage:
+  given a requester says "we're basically healthcare-adjacent", the engine may
+  create an organization inference with confidence, evidence, scope, and
+  review posture, but it must not mutate `Organization Record.industry` or any
+  other official organization/tenant record.
+
+- Capability: existing feature ownership for role-related discovery
+  Test Case ID: `TC-CHAT-L1-UNIT-010`
+  Source Authority: PRD Actor Context And Existing Role Ownership; ADR-0041
+  Related Story / AC: future solution-routing hardening / TBD
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/discoveryIntelligence/`
+  Requires Shared Test Helper: role/capability public-seam fixture and routing
+  fixture
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Mock / Runtime Honesty: test doubles must represent existing role/RBAC/admin
+  public seams, not a Discovery-owned role model
+  Traceability / Execution Posture: planned before solution-routing
+  implementation
+  Coverage Strength Signal: feature-ownership routing proof
+  Coverage:
+  routes tenant admin role-assignment requests to the existing role/RBAC/admin
+  owner, includes required role/authz seams and review triggers, and proves no
+  Discovery-local role, permission, capability, or assignment model is created.
+
+- Capability: hard-restraint rerouting for unsafe inline permission changes
+  Test Case ID: `TC-CHAT-L1-UNIT-011`
+  Source Authority: PRD Hard Restraint Evaluation; repo authz and
+  design-system governance
+  Related Story / AC: future hard-restraint evaluation / TBD
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/discoveryIntelligence/`
+  Requires Shared Test Helper: hard-restraint catalogue fixture and route
+  assessment fixture
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Mock / Runtime Honesty: catalogue fixtures must not approve UI behavior that
+  the design-system or authz docs do not approve
+  Traceability / Execution Posture: planned before hard-restraint
+  implementation
+  Coverage Strength Signal: restraint-to-route branch proof
+  Coverage:
+  given a request to let tenant admins edit access rights inline from a users
+  table, detects `designSystemSeamRestraint`, `roleAuthorityRestraint`, and
+  `auditabilityRestraint`; rejects unsafe inline mutation as the recommendation;
+  and reroutes toward role-feature extension, approved review/confirm journey,
+  audit requirements, and security/authz review when boundary changes.
+
+- Capability: runtime and token governance tier selection
+  Test Case ID: `TC-CHAT-L1-UNIT-012`
+  Source Authority: PRD Runtime And Token Governance
+  Related Story / AC: future discovery engine runtime policy / TBD
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/discoveryIntelligence/`
+  Requires Shared Test Helper: execution-tier classifier and catalogue loader
+  spy
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Mock / Runtime Honesty: tests must assert catalogues not loaded for fast-path
+  turns rather than relying on response text only
+  Traceability / Execution Posture: planned before runtime/token governance
+  implementation
+  Coverage Strength Signal: catalogue-loading and LLM-call avoidance proof
+  Coverage:
+  simple acknowledgement turns select Tier 0 and do not load catalogues; normal
+  workflow discussion selects Tier 1 and loads only relevant context; permission
+  requests trigger the safety short-circuit, select Tier 2, and load only
+  role/authz/audit/design-system relevant catalogues; packet generation selects
+  Tier 3 only near handoff.
+
+- Capability: recommendation safety hierarchy
+  Test Case ID: `TC-CHAT-L1-UNIT-013`
+  Source Authority: PRD Conversation Control And Recommendations
+  Related Story / AC: future recommendation policy / TBD
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/discoveryIntelligence/`
+  Requires Shared Test Helper: recommendation source hierarchy fixture
+  Requires Manifest Tracking: no
+  Cleanup Expectation: n/a
+  Mock / Runtime Honesty: best-practice fixtures must cite governed sources or
+  explicitly classify the fallback as cheapest low-risk path
+  Traceability / Execution Posture: planned before recommendation engine
+  implementation
+  Coverage Strength Signal: hard-restraint and governed-source precedence
+  Coverage:
+  hard restraints override preferences and ROI; governed design-system,
+  platform, authz, compliance, and feature patterns beat novel suggestions;
+  approved precedent beats speculative paths; cheapest low-risk path is used
+  only when no governed source applies; and uncertainty that may violate
+  security, compliance, authz, design-system, platform, feature ownership, or
+  commercial boundaries escalates instead of recommending.
 
 ## Integration Tests For Features Working Together
 

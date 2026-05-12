@@ -43,6 +43,7 @@
     - `docs/architecture/adr/0034-add-a-bullmq-backed-job-processing-foundation-with-transactional-outbox.md`
     - `docs/architecture/adr/0035-adopt-object-storage-backed-asset-foundation.md`
     - `docs/architecture/adr/0036-adopt-layered-platform-authorization-evaluation.md`
+    - `docs/architecture/adr/0041-adopt-context-account-architecture-for-discovery-intelligence.md`
   - Change areas reviewed:
     feature-bundle structure, API/entity defaults, searchable storage,
     root authentication, root/tenant authorization, traceable tests,
@@ -51,14 +52,17 @@
     object-storage/asset delivery, background job posture, and layered authz.
   - Enduring decision areas with no existing ADR found:
     generated-document rendering seam for server-generated PDFs; Layer 1
-    LLM/harness runtime adapter contract; `harnessChat` feature ownership.
+    LLM/harness runtime adapter contract; persistent discovery inference
+    ownership; discovery engine microservice boundary.
   - New ADR required:
     not required before root-admin MVP implementation if the generated-document
     seam stays internal, provider-neutral, Product-Discovery-first, and scoped
     exactly to the approved asset decision. A new ADR is required before
     turning generated-document rendering into a general platform service,
     adding stored generated files, public delivery, arbitrary HTML/document
-    input, or asynchronous high-volume export infrastructure.
+    input, asynchronous high-volume export infrastructure, durable
+    cross-session inference automation, or a Discovery Chat / Discovery
+    Intelligence microservice split.
   - ADR conflict / stale guidance:
     none found for this MVP. ADR-0034 and ADR-0035 are `Proposed`, so
     implementation may consume their approved direction only where already
@@ -401,6 +405,175 @@ itself create a packet. Packet creation occurs only after the requester confirms
 there is no final follow-up or explicitly asks to produce the packet. Once that
 confirmation has been answered, the service should generate the packet revision
 and should not ask the final confirmation again for the same ready state.
+
+## Persistence-Backed Discovery Intelligence Blueprint
+
+This section is a forward-looking planning blueprint for the discovery engine
+model. It does not authorize source implementation, new persistence tables,
+record mutation behavior, or a service split by itself.
+
+### Context Account Architecture
+
+Discovery intelligence must use the account split defined in
+`docs/architecture/adr/0041-adopt-context-account-architecture-for-discovery-intelligence.md`:
+
+- Record Account:
+  official product truth owned by the relevant feature or module.
+- Inference Account:
+  evidence-backed discovery intelligence with confidence, source, scope,
+  lifecycle, and reconciliation posture.
+- Session State:
+  one Discovery Chat session's working memory, assumptions, next best action,
+  blockers, packet readiness, and evidence links.
+
+Record accounts are truth. Inference accounts are intelligence. Session state
+is working memory. Discovery may read official records through approved public
+seams and may create inference, but it must not directly mutate official
+tenant, organization, user, role, capability, entitlement, compliance,
+design-system, platform, feature, or outcome records owned elsewhere.
+
+### Service Boundary Candidate
+
+The discovery engine is a plausible first microservice candidate because it has
+its own runtime policy, token budget, catalogue loading, inference lifecycle,
+evidence model, packet-readiness gate, and cross-feature read requirements.
+That boundary is not approved for this blueprint.
+
+Before a microservice split, create a dedicated ADR covering API and event
+boundaries, durable data ownership, migration from `harnessChat`, authn/authz,
+tenancy, record-account read seams, catalogue synchronization, inference
+lifecycle, reconciliation workflow, observability, audit, retries, failure
+modes, local development, deployment, and rollback strategy.
+
+Until that ADR exists, keep the root-admin MVP as a feature/module boundary and
+treat the service split as an open architecture option.
+
+### Planned Durable State Families
+
+The persistence-backed model should be planned as these state families:
+
+- `DiscoverySessionState`:
+  compact working state, active summaries, active route hypothesis, active
+  restraints, active assumptions, open questions, and next best action.
+- `DiscoveryInferenceFact`:
+  evidence-backed inference about organization, actor profile, workflow,
+  problem, restraint, outcome, terminology, preference, or opportunity
+  economics.
+- `DiscoveryEvidenceLink`:
+  source linkage for user-stated facts, record-backed facts, catalogue/policy
+  matches, LLM inference, derived calculations, assumptions, open questions,
+  and deferred learning.
+- `DiscoveryHardRestraintAssessment`:
+  detected non-negotiable restraint, severity, confidence, enforcement mode,
+  accountable route, and packet impact.
+- `DiscoveryOutcomeNode` and `DiscoveryOutcomeRelationship`:
+  contextual OKR/outcome graph inference. These are not official company OKRs.
+- `DiscoveryConversationDecision`:
+  deterministic record of why the engine asked, inferred, assumed,
+  recommended, escalated, deferred, or generated a packet.
+- `DiscoveryPacketReadinessSnapshot`:
+  deterministic readiness dimensions, state, blockers, assumptions, and final
+  confirmation posture.
+- `DiscoveryLearningBacklogItem`:
+  useful future learning that should not block the current packet.
+
+### Inference Category Catalogues
+
+Actor, workflow, and problem inference should use governed category catalogues
+instead of arbitrary emergent labels.
+
+Actor context should distinguish role records from profile inference. Existing
+role, capability, assignment, and authority records remain owned by the
+existing role/RBAC/admin/authz features. Discovery may reference role records
+only through public seams. Profile inference may classify responsibility,
+authority, technical fluency, confidence, risk sensitivity, decision style,
+communication preference, pressure point, success criteria, workaround,
+avoidance, escalation, approval, dependency, emotional driver, and support
+need signals.
+
+Workflow context should bridge operational reality and approved implementation
+paths. It must evaluate operational workflow understanding, design-system fit,
+platform fit, feature fit, and required procedure. Workflow inference should
+include trigger, actor sequence, handoff, decision point, approval, exception,
+workaround, tool usage, data input/output, processing, frequency/volume,
+failure point, latency, risk, emotional friction, success signal, and desired
+change categories.
+
+Problem context should structure pain before solution. It should capture pain,
+impact, urgency, frequency, severity, business consequence, user consequence,
+operational cost, risk exposure, workaround cost, root-cause hypothesis,
+definition of good, non-goal, priority signal, emotional pressure, and failure
+mode categories.
+
+Opportunity economics is a derived inference layer. It may describe workflow
+value, workflow cost, and change ROI hypotheses, but it must remain
+assumption-labelled and must not become accounting truth.
+
+### Runtime / Token Governance
+
+The engine must not load or reason over the whole model every turn.
+
+- Tier 0 fast path:
+  acknowledgement, simple continuation, and small clarification turns.
+- Tier 1 focused discovery:
+  normal discovery turns using the relevant context layer, matching inference
+  categories, active assumptions, and learning backlog.
+- Tier 2 routing/restraint evaluation:
+  triggered by permissions, data, compliance, frontend journeys, platform
+  tooling, feature ownership, pricing, import/export, destructive action, or
+  similar danger signals.
+- Tier 3 packet generation:
+  only near handoff, using structured state, record facts, inference facts,
+  evidence, assumptions, blockers, routing, and deferred learning.
+
+Every recommendation must first run a lightweight danger check for tenant
+boundary, authorization, sensitive data, compliance, audit, pricing,
+destructive action, design-system seam, platform boundary, and feature
+ownership impact. A clean check may continue on the cheap path. A positive
+check escalates to Tier 2.
+
+### MVP Cut
+
+The MVP should improve packet safety and efficiency, not build a complete
+product intelligence platform.
+
+Include session state, compact working state, record/inference/session
+separation, actor/workflow/problem catalogues, hard-restraint evaluation
+skeleton, solution-routing skeleton, conversation-control modes,
+packet-readiness gate, learning backlog, and runtime/token governance.
+
+Do not include full reconciliation UX, automated profile merge/split, official
+OKR management, advanced ROI, catalogue admin UI, cross-session intelligence
+automation beyond simple persisted inference, or microservice extraction.
+
+### Repo Reconciliation Checklist
+
+Before implementing durable inference, new catalogues, or a service split,
+complete this reconciliation.
+
+| Area | Existing Owner | Existing Seam / Catalogue | Discovery Usage | Gap | Decision Needed |
+| --- | --- | --- | --- | --- | --- |
+| Roles and root capabilities | `rootRoles`, role/RBAC/admin docs | root capability checker, permission mappings, root capability/grant records | read role and capability facts; route authority restraints | no Discovery-owned role model approved | keep roles official and external to Discovery |
+| Future tenant authz / ABAC / ReBAC | authz architecture | ADR-0036, platform authz blueprint, permission mappings | classify authority and object/data access restraints | broad ABAC/ReBAC runtime remains future | route boundary changes to security/architecture |
+| Tenant / organization records | `tenants` and future organization feature | tenant record seams and future organization seams | read official org facts; create separate inference | organization inference owner unsettled | choose inference owner before cross-session learning |
+| Compliance enforcement | standards and compliance artifacts | standards gates, compliance docs, feature evidence | classify compliance restraints and evidence needs | no centralized tenant compliance record account | route inference to review, never record mutation |
+| Design-system components/pages/workflows | design-system layer | behavior locks, page templates, future workflow templates | evaluate fit and forbidden adaptations | workflow catalogue not durable yet | define design-system workflow owner |
+| Platform workflow capabilities | platform features and shared libs | authz, jobs, assets, notifications, capability catalogue | route platform seam usage or extension | no single platform workflow catalogue | reconcile before adding taxonomy |
+| Feature workflow capabilities | owning features | manifests, PRDs, capability matrices, public seams | route feature ownership and fit | catalogue is distributed | decide catalogue exposure point |
+| Solution routing / change class | planning loop artifacts | Product Request, Story/Task Breakdown, task-type guardrails | classify route and reviews | no single canonical routing taxonomy | map proposed categories to existing values |
+| Outcome / OKR records | future planning/strategy feature | none approved | infer outcomes only | no official outcome record owner | keep OKR inference contextual |
+| Evidence model | `harnessChat`, audit/proof artifacts | messages, packet revisions, audit rows, future evidence links | attach source/confidence to claims | intentionally placeholder in v1 | define minimum evidence link contract |
+
+### Implementation Stop Conditions
+
+Stop and return to architecture or planning before implementation if a proposed
+change would make Discovery mutate another feature's official record account,
+create a parallel role/authz/design-system/compliance/platform/feature-routing
+or OKR model, treat inference as operational truth without reconciliation,
+implement cross-session inference ownership before it is settled, split the
+engine into a service without ADR approval, recommend a hard-restraint risk
+without Tier 2 routing, or generate packet claims without evidence,
+confidence, assumption, or open-question status.
 
 ## Generated Document / PDF Plan
 

@@ -641,6 +641,110 @@ html.list-page-document-scroll-locked body {
   overscroll-behavior: contain;
 }
 
+.list-page-detail-index-layout {
+  display: grid;
+  grid-template-columns: minmax(7.5rem, 0.34fr) minmax(0, 1fr);
+  gap: 1rem;
+  min-height: 0;
+}
+
+.list-page-detail-index {
+  position: sticky;
+  top: 0;
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  min-width: 0;
+  padding: 0.35rem;
+  border: 0.0625rem solid color-mix(in srgb, var(--line) 84%, transparent);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface-1) 82%, var(--surface-2) 18%);
+}
+
+.list-page-detail-index-button {
+  display: block;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 2.65rem;
+  font: inherit;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.list-page-detail-index-button .list-page-detail-index-label {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-page-detail-aspect-panel {
+  min-width: 0;
+}
+
+.list-page-detail-aspect-card,
+.list-page-detail-picture-card {
+  display: grid;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 0.0625rem solid color-mix(in srgb, var(--line) 90%, transparent);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+}
+
+.list-page-detail-aspect-eyebrow,
+.list-page-detail-aspect-title,
+.list-page-detail-aspect-copy {
+  margin: 0;
+}
+
+.list-page-detail-aspect-eyebrow {
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.list-page-detail-aspect-title {
+  color: var(--ink);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.list-page-detail-aspect-copy {
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+
+.list-page-detail-picture-card {
+  grid-template-columns: minmax(5rem, 0.34fr) minmax(0, 1fr);
+  align-items: center;
+}
+
+.list-page-detail-picture-preview {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  min-width: 0;
+  border: 0.0625rem solid color-mix(in srgb, var(--accent) 22%, var(--line));
+  border-radius: var(--radius-sm);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-soft) 70%, var(--surface-1) 30%), transparent),
+    var(--surface-2);
+  color: var(--ink);
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.list-page-detail-picture-copy {
+  display: grid;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
 .drawer-form,
 .list-page-form-drawer {
   min-block-size: 0;
@@ -977,6 +1081,15 @@ html.list-page-document-scroll-locked body {
     position: absolute;
     top: 0;
     inset-inline-end: 0;
+  }
+
+  .list-page-detail-index-layout,
+  .list-page-detail-picture-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .list-page-detail-index {
+    position: static;
   }
 
   .drawer-form-grid,

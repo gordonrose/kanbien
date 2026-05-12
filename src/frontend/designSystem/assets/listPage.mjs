@@ -15,6 +15,14 @@ const detailSubtitle = selectableList?.querySelector('[data-selectable-list-deta
 const detailDescription = selectableList?.querySelector('[data-selectable-list-detail-field="description"]');
 const detailMeta = selectableList?.querySelector('[data-selectable-list-detail-field="meta"]');
 const detailTags = selectableList?.querySelector('[data-selectable-list-detail-field="tags"]');
+const detailAspectLayout = selectableList?.querySelector("[data-selectable-list-detail-index-layout]");
+const detailAspectOptions = Array.from(selectableList?.querySelectorAll("[data-selectable-list-detail-aspect-option]") ?? []);
+const detailAspectPanels = Array.from(selectableList?.querySelectorAll("[data-selectable-list-detail-aspect]") ?? []);
+const detailAspectTitle = selectableList?.querySelector('[data-selectable-list-detail-field="aspect-title"]');
+const detailAspectSubtitle = selectableList?.querySelector('[data-selectable-list-detail-field="aspect-subtitle"]');
+const detailPictureInitials = selectableList?.querySelector('[data-selectable-list-detail-field="picture-initials"]');
+const detailPictureTitle = selectableList?.querySelector('[data-selectable-list-detail-field="picture-title"]');
+const detailPictureDescription = selectableList?.querySelector('[data-selectable-list-detail-field="picture-description"]');
 const detailClose = selectableList?.querySelector("#list-page-detail-close");
 const detailPrev = selectableList?.querySelector("#list-page-detail-prev");
 const detailNext = selectableList?.querySelector("#list-page-detail-next");
@@ -54,7 +62,9 @@ const detailError = selectableList?.querySelector("[data-selectable-list-detail-
 const detailRetry = selectableList?.querySelector("[data-selectable-list-detail-retry]");
 const searchParams = new URLSearchParams(window.location.search);
 const listItemVariantOptions = Array.from(document.querySelectorAll("[data-list-item-variant-option]"));
+const drawerVariantOptions = Array.from(document.querySelectorAll("[data-drawer-variant-option]"));
 const initialListItemVariant = searchParams.get("listItemVariant") === "row" ? "row" : "card";
+const initialDrawerVariant = searchParams.get("drawerVariant") === "indexed" ? "indexed" : "standard";
 const initialLoadingPreview = searchParams.get("listLoading") === "initial";
 const initialEmptyPreview = searchParams.get("listState") === "empty";
 const initialMissingAttributesPreview = searchParams.get("listState") === "missing-attributes";
@@ -265,6 +275,7 @@ function isAppendErrorVisible() {
 
 function setDetailErrorVisible(visible) {
   setStateVisibility(detailError, visible);
+  setStateVisibility(detailAspectLayout, !visible);
 }
 
 function getDefaultLazyLoadStatus() {
@@ -377,6 +388,15 @@ function normalizeText(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function getRecordInitials(value) {
+  return normalizeText(value)
+    .split(/\s+/)
+    .map((word) => word[0] ?? "")
+    .join("")
+    .slice(0, 2)
+    .toUpperCase() || "RI";
+}
+
 function getTagsFromButton(button) {
   return (button.dataset.tags ?? "")
     .split("|")
@@ -441,6 +461,56 @@ function setOptionalText(element, value) {
   element.setAttribute("aria-hidden", String(!hasValue));
 }
 
+function activateDetailAspect(nextAspect = "details", options = {}) {
+  const { focus = false } = options;
+  const availableAspects = detailAspectOptions
+    .filter((option) => option instanceof HTMLElement)
+    .map((option) => option.dataset.selectableListDetailAspectOption)
+    .filter(Boolean);
+  const resolvedAspect = availableAspects.includes(nextAspect) ? nextAspect : "details";
+
+  for (const option of detailAspectOptions) {
+    if (!(option instanceof HTMLElement)) {
+      continue;
+    }
+
+    const isActive = option.dataset.selectableListDetailAspectOption === resolvedAspect;
+    option.classList.toggle("active", isActive);
+    option.setAttribute("aria-selected", String(isActive));
+    option.tabIndex = isActive ? 0 : -1;
+
+    if (isActive && focus) {
+      option.focus({ preventScroll: true });
+    }
+  }
+
+  for (const panel of detailAspectPanels) {
+    if (!(panel instanceof HTMLElement)) {
+      continue;
+    }
+
+    setStateVisibility(panel, panel.dataset.selectableListDetailAspect === resolvedAspect);
+  }
+}
+
+function syncIndexedDetailFields(record) {
+  if (!record) {
+    return;
+  }
+
+  setOptionalText(detailAspectTitle, record.detailTitle);
+  setOptionalText(detailAspectSubtitle, record.detailSubtitle || record.detailMetaValue);
+  setOptionalText(detailPictureTitle, record.detailTitle);
+  setOptionalText(
+    detailPictureDescription,
+    `${record.detailTitle} picture placeholder. Future application consumers can bind this section to the selected record image.`,
+  );
+
+  if (detailPictureInitials instanceof HTMLElement) {
+    detailPictureInitials.textContent = getRecordInitials(record.detailTitle);
+  }
+}
+
 function setOptionalTags(container, tags) {
   if (!(container instanceof HTMLElement)) {
     return;
@@ -503,6 +573,18 @@ function syncListItemVariantControls() {
   }
 }
 
+function syncDrawerVariantControls() {
+  for (const option of drawerVariantOptions) {
+    if (!(option instanceof HTMLButtonElement)) {
+      continue;
+    }
+
+    const isActive = option.dataset.drawerVariantOption === initialDrawerVariant;
+    option.classList.toggle("active", isActive);
+    option.setAttribute("aria-pressed", String(isActive));
+  }
+}
+
 function syncListItemVariantShell() {
   if (itemsContainer instanceof HTMLElement) {
     itemsContainer.dataset.listItemVariant = listItemVariant;
@@ -515,6 +597,7 @@ function syncListItemVariantShell() {
   }
 
   syncListItemVariantControls();
+  syncDrawerVariantControls();
   syncRowCount();
 }
 
@@ -1222,6 +1305,7 @@ function setDetailContent(button, options = {}) {
 
   setOptionalText(detailSubtitle, record.detailSubtitle);
   setOptionalText(detailMeta, record.detailMetaValue);
+  syncIndexedDetailFields(record);
   splitLayout?.classList.add("detail-open");
   detailPanel.classList.remove("hidden");
   detailPanel.setAttribute("aria-hidden", "false");
@@ -1240,6 +1324,7 @@ function setDetailContent(button, options = {}) {
     setDetailErrorVisible(false);
     setOptionalText(detailDescription, record.detailBody);
     setOptionalTags(detailTags, record.tags);
+    activateDetailAspect("details");
     announce(`Opened details for ${record.detailTitle}.`);
   }
 
@@ -1424,6 +1509,48 @@ if (getItemButtons().length > 0 && detailPanel instanceof HTMLElement) {
       renderAllItems();
       updateDetailNavigation();
       announce(nextVariant === "row" ? "List item style changed to rows." : "List item style changed to cards.");
+    });
+  }
+  for (const option of drawerVariantOptions) {
+    option.addEventListener("click", () => {
+      const nextVariant = option instanceof HTMLElement && option.dataset.drawerVariantOption === "indexed"
+        ? "indexed"
+        : "standard";
+      const nextUrl = new URL(window.location.href);
+
+      if (nextVariant === "indexed") {
+        nextUrl.searchParams.set("drawerVariant", "indexed");
+      } else {
+        nextUrl.searchParams.delete("drawerVariant");
+      }
+
+      window.location.assign(`${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`);
+    });
+  }
+  for (const option of detailAspectOptions) {
+    option.addEventListener("click", (event) => {
+      if (!(option instanceof HTMLElement)) {
+        return;
+      }
+
+      event.stopPropagation();
+      activateDetailAspect(option.dataset.selectableListDetailAspectOption || "details");
+    });
+    option.addEventListener("keydown", (event) => {
+      if (!(event instanceof KeyboardEvent) || (event.key !== "ArrowLeft" && event.key !== "ArrowRight")) {
+        return;
+      }
+
+      event.preventDefault();
+      const currentIndex = detailAspectOptions.indexOf(option);
+      const nextIndex = event.key === "ArrowRight"
+        ? (currentIndex + 1) % detailAspectOptions.length
+        : (currentIndex - 1 + detailAspectOptions.length) % detailAspectOptions.length;
+      const nextOption = detailAspectOptions[nextIndex];
+      const nextAspect = nextOption instanceof HTMLElement
+        ? nextOption.dataset.selectableListDetailAspectOption
+        : "details";
+      activateDetailAspect(nextAspect || "details", { focus: true });
     });
   }
   createButton?.addEventListener("click", () => {

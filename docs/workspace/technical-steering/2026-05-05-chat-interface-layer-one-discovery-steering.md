@@ -20,6 +20,7 @@
   - `docs/architecture/adr/0031-add-feature-manifests-for-declared-seams-and-dependencies.md`
   - `docs/architecture/adr/0032-promote-selected-root-admin-suites-from-hash-aliases-to-path-backed-canonical-routes.md`
   - `docs/architecture/adr/0035-adopt-object-storage-backed-asset-foundation.md`
+  - `docs/architecture/adr/0041-adopt-context-account-architecture-for-discovery-intelligence.md`
 - Validation status: `pass`
 
 ## Product Handoff
@@ -113,6 +114,11 @@
 | TS-CHAT-010 | Future tenant-builder rollout | feature-local | future tenant-builder adoption and tenant-scoped repo/configuration flows | deferred-with-owner | Product Discovery named tenant builders, but MVP is root-admin only. Tenant-builder support needs separate routing, permission, history, and tenant-context planning before activation. | DOC:docs-artifact |
 | TS-CHAT-011 | Reusable chat and panel logic | shared-lib-candidate | chat feature domain first, shared extraction only after another active consumer | deferred-with-owner | Reporting and Support may later reuse panel/chat orchestration, but MVP has one active Build consumer. | DECISION:refactor-first |
 | TS-CHAT-012 | Maintained docs and artifact alignment | feature-local | planning and source-independent artifact sweep | approved | PRD, capability matrix, API, data, permissions, asset/download, design-system, and QA artifacts must stay aligned before implementation completion. | DOC:docs-artifact |
+| TS-CHAT-013 | Context Account Architecture | architecture-foundation-required | record-owning features plus future inference/session owner | proposed | Discovery intelligence must distinguish official record truth, evidence-backed inference, and session working state so discovery does not become a backdoor mutation path for tenants, roles, authz, design-system records, platform capabilities, feature capabilities, entitlements, compliance, or outcomes. | DECISION:architecture-foundation |
+| TS-CHAT-014 | Persistent inference ownership | architecture-open-question | unresolved: harnessChat, Discovery Intelligence feature, subject-owning features, or platform context/intelligence service | open | Inference must outlive one chat session but must not become official record data without reconciliation. Ownership must be settled before durable cross-session inference is implemented. | DECISION:architecture-foundation |
+| TS-CHAT-015 | Discovery engine service boundary | architecture-open-question | unresolved: feature module first, future microservice candidate | open | The Layer 1 discovery engine has a plausible microservice boundary, but splitting it requires a follow-up ADR for API boundaries, authz, tenancy, observability, data ownership, event/sync behavior, deployment, and migration from `harnessChat`. | DECISION:architecture-foundation |
+| TS-CHAT-016 | Discovery intelligence runtime governance | platform-seam | Discovery Chat / future Discovery Intelligence execution policy | proposed | Runtime/token usage must use tiered execution and trigger-based catalogue loading so simple turns do not load or validate the entire discovery model. | DEV:platform-seam |
+| TS-CHAT-017 | Discovery intelligence test harness | test-suite-foundation | future discovery engine test harness | proposed | Context-account safety, feature ownership, hard restraints, catalogue routing, conversation control, packet readiness, runtime/token governance, and recommendation safety need deterministic proof before implementation completion. | TEST:test-suite-alignment |
 
 ## Architecture Risk Flags
 
@@ -128,6 +134,8 @@
 | data dictionary impact | yes | New durable records and retention/supersession behavior require source-independent documentation. | Data dictionary story required. | `DOC:data-dictionary` |
 | QA/runtime evidence need | yes | Permission boundaries, PDF generation, retention, browser behavior, and mock honesty require layered evidence. | PRD-derived test cases and runtime/browser scenarios required. | `EVIDENCE:qa-evidence` |
 | source-independent docs impact | yes | Product Discovery, Technical Steering, future PRD, capability matrix, API, data, permissions, DS, and asset/download decisions must align. | Artifact sweep story required. | `DOC:docs-artifact` |
+| new architecture principle or ADR | yes | Context Account Architecture and persistent inference ownership affect cross-feature discovery behavior. | ADR/principles update required before implementation. | `DECISION:architecture-foundation` |
+| microservice or service-boundary pressure | yes | Discovery engine may become the first service boundary, but this requires explicit follow-up decision. | Record as open architecture decision; do not split in this doc-only task. | `DECISION:architecture-foundation` |
 
 ## Architecture Decision Analysis
 
@@ -209,6 +217,8 @@
 | DEC-CHAT-007 | Model platform and tenant scope even though tenant-builder UI is deferred. | Future tenant builders are known; records must not require migration from root-only assumptions. | Tenant-builder active workflows remain out of MVP. | Data/API/permission owners |
 | DEC-CHAT-008 | Use server-side authorization as authority for context and downloads. | Page/module/role starter prompts are helpful context, not authority. | No sensitive authority in URLs or client-provided context. | Backend/security owner |
 | DEC-CHAT-009 | Run the Layer 2 to Layer 3 blocker-resolution loop before Story Breakdown. | The harness should proactively work through requester-answerable blockers and queue technical/design/security blockers as Layer 3 unblock stories. | Additive process behavior; no product contract changes. | Harness/planning owner |
+| DEC-CHAT-010 | Adopt Context Account Architecture for discovery intelligence planning. | Discovery needs durable intelligence without mutating official tenant, role, authz, design-system, platform, feature, entitlement, compliance, or outcome records. | Additive architecture guardrail; implementation must read records through public seams and persist inference separately. | Architecture owner |
+| DEC-CHAT-011 | Keep inference ownership and microservice extraction unresolved until a follow-up decision. | The engine is a strong service-boundary candidate, but premature extraction could create duplicated authz, role, catalogue, or record models. | Existing `harnessChat` remains the root-admin MVP owner; future inference persistence or service split requires ADR/blueprint refresh. | Architecture/platform owner |
 
 ## Blockers
 
@@ -220,6 +230,26 @@
 | BLK-CHAT-004 | Protected routes and history access | security/contract artifact | API contract and permission mapping | Backend/security owner |
 | BLK-CHAT-005 | Persistence implementation | data artifact | Data dictionary and migration plan for conversations, packet versions, scope, downloads, and supersession | Backend/data owner |
 | BLK-CHAT-006 | Future tenant-builder active rollout | product/architecture artifact | New or revised Product Discovery and Technical Steering for tenant-builder workflows | Product/architecture owner |
+| BLK-CHAT-007 | Durable cross-session discovery intelligence | architecture/data artifact | Context Account Architecture reconciliation, inference ownership decision, planned data dictionary, and discovery engine test harness | Architecture/data owner |
+| BLK-CHAT-008 | Discovery engine microservice split | architecture/platform artifact | Dedicated ADR covering API/service boundary, data ownership, authn/authz, tenancy, observability, deployment, failure modes, and migration | Architecture/platform owner |
+
+## Discovery Intelligence Reconciliation Checklist
+
+Before durable cross-session inference or a service split is implemented, the
+following repo reconciliation must be completed.
+
+| Area | Existing Owner | Existing Seam / Catalogue | Discovery Usage | Gap | Decision Needed |
+| --- | --- | --- | --- | --- | --- |
+| Roles and root capabilities | `rootRoles` and role/RBAC/admin docs | root capability checker, permission mappings, `root_authz_capabilities`, role grants | read role/capability facts; route role-authority restraints | no Discovery-owned role model approved | inference may reference roles only through public seams |
+| Future tenant authz / ABAC / ReBAC | authz architecture and tenant auth planning | ADR-0036, platform authz blueprint, permission mappings | classify authz/data-access restraints and required reviews | concrete broad ABAC/ReBAC runtime remains future | route to security/architecture when authority boundary changes |
+| Tenant / organization records | `tenants` and future organization features | tenant records and future public read seams | read formal org/tenant facts; create separate org inference | no organization inference owner selected | choose inference ownership before cross-session learning |
+| Compliance enforcement | standards gates, compliance status docs, feature-specific compliance artifacts | standards gates and compliance platform-status docs | classify compliance restraints and evidence needs | no centralized compliance record account for tenant reality | route compliance inference to review, not official record mutation |
+| Design-system components/pages/workflows | design-system docs and frontend architecture | behavior locks, reference packs, canonicals, page templates, future workflow templates | evaluate design-system fit and forbidden adaptations | design-system workflow catalogue is not yet modeled as durable record truth | future DS workflow catalogue owner needed |
+| Platform workflow capabilities | platform features and shared libs | job processing, asset foundation, authz, notification delivery, capability catalog | route platform seam usage/extension | no single platform workflow catalogue yet | reconcile with capability catalog before adding new taxonomy |
+| Feature workflow capabilities | owning feature manifests, capability matrices, PRDs | feature public seams and capability matrix rows | route feature fit and ownership | feature workflow catalogue is distributed across artifacts | decide whether capability catalog or feature manifests expose workflow fit |
+| Solution routing / change class | Product Request, Story/Task Breakdown, capability matrix, task-type guardrails | planning artifacts and task breakdown task types | classify recommended delivery path and reviews | no single canonical routing taxonomy for Discovery Chat | map proposed categories before adding new values |
+| Outcome / OKR records | future planning/strategy feature | none currently approved | infer outcomes and metric candidates only | no official outcome record owner | keep OKR inference contextual until owner exists |
+| Evidence model | harness chat messages, packet revisions, audit/proof artifacts | transcript messages, metadata, audit rows, future evidence links | attach source/confidence to inference and packet claims | evidence model intentionally placeholder for v1 | define minimum evidence link before durable inference tables |
 
 ## Layer 2 To Layer 3 Blocker-Resolution Loop
 
