@@ -94,6 +94,9 @@ Rules:
 - admins create organizations manually; there is no automatically created
   default organization
 - a customer/account may have many organizations
+- organization names are unique within one customer/account for active
+  organizations, while different customer/accounts may use the same
+  organization name
 - child organizations are allowed
 - hierarchy max depth is 10 for v1
 - loops are forbidden
@@ -111,6 +114,9 @@ A legal profile stores official legal details for an organization.
 Rules:
 
 - v1 allows one active legal profile per organization
+- tax or VAT number is optional
+- registered address fields belong to the legal profile when they describe the
+  official registered address rather than an operational location
 - previous or archived legal profiles remain retained according to the data
   dictionary and export rules
 - multiple active legal profiles are deferred
@@ -122,6 +128,7 @@ A location is a place of operation for an organization.
 Rules:
 
 - an organization may have many locations
+- locations may include optional geocoordinates for map/display/search behavior
 - head-office flags are descriptive booleans
 - head-office flags are not uniqueness constraints
 - location lifecycle follows the Organization-domain archive/restore posture
@@ -146,6 +153,8 @@ A business unit is an internal structure inside an organization.
 Rules:
 
 - business units may have parent and child relationships
+- child unit IDs are exposed as a derived child-list projection from the
+  parent relationship rather than stored as an independent source of truth
 - business-unit hierarchy max depth is 10 for v1
 - loops are forbidden
 - parent and child business units must belong to the same customer/account and
@@ -154,15 +163,21 @@ Rules:
 
 ### Business Unit Membership
 
-A business-unit membership links a real user or role to a business unit.
+A business-unit membership links a real individual user or another real
+business unit to a business unit.
 
 Rules:
 
-- memberships must reference real existing user and role records
-- placeholder users and placeholder roles are not allowed
-- membership behavior must use public user/role identity seams or approved
-  equivalents; it must not import private persistence directly from other
-  features
+- memberships must reference real existing individual-user records or real
+  existing business-unit records
+- placeholder people, teams, or units are not allowed
+- v1 membership roles are Organization-domain participation roles, not the
+  platform authorization-role system
+- v1 membership roles are fixed system values: owner, manager, member, and
+  viewer
+- membership behavior must use public individual-user and business-unit seams
+  or approved equivalents; it must not import private persistence directly from
+  other features
 - membership records may be PII-adjacent and require privacy, audit, and
   permission coverage
 
@@ -180,8 +195,10 @@ Rules:
 
 ### Reference Values
 
-Reference values are system-owned Organization values such as organization
-types or relationship types.
+Reference values are system-owned option-list values for Organization-domain
+fields. They are the controlled choices tenant admins select from, such as
+organization type, legal form, industry category, location type, integration
+type, or relationship type.
 
 Rules:
 
@@ -546,7 +563,7 @@ Before source implementation, the following artifacts are required:
 
 | Blocker | Required Resolution |
 | --- | --- |
-| Exact API contract | Create root-admin and tenant-admin API contracts. |
+| Exact API contract | Resolved for task-breakdown planning by `docs/api-contracts/organization-root-admin.md` and `docs/api-contracts/organization-tenant-admin.md`; implementation still requires task-level route, OpenAPI, and maintained artifact work. |
 | Exact data model | Create data dictionary pages before migrations. |
 | Exact permission keys | Create permission mapping before protected runtime work. |
 | PRD-derived tests | Create detailed test cases before task breakdown/implementation. |

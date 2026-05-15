@@ -17,7 +17,7 @@
 - Actor / System Perspective:
   quality reviewer
 - Outcome:
-  The test plan says how we will check permissions, privacy, record changes, logo handling, export packages, search, and screen behavior.
+  The test plan is captured in `docs/prd/test_cases/2026-05-12-0025-organization-domain-foundation-test-cases.md`.
 - Non-goals:
   No code changes and no executable tests yet.
 
@@ -36,4 +36,4 @@ No new business choice is expected; any proof gap must be named as a blocker.
 After this, later build tasks can include the right checks from the start.
 
 **Evidence Of Success**
-Every active story has a named check, and no sensitive behavior is left with a vague “we should test this later.”
+Every active story has a named check in `docs/prd/test_cases/2026-05-12-0025-organization-domain-foundation-test-cases.md`, and no sensitive behavior is left with a vague “we should test this later.”

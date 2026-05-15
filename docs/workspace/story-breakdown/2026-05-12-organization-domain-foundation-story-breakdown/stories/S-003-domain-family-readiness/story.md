@@ -17,7 +17,7 @@
 - Actor / System Perspective:
   repo governance owner
 - Outcome:
-  Organization feature records can show their family and responsibility without using unsupported fields.
+  The Organization feature-family decision is captured in `docs/workspace/architecture-map/feature-families/2026-05-12-organization-domain-foundation-feature-family.md`.
 - Non-goals:
   No Organization feature implementation and no unsupported record fields.
 
@@ -36,4 +36,4 @@ The governance work must choose the approved place and format for that family in
 After this, the Organization features can be added without inventing a different tracking style in each folder.
 
 **Evidence Of Success**
-Reviewers can see Organization represented as a feature family, and the repo checks accept that representation.
+Reviewers can see the Organization family boundary, planned member features, manifest rule, and later task requirements without needing unsupported `feature.manifest.json` fields.
