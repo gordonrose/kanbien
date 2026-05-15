@@ -75,14 +75,14 @@
               <h2>Build work panel</h2>
             </div>
             <div class="build-work-panel-demo-header-actions">
-              <button class="build-work-panel-demo-history-toggle" type="button" data-chat-workspace-toggle aria-controls="chat-workspace-main" aria-expanded="false">
-                <span data-chat-workspace-toggle-label>Expand</span>
+              <button class="icon-button tooltip-anchor" type="button" data-chat-workspace-toggle aria-controls="chat-workspace-main" aria-expanded="false" aria-label="Expand workspace" data-tooltip="Expand workspace">
+                <span class="icon-button-glyph" aria-hidden="true" data-chat-workspace-toggle-icon>
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="M5 5h14v14H5zM5 9h14M9 5v14" /></svg>
+                </span>
               </button>
-              <button class="build-work-panel-demo-history-toggle" type="button" data-chat-workspace-history-toggle aria-controls="build-work-panel-history" aria-expanded="true">
-                <span class="build-work-panel-demo-history-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
-                <span data-chat-workspace-history-toggle-label>Hide history</span>
-                <span class="build-work-panel-demo-history-toggle-caret" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="m9 6 6 6-6 6-1.4-1.4 4.6-4.6-4.6-4.6z" /></svg>
+              <button class="icon-button tooltip-anchor" type="button" data-chat-workspace-history-toggle aria-controls="build-work-panel-history" aria-expanded="true" aria-label="Hide history" data-tooltip="Hide history">
+                <span class="icon-button-glyph" aria-hidden="true" data-chat-workspace-history-toggle-icon>
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="M8 6h11M8 12h11M8 18h11M5 6h.01M5 12h.01M5 18h.01" /></svg>
                 </span>
               </button>
               <button class="build-work-panel-demo-close" type="button" data-chat-workspace-close aria-label="Close chat panel">
@@ -92,6 +92,8 @@
           </header>
 
           <nav class="chat-workspace-layer-toolbar build-work-panel-demo-action-nav" aria-label="Workspace layers" data-chat-workspace-layer-toolbar></nav>
+
+          <section class="chat-workspace-history-dock" aria-label="Conversation history" data-chat-workspace-history-dock></section>
 
           <div class="chat-workspace-chat-pane build-work-panel-demo-page" aria-label="Chat pane">
             <div class="chat-workspace-chat-mount" data-chat-workspace-chat-mount></div>

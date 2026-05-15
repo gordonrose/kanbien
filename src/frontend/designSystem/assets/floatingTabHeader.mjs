@@ -1,3 +1,5 @@
+import { createDragPreview, createDropMarker } from "./dragDropAffordance.mjs";
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -220,6 +222,12 @@ function renderRows(list, label, rowsByLabel = floatingTabRows, category = "") {
   list.innerHTML = renderFloatingTabRows(label, rowsByLabel, category);
 }
 
+function getCategoryRows(rowsByLabel, category) {
+  return category && rowsByLabel?.[category] && typeof rowsByLabel[category] === "object"
+    ? rowsByLabel[category]
+    : rowsByLabel;
+}
+
 function renderSubTabs(container, label, attentionEnabled = false, subTabsByLabel = floatingSubTabs) {
   const tabs = subTabsByLabel[label] ?? subTabsByLabel.Active ?? [];
   container.innerHTML = tabs
@@ -278,23 +286,29 @@ export function renderFloatingTabHeader({
   const categoryEntries = Object.entries(categories);
   const safeCategory = categories[activeCategory] ? activeCategory : categoryEntries[0]?.[0] ?? "status";
   const items = categories[safeCategory] ?? [];
+  const maxItemCount = Math.max(0, ...categoryEntries.map(([, categoryItems]) => categoryItems.length));
   const activeItem = items[activeIndex] ?? items[0] ?? ["Active", "In motion", 0, false];
   const [activeLabel, , activeCount] = activeItem;
-  const tabButtons = items
-    .map(([label, meta, count, attention], index) => {
+  const tabButtons = Array.from({ length: maxItemCount })
+    .map((_, index) => {
+      const item = items[index];
+      const [label, meta, count, attention] = item ?? ["", "", 0, false];
       const extendedClass = index >= 4 ? " floating-tab-card-extended" : "";
       const overflowClass = index >= 8 ? " floating-tab-card-overflow-candidate" : "";
-      const activeClass = index === activeIndex ? " active" : "";
+      const hiddenClass = item ? "" : " hidden floating-tab-card-empty";
+      const activeClass = item && index === activeIndex ? " active" : "";
       const attentionMarkup = attention ? '<span class="floating-tab-attention-label">Needs attention</span>' : "";
+      const hiddenAttributes = item ? "" : ' aria-hidden="true" disabled';
 
       return `
-                    <button class="floating-tab-card${extendedClass}${overflowClass}${activeClass}" id="${ids.header}-${slugify(label)}-${index + 1}" type="button" role="tab" aria-selected="${index === activeIndex ? "true" : "false"}" aria-controls="${ids.panel}" data-tab-label="${escapeHtml(label)}" data-tab-count="${escapeHtml(count)}"${attention ? ' data-tab-attention="true"' : ""}>
+                    <button class="floating-tab-card${extendedClass}${overflowClass}${hiddenClass}${activeClass}" id="${ids.header}-${slugify(label || `slot-${index + 1}`)}-${index + 1}" type="button" role="tab" aria-selected="${item && index === activeIndex ? "true" : "false"}" aria-controls="${ids.panel}" data-tab-label="${escapeHtml(label)}" data-tab-count="${escapeHtml(count)}"${attention ? ' data-tab-attention="true"' : ""}${hiddenAttributes}>
                       <span class="floating-tab-card-copy">
                         <span class="floating-tab-card-title">${escapeHtml(label)}</span>
                         <span class="floating-tab-card-meta">${escapeHtml(meta)}</span>
                         ${attentionMarkup}
                       </span>
                       <span class="floating-tab-card-count">${escapeHtml(count)}</span>
+                      <span class="floating-tab-card-drop-overlay" aria-hidden="true">Drop to move here</span>
                     </button>`;
     })
     .join("");
@@ -475,6 +489,11 @@ export function mountFloatingTabHeader({
   let measuredVisibleLimit = null;
   let measuredCrowded = false;
   let applyingMeasuredDensity = false;
+  let draggedRow = null;
+  let dragPreview = null;
+  let dropMarker = null;
+  let lastObservedInlineSize = 0;
+  let resizeObserver = null;
 
   function getBooleanParam(params, name, fallback) {
     const value = params.get(name);
@@ -586,8 +605,111 @@ export function mountFloatingTabHeader({
     collapsedCount.textContent = `Content hidden, ${activeCount} records${isAttentionTab(getActiveTabButton()) ? ", needs attention" : ""}`;
   }
 
+  function getRowData(row) {
+    const title = row.querySelector("strong")?.textContent?.trim() ?? "";
+    const owner = row.querySelector("span:not(.floating-tab-row-marker)")?.textContent?.trim() ?? "";
+    const due = row.querySelector("small")?.textContent?.trim() ?? "";
+    return [title, owner, due];
+  }
+
+  function getTabItem(label) {
+    return (categories[category] ?? []).find((item) => item[0] === label);
+  }
+
+  function setTabCount(label, delta) {
+    const item = getTabItem(label);
+    if (!item) {
+      return;
+    }
+    item[2] = Math.max(0, Number(item[2] ?? 0) + delta);
+    const button = tabButtons.find((tab) => tab.dataset.tabLabel === label);
+    if (button instanceof HTMLElement) {
+      button.dataset.tabCount = String(item[2]);
+      const count = button.querySelector(".floating-tab-card-count");
+      if (count instanceof HTMLElement) {
+        count.textContent = String(item[2]);
+      }
+    }
+  }
+
+  function ensureListDropMarker(height = "") {
+    if (dropMarker instanceof HTMLElement) {
+      if (height) {
+        dropMarker.style.setProperty("--drag-drop-marker-min-height", height);
+      }
+      return dropMarker;
+    }
+    dropMarker = createDropMarker({
+      className: "floating-tab-drop-marker",
+      label: "Drop to reorder",
+      minHeight: height,
+    });
+    return dropMarker;
+  }
+
+  function clearListDropMarker() {
+    dropMarker?.remove();
+    dropMarker = null;
+    Array.from(list.querySelectorAll("[data-floating-tab-row-drop-target]")).forEach((row) => {
+      if (row instanceof HTMLElement) {
+        delete row.dataset.floatingTabRowDropTarget;
+      }
+    });
+  }
+
+  function clearFloatingTabDragState() {
+    if (draggedRow instanceof HTMLElement) {
+      delete draggedRow.dataset.dragging;
+      draggedRow.classList.remove("drag-drop-source");
+    }
+    draggedRow = null;
+    dragPreview?.remove();
+    dragPreview = null;
+    clearListDropMarker();
+    tabButtons.forEach((button) => {
+      delete button.dataset.floatingTabDropTarget;
+    });
+  }
+
+  function moveDraggedRowToStatus(targetLabel) {
+    if (!(draggedRow instanceof HTMLElement) || !targetLabel || targetLabel === activeLabel) {
+      return false;
+    }
+
+    const rowData = getRowData(draggedRow);
+    const categoryRows = getCategoryRows(rowsByLabel, category);
+    const currentRows = categoryRows[activeLabel] ?? [];
+    const sourceIndex = currentRows.findIndex(([title, owner, due]) =>
+      title === rowData[0] && owner === rowData[1] && due === rowData[2],
+    );
+    if (sourceIndex >= 0) {
+      currentRows.splice(sourceIndex, 1);
+    }
+    if (!Array.isArray(categoryRows[targetLabel])) {
+      categoryRows[targetLabel] = [];
+    }
+    categoryRows[targetLabel].push([rowData[0], targetLabel, rowData[2]]);
+    setTabCount(activeLabel, -1);
+    setTabCount(targetLabel, 1);
+    activeCount = String(getTabItem(activeLabel)?.[2] ?? activeCount);
+    panelCount.textContent = `${activeCount} records`;
+    syncCollapsedSummary();
+    renderRows(list, activeLabel, rowsByLabel, category);
+    syncListDragRows();
+    return true;
+  }
+
+  function syncActiveRowsFromDom() {
+    const categoryRows = getCategoryRows(rowsByLabel, category);
+    categoryRows[activeLabel] = Array.from(list.querySelectorAll(".floating-tab-row"))
+      .filter((row) => row instanceof HTMLElement)
+      .map((row) => getRowData(row));
+  }
+
   function getActiveTabButton() {
-    return tabButtons.find((button) => button.classList.contains("active")) ?? tabButtons[0];
+    return tabButtons.find((button) => button.classList.contains("active") && !button.disabled && !button.classList.contains("hidden"))
+      ?? tabButtons.find((button) => !button.disabled && !button.classList.contains("hidden"))
+      ?? tabButtons[0];
   }
 
   function syncAttentionLabels() {
@@ -666,6 +788,32 @@ export function mountFloatingTabHeader({
     return element.scrollWidth > element.clientWidth + 1 || element.scrollHeight > element.clientHeight + 1;
   }
 
+  function wouldRoomyCardsFit(visibleCards) {
+    const scrollerStyle = window.getComputedStyle(tabScroller);
+    const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
+    const roomyMinWidth = 8.5 * rootFontSize;
+    const columnGap = Number.parseFloat(scrollerStyle.columnGap || scrollerStyle.gap) || 0;
+    const roomyFitWidth = (visibleCards.length * roomyMinWidth) + Math.max(0, visibleCards.length - 1) * columnGap;
+    return roomyFitWidth <= tabScroller.clientWidth + 1;
+  }
+
+  function roomyLabelsWouldOverflow(visibleCards) {
+    const previousCrowded = measuredCrowded;
+    if (!previousCrowded) {
+      return false;
+    }
+
+    header.dataset.floatingTabCrowded = "false";
+    const labelsOverflow = visibleCards.some((button) => {
+      const title = button.querySelector(".floating-tab-card-title");
+      const meta = button.querySelector(".floating-tab-card-meta");
+      const attention = button.querySelector(".floating-tab-attention-label");
+      return textOverflows(title) || textOverflows(meta) || (isAttentionTab(button) && textOverflows(attention));
+    });
+    header.dataset.floatingTabCrowded = "true";
+    return labelsOverflow;
+  }
+
   function syncMeasuredCardDensity() {
     if (layout !== "horizontal") {
       header.dataset.floatingTabCrowded = "false";
@@ -676,7 +824,8 @@ export function mountFloatingTabHeader({
 
     const visibleCards = tabButtons.filter(
       (button) =>
-        !button.classList.contains("floating-tab-card-fixture-hidden")
+        !button.classList.contains("hidden")
+        && !button.classList.contains("floating-tab-card-fixture-hidden")
         && !button.classList.contains("floating-tab-card-overflow-hidden"),
     );
     if (!visibleCards.length) {
@@ -689,14 +838,25 @@ export function mountFloatingTabHeader({
         const meta = button.querySelector(".floating-tab-card-meta");
         const attention = button.querySelector(".floating-tab-attention-label");
         return textOverflows(title) || textOverflows(meta) || (isAttentionTab(button) && textOverflows(attention));
-      });
-    if (measuredCrowded && railOverflow) {
+    });
+    if (measuredCrowded) {
       const scrollerStyle = window.getComputedStyle(tabScroller);
       const rootFontSize = Number.parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
       const compactMinWidth = 4.5 * rootFontSize;
       const columnGap = Number.parseFloat(scrollerStyle.columnGap || scrollerStyle.gap) || 0;
       const compactFitWidth = (visibleCards.length * compactMinWidth) + Math.max(0, visibleCards.length - 1) * columnGap;
-      railOverflow = compactFitWidth > tabScroller.clientWidth + 1;
+      if (wouldRoomyCardsFit(visibleCards) && !roomyLabelsWouldOverflow(visibleCards)) {
+        measuredVisibleLimit = null;
+        measuredCrowded = false;
+        applyingMeasuredDensity = true;
+        applyVariantState();
+        applyingMeasuredDensity = false;
+        scheduleMeasuredCardDensity();
+        return;
+      }
+      if (railOverflow) {
+        railOverflow = compactFitWidth > tabScroller.clientWidth + 1;
+      }
     }
     const fittedOverflow = measuredCrowded ? railOverflow : railOverflow || textOverflow;
 
@@ -737,6 +897,29 @@ export function mountFloatingTabHeader({
     });
   }
 
+  function resetMeasuredCardDensity() {
+    measuredVisibleLimit = null;
+    measuredCrowded = false;
+    applyVariantState();
+    settleMeasuredCardDensity();
+  }
+
+  function settleMeasuredCardDensity() {
+    if (layout !== "horizontal") {
+      return;
+    }
+    for (let index = 0; index < tabButtons.length + 1; index += 1) {
+      const beforeCrowded = measuredCrowded;
+      const beforeLimit = measuredVisibleLimit;
+      syncMeasuredCardDensity();
+      if (beforeCrowded === measuredCrowded && beforeLimit === measuredVisibleLimit) {
+        break;
+      }
+    }
+    syncScrollButtons();
+    syncTabOverflowTooltips();
+  }
+
   function setOverflowSummary(summary, count, side) {
     summary.classList.toggle("hidden", count === 0);
     summary.textContent = `${count} more`;
@@ -751,7 +934,26 @@ export function mountFloatingTabHeader({
     category = categories[nextCategory] ? nextCategory : Object.keys(categories)[0] ?? "status";
     const items = categories[category];
     tabButtons.forEach((button, index) => {
-      const [label, meta, count, attention] = items[index] ?? items[0];
+      const item = items[index];
+      if (!item) {
+        button.classList.add("hidden", "floating-tab-card-empty");
+        button.disabled = true;
+        button.setAttribute("aria-hidden", "true");
+        button.setAttribute("aria-selected", "false");
+        button.classList.remove("active");
+        button.dataset.tabLabel = "";
+        button.dataset.tabCount = "0";
+        button.dataset.tabAttention = "false";
+        button.querySelector(".floating-tab-card-title").textContent = "";
+        button.querySelector(".floating-tab-card-meta").textContent = "";
+        button.querySelector(".floating-tab-card-count").textContent = "0";
+        return;
+      }
+
+      const [label, meta, count, attention] = item;
+      button.classList.remove("hidden", "floating-tab-card-empty");
+      button.disabled = false;
+      button.removeAttribute("aria-hidden");
       button.dataset.tabLabel = label;
       button.dataset.tabCount = String(count);
       button.dataset.tabAttention = attention ? "true" : "false";
@@ -760,6 +962,14 @@ export function mountFloatingTabHeader({
       button.querySelector(".floating-tab-card-count").textContent = String(count);
     });
 
+    const activeTab = tabButtons.find((button) => button.classList.contains("active") && !button.disabled && !button.classList.contains("hidden"))
+      ?? tabButtons.find((button) => !button.disabled && !button.classList.contains("hidden"))
+      ?? tabButtons[0];
+    tabButtons.forEach((button) => {
+      const active = button === activeTab;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-selected", active ? "true" : "false");
+    });
     const activeButton = getActiveTabButton();
     activeLabel = activeButton.dataset.tabLabel ?? "Active";
     activeCount = activeButton.dataset.tabCount ?? "0";
@@ -770,6 +980,7 @@ export function mountFloatingTabHeader({
       readout.textContent = `Viewing ${activeLabel}, ${activeCount} records${isAttentionTab(activeButton) ? ", needs attention" : ""}`;
     }
     renderRows(list, activeLabel, rowsByLabel, category);
+    syncListDragRows();
     if (typeof onCategoryChange === "function") {
       onCategoryChange({ category, label: activeLabel, count: activeCount });
     }
@@ -783,7 +994,8 @@ export function mountFloatingTabHeader({
     const contentCollapsed = expandable && collapsed;
     const shouldShowSubTabs = subTabsEnabled;
     const rowRule = rowPackingRules[rowPacking] ?? rowPackingRules.single;
-    const fixtureLimit = layout === "vertical" ? tabButtons.length : Math.min(tabCount, tabButtons.length);
+    const categoryItemCount = categories[category]?.length ?? tabButtons.length;
+    const fixtureLimit = layout === "vertical" ? categoryItemCount : Math.min(tabCount, categoryItemCount);
     const rowCapacity = layout === "vertical" ? Number.POSITIVE_INFINITY : rowRule.maxTabsPerRow * rowRule.maxRows;
     const measuredLimit = Number.isInteger(measuredVisibleLimit)
       ? Math.max(1, Math.min(measuredVisibleLimit, fixtureLimit))
@@ -829,7 +1041,8 @@ export function mountFloatingTabHeader({
     workspace.dataset.floatingTabLayout = layout;
     workspace.dataset.floatingTabRowPacking = rowPacking;
     tabButtons.forEach((button, index) => {
-      const outsideFixture = layout !== "vertical" && index >= fixtureLimit;
+      const outsideCategory = index >= categoryItemCount;
+      const outsideFixture = outsideCategory || (layout !== "vertical" && index >= fixtureLimit);
       const outsideVisibleWindow = layout !== "vertical" && (index < tabWindowStart || index >= visibleWindowEnd);
       button.classList.toggle("floating-tab-card-fixture-hidden", outsideFixture);
       button.classList.toggle("floating-tab-card-overflow-hidden", !outsideFixture && outsideVisibleWindow);
@@ -895,11 +1108,133 @@ export function mountFloatingTabHeader({
       readout.textContent = `Viewing ${activeLabel}, ${activeCount} records${isAttentionTab(button) ? ", needs attention" : ""}`;
     }
     renderRows(list, activeLabel, rowsByLabel, category);
+    syncListDragRows();
     if (typeof onTabChange === "function") {
       onTabChange({ category, label: activeLabel, count: activeCount });
     }
     applyVariantState();
   }
+
+  function syncListDragRows() {
+    Array.from(list.querySelectorAll(".floating-tab-row")).forEach((row) => {
+      if (!(row instanceof HTMLElement)) {
+        return;
+      }
+      row.draggable = true;
+      row.dataset.floatingTabDragRow = "";
+      row.setAttribute("aria-label", `${row.querySelector("strong")?.textContent?.trim() ?? "Row"} draggable status item`);
+    });
+  }
+
+  list.addEventListener("dragstart", (event) => {
+    const row = event.target instanceof Element ? event.target.closest("[data-floating-tab-drag-row]") : null;
+    if (!(row instanceof HTMLElement)) {
+      return;
+    }
+    draggedRow = row;
+    row.dataset.dragging = "true";
+    row.classList.add("drag-drop-source");
+    dragPreview = createDragPreview(row, {
+      className: "floating-tab-drag-preview",
+      removeAttributes: ["data-floating-tab-drag-row"],
+    });
+    const title = row.querySelector("strong")?.textContent?.trim() ?? "Workspace row";
+    event.dataTransfer?.setData("text/plain", title);
+    event.dataTransfer?.setData("application/x-floating-tab-row", title);
+    event.dataTransfer?.setDragImage(dragPreview ?? row, 24, 24);
+  });
+
+  list.addEventListener("dragend", () => {
+    clearFloatingTabDragState();
+  });
+
+  list.addEventListener("dragover", (event) => {
+    if (!(draggedRow instanceof HTMLElement)) {
+      return;
+    }
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
+    tabButtons.forEach((button) => {
+      delete button.dataset.floatingTabDropTarget;
+    });
+    const targetRow = event.target instanceof Element ? event.target.closest("[data-floating-tab-drag-row]") : null;
+    Array.from(list.querySelectorAll("[data-floating-tab-row-drop-target]")).forEach((row) => {
+      if (row instanceof HTMLElement) {
+        delete row.dataset.floatingTabRowDropTarget;
+      }
+    });
+    if (targetRow instanceof HTMLElement && targetRow !== draggedRow) {
+      const bounds = targetRow.getBoundingClientRect();
+      const shouldPlaceAfter = event.clientY > bounds.top + bounds.height / 2;
+      targetRow.dataset.floatingTabRowDropTarget = shouldPlaceAfter ? "after" : "before";
+      list.insertBefore(
+        ensureListDropMarker(`${Math.max(48, bounds.height)}px`),
+        shouldPlaceAfter ? targetRow.nextElementSibling : targetRow,
+      );
+      return;
+    }
+    list.append(ensureListDropMarker());
+  });
+
+  list.addEventListener("dragleave", (event) => {
+    if (event.relatedTarget instanceof Node && list.contains(event.relatedTarget)) {
+      return;
+    }
+    clearListDropMarker();
+  });
+
+  list.addEventListener("drop", (event) => {
+    if (!(draggedRow instanceof HTMLElement)) {
+      return;
+    }
+    event.preventDefault();
+    if (dropMarker instanceof HTMLElement) {
+      list.insertBefore(draggedRow, dropMarker);
+      syncActiveRowsFromDom();
+    }
+    clearFloatingTabDragState();
+    syncListDragRows();
+  });
+
+  header.addEventListener("dragover", (event) => {
+    const tab = event.target instanceof Element ? event.target.closest(".floating-tab-card") : null;
+    if (!(draggedRow instanceof HTMLElement) || !(tab instanceof HTMLElement) || tab.disabled || tab.dataset.tabLabel === activeLabel) {
+      return;
+    }
+    event.preventDefault();
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect = "move";
+    }
+    clearListDropMarker();
+    tabButtons.forEach((button) => {
+      delete button.dataset.floatingTabDropTarget;
+    });
+    tab.dataset.floatingTabDropTarget = "status";
+  });
+
+  header.addEventListener("dragleave", (event) => {
+    if (event.relatedTarget instanceof Node && header.contains(event.relatedTarget)) {
+      return;
+    }
+    tabButtons.forEach((button) => {
+      delete button.dataset.floatingTabDropTarget;
+    });
+  });
+
+  header.addEventListener("drop", (event) => {
+    const tab = event.target instanceof Element ? event.target.closest(".floating-tab-card") : null;
+    if (!(draggedRow instanceof HTMLElement) || !(tab instanceof HTMLElement)) {
+      return;
+    }
+    event.preventDefault();
+    const moved = moveDraggedRowToStatus(tab.dataset.tabLabel ?? "");
+    clearFloatingTabDragState();
+    if (moved && typeof onTabChange === "function") {
+      onTabChange({ category, label: activeLabel, count: activeCount, movement: "status-drop" });
+    }
+  });
 
   tabButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -1024,6 +1359,7 @@ export function mountFloatingTabHeader({
       categoryDrawer.classList.add("hidden");
       categoryToggle.setAttribute("aria-expanded", "false");
       applyVariantState();
+      settleMeasuredCardDensity();
     });
   });
 
@@ -1063,10 +1399,21 @@ export function mountFloatingTabHeader({
   scrollLeftButton.addEventListener("click", () => scrollTabs(-1));
   scrollRightButton.addEventListener("click", () => scrollTabs(1));
   tabScroller.addEventListener("scroll", syncScrollButtons, { passive: true });
-  window.addEventListener("resize", () => {
-    measuredVisibleLimit = null;
-    applyVariantState();
-  });
+  window.addEventListener("resize", resetMeasuredCardDensity);
+  if ("ResizeObserver" in window) {
+    resizeObserver = new ResizeObserver((entries) => {
+      const inlineSize = entries.reduce((max, entry) => {
+        const box = Array.isArray(entry.borderBoxSize) ? entry.borderBoxSize[0] : entry.borderBoxSize;
+        return Math.max(max, box?.inlineSize ?? entry.contentRect.width);
+      }, 0);
+      if (Math.abs(inlineSize - lastObservedInlineSize) <= 1) {
+        return;
+      }
+      lastObservedInlineSize = inlineSize;
+      resetMeasuredCardDensity();
+    });
+    resizeObserver.observe(tabScroller);
+  }
   if (document.fonts?.ready) {
     document.fonts.ready.then(scheduleMeasuredCardDensity).catch(() => {});
   }
@@ -1087,5 +1434,6 @@ export function mountFloatingTabHeader({
   applyInitialStateFromUrl();
   applyCategory(category);
   applyVariantState();
+  syncListDragRows();
   applyReferenceRoutePosture();
 }

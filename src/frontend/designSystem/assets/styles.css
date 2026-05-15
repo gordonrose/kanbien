@@ -1340,6 +1340,51 @@ body[data-floating-tab-header-preview="true"] #accessibility-drawer {
   transform: none;
 }
 
+.floating-tab-row[draggable="true"] {
+  cursor: grab;
+}
+
+.floating-tab-row[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+.floating-tab-card[data-floating-tab-drop-target="status"] {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
+  outline: 0.125rem solid color-mix(in srgb, var(--accent) 32%, transparent);
+  outline-offset: 0.1875rem;
+  background: color-mix(in srgb, var(--accent-soft) 72%, var(--surface-2));
+}
+
+.floating-tab-card-drop-overlay {
+  position: absolute;
+  inset: 0.45rem;
+  z-index: 2;
+  display: none;
+  place-items: center;
+  border: 0.0625rem dashed color-mix(in srgb, var(--accent) 58%, var(--line));
+  border-radius: calc(var(--radius-sm) - 0.125rem);
+  background: color-mix(in srgb, var(--accent-soft) 76%, transparent);
+  color: var(--accent-text);
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1.1;
+  pointer-events: none;
+  text-align: center;
+}
+
+.floating-tab-card[data-floating-tab-drop-target="status"] .floating-tab-card-drop-overlay {
+  display: grid;
+}
+
+.floating-tab-row[data-floating-tab-row-drop-target] {
+  outline: 0.125rem solid color-mix(in srgb, var(--accent) 30%, transparent);
+  outline-offset: 0.1875rem;
+}
+
+.floating-tab-drop-marker {
+  inline-size: 100%;
+}
+
 .floating-tab-card.active,
 .floating-tab-card[aria-selected="true"] {
   border-color: color-mix(in srgb, var(--accent) 70%, var(--line));
