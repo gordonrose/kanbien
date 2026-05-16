@@ -1,4 +1,11 @@
 export { createJobTypeRegistry, JobTypeRegistry } from "./domain/jobRegistry";
+export {
+  createRecurringScheduleRegistry,
+  RecurringScheduleRegistry,
+  type RecurringScheduleRegistryDefinition,
+} from "./domain/recurringScheduleRegistry";
+export { runRecurringSchedulerOnce } from "./domain/runRecurringScheduler";
+export { createJobProcessingFeature } from "./integration";
 export { enqueueTransactionalJobRequest } from "./domain/enqueueTransactionalJobRequest";
 export { dispatchOutboxToQueue } from "./domain/dispatchOutboxToQueue";
 export { executeRegisteredJob } from "./domain/executeRegisteredJob";
@@ -11,6 +18,11 @@ export {
 export { createPostgresJobProcessingRepository } from "./persistence/postgresRepository";
 export { buildJobMetadataProjection } from "./domain/metadata";
 export { DEFAULT_JOB_RETRY_POLICY, computeRetryDecision } from "./domain/retryPolicy";
+export {
+  JOB_LIFECYCLE_FAILURE_CATEGORIES,
+  classifyJobLifecycleTimeout,
+  type JobLifecycleFailureCategory,
+} from "./domain/lifecycleHardening";
 export { JOB_QUEUE_NAMES, DEFAULT_QUEUE_CONCURRENCY } from "./domain/queueConfig";
 export { InvalidJobRequestError, JobProcessingError } from "./contract/errors";
 export type { QueueProviderAdapter } from "./domain/provider";

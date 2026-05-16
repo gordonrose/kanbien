@@ -6865,7 +6865,24 @@ function loadTaskBreakdownPath(packetPath: string): TaskBreakdownLoadResult {
     }
   }
 
-  const taskContents = taskFiles.map((entry) => readFileSync(path.join(tasksPath, entry), "utf8"));
+  const taskContents = taskFiles.map((entry) => {
+    const taskContent = readFileSync(path.join(tasksPath, entry), "utf8");
+    const taskId = entry.match(/^(T-[A-Za-z0-9]+-\d+)/)?.[1] ?? entry;
+    const normalized = taskContent.trim();
+    if (normalized === "See `../task-breakdown.md`." || normalized.endsWith("\nSee `../task-breakdown.md`.")) {
+      errors.push(`tasks/${taskId}-*.md is a placeholder and must contain standalone task handoff details`);
+    }
+    if (!taskContent.includes("## Task Handoff")) {
+      errors.push(`tasks/${taskId}-*.md missing Task Handoff section`);
+    }
+    if (!taskContent.includes("## Delivery Context")) {
+      errors.push(`tasks/${taskId}-*.md missing Delivery Context section`);
+    }
+    if (!taskContent.includes("## Proof And Evidence")) {
+      errors.push(`tasks/${taskId}-*.md missing Proof And Evidence section`);
+    }
+    return taskContent;
+  });
 
   return {
     content: [summaryContent, ...taskContents].join("\n\n"),

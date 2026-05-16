@@ -11,6 +11,7 @@ export type TestCaseType =
   | "RESILIENCE"
   | "COMPAT"
   | "A11Y"
+  | "ASSET"
   | "UNKNOWN";
 
 export interface ParsedTestCaseId {
@@ -32,6 +33,7 @@ const knownTypes = new Set<TestCaseType>([
   "RESILIENCE",
   "COMPAT",
   "A11Y",
+  "ASSET",
 ]);
 
 export function parseTestCaseId(id: string): ParsedTestCaseId {

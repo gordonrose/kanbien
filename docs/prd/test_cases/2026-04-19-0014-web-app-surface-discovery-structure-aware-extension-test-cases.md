@@ -192,6 +192,9 @@
 - Flow: repeated successful runs update current structure truth and stale
   posture deterministically
   Test Case ID: `TC-WEB-APP-SURF-DISC-INT-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Requires Shared Test Helper: yes
@@ -313,6 +316,9 @@
 
 - Edge: malformed provider graph output is rejected
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit` or `feature-integration`
   Suggested Test Folder: `tests/unit/webAppSurfaceDiscovery/` or
   `tests/integration/webAppSurfaceDiscovery/`
@@ -323,6 +329,9 @@
 
 - Edge: empty approved family remains valid
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Coverage:
@@ -333,6 +342,9 @@
 - Edge: mixed support-only and user-facing leaves under one group remain
   distinct
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Coverage:
@@ -341,6 +353,9 @@
 
 - Edge: stale structure nodes remain queryable and linked to run history
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Coverage:
@@ -363,6 +378,9 @@
 
 - Persistence: structure stale marking is additive and non-destructive
   Test Case ID: `TC-WEB-APP-SURF-DISC-INT-007`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `persistence-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Requires Shared Test Helper: yes
@@ -385,6 +403,9 @@
 - Compatibility: later hierarchy consumers can build a discovered tree without
   parsing raw paths
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Coverage:
@@ -398,6 +419,9 @@
 - Concurrency/Idempotency: repeated unchanged structure-aware runs do not create
   duplicate current structure nodes
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-007`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Requires Shared Test Helper: yes

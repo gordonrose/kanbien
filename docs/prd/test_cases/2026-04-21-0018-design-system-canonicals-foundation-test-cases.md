@@ -119,6 +119,9 @@
 
 - Capability: manage canonical family governance
   Test Case ID: `TC-DESIGN-SYS-CANON-UNIT-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/designSystemCanonicals/`
   Requires Shared Test Helper: yes
@@ -130,6 +133,9 @@
 
 - Capability: manage canonical reference governance
   Test Case ID: `TC-DESIGN-SYS-CANON-UNIT-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/designSystemCanonicals/`
   Requires Shared Test Helper: yes
@@ -142,6 +148,9 @@
 
 - Capability: public launcher projection is family-scoped and lifecycle-gated
   Test Case ID: `TC-DESIGN-SYS-CANON-UNIT-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/designSystemCanonicals/`
   Requires Shared Test Helper: yes
@@ -153,6 +162,9 @@
 
 - Capability: public deterministic render projection is exact and non-mutable
   Test Case ID: `TC-DESIGN-SYS-CANON-UNIT-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/designSystemCanonicals/`
   Requires Shared Test Helper: yes
@@ -165,6 +177,9 @@
 - Capability: page-tree sync materializes launcher and render pages from
   canonical-governance truth
   Test Case ID: `TC-DESIGN-SYS-CANON-UNIT-005`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -176,6 +191,9 @@
 
 - Capability: page-template settings support `canonical-rendering` precisely
   Test Case ID: `TC-DESIGN-SYS-CANON-UNIT-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/webAppPageSettings/`
   Requires Shared Test Helper: yes
@@ -190,6 +208,9 @@
 - Flow: privileged root operator governs a canonical family and rereads the
   stored result
   Test Case ID: `TC-DESIGN-SYS-CANON-INT-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/designSystemCanonicals/`
   Requires Shared Test Helper: yes
@@ -205,6 +226,9 @@
 - Flow: privileged root operator governs canonical refs with deterministic
   render settings and payload
   Test Case ID: `TC-DESIGN-SYS-CANON-INT-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/designSystemCanonicals/`
   Requires Shared Test Helper: yes
@@ -219,6 +243,9 @@
 
 - Flow: public generated launcher route renders from persisted family truth
   Test Case ID: `TC-DESIGN-SYS-CANON-INT-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/designSystem/`
   Requires Shared Test Helper: yes
@@ -234,6 +261,9 @@
 
 - Flow: public deterministic render route resolves one exact canonical ref
   Test Case ID: `TC-DESIGN-SYS-CANON-INT-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/designSystem/`
   Requires Shared Test Helper: yes
@@ -250,6 +280,9 @@
 - Flow: page-tree sync refreshes durable design-system topology from canonical
   governance truth
   Test Case ID: `TC-DESIGN-SYS-CANON-INT-005`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -266,6 +299,9 @@
 
 - Flow: page-template settings coexist with generated canonical routes
   Test Case ID: `TC-DESIGN-SYS-CANON-INT-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppPageSettings/`
   Requires Shared Test Helper: yes
@@ -283,6 +319,9 @@
 - Capability: protected family, ref, and sync mutations deny missing or
   insufficient authorization
   Test Case ID: `TC-DESIGN-SYS-CANON-SEC-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/designSystemCanonicals/` and
   `tests/security/webAppHierarchyBuilder/`
@@ -294,6 +333,9 @@
 
 - Capability: public generated reads expose only live/public families and refs
   Test Case ID: `TC-DESIGN-SYS-CANON-SEC-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/designSystemCanonicals/`
   Coverage:
@@ -304,6 +346,9 @@
 - Capability: generated canonical-rendering routes reject mutable query-state
   authority
   Test Case ID: `TC-DESIGN-SYS-CANON-SEC-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/designSystem/`
   Coverage:
@@ -315,6 +360,9 @@
 - Capability: denied canonical governance and page-tree sync attempts remain
   audit-visible
   Test Case ID: `TC-DESIGN-SYS-CANON-AUD-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/designSystemCanonicals/` and
   `tests/audit/webAppHierarchyBuilder/`
@@ -326,6 +374,9 @@
 - Capability: successful privileged canonical-governance mutations are
   attributable
   Test Case ID: `TC-DESIGN-SYS-CANON-AUD-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/designSystemCanonicals/`
   Coverage:
@@ -338,6 +389,9 @@
 - Capability: generated route family remains additive alongside legacy
   canonical routes
   Test Case ID: `TC-DESIGN-SYS-CANON-EDGE-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/designSystem/`
   Coverage:
@@ -349,6 +403,9 @@
 - Capability: parity harness can point legacy canonical assertions at generated
   routes
   Test Case ID: `TC-DESIGN-SYS-CANON-EDGE-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `frontend-visual` and `route-integration`
   Suggested Test Folder: `tests/visual/designSystem/` and
   `tests/integration/designSystem/`
@@ -364,6 +421,9 @@
 
 - Capability: generated page-tree nodes remain durable and deterministic
   Test Case ID: `TC-DESIGN-SYS-CANON-EDGE-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Coverage:
@@ -374,6 +434,9 @@
 
 - Capability: template precision remains stable across rollout
   Test Case ID: `TC-DESIGN-SYS-CANON-EDGE-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit` or `feature-integration`
   Suggested Test Folder: `tests/unit/webAppPageSettings/`
   Coverage:
@@ -384,6 +447,9 @@
 - Capability: persisted seed truth stays aligned with executable current route
   behavior
   Test Case ID: `TC-DESIGN-SYS-CANON-EDGE-005`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/designSystemCanonicals/`
   Coverage:
@@ -395,6 +461,9 @@
 
 - Capability: generated launcher routes satisfy launcher-template expectations
   Test Case ID: `TC-DESIGN-SYS-CANON-INT-007`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `frontend-visual`
   Suggested Test Folder: `tests/visual/designSystem/`
   Coverage:
@@ -408,6 +477,9 @@
 - Capability: generated render routes satisfy family-specific canonical visual
   expectations
   Test Case ID: `TC-DESIGN-SYS-CANON-INT-008`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `frontend-visual`
   Suggested Test Folder: `tests/visual/designSystem/`
   Coverage:
@@ -422,6 +494,9 @@
 - Capability: repeated governance writes and repeated sync should remain
   deterministic
   Test Case ID: `TC-DESIGN-SYS-CANON-EDGE-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/designSystemCanonicals/` and
   `tests/integration/webAppHierarchyBuilder/`

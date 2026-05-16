@@ -279,7 +279,7 @@ const genericPluginContracts: Array<[taskType: string, sections: string]> = [
 
 | Task ID | Test Change Class | Coverage Source | Traceability IDs | Test Layer | Proof Target | Fixture / Data Source | Mock / Runtime Honesty | Production Behavior Change Posture | Focused Command | Split / Blocked Follow-Up |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-GEN-01 | prd-test-case | docs/prd/test_cases/example.md | TC-EXAMPLE-001 | tests/unit/example | proof target evidence | tests/fixtures/example.ts | mock honesty evidence | no production behavior change | npx vitest run tests/unit/layer5 | DEV:backend owns implementation changes. |
+| T-GEN-01 | prd-test-case | docs/prd/test_cases/example.md | AC-EXAMPLE-001 | tests/unit/example | proof target evidence | tests/fixtures/example.ts | mock honesty evidence | no production behavior change | npx vitest run tests/unit/layer5 | DEV:backend owns implementation changes. |
 
 ## Capability Permission / State Matrix
 
@@ -369,7 +369,7 @@ const semanticBlockedContracts: Array<[taskType: string, sections: string, expec
       case "DEV:backend":
         return [taskType, sections.replace("root authz and lifecycle posture", "business posture"), "Backend task must name authz"];
       case "TEST:test-only":
-        return [taskType, sections.replace("TC-EXAMPLE-001", "EXAMPLE-001"), "Test-only task must name TC-* or AC-* traceability"];
+        return [taskType, sections.replace("AC-EXAMPLE-001", "EXAMPLE-001"), "Test-only task must name TC-* or AC-* traceability"];
       case "TEST:test-suite-alignment":
         return [taskType, sections.replace("npm run test:traceability", "npm run typecheck"), "Test suite alignment must name traceability command"];
       case "DECISION:refactor-first":

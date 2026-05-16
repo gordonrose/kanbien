@@ -120,6 +120,9 @@
 
 - Capability: preview design-system materialization
   Test Case ID: `TC-DESIGN-SYS-TOPO-UNIT-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -135,6 +138,9 @@
 
 - Capability: apply design-system materialization
   Test Case ID: `TC-DESIGN-SYS-TOPO-UNIT-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -148,6 +154,9 @@
 
 - Capability: blocked folder move handling
   Test Case ID: `TC-DESIGN-SYS-TOPO-UNIT-005`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -160,6 +169,9 @@
 
 - Capability: shared-CSS default materialization
   Test Case ID: `TC-DESIGN-SYS-TOPO-UNIT-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -200,6 +212,9 @@
 - Flow: authenticated root operator creates a design-system subpage and the
   resulting tree preserves parent-child placement
   Test Case ID: `TC-DESIGN-SYS-TOPO-INT-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -216,6 +231,9 @@
 - Flow: route-segment rename requires preview and explicit compatibility-aware
   apply
   Test Case ID: `TC-DESIGN-SYS-TOPO-INT-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -230,6 +248,9 @@
 
 - Flow: folder movement request is blocked honestly
   Test Case ID: `TC-DESIGN-SYS-TOPO-INT-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -245,6 +266,9 @@
 - Flow: apply remains aligned with current discovery truth for the
   `design-system` family
   Test Case ID: `TC-DESIGN-SYS-TOPO-INT-005`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Requires Shared Test Helper: yes
@@ -276,6 +300,9 @@
 
 - Security: backend remains authoritative for approval posture
   Test Case ID: `TC-DESIGN-SYS-TOPO-SEC-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/webAppHierarchyBuilder/`
   Coverage:
@@ -291,6 +318,9 @@
 
 - Audit: denied topology-change attempts remain audit-visible
   Test Case ID: `TC-DESIGN-SYS-TOPO-AUD-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/webAppHierarchyBuilder/`
   Coverage:
@@ -300,6 +330,9 @@
 - Audit: successful apply is operator-attributable if success-side audit is
   implemented in the slice
   Test Case ID: `TC-DESIGN-SYS-TOPO-AUD-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/webAppHierarchyBuilder/`
   Coverage:
@@ -310,6 +343,9 @@
 
 - Edge: duplicate sibling route segment rejected
   Test Case ID: `TC-DESIGN-SYS-TOPO-EDGE-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Coverage:
@@ -317,6 +353,9 @@
 
 - Edge: stale preview token or stale preview posture rejected on apply
   Test Case ID: `TC-DESIGN-SYS-TOPO-EDGE-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Coverage:
@@ -325,6 +364,9 @@
 
 - Edge: invalid parent placement rejected for subpage create
   Test Case ID: `TC-DESIGN-SYS-TOPO-EDGE-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Coverage:
@@ -332,6 +374,9 @@
 
 - Edge: blocked delete/retire request remains explicitly unsupported
   Test Case ID: `TC-DESIGN-SYS-TOPO-EDGE-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Coverage:
@@ -343,6 +388,9 @@
 - Frontend: governed hierarchy surface supports create, preview, apply, error,
   and post-apply tree refresh honestly
   Test Case ID: `TC-DESIGN-SYS-TOPO-INT-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `frontend-integration` or `visual/browser`
   Suggested Test Folder:
   - `tests/visual/designSystem/`
@@ -361,6 +409,9 @@
 - Compatibility: route-segment rename stays explicitly classified and does not
   become a silent additive change
   Test Case ID: `TC-DESIGN-SYS-TOPO-EDGE-005`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppHierarchyBuilder/`
   Coverage:

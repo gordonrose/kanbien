@@ -291,3 +291,14 @@
   Coverage:
   - blueprint, PRD, and capability matrix all preserve the same durable route
     model
+
+- Compatibility: nested durable routes expose breadcrumb hierarchy as separate
+  nodes
+  Test Case ID: `TC-ROOT-PATH-COMPAT-003`
+  Recommended Test Layer: `artifact-review`
+  Suggested Test Folder: `tests/audit/`
+  Coverage:
+  - nested root-admin route metadata exposes parent and current breadcrumb
+    labels separately
+  - visual proof targets separate breadcrumb nodes rather than combined labels
+  - maintained route artifacts preserve nested path-backed topology

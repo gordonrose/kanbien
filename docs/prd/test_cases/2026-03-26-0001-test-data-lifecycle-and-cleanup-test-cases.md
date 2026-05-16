@@ -86,6 +86,18 @@
   Notes:
   - keep reporting deterministic for automation and review
 
+- Capability: traceability parser recognizes asset-linking proof IDs
+  Test Case ID: `TC-TEST-DATA-UNIT-007`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/traceability/`
+  Coverage:
+  - parses `TC-*-ASSET-*` IDs used by profile-picture and asset-linking seams
+  - keeps asset-linking proof grouped separately from generic unit/security
+    coverage
+  Notes:
+  - added during the 2026-05-16 traceability cleanup because root-user and
+    tenant-admin profile-picture tests already used the `ASSET` proof type
+
 ## Integration Tests For Features Working Together
 
 - Flow: routine persistence-backed tests use reset-first cleanup instead of

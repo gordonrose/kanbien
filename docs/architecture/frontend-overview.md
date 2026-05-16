@@ -32,6 +32,9 @@ Today that means:
   by server-side session records
 - the root-admin login flow uses a localhost signing-helper bridge for SSH
   proof
+- `package.json` now also declares backend/platform job runtime commands such
+  as `scheduler:jobs`; those commands do not change the browser delivery model
+  or frontend route topology
 
 Primary architecture decisions behind this shape live in:
 

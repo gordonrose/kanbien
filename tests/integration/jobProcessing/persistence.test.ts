@@ -79,4 +79,57 @@ describePostgres("jobProcessing persistence", () => {
     expect(replay.jobId).toBe(job.jobId);
     expect(outbox?.dispatchStatus).toBe("pending");
   });
+
+  it("TC-SCHED-INT-001 persists recurring schedules, leases due slots, and records outcomes", async () => {
+    const repository = createPostgresJobProcessingRepository(pool);
+    const dueSlotAt = new Date("2026-05-16T10:00:00.000Z");
+    const now = new Date("2026-05-16T10:05:00.000Z");
+    await repository.upsertRecurringScheduleDefinitions([
+      {
+        scheduleKey: "integration-recurring",
+        jobType: "test.persist",
+        payloadVersion: 1,
+        cadenceSeconds: 3600,
+        enabled: true,
+        nextRunAt: dueSlotAt,
+      },
+    ]);
+
+    const claimed = await repository.claimDueRecurringSchedules({
+      schedulerId: "scheduler-integration",
+      now,
+      limit: 10,
+      leaseUntil: new Date(now.getTime() + 300_000),
+    });
+
+    expect(claimed).toHaveLength(1);
+    expect(claimed[0]?.run.status).toBe("leased");
+
+    const outcome = await repository.recordRecurringScheduleRunOutcome({
+      scheduleKey: "integration-recurring",
+      dueSlotAt,
+      status: "enqueued",
+      finishedAt: now,
+      nextRunAt: new Date("2026-05-16T11:00:00.000Z"),
+    });
+    await repository.upsertRecurringScheduleDefinitions([
+      {
+        scheduleKey: "integration-recurring",
+        jobType: "test.persist",
+        payloadVersion: 1,
+        cadenceSeconds: 3600,
+        enabled: true,
+        nextRunAt: dueSlotAt,
+      },
+    ]);
+    const claimedAgain = await repository.claimDueRecurringSchedules({
+      schedulerId: "scheduler-integration",
+      now,
+      limit: 10,
+      leaseUntil: new Date(now.getTime() + 300_000),
+    });
+
+    expect(outcome?.status).toBe("enqueued");
+    expect(claimedAgain).toHaveLength(0);
+  });
 });

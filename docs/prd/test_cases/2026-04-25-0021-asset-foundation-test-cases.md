@@ -213,6 +213,16 @@
   Coverage: exercises the stateful API sequence create intent, place object in local storage, complete upload, read metadata, read content, delete, and verify subsequent denial.
   Notes: Formal `tests/e2e/` journey inventory is deferred until a frontend or real tenant-branding workflow is added.
 
+- Flow: browser-provided bytes use the same-origin upload seam
+  Test Case ID: `TC-ASSETS-INT-009`
+  Recommended Test Layer: `feature-integration`
+  Suggested Test Folder: `tests/integration/assets/`
+  Requires Shared Test Helper: authenticated actor, in-memory or local storage writer
+  Requires Manifest Tracking: no
+  Cleanup Expectation: reset-first database and storage cleanup
+  Coverage: uploads browser-provided bytes through the same-origin asset seam before completion and verifies the service reads those bytes from storage rather than trusting client metadata alone.
+  Notes: Added during traceability cleanup for existing executable coverage in `tests/integration/assets/flow.test.ts`.
+
 ## NFR Security Tests
 
 - Scenario: unauthenticated and missing-capability denials

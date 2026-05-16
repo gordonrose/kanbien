@@ -6,6 +6,9 @@ import type {
   EnqueueJobRequest,
   JobAttemptStatus,
   JobStatus,
+  RecurringScheduleDefinition,
+  RecurringScheduleRunRecord,
+  RecurringScheduleRunStatus,
 } from "../../src/features/jobProcessing/domain/types";
 import type {
   CreateJobRecordInput,
@@ -38,6 +41,11 @@ export class InMemoryJobProcessingRepository implements JobProcessingRepository 
   public readonly jobs = new Map<string, DurableJobRecord>();
   public readonly outboxes = new Map<string, DurableOutboxRecord>();
   public readonly attempts = new Map<string, DurableAttemptRecord>();
+  public readonly recurringSchedules = new Map<string, RecurringScheduleDefinition & {
+    leaseOwner: string | null;
+    leaseUntil: Date | null;
+  }>();
+  public readonly recurringRuns = new Map<string, RecurringScheduleRunRecord>();
 
   async createJobRequest(input: CreateJobRecordInput): Promise<DurableJobRecord> {
     const existing =
@@ -240,6 +248,124 @@ export class InMemoryJobProcessingRepository implements JobProcessingRepository 
 
   async getOutboxByJobId(jobId: string): Promise<DurableOutboxRecord | null> {
     return [...this.outboxes.values()].find((outbox) => outbox.jobId === jobId) ?? null;
+  }
+
+  async upsertRecurringScheduleDefinitions(
+    definitions: RecurringScheduleDefinition[],
+  ): Promise<RecurringScheduleDefinition[]> {
+    return definitions.map((definition) => {
+      const existing = this.recurringSchedules.get(definition.scheduleKey);
+      const persisted = {
+        ...definition,
+        nextRunAt: existing?.nextRunAt ?? definition.nextRunAt,
+        leaseOwner: existing?.leaseOwner ?? null,
+        leaseUntil: existing?.leaseUntil ?? null,
+      };
+      this.recurringSchedules.set(definition.scheduleKey, persisted);
+      return {
+        scheduleKey: persisted.scheduleKey,
+        jobType: persisted.jobType,
+        payloadVersion: persisted.payloadVersion,
+        cadenceSeconds: persisted.cadenceSeconds,
+        enabled: persisted.enabled,
+        nextRunAt: persisted.nextRunAt,
+      };
+    });
+  }
+
+  async claimDueRecurringSchedules(input: {
+    schedulerId: string;
+    now: Date;
+    limit: number;
+    leaseUntil: Date;
+  }): Promise<Array<{ definition: RecurringScheduleDefinition; run: RecurringScheduleRunRecord }>> {
+    return [...this.recurringSchedules.values()]
+      .filter((definition) =>
+        definition.enabled &&
+        definition.nextRunAt <= input.now &&
+        (!definition.leaseUntil || definition.leaseUntil <= input.now)
+      )
+      .sort((left, right) =>
+        left.nextRunAt.getTime() - right.nextRunAt.getTime() ||
+        left.scheduleKey.localeCompare(right.scheduleKey)
+      )
+      .slice(0, input.limit)
+      .map((definition) => {
+        const leased = {
+          ...definition,
+          leaseOwner: input.schedulerId,
+          leaseUntil: input.leaseUntil,
+        };
+        this.recurringSchedules.set(definition.scheduleKey, leased);
+        const runKey = `${definition.scheduleKey}:${definition.nextRunAt.toISOString()}`;
+        const existingRun = this.recurringRuns.get(runKey);
+        const now = input.now;
+        const run: RecurringScheduleRunRecord = existingRun
+          ? {
+              ...existingRun,
+              status: "skipped_overlap",
+              attemptCount: existingRun.attemptCount + 1,
+              updatedAt: now,
+            }
+          : {
+              runId: `run-${this.recurringRuns.size + 1}`,
+              scheduleKey: definition.scheduleKey,
+              dueSlotAt: definition.nextRunAt,
+              status: "leased",
+              jobId: null,
+              attemptCount: 1,
+              errorCategory: null,
+              errorSummary: null,
+              createdAt: now,
+              updatedAt: now,
+            };
+        this.recurringRuns.set(runKey, run);
+        return {
+          definition: {
+            scheduleKey: leased.scheduleKey,
+            jobType: leased.jobType,
+            payloadVersion: leased.payloadVersion,
+            cadenceSeconds: leased.cadenceSeconds,
+            enabled: leased.enabled,
+            nextRunAt: leased.nextRunAt,
+          },
+          run,
+        };
+      });
+  }
+
+  async recordRecurringScheduleRunOutcome(input: {
+    scheduleKey: string;
+    dueSlotAt: Date;
+    status: RecurringScheduleRunStatus;
+    finishedAt: Date;
+    nextRunAt: Date;
+    jobId?: string | null;
+    errorCategory?: string | null;
+    errorSummary?: string | null;
+  }): Promise<RecurringScheduleRunRecord | null> {
+    const runKey = `${input.scheduleKey}:${input.dueSlotAt.toISOString()}`;
+    const run = this.recurringRuns.get(runKey);
+    if (!run) return null;
+    const updatedRun: RecurringScheduleRunRecord = {
+      ...run,
+      status: input.status,
+      jobId: input.jobId ?? null,
+      errorCategory: input.errorCategory ?? null,
+      errorSummary: input.errorSummary ?? null,
+      updatedAt: input.finishedAt,
+    };
+    this.recurringRuns.set(runKey, updatedRun);
+    const schedule = this.recurringSchedules.get(input.scheduleKey);
+    if (schedule) {
+      this.recurringSchedules.set(input.scheduleKey, {
+        ...schedule,
+        nextRunAt: input.nextRunAt,
+        leaseOwner: null,
+        leaseUntil: null,
+      });
+    }
+    return updatedRun;
   }
 }
 

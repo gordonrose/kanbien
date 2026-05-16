@@ -59,6 +59,9 @@
 
 - Capability: central evaluator applies v1 layer order
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-UNIT-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-004 / AC-S004-01, AC-S004-02
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/authz/`
@@ -77,6 +80,9 @@
 
 - Capability: tenant context resolver requires exactly one current tenant
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-UNIT-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-004 / AC-S004-01
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/authz/`
@@ -92,6 +98,9 @@
 
 - Capability: `adminOwner` grant resolver reads v1 tenant role truth
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-UNIT-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-003 / AC-S003-01, AC-S003-02
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/authz/` or `tests/unit/tenantAuth/`
@@ -108,6 +117,9 @@
 
 - Capability: lifecycle gate maps current tenant facts honestly
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-UNIT-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-005 / AC-S005-01, AC-S005-02
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/authz/`
@@ -125,6 +137,9 @@
 
 - Capability: denial mapper returns safe public codes
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-UNIT-005`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-002 / AC-S002-01
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/authz/`
@@ -140,6 +155,9 @@
 
 - Capability: ABAC/ReBAC/object rules are typed extension points only in v1
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-UNIT-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-004 / AC-S004-03
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/authz/`
@@ -159,6 +177,9 @@
 - Flow: tenant session plus active `adminOwner` grant allows first protected
   route adoption
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-INT-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-004, S-006 / AC-S004-01, AC-S006-01
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/authz/` or first adopted route
@@ -179,6 +200,9 @@
 
 - Flow: revoked grant immediately denies previously authorized tenant actor
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-INT-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-003 / AC-S003-02
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/authz/`
@@ -196,6 +220,9 @@
 
 - Flow: lifecycle gate denies before feature-specific business logic
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-INT-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-005 / AC-S005-02
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/authz/`
@@ -215,6 +242,9 @@
 
 - Flow: feature/configuration gate denies before RBAC when unavailable
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-INT-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-006 / AC-S006-01
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/authz/`
@@ -235,6 +265,9 @@
 - Flow: first real tenant-admin route adoption proves login-to-protected-read
   journey
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-E2E-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-004, S-006
   Related Journey ID: future first route-family journey
   Recommended Test Layer: `end-to-end-journey`
@@ -256,6 +289,9 @@
 
 - Scenario: cross-tenant access denies by default
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-SEC-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-004 / AC-S004-01
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/authz/`
@@ -271,6 +307,9 @@
 
 - Scenario: root authority and tenant authority do not collapse
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-SEC-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-006 / AC-S006-02
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/authz/`
@@ -285,6 +324,9 @@
 
 - Scenario: pending/setup-incomplete tenant admin cannot authorize
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-SEC-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-003 / AC-S003-02
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/authz/`
@@ -300,6 +342,9 @@
 
 - Scenario: UI eligibility remains blocked without runtime enforcement proof
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-SEC-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-009 / AC-S009-02
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/capabilityContractCatalog/`
@@ -316,6 +361,9 @@
 
 - Scenario: denied decisions emit required audit/proof posture
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-AUD-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-008 / AC-S008-01, AC-S008-02
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/authz/`
@@ -333,6 +381,9 @@
 
 - Scenario: proof-field honesty for existing audit adapter
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-AUD-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-008 / AC-S008-01
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/authz/`
@@ -349,6 +400,9 @@
 
 - Scenario: grant source posture changes are audit-visible
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-AUD-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Story / AC: S-003, S-008
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/authz/`
@@ -366,6 +420,9 @@
 
 - Scenario: grant backfill migration is idempotent
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-CONC-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `persistence-backed`
   Suggested Test Folder: `tests/integration/tenantAuth/` or `tests/persistence/authz/`
   Requires Shared Test Helper: yes
@@ -379,6 +436,9 @@
 
 - Scenario: concurrent grant revocation and route authorization fail closed
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-CONC-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `concurrency-integration`
   Suggested Test Folder: `tests/integration/authz/`
   Requires Shared Test Helper: yes
@@ -394,6 +454,9 @@
 
 - Scenario: evaluator avoids excessive cross-feature reads on protected route
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-PERF-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `performance`
   Suggested Test Folder: `tests/performance/authz/`
   Requires Shared Test Helper: yes
@@ -411,6 +474,9 @@
 
 - Scenario: resolver failure maps to safe denial or service error posture
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-RES-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `resilience`
   Suggested Test Folder: `tests/integration/authz/`
   Requires Shared Test Helper: yes
@@ -425,6 +491,9 @@
 
 - Scenario: existing root and tenant-auth API denial behavior remains compatible
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-RES-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `compatibility-contract`
   Suggested Test Folder: `tests/compatibility/authz/` or existing route-family
     integration folders
@@ -442,6 +511,9 @@
 
 - Scenario: malformed or unknown capability keys deny safely
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-EDGE-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/authz/`
   Requires Shared Test Helper: no
@@ -455,6 +527,9 @@
 
 - Scenario: tenant lifecycle future states are not guessed from missing fields
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-EDGE-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/authz/`
   Requires Shared Test Helper: no
@@ -468,6 +543,9 @@
 
 - Scenario: multiple active tenant grants still require one selected context
   Test Case ID: `TC-AUTHZ-ADMIN-OWNER-EDGE-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/authz/`
   Requires Shared Test Helper: yes

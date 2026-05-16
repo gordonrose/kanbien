@@ -4,6 +4,8 @@ import { enqueueTransactionalJobRequest } from "./enqueueTransactionalJobRequest
 import { executeRegisteredJob } from "./executeRegisteredJob";
 import type { JobTypeRegistry } from "./jobRegistry";
 import type { QueueProviderAdapter } from "./provider";
+import type { RecurringScheduleRegistry } from "./recurringScheduleRegistry";
+import { runRecurringSchedulerOnce } from "./runRecurringScheduler";
 
 export function createJobProcessingService(input: {
   registry: JobTypeRegistry;
@@ -32,6 +34,18 @@ export function createJobProcessingService(input: {
         jobId,
         workerId,
         registry: input.registry,
+        repository: input.repository,
+      }),
+    runRecurringSchedulerOnce: (request: {
+      scheduleRegistry: RecurringScheduleRegistry;
+      schedulerId: string;
+      now?: Date;
+      batchSize?: number;
+      leaseMs?: number;
+    }) =>
+      runRecurringSchedulerOnce({
+        ...request,
+        jobRegistry: input.registry,
         repository: input.repository,
       }),
   };

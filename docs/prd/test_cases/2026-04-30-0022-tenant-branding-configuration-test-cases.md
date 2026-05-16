@@ -48,6 +48,9 @@
 - Capability:
   root branding save validation
   Test Case ID: `TC-TENANT-BRANDING-UNIT-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/tenantBranding/`
   Requires Shared Test Helper: no
@@ -62,6 +65,9 @@
 - Capability:
   root branding save persistence result
   Test Case ID: `TC-TENANT-BRANDING-UNIT-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/tenantBranding/`
   Requires Shared Test Helper: repository fake
@@ -76,6 +82,9 @@
 - Capability:
   dashboard projection fallback matrix
   Test Case ID: `TC-TENANT-BRANDING-UNIT-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/tenantBranding/`
   Requires Shared Test Helper: projection fixtures
@@ -90,6 +99,9 @@
 - Capability:
   logo relationship consumer readiness
   Test Case ID: `TC-TENANT-BRANDING-UNIT-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/tenantBranding/`
   Requires Shared Test Helper: asset readiness fixtures
@@ -104,6 +116,9 @@
 - Capability:
   replacement-only logo lifecycle
   Test Case ID: `TC-TENANT-BRANDING-UNIT-005`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/tenantBranding/`
   Requires Shared Test Helper: relationship fixtures
@@ -119,6 +134,9 @@
 - Capability:
   audit-safe event payloads
   Test Case ID: `TC-TENANT-BRANDING-UNIT-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/tenantBranding/`
   Requires Shared Test Helper: audit event fake
@@ -136,6 +154,9 @@
 - Flow:
   root read and save tenant branding through v1 router
   Test Case ID: `TC-TENANT-BRANDING-INT-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/tenantBranding/`
   Requires Shared Test Helper: authenticated root user, tenant fixture,
@@ -153,6 +174,9 @@
 - Flow:
   logo upload intent through tenant branding to assets
   Test Case ID: `TC-TENANT-BRANDING-INT-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/tenantBranding/`
   Requires Shared Test Helper: asset storage fixture and authenticated root
@@ -169,6 +193,9 @@
 - Flow:
   logo replacement validates asset readiness and relationship metadata
   Test Case ID: `TC-TENANT-BRANDING-INT-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/tenantBranding/`
   Requires Shared Test Helper: ready/pending/rejected asset fixtures
@@ -185,6 +212,9 @@
 - Flow:
   tenant dashboard branding projection
   Test Case ID: `TC-TENANT-BRANDING-INT-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/tenantBranding/`
   Requires Shared Test Helper: tenant session/current-tenant fixture
@@ -201,6 +231,9 @@
 - Flow:
   same-origin logo content route
   Test Case ID: `TC-TENANT-BRANDING-INT-005`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/tenantBranding/`
   Requires Shared Test Helper: ready logo asset fixture
@@ -220,6 +253,9 @@
 - Flow:
   root admin configures branding and tenant user sees it after reload
   Test Case ID: `TC-TENANT-BRANDING-E2E-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Related Journey ID:
   S-003; S-004; S-005; S-007; S-008
   Recommended Test Layer: `end-to-end-journey`
@@ -240,6 +276,9 @@
 - Scenario:
   root and tenant authz allow/deny matrix
   Test Case ID: `TC-TENANT-BRANDING-SEC-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/tenantBranding/`
   Requires Shared Test Helper: root role/capability and tenant session fixtures
@@ -255,6 +294,9 @@
 - Scenario:
   asset authority cannot replace tenant branding authorization
   Test Case ID: `TC-TENANT-BRANDING-SEC-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/tenantBranding/`
   Requires Shared Test Helper: cross-tenant asset fixtures
@@ -269,6 +311,9 @@
 - Scenario:
   public and raw storage delivery denial
   Test Case ID: `TC-TENANT-BRANDING-SEC-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `security-integration`
   Suggested Test Folder: `tests/security/tenantBranding/`
   Requires Shared Test Helper: ready logo fixture
@@ -285,6 +330,9 @@
 - Scenario:
   privileged branding and logo events are audit visible
   Test Case ID: `TC-TENANT-BRANDING-AUD-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/tenantBranding/`
   Requires Shared Test Helper: audit repository fixture
@@ -300,6 +348,9 @@
 - Scenario:
   forbidden fields are absent from audit and operational summaries
   Test Case ID: `TC-TENANT-BRANDING-AUD-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `audit-integration`
   Suggested Test Folder: `tests/audit/tenantBranding/`
   Requires Shared Test Helper: audit capture fixture
@@ -317,6 +368,9 @@
 - Scenario:
   concurrent branding saves preserve durable last-write truth
   Test Case ID: `TC-TENANT-BRANDING-CONC-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `concurrency-integration`
   Suggested Test Folder: `tests/integration/tenantBranding/`
   Requires Shared Test Helper: concurrent request fixture
@@ -331,6 +385,9 @@
 - Scenario:
   concurrent logo replacements keep one current relationship
   Test Case ID: `TC-TENANT-BRANDING-CONC-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `concurrency-integration`
   Suggested Test Folder: `tests/integration/tenantBranding/`
   Requires Shared Test Helper: two ready logo asset fixtures
@@ -347,6 +404,9 @@
 - Scenario:
   dashboard projection exact lookup remains bounded
   Test Case ID: `TC-TENANT-BRANDING-PERF-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `performance`
   Suggested Test Folder: `tests/performance/tenantBranding/`
   Requires Shared Test Helper: seeded tenant branding records
@@ -363,6 +423,9 @@
 - Scenario:
   dependency failure produces truthful unavailable state
   Test Case ID: `TC-TENANT-BRANDING-RES-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `resilience`
   Suggested Test Folder: `tests/integration/tenantBranding/`
   Requires Shared Test Helper: repository and storage failure fixtures
@@ -378,6 +441,9 @@
 - Scenario:
   contract artifacts remain compatible with implemented routes
   Test Case ID: `TC-TENANT-BRANDING-RES-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `compatibility-contract`
   Suggested Test Folder: `tests/compatibility/tenantBranding/`
   Requires Shared Test Helper: OpenAPI/Postman parity harness when available
@@ -394,6 +460,9 @@
 - Scenario:
   lifecycle and fallback edge matrix
   Test Case ID: `TC-TENANT-BRANDING-EDGE-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/tenantBranding/`
   Requires Shared Test Helper: lifecycle fixture matrix
@@ -409,6 +478,9 @@
 - Scenario:
   governed frontend state matrix
   Test Case ID: `TC-TENANT-BRANDING-EDGE-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `rendered-browser`
   Suggested Test Folder: `tests/visual/tenantBranding/`
   Requires Shared Test Helper: design-system canonical and app adoption

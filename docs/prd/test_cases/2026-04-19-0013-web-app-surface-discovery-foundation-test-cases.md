@@ -185,6 +185,9 @@
 - Flow: repeated successful runs update current truth and stale posture
   deterministically
   Test Case ID: `TC-WEB-APP-SURF-DISC-INT-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Requires Shared Test Helper: yes
@@ -287,6 +290,9 @@
 
 - Compatibility: provider seams preserve contract honesty across locator kinds
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-001`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `compatibility-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Coverage:
@@ -299,6 +305,9 @@
 
 - Compatibility: read contract remains stable for later reconcile consumers
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-002`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `compatibility-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Coverage:
@@ -310,6 +319,9 @@
 - Edge: duplicate discovered surfaces in one provider output are handled
   deterministically
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-003`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/webAppSurfaceDiscovery/`
   Coverage:
@@ -318,6 +330,9 @@
 
 - Edge: provider returns unsupported or malformed locator shape
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-004`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/webAppSurfaceDiscovery/`
   Coverage:
@@ -335,6 +350,9 @@
 
 - Edge: empty discovery for an approved family remains honest
   Test Case ID: `TC-WEB-APP-SURF-DISC-EDGE-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/webAppSurfaceDiscovery/`
   Coverage:
