@@ -13,15 +13,29 @@
   root-admin and tenant-admin organization logo upload, replacement, display,
   export bundling, and public logo delivery
 - Decision status:
-  approved for planning
+  approved for S-012 task breakdown; v1 implementation scope is primary logo
+  only
 - Approver:
   Product requester approved public organization logos, automatic publication
-  after accepted upload, multiple logo types, stable app-controlled public
-  URLs, raster-only v1, required malware scanning, metadata stripping, cache
-  purge/revalidation posture, deterministic placeholders, and v1 numeric
-  limits in chat on 2026-05-12. Implementation remains blocked until PRD, API
-  contract, data dictionary, permission mapping, runbook, and security/QA tests
-  carry this decision into executable requirements.
+  after accepted upload, stable app-controlled public URLs, raster-only v1,
+  required malware scanning, metadata stripping, cache purge/revalidation
+  posture, deterministic placeholders, and v1 numeric limits in chat on
+  2026-05-12. The later scope correction approved one v1 logo type for now:
+  `primary`. Additional logo types require separate expansion. Implementation
+  must carry the technical signoff into PRD, API contract, data dictionary,
+  permission mapping, runbook, and security/QA tests. The technical signoff
+  gate is tracked in
+  `docs/workspace/asset-consumer-decisions/2026-05-15-organization-public-logo-technical-signoff.md`.
+
+## Technical Signoff Gate
+
+| Concern | Status | Required artifact |
+| --- | --- | --- |
+| Product direction | `approved-for-planning` | this decision record |
+| Technical implementation | `approved-for-s012-task-breakdown` | `docs/workspace/asset-consumer-decisions/2026-05-15-organization-public-logo-technical-signoff.md` |
+| Security posture | `approved-with-required-s012-proof` | technical signoff checklist and future security tests |
+| Frontend/rendering posture | `approved-for-primary-logo-only` | technical signoff checklist and future design-system/app evidence |
+| Operational posture | `approved-with-runbook-and-required-s012-proof` | technical signoff checklist and runbook |
 
 ## Business Decision
 
@@ -60,10 +74,11 @@
 - Maximum file size:
   5 MB per raster logo.
 - Maximum count or storage footprint:
-  Four current logo types per organization: `primary`, `icon`,
-  `light-background`, and `dark-background`. Stored organization-logo bytes
-  are capped at 1 GB per tenant for v1. Historical/replaced/rejected attempts
-  remain governed by asset lifecycle and cleanup rules.
+  One current `primary` logo per organization for v1. Future logo types such
+  as `icon`, `light-background`, and `dark-background` require separate
+  expansion approval. Stored organization-logo bytes are capped at 1 GB per
+  tenant for v1. Historical/replaced/rejected attempts remain governed by
+  asset lifecycle and cleanup rules.
 - SVG allowed?
   No for v1 public organization logos.
 - If SVG is allowed, what sanitizer/validator and disallowed SVG features
@@ -340,8 +355,7 @@
 ## Final Decision
 
 - Approved scope:
-  Proposed for review: organization logo image assets only, multiple logo
-  types (`primary`, `icon`, `light-background`, `dark-background`), current
+  Organization logo image assets only, v1 `primary` logo type only, current
   accepted asset per organization/logo type, stable app-controlled public URLs,
   no raw bucket URLs, public delivery automatic after accepted safe upload,
   with contextual alt text required and generated from organization name as an
@@ -349,17 +363,16 @@
   app-generated initials placeholder derived deterministically from the
   organization name.
 - Explicitly deferred protections:
-  SVG public-logo support is deferred until a separate sanitizer/security
-  review. Security review must still explicitly decide public cache behavior,
-  bandwidth limits, and legal-hold/export interactions.
+  SVG public-logo support and additional logo types are deferred until a
+  separate sanitizer/security or logo-type expansion review.
 - Required follow-up before broader rollout:
-  PRD, API contract, data dictionary, permission mapping, runbook, QA/security
-  tests, asset processing/scanning implementation plan, and public delivery
-  cache purge/revalidation/retry strategy, including the exact cleanup window
-  for replaced logo bytes and numeric v1 quota/rate/transfer defaults.
+  S-012 task breakdown must carry PRD, API contract, data dictionary,
+  permission mapping, runbook, QA/security tests, asset processing/scanning
+  implementation plan, and public delivery cache purge/revalidation/retry
+  strategy into executable tasks.
 - Residual risk statement:
   Public organization logos are a deliberate exception to the repo's default
-  private-asset posture. The exception is narrow and approved for planning
-  only; implementation remains blocked until the detailed processing,
-  scanning, caching, quota, retention, and evidence controls are carried into
-  downstream artifacts and tests.
+  private-asset posture. The exception is narrow, approved for v1 `primary`
+  logo planning, and requires the detailed processing, scanning, caching,
+  quota, retention, and evidence controls to be carried into downstream S-012
+  tasks and tests.

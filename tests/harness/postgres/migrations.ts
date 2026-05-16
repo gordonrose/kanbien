@@ -20,6 +20,16 @@ type MigrationGroup =
   | "tenantAuth"
   | "tenantConfiguration"
   | "assets"
+  | "organizationCore"
+  | "organizationLegalDetails"
+  | "organizationLocations"
+  | "organizationOpeningHours"
+  | "organizationBusinessUnits"
+  | "organizationBusinessUnitMemberships"
+  | "organizationReferenceCatalogues"
+  | "organizationSearch"
+  | "organizationBrandingReferences"
+  | "organizationExports"
   | "harnessChat";
 
 interface TestMigrationFile {
@@ -204,6 +214,55 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
     relativePath: "assets/persistence/migrations/0040_create_assets.sql",
   },
   {
+    group: "organizationCore",
+    relativePath: "organizationCore/persistence/migrations/0051_create_organization_core.sql",
+  },
+  {
+    group: "organizationLegalDetails",
+    relativePath:
+      "organizationLegalDetails/persistence/migrations/0052_create_organization_legal_details.sql",
+  },
+  {
+    group: "organizationLocations",
+    relativePath:
+      "organizationLocations/persistence/migrations/0053_create_organization_locations.sql",
+  },
+  {
+    group: "organizationOpeningHours",
+    relativePath:
+      "organizationOpeningHours/persistence/migrations/0054_create_location_opening_hours.sql",
+  },
+  {
+    group: "organizationBusinessUnits",
+    relativePath:
+      "organizationBusinessUnits/persistence/migrations/0055_create_organization_business_units.sql",
+  },
+  {
+    group: "organizationBusinessUnitMemberships",
+    relativePath:
+      "organizationBusinessUnitMemberships/persistence/migrations/0056_create_organization_business_unit_memberships.sql",
+  },
+  {
+    group: "organizationReferenceCatalogues",
+    relativePath:
+      "organizationReferenceCatalogues/persistence/migrations/0057_create_organization_reference_values.sql",
+  },
+  {
+    group: "organizationSearch",
+    relativePath:
+      "organizationSearch/persistence/migrations/0058_create_organization_search.sql",
+  },
+  {
+    group: "organizationBrandingReferences",
+    relativePath:
+      "organizationBrandingReferences/persistence/migrations/0059_create_organization_branding_references.sql",
+  },
+  {
+    group: "organizationExports",
+    relativePath:
+      "organizationExports/persistence/migrations/0060_create_organization_exports.sql",
+  },
+  {
     group: "rootUsers",
     relativePath:
       "rootUsers/persistence/migrations/0045_add_root_user_profile_picture_asset.sql",
@@ -342,6 +401,13 @@ export async function applyPostgresTestMigrations(
     "tenantAdmins",
     "tenantAuth",
     "tenantConfiguration",
+    "organizationCore",
+    "organizationLegalDetails",
+    "organizationLocations",
+    "organizationOpeningHours",
+    "organizationBusinessUnits",
+    "organizationBusinessUnitMemberships",
+    "organizationExports",
     "harnessChat",
   ],
 ): Promise<void> {

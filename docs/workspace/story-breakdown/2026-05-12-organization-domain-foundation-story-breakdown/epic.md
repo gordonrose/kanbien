@@ -5,7 +5,7 @@
 - Packet status:
   `blocked`
 - Packet date:
-  2026-05-12
+  2026-05-15
 - Epic ID:
   `EPIC-ORG-DOMAIN-FOUNDATION`
 - Epic title:
@@ -20,14 +20,13 @@
   `docs/workspace/capability-matrices/2026-05-12-organization-domain-foundation-capability-matrix-first-draft.csv`
 - Related PRD test cases:
   `docs/prd/test_cases/2026-05-12-0025-organization-domain-foundation-test-cases.md`
-- Related feature-family decision:
-  `docs/workspace/architecture-map/feature-families/2026-05-12-organization-domain-foundation-feature-family.md`
-- Related Organization API contracts:
-  `docs/api-contracts/organization-root-admin.md`;
-  `docs/api-contracts/organization-tenant-admin.md`
+- Related implementation blueprint:
+  `docs/workspace/implementation-blueprints/2026-05-15-organization-domain-foundation-planning-blueprint.md`
 - Related GOV:design-system, asset, ADR, or architecture artifacts:
   `docs/workspace/asset-consumer-decisions/2026-05-12-organization-public-logo.md`;
+  `docs/workspace/asset-consumer-decisions/2026-05-15-organization-public-logo-technical-signoff.md`;
   `docs/workspace/asset-consumer-decisions/2026-05-12-organization-private-export-bundle.md`;
+  `docs/workspace/product-discovery/2026-05-15-reusable-email-export-behavior.md`;
   `docs/architecture/adr/0035-adopt-object-storage-backed-asset-foundation.md`;
   `docs/architecture/adr/0036-adopt-layered-platform-authorization-evaluation.md`;
   `docs/architecture/adr/0037-separate-tenant-operational-lifecycle-from-deletion-posture.md`
@@ -41,19 +40,75 @@
 - Product Discovery status:
   `ready-for-technical-steering`
 - Technical Steering status:
-  `ready-for-story-breakdown`
+  `refreshed-2026-05-15`
 - Steering non-goals preserved:
-  no import or bulk upload, no special opening-hour calendars, no deep integration settings or secrets, no multiple active legal profiles, no public non-logo organization pages, no admin-visible change-history view in v1
+  no import or bulk upload, no recurring holiday calendars, no seasonal or
+  external opening-hour feeds, no deep integration setup, no integration export,
+  no CSV export, no request-time export snapshots, no generated placeholder
+  image files in export bundles, no multiple active legal profiles, no public
+  non-logo Organization pages, and no admin-visible change-history screens.
 - Steering stop conditions resolved or carried as blockers:
-  public logo and private export decisions are approved for planning; app screens remain blocked on design-system work; source work remains blocked on requirements, behavior, proof, data, permission, and service answer documents.
+  Organization management, reference values, search, locations, opening-hour
+  exceptions, business units, memberships, and data dictionary work are ready
+  for detailed task planning. Logo implementation is blocked on technical
+  signoff. Export implementation is blocked on secure generated export
+  technical steering. App screens are blocked on shared screen governance.
+  Integration records are deferred from v1.
 - Architecture invention check:
   `consumes-steering-only`
 - Governed DEV:frontend seam posture:
   `blocked`
 - Asset/security/tenant/authz/persistence/migration/compliance risks:
-  tenant boundary protection, root-versus-tenant authority, public image delivery, private export delivery, retained records, background work, search scale, audit evidence, and source-independent document alignment
+  tenant boundary protection, root-versus-tenant authority, public image
+  delivery, private export delivery, retained records, background work, search
+  scale, audit evidence, durable data retention, and source-independent
+  document alignment.
 - Missing source-of-truth artifacts:
-  PRD, reconciled behavior map, detailed proof cases, service answer documents, data dictionary, permission mapping, job notes, runbook notes, design-system behavior locks, feature documents, feature manifests, generated dependency graph updates
+  refreshed capability matrix rows, refreshed PRD-derived test cases,
+  permission mapping, logo technical signoff completion, secure export
+  technical steering, shared screen behavior locks, feature documents, feature
+  manifests, runbooks, and generated dependency graph updates.
+
+## Entity Readiness Snapshot
+
+### Entity Inventory
+
+| Entity / Record | Role In Request | V1 Posture | Owning Feature / Seam | Data Dictionary Status | API / UX Surface Status | Search / Export Status | Open Questions / Blockers |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Organization | Primary customer/account-scoped organization record and hierarchy root. | active-v1 | organizationCore | current planning page exists | root and tenant API contracts planned; UI blocked on shared screen behavior | search and export included | permission mapping and task breakdown still required |
+| Organization Legal Profile | Legal details for one organization. | active-v1 | organizationLegalDetails | current planning page exists | API planned; UI blocked on shared screen behavior | search and export included | permission mapping and task breakdown still required |
+| Organization Location | Physical or operational location. | active-v1 | organizationLocations | current planning page exists | API planned; UI blocked on shared screen behavior | search and export included | permission mapping and task breakdown still required |
+| Weekly Opening-Hour Slot | Normal weekday opening and closing slot for a location. | active-v1 | locationOpeningHours | current planning page exists | API planned; UI blocked on shared screen behavior | search and export included | task breakdown must preserve slot validation |
+| Opening-Hour Exception | Date-specific override for normal opening hours. | active-v1 | organizationOpeningHoursExceptions | current planning page exists | API planned; UI blocked on shared screen behavior | search and export included | task breakdown must preserve precedence rules |
+| Business Unit | Internal organization unit with hierarchy. | active-v1 | businessUnits | current planning page exists | API planned; UI blocked on shared screen behavior | search and export included | task breakdown must preserve depth and move/archive rules |
+| Business Unit Membership | Link from a real person or business unit to a business unit. | active-v1 | businessUnitMemberships | current planning page exists | API planned; UI blocked on shared screen behavior | search and export included | public lookup seams and permission mapping still required |
+| Organization Reference Value | Root-managed option value tenant admins can use. | active-v1 | organizationReferenceCatalogues | current planning page exists | API planned; UI blocked on shared screen behavior | search and export included | broader platform catalogue remains deferred |
+| Organization Logo Relationship | Link between an Organization primary logo and an asset. | ready-for-task-breakdown | organizationBrandingReferences and assets | current planning page exists | API planned; UI blocked on shared screen behavior | search planned; export includes selected actual files | S-012 must carry completed public logo signoff and runbook proof obligations |
+| Organization Export | Durable request/status record for generated private export bundles. | ready-for-task-breakdown | organizationExports, jobs, assets/file delivery | current planning page exists | API planned; UI blocked on shared screen behavior | exports generate JSON and selected files | S-015 must carry secure export steering, private export decision, and reusable export/email obligations |
+| Organization Integration Record | Future high-level integration relationship. | deferred-with-owner | future organizationIntegrations | deferred planning page exists | no v1 API or UI | excluded from v1 search and export | future discovery required before revival |
+| Public Organization Summary | Narrow future read summary for later consumers. | deferred-with-owner | future organizationCore public seam | not yet needed beyond steering note | no v1 API or UI | not included in v1 search/export | first real consumer must define fields |
+
+### Per-Entity Readiness Questions
+
+| Entity / Record | Question Area | Question Or Gap | Required Before Story Ready | Owner / Next Action |
+| --- | --- | --- | --- | --- |
+| Organization Logo Relationship | asset delivery | Has public URL shape, cache update signal, byte verification, processing, raw URL denial, cleanup, and runbook posture been approved? | yes for S-012 | carry completed public logo signoff into S-012 tasks |
+| Organization Export | background work | Has PIN/password ZIP behavior, cancellation, retry, notification, safety limits, failure recording, and cleanup behavior been locked? | yes for S-015 | carry completed secure generated export steering into S-015 tasks |
+| Business Unit Membership | relationship | Which public seams prove a target individual user or business unit is real and in scope? | yes for source tasks | capture in permission mapping and task breakdown |
+| All active v1 entities | permission | Which root, tenant, public-read, and worker capabilities govern each action? | yes for source tasks | create Organization permission mapping |
+| All active v1 entities | proof | Do PRD-derived test cases cover the current story list and entity states? | yes for source tasks | refresh PRD-derived test cases |
+| Admin screen entities | screen behavior | Which shared screen references govern list, detail, relationship, status, async, and action behavior? | yes for app UI tasks | create shared admin screen behavior locks |
+
+### Entity Deferral Register
+
+| Entity / Behavior | Deferral Posture | Must Not Appear In | Revisit Trigger | Owner |
+| --- | --- | --- | --- | --- |
+| Organization Integration Record implementation | deferred-with-owner | v1 route, persistence, search, export, UI, or source task | new product discovery for integrations | future product owner |
+| Integration export | out-of-scope | v1 export bundle sections or export job tasks | integration implementation is approved later | future product owner |
+| CSV export | out-of-scope | v1 export route, job, file manifest, or tests | future export format request | product owner |
+| Request-time export snapshot | out-of-scope | v1 export job behavior | future export consistency request | product owner |
+| Recurring holiday calendars and seasonal/external opening-hour feeds | deferred-with-owner | v1 opening-hour stories, API, UI, or task work | future scheduling discovery | product owner |
+| Public non-logo Organization pages | out-of-scope | v1 public route, UI, or search work | future public profile request | product owner |
 
 ## Steering Architecture Classification Snapshot
 
@@ -62,16 +117,16 @@
 | TS-ORG-001 | Organization domain family | architecture-foundation-required | Organization domain family across multiple feature bundles | approved | DECISION:architecture-foundation |
 | TS-ORG-002 | Organization core records | feature-local | organizationCore feature bundle | approved | DEV:migration-persistence |
 | TS-ORG-003 | Legal details | feature-local | organizationLegalDetails feature bundle | approved | DEV:migration-persistence |
-| TS-ORG-004 | Locations and weekly opening hours | feature-local | organizationLocations and locationOpeningHours feature bundles | approved | DEV:migration-persistence |
+| TS-ORG-004 | Locations, weekly opening hours, and exceptions | feature-local | organizationLocations, locationOpeningHours, and organizationOpeningHoursExceptions feature bundles | approved | DEV:migration-persistence |
 | TS-ORG-005 | Business-unit hierarchy and memberships | feature-local | businessUnits and businessUnitMemberships feature bundles | approved | DEV:migration-persistence |
-| TS-ORG-006 | High-level integration records | feature-local | organizationIntegrations feature bundle | approved | DEV:migration-persistence |
-| TS-ORG-007 | Branding and logo relationships | feature-public-seam | organizationBrandingReferences consuming assets feature | approved | DOC:asset-decision |
+| TS-ORG-006 | High-level integration records | feature-local | future organizationIntegrations feature bundle | deferred-with-owner | FUTURE:product-discovery |
+| TS-ORG-007 | Branding and logo relationships | feature-public-seam | organizationBrandingReferences consuming assets feature | approved-for-planning | DOC:asset-decision |
 | TS-ORG-008 | System reference catalogues | feature-local | organizationReferenceCatalogues unless broader platform catalogue feature is approved | deferred-with-owner | DECISION:architecture-foundation |
-| TS-ORG-009 | Public logo asset delivery | platform-seam | assets feature and public delivery policy | approved | DOC:asset-decision |
-| TS-ORG-010 | Private export bundles | platform-seam | job processing, assets/file delivery, and export feature seam | approved | DECISION:job-cleanup |
+| TS-ORG-009 | Public logo asset delivery | platform-seam | assets feature and public delivery policy | approved-for-planning | DOC:technical-signoff |
+| TS-ORG-010 | Private export bundles | platform-seam | job processing, assets/file delivery, and export feature seam | approved-for-planning | DECISION:job-cleanup |
 | TS-ORG-011 | Root and tenant admin authorization | feature-public-seam | platform authorization plus root/tenant auth feature seams | approved | DOC:permission-mapping |
 | TS-ORG-012 | Separated-by-type domain search | architecture-foundation-required | Organization domain read-model/search strategy | approved | DECISION:architecture-foundation |
-| TS-ORG-013 | Admin UI surfaces | design-system-seam | root-admin and future tenant-admin design-system-owned management areas | approved | GOV:design-system |
+| TS-ORG-013 | Admin UI surfaces | design-system-seam | root-admin and future tenant-admin shared management areas | approved | GOV:design-system |
 | TS-ORG-014 | Public read summaries for later consumers | feature-public-seam | narrow exported Organization domain summaries | deferred-with-owner | DOC:feature-manifest |
 | TS-ORG-015 | Maintained artifact alignment | feature-local | planning and source-independent artifact sweep | approved | DOC:docs-artifact |
 
@@ -79,425 +134,611 @@
 
 | Scope Element | Route Family | Product Module | Journey Group | Route Visibility | Actor Scope | Runtime Shape | Surface Class | Topology Class | Locator Type | Canonical Locator | Compatibility Locators | Topology Authority | Target Topology Authority | Authority Transition Posture | State Owner | Shell Governance | Design-System Prerequisite | Materialization Model | Source Placement | Implementation Readiness | Evidence |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Root-admin organization management areas | root-admin | organization domain | organization management | primary-nav | root-operator | browser-workflow | app-adoption | durable-page | path | future /root-admin/organizations family | none | manual-shell-registry | curated-webAppHierarchyBuilder | transition-required | feature-local-state-machine | DS-owned-shell-required | DS-task-required | preview-apply-required | module-journey-files | not-applicable | Browser proof after design-system signoff and route adoption; no app implementation is handed off by this packet. |
-| Tenant-admin organization management areas | new-family | organization domain | tenant organization management | primary-nav | tenant-actor | browser-workflow | app-adoption | durable-page | path | future tenant-admin organization family | none | not-applicable | generated-materializer | transition-required | feature-local-state-machine | DS-owned-shell-required | DS-task-required | preview-apply-required | module-journey-files | not-applicable | Tenant-admin shell and topology path need governed planning before app screens; no app implementation is handed off by this packet. |
+| Root-admin organization management areas | root-admin | organization domain | organization management | primary-nav | root-operator | browser-workflow | app-adoption | durable-page | path | future /root-admin/organizations family | none | manual-shell-registry | curated-webAppHierarchyBuilder | transition-required | feature-local-state-machine | DS-owned-shell-required | DS-task-required | preview-apply-required | module-journey-files | not-applicable | Browser proof after shared screen signoff and route adoption. |
+| Tenant-admin organization management areas | new-family | organization domain | tenant organization management | primary-nav | tenant-actor | browser-workflow | app-adoption | durable-page | path | future tenant-admin organization family | none | not-applicable | generated-materializer | transition-required | feature-local-state-machine | DS-owned-shell-required | DS-task-required | preview-apply-required | module-journey-files | not-applicable | Tenant-admin shell and topology path need governed planning before app screens. |
 | Grouped organization-domain search | root-admin | organization domain | search and browse | context-nav | root-operator | browser-workflow | journey | ui-state | none | organization-domain grouped search state | not applicable | manual-shell-registry | curated-webAppHierarchyBuilder | transition-required | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | module-journey-files | not-applicable | Search results separated by type; no browser implementation is handed off by this packet. |
-| Logo management | root-admin | organization domain | branding/logo management | context-nav | root-operator | browser-workflow | journey | ui-state | none | organization logo management state | not applicable | manual-shell-registry | curated-webAppHierarchyBuilder | transition-required | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | module-journey-files | not-applicable | Public asset decision must be carried into later proof; no browser implementation is handed off by this packet. |
-| Export request/status/download | root-admin | organization domain | organization export | context-nav | root-operator | browser-workflow | journey | ui-state | none | organization export workflow state | not applicable | manual-shell-registry | curated-webAppHierarchyBuilder | transition-required | server-backed-snapshot | DS-owned-shell-required | DS-task-required | shell-registry-update | module-journey-files | not-applicable | Private job-backed export; no browser implementation is handed off by this packet. |
+| Logo management | root-admin | organization domain | branding/logo management | context-nav | root-operator | browser-workflow | journey | ui-state | none | organization logo management state | not applicable | manual-shell-registry | curated-webAppHierarchyBuilder | transition-required | feature-local-state-machine | DS-owned-shell-required | DS-task-required | shell-registry-update | module-journey-files | not-applicable | Public asset signoff required before app behavior. |
+| Export request/status/download | root-admin | organization domain | organization export | context-nav | root-operator | browser-workflow | journey | ui-state | none | organization export workflow state | not applicable | manual-shell-registry | curated-webAppHierarchyBuilder | transition-required | server-backed-snapshot | DS-owned-shell-required | DS-task-required | shell-registry-update | module-journey-files | not-applicable | Private job-backed export; no authority in URL state. |
 
 ## Browser Security Posture Snapshot
 
 | Security Area | Present | Layer 2 Decision / Evidence | Required Layer 4 Signal | Stop If Missing |
 | --- | --- | --- | --- | --- |
-| session-cookie | yes | Root and tenant admin browser calls require authenticated sessions. | Security checks for unauthenticated, unauthorized, cross-space, and wrong-authority denials. | yes |
-| csrf-mutation | yes | Create, update, archive, move, upload, export, and delete actions are browser-triggered changes. | Service answer work must preserve existing trusted-origin protection. | yes |
+| session-cookie | yes | Root and tenant admin browser calls require authenticated sessions. | Security checks for unauthenticated, unauthorized, cross-tenant, and wrong-authority denials. | yes |
+| csrf-mutation | yes | Create, update, archive, move, upload, export, cancel, retry, and delete actions are browser-triggered changes. | Mutation calls preserve existing trusted-origin protection. | yes |
 | url-replay-state | yes | Search values may be low-risk state; authority and selected customer/account must remain server-side. | Replay review confirms no customer/account or permission authority in URLs. | yes |
-| sensitive-rendering | yes | Admin areas may display legal details, memberships, retained records, and private export status. | Visibility and redaction checks must match actor authority. | yes |
-| csp-assets | yes | Logo work must not inject unsafe uploaded content. | Image handling must remain compatible with content security policy. | yes |
-| privileged-helper | yes | Export, cleanup, asset processing, and cache invalidation run under system control. | Background work must record authority, retry, and failure evidence. | yes |
-| asset-delivery | yes | Public logos and private export bundles are file delivery surfaces. | Asset and export decisions must be carried into service, data, and proof work. | yes |
+| sensitive-rendering | yes | Admin areas may display legal details, memberships, retained records, and private export status. | Visibility and redaction checks match actor authority. | yes |
+| csp-assets | yes | Logo work must not inject unsafe uploaded content. | Image handling remains compatible with content security policy. | yes |
+| privileged-helper | yes | Export, cleanup, asset processing, and cache update signals run under system control. | Background work records authority, retry, and failure evidence. | yes |
+| asset-delivery | yes | Public logos and private export bundles are file delivery surfaces. | Asset and export decisions are carried into service, data, and proof work. | yes |
 
 ## Task-Type Signal Matrix
 
 | Story ID | Signal | Present | Evidence | Implied Task Type |
 | --- | --- | --- | --- | --- |
-| S-000 | behavior map needs reconciliation | yes | Existing first draft predates final public logo, export, and tenant-admin decisions. | DOC:docs-artifact |
-| S-001 | requirements lock missing | yes | Product Discovery and steering exist, but PRD does not. | DOC:docs-artifact |
-| S-002 | proof plan missing | yes | Detailed proof cases do not yet exist. | DOC:docs-artifact |
-| S-003 | domain-family tooling pressure | yes | Steering approved early domain and runtime manifest readiness through explicit governance work. | DECISION:architecture-foundation |
-| S-004 | durable organization records | yes | Core identity, parent hierarchy, depth, cycle, and lifecycle rules are required. | DEV:backend |
-| S-005 | legal profile records | yes | One active legal profile per organization is required. | DEV:backend |
-| S-006 | location and weekly-hour records | yes | Many locations and optional weekly hours are required. | DEV:backend |
-| S-007 | unit and membership records | yes | Unit tree, real user/role membership, and max depth are required. | DEV:backend |
-| S-008 | high-level integration records | yes | Official integration presence records are in scope while secrets are out. | DEV:backend |
-| S-009 | reference catalogue governance | yes | System-owned catalogues need root edit and tenant use rules. | DEV:backend |
-| S-010 | public logo branding | yes | Public image upload, replacement, delivery, placeholder, and export inclusion are required. | DEV:vertical-slice |
-| S-011 | separated search | yes | Broad text search plus exact filters must be grouped by type. | DEV:backend |
-| S-012 | private export bundles | yes | Background private zip export with retained data and actual logo files is required. | DEV:backend |
-| S-013 | governed admin experience | yes | Admin screens are blocked until governed design patterns exist. | GOV:design-system |
-| S-014 | future public summaries | yes | Later consumers need narrow summaries after core records exist. | DEV:backend |
-| S-015 | maintained evidence alignment | yes | Feature documents, manifests, generated graph, runbooks, and status notes must stay aligned. | DOC:docs-artifact |
+| S-000 | capability rows need reconciliation | yes | Current capability matrix predates the refreshed blueprint and deferred integration posture. | DOC:docs-artifact |
+| S-001 | proof plan needs refresh | yes | Test cases predate opening-hour exceptions, export PIN behavior, logo signoff, and membership target changes. | DOC:docs-artifact |
+| S-002 | permission map missing | yes | Root and tenant actors share workflows but have different authority, catalogue rights, logo rights, and export rights. | DOC:docs-artifact |
+| S-003 | domain-family tooling pressure | yes | Steering approved early domain/runtime metadata through explicit governance work. | DECISION:architecture-foundation |
+| S-004 | durable organization records | yes | Core identity, tenant-level name uniqueness, parent hierarchy, depth, cycle, and lifecycle rules are required. | DEV:backend |
+| S-005 | legal profile records | yes | One active legal profile, optional tax/VAT number, and registered address are required. | DEV:backend |
+| S-006 | location records | yes | Many locations, optional coordinates, descriptive head-office flags, and lifecycle rules are required. | DEV:backend |
+| S-007 | opening-hour slots and exceptions | yes | Weekday slots and exception overrides have distinct rules and precedence. | DEV:backend |
+| S-008 | business-unit records | yes | Business-unit hierarchy, child projections, depth limit, and branch archive or move behavior are required. | DEV:backend |
+| S-009 | membership records | yes | Memberships target real business units now with fixed participation roles; individual/person targets are explicitly deferred until an approved lookup seam exists. | DEV:backend |
+| S-010 | reference catalogue governance | yes | System-owned values need root edit, tenant use, and archive/deprecate/replace behavior. | DEV:backend |
+| S-011 | logo technical signoff | yes | Public delivery is approved for S-012 task breakdown with implementation proof obligations. | DOC:docs-artifact |
+| S-012 | public logo relationship and delivery | yes | Logo relationships consume assets and public delivery after signoff. | DEV:vertical-slice |
+| S-013 | separated search | yes | Broad search plus exact filters must return grouped, permission-filtered result types. | DEV:backend |
+| S-014 | secure export technical steering | yes | PIN/password ZIP, cancellation, retry, notification, and safety limits need technical lock. | DECISION:architecture-foundation |
+| S-015 | private export bundles | yes | Background private export requests produce requester-bound ZIP files with JSON and selected files. | DEV:backend |
+| S-016 | governed admin screens | yes | Shared admin screen patterns must exist before real app pages. | GOV:design-system |
+| S-017 | deferred integration boundary | yes | Integration records are out of v1 and must stay out of route, search, UI, and export work. | DOC:docs-artifact |
+| S-018 | maintained evidence alignment | yes | Feature docs, manifests, generated graph, runbooks, and status notes must stay aligned. | DOC:docs-artifact |
 
 ## Epic Summary
 
 - Epic job to be done:
-  Break the Organization domain foundation into reviewable stories so later work can build the customer/account structure, branding, search, export, and admin experience from clear boundaries.
+  Break the Organization foundation into concrete stories so task planning can
+  proceed without guessing behavior, authority, data shape, or proof.
 - Epic outcome:
-  The next planning step can start with ready control stories, while build stories remain blocked until their source truths and proof obligations exist.
+  Task Breakdown can start from stories that say what the system must do, what
+  remains blocked, and what evidence will prove the work.
 - Epic actors:
-  root admin, tenant admin, public logo reader, background worker, planning reviewer, security reviewer, support operator
+  root admin, tenant admin, public logo reader, background worker, planning
+  reviewer, security reviewer, support operator
 - Epic non-goals:
-  import, deep integration setup, special opening-hour calendars, multiple active legal profiles, public non-logo pages, visible change-history screens
+  import, recurring holiday calendars, seasonal or external opening-hour feeds,
+  deep integration setup, integration export, CSV export, public non-logo pages,
+  multiple active legal profiles, and visible change-history screens
 - Epic dependency summary:
-  Depends on tenant context, root and tenant authorization, assets, background work, storage, design-system governance, public-seam governance, and maintained planning artifacts.
+  Depends on tenant context, root and tenant authorization, assets, background
+  work, storage, shared screen governance, feature-public seams, and maintained
+  planning artifacts.
 - Epic-level proof target:
   `mixed`
 
 ## Story Narratives
 
-### S-000: Update the Organization behavior spreadsheet
+### S-000: Reconcile the Organization behavior matrix
 
 **Situation**
-We already have a first-draft Organization spreadsheet, but the conversation changed and clarified important parts of the feature: tenant admins are in scope, public logos are in scope, private exports are in scope, and several future ideas are out of scope.
+The existing behavior spreadsheet was useful early on, but it now misses or
+misstates important decisions about exports, logo delivery, opening-hour
+exceptions, memberships, and integration deferral.
 
 **Goal**
-The spreadsheet should become the shared checklist for the first version. Anyone reading it should be able to see what Organization needs to do, what is deferred, and which story will carry each part forward.
+The spreadsheet should become the checklist that says which Organization
+behaviors are in the first version, which are deferred, and which story owns
+each behavior.
 
 **Decisions Needed**
-No new decision is expected. If the spreadsheet exposes a contradiction, that contradiction should be called out instead of guessed around.
+No new business choice is expected. Any conflict found during reconciliation
+should be named as a blocker rather than silently resolved.
 
 **Work That Follows**
-After this, the requirements document can use the spreadsheet as its checklist instead of re-reading the whole conversation.
+The refreshed spreadsheet will guide task planning and later checks that every
+story traces to a behavior.
 
 **Evidence Of Success**
-A reviewer can open the spreadsheet and see every agreed first-version Organization behavior listed once, with clear story ownership, source evidence, and no stale promises from the earlier draft.
+A reviewer can match every active story to a clear behavior row and can see
+that deferred items are not treated as build-ready.
 
-### S-001: Write the Organization requirements document
+### S-001: Refresh the Organization proof plan
 
 **Situation**
-The Organization foundation now has many confirmed rules: who can manage records, which records exist, how logos and exports work, and which ideas are deferred. Those rules need one readable home.
+The proof plan is stale because the feature changed. The system now has more
+specific rules for public logos, private exports, opening hours, memberships,
+and deferred integrations.
 
 **Goal**
-Someone should be able to open the requirements document and understand the first version without reading the whole conversation.
+Reviewers should know exactly what must be proved before each Organization
+slice can be trusted.
 
 **Decisions Needed**
-No new business choice is expected; any hidden conflict found while writing must be surfaced instead of guessed.
+No new business choice is expected. Missing proof should become a blocker or
+named follow-up, not an assumption.
 
 **Work That Follows**
-After this, build planning can use the requirements document as the source for what should be created.
+Task planning can carry the right checks into source work from the start.
 
 **Evidence Of Success**
-A reviewer can confirm that the document lists the agreed scope, names what is out of scope, and does not quietly add or drop behavior.
+Each active story has a concrete proof obligation for allowed actions, denied
+actions, lifecycle behavior, privacy, audit, failure recovery, and records.
 
-### S-002: Write the Organization test plan
+### S-002: Map Organization authority
 
 **Situation**
-This foundation touches sensitive records, public images, private downloads, and background work. If the checks are vague, important risks can slip through.
+Root admins and tenant admins can do similar work, but their authority is not
+the same. Some actions are tenant-bound, some are root-only, and some involve
+public or private files.
 
 **Goal**
-Reviewers can see exactly which situations need to be checked: allowed actions, denied actions, record changes, privacy, audit history, recovery from failures, and screens.
+Create the Organization authority map that later protected endpoints, jobs,
+export, logo, search, record-management, and screen work must use.
 
 **Decisions Needed**
-No new business choice is expected; any proof gap must be named as a blocker.
+The mapping must settle who can act, which customer/account context applies,
+which records must be checked before access, which actions are denied, and
+which logo, export, or integration work must remain blocked or deferred.
 
 **Work That Follows**
-After this, later build tasks can include the right checks from the start.
+Record management, export, logo, search, membership, reference-value, and
+screen tasks can now reference the same permission source.
 
 **Evidence Of Success**
-Every active story has a named check, and no sensitive behavior is left with a vague "we should test this later."
+A reviewer can open the permission mapping and see who may create, read,
+update, archive, restore, move, search, upload, export, download, cancel, retry,
+view PINs, delete export copies, manage reference values, and run logo/export
+worker actions.
 
-### S-003: Teach the repo that Organization is a family of features
+### S-003: Record Organization as a feature family
 
 **Situation**
-Organization will not be one giant feature. It will include core organizations, locations, units, branding, exports, and more. The repo needs a clean way to show that these pieces belong together.
+Organization is made of related pieces, not one giant feature. The repo needs a
+durable way to show those pieces belong together.
 
 **Goal**
-The repo should be able to show which features are part of the Organization family and what each part is responsible for.
+Reviewers should be able to see the Organization family and the responsibility
+of each member without relying on memory.
 
 **Decisions Needed**
-The governance work must choose the approved place and format for that family information.
+The governance work must choose the approved format for family metadata and
+avoid unsupported manifest fields.
 
 **Work That Follows**
-After this, the Organization features can be added without inventing a different tracking style in each folder.
+Organization source work can add feature manifests without inventing a new
+tracking style.
 
 **Evidence Of Success**
-Reviewers can see Organization represented as a feature family, and the repo checks accept that representation.
+Repo checks accept the chosen representation, and the generated dependency
+view can still be trusted.
 
-### S-004: Core organizations and hierarchy
+### S-004: Manage core organizations and hierarchy
 
 **Situation**
-Admins need official organization records that can represent parent and child relationships without losing track of ownership or history.
+Every other Organization record attaches to an official organization. Those
+records need stable identity, tenant-level name uniqueness, parent-child
+structure, and safe lifecycle behavior.
 
 **Goal**
-An admin can create, edit, archive, restore, move, and review organizations without accidentally crossing into another customer/account.
+Admins can manage organizations inside one customer/account without crossing
+boundaries or creating broken trees.
 
 **Decisions Needed**
-The requirements document must settle exact fields, names, and acceptable values before build tasks are written.
+No new product choice is expected, but task planning must carry exact fields,
+request rules, permission rules, indexes, and errors from the approved docs.
 
 **Work That Follows**
-After this is planned in detail, build work can create the organization records and the rules for moving or archiving them.
+Source work can create the core records and the rules for moving, archiving,
+restoring, and reading organizations.
 
 **Evidence Of Success**
-Reviewers can confirm the depth limit, loop prevention, branch archive option, child move option, and denial when a move crosses the wrong customer/account.
+Reviewers can prove normalized name uniqueness, depth 10, loop prevention,
+branch archive, child reassignment, lifecycle visibility, and cross-tenant
+denial.
 
-### S-005: Legal profiles
+### S-005: Manage legal profiles
 
 **Situation**
-Organizations need official legal details, but the first version allows only one active profile so later records remain understandable.
+Organizations need legal details, but the first version allows only one active
+legal profile at a time.
 
 **Goal**
-Admins can maintain one active legal profile per organization while retained prior records remain available where required.
+Admins can maintain legal information while old or archived profiles stay
+understandable.
 
 **Decisions Needed**
-The requirements document must settle exact legal fields and how old legal profiles are kept.
+No new product choice is expected. Task planning must carry optional tax/VAT
+number, optional registered address, one-active behavior, and retention rules.
 
 **Work That Follows**
-After this is planned in detail, build work can create the legal profile records and the checks that prevent duplicate active profiles.
+Source work can create legal profile records, validation, lifecycle behavior,
+and read/export projections.
 
 **Evidence Of Success**
-Reviewers can confirm the one-active rule, retained history, and tenant-bound access behavior.
+Reviewers can prove only one active profile exists per organization and that
+profiles cannot attach across the wrong customer/account.
 
-### S-006: Locations and weekly hours
+### S-006: Manage locations
 
 **Situation**
-Organizations can have many places of operation, and the head-office flag is descriptive rather than a uniqueness rule.
+An organization can have many locations. Head-office flags describe a location
+but do not make it the only head office.
 
 **Goal**
-Admins can manage locations and optional weekly hours without accidentally promising holiday, seasonal, or temporary hours.
+Admins can record locations with optional coordinates and lifecycle behavior
+without creating hidden uniqueness rules.
 
 **Decisions Needed**
-The detailed requirements must settle location fields, weekly slot values, and invalid time examples.
+No new product choice is expected. Task planning must carry address fields,
+coordinate validation, descriptive flags, search fields, and export projection.
 
 **Work That Follows**
-After this is planned in detail, build work can create the location and weekly-hours records and reject invalid times.
+Source work can create location records and the checks that keep them attached
+to the correct organization.
 
 **Evidence Of Success**
-Reviewers can confirm multiple head-office flags are allowed, weekly hours are optional, and invalid time ranges are rejected.
+Reviewers can prove many locations are allowed, many head-office flags are
+allowed, coordinates are validated, and cross-boundary location writes are
+denied.
 
-### S-007: Units and memberships
+### S-007: Manage opening-hour slots and exceptions
 
 **Situation**
-Organizations need internal units and membership links, but membership must point to real people and roles already known by the system.
+Normal opening hours repeat weekly, but exceptional closures or special hours
+must be able to override the normal slots.
 
 **Goal**
-Admins can manage unit hierarchy and memberships while preventing placeholder people, placeholder roles, loops, and depth overflow.
+Admins can manage weekday slots and date-specific exceptions while the system
+calculates which rule wins.
 
 **Decisions Needed**
-The requirements document must settle membership fields, where roles come from, and how unit moves work.
+No new product choice is expected. Task planning must carry slot order,
+weekday, local open and close times, no-overlap behavior, no overnight v1, and
+exception precedence.
 
 **Work That Follows**
-After this is planned in detail, build work can create unit records, membership links, and the checks that prevent fake or cross-account links.
+Source work can create slot and exception records, validation, search fields,
+and export projection.
 
 **Evidence Of Success**
-Reviewers can confirm the depth limit, cycle prevention, real user and role links, and cross-boundary denial.
+Reviewers can prove closed days override everything, replacement day schedules
+override normal slots, closed time slots suppress normal openings, and special
+opening slots apply only when not overridden.
 
-### S-008: Integration records
+### S-008: Manage business units
 
 **Situation**
-Admins need to record which integrations are official without storing credentials, endpoints, or deeper setup in the first version.
+Organizations need internal structures that can nest, move, and archive without
+breaking child records.
 
 **Goal**
-Admins can maintain high-level integration records while sensitive setup remains outside the first version.
+Admins can manage business-unit hierarchy inside the right customer/account.
 
 **Decisions Needed**
-The detailed requirements must settle record fields and the wording that keeps secrets and provider setup out of scope.
+No new product choice is expected. Task planning must carry depth 10, loop
+prevention, derived child-unit reads, archive-whole-branch, and move-children
+behavior.
 
 **Work That Follows**
-After this is planned in detail, build work can create the integration records and reject sensitive setup fields.
+Source work can create business-unit records and safe hierarchy operations.
 
 **Evidence Of Success**
-Reviewers can confirm official records exist without accepting credentials, endpoints, or provider configuration.
+Reviewers can prove unit depth, loop denial, child projections from parent
+links, branch archive, child reassignment, and cross-boundary denial.
 
-### S-009: Reference catalogues
+### S-009: Manage business-unit memberships
 
 **Situation**
-Admins need shared values such as organization types or relationship types, and those values must stay stable when records already use them.
+Memberships should point to real existing participants. The first version
+supports individuals and other business units with fixed participation labels.
 
 **Goal**
-Root admins can manage the shared values, and tenant admins can use the approved values inside their own customer/account.
+Admins can maintain memberships without placeholder people, placeholder units,
+or confusing participation labels with system permissions.
 
 **Decisions Needed**
-The detailed requirements must settle whether these shared values belong only to Organization for now or to a broader shared-value area.
+No new product choice is expected. Task planning must carry target type,
+target identity, fixed labels of owner, manager, member, and viewer, and the
+rule that these labels are not authorization grants.
 
 **Work That Follows**
-After this is planned in detail, build work can create the shared values and the rules for renaming, archiving, deprecating, and replacing them.
+Source work can create membership records and validation against approved
+public lookup seams.
 
 **Evidence Of Success**
-Reviewers can confirm used values are archived, deprecated, or replaced explicitly, and label changes apply immediately.
+Reviewers can prove only real individual users or business units can be linked,
+roles use the fixed labels, and cross-account or placeholder links are denied.
 
-### S-010: Public logo branding
+### S-010: Manage reference values
 
 **Situation**
-Organizations need real logo images that can appear publicly after they are accepted as safe and usable.
+Organization records need shared values such as organization type, legal form,
+industry category, location type, and relationship type.
 
 **Goal**
-Admins can upload, replace, remove, and export multiple logo types while public places show approved image URLs or initials placeholders.
+Root admins can manage shared values, and tenant admins can use approved
+values without making used values disappear.
 
 **Decisions Needed**
-No new business choice is expected; the approved image, replacement, and cache decisions must be carried into later planning.
+No new product choice is expected. Task planning must carry root-only mutation,
+tenant use, immediate label updates, archive, deprecate, replace, and used
+value retention.
 
 **Work That Follows**
-After this is planned in detail, build work can create upload, safety checking, replacement, removal, public display, placeholder, and export behavior.
+Source work can create catalogue records and the rules for safe value changes.
 
 **Evidence Of Success**
-Reviewers can confirm old images stay until replacement is ready, raw storage links are not exposed, and removed logos fall back to deterministic initials.
+Reviewers can prove tenant admins cannot mutate catalogues, used values remain
+understandable, and replacements are explicit.
 
-### S-011: Separated search
+### S-011: Complete public logo technical signoff
 
 **Situation**
-Admins need to find records across the whole organization structure, but the results must stay understandable and only show records the admin is allowed to see.
+Public logos are product-approved, but file upload and public delivery carry
+security, cache, accessibility, and cleanup risks.
 
 **Goal**
-Admins can search broadly, apply exact filters, and see results grouped by record type.
+Implementation should wait until the technical checklist has clear answers for
+safe delivery.
 
 **Decisions Needed**
-The requirements document must settle which fields can be searched, which filters are supported, how results are ordered, and how many results can be returned.
+The signoff must settle public URL shape, delivery mode, cache update signal,
+MIME and byte verification, image processing, raw URL denial, cleanup, legal
+hold posture, and runbook coverage.
 
 **Work That Follows**
-After this is planned in detail, build work can create the search behavior, supported filters, ordering, and result groups.
+Logo implementation can proceed only after this checklist is complete.
 
 **Evidence Of Success**
-Reviewers can confirm grouped results, stable paging, exact filters, and no cross-boundary leakage.
+Reviewers can see the signoff record completed and can trace each security and
+delivery rule into later tasks.
 
-### S-012: Private export bundles
+### S-012: Manage public logo relationships
 
 **Situation**
-Admins need a downloadable copy of Organization information, including retained records and real logo image files, without creating a public link.
+Organizations need real logo images that can appear publicly after they are
+accepted as safe and usable.
 
 **Goal**
-Admins can request selected sections and later download a private zip that expires after 24 hours or deletion.
+Admins can upload, replace, remove, and export the primary logo while public
+places show approved image URLs or deterministic initials placeholders.
 
 **Decisions Needed**
-No new business choice is expected; the approved private export decision must be carried into later planning.
+No new product choice is expected, but this story remains blocked until public
+logo technical signoff is complete.
 
 **Work That Follows**
-After this is planned in detail, build work can create the export request, background processing, status, download, expiry, deletion, retry, and cleanup behavior.
+Source work can create logo relationships, asset integration, replacement
+behavior, public delivery behavior, alt text defaults, and export inclusion.
 
 **Evidence Of Success**
-Reviewers can confirm selected sections, all retained data, actual logo files, private access, quotas, retries, and cleanup failure recording.
+Reviewers can prove old images remain active until replacement is ready, raw
+storage links are never exposed, removed logos fall back to initials, and
+Organization authority still controls the relationship.
 
-### S-013: Design shared admin screen patterns first
+### S-013: Search Organization records by type
 
 **Situation**
-Admins need separate management areas for organizations, locations, units, logos, search, and exports. Before those screens are built, the shared screen patterns need to be settled.
+Admins need to find records across the Organization domain, but mixed results
+can become confusing or unsafe if they ignore boundaries.
 
 **Goal**
-The design-system work should define how these screens behave: lists, details, grouped search results, branch archive choices, logo management, and export status.
+Admins can search broadly and see results grouped by record type, with exact
+filters and predictable paging.
 
 **Decisions Needed**
-The design work must decide which existing shared patterns can be reused and which new patterns need approval.
+No new product choice is expected. Task planning must carry searchable fields,
+operators, indexes, sorting, pagination, and permission filtering.
 
 **Work That Follows**
-After this, the real admin screens can use the approved patterns instead of inventing their own.
+Source work can create the search endpoint and read model.
 
 **Evidence Of Success**
-Reviewers can open the design-system references and see the approved patterns that the real screens must use.
+Reviewers can prove grouped results, stable paging, exact filters, index
+coverage, and no cross-tenant leakage.
 
-### S-014: Defer public Organization summaries until a real consumer needs them
+### S-014: Lock secure generated export behavior
 
 **Situation**
-Later product areas may need a small public Organization summary, but the first version is not building public non-logo pages.
+Private exports are product-approved, but PIN-protected ZIP files, background
+jobs, cancellation, retries, notifications, and safety limits need technical
+rules before source work starts.
 
 **Goal**
-We should remember the future need without designing a public summary too early.
+The system should have one reusable export pattern that Organization and
+future export features can follow.
 
 **Decisions Needed**
-The exact future use case and fields should be decided after core organization records exist.
+The technical steering must settle PIN/password ZIP mechanics, safety limits,
+queue behavior, failure states, cancellation, retry, notification failure,
+download authority, and cleanup/runbook posture.
 
 **Work That Follows**
-This story stays deferred until a real feature needs the summary.
+Organization export implementation can proceed after the reusable pattern is
+locked.
 
 **Evidence Of Success**
-Reviewers can see that the future idea is recorded, but no first-version work is blocked by it.
+Reviewers can see a technical decision that is specific enough to implement
+without inventing security or job behavior inside the task.
 
-### S-015: Keep planning, support, and feature notes in sync
+### S-015: Manage private export bundles
 
 **Situation**
-Organization will be delivered in several pieces. If the notes are not refreshed as each piece lands, future work will start from stale information.
+Admins need a downloadable copy of Organization data and selected actual files
+without creating a public link.
 
 **Goal**
-Reviewers can trust that the requirements, feature notes, generated records, support notes, and status notes match what was actually built.
+Admins can request selected sections, choose current-only or include-retained
+data where authorized, and later download a private PIN/password protected ZIP.
 
 **Decisions Needed**
-No new business choice is expected; each slice just needs to refresh the records it changed.
+No new product choice is expected, but this story remains blocked until secure
+generated export technical steering is complete.
 
 **Work That Follows**
-After each Organization slice, the related notes and generated records are checked before the slice is treated as finished.
+Source work can create export requests, background processing, status,
+download, PIN view/email behavior, expiry, deletion, cancellation, retry, and
+cleanup.
 
 **Evidence Of Success**
-Reviewers can confirm that completed Organization work does not leave stale planning or support notes behind.
+Reviewers can prove requester-only download, selected sections, JSON data,
+selected actual files, 24-hour expiry, manual delete, cancellation, retry,
+safe failures, and cleanup failure recording.
+
+### S-016: Define shared admin screen behavior
+
+**Situation**
+Admins need management areas for organizations, legal profiles, locations,
+opening hours, units, memberships, reference values, logos, search, and
+exports. Those screens should not invent one-off behavior.
+
+**Goal**
+Shared screen references should define how the admin experience behaves before
+real app pages consume it.
+
+**Decisions Needed**
+The screen work must settle lists, detail editing, grouped search, branch
+archive or move-child choices, logo management, export status, async attention
+badges, and accessibility behavior.
+
+**Work That Follows**
+Root-admin and tenant-admin pages can adopt the approved shared behavior.
+
+**Evidence Of Success**
+Reviewers can inspect approved shared screen references before app pages are
+built.
+
+### S-017: Keep integration records deferred
+
+**Situation**
+Integration records were discussed earlier, but the current first version does
+not build them.
+
+**Goal**
+The future idea should remain visible without becoming accidental first-version
+request, search, export, screen, or record-storage work.
+
+**Decisions Needed**
+No new decision is expected. Future integration work must re-enter discovery
+before implementation planning.
+
+**Work That Follows**
+Task planning can exclude integration work while keeping the no-secrets
+boundary recorded for later.
+
+**Evidence Of Success**
+Reviewers can confirm integration records are marked deferred and do not appear
+as active v1 implementation scope.
+
+### S-018: Keep Organization artifacts aligned as slices land
+
+**Situation**
+Organization will be delivered in several pieces. If records and support notes
+drift, later work will start from stale instructions.
+
+**Goal**
+Reviewers can trust that source-independent documents, feature notes, generated
+records, runbooks, and status notes match what has actually landed.
+
+**Decisions Needed**
+No new business choice is expected. Each slice must name which maintained
+records changed.
+
+**Work That Follows**
+Every source slice carries its maintained-record review before it is called
+complete.
+
+**Evidence Of Success**
+Reviewers can confirm completed Organization work does not leave older docs or
+generated records describing the pre-change platform.
 
 ## Story Queue
 
 | Story ID | Status | Value Type | Delivery Shape | Title | Context | Job To Be Done | Actor / System Perspective | Outcome | Blocks / Depends On |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Update the Organization behavior spreadsheet | This is needed because we made many Organization decisions in conversation, and they need to be captured in the spreadsheet used to plan the work. | As the planner, I need the Organization spreadsheet updated with the final decisions so the requirements document and later build work use the same checklist. | planner | The spreadsheet lists first-version Organization behaviors clearly, including scope, deferrals, source evidence, and story ownership. | Product Discovery; Technical Steering; asset/export decisions; first-draft spreadsheet |
-| S-001 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Write the Organization requirements document | This is needed because the Organization feature is too broad to build safely from chat notes alone. | As the planner, I need one requirements document that says what the first version includes, excludes, and must protect. | planner | The first-version Organization requirements are captured in docs/prd/2026-05-12-0025-organization-domain-foundation.md. | S-000 |
-| S-002 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Write the Organization test plan | This is needed because Organization will touch private records, public logos, exports, and permissions, so we need to know how each promise will be checked. | As the quality reviewer, I need a test plan that names the checks required for each story. | quality reviewer | The test plan is captured in docs/prd/test_cases/2026-05-12-0025-organization-domain-foundation-test-cases.md. | S-001 |
-| S-003 | ready-for-task-breakdown | harness-value | DECISION:architecture-foundation | Teach the repo that Organization is a family of features | This is needed because Organization will be several related features, and the repo should track that relationship before the work spreads out. | As the repo governance owner, I need an approved way to mark Organization features as part of the same family. | repo governance owner | The Organization feature-family decision is captured in docs/workspace/architecture-map/feature-families/2026-05-12-organization-domain-foundation-feature-family.md. | Technical Steering |
-| S-004 | needs-prd-refinement | system-value | DEV:backend | Core organizations and hierarchy | This is its own story because every other Organization record needs a real organization to attach to. | As the system, I need organization records that can be safely arranged into parent and child organizations inside one customer/account. | system | Organizations can be created, edited, archived, restored, moved, and kept inside the right customer/account. | S-000; S-001; S-002; S-003 |
-| S-005 | needs-prd-refinement | system-value | DEV:backend | Legal profiles | This is its own story because legal details have a special rule: only one legal profile can be active for an organization. | As the system, I need each organization to have at most one active legal profile. | system | Admins can maintain legal details without creating two active legal profiles for the same organization. | S-000; S-001; S-002; S-004 |
-| S-006 | needs-prd-refinement | user-value | DEV:backend | Locations and weekly hours | This is its own story because an organization can have many locations, and weekly opening hours have their own simple rules. | As an admin, I need to manage organization locations and optional weekly opening hours. | admin | Admins can save locations, mark descriptive head-office flags, and add optional weekly hours. | S-000; S-001; S-002; S-004 |
-| S-007 | needs-prd-refinement | user-value | DEV:backend | Units and memberships | This is its own story because internal units and membership links are useful only if they point to real users and roles. | As an admin, I need to manage unit hierarchy and membership links using real existing records. | admin | Admins can create unit trees and memberships without placeholder users, placeholder roles, loops, or cross-account links. | S-000; S-001; S-002; S-004 |
-| S-008 | needs-prd-refinement | user-value | DEV:backend | Integration records | This is its own story because admins should be able to record that an integration exists without storing setup secrets. | As an admin, I need to record official organization integrations without storing sensitive setup. | admin | Admins can track official integrations, while credentials, endpoints, and provider setup stay out of the first version. | S-000; S-001; S-002; S-004 |
-| S-009 | needs-prd-refinement | system-value | DEV:backend | Reference catalogues | This is needed because Organization records will reuse shared values, and those values cannot disappear after records start using them. | As the system, I need shared Organization values that root admins manage and tenant admins can choose from. | system | Shared values can be created, renamed, archived, deprecated, or replaced without breaking records that already use them. | S-000; S-001; S-002 |
-| S-010 | needs-prd-refinement | user-value | DEV:vertical-slice | Public logo branding | This is its own story because logo images are uploaded by admins, shown publicly, included in exports, and need safety checks. | As an admin, I need to manage organization logos so public places show safe approved images or initials placeholders. | admin and public reader | Multiple logo types can be uploaded, replaced, removed, shown publicly, and included in exports. | S-000; S-001; S-002; public logo decision |
-| S-011 | needs-prd-refinement | user-value | DEV:backend | Separated search | This is needed because admins may need to search organizations, locations, units, integrations, and other related records from one place. | As an admin, I need to search across Organization records and see results grouped by what kind of record they are. | admin | Search returns grouped results, respects permissions, and supports predictable paging and filters. | S-000; S-001; S-002; S-004 through S-010 |
-| S-012 | needs-prd-refinement | user-value | DEV:backend | Private export bundles | This is its own story because exports include retained data and real logo files, so they must be prepared carefully and kept private. | As an admin, I need to request selected Organization sections and download them later as a private zip file. | admin and background worker | The system creates private export zip files, makes them available for 24 hours or until deleted, and records failures. | S-000; S-001; S-002; private export decision |
-| S-013 | ready-for-task-breakdown | harness-value | GOV:design-system | Design shared admin screen patterns first | This is needed because Organization screens should use approved shared patterns instead of one-off screen designs. | As the design-system owner, I need approved patterns for the Organization admin screens before the real screens are built. | design-system owner | The main Organization screen patterns are approved before root and tenant admin screens use them. | S-001; S-002 |
-| S-014 | blocked | system-value | DEV:backend | Defer public Organization summaries until a real consumer needs them | This is deferred because we do not yet know which future feature needs a reduced public Organization summary. | As the system, I need public Organization summaries to wait until a real future use case names the fields it needs. | system | The future summary idea is recorded, but it does not block first-version admin management. | S-004; future consumer decision |
-| S-015 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Keep planning, support, and feature notes in sync | This is needed because Organization work will land in pieces, and the notes about the feature should not drift from what was actually built. | As the planning reviewer, I need the related notes and generated records refreshed as each Organization piece lands. | planning reviewer | Requirements, feature notes, generated records, and support notes stay aligned with the implemented Organization work. | All stories |
+| S-000 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Reconcile the Organization behavior matrix | This is needed because the spreadsheet should match the current Organization decisions before task planning uses it. | As the planning reviewer, I need the behavior matrix refreshed so every active story traces to one clear behavior row. | planning reviewer | The matrix lists active and deferred Organization behavior with story ownership and source evidence. | Technical Steering; PRD; blueprint |
+| S-001 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Refresh the Organization proof plan | This is needed because the proof plan should match the current logo, export, opening-hour, membership, and integration decisions. | As the quality reviewer, I need current proof obligations so later tasks carry the right checks. | quality reviewer | The test-case document covers every active story and blocker with concrete proof obligations. | S-000; PRD |
+| S-002 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Map Organization authority | This is needed because root admins, tenant admins, public readers, and export workers need different rules. | As the security reviewer, I need an authority map before routes, jobs, or screens are planned. | security reviewer | Permission mapping names capabilities, tenant context, object rules, and denial behavior. | Technical Steering; API contracts |
+| S-003 | ready-for-task-breakdown | harness-value | DECISION:architecture-foundation | Record Organization as a feature family | This is needed because Organization will be several related parts and the repo needs a stable way to track them together. | As the repo governance owner, I need approved family metadata before source manifests depend on it. | repo governance owner | The repo records Organization family membership without unsupported manifest fields. | Technical Steering |
+| S-004 | ready-for-task-breakdown | system-value | DEV:backend | Manage core organizations and hierarchy | This is needed because every Organization record needs a safe parent organization inside one customer/account. | As the system, I need official organization records with safe hierarchy, lifecycle, and tenant boundaries. | system | Organizations can be created, read, updated, archived, restored, moved, and searched within the right boundary. | S-000; S-001; S-002; S-003 |
+| S-005 | ready-for-task-breakdown | system-value | DEV:backend | Manage legal profiles | This is needed because legal details have one-active behavior and must stay understandable over time. | As the system, I need one active legal profile per organization with retained prior records. | system | Legal profiles support required fields, optional tax/VAT number, optional registered address, lifecycle, and export projection. | S-004 |
+| S-006 | ready-for-task-breakdown | user-value | DEV:backend | Manage locations | This is needed because admins need many locations without hidden head-office uniqueness. | As an admin, I need to manage organization locations with optional coordinates and descriptive flags. | admin | Locations can be saved, searched, archived, and exported under the correct organization. | S-004 |
+| S-007 | ready-for-task-breakdown | user-value | DEV:backend | Manage opening-hour slots and exceptions | This is needed because normal weekly hours and exceptional closures need deterministic rules. | As an admin, I need to manage weekly slots and exceptions that supersede normal hours. | admin | Weekly slots and exceptions validate correctly and produce predictable effective opening rules. | S-006 |
+| S-008 | ready-for-task-breakdown | user-value | DEV:backend | Manage business units | This is needed because organizations need internal hierarchy with safe moves and archiving. | As an admin, I need to manage business-unit trees inside one customer/account. | admin | Business units support depth 10, cycle denial, child projections, branch archive, and child reassignment. | S-004 |
+| S-009 | ready-for-task-breakdown | user-value | DEV:backend | Manage business-unit memberships | This is needed because memberships should link only to real participants with clear participation labels. | As an admin, I need to assign real business units to business units with fixed labels, with individual/person memberships deferred until an approved person lookup seam exists. | admin | Business-unit memberships reject placeholders, cross-boundary targets, self-links, and labels outside owner, manager, member, and viewer; individual/person targets return an explicit deferred response. | S-008; future individual/person public seam |
+| S-010 | ready-for-task-breakdown | system-value | DEV:backend | Manage reference values | This is needed because shared Organization values must remain stable after records use them. | As the system, I need root-managed shared values that tenant admins can use safely. | system | Reference values support create, label update, archive, deprecate, replace, tenant use, and used-value retention. | S-002 |
+| S-011 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Complete public logo technical signoff | This is needed because public image delivery needs cache, security, accessibility, and cleanup rules before implementation. | As the security reviewer, I need the logo signoff completed before source work starts. | security reviewer | The logo signoff answers every required public delivery and asset-safety question. | Public logo decision |
+| S-012 | ready-for-task-breakdown | user-value | DEV:vertical-slice | Manage public logo relationships | This is needed because public logos touch uploaded files, public delivery, replacement, and export inclusion. | As an admin, I need to manage the primary organization logo that public places can display safely. | admin and public reader | Logo relationships use approved assets, app-controlled URLs, replacement safety, removal placeholders, and export inclusion. | S-011; assets feature |
+| S-013 | ready-for-task-breakdown | user-value | DEV:backend | Search Organization records by type | This is needed because admins need broad search without mixing results or leaking records. | As an admin, I need grouped Organization search with filters and stable paging. | admin | Search returns permission-filtered grouped results with explicit operators and indexes. | S-004 through S-010; include S-012 logo fields after logo relationship tasks land |
+| S-014 | ready-for-task-breakdown | harness-value | DECISION:architecture-foundation | Lock secure generated export behavior | This is needed because private ZIP exports need reusable security and job rules before implementation. | As the security reviewer, I need the export pattern locked before Organization exports are built. | security reviewer | Technical steering defines PIN/password ZIP, cancellation, retry, notification, safety limits, and cleanup posture. | Export product packet |
+| S-015 | ready-for-task-breakdown | user-value | DEV:backend | Manage private export bundles | This is needed because export files contain selected Organization data and actual files and must stay private. | As an admin, I need to request, monitor, download, cancel, retry, and delete private Organization exports. | admin and background worker | Exports produce requester-bound PIN/password ZIP files with JSON, selected files, expiry, and cleanup evidence. | S-014; job processing; assets |
+| S-016 | blocked | harness-value | GOV:design-system | Define shared admin screen behavior | This is needed because Organization screens should use approved shared behavior before real pages are built. | As the screen standards owner, I need approved shared screen references for Organization management. | screen standards owner | Shared references cover lists, details, search, branch choices, logo management, export status, and attention badges. | Design-system governance |
+| S-017 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Keep integration records deferred | This is needed because integration records should remain visible as future scope without entering v1 by accident. | As the planning reviewer, I need integration records marked deferred across planning sources. | planning reviewer | Integration records do not appear in active v1 route, search, UI, export, or persistence work. | PRD; API contracts; data dictionary |
+| S-018 | ready-for-task-breakdown | harness-value | DOC:docs-artifact | Keep Organization artifacts aligned as slices land | This is needed because Organization work will land in pieces and older records can drift quickly. | As the planning reviewer, I need each slice to refresh the records it changes before it is treated as complete. | planning reviewer | Feature docs, manifests, generated graph, runbooks, status notes, and planning records stay aligned. | All stories |
 
 ## Acceptance Criteria
 
 | AC ID | Story ID | Acceptance Criterion | Primary Proof Layer | Required Test Families | Required Artifact Obligations |
 | --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | S-000 | The refreshed spreadsheet maps every active first-version behavior to a source decision and story ID, and marks deferred behavior without treating it as build-ready. | contract-level | docs-alignment, standards | capability matrix |
-| AC-S001-01 | S-001 | The requirements source preserves confirmed v1 scope, actors, lifecycle, non-goals, and blocker carry-forward from discovery and steering. | contract-level | docs-alignment, standards | PRD |
-| AC-S002-01 | S-002 | Detailed proof cases are created for actor authority, lifecycle, privacy, audit, asset, export, search, background work, and browser obligations. | contract-level | docs-alignment, security, audit | PRD-derived test cases |
-| AC-S003-01 | S-003 | The Organization family boundary, member features, manifest rule, and later task requirements are documented before Organization source work depends on family metadata. | contract-level | docs-alignment, generated-artifact | feature-family decision, task-breakdown carry-forward |
-| AC-S004-01 | S-004 | Organization records support create, read, update, archive, reactivate, parent move, branch archive, child reassignment, depth 10, cycle denial, and same-customer/account enforcement. | persistence-level | unit, integration, security, audit, persistence | PRD, data dictionary, permission mapping, service answer docs |
-| AC-S005-01 | S-005 | Legal profile records enforce one active profile per organization while retaining prior or archived profiles according to the requirements source. | persistence-level | unit, integration, security, audit, persistence | PRD, data dictionary, permission mapping |
-| AC-S006-01 | S-006 | Locations and optional weekly opening hours allow many locations, descriptive head-office flags, valid weekly slots, and archive behavior without special calendar rules. | persistence-level | unit, integration, security, persistence | PRD, data dictionary, service answer docs |
-| AC-S007-01 | S-007 | Unit hierarchy and memberships enforce depth 10, cycle denial, real user and role references, same-customer/account boundaries, and archive or move-child behavior. | persistence-level | unit, integration, security, audit, persistence | PRD, data dictionary, permission mapping |
-| AC-S008-01 | S-008 | Integration records store only approved high-level official integration facts and reject credentials, endpoints, secrets, and provider setup values. | persistence-level | unit, integration, security, privacy | PRD, data dictionary, permission mapping |
-| AC-S009-01 | S-009 | Reference catalogue values are root-managed, tenant-usable, immediately reflected by label changes, and archived, deprecated, or explicitly replaced when already used. | mixed | unit, integration, security, audit, compatibility | PRD, data dictionary, permission mapping |
-| AC-S010-01 | S-010 | Public logo branding supports approved raster uploads, multiple logo types, accepted-safe public delivery, stable app-controlled URLs, replacement safety, removal placeholder, alt text defaulting, and export inclusion. | mixed | unit, integration, security, audit, asset, accessibility, runtime-api | PRD, asset decision, data dictionary, permission mapping, runbook |
-| AC-S011-01 | S-011 | Search supports broad text search, explicit exact filters, stable paging, grouped result types, and permission-filtered results without arbitrary advanced query behavior. | runtime-api | unit, integration, security, performance, compatibility | PRD, data dictionary, service answer docs |
-| AC-S012-01 | S-012 | Private exports create selectable-section zip bundles with CSV and JSON, actual retained logo files, private download, 24-hour expiry or deletion, quotas, retries, and cleanup failure recording. | mixed | unit, integration, security, audit, privacy, resilience, job | PRD, export decision, data dictionary, permission mapping, runbook |
-| AC-S013-01 | S-013 | Design-system work defines approved shared patterns for lists, detail editing, grouped search, branch archive or move-child, logo management, and export status before app screen adoption. | rendered-browser | visual, accessibility, interaction, standards | design-system behavior locks and references |
-| AC-S014-01 | S-014 | Public summary work remains deferred until core records and a first consumer are known, with no private owning-record dependency promised early. | contract-level | docs-alignment, compatibility | feature manifest notes after consumer decision |
-| AC-S015-01 | S-015 | Maintained records are refreshed as slices land, including feature records, generated graph, source-independent documents, runbooks, and status notes. | mixed | docs-alignment, standards, generated-artifact | feature docs, manifests, generated graph, runbooks |
+| AC-S000-01 | S-000 | The refreshed matrix maps every active v1 Organization behavior to a source decision and story ID, and marks deferred behavior without build-ready posture. | contract-level | docs-alignment, standards | capability matrix |
+| AC-S001-01 | S-001 | The proof plan covers every active story and names actor, authority, state, object, lifecycle, privacy, audit, asset, export, search, job, and browser obligations. | contract-level | docs-alignment, security, audit | PRD-derived test cases |
+| AC-S002-01 | S-002 | Permission mapping defines root-admin, tenant-admin, public-read, and system-worker authority for Organization create, read, update, archive, move, logo, search, export, cancel, retry, download, and catalogue actions. | contract-level | docs-alignment, security | permission mapping |
+| AC-S003-01 | S-003 | Organization family metadata is documented through an approved repo-governance path before Organization manifests rely on domain or runtime family fields. | contract-level | docs-alignment, generated-artifact | feature-family decision |
+| AC-S004-01 | S-004 | Organization records support create, read, update, archive, restore, parent move, branch archive, child reassignment, normalized tenant-level name uniqueness, depth 10, cycle denial, and same-tenant enforcement. | persistence-level | unit, integration, security, audit, persistence | PRD, API contract, data dictionary, permission mapping |
+| AC-S005-01 | S-005 | Legal profile records enforce one active profile per organization and support optional tax/VAT number, optional registered address, lifecycle visibility, retained profile reads where approved, and same-tenant enforcement. | persistence-level | unit, integration, security, audit, persistence | PRD, API contract, data dictionary, permission mapping |
+| AC-S006-01 | S-006 | Location records allow many locations per organization, allow multiple descriptive head-office flags, validate optional coordinates, support lifecycle visibility, and remain scoped to the owning tenant. | persistence-level | unit, integration, security, audit, persistence | PRD, API contract, data dictionary, permission mapping |
+| AC-S007-01 | S-007 | Opening-hour slots and exceptions enforce weekday slot order, same-day open/close validation, no overlapping active slots, no overnight v1 slots, and exception precedence of closed day, replacement day, closed slot, then special opening. | persistence-level | unit, integration, security, persistence | PRD, API contract, data dictionary |
+| AC-S008-01 | S-008 | Business units support hierarchy depth 10, cycle denial, derived child-unit reads from parent links, branch archive, child reassignment, lifecycle visibility, and same-tenant enforcement. | persistence-level | unit, integration, security, audit, persistence | PRD, API contract, data dictionary, permission mapping |
+| AC-S009-01 | S-009 | Membership records accept only real business-unit targets for the current slice, fixed participation labels of owner, manager, member, and viewer, same-tenant ownership, self-link denial, and explicit individual/person target deferral. | persistence-level | unit, integration, security, audit, privacy | PRD, API contract, data dictionary, permission mapping |
+| AC-S010-01 | S-010 | Reference values are root-managed, tenant-usable, immediately reflected by label changes, and archived, deprecated, or explicitly replaced when already used. | mixed | unit, integration, security, audit, compatibility | PRD, API contract, data dictionary, permission mapping |
+| AC-S011-01 | S-011 | Public logo technical signoff answers URL shape, delivery mode, cache update signal, accepted file types, actual-byte verification, processing, raw URL denial, cleanup, legal-hold posture, public-read abuse controls, and runbook obligations. | contract-level | docs-alignment, security, privacy, asset | public logo technical signoff |
+| AC-S012-01 | S-012 | Logo relationships support the v1 primary logo type, accepted-safe public delivery, app-controlled URLs, replacement after new image readiness, removal to deterministic initials, alt text defaulting, and selected actual-file export inclusion. | mixed | unit, integration, security, audit, asset, accessibility, runtime-api | PRD, API contract, asset decision, data dictionary, permission mapping, runbook |
+| AC-S013-01 | S-013 | Search supports broad text search, explicit exact filters, stable paging, deterministic sorting, grouped result types, index-backed fields, and permission-filtered results without arbitrary advanced query behavior. | runtime-api | unit, integration, security, performance, compatibility | PRD, API contract, data dictionary, permission mapping |
+| AC-S014-01 | S-014 | Secure generated export steering defines PIN/password ZIP mechanics, requester-only download, cancellation, retry, ready/failed notifications, safety limits, cleanup, expiry, failure recording, and runbook posture. | contract-level | docs-alignment, security, audit, resilience, job | technical steering, reusable export pattern |
+| AC-S015-01 | S-015 | Export bundles support selected sections, current-only or include-retained choice, JSON data, selected actual files, requester-bound download, PIN view/email behavior, cancel, retry, ready/failed notification, 24-hour expiry, manual delete, and cleanup failure recording. | mixed | unit, integration, security, audit, privacy, resilience, job | PRD, API contract, data dictionary, permission mapping, runbook |
+| AC-S016-01 | S-016 | Shared screen references define Organization lists, detail editing, grouped search, branch archive or move-child decisions, logo management, export status, async attention badges, and accessibility before app page adoption. | rendered-browser | visual, accessibility, interaction, standards | design-system behavior locks and references |
+| AC-S017-01 | S-017 | Integration records are marked deferred in PRD, API contracts, data dictionary, story breakdown, and task planning, with no active v1 route, search, UI, export, or persistence task. | contract-level | docs-alignment, standards | PRD, API contracts, data dictionary |
+| AC-S018-01 | S-018 | Each Organization slice refreshes affected source-independent docs, feature docs, manifests, generated dependency graph, runbooks, test evidence, and status notes before completion language is used. | mixed | docs-alignment, standards, generated-artifact | feature docs, manifests, generated graph, runbooks |
 
 ## Capability Mapping
 
 | Story ID | AC ID | Capability Matrix Row(s) | Boundary | Capability Posture | Notes |
 | --- | --- | --- | --- | --- | --- |
-| S-000 | AC-S000-01 | CAP-ORG-000 | planning | create-or-refresh-required | Control row for behavior map reconciliation. |
-| S-001 | AC-S001-01 | CAP-ORG-001 | planning | create-or-refresh-required | Control row for requirements lock. |
-| S-002 | AC-S002-01 | CAP-ORG-002 | planning | create-or-refresh-required | Control row for proof planning. |
+| S-000 | AC-S000-01 | CAP-ORG-000 | planning | create-or-refresh-required | Behavior matrix reconciliation. |
+| S-001 | AC-S001-01 | CAP-ORG-001 | planning | create-or-refresh-required | Proof plan refresh. |
+| S-002 | AC-S002-01 | CAP-ORG-002 | root, tenant, public, worker | create-or-refresh-required | Permission mapping. |
 | S-003 | AC-S003-01 | CAP-ORG-003 | repo-governance | create-or-refresh-required | Domain family metadata support. |
-| S-004 | AC-S004-01 | CAP-ORG-CORE-001 | tenant/root | create-or-refresh-required | Core organization management behavior. |
-| S-005 | AC-S005-01 | CAP-ORG-LEGAL-001 | tenant/root | create-or-refresh-required | Legal profile behavior. |
-| S-006 | AC-S006-01 | CAP-ORG-LOC-001 | tenant/root | create-or-refresh-required | Location and weekly hours behavior. |
-| S-007 | AC-S007-01 | CAP-ORG-UNIT-001 | tenant/root | create-or-refresh-required | Unit and membership behavior. |
-| S-008 | AC-S008-01 | CAP-ORG-INT-001 | tenant/root | create-or-refresh-required | High-level integration record behavior. |
-| S-009 | AC-S009-01 | CAP-ORG-CAT-001 | root/tenant-use | create-or-refresh-required | Reference catalogue behavior. |
-| S-010 | AC-S010-01 | CAP-ORG-BRAND-001 | tenant/root/public | create-or-refresh-required | Logo branding and public read behavior. |
-| S-011 | AC-S011-01 | CAP-ORG-SEARCH-001 | tenant/root | create-or-refresh-required | Grouped search behavior. |
-| S-012 | AC-S012-01 | CAP-ORG-EXPORT-001 | tenant/root/system-job | create-or-refresh-required | Private export behavior. |
-| S-013 | AC-S013-01 | CAP-ORG-UI-001 | governed-ui | create-or-refresh-required | Design-system prerequisite behavior. |
-| S-014 | AC-S014-01 | CAP-ORG-SUMMARY-001 | future-public-seam | create-or-refresh-required | Deferred public summary behavior. |
-| S-015 | AC-S015-01 | CAP-ORG-ARTIFACT-001 | planning | create-or-refresh-required | Maintained record alignment behavior. |
+| S-004 | AC-S004-01 | CAP-ORG-CORE-001 | tenant/root | create-or-refresh-required | Core organization records. |
+| S-005 | AC-S005-01 | CAP-ORG-LEGAL-001 | tenant/root | create-or-refresh-required | Legal profiles. |
+| S-006 | AC-S006-01 | CAP-ORG-LOC-001 | tenant/root | create-or-refresh-required | Locations. |
+| S-007 | AC-S007-01 | CAP-ORG-HOURS-001 | tenant/root | create-or-refresh-required | Weekly slots and exceptions. |
+| S-008 | AC-S008-01 | CAP-ORG-UNIT-001 | tenant/root | create-or-refresh-required | Business units. |
+| S-009 | AC-S009-01 | CAP-ORG-MEMBER-001 | tenant/root | create-or-refresh-required | Memberships. |
+| S-010 | AC-S010-01 | CAP-ORG-CAT-001 | root/tenant-use | create-or-refresh-required | Reference values. |
+| S-011 | AC-S011-01 | CAP-ORG-BRAND-SIGNOFF-001 | asset/security | create-or-refresh-required | Logo technical signoff. |
+| S-012 | AC-S012-01 | CAP-ORG-BRAND-001 | tenant/root/public | create-or-refresh-required | Logo relationships and delivery. |
+| S-013 | AC-S013-01 | CAP-ORG-SEARCH-001 | tenant/root | create-or-refresh-required | Grouped search. |
+| S-014 | AC-S014-01 | CAP-ORG-EXPORT-SIGNOFF-001 | job/security | create-or-refresh-required | Secure export technical steering. |
+| S-015 | AC-S015-01 | CAP-ORG-EXPORT-001 | tenant/root/system-job | create-or-refresh-required | Private export bundles. |
+| S-016 | AC-S016-01 | CAP-ORG-UI-001 | governed-ui | create-or-refresh-required | Shared screen prerequisite. |
+| S-017 | AC-S017-01 | CAP-ORG-INT-DEFER-001 | planning | create-or-refresh-required | Deferred integration boundary. |
+| S-018 | AC-S018-01 | CAP-ORG-ARTIFACT-001 | planning | create-or-refresh-required | Maintained artifact alignment. |
 
 ## Dependency And Seam Map
 
 | Dependency ID | Needed By Story / AC | Provider Feature Or Seam | Dependency Type | Existing Or New | Required Contract Proof | Integration Test Obligation |
 | --- | --- | --- | --- | --- | --- | --- |
-| DEP-S000 | S-000 / AC-S000-01 | Product Discovery, Technical Steering, public-logo decision, private-export decision, first-draft spreadsheet, and spreadsheet template | planning-source | existing | Reconciled CSV contains every story behavior row with source evidence. | no runtime integration; docs alignment proof only |
-| DEP-S001 | S-001 / AC-S001-01 | Product Discovery and Technical Steering packets | planning-source | existing | PRD preserves confirmed decisions and non-goals. | no runtime integration; docs alignment proof only |
-| DEP-S002 | S-002 / AC-S002-01 | story acceptance criteria and proof guide | planning-source | existing | Test case document covers each AC and sensitive obligation. | no runtime integration; proof planning only |
-| DEP-S003 | S-003 / AC-S003-01 | feature manifest and dependency graph governance | repo-governance | new | Manifest schema/checks support approved metadata. | generated graph test proves supported fields are handled |
-| DEP-S004 | S-004 / AC-S004-01 | tenant context and authorization evaluator | feature-public-seam | existing | Root and tenant allow/deny behavior is documented. | integration test proves same-customer/account enforcement |
-| DEP-S005 | S-005 / AC-S005-01 | organization core record identity | feature-public-seam | new | Legal profiles resolve owning organization through public identity seam. | integration test proves profile cannot attach across boundaries |
-| DEP-S006 | S-006 / AC-S006-01 | organization core record identity | feature-public-seam | new | Locations resolve owning organization through public identity seam. | integration test proves location cannot attach across boundaries |
-| DEP-S007 | S-007 / AC-S007-01 | user and role public identity seams | feature-public-seam | existing-or-new | Memberships can validate real users and roles without private imports. | integration test proves placeholder and cross-boundary denial |
-| DEP-S008 | S-008 / AC-S008-01 | organization core record identity | feature-public-seam | new | Integration records resolve owning organization through public identity seam. | integration test proves sensitive setup fields are rejected |
-| DEP-S009 | S-009 / AC-S009-01 | reference catalogue ownership decision | architecture-foundation | new | Catalogue owner is settled before implementation tasks. | integration test proves root mutation and tenant use behavior |
-| DEP-S010 | S-010 / AC-S010-01 | assets feature and public delivery policy | platform-seam | existing | Asset decision is carried into upload, read, replace, delete, and public URL behavior. | integration test proves accepted-safe replacement and raw URL denial |
-| DEP-S011 | S-011 / AC-S011-01 | organization records and indexes | read-model | new | Search fields and filters are documented before route behavior. | integration test proves grouped filtered results across record types |
-| DEP-S012 | S-012 / AC-S012-01 | background worker and private file delivery | platform-seam | existing-or-new | Export decision is carried into job, status, download, expiry, and cleanup behavior. | integration test proves private download and cleanup failure recording |
-| DEP-S013 | S-013 / AC-S013-01 | design-system governed page patterns | design-system-seam | new | Behavior locks and rendered references exist before app adoption. | browser tests prove shared patterns before app screens consume them |
-| DEP-S014 | S-014 / AC-S014-01 | first future consumer decision | future-feature-seam | new | Consumer and summary fields are decided before public summary work. | future integration test required after consumer exists |
-| DEP-S015 | S-015 / AC-S015-01 | feature manifests and generated graph | repo-governance | existing | Generated records match feature public seams after each slice. | generated graph tests run after manifest changes |
+| DEP-S000 | S-000 / AC-S000-01 | Product Discovery, Technical Steering, PRD, API contracts, data dictionary, asset/export decisions, blueprint | planning-source | existing | Matrix rows trace to current source decisions. | docs alignment proof only |
+| DEP-S001 | S-001 / AC-S001-01 | story acceptance criteria and proof guide | planning-source | existing | Test-case document maps each AC to concrete proof. | proof planning only |
+| DEP-S002 | S-002 / AC-S002-01 | platform authorization and tenant session model | feature-public-seam | existing | Permission map names actor, current tenant, object rule, and denial. | later integration tests prove allow and deny behavior |
+| DEP-S003 | S-003 / AC-S003-01 | feature manifest and dependency graph governance | repo-governance | new | Approved metadata shape exists before manifests use it. | generated graph validation tests |
+| DEP-S004 | S-004 / AC-S004-01 | tenant context and authorization evaluator | feature-public-seam | existing | Core record contract proves same-tenant ownership and lifecycle. | integration tests prove hierarchy and tenant denial |
+| DEP-S005 | S-005 / AC-S005-01 | organization core identity seam | feature-public-seam | new | Legal profiles resolve owning organization through public identity. | integration tests prove one-active and cross-boundary denial |
+| DEP-S006 | S-006 / AC-S006-01 | organization core identity seam | feature-public-seam | new | Locations resolve owning organization through public identity. | integration tests prove coordinate validation and tenant denial |
+| DEP-S007 | S-007 / AC-S007-01 | location identity seam | feature-public-seam | new | Hours and exceptions resolve owning location and organization. | integration tests prove slot validation and exception precedence |
+| DEP-S008 | S-008 / AC-S008-01 | organization core identity seam | feature-public-seam | new | Units resolve owning organization through public identity. | integration tests prove hierarchy behavior |
+| DEP-S009 | S-009 / AC-S009-01 | individual-user lookup and business-unit lookup seams | feature-public-seam | existing-or-new | Memberships validate real targets without private imports. | integration tests prove placeholder and cross-boundary denial |
+| DEP-S010 | S-010 / AC-S010-01 | reference catalogue ownership decision | architecture-foundation | new | Catalogue owner and value lifecycle rules are settled. | integration tests prove root mutation and tenant use |
+| DEP-S011 | S-011 / AC-S011-01 | asset foundation and public delivery policy | platform-seam | existing | Signoff answers every public delivery decision for v1 primary logo scope. | S-012 must carry signed-off controls into implementation tasks |
+| DEP-S012 | S-012 / AC-S012-01 | assets feature and Organization object authority | platform-seam | existing | Logo relationship contract keeps Organization authority separate from asset storage authority. | integration tests prove replacement and raw URL denial |
+| DEP-S013 | S-013 / AC-S013-01 | Organization records and indexes | read-model | new | Search fields, filters, and indexes are documented before implementation. | integration tests prove grouped filtered results |
+| DEP-S014 | S-014 / AC-S014-01 | job processing and private file delivery | platform-seam | existing-or-new | Technical steering locks job, PIN, safety, and cleanup rules. | no source integration until steering is complete |
+| DEP-S015 | S-015 / AC-S015-01 | export job seam, assets, and Organization source seams | platform-seam | existing-or-new | Export contract carries requester, sections, files, expiry, and cleanup. | integration tests prove private download and cleanup failure recording |
+| DEP-S016 | S-016 / AC-S016-01 | shared screen governance | design-system-seam | new | Screen references exist before app pages consume them. | browser tests prove shared references |
+| DEP-S017 | S-017 / AC-S017-01 | PRD, API contracts, and data dictionary | planning-source | existing | Deferred integration wording is consistent. | docs alignment proof only |
+| DEP-S018 | S-018 / AC-S018-01 | feature manifests and generated graph | repo-governance | existing | Generated records match public seams after slices land. | generated graph tests after manifest changes |
 
 ## Downstream Capability Impact
 
 | New Or Changed Capability / Seam | Future Consumer | Contract Promise | Must Not Depend On | Integration Coverage |
 | --- | --- | --- | --- | --- |
-| organization core public identity seam | legal, locations, units, integrations, branding, search, export | owning organization identity and lifecycle can be checked without private record imports | private persistence records | first consumer integration test |
-| organization branding reference seam | assets and export work | logo relationships are owned by Organization while asset safety remains owned by assets | raw bucket URL authority | logo replacement and export integration tests |
-| organization export request seam | admin experience and support operations | export lifecycle is requestable, inspectable, downloadable, expirable, and auditable | public links or URL-carried authority | export job and cleanup integration tests |
+| organization core public identity seam | legal, locations, units, memberships, logos, search, export | owning organization identity and lifecycle can be checked without private record imports | private persistence records | first consumer integration test |
+| location and opening-hour seams | search, export, admin screens | location, weekly slot, and exception data can be read through approved feature-owned contracts | browser-only calculation | slot and exception integration tests |
+| business-unit and membership seams | search, export, admin screens | units and memberships can be read without cross-feature private imports | participation labels as permission grants | hierarchy and membership integration tests |
+| organization branding reference seam | assets, public read, and export work | logo relationships are owned by Organization while asset safety remains owned by assets | raw bucket URL authority | logo replacement and export integration tests |
+| organization export request seam | admin experience and support operations | export lifecycle is requestable, inspectable, downloadable, expirable, cancellable, retryable, and auditable | public links or URL-carried authority | export job and cleanup integration tests |
 | grouped organization search response | admin screens and future support tools | results are grouped by type and permission-filtered | browser-only filtering | search integration and browser adoption tests |
 | organization domain manifest metadata | dependency graph and future extraction review | domain membership and runtime boundary intent are supported by tooling | unsupported manifest fields | generated graph validation tests |
 
@@ -505,126 +746,118 @@ Reviewers can confirm that completed Organization work does not leave stale plan
 
 | Story ID | Actors | Actor Permissions | Actor States | Object States | Value Types / Validation Rules | Lifecycle Transitions | System Errors | NFRs |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S-000 | planning reviewer | not-applicable: planning control | active packet | draft behavior list, final behavior list | complete rows, missing rows, contradictory rows | draft to reconciled | missing source packet | traceability, standards |
-| S-001 | planning reviewer | not-applicable: planning control | active packet | discovery and steering ready | confirmed scope, non-goals, blockers | draft to approved requirements | conflicting source decision | traceability, standards |
-| S-002 | quality reviewer | not-applicable: planning control | active packet | story queue ready and blocked | allow, deny, lifecycle, privacy, asset, export proof obligations | draft to proof plan | missing story AC | security, audit, privacy, resilience |
-| S-003 | repo governance owner | allowed planning decision | active branch | current manifest schema, feature-family decision | documented family boundary, rejected unsupported fields | undocumented to documented | unsupported manifest field required | compatibility, standards |
-| S-004 | root admin, tenant admin | allowed and denied root/tenant authority | active, expired, wrong customer/account | active, archived, deleted, parented, childed organizations | names, reference values, parent ids, depth boundaries | create, update, archive, reactivate, move, branch archive | cycle, stale parent, missing parent, cross-boundary parent | security, audit, performance, compatibility |
-| S-005 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong customer/account | no profile, active profile, archived profile | legal name, registration values, empty string rejection | create active, replace active, archive | duplicate active, missing org, cross-boundary org | privacy, audit, compatibility |
-| S-006 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong customer/account | many locations, archived locations, no hours, weekly hours | address fields, flags, weekday, open/close times | create, update, archive, replace hours | invalid time range, missing org, cross-boundary org | accessibility, audit, performance |
-| S-007 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong customer/account | unit tree, archived unit, real users, real roles | parent ids, user ids, role ids, depth boundaries | create, update, archive, move, membership add/remove | cycle, placeholder user, placeholder role, stale role | security, audit, compatibility |
-| S-008 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong customer/account | active integration records, archived records | provider name, purpose, rejected secret-like fields | create, update, archive | sensitive field submitted, missing org | privacy, security, audit |
-| S-009 | root admin, tenant admin | root mutate, tenant use, denied tenant mutate | active, disabled session | active, archived, deprecated, replaced, in-use values | labels, keys, replacement ids, empty string rejection | create, edit label, archive, deprecate, replace | replacement missing, in-use delete attempt | compatibility, audit, security |
-| S-010 | root admin, tenant admin, public reader, asset processor | admin manage, public read, denied raw access | active, expired upload intent | pending, accepted, rejected, replaced, removed logos | MIME allowlist, size 5 MB, alt text, logo type | upload, accept, replace, remove, cleanup | scan failure, purge failure, stale public cache | security, privacy, accessibility, resilience |
-| S-011 | root admin, tenant admin | allowed and denied root/tenant search | active, wrong customer/account | active and archived records across types | search text, exact filters, page, page size, sort | search request to grouped results | index unavailable, unsupported filter | security, performance, compatibility |
-| S-012 | root admin, tenant admin, background worker | request/download/delete own scope, denied other scope | active, expired session | queued, running, ready, failed, expired, deleted exports | section list, zip size, retry count, checksum | request, run, ready, download, expire, delete, cleanup retry | worker timeout, storage failure, cleanup failure | privacy, audit, resilience, operability |
-| S-013 | design-system owner, app adopter | approved design governance | active design packet | draft pattern, signed-off pattern | list density, search grouping, confirmation, upload, status states | draft to behavior lock to adoption | visual mismatch, accessibility failure | accessibility, browser proof, standards |
-| S-014 | system, future consumer | not-applicable until consumer exists | deferred | no consumer, known consumer | summary field list, private-field exclusion | deferred to active later | consumer not identified | compatibility, privacy |
-| S-015 | planning reviewer | not-applicable: planning control | active branch | changed feature records, changed docs, changed generated graph | aligned, stale, missing generated output | draft to aligned after slice | missing generated record, stale document | traceability, standards, operability |
+| S-000 | planning reviewer | planning artifact access | active packet | old matrix, refreshed matrix, deferred rows | complete rows, stale rows, contradictory rows | draft to refreshed | missing source artifact | traceability, standards |
+| S-001 | quality reviewer | planning artifact access | active packet | current stories, stale proof cases | allowed action, denied action, lifecycle, privacy, asset, export proof | stale to refreshed | missing AC coverage | security, audit, privacy, resilience |
+| S-002 | security reviewer | planning artifact access | active packet | root authority, tenant authority, public read, worker authority | capability key, tenant context, object rule, denial category | unmapped to mapped | conflicting authority source | security, audit, compliance |
+| S-003 | repo governance owner | governance authority | active branch | current manifest schema, family decision | family metadata, rejected unsupported fields | undocumented to documented | unsupported manifest field required | compatibility, standards |
+| S-004 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong tenant | active, archived, deleted, parented, childed organizations | normalized name, parent id, depth, relationship values | create, update, archive, restore, move, branch archive | duplicate name, cycle, depth, stale parent, cross-tenant parent | security, audit, performance, compatibility |
+| S-005 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong tenant | no profile, active profile, archived profile | legal fields, tax/VAT, registered address, empty string rejection | create active, replace active, archive | duplicate active, missing org, cross-tenant org | privacy, audit, compatibility |
+| S-006 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong tenant | many locations, archived locations | address fields, head-office flag, latitude, longitude | create, update, archive, restore | invalid coordinate, missing org, cross-tenant org | audit, performance |
+| S-007 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong tenant | no hours, weekly slots, exception records | weekday, slot order, open time, close time, exception type | create slot, update slot, archive slot, create exception | overlap, overnight v1, invalid precedence, missing location | audit, correctness |
+| S-008 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong tenant | unit tree, archived unit, child units | parent id, depth boundary, status | create, update, archive, restore, move, child reassignment | cycle, depth, stale parent, cross-tenant parent | security, audit, compatibility |
+| S-009 | root admin, tenant admin | allowed and denied root/tenant authority | active, wrong tenant | individual user target, business-unit target, archived membership | target type, target id, owner, manager, member, viewer | create, update label, archive, restore | placeholder target, invalid label, cross-tenant target | security, audit, privacy |
+| S-010 | root admin, tenant admin | root mutate, tenant use, denied tenant mutate | active, wrong authority | active, archived, deprecated, replaced, in-use values | label, type, replacement id, empty string rejection | create, edit, archive, deprecate, replace | in-use delete attempt, replacement missing | compatibility, audit, security |
+| S-011 | security reviewer | signoff authority | active packet | answered checklist | URL shape, MIME, bytes, cache signal, cleanup, runbook | signed | missing required answer | security, privacy, operability |
+| S-012 | root admin, tenant admin, public reader, asset processor | admin manage, public read, denied raw access | active, expired upload intent | pending, accepted, rejected, replaced, removed logos | MIME allowlist, size, alt text, logo type, initials fallback | upload, accept, replace, remove, cleanup | scan failure, stale cache, raw URL access | security, accessibility, resilience |
+| S-013 | root admin, tenant admin | allowed and denied root/tenant search | active, wrong tenant | active and archived records across types | search text, exact filters, page, page size, sort | search request to grouped response | unsupported filter, index unavailable | security, performance, compatibility |
+| S-014 | security reviewer, job owner | steering authority | active packet | unanswered export decisions, answered decisions | PIN, ZIP, safety limits, cancellation, retry, notification | undecided to locked | missing safety rule | security, resilience, operability |
+| S-015 | root admin, tenant admin, background worker | request/download/delete own scope, denied other scope | active, expired session | queued, running, canceled, ready, failed, expired, deleted exports | section list, retained choice, ZIP manifest, PIN, checksum | request, run, cancel, retry, ready, download, expire, delete | worker timeout, storage failure, cleanup failure | privacy, audit, resilience, operability |
+| S-016 | screen standards owner, admin reviewer | screen governance authority | active packet | draft reference, approved reference | lists, detail edit, branch choice, status badge, keyboard states | draft to approved reference | inaccessible state, missing reference | accessibility, visual stability |
+| S-017 | planning reviewer | planning artifact access | active packet | active integration wording, deferred integration wording | route scope, search scope, export scope, data page status | active scope to deferred scope | stale active integration row | traceability, standards |
+| S-018 | planning reviewer, support operator | artifact review authority | before slice, after slice | feature docs, manifests, generated graph, runbooks, status notes | stale docs, current docs, generated records | slice draft to artifact-complete | stale downstream doc | standards, operability |
 
 ## Acceptance Criteria To Test Obligation Matrix
 
 | AC ID | Actors / States Covered | Capability Row(s) | Proof Layer | Required TC IDs Or TC Obligation | Integration Needed |
 | --- | --- | --- | --- | --- | --- |
-| AC-S000-01 | planner with source packets and draft spreadsheet | CAP-ORG-000 | contract-level | Create proof case that every active behavior row has source evidence and story ownership, and every deferred behavior is marked deferred. | no |
-| AC-S001-01 | planning reviewer with ready discovery and steering packets | CAP-ORG-001 | contract-level | Create proof case that PRD preserves scope, non-goals, blockers, and decisions. | no |
-| AC-S002-01 | quality reviewer with all active and blocked stories | CAP-ORG-002 | contract-level | Create proof cases for actor, permission, lifecycle, asset, export, search, and browser obligations. | no |
-| AC-S003-01 | repo governance owner with current manifest schema and feature-family decision | CAP-ORG-003 | contract-level | Create proof case that family tracking is documented without requiring unsupported manifest fields, and that later task breakdown carries any schema/tooling work separately. | no |
-| AC-S004-01 | root and tenant admins across active, archived, childed, and wrong-boundary organizations | CAP-ORG-CORE-001 | persistence-level | Create proof cases for hierarchy depth, cycle denial, branch archive, child move, and boundary denial. | yes |
-| AC-S005-01 | root and tenant admins across no-profile, active-profile, and archived-profile states | CAP-ORG-LEGAL-001 | persistence-level | Create proof cases for one-active legal profile, replacement, retention, and boundary denial. | yes |
-| AC-S006-01 | root and tenant admins across many locations and optional weekly hours | CAP-ORG-LOC-001 | persistence-level | Create proof cases for descriptive head-office flags, weekly slot validation, optional hours, and archive behavior. | yes |
-| AC-S007-01 | root and tenant admins across unit tree, real user, real role, and wrong-boundary states | CAP-ORG-UNIT-001 | persistence-level | Create proof cases for unit depth, cycle denial, real-record membership, and archive or move-child behavior. | yes |
-| AC-S008-01 | root and tenant admins across active and archived integration records | CAP-ORG-INT-001 | persistence-level | Create proof cases for approved high-level fields and rejected secret, endpoint, credential, and provider setup values. | yes |
-| AC-S009-01 | root admin mutate and tenant admin use across active, archived, deprecated, and in-use values | CAP-ORG-CAT-001 | mixed | Create proof cases for root-only mutation, tenant use, immediate label read, archive, deprecate, and explicit replace. | yes |
-| AC-S010-01 | admin, public reader, and asset processor across pending, accepted, replaced, removed, and failed states | CAP-ORG-BRAND-001 | mixed | Create proof cases for upload safety, accepted public delivery, replacement, raw URL denial, placeholder, alt text, and export inclusion. | yes |
-| AC-S011-01 | root and tenant admins across active, archived, filtered, paged, and wrong-boundary results | CAP-ORG-SEARCH-001 | runtime-api | Create proof cases for broad text search, exact filters, grouped results, paging, unsupported filters, and boundary denial. | yes |
-| AC-S012-01 | admin and background worker across queued, running, ready, failed, expired, and deleted exports | CAP-ORG-EXPORT-001 | mixed | Create proof cases for selected sections, CSV and JSON, logo files, private download, expiry, deletion, retries, quota, and cleanup failure. | yes |
-| AC-S013-01 | design-system owner and app adopter across draft, signed-off, and mismatch states | CAP-ORG-UI-001 | rendered-browser | Create browser proof cases for list, detail, grouped search, branch archive, logo management, and export status patterns. | yes |
-| AC-S014-01 | future consumer absent and future consumer known states | CAP-ORG-SUMMARY-001 | contract-level | Create future proof case when first consumer and summary fields are approved. | yes |
-| AC-S015-01 | planning reviewer across changed and stale maintained records | CAP-ORG-ARTIFACT-001 | mixed | Create proof case for feature records, generated graph, source-independent documents, runbooks, and status notes after each slice. | yes |
-
-## Refactor-First And Architecture-Foundation Queue
-
-| Blocker ID | Blocks Story | Blocker Type | Reason | Required Output | Stop Condition |
-| --- | --- | --- | --- | --- | --- |
-| RF-ORG-001 | S-003; S-004 through S-015 | architecture-foundation | Domain family tracking should be decided before Organization feature work spreads across multiple feature folders. | Feature-family decision and task-breakdown carry-forward for any future manifest schema/tooling work. | Stop Organization implementation if unsupported feature-manifest fields would be required. |
-| RF-ORG-002 | S-013 | design-system-governance | App screens require governed shared patterns before adoption. | Signed-off design-system behavior locks, references, verification, and adoption posture. | Stop app screen work if shared render or behavior seams do not exist. |
+| AC-S000-01 | planning reviewer with old and refreshed matrix | CAP-ORG-000 | contract-level | Create docs proof that every story maps to current behavior and deferred rows are not build-ready. | no |
+| AC-S001-01 | quality reviewer with current stories and stale tests | CAP-ORG-001 | contract-level | Refresh PRD-derived test cases for every active story and blocker. | no |
+| AC-S002-01 | security reviewer with root, tenant, public, and worker authority | CAP-ORG-002 | contract-level | Create permission mapping obligations for allow, deny, tenant context, object rules, and worker revalidation. | no |
+| AC-S003-01 | repo governance owner with current manifest schema | CAP-ORG-003 | contract-level | Prove family metadata uses approved governance and generated graph checks. | yes |
+| AC-S004-01 | root and tenant admins over active, archived, deleted, parented, and childed organizations | CAP-ORG-CORE-001 | persistence-level | Plan unit, persistence, API, authz, audit, and compatibility tests for hierarchy and lifecycle. | yes |
+| AC-S005-01 | root and tenant admins over no-profile, active-profile, and archived-profile states | CAP-ORG-LEGAL-001 | persistence-level | Plan tests for one-active legal profile, optional fields, retained reads, and tenant denial. | yes |
+| AC-S006-01 | root and tenant admins over many locations and archived locations | CAP-ORG-LOC-001 | persistence-level | Plan tests for coordinate validation, head-office flags, lifecycle, search, export, and tenant denial. | yes |
+| AC-S007-01 | root and tenant admins over no-hours, slots, and exception records | CAP-ORG-HOURS-001 | persistence-level | Plan tests for slot validation, no overlap, exception precedence, search, export, and tenant denial. | yes |
+| AC-S008-01 | root and tenant admins over unit tree and archived unit states | CAP-ORG-UNIT-001 | persistence-level | Plan tests for depth, cycle denial, child projection, branch archive, child reassignment, and tenant denial. | yes |
+| AC-S009-01 | root and tenant admins over business-unit membership targets and deferred individual/person targets | CAP-ORG-MEMBER-001 | persistence-level | Plan tests for real business-unit target validation, fixed labels, explicit individual/person deferral, privacy, audit, lifecycle, and tenant denial. | yes |
+| AC-S010-01 | root admin mutation and tenant admin use states | CAP-ORG-CAT-001 | mixed | Plan tests for create, label update, archive, deprecate, replace, used-value retention, and tenant mutation denial. | yes |
+| AC-S011-01 | security reviewer over unanswered and answered signoff states | CAP-ORG-BRAND-SIGNOFF-001 | contract-level | Prove public logo technical signoff checklist is complete before implementation tasks. | no |
+| AC-S012-01 | admins, public readers, and asset processor over logo lifecycle states | CAP-ORG-BRAND-001 | mixed | Plan tests for upload intent, accepted delivery, replacement, removal placeholder, raw URL denial, cache signal, export, and accessibility. | yes |
+| AC-S013-01 | root and tenant admins over allowed and denied search states | CAP-ORG-SEARCH-001 | runtime-api | Plan tests for grouped result types, exact filters, paging, sorting, indexes, performance, and tenant denial. | yes |
+| AC-S014-01 | security reviewer and job owner over undecided and locked export pattern states | CAP-ORG-EXPORT-SIGNOFF-001 | contract-level | Prove secure export technical steering answers PIN, ZIP, job, notification, safety, cleanup, and runbook decisions. | no |
+| AC-S015-01 | admins and background worker over queued, running, canceled, ready, failed, expired, and deleted exports | CAP-ORG-EXPORT-001 | mixed | Plan tests for selected sections, retained choice, actual files, requester-only download, PIN behavior, cancel, retry, expiry, delete, notifications, and cleanup failures. | yes |
+| AC-S016-01 | screen standards owner and admin reviewer over draft and approved references | CAP-ORG-UI-001 | rendered-browser | Plan visual, keyboard, accessibility, mobile, async status, branch choice, logo, search, and export status proof. | yes |
+| AC-S017-01 | planning reviewer over active and deferred integration wording | CAP-ORG-INT-DEFER-001 | contract-level | Prove integration records are excluded from active v1 task scope while future no-secrets boundary remains documented. | no |
+| AC-S018-01 | planning reviewer and support operator over before-slice and after-slice states | CAP-ORG-ARTIFACT-001 | mixed | Plan artifact sweep proof for docs, feature manifests, generated graph, runbooks, test evidence, and status notes. | yes |
 
 ## Follow-Up Decision Questions
 
 | Question ID | Trigger / Blocker | Question | Required Before Layer 3 Completion | Resolution / Owner |
 | --- | --- | --- | --- | --- |
-| FQ-ORG-001 | Blocked build stories | Do any steering decisions need to change before artifact creation starts? | no | No change requested; planning owners proceed from current steering unless a later conflict is found. |
-| FQ-ORG-002 | S-009 catalogue owner | Should a broader platform catalogue owner replace the Organization-owned catalogue owner for v1? | no | Deferred with owner; safe v1 default is Organization-owned catalogues unless a broader owner is approved before that story reaches task breakdown. |
-| FQ-ORG-003 | S-014 public summaries | Which first consumer needs Organization summaries? | no | Deferred until core organization records exist and a real consumer is ready. |
+| Q-ORG-001 | Public logo implementation blocker | Have all public logo technical signoff checklist rows been answered and approved? | yes | Asset/security owner |
+| Q-ORG-002 | Export implementation blocker | Has secure generated export technical steering locked PIN/password ZIP, cancellation, retry, notification, safety limits, and cleanup behavior? | yes | Job/assets/security owner |
+| Q-ORG-003 | Governed app screen blocker | Have shared screen behavior references been approved before root-admin or tenant-admin pages are built? | yes | Screen standards owner |
 
 ## Layer 3 Unblock Queue
 
 | Unblock ID | Blocks Story / AC | Blocker Source | Unblock Type | Human Decision Needed | Options / Safe Defaults | Recommended Next Action | Can Auto-Create Artifact | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| U-ORG-001 | S-000 / AC-S000-01 | ART-ORG-001 | capability-matrix-required | not-applicable: no human decision remains | safe default: reconcile from discovery, steering, and asset/export decisions | Run capability matrix maintenance next. | yes | ready-to-create-artifact |
-| U-ORG-002 | S-001 / AC-S001-01 | ART-ORG-002 | prd-required | not-applicable: no human decision remains | safe default: create PRD from approved discovery and steering | Run PRD maintenance after behavior map refresh. | yes | ready-to-create-artifact |
-| U-ORG-003 | S-002 / AC-S002-01 | ART-ORG-003 | artifact-creation | not-applicable: no human decision remains | safe default: derive proof cases from PRD and story ACs | Run PRD test-case planning after PRD creation. | yes | ready-to-create-artifact |
-| U-ORG-004 | S-003 / AC-S003-01 | ART-ORG-004 | technical-steering-revisit | not-applicable: no human decision remains | safe default: create explicit repo-governance story before Organization implementation | Run repo governance decision work before feature records are created. | yes | ready-to-create-artifact |
-| U-ORG-005 | S-004 through S-012 / build ACs | ART-ORG-005 | api-contract-required | not-applicable: no human decision remains | safe default: write root and tenant service answer documents after PRD | Organization root-admin and tenant-admin API contracts created. | yes | resolved |
-| U-ORG-006 | S-004 through S-012 / build ACs | ART-ORG-006 | data-dictionary-required | not-applicable: no human decision remains | safe default: create data dictionary pages for each durable record family | Run data dictionary maintenance before saved-record work. | yes | ready-to-create-artifact |
-| U-ORG-007 | S-004 through S-012 / build ACs | ART-ORG-007 | permission-mapping-required | not-applicable: no human decision remains | safe default: map root allow, tenant allow, tenant cross-deny, catalogue root mutation, asset, export, and job authority | Run permission mapping maintenance before protected work. | yes | ready-to-create-artifact |
-| U-ORG-008 | S-010 / AC-S010-01 | ART-ORG-008 | artifact-creation | not-applicable: asset decision approved for planning | safe default: carry approved public-logo decision into PRD, data, permissions, runbook, and proof | Include public-logo decision in downstream artifacts before implementation. | yes | resolved |
-| U-ORG-009 | S-012 / AC-S012-01 | ART-ORG-009 | artifact-creation | not-applicable: export decision approved for planning | safe default: carry approved private-export decision into PRD, data, permissions, runbook, and proof | Include export decision in downstream artifacts before implementation. | yes | resolved |
-| U-ORG-010 | S-013 / AC-S013-01 | ART-ORG-010 | design-system-governance | not-applicable: no human decision remains | safe default: create design-system behavior locks before app adoption | Run design-system governance before app screen work. | yes | ready-to-create-artifact |
-| U-ORG-011 | S-014 / AC-S014-01 | FQ-ORG-003 | human-decision | Which first consumer needs Organization summaries? | wait for first consumer; no safe default for summary fields | Keep deferred until core records and consumer need exist. | no | deferred-with-owner |
-| U-ORG-012 | S-015 / AC-S015-01 | ART-ORG-011 | artifact-creation | not-applicable: no human decision remains | safe default: run maintained-artifact sweeps after each slice | Add alignment checks to later task breakdowns. | yes | ready-to-create-artifact |
+| U-ORG-S000 | S-000 / AC-S000-01 | ART-ORG-000 capability matrix drift | capability-matrix-required | no | matrix refreshed from current PRD, steering, blueprint, and entity-readiness snapshot | Matrix refresh completed in `docs/workspace/capability-matrices/2026-05-12-organization-domain-foundation-capability-matrix-first-draft.csv`. | yes | resolved |
+| U-ORG-S001 | S-001 / AC-S001-01 | ART-ORG-001 stale test cases | artifact-creation | no | test cases refreshed from current story packet, capability matrix, PRD, API contracts, and entity-readiness snapshot | PRD-derived test-case refresh completed in `docs/prd/test_cases/2026-05-12-0025-organization-domain-foundation-test-cases.md`. | yes | resolved |
+| U-ORG-S002 | S-002 / AC-S002-01 | ART-ORG-002 missing permission mapping | permission-mapping-required | no | permission mapping created from current PRD, story packet, API contracts, data dictionary, logo, and export decisions | Permission mapping completed in `docs/architecture/permission-mappings/organization-domain-foundation-permission-mapping.md`. | yes | resolved |
+| U-ORG-S003 | S-003 / AC-S003-01 | ART-ORG-003 domain family metadata decision | artifact-creation | no | registry-first domain family governance created without unsupported manifest fields | ADR-0042 and `docs/architecture/domain-feature-family-registry.md` created. | yes | resolved |
+| U-ORG-S004 | S-004 through S-010 / AC-S004-01 through AC-S010-01 | ART-ORG-004 API and data docs must remain current | api-contract-required | no | API contracts, data dictionaries, and permission mapping reviewed and corrected before task split | Alignment review completed in `docs/workspace/reviews/2026-05-15-organization-api-data-alignment-review.md`. | yes | resolved |
+| U-ORG-S011 | S-012 / AC-S012-01 | Q-ORG-001 ART-ORG-005 logo technical signoff incomplete | source-of-truth-inspection | Has the public logo technical signoff been approved? | approve signoff before source work; no safe default | Signoff approved in `docs/workspace/asset-consumer-decisions/2026-05-15-organization-public-logo-technical-signoff.md`; S-012 must carry proof obligations into task breakdown. | yes | resolved |
+| U-ORG-S014 | S-015 / AC-S015-01 | Q-ORG-002 ART-ORG-006 secure export technical steering missing | technical-steering-revisit | no | lock reusable export pattern before source work | Signoff approved in `docs/workspace/technical-steering/2026-05-15-secure-generated-export-behavior-steering.md`; S-015 must carry proof obligations into task breakdown. | yes | resolved |
+| U-ORG-S016 | S-016 / AC-S016-01 | Q-ORG-003 ART-ORG-007 shared screen references missing | design-system-governance | no | design-system first before app pages | Create shared admin screen behavior lock and rendered references. | yes | deferred-with-owner |
+| U-ORG-S018 | S-018 / AC-S018-01 | ART-ORG-008 maintained artifacts sweep | artifact-creation | no | refresh maintained artifacts as each slice lands | Carry artifact sweep into every task breakdown slice. | yes | ready-to-create-artifact |
 
 ## Artifact Ledger
 
 | Artifact ID | Story ID | Artifact Type | Required Action | Owner Skill Or Workflow | Blocks Task Breakdown |
 | --- | --- | --- | --- | --- | --- |
-| ART-ORG-001 | S-000 | Capability matrix | Reconcile first draft to final discovery, steering, public logo, export, and tenant-admin decisions. | capability-matrix-maintainer or manual planning workflow | yes |
-| ART-ORG-002 | S-001 | PRD | Create Organization domain foundation PRD. | product/prd planning workflow | yes |
-| ART-ORG-003 | S-002 | Test-case document | Create PRD-derived proof cases for all active stories. | prd-test-case-planner | yes |
-| ART-ORG-004 | S-003 | Repo governance decision | Add supported domain-family and runtime-boundary metadata path before Organization feature records rely on it. | repo governance workflow | yes |
-| ART-ORG-005 | S-004 through S-012 | Service answer documents | Created root and tenant API contracts for management, search, logo, export, catalogue, and denial behavior. | api-contract-maintainer | no |
-| ART-ORG-006 | S-004 through S-012 | Data dictionary | Create data dictionary pages for organization records, relationships, assets, exports, indexes, lifecycle, and retention. | data-dictionary-maintainer | yes |
-| ART-ORG-007 | S-004 through S-012 | Permission mapping | Create root, tenant, public-read, background-worker, catalogue, asset, export, and object-rule mappings. | permission mapping workflow | yes |
-| ART-ORG-008 | S-010 | Asset decision carry-forward | Carry approved public-logo asset decision into downstream source-truth documents. | asset/security workflow | no |
-| ART-ORG-009 | S-012 | Export decision carry-forward | Carry approved private-export decision into downstream source-truth documents. | job/export planning workflow | no |
-| ART-ORG-010 | S-013 | Design-system governance | Create shared pattern behavior locks, references, proof, and adoption posture before app screens. | frontend-design-system-loop-maintainer | yes |
-| ART-ORG-011 | S-015 | Maintained artifact sweep | Keep feature records, generated graph, feature docs, runbooks, and status notes aligned as slices land. | docs-alignment-auditor and feature manifest workflow | yes |
-
-## Story Readiness Summary
-
-- Ready stories:
-  S-000, S-001, S-002, S-003, S-013, S-015
-- Blocked stories:
-  S-014
-- Stories needing capability matrix:
-  S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012
-- Stories needing PRD refinement:
-  S-004, S-005, S-006, S-007, S-008, S-009, S-010, S-011, S-012
-- Stories needing Technical Steering revisit:
-  S-009 only if broader platform catalogue ownership is chosen before task breakdown; S-014 when first consumer is known
-- Broad cleanup or shortcut risk:
-  none
-- Architecture invention risk:
-  none
+| ART-ORG-000 | S-000 | capability matrix | refreshed current rows and deferred posture | capability-matrix maintainer | no |
+| ART-ORG-001 | S-001 | PRD-derived test cases | refreshed to current story packet | prd-test-case-planner | no |
+| ART-ORG-002 | S-002 | permission mapping | created Organization root/tenant/public/worker mapping | permission mapping workflow | no |
+| ART-ORG-003 | S-003 | architecture/governance | created registry-first domain family metadata support | repo governance workflow | no |
+| ART-ORG-004 | S-004 through S-010 | API and data docs | reviewed and corrected PRD, API contracts, and data dictionary alignment | API and data dictionary maintainers | no |
+| ART-ORG-S004 | S-004 | Layer 4 task breakdown | create core Organization task queue and carry API, data dictionary, permission, test, migration, and artifact obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-S005 | S-005 | Layer 4 task breakdown | create legal profile task queue and carry API, data dictionary, permission, test, migration, and artifact obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-S006 | S-006 | Layer 4 task breakdown | create location task queue and carry API, data dictionary, permission, test, migration, and artifact obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-S007 | S-007 | Layer 4 task breakdown | create opening-hour slot and exception task queue and carry API, data dictionary, permission, test, migration, and artifact obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-S008 | S-008 | Layer 4 task breakdown | create business-unit task queue and carry API, data dictionary, permission, test, migration, and artifact obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-S009 | S-009 | Layer 4 task breakdown | create business-unit membership task queue and carry API, data dictionary, permission, test, migration, target deferral, and artifact obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-S010 | S-010 | Layer 4 task breakdown | create reference-value catalogue task queue and carry API, data dictionary, permission, test, migration, lifecycle, replacement, and artifact obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-005 | S-011 | asset decision | completed logo technical signoff and runbook | asset/security workflow | no |
+| ART-ORG-S012 | S-012 | Layer 4 task breakdown | create public-logo relationship and delivery task queue and carry asset, cache, security, accessibility, export, runbook, and cleanup obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-S013 | S-013 | Layer 4 task breakdown | create grouped Organization search task queue and carry search, filter, index, permission, performance, and compatibility obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-006 | S-014 | technical steering | completed secure generated export addendum | technical steering workflow | no |
+| ART-ORG-S015 | S-015 | Layer 4 task breakdown | create private export bundle task queue and carry job, PIN, notification, file, cleanup, security, and requester-bound proof obligations into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-007 | S-016 | design-system | create shared screen behavior locks and references | frontend design-system loop | yes |
+| ART-ORG-S017 | S-017 | Layer 4 task breakdown | create deferred integration boundary task queue and carry no-active-v1-scope proof into delivery tasks | task-breakdown-maintainer | no |
+| ART-ORG-008 | S-018 | maintained artifacts | refresh docs, manifests, generated graph, runbooks, and status notes as slices land | artifact sweep workflow | yes |
+| ART-ORG-S018 | S-018 | Layer 4 task breakdown | create maintained artifact alignment task queue and carry slice closeout obligations into delivery tasks | task-breakdown-maintainer | no |
 
 ## Layer 4 Handoff
 
 | Story ID | Handoff Status | Reason |
 | --- | --- | --- |
-| S-000 | ready-for-task-breakdown | Behavior-map reconciliation can proceed from approved discovery and steering. |
-| S-001 | ready-for-task-breakdown | Requirements creation can proceed after behavior-map reconciliation. |
-| S-002 | ready-for-task-breakdown | Proof planning can proceed after requirements creation. |
-| S-003 | ready-for-task-breakdown | Repo-governance work is explicitly approved by steering and requester preference. |
-| S-004 | blocked-on-artifacts | Needs behavior map, requirements, proof cases, service answers, data dictionary, and permission mapping. |
-| S-005 | blocked-on-artifacts | Needs behavior map, requirements, proof cases, data dictionary, and permission mapping. |
-| S-006 | blocked-on-artifacts | Needs behavior map, requirements, proof cases, service answers, and data dictionary. |
-| S-007 | blocked-on-artifacts | Needs behavior map, requirements, proof cases, public user/role seams, data dictionary, and permission mapping. |
-| S-008 | blocked-on-artifacts | Needs behavior map, requirements, proof cases, data dictionary, and permission mapping. |
-| S-009 | blocked-on-artifacts | Needs catalogue owner confirmation during PRD/API/data work unless Organization-owned default remains. |
-| S-010 | blocked-on-artifacts | Needs downstream carry-forward of public logo asset decision into requirements, data, permissions, runbook, and proof. |
-| S-011 | blocked-on-artifacts | Needs exact search fields, filters, indexes, service answers, and proof cases. |
-| S-012 | blocked-on-artifacts | Needs downstream carry-forward of private export decision into requirements, data, permissions, runbook, and proof. |
-| S-013 | ready-for-task-breakdown | Design-system governance can proceed before app screen work. |
-| S-014 | deferred-with-owner | First consumer and summary fields are intentionally deferred until core records exist. |
-| S-015 | ready-for-task-breakdown | Maintained-record alignment can be included in each later slice. |
+| S-000 | ready-for-task-breakdown | Behavior matrix refresh has concrete source inputs and acceptance criteria. |
+| S-001 | ready-for-task-breakdown | Test-case refresh has concrete story and proof inputs. |
+| S-002 | ready-for-task-breakdown | Permission mapping scope is known from PRD, API, and steering. |
+| S-003 | ready-for-task-breakdown | Domain family metadata is recorded through ADR-0042 and the architecture registry before source manifests rely on it. |
+| S-004 | ready-for-task-breakdown | Core organization behavior is specified enough for task isolation. |
+| S-005 | ready-for-task-breakdown | Legal profile behavior is specified enough for task isolation. |
+| S-006 | ready-for-task-breakdown | Location behavior is specified enough for task isolation. |
+| S-007 | ready-for-task-breakdown | Opening-hour slot and exception behavior is specified enough for task isolation. |
+| S-008 | ready-for-task-breakdown | Business-unit behavior is specified enough for task isolation. |
+| S-009 | ready-for-task-breakdown | Membership behavior is specified enough for task isolation with public seam checks. |
+| S-010 | ready-for-task-breakdown | Reference value behavior is specified enough for task isolation. |
+| S-011 | ready-for-task-breakdown | Signoff completion can be planned as a documentation/security task. |
+| S-012 | ready-for-task-breakdown | Source work may be task-planned for v1 primary logo only, carrying public-logo signoff, runbook, and asset/security proof obligations. |
+| S-013 | ready-for-task-breakdown | Search behavior is specified enough for task isolation. |
+| S-014 | ready-for-task-breakdown | Secure export steering can be planned as an architecture task. |
+| S-015 | ready-for-task-breakdown | Source work may be task-planned with secure export steering, private export decision, reusable export/email pattern, and job/file/security proof obligations. |
+| S-016 | blocked | App UI work waits for shared screen governance. |
+| S-017 | ready-for-task-breakdown | Deferred integration cleanup is a docs alignment task. |
+| S-018 | ready-for-task-breakdown | Artifact sweep requirements are known and recur across source slices. |

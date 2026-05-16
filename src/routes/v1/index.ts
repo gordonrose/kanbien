@@ -3,11 +3,26 @@ import { createRootAuthFeature } from "../../features/rootAuth";
 import { createRootRolesFeature } from "../../features/rootRoles";
 import { createRootUserFeature } from "../../features/rootUsers";
 import { createTenantsFeature } from "../../features/tenants";
-import { createNotificationDeliveryFeature } from "../../features/notificationDelivery";
+import {
+  createNotificationDeliveryFeature,
+  createQueuedNotificationEmailWriter,
+} from "../../features/notificationDelivery";
 import { createHarnessChatFeature } from "../../features/harnessChat";
 import { createTenantAdminsFeature } from "../../features/tenantAdmins";
 import { createTenantAuthFeature } from "../../features/tenantAuth";
+import { createTenantAuthSessionLookupRepository } from "../../features/tenantAuth";
 import { createTenantConfigurationFeature } from "../../features/tenantConfiguration";
+import { createOrganizationCoreFeature } from "../../features/organizationCore";
+import { createOrganizationLegalDetailsFeature } from "../../features/organizationLegalDetails";
+import { createOrganizationLocationsFeature } from "../../features/organizationLocations";
+import { createOrganizationOpeningHoursFeature } from "../../features/organizationOpeningHours";
+import { createOrganizationBusinessUnitsFeature } from "../../features/organizationBusinessUnits";
+import { createOrganizationBusinessUnitMembershipsFeature } from "../../features/organizationBusinessUnitMemberships";
+import { createOrganizationReferenceCataloguesFeature } from "../../features/organizationReferenceCatalogues";
+import { createOrganizationSearchFeature } from "../../features/organizationSearch";
+import { createOrganizationBrandingReferencesFeature } from "../../features/organizationBrandingReferences";
+import { createOrganizationExportsFeature } from "../../features/organizationExports";
+import { createJobProcessingFeature } from "../../features/jobProcessing";
 import {
   createPublicWebAppHierarchyBuilderFeature,
   createWebAppHierarchyBuilderFeature,
@@ -45,11 +60,96 @@ const tenantAuthFeature = createTenantAuthFeature(
   platformSecurityRepository,
   tenantConfigurationFeature.policyResolver,
 );
+const organizationCoreFeature = createOrganizationCoreFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  createTenantAuthSessionLookupRepository(dbPool),
+  platformSecurityRepository,
+);
+const organizationLegalDetailsFeature = createOrganizationLegalDetailsFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  createTenantAuthSessionLookupRepository(dbPool),
+  organizationCoreFeature.organizationCoreService,
+  platformSecurityRepository,
+);
+const organizationLocationsFeature = createOrganizationLocationsFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  createTenantAuthSessionLookupRepository(dbPool),
+  organizationCoreFeature.organizationCoreService,
+  platformSecurityRepository,
+);
+const organizationOpeningHoursFeature = createOrganizationOpeningHoursFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  createTenantAuthSessionLookupRepository(dbPool),
+  organizationLocationsFeature.organizationLocationsService,
+  platformSecurityRepository,
+);
+const organizationBusinessUnitsFeature = createOrganizationBusinessUnitsFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  createTenantAuthSessionLookupRepository(dbPool),
+  organizationCoreFeature.organizationCoreService,
+  platformSecurityRepository,
+);
+const organizationBusinessUnitMembershipsFeature = createOrganizationBusinessUnitMembershipsFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  createTenantAuthSessionLookupRepository(dbPool),
+  organizationBusinessUnitsFeature.organizationBusinessUnitsService,
+  platformSecurityRepository,
+);
+const organizationReferenceCataloguesFeature = createOrganizationReferenceCataloguesFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  createTenantAuthSessionLookupRepository(dbPool),
+  platformSecurityRepository,
+);
+const organizationSearchFeature = createOrganizationSearchFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  createTenantAuthSessionLookupRepository(dbPool),
+  platformSecurityRepository,
+);
 const assetsFeature = createAssetsFeature(
   dbPool,
   rootRolesFeature.capabilityChecker,
   platformSecurityRepository,
 );
+const jobProcessingFeature = createJobProcessingFeature({
+  dbPool,
+});
+const queuedNotificationEmailWriter = createQueuedNotificationEmailWriter(
+  dbPool,
+  jobProcessingFeature.service,
+);
+const organizationBrandingReferencesFeature = createOrganizationBrandingReferencesFeature(
+  dbPool,
+  rootRolesFeature.capabilityChecker,
+  createTenantAuthSessionLookupRepository(dbPool),
+  organizationCoreFeature.organizationCoreService,
+  assetsFeature.assetsService,
+  platformSecurityRepository,
+);
+const organizationExportsFeature = createOrganizationExportsFeature({
+  dbPool,
+  capabilityChecker: rootRolesFeature.capabilityChecker,
+  tenantSessionLookupRepository: createTenantAuthSessionLookupRepository(dbPool),
+  organizationCoreService: organizationCoreFeature.organizationCoreService,
+  legalDetailsService: organizationLegalDetailsFeature.organizationLegalDetailsService,
+  locationsService: organizationLocationsFeature.organizationLocationsService,
+  openingHoursService: organizationOpeningHoursFeature.organizationOpeningHoursService,
+  businessUnitsService: organizationBusinessUnitsFeature.organizationBusinessUnitsService,
+  membershipsService: organizationBusinessUnitMembershipsFeature.organizationBusinessUnitMembershipsService,
+  referenceCataloguesService: organizationReferenceCataloguesFeature.organizationReferenceCataloguesService,
+  brandingService: organizationBrandingReferencesFeature.organizationBrandingReferencesService,
+  assetsService: assetsFeature.assetsService,
+  jobEnqueuer: jobProcessingFeature.service,
+  notificationService: queuedNotificationEmailWriter,
+  platformSecurityRepository,
+});
 const tenantAdminsFeature = createTenantAdminsFeature(
   dbPool,
   rootRolesFeature.capabilityChecker,
@@ -90,6 +190,12 @@ v1Router.get("/health", publicReadRateLimit, (_request, response) => {
 });
 
 v1Router.use(
+  "/public",
+  publicReadRateLimit,
+  organizationBrandingReferencesFeature.publicOrganizationBrandingReferencesRouter,
+);
+
+v1Router.use(
   "/root-auth",
   createRootAuthFeature(dbPool, platformSecurityRepository, rootRolesFeature.capabilityChecker),
 );
@@ -124,10 +230,84 @@ v1Router.use(
   tenantConfigurationFeature.tenantTenantConfigurationRouter,
 );
 v1Router.use(
+  "/tenant/organizations",
+  organizationCoreFeature.tenantOrganizationCoreRouter,
+  organizationBrandingReferencesFeature.tenantOrganizationBrandingReferencesRouter,
+  organizationLegalDetailsFeature.tenantOrganizationLegalDetailsRouter,
+  organizationLocationsFeature.tenantOrganizationLocationsRouter,
+  organizationOpeningHoursFeature.tenantOrganizationOpeningHoursRouter,
+  organizationBusinessUnitsFeature.tenantOrganizationBusinessUnitsRouter,
+  organizationBusinessUnitMembershipsFeature.tenantOrganizationBusinessUnitMembershipsRouter,
+);
+v1Router.use(
+  "/tenant-admin/organizations",
+  organizationCoreFeature.tenantOrganizationCoreRouter,
+  organizationBrandingReferencesFeature.tenantOrganizationBrandingReferencesRouter,
+  organizationLegalDetailsFeature.tenantOrganizationLegalDetailsRouter,
+  organizationLocationsFeature.tenantOrganizationLocationsRouter,
+  organizationOpeningHoursFeature.tenantOrganizationOpeningHoursRouter,
+  organizationBusinessUnitsFeature.tenantOrganizationBusinessUnitsRouter,
+  organizationBusinessUnitMembershipsFeature.tenantOrganizationBusinessUnitMembershipsRouter,
+);
+v1Router.use(
+  "/tenant-admin/organization-reference-values",
+  organizationReferenceCataloguesFeature.tenantOrganizationReferenceCataloguesRouter,
+);
+v1Router.use(
+  "/tenant-admin/organization-search",
+  organizationSearchFeature.tenantOrganizationSearchRouter,
+);
+v1Router.use(
+  "/tenant-admin/organization-exports",
+  organizationExportsFeature.tenantOrganizationExportsRouter,
+);
+v1Router.use(
   "/tenants/:tenantId/auth-policy",
   requireRootSession,
   authenticatedGeneralRateLimit,
   tenantConfigurationFeature.rootTenantConfigurationRouter,
+);
+v1Router.use(
+  "/tenants/:tenantId/organizations",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  organizationCoreFeature.rootOrganizationCoreRouter,
+  organizationBrandingReferencesFeature.rootOrganizationBrandingReferencesRouter,
+  organizationLegalDetailsFeature.rootOrganizationLegalDetailsRouter,
+  organizationLocationsFeature.rootOrganizationLocationsRouter,
+  organizationOpeningHoursFeature.rootOrganizationOpeningHoursRouter,
+  organizationBusinessUnitsFeature.rootOrganizationBusinessUnitsRouter,
+  organizationBusinessUnitMembershipsFeature.rootOrganizationBusinessUnitMembershipsRouter,
+);
+v1Router.use(
+  "/root-admin/tenants/:tenantId/organizations",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  organizationCoreFeature.rootOrganizationCoreRouter,
+  organizationBrandingReferencesFeature.rootOrganizationBrandingReferencesRouter,
+  organizationLegalDetailsFeature.rootOrganizationLegalDetailsRouter,
+  organizationLocationsFeature.rootOrganizationLocationsRouter,
+  organizationOpeningHoursFeature.rootOrganizationOpeningHoursRouter,
+  organizationBusinessUnitsFeature.rootOrganizationBusinessUnitsRouter,
+  organizationBusinessUnitMembershipsFeature.rootOrganizationBusinessUnitMembershipsRouter,
+);
+v1Router.use(
+  "/root-admin/organization-reference-values",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  organizationReferenceCataloguesFeature.rootOrganizationReferenceCataloguesRouter,
+);
+v1Router.use(
+  "/root-admin/tenants/:tenantId/organization-search",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  organizationSearchFeature.rootOrganizationSearchRouter,
+);
+v1Router.use(
+  "/root-admin/tenants/:tenantId/organization-exports",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  organizationExportsFeature.rootOrganizationExportsRouter,
 );
 v1Router.use(
   "/tenants/:tenantId/admins",

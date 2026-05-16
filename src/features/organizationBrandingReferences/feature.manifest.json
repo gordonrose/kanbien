@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "featureName": "organizationBrandingReferences",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createOrganizationBrandingReferencesFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for Organization logo relationship management and public logo delivery."
+    },
+    {
+      "seamId": "organization-branding-references-service-type",
+      "symbol": "OrganizationBrandingReferencesService",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "experimental",
+      "description": "Domain service contract for primary Organization logo upload, replacement, deletion, relationship reads, and public delivery."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "assets",
+      "seamIds": [
+        "feature-factory",
+        "service"
+      ],
+      "description": "Organization logo relationships store and stream real image bytes through the governed asset service."
+    },
+    {
+      "featureName": "organizationCore",
+      "seamIds": [
+        "feature-factory",
+        "organization-core-service-type"
+      ],
+      "description": "Logo management validates Organization tenant/object ownership through the Organization Core service."
+    },
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "description": "Tenant-admin logo routes require an active tenant session context."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing stable public logo URLs, primary-logo replacement semantics, placeholder behavior, cache headers, or asset-read delegation can break public branding, downstream rendering, and cache invalidation assumptions."
+  ]
+}

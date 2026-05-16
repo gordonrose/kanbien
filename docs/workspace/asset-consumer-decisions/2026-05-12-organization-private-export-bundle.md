@@ -13,17 +13,22 @@
   root-admin and tenant-admin organization export request, job status, private
   download, expiry, and delete workflow
 - Decision status:
-  approved for planning
+  approved for S-015 task breakdown; updated by reusable export/email pattern
+  and secure generated export steering
 - Approver:
   Product requester approved private background exports, selectable sections,
-  all retained data, actual uploaded logo image files, 24-hour expiry or
-  deletion, tenant-admin export for own account, ZIP package format, both CSV
-  and JSON structured data, section folders, private non-password download,
-  checksum/byte verification, v1 numeric limits, and legal/incident hold
-  non-impact on generated copies in chat on 2026-05-12. Implementation remains
-  blocked until PRD, API contract, data dictionary, permission mapping,
-  job/cleanup runbook, and security/QA tests carry this decision into
-  executable requirements.
+  actual uploaded logo image files, 24-hour expiry or deletion, tenant-admin
+  export for own account, ZIP package format, JSON plus actual file assets,
+  section/folder organization, requester-personal download, password/PIN
+  protected ZIPs, PIN view and email delivery, retry, cancellation,
+  checksum/byte verification, and legal/incident hold non-impact on generated
+  copies in chat on 2026-05-12 and 2026-05-15. Secure generated export steering
+  now allows S-015 task breakdown; implementation must still carry PRD, API
+  contract, data dictionary, permission mapping, job/cleanup runbook, and
+  security/QA tests into executable requirements. Reusable behavior source:
+  `docs/workspace/product-discovery/2026-05-15-reusable-email-export-behavior.md`.
+  Technical steering source:
+  `docs/workspace/technical-steering/2026-05-15-secure-generated-export-behavior-steering.md`.
 
 ## Business Decision
 
@@ -42,9 +47,10 @@
 - Who may upload, replace, read, download, delete, or publish this asset?
   No actor uploads or publishes the generated export bundle. Authorized root
   admins and tenant admins may request, read status for, download, and delete
-  their authorized export bundles. Tenant admins are limited to their own
-  current tenant/account. Root admins may export through root Organization
-  authority.
+  their own requester-personal export bundles. Tenant admins are limited to
+  their own current tenant/account. Root admins may export through root
+  Organization authority. Other admins cannot download a generated copy solely
+  because they have equivalent Organization permission.
 - Is this a narrow approved use case or a generic asset-library/file-hosting
   surface?
   Narrow approved export use case only. This does not approve generic file
@@ -55,37 +61,43 @@
 - Package format:
   `.zip`
 - ZIP encryption/password:
-  none for v1. Password-protected ZIP delivery is not approved for the first
-  version.
+  required. Each generated ZIP uses a generated PIN/password. The requesting
+  admin may view the PIN again while the export is available, and ready email
+  may include the PIN subject to security controls and no ordinary logging.
 - Bundle contents:
-  selected structured data sections as both CSV and JSON files, an export
-  manifest, plus actual uploaded logo image files that still exist/are
-  retained at export time.
+  selected structured data sections as JSON files, an export manifest, plus
+  actual uploaded logo image files that still exist/are retained at generation
+  time.
 - Generated placeholders:
   app-generated initials placeholders are not included as image files. Export
   metadata may state that public display uses a generated placeholder when no
   uploaded logo exists.
 - Included record posture:
-  all retained data in the selected sections, including active, archived,
-  deprecated, and historical retained records.
+  the requester chooses `current_only` or `include_retained`. Deleted records
+  are excluded from exports.
 - Section selection:
-  admins can select export sections such as organizations, legal details,
-  locations, opening hours, business units, memberships, integrations,
-  branding/logo references, catalogues, audit/export metadata where approved,
-  and uploaded logo image files.
+  admins can select export sections with a select-all convenience. V1
+  Organization exports include business data sections such as organizations,
+  legal details, locations, opening hours, opening-hour exceptions, business
+  units, memberships, branding/logo references, catalogues/reference values,
+  and uploaded logo image files where selected. Integration records and
+  audit/history/change-security events are excluded from normal v1 Organization
+  exports.
 - Structured data formats:
-  both CSV and JSON for v1. CSV supports spreadsheet review; JSON preserves
-  structure, identifiers, relationships, and future machine-readable use.
+  JSON plus actual file assets for v1. CSV/spreadsheet export is deferred.
 - Export manifest:
   required. The manifest must identify export id, generated timestamp,
-  requesting actor, tenant/root scope, selected sections, included files,
-  schema/version, and whether any placeholder logo metadata is represented
-  without image bytes.
+  requesting actor, tenant/root scope, source Organization scope, selected
+  sections, current/retained scope, generation-time data posture, included
+  files, schema/version, and whether any placeholder logo metadata is
+  represented without image bytes.
 - ZIP layout:
-  section folders. V1 should not place every export file flat at the ZIP root.
-  Example folders include `/organizations`, `/legal-details`, `/locations`,
-  `/opening-hours`, `/business-units`, `/memberships`, `/integrations`,
-  `/branding`, `/catalogues`, and `/logos`, with the manifest at the ZIP root.
+  section folders. Branch exports use one ZIP with a folder per included
+  Organization and a manifest that records the branch tree. V1 should not
+  place every export file flat at the ZIP root. Example section folders include
+  `/organizations`, `/legal-details`, `/locations`, `/opening-hours`,
+  `/opening-hour-exceptions`, `/business-units`, `/memberships`, `/branding`,
+  `/reference-values`, and `/logos`, with the manifest at the ZIP root.
 - Source-of-truth posture:
   the generated ZIP is not the durable source of truth. Durable source records
   remain in their owning Organization features and the generated bundle expires
@@ -98,11 +110,14 @@
 - Exact MIME allowlist:
   `application/zip`
 - Maximum file size:
-  250 MB generated ZIP size cap for v1. Exports at or above 100 MB should
-  record a warning metric.
+  No product-facing maximum ZIP size or included Organization count is
+  approved for v1. Technical safety limits may still be required by Technical
+  Steering.
 - Maximum count or storage footprint:
-  Stored export bytes are capped at 2 GB per tenant for v1. Generated export
-  bundles remain available for 24 hours after readiness unless deleted sooner.
+  Generated export bundles remain available for 24 hours after readiness
+  unless deleted sooner. Storage-footprint safety guardrails are deferred to
+  Technical Steering and must not be presented as product-facing caps unless
+  later approved.
 - SVG allowed?
   Not as an uploaded logo source for v1 public logos. If older retained logo
   assets with SVG are ever eligible for export, PRD/API must explicitly decide
@@ -151,7 +166,8 @@
   select a target tenant/account through approved root Organization authority.
 - Cross-tenant deny rule:
   Deny export request, status read, download, and delete when the actor is not
-  authorized for the target tenant/account or export record.
+  authorized for the target tenant/account, source Organization, every included
+  branch Organization, or requester-personal export record.
 - Owning feature's entity-relationship authorization rule:
   Organization export authorizes the actor and selected sections before the
   job reads source records or logo files. Asset ownership alone does not grant
@@ -186,6 +202,19 @@
 - Failure recording:
   every failed export attempt records safe failure category, job id, actor,
   tenant/root scope, selected sections, timestamp, and retry/final status.
+- Cancellation:
+  requesting admins may cancel pending or running exports. Cancellation records
+  a lifecycle transition and either stops the worker or ignores/deletes output
+  if the job is already too far progressed. Exact worker-interrupt semantics
+  are deferred to Technical Steering.
+- Retry:
+  failed exports remain visible with safe failure reason and retry option.
+  Retry may reuse previous sections/options or accept changed options before
+  requeueing.
+- Notifications:
+  ready and failed email notifications are required. Ready notifications may
+  include the export PIN. In-app async/status attention is also required for
+  ready, failed, and action-needed states.
 - Expiry:
   generated bundles remain available for 24 hours after readiness unless an
   authorized admin deletes them earlier.
@@ -286,28 +315,31 @@
 ## Abuse And Cost Controls
 
 - Per-actor rate limit:
-  5 export requests per actor per hour.
+  deferred to Technical Steering as an operational safety limit; no
+  product-facing request cap approved here.
 - Per-tenant rate limit:
-  20 export requests per tenant per day.
+  deferred to Technical Steering as an operational safety limit; no
+  product-facing request cap approved here.
 - Per-tenant storage quota:
-  2 GB stored export bytes per tenant.
+  deferred to Technical Steering as an operational safety limit; no
+  product-facing storage cap approved here.
 - Pending export limit:
-  1 active export job per actor, 3 active export jobs per tenant, and 10 active
-  export jobs platform-wide.
+  deferred to Technical Steering as an operational safety limit; no
+  product-facing active-job cap approved here.
 - Daily export byte limit:
-  Covered by the 2 GB stored export-byte quota and 250 MB per-export cap for
-  v1.
+  deferred to Technical Steering as an operational safety limit.
 - Transfer or bandwidth limit:
-  10 download attempts per export before expiry. Additional transfer/bandwidth
-  alert thresholds may be added after baseline usage exists.
+  deferred to Technical Steering as an operational safety limit. The requester
+  remains the only actor who may download while the export is available.
 - Cleanup policy for expired exports:
   delete generated ZIP bytes after 24-hour expiry; record and retry failures.
 - Cleanup policy for orphaned objects:
   delete failed/abandoned generated ZIP bytes through job cleanup; record and
   retry failures.
 - Alerting or operational signal for abuse:
-  record rate-limit denials, oversized exports, repeated failures, cleanup
-  failures, unusual export volume, and unusual download volume.
+  record technical safety-limit denials where later approved, repeated
+  failures, cleanup failures, unusual export volume, and unusual download
+  volume.
 
 ## Lifecycle And Retention
 
@@ -335,8 +367,10 @@
 
 - Required audit events:
   export request created, job started, job completed, job failed, retry,
-  download, delete, expiry cleanup, cleanup failure, cross-tenant denial,
-  authorization denial, oversized export denial, rate-limit denial.
+  cancellation requested, cancelled, PIN viewed, ready notification sent or
+  failed, failed notification sent or failed, download, delete, expiry cleanup,
+  cleanup failure, cross-tenant denial, authorization denial, and technical
+  safety-limit denial where such limits are later approved.
 - Personal or customer data classification:
   Export may include customer organization structure, legal details,
   memberships linked to users/roles, location data, integrations, branding
@@ -350,7 +384,8 @@
   `visibility:private`, `pii:possible`
 - Forbidden logged fields:
   ZIP bytes, logo bytes, raw export contents, raw bucket URLs, storage
-  credentials, bearer/session tokens, and sensitive internal failure details.
+  credentials, bearer/session tokens, export PIN/password, and sensitive
+  internal failure details.
 - Privacy note required?
   yes
 - Runbook required?
@@ -385,14 +420,16 @@
 
 - Approved scope:
   Private background-generated Organization export ZIP bundles containing
-  selected structured sections as CSV and JSON plus actual uploaded logo image
-  files, organized by section folders with a root manifest, available for 24
-  hours or until manual deletion, with no public delivery and no raw bucket
-  URLs.
+  selected structured sections as JSON plus actual uploaded logo image files,
+  organized by Organization/section folders with a root manifest, available for
+  24 hours or until manual deletion, requester-personal, authenticated,
+  password/PIN protected, with no public delivery and no raw bucket URLs.
 - Explicitly deferred protections:
-  Exact export manifest schema and encrypted/password export delivery remain
-  unresolved. Encrypted export delivery can be reconsidered later if customers
-  need off-platform sharing controls.
+  Exact export manifest schema, ZIP encryption implementation, PIN storage,
+  email secret-handling posture, cancellation worker semantics, and operational
+  safety limits remain unresolved technical steering questions. CSV/spreadsheet
+  export, request-time snapshots, expiry warnings, generated placeholder image
+  files, and normal audit/history export are out of v1 scope.
 - Required follow-up before broader rollout:
   PRD, API contract, data dictionary, permission mapping, runbook, job/cleanup
   tasking, security tests, persistence-backed tests, and QA evidence.

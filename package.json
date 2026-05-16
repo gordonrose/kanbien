@@ -65,6 +65,7 @@
     "test:all": "npm run test && npm run test:traceability"
   },
   "dependencies": {
+    "@zip.js/zip.js": "^2.8.26",
     "bullmq": "^5.76.2",
     "dotenv": "^17.3.1",
     "express": "5.2.1",

@@ -7,11 +7,11 @@
 | Entity key | `organization-business-unit` |
 | Entity name | Organization Business Unit |
 | Dictionary file | `docs/data-dictionary/organization-business-unit.md` |
-| Owning feature | planned `businessUnits` |
-| Ownership status | `planned` |
-| Current entity status | `draft` |
-| Primary authority | `planning-artifact` |
-| Primary source table or record | planned `organization_business_unit`, planned `OrganizationBusinessUnitRecord` |
+| Owning feature | `organizationBusinessUnits` |
+| Ownership status | `implemented-foundation` |
+| Current entity status | `active-v1` |
+| Primary authority | `runtime-source` |
+| Primary source table or record | `organization_business_unit`, `OrganizationBusinessUnitData` |
 | Entity definition lineage | `not-yet-registered` |
 | Latest source review date | `2026-05-14` |
 | Related PRD / steering / ADR | `docs/prd/2026-05-12-0025-organization-domain-foundation.md`; `docs/api-contracts/organization-root-admin.md`; `docs/api-contracts/organization-tenant-admin.md` |
@@ -20,14 +20,14 @@
 
 | Concern | Current posture | Future posture | Source / target |
 | --- | --- | --- | --- |
-| Current source of truth | planning artifacts and source-independent dictionary entry | implemented source, migrations, and registry-backed dictionary truth | PRD, API contracts, this page |
-| Source precedence | Approved PRD/API/data dictionary own planned behavior until implementation exists. | Runtime source and migrations win after implementation; registry rows and generated docs must reconcile. | future `businessUnits` implementation |
-| Runtime persistence owner | planned `businessUnits` | `businessUnits` | future `src/features/businessUnits` |
-| Runtime persistence record | planned `organization_business_unit` | `organization_business_unit` table and record type | future migration and persistence files |
+| Current source of truth | runtime source, migration, focused tests, and this source-independent dictionary entry | registry-backed dictionary truth after future entity-registry migration | `src/features/organizationBusinessUnits`; migration `0055`; focused tests |
+| Source precedence | Runtime source and migrations win for implemented behavior; this page mirrors them. | Registry rows and generated docs must reconcile after future persistence-backed dictionary migration. | `organizationBusinessUnits` implementation |
+| Runtime persistence owner | `organizationBusinessUnits` | `organizationBusinessUnits` | `src/features/organizationBusinessUnits` |
+| Runtime persistence record | `organization_business_unit` | `organization_business_unit` table and record type | `src/features/organizationBusinessUnits/persistence/migrations/0055_create_organization_business_units.sql` |
 | Entity-registry persistence owner | not-yet-registered | `entityBuilder` or approved successor registry | `entityKey = organization-business-unit` |
 | Entity-registry persistence record | not yet backed by registry rows | DB-backed lineage, version, attributes, relationships, lifecycle, and retention rows | future registry records |
-| Markdown posture | `source-independent-planning` | generated output or mirrored transitional artifact | this file |
-| Migration trigger | Business-unit persistence task | source, migrations, API contract, registry rows, and generated Markdown reconciled | future task breakdown / blueprint |
+| Markdown posture | `source-independent-implemented-mirror` | generated output or mirrored transitional artifact | this file |
+| Migration trigger | completed S-008 foundation implementation | source, migrations, API contract, registry rows, and generated Markdown reconciled | S-008 story |
 
 ## Summary
 
@@ -43,7 +43,7 @@
 
 | Field | Value |
 | --- | --- |
-| Primary table or durable record | planned `organization_business_unit` |
+| Primary table or durable record | `organization_business_unit` |
 | Primary key | `organization_business_unit_id` |
 | Stable external key | `organization_business_unit_id` |
 | Versioning model | `mutable-current-record` |
@@ -52,7 +52,7 @@
 | Soft-delete field | `deleted_at` |
 | Archive field | `archived_at`; business state held in `lifecycle_status` |
 | Generated artifact posture | `not-applicable` for source record |
-| Migration posture | `source-independent-planning` |
+| Migration posture | implemented |
 
 ## Capability Inventory
 
@@ -167,10 +167,10 @@
 
 | Concern | Policy | Owner | Trigger | Failure / retry posture | Evidence | Source |
 | --- | --- | --- | --- | --- | --- | --- |
-| Retention | Archived business units remain retained. | `businessUnits` | archive/export | lifecycle failures require audit evidence later. | future tests | PRD |
+| Retention | Archived business units remain retained. | `businessUnits` | archive/export | lifecycle failures require audit evidence later. | focused persistence tests | PRD |
 | Cleanup | No source cleanup job approved in planning slice. | `businessUnits` | not-applicable | not-applicable until approved. | this page | this page |
 | Export | Included in private Organization exports when selected and authorized. | `organizationExports` reads via business-unit seam | export request | export failures recorded by export job. | private export decision | asset decision |
-| Delete / purge | Soft delete only in this planning page. | `businessUnits` | explicit delete | failure evidence required later. | future tests | AGENTS defaults |
+| Delete / purge | Soft delete only in this planning page. | `businessUnits` | explicit delete | failure evidence required later. | focused persistence tests | AGENTS defaults |
 | Legal hold | Persistent source data may be held; generated export copies follow export-copy policy. | future compliance owner | hold placement | cleanup must not remove held source data. | future runbook | Organization decisions |
 
 ## Authorization And Tenant Boundary
@@ -215,10 +215,10 @@
 | Standard / Rule | Applies? | Repo Enforcement | Test / Evidence | Notes |
 | --- | --- | --- | --- | --- |
 | Durable domain data rule | yes | enforced-by-maintained-artifact | this page; PRD | Planned durable child record. |
-| System-managed identifiers, timestamps, lifecycle, and audit fields | yes | planned | future implementation tests | IDs/timestamps/lifecycle fields system-managed. |
-| Normalization, uniqueness, and searchable-storage rules | yes | planned | PRD/API contracts | Name uniqueness not approved here. |
-| Soft-delete and normal-read visibility | yes | planned | future tests | Normal reads exclude archived/deleted rows. |
-| Tenant boundary / object-level authorization | yes | planned | future authz tests | Same tenant/account and Organization. |
+| System-managed identifiers, timestamps, lifecycle, and audit fields | yes | implemented | focused persistence tests | IDs/timestamps/lifecycle fields system-managed. |
+| Normalization, uniqueness, and searchable-storage rules | yes | implemented | PRD/API contracts and focused tests | Name uniqueness not approved here. |
+| Soft-delete and normal-read visibility | yes | implemented | focused persistence tests | Normal reads exclude archived/deleted rows. |
+| Tenant boundary / object-level authorization | yes | implemented | focused persistence tests | Same tenant/account and Organization. |
 | Retention, cleanup, export/delete, and legal-hold posture | yes | documented-not-enforced | this page; export decision | Source retention/runbook not implemented. |
 | Auditability and operational evidence | yes | planned | future audit tests | Audit sink/schema not defined here. |
 

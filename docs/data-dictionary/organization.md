@@ -7,13 +7,13 @@
 | Entity key | `organization` |
 | Entity name | Organization |
 | Dictionary file | `docs/data-dictionary/organization.md` |
-| Owning feature | planned `organizationCore` |
-| Ownership status | `planned` |
-| Current entity status | `draft` |
+| Owning feature | `organizationCore` |
+| Ownership status | `implemented-foundation` |
+| Current entity status | `active-v1-foundation` |
 | Primary authority | `planning-artifact` |
-| Primary source table or record | planned `organization`, planned `OrganizationRecord` |
+| Primary source table or record | `organization`, `OrganizationRecord` |
 | Entity definition lineage | `not-yet-registered` |
-| Latest source review date | `2026-05-14` |
+| Latest source review date | `2026-05-15` |
 | Related PRD / steering / ADR | `docs/prd/2026-05-12-0025-organization-domain-foundation.md`; `docs/workspace/technical-steering/2026-05-12-organization-domain-foundation-steering.md`; `docs/api-contracts/organization-root-admin.md`; `docs/api-contracts/organization-tenant-admin.md` |
 
 ## Source Authority And Future Persistence
@@ -21,9 +21,9 @@
 | Concern | Current posture | Future posture | Source / target |
 | --- | --- | --- | --- |
 | Current source of truth | planning artifacts and source-independent data dictionary entry | implemented source, migrations, and generated/registry-backed dictionary truth after the feature is built | PRD, API contracts, this page |
-| Source precedence | Until implementation exists, approved PRD/API/asset decisions and this data dictionary entry own planned Organization truth; if these disagree, update the planning artifact chain before implementation. | Once implemented, source code, migrations, API contracts, and persisted registry rows must agree; applied migrations and runtime source win over stale prose, with docs regenerated or corrected. | AGENTS source/code and migration safety rules; future `organizationCore` implementation |
-| Runtime persistence owner | planned `organizationCore` | `organizationCore` | future `src/features/organizationCore` |
-| Runtime persistence record | planned `organization`, planned `OrganizationRecord` | `organization` table and Organization repository/domain record type | future zero-padded migration and persistence files |
+| Source precedence | Runtime source, migration, API contracts, and this data dictionary entry must now stay aligned for S-004 core Organization behavior. | Persisted registry rows remain future work; once introduced, source code, migrations, API contracts, and registry rows must agree. | AGENTS source/code and migration safety rules; `organizationCore` implementation |
+| Runtime persistence owner | `organizationCore` | `organizationCore` | `src/features/organizationCore` |
+| Runtime persistence record | `organization`, `OrganizationRecord` | `organization` table and Organization repository/domain record type | `src/features/organizationCore/persistence/migrations/0051_create_organization_core.sql` |
 | Entity-registry persistence owner | `not-yet-registered`; Markdown is the planning bridge | `entityBuilder` or approved successor entity registry | `entityKey = organization` |
 | Entity-registry persistence record | not yet backed by entity-definition lineage/version rows | DB-backed entity lineage, version, attributes, relationships, lifecycle, and retention rows | future `entityBuilder`/registry records |
 | Markdown posture | `source-independent-planning` | generated output or mirrored transitional artifact from DB-backed entity registry | `docs/data-dictionary/organization.md` |
@@ -33,7 +33,7 @@
 
 | Field | Value |
 | --- | --- |
-| Plain-language description | Planned durable tenant-owned business entity record representing an official organization inside one customer/account. |
+| Plain-language description | Durable tenant-owned business entity record representing an official organization inside one customer/account. |
 | Business purpose | Gives the Organization domain a stable root record for hierarchy, child business records, search, logo relationships, and exports. |
 | Durable fact boundary | Organization identity, tenant/account ownership, parent relationship, active name uniqueness, lifecycle visibility, archive/delete posture, and source-data export behavior must remain stable on this entity or owned child records. |
 | Primary users / actors | Root admins, tenant admins, Organization-domain services, asset/logo consumers, search/export jobs, audit/evidence reviewers, and future support operators. |
@@ -43,7 +43,7 @@
 
 | Field | Value |
 | --- | --- |
-| Primary table or durable record | planned `organization` |
+| Primary table or durable record | `organization` |
 | Primary key | `organization_id` |
 | Stable external key | `organization_id`; no separate human-stable slug approved for v1 |
 | Versioning model | `mutable-current-record` with audit/history evidence expected outside this page |
@@ -52,7 +52,7 @@
 | Soft-delete field | `deleted_at` |
 | Archive field | `archived_at`; business state held in `lifecycle_status` |
 | Generated artifact posture | `not-applicable` for the source record; exports are generated private copies |
-| Migration posture | `source-independent-planning` |
+| Migration posture | `implemented-foundation`; later child/entity-registry migration remains future work |
 
 ## Capability Inventory
 
@@ -131,35 +131,35 @@
 | `organization.parent` | `parent` | Organization | Organization | many-to-one optional | Parent must be same tenant/account; depth <= 10; cycles denied. | Archive/move/delete decisions must account for children and branch posture. | Hierarchy tree and parent selector. | PRD Hierarchy Requirements |
 | `organization.children` | `child` | Organization | Organization | one-to-many | Children must remain same tenant/account and within max depth. | Parent archive can archive branch or move children to another valid parent. | Child list/tree branch controls. | PRD Hierarchy Requirements |
 | `organization.reference-type` | `reference` | Organization | Organization reference value | many-to-one optional | Reference values are system-owned; root admins manage; tenant admins use active approved values. | Deprecated/replaced values must preserve historical meaning. | Reference-value selector and retained label display. | PRD Reference Values; root-admin API contract |
-| `organization.logo` | `reference` | Organization | Asset / Organization logo relationship | one-to-many by logo type over time; v1 uses one logo type | Organization owns entity authorization; `assets` owns asset invariants. | Deleting logo relationship falls back to initials placeholder. | Logo panel/uploader and public delivery preview. | asset decision records; API contracts |
-| `organization.child-records` | `child` | Organization | legal profiles, locations, business units, integrations | one-to-many | Child features must validate Organization existence and tenant ownership through `organizationCore` seam. | Archive/delete and export behavior must account for child records. | Separate child areas scoped under Organization detail. | PRD scope; API contracts |
+| `organization.logo` | `reference` | Organization | Asset / Organization logo relationship | one current primary logo in v1; future logo types require expansion | Organization owns entity authorization; `assets` owns asset invariants. | Deleting logo relationship falls back to initials placeholder. | Logo panel/uploader and public delivery preview. | asset decision records; API contracts |
+| `organization.child-records` | `child` | Organization | legal profiles, locations, business units, future integrations if revived | one-to-many | Child features must validate Organization existence and tenant ownership through `organizationCore` seam. | Archive/delete and export behavior must account for active v1 child records; integrations are deferred. | Separate child areas scoped under Organization detail. | PRD scope; API contracts |
 | `organization.export` | `evidence-link` | Organization | private export bundle | one-to-many | Export must be requested by authorized root/tenant actor for selected tenant/account sections. | Generated export copies expire/delete without changing source Organization data. | Export history/download area. | private export asset decision; API contracts |
 
 ## Indexes And Constraints
 
 | Name | Type | Field(s) | Definition / rule | Why it matters | Source |
 | --- | --- | --- | --- | --- | --- |
-| `organization_pkey` | `primary key` | `organization_id` | Primary key on `organization_id`. | Stable identity for child records, hierarchy, search, exports, audit, and logo relationships. | planned |
+| `organization_pkey` | `primary key` | `organization_id` | Primary key on `organization_id`. | Stable identity for child records, hierarchy, search, exports, audit, and logo relationships. | implemented |
 | `fk_organization_tenant` | `foreign key` | `tenant_id` | `tenant_id` references owning tenant/customer account. | Tenant boundary enforcement depends on durable tenant ownership. | PRD Authorization Requirements |
 | `fk_organization_parent` | `foreign key` | `parent_organization_id` | References `organization.organization_id`. | Parent/child relationships must be durable. | PRD Hierarchy Requirements |
 | `same_tenant_parent_rule` | `code-enforced validation` | `tenant_id`, `parent_organization_id` | Parent and child must share `tenant_id`. | Prevents cross-tenant hierarchy leaks and authority confusion. | PRD Authorization Requirements; `TC-ORG-FOUNDATION-UNIT-001` |
 | `organization_depth_and_cycle_rule` | `code-enforced validation` | `parent_organization_id` | Hierarchy depth must not exceed 10 and cycles are denied. | Keeps tree operations bounded and prevents recursive corruption. | PRD Hierarchy Requirements; `TC-ORG-FOUNDATION-UNIT-001` |
-| `ix_organization_tenant_lifecycle` | `index` | `tenant_id`, `lifecycle_status`, `deleted_at` | Planned visibility index for tenant-scoped reads. | Supports normal and retained-record visibility without full scans. | inferred from PRD/API contracts |
-| `ix_organization_parent` | `index` | `tenant_id`, `parent_organization_id` | Planned hierarchy lookup index. | Supports child lookup, branch archive, move-children, and hierarchy rendering. | PRD Hierarchy Requirements |
-| `ix_organization_normalized_name` | `index` | `tenant_id`, `normalized_name` | Planned search/filter index. | Supports deterministic name search and filters. | PRD Search Requirements |
-| `uq_organization_tenant_normalized_name_active` | `partial unique` | `tenant_id`, `normalized_name` | Unique where Organization is active and not soft-deleted. | Allows different tenants/accounts to share names while preventing duplicate active names inside one tenant/account. | product decision on 2026-05-14; AGENTS uniqueness defaults |
+| `ix_organization_tenant_lifecycle` | `index` | `tenant_id`, `lifecycle_status`, `updated_at` where not deleted | Visibility index for tenant-scoped active reads. | Supports normal visibility without full scans. | implemented |
+| `ix_organization_tenant_parent` | `index` | `tenant_id`, `parent_organization_id` where not deleted | Hierarchy lookup index. | Supports child lookup, branch archive, move-children, and hierarchy rendering. | implemented |
+| `ix_organization_tenant_deleted` | `index` | `tenant_id`, `deleted_at` where deleted | Deleted-record lookup index. | Supports explicit deleted-record maintenance and future review. | implemented |
+| `uq_organization_tenant_active_normalized_name` | `partial unique` | `tenant_id`, `normalized_name` | Unique where Organization is active and not soft-deleted. | Allows different tenants/accounts to share names while preventing duplicate active names inside one tenant/account. | implemented |
 
 ## Normalization And Validation Rules
 
 | Rule key | Field(s) | Rule | Failure behavior / error | Source |
 | --- | --- | --- | --- | --- |
-| `organization.name.trim-lowercase` | `name`, `normalized_name` | Trim `name`; store lowercase `normalized_name` for uniqueness/search. | `ORGANIZATION_INVALID_REQUEST` for invalid shape; `ORGANIZATION_NAME_ALREADY_EXISTS` for duplicate active normalized name. | AGENTS normalization/search defaults; PRD/API contracts |
-| `organization.name.required` | `name` | Empty strings are rejected, not converted to null. | `ORGANIZATION_INVALID_REQUEST`. | AGENTS normalization defaults |
+| `organization.name.trim-lowercase` | `name`, `normalized_name` | Trim `name`; store lowercase `normalized_name` for uniqueness/search. | `INVALID_REQUEST` for invalid shape; `ORGANIZATION_NAME_ALREADY_EXISTS` for duplicate active normalized name. | AGENTS normalization/search defaults; PRD/API contracts |
+| `organization.name.required` | `name` | Empty strings are rejected, not converted to null. | `INVALID_REQUEST`. | AGENTS normalization defaults |
 | `organization.name.tenant-active-unique` | `tenant_id`, `normalized_name`, `lifecycle_status`, `deleted_at` | Active non-deleted names are unique within one tenant/account only. | `ORGANIZATION_NAME_ALREADY_EXISTS`. | product decision on 2026-05-14 |
 | `organization.parent.same-tenant` | `tenant_id`, `parent_organization_id` | Parent and child must share tenant/account. | `ORGANIZATION_TENANT_MISMATCH`. | PRD Authorization Requirements |
-| `organization.parent.no-cycle` | `parent_organization_id` | Parent cannot be self or descendant. | `ORGANIZATION_HIERARCHY_CYCLE`. | PRD Hierarchy Requirements |
-| `organization.parent.max-depth` | `parent_organization_id` | Hierarchy depth must not exceed 10. | `ORGANIZATION_HIERARCHY_DEPTH_EXCEEDED`. | PRD Hierarchy Requirements |
-| `organization.system-managed-fields` | IDs, tenant authority, timestamps, lifecycle fields | Clients cannot override system-managed fields through create/update bodies. | `ORGANIZATION_INVALID_REQUEST`. | AGENTS system-managed field defaults; API contracts |
+| `organization.parent.no-cycle` | `parent_organization_id` | Parent cannot be self or descendant. | `ORGANIZATION_HIERARCHY_CONFLICT`. | PRD Hierarchy Requirements |
+| `organization.parent.max-depth` | `parent_organization_id` | Hierarchy depth must not exceed 10. | `ORGANIZATION_HIERARCHY_CONFLICT`. | PRD Hierarchy Requirements |
+| `organization.system-managed-fields` | IDs, tenant authority, timestamps, lifecycle fields | Clients cannot override system-managed fields through create/update bodies. | `INVALID_REQUEST`. | AGENTS system-managed field defaults; API contracts |
 
 ## Search, Filter, And Sort Model
 
@@ -170,7 +170,7 @@
 | `parent_organization_id` | exact, facet | scalar self-reference | `ix_organization_parent` | Supports hierarchy tree, branch archive, and move-child workflows. | PRD Hierarchy Requirements |
 | `lifecycle_status` | exact, facet | scalar | `ix_organization_tenant_lifecycle` | Normal reads exclude archived unless explicitly requested/authorized. | PRD Core Concepts |
 | `deleted_at` | exact null/non-null, range, sort | scalar timestamp | `ix_organization_tenant_lifecycle` | Normal reads exclude deleted rows. | AGENTS visibility defaults |
-| `created_at`, `updated_at`, `archived_at` | range, sort | scalar timestamps | planned sort/filter indexes as needed | Supports deterministic pagination, audit review, and retained-record filtering. | AGENTS pagination/sorting defaults |
+| `created_at`, `updated_at`, `archived_at` | range, sort | scalar timestamps | `updated_at` participates in current visibility ordering; broader retained-record indexes can be added when retained reads are implemented | Supports deterministic pagination, audit review, and retained-record filtering. | AGENTS pagination/sorting defaults |
 
 ## Mutation Semantics
 
@@ -224,7 +224,7 @@
 | Data classification | confidential tenant organization metadata | PRD; AGENTS tenant boundary defaults |
 | Privacy / PII relevance | Organization identity is not inherently personal data, but can be business-sensitive and PII-adjacent when combined with memberships, contacts, or legal/location child records. | PRD; data dictionary planning |
 | Security relevance | moderate to high: tenant boundary, hierarchy authorization, logo asset relationship, export, and retained-record access require integrity protection. | AGENTS tenant/asset defaults; API contracts |
-| Audit relevance | yes: create, update, move, archive, restore, delete, logo changes, export, and denied access require evidence. | PRD; planned test cases |
+| Audit relevance | yes: S-004 records create, update, move, archive, restore, and delete events in `organization_audit_event`; logo/export audit remains future slice work. | PRD; executable S-004 tests |
 | Retention / cleanup posture | archived and retained source records remain available through explicit retained-record/export capabilities; generated export copies expire/delete separately. | PRD; private export asset decision |
 | Export / deletion posture | private exports include selected source data; generated export copies are not source truth and expire/delete independently. | private export asset decision |
 | Legal hold posture | legal and incident holds affect persistent source data and audit evidence, not temporary generated export copies. | Organization discovery decision |
@@ -234,24 +234,23 @@
 
 | Standard / Rule | Applies? | Repo Enforcement | Test / Evidence | Notes |
 | --- | --- | --- | --- | --- |
-| Durable domain data rule | yes | enforced-by-maintained-artifact | This page; PRD; API contracts | Organization is documented as planned durable source data owned by `organizationCore`. |
-| System-managed identifiers, timestamps, lifecycle, and audit fields | yes | planned | PRD/API contracts; executable tests not implemented yet | `organization_id`, `created_at`, `updated_at`, `deleted_at`, and lifecycle fields must be generated or maintained by the system. |
-| Normalization, uniqueness, and searchable-storage rules | yes | planned | product decision on 2026-05-14; PRD Search Requirements; planned implementation must add validation and storage index proof | Same normalized name is allowed across tenants/accounts but denied within one tenant/account for active rows. |
-| Soft-delete and normal-read visibility | yes | planned | PRD/API contracts; executable tests not implemented yet | Normal reads exclude archived and deleted rows by default. |
-| Tenant boundary / object-level authorization | yes | planned | planned security cases `TC-ORG-FOUNDATION-SEC-001`; integration cases `TC-ORG-FOUNDATION-INT-001`, `TC-ORG-FOUNDATION-INT-002` | Root and tenant authority remain distinct; current/selected tenant context is required. |
+| Durable domain data rule | yes | implemented-foundation | This page; PRD; API contracts; `src/features/organizationCore` | Organization is durable source data owned by `organizationCore`. |
+| System-managed identifiers, timestamps, lifecycle, and audit fields | yes | implemented-foundation | PRD/API contracts; S-004 tests | `organization_id`, `created_at`, `updated_at`, `deleted_at`, and lifecycle fields are generated or maintained by the system. |
+| Normalization, uniqueness, and searchable-storage rules | yes | implemented-foundation | product decision on 2026-05-14; PRD Search Requirements; S-004 source/tests | Same normalized name is allowed across tenants/accounts but denied within one tenant/account for active rows. |
+| Soft-delete and normal-read visibility | yes | implemented-foundation | PRD/API contracts; S-004 source/tests | Normal reads exclude archived and deleted rows by default. |
+| Tenant boundary / object-level authorization | yes | implemented-foundation | security case `TC-ORG-S004-SEC-001`; domain and integration proof | Root and tenant authority remain distinct; current/selected tenant context is required. |
 | Retention, cleanup, export/delete, and legal-hold posture | yes | documented-not-enforced | `docs/workspace/asset-consumer-decisions/2026-05-12-organization-private-export-bundle.md`; this page | Persistent source data retention needs implementation/runbook proof; generated export copies expire/delete on schedule. |
-| Auditability and operational evidence | yes | planned | planned audit case `TC-ORG-FOUNDATION-AUD-001`; future runbook/test evidence | Audit sink/schema is not defined by this entity page. |
+| Auditability and operational evidence | yes | implemented-foundation | `organization_audit_event`; `TC-ORG-S004-UNIT-003`; `TC-ORG-S004-INT-001` | S-004 source lifecycle events are recorded; denied-access audit remains covered by root authz middleware where applicable. |
 
 ## Related Errors
 
 | Error code | Message | Field / object | Reason | Source |
 | --- | --- | --- | --- | --- |
-| `ORGANIZATION_INVALID_REQUEST` | request is missing or invalid Organization fields. | varies | invalid body, invalid query, unexpected field, empty string, or unsupported lifecycle request | API contracts; AGENTS defaults |
+| `INVALID_REQUEST` | request is missing or invalid Organization fields. | varies | invalid body, invalid query, unexpected field, empty string, or unsupported lifecycle request | API contracts; AGENTS defaults |
 | `ORGANIZATION_NOT_FOUND` | organization cannot be found for the authorized context. | `organizationId` | missing, archived/deleted not visible through normal route, or wrong tenant/account | API contracts |
 | `ORGANIZATION_TENANT_MISMATCH` | organization does not belong to the current or selected tenant. | `tenantId` or `organizationId` | cross-tenant access or relationship attempt | API contracts; PRD Authorization Requirements |
 | `ORGANIZATION_NAME_ALREADY_EXISTS` | organization name is already used by another active organization in this tenant/account. | `name` | duplicate active `normalized_name` within the same `tenant_id` | product decision on 2026-05-14 |
-| `ORGANIZATION_HIERARCHY_DEPTH_EXCEEDED` | hierarchy depth would exceed the approved limit. | `parentOrganizationId` | depth greater than 10 | PRD Hierarchy Requirements |
-| `ORGANIZATION_HIERARCHY_CYCLE` | hierarchy operation would create a loop. | `parentOrganizationId` | parent is the same organization or a descendant | PRD Hierarchy Requirements |
+| `ORGANIZATION_HIERARCHY_CONFLICT` | hierarchy depth, parent lifecycle, or cycle rule would be violated. | `parentOrganizationId` | depth greater than 10, parent missing/archived/deleted, parent is the same organization, or parent is a descendant | PRD Hierarchy Requirements |
 | `ORGANIZATION_LIFECYCLE_CONFLICT` | requested operation conflicts with lifecycle state. | `lifecycleStatus` | normal update blocked by archive/delete state, invalid restore, or parent/child lifecycle violation | PRD lifecycle requirements |
 
 ## Source And Evidence Links

@@ -191,182 +191,182 @@ remain active because they are backed by current source tests.
 
 - `TC-ORG-FOUNDATION-UNIT-012`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: existing executable reference-value lifecycle proof remains current.
 
 - `TC-ORG-FOUNDATION-INT-008`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: existing executable reference-value persistence proof remains current.
 
 - `TC-ORG-FOUNDATION-SEC-003`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: existing executable reference-value authorization proof remains current.
 
 - `TC-ORG-S004-UNIT-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: organization core unit proof for tenant-level active-name uniqueness.
 
 - `TC-ORG-S004-UNIT-002`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: organization core unit proof for cycle and depth validation.
 
 - `TC-ORG-S004-UNIT-003`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: organization core unit proof for branch archive and audit evidence.
 
 - `TC-ORG-S004-UNIT-004`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: organization core unit proof for child movement during archive.
 
 - `TC-ORG-S004-INT-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: organization core persistence proof for hierarchy, lifecycle, and audit state.
 
 - `TC-ORG-S004-SEC-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: organization core route/authentication proof remains current.
 
 - `TC-ORG-S004-SEC-002`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: organization core system-managed field and malformed input proof remains current.
 
 - `TC-ORG-S005-INT-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: legal profile persistence proof remains current.
 
 - `TC-ORG-S005-SEC-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: legal/location root authentication and capability proof remains current.
 
 - `TC-ORG-S005-SEC-002`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: legal/location system-managed field and malformed input proof remains current.
 
 - `TC-ORG-S006-INT-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: location persistence proof with coordinates and lifecycle state remains current.
 
 - `TC-ORG-S007-INT-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: opening-hours slot, exception, effective-hours, and audit persistence proof remains current.
 
 - `TC-ORG-S007-SEC-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: opening-hours authentication and capability proof remains current.
 
 - `TC-ORG-S007-SEC-002`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: opening-hours system-managed field proof remains current.
 
 - `TC-ORG-S008-S009-INT-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: business-unit hierarchy and membership persistence proof remains current.
 
 - `TC-ORG-S012-SEC-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: public logo delivery proof remains current.
 
 - `TC-ORG-S012-SEC-002`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: unsupported public logo type denial proof remains current.
 
 - `TC-ORG-S013-INT-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: grouped organization search persistence proof remains current.
 
 - `TC-ORG-S013-INT-002`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: exact result-type, organization filter, and paging proof remains current.
 
 - `TC-ORG-S013-SEC-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: organization search authentication and capability proof remains current.
 
 - `TC-ORG-S013-SEC-002`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: unsupported organization search filter denial proof remains current.
 
 - `TC-ORG-S015-UNIT-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: export expiry-at-PIN-view proof remains current.
 
 - `TC-ORG-S015-UNIT-002`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: export cleanup failure recording proof remains current.
 
 - `TC-ORG-S015-UNIT-003`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: notification failure without invalidating ready export proof remains current.
 
 - `TC-ORG-S015-UNIT-004`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: expired export byte cleanup and PIN scrubbing proof remains current.
 
 - `TC-ORG-S015-UNIT-005`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: cleanup retry cap and operator-review proof remains current.
 
 - `TC-ORG-S015-UNIT-006`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: export cleanup job registration proof remains current.
 
 - `TC-ORG-S015-UNIT-007`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: stale running export timeout classification proof remains current.
 
 - `TC-ORG-S015-UNIT-008`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: export timeout sweep job registration proof remains current.
 
 - `TC-ORG-S015-UNIT-009`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: implemented Organization sections in generated export bundle proof remains current.
 
 - `TC-ORG-S015-INT-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: requester-bound export lifecycle persistence proof remains current.
 
 - `TC-ORG-S015-INT-002`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: private password-protected ZIP generation and download evidence proof remains current.
 
 - `TC-ORG-S015-SEC-001`
   Version: v1
-  Lifecycle Status: pending-review
+  Lifecycle Status: active
   Reason: private export authentication and capability proof remains current.
 
 ## Open Verification Blockers

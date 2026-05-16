@@ -61,17 +61,17 @@ the existing manifest contract.
 
 | Planned Feature | Responsibility | First Owning Story | Implementation Posture |
 | --- | --- | --- | --- |
-| `organizationCore` | Official organization identity, parent/child hierarchy, depth and cycle rules, archive/restore/move behavior. | `S-004` | planned; no source folder yet |
-| `organizationLegalDetails` | One active legal profile per organization and legal-detail lifecycle rules. | `S-005` | planned; no source folder yet |
-| `organizationLocations` | Organization location records, location type selection, head-office booleans, and location lifecycle. | `S-006` | planned; no source folder yet |
-| `locationOpeningHours` | Optional weekly opening-hour records attached to real locations. | `S-006` | planned; no source folder yet |
-| `businessUnits` | Organization unit hierarchy with max depth and move/archive behavior. | `S-007` | planned; no source folder yet |
-| `businessUnitMemberships` | Real user/role membership relationships for business units. | `S-007` | planned; no source folder yet |
-| `organizationIntegrations` | High-level official integration presence records without secrets or deep settings. | `S-008` | planned; no source folder yet |
-| `organizationReferenceCatalogues` | System-owned reference values editable by root admins and usable by tenant admins. | `S-009` | planned; no source folder yet |
-| `organizationBrandingReferences` | Organization logo relationships, placeholder behavior, alt text, and consuming-feature authorization around asset links. | `S-010` | planned; no source folder yet |
-| `organizationSearch` | Separated-by-type search and filter read model across approved Organization-domain record types. | `S-011` | planned; no source folder yet |
-| `organizationExports` | Private background ZIP export requests, status, download, cleanup, and failure evidence. | `S-012` | planned; no source folder yet |
+| `organizationCore` | Official organization identity, parent/child hierarchy, depth and cycle rules, archive/restore/move behavior. | `S-004` | implemented-foundation |
+| `organizationLegalDetails` | One active legal profile per organization and legal-detail lifecycle rules. | `S-005` | implemented-foundation |
+| `organizationLocations` | Organization location records, location type selection, head-office booleans, and location lifecycle. | `S-006` | implemented-foundation |
+| `organizationOpeningHours` | Optional weekly opening-hour and exception records attached to real locations. | `S-007` | implemented-foundation |
+| `organizationBusinessUnits` | Organization unit hierarchy with max depth and move/archive behavior. | `S-008` | implemented-foundation |
+| `organizationBusinessUnitMemberships` | Real business-unit membership relationships for business units, with individual/person targets deferred. | `S-009` | implemented-foundation-partial-targets |
+| `organizationIntegrations` | High-level official integration presence records without secrets or deep settings. | `S-017` | deferred; no source folder yet |
+| `organizationReferenceCatalogues` | System-owned reference values editable by root admins and usable by tenant admins. | `S-010` | implemented-foundation |
+| `organizationBrandingReferences` | Organization logo relationships, placeholder behavior, alt text, and consuming-feature authorization around asset links. | `S-012` | blocked; no source folder yet |
+| `organizationSearch` | Separated-by-type search and filter read model across approved Organization-domain record types. | `S-013` | planned; no source folder yet |
+| `organizationExports` | Private background ZIP export requests, status, download, cleanup, and failure evidence. | `S-015` | blocked; no source folder yet |
 | `organizationPublicSummaries` | Future narrow public-facing organization summaries after core behavior exists. | `S-014` | deferred; no source folder yet |
 
 ## Manifest Rule For Later Implementation

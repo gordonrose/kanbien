@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "featureName": "organizationExports",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createOrganizationExportsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for private Organization export request, status, PIN, download, retry, cancel, delete, and generation behavior."
+    },
+    {
+      "seamId": "organization-exports-service-type",
+      "symbol": "OrganizationExportsService",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "experimental",
+      "description": "Domain service contract for Organization export lifecycle and generated ZIP delivery."
+    },
+    {
+      "seamId": "organization-export-job-types",
+      "symbol": "createOrganizationExportJobTypes",
+      "path": "index.ts",
+      "kind": "job-type-factory",
+      "stability": "experimental",
+      "description": "Job type factory for worker-driven private Organization export generation and generated-bundle cleanup."
+    },
+    {
+      "seamId": "organization-export-recurring-schedules",
+      "symbol": "createOrganizationExportRecurringSchedules",
+      "path": "index.ts",
+      "kind": "job-schedule-factory",
+      "stability": "experimental",
+      "description": "Code-declared recurring scheduler definitions for Organization export cleanup and timeout sweeps."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "assets",
+      "seamIds": ["service"],
+      "description": "Export generation reads approved logo bytes through the public asset service seam."
+    },
+    {
+      "featureName": "organizationBrandingReferences",
+      "seamIds": ["organization-branding-references-service-type"],
+      "description": "Export generation reads current logo relationship metadata through the branding service seam."
+    },
+    {
+      "featureName": "organizationCore",
+      "seamIds": ["organization-core-service-type"],
+      "description": "Export request and generation validate source Organization authority through Organization Core."
+    },
+    {
+      "featureName": "organizationBusinessUnits",
+      "seamIds": ["organization-business-units-service-type"],
+      "description": "Export generation reads business-unit projection data through the business units service."
+    },
+    {
+      "featureName": "organizationBusinessUnitMemberships",
+      "seamIds": ["organization-business-unit-memberships-service-type"],
+      "description": "Export generation reads business-unit membership projection data through the memberships service."
+    },
+    {
+      "featureName": "organizationLegalDetails",
+      "seamIds": ["organization-legal-details-service-type"],
+      "description": "Export generation reads legal profile projection data through the legal details service."
+    },
+    {
+      "featureName": "organizationLocations",
+      "seamIds": ["organization-locations-service-type"],
+      "description": "Export generation reads location projection data through the locations service."
+    },
+    {
+      "featureName": "organizationOpeningHours",
+      "seamIds": ["organization-opening-hours-service-type"],
+      "description": "Export generation reads weekly slot and exception projection data through the opening hours service."
+    },
+    {
+      "featureName": "organizationReferenceCatalogues",
+      "seamIds": ["organization-reference-catalogues-service-type"],
+      "description": "Export generation reads reference value projection data through the reference catalogues service."
+    },
+    {
+      "featureName": "jobProcessing",
+      "seamIds": ["enqueue-service", "dispatcher-worker-runtime", "job-lifecycle-hardening", "recurring-scheduler"],
+      "description": "Export requests enqueue background generation jobs, classify stale running work, and declare cleanup/timeout recurring schedules through the platform job-processing seams."
+    },
+    {
+      "featureName": "notificationDelivery",
+      "seamIds": ["notification-email-writer"],
+      "description": "Export generation may send ready and failed notification emails through the notification delivery seam."
+    },
+    {
+      "featureName": "tenantAuth",
+      "seamIds": ["session-lookup-repository-factory", "session-lookup-repository-type"],
+      "description": "Tenant-admin export routes require an active tenant session context."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing requester-only access, PIN handling, ZIP encryption, private download headers, expiry/delete behavior, or manifest contents can break security and export consumers."
+  ]
+}

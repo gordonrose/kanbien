@@ -6,7 +6,7 @@ Define the first-version Organization domain foundation for Kanbien.
 
 V1 gives root admins and tenant admins a governed way to manage the business
 structure for a customer/account: organizations, legal details, locations,
-weekly hours, business units, memberships, high-level integrations, reference
+weekly hours, opening-hour exceptions, business units, memberships, reference
 values, public logos, search, and private exports.
 
 This PRD is a requirements artifact only. It does not approve runtime
@@ -41,8 +41,7 @@ V1 defines requirements for:
 - organization locations
 - optional weekly opening hours
 - business-unit hierarchy
-- business-unit memberships to real users and roles
-- high-level organization integration records
+- business-unit memberships to real individual users and business units
 - system-owned Organization reference values
 - public organization logo handling
 - separated-by-type Organization search
@@ -62,14 +61,19 @@ V1 does not include:
 - approved permission keys
 - app screen implementation
 - import or bulk upload
-- holiday, seasonal, or temporary opening-hour exceptions
+- recurring holiday calendars, seasonal schedules, and external holiday feeds
+- high-level organization integration records
 - deep integration setup, credentials, endpoints, webhook secrets, payload
   examples, or provider configuration
 - multiple active legal profiles per organization
 - public non-logo Organization pages
 - admin-visible change-history screens
 - generic public file hosting or generic asset-library behavior
-- password-protected export zip files
+- CSV/spreadsheet export files for v1
+- generated placeholder image files in export bundles
+- audit/history/change-security event export in normal Organization exports
+- request-time export snapshots
+- expiry warning notifications
 
 ## Actors
 
@@ -140,11 +144,36 @@ Weekly opening hours describe recurring weekly availability for a location.
 Rules:
 
 - opening hours are optional
-- v1 supports weekly slots only
-- holiday, seasonal, special closure, or temporary exception behavior is out of
-  scope
-- the PRD-derived test plan must cover valid weekdays, time ranges, optional
-  absence, and invalid values once the data dictionary names exact fields
+- v1 weekly hours are weekday-specific slots
+- a location may have multiple slots for the same weekday
+- each slot has a weekday, slot order, local opening time, and local closing
+  time
+- no active slots for a weekday means the location is closed on that weekday
+  under the normal recurring schedule
+- overlapping active slots for the same location and weekday are denied
+- overnight slots are deferred unless explicitly approved later
+- the PRD-derived test plan must cover valid weekdays, multiple slots,
+  ordering, non-overlap, local time ranges, optional absence, and invalid values
+
+### Opening Hours Exceptions
+
+Opening-hours exceptions describe date-specific changes that supersede the
+normal weekly schedule for a location.
+
+Rules:
+
+- exceptions are optional
+- exceptions always win over recurring weekly slots for the affected date or
+  date/time range
+- v1 exception types are `closed_day`, `closed_time_slot`,
+  `special_opening_slot`, and `replacement_day_schedule`
+- deterministic precedence is `closed_day`, then `replacement_day_schedule`,
+  then `closed_time_slot`, then `special_opening_slot`
+- exception times are local date and local time values tied to the location
+- recurring holiday calendars, seasonal schedules, and external holiday feeds
+  are deferred
+- the PRD-derived test plan must cover exception precedence, date validation,
+  non-overlap where applicable, and effective-hours behavior
 
 ### Business Unit
 
@@ -183,15 +212,15 @@ Rules:
 
 ### Integration Record
 
-An integration record states that an organization has an official high-level
-integration relationship.
+Integration records are deferred from v1 implementation.
 
 Rules:
 
-- v1 stores high-level official facts only
-- credentials, endpoints, webhook secrets, payload examples, and provider
-  configuration are out of scope and must be rejected or absent from accepted
-  request contracts
+- no v1 route, UI, export, or search behavior is approved for integration
+  records
+- if integration records are revived later, they must stay high level and must
+  exclude credentials, endpoints, webhook secrets, payload examples, provider
+  configuration, and other secret/configuration material
 
 ### Reference Values
 
@@ -296,9 +325,9 @@ Organization logos are a narrow approved public asset use case.
 Logo types:
 
 - `primary`
-- `icon`
-- `light-background`
-- `dark-background`
+
+Future logo types such as `icon`, `light-background`, or `dark-background`
+require a separate expansion decision.
 
 Allowed v1 MIME types:
 
@@ -369,7 +398,6 @@ The PRD allows the following result areas:
 - weekly opening hours
 - business units
 - memberships
-- integrations
 - branding/logo references
 - reference values
 
@@ -385,32 +413,50 @@ Export request rules:
 - root admins can request authorized Organization exports through root
   Organization authority
 - tenant admins can request exports only for their current customer/account
-- admins can select export sections
-- active export jobs are limited to 1 per actor, 3 per tenant, and 10
-  platform-wide
-- export requests are limited to 5 per actor per hour and 20 per tenant per
-  day
+- admins can select export sections and may use a select-all convenience
+- export scope supports selected Organization only or selected Organization
+  plus child branch when the actor is authorized for every included
+  Organization
+- export copies are personal to the requesting admin; other admins cannot
+  download them solely because they have Organization permission
+- export generation is background-job only, including small exports
+- requesting admins can cancel pending or running exports
+- failed exports remain visible with a safe reason and retry option
+- retry can reuse previous selected sections/options, and the admin may change
+  them before retrying
+- reusable export/email behavior follows
+  `docs/workspace/product-discovery/2026-05-15-reusable-email-export-behavior.md`
 
 Export package rules:
 
 - package format is `.zip`
-- no password-protected ZIP in v1
-- selected structured sections are included as both CSV and JSON
+- ZIP is password/PIN protected
+- generated PIN can be viewed again by the requesting admin while the export is
+  available
+- PIN may be included in the ready email notification subject to security
+  controls and no ordinary logging
+- selected structured sections are included as JSON files plus actual selected
+  file assets
 - an export manifest is required
 - actual uploaded logo image files retained at export time are included
 - generated initials placeholders are not included as image files
 - export metadata may state that a placeholder is used publicly when no
   uploaded logo exists
-- exports include all retained data in selected sections, including active,
-  archived, deprecated, and historical retained records
+- export data reflects generation-time source records for v1
+- actor chooses `current_only` or `include_retained`; deleted records are
+  excluded from exports
+- normal Organization exports exclude audit/history/change-security events
+- integration records are excluded from v1 Organization exports
+- reference values are included inline in business records and also in a
+  `reference-values.json` file
+- branch exports use one ZIP with a folder per included Organization and a
+  manifest that records the branch tree
 
 Export size and lifecycle:
 
-- max ZIP size is 250 MB
-- warning metric at 100 MB
-- stored export bytes per tenant capped at 2 GB
+- no product-facing maximum Organization count or maximum ZIP size is approved
+  for v1; technical safety limits may be required by Technical Steering
 - ready export available for 24 hours or until deleted
-- download attempts capped at 10 before expiry
 - job soft timeout is 10 minutes
 - job hard timeout is 30 minutes
 - transient job/storage retry count is 2
@@ -419,8 +465,14 @@ Export size and lifecycle:
 Delivery and privacy:
 
 - download is private
+- admin must be currently logged in to download
+- download requires the requester-bound export record; link plus PIN alone is
+  not authority
 - no public export links
 - no raw bucket/provider URLs
+- ready and failed email notifications are required
+- in-app async/status component with an attention badge is required for ready,
+  failed, and action-needed states
 - checksum/actual-byte verification is required before ready
 - no second malware scan is required for generated ZIP files when they are
   server-generated from verified source records and already-scanned logo files
@@ -439,9 +491,9 @@ Expected areas:
 - legal details
 - locations
 - weekly hours
+- opening-hour exceptions
 - business units
 - memberships
-- integrations
 - reference values
 - branding/logos
 - search
@@ -550,7 +602,7 @@ Before source implementation, the following artifacts are required:
 | S-005 | Legal profiles and one-active legal profile rule. |
 | S-006 | Locations and weekly hours. |
 | S-007 | Business units and memberships. |
-| S-008 | High-level integration records. |
+| S-008 | High-level integration records are deferred from v1. |
 | S-009 | Reference values. |
 | S-010 | Public logo branding. |
 | S-011 | Separated-by-type search. |

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "featureName": "organizationLocations",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createOrganizationLocationsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for organization location routes and behavior."
+    },
+    {
+      "seamId": "organization-locations-service-type",
+      "symbol": "OrganizationLocationsService",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "experimental",
+      "description": "Service contract for organization location lifecycle and export projection operations."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "organizationCore",
+      "seamIds": [
+        "organization-core-service-type"
+      ],
+      "description": "Locations resolve and authorize their owning organization through the organizationCore public service seam."
+    },
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "description": "Tenant-admin location routes require an active tenant session context."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing many-location, coordinate, or descriptive office flag semantics can break Organization export, search, hours, and admin detail slices.",
+    "Changing location route context behavior can break root and tenant scoped child-resource consumers."
+  ]
+}
