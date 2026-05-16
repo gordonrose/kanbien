@@ -7,27 +7,27 @@
 | Entity key | `organization-location` |
 | Entity name | Organization Location |
 | Dictionary file | `docs/data-dictionary/organization-location.md` |
-| Owning feature | planned `organizationLocations` |
-| Ownership status | `planned` |
-| Current entity status | `draft` |
-| Primary authority | `planning-artifact` |
-| Primary source table or record | planned `organization_location`, planned `OrganizationLocationRecord` |
-| Entity definition lineage | `not-yet-registered` |
-| Latest source review date | `2026-05-14` |
+| Owning feature | `organizationLocations` |
+| Ownership status | `implemented-foundation` |
+| Current entity status | `active-v1` |
+| Primary authority | `runtime-source` |
+| Primary source table or record | `organization_location`, `OrganizationLocationRecord` |
+| Entity definition lineage | `source-backed-markdown` |
+| Latest source review date | `2026-05-15` |
 | Related PRD / steering / ADR | `docs/prd/2026-05-12-0025-organization-domain-foundation.md`; `docs/api-contracts/organization-root-admin.md`; `docs/api-contracts/organization-tenant-admin.md` |
 
 ## Source Authority And Future Persistence
 
 | Concern | Current posture | Future posture | Source / target |
 | --- | --- | --- | --- |
-| Current source of truth | planning artifacts and source-independent dictionary entry | implemented source, migrations, and registry-backed dictionary truth | PRD, API contracts, this page |
-| Source precedence | Approved PRD/API/data dictionary own planned behavior until implementation exists. | Runtime source and migrations win after implementation; registry rows and generated docs must reconcile. | future `organizationLocations` implementation |
-| Runtime persistence owner | planned `organizationLocations` | `organizationLocations` | future `src/features/organizationLocations` |
-| Runtime persistence record | planned `organization_location` | `organization_location` table and record type | future migration and persistence files |
+| Current source of truth | implemented source, migration, tests, and this source-backed dictionary entry | registry-backed dictionary truth when entity registry persistence is adopted | `src/features/organizationLocations`; this page |
+| Source precedence | Runtime source and migration own implemented behavior; this page mirrors that truth. | Registry rows and generated docs reconcile from runtime and registry truth. | `organizationLocations` implementation |
+| Runtime persistence owner | `organizationLocations` | `organizationLocations` | `src/features/organizationLocations` |
+| Runtime persistence record | `organization_location` table and `OrganizationLocationRecord` | `organization_location` table and record type | migration and persistence files |
 | Entity-registry persistence owner | not-yet-registered | `entityBuilder` or approved successor registry | `entityKey = organization-location` |
 | Entity-registry persistence record | not yet backed by registry rows | DB-backed lineage, version, attributes, relationships, lifecycle, and retention rows | future registry records |
-| Markdown posture | `source-independent-planning` | generated output or mirrored transitional artifact | this file |
-| Migration trigger | Organization location persistence task | source, migrations, API contract, registry rows, and generated Markdown reconciled | future task breakdown / blueprint |
+| Markdown posture | `source-backed-transitional` | generated output or mirrored transitional artifact | this file |
+| Migration trigger | Organization location persistence task | source, migrations, API contract, registry rows, and generated Markdown reconciled | S-006 task breakdown / blueprint |
 
 ## Summary
 
@@ -43,7 +43,7 @@
 
 | Field | Value |
 | --- | --- |
-| Primary table or durable record | planned `organization_location` |
+| Primary table or durable record | `organization_location` |
 | Primary key | `organization_location_id` |
 | Stable external key | `organization_location_id` |
 | Versioning model | `mutable-current-record` |
@@ -52,17 +52,15 @@
 | Soft-delete field | `deleted_at` |
 | Archive field | `archived_at`; business state held in `lifecycle_status` |
 | Generated artifact posture | `not-applicable` for source record |
-| Migration posture | `source-independent-planning` |
+| Migration posture | `implemented` via `src/features/organizationLocations/persistence/migrations/0053_create_organization_locations.sql` |
 
 ## Capability Inventory
 
 | Capability key | Capability family | Operation | Actor / authority world | Surface | Lifecycle or relationship impact | Evidence / audit expectation | Source artifact | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `organization.location.create` | `authoring` | create location | root, tenant | UI/API | creates child record under Organization | audit create; boundary proof | PRD; API contracts | An Organization may have many locations. |
+| `organization.location.manage` | `authoring` | create, update, archive, restore, or delete location | root | API | manages child records under Organization | audit create/update/archive/restore/delete; boundary proof | source; PRD; API contracts | An Organization may have many locations. |
 | `organization.location.read` | `read-discovery` | list/get locations | root, tenant | UI/API/search/export | no mutation; scoped to Organization and tenant/account | access proof | API contracts | Includes active and retained visibility handling. |
-| `organization.location.update` | `authoring` | update location facts | root, tenant | UI/API | refreshes `updated_at` | audit update | API contracts | Head-office flags are descriptive booleans, not uniqueness constraints. |
-| `organization.location.archive` | `lifecycle` | archive location | root, tenant | UI/API | follows Organization-domain archive posture | audit archive | PRD | Normal reads exclude archived rows. |
-| `organization.location.restore` | `lifecycle` | restore location | root, tenant | UI/API | restores active visibility if parent Organization allows | audit restore | PRD | Must respect Organization lifecycle. |
+| `organization.location.manage` | `lifecycle` | archive, restore, or soft delete location | root | API | follows Organization-domain archive posture | audit archive/restore/delete | PRD; source | Normal reads exclude archived rows. |
 | `organization.location.export` | `import-export` | include in private export | root, tenant, system | job/export | exports selected source data | export evidence | private export decision | Location data may be sensitive. |
 
 ## Capability Family Rules
@@ -78,15 +76,15 @@
 
 | Attribute key | Stored field / source field | Category | Type / shape | Cardinality | Required? | System-managed? | Mutable? | Search/filter role | Design-system treatment | Source |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `organization_location_id` | `organization_location_id` | `identity` | `UUID` | `single` | yes | yes | immutable | exact | hidden system identity | planned |
+| `organization_location_id` | `organization_location_id` | `identity` | `UUID` | `single` | yes | yes | immutable | exact | hidden system identity | source |
 | `tenant_id` | `tenant_id` | `relationship` | `UUID` | `single` | yes | yes | immutable | exact, facet | hidden authority field | PRD/API contracts |
 | `organization_id` | `organization_id` | `relationship` | `UUID` | `single` | yes | yes | immutable | exact, facet | Organization relationship panel | PRD/API contracts |
-| `location_name` | planned location name field | `core` | `TEXT` | `single` | yes | no | updateable | prefix, full-text | primary title field | inferred from location purpose |
-| `address_summary` | planned address field group | `core` | `TEXT or structured address fields` | `single` | optional | no | updateable | prefix, full-text | address block | inferred from location purpose |
-| `latitude` | planned latitude field | `secondary` | `DECIMAL or DOUBLE PRECISION` | `single` | no | no | updateable | range, geo | coordinate input/map pin | user refinement 2026-05-14 |
-| `longitude` | planned longitude field | `secondary` | `DECIMAL or DOUBLE PRECISION` | `single` | no | no | updateable | range, geo | coordinate input/map pin | user refinement 2026-05-14 |
-| `is_head_office` | planned head-office flag | `secondary` | `BOOLEAN` | `single` | yes | no | updateable | exact, facet | boolean toggle | PRD Location |
-| `is_registered_office` | planned office flag | `secondary` | `BOOLEAN` | `single` | yes | no | updateable | exact, facet | boolean toggle | inferred |
+| `location_name` | `location_name` | `core` | `TEXT` | `single` | yes | no | updateable | prefix, full-text | primary title field | source |
+| `address_summary` | `address_summary` | `core` | `TEXT or NULL` | `single` | optional | no | updateable | prefix, full-text | address block | source |
+| `latitude` | `latitude` | `secondary` | `DOUBLE PRECISION or NULL` | `single` | no | no | updateable | range, geo | coordinate input/map pin | source |
+| `longitude` | `longitude` | `secondary` | `DOUBLE PRECISION or NULL` | `single` | no | no | updateable | range, geo | coordinate input/map pin | source |
+| `is_head_office` | `is_head_office` | `secondary` | `BOOLEAN` | `single` | yes | no | updateable | exact, facet | boolean toggle | source |
+| `is_registered_office` | `is_registered_office` | `secondary` | `BOOLEAN` | `single` | yes | no | updateable | exact, facet | boolean toggle | source |
 | `lifecycle_status` | `lifecycle_status` | `lifecycle` | `active` or `archived` | `single` | yes | yes | lifecycle-only | exact | status badge | PRD Location |
 | `archived_at` | `archived_at` | `lifecycle` | `TIMESTAMPTZ or NULL` | `single` | no | yes | lifecycle-only | range, sort | lifecycle metadata | AGENTS defaults |
 | `deleted_at` | `deleted_at` | `lifecycle` | `TIMESTAMPTZ or NULL` | `single` | no | yes | lifecycle-only | range, sort | deleted metadata | AGENTS defaults |
@@ -108,7 +106,6 @@
 
 | Status | Meaning for this entity | Normal visibility | Allowed next actions | Source |
 | --- | --- | --- | --- | --- |
-| `draft` | Planning status before implementation. | docs/planning only | implementation planning | this page |
 | `active` | Current location. | normal reads | update, archive, export | PRD Location |
 | `superseded` | Not a named v1 runtime state. | not-applicable | not-applicable unless versioning is approved | this page |
 | `archived` | Retained location removed from current views. | explicit retained reads/export only | restore, delete where approved | PRD Location |
@@ -125,10 +122,11 @@
 
 | Name | Type | Field(s) | Definition / rule | Why it matters | Source |
 | --- | --- | --- | --- | --- | --- |
-| `organization_location_pkey` | `primary key` | `organization_location_id` | Stable row identity. | Supports reads and audit. | planned |
+| `organization_location_pkey` | `primary key` | `organization_location_id` | Stable row identity. | Supports reads and audit. | source |
 | `fk_organization_location_organization` | `foreign key` | `organization_id` | References owning Organization. | Keeps location scoped to Organization. | PRD |
-| `ix_organization_location_tenant` | `index` | `tenant_id`, `lifecycle_status`, `deleted_at` | Tenant/account visibility index. | Supports secure list/search/export. | inferred |
-| `ix_organization_location_organization` | `index` | `organization_id`, `lifecycle_status`, `deleted_at` | Organization child list index. | Supports detail view and export. | inferred |
+| `ix_organization_location_tenant_lifecycle` | `index` | `tenant_id`, `lifecycle_status`, `updated_at` | Tenant/account visibility index over non-deleted rows. | Supports secure list/search/export. | source |
+| `ix_organization_location_organization` | `index` | `tenant_id`, `organization_id`, `updated_at` | Organization child list index over non-deleted rows. | Supports detail view and export. | source |
+| `ix_organization_location_descriptive_flags` | `index` | `tenant_id`, `organization_id`, `is_head_office`, `is_registered_office` | Descriptive flag index over non-deleted rows. | Supports flag filtering without uniqueness. | source |
 
 ## Normalization And Validation Rules
 
@@ -178,7 +176,7 @@
 | Authority world | root or tenant | API contracts |
 | Tenant context required | yes | AGENTS tenant defaults |
 | Tenant context source | root route `tenantId`; tenant-admin server-side current tenant/account | API contracts |
-| Governing capability | planned Organization location capabilities | API contracts |
+| Governing capability | root: `organization.location.manage` or `organization.location.read`; tenant: active tenant-admin session in current tenant context until tenant-admin grant model is introduced | source; API contracts |
 | Cross-tenant posture | deny-by-default | AGENTS tenant defaults |
 | Object-level rule | Location, Organization, and tenant/account must match. | PRD/API contracts |
 
@@ -186,7 +184,7 @@
 
 | Concern | Posture | Source |
 | --- | --- | --- |
-| API required | planned child resource APIs | API contracts |
+| API required | implemented child resource APIs for create, read, list, update, archive, restore, and soft delete | source; API contracts |
 | UI required | planned Organization detail child area | PRD |
 | Default entity-management preset | not-yet-defined | entity registry discovery |
 | List view treatment | scoped under Organization with active/retained filtering | PRD/API contracts |
@@ -213,12 +211,12 @@
 | Standard / Rule | Applies? | Repo Enforcement | Test / Evidence | Notes |
 | --- | --- | --- | --- | --- |
 | Durable domain data rule | yes | enforced-by-maintained-artifact | this page; PRD | Planned durable child record. |
-| System-managed identifiers, timestamps, lifecycle, and audit fields | yes | planned | future implementation tests | IDs/timestamps/lifecycle fields system-managed. |
-| Normalization, uniqueness, and searchable-storage rules | yes | planned | PRD/API contracts | Exact address schema still needs implementation detail. |
-| Soft-delete and normal-read visibility | yes | planned | future tests | Normal reads exclude archived/deleted rows. |
-| Tenant boundary / object-level authorization | yes | planned | future authz tests | Same tenant/account as Organization. |
-| Retention, cleanup, export/delete, and legal-hold posture | yes | documented-not-enforced | this page; export decision | Source retention/runbook not implemented. |
-| Auditability and operational evidence | yes | planned | future audit tests | Audit sink/schema not defined here. |
+| System-managed identifiers, timestamps, lifecycle, and audit fields | yes | implemented-foundation | `tests/unit/organizationLocations/service.test.ts`; migration | IDs/timestamps/lifecycle fields system-managed. |
+| Normalization, uniqueness, and searchable-storage rules | yes | implemented-foundation | `tests/integration/organizationLocations/persistence.test.ts`; migration | Multiple head-office flags are allowed; no hidden uniqueness. |
+| Soft-delete and normal-read visibility | yes | implemented-foundation | `tests/unit/organizationLocations/service.test.ts` | Normal reads exclude archived/deleted rows. |
+| Tenant boundary / object-level authorization | yes | implemented-foundation | `tests/unit/organizationLocations/service.test.ts` | Same tenant/account as Organization through `organizationCore` seam. |
+| Retention, cleanup, export/delete, and legal-hold posture | yes | documented-partial | this page; export decision | Source retention implemented for archived rows; export job remains later story. |
+| Auditability and operational evidence | yes | implemented-foundation | migration; service tests | Feature-local audit table exists; broader audit proof can deepen later. |
 
 ## Related Errors
 
@@ -235,3 +233,6 @@
 | API contract | `docs/api-contracts/organization-root-admin.md` | Child route posture and errors. |
 | API contract | `docs/api-contracts/organization-tenant-admin.md` | Tenant-admin child route posture. |
 | standard | `docs/standards/data-dictionary-registry-migration-map.md` | Markdown-to-registry migration mapping. |
+| feature source | `src/features/organizationLocations` | Implemented location domain, persistence, transport, and manifest. |
+| migration | `src/features/organizationLocations/persistence/migrations/0053_create_organization_locations.sql` | Table, indexes, audit table, and root capability seed. |
+| tests | `tests/unit/organizationLocations/service.test.ts`; `tests/integration/organizationLocations/persistence.test.ts` | Many locations, coordinate validation, descriptive flags, lifecycle visibility, export projection, and tenant-boundary proof. |

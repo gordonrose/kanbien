@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "featureName": "organizationBusinessUnits",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createOrganizationBusinessUnitsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for organization business-unit routes and behavior."
+    },
+    {
+      "seamId": "organization-business-units-service-type",
+      "symbol": "OrganizationBusinessUnitsService",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "experimental",
+      "description": "Service contract for business-unit hierarchy and membership target validation."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "organizationCore",
+      "seamIds": [
+        "organization-core-service-type"
+      ],
+      "description": "Business units resolve their owning Organization through the organizationCore public service seam."
+    },
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "description": "Tenant-admin business-unit routes require an active tenant session context."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing business-unit hierarchy, depth, or branch archive semantics can break memberships, exports, and future reporting slices.",
+    "Changing business-unit route context behavior can break root and tenant scoped child-resource consumers."
+  ]
+}

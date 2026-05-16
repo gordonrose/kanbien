@@ -1,8 +1,8 @@
 {
   "ruleVersion": 2,
   "ruleSummary": "Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.",
-  "featureCount": 17,
-  "edgeCount": 16,
+  "featureCount": 27,
+  "edgeCount": 44,
   "violationCount": 0,
   "features": [
     {
@@ -36,6 +36,8 @@
       "publicDependencies": [],
       "privateDependencyCount": 0,
       "dependedOnBy": [
+        "organizationBrandingReferences",
+        "organizationExports",
         "rootUsers",
         "tenantAdmins"
       ],
@@ -216,7 +218,8 @@
       "publicDependencies": [],
       "privateDependencyCount": 0,
       "dependedOnBy": [
-        "notificationDelivery"
+        "notificationDelivery",
+        "organizationExports"
       ],
       "breakingChangeRisks": [
         "Changing job status, outbox, attempt, retry, or idempotency semantics can strand queued historical jobs or break at-least-once execution guarantees.",
@@ -267,12 +270,412 @@
       ],
       "privateDependencyCount": 0,
       "dependedOnBy": [
+        "organizationExports",
         "tenantAdmins"
       ],
       "breakingChangeRisks": [
         "Changing the notification email writer contract can break features that delegate onboarding or verification email delivery through this seam.",
         "Changing outbound email persistence or resend semantics can affect auditability and historical correctness for feature-owned workflows.",
         "Queued email delivery must not send redacted durable snapshots as provider content; security-sensitive emails require owner-regenerated content or synchronous delivery until a richer async content model is approved."
+      ]
+    },
+    {
+      "featureName": "organizationBrandingReferences",
+      "manifestPath": "src/features/organizationBrandingReferences/feature.manifest.json",
+      "fileCount": 10,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationBrandingReferencesFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-branding-references-service-type",
+          "symbol": "OrganizationBrandingReferencesService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "assets",
+        "organizationCore",
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "assets",
+        "organizationCore",
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "organizationExports"
+      ],
+      "breakingChangeRisks": [
+        "Changing stable public logo URLs, primary-logo replacement semantics, placeholder behavior, cache headers, or asset-read delegation can break public branding, downstream rendering, and cache invalidation assumptions."
+      ]
+    },
+    {
+      "featureName": "organizationBusinessUnitMemberships",
+      "manifestPath": "src/features/organizationBusinessUnitMemberships/feature.manifest.json",
+      "fileCount": 11,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationBusinessUnitMembershipsFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-business-unit-memberships-service-type",
+          "symbol": "OrganizationBusinessUnitMembershipsService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "organizationBusinessUnits",
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "organizationBusinessUnits",
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "organizationExports"
+      ],
+      "breakingChangeRisks": [
+        "Changing membership role taxonomy or member-target validation can break exports and future access/reporting slices.",
+        "Individual member targets are intentionally deferred until an approved individual/person record seam exists."
+      ]
+    },
+    {
+      "featureName": "organizationBusinessUnits",
+      "manifestPath": "src/features/organizationBusinessUnits/feature.manifest.json",
+      "fileCount": 11,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationBusinessUnitsFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-business-units-service-type",
+          "symbol": "OrganizationBusinessUnitsService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "organizationCore",
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "organizationCore",
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "organizationBusinessUnitMemberships",
+        "organizationExports"
+      ],
+      "breakingChangeRisks": [
+        "Changing business-unit hierarchy, depth, or branch archive semantics can break memberships, exports, and future reporting slices.",
+        "Changing business-unit route context behavior can break root and tenant scoped child-resource consumers."
+      ]
+    },
+    {
+      "featureName": "organizationCore",
+      "manifestPath": "src/features/organizationCore/feature.manifest.json",
+      "fileCount": 19,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationCoreFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-core-service-type",
+          "symbol": "OrganizationCoreService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "organizationBrandingReferences",
+        "organizationBusinessUnits",
+        "organizationExports",
+        "organizationLegalDetails",
+        "organizationLocations"
+      ],
+      "breakingChangeRisks": [
+        "Changing organization hierarchy depth, lifecycle filtering, or tenant name uniqueness semantics can break downstream organization legal profile, location, business unit, logo, and export slices.",
+        "Changing tenant-admin route current-tenant behavior can break tenant-scoped organization management flows."
+      ]
+    },
+    {
+      "featureName": "organizationExports",
+      "manifestPath": "src/features/organizationExports/feature.manifest.json",
+      "fileCount": 12,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationExportsFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-exports-service-type",
+          "symbol": "OrganizationExportsService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-export-job-types",
+          "symbol": "createOrganizationExportJobTypes",
+          "kind": "job-type-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-export-recurring-schedules",
+          "symbol": "createOrganizationExportRecurringSchedules",
+          "kind": "job-schedule-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "assets",
+        "organizationBrandingReferences",
+        "organizationCore",
+        "organizationBusinessUnits",
+        "organizationBusinessUnitMemberships",
+        "organizationLegalDetails",
+        "organizationLocations",
+        "organizationOpeningHours",
+        "organizationReferenceCatalogues",
+        "jobProcessing",
+        "notificationDelivery",
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "assets",
+        "jobProcessing",
+        "notificationDelivery",
+        "organizationBrandingReferences",
+        "organizationBusinessUnitMemberships",
+        "organizationBusinessUnits",
+        "organizationCore",
+        "organizationLegalDetails",
+        "organizationLocations",
+        "organizationOpeningHours",
+        "organizationReferenceCatalogues",
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": [
+        "Changing requester-only access, PIN handling, ZIP encryption, private download headers, expiry/delete behavior, or manifest contents can break security and export consumers."
+      ]
+    },
+    {
+      "featureName": "organizationLegalDetails",
+      "manifestPath": "src/features/organizationLegalDetails/feature.manifest.json",
+      "fileCount": 11,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationLegalDetailsFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-legal-details-service-type",
+          "symbol": "OrganizationLegalDetailsService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "organizationCore",
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "organizationCore",
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "organizationExports"
+      ],
+      "breakingChangeRisks": [
+        "Changing one-active legal profile semantics can break Organization export, search, and admin detail slices.",
+        "Changing legal-profile route context behavior can break root and tenant scoped child-resource consumers."
+      ]
+    },
+    {
+      "featureName": "organizationLocations",
+      "manifestPath": "src/features/organizationLocations/feature.manifest.json",
+      "fileCount": 11,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationLocationsFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-locations-service-type",
+          "symbol": "OrganizationLocationsService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "organizationCore",
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "organizationCore",
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "organizationExports",
+        "organizationOpeningHours"
+      ],
+      "breakingChangeRisks": [
+        "Changing many-location, coordinate, or descriptive office flag semantics can break Organization export, search, hours, and admin detail slices.",
+        "Changing location route context behavior can break root and tenant scoped child-resource consumers."
+      ]
+    },
+    {
+      "featureName": "organizationOpeningHours",
+      "manifestPath": "src/features/organizationOpeningHours/feature.manifest.json",
+      "fileCount": 11,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationOpeningHoursFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-opening-hours-service-type",
+          "symbol": "OrganizationOpeningHoursService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "organizationLocations",
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "organizationLocations",
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "organizationExports"
+      ],
+      "breakingChangeRisks": [
+        "Changing weekly slot, exception precedence, or effective-hours semantics can break public-facing schedules, exports, and future booking slices.",
+        "Changing opening-hour route context behavior can break root and tenant scoped child-resource consumers."
+      ]
+    },
+    {
+      "featureName": "organizationReferenceCatalogues",
+      "manifestPath": "src/features/organizationReferenceCatalogues/feature.manifest.json",
+      "fileCount": 10,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationReferenceCataloguesFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-reference-catalogues-service-type",
+          "symbol": "OrganizationReferenceCataloguesService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [
+        "organizationExports"
+      ],
+      "breakingChangeRisks": [
+        "Changing reference value lifecycle states or replacement semantics can break historical record display, exports, and future search slices.",
+        "Turning system-owned reference values into tenant-owned values would be a breaking authority and data-model change."
+      ]
+    },
+    {
+      "featureName": "organizationSearch",
+      "manifestPath": "src/features/organizationSearch/feature.manifest.json",
+      "fileCount": 10,
+      "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createOrganizationSearchFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "organization-search-service-type",
+          "symbol": "OrganizationSearchService",
+          "kind": "domain-type",
+          "stability": "experimental",
+          "path": "index.ts"
+        }
+      ],
+      "declaredDependencies": [
+        "tenantAuth"
+      ],
+      "publicDependencies": [
+        "tenantAuth"
+      ],
+      "privateDependencyCount": 0,
+      "dependedOnBy": [],
+      "breakingChangeRisks": [
+        "Changing grouped result names, tenant filtering, default lifecycle visibility, or pagination semantics can break admin search and export-selection flows."
       ]
     },
     {
@@ -478,6 +881,16 @@
       ],
       "privateDependencyCount": 0,
       "dependedOnBy": [
+        "organizationBrandingReferences",
+        "organizationBusinessUnitMemberships",
+        "organizationBusinessUnits",
+        "organizationCore",
+        "organizationExports",
+        "organizationLegalDetails",
+        "organizationLocations",
+        "organizationOpeningHours",
+        "organizationReferenceCatalogues",
+        "organizationSearch",
         "tenantAdmins",
         "tenantConfiguration"
       ],
@@ -773,6 +1186,749 @@
           "importPath": "../jobProcessing",
           "line": 3,
           "resolvedPath": "src/features/jobProcessing/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationBrandingReferences",
+      "targetFeature": "assets",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "feature-factory",
+        "service"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationBrandingReferences/domain/service.ts",
+          "importPath": "../../assets",
+          "line": 3,
+          "resolvedPath": "src/features/assets/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationBrandingReferences/integration.ts",
+          "importPath": "../assets",
+          "line": 4,
+          "resolvedPath": "src/features/assets/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationBrandingReferences",
+      "targetFeature": "organizationCore",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "feature-factory",
+        "organization-core-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationBrandingReferences/domain/service.ts",
+          "importPath": "../../organizationCore",
+          "line": 4,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationBrandingReferences/integration.ts",
+          "importPath": "../organizationCore",
+          "line": 5,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationBrandingReferences",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationBrandingReferences/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 6,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationBrandingReferences/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 7,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationBusinessUnitMemberships",
+      "targetFeature": "organizationBusinessUnits",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-business-units-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationBusinessUnitMemberships/domain/service.ts",
+          "importPath": "../../organizationBusinessUnits",
+          "line": 2,
+          "resolvedPath": "src/features/organizationBusinessUnits/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationBusinessUnitMemberships/integration.ts",
+          "importPath": "../organizationBusinessUnits",
+          "line": 4,
+          "resolvedPath": "src/features/organizationBusinessUnits/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationBusinessUnitMemberships",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationBusinessUnitMemberships/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 5,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationBusinessUnitMemberships/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 7,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationBusinessUnits",
+      "targetFeature": "organizationCore",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-core-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationBusinessUnits/domain/service.ts",
+          "importPath": "../../organizationCore",
+          "line": 2,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationBusinessUnits/integration.ts",
+          "importPath": "../organizationCore",
+          "line": 4,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationBusinessUnits",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationBusinessUnits/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 5,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationBusinessUnits/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 7,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationCore",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationCore/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 4,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationCore/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 13,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "assets",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "service"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../assets",
+          "line": 7,
+          "resolvedPath": "src/features/assets/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../assets",
+          "line": 7,
+          "resolvedPath": "src/features/assets/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "jobProcessing",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "enqueue-service",
+        "dispatcher-worker-runtime",
+        "job-lifecycle-hardening",
+        "recurring-scheduler"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/jobTypes.ts",
+          "importPath": "../../jobProcessing",
+          "line": 1,
+          "resolvedPath": "src/features/jobProcessing/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../jobProcessing",
+          "line": 12,
+          "resolvedPath": "src/features/jobProcessing/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "notificationDelivery",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "notification-email-writer"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../notificationDelivery",
+          "line": 8,
+          "resolvedPath": "src/features/notificationDelivery/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../notificationDelivery",
+          "line": 8,
+          "resolvedPath": "src/features/notificationDelivery/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "organizationBrandingReferences",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-branding-references-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../organizationBrandingReferences",
+          "line": 9,
+          "resolvedPath": "src/features/organizationBrandingReferences/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../organizationBrandingReferences",
+          "line": 9,
+          "resolvedPath": "src/features/organizationBrandingReferences/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "organizationBusinessUnitMemberships",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-business-unit-memberships-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../organizationBusinessUnitMemberships",
+          "line": 10,
+          "resolvedPath": "src/features/organizationBusinessUnitMemberships/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../organizationBusinessUnitMemberships",
+          "line": 10,
+          "resolvedPath": "src/features/organizationBusinessUnitMemberships/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "organizationBusinessUnits",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-business-units-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../organizationBusinessUnits",
+          "line": 11,
+          "resolvedPath": "src/features/organizationBusinessUnits/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../organizationBusinessUnits",
+          "line": 11,
+          "resolvedPath": "src/features/organizationBusinessUnits/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "organizationCore",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-core-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../organizationCore",
+          "line": 17,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../organizationCore",
+          "line": 12,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "organizationLegalDetails",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-legal-details-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../organizationLegalDetails",
+          "line": 18,
+          "resolvedPath": "src/features/organizationLegalDetails/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../organizationLegalDetails",
+          "line": 13,
+          "resolvedPath": "src/features/organizationLegalDetails/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "organizationLocations",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-locations-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../organizationLocations",
+          "line": 19,
+          "resolvedPath": "src/features/organizationLocations/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../organizationLocations",
+          "line": 14,
+          "resolvedPath": "src/features/organizationLocations/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "organizationOpeningHours",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-opening-hours-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../organizationOpeningHours",
+          "line": 20,
+          "resolvedPath": "src/features/organizationOpeningHours/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../organizationOpeningHours",
+          "line": 15,
+          "resolvedPath": "src/features/organizationOpeningHours/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "organizationReferenceCatalogues",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-reference-catalogues-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/domain/service.ts",
+          "importPath": "../../organizationReferenceCatalogues",
+          "line": 21,
+          "resolvedPath": "src/features/organizationReferenceCatalogues/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../organizationReferenceCatalogues",
+          "line": 16,
+          "resolvedPath": "src/features/organizationReferenceCatalogues/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationExports",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationExports/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 20,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationExports/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 7,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationLegalDetails",
+      "targetFeature": "organizationCore",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-core-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationLegalDetails/domain/service.ts",
+          "importPath": "../../organizationCore",
+          "line": 2,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationLegalDetails/integration.ts",
+          "importPath": "../organizationCore",
+          "line": 4,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationLegalDetails",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationLegalDetails/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 5,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationLegalDetails/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 13,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationLocations",
+      "targetFeature": "organizationCore",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-core-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationLocations/domain/service.ts",
+          "importPath": "../../organizationCore",
+          "line": 2,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationLocations/integration.ts",
+          "importPath": "../organizationCore",
+          "line": 4,
+          "resolvedPath": "src/features/organizationCore/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationLocations",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationLocations/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 5,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationLocations/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 13,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationOpeningHours",
+      "targetFeature": "organizationLocations",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "organization-locations-service-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationOpeningHours/domain/service.ts",
+          "importPath": "../../organizationLocations",
+          "line": 2,
+          "resolvedPath": "src/features/organizationLocations/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationOpeningHours/integration.ts",
+          "importPath": "../organizationLocations",
+          "line": 4,
+          "resolvedPath": "src/features/organizationLocations/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationOpeningHours",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationOpeningHours/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 5,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationOpeningHours/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 7,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationReferenceCatalogues",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationReferenceCatalogues/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 4,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationReferenceCatalogues/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 7,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "sourceFeature": "organizationSearch",
+      "targetFeature": "tenantAuth",
+      "declaredInManifest": true,
+      "declaredSeamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "publicImportCount": 2,
+      "privateImportCount": 0,
+      "imports": [
+        {
+          "sourceFile": "src/features/organizationSearch/integration.ts",
+          "importPath": "../tenantAuth",
+          "line": 4,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
+          "visibility": "public"
+        },
+        {
+          "sourceFile": "src/features/organizationSearch/transport/router.ts",
+          "importPath": "../../tenantAuth",
+          "line": 7,
+          "resolvedPath": "src/features/tenantAuth/index.ts",
           "visibility": "public"
         }
       ]

@@ -35,6 +35,10 @@ Today that means:
 - `package.json` now also declares backend/platform job runtime commands such
   as `scheduler:jobs`; those commands do not change the browser delivery model
   or frontend route topology
+- `package.json` also declares backend export-bundle support through
+  `@zip.js/zip.js`; that dependency is used by server-side generated exports
+  and does not introduce a frontend bundler, frontend framework, or browser
+  package-delivery change
 
 Primary architecture decisions behind this shape live in:
 

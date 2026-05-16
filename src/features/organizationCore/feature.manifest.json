@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "featureName": "organizationCore",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createOrganizationCoreFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for organization core routes and hierarchy behavior."
+    },
+    {
+      "seamId": "organization-core-service-type",
+      "symbol": "OrganizationCoreService",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "experimental",
+      "description": "Service contract for organization record lifecycle and hierarchy operations."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "description": "Tenant-admin organization routes require an active tenant session context."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing organization hierarchy depth, lifecycle filtering, or tenant name uniqueness semantics can break downstream organization legal profile, location, business unit, logo, and export slices.",
+    "Changing tenant-admin route current-tenant behavior can break tenant-scoped organization management flows."
+  ]
+}

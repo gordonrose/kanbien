@@ -2,8 +2,8 @@
 
 ## Summary
 
-- Features analyzed: 17
-- Cross-feature edges: 16
+- Features analyzed: 27
+- Cross-feature edges: 44
 - Validation violations: 0
 
 Rule: Cross-feature imports in src/features must go through target feature index.ts seams, and each feature manifest must declare current downstream dependencies and public seams.
@@ -17,7 +17,7 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Declared dependencies: none
 - Current public dependencies: none
 - Private seam violations: 0
-- Depended on by: rootUsers, tenantAdmins
+- Depended on by: organizationBrandingReferences, organizationExports, rootUsers, tenantAdmins
 - Public seams:
   - `feature-factory` via `createAssetsFeature` in `index.ts` (feature-factory, stable)
   - `service` via `AssetsService` in `index.ts` (domain-service, stable)
@@ -94,7 +94,7 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Declared dependencies: none
 - Current public dependencies: none
 - Private seam violations: 0
-- Depended on by: notificationDelivery
+- Depended on by: notificationDelivery, organizationExports
 - Public seams:
   - `feature-factory` via `createJobProcessingFeature` in `index.ts` (feature-factory, experimental)
   - `enqueue-service` via `enqueueTransactionalJobRequest` in `index.ts` (service, experimental)
@@ -116,7 +116,7 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Declared dependencies: jobProcessing
 - Current public dependencies: jobProcessing
 - Private seam violations: 0
-- Depended on by: tenantAdmins
+- Depended on by: organizationExports, tenantAdmins
 - Public seams:
   - `feature-factory` via `createNotificationDeliveryFeature` in `index.ts` (feature-factory, stable)
   - `notification-email-writer` via `createNotificationEmailWriter | NotificationEmailWriter` in `index.ts` (writer-seam, stable)
@@ -126,6 +126,155 @@ Rule: Cross-feature imports in src/features must go through target feature index
   - Changing the notification email writer contract can break features that delegate onboarding or verification email delivery through this seam.
   - Changing outbound email persistence or resend semantics can affect auditability and historical correctness for feature-owned workflows.
   - Queued email delivery must not send redacted durable snapshots as provider content; security-sensitive emails require owner-regenerated content or synchronous delivery until a richer async content model is approved.
+
+### organizationBrandingReferences
+
+- Manifest: `src/features/organizationBrandingReferences/feature.manifest.json`
+- Source files: 10
+- Declared dependencies: assets, organizationCore, tenantAuth
+- Current public dependencies: assets, organizationCore, tenantAuth
+- Private seam violations: 0
+- Depended on by: organizationExports
+- Public seams:
+  - `feature-factory` via `createOrganizationBrandingReferencesFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-branding-references-service-type` via `OrganizationBrandingReferencesService` in `index.ts` (domain-type, experimental)
+- Breaking-change risks:
+  - Changing stable public logo URLs, primary-logo replacement semantics, placeholder behavior, cache headers, or asset-read delegation can break public branding, downstream rendering, and cache invalidation assumptions.
+
+### organizationBusinessUnitMemberships
+
+- Manifest: `src/features/organizationBusinessUnitMemberships/feature.manifest.json`
+- Source files: 11
+- Declared dependencies: organizationBusinessUnits, tenantAuth
+- Current public dependencies: organizationBusinessUnits, tenantAuth
+- Private seam violations: 0
+- Depended on by: organizationExports
+- Public seams:
+  - `feature-factory` via `createOrganizationBusinessUnitMembershipsFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-business-unit-memberships-service-type` via `OrganizationBusinessUnitMembershipsService` in `index.ts` (domain-type, experimental)
+- Breaking-change risks:
+  - Changing membership role taxonomy or member-target validation can break exports and future access/reporting slices.
+  - Individual member targets are intentionally deferred until an approved individual/person record seam exists.
+
+### organizationBusinessUnits
+
+- Manifest: `src/features/organizationBusinessUnits/feature.manifest.json`
+- Source files: 11
+- Declared dependencies: organizationCore, tenantAuth
+- Current public dependencies: organizationCore, tenantAuth
+- Private seam violations: 0
+- Depended on by: organizationBusinessUnitMemberships, organizationExports
+- Public seams:
+  - `feature-factory` via `createOrganizationBusinessUnitsFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-business-units-service-type` via `OrganizationBusinessUnitsService` in `index.ts` (domain-type, experimental)
+- Breaking-change risks:
+  - Changing business-unit hierarchy, depth, or branch archive semantics can break memberships, exports, and future reporting slices.
+  - Changing business-unit route context behavior can break root and tenant scoped child-resource consumers.
+
+### organizationCore
+
+- Manifest: `src/features/organizationCore/feature.manifest.json`
+- Source files: 19
+- Declared dependencies: tenantAuth
+- Current public dependencies: tenantAuth
+- Private seam violations: 0
+- Depended on by: organizationBrandingReferences, organizationBusinessUnits, organizationExports, organizationLegalDetails, organizationLocations
+- Public seams:
+  - `feature-factory` via `createOrganizationCoreFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-core-service-type` via `OrganizationCoreService` in `index.ts` (domain-type, experimental)
+- Breaking-change risks:
+  - Changing organization hierarchy depth, lifecycle filtering, or tenant name uniqueness semantics can break downstream organization legal profile, location, business unit, logo, and export slices.
+  - Changing tenant-admin route current-tenant behavior can break tenant-scoped organization management flows.
+
+### organizationExports
+
+- Manifest: `src/features/organizationExports/feature.manifest.json`
+- Source files: 12
+- Declared dependencies: assets, organizationBrandingReferences, organizationCore, organizationBusinessUnits, organizationBusinessUnitMemberships, organizationLegalDetails, organizationLocations, organizationOpeningHours, organizationReferenceCatalogues, jobProcessing, notificationDelivery, tenantAuth
+- Current public dependencies: assets, jobProcessing, notificationDelivery, organizationBrandingReferences, organizationBusinessUnitMemberships, organizationBusinessUnits, organizationCore, organizationLegalDetails, organizationLocations, organizationOpeningHours, organizationReferenceCatalogues, tenantAuth
+- Private seam violations: 0
+- Depended on by: none
+- Public seams:
+  - `feature-factory` via `createOrganizationExportsFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-exports-service-type` via `OrganizationExportsService` in `index.ts` (domain-type, experimental)
+  - `organization-export-job-types` via `createOrganizationExportJobTypes` in `index.ts` (job-type-factory, experimental)
+  - `organization-export-recurring-schedules` via `createOrganizationExportRecurringSchedules` in `index.ts` (job-schedule-factory, experimental)
+- Breaking-change risks:
+  - Changing requester-only access, PIN handling, ZIP encryption, private download headers, expiry/delete behavior, or manifest contents can break security and export consumers.
+
+### organizationLegalDetails
+
+- Manifest: `src/features/organizationLegalDetails/feature.manifest.json`
+- Source files: 11
+- Declared dependencies: organizationCore, tenantAuth
+- Current public dependencies: organizationCore, tenantAuth
+- Private seam violations: 0
+- Depended on by: organizationExports
+- Public seams:
+  - `feature-factory` via `createOrganizationLegalDetailsFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-legal-details-service-type` via `OrganizationLegalDetailsService` in `index.ts` (domain-type, experimental)
+- Breaking-change risks:
+  - Changing one-active legal profile semantics can break Organization export, search, and admin detail slices.
+  - Changing legal-profile route context behavior can break root and tenant scoped child-resource consumers.
+
+### organizationLocations
+
+- Manifest: `src/features/organizationLocations/feature.manifest.json`
+- Source files: 11
+- Declared dependencies: organizationCore, tenantAuth
+- Current public dependencies: organizationCore, tenantAuth
+- Private seam violations: 0
+- Depended on by: organizationExports, organizationOpeningHours
+- Public seams:
+  - `feature-factory` via `createOrganizationLocationsFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-locations-service-type` via `OrganizationLocationsService` in `index.ts` (domain-type, experimental)
+- Breaking-change risks:
+  - Changing many-location, coordinate, or descriptive office flag semantics can break Organization export, search, hours, and admin detail slices.
+  - Changing location route context behavior can break root and tenant scoped child-resource consumers.
+
+### organizationOpeningHours
+
+- Manifest: `src/features/organizationOpeningHours/feature.manifest.json`
+- Source files: 11
+- Declared dependencies: organizationLocations, tenantAuth
+- Current public dependencies: organizationLocations, tenantAuth
+- Private seam violations: 0
+- Depended on by: organizationExports
+- Public seams:
+  - `feature-factory` via `createOrganizationOpeningHoursFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-opening-hours-service-type` via `OrganizationOpeningHoursService` in `index.ts` (domain-type, experimental)
+- Breaking-change risks:
+  - Changing weekly slot, exception precedence, or effective-hours semantics can break public-facing schedules, exports, and future booking slices.
+  - Changing opening-hour route context behavior can break root and tenant scoped child-resource consumers.
+
+### organizationReferenceCatalogues
+
+- Manifest: `src/features/organizationReferenceCatalogues/feature.manifest.json`
+- Source files: 10
+- Declared dependencies: tenantAuth
+- Current public dependencies: tenantAuth
+- Private seam violations: 0
+- Depended on by: organizationExports
+- Public seams:
+  - `feature-factory` via `createOrganizationReferenceCataloguesFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-reference-catalogues-service-type` via `OrganizationReferenceCataloguesService` in `index.ts` (domain-type, experimental)
+- Breaking-change risks:
+  - Changing reference value lifecycle states or replacement semantics can break historical record display, exports, and future search slices.
+  - Turning system-owned reference values into tenant-owned values would be a breaking authority and data-model change.
+
+### organizationSearch
+
+- Manifest: `src/features/organizationSearch/feature.manifest.json`
+- Source files: 10
+- Declared dependencies: tenantAuth
+- Current public dependencies: tenantAuth
+- Private seam violations: 0
+- Depended on by: none
+- Public seams:
+  - `feature-factory` via `createOrganizationSearchFeature` in `index.ts` (feature-factory, experimental)
+  - `organization-search-service-type` via `OrganizationSearchService` in `index.ts` (domain-type, experimental)
+- Breaking-change risks:
+  - Changing grouped result names, tenant filtering, default lifecycle visibility, or pagination semantics can break admin search and export-selection flows.
 
 ### rootAuth
 
@@ -196,7 +345,7 @@ Rule: Cross-feature imports in src/features must go through target feature index
 - Declared dependencies: tenantAdmins, tenantConfiguration, tenants
 - Current public dependencies: tenantAdmins, tenantConfiguration, tenants
 - Private seam violations: 0
-- Depended on by: tenantAdmins, tenantConfiguration
+- Depended on by: organizationBrandingReferences, organizationBusinessUnitMemberships, organizationBusinessUnits, organizationCore, organizationExports, organizationLegalDetails, organizationLocations, organizationOpeningHours, organizationReferenceCatalogues, organizationSearch, tenantAdmins, tenantConfiguration
 - Public seams:
   - `feature-factory` via `createTenantAuthFeature` in `index.ts` (feature-factory, stable)
   - `session-lookup-repository-factory` via `createTenantAuthSessionLookupRepository` in `index.ts` (repository-factory, stable)
@@ -305,6 +454,286 @@ Rule: Cross-feature imports in src/features must go through target feature index
 
 - `src/features/notificationDelivery/domain/jobTypes.ts:1` imports `../../jobProcessing` -> `src/features/jobProcessing/index.ts` (public)
 - `src/features/notificationDelivery/emailWriter.ts:3` imports `../jobProcessing` -> `src/features/jobProcessing/index.ts` (public)
+
+### organizationBrandingReferences -> assets
+
+- Declared in manifest: yes
+- Declared seam ids: feature-factory, service
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationBrandingReferences/domain/service.ts:3` imports `../../assets` -> `src/features/assets/index.ts` (public)
+- `src/features/organizationBrandingReferences/integration.ts:4` imports `../assets` -> `src/features/assets/index.ts` (public)
+
+### organizationBrandingReferences -> organizationCore
+
+- Declared in manifest: yes
+- Declared seam ids: feature-factory, organization-core-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationBrandingReferences/domain/service.ts:4` imports `../../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+- `src/features/organizationBrandingReferences/integration.ts:5` imports `../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+
+### organizationBrandingReferences -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationBrandingReferences/integration.ts:6` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationBrandingReferences/transport/router.ts:7` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+
+### organizationBusinessUnitMemberships -> organizationBusinessUnits
+
+- Declared in manifest: yes
+- Declared seam ids: organization-business-units-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationBusinessUnitMemberships/domain/service.ts:2` imports `../../organizationBusinessUnits` -> `src/features/organizationBusinessUnits/index.ts` (public)
+- `src/features/organizationBusinessUnitMemberships/integration.ts:4` imports `../organizationBusinessUnits` -> `src/features/organizationBusinessUnits/index.ts` (public)
+
+### organizationBusinessUnitMemberships -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationBusinessUnitMemberships/integration.ts:5` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationBusinessUnitMemberships/transport/router.ts:7` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+
+### organizationBusinessUnits -> organizationCore
+
+- Declared in manifest: yes
+- Declared seam ids: organization-core-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationBusinessUnits/domain/service.ts:2` imports `../../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+- `src/features/organizationBusinessUnits/integration.ts:4` imports `../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+
+### organizationBusinessUnits -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationBusinessUnits/integration.ts:5` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationBusinessUnits/transport/router.ts:7` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+
+### organizationCore -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationCore/integration.ts:4` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationCore/transport/router.ts:13` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+
+### organizationExports -> assets
+
+- Declared in manifest: yes
+- Declared seam ids: service
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:7` imports `../../assets` -> `src/features/assets/index.ts` (public)
+- `src/features/organizationExports/integration.ts:7` imports `../assets` -> `src/features/assets/index.ts` (public)
+
+### organizationExports -> jobProcessing
+
+- Declared in manifest: yes
+- Declared seam ids: enqueue-service, dispatcher-worker-runtime, job-lifecycle-hardening, recurring-scheduler
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/jobTypes.ts:1` imports `../../jobProcessing` -> `src/features/jobProcessing/index.ts` (public)
+- `src/features/organizationExports/domain/service.ts:12` imports `../../jobProcessing` -> `src/features/jobProcessing/index.ts` (public)
+
+### organizationExports -> notificationDelivery
+
+- Declared in manifest: yes
+- Declared seam ids: notification-email-writer
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:8` imports `../../notificationDelivery` -> `src/features/notificationDelivery/index.ts` (public)
+- `src/features/organizationExports/integration.ts:8` imports `../notificationDelivery` -> `src/features/notificationDelivery/index.ts` (public)
+
+### organizationExports -> organizationBrandingReferences
+
+- Declared in manifest: yes
+- Declared seam ids: organization-branding-references-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:9` imports `../../organizationBrandingReferences` -> `src/features/organizationBrandingReferences/index.ts` (public)
+- `src/features/organizationExports/integration.ts:9` imports `../organizationBrandingReferences` -> `src/features/organizationBrandingReferences/index.ts` (public)
+
+### organizationExports -> organizationBusinessUnitMemberships
+
+- Declared in manifest: yes
+- Declared seam ids: organization-business-unit-memberships-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:10` imports `../../organizationBusinessUnitMemberships` -> `src/features/organizationBusinessUnitMemberships/index.ts` (public)
+- `src/features/organizationExports/integration.ts:10` imports `../organizationBusinessUnitMemberships` -> `src/features/organizationBusinessUnitMemberships/index.ts` (public)
+
+### organizationExports -> organizationBusinessUnits
+
+- Declared in manifest: yes
+- Declared seam ids: organization-business-units-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:11` imports `../../organizationBusinessUnits` -> `src/features/organizationBusinessUnits/index.ts` (public)
+- `src/features/organizationExports/integration.ts:11` imports `../organizationBusinessUnits` -> `src/features/organizationBusinessUnits/index.ts` (public)
+
+### organizationExports -> organizationCore
+
+- Declared in manifest: yes
+- Declared seam ids: organization-core-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:17` imports `../../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+- `src/features/organizationExports/integration.ts:12` imports `../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+
+### organizationExports -> organizationLegalDetails
+
+- Declared in manifest: yes
+- Declared seam ids: organization-legal-details-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:18` imports `../../organizationLegalDetails` -> `src/features/organizationLegalDetails/index.ts` (public)
+- `src/features/organizationExports/integration.ts:13` imports `../organizationLegalDetails` -> `src/features/organizationLegalDetails/index.ts` (public)
+
+### organizationExports -> organizationLocations
+
+- Declared in manifest: yes
+- Declared seam ids: organization-locations-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:19` imports `../../organizationLocations` -> `src/features/organizationLocations/index.ts` (public)
+- `src/features/organizationExports/integration.ts:14` imports `../organizationLocations` -> `src/features/organizationLocations/index.ts` (public)
+
+### organizationExports -> organizationOpeningHours
+
+- Declared in manifest: yes
+- Declared seam ids: organization-opening-hours-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:20` imports `../../organizationOpeningHours` -> `src/features/organizationOpeningHours/index.ts` (public)
+- `src/features/organizationExports/integration.ts:15` imports `../organizationOpeningHours` -> `src/features/organizationOpeningHours/index.ts` (public)
+
+### organizationExports -> organizationReferenceCatalogues
+
+- Declared in manifest: yes
+- Declared seam ids: organization-reference-catalogues-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/domain/service.ts:21` imports `../../organizationReferenceCatalogues` -> `src/features/organizationReferenceCatalogues/index.ts` (public)
+- `src/features/organizationExports/integration.ts:16` imports `../organizationReferenceCatalogues` -> `src/features/organizationReferenceCatalogues/index.ts` (public)
+
+### organizationExports -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationExports/integration.ts:20` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationExports/transport/router.ts:7` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+
+### organizationLegalDetails -> organizationCore
+
+- Declared in manifest: yes
+- Declared seam ids: organization-core-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationLegalDetails/domain/service.ts:2` imports `../../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+- `src/features/organizationLegalDetails/integration.ts:4` imports `../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+
+### organizationLegalDetails -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationLegalDetails/integration.ts:5` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationLegalDetails/transport/router.ts:13` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+
+### organizationLocations -> organizationCore
+
+- Declared in manifest: yes
+- Declared seam ids: organization-core-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationLocations/domain/service.ts:2` imports `../../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+- `src/features/organizationLocations/integration.ts:4` imports `../organizationCore` -> `src/features/organizationCore/index.ts` (public)
+
+### organizationLocations -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationLocations/integration.ts:5` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationLocations/transport/router.ts:13` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+
+### organizationOpeningHours -> organizationLocations
+
+- Declared in manifest: yes
+- Declared seam ids: organization-locations-service-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationOpeningHours/domain/service.ts:2` imports `../../organizationLocations` -> `src/features/organizationLocations/index.ts` (public)
+- `src/features/organizationOpeningHours/integration.ts:4` imports `../organizationLocations` -> `src/features/organizationLocations/index.ts` (public)
+
+### organizationOpeningHours -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationOpeningHours/integration.ts:5` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationOpeningHours/transport/router.ts:7` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+
+### organizationReferenceCatalogues -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationReferenceCatalogues/integration.ts:4` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationReferenceCatalogues/transport/router.ts:7` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+
+### organizationSearch -> tenantAuth
+
+- Declared in manifest: yes
+- Declared seam ids: session-lookup-repository-factory, session-lookup-repository-type
+- Public imports: 2
+- Private imports: 0
+
+- `src/features/organizationSearch/integration.ts:4` imports `../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
+- `src/features/organizationSearch/transport/router.ts:7` imports `../../tenantAuth` -> `src/features/tenantAuth/index.ts` (public)
 
 ### rootAuth -> rootUsers
 

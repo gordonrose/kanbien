@@ -34,8 +34,8 @@
 | Field | Value |
 | --- | --- |
 | Plain-language description | Durable relationship between an Organization, a logo type, and a ready image asset. |
-| Business purpose | Controls the current public logo for an Organization and logo type while keeping asset storage policy separate. |
-| Durable fact boundary | Organization ownership, tenant/account boundary, logo type, current asset relationship, alt text, public readiness, replacement/delete posture, and cleanup behavior. |
+| Business purpose | Controls the current public primary logo for an Organization while keeping asset storage policy separate. |
+| Durable fact boundary | Organization ownership, tenant/account boundary, v1 primary logo type, current asset relationship, alt text, public readiness, replacement/delete posture, and cleanup behavior. |
 | Primary users / actors | Root admins, tenant admins, public logo readers, asset processor, cleanup worker, export worker, and audit reviewers. |
 | Rebuild-from-spec value | A future maintainer can reconstruct logo relationship ownership, allowed types/MIME/size, public delivery, alt text, replacement, placeholder, cache signal, and cleanup rules. |
 
@@ -58,7 +58,7 @@
 
 | Capability key | Capability family | Operation | Actor / authority world | Surface | Lifecycle or relationship impact | Evidence / audit expectation | Source artifact | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `organization.logo.upload-intent` | `authoring` | create upload intent for logo type | root, tenant | UI/API/assets | creates scoped upload intent before relationship exists | upload audit; asset policy proof | public logo asset decision; API contracts | Intent is actor/scope/storage-key bound. |
+| `organization.logo.upload-intent` | `authoring` | create upload intent for v1 primary logo type | root, tenant | UI/API/assets | creates scoped upload intent before relationship exists | upload audit; asset policy proof | public logo asset decision; API contracts | Intent is actor/scope/storage-key bound. |
 | `organization.logo.replace` | `relationship-control` | attach ready asset as current logo | root, tenant | UI/API/assets | replaces current relationship after asset readiness | audit replacement; cache signal proof | public logo asset decision | Prior logo remains public until replacement accepted. |
 | `organization.logo.delete` | `lifecycle` | remove current logo relationship | root, tenant | UI/API/assets | removes current relationship and falls back to initials placeholder | audit delete; cleanup evidence | public logo asset decision | Placeholder is app-generated, not uploaded asset. |
 | `organization.logo.public-read` | `read-discovery` | read current public logo bytes or placeholder | public | app-controlled URL | no private Organization access granted | raw URL denial proof | public logo asset decision | Public read constrained to current accepted relationship. |
@@ -70,7 +70,7 @@
 | Capability family | Meaning for Logo Relationship | Prefer over another family when |
 | --- | --- | --- |
 | `authoring` | Creates upload intents and relationship-ready inputs. | The operation starts or updates logo management. |
-| `relationship-control` | Links a ready asset to an Organization/logo type. | The main effect is current logo relationship. |
+| `relationship-control` | Links a ready asset to an Organization primary logo relationship. | The main effect is current logo relationship. |
 | `lifecycle` | Removes current logo relationship. | The operation changes current public relationship availability. |
 | `read-discovery` | Public/current logo read without private record access. | The operation serves current public bytes or placeholder. |
 | `import-export` | Reads logo bytes into private export. | The boundary is export packaging. |
@@ -84,7 +84,7 @@
 | `tenant_id` | `tenant_id` | `relationship` | `UUID` | `single` | yes | yes | immutable | exact, facet | hidden authority field | PRD/API contracts |
 | `organization_id` | `organization_id` | `relationship` | `UUID` | `single` | yes | yes | immutable | exact, facet | Organization relationship | PRD/API contracts |
 | `asset_id` | `asset_id` | `relationship` | `UUID` | `single` | yes for current uploaded logo | no | relationship-action only | exact | asset relationship | public logo asset decision |
-| `logo_type` | `logo_type` | `core` | `primary`, `icon`, `light-background`, or `dark-background` | `single` | yes | no | create-only per relationship key | exact, facet | logo type selector | asset decision/API contracts |
+| `logo_type` | `logo_type` | `core` | `primary` in v1 | `single` | yes | no | create-only per relationship key | exact, facet | logo type selector | asset decision/API contracts |
 | `alt_text` | `alt_text` | `core` | `TEXT` | `single` | yes for public logo | no | updateable with relationship | full-text maybe | alt text field | public logo asset decision |
 | `public_readiness_status` | planned readiness field | `lifecycle` | `pending`, `ready`, `rejected`, or `removed` | `single` | yes | yes | lifecycle-only | exact | readiness badge | asset decision |
 | `published_at` | `published_at` | `lifecycle` | `TIMESTAMPTZ or NULL` | `single` | no | yes | lifecycle-only | range, sort | public status metadata | asset decision |
@@ -108,7 +108,7 @@
 | Status | Meaning for this entity | Normal visibility | Allowed next actions | Source |
 | --- | --- | --- | --- | --- |
 | `draft` | Planning status before implementation. | docs/planning only | implementation planning | this page |
-| `active` | Current accepted logo relationship for a logo type. | public logo read and authorized admin reads | replace, delete, export | public logo asset decision |
+| `active` | Current accepted v1 primary logo relationship. | public logo read and authorized admin reads | replace, delete, export | public logo asset decision |
 | `superseded` | Prior relationship replaced by a newer accepted logo. | retained/audit reads only | cleanup eligible after 24 hours where allowed | public logo asset decision |
 | `archived` | Not a named v1 logo relationship state. | not-applicable | not-applicable | this page |
 | `deleted` | Current relationship removed; placeholder is used. | explicit/audit reads only | create new relationship | public logo asset decision |
@@ -121,12 +121,24 @@
 | `logo.asset` | `reference` | Organization Logo Relationship | Asset | many-to-one | Asset must be ready, same tenant/account, and satisfy asset policy. | Asset readiness controls public relationship. | upload/preview panel | asset decision |
 | `logo.prior-replacement` | `replacement` | Organization Logo Relationship | Organization Logo Relationship | many-to-one optional | Prior logo remains public until replacement accepted. | Replaced bytes may be cleanup-eligible after 24 hours. | replacement history | asset decision |
 
+## Storage And Retrieval Model
+
+| Concern | Rule | Why it matters | Source |
+| --- | --- | --- | --- |
+| Where the logo relationship stores the link | Store `asset_id` on the Organization Logo Relationship. | The Organization feature knows which asset is current for each Organization primary logo. | asset decision |
+| Where physical storage is recorded | Store `storage_provider` and `storage_key` on the `assets` record, not on the logo relationship. | The reusable asset feature owns object-storage details and can change providers or keys without changing Organization records. | `docs/data-dictionary/asset.md` |
+| Admin retrieval | Admin/API reads return the logo relationship, `asset_id`, logo type, readiness, alt text, and an app-controlled delivery URL or placeholder descriptor. | Admin screens can display/manage the logo without exposing raw storage paths. | asset decision |
+| Public retrieval | Public readers request a stable app-controlled URL for the Organization primary logo. The app resolves the current ready logo relationship, calls the asset content seam by `asset_id`, and streams or redirects through approved public delivery. | Public callers do not need tenant authority and never receive raw bucket URLs. | asset decision |
+| Export retrieval | The export job uses the authorized Organization export flow, resolves the current primary logo relationship by Organization, then reads actual bytes through the asset content seam. | Exports include image files without making asset storage the Organization source of truth. | private export decision |
+| Missing/deleted logo | If no current ready relationship exists, return or render the deterministic initials placeholder for the Organization. | Placeholder behavior is generated by the app, not stored as uploaded logo bytes. | asset decision |
+| Raw storage access | Raw bucket/provider URLs, storage credentials, and storage keys are never product-facing URL authority. | Prevents bypassing Organization authorization, cache rules, and public-read constraints. | asset decision |
+
 ## Indexes And Constraints
 
 | Name | Type | Field(s) | Definition / rule | Why it matters | Source |
 | --- | --- | --- | --- | --- | --- |
 | `organization_logo_relationship_pkey` | `primary key` | `organization_logo_relationship_id` | Stable row identity. | Supports reads and audit. | planned |
-| `uq_current_logo_per_type` | `partial unique` | `organization_id`, `logo_type` | One current accepted logo relationship per Organization/logo type. | Prevents ambiguous public logo reads. | asset decision |
+| `uq_current_primary_logo` | `partial unique` | `organization_id`, `logo_type` | One current accepted v1 primary logo relationship per Organization. | Prevents ambiguous public logo reads and leaves room for future logo-type expansion. | asset decision |
 | `fk_logo_organization` | `foreign key` | `organization_id` | References Organization. | Keeps relationship scoped to Organization. | PRD |
 | `fk_logo_asset` | `foreign key` | `asset_id` | References asset record. | Links asset without making asset authority. | asset decision |
 
@@ -134,7 +146,7 @@
 
 | Rule key | Field(s) | Rule | Failure behavior / error | Source |
 | --- | --- | --- | --- | --- |
-| `logo.type.allowed` | `logo_type` | Allowed types are primary, icon, light-background, dark-background. | `ORGANIZATION_LOGO_TYPE_INVALID`. | API contracts |
+| `logo.type.allowed` | `logo_type` | V1 allowed type is primary. Future types require a separate expansion decision. | `ORGANIZATION_LOGO_TYPE_INVALID`. | API contracts |
 | `logo.alt-text.required` | `alt_text` | Public logo requires contextual alt text; default may be generated as organization name plus logo. | `ORGANIZATION_LOGO_ALT_TEXT_REQUIRED`. | asset decision |
 | `logo.asset.ready` | `asset_id` | Replacement requires ready asset passing verification/scanning/processing. | `ORGANIZATION_LOGO_NOT_READY`. | asset decision |
 | `logo.asset.same-tenant` | `asset_id`, `organization_id` | Asset and Organization must belong to same tenant/account. | `ORGANIZATION_LOGO_TENANT_MISMATCH`. | API contracts |
@@ -145,7 +157,7 @@
 | Field | Operator(s) | Storage model | Index posture | Default sort / visibility impact | Source |
 | --- | --- | --- | --- | --- | --- |
 | `tenant_id`, `organization_id` | exact, facet | scalar | boundary and child indexes | Required boundary for admin reads. | API contracts |
-| `logo_type` | exact, facet | scalar | current-logo unique/index | Resolves current public logo type. | asset decision |
+| `logo_type` | exact, facet | scalar | current-logo unique/index | Resolves current public primary logo and leaves room for future logo-type expansion. | asset decision |
 | `public_readiness_status` | exact, facet | scalar | readiness index | Separates pending/ready/rejected/removed. | asset decision |
 | `deleted_at`, `published_at`, `replaced_at` | range, sort | scalar | lifecycle indexes as needed | Supports cleanup and audit. | asset decision |
 
@@ -186,7 +198,7 @@
 | API required | planned logo upload/replace/delete APIs and public delivery URL | API contracts |
 | UI required | planned Organization logo management panel | PRD |
 | Default entity-management preset | not-yet-defined | entity registry discovery |
-| List view treatment | logo types with current/placeholder/readiness status | asset decision |
+| List view treatment | primary logo with current/placeholder/readiness status; future logo types require expansion | asset decision |
 | Detail view treatment | preview, alt text, asset readiness, replacement history | asset decision |
 | Create/edit treatment | upload intent, asset readiness, alt text confirmation | asset decision |
 | Lifecycle action treatment | delete/removal confirmation with placeholder fallback | asset decision |
@@ -211,7 +223,7 @@
 | --- | --- | --- | --- | --- |
 | Durable domain data rule | yes | enforced-by-maintained-artifact | this page; asset decision | Planned durable relationship record. |
 | System-managed identifiers, timestamps, lifecycle, and audit fields | yes | planned | future implementation tests | IDs/timestamps/readiness fields system-managed. |
-| Normalization, uniqueness, and searchable-storage rules | yes | planned | asset decision/API contracts | One current logo per Organization/logo type. |
+| Normalization, uniqueness, and searchable-storage rules | yes | planned | asset decision/API contracts | One current primary logo per Organization in v1. |
 | Soft-delete and normal-read visibility | yes | planned | future tests | Delete removes current relationship and uses placeholder. |
 | Tenant boundary / object-level authorization | yes | planned | future authz/asset tests | Organization authorizes relationship before asset seam. |
 | Retention, cleanup, export/delete, and legal-hold posture | yes | documented-not-enforced | asset decisions | Cleanup/runbook not implemented. |

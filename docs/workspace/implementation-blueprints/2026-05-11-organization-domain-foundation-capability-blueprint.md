@@ -1,5 +1,12 @@
 # Organization Domain Foundation Capability Blueprint
 
+> Superseded 2026-05-15 by
+> `docs/workspace/implementation-blueprints/2026-05-15-organization-domain-foundation-planning-blueprint.md`.
+> This earlier draft is retained for history only. It predates the refreshed
+> PRD/API/data-dictionary alignment, integration deferral, opening-hour
+> exceptions, public logo technical signoff gate, and reusable secure export
+> behavior.
+
 ## Summary
 
 - Feature set:

@@ -7,9 +7,9 @@
 | Entity key | `organization-integration-record` |
 | Entity name | Organization Integration Record |
 | Dictionary file | `docs/data-dictionary/organization-integration-record.md` |
-| Owning feature | planned `organizationIntegrations` |
-| Ownership status | `planned` |
-| Current entity status | `draft` |
+| Owning feature | future `organizationIntegrations` |
+| Ownership status | `deferred` |
+| Current entity status | `deferred` |
 | Primary authority | `planning-artifact` |
 | Primary source table or record | planned `organization_integration_record`, planned `OrganizationIntegrationRecord` |
 | Entity definition lineage | `not-yet-registered` |
@@ -21,8 +21,8 @@
 | Concern | Current posture | Future posture | Source / target |
 | --- | --- | --- | --- |
 | Current source of truth | planning artifacts and source-independent dictionary entry | implemented source, migrations, and registry-backed dictionary truth | PRD, API contracts, this page |
-| Source precedence | Approved PRD/API/data dictionary own planned behavior until implementation exists. | Runtime source and migrations win after implementation; registry rows and generated docs must reconcile. | future `organizationIntegrations` implementation |
-| Runtime persistence owner | planned `organizationIntegrations` | `organizationIntegrations` | future `src/features/organizationIntegrations` |
+| Source precedence | Approved PRD/API/data dictionary own deferred boundary until a future discovery revives it. | Runtime source and migrations win only after a future implementation is approved; registry rows and generated docs must reconcile. | future `organizationIntegrations` implementation |
+| Runtime persistence owner | deferred `organizationIntegrations` | `organizationIntegrations` if revived | future `src/features/organizationIntegrations` |
 | Runtime persistence record | planned `organization_integration_record` | integration table and record type | future migration and persistence files |
 | Entity-registry persistence owner | not-yet-registered | `entityBuilder` or approved successor registry | `entityKey = organization-integration-record` |
 | Entity-registry persistence record | not yet backed by registry rows | DB-backed lineage, version, attributes, relationships, lifecycle, and retention rows | future registry records |
@@ -35,9 +35,9 @@
 | --- | --- |
 | Plain-language description | High-level official integration relationship for an Organization. |
 | Business purpose | Records that an Organization has an integration relationship without storing provider configuration or secrets in v1. |
-| Durable fact boundary | Owning Organization, tenant/account boundary, integration name/type/status, rejection of secrets/endpoints/config, lifecycle, and export behavior. |
-| Primary users / actors | Root admins, tenant admins, Organization-domain services, search/export jobs, security reviewers, and audit reviewers. |
-| Rebuild-from-spec value | A future maintainer can reconstruct the high-level integration table and the explicit no-secrets/no-provider-config boundary. |
+| Durable fact boundary | Owning Organization, tenant/account boundary, integration name/type/status, rejection of secrets/endpoints/config, and lifecycle if a future version revives the entity. |
+| Primary users / actors | Future root admins, tenant admins, Organization-domain services, security reviewers, and audit reviewers. |
+| Rebuild-from-spec value | A future maintainer can understand the deferred high-level integration boundary and the explicit no-secrets/no-provider-config constraint without treating it as v1 scope. |
 
 ## Storage Model
 
@@ -58,11 +58,10 @@
 
 | Capability key | Capability family | Operation | Actor / authority world | Surface | Lifecycle or relationship impact | Evidence / audit expectation | Source artifact | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `organization.integration.create` | `authoring` | create high-level integration record | root, tenant | UI/API | creates child record under Organization | audit create; secret-field rejection proof | PRD; API contracts | Credentials/endpoints/webhook secrets/provider config are out of scope. |
-| `organization.integration.read` | `read-discovery` | list/get integration records | root, tenant | UI/API/search/export | no mutation; scoped to Organization and tenant/account | access proof | API contracts | Reads high-level facts only. |
-| `organization.integration.update` | `authoring` | update high-level integration facts | root, tenant | UI/API | refreshes `updated_at` | audit update; secret-field rejection proof | API contracts | Must reject secret-like fields. |
-| `organization.integration.archive` | `lifecycle` | archive integration record | root, tenant | UI/API | removes current visibility | audit archive | PRD | Normal reads exclude archived rows. |
-| `organization.integration.export` | `import-export` | include in private export | root, tenant, system | job/export | exports selected high-level facts | export evidence | private export decision | Export must not include rejected config/secrets. |
+| `organization.integration.create` | `authoring` | future create high-level integration record | root, tenant | future UI/API | creates child record under Organization if revived | audit create; secret-field rejection proof | future Product Discovery | Deferred from v1. Credentials/endpoints/webhook secrets/provider config remain out of scope. |
+| `organization.integration.read` | `read-discovery` | future list/get integration records | root, tenant | future UI/API/search | no mutation; scoped to Organization and tenant/account | access proof | future Product Discovery | Deferred from v1. |
+| `organization.integration.update` | `authoring` | future update high-level integration facts | root, tenant | future UI/API | refreshes `updated_at` | audit update; secret-field rejection proof | future Product Discovery | Deferred from v1. Must reject secret-like fields if revived. |
+| `organization.integration.archive` | `lifecycle` | future archive integration record | root, tenant | future UI/API | removes current visibility | audit archive | future Product Discovery | Deferred from v1. |
 
 ## Capability Family Rules
 
@@ -71,7 +70,7 @@
 | `read-discovery` | Reads high-level integration records. | The operation inspects integration truth. |
 | `authoring` | Creates or updates high-level integration facts. | The operation changes non-secret integration facts. |
 | `lifecycle` | Archives, restores, or deletes integration records. | The operation changes current visibility. |
-| `import-export` | Includes integration records in private export bundles. | The boundary is data movement out of the feature. |
+| `import-export` | Not approved for integration records in v1. | A future version explicitly adds integration export behavior after discovery and security review. |
 | `security-access` | Rejects or governs secret-like/config fields. | The operation touches credentials, endpoints, webhook secrets, payloads, or provider config. |
 
 ## Attribute Inventory
@@ -105,8 +104,9 @@
 
 | Status | Meaning for this entity | Normal visibility | Allowed next actions | Source |
 | --- | --- | --- | --- | --- |
-| `draft` | Planning status before implementation. | docs/planning only | implementation planning | this page |
-| `active` | Current high-level integration record. | normal reads | update, archive, export | PRD Integration Record |
+| `deferred` | Planning record retained only as a future-scope boundary. | docs/planning only | future discovery/steering | this page |
+| `draft` | Future planning status before implementation if revived. | docs/planning only | implementation planning | this page |
+| `active` | Future current high-level integration record if revived. | future normal reads | update, archive | future Product Discovery |
 | `superseded` | Not a named v1 runtime state. | not-applicable | not-applicable unless versioning is approved | this page |
 | `archived` | Retained record removed from current views. | explicit retained reads/export only | restore, delete where approved | AGENTS defaults |
 | `deleted` | Soft-deleted record. | explicit deleted reads only | restore or purge only if later approved | AGENTS defaults |
@@ -124,7 +124,7 @@
 | --- | --- | --- | --- | --- | --- |
 | `organization_integration_record_pkey` | `primary key` | `organization_integration_record_id` | Stable row identity. | Supports reads and audit. | planned |
 | `fk_integration_organization` | `foreign key` | `organization_id` | References owning Organization. | Keeps integration scoped to Organization. | PRD |
-| `ix_integration_organization` | `index` | `organization_id`, `lifecycle_status`, `deleted_at` | Organization integration lookup. | Supports detail view and export. | inferred |
+| `ix_integration_organization` | `index` | `organization_id`, `lifecycle_status`, `deleted_at` | Future Organization integration lookup. | Supports future detail view if revived. | inferred |
 
 ## Normalization And Validation Rules
 
@@ -157,9 +157,9 @@
 
 | Concern | Policy | Owner | Trigger | Failure / retry posture | Evidence | Source |
 | --- | --- | --- | --- | --- | --- | --- |
-| Retention | Archived integration records remain retained. | `organizationIntegrations` | archive/export | lifecycle failures require audit evidence later. | future tests | PRD |
+| Retention | Archived integration records would remain retained if the entity is revived. | `organizationIntegrations` | future archive | lifecycle failures require audit evidence later. | future tests | future Product Discovery |
 | Cleanup | No source cleanup job approved in planning slice. | `organizationIntegrations` | not-applicable | not-applicable until approved. | this page | this page |
-| Export | Included in private Organization exports when selected and authorized, excluding forbidden secret/config data. | `organizationExports` reads via integration seam | export request | export failures recorded by export job. | private export decision | asset decision |
+| Export | Deferred; integration records are excluded from v1 Organization exports. | not-applicable | not-applicable | not-applicable until future approval. | private export decision | Organization PRD |
 | Delete / purge | Soft delete only in this planning page. | `organizationIntegrations` | explicit delete | failure evidence required later. | future tests | AGENTS defaults |
 | Legal hold | Persistent source data may be held; generated export copies follow export-copy policy. | future compliance owner | hold placement | cleanup must not remove held source data. | future runbook | Organization decisions |
 
@@ -178,8 +178,8 @@
 
 | Concern | Posture | Source |
 | --- | --- | --- |
-| API required | planned child resource APIs | API contracts |
-| UI required | planned Organization detail child area | PRD |
+| API required | deferred; no v1 API approved | PRD |
+| UI required | deferred; no v1 UI approved | PRD |
 | Default entity-management preset | not-yet-defined | entity registry discovery |
 | List view treatment | integration list scoped under Organization | PRD |
 | Detail view treatment | high-level integration detail only | PRD |
@@ -196,7 +196,7 @@
 | Security relevance | high boundary because secrets/config are explicitly out of scope and must be rejected | PRD |
 | Audit relevance | yes for create/update/archive/delete/export and rejected secret-like submissions | PRD/test planning |
 | Retention / cleanup posture | retained when archived; no purge approved | PRD |
-| Export / deletion posture | private export inclusion for approved high-level facts only | private export decision |
+| Export / deletion posture | excluded from v1 exports; future export requires explicit approval | private export decision |
 | Legal hold posture | source records may be held; export copies not extended by hold in v1 | Organization decisions |
 | Operational evidence requirements | `npm run data:compliance-health`; future secret-rejection/authz/export tests | this page |
 

@@ -10,11 +10,16 @@ Today the system has:
 
 - one Express application
 - one versioned API router under `/v1`
-- fifteen mounted API features: `rootAuth`, `rootRoles`, `rootUsers`,
+- twenty-five mounted API features: `rootAuth`, `rootRoles`, `rootUsers`,
   `tenantAdmins`, `tenantAuth`, `tenantConfiguration`, `tenants`,
   `webAppHierarchyBuilder`, `webAppPageSettings`, `entityBuilder`,
   `webAppSurfaceDiscovery`, `designSystemCanonicals`,
-  `notificationDelivery`, `capabilityContractCatalog`, and `assets`
+  `notificationDelivery`, `capabilityContractCatalog`, `assets`,
+  `organizationCore`, `organizationLegalDetails`, `organizationLocations`,
+  `organizationOpeningHours`, `organizationBusinessUnits`,
+  `organizationBusinessUnitMemberships`, `organizationReferenceCatalogues`,
+  `organizationSearch`, `organizationBrandingReferences`, and
+  `organizationExports`
 - one unmounted backend foundation feature: `jobProcessing`
 - two mounted browser/frontend route families:
   `/design-system` and `/root-admin`
@@ -103,7 +108,14 @@ The active mounted API examples are `src/features/rootAuth`,
 `src/features/webAppHierarchyBuilder`, `src/features/webAppPageSettings`,
 `src/features/entityBuilder`, `src/features/webAppSurfaceDiscovery`,
 `src/features/designSystemCanonicals`, `src/features/notificationDelivery`,
-`src/features/capabilityContractCatalog`, and `src/features/assets`.
+`src/features/capabilityContractCatalog`, `src/features/assets`,
+`src/features/organizationCore`, `src/features/organizationLegalDetails`,
+`src/features/organizationLocations`, `src/features/organizationOpeningHours`,
+`src/features/organizationBusinessUnits`,
+`src/features/organizationBusinessUnitMemberships`,
+`src/features/organizationReferenceCatalogues`,
+`src/features/organizationSearch`, `src/features/organizationBrandingReferences`,
+and `src/features/organizationExports`.
 The active unmounted backend foundation example is
 `src/features/jobProcessing`.
 Each feature follows the same internal structure:
@@ -210,6 +222,11 @@ Current auth model:
   outbox dispatch, worker execution, retry/dead-letter, payload-safety, and
   attempt-history seams; concrete BullMQ adapter integration and operator APIs
   remain deferred
+- the Organization domain is delivered as a related backend feature family:
+  `organizationCore` owns tenant-scoped organization identity and hierarchy,
+  child features own legal details, locations, opening hours, business units,
+  memberships, reference values, search, public logo relationships, and
+  requester-bound private exports
 - `rootUsers` remains authoritative for root-user lifecycle state
 - `rootAuth` reads root-user sign-in eligibility through an exported
   `rootUsers` auth-state reader rather than `rootUsers` private persistence

@@ -7,13 +7,13 @@
 | Entity key | `organization-reference-value` |
 | Entity name | Organization Reference Value |
 | Dictionary file | `docs/data-dictionary/organization-reference-value.md` |
-| Owning feature | planned `organizationReferenceCatalogues` |
-| Ownership status | `planned` |
-| Current entity status | `draft` |
-| Primary authority | `planning-artifact` |
-| Primary source table or record | planned `organization_reference_value`, planned `OrganizationReferenceValueRecord` |
+| Owning feature | `organizationReferenceCatalogues` |
+| Ownership status | `implemented-foundation` |
+| Current entity status | `active-v1-foundation` |
+| Primary authority | `runtime-source-and-planning-artifact` |
+| Primary source table or record | `organization_reference_value`, `OrganizationReferenceValueData` |
 | Entity definition lineage | `not-yet-registered` |
-| Latest source review date | `2026-05-14` |
+| Latest source review date | `2026-05-15` |
 | Related PRD / steering / ADR | `docs/prd/2026-05-12-0025-organization-domain-foundation.md`; `docs/api-contracts/organization-root-admin.md`; `docs/api-contracts/organization-tenant-admin.md` |
 
 ## Source Authority And Future Persistence
@@ -22,8 +22,8 @@
 | --- | --- | --- | --- |
 | Current source of truth | planning artifacts and source-independent dictionary entry | implemented source, migrations, and registry-backed dictionary truth | PRD, API contracts, this page |
 | Source precedence | Approved PRD/API/data dictionary own planned behavior until implementation exists. | Runtime source and migrations win after implementation; registry rows and generated docs must reconcile. | future `organizationReferenceCatalogues` implementation |
-| Runtime persistence owner | planned `organizationReferenceCatalogues` | `organizationReferenceCatalogues` unless broader platform catalogue is approved | future `src/features/organizationReferenceCatalogues` |
-| Runtime persistence record | planned `organization_reference_value` | reference-value table and record type | future migration and persistence files |
+| Runtime persistence owner | `organizationReferenceCatalogues` | `organizationReferenceCatalogues` unless broader platform catalogue is approved | `src/features/organizationReferenceCatalogues` |
+| Runtime persistence record | `organization_reference_value` | reference-value table and record type | `src/features/organizationReferenceCatalogues/persistence/migrations/0057_create_organization_reference_values.sql` |
 | Entity-registry persistence owner | not-yet-registered | `entityBuilder` or approved successor registry | `entityKey = organization-reference-value` |
 | Entity-registry persistence record | not yet backed by registry rows | DB-backed lineage, version, attributes, relationships, lifecycle, and retention rows | future registry records |
 | Markdown posture | `source-independent-planning` | generated output or mirrored transitional artifact | this file |
@@ -34,7 +34,7 @@
 | Field | Value |
 | --- | --- |
 | Plain-language description | System-owned option-list value used by Organization-domain records. |
-| Business purpose | Provides controlled choices tenant admins can select, such as organization type, legal form, industry category, location type, integration type, or relationship type. |
+| Business purpose | Provides controlled choices tenant admins can select, such as organization type, legal form, industry category, location type, or relationship type. Future integration-type values require revived integration scope. |
 | Durable fact boundary | Stable key, reference type, label, lifecycle state, replacement link, root-admin ownership, tenant-admin read/use posture, and historical meaning. |
 | Primary users / actors | Root admins, tenant admins as readers/users, Organization-domain services, search/export jobs, and audit reviewers. |
 | Rebuild-from-spec value | A future maintainer can reconstruct the option-list table, root-only mutation, tenant read/use, immediate label update, and used-value retention rules. |
@@ -45,7 +45,7 @@
 | --- | --- |
 | What is a reference value? | A controlled option in a list, managed by root admins and selected by tenant admins. |
 | What is it not? | It is not a customer-created Organization record and it is not free text. |
-| Example values | Organization type, legal form, industry category, location type, integration type, relationship type. |
+| Example values | Organization type, legal form, industry category, location type, relationship type. |
 | Why store it as a record? | So used choices keep stable meaning, can be renamed immediately by reference, and can be archived/deprecated/replaced without silently breaking historical records. |
 | Why not hard-code only enums? | Some option lists may need root-admin changes without a deployment, while still remaining system-owned and governed. |
 
@@ -53,7 +53,7 @@
 
 | Field | Value |
 | --- | --- |
-| Primary table or durable record | planned `organization_reference_value` |
+| Primary table or durable record | `organization_reference_value` |
 | Primary key | `organization_reference_value_id` |
 | Stable external key | planned stable `reference_value_key` |
 | Versioning model | `mutable-current-record` with replacement link for used values |

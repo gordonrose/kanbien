@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "featureName": "organizationBusinessUnitMemberships",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createOrganizationBusinessUnitMembershipsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for organization business-unit membership routes and behavior."
+    },
+    {
+      "seamId": "organization-business-unit-memberships-service-type",
+      "symbol": "OrganizationBusinessUnitMembershipsService",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "experimental",
+      "description": "Service contract for business-unit membership lifecycle, member-target validation, and export projection reads."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "organizationBusinessUnits",
+      "seamIds": [
+        "organization-business-units-service-type"
+      ],
+      "description": "Memberships validate owning and member business units through the organizationBusinessUnits public service seam."
+    },
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "description": "Tenant-admin membership routes require an active tenant session context."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing membership role taxonomy or member-target validation can break exports and future access/reporting slices.",
+    "Individual member targets are intentionally deferred until an approved individual/person record seam exists."
+  ]
+}

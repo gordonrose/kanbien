@@ -12,9 +12,10 @@ on:
       - "package-lock.json"
       - "playwright.config.ts"
       - "src/frontend/**"
-      - "src/lib/frontendQualityGateManifest.ts"
-      - "src/scripts/checkFrontendGovernance.ts"
-      - "src/scripts/runFrontendGate.ts"
+      - "src/scripts/checkFrontendArchitectureDocs.ts"
+      - "src/scripts/checkGovernedRootAdminPageAudit.ts"
+      - "src/scripts/checkGovernedRootAdminUi.ts"
+      - "src/scripts/checkGovernedUiAdoption.ts"
       - "tests/visual/**"
   push:
     branches:
@@ -29,15 +30,41 @@ on:
       - "package-lock.json"
       - "playwright.config.ts"
       - "src/frontend/**"
-      - "src/lib/frontendQualityGateManifest.ts"
-      - "src/scripts/checkFrontendGovernance.ts"
-      - "src/scripts/runFrontendGate.ts"
+      - "src/scripts/checkFrontendArchitectureDocs.ts"
+      - "src/scripts/checkGovernedRootAdminPageAudit.ts"
+      - "src/scripts/checkGovernedRootAdminUi.ts"
+      - "src/scripts/checkGovernedUiAdoption.ts"
       - "tests/visual/**"
 
 jobs:
   frontend-gate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: service_platform
+          POSTGRES_PASSWORD: frontend_gate_password
+          POSTGRES_DB: service_platform_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U service_platform -d service_platform_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      NODE_ENV: test
+      PORT: "4317"
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_PORT: "5432"
+      DATABASE_NAME: service_platform_test
+      DATABASE_USER: service_platform
+      DATABASE_PASSWORD: frontend_gate_password
+      DATABASE_SSL: "false"
+      ROOT_AUTH_BOOTSTRAP_PASSWORD: FrontendGateBootstrapPassword123!
+      ROOT_AUTH_BOOTSTRAP_SSH_PUBLIC_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE+fWomSs6CBXFwaDSUYCy2FHG5UtnFJF7RE/O1hoozG frontend-gate@example.invalid
 
     steps:
       - name: Check out repository
@@ -56,13 +83,17 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Validate frontend governance
-        run: npm run frontend:governance
+        run: |
+          npm run check:frontend-architecture
+          npm run check:governed-ui-adoption
+          npm run check:governed-root-admin-page-audit
+          npm run check:governed-root-admin-ui
 
-      - name: Run frontend gate
-        run: npm run frontend:gate
+      - name: Prepare visual gate database
+        run: npm run db:migrate
 
-      - name: Run Lighthouse on public design-system routes
-        run: npm run frontend:lighthouse
+      - name: Run design-system visual gate
+        run: npm run test:visual:design-system
 
       - name: Upload Playwright artifacts
         if: failure()

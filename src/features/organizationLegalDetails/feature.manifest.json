@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "featureName": "organizationLegalDetails",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createOrganizationLegalDetailsFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for organization legal profile routes and behavior."
+    },
+    {
+      "seamId": "organization-legal-details-service-type",
+      "symbol": "OrganizationLegalDetailsService",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "experimental",
+      "description": "Service contract for organization legal profile lifecycle and export projection operations."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "organizationCore",
+      "seamIds": [
+        "organization-core-service-type"
+      ],
+      "description": "Legal profiles resolve and authorize their owning organization through the organizationCore public service seam."
+    },
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "description": "Tenant-admin legal profile routes require an active tenant session context."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing one-active legal profile semantics can break Organization export, search, and admin detail slices.",
+    "Changing legal-profile route context behavior can break root and tenant scoped child-resource consumers."
+  ]
+}

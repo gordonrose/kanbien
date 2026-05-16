@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "featureName": "organizationSearch",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createOrganizationSearchFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for grouped Organization-domain search routes."
+    },
+    {
+      "seamId": "organization-search-service-type",
+      "symbol": "OrganizationSearchService",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "experimental",
+      "description": "Read-only grouped search service contract for Organization-domain records."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "description": "Tenant-admin search routes require an active tenant session context."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing grouped result names, tenant filtering, default lifecycle visibility, or pagination semantics can break admin search and export-selection flows."
+  ]
+}

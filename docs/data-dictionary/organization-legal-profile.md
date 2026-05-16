@@ -7,27 +7,27 @@
 | Entity key | `organization-legal-profile` |
 | Entity name | Organization Legal Profile |
 | Dictionary file | `docs/data-dictionary/organization-legal-profile.md` |
-| Owning feature | planned `organizationLegalDetails` |
-| Ownership status | `planned` |
-| Current entity status | `draft` |
-| Primary authority | `planning-artifact` |
-| Primary source table or record | planned `organization_legal_profile`, planned `OrganizationLegalProfileRecord` |
-| Entity definition lineage | `not-yet-registered` |
-| Latest source review date | `2026-05-14` |
+| Owning feature | `organizationLegalDetails` |
+| Ownership status | `implemented-foundation` |
+| Current entity status | `active-v1` |
+| Primary authority | `runtime-source` |
+| Primary source table or record | `organization_legal_profile`, `OrganizationLegalProfileRecord` |
+| Entity definition lineage | `source-backed-markdown` |
+| Latest source review date | `2026-05-15` |
 | Related PRD / steering / ADR | `docs/prd/2026-05-12-0025-organization-domain-foundation.md`; `docs/api-contracts/organization-root-admin.md`; `docs/api-contracts/organization-tenant-admin.md` |
 
 ## Source Authority And Future Persistence
 
 | Concern | Current posture | Future posture | Source / target |
 | --- | --- | --- | --- |
-| Current source of truth | planning artifacts and source-independent dictionary entry | implemented source, migrations, and registry-backed dictionary truth | PRD, API contracts, this page |
-| Source precedence | Approved PRD/API/data dictionary own planned behavior until implementation exists. | Runtime source and migrations win over stale prose after implementation; registry rows and generated docs must reconcile. | future `organizationLegalDetails` implementation |
-| Runtime persistence owner | planned `organizationLegalDetails` | `organizationLegalDetails` | future `src/features/organizationLegalDetails` |
-| Runtime persistence record | planned `organization_legal_profile` | `organization_legal_profile` table and record type | future migration and persistence files |
+| Current source of truth | implemented source, migration, tests, and this source-backed dictionary entry | registry-backed dictionary truth when entity registry persistence is adopted | `src/features/organizationLegalDetails`; this page |
+| Source precedence | Runtime source and migration own implemented behavior; this page mirrors that truth. | Registry rows and generated docs reconcile from runtime and registry truth. | `organizationLegalDetails` implementation |
+| Runtime persistence owner | `organizationLegalDetails` | `organizationLegalDetails` | `src/features/organizationLegalDetails` |
+| Runtime persistence record | `organization_legal_profile` table and `OrganizationLegalProfileRecord` | `organization_legal_profile` table and record type | migration and persistence files |
 | Entity-registry persistence owner | not-yet-registered | `entityBuilder` or approved successor registry | `entityKey = organization-legal-profile` |
 | Entity-registry persistence record | not yet backed by registry rows | DB-backed lineage, version, attributes, relationships, lifecycle, and retention rows | future registry records |
 | Markdown posture | `source-independent-planning` | generated output or mirrored transitional artifact | this file |
-| Migration trigger | Organization legal profile persistence task | source, migrations, API contract, registry rows, and generated Markdown reconciled | future task breakdown / blueprint |
+| Migration trigger | S-005 legal profile persistence task | source, migrations, API contract, registry rows, and generated Markdown reconciled | S-005 task breakdown / blueprint |
 
 ## Summary
 
@@ -43,7 +43,7 @@
 
 | Field | Value |
 | --- | --- |
-| Primary table or durable record | planned `organization_legal_profile` |
+| Primary table or durable record | `organization_legal_profile` |
 | Primary key | `organization_legal_profile_id` |
 | Stable external key | `organization_legal_profile_id` |
 | Versioning model | `mutable-current-record` with retained archived rows |
@@ -52,17 +52,15 @@
 | Soft-delete field | `deleted_at` |
 | Archive field | `archived_at`; business state held in `lifecycle_status` |
 | Generated artifact posture | `not-applicable` for source record |
-| Migration posture | `source-independent-planning` |
+| Migration posture | `implemented` via `src/features/organizationLegalDetails/persistence/migrations/0052_create_organization_legal_details.sql` |
 
 ## Capability Inventory
 
 | Capability key | Capability family | Operation | Actor / authority world | Surface | Lifecycle or relationship impact | Evidence / audit expectation | Source artifact | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `organization.legal-profile.create` | `authoring` | create legal profile | root, tenant | UI/API | creates active child record under Organization | audit create; one-active validation proof | PRD; API contracts | v1 allows one active legal profile per Organization. |
+| `organization.legal-profile.manage` | `authoring` | create, update, archive, restore, or delete legal profile | root | API | manages active child record under Organization | audit create/update/archive/restore/delete; one-active validation proof | source; PRD; API contracts | Root runtime capability seeded in S-005. |
 | `organization.legal-profile.read` | `read-discovery` | list/get legal profiles | root, tenant | UI/API/search/export | no mutation; scoped to Organization and tenant/account | access and retained-record proof | API contracts | Retained archived profiles require explicit visibility. |
-| `organization.legal-profile.update` | `authoring` | update legal details | root, tenant | UI/API | refreshes `updated_at` | audit update | API contracts | Exact legal fields remain data-dictionary controlled. |
-| `organization.legal-profile.archive` | `lifecycle` | archive legal profile | root, tenant | UI/API | removes from current active profile | audit archive | PRD | Previous or archived profiles remain retained. |
-| `organization.legal-profile.restore` | `lifecycle` | restore legal profile | root, tenant | UI/API | may re-enter active set if one-active rule permits | audit restore; uniqueness proof | PRD | Restore must not create two active profiles. |
+| `organization.legal-profile.manage` | `lifecycle` | archive, restore, or soft delete legal profile | root | API | removes or restores current active visibility | audit archive/restore/delete | PRD; source | Previous or archived profiles remain retained. |
 | `organization.legal-profile.export` | `import-export` | include in private Organization export | root, tenant, system | job/export | exports selected active and retained source data | export evidence | private export decision | Legal profile data may be sensitive private data. |
 
 ## Capability Family Rules
@@ -78,13 +76,13 @@
 
 | Attribute key | Stored field / source field | Category | Type / shape | Cardinality | Required? | System-managed? | Mutable? | Search/filter role | Design-system treatment | Source |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `organization_legal_profile_id` | `organization_legal_profile_id` | `identity` | `UUID` | `single` | yes | yes | immutable | exact | hidden system identity | planned |
+| `organization_legal_profile_id` | `organization_legal_profile_id` | `identity` | `UUID` | `single` | yes | yes | immutable | exact | hidden system identity | source |
 | `tenant_id` | `tenant_id` | `relationship` | `UUID` | `single` | yes | yes | immutable | exact, facet | hidden authority field | PRD/API contracts |
 | `organization_id` | `organization_id` | `relationship` | `UUID` | `single` | yes | yes | immutable | exact, facet | Organization relationship panel | PRD/API contracts |
-| `legal_name` | planned legal-name field | `core` | `TEXT` | `single` | yes | no | updateable | prefix, full-text | primary legal-name field | PRD Legal Profile |
-| `registration_identifier` | planned registration identifier field | `core` | `TEXT or NULL` | `single` | no | no | updateable | exact, prefix | legal identifier field | inferred from legal profile purpose |
-| `tax_vat_number` | planned tax/VAT number field | `core` | `TEXT or NULL` | `single` | no | no | updateable | exact, prefix | tax/VAT field | user refinement 2026-05-14 |
-| `registered_address` | planned registered address field group | `core` | `structured address fields or TEXT` | `single` | no | no | updateable | prefix, full-text | registered-address block | user refinement 2026-05-14 |
+| `legal_name` | `legal_name` | `core` | `TEXT` | `single` | yes | no | updateable | prefix, full-text | primary legal-name field | PRD Legal Profile |
+| `registration_identifier` | `registration_identifier` | `core` | `TEXT or NULL` | `single` | no | no | updateable | exact, prefix | legal identifier field | source |
+| `tax_vat_number` | `tax_vat_number` | `core` | `TEXT or NULL` | `single` | no | no | updateable | exact, prefix | tax/VAT field | user refinement 2026-05-14; source |
+| `registered_address` | `registered_address` | `core` | `TEXT or NULL` | `single` | no | no | updateable | prefix, full-text | registered-address block | user refinement 2026-05-14; source |
 | `lifecycle_status` | `lifecycle_status` | `lifecycle` | `active` or `archived` | `single` | yes | yes | lifecycle-only | exact | status badge | PRD Legal Profile |
 | `archived_at` | `archived_at` | `lifecycle` | `TIMESTAMPTZ or NULL` | `single` | no | yes | lifecycle-only | range, sort | lifecycle metadata | AGENTS defaults |
 | `deleted_at` | `deleted_at` | `lifecycle` | `TIMESTAMPTZ or NULL` | `single` | no | yes | lifecycle-only | range, sort | deleted metadata | AGENTS defaults |
@@ -105,7 +103,6 @@
 
 | Status | Meaning for this entity | Normal visibility | Allowed next actions | Source |
 | --- | --- | --- | --- | --- |
-| `draft` | Planning status before implementation. | docs/planning only | implementation planning | this page |
 | `active` | Current legal profile for the Organization. | normal reads | update, archive, export | PRD Legal Profile |
 | `superseded` | Not a named v1 runtime state. | not-applicable | not-applicable unless versioning is approved | this page |
 | `archived` | Retained previous legal profile. | explicit retained reads/export only | restore, delete where approved | PRD Legal Profile |
@@ -122,10 +119,11 @@
 
 | Name | Type | Field(s) | Definition / rule | Why it matters | Source |
 | --- | --- | --- | --- | --- | --- |
-| `organization_legal_profile_pkey` | `primary key` | `organization_legal_profile_id` | Stable row identity. | Supports child record reads and audit. | planned |
+| `organization_legal_profile_pkey` | `primary key` | `organization_legal_profile_id` | Stable row identity. | Supports child record reads and audit. | source |
 | `fk_organization_legal_profile_organization` | `foreign key` | `organization_id` | References owning Organization. | Keeps legal profile scoped to Organization. | PRD |
 | `uq_organization_legal_profile_active` | `partial unique` | `organization_id` | One active non-deleted legal profile per Organization. | Enforces v1 one-active rule. | PRD Legal Profile |
-| `ix_organization_legal_profile_tenant` | `index` | `tenant_id`, `lifecycle_status`, `deleted_at` | Tenant/account scoped visibility index. | Supports secure list/search/export. | inferred |
+| `ix_organization_legal_profile_tenant_visibility` | `index` | `tenant_id`, `lifecycle_status`, `deleted_at` | Tenant/account scoped visibility index. | Supports secure list/search/export. | source |
+| `ix_organization_legal_profile_organization_visibility` | `index` | `organization_id`, `lifecycle_status`, `deleted_at` | Organization child visibility index. | Supports child list and lifecycle reads. | source |
 
 ## Normalization And Validation Rules
 
@@ -174,7 +172,7 @@
 | Authority world | root or tenant | API contracts |
 | Tenant context required | yes | AGENTS tenant defaults |
 | Tenant context source | root route `tenantId`; tenant-admin server-side current tenant/account | API contracts |
-| Governing capability | planned Organization legal-profile capabilities | API contracts |
+| Governing capability | root: `organization.legal-profile.manage` or `organization.legal-profile.read`; tenant: active tenant-admin session in current tenant context until tenant-admin grant model is introduced | source; API contracts |
 | Cross-tenant posture | deny-by-default | AGENTS tenant defaults |
 | Object-level rule | Legal profile, Organization, and tenant/account must match. | PRD/API contracts |
 
@@ -182,7 +180,7 @@
 
 | Concern | Posture | Source |
 | --- | --- | --- |
-| API required | planned child resource APIs | API contracts |
+| API required | implemented child resource APIs for create, read, list, update, archive, restore, and soft delete | source; API contracts |
 | UI required | planned Organization detail child area | PRD |
 | Default entity-management preset | not-yet-defined | entity registry discovery |
 | List view treatment | scoped under Organization with active/retained filtering | PRD/API contracts |
@@ -209,12 +207,12 @@
 | Standard / Rule | Applies? | Repo Enforcement | Test / Evidence | Notes |
 | --- | --- | --- | --- | --- |
 | Durable domain data rule | yes | enforced-by-maintained-artifact | this page; PRD | Planned durable child record. |
-| System-managed identifiers, timestamps, lifecycle, and audit fields | yes | planned | future implementation tests | IDs/timestamps/lifecycle fields system-managed. |
-| Normalization, uniqueness, and searchable-storage rules | yes | planned | one-active rule in PRD/API contracts | Exact legal fields still need implementation detail. |
-| Soft-delete and normal-read visibility | yes | planned | future tests | Normal reads exclude archived/deleted rows. |
-| Tenant boundary / object-level authorization | yes | planned | future authz tests | Same tenant/account as Organization. |
-| Retention, cleanup, export/delete, and legal-hold posture | yes | documented-not-enforced | this page; export decision | Source retention/runbook not implemented. |
-| Auditability and operational evidence | yes | planned | future audit tests | Audit sink/schema not defined here. |
+| System-managed identifiers, timestamps, lifecycle, and audit fields | yes | implemented-foundation | `tests/unit/organizationLegalDetails/service.test.ts`; migration | IDs/timestamps/lifecycle fields system-managed. |
+| Normalization, uniqueness, and searchable-storage rules | yes | implemented-foundation | `tests/unit/organizationLegalDetails/service.test.ts`; migration | One-active active-profile rule enforced in service and storage. |
+| Soft-delete and normal-read visibility | yes | implemented-foundation | `tests/unit/organizationLegalDetails/service.test.ts` | Normal reads exclude archived/deleted rows. |
+| Tenant boundary / object-level authorization | yes | implemented-foundation | `tests/unit/organizationLegalDetails/service.test.ts` | Same tenant/account as Organization through `organizationCore` seam. |
+| Retention, cleanup, export/delete, and legal-hold posture | yes | documented-partial | this page; export decision | Source retention implemented for archived rows; export job remains later story. |
+| Auditability and operational evidence | yes | implemented-foundation | migration; service tests | Feature-local audit table exists; broader audit proof can deepen later. |
 
 ## Related Errors
 
@@ -232,3 +230,6 @@
 | API contract | `docs/api-contracts/organization-root-admin.md` | Child route posture and errors. |
 | API contract | `docs/api-contracts/organization-tenant-admin.md` | Tenant-admin child route posture. |
 | standard | `docs/standards/data-dictionary-registry-migration-map.md` | Markdown-to-registry migration mapping. |
+| feature source | `src/features/organizationLegalDetails` | Implemented legal-profile domain, persistence, transport, and manifest. |
+| migration | `src/features/organizationLegalDetails/persistence/migrations/0052_create_organization_legal_details.sql` | Table, indexes, audit table, and root capability seed. |
+| tests | `tests/unit/organizationLegalDetails/service.test.ts` | One-active rule, optional fields, lifecycle visibility, export projection, and tenant-boundary proof. |

@@ -5,13 +5,16 @@
 - Contract name:
   `organizationRootAdmin`
 - Feature:
-  planned Organization domain feature family
+  Organization domain feature family
 - Route family or capability group:
   Root-admin Organization management, reference catalogue management, public
   logo relationship management, grouped search, and private export requests.
 - Implementation status:
-  planned; this is a source-independent first-draft contract for task
-  breakdown, not an implemented route inventory.
+  S-004 core Organization record routes, S-005 legal-profile routes, S-006
+  location routes, S-007 opening-hour routes, S-008 business-unit routes, and
+  S-009 business-unit membership routes, and S-010 reference-value catalogue
+  routes have initial backend implementations. Logo, search, export, and UI
+  routes remain planned.
 - In-scope routes:
   - `POST /v1/root-admin/tenants/:tenantId/organizations`
   - `GET /v1/root-admin/tenants/:tenantId/organizations`
@@ -20,8 +23,17 @@
   - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/archive`
   - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/restore`
   - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/move`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/delete`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles`
+  - `GET /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles`
+  - `GET /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId`
+  - `PATCH /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId/archive`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId/restore`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId/delete`
   - `GET /v1/root-admin/tenants/:tenantId/organization-search`
   - `POST /v1/root-admin/organization-reference-values`
+  - `GET /v1/root-admin/organization-reference-values`
   - `PATCH /v1/root-admin/organization-reference-values/:referenceValueId`
   - `POST /v1/root-admin/organization-reference-values/:referenceValueId/archive`
   - `POST /v1/root-admin/organization-reference-values/:referenceValueId/deprecate`
@@ -32,6 +44,9 @@
   - `POST /v1/root-admin/tenants/:tenantId/organization-exports`
   - `GET /v1/root-admin/tenants/:tenantId/organization-exports`
   - `GET /v1/root-admin/tenants/:tenantId/organization-exports/:exportId`
+  - `POST /v1/root-admin/tenants/:tenantId/organization-exports/:exportId/cancel`
+  - `POST /v1/root-admin/tenants/:tenantId/organization-exports/:exportId/retry`
+  - `GET /v1/root-admin/tenants/:tenantId/organization-exports/:exportId/pin`
   - `GET /v1/root-admin/tenants/:tenantId/organization-exports/:exportId/download`
   - `DELETE /v1/root-admin/tenants/:tenantId/organization-exports/:exportId`
 - Out-of-scope but closely related routes:
@@ -43,12 +58,12 @@
 ## Capability
 
 - Feature:
-  planned Organization feature family:
+  Organization feature family:
   `organizationCore`, `organizationLegalDetails`, `organizationLocations`,
-  `locationOpeningHours`, `businessUnits`, `businessUnitMemberships`,
-  `organizationIntegrations`, `organizationReferenceCatalogues`,
+  `organizationOpeningHours`, `businessUnits`, `businessUnitMemberships`,
+  `organizationOpeningHoursExceptions`, `organizationReferenceCatalogues`,
   `organizationBrandingReferences`, `organizationSearch`, and
-  `organizationExports`.
+  `organizationExports`. `organizationIntegrations` is deferred from v1.
 - Capabilities:
   root-admin Organization management, system reference catalogue management,
   public logo management, grouped search, private export request/status/read,
@@ -104,6 +119,7 @@
   - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/archive`
   - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/restore`
   - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/move`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/delete`
 - Request contract:
   - params:
     exact `tenantId` and `organizationId` where present
@@ -114,7 +130,8 @@
     create/update accept only Organization-domain fields approved by the data
     dictionary; archive accepts an archive choice of whole branch or move
     children to a valid replacement parent; move accepts a target parent or
-    root-level posture.
+    root-level posture; delete soft-deletes an organization with no active
+    children.
   - validation rules:
     clients must not supply system-managed fields; empty strings are rejected;
     active organization names must be unique within the selected
@@ -130,56 +147,124 @@
     `201` for create, `200` for reads and mutations.
 - Error contract:
   - feature-local:
-    `ORGANIZATION_INVALID_REQUEST`, `ORGANIZATION_NOT_FOUND`,
-    `ORGANIZATION_TENANT_MISMATCH`, `ORGANIZATION_NAME_ALREADY_EXISTS`,
-    `ORGANIZATION_HIERARCHY_DEPTH_EXCEEDED`, `ORGANIZATION_HIERARCHY_CYCLE`,
+    `INVALID_REQUEST`, `ORGANIZATION_NOT_FOUND`,
+    `ORGANIZATION_NAME_ALREADY_EXISTS`, `ORGANIZATION_HIERARCHY_CONFLICT`,
     `ORGANIZATION_LIFECYCLE_CONFLICT`, `ORGANIZATION_REFERENCE_VALUE_INVALID`
   - shared middleware:
     `UNAUTHORIZED`, `INVALID_SESSION`, `FORBIDDEN`, `RATE_LIMITED`
 
-## Route Group: Related Records
+## Route Group: Legal Profiles
+
+- Methods and paths:
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles`
+  - `GET /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles`
+  - `GET /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId`
+  - `PATCH /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId/archive`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId/restore`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/legal-profiles/:legalProfileId/delete`
+- Compatibility paths:
+  `/v1/tenants/:tenantId/organizations/:organizationId/legal-profiles`
+  exposes the same child route family during the current route migration.
+- Request contract:
+  create/update accept only `legalName`, optional `registrationIdentifier`,
+  optional `taxVatNumber`, and optional `registeredAddress`. List defaults to
+  `page=1`, `pageSize=25`, `orderDirection=desc` and supports explicit
+  retained-record filters for archived profiles.
+- Response contract:
+  success payloads return generated identifiers, Organization and tenant
+  ownership, legal fields, lifecycle status, archived/deleted markers, and
+  audit-safe timestamps.
+- Error contract:
+  feature-local errors include
+  `ORGANIZATION_LEGAL_PROFILE_DUPLICATE_ACTIVE`,
+  `ORGANIZATION_LEGAL_PROFILE_NOT_FOUND`, and
+  `ORGANIZATION_LEGAL_PROFILE_INVALID_REQUEST`.
+- Implementation status:
+  implemented-foundation in `src/features/organizationLegalDetails`; UI,
+  grouped search, export-job integration, and deeper persistence-backed route
+  proof remain later slices.
+
+## Route Group: Locations
+
+- Methods and paths:
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/locations`
+  - `GET /v1/root-admin/tenants/:tenantId/organizations/:organizationId/locations`
+  - `GET /v1/root-admin/tenants/:tenantId/organizations/:organizationId/locations/:locationId`
+  - `PATCH /v1/root-admin/tenants/:tenantId/organizations/:organizationId/locations/:locationId`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/locations/:locationId/archive`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/locations/:locationId/restore`
+  - `POST /v1/root-admin/tenants/:tenantId/organizations/:organizationId/locations/:locationId/delete`
+- Compatibility paths:
+  `/v1/tenants/:tenantId/organizations/:organizationId/locations` exposes the
+  same child route family during the current route migration.
+- Request contract:
+  create/update accept only `locationName`, optional `addressSummary`,
+  optional latitude/longitude pair, `isHeadOffice`, and
+  `isRegisteredOffice`. Multiple active locations and multiple head-office
+  flags are allowed.
+- Response contract:
+  success payloads return generated identifiers, Organization and tenant
+  ownership, location fields, descriptive flags, lifecycle status,
+  archived/deleted markers, and audit-safe timestamps.
+- Error contract:
+  feature-local errors include `ORGANIZATION_LOCATION_NOT_FOUND` and
+  `ORGANIZATION_LOCATION_INVALID_REQUEST`.
+- Implementation status:
+  implemented-foundation in `src/features/organizationLocations`; opening
+  hours, UI, grouped search, and export-job integration remain later slices.
+
+## Route Group: Other Related Records
 
 - Scope:
-  legal profiles, locations, weekly opening hours, business units, business
-  unit memberships, and high-level integration records use child resources
-  under the selected tenant/account and organization.
+  weekly opening-hour slots, opening-hours exceptions, business units, and
+  business unit memberships use child resources under the selected
+  tenant/account and organization.
 - Planned path pattern:
   `/v1/root-admin/tenants/:tenantId/organizations/:organizationId/<record-area>`
 - Request contract:
   child record request bodies accept only data-dictionary-approved fields.
-  Legal profiles may include optional tax/VAT number and registered address
-  fields. Locations may include optional geocoordinates. Business-unit
-  hierarchy depth greater than 10 is denied. Business-unit child IDs are a
+  Weekly opening hours are weekday-specific slots with slot order, local open/close times,
+  same-day-only v1 behavior, and non-overlap validation. Opening-hours
+  exceptions are date-specific overrides and use deterministic precedence:
+  closed day, replacement day schedule, closed time slot, then special opening
+  slot. Business-unit hierarchy depth greater than 10 is denied.
+  Business-unit child IDs are a
   derived read projection from parent relationships, not an independently
-  mutable request field. Memberships must reference real individual users or
-  real business units through approved public seams and use one of the fixed v1
-  membership roles: owner, manager, member, or viewer.
-  Integration records reject credentials, endpoints, webhook secrets, payload
-  examples, and provider configuration.
+  mutable request field. Memberships currently support real business-unit
+  member targets through the `organizationBusinessUnits` public service seam
+  and use one of the fixed v1 membership roles: owner, manager, member, or
+  viewer. Individual/person member targets are explicitly deferred until an
+  approved individual/person lookup seam exists.
+  Integration records are not v1 child resources. If revived later, they must
+  re-enter discovery and continue to reject credentials, endpoints, webhook
+  secrets, payload examples, and provider configuration.
 - Response contract:
   success payloads return the created, updated, listed, or lifecycle-changed
   child record with generated identifiers and audit-safe timestamps.
 - Error contract:
   child routes share Organization boundary errors and add area-specific
   validation errors such as duplicate active legal profile, invalid weekly
-  hours, invalid geocoordinates, invalid business-unit parent, missing user,
-  missing member business unit, invalid membership role, and rejected
-  secret-like integration field.
+  hours, overlapping weekly hours, invalid opening-hours exception, invalid
+  geocoordinates, invalid business-unit parent, missing user, missing member
+  business unit, and invalid membership role.
 
 ## Route Group: Reference Values
 
 - Methods and paths:
   - `POST /v1/root-admin/organization-reference-values`
+  - `GET /v1/root-admin/organization-reference-values`
   - `PATCH /v1/root-admin/organization-reference-values/:referenceValueId`
   - `POST /v1/root-admin/organization-reference-values/:referenceValueId/archive`
   - `POST /v1/root-admin/organization-reference-values/:referenceValueId/deprecate`
   - `POST /v1/root-admin/organization-reference-values/:referenceValueId/replace`
 - Request contract:
   root admins manage system-owned Organization option-list values, such as
-  organization type, legal form, industry category, location type, integration
-  type, or relationship type. Used values must be archived, deprecated, or
-  explicitly replaced; they must not silently disappear. Label changes apply
-  immediately wherever records reference the value.
+  organization type, legal form, industry category, location type, or
+  relationship type. Future integration-type values require a revived
+  integration scope. Used values must be archived, deprecated, or explicitly
+  replaced; they must not silently disappear. Label changes apply immediately
+  wherever records reference the value.
 - Response contract:
   saved reference value or replacement result with lifecycle state and
   audit-safe timestamps.
@@ -195,11 +280,12 @@
   - `PUT /v1/root-admin/tenants/:tenantId/organizations/:organizationId/logos/:logoType`
   - `DELETE /v1/root-admin/tenants/:tenantId/organizations/:organizationId/logos/:logoType`
 - Request contract:
-  `logoType` is one of `primary`, `icon`, `light-background`, or
-  `dark-background`. Upload-intent body includes allowed MIME type, byte size,
-  checksum, and optional original filename. Relationship replacement body
-  includes a ready `assetId` and required alt text, defaulting to
-  `<organizationName> logo` when custom text is not supplied.
+  v1 supports `logoType=primary`. Future logo types such as icon or
+  light/dark-background variants require a separate expansion decision.
+  Upload-intent body includes allowed MIME type, byte size, checksum, and
+  optional original filename. Relationship replacement body includes a ready
+  `assetId` and required alt text, defaulting to `<organizationName> logo`
+  when custom text is not supplied.
 - Validation rules:
   allowed MIME types are `image/png`, `image/jpeg`, and `image/webp`; SVG is
   out of scope; max upload size is 5 MB; accepted public delivery requires
@@ -227,8 +313,8 @@
   data dictionary.
 - Response contract:
   grouped result sets by record type for organizations, legal profiles,
-  locations, weekly opening hours, business units, memberships, integrations,
-  branding/logo references, and reference values. Results are
+  locations, weekly opening hours, opening-hour exceptions, business units,
+  memberships, branding/logo references, and reference values. Results are
   permission-filtered and tenant/account-filtered.
 - Error contract:
   unsupported filters, invalid pagination/sort, tenant mismatch, and shared
@@ -240,25 +326,39 @@
   - `POST /v1/root-admin/tenants/:tenantId/organization-exports`
   - `GET /v1/root-admin/tenants/:tenantId/organization-exports`
   - `GET /v1/root-admin/tenants/:tenantId/organization-exports/:exportId`
+  - `POST /v1/root-admin/tenants/:tenantId/organization-exports/:exportId/cancel`
+  - `POST /v1/root-admin/tenants/:tenantId/organization-exports/:exportId/retry`
+  - `GET /v1/root-admin/tenants/:tenantId/organization-exports/:exportId/pin`
   - `GET /v1/root-admin/tenants/:tenantId/organization-exports/:exportId/download`
   - `DELETE /v1/root-admin/tenants/:tenantId/organization-exports/:exportId`
 - Request contract:
-  create body selects export sections. Active exports are limited to 1 per
-  actor, 3 per tenant, and 10 platform-wide. Requests are limited to 5 per
-  actor per hour and 20 per tenant per day.
+  create body selects export sections, visibility scope (`current_only` or
+  `include_retained`), Organization scope (`selected_organization_only` or
+  `include_child_branch`), and optional select-all expansion. Deleted records
+  are excluded. Integration records are excluded from v1 Organization exports.
+  Export copies are personal to the requesting root admin. Retry may reuse
+  previous options or submit changed options. Cancel is allowed while queued or
+  running.
 - Response contract:
   export request/status payload with selected sections, state, timestamps,
-  expiry, size/checksum once ready, failure category when failed, and download
-  availability. Download returns a private `.zip` attachment.
+  generation-time snapshot note, expiry, size/checksum once ready, failure
+  category when failed, notification status, PIN availability, and download
+  availability. Ready and failed export states should drive the async/status
+  component and attention badge. Download returns a private password/PIN
+  protected `.zip` attachment.
 - Validation rules:
-  exports are background jobs only. ZIP size cap is 250 MB. Download attempts
-  are capped at 10 before expiry. Ready exports expire after 24 hours or when
-  deleted.
+  exports are background jobs only. No product-facing maximum Organization
+  count or ZIP size is approved in v1; technical safety limits remain a
+  steering concern. Ready exports expire after 24 hours or when deleted. Admin
+  must be currently logged in and must be the requester to download or view the
+  PIN. Link plus PIN alone is not authority. The ZIP manifest is required and
+  JSON plus file assets are the v1 export format.
 - Error contract:
   `ORGANIZATION_EXPORT_INVALID_REQUEST`, `ORGANIZATION_EXPORT_NOT_FOUND`,
   `ORGANIZATION_EXPORT_LIMIT_EXCEEDED`, `ORGANIZATION_EXPORT_NOT_READY`,
-  `ORGANIZATION_EXPORT_EXPIRED`, `ORGANIZATION_EXPORT_DOWNLOAD_LIMIT_EXCEEDED`,
-  `ORGANIZATION_EXPORT_FORBIDDEN`, and shared middleware errors.
+  `ORGANIZATION_EXPORT_CANCELLED`, `ORGANIZATION_EXPORT_PIN_FORBIDDEN`,
+  `ORGANIZATION_EXPORT_EXPIRED`, `ORGANIZATION_EXPORT_FORBIDDEN`, and shared
+  middleware errors.
 
 ## Persistence / Side Effects
 
@@ -303,10 +403,12 @@
 ## Compatibility / Lifecycle Notes
 
 - Notes:
-  This contract approves planned route shape for task breakdown. Source
-  implementation, migrations, exact table names, exact field names, exact
-  permission keys, and UI screens remain separate tasks. Backwards
-  compatibility is required by default once any route is implemented.
+  This contract now includes implemented backend route shape for Organization
+  records, legal profiles, locations, opening-hour records, business units, and
+  business-unit memberships. Source implementation, migrations, exact table
+  names, exact field names, and permission keys exist for S-004 through S-009;
+  UI screens and later Organization-domain route groups remain separate tasks.
+  Backwards compatibility is required by default once any route is implemented.
 
 ## Traceability
 
@@ -315,7 +417,7 @@
   `docs/workspace/asset-consumer-decisions/2026-05-12-organization-public-logo.md`;
   `docs/workspace/asset-consumer-decisions/2026-05-12-organization-private-export-bundle.md`
 - OpenAPI:
-  not maintained yet for this planned route family.
+  not maintained yet for this route family.
 - Tests required or existing:
   `docs/prd/test_cases/2026-05-12-0025-organization-domain-foundation-test-cases.md`
 
@@ -329,7 +431,7 @@
   logo/asset relationship, export job status and private download.
 - Security:
   root capability denial, tenant/account object denial, raw URL denial, private
-  export denial, rejected secret-like integration fields.
+  export denial, and deferred integration route denial.
 - Audit:
   mutation, denied access, logo processing/cleanup, and export lifecycle
   evidence.

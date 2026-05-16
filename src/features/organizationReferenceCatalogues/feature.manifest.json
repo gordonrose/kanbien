@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "featureName": "organizationReferenceCatalogues",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createOrganizationReferenceCataloguesFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for system-owned Organization reference catalogue routes and behavior."
+    },
+    {
+      "seamId": "organization-reference-catalogues-service-type",
+      "symbol": "OrganizationReferenceCataloguesService",
+      "path": "index.ts",
+      "kind": "domain-type",
+      "stability": "experimental",
+      "description": "Service contract for root-managed reference values and tenant read/use validation."
+    }
+  ],
+  "dependsOn": [
+    {
+      "featureName": "tenantAuth",
+      "seamIds": [
+        "session-lookup-repository-factory",
+        "session-lookup-repository-type"
+      ],
+      "description": "Tenant-admin catalogue reads require an active tenant session context."
+    }
+  ],
+  "breakingChangeRisks": [
+    "Changing reference value lifecycle states or replacement semantics can break historical record display, exports, and future search slices.",
+    "Turning system-owned reference values into tenant-owned values would be a breaking authority and data-model change."
+  ]
+}
