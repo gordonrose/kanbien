@@ -13,8 +13,9 @@
 | Command | Result | Notes |
 | --- | --- | --- |
 | `npx vitest run tests/unit/jobProcessing/recurringScheduler.test.ts tests/unit/jobProcessing/lifecycleHardening.test.ts tests/unit/traceability/traceability.test.ts tests/platform/express4-runtime-characterization.test.ts` | pass | 4 files passed; 18 tests passed. Covers registry validation, due-slot enqueue/idempotency, lifecycle hardening, traceability cleanup, and Express runtime characterization after isolating the scheduler-only slice. |
+| `npx vitest run tests/unit/jobProcessing/recurringScheduler.test.ts` | pass | 4 tests passed after PR review fix. Confirms scheduler registry/runtime behavior still passes. |
 | `npx vitest run tests/unit/taskBreakdown/taskBreakdownValidate.test.ts` | pass | 163 tests passed after adding folder-task placeholder rejection to the validator. |
-| `env $(rg '^TEST_DATABASE_' /home/gordon/kanbien/.env.test.local) RUN_POSTGRES_TESTS=true npx vitest run --fileParallelism false tests/integration/jobProcessing/persistence.test.ts` | pass | 2 tests passed after allowing local Postgres access. Covers durable job/outbox and scheduler schedule/run persistence. |
+| `env $(rg '^TEST_DATABASE_' /home/gordon/kanbien/.env.test.local) RUN_POSTGRES_TESTS=true npx vitest run --fileParallelism false tests/integration/jobProcessing/persistence.test.ts` | pass | 2 tests passed after allowing local Postgres access. Covers durable job/outbox and scheduler schedule/run persistence, including proof that code-declared schedule re-upsert does not rewind an existing runtime `next_run_at`. |
 | `npm run typecheck` | pass | TypeScript compile check passed. |
 | `npm run generate:feature-dependencies` | pass | Regenerated `docs/architecture/generated/feature-dependency-graph.*`. |
 | `npm run check:feature-dependencies` | pass | Generated feature dependency graph is up to date with 17 features and 16 cross-feature edges. |
@@ -49,6 +50,9 @@
   `TC-SCHED-INT-001` are documented executable IDs. `TC-SCHED-UNIT-004` now
   proves generic code-declared platform schedules rather than an Organization
   export first consumer.
+- PR review found and fixed a scheduler rewind risk: code-declared definition
+  upsert must preserve an existing schedule's runtime `next_run_at` instead of
+  resetting it to the code default on every scheduler tick or deploy.
 - The repo still has pending-review documented cases outside the scheduler
   slice, including Organization-domain cases intentionally deferred from this
   platform-only branch. They are not enforced as active executable obligations

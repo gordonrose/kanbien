@@ -343,7 +343,6 @@ export function createPostgresJobProcessingRepository(db: Queryable): JobProcess
               payload_version = EXCLUDED.payload_version,
               cadence_seconds = EXCLUDED.cadence_seconds,
               enabled = EXCLUDED.enabled,
-              next_run_at = LEAST(job_processing_recurring_schedule.next_run_at, EXCLUDED.next_run_at),
               updated_at = NOW()
             RETURNING *
           `,

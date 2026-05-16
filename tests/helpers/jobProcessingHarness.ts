@@ -255,12 +255,9 @@ export class InMemoryJobProcessingRepository implements JobProcessingRepository 
   ): Promise<RecurringScheduleDefinition[]> {
     return definitions.map((definition) => {
       const existing = this.recurringSchedules.get(definition.scheduleKey);
-      const nextRunAt = existing && existing.nextRunAt < definition.nextRunAt
-        ? existing.nextRunAt
-        : definition.nextRunAt;
       const persisted = {
         ...definition,
-        nextRunAt,
+        nextRunAt: existing?.nextRunAt ?? definition.nextRunAt,
         leaseOwner: existing?.leaseOwner ?? null,
         leaseUntil: existing?.leaseUntil ?? null,
       };

@@ -112,6 +112,16 @@ describePostgres("jobProcessing persistence", () => {
       finishedAt: now,
       nextRunAt: new Date("2026-05-16T11:00:00.000Z"),
     });
+    await repository.upsertRecurringScheduleDefinitions([
+      {
+        scheduleKey: "integration-recurring",
+        jobType: "test.persist",
+        payloadVersion: 1,
+        cadenceSeconds: 3600,
+        enabled: true,
+        nextRunAt: dueSlotAt,
+      },
+    ]);
     const claimedAgain = await repository.claimDueRecurringSchedules({
       schedulerId: "scheduler-integration",
       now,
