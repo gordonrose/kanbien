@@ -122,6 +122,13 @@ export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
     DROP TABLE IF EXISTS job_processing_attempt CASCADE;
     DROP TABLE IF EXISTS job_processing_outbox CASCADE;
     DROP TABLE IF EXISTS job_processing_job CASCADE;
+    DROP TABLE IF EXISTS organization_export_audit_event CASCADE;
+    DROP TABLE IF EXISTS organization_export_attempt CASCADE;
+    DROP TABLE IF EXISTS organization_export CASCADE;
+    DROP TABLE IF EXISTS organization_logo_audit_event CASCADE;
+    DROP TABLE IF EXISTS organization_logo_relationship CASCADE;
+    DROP TABLE IF EXISTS organization_reference_value_audit_event CASCADE;
+    DROP TABLE IF EXISTS organization_reference_value CASCADE;
     DROP TABLE IF EXISTS organization_opening_hours_audit_event CASCADE;
     DROP TABLE IF EXISTS organization_opening_hours_exception CASCADE;
     DROP TABLE IF EXISTS organization_location_weekly_opening_hours CASCADE;
