@@ -33,6 +33,8 @@
   - Traceability Enforcement: partially executable
   - executable `TC-JOB-PROC-*` coverage exists for the provider-neutral
     foundation seam
+  - executable `TC-SCHED-*` coverage exists for the code-declared recurring
+    scheduler foundation added as the first platform-maintenance extension
   - Redis-backed BullMQ coverage exists behind the explicit opt-in
     `RUN_REDIS_JOB_PROVIDER_TESTS=true` flag so normal local and CI runs do not
     require Redis
@@ -617,7 +619,75 @@
   Coverage:
   - rejects cron expression or recurring schedule fields
   - accepts one-off `runAt` where valid
-  - clearly communicates that scheduling toolkit behavior is deferred
+  - clearly communicates that public enqueue requests cannot create ad hoc
+    recurring schedules; recurring maintenance uses the separate
+    code-declared scheduler seam
+
+## Recurring Scheduler Foundation Tests
+
+- Capability: `createRecurringScheduleRegistry`
+  Test Case ID: `TC-SCHED-UNIT-001`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/jobProcessing/`
+  Requires Shared Test Helper: yes
+  Requires Manifest Tracking: no
+  Cleanup Expectation: none
+  Coverage:
+  - rejects duplicate schedule keys
+  - rejects unstable or malformed schedule keys
+  - rejects unsupported job type and payload-version references when a job
+    registry is supplied
+  - enforces a minimum supported cadence for platform maintenance schedules
+
+- Capability: `runRecurringSchedulerOnce`
+  Test Case ID: `TC-SCHED-UNIT-002`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/jobProcessing/`
+  Requires Shared Test Helper: yes
+  Requires Manifest Tracking: no
+  Cleanup Expectation: none
+  Coverage:
+  - upserts code-declared schedule definitions before claiming due work
+  - enqueues one due maintenance job through the job-processing service seam
+  - uses deterministic due-slot idempotency keys
+  - advances the schedule to the next future cadence after a successful enqueue
+
+- Scenario: scheduler replay does not duplicate an already-claimed due slot
+  Test Case ID: `TC-SCHED-UNIT-003`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/jobProcessing/`
+  Requires Shared Test Helper: yes
+  Requires Manifest Tracking: no
+  Cleanup Expectation: none
+  Coverage:
+  - records a due-slot run outcome
+  - prevents a repeated scheduler tick from enqueueing the same due slot twice
+  - preserves at-least-once retry posture for retryable scheduler failures
+
+- Scenario: code-declared platform maintenance schedules validate against the registry
+  Test Case ID: `TC-SCHED-UNIT-004`
+  Recommended Test Layer: `service-unit`
+  Suggested Test Folder: `tests/unit/jobProcessing/`
+  Requires Shared Test Helper: yes
+  Requires Manifest Tracking: no
+  Cleanup Expectation: none
+  Coverage:
+  - registers multiple code-declared platform maintenance schedules
+  - validates those schedules against the job-processing job registry
+  - keeps schedule payloads scoped to internal platform maintenance work
+
+- Capability: recurring scheduler persistence
+  Test Case ID: `TC-SCHED-INT-001`
+  Recommended Test Layer: `persistence-integration`
+  Suggested Test Folder: `tests/integration/jobProcessing/`
+  Requires Shared Test Helper: yes
+  Requires Manifest Tracking: yes
+  Cleanup Expectation: reset durable recurring schedule and run rows
+  Coverage:
+  - persists schedule definitions and next-run timestamps
+  - claims due schedules with scheduler identity and a lease
+  - records due-slot run outcomes durably
+  - prevents a completed due slot from being claimed again
 
 - Scenario: non-retryable handler error does not churn all attempts
   Test Case ID: `TC-JOB-PROC-EDGE-003`

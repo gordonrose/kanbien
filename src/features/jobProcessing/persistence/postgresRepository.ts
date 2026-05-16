@@ -4,12 +4,16 @@ import type {
   DurableAttemptRecord,
   DurableJobRecord,
   DurableOutboxRecord,
+  RecurringScheduleDefinition,
+  RecurringScheduleRunRecord,
 } from "../domain/types";
 import type { JobProcessingRepository } from "./repository";
 import type {
   JobProcessingAttemptRecord,
   JobProcessingJobRecord,
   JobProcessingOutboxRecord,
+  JobProcessingRecurringScheduleRecord,
+  JobProcessingRecurringScheduleRunRecord,
 } from "./types";
 
 type Queryable = Pick<Pool | PoolClient, "query">;
@@ -67,6 +71,34 @@ function toAttempt(record: JobProcessingAttemptRecord): DurableAttemptRecord {
     finishedAt: record.finished_at,
     errorCode: record.error_code,
     errorSummary: record.error_summary,
+  };
+}
+
+function toRecurringSchedule(record: JobProcessingRecurringScheduleRecord): RecurringScheduleDefinition {
+  return {
+    scheduleKey: record.schedule_key,
+    jobType: record.job_type,
+    payloadVersion: record.payload_version,
+    cadenceSeconds: record.cadence_seconds,
+    enabled: record.enabled,
+    nextRunAt: record.next_run_at,
+  };
+}
+
+function toRecurringScheduleRun(
+  record: JobProcessingRecurringScheduleRunRecord,
+): RecurringScheduleRunRecord {
+  return {
+    runId: record.run_id,
+    scheduleKey: record.schedule_key,
+    dueSlotAt: record.due_slot_at,
+    status: record.status,
+    jobId: record.job_id,
+    attemptCount: record.attempt_count,
+    errorCategory: record.error_category,
+    errorSummary: record.error_summary,
+    createdAt: record.created_at,
+    updatedAt: record.updated_at,
   };
 }
 
@@ -294,6 +326,139 @@ export function createPostgresJobProcessingRepository(db: Queryable): JobProcess
         [jobId],
       );
       return result.rows[0] ? toOutbox(result.rows[0]) : null;
+    },
+
+    async upsertRecurringScheduleDefinitions(definitions) {
+      const persisted: RecurringScheduleDefinition[] = [];
+      for (const definition of definitions) {
+        const result = await db.query<JobProcessingRecurringScheduleRecord>(
+          `
+            INSERT INTO job_processing_recurring_schedule (
+              schedule_key, job_type, payload_version, cadence_seconds, enabled, next_run_at
+            )
+            VALUES ($1,$2,$3,$4,$5,$6)
+            ON CONFLICT (schedule_key)
+            DO UPDATE SET
+              job_type = EXCLUDED.job_type,
+              payload_version = EXCLUDED.payload_version,
+              cadence_seconds = EXCLUDED.cadence_seconds,
+              enabled = EXCLUDED.enabled,
+              next_run_at = LEAST(job_processing_recurring_schedule.next_run_at, EXCLUDED.next_run_at),
+              updated_at = NOW()
+            RETURNING *
+          `,
+          [
+            definition.scheduleKey,
+            definition.jobType,
+            definition.payloadVersion,
+            definition.cadenceSeconds,
+            definition.enabled,
+            definition.nextRunAt,
+          ],
+        );
+        persisted.push(toRecurringSchedule(result.rows[0]!));
+      }
+      return persisted;
+    },
+
+    async claimDueRecurringSchedules(input) {
+      const result = await db.query<
+        JobProcessingRecurringScheduleRecord & JobProcessingRecurringScheduleRunRecord
+      >(
+        `
+          WITH due AS (
+            SELECT schedule_key, next_run_at
+            FROM job_processing_recurring_schedule
+            WHERE enabled = TRUE
+              AND next_run_at <= $1
+              AND (lease_until IS NULL OR lease_until <= $1)
+            ORDER BY next_run_at ASC, schedule_key ASC
+            FOR UPDATE SKIP LOCKED
+            LIMIT $2
+          ),
+          leased AS (
+            UPDATE job_processing_recurring_schedule s
+            SET lease_owner = $3,
+                lease_until = $4,
+                updated_at = NOW()
+            FROM due
+            WHERE s.schedule_key = due.schedule_key
+            RETURNING s.*
+          ),
+          runs AS (
+            INSERT INTO job_processing_recurring_schedule_run (
+              run_id, schedule_key, due_slot_at, status, attempt_count
+            )
+            SELECT gen_random_uuid(), schedule_key, next_run_at, 'leased', 1
+            FROM leased
+            ON CONFLICT (schedule_key, due_slot_at)
+            DO UPDATE SET
+              status = 'skipped_overlap',
+              attempt_count = job_processing_recurring_schedule_run.attempt_count + 1,
+              updated_at = NOW()
+            RETURNING *
+          )
+          SELECT leased.*, runs.*
+          FROM leased
+          JOIN runs ON runs.schedule_key = leased.schedule_key
+        `,
+        [input.now, input.limit, input.schedulerId, input.leaseUntil],
+      );
+
+      return result.rows.map((row) => ({
+        definition: toRecurringSchedule(row),
+        run: toRecurringScheduleRun(row),
+      }));
+    },
+
+    async recordRecurringScheduleRunOutcome(input) {
+      const result = await db.query<JobProcessingRecurringScheduleRunRecord>(
+        `
+          UPDATE job_processing_recurring_schedule_run
+          SET status = $3,
+              job_id = $4,
+              error_category = $5,
+              error_summary = $6,
+              updated_at = $7
+          WHERE schedule_key = $1
+            AND due_slot_at = $2
+          RETURNING *
+        `,
+        [
+          input.scheduleKey,
+          input.dueSlotAt,
+          input.status,
+          input.jobId ?? null,
+          input.errorCategory ?? null,
+          input.errorSummary ?? null,
+          input.finishedAt,
+        ],
+      );
+
+      await db.query(
+        `
+          UPDATE job_processing_recurring_schedule
+          SET next_run_at = $2,
+              last_run_at = $3,
+              lease_owner = NULL,
+              lease_until = NULL,
+              failure_count = CASE WHEN $4 IN ('retryable_failed', 'terminal_failed') THEN failure_count + 1 ELSE 0 END,
+              last_error_category = CASE WHEN $4 IN ('retryable_failed', 'terminal_failed') THEN $5 ELSE NULL END,
+              last_error_summary = CASE WHEN $4 IN ('retryable_failed', 'terminal_failed') THEN $6 ELSE NULL END,
+              updated_at = $3
+          WHERE schedule_key = $1
+        `,
+        [
+          input.scheduleKey,
+          input.nextRunAt,
+          input.finishedAt,
+          input.status,
+          input.errorCategory ?? null,
+          input.errorSummary ?? null,
+        ],
+      );
+
+      return result.rows[0] ? toRecurringScheduleRun(result.rows[0]) : null;
     },
   };
 }

@@ -160,8 +160,15 @@
     {
       "featureName": "jobProcessing",
       "manifestPath": "src/features/jobProcessing/feature.manifest.json",
-      "fileCount": 20,
+      "fileCount": 23,
       "publicSeams": [
+        {
+          "seamId": "feature-factory",
+          "symbol": "createJobProcessingFeature",
+          "kind": "feature-factory",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
         {
           "seamId": "enqueue-service",
           "symbol": "enqueueTransactionalJobRequest",
@@ -182,6 +189,27 @@
           "kind": "runtime",
           "stability": "experimental",
           "path": "index.ts"
+        },
+        {
+          "seamId": "job-lifecycle-hardening",
+          "symbol": "classifyJobLifecycleTimeout",
+          "kind": "helper",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "recurring-scheduler",
+          "symbol": "createRecurringScheduleRegistry",
+          "kind": "runtime",
+          "stability": "experimental",
+          "path": "index.ts"
+        },
+        {
+          "seamId": "transport-placeholder",
+          "symbol": "transport/README.md",
+          "kind": "documentation",
+          "stability": "stable",
+          "path": "transport/README.md"
         }
       ],
       "declaredDependencies": [],
@@ -193,7 +221,8 @@
       "breakingChangeRisks": [
         "Changing job status, outbox, attempt, retry, or idempotency semantics can strand queued historical jobs or break at-least-once execution guarantees.",
         "Changing payload safety, execution-scope, or tenant-context validation can weaken async authorization boundaries or make historical payload versions unexecutable.",
-        "Exposing provider-specific BullMQ or Redis types through public seams would break the planned provider-neutral compatibility boundary."
+        "Exposing provider-specific BullMQ or Redis types through public seams would break the planned provider-neutral compatibility boundary.",
+        "Changing recurring schedule keys, cadence semantics, due-slot idempotency, or lease recovery can duplicate or skip maintenance work."
       ]
     },
     {

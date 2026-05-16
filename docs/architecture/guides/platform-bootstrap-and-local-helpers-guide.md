@@ -157,6 +157,9 @@ Bootstrap expectation:
 - the persistence test database must exist before the dedicated Postgres suite
   runs
 - feature migrations are owned under `src/features/*/persistence/migrations/`
+- recurring maintenance runs through the separate `scheduler:jobs` process
+  command; the HTTP server does not own scheduler ticks and the worker still
+  owns job execution
 
 ## Required Local Helpers
 

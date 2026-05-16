@@ -4,6 +4,7 @@ import type {
   JobDispatchStatus,
   JobExecutionScope,
   JobQueueName,
+  RecurringScheduleRunStatus,
   JobStatus,
 } from "../domain/types";
 
@@ -55,4 +56,34 @@ export interface JobProcessingAttemptRecord {
   finished_at: Date | null;
   error_code: string | null;
   error_summary: string | null;
+}
+
+export interface JobProcessingRecurringScheduleRecord {
+  schedule_key: string;
+  job_type: string;
+  payload_version: number;
+  cadence_seconds: number;
+  enabled: boolean;
+  next_run_at: Date;
+  last_run_at: Date | null;
+  lease_owner: string | null;
+  lease_until: Date | null;
+  failure_count: number;
+  last_error_category: string | null;
+  last_error_summary: string | null;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface JobProcessingRecurringScheduleRunRecord {
+  run_id: string;
+  schedule_key: string;
+  due_slot_at: Date;
+  status: RecurringScheduleRunStatus;
+  job_id: string | null;
+  attempt_count: number;
+  error_category: string | null;
+  error_summary: string | null;
+  created_at: Date;
+  updated_at: Date;
 }

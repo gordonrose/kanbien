@@ -90,19 +90,24 @@ Rule: Cross-feature imports in src/features must go through target feature index
 ### jobProcessing
 
 - Manifest: `src/features/jobProcessing/feature.manifest.json`
-- Source files: 20
+- Source files: 23
 - Declared dependencies: none
 - Current public dependencies: none
 - Private seam violations: 0
 - Depended on by: notificationDelivery
 - Public seams:
+  - `feature-factory` via `createJobProcessingFeature` in `index.ts` (feature-factory, experimental)
   - `enqueue-service` via `enqueueTransactionalJobRequest` in `index.ts` (service, experimental)
   - `job-registry` via `createJobTypeRegistry` in `index.ts` (registry, experimental)
   - `dispatcher-worker-runtime` via `createJobProcessingService` in `index.ts` (runtime, experimental)
+  - `job-lifecycle-hardening` via `classifyJobLifecycleTimeout` in `index.ts` (helper, experimental)
+  - `recurring-scheduler` via `createRecurringScheduleRegistry` in `index.ts` (runtime, experimental)
+  - `transport-placeholder` via `transport/README.md` in `transport/README.md` (documentation, stable)
 - Breaking-change risks:
   - Changing job status, outbox, attempt, retry, or idempotency semantics can strand queued historical jobs or break at-least-once execution guarantees.
   - Changing payload safety, execution-scope, or tenant-context validation can weaken async authorization boundaries or make historical payload versions unexecutable.
   - Exposing provider-specific BullMQ or Redis types through public seams would break the planned provider-neutral compatibility boundary.
+  - Changing recurring schedule keys, cadence semantics, due-slot idempotency, or lease recovery can duplicate or skip maintenance work.
 
 ### notificationDelivery
 

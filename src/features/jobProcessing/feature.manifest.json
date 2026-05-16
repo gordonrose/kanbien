@@ -3,6 +3,14 @@
   "featureName": "jobProcessing",
   "publicSeams": [
     {
+      "seamId": "feature-factory",
+      "symbol": "createJobProcessingFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for durable job-processing registry, repository, and enqueue/execution service composition."
+    },
+    {
       "seamId": "enqueue-service",
       "symbol": "enqueueTransactionalJobRequest",
       "path": "index.ts",
@@ -25,12 +33,37 @@
       "kind": "runtime",
       "stability": "experimental",
       "description": "Provider-neutral dispatcher and worker execution service for background processes."
+    },
+    {
+      "seamId": "job-lifecycle-hardening",
+      "symbol": "classifyJobLifecycleTimeout",
+      "path": "index.ts",
+      "kind": "helper",
+      "stability": "experimental",
+      "description": "Provider-neutral helper for classifying stale long-running work with safe lifecycle failure categories."
+    },
+    {
+      "seamId": "recurring-scheduler",
+      "symbol": "createRecurringScheduleRegistry",
+      "path": "index.ts",
+      "kind": "runtime",
+      "stability": "experimental",
+      "description": "Code-declared recurring maintenance schedule registry and scheduler tick runtime for platform-owned maintenance jobs."
+    },
+    {
+      "seamId": "transport-placeholder",
+      "symbol": "transport/README.md",
+      "path": "transport/README.md",
+      "kind": "documentation",
+      "stability": "stable",
+      "description": "Explicitly records that jobProcessing has no HTTP transport in the current service/runtime-only slice."
     }
   ],
   "dependsOn": [],
   "breakingChangeRisks": [
     "Changing job status, outbox, attempt, retry, or idempotency semantics can strand queued historical jobs or break at-least-once execution guarantees.",
     "Changing payload safety, execution-scope, or tenant-context validation can weaken async authorization boundaries or make historical payload versions unexecutable.",
-    "Exposing provider-specific BullMQ or Redis types through public seams would break the planned provider-neutral compatibility boundary."
+    "Exposing provider-specific BullMQ or Redis types through public seams would break the planned provider-neutral compatibility boundary.",
+    "Changing recurring schedule keys, cadence semantics, due-slot idempotency, or lease recovery can duplicate or skip maintenance work."
   ]
 }

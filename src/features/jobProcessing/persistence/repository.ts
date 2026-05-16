@@ -7,6 +7,9 @@ import type {
   JobAttemptStatus,
   JobRetryPolicy,
   JobStatus,
+  RecurringScheduleDefinition,
+  RecurringScheduleRunRecord,
+  RecurringScheduleRunStatus,
 } from "../domain/types";
 
 export interface CreateJobRecordInput {
@@ -66,4 +69,23 @@ export interface JobProcessingRepository {
   recordAttemptFinish(input: RecordAttemptFinishInput): Promise<DurableAttemptRecord>;
   listAttempts(jobId: string): Promise<DurableAttemptRecord[]>;
   getOutboxByJobId(jobId: string): Promise<DurableOutboxRecord | null>;
+  upsertRecurringScheduleDefinitions(
+    definitions: RecurringScheduleDefinition[],
+  ): Promise<RecurringScheduleDefinition[]>;
+  claimDueRecurringSchedules(input: {
+    schedulerId: string;
+    now: Date;
+    limit: number;
+    leaseUntil: Date;
+  }): Promise<Array<{ definition: RecurringScheduleDefinition; run: RecurringScheduleRunRecord }>>;
+  recordRecurringScheduleRunOutcome(input: {
+    scheduleKey: string;
+    dueSlotAt: Date;
+    status: RecurringScheduleRunStatus;
+    finishedAt: Date;
+    nextRunAt: Date;
+    jobId?: string | null;
+    errorCategory?: string | null;
+    errorSummary?: string | null;
+  }): Promise<RecurringScheduleRunRecord | null>;
 }

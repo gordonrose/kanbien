@@ -12,6 +12,14 @@ describe("traceability parsing", () => {
     });
   });
 
+  it("TC-TEST-DATA-UNIT-007 recognizes asset-linking traceability IDs", () => {
+    expect(parseTestCaseId("TC-ROOT-USERS-ASSET-001")).toEqual({
+      id: "TC-ROOT-USERS-ASSET-001",
+      prdKey: "ROOT-USERS",
+      testType: "ASSET",
+    });
+  });
+
   it("TC-TEST-DATA-UNIT-006 classifies malformed IDs as unknown", () => {
     expect(parseTestCaseId(BAD_TRACEABILITY_ID)).toEqual({
       id: BAD_TRACEABILITY_ID,

@@ -150,3 +150,32 @@ export interface JobMetadataProjection {
   deadLetterReason: string | null;
   payloadSummary: Record<string, string>;
 }
+
+export type RecurringScheduleRunStatus =
+  | "leased"
+  | "enqueued"
+  | "skipped_overlap"
+  | "retryable_failed"
+  | "terminal_failed";
+
+export interface RecurringScheduleDefinition {
+  scheduleKey: string;
+  jobType: string;
+  payloadVersion: number;
+  cadenceSeconds: number;
+  enabled: boolean;
+  nextRunAt: Date;
+}
+
+export interface RecurringScheduleRunRecord {
+  runId: string;
+  scheduleKey: string;
+  dueSlotAt: Date;
+  status: RecurringScheduleRunStatus;
+  jobId: string | null;
+  attemptCount: number;
+  errorCategory: string | null;
+  errorSummary: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}

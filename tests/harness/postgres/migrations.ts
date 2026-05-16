@@ -163,12 +163,21 @@ const MIGRATION_ORDER: Array<{ group: MigrationGroup; relativePath: string }> = 
       "webAppHierarchyBuilder/persistence/migrations/0026_seed_module_landing_page_capability.sql",
   },
   {
+    group: "webAppHierarchyBuilder",
+    relativePath:
+      "webAppHierarchyBuilder/persistence/migrations/0027_create_web_app_hierarchy_audit_events.sql",
+  },
+  {
     group: "notificationDelivery",
     relativePath: "notificationDelivery/persistence/migrations/0007_create_notification_delivery.sql",
   },
   {
     group: "jobProcessing",
     relativePath: "jobProcessing/persistence/migrations/0040_create_job_processing.sql",
+  },
+  {
+    group: "jobProcessing",
+    relativePath: "jobProcessing/persistence/migrations/0041_create_recurring_scheduler.sql",
   },
   {
     group: "tenantAdmins",

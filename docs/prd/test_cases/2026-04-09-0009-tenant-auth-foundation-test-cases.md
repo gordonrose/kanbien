@@ -91,6 +91,9 @@
 
 - Capability: `restartTenantAdminOnboarding`
   Test Case ID: `TC-TENANT-AUTH-UNIT-009`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `service-unit`
   Suggested Test Folder: `tests/unit/tenantAdmins/`
   Requires Shared Test Helper: yes; verified-tenant-admin fixture
@@ -291,6 +294,9 @@
 - Flow: root operator restarts onboarding for a previously verified tenant
   admin who still needs password setup
   Test Case ID: `TC-TENANT-AUTH-INT-006`
+  Lifecycle Status: pending-review
+  Reason: executable traceability has not landed yet; keep out of enforced active set until implementation or lifecycle review confirms this case remains current.
+  Approval Note: approved during 2026-05-16 traceability cleanup to restore honest global gate behavior.
   Recommended Test Layer: `feature-integration`
   Suggested Test Folder: `tests/integration/tenantAdmins/`
   Requires Shared Test Helper: yes

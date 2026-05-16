@@ -32,9 +32,16 @@ describe("Express runtime characterization", () => {
           regexp: RegExp;
         }>;
       };
+      _router?: {
+        stack: Array<{
+          name: string;
+          route?: { path: string };
+          regexp: RegExp;
+        }>;
+      };
     };
 
-    const stack = app.router?.stack ?? [];
+    const stack = app.router?.stack ?? app._router?.stack ?? [];
     const layers = stack.map((layer) => ({
       name: layer.name,
       path: layer.route?.path ?? null,
@@ -79,6 +86,9 @@ describe("Express runtime characterization", () => {
         name: "serveStatic",
       }),
       expect.objectContaining({
+        name: "serveStatic",
+      }),
+      expect.objectContaining({
         name: "handle",
         path: /.*/,
         methods: { get: true },
@@ -117,7 +127,7 @@ describe("Express runtime characterization", () => {
     expect(designSystem.text).toContain("/design-system/assets/styles.css");
 
     expect(rootAdmin.status).toBe(200);
-    expect(rootAdmin.text).toContain("Root Admin Shell POC");
+    expect(rootAdmin.text).toContain("Kanbien Root Admin");
     expect(rootAdmin.text).toContain("/root-admin/assets/app.mjs");
   });
 
@@ -132,7 +142,7 @@ describe("Express runtime characterization", () => {
       .set("host", "admin.example.test");
 
     expect(rootAdminUnknown.status).toBe(200);
-    expect(rootAdminUnknown.text).toContain("Root Admin Shell POC");
+    expect(rootAdminUnknown.text).toContain("Kanbien Root Admin");
 
     expect(designSystemUnknownCanonical.status).toBe(404);
     expect(designSystemUnknownCanonical.text).toBe("Design-system route not found");
