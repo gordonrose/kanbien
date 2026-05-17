@@ -55,6 +55,21 @@
             <span class="context-nav-label">Canonicals</span>
           </a>
         </div>
+        <div class="context-nav-bottom-group">
+          <button
+            class="context-nav-item context-nav-item-button context-nav-item-bottom"
+            type="button"
+            data-build-work-panel-demo-settings-open
+            data-tooltip="Display"
+            aria-controls="build-work-panel-demo-settings-drawer"
+            aria-expanded="false"
+          >
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75zm0 3.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 5.85zm0 11.55a5.4 5.4 0 0 1-4.19-1.97 4.87 4.87 0 0 1 8.38 0A5.4 5.4 0 0 1 12 17.4z" /></svg>
+            </span>
+            <span class="context-nav-label">Display</span>
+          </button>
+        </div>
       </nav>
 
       <main class="design-system-page-main build-work-panel-demo-page" data-build-work-panel-demo>
@@ -70,15 +85,6 @@
             <li>Not app-consumable</li>
             <li>/design-system/patterns/build-work-panel-demo</li>
           </ul>
-          <button
-            class="build-work-panel-demo-settings-button"
-            type="button"
-            data-build-work-panel-demo-settings-open
-            aria-controls="build-work-panel-demo-settings-drawer"
-            aria-expanded="false"
-          >
-            Display settings
-          </button>
         </section>
 
         <section class="build-work-panel-demo-stage" aria-label="Rendered Build work panel demo">
@@ -305,50 +311,53 @@
 
         <div
           id="build-work-panel-demo-settings-drawer"
-          class="build-work-panel-demo-settings-drawer"
+          class="side-panel display-settings-drawer hidden"
           data-build-work-panel-demo-settings-drawer
           role="dialog"
           aria-modal="false"
+          aria-hidden="true"
           aria-labelledby="build-work-panel-demo-settings-title"
         >
-          <div class="build-work-panel-demo-settings-header">
+          <div class="side-panel-header accessibility-drawer-header">
             <div>
-              <p class="top-nav-preview-eyebrow">Display</p>
+              <p class="drawer-eyebrow">Display</p>
               <h2 id="build-work-panel-demo-settings-title">Display settings</h2>
             </div>
             <button
-              class="build-work-panel-demo-close"
+              class="icon-button"
               type="button"
               data-build-work-panel-demo-settings-close
               aria-label="Close display settings"
             >
-              ×
+              <span class="icon-button-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M6 6 18 18M18 6 6 18" /></svg>
+              </span>
             </button>
           </div>
 
-          <section class="build-work-panel-demo-settings-group" aria-labelledby="build-work-panel-demo-theme-title">
-            <h3 id="build-work-panel-demo-theme-title">Theme</h3>
-            <div class="build-work-panel-demo-settings-options">
-              <button class="is-active" type="button" data-build-work-panel-demo-theme="normal">Normal</button>
-              <button type="button" data-build-work-panel-demo-theme="dark">Dark</button>
-              <button type="button" data-build-work-panel-demo-theme="desert">Desert</button>
+          <section class="accessibility-group" aria-labelledby="build-work-panel-demo-theme-title">
+            <p id="build-work-panel-demo-theme-title" class="accessibility-label">Theme</p>
+            <div class="chip-row" role="group" aria-labelledby="build-work-panel-demo-theme-title">
+              <button class="accessibility-chip active" type="button" data-build-work-panel-demo-theme="normal" aria-pressed="true">Normal</button>
+              <button class="accessibility-chip" type="button" data-build-work-panel-demo-theme="dark" aria-pressed="false">Dark</button>
+              <button class="accessibility-chip" type="button" data-build-work-panel-demo-theme="desert" aria-pressed="false">Desert</button>
             </div>
           </section>
 
-          <section class="build-work-panel-demo-settings-group" aria-labelledby="build-work-panel-demo-size-title">
-            <h3 id="build-work-panel-demo-size-title">Text size</h3>
-            <div class="build-work-panel-demo-settings-options">
-              <button type="button" data-build-work-panel-demo-scale="100">100%</button>
-              <button class="is-active" type="button" data-build-work-panel-demo-scale="115">115%</button>
-              <button type="button" data-build-work-panel-demo-scale="135">135%</button>
+          <section class="accessibility-group" aria-labelledby="build-work-panel-demo-size-title">
+            <p id="build-work-panel-demo-size-title" class="accessibility-label">Text size</p>
+            <div class="chip-row" role="group" aria-labelledby="build-work-panel-demo-size-title">
+              <button class="accessibility-chip" type="button" data-build-work-panel-demo-scale="100" aria-pressed="false">100%</button>
+              <button class="accessibility-chip active" type="button" data-build-work-panel-demo-scale="115" aria-pressed="true">115%</button>
+              <button class="accessibility-chip" type="button" data-build-work-panel-demo-scale="135" aria-pressed="false">135%</button>
             </div>
           </section>
 
-          <section class="build-work-panel-demo-settings-group" aria-labelledby="build-work-panel-demo-direction-title">
-            <h3 id="build-work-panel-demo-direction-title">Direction</h3>
-            <div class="build-work-panel-demo-settings-options">
-              <button class="is-active" type="button" data-build-work-panel-demo-direction="ltr">LTR</button>
-              <button type="button" data-build-work-panel-demo-direction="rtl">RTL</button>
+          <section class="accessibility-group" aria-labelledby="build-work-panel-demo-direction-title">
+            <p id="build-work-panel-demo-direction-title" class="accessibility-label">Direction</p>
+            <div class="chip-row" role="group" aria-labelledby="build-work-panel-demo-direction-title">
+              <button class="accessibility-chip active" type="button" data-build-work-panel-demo-direction="ltr" aria-pressed="true">LTR</button>
+              <button class="accessibility-chip" type="button" data-build-work-panel-demo-direction="rtl" aria-pressed="false">RTL</button>
             </div>
           </section>
         </div>

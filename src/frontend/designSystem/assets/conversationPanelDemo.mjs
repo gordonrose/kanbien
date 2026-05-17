@@ -230,6 +230,8 @@ function setSettingsOpen(isOpen) {
   }
 
   settingsDrawer.classList.toggle("is-open", isOpen);
+  settingsDrawer.classList.toggle("hidden", !isOpen);
+  settingsDrawer.setAttribute("aria-hidden", String(!isOpen));
   if (settingsOpenButton instanceof HTMLButtonElement) {
     settingsOpenButton.setAttribute("aria-expanded", String(isOpen));
   }
@@ -237,7 +239,12 @@ function setSettingsOpen(isOpen) {
 
 function activateOption(buttons, activeButton) {
   buttons.forEach((button) => {
-    button.classList.toggle("is-active", button === activeButton);
+    const isActive = button === activeButton;
+    button.classList.toggle("active", isActive);
+    button.classList.toggle("is-active", isActive);
+    if (button instanceof HTMLButtonElement) {
+      button.setAttribute("aria-pressed", String(isActive));
+    }
   });
 }
 
