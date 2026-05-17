@@ -179,3 +179,24 @@
   connect real Build backlog behavior only after a product/API contract exists;
   keep tab header visual, ARIA, overflow, category drawer, attention, sub-tab,
   and collapsible-content behavior in `floatingTabHeader.mjs`
+
+## `/root-admin/build/workspace`
+
+- Current implementation status:
+  mocked in-app proof consumer for the DS-owned chat workspace seam; route is
+  path-backed and intentionally not production Build workspace behavior
+- Local implementation evidence:
+  `src/frontend/rootAdminShell/index.html` keeps only the empty route mount;
+  `src/frontend/rootAdminShell/routes/build/workspace/page.mjs` creates an
+  explicit open, expanded, new-chat mock state, mirrors root display theme, and
+  mounts the shared mock consumer controller into the existing root-admin
+  conversation-panel slot
+- Design-system sourced implementation evidence:
+  `src/frontend/designSystem/assets/chatWorkspaceMockConsumer.mjs` owns the
+  mocked shell render/controller composition and delegates through the shared
+  chat workspace seams, including `chatWorkspaceBootstrap.mjs`,
+  `chatWorkspaceShell.mjs`, and `chatWorkspaceController.mjs`
+- Required remediation before more page work:
+  keep this route as a proof consumer until a production Build workspace
+  product/API contract exists; do not add app-local chat workspace markup,
+  controller behavior, or CSS in `rootAdminShell`

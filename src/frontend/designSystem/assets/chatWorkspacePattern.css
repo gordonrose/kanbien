@@ -44,15 +44,15 @@
   pointer-events: auto;
 }
 
-.conversation-panel-shell-mount[data-panel-open="false"]:has([data-root-admin-chat-workspace-mock]),
-.conversation-panel-shell-mount:has([data-root-admin-chat-workspace-mock] .chat-workspace-chat-mount[data-panel-open="false"]) {
-  width: 0;
-  pointer-events: none;
-}
-
 .conversation-panel-shell-mount:has([data-root-admin-chat-workspace-mock] [data-chat-workspace-expanded="true"]) {
   left: 4.25rem;
   width: auto;
+}
+
+.conversation-panel-shell-mount[data-panel-open="false"]:has([data-root-admin-chat-workspace-mock]) {
+  left: auto;
+  width: 4rem;
+  pointer-events: auto;
 }
 
 .conversation-panel-shell-mount:has([data-root-admin-chat-workspace-mock]) .chat-workspace-pattern-page,
@@ -483,37 +483,6 @@
   visibility: hidden;
 }
 
-.chat-workspace-shell[data-chat-workspace-panel-open="false"],
-.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) {
-  grid-template-columns: 0;
-  inline-size: 0;
-  min-inline-size: 0;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-joint-header,
-.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-secondary-header,
-.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-history-dock,
-.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-main,
-.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-chat-pane,
-.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-joint-header,
-.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-secondary-header,
-.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-history-dock,
-.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-main,
-.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-chat-pane {
-  display: none;
-}
-
-.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-layer-toolbar,
-.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-layer-toolbar {
-  display: none;
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
-}
-
 .chat-workspace-history-dock {
   grid-column: 1;
   grid-row: 3;
@@ -655,6 +624,40 @@
 
 .chat-workspace-shell[data-chat-workspace-expanded="true"] .chat-workspace-chat-mount .build-work-panel-demo-action-nav {
   display: grid;
+}
+
+.chat-workspace-shell[data-chat-workspace-panel-open="false"],
+.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) {
+  grid-template-columns: 4rem;
+  inline-size: 4rem;
+  min-inline-size: 4rem;
+  margin-inline-start: auto;
+  border-color: var(--chat-workspace-line);
+  background: var(--bwp-panel-surface);
+  box-shadow: none;
+  overflow: visible;
+}
+
+.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-joint-header,
+.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-secondary-header,
+.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-history-dock,
+.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-main,
+.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-layer-toolbar,
+.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-joint-header,
+.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-secondary-header,
+.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-history-dock,
+.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-main,
+.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-layer-toolbar {
+  display: none;
+}
+
+.chat-workspace-shell[data-chat-workspace-panel-open="false"] .chat-workspace-chat-pane,
+.chat-workspace-shell:has(.chat-workspace-chat-mount[data-panel-open="false"]) .chat-workspace-chat-pane {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  min-inline-size: 4rem;
+  border-inline-start: 0;
+  background: transparent;
 }
 
 .chat-workspace-main {

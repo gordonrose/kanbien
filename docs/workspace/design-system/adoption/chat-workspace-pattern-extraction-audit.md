@@ -64,8 +64,8 @@ The current extraction still needs review before app adoption:
 - a dedicated canonical render surface for `chat-workspace-shell`
 - an adoption contract that states exactly which render/controller seams an app
   consumer may call
-- a decision on whether `chatWorkspaceMockConsumer.mjs` is only review material
-  or becomes a governed consumer harness
+- a production adoption decision beyond the current mocked in-app proof
+  consumer at `/root-admin/build/workspace`
 
 ## Current Risk
 

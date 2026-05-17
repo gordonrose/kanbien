@@ -58,6 +58,13 @@ function createRootAdminBuildTree() {
                 resolvedFullRoutePath: "/root-admin/build/backlog",
                 children: [],
               },
+              {
+                webAppPageId: "page-build-workspace",
+                pageKey: "build-workspace",
+                displayLabel: "Workspace",
+                resolvedFullRoutePath: "/root-admin/build/workspace",
+                children: [],
+              },
             ],
             orphanedPages: [],
           },
@@ -72,6 +79,7 @@ function createPageSettingsRecord(pageId: string) {
     "page-overview": { displayLabel: "Overview", showInTopNav: true, topNavOrder: 0 },
     "page-users": { displayLabel: "Users", showInTopNav: true, topNavOrder: 1 },
     "page-build-backlog": { displayLabel: "Build", showInTopNav: true, topNavOrder: 2 },
+    "page-build-workspace": { displayLabel: "Workspace", showInTopNav: true, topNavOrder: 3 },
   };
   const record = settingsByPageId[pageId];
 
@@ -165,6 +173,14 @@ async function bootstrapAuthenticatedBuildBacklog(page: Page) {
   await page.locator("#page-build-backlog").waitFor({ state: "visible" });
   await page.locator("#floating-tab-header").waitFor({ state: "visible" });
   await expect(page.locator("[data-build-work-panel-panel]")).not.toHaveClass(/is-open/);
+}
+
+async function bootstrapAuthenticatedBuildWorkspace(page: Page) {
+  await bootstrapAuthenticatedBuildBacklog(page);
+  await page.goto("/root-admin/build/workspace");
+  await page.locator("#shell-view").waitFor({ state: "visible" });
+  await page.locator("#page-build-workspace").waitFor({ state: "attached" });
+  await page.locator("#root-admin-conversation-panel-mount [data-root-admin-chat-workspace-mock]").waitFor({ state: "visible" });
 }
 
 test("root-admin Build Backlog consumes the governed floating tab header seam on a path-backed page", async ({ page }) => {
@@ -287,4 +303,159 @@ test("root-admin Build Backlog consumes the governed floating tab header seam on
   await page.locator("#floating-tab-collapse-toggle").click();
   await expect(page.locator("#floating-tab-panel")).toBeHidden();
   await expect(page.locator("#floating-tab-collapsed-summary")).toBeVisible();
+});
+
+test("root-admin Build Workspace consumes the chat workspace seam as an in-app proof route", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await bootstrapAuthenticatedBuildWorkspace(page);
+
+  await expect(page).toHaveURL(/\/root-admin\/build\/workspace$/);
+  await expect(page.locator("#breadcrumb-page-minus-one-link")).toHaveText("Build");
+  await expect(page.locator("#breadcrumb-current-label")).toHaveText("Workspace");
+  await expect(page.locator('#primary-nav-links .nav-link[data-page-link="build-workspace"]')).toHaveAttribute(
+    "href",
+    "/root-admin/build/workspace",
+  );
+
+  const mount = page.locator("#root-admin-conversation-panel-mount");
+  const shell = mount.locator("[data-chat-workspace-shell]");
+  await expect(page.locator("#page-build-workspace [data-chat-workspace-shell]")).toHaveCount(0);
+  await expect(shell).toBeVisible();
+  await expect(shell).toHaveAttribute(
+    "data-chat-workspace-expanded",
+    "true",
+  );
+  await expect(shell).toHaveAttribute("data-chat-workspace-history-open", "false");
+  await expect(mount.locator("[data-chat-workspace-entity-workspace]")).toBeVisible();
+  await expect(mount.locator("[data-build-work-panel-packet]")).toHaveCount(0);
+
+  const geometry = await mount.evaluate((node) => {
+    const mountRect = node.getBoundingClientRect();
+    const shell = node.querySelector("[data-chat-workspace-shell]");
+    const shellRect = shell?.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+    return shellRect
+      ? {
+          mountBottomGap: Math.round(viewportHeight - mountRect.bottom),
+          mountHeight: Math.round(mountRect.height),
+          mountLeft: Math.round(mountRect.left),
+          shellBottomGap: Math.round(viewportHeight - shellRect.bottom),
+          shellHeight: Math.round(shellRect.height),
+          shellLeft: Math.round(shellRect.left),
+          shellRightGap: Math.round(viewportWidth - shellRect.right),
+          shellWidth: Math.round(shellRect.width),
+          viewportHeight,
+          viewportWidth,
+        }
+      : null;
+  });
+  expect(geometry).not.toBeNull();
+  expect(geometry?.mountBottomGap).toBeLessThanOrEqual(1);
+  expect(geometry?.shellBottomGap).toBeLessThanOrEqual(1);
+  expect(geometry?.shellHeight).toBeGreaterThan(geometry!.viewportHeight - 150);
+  expect(geometry?.shellLeft).toBeLessThanOrEqual(80);
+  expect(geometry?.shellRightGap).toBeLessThanOrEqual(1);
+  expect(geometry?.shellWidth).toBeGreaterThan(geometry!.viewportWidth - 90);
+
+  await page.locator("#display-settings-button").click();
+  await page.locator('[data-theme-option="dark"]').click();
+  await expect(shell).toHaveAttribute("data-theme-scope", "dark");
+  const darkColors = await shell.evaluate((node) => {
+    const shellStyle = getComputedStyle(node);
+    const listPanel = node.querySelector(".floating-tab-list-panel");
+    const listStyle = listPanel instanceof HTMLElement ? getComputedStyle(listPanel) : null;
+    return {
+      shellBackground: shellStyle.backgroundColor,
+      listBackground: listStyle?.backgroundColor ?? "",
+      text: shellStyle.color,
+    };
+  });
+  expect(darkColors.shellBackground).toMatch(/rgb\(17, 24, 39\)|rgb\(15, 23, 42\)/);
+  expect(darkColors.listBackground).toMatch(/rgb\(23, 32, 51\)|rgba\(23, 32, 51/);
+
+  await mount.locator("[data-chat-workspace-chat-selector-toggle]").click();
+  await expect(shell).toHaveAttribute("data-chat-workspace-history-open", "true");
+  await expect(mount.locator("[data-chat-workspace-history-dock] .build-work-panel-demo-history")).toBeVisible();
+  const workspaceToggle = mount.locator("[data-chat-workspace-toggle]").first();
+  await workspaceToggle.click();
+  await expect(shell).toHaveAttribute("data-chat-workspace-expanded", "false");
+  await expect(shell).toHaveAttribute("data-chat-workspace-history-open", "false");
+  await expect(mount.locator("[data-build-work-panel-panel]")).toHaveAttribute("data-history-open", "false");
+  await expect(mount.locator("[data-chat-workspace-history-dock] .build-work-panel-demo-history")).toHaveCount(0);
+  await expect(mount.locator(".chat-workspace-chat-pane .build-work-panel-demo-history")).toBeHidden();
+  await workspaceToggle.click();
+  await expect(shell).toHaveAttribute("data-chat-workspace-expanded", "true");
+  await expect(shell).toHaveAttribute("data-chat-workspace-history-open", "true");
+
+  const buildAction = mount.locator("[data-build-work-panel-build-action]");
+  await buildAction.click();
+  await expect(mount).toHaveAttribute("data-panel-open", "false");
+  await expect(shell).toHaveAttribute("data-chat-workspace-panel-open", "false");
+  await expect(shell).toBeVisible();
+  await expect(mount.locator("[data-chat-workspace-main]")).toBeHidden();
+  await expect(mount.locator("[data-chat-workspace-layer-toolbar]")).toBeHidden();
+  await expect(mount.locator(".chat-workspace-chat-pane")).toBeVisible();
+  await expect(buildAction).toBeVisible();
+  await expect(mount.locator("[data-chat-workspace-entity-workspace]")).toBeHidden();
+  await expect(mount.locator("[data-build-work-panel-panel]")).not.toHaveClass(/is-open/);
+  const collapsedGeometry = await mount.evaluate((node) => {
+    const mountRect = node.getBoundingClientRect();
+    const shell = node.querySelector("[data-chat-workspace-shell]");
+    const shellRect = shell?.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    return shellRect
+      ? {
+          mountRightGap: Math.round(viewportWidth - mountRect.right),
+          mountWidth: Math.round(mountRect.width),
+          shellLeft: Math.round(shellRect.left),
+          shellRightGap: Math.round(viewportWidth - shellRect.right),
+          shellWidth: Math.round(shellRect.width),
+          viewportWidth,
+        }
+      : null;
+  });
+  expect(collapsedGeometry).not.toBeNull();
+  expect(collapsedGeometry?.mountRightGap).toBeLessThanOrEqual(1);
+  expect(collapsedGeometry?.mountWidth).toBeLessThanOrEqual(66);
+  expect(collapsedGeometry?.shellRightGap).toBeLessThanOrEqual(1);
+  expect(collapsedGeometry?.shellWidth).toBeLessThanOrEqual(66);
+  expect(collapsedGeometry?.shellLeft).toBeGreaterThan(collapsedGeometry!.viewportWidth - 70);
+  await buildAction.hover();
+  const tooltipGeometry = await buildAction.evaluate((button) => {
+    const shell = button.closest("[data-chat-workspace-shell]");
+    const afterStyle = getComputedStyle(button, "::after");
+    const buttonRect = button.getBoundingClientRect();
+    const tooltipWidth = Number.parseFloat(afterStyle.width);
+    const gap = Number.parseFloat(afterStyle.right);
+    return {
+      display: afterStyle.display,
+      shellOverflow: shell instanceof HTMLElement ? getComputedStyle(shell).overflow : "",
+      tooltipLeft: Math.round(buttonRect.left - gap - tooltipWidth),
+    };
+  });
+  expect(tooltipGeometry.display).toBe("block");
+  expect(tooltipGeometry.shellOverflow).toBe("visible");
+  expect(tooltipGeometry.tooltipLeft).toBeGreaterThan(0);
+
+  await buildAction.click();
+  await expect(mount).toHaveAttribute("data-panel-open", "true");
+  await expect(shell).toHaveAttribute("data-chat-workspace-panel-open", "true");
+  await expect(shell).toHaveAttribute("data-chat-workspace-expanded", "false");
+  await expect(shell).toHaveAttribute("data-chat-workspace-history-open", "false");
+  await expect(mount.locator("[data-build-work-panel-panel]")).toHaveClass(/is-open/);
+  await expect(mount.locator("[data-chat-workspace-layer-toolbar]")).toBeHidden();
+  await expect(mount.locator("[data-chat-workspace-entity-workspace]")).toBeHidden();
+  await expect(mount.locator(".chat-workspace-chat-pane")).toBeVisible();
+  const reopenedGeometry = await shell.evaluate((node) => {
+    const rect = node.getBoundingClientRect();
+    return {
+      rightGap: Math.round(window.innerWidth - rect.right),
+      width: Math.round(rect.width),
+      viewportWidth: window.innerWidth,
+    };
+  });
+  expect(reopenedGeometry.rightGap).toBeLessThanOrEqual(1);
+  expect(reopenedGeometry.width).toBeGreaterThan(700);
+  expect(reopenedGeometry.width).toBeLessThan(reopenedGeometry.viewportWidth - 300);
 });

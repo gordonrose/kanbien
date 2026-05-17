@@ -614,11 +614,11 @@ export function createConversationPanelController(root, options = {}) {
   const composer = root.querySelector("[data-build-work-panel-composer]");
   const thread = root.querySelector("[data-build-work-panel-thread]");
 
-  function setPanelOpen(isOpen) {
+  function setPanelOpen(isOpen, { source = "panel" } = {}) {
     root.dataset.panelOpen = isOpen ? "true" : "false";
     panel?.classList.toggle("is-open", isOpen);
     openButton?.setAttribute("aria-expanded", String(isOpen));
-    handlers.onPanelOpenChange?.({ open: isOpen });
+    handlers.onPanelOpenChange?.({ open: isOpen, source });
   }
 
   function setHistoryOpen(isOpen) {
@@ -667,9 +667,9 @@ export function createConversationPanelController(root, options = {}) {
     input.style.overflowY = Number.isFinite(maxHeight) && measuredHeight > maxHeight ? "auto" : "hidden";
   }
 
-  openButton?.addEventListener("click", () => setPanelOpen(true));
-  closeButton?.addEventListener("click", () => setPanelOpen(false));
-  buildAction?.addEventListener("click", () => setPanelOpen(!(panel instanceof HTMLElement && panel.classList.contains("is-open"))));
+  openButton?.addEventListener("click", () => setPanelOpen(true, { source: "open-button" }));
+  closeButton?.addEventListener("click", () => setPanelOpen(false, { source: "close-button" }));
+  buildAction?.addEventListener("click", () => setPanelOpen(!(panel instanceof HTMLElement && panel.classList.contains("is-open")), { source: "build-action" }));
   historyToggle?.addEventListener("click", () => setHistoryOpen(!(panel instanceof HTMLElement && panel.dataset.historyOpen === "true")));
   toolsToggle?.addEventListener("click", () => setToolsOpen(!(toolsMenu instanceof HTMLElement && toolsMenu.classList.contains("is-open"))));
   composer?.addEventListener("submit", (event) => {

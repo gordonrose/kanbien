@@ -43,3 +43,7 @@ Before a real app route may adopt this family, the consumer must provide:
 
 This contract permits design-system proving-ground and mocked first-consumer
 preview work. It does not by itself approve production root-admin app adoption.
+
+The current mocked in-app proof consumer is
+`/root-admin/build/workspace`, governed by
+`root-admin-build-workspace-chat-workspace-adoption-contract.md`.

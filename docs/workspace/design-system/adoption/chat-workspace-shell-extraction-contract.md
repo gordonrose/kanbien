@@ -37,3 +37,5 @@ The extraction is checked by unit and audit tests that assert:
 - shell expansion/history behavior lives in `chatWorkspaceShell.mjs`
 - resolver behavior is gated by the scoped shell contract
 - root-admin mock adoption consumes the shared mock consumer harness
+- `/root-admin/build/workspace` mounts the shared mock consumer harness as the
+  first in-app proof route

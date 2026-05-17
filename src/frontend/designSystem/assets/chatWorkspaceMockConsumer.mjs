@@ -463,10 +463,15 @@ export function createChatWorkspaceMockConsumerController(mount, {
     const handlers = input.handlers ?? {};
     const wrappedHandlers = {
       ...handlers,
-      onPanelOpenChange({ open } = {}) {
+      onPanelOpenChange({ open, source } = {}) {
         state.chat.panel.panelOpen = open === true;
+        if (open === true && source === "build-action") {
+          state.workspace.expanded = false;
+          state.chat.panel.historyOpen = false;
+          bootstrapController?.syncWorkspaceToggle({ refresh: false });
+        }
         syncPanelOpenState();
-        handlers.onPanelOpenChange?.({ open });
+        handlers.onPanelOpenChange?.({ open, source });
         syncHistoryDock();
         syncHeaderLayerSelector();
         syncSecondaryHeader();

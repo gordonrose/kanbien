@@ -52,3 +52,10 @@ evolves.
 - `0038-use-explicit-generated-canonical-route-registry-for-design-system-canonicals.md`
 - `0039-defer-persistent-artifact-registry-until-product-surface-matures.md`
 - `0040-use-root-admin-route-modules-for-durable-frontend-pages.md`
+- `0041-adopt-context-account-architecture-for-discovery-intelligence.md`
+- `0042-use-domain-feature-family-registry-for-related-feature-bundles.md`
+- `0043-use-platform-owned-job-lifecycle-hardening-for-long-running-work.md`
+- `0044-use-private-generated-export-bundles-for-sensitive-domain-exports.md`
+- `0045-use-app-controlled-public-asset-delivery-for-rendered-domain-assets.md`
+- `0046-defer-recurring-maintenance-scheduler-until-platform-cadence-is-approved.md`
+- `0047-use-mocked-root-admin-chat-workspace-proof-route-before-production-adoption.md`

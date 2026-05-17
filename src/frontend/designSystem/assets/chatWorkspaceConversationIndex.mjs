@@ -10,6 +10,16 @@ export function dockChatWorkspaceConversationIndex({
   const panelBody = chatMount.querySelector(".build-work-panel-demo-body");
   const chatColumn = chatMount.querySelector(".build-work-panel-demo-chat-column");
   const dockedHistory = historyDock.querySelector(".build-work-panel-demo-history");
+  const embeddedPanel = chatMount.querySelector("[data-build-work-panel-panel]");
+  const historyToggle = chatMount.querySelector("[data-build-work-panel-history-toggle]");
+  const open = historyOpen !== false;
+
+  if (embeddedPanel instanceof HTMLElement) {
+    embeddedPanel.dataset.historyOpen = open ? "true" : "false";
+  }
+  if (historyToggle instanceof HTMLElement) {
+    historyToggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
 
   if (historyOpen === false) {
     if (panelBody instanceof HTMLElement && chatColumn instanceof HTMLElement && dockedHistory instanceof HTMLElement) {

@@ -11,15 +11,15 @@ type LockedFile = {
 const lockedRootAdminUiFiles: LockedFile[] = [
   {
     path: "src/frontend/rootAdminShell/index.html",
-    sha256: "8f2599bc372fb29e4c538a5f3a174d3bdf9ad04eff72a9beca2d6d699a427b2a",
+    sha256: "18d92ef493641730de09d845e059c05a9918402e8d7ae474f491c0b95c8ad9d5",
     rationale:
-      "Authenticated root-admin shell markup must remain outside index.html and flow through the shared design-system appShell seam.",
+      "Authenticated root-admin shell markup must remain outside index.html and styling must flow through shared design-system stylesheet entrypoints.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/app.mjs",
-    sha256: "69e82bb928a365cd0e93278ec7b82e662e54479a0f2b06eaa571a5c268174f76",
+    sha256: "225f91513029da3d22ec95cc1af05533dc59f1f65df961bf77806fb5960d809c",
     rationale:
-      "Root-admin authenticated shell behavior remains locally composed, but approved route-topology, protected Build-panel integration, and narrow session-context handoff changes may update orchestration as long as shared design-system shell, directory-workspace, and conversation-panel behavior does not regress back into app-local ownership.",
+      "Root-admin authenticated shell behavior remains locally composed, but approved route-topology, protected Build-panel integration, chat-workspace proof routing through the existing conversation-panel slot, and narrow session-context handoff changes may update orchestration as long as shared design-system shell, directory-workspace, conversation-panel, and chat-workspace behavior does not regress back into app-local ownership.",
   },
   {
     path: "src/frontend/rootAdminShell/assets/webAppHierarchyPage.mjs",
@@ -41,6 +41,7 @@ const requiredRootAdminShellStylesheets = [
   '/design-system/assets/form-template-shared.css',
   '/design-system/assets/hierarchyTree.css',
   '/design-system/assets/conversationPanel.css',
+  '/design-system/assets/chatWorkspacePattern.css',
 ];
 
 const requiredRootAdminHierarchyImports = [
@@ -49,6 +50,10 @@ const requiredRootAdminHierarchyImports = [
 
 const requiredRootAdminBuildBacklogImports = [
   "/design-system/assets/floatingTabHeader.mjs?v=2026-05-08-overflow-tooltip-contract",
+];
+
+const requiredRootAdminBuildWorkspaceImports = [
+  "/design-system/assets/chatWorkspaceMockConsumer.mjs",
 ];
 
 const allowedRootAdminCssFiles = new Set<string>();
@@ -330,12 +335,15 @@ function main() {
   const hierarchyPageSource = readUtf8(hierarchyPageSourcePath);
   const buildBacklogPageSourcePath = "src/frontend/rootAdminShell/routes/build/backlog/page.mjs";
   const buildBacklogPageSource = readUtf8(buildBacklogPageSourcePath);
+  const buildWorkspacePageSourcePath = "src/frontend/rootAdminShell/routes/build/workspace/page.mjs";
+  const buildWorkspacePageSource = readUtf8(buildWorkspacePageSourcePath);
   const unexpectedCssFiles = listUnexpectedRootAdminCssFiles();
 
   const missingImports = requiredRootAdminShellImports.filter((specifier) => !shellAppSource.includes(specifier));
   const missingStylesheets = requiredRootAdminShellStylesheets.filter((href) => !shellIndexSource.includes(href));
   const missingHierarchyImports = requiredRootAdminHierarchyImports.filter((specifier) => !hierarchyPageSource.includes(specifier));
   const missingBuildBacklogImports = requiredRootAdminBuildBacklogImports.filter((specifier) => !buildBacklogPageSource.includes(specifier));
+  const missingBuildWorkspaceImports = requiredRootAdminBuildWorkspaceImports.filter((specifier) => !buildWorkspacePageSource.includes(specifier));
   const indexOwnershipViolations = forbiddenRootAdminIndexPatterns
     .filter((entry) => entry.pattern.test(shellIndexSource))
     .map((entry) => ({
@@ -378,6 +386,7 @@ function main() {
     && missingStylesheets.length === 0
     && missingHierarchyImports.length === 0
     && missingBuildBacklogImports.length === 0
+    && missingBuildWorkspaceImports.length === 0
     && unexpectedCssFiles.length === 0
     && indexOwnershipViolations.length === 0
     && localOwnershipViolations.length === 0
@@ -437,6 +446,13 @@ function main() {
   if (missingBuildBacklogImports.length > 0) {
     console.error("The root-admin Build Backlog page is missing required design-system imports:");
     for (const missing of missingBuildBacklogImports) {
+      console.error(`- ${missing}`);
+    }
+    console.error("");
+  }
+  if (missingBuildWorkspaceImports.length > 0) {
+    console.error("The root-admin Build Workspace page is missing required design-system imports:");
+    for (const missing of missingBuildWorkspaceImports) {
       console.error(`- ${missing}`);
     }
     console.error("");

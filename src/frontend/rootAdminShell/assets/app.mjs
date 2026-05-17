@@ -101,6 +101,7 @@ const rootAdminTopNavPageOrder = [
   "tenant-admins",
   "web-app-hierarchy",
   "build-backlog",
+  "build-workspace",
 ];
 
 const rootAdminTopNavPageOrderIndex = new Map(
@@ -266,6 +267,11 @@ const rootAdminAppShellInput = {
       sectionId: "page-build-backlog",
       initiallyVisible: false,
     },
+    {
+      key: "build-workspace",
+      sectionId: "page-build-workspace",
+      initiallyVisible: false,
+    },
   ],
 };
 
@@ -374,6 +380,7 @@ const pageSections = {
   "tenant-admins": document.getElementById("page-tenant-admins"),
   "web-app-hierarchy": document.getElementById("page-web-app-hierarchy"),
   "build-backlog": document.getElementById("page-build-backlog"),
+  "build-workspace": document.getElementById("page-build-workspace"),
 };
 
 const appShellController = createAppShellController({
@@ -536,6 +543,16 @@ const webAppHierarchyPageController = webAppHierarchyRoute?.mount?.({
 const buildBacklogRoute = getRootAdminRouteDefinition("build-backlog");
 const buildBacklogPageController = buildBacklogRoute?.mount?.({
   root: document.getElementById("page-build-backlog"),
+  getCurrentPage: () => state.navigation.currentPage,
+}) ?? {
+  syncPageState() {},
+  reset() {},
+};
+
+const buildWorkspaceRoute = getRootAdminRouteDefinition("build-workspace");
+const buildWorkspacePageController = buildWorkspaceRoute?.mount?.({
+  panelRoot: rootAdminConversationPanelMount,
+  root: document.getElementById("page-build-workspace"),
   getCurrentPage: () => state.navigation.currentPage,
 }) ?? {
   syncPageState() {},
@@ -843,6 +860,12 @@ function mountRootAdminConversationPanel() {
     return;
   }
 
+  if (state.navigation.currentPage === "build-workspace") {
+    rootAdminConversationPanelController?.destroy?.();
+    rootAdminConversationPanelController = null;
+    return;
+  }
+
   rootAdminConversationPanelController?.destroy?.();
   const ref = {
     ...rootAdminConversationPanelRefForRender(),
@@ -1058,6 +1081,9 @@ function defaultDisplayIconKeyForPage(pageKey) {
     case "build-backlog":
     case "root-admin-build-backlog":
       return "list";
+    case "build-workspace":
+    case "root-admin-build-workspace":
+      return "workspace";
     default:
       return "grid";
   }
@@ -1551,6 +1577,7 @@ function resetAuthenticatedShellForLogin({ authMessage = "" } = {}) {
   rootAdminDirectoryController.reset();
   webAppHierarchyPageController.reset();
   buildBacklogPageController.reset();
+  buildWorkspacePageController.reset();
   setTopNavLinkCollections(buildFallbackTopNavItems());
   renderContextNavItems([]);
   render();
@@ -1777,6 +1804,7 @@ function render() {
     rootAdminDirectoryController.syncPageState();
     webAppHierarchyPageController.syncPageState();
     buildBacklogPageController.syncPageState();
+    buildWorkspacePageController.syncPageState();
     mountRootAdminConversationPanel();
   }
 

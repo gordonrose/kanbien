@@ -48,4 +48,15 @@ export const rootAdminPageMetadata = {
     searchPlaceholder: "Search build backlog views, statuses, or owners",
     searchKeywords: ["build", "backlog", "status", "statuses", "boards", "priority", "owner"],
   },
+  "build-workspace": {
+    title: "Workspace",
+    breadcrumbCurrent: "Workspace",
+    breadcrumbChain: [
+      { href: buildCanonicalRootAdminPath("overview"), label: "Root Admin" },
+      { href: buildCanonicalRootAdminPath("build-workspace"), label: "Build" },
+      { href: buildCanonicalRootAdminPath("build-workspace"), label: "Workspace" },
+    ],
+    searchPlaceholder: "Search build workspace layers, chats, or records",
+    searchKeywords: ["build", "workspace", "chat", "discovery", "design", "delivery", "records"],
+  },
 };

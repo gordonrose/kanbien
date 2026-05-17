@@ -6,6 +6,7 @@ export const rootAdminCanonicalPaths = {
   "tenant-admins": "/root-admin/tenant-admins",
   "web-app-hierarchy": "/root-admin/web-app-hierarchy",
   "build-backlog": "/root-admin/build/backlog",
+  "build-workspace": "/root-admin/build/workspace",
 };
 
 const pageAliases = {

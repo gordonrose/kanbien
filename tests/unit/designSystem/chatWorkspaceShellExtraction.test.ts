@@ -50,6 +50,10 @@ describe("chatWorkspaceShell extraction", () => {
       resolve(process.cwd(), "src/frontend/designSystem/assets/chatWorkspaceShellContract.mjs"),
       "utf8",
     );
+    const rootAdminRouteSource = readFileSync(
+      resolve(process.cwd(), "src/frontend/rootAdminShell/routes/build/workspace/page.mjs"),
+      "utf8",
+    );
 
     expect(adoptionContract).toContain("Expansion is disabled unless the consumer explicitly sets");
     expect(adoptionContract).toContain("Layer + Entity Category + Chat = Scoped Entity List");
@@ -61,5 +65,10 @@ describe("chatWorkspaceShell extraction", () => {
     expect(patternContract).toContain("chat-workspace-shell-consumer-adoption-contract.md");
     expect(sourceContract).toContain("export function createChatWorkspaceShellConfig");
     expect(sourceContract).toContain("export function shouldResolveChatWorkspaceEntities");
+    expect(rootAdminRouteSource).toContain("/design-system/assets/chatWorkspaceMockConsumer.mjs");
+    expect(rootAdminRouteSource).toContain("createChatWorkspaceMockConsumerController");
+    expect(rootAdminRouteSource).not.toContain("class=\"chat-workspace-shell");
+    expect(rootAdminRouteSource).not.toContain("class='chat-workspace-shell");
+    expect(rootAdminRouteSource).not.toContain("createChatWorkspaceBootstrap");
   });
 });

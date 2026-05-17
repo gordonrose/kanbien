@@ -252,6 +252,7 @@ Journey modules must not:
 | `/root-admin/roles` | `routes/roles/` | `durable-page` | Intentional placeholder for now; real behavior waits for a DS-owned roles workspace seam or new explicit exception. |
 | `/root-admin/web-app-hierarchy` | `routes/web-app-hierarchy/` | `durable-page` | Extracted; page body mounts through the thin `webAppHierarchyPage.mjs` adapter and `webAppHierarchyWorkspace.mjs`. |
 | `/root-admin/build/backlog` | `routes/build/backlog/` | `durable-page` | Proof route; floating-tab header is DS-owned, wrapper remains cleanup target. |
+| `/root-admin/build/workspace` | `routes/build/workspace/` | `durable-page` | Proof route; mounts the DS-owned `chatWorkspaceMockConsumer.mjs` harness as the first mocked in-app chat workspace consumer. |
 | root-admin helper downloads | no page route module | `support-only` | Keep in router/support helper handling, not normal user-facing topology. |
 | legacy `#overview`, `#users`, etc. | `routeTopology.mjs` aliases | compatibility alias | Do not treat as canonical route truth. |
 

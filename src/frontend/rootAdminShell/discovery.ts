@@ -6,7 +6,8 @@ export interface RootAdminShellDiscoveredState {
     | "tenants"
     | "tenant-admins"
     | "web-app-hierarchy"
-    | "build-backlog";
+    | "build-backlog"
+    | "build-workspace";
   displayLabel: string;
   routePath?: string;
   implementationSourcePath: string;
@@ -58,6 +59,12 @@ export const ROOT_ADMIN_SHELL_DISCOVERED_STATES: RootAdminShellDiscoveredState[]
     displayLabel: "Backlog",
     routePath: "/root-admin/build/backlog",
     implementationSourcePath: "src/frontend/rootAdminShell/routes/build/backlog/page.mjs",
+  },
+  {
+    pageKey: "build-workspace",
+    displayLabel: "Workspace",
+    routePath: "/root-admin/build/workspace",
+    implementationSourcePath: "src/frontend/rootAdminShell/routes/build/workspace/page.mjs",
   },
 ];
 

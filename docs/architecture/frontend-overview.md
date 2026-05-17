@@ -162,6 +162,9 @@ Current governed-adoption posture inside `rootAdminShell` is not uniform yet:
 - the `build/backlog` proof route consumes the design-system-owned
   `floatingTabHeader.mjs` seam, but still owns representative route wrapper
   copy and proof data locally
+- the `build/workspace` proof route consumes the design-system-owned
+  `chatWorkspaceMockConsumer.mjs` harness as a mocked in-app proof consumer of
+  the chat workspace seam; it is not production Build workspace behavior
 - the `/root-admin` overview/session body and `/root-admin/roles` body remain
   intentional local placeholder page bodies rather than page-family
   design-system adoption
