@@ -578,7 +578,7 @@ export function mountFloatingTabHeader({
     layout = params.get("layout") === "vertical" ? "vertical" : layout;
     rowPacking = params.get("rowPacking") === "double" ? "double" : rowPacking;
     const requestedTabCount = Number(params.get("tabs"));
-    if ([5, 10, 12].includes(requestedTabCount)) {
+    if ([4, 5, 10, 12, 16].includes(requestedTabCount)) {
       tabCount = requestedTabCount;
     }
     if (categories[params.get("category")]) {

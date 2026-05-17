@@ -25,7 +25,10 @@ import {
   renderChatWorkspaceEntityHost,
 } from "./chatWorkspaceEntityHost.mjs";
 import { renderChatWorkspaceEntitySelector } from "./chatWorkspaceEntitySelector.mjs";
-import { renderChatWorkspaceJointHeader } from "./chatWorkspaceJointHeader.mjs";
+import {
+  renderChatWorkspaceJointHeader,
+  renderChatWorkspaceLayerSelector,
+} from "./chatWorkspaceJointHeader.mjs";
 import {
   renderChatWorkspaceListDrawer,
   syncChatWorkspaceRowSelection,
@@ -177,7 +180,12 @@ function renderShellScaffold({ title = "Build work panel" } = {}) {
 
 export function createChatWorkspaceMockConsumerController(mount, {
   config,
+  entityHostOptions = {},
   getChatInput,
+  entitySelectorLabel = "",
+  headerTools = [],
+  layerSelectorPlacement = "joint-header",
+  newConversationLabel = "Start new chat",
   onClose,
   state = createChatWorkspaceMockConsumerState({ config }),
   title = "Build work panel",
@@ -215,7 +223,7 @@ export function createChatWorkspaceMockConsumerController(mount, {
           entityLabel: state.active.entity.label,
           expanded: state.workspace.entityDrawerOpen,
         })}
-        <span class="floating-tab-panel-count">${escapeHtml(getChatWorkspaceEntityItemCount(state.active.entity))} records</span>
+        <span class="floating-tab-panel-count">${escapeHtml(getChatWorkspaceEntityItemCount(state.active.entity, entityHostOptions))} records</span>
       `;
     if (header.previousElementSibling !== tabHeader) {
       entityWorkspace.insertBefore(header, tabHeader);
@@ -304,6 +312,7 @@ export function createChatWorkspaceMockConsumerController(mount, {
       activeEntity: state.active.entity,
       displayRoot: shell ?? document.documentElement,
       layer: state.active.layer,
+      ...entityHostOptions,
       onCategoryChange({ category }) {
         selectChatWorkspaceEntity({
           activeState: state.active,
@@ -363,9 +372,20 @@ export function createChatWorkspaceMockConsumerController(mount, {
     secondaryHeader.innerHTML = renderChatWorkspaceSecondaryHeader({
       chatLabel: historyOpen ? getChatLabel() : "Discovery chat",
       entityLabel: state.active.entity.label,
+      entitySelectorLabel,
       entitySelectorExpanded: state.workspace.entityDrawerOpen,
+      headerTools,
       historyOpen,
-      recordCount: getChatWorkspaceEntityItemCount(state.active.entity),
+      listPrefix: layerSelectorPlacement === "secondary-list"
+        ? renderChatWorkspaceLayerSelector({
+          activeLayerKey: state.active.layer?.key,
+          activeLayerLabel: state.active.layer?.label,
+          expanded: state.workspace.layerDrawerOpen,
+          layers,
+        })
+        : "",
+      newConversationLabel,
+      recordCount: getChatWorkspaceEntityItemCount(state.active.entity, entityHostOptions),
       workspaceExpanded: state.workspace.expanded,
     });
     const entityWorkspace = mount.querySelector("[data-chat-workspace-entity-workspace]");
@@ -561,6 +581,9 @@ export function createChatWorkspaceMockConsumerController(mount, {
             continue;
           }
           const result = runChatWorkspaceActionEffects(action, workspaceEffectHandlers);
+          if (action.type === "toggle-layer-selector" || action.type === "close-layer-selector") {
+            syncSecondaryHeader();
+          }
           if (result.stopped) {
             return true;
           }

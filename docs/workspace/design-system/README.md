@@ -134,6 +134,7 @@ Current authored examples now include:
 - `templates/launcher-template.md`
 - `templates/canonical-render-page-template.md`
 - `templates/form-template.md`
+- `templates/record-management-list-centric-template.md`
 - `verification/top-nav-verification-checklist.md`
 - `verification/list-record-card-verification-checklist.md`
 - `verification/form-template-verification-checklist.md`

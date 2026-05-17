@@ -41,8 +41,17 @@ export function renderChatWorkspaceEntitySelector({
   selector.classList.toggle("is-open", open);
   selector.hidden = !open;
   if (!open) {
+    selector.style.removeProperty("--chat-workspace-entity-selector-left");
+    selector.style.removeProperty("--chat-workspace-entity-selector-width");
     selector.replaceChildren();
     return;
+  }
+
+  if (trigger instanceof HTMLElement) {
+    const triggerRect = trigger.getBoundingClientRect();
+    const mountRect = mount.getBoundingClientRect();
+    selector.style.setProperty("--chat-workspace-entity-selector-left", `${triggerRect.left - mountRect.left}px`);
+    selector.style.setProperty("--chat-workspace-entity-selector-width", `${triggerRect.width}px`);
   }
 
   selector.innerHTML = `

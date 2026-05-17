@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Record Management List Centric Template</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/assets/conversationPanel.css" />
+    <link rel="stylesheet" href="/design-system/assets/chatWorkspacePattern.css" />
+  </head>
+  <body data-chat-workspace-owner="design-system">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button tooltip-anchor" href="/design-system" data-tooltip="Home" title="Home">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button tooltip-anchor" href="/design-system/templates" data-tooltip="Home > Templates" title="Home > Templates">Templates</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current tooltip-anchor" aria-current="page" data-tooltip="Home > Templates > record_management_list_centric" title="Home > Templates > record_management_list_centric">record_management_list_centric</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input
+              class="search-input"
+              type="search"
+              name="record-management-search"
+              placeholder="Search"
+              autocomplete="off"
+            />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+      </section>
+
+      <nav class="context-nav" aria-label="Record management list-centric template navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item active" href="/design-system/templates/record_management_list_centric" data-tooltip="Template" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 4h14v4H5zm0 6h14v4H5zm0 6h9v4H5zm12 1h2v3h-2z" /></svg>
+            </span>
+            <span class="context-nav-label">Template</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/patterns/chat-workspace" data-tooltip="Source Pattern">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h7v14H4zm9 0h7v6h-7zm0 8h7v6h-7z" /></svg>
+            </span>
+            <span class="context-nav-label">Source Pattern</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group">
+          <button
+            id="record-management-display-settings-button"
+            class="context-nav-item context-nav-item-button context-nav-item-bottom"
+            type="button"
+            data-tooltip="Display Settings"
+            aria-expanded="false"
+            aria-controls="record-management-display-settings-drawer"
+          >
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4.75 5.25h14.5a1.5 1.5 0 0 1 1.5 1.5v8.5a1.5 1.5 0 0 1-1.5 1.5H13.5l.9 2h2.35a.75.75 0 0 1 0 1.5H7.25a.75.75 0 0 1 0-1.5H9.6l.9-2H4.75a1.5 1.5 0 0 1-1.5-1.5v-8.5a1.5 1.5 0 0 1 1.5-1.5zm0 1.5v8.5h14.5v-8.5zm7.25 2a2.5 2.5 0 1 1-2.5 2.5 2.5 2.5 0 0 1 2.5-2.5z" /></svg>
+            </span>
+            <span class="context-nav-label">Display</span>
+          </button>
+        </div>
+      </nav>
+
+      <aside
+        id="record-management-display-settings-drawer"
+        class="side-panel display-settings-drawer hidden"
+        aria-labelledby="record-management-display-settings-title"
+        aria-hidden="true"
+      >
+        <div class="side-panel-header">
+          <div>
+            <p class="drawer-eyebrow">Display</p>
+            <h2 id="record-management-display-settings-title">Display Settings</h2>
+          </div>
+          <button
+            id="record-management-display-settings-close"
+            class="icon-button"
+            type="button"
+            aria-label="Close display settings"
+          >
+            <span class="icon-button-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M6 6 18 18M18 6 6 18" /></svg>
+            </span>
+          </button>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label">Theme</p>
+          <div class="chip-row" role="group" aria-label="Theme">
+            <button class="accessibility-chip active" type="button" data-record-management-theme-option="normal" aria-pressed="true">Normal</button>
+            <button class="accessibility-chip" type="button" data-record-management-theme-option="dark" aria-pressed="false">Dark</button>
+            <button class="accessibility-chip" type="button" data-record-management-theme-option="desert" aria-pressed="false">Desert</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label">Direction</p>
+          <div class="chip-row" role="group" aria-label="Direction">
+            <button class="accessibility-chip active" type="button" data-record-management-direction-option="ltr" aria-pressed="true">LTR</button>
+            <button class="accessibility-chip" type="button" data-record-management-direction-option="rtl" aria-pressed="false">RTL</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label">Magnification</p>
+          <div class="chip-row chip-row-single-line" role="group" aria-label="Magnification">
+            <button class="accessibility-chip" type="button" data-record-management-magnification-option="-50" aria-pressed="false">-50%</button>
+            <button class="accessibility-chip active" type="button" data-record-management-magnification-option="0" aria-pressed="true">0%</button>
+            <button class="accessibility-chip" type="button" data-record-management-magnification-option="50" aria-pressed="false">+50%</button>
+            <button class="accessibility-chip" type="button" data-record-management-magnification-option="100" aria-pressed="false">+100%</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label">List drawer</p>
+          <div class="chip-row chip-row-single-line" role="group" aria-label="List drawer">
+            <button class="accessibility-chip active" type="button" data-record-management-drawer-view="end_user" aria-pressed="true">End user view</button>
+            <button class="accessibility-chip" type="button" data-record-management-drawer-view="root" aria-pressed="false">Root view</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label">Statuses</p>
+          <div class="chip-row chip-row-single-line" role="group" aria-label="Statuses">
+            <button class="accessibility-chip" type="button" data-record-management-status-count="4" aria-pressed="false">4 status</button>
+            <button class="accessibility-chip active" type="button" data-record-management-status-count="10" aria-pressed="true">10 status</button>
+            <button class="accessibility-chip" type="button" data-record-management-status-count="16" aria-pressed="false">16 statuses</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label">List items</p>
+          <div class="chip-row chip-row-single-line" role="group" aria-label="List items">
+            <button class="accessibility-chip" type="button" data-record-management-list-count="0" aria-pressed="false">0 list items</button>
+            <button class="accessibility-chip active" type="button" data-record-management-list-count="5" aria-pressed="true">5 list items</button>
+            <button class="accessibility-chip" type="button" data-record-management-list-count="100" aria-pressed="false">100 list items</button>
+          </div>
+        </div>
+      </aside>
+
+      <main class="design-system-page-main build-work-panel-demo-page chat-workspace-pattern-page" data-record-management-list-centric-template data-record-management-drawer-view-mode="end_user">
+        <section class="record-management-template-frame" aria-label="Record management list-centric preview" data-record-management-template-frame data-filter-expanded="true">
+          <aside class="record-management-filter-panel" aria-label="Record filters" data-record-management-filter-panel>
+            <div class="record-management-filter-header">
+              <button
+                class="record-management-filter-trigger tooltip-anchor"
+                type="button"
+                aria-label="Collapse filters"
+                data-tooltip="Collapse filters"
+                data-record-management-filter-toggle
+              >
+                <span class="record-management-filter-trigger-copy">
+                  <small>Filters</small>
+                  <strong data-record-management-filter-total>0 selected</strong>
+                </span>
+                <span class="chat-workspace-selector-chevron" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" focusable="false"><path d="m7 10 5 5 5-5" /></svg>
+                </span>
+              </button>
+            </div>
+
+            <div class="record-management-filter-card-list">
+              <button class="record-management-filter-card" type="button" aria-expanded="false" data-record-management-filter-card="status">
+                <span>
+                  <strong>Status</strong>
+                  <small>Workflow state</small>
+                </span>
+                <em data-record-management-filter-count="status">0</em>
+              </button>
+              <button class="record-management-filter-card" type="button" aria-expanded="false" data-record-management-filter-card="org">
+                <span>
+                  <strong>Org</strong>
+                  <small>Owning group</small>
+                </span>
+                <em data-record-management-filter-count="org">0</em>
+              </button>
+              <button class="record-management-filter-card" type="button" aria-expanded="false" data-record-management-filter-card="date">
+                <span>
+                  <strong>Date</strong>
+                  <small>Review window</small>
+                </span>
+                <em data-record-management-filter-count="date">0</em>
+              </button>
+            </div>
+
+            <div class="record-management-filter-selection-drawer form-drawer-select-panel form-drawer-select-attribute-cards" role="dialog" aria-modal="false" aria-hidden="true" hidden data-record-management-filter-drawer></div>
+          </aside>
+          <div data-record-management-list-centric-mount></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/recordManagementListCentricTemplate.mjs"></script>
+  </body>
+</html>
