@@ -166,7 +166,7 @@
   align-items: start;
   min-block-size: 6rem;
   padding-block: 1rem 1.15rem;
-  border-block-end: 0;
+  border-block-end: 1px solid var(--chat-workspace-line);
   background: transparent;
 }
 

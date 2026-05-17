@@ -301,6 +301,8 @@ test.describe("design-system chat workspace pattern variant", () => {
     });
     expect(expandedHeaderAlignment).not.toBeNull();
     expect(Math.abs((expandedHeaderAlignment?.layerLeft ?? 0) - (expandedHeaderAlignment?.chatSelectorLeft ?? 0))).toBeLessThanOrEqual(2);
+    await expect(page.locator("[data-chat-workspace-joint-header]")).toHaveCSS("border-bottom-style", "solid");
+    await expect(page.locator("[data-chat-workspace-joint-header]")).toHaveCSS("border-bottom-width", "1px");
     const historyTooltipGeometry = await page.evaluate(() => {
       const row = document.querySelector(".chat-workspace-history-dock .build-work-panel-demo-history-row");
       row?.classList.add("is-tooltip-visible");
