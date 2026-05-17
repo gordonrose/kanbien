@@ -25,7 +25,7 @@ describe("design system breadcrumb overflow", () => {
     expect(markup).toContain('id="breadcrumb-compact-menu"');
     expect(script).toContain("const designSystemBreadcrumbChains = new Map([");
     expect(script).toContain("const designSystemPrimaryNavItems = [");
-    expect(script).toContain('{ href: "/design-system/templates", label: "Templates" }');
+    expect(script).toContain('{ href: "/design-system/canonical-renderings", label: "Canonical Renderings" }');
     expect(script).toContain('["/design-system/components/top-nav", [');
     expect(script).toContain('{ href: "/design-system/components", label: "Home" },');
     expect(script).toContain('["/design-system/canonicals/top-nav", [');
@@ -76,7 +76,8 @@ describe("design system breadcrumb overflow", () => {
     expect(script).toContain("list.classList.remove(\"hidden\");");
     expect(script).toContain("updateBreadcrumbOverflow();");
     expect(script).toContain("updateBreadcrumbOverflowTooltips();");
-    expect(script).toContain("breadcrumbPageMinusOneLink.dataset.shortLabel = \"Previous\";");
+    expect(script).toContain("breadcrumbPageMinusOneLink.dataset.shortLabel = preserveCanonicalBreadcrumbLabel");
+    expect(script).toContain(": \"Previous\";");
     expect(script).toContain("setBreadcrumbButtonLabel(pageMinusOneLink, shortPageMinusOneLabel);");
     expect(script).toContain("setBreadcrumbItemHidden(collapsedItem, true);");
     expect(script).toContain("setBreadcrumbItemHidden(pageMinusOneItem, true);");
@@ -162,7 +163,7 @@ describe("design system breadcrumb overflow", () => {
     expect(templatesMarkup).toContain('id="breadcrumb-current-item" class="hidden"');
 
     expect(componentMarkup).toContain('href="/design-system/components">Home<');
-    expect(componentMarkup).not.toContain('href="/design-system/canonicals">Canonicals<');
+    expect(componentMarkup).toContain('href="/design-system/canonicals/top-nav">Top Nav Canonicals<');
 
     expect(explorationMarkup).toContain('href="/design-system/components/top-nav">Top Nav<');
     expect(explorationMarkup).toContain(">Exploration<");
