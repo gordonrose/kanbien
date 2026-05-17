@@ -1,4 +1,8 @@
-import { createDragPreview, createDropMarker } from "./dragDropAffordance.mjs";
+import { createFloatingTabRowReorderController } from "./floatingTabRowReorder.mjs";
+import {
+  createFloatingTabStatusDropController,
+  moveFloatingTabRowToStatus,
+} from "./floatingTabStatusDrop.mjs";
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -489,9 +493,6 @@ export function mountFloatingTabHeader({
   let measuredVisibleLimit = null;
   let measuredCrowded = false;
   let applyingMeasuredDensity = false;
-  let draggedRow = null;
-  let dragPreview = null;
-  let dropMarker = null;
   let lastObservedInlineSize = 0;
   let resizeObserver = null;
 
@@ -632,71 +633,24 @@ export function mountFloatingTabHeader({
     }
   }
 
-  function ensureListDropMarker(height = "") {
-    if (dropMarker instanceof HTMLElement) {
-      if (height) {
-        dropMarker.style.setProperty("--drag-drop-marker-min-height", height);
-      }
-      return dropMarker;
-    }
-    dropMarker = createDropMarker({
-      className: "floating-tab-drop-marker",
-      label: "Drop to reorder",
-      minHeight: height,
-    });
-    return dropMarker;
-  }
-
-  function clearListDropMarker() {
-    dropMarker?.remove();
-    dropMarker = null;
-    Array.from(list.querySelectorAll("[data-floating-tab-row-drop-target]")).forEach((row) => {
-      if (row instanceof HTMLElement) {
-        delete row.dataset.floatingTabRowDropTarget;
-      }
-    });
-  }
-
-  function clearFloatingTabDragState() {
-    if (draggedRow instanceof HTMLElement) {
-      delete draggedRow.dataset.dragging;
-      draggedRow.classList.remove("drag-drop-source");
-    }
-    draggedRow = null;
-    dragPreview?.remove();
-    dragPreview = null;
-    clearListDropMarker();
-    tabButtons.forEach((button) => {
-      delete button.dataset.floatingTabDropTarget;
-    });
-  }
-
   function moveDraggedRowToStatus(targetLabel) {
-    if (!(draggedRow instanceof HTMLElement) || !targetLabel || targetLabel === activeLabel) {
-      return false;
-    }
-
-    const rowData = getRowData(draggedRow);
-    const categoryRows = getCategoryRows(rowsByLabel, category);
-    const currentRows = categoryRows[activeLabel] ?? [];
-    const sourceIndex = currentRows.findIndex(([title, owner, due]) =>
-      title === rowData[0] && owner === rowData[1] && due === rowData[2],
-    );
-    if (sourceIndex >= 0) {
-      currentRows.splice(sourceIndex, 1);
-    }
-    if (!Array.isArray(categoryRows[targetLabel])) {
-      categoryRows[targetLabel] = [];
-    }
-    categoryRows[targetLabel].push([rowData[0], targetLabel, rowData[2]]);
-    setTabCount(activeLabel, -1);
-    setTabCount(targetLabel, 1);
-    activeCount = String(getTabItem(activeLabel)?.[2] ?? activeCount);
-    panelCount.textContent = `${activeCount} records`;
-    syncCollapsedSummary();
-    renderRows(list, activeLabel, rowsByLabel, category);
-    syncListDragRows();
-    return true;
+    const draggedRow = rowReorderController.getDraggedRow();
+    return moveFloatingTabRowToStatus({
+      draggedRow,
+      targetLabel,
+      activeLabel,
+      categoryRows: getCategoryRows(rowsByLabel, category),
+      getRowData,
+      setTabCount,
+      getTabItem,
+      setActiveCount: (nextActiveCount) => {
+        activeCount = nextActiveCount;
+      },
+      panelCount,
+      syncCollapsedSummary,
+      renderActiveRows: () => renderRows(list, activeLabel, rowsByLabel, category),
+      syncRows: () => rowReorderController.syncRows(),
+    });
   }
 
   function syncActiveRowsFromDom() {
@@ -705,6 +659,30 @@ export function mountFloatingTabHeader({
       .filter((row) => row instanceof HTMLElement)
       .map((row) => getRowData(row));
   }
+
+  let statusDropController = null;
+  const rowReorderController = createFloatingTabRowReorderController({
+    list,
+    getRows: () => list.querySelectorAll(".floating-tab-row"),
+    getRowLabel: (row) => row.querySelector("strong")?.textContent?.trim() ?? "Row",
+    onRowsReordered: syncActiveRowsFromDom,
+    onClearExternalTargets: () => statusDropController?.clearDropTargets(),
+  });
+
+  statusDropController = createFloatingTabStatusDropController({
+    header,
+    tabButtons,
+    getDraggedRow: () => rowReorderController.getDraggedRow(),
+    getActiveLabel: () => activeLabel,
+    clearRowDropMarker: () => rowReorderController.clearDropMarker(),
+    clearDragState: () => rowReorderController.clearDragState(),
+    moveDraggedRowToStatus,
+    onMoved: () => {
+      if (typeof onTabChange === "function") {
+        onTabChange({ category, label: activeLabel, count: activeCount, movement: "status-drop" });
+      }
+    },
+  });
 
   function getActiveTabButton() {
     return tabButtons.find((button) => button.classList.contains("active") && !button.disabled && !button.classList.contains("hidden"))
@@ -845,7 +823,11 @@ export function mountFloatingTabHeader({
       const compactMinWidth = 4.5 * rootFontSize;
       const columnGap = Number.parseFloat(scrollerStyle.columnGap || scrollerStyle.gap) || 0;
       const compactFitWidth = (visibleCards.length * compactMinWidth) + Math.max(0, visibleCards.length - 1) * columnGap;
-      if (wouldRoomyCardsFit(visibleCards) && !roomyLabelsWouldOverflow(visibleCards)) {
+      if (
+        measuredVisibleLimit === null
+        && wouldRoomyCardsFit(visibleCards)
+        && !roomyLabelsWouldOverflow(visibleCards)
+      ) {
         measuredVisibleLimit = null;
         measuredCrowded = false;
         applyingMeasuredDensity = true;
@@ -980,7 +962,7 @@ export function mountFloatingTabHeader({
       readout.textContent = `Viewing ${activeLabel}, ${activeCount} records${isAttentionTab(activeButton) ? ", needs attention" : ""}`;
     }
     renderRows(list, activeLabel, rowsByLabel, category);
-    syncListDragRows();
+    rowReorderController.syncRows();
     if (typeof onCategoryChange === "function") {
       onCategoryChange({ category, label: activeLabel, count: activeCount });
     }
@@ -1108,133 +1090,15 @@ export function mountFloatingTabHeader({
       readout.textContent = `Viewing ${activeLabel}, ${activeCount} records${isAttentionTab(button) ? ", needs attention" : ""}`;
     }
     renderRows(list, activeLabel, rowsByLabel, category);
-    syncListDragRows();
+    rowReorderController.syncRows();
     if (typeof onTabChange === "function") {
       onTabChange({ category, label: activeLabel, count: activeCount });
     }
     applyVariantState();
   }
 
-  function syncListDragRows() {
-    Array.from(list.querySelectorAll(".floating-tab-row")).forEach((row) => {
-      if (!(row instanceof HTMLElement)) {
-        return;
-      }
-      row.draggable = true;
-      row.dataset.floatingTabDragRow = "";
-      row.setAttribute("aria-label", `${row.querySelector("strong")?.textContent?.trim() ?? "Row"} draggable status item`);
-    });
-  }
-
-  list.addEventListener("dragstart", (event) => {
-    const row = event.target instanceof Element ? event.target.closest("[data-floating-tab-drag-row]") : null;
-    if (!(row instanceof HTMLElement)) {
-      return;
-    }
-    draggedRow = row;
-    row.dataset.dragging = "true";
-    row.classList.add("drag-drop-source");
-    dragPreview = createDragPreview(row, {
-      className: "floating-tab-drag-preview",
-      removeAttributes: ["data-floating-tab-drag-row"],
-    });
-    const title = row.querySelector("strong")?.textContent?.trim() ?? "Workspace row";
-    event.dataTransfer?.setData("text/plain", title);
-    event.dataTransfer?.setData("application/x-floating-tab-row", title);
-    event.dataTransfer?.setDragImage(dragPreview ?? row, 24, 24);
-  });
-
-  list.addEventListener("dragend", () => {
-    clearFloatingTabDragState();
-  });
-
-  list.addEventListener("dragover", (event) => {
-    if (!(draggedRow instanceof HTMLElement)) {
-      return;
-    }
-    event.preventDefault();
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = "move";
-    }
-    tabButtons.forEach((button) => {
-      delete button.dataset.floatingTabDropTarget;
-    });
-    const targetRow = event.target instanceof Element ? event.target.closest("[data-floating-tab-drag-row]") : null;
-    Array.from(list.querySelectorAll("[data-floating-tab-row-drop-target]")).forEach((row) => {
-      if (row instanceof HTMLElement) {
-        delete row.dataset.floatingTabRowDropTarget;
-      }
-    });
-    if (targetRow instanceof HTMLElement && targetRow !== draggedRow) {
-      const bounds = targetRow.getBoundingClientRect();
-      const shouldPlaceAfter = event.clientY > bounds.top + bounds.height / 2;
-      targetRow.dataset.floatingTabRowDropTarget = shouldPlaceAfter ? "after" : "before";
-      list.insertBefore(
-        ensureListDropMarker(`${Math.max(48, bounds.height)}px`),
-        shouldPlaceAfter ? targetRow.nextElementSibling : targetRow,
-      );
-      return;
-    }
-    list.append(ensureListDropMarker());
-  });
-
-  list.addEventListener("dragleave", (event) => {
-    if (event.relatedTarget instanceof Node && list.contains(event.relatedTarget)) {
-      return;
-    }
-    clearListDropMarker();
-  });
-
-  list.addEventListener("drop", (event) => {
-    if (!(draggedRow instanceof HTMLElement)) {
-      return;
-    }
-    event.preventDefault();
-    if (dropMarker instanceof HTMLElement) {
-      list.insertBefore(draggedRow, dropMarker);
-      syncActiveRowsFromDom();
-    }
-    clearFloatingTabDragState();
-    syncListDragRows();
-  });
-
-  header.addEventListener("dragover", (event) => {
-    const tab = event.target instanceof Element ? event.target.closest(".floating-tab-card") : null;
-    if (!(draggedRow instanceof HTMLElement) || !(tab instanceof HTMLElement) || tab.disabled || tab.dataset.tabLabel === activeLabel) {
-      return;
-    }
-    event.preventDefault();
-    if (event.dataTransfer) {
-      event.dataTransfer.dropEffect = "move";
-    }
-    clearListDropMarker();
-    tabButtons.forEach((button) => {
-      delete button.dataset.floatingTabDropTarget;
-    });
-    tab.dataset.floatingTabDropTarget = "status";
-  });
-
-  header.addEventListener("dragleave", (event) => {
-    if (event.relatedTarget instanceof Node && header.contains(event.relatedTarget)) {
-      return;
-    }
-    tabButtons.forEach((button) => {
-      delete button.dataset.floatingTabDropTarget;
-    });
-  });
-
-  header.addEventListener("drop", (event) => {
-    const tab = event.target instanceof Element ? event.target.closest(".floating-tab-card") : null;
-    if (!(draggedRow instanceof HTMLElement) || !(tab instanceof HTMLElement)) {
-      return;
-    }
-    event.preventDefault();
-    const moved = moveDraggedRowToStatus(tab.dataset.tabLabel ?? "");
-    clearFloatingTabDragState();
-    if (moved && typeof onTabChange === "function") {
-      onTabChange({ category, label: activeLabel, count: activeCount, movement: "status-drop" });
-    }
-  });
+  rowReorderController.install();
+  statusDropController.install();
 
   tabButtons.forEach((button) => {
     button.addEventListener("click", () => {
@@ -1434,6 +1298,6 @@ export function mountFloatingTabHeader({
   applyInitialStateFromUrl();
   applyCategory(category);
   applyVariantState();
-  syncListDragRows();
+  rowReorderController.syncRows();
   applyReferenceRoutePosture();
 }

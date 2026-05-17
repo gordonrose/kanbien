@@ -3,144 +3,54 @@ import {
   createConversationPanelController,
   getConversationPanelCanonicalRef,
 } from "./conversationPanel.mjs";
-import { mountFloatingTabHeader, renderFloatingTabHeader } from "./floatingTabHeader.mjs";
+import {
+  renderChatWorkspaceEntitySelectorTrigger,
+  renderChatWorkspaceSecondaryHeader,
+} from "./chatWorkspaceSecondaryHeader.mjs";
+import {
+  clearChatWorkspaceConversationIndex,
+  dockChatWorkspaceConversationIndex,
+} from "./chatWorkspaceConversationIndex.mjs";
+import {
+  getChatWorkspaceEntityItemCount as getEntityItemCount,
+  refreshChatWorkspaceEntityHostLayout,
+  renderChatWorkspaceEntityHost,
+} from "./chatWorkspaceEntityHost.mjs";
+import {
+  renderChatWorkspaceEntitySelector,
+} from "./chatWorkspaceEntitySelector.mjs";
+import { renderChatWorkspaceJointHeader } from "./chatWorkspaceJointHeader.mjs";
+import {
+  renderChatWorkspaceListDrawer,
+  syncChatWorkspaceRowSelection,
+} from "./chatWorkspaceRowDrawer.mjs";
+import {
+  closeChatWorkspaceEntitySelector,
+  closeChatWorkspaceRowDrawer,
+  getClosedChatWorkspaceDrawerState,
+  resolveChatWorkspaceClickActions,
+  runChatWorkspaceActionEffects,
+  selectChatWorkspaceEntity,
+  selectChatWorkspaceLayer,
+  selectChatWorkspaceTool,
+  startChatWorkspaceConversation,
+} from "./chatWorkspaceController.mjs";
+import { createChatWorkspaceBootstrap } from "./chatWorkspaceBootstrap.mjs";
+import {
+  chatWorkspaceExpansionModes,
+  chatWorkspaceLayers as layers,
+  getChatWorkspaceLayerDefaultEntity as getLayerDefaultEntity,
+  getChatWorkspaceLayerDefaultTool,
+  getChatWorkspaceLayerTools,
+  isChatWorkspaceExpansionEnabled,
+} from "./chatWorkspaceShellContract.mjs";
 
-const layers = [
-  {
-    key: "discovery",
-    label: "Discovery",
-    entities: [
-      {
-        key: "product-discovery-package",
-        label: "Product Discovery Package",
-        rows: [
-          ["PD-001", "Chat workspace pattern variant", "Draft review", "4 linked questions"],
-          ["PD-002", "Organization domain foundation", "Needs steering", "2 decisions open"],
-          ["PD-003", "Root admin build panel", "Signed off", "Packet ready"],
-        ],
-      },
-      {
-        key: "chat-session",
-        label: "Chat Session",
-        rows: [
-          ["CS-014", "Workspace layout exploration", "Active", "12 messages"],
-          ["CS-011", "Discovery handoff review", "Archived", "6 messages"],
-          ["CS-006", "Build panel MVP", "Active", "Packet attached"],
-        ],
-      },
-      {
-        key: "questions",
-        label: "Questions",
-        rows: [
-          ["Q-101", "Who uses this expanded workspace first?", "Answered", "Owner confirmed"],
-          ["Q-102", "Which rows need first-class comparison?", "Open", "Design follow-up"],
-          ["Q-103", "What should be visible before save?", "Open", "Needs review"],
-        ],
-      },
-    ],
-  },
-  {
-    key: "design",
-    label: "Design",
-    entities: [
-      {
-        key: "architecture-questions",
-        label: "Architecture Questions",
-        rows: [
-          ["AQ-021", "Where does workspace state persist?", "Deferred", "Logic later"],
-          ["AQ-022", "Which artifacts own entity rows?", "Open", "Planning seam"],
-          ["AQ-023", "How does app adoption consume the pattern?", "Blocked", "Needs signoff"],
-        ],
-      },
-      {
-        key: "design-questions",
-        label: "Design Questions",
-        rows: [
-          ["DQ-031", "Does the layer rail stay visible while rows scroll?", "Proposed", "Yes"],
-          ["DQ-032", "How many entity tabs fit before overflow?", "Open", "Canonical later"],
-          ["DQ-033", "What empty state belongs under each entity?", "Deferred", "Logic later"],
-        ],
-      },
-    ],
-  },
-  {
-    key: "delivery",
-    label: "Delivery",
-    entities: [
-      {
-        key: "product-discovery-package",
-        label: "Product Discovery Package",
-        rows: [
-          ["PD-001", "Delivery-ready packet", "Ready for delivery", "3 linked stories"],
-          ["PD-002", "Discovery signoff trail", "Ready for review", "Approval visible"],
-          ["PD-003", "Packet release note", "Ready for deploy", "Handoff ready"],
-        ],
-      },
-      {
-        key: "epics",
-        label: "Epics",
-        rows: [
-          ["EP-001", "Expanded chat workspace", "Draft", "3 stories"],
-          ["EP-002", "Discovery artifact flow", "Planned", "5 stories"],
-          ["EP-003", "Delivery task surface", "Backlog", "Unscoped"],
-        ],
-      },
-      {
-        key: "stories",
-        label: "Stories",
-        rows: [
-          ["ST-014", "Switch between layers beside chat", "Ready", "Design-system first"],
-          ["ST-015", "Browse build entities as row lists", "Ready", "Static demo"],
-          ["ST-016", "Wire real workspace data", "Deferred", "Future logic"],
-        ],
-      },
-      {
-        key: "tasks",
-        label: "Tasks",
-        rows: [
-          ["TK-101", "Create provisional pattern surface", "In progress", "Design system"],
-          ["TK-102", "Add smoke coverage", "Ready", "Visual test"],
-          ["TK-103", "Prepare behavior lock after signoff", "Blocked", "Needs review"],
-        ],
-      },
-    ],
-  },
-];
-
-const statusSets = {
-  "product-discovery-package": ["Draft", "In Refinement", "Ready for Review", "Done"],
-  "chat-session": ["In Progress", "Paused", "Complete", "Archived"],
-  questions: ["Queued", "In Progress", "Paused", "Blocked", "Answered", "Deferred", "Archived"],
-  "architecture-questions": ["Queued", "In Progress", "Paused", "Blocked", "Answered", "Deferred", "Archived"],
-  "design-questions": ["Queued", "In Progress", "Paused", "Blocked", "Answered", "Deferred", "Archived"],
-  epics: [
-    "Draft",
-    "Steering",
-    "Blocked",
-    "In Refinement",
-    "Ready for Delivery",
-    "In Delivery",
-    "Ready for Review",
-    "Ready for Deploy",
-    "Deployed",
-  ],
-  stories: [
-    "Draft",
-    "Blocked",
-    "In Refinement",
-    "Ready for Review",
-    "Task Breakdown",
-    "Ready for Delivery",
-    "Ready for Deploy",
-    "Deployed",
-  ],
-  tasks: ["Draft", "Blocked", "In Refinement", "Ready for Review", "Ready for Delivery", "Ready for Deploy", "Deployed"],
-};
+const chatWorkspacePreviewConfig = Object.freeze({
+  expansion: chatWorkspaceExpansionModes.enabled,
+});
 
 const layerDefaults = {
   discovery: {
-    entity: "questions",
-    tool: "conversations",
     history: [
       ["chat-workspace-discovery-history", "Discovery chat history", "Active discovery thread, open questions, and packet context."],
       ["chat-workspace-build-panel", "Build panel MVP", "Workspace pattern review with active discovery, design, and delivery layers."],
@@ -148,8 +58,6 @@ const layerDefaults = {
     ],
   },
   design: {
-    entity: "architecture-questions",
-    tool: "conversations",
     history: [
       ["chat-workspace-product-discovery", "Product Discovery", "Approved packet context for architecture and design questions."],
       ["chat-workspace-architecture-review", "Architecture review", "Open architecture decisions for the workspace pattern."],
@@ -157,8 +65,6 @@ const layerDefaults = {
     ],
   },
   delivery: {
-    entity: "stories",
-    tool: "stories",
     history: [
       ["chat-workspace-epics", "Epics", "Delivery epic context and sequencing for the expanded workspace."],
       ["chat-workspace-stories", "Stories", "Story breakdown and acceptance notes for the active delivery lane."],
@@ -166,10 +72,6 @@ const layerDefaults = {
     ],
   },
 };
-
-function getLayerDefaultEntity(layer) {
-  return layer.entities.find((entity) => entity.key === layerDefaults[layer.key]?.entity) ?? layer.entities[0];
-}
 
 function getLayerHistory(layerKey) {
   const defaultHistory = layerDefaults[layerKey]?.history ?? layerDefaults.discovery.history;
@@ -192,7 +94,7 @@ function getLayerHistory(layerKey) {
 const activeState = {
   layer: layers[0],
   entity: getLayerDefaultEntity(layers[0]),
-  tool: layerDefaults.discovery.tool,
+  tool: getChatWorkspaceLayerDefaultTool(layers[0]),
 };
 
 const chatState = {
@@ -218,6 +120,7 @@ const chatState = {
 };
 
 const workspaceState = {
+  expansionEnabled: isChatWorkspaceExpansionEnabled(chatWorkspacePreviewConfig),
   expanded: false,
   drawer: {
     open: false,
@@ -229,7 +132,7 @@ const workspaceState = {
 
 let chatController = null;
 let workspaceRefreshTimer = 0;
-let workspaceDrawerObserver = null;
+let bootstrapController = null;
 
 const layerIconPaths = {
   discovery: "M12 3a7 7 0 0 0-4 12.75V18h8v-2.25A7 7 0 0 0 12 3zm0 2a5 5 0 0 1 2.6 9.27l-.6.36V16h-4v-1.37l-.6-.36A5 5 0 0 1 12 5zm-3 15h6v2H9z",
@@ -238,37 +141,20 @@ const layerIconPaths = {
 };
 
 const workspaceToolIcons = {
-  conversations: "M4 5h16v10H8l-4 4zm4 4h8v2H8z",
-  "product-discovery-package": "M6 3h9l3 3v15H6zm8 1.5V7h2.5zM8 10h8v2H8zm0 4h8v2H8z",
-  questions: "M12 4a6 6 0 0 0-6 6h2a4 4 0 1 1 5.2 3.82L12 14.3V17h2v-1.35A6 6 0 0 0 12 4zm-1 15h2v2h-2z",
-  "architecture-questions": "M4 20h16v-2H4zm2-4h12v-2H6zm1-4h10l-5-7z",
-  "design-questions": "M6 4h12v16H6zm2 2v12h8V6zm2 2h4v2h-4zm0 4h4v2h-4z",
-  epics: "M4 5h16v4H4zm0 6h16v8H4zm3 2v4h3v-4z",
-  stories: "M5 4h14v16H5zm2 3h10v2H7zm0 4h10v2H7zm0 4h6v2H7z",
-  tasks: "M5 5h14v14H5zm3 4 2 2 4-4 1.4 1.4L10 13.8 6.6 10.4zm0 6h8v2H8z",
-};
-
-const layerWorkspaceTools = {
-  discovery: [
-    { key: "conversations", label: "Conversations" },
-    { key: "questions", label: "Questions", entity: "questions" },
-  ],
-  design: [
-    { key: "conversations", label: "Conversations" },
-    { key: "architecture-questions", label: "Architecture Questions", entity: "architecture-questions" },
-    { key: "design-questions", label: "Design Questions", entity: "design-questions" },
-  ],
-  delivery: [
-    { key: "product-discovery-package", label: "Product Discovery Package", entity: "product-discovery-package" },
-    { key: "epics", label: "Epics", entity: "epics" },
-    { key: "stories", label: "Stories", entity: "stories" },
-    { key: "tasks", label: "Tasks", entity: "tasks" },
-  ],
+  conversations: "M4 6.5A3.5 3.5 0 0 1 7.5 3h9A3.5 3.5 0 0 1 20 6.5v4A3.5 3.5 0 0 1 16.5 14H10l-5 4v-4.7A3.5 3.5 0 0 1 4 10.5zm4 1h8v2H8z",
+  "product-discovery-package": "M6 3h8.5L19 7.5V21H6zm8 1.8V8h3.2zM9 11h6v2H9zm0 4h4v2H9zm8.8-4.4.7 1.5 1.5.7-1.5.7-.7 1.5-.7-1.5-1.5-.7 1.5-.7z",
+  questions: "M12 3.5c3.6 0 6.5 2.35 6.5 5.5 0 2.55-1.9 4.65-4.5 5.3V17h-4v-4.1l1.4-.25c1.9-.35 3.1-1.7 3.1-3.3 0-1.75-1.45-3-3.35-3-1.65 0-2.95.85-3.35 2.25L5 7.8c.75-2.55 3.35-4.3 7-4.3zM10 19h4v2h-4z",
+  "architecture-questions": "M12 3 4 8v2h16V8zm-5 9h2v6H7zm4 0h2v6h-2zm4 0h2v6h-2zM5 20h14v1H5zm10.8-8.4.7 1.5 1.5.7-1.5.7-.7 1.5-.7-1.5-1.5-.7 1.5-.7z",
+  "design-questions": "M5 5.5A2.5 2.5 0 0 1 7.5 3h9A2.5 2.5 0 0 1 19 5.5v13A2.5 2.5 0 0 1 16.5 21h-9A2.5 2.5 0 0 1 5 18.5zm4 1.5v4h6V7zm0 6v2h6v-2zm0 4v1h4v-1z",
+  epics: "M5 4h2v16H5zm4 1h8l2 2.4-2 2.4H9zm0 6h6.8l1.7 2-1.7 2H9zm0 5h5v2H9z",
+  stories: "M8 4h9a2 2 0 0 1 2 2v9h-2V6H8zm-3 4h9a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5zm3 3h5v2H8zm0 4h4v2H8z",
+  tasks: "M6 4h12v3h-2V6H8v12h8v-3h2v5H6zm9.2 4.2 1.4 1.4-4.6 4.6-2.6-2.6 1.4-1.4 1.2 1.2zM9 15h4v2H9z",
 };
 
 const workspaceControlIcons = {
   project: "M5 5h14v14H5zM5 9h14M9 5v14",
   index: "M8 6h11M8 12h11M8 18h11M5 6h.01M5 12h.01M5 18h.01",
+  plus: "M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6z",
 };
 
 function escapeHtml(value) {
@@ -304,143 +190,19 @@ function getChatModes() {
 }
 
 function syncLayerMode(mode) {
-  const nextLayer = layers.find((layer) => layer.key === mode);
-  if (!nextLayer) {
+  if (!selectChatWorkspaceLayer({
+    layerKey: mode,
+    layers,
+    activeState,
+    chatState,
+    workspaceState,
+    getLayerHistory,
+  })) {
     return;
   }
-  chatState.activeMode = mode;
-  activeState.layer = nextLayer;
-  activeState.entity = getLayerDefaultEntity(nextLayer);
-  activeState.tool = layerDefaults[nextLayer.key]?.tool ?? "conversations";
-  chatState.history = getLayerHistory(nextLayer.key);
-  chatState.panel.historyOpen = workspaceState.expanded;
-  chatState.panel.historyView = "active";
-  chatState.panel.copyNotice = "";
-  chatState.panel.renameConversationId = null;
-  chatState.panel.showArchiveUndo = false;
-  chatState.archivedConversation = null;
-  workspaceState.drawer = { open: false, row: null };
-  workspaceState.entityDrawerOpen = false;
-  workspaceState.layerDrawerOpen = false;
   renderEntityWorkspace();
-  syncSecondaryHeader();
+  syncHeaderLayerSelector();
   syncLayerToolbar();
-}
-
-function getStatusItems(entity) {
-  return (statusSets[entity.key] ?? ["Draft", "In Progress", "Done"]).map((status, index) => ({
-    key: `${entity.key}-${status.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${index}`,
-    label: status,
-    meta: entity.label,
-    count: Math.max(1, 4 - (index % 3)),
-    attention: ["Blocked", "Ready for Review", "Ready for Deploy"].includes(status),
-    rows: [
-      [`${entity.key.slice(0, 2).toUpperCase()}-${String(index * 3 + 1).padStart(3, "0")}`, `${entity.label} ${status.toLowerCase()} item`, status, "Workspace preview"],
-      [`${entity.key.slice(0, 2).toUpperCase()}-${String(index * 3 + 2).padStart(3, "0")}`, `${status} follow-up`, status, "Owner needed"],
-      [`${entity.key.slice(0, 2).toUpperCase()}-${String(index * 3 + 3).padStart(3, "0")}`, `${entity.label} handoff`, status, "Next review"],
-    ],
-  }));
-}
-
-function getEntityItemCount(entity, layer = activeState.layer) {
-  return getStatusItems(entity).reduce((total, status) => total + Number(status.count ?? 0), 0);
-}
-
-function toEntityStatusCategories(entities) {
-  return Object.fromEntries(
-    entities.map((entity) => [
-      entity.key,
-      getStatusItems(entity).map((status) => [status.label, "Status", status.count, status.attention]),
-    ]),
-  );
-}
-
-function toEntityStatusRows(entities) {
-  return Object.fromEntries(
-    entities.map((entity) => [
-      entity.key,
-      Object.fromEntries(
-        getStatusItems(entity).map((status) => [
-          status.label,
-          status.rows.map(([id, title, rowStatus, note]) => [`${id} - ${title}`, rowStatus, note]),
-        ]),
-      ),
-    ]),
-  );
-}
-
-function toEntityCategoryMetadata(entities) {
-  return Object.fromEntries(entities.map((entity) => [entity.key, [entity.label, "Build entity"]]));
-}
-
-function getWorkspaceDrawerRowFromElement(row) {
-  const title = row.querySelector("strong")?.textContent?.trim() ?? "Selected workspace item";
-  const status = row.querySelector("span:not(.floating-tab-row-marker)")?.textContent?.trim() ?? "Status";
-  const note = row.querySelector("small")?.textContent?.trim() ?? "Workspace detail";
-  return {
-    key: `${activeState.layer.key}:${activeState.entity.key}:${title}`,
-    title,
-    status,
-    note,
-    entity: activeState.entity.label,
-    layer: activeState.layer.label,
-  };
-}
-
-function renderWorkspaceListDrawer(entityWorkspace) {
-  const panel = entityWorkspace.querySelector(".floating-tab-list-panel");
-  const list = entityWorkspace.querySelector(".floating-tab-list");
-  if (!(panel instanceof HTMLElement) || !(list instanceof HTMLElement)) {
-    return;
-  }
-
-  let drawer = entityWorkspace.querySelector("[data-chat-workspace-list-drawer]");
-  if (!(drawer instanceof HTMLElement)) {
-    drawer = document.createElement("aside");
-    drawer.className = "chat-workspace-list-drawer";
-    drawer.dataset.chatWorkspaceListDrawer = "";
-    drawer.setAttribute("aria-label", "Workspace item detail");
-    panel.append(drawer);
-  }
-
-  const selected = workspaceState.drawer.open ? workspaceState.drawer.row : null;
-  entityWorkspace.dataset.chatWorkspaceDrawerOpen = selected ? "true" : "false";
-  drawer.hidden = !selected;
-  if (!selected) {
-    drawer.replaceChildren();
-    return;
-  }
-
-  drawer.innerHTML = `
-    <div class="chat-workspace-list-drawer-header">
-      <div>
-        <p>${escapeHtml(selected.entity)}</p>
-        <h4>${escapeHtml(selected.title)}</h4>
-      </div>
-      <button class="icon-button" type="button" aria-label="Close item detail" data-chat-workspace-list-drawer-close>
-        <span class="icon-button-glyph" aria-hidden="true">
-          <svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg>
-        </span>
-      </button>
-    </div>
-    <dl class="chat-workspace-list-drawer-meta">
-      <div>
-        <dt>Layer</dt>
-        <dd>${escapeHtml(selected.layer)}</dd>
-      </div>
-      <div>
-        <dt>Status</dt>
-        <dd>${escapeHtml(selected.status)}</dd>
-      </div>
-      <div>
-        <dt>Signal</dt>
-        <dd>${escapeHtml(selected.note)}</dd>
-      </div>
-    </dl>
-    <div class="chat-workspace-list-drawer-body">
-      <p>This drawer is reserved for the selected build item preview. Logic and real workspace data stay deferred.</p>
-    </div>
-  `;
 }
 
 function syncWorkspaceListHeader(entityWorkspace) {
@@ -451,77 +213,48 @@ function syncWorkspaceListHeader(entityWorkspace) {
   }
 
   header.classList.add("chat-workspace-list-header-bar");
+  header.innerHTML = workspaceState.expanded
+    ? ""
+    : `
+      ${renderChatWorkspaceEntitySelectorTrigger({
+        entityLabel: activeState.entity.label,
+        expanded: workspaceState.entityDrawerOpen,
+      })}
+      <span class="floating-tab-panel-count">${escapeHtml(getEntityItemCount(activeState.entity))} records</span>
+    `;
   if (header.previousElementSibling !== tabHeader) {
     entityWorkspace.insertBefore(header, tabHeader);
   }
 }
 
 function renderWorkspaceEntitySelector(entityWorkspace) {
-  const mount = document.querySelector("[data-chat-workspace-secondary-list]");
-  if (!(mount instanceof HTMLElement)) {
-    return;
-  }
-
-  const legacyDrawer = entityWorkspace.querySelector("[data-chat-workspace-entity-drawer]");
-  legacyDrawer?.remove();
-
-  const trigger = mount.querySelector("[data-chat-workspace-entity-selector-trigger]");
-  if (trigger instanceof HTMLElement) {
-    trigger.setAttribute("aria-expanded", workspaceState.entityDrawerOpen ? "true" : "false");
-  }
-
-  let selector = mount.querySelector("[data-chat-workspace-entity-selector-options]");
-  if (!(selector instanceof HTMLElement)) {
-    selector = document.createElement("div");
-    selector.className = "chat-workspace-entity-selector-options";
-    selector.dataset.chatWorkspaceEntitySelectorOptions = "";
-    selector.setAttribute("role", "listbox");
-    selector.setAttribute("aria-label", `${activeState.layer.label} entities`);
-    mount.append(selector);
-  }
-
-  entityWorkspace.dataset.chatWorkspaceEntitySelectorOpen = workspaceState.entityDrawerOpen ? "true" : "false";
-  selector.classList.toggle("is-open", workspaceState.entityDrawerOpen);
-  selector.hidden = !workspaceState.entityDrawerOpen;
-  if (!workspaceState.entityDrawerOpen) {
-    selector.replaceChildren();
-    return;
-  }
-
-  selector.innerHTML = `
-    ${activeState.layer.entities.map((entity) => `
-      <button
-        class="chat-workspace-entity-option${entity.key === activeState.entity.key ? " is-active" : ""}"
-        type="button"
-        role="option"
-        aria-selected="${entity.key === activeState.entity.key ? "true" : "false"}"
-        data-chat-workspace-entity-option="${escapeHtml(entity.key)}"
-      >
-        <span>${escapeHtml(entity.label)}</span>
-        <small>${escapeHtml(getEntityItemCount(entity, activeState.layer))} entities</small>
-      </button>
-    `).join("")}
-  `;
+  const mount = workspaceState.expanded && secondaryHeader instanceof HTMLElement
+    ? secondaryHeader.querySelector("[data-chat-workspace-secondary-list]")
+    : entityWorkspace.querySelector(".chat-workspace-list-header-bar");
+  renderChatWorkspaceEntitySelector({
+    entityWorkspace,
+    mount,
+    layer: activeState.layer,
+    activeEntity: activeState.entity,
+    open: workspaceState.entityDrawerOpen,
+    getEntityCount: getEntityItemCount,
+  });
 }
 
 function syncWorkspaceListRows(entityWorkspace) {
   syncWorkspaceListHeader(entityWorkspace);
   syncSecondaryHeader();
   renderWorkspaceEntitySelector(entityWorkspace);
-  const rows = Array.from(entityWorkspace.querySelectorAll(".floating-tab-row"));
-  rows.forEach((row) => {
-    if (!(row instanceof HTMLElement)) {
-      return;
-    }
-    const rowState = getWorkspaceDrawerRowFromElement(row);
-    const selected = workspaceState.drawer.open && workspaceState.drawer.row?.key === rowState.key;
-    row.tabIndex = 0;
-    row.setAttribute("role", "button");
-    row.setAttribute("aria-pressed", selected ? "true" : "false");
-    row.dataset.chatWorkspaceListRow = "";
-    row.classList.toggle("is-selected", selected);
+  syncChatWorkspaceRowSelection({
+    entityWorkspace,
+    layer: activeState.layer,
+    entity: activeState.entity,
+    selectedRow: workspaceState.drawer,
   });
-  renderWorkspaceListDrawer(entityWorkspace);
+  renderChatWorkspaceListDrawer({
+    entityWorkspace,
+    selected: workspaceState.drawer.open ? workspaceState.drawer.row : null,
+  });
 }
 
 function selectWorkspaceEntity(entityWorkspace, nextEntity) {
@@ -529,9 +262,12 @@ function selectWorkspaceEntity(entityWorkspace, nextEntity) {
     return;
   }
 
-  activeState.entity = nextEntity;
-  activeState.tool = getActiveLayerTools().find((tool) => tool.entity === nextEntity.key)?.key ?? activeState.tool;
-  workspaceState.drawer = { open: false, row: null };
+  selectChatWorkspaceEntity({
+    activeState,
+    workspaceState,
+    nextEntity,
+    tools: getActiveLayerTools(),
+  });
   const categoryButton = entityWorkspace.querySelector(`[data-floating-tab-category="${CSS.escape(nextEntity.key)}"]`);
   if (categoryButton instanceof HTMLElement) {
     categoryButton.dispatchEvent(new MouseEvent("click", { bubbles: false, cancelable: true }));
@@ -540,171 +276,39 @@ function selectWorkspaceEntity(entityWorkspace, nextEntity) {
   if (kicker instanceof HTMLElement) {
     kicker.textContent = nextEntity.label;
   }
-  syncSecondaryHeader();
+  syncHeaderLayerSelector();
   syncWorkspaceListRows(entityWorkspace);
   syncLayerToolbar();
 }
 
 function getActiveLayerTools() {
-  return layerWorkspaceTools[activeState.layer.key] ?? [];
+  return getChatWorkspaceLayerTools(activeState.layer.key);
 }
 
 function selectWorkspaceTool(toolKey) {
-  const tool = getActiveLayerTools().find((item) => item.key === toolKey);
-  if (!tool) {
+  const result = selectChatWorkspaceTool({
+    activeState,
+    chatState,
+    workspaceState,
+    toolKey,
+    tools: getActiveLayerTools(),
+  });
+  if (!result) {
     return;
   }
 
-  activeState.tool = tool.key;
-  workspaceState.drawer = { open: false, row: null };
-  workspaceState.entityDrawerOpen = false;
-
-  if (tool.key === "conversations") {
-    chatState.panel.historyOpen = true;
+  if (result.type === "conversations") {
     syncWorkspaceToggle({ refresh: false });
     syncLayerToolbar();
     return;
   }
 
-  const nextEntity = activeState.layer.entities.find((entity) => entity.key === tool.entity);
   const entityWorkspace = document.querySelector("[data-chat-workspace-entity-workspace]");
-  if (nextEntity && entityWorkspace instanceof HTMLElement) {
-    selectWorkspaceEntity(entityWorkspace, nextEntity);
+  if (result.entity && entityWorkspace instanceof HTMLElement) {
+    selectWorkspaceEntity(entityWorkspace, result.entity);
   }
   syncLayerToolbar();
 }
-
-function installWorkspaceListDrawer(entityWorkspace) {
-  if (!(entityWorkspace instanceof HTMLElement)) {
-    return;
-  }
-
-  if (entityWorkspace.dataset.chatWorkspaceDrawerInstalled !== "true") {
-    entityWorkspace.dataset.chatWorkspaceDrawerInstalled = "true";
-    entityWorkspace.addEventListener("click", (event) => {
-      const target = event.target instanceof Element ? event.target : null;
-      const entityOption = target?.closest("[data-chat-workspace-entity-option]");
-      if (entityOption instanceof HTMLElement) {
-        event.stopPropagation();
-        const nextEntity = activeState.layer.entities.find((entity) => entity.key === entityOption.dataset.chatWorkspaceEntityOption);
-        if (nextEntity) {
-          selectWorkspaceEntity(entityWorkspace, nextEntity);
-        }
-        workspaceState.entityDrawerOpen = false;
-        syncWorkspaceListRows(entityWorkspace);
-        return;
-      }
-
-      if (target?.closest("[data-chat-workspace-entity-selector-trigger]")) {
-        workspaceState.entityDrawerOpen = !workspaceState.entityDrawerOpen;
-        workspaceState.drawer = { open: false, row: null };
-        syncWorkspaceListRows(entityWorkspace);
-        return;
-      }
-
-      if (
-        workspaceState.entityDrawerOpen
-        && !target?.closest("[data-chat-workspace-entity-selector-options]")
-        && !target?.closest("[data-chat-workspace-entity-selector-trigger]")
-      ) {
-        workspaceState.entityDrawerOpen = false;
-        syncWorkspaceListRows(entityWorkspace);
-      }
-
-      if (target?.closest("[data-chat-workspace-list-drawer-close]")) {
-        workspaceState.drawer = { open: false, row: null };
-        syncWorkspaceListRows(entityWorkspace);
-        return;
-      }
-
-      const row = target?.closest("[data-chat-workspace-list-row], .floating-tab-row");
-      if (row instanceof HTMLElement) {
-        workspaceState.drawer = {
-          open: true,
-          row: getWorkspaceDrawerRowFromElement(row),
-        };
-        syncWorkspaceListRows(entityWorkspace);
-      }
-    });
-    entityWorkspace.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && workspaceState.entityDrawerOpen) {
-        event.preventDefault();
-        workspaceState.entityDrawerOpen = false;
-        syncWorkspaceListRows(entityWorkspace);
-        return;
-      }
-
-      if (event.key !== "Enter" && event.key !== " ") {
-        return;
-      }
-      const target = event.target instanceof Element ? event.target : null;
-      if (target?.closest("[data-chat-workspace-entity-selector-trigger]")) {
-        event.preventDefault();
-        workspaceState.entityDrawerOpen = !workspaceState.entityDrawerOpen;
-        workspaceState.drawer = { open: false, row: null };
-        syncWorkspaceListRows(entityWorkspace);
-        return;
-      }
-
-      const row = target?.closest("[data-chat-workspace-list-row], .floating-tab-row");
-      if (row instanceof HTMLElement) {
-        event.preventDefault();
-        workspaceState.drawer = {
-          open: true,
-          row: getWorkspaceDrawerRowFromElement(row),
-        };
-        syncWorkspaceListRows(entityWorkspace);
-      }
-    });
-  }
-
-  workspaceDrawerObserver?.disconnect();
-  const list = entityWorkspace.querySelector(".floating-tab-list");
-  if (list instanceof HTMLElement) {
-    workspaceDrawerObserver = new MutationObserver(() => {
-      window.requestAnimationFrame(() => syncWorkspaceListRows(entityWorkspace));
-    });
-    workspaceDrawerObserver.observe(list, { childList: true });
-  }
-
-  syncWorkspaceListRows(entityWorkspace);
-}
-
-document.addEventListener("click", (event) => {
-  const entityWorkspace = document.querySelector("[data-chat-workspace-entity-workspace]");
-  if (!(entityWorkspace instanceof HTMLElement) || !workspaceState.entityDrawerOpen) {
-    return;
-  }
-
-  const target = event.target instanceof Element ? event.target : null;
-  if (
-    target
-    && (
-      entityWorkspace.contains(target)
-      || target.closest("[data-chat-workspace-entity-selector-options]")
-      || target.closest("[data-chat-workspace-entity-selector-trigger]")
-    )
-  ) {
-    return;
-  }
-
-  workspaceState.entityDrawerOpen = false;
-  syncWorkspaceListRows(entityWorkspace);
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key !== "Escape" || !workspaceState.entityDrawerOpen) {
-    return;
-  }
-
-  const entityWorkspace = document.querySelector("[data-chat-workspace-entity-workspace]");
-  if (!(entityWorkspace instanceof HTMLElement)) {
-    return;
-  }
-
-  workspaceState.entityDrawerOpen = false;
-  syncWorkspaceListRows(entityWorkspace);
-});
 
 function renderEntityWorkspace() {
   const entityWorkspace = document.querySelector("[data-chat-workspace-entity-workspace]");
@@ -712,57 +316,42 @@ function renderEntityWorkspace() {
     return;
   }
 
-  const categories = toEntityStatusCategories(activeState.layer.entities);
-  const rowsByLabel = toEntityStatusRows(activeState.layer.entities);
-  const categoryMetadata = toEntityCategoryMetadata(activeState.layer.entities);
-  entityWorkspace.innerHTML = renderFloatingTabHeader({
-    instanceId: "chat-workspace-entity",
-    categories,
-    rowsByLabel,
-    activeCategory: activeState.entity.key,
-    activeIndex: 0,
-    categoryMetadata,
-    ariaLabel: `${activeState.layer.label} workspace statuses`,
-    tablistLabel: `${activeState.layer.label} status tabs`,
-    panelKicker: activeState.entity.label,
-  });
-  mountFloatingTabHeader({
+  renderChatWorkspaceEntityHost({
     root: entityWorkspace,
-    instanceId: "chat-workspace-entity",
-    workspaceId: "chat-workspace-entity-workspace",
-    categories,
-    rowsByLabel,
-    initialParams: new URLSearchParams(`layout=horizontal&tabs=10&category=${encodeURIComponent(activeState.entity.key)}&categorySwitch=false&expandable=false&subTabs=off&attention=on`),
+    layer: activeState.layer,
+    activeEntity: activeState.entity,
     displayRoot: document.querySelector("[data-chat-workspace-shell]") ?? document.documentElement,
     onCategoryChange({ category }) {
-      activeState.entity = activeState.layer.entities.find((entity) => entity.key === category) ?? activeState.layer.entities[0];
-      workspaceState.drawer = { open: false, row: null };
+      selectChatWorkspaceEntity({
+        activeState,
+        workspaceState,
+        nextEntity: activeState.layer.entities.find((entity) => entity.key === category) ?? activeState.layer.entities[0],
+        tools: getActiveLayerTools(),
+        syncTool: false,
+      });
       window.requestAnimationFrame(() => syncWorkspaceListRows(entityWorkspace));
     },
     onTabChange() {
-      workspaceState.drawer = { open: false, row: null };
-      workspaceState.entityDrawerOpen = false;
+      closeChatWorkspaceRowDrawer({ workspaceState });
+      closeChatWorkspaceEntitySelector({ workspaceState });
       window.requestAnimationFrame(() => syncWorkspaceListRows(entityWorkspace));
     },
   });
-  installWorkspaceListDrawer(entityWorkspace);
+  bootstrapController?.getListInteractionController()?.installWorkspaceListDrawer(entityWorkspace);
 }
 
 function refreshEntityWorkspaceAfterLayout() {
-  window.clearTimeout(workspaceRefreshTimer);
-  window.requestAnimationFrame(() => {
-    window.dispatchEvent(new Event("resize"));
-    const entityWorkspace = document.querySelector("[data-chat-workspace-entity-workspace]");
-    if (entityWorkspace instanceof HTMLElement) {
-      syncWorkspaceListRows(entityWorkspace);
-    }
-    workspaceRefreshTimer = window.setTimeout(() => {
-      window.dispatchEvent(new Event("resize"));
-      const refreshedWorkspace = document.querySelector("[data-chat-workspace-entity-workspace]");
-      if (refreshedWorkspace instanceof HTMLElement) {
-        syncWorkspaceListRows(refreshedWorkspace);
-      }
-    }, 190);
+  refreshChatWorkspaceEntityHostLayout({
+    getRoot() {
+      return document.querySelector("[data-chat-workspace-entity-workspace]");
+    },
+    onSyncRows: syncWorkspaceListRows,
+    clearTimer() {
+      window.clearTimeout(workspaceRefreshTimer);
+    },
+    setTimer(timer) {
+      workspaceRefreshTimer = timer;
+    },
   });
 }
 
@@ -770,19 +359,24 @@ function applyRequestDisplayState(root) {
   const params = new URLSearchParams(window.location.search);
   const theme = params.get("theme");
   const direction = params.get("dir");
-  const scale = params.get("scale");
+  const scale = params.get("scale") ?? params.get("zoom");
   const expanded = params.get("expanded");
+  const expansion = params.get("expansion");
 
-  if (theme === "dark") {
-    root.dataset.themeScope = "dark";
+  if (["dark", "desert"].includes(theme)) {
+    applyPreviewTheme(theme);
   }
   if (direction === "rtl") {
-    root.setAttribute("dir", "rtl");
+    applyPreviewDirection("rtl");
   }
   if (scale) {
-    root.style.setProperty("--ui-scale", String(Number(scale) / 100));
+    applyPreviewScale(scale);
   }
-  if (expanded === "true") {
+  if (expansion === chatWorkspaceExpansionModes.disabled) {
+    workspaceState.expansionEnabled = false;
+    workspaceState.expanded = false;
+  }
+  if (expanded === "true" && workspaceState.expansionEnabled) {
     workspaceState.expanded = true;
   }
 }
@@ -792,14 +386,159 @@ const chatMount = document.querySelector("[data-chat-workspace-chat-mount]");
 const workspaceMain = document.querySelector("[data-chat-workspace-main]");
 const layerToolbar = document.querySelector("[data-chat-workspace-layer-toolbar]");
 const historyDock = document.querySelector("[data-chat-workspace-history-dock]");
+const secondaryHeader = document.querySelector("[data-chat-workspace-secondary-header]");
+const patternPage = document.querySelector("[data-chat-workspace-pattern]");
+const settingsOpenButton = document.querySelector("[data-chat-workspace-settings-open]");
+const settingsCloseButton = document.querySelector("[data-chat-workspace-settings-close]");
+const settingsDrawer = document.querySelector("[data-chat-workspace-settings-drawer]");
+const themeOptionButtons = document.querySelectorAll("[data-chat-workspace-theme]");
+const scaleOptionButtons = document.querySelectorAll("[data-chat-workspace-scale]");
+const directionOptionButtons = document.querySelectorAll("[data-chat-workspace-direction]");
 
-if (shell instanceof HTMLElement) {
-  applyRequestDisplayState(shell);
+function activateOption(buttons, activeButton) {
+  buttons.forEach((button) => {
+    const isActive = button === activeButton;
+    button.classList.toggle("active", isActive);
+    button.classList.toggle("is-active", isActive);
+    if (button instanceof HTMLButtonElement) {
+      button.setAttribute("aria-pressed", String(isActive));
+    }
+  });
 }
 
-if (!workspaceState.expanded) {
-  chatState.panel.historyOpen = false;
+function findOptionButton(buttons, value, dataName) {
+  return Array.from(buttons).find((button) => button instanceof HTMLButtonElement && button.dataset[dataName] === value) ?? null;
 }
+
+function setSettingsOpen(isOpen) {
+  if (!(settingsDrawer instanceof HTMLElement)) {
+    return;
+  }
+
+  settingsDrawer.classList.toggle("is-open", isOpen);
+  settingsDrawer.classList.toggle("hidden", !isOpen);
+  settingsDrawer.setAttribute("aria-hidden", String(!isOpen));
+  if (settingsOpenButton instanceof HTMLButtonElement) {
+    settingsOpenButton.setAttribute("aria-expanded", String(isOpen));
+  }
+}
+
+function applyPreviewTheme(theme, activeButton = null) {
+  const normalizedTheme = ["normal", "dark", "desert"].includes(theme) ? theme : "normal";
+  if (shell instanceof HTMLElement) {
+    if (normalizedTheme === "normal") {
+      delete shell.dataset.themeScope;
+    } else {
+      shell.dataset.themeScope = normalizedTheme;
+    }
+  }
+  if (patternPage instanceof HTMLElement) {
+    if (normalizedTheme === "normal") {
+      delete patternPage.dataset.demoTheme;
+    } else {
+      patternPage.dataset.demoTheme = normalizedTheme;
+    }
+  }
+  if (settingsDrawer instanceof HTMLElement) {
+    settingsDrawer.dataset.demoTheme = normalizedTheme;
+  }
+  activateOption(themeOptionButtons, activeButton ?? findOptionButton(themeOptionButtons, normalizedTheme, "chatWorkspaceTheme"));
+}
+
+function applyPreviewScale(scale, activeButton = null) {
+  const normalizedScale = ["100", "115", "135"].includes(scale) ? scale : "100";
+  if (shell instanceof HTMLElement) {
+    shell.style.setProperty("--ui-scale", String(Number(normalizedScale) / 100));
+  }
+  activateOption(scaleOptionButtons, activeButton ?? findOptionButton(scaleOptionButtons, normalizedScale, "chatWorkspaceScale"));
+}
+
+function applyPreviewDirection(direction, activeButton = null) {
+  const normalizedDirection = direction === "rtl" ? "rtl" : "ltr";
+  if (shell instanceof HTMLElement) {
+    shell.setAttribute("dir", normalizedDirection);
+  }
+  if (patternPage instanceof HTMLElement) {
+    patternPage.setAttribute("dir", normalizedDirection);
+  }
+  if (settingsDrawer instanceof HTMLElement) {
+    settingsDrawer.setAttribute("dir", normalizedDirection);
+  }
+  activateOption(directionOptionButtons, activeButton ?? findOptionButton(directionOptionButtons, normalizedDirection, "chatWorkspaceDirection"));
+}
+
+function installDisplaySettingsDrawer() {
+  settingsOpenButton?.addEventListener("click", () => {
+    const isOpen = settingsDrawer instanceof HTMLElement && settingsDrawer.classList.contains("is-open");
+    setSettingsOpen(!isOpen);
+  });
+
+  settingsCloseButton?.addEventListener("click", () => {
+    setSettingsOpen(false);
+    if (settingsOpenButton instanceof HTMLButtonElement) {
+      settingsOpenButton.focus();
+    }
+  });
+
+  themeOptionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button instanceof HTMLButtonElement) {
+        applyPreviewTheme(button.dataset.chatWorkspaceTheme ?? "normal", button);
+      }
+    });
+  });
+
+  scaleOptionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button instanceof HTMLButtonElement) {
+        applyPreviewScale(button.dataset.chatWorkspaceScale ?? "100", button);
+      }
+    });
+  });
+
+  directionOptionButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      if (button instanceof HTMLButtonElement) {
+        applyPreviewDirection(button.dataset.chatWorkspaceDirection ?? "ltr", button);
+      }
+    });
+  });
+}
+
+bootstrapController = createChatWorkspaceBootstrap({
+  activeState,
+  applyRequestDisplayState,
+  chatMount,
+  chatState,
+  documentRef: document,
+  getEntityWorkspace() {
+    return document.querySelector("[data-chat-workspace-entity-workspace]");
+  },
+  historyDock,
+  iconButtonMarkup: iconButtonGlyph("project"),
+  mountChatPanel,
+  renderEntityWorkspace,
+  runActionEffects(target, workspaceEffectHandlers) {
+    const actions = resolveChatWorkspaceClickActions(target, { workspaceState });
+    for (const action of actions) {
+      const result = runChatWorkspaceActionEffects(action, workspaceEffectHandlers);
+      if (result.stopped) {
+        return true;
+      }
+    }
+    return false;
+  },
+  selectWorkspaceEntity,
+  shell,
+  startNewConversation,
+  syncHeaderLayerSelector,
+  syncHistoryDock,
+  syncLayerMode,
+  syncLayerToolbar,
+  syncWorkspaceListRows,
+  workspaceMain,
+  workspaceState,
+});
 
 function syncLayerToolbar() {
   if (!(layerToolbar instanceof HTMLElement)) {
@@ -822,208 +561,63 @@ function syncLayerToolbar() {
 }
 
 function syncWorkspaceToggle({ refresh = false } = {}) {
-  if (shell instanceof HTMLElement) {
-    shell.dataset.chatWorkspaceExpanded = workspaceState.expanded ? "true" : "false";
-    shell.dataset.chatWorkspaceHistoryOpen = chatState.panel.historyOpen === false ? "false" : "true";
-  }
-
-  if (workspaceMain instanceof HTMLElement) {
-    workspaceMain.setAttribute("aria-hidden", workspaceState.expanded ? "false" : "true");
-    workspaceMain.inert = !workspaceState.expanded;
-  }
-
-  document.querySelectorAll("[data-chat-workspace-toggle]").forEach((toggle) => {
-    if (toggle instanceof HTMLButtonElement) {
-      const labelText = workspaceState.expanded ? "Collapse workspace" : "Expand workspace";
-      toggle.setAttribute("aria-expanded", workspaceState.expanded ? "true" : "false");
-      toggle.setAttribute("aria-label", labelText);
-      toggle.dataset.tooltip = labelText;
-      const label = toggle.querySelector("[data-chat-workspace-toggle-label]");
-      if (label instanceof HTMLElement) {
-        label.textContent = labelText;
-      }
-    }
-  });
-
-  document.querySelectorAll("[data-chat-workspace-history-toggle]").forEach((toggle) => {
-    if (toggle instanceof HTMLButtonElement) {
-      const historyOpen = chatState.panel.historyOpen !== false;
-      const labelText = historyOpen ? "Hide history" : "Show history";
-      toggle.setAttribute("aria-expanded", historyOpen ? "true" : "false");
-      toggle.setAttribute("aria-label", labelText);
-      toggle.dataset.tooltip = labelText;
-      const label = toggle.querySelector("[data-chat-workspace-history-toggle-label]");
-      if (label instanceof HTMLElement) {
-        label.textContent = labelText;
-      }
-    }
-  });
-
-  if (refresh && workspaceState.expanded) {
-    refreshEntityWorkspaceAfterLayout();
-  }
-
-  installWorkspaceHistoryIconButton();
-  syncHistoryDock();
-  syncSecondaryHeader();
+  bootstrapController?.syncWorkspaceToggle({ refresh });
 }
 
-function renderLayerSelectorMarkup() {
-  return `
-    <div class="chat-workspace-layer-selector" data-chat-workspace-layer-selector>
-      <button
-        class="chat-workspace-layer-trigger"
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded="${workspaceState.layerDrawerOpen ? "true" : "false"}"
-        data-chat-workspace-layer-trigger
-      >
-        <span>
-          <small>Layer</small>
-          <strong>${escapeHtml(activeState.layer.label)}</strong>
-        </span>
-        <span class="chat-workspace-layer-trigger-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" focusable="false"><path d="m7 9 5 5 5-5" /></svg>
-        </span>
-      </button>
-      <div class="chat-workspace-layer-options${workspaceState.layerDrawerOpen ? " is-open" : ""}" role="listbox" aria-label="Workspace layer" data-chat-workspace-layer-options>
-        ${layers.map((layer) => `
-          <button
-            class="chat-workspace-layer-option${layer.key === activeState.layer.key ? " is-active" : ""}"
-            type="button"
-            role="option"
-            aria-selected="${layer.key === activeState.layer.key ? "true" : "false"}"
-            data-chat-workspace-layer-option="${escapeHtml(layer.key)}"
-          >
-            <span>${escapeHtml(layer.label)}</span>
-          </button>
-        `).join("")}
-      </div>
-    </div>
-  `;
-}
-
-function renderEntitySelectorTriggerMarkup() {
-  return `
-    <button
-      class="chat-workspace-entity-trigger-card"
-      type="button"
-      aria-haspopup="listbox"
-      aria-expanded="${workspaceState.entityDrawerOpen ? "true" : "false"}"
-      data-chat-workspace-entity-selector-trigger
-    >
-      <span class="floating-tab-project-kicker">${escapeHtml(activeState.entity.label)}</span>
-      <span class="chat-workspace-entity-trigger-icon" aria-hidden="true" data-chat-workspace-entity-trigger-icon>
-        <svg viewBox="0 0 24 24" focusable="false"><path d="m7 9 5 5 5-5" /></svg>
-      </span>
-    </button>
-  `;
-}
-
-function syncSecondaryHeader() {
+function syncHeaderLayerSelector() {
   const header = document.querySelector("[data-chat-workspace-joint-header]");
   if (!(header instanceof HTMLElement)) {
     return;
   }
 
   const historyOpen = chatState.panel.historyOpen !== false;
-  const chatTitle = getActiveChatTitle();
-  header.dataset.chatWorkspaceSecondaryHistoryOpen = historyOpen ? "true" : "false";
-  header.innerHTML = `
-    ${workspaceState.expanded || historyOpen ? `
-      <section class="chat-workspace-secondary-section chat-workspace-secondary-index" data-chat-workspace-secondary-index>
-        ${workspaceState.expanded ? renderLayerSelectorMarkup() : `
-          <div>
-            <p class="top-nav-preview-eyebrow">Index</p>
-            <h2>Conversation history</h2>
-          </div>
-        `}
-        <button class="icon-button tooltip-anchor" type="button" aria-label="Close conversation index" data-tooltip="Close conversation index" data-chat-workspace-history-close>
-          ${iconButtonGlyph("index")}
-        </button>
-      </section>
-    ` : ""}
-    ${workspaceState.expanded ? `
-      <section class="chat-workspace-secondary-section chat-workspace-secondary-list" data-chat-workspace-secondary-list>
-        ${renderEntitySelectorTriggerMarkup()}
-        <span class="floating-tab-panel-count">${escapeHtml(getEntityItemCount(activeState.entity, activeState.layer))} records</span>
-      </section>
-    ` : ""}
-    <section class="chat-workspace-secondary-section chat-workspace-secondary-chat" data-chat-workspace-secondary-chat>
-      <button
-        class="chat-workspace-chat-title-trigger"
-        type="button"
-        aria-haspopup="dialog"
-        aria-expanded="${historyOpen ? "true" : "false"}"
-        data-chat-workspace-chat-selector-toggle
-      >
-        <span>
-          <small>Chat</small>
-          <strong>${escapeHtml(chatTitle)}</strong>
-        </span>
-        <span class="chat-workspace-layer-trigger-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" focusable="false"><path d="m7 9 5 5 5-5" /></svg>
-        </span>
-      </button>
-      <div class="build-work-panel-demo-header-actions">
-        <button class="icon-button tooltip-anchor" type="button" data-chat-workspace-toggle aria-controls="chat-workspace-main" aria-expanded="${workspaceState.expanded ? "true" : "false"}" aria-label="${workspaceState.expanded ? "Collapse workspace" : "Expand workspace"}" data-tooltip="${workspaceState.expanded ? "Collapse workspace" : "Expand workspace"}">
-          ${iconButtonGlyph("project")}
-        </button>
-        <button class="build-work-panel-demo-close" type="button" data-chat-workspace-close aria-label="Close chat panel">
-          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true"><path d="M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6z" /></svg>
-        </button>
-      </div>
-    </section>
-  `;
+  header.dataset.chatWorkspaceHeaderHistoryOpen = historyOpen ? "true" : "false";
+  header.innerHTML = renderChatWorkspaceJointHeader({
+    workspaceExpanded: workspaceState.expanded,
+    expansionEnabled: workspaceState.expansionEnabled,
+    layerDrawerOpen: workspaceState.layerDrawerOpen,
+    activeLayer: activeState.layer,
+    layers,
+  });
+}
+
+function syncSecondaryHeader() {
+  if (!(secondaryHeader instanceof HTMLElement)) {
+    return;
+  }
+
+  const historyOpen = chatState.panel.historyOpen !== false;
+  secondaryHeader.dataset.chatWorkspaceSecondaryHistoryOpen = historyOpen ? "true" : "false";
+  secondaryHeader.innerHTML = renderChatWorkspaceSecondaryHeader({
+    historyOpen,
+    workspaceExpanded: workspaceState.expanded,
+    chatLabel: historyOpen ? getActiveChatTitle() : "Discovery chat",
+    entityLabel: activeState.entity.label,
+    entitySelectorExpanded: workspaceState.entityDrawerOpen,
+    recordCount: getEntityItemCount(activeState.entity),
+  });
+
   const entityWorkspace = document.querySelector("[data-chat-workspace-entity-workspace]");
   if (entityWorkspace instanceof HTMLElement) {
     renderWorkspaceEntitySelector(entityWorkspace);
   }
 }
 
+function startNewConversation() {
+  startChatWorkspaceConversation({ chatState });
+  mountChatPanel();
+}
+
 function syncHistoryDock() {
-  if (!(chatMount instanceof HTMLElement) || !(historyDock instanceof HTMLElement)) {
-    return;
-  }
-
-  const panelBody = chatMount.querySelector(".build-work-panel-demo-body");
-  const chatColumn = chatMount.querySelector(".build-work-panel-demo-chat-column");
-  const dockedHistory = historyDock.querySelector(".build-work-panel-demo-history");
-
-  if (chatState.panel.historyOpen === false) {
-    if (panelBody instanceof HTMLElement && chatColumn instanceof HTMLElement && dockedHistory instanceof HTMLElement) {
-      panelBody.insertBefore(dockedHistory, chatColumn);
-    }
-    return;
-  }
-
-  const history = dockedHistory ?? chatMount.querySelector(".build-work-panel-demo-history");
-  if (history instanceof HTMLElement) {
-    historyDock.append(history);
-  }
+  dockChatWorkspaceConversationIndex({
+    chatMount,
+    historyDock,
+    historyOpen: chatState.panel.historyOpen,
+  });
 }
 
 function installWorkspaceToggle() {
-  if (!(chatMount instanceof HTMLElement)) {
-    return;
-  }
-
-  const headerActions = chatMount.querySelector(".build-work-panel-demo-header-actions");
-  if (!(headerActions instanceof HTMLElement) || headerActions.querySelector("[data-chat-workspace-toggle]")) {
-    syncWorkspaceToggle();
-    return;
-  }
-
-  const toggle = document.createElement("button");
-  toggle.className = "icon-button tooltip-anchor";
-  toggle.type = "button";
-  toggle.dataset.chatWorkspaceToggle = "";
-  toggle.dataset.tooltip = "Expand workspace";
-  toggle.setAttribute("aria-controls", "chat-workspace-main");
-  toggle.setAttribute("aria-label", "Expand workspace");
-  toggle.innerHTML = iconButtonGlyph("project");
-  headerActions.prepend(toggle);
-  syncWorkspaceToggle();
+  bootstrapController?.installWorkspaceToggle();
 }
 
 function installWorkspaceHistoryIconButton() {
@@ -1043,112 +637,13 @@ function installWorkspaceHistoryIconButton() {
   historyToggle.innerHTML = iconButtonGlyph("index");
 }
 
-if (shell instanceof HTMLElement) {
-  shell.addEventListener("click", (event) => {
-    const target = event.target instanceof Element ? event.target : null;
-    const layerTrigger = target?.closest("[data-chat-workspace-layer-trigger]");
-    if (layerTrigger instanceof HTMLElement) {
-      workspaceState.layerDrawerOpen = !workspaceState.layerDrawerOpen;
-      syncSecondaryHeader();
-      return;
-    }
-
-    const layerOption = target?.closest("[data-chat-workspace-layer-option]");
-    if (layerOption instanceof HTMLElement) {
-      syncLayerMode(layerOption.dataset.chatWorkspaceLayerOption ?? "");
-      chatState.panel.panelOpen = true;
-      mountChatPanel();
-      return;
-    }
-
-    if (
-      workspaceState.layerDrawerOpen
-      && !target?.closest("[data-chat-workspace-layer-selector]")
-    ) {
-      workspaceState.layerDrawerOpen = false;
-      syncSecondaryHeader();
-    }
-
-    const entityWorkspace = document.querySelector("[data-chat-workspace-entity-workspace]");
-    const entityOption = target?.closest("[data-chat-workspace-entity-option]");
-    if (entityOption instanceof HTMLElement && entityWorkspace instanceof HTMLElement) {
-      const nextEntity = activeState.layer.entities.find((entity) => entity.key === entityOption.dataset.chatWorkspaceEntityOption);
-      if (nextEntity) {
-        selectWorkspaceEntity(entityWorkspace, nextEntity);
-      }
-      workspaceState.entityDrawerOpen = false;
-      syncWorkspaceListRows(entityWorkspace);
-      return;
-    }
-
-    const entityTrigger = target?.closest("[data-chat-workspace-entity-selector-trigger]");
-    if (entityTrigger instanceof HTMLElement && entityWorkspace instanceof HTMLElement) {
-      workspaceState.entityDrawerOpen = !workspaceState.entityDrawerOpen;
-      workspaceState.drawer = { open: false, row: null };
-      syncWorkspaceListRows(entityWorkspace);
-      return;
-    }
-
-    const toggle = target?.closest("[data-chat-workspace-toggle]");
-    if (toggle instanceof HTMLElement) {
-      workspaceState.expanded = !workspaceState.expanded;
-      chatState.panel.historyOpen = workspaceState.expanded;
-      syncWorkspaceToggle({ refresh: true });
-      return;
-    }
-
-    const historyToggle = target?.closest("[data-chat-workspace-history-toggle]");
-    if (historyToggle instanceof HTMLElement) {
-      const sourceHistoryToggle = chatMount instanceof HTMLElement ? chatMount.querySelector("[data-build-work-panel-history-toggle]") : null;
-      if (sourceHistoryToggle instanceof HTMLButtonElement) {
-        sourceHistoryToggle.click();
-      }
-      return;
-    }
-
-    const chatSelectorToggle = target?.closest("[data-chat-workspace-chat-selector-toggle]");
-    if (chatSelectorToggle instanceof HTMLElement) {
-      chatState.panel.historyOpen = true;
-      syncWorkspaceToggle({ refresh: workspaceState.expanded });
-      mountChatPanel();
-      return;
-    }
-
-    const historyClose = target?.closest("[data-chat-workspace-history-close]");
-    if (historyClose instanceof HTMLElement) {
-      chatState.panel.historyOpen = false;
-      syncWorkspaceToggle({ refresh: workspaceState.expanded });
-      mountChatPanel();
-      return;
-    }
-
-    const closeButton = target?.closest("[data-chat-workspace-close]");
-    if (closeButton instanceof HTMLElement) {
-      const sourceCloseButton = chatMount instanceof HTMLElement ? chatMount.querySelector("[data-build-work-panel-close]") : null;
-      if (sourceCloseButton instanceof HTMLButtonElement) {
-        sourceCloseButton.click();
-      }
-    }
-  });
-
-  shell.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || !workspaceState.layerDrawerOpen) {
-      return;
-    }
-    workspaceState.layerDrawerOpen = false;
-    syncSecondaryHeader();
-  });
-}
-
 function mountChatPanel() {
   if (!(chatMount instanceof HTMLElement)) {
     return;
   }
 
   chatController?.destroy?.();
-  if (historyDock instanceof HTMLElement) {
-    historyDock.replaceChildren();
-  }
+  clearChatWorkspaceConversationIndex(historyDock);
   chatController = createConversationPanelController(chatMount, {
     ref: chatState.panel,
     messages: chatState.messages,
@@ -1217,17 +712,7 @@ function mountChatPanel() {
         mountChatPanel();
       },
       onNewConversation() {
-        chatState.messages = [
-          {
-            author: "Harness",
-            text: "New chat started. Tell me what you want to shape next.",
-          },
-        ];
-        chatState.panel.packetState = "none";
-        chatState.panel.copyNotice = "";
-        chatState.panel.editMessageIndex = null;
-        chatState.panel.replyToMessageIndex = null;
-        mountChatPanel();
+        startNewConversation();
       },
       onHistoryViewSelect({ view }) {
         chatState.panel.historyView = view;
@@ -1283,12 +768,14 @@ function mountChatPanel() {
   installWorkspaceHistoryIconButton();
   syncLayerToolbar();
   syncHistoryDock();
-  syncSecondaryHeader();
+  syncHeaderLayerSelector();
 }
 
-if (chatMount instanceof HTMLElement) {
-  mountChatPanel();
-}
-
-renderEntityWorkspace();
-syncWorkspaceToggle();
+bootstrapController.initialize({
+  onRefreshWorkspace: refreshEntityWorkspaceAfterLayout,
+  onSyncHistoryIcon: installWorkspaceHistoryIconButton,
+  onSyncHistoryDock: syncHistoryDock,
+  onSyncHeader: syncHeaderLayerSelector,
+  onSyncSecondaryHeader: syncSecondaryHeader,
+});
+installDisplaySettingsDrawer();

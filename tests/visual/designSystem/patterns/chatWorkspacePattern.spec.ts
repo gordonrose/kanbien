@@ -133,6 +133,18 @@ async function auditEntityStatusPreview(page: Page) {
 }
 
 test.describe("design-system chat workspace pattern variant", () => {
+  test("keeps expansion absent when the shell is not explicitly opted in", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await gotoChatWorkspace(page, "/design-system/patterns/chat-workspace?expansion=disabled");
+
+    await expect(page.locator("[data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-expansion-enabled", "false");
+    await expect(page.locator("[data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-expanded", "false");
+    await expect(page.locator("[data-chat-workspace-toggle]")).toHaveCount(0);
+    await expect(page.locator(".chat-workspace-main")).toHaveAttribute("aria-hidden", "true");
+    await expect(page.locator("[data-chat-workspace-secondary-list]")).toHaveCount(0);
+    await expect(page.locator("[data-chat-workspace-chat-selector-toggle]")).toBeVisible();
+  });
+
   test("renders right-docked chat by default and expands workspace beside it", async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 1000 });
     await gotoChatWorkspace(page);
@@ -152,8 +164,13 @@ test.describe("design-system chat workspace pattern variant", () => {
     await expect(page.locator(".chat-workspace-chat-pane [data-build-work-panel-tools-toggle]")).toBeVisible();
     await expect(page.locator(".chat-workspace-chat-pane [data-build-work-panel-packet]")).toBeVisible();
     await expect(page.locator(".chat-workspace-chat-pane [data-build-work-panel-close]")).not.toBeVisible();
+    await expect(page.locator("[data-chat-workspace-secondary-header]")).toBeVisible();
+    await expect(page.locator("[data-chat-workspace-secondary-index]")).toHaveCount(0);
+    await expect(page.locator("[data-chat-workspace-secondary-list]")).toHaveCount(0);
     await expect(page.locator("[data-chat-workspace-chat-selector-toggle]")).toContainText("Chat");
     await expect(page.locator("[data-chat-workspace-chat-selector-toggle]")).toHaveAttribute("aria-expanded", "false");
+    await expect(page.locator("[data-chat-workspace-secondary-new-chat] [data-chat-workspace-new-conversation]")).toBeVisible();
+    await expect(page.locator("[data-chat-workspace-secondary-new-chat] [data-chat-workspace-new-conversation]")).toHaveAttribute("data-tooltip", "Start new chat");
     await expect(page.locator("[data-chat-workspace-toggle]:visible")).toHaveAttribute("aria-expanded", "false");
     await expect(page.locator("[data-chat-workspace-toggle]:visible")).toHaveClass(/icon-button/);
     await expect(page.locator("[data-chat-workspace-toggle]:visible")).toHaveAttribute("data-tooltip", "Expand workspace");
@@ -162,15 +179,27 @@ test.describe("design-system chat workspace pattern variant", () => {
       const shell = document.querySelector("[data-chat-workspace-shell]")?.getBoundingClientRect();
       const chat = document.querySelector(".chat-workspace-chat-pane")?.getBoundingClientRect();
       const workspace = document.querySelector(".chat-workspace-main")?.getBoundingClientRect();
+      const header = document.querySelector("[data-chat-workspace-joint-header]")?.getBoundingClientRect();
+      const secondary = document.querySelector("[data-chat-workspace-secondary-header]")?.getBoundingClientRect();
+      const panel = document.querySelector(".chat-workspace-chat-pane .build-work-panel-demo-panel")?.getBoundingClientRect();
+      const rail = document.querySelector(".chat-workspace-chat-pane .build-work-panel-demo-action-nav")?.getBoundingClientRect();
       const duration = shell
         ? getComputedStyle(document.querySelector("[data-chat-workspace-shell]") as Element)
             .transitionDuration.split(",")
             .map((value) => value.trim())
         : [];
-      return shell && chat && workspace
+      return shell && chat && workspace && header && secondary && panel && rail
         ? {
+            shellTop: Math.round(shell.top),
+            shellBottom: Math.round(shell.bottom),
             shellRight: Math.round(shell.right),
             chatRight: Math.round(chat.right),
+            headerRight: Math.round(header.right),
+            secondaryRight: Math.round(secondary.right),
+            panelRight: Math.round(panel.right),
+            railLeft: Math.round(rail.left),
+            railTop: Math.round(rail.top),
+            railBottom: Math.round(rail.bottom),
             shellWidth: Math.round(shell.width),
             workspaceWidth: Math.round(workspace.width),
             viewportRight: document.documentElement.clientWidth,
@@ -180,9 +209,64 @@ test.describe("design-system chat workspace pattern variant", () => {
     });
 
     expect(collapsedGeometry).not.toBeNull();
-    expect(collapsedGeometry?.shellWidth ?? 0).toBeLessThanOrEqual(834);
+    expect(collapsedGeometry?.shellWidth ?? 0).toBeLessThanOrEqual(900);
     expect(collapsedGeometry?.chatRight ?? 0).toBeGreaterThan((collapsedGeometry?.viewportRight ?? 0) - 140);
+    expect(collapsedGeometry?.headerRight ?? 0).toBeLessThanOrEqual(collapsedGeometry?.railLeft ?? 0);
+    expect(collapsedGeometry?.secondaryRight ?? 0).toBeLessThanOrEqual(collapsedGeometry?.railLeft ?? 0);
+    expect(collapsedGeometry?.panelRight ?? 0).toBeLessThanOrEqual(collapsedGeometry?.railLeft ?? 0);
+    expect(Math.abs((collapsedGeometry?.railTop ?? 0) - (collapsedGeometry?.shellTop ?? 0))).toBeLessThanOrEqual(2);
+    expect(Math.abs((collapsedGeometry?.railBottom ?? 0) - (collapsedGeometry?.shellBottom ?? 0))).toBeLessThanOrEqual(2);
     expect(collapsedGeometry?.duration).toContain("0.16s");
+
+    await page.locator("[data-chat-workspace-chat-selector-toggle]").click();
+    await expect(page.locator("[data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-history-open", "true");
+    await expect(page.locator("[data-chat-workspace-secondary-index]")).toBeVisible();
+    await expect(page.locator("[data-chat-workspace-secondary-list]")).toHaveCount(0);
+    await expect(page.locator("[data-chat-workspace-secondary-new-chat] [data-chat-workspace-new-conversation]")).toBeVisible();
+    await expect(page.locator(".chat-workspace-history-dock .build-work-panel-demo-history")).toBeVisible();
+    await expect(page.locator(".chat-workspace-history-dock [data-build-work-panel-new-conversation]")).not.toBeVisible();
+    const collapsedIndexGeometry = await page.evaluate(() => {
+      const history = document.querySelector(".chat-workspace-history-dock")?.getBoundingClientRect();
+      const chat = document.querySelector(".chat-workspace-chat-pane")?.getBoundingClientRect();
+      const secondaryIndex = document.querySelector("[data-chat-workspace-secondary-index]")?.getBoundingClientRect();
+      const newChat = document.querySelector("[data-chat-workspace-secondary-new-chat]")?.getBoundingClientRect();
+      const secondary = document.querySelector("[data-chat-workspace-secondary-header]")?.getBoundingClientRect();
+      const rail = document
+        .querySelector(".chat-workspace-chat-pane .build-work-panel-demo-action-nav")
+        ?.getBoundingClientRect();
+      const secondaryStyle = document.querySelector("[data-chat-workspace-secondary-header]")
+        ? getComputedStyle(document.querySelector("[data-chat-workspace-secondary-header]") as Element)
+        : null;
+      return history && chat && secondaryIndex && newChat && secondary && rail && secondaryStyle
+        ? {
+            historyLeft: Math.round(history.left),
+            historyRight: Math.round(history.right),
+            chatLeft: Math.round(chat.left),
+            chatTop: Math.round(chat.top),
+            secondaryTop: Math.round(secondary.top),
+            secondaryIndexLeft: Math.round(secondaryIndex.left),
+            secondaryIndexRight: Math.round(secondaryIndex.right),
+            newChatLeft: Math.round(newChat.left),
+            newChatRight: Math.round(newChat.right),
+            secondaryRight: Math.round(secondary.right),
+            secondaryBottom: Math.round(secondary.bottom),
+            railLeft: Math.round(rail.left),
+            secondaryBackground: secondaryStyle.backgroundColor,
+          }
+        : null;
+    });
+    expect(collapsedIndexGeometry).not.toBeNull();
+    expect(collapsedIndexGeometry?.historyRight ?? 0).toBeLessThanOrEqual(collapsedIndexGeometry?.chatLeft ?? 0);
+    expect(Math.abs((collapsedIndexGeometry?.secondaryIndexLeft ?? 0) - (collapsedIndexGeometry?.historyLeft ?? 0))).toBeLessThanOrEqual(2);
+    expect(Math.abs((collapsedIndexGeometry?.secondaryIndexRight ?? 0) - (collapsedIndexGeometry?.historyRight ?? 0))).toBeLessThanOrEqual(2);
+    expect(collapsedIndexGeometry?.newChatLeft ?? 0).toBeGreaterThan((collapsedIndexGeometry?.chatLeft ?? 0) + 160);
+    expect(Math.abs((collapsedIndexGeometry?.newChatRight ?? 0) - (collapsedIndexGeometry?.secondaryRight ?? 0))).toBeLessThanOrEqual(2);
+    expect(collapsedIndexGeometry?.secondaryRight ?? 0).toBeLessThanOrEqual(collapsedIndexGeometry?.railLeft ?? 0);
+    expect(Math.abs((collapsedIndexGeometry?.chatTop ?? 0) - (collapsedIndexGeometry?.secondaryBottom ?? 0))).toBeLessThanOrEqual(2);
+    expect(collapsedIndexGeometry?.secondaryBackground).not.toBe("rgba(0, 0, 0, 0)");
+    await expect(page.locator("[data-chat-workspace-history-close]")).toHaveCount(0);
+    await page.locator("[data-chat-workspace-chat-selector-toggle]").click();
+    await expect(page.locator("[data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-history-open", "false");
 
     await expandWorkspace(page);
     await expect(page.locator("[data-chat-workspace-toggle]:visible")).toHaveAttribute("aria-expanded", "true");
@@ -191,8 +275,7 @@ test.describe("design-system chat workspace pattern variant", () => {
     await expect(page.locator("[data-chat-workspace-joint-header]").getByRole("button", { name: "Collapse workspace" })).toBeVisible();
     await expect(page.locator("[data-chat-workspace-joint-header] [data-chat-workspace-toggle]")).toHaveClass(/icon-button/);
     await expect(page.locator("[data-chat-workspace-joint-header] [data-chat-workspace-toggle]")).toHaveAttribute("data-tooltip", "Collapse workspace");
-    await expect(page.locator("[data-chat-workspace-joint-header] [data-chat-workspace-history-close]")).toHaveClass(/icon-button/);
-    await expect(page.locator("[data-chat-workspace-joint-header] [data-chat-workspace-history-close]")).toHaveAttribute("data-tooltip", "Close conversation index");
+    await expect(page.locator("[data-chat-workspace-joint-header] [data-chat-workspace-history-toggle]")).toHaveCount(0);
     await expect(page.locator("[data-chat-workspace-layer-trigger]")).toContainText("Discovery");
     await expect(page.locator("[data-chat-workspace-layer-toolbar]")).toBeVisible();
     await expect(page.locator("[data-chat-workspace-layer-toolbar] [data-chat-workspace-tool]")).toHaveCount(2);
@@ -203,6 +286,39 @@ test.describe("design-system chat workspace pattern variant", () => {
     await expectActiveEntityCategory(page, "Questions");
     await expect(await revealEntityTab(page, "In Progress")).toBeVisible();
     await expect(page.locator("[data-chat-workspace-entity-workspace] #chat-workspace-entity-category-toggle")).not.toBeVisible();
+    await expect(page.locator("[data-chat-workspace-secondary-index]")).toBeVisible();
+    await expect(page.locator("[data-chat-workspace-secondary-list] [data-chat-workspace-entity-selector-trigger]")).toBeVisible();
+    await expect(page.locator("[data-chat-workspace-secondary-new-chat] [data-chat-workspace-new-conversation]")).toBeVisible();
+    const expandedHeaderAlignment = await page.evaluate(() => {
+      const layer = document.querySelector("[data-chat-workspace-layer-trigger]")?.getBoundingClientRect();
+      const chatSelector = document.querySelector("[data-chat-workspace-secondary-index] [data-chat-workspace-chat-selector-toggle]")?.getBoundingClientRect();
+      return layer && chatSelector
+        ? {
+            layerLeft: Math.round(layer.left),
+            chatSelectorLeft: Math.round(chatSelector.left),
+          }
+        : null;
+    });
+    expect(expandedHeaderAlignment).not.toBeNull();
+    expect(Math.abs((expandedHeaderAlignment?.layerLeft ?? 0) - (expandedHeaderAlignment?.chatSelectorLeft ?? 0))).toBeLessThanOrEqual(2);
+    const historyTooltipGeometry = await page.evaluate(() => {
+      const row = document.querySelector(".chat-workspace-history-dock .build-work-panel-demo-history-row");
+      row?.classList.add("is-tooltip-visible");
+      const dock = document.querySelector(".chat-workspace-history-dock")?.getBoundingClientRect();
+      const tooltip = document.querySelector(".chat-workspace-history-dock .build-work-panel-demo-history-item span")?.getBoundingClientRect();
+      row?.classList.remove("is-tooltip-visible");
+      return dock && tooltip
+        ? {
+            dockLeft: Math.round(dock.left),
+            dockRight: Math.round(dock.right),
+            tooltipLeft: Math.round(tooltip.left),
+            tooltipRight: Math.round(tooltip.right),
+          }
+        : null;
+    });
+    expect(historyTooltipGeometry).not.toBeNull();
+    expect(historyTooltipGeometry?.tooltipLeft ?? 0).toBeGreaterThanOrEqual(historyTooltipGeometry?.dockLeft ?? 0);
+    expect(historyTooltipGeometry?.tooltipRight ?? 9999).toBeLessThanOrEqual(historyTooltipGeometry?.dockRight ?? 0);
     await expect(page.locator(".chat-workspace-history-dock .build-work-panel-demo-history-row").first()).toContainText("Discovery chat history");
     const workspaceOrder = await page.evaluate(() => {
       const listHeader = document.querySelector("[data-chat-workspace-secondary-list]")?.getBoundingClientRect();
@@ -372,16 +488,24 @@ test.describe("design-system chat workspace pattern variant", () => {
       const header = document.querySelector("[data-chat-workspace-entity-workspace] .floating-tab-header")?.getBoundingClientRect();
       const list = document.querySelector("[data-chat-workspace-entity-workspace] .floating-tab-list")?.getBoundingClientRect();
       const panel = document.querySelector("[data-chat-workspace-entity-workspace] .floating-tab-list-panel")?.getBoundingClientRect();
+      const rows = Array.from(document.querySelectorAll("[data-chat-workspace-entity-workspace] .floating-tab-row"))
+        .map((row) => row.getBoundingClientRect());
       return header && list && panel
         ? {
             gapAfterHeader: Math.round(list.top - header.bottom),
             spaceBelowList: Math.round(panel.bottom - list.bottom),
+            maxRowHeight: Math.max(...rows.map((row) => row.height)),
+            rowsBlockHeight: rows.length
+              ? Math.round(Math.max(...rows.map((row) => row.bottom)) - Math.min(...rows.map((row) => row.top)))
+              : 0,
           }
         : null;
     });
     expect(closedListGeometry).not.toBeNull();
     expect(closedListGeometry?.gapAfterHeader ?? 999).toBeLessThanOrEqual(56);
-    expect(closedListGeometry?.spaceBelowList ?? 0).toBeGreaterThan(120);
+    expect(closedListGeometry?.spaceBelowList ?? 0).toBeGreaterThanOrEqual(24);
+    expect(closedListGeometry?.maxRowHeight ?? 999).toBeLessThanOrEqual(92);
+    expect(closedListGeometry?.rowsBlockHeight ?? 999).toBeLessThanOrEqual(240);
     await expect(page.locator("[data-chat-workspace-entity-workspace] #chat-workspace-entity-header")).toHaveAttribute("data-floating-tab-crowded", "true");
 
     const density = await page.locator("[data-chat-workspace-entity-workspace] #chat-workspace-entity-status-tabs").evaluate((scroller) => {
@@ -417,6 +541,52 @@ test.describe("design-system chat workspace pattern variant", () => {
     expect(geometry?.workspaceRight ?? 0).toBeLessThanOrEqual(geometry?.chatLeft ?? 0);
     expect(Math.abs((geometry?.chatRight ?? 0) - (collapsedGeometry?.chatRight ?? 0))).toBeLessThanOrEqual(2);
     expect(geometry?.workspaceWidth ?? 0).toBeGreaterThan(400);
+  });
+
+  test("previews display settings drawer changes against the chat workspace shell", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await gotoChatWorkspace(page);
+
+    const settingsButton = page.locator("[data-chat-workspace-settings-open]");
+    await expect(settingsButton).toHaveClass(/context-nav-item/);
+    await expect(settingsButton).toHaveAttribute("data-tooltip", "Display");
+    await settingsButton.click();
+    const drawer = page.locator("[data-chat-workspace-settings-drawer]");
+    const shell = page.locator("[data-chat-workspace-shell]");
+    await expect(drawer).toBeVisible();
+    await expect(drawer).toHaveAttribute("aria-hidden", "false");
+    await expect(settingsButton).toHaveAttribute("aria-expanded", "true");
+
+    await drawer.getByRole("button", { name: "Dark" }).click();
+    await expect(shell).toHaveAttribute("data-theme-scope", "dark");
+    await expect(page.locator("[data-chat-workspace-pattern]")).toHaveAttribute("data-demo-theme", "dark");
+
+    await drawer.getByRole("button", { name: "135%" }).click();
+    await expect(shell).toHaveCSS("transform", /matrix\(1\.35/);
+
+    await drawer.getByRole("button", { name: "RTL" }).click();
+    await expect(shell).toHaveAttribute("dir", "rtl");
+    await expect(page.locator("[data-chat-workspace-pattern]")).toHaveAttribute("dir", "rtl");
+    const rtlGeometry = await page.evaluate(() => {
+      const navBox = document.querySelector(".context-nav")?.getBoundingClientRect();
+      const drawerBox = document.querySelector("[data-chat-workspace-settings-drawer]")?.getBoundingClientRect();
+      const chatBox = document.querySelector(".chat-workspace-chat-pane")?.getBoundingClientRect();
+      return navBox && drawerBox && chatBox
+        ? {
+            navRight: Math.round(navBox.right),
+            drawerLeft: Math.round(drawerBox.left),
+            drawerRight: Math.round(drawerBox.right),
+            chatLeft: Math.round(chatBox.left),
+          }
+        : null;
+    });
+    expect(rtlGeometry).not.toBeNull();
+    expect(Math.abs((rtlGeometry?.drawerLeft ?? 0) - (rtlGeometry?.navRight ?? 0))).toBeLessThanOrEqual(2);
+    expect(rtlGeometry?.drawerRight ?? 9999).toBeLessThan(rtlGeometry?.chatLeft ?? 0);
+
+    await drawer.getByRole("button", { name: "Close display settings" }).click();
+    await expect(drawer).not.toBeVisible();
+    await expect(drawer).toHaveAttribute("aria-hidden", "true");
   });
 
   test("switches layer tabs and entity tabs without leaving the pattern surface", async ({ page }) => {
@@ -528,7 +698,26 @@ test.describe("design-system chat workspace pattern variant", () => {
       const beforeDrop = {
         source: rows[0].classList.contains("drag-drop-source"),
         target: rows[1].getAttribute("data-floating-tab-row-drop-target"),
+        sharedTarget: rows[1].getAttribute("data-drop-target"),
         marker: marker instanceof HTMLElement ? marker.dataset.dragDropMarkerLabel : "",
+        sourceOpacity: Number(getComputedStyle(rows[0]).opacity),
+        sourceOutlined: getComputedStyle(rows[0]).outlineStyle !== "none",
+      };
+
+      const markerBeforeTop = marker instanceof HTMLElement ? Math.round(marker.getBoundingClientRect().top) : null;
+      marker?.dispatchEvent(new DragEvent("dragover", {
+        bubbles: true,
+        cancelable: true,
+        clientX: targetBounds.left + 12,
+        clientY: marker instanceof HTMLElement ? marker.getBoundingClientRect().top + 2 : targetBounds.bottom - 2,
+        dataTransfer: transfer,
+      }));
+      const stableMarker = list.querySelector("[data-drag-drop-marker]");
+      const afterMarkerHover = {
+        markerTop: stableMarker instanceof HTMLElement ? Math.round(stableMarker.getBoundingClientRect().top) : null,
+        target: rows[1].getAttribute("data-floating-tab-row-drop-target"),
+        sharedTarget: rows[1].getAttribute("data-drop-target"),
+        markerCount: list.querySelectorAll("[data-drag-drop-marker]").length,
       };
 
       list.dispatchEvent(new DragEvent("drop", { bubbles: true, cancelable: true, dataTransfer: transfer }));
@@ -536,6 +725,8 @@ test.describe("design-system chat workspace pattern variant", () => {
 
       return {
         beforeDrop,
+        afterMarkerHover,
+        markerBeforeTop,
         rows: Array.from(document.querySelectorAll("[data-chat-workspace-entity-workspace] .floating-tab-row strong"))
           .map((row) => row.textContent?.trim()),
         count: document.querySelector("[data-chat-workspace-entity-workspace] .floating-tab-card[data-tab-label=\"Queued\"]")
@@ -548,7 +739,16 @@ test.describe("design-system chat workspace pattern variant", () => {
     expect(reorderResult?.beforeDrop).toEqual({
       source: true,
       target: "after",
-      marker: "Drop to reorder",
+      sharedTarget: "after",
+      marker: "Drop here",
+      sourceOpacity: 0.9,
+      sourceOutlined: true,
+    });
+    expect(reorderResult?.afterMarkerHover).toEqual({
+      markerTop: reorderResult?.markerBeforeTop,
+      target: "after",
+      sharedTarget: "after",
+      markerCount: 1,
     });
     expect(reorderResult?.rows).toEqual([
       "QU-002 - Queued follow-up",
@@ -610,32 +810,7 @@ test.describe("design-system chat workspace pattern variant", () => {
         : null;
     });
 
-    await page.locator("[data-chat-workspace-toggle]:visible").first().click();
-    await expect(page.locator("[data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-expanded", "false");
-    await expect(page.locator("[data-chat-workspace-joint-header]")).toBeVisible();
-    await expect(page.locator(".chat-workspace-chat-pane .build-work-panel-demo-panel-header")).not.toBeVisible();
-    await expect(page.locator(".chat-workspace-chat-pane .build-work-panel-demo-history")).not.toBeVisible();
-    await page.locator("[data-chat-workspace-chat-selector-toggle]").click();
-    await expect(page.locator("[data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-history-open", "true");
-    await expect(page.locator(".chat-workspace-history-dock .build-work-panel-demo-history")).toBeVisible();
-    const collapsedAfterExpandGeometry = await page.evaluate(() => {
-      const history = document.querySelector(".chat-workspace-history-dock .build-work-panel-demo-history")?.getBoundingClientRect();
-      const chatColumn = document.querySelector(".chat-workspace-chat-pane .build-work-panel-demo-chat-column")?.getBoundingClientRect();
-      return history && chatColumn
-        ? {
-            historyLeft: Math.round(history.left),
-            chatColumnLeft: Math.round(chatColumn.left),
-            chatColumnWidth: Math.round(chatColumn.width),
-          }
-        : null;
-    });
-    expect(collapsedAfterExpandGeometry).not.toBeNull();
-    expect(collapsedAfterExpandGeometry?.historyLeft ?? 0).toBeLessThan(collapsedAfterExpandGeometry?.chatColumnLeft ?? 0);
-    expect(collapsedAfterExpandGeometry?.chatColumnWidth ?? 0).toBeGreaterThan(300);
-    await page.locator("[data-chat-workspace-toggle]:visible").first().click();
-    await expect(page.locator("[data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-expanded", "true");
-
-    await page.locator("[data-chat-workspace-history-close]:visible").click();
+    await page.locator("[data-chat-workspace-chat-selector-toggle]:visible").click();
     await expect(panel).toHaveAttribute("data-history-open", "false");
     await expect(page.locator("[data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-history-open", "false");
     await page.waitForTimeout(240);
@@ -643,11 +818,22 @@ test.describe("design-system chat workspace pattern variant", () => {
       const chat = document.querySelector(".chat-workspace-chat-pane")?.getBoundingClientRect();
       const chatColumn = document.querySelector(".chat-workspace-chat-pane .build-work-panel-demo-chat-column")?.getBoundingClientRect();
       const workspace = document.querySelector(".chat-workspace-main")?.getBoundingClientRect();
+      const entityTrigger = document.querySelector("[data-chat-workspace-secondary-list] [data-chat-workspace-entity-selector-trigger]")?.getBoundingClientRect();
+      const listHeader = document.querySelector("[data-chat-workspace-secondary-list]")?.getBoundingClientRect();
+      const chatHeader = document.querySelector("[data-chat-workspace-secondary-chat]")?.getBoundingClientRect();
+      const chatTrigger = document.querySelector("[data-chat-workspace-secondary-chat] [data-chat-workspace-chat-selector-toggle]")?.getBoundingClientRect();
+      const newChat = document.querySelector("[data-chat-workspace-secondary-new-chat]")?.getBoundingClientRect();
       return chat && chatColumn && workspace
         ? {
             chatWidth: Math.round(chat.width),
             chatColumnWidth: Math.round(chatColumn.width),
             workspaceWidth: Math.round(workspace.width),
+            entityTriggerWidth: entityTrigger ? Math.round(entityTrigger.width) : 0,
+            listRight: listHeader ? Math.round(listHeader.right) : 0,
+            chatLeft: chatHeader ? Math.round(chatHeader.left) : 0,
+            chatRight: chatHeader ? Math.round(chatHeader.right) : 0,
+            chatTriggerRight: chatTrigger ? Math.round(chatTrigger.right) : 0,
+            newChatLeft: newChat ? Math.round(newChat.left) : 0,
           }
         : null;
     });
@@ -657,6 +843,20 @@ test.describe("design-system chat workspace pattern variant", () => {
     expect(Math.abs((historyHiddenGeometry?.chatWidth ?? 0) - (historyOpenGeometry?.chatWidth ?? 0))).toBeLessThanOrEqual(2);
     expect(Math.abs((historyHiddenGeometry?.chatColumnWidth ?? 0) - (historyOpenGeometry?.chatColumnWidth ?? 0))).toBeLessThanOrEqual(4);
     expect(historyHiddenGeometry?.workspaceWidth ?? 0).toBeGreaterThan(historyOpenGeometry?.workspaceWidth ?? 0);
+    expect(historyHiddenGeometry?.entityTriggerWidth ?? 0).toBeGreaterThan(140);
+    expect(Math.abs((historyHiddenGeometry?.listRight ?? 0) - (historyHiddenGeometry?.chatLeft ?? 0))).toBeLessThanOrEqual(2);
+    expect(Math.abs((historyHiddenGeometry?.chatRight ?? 0) - (historyHiddenGeometry?.newChatLeft ?? 0))).toBeLessThanOrEqual(2);
+    expect(Math.abs((historyHiddenGeometry?.chatTriggerRight ?? 0) - (historyHiddenGeometry?.newChatLeft ?? 0))).toBeLessThanOrEqual(18);
+    await expect(page.locator("[data-chat-workspace-secondary-chat] [data-chat-workspace-chat-selector-toggle]")).toBeVisible();
+    await expect(page.locator("[data-chat-workspace-secondary-new-chat] [data-chat-workspace-new-conversation]")).toBeVisible();
+    await page.locator("[data-chat-workspace-secondary-list] [data-chat-workspace-entity-selector-trigger]").click();
+    await expect(page.locator("[data-chat-workspace-entity-workspace]")).toHaveAttribute("data-chat-workspace-entity-selector-open", "true");
+    await expect(page.locator("[data-chat-workspace-entity-selector-options]")).toBeVisible();
+    await page.locator("[data-chat-workspace-entity-selector-options]").getByRole("option", { name: /Chat Session/ }).click();
+    await expectActiveEntityCategory(page, "Chat Session");
+    await page.locator("[data-chat-workspace-secondary-list] [data-chat-workspace-entity-selector-trigger]").click();
+    await page.locator("[data-chat-workspace-entity-selector-options]").getByRole("option", { name: /Questions/ }).click();
+    await expectActiveEntityCategory(page, "Questions");
     const hiddenHistoryFrames = [];
     for (let index = 0; index < 8; index += 1) {
       await page.evaluate(() => new Promise(requestAnimationFrame));
@@ -743,7 +943,7 @@ test.describe("design-system chat workspace pattern variant", () => {
       await page.locator("[data-chat-workspace-chat-selector-toggle]:visible").click();
       await expect(page.locator("[data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-history-open", "true");
     }
-    await page.locator(".chat-workspace-history-dock [data-build-work-panel-new-conversation]").click();
+    await page.locator("[data-chat-workspace-secondary-new-chat] [data-chat-workspace-new-conversation]").click();
     await expect(page.locator(".chat-workspace-chat-pane [data-build-work-panel-packet]")).toHaveCount(0);
     await expect(page.locator(".chat-workspace-chat-pane .build-work-panel-demo-message")).toHaveCount(1);
     await expect(page.locator(".chat-workspace-chat-pane .build-work-panel-demo-message").first()).toContainText("New chat started");
@@ -765,9 +965,7 @@ test.describe("design-system chat workspace pattern variant", () => {
 
     await page.locator("[data-chat-workspace-close]:visible").click();
     await expect(page.locator(".chat-workspace-chat-pane .build-work-panel-demo-panel")).not.toHaveClass(/is-open/);
-    await page.locator(".chat-workspace-chat-pane [data-build-work-panel-mode='build']").click();
-    await expect(page.locator(".chat-workspace-chat-pane .build-work-panel-demo-panel")).toHaveClass(/is-open/);
-    await expect(page.locator(".chat-workspace-chat-pane [data-build-work-panel-mode='build']")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator(".chat-workspace-chat-pane [data-build-work-panel-mode='build']")).toBeHidden();
   });
 
   test("keeps dark, RTL, magnified, and mobile states reachable", async ({ page }) => {
@@ -779,22 +977,29 @@ test.describe("design-system chat workspace pattern variant", () => {
     await expect(shell).toHaveAttribute("dir", "rtl");
     await expect(page.locator(".chat-workspace-chat-pane")).toBeVisible();
     await expect(page.locator(".chat-workspace-main")).toHaveAttribute("aria-hidden", "true");
-    await expandWorkspace(page, { dispatch: true });
-    await expect(page.locator(".chat-workspace-main")).toBeVisible();
+    await expect(page.locator("[data-chat-workspace-toggle]:visible")).toHaveCount(0);
 
     const state = await page.evaluate(() => {
       const shell = document.querySelector("[data-chat-workspace-shell]");
       const chat = document.querySelector(".chat-workspace-chat-pane")?.getBoundingClientRect();
-      const workspace = document.querySelector(".chat-workspace-main")?.getBoundingClientRect();
+      const workspaceElement = document.querySelector(".chat-workspace-main");
+      const workspace = workspaceElement?.getBoundingClientRect();
+      const actionNav = document.querySelector(".chat-workspace-chat-pane .build-work-panel-demo-action-nav");
       return {
+        actionNavHidden: actionNav ? getComputedStyle(actionNav).display === "none" : false,
         scale: shell instanceof HTMLElement ? getComputedStyle(shell).getPropertyValue("--ui-scale").trim() : "",
         overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-        chatAboveWorkspace: chat && workspace ? Math.round(chat.bottom) <= Math.round(workspace.top) : false,
+        chatWidth: chat ? Math.round(chat.width) : 0,
+        workspaceHidden: workspaceElement ? getComputedStyle(workspaceElement).visibility === "hidden" : false,
       };
     });
 
+    await expect(page.locator(".chat-workspace-main")).toHaveAttribute("aria-hidden", "true");
+    await expect(shell).toHaveAttribute("data-chat-workspace-expanded", "false");
+    expect(state.actionNavHidden).toBe(true);
     expect(state.scale).toBe("1.35");
     expect(state.overflow).toBeLessThanOrEqual(2);
-    expect(state.chatAboveWorkspace).toBe(true);
+    expect(state.chatWidth).toBeGreaterThan(320);
+    expect(state.workspaceHidden).toBe(true);
   });
 });

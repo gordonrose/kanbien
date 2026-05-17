@@ -47,7 +47,8 @@ describe("design system floating tab header artifacts", () => {
     expect(componentMarkup).toContain('data-floating-tab-seam-mount="true"');
     expect(componentMarkup).not.toContain('class="floating-tab-card');
     expect(componentMarkup).toContain("/design-system/assets/floatingTabHeaderCanonical.mjs");
-    expect(explorationMarkup).toContain("Provisional Demo");
+    expect(explorationMarkup).toContain('<h1 id="floating-tab-title">Floating Tab Header</h1>');
+    expect(explorationMarkup).not.toContain('<p class="top-nav-preview-eyebrow">Provisional Demo</p>');
     expect(explorationMarkup).toContain('data-floating-tab-seam-mount="true"');
     expect(behaviorLock).toContain("FTH-001");
     expect(behaviorLock).toContain("FTH-013");

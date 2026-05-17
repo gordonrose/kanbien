@@ -66,6 +66,10 @@ anchored on the right.
 - list detail drawer: selecting a row opens a scoped, full-height drawer inside
   the list panel; the row list keeps one third of the list-panel width while
   the drawer takes the remaining two thirds
+- display settings drawer: the pattern page hosts a preview-only display
+  drawer for theme, zoom, and direction, launched from the context nav so
+  reviewers can inspect the chat workspace under dark/desert styling,
+  magnified scale, and RTL without leaving the pattern surface
 
 ## Header Layer Selector
 
@@ -124,6 +128,8 @@ anchored on the right.
   and error states are intentionally deferred.
 - A behavior lock, reference pack, canonical renderings, and adoption contract
   are still required before real-app use.
+- Consumer adoption is governed by
+  `chat-workspace-shell-consumer-adoption-contract.md`.
 - The shared `floating-tab-header` render/controller seam now supports scoped
   instance IDs so this pattern can reuse it for both layer and entity
   navigation without duplicate IDs.
@@ -134,7 +140,9 @@ anchored on the right.
 ## Cross-Cutting Notes
 
 - RTL: the demo supports scoped `dir=rtl` rendering through URL state.
-- Theme: the demo supports a scoped dark rendering through URL state.
-- Magnification: the demo supports scoped scale testing through URL state.
+- Theme: the demo supports scoped dark and desert rendering through URL state
+  and the preview drawer.
+- Magnification: the demo supports scoped scale testing through URL state and
+  the preview drawer.
 - Accessibility: layer and entity controls use tab semantics and visible focus;
   row content remains list-based for now.

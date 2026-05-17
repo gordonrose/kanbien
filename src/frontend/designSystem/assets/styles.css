@@ -1376,7 +1376,8 @@ body[data-floating-tab-header-preview="true"] #accessibility-drawer {
   display: grid;
 }
 
-.floating-tab-row[data-floating-tab-row-drop-target] {
+.floating-tab-row[data-floating-tab-row-drop-target],
+.floating-tab-row[data-drop-target] {
   outline: 0.125rem solid color-mix(in srgb, var(--accent) 30%, transparent);
   outline-offset: 0.1875rem;
 }

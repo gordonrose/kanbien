@@ -8,8 +8,12 @@ describe("design system context nav responsiveness", () => {
       resolve(process.cwd(), "src/frontend/designSystem/assets/styles.css"),
       "utf8",
     );
-    const markup = readFileSync(
+    const shellMarkup = readFileSync(
       resolve(process.cwd(), "src/frontend/designSystem/index.html"),
+      "utf8",
+    );
+    const markup = readFileSync(
+      resolve(process.cwd(), "src/frontend/designSystem/components/context-nav.html"),
       "utf8",
     );
     const script = readFileSync(
@@ -18,13 +22,13 @@ describe("design system context nav responsiveness", () => {
     );
 
     expect(markup).toContain('class="context-nav"');
-    expect(markup).toContain('id="primary-nav-overflow-button"');
-    expect(markup).toContain('data-tooltip="Overview"');
+    expect(shellMarkup).toContain('id="primary-nav-overflow-button"');
+    expect(markup).toContain('href="/design-system" aria-current="page">Overview</a>');
     expect(markup).toContain("context-nav-label");
     expect(markup).toContain('id="context-nav-more-button"');
     expect(markup).toContain('id="context-nav-more-menu"');
     expect(markup).toContain('id="filter-panel-button"');
-    expect(markup).toContain('id="context-nav-more-filter"');
+    expect(script).toContain('id="context-nav-more-filter"');
     expect(markup).toContain('id="filter-options-panel"');
     expect(markup).toContain('id="filter-options-search"');
     expect(styles).toContain(".context-nav {\n  position: fixed;");
@@ -73,10 +77,10 @@ describe("design system context nav responsiveness", () => {
     expect(script).toContain("function renderPrimaryNavOverflowMenu(links)");
     expect(script).toContain("while (");
     expect(script).toContain("getVisiblePrimaryNavLinks().length > 2");
-    expect(script).toContain("lastVisibleLinkRect.right > navUtilitiesRect.left");
-    expect(script).toContain("overflowRect.right > navUtilitiesRect.left");
-    expect(script).toContain("if (primaryNavFits() && !primaryNavOverlapsUtilities())");
-    expect(script).toContain("&& (!primaryNavFits() || primaryNavOverlapsUtilities() || primaryNavOverflowOverlapsVisibleLinks())");
+    expect(script).toContain("horizontalRectsOverlap(link.getBoundingClientRect(), navUtilitiesRect)");
+    expect(script).toContain("horizontalRectsOverlap(overflowRect, navUtilitiesRect)");
+    expect(script).toContain("primaryNavFits()\n    && !primaryNavOverlapsUtilities()");
+    expect(script).toContain("!primaryNavFits()\n      || primaryNavOverlapsUtilities()\n      || primaryNavOverflowOverlapsVisibleLinks()");
     expect(script).toContain("renderPrimaryNavOverflowMenu(primaryNavLinks.filter((link) => link.classList.contains(\"hidden\")))");
     expect(script).toContain("applyMagnification(button.dataset.magnificationOption ?? \"0\")");
     expect(script).toContain("updatePrimaryNavOverflow();");

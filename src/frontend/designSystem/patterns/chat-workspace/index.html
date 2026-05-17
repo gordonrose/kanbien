@@ -51,11 +51,25 @@
             <span class="context-nav-label">Chat Panel</span>
           </a>
         </div>
+        <div class="context-nav-bottom-group">
+          <button
+            class="context-nav-item context-nav-item-button context-nav-item-bottom"
+            type="button"
+            data-chat-workspace-settings-open
+            data-tooltip="Display"
+            aria-controls="chat-workspace-settings-drawer"
+            aria-expanded="false"
+          >
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 2.75a9.25 9.25 0 1 0 9.25 9.25A9.26 9.26 0 0 0 12 2.75zm0 3.1a2.15 2.15 0 1 1-2.15 2.15A2.15 2.15 0 0 1 12 5.85zm0 11.55a5.4 5.4 0 0 1-4.19-1.97 4.87 4.87 0 0 1 8.38 0A5.4 5.4 0 0 1 12 17.4z" /></svg>
+            </span>
+            <span class="context-nav-label">Display</span>
+          </button>
+        </div>
       </nav>
 
-      <main class="design-system-page-main chat-workspace-pattern-page" data-chat-workspace-pattern>
+      <main class="design-system-page-main build-work-panel-demo-page chat-workspace-pattern-page" data-chat-workspace-pattern>
         <section class="chat-workspace-pattern-intro" aria-labelledby="chat-workspace-pattern-title">
-          <p class="top-nav-preview-eyebrow">Provisional pattern variant</p>
           <h1 id="chat-workspace-pattern-title">Chat Workspace</h1>
           <p class="chat-workspace-pattern-copy">
             Demo rendering for an expanded chat view with the conversation anchored left and a build workspace on the right. This is review material, not canonical or app-consumable truth.
@@ -91,6 +105,8 @@
             </div>
           </header>
 
+          <header class="chat-workspace-secondary-header" data-chat-workspace-secondary-header></header>
+
           <nav class="chat-workspace-layer-toolbar build-work-panel-demo-action-nav" aria-label="Workspace layers" data-chat-workspace-layer-toolbar></nav>
 
           <section class="chat-workspace-history-dock" aria-label="Conversation history" data-chat-workspace-history-dock></section>
@@ -109,6 +125,59 @@
             </div>
           </section>
         </section>
+
+        <div
+          id="chat-workspace-settings-drawer"
+          class="side-panel display-settings-drawer chat-workspace-settings-drawer hidden"
+          data-chat-workspace-settings-drawer
+          role="dialog"
+          aria-modal="false"
+          aria-hidden="true"
+          aria-labelledby="chat-workspace-settings-title"
+        >
+          <div class="side-panel-header accessibility-drawer-header">
+            <div>
+              <p class="drawer-eyebrow">Display</p>
+              <h2 id="chat-workspace-settings-title">Display settings</h2>
+            </div>
+            <button
+              class="icon-button"
+              type="button"
+              data-chat-workspace-settings-close
+              aria-label="Close display settings"
+            >
+              <span class="icon-button-glyph" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false"><path d="M6 6 18 18M18 6 6 18" /></svg>
+              </span>
+            </button>
+          </div>
+
+          <section class="accessibility-group" aria-labelledby="chat-workspace-theme-title">
+            <p id="chat-workspace-theme-title" class="accessibility-label">Theme</p>
+            <div class="chip-row" role="group" aria-labelledby="chat-workspace-theme-title">
+              <button class="accessibility-chip active" type="button" data-chat-workspace-theme="normal" aria-pressed="true">Normal</button>
+              <button class="accessibility-chip" type="button" data-chat-workspace-theme="dark" aria-pressed="false">Dark</button>
+              <button class="accessibility-chip" type="button" data-chat-workspace-theme="desert" aria-pressed="false">Desert</button>
+            </div>
+          </section>
+
+          <section class="accessibility-group" aria-labelledby="chat-workspace-zoom-title">
+            <p id="chat-workspace-zoom-title" class="accessibility-label">Zoom</p>
+            <div class="chip-row" role="group" aria-labelledby="chat-workspace-zoom-title">
+              <button class="accessibility-chip active" type="button" data-chat-workspace-scale="100" aria-pressed="true">100%</button>
+              <button class="accessibility-chip" type="button" data-chat-workspace-scale="115" aria-pressed="false">115%</button>
+              <button class="accessibility-chip" type="button" data-chat-workspace-scale="135" aria-pressed="false">135%</button>
+            </div>
+          </section>
+
+          <section class="accessibility-group" aria-labelledby="chat-workspace-direction-title">
+            <p id="chat-workspace-direction-title" class="accessibility-label">Direction</p>
+            <div class="chip-row" role="group" aria-labelledby="chat-workspace-direction-title">
+              <button class="accessibility-chip active" type="button" data-chat-workspace-direction="ltr" aria-pressed="true">LTR</button>
+              <button class="accessibility-chip" type="button" data-chat-workspace-direction="rtl" aria-pressed="false">RTL</button>
+            </div>
+          </section>
+        </div>
       </main>
     </div>
 
