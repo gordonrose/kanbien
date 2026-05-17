@@ -54,8 +54,8 @@ describe("page-shell banner artifact chain", () => {
     expect(referencePack).toContain("PSBR-001");
     expect(verificationChecklist).toContain("Page-shell banner");
     expect(canonicalLauncher).toContain("Page-Shell Banner Canonicals");
-    expect(canonicalLauncher).toContain("/design-system/components/page-shell-banner?ref=PSBR-001");
+    expect(canonicalLauncher).toContain("/design-system/canonical-renderings/page-shell-banner/PSBR-001");
     expect(canonicalRender).toContain("data-page-shell-banner-surface=\"canonical\"");
-    expect(canonicalRender).toContain("href=\"/design-system/canonicals/page-shell-banner\"");
+    expect(canonicalRender).toContain("pageShellBannerCanonical.mjs");
   });
 });

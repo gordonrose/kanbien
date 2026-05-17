@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 describe("design system accessibility drawer", () => {
   it("defines an accessibility control surface that applies theme, magnification, accent, direction, and sibling filter panels", () => {
     const markup = readFileSync(
-      resolve(process.cwd(), "src/frontend/designSystem/index.html"),
+      resolve(process.cwd(), "src/frontend/designSystem/components/context-nav.html"),
       "utf8",
     );
     const script = readFileSync(

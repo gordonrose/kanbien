@@ -54,6 +54,14 @@ const generatedCanonicalFamilies: readonly GeneratedCanonicalFamily[] = [
     bodyAttribute: { name: "data-simple-select-surface", value: "canonical" as const },
   },
   {
+    familyKey: "chat-workspace-shell",
+    familyLabel: /Chat Workspace Shell/i,
+    sampleRenderPath: "/design-system/canonical-renderings/chat-workspace-shell/CWS-R-004",
+    surfaceLocator: "#chat-workspace-preview-frame",
+    readyLocator: "#chat-workspace-preview-frame[data-render-status='ready']",
+    bodyAttribute: { name: "data-chat-workspace-shell-surface", value: "canonical" as const },
+  },
+  {
     familyKey: "choice-group",
     familyLabel: /Choice Group/i,
     sampleRenderPath: "/design-system/canonical-renderings/choice-group/CGR-003",

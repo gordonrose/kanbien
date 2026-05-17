@@ -204,7 +204,7 @@ Current runtime assumptions:
 
 Used for:
 
-- future BullMQ-backed dispatcher and worker execution
+- BullMQ-backed dispatcher and worker execution
 
 Current runtime assumption:
 
@@ -220,10 +220,12 @@ Current scripts:
 
 - `npm run dispatcher:jobs`
 - `npm run worker:jobs`
+- `npm run scheduler:jobs`
 
-The first foundation slice includes provider-neutral entrypoints and seams. The
-concrete BullMQ adapter remains deferred, so these scripts fail fast with a
-provider-not-configured message until that adapter lands.
+The current foundation includes provider-neutral entrypoints and a BullMQ/Redis
+provider adapter. Redis must be reachable for provider-backed dispatcher and
+worker runtime proof. Recurring maintenance runs through the separate
+`scheduler:jobs` command; the HTTP server does not own scheduler ticks.
 
 ## Optional Local Helpers
 

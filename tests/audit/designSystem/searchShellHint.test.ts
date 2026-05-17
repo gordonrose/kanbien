@@ -23,7 +23,7 @@ describe("design system search shell enter hint", () => {
     expect(markup).toContain("Enter");
     expect(previewMarkup).toContain('class="search-shell-field"');
     expect(styles).toContain(".search-shell-field {");
-    expect(styles).toContain("padding: 0.7rem 6.6rem 0.7rem 0.85rem;");
+    expect(styles).toContain("padding: 0.7rem 8rem 0.7rem 0.85rem;");
     expect(styles).toContain(".search-submit-hint {");
     expect(styles).toContain(".search-submit-hint-key {");
     expect(styles).toContain(".search-shell:focus-within .search-submit-hint {");

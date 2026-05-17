@@ -10,7 +10,7 @@ Today the system has:
 
 - one Express application
 - one versioned API router under `/v1`
-- twenty-five mounted API features: `rootAuth`, `rootRoles`, `rootUsers`,
+- twenty-six mounted API features: `rootAuth`, `rootRoles`, `rootUsers`,
   `tenantAdmins`, `tenantAuth`, `tenantConfiguration`, `tenants`,
   `webAppHierarchyBuilder`, `webAppPageSettings`, `entityBuilder`,
   `webAppSurfaceDiscovery`, `designSystemCanonicals`,
@@ -19,7 +19,7 @@ Today the system has:
   `organizationOpeningHours`, `organizationBusinessUnits`,
   `organizationBusinessUnitMemberships`, `organizationReferenceCatalogues`,
   `organizationSearch`, `organizationBrandingReferences`, and
-  `organizationExports`
+  `organizationExports`, and `harnessChat`
 - one unmounted backend foundation feature: `jobProcessing`
 - two mounted browser/frontend route families:
   `/design-system` and `/root-admin`
@@ -220,8 +220,12 @@ Current auth model:
   future feature-owned workflows
 - `jobProcessing` owns provider-neutral durable asynchronous job request,
   outbox dispatch, worker execution, retry/dead-letter, payload-safety, and
-  attempt-history seams; concrete BullMQ adapter integration and operator APIs
+  attempt-history seams; BullMQ/Redis provider integration, recurring schedule
+  state, and the separate scheduler runtime are present, while operator APIs
   remain deferred
+- `harnessChat` owns the root-admin Build chat MVP for Layer 1 Product
+  Discovery conversations, transcript history, packet generation state, and
+  packet-download evidence
 - the Organization domain is delivered as a related backend feature family:
   `organizationCore` owns tenant-scoped organization identity and hierarchy,
   child features own legal details, locations, opening hours, business units,

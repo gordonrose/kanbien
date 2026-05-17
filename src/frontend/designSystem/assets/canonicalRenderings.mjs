@@ -1,5 +1,4 @@
 import { floatingTabHeaderCanonicalStates } from "./floatingTabHeaderCanonical.mjs";
-import { chatWorkspaceCanonicalStates } from "./chatWorkspaceCanonical.mjs";
 
 async function fetchJson(url) {
   const response = await fetch(url, {
@@ -32,26 +31,6 @@ function buildFloatingTabHeaderLauncherPayload() {
       displayLabel: state.label,
       renderRoutePath: state.route,
       featured: index < 9 || state.refId === "FTH-R-020" || state.refId === "FTH-R-024",
-    })),
-  };
-}
-
-function buildChatWorkspaceShellLauncherPayload() {
-  return {
-    family: {
-      familyKey: "chat-workspace-shell",
-      displayLabel: "Chat Workspace Shell",
-      launcherTitle: "Chat Workspace Shell Canonical Renderings",
-      launcherDescription:
-        "Generated canonical launcher fallback for the expandable chat workspace shell while persistence-backed governance records catch up.",
-      generatedLauncherRoutePath: "/design-system/canonical-renderings/chat-workspace-shell",
-      legacyLauncherRoutePath: "/design-system/patterns/chat-workspace",
-    },
-    references: chatWorkspaceCanonicalStates.map((state, index) => ({
-      referenceId: state.refId,
-      displayLabel: state.label,
-      renderRoutePath: state.route,
-      featured: index < 8 || state.refId === "CWS-R-013" || state.refId === "CWS-R-019" || state.refId === "CWS-R-020",
     })),
   };
 }
@@ -175,18 +154,13 @@ async function main() {
       `/v1/design-system-canonicals/public/families/${encodeURIComponent(pathInfo.familyKey)}/launcher`,
     );
   } catch (error) {
-    if (pathInfo.familyKey !== "floating-tab-header" && pathInfo.familyKey !== "chat-workspace-shell") {
+    if (pathInfo.familyKey !== "floating-tab-header") {
       throw error;
     }
-    payload = pathInfo.familyKey === "chat-workspace-shell"
-      ? buildChatWorkspaceShellLauncherPayload()
-      : buildFloatingTabHeaderLauncherPayload();
+    payload = buildFloatingTabHeaderLauncherPayload();
   }
   if (pathInfo.familyKey === "floating-tab-header" && (!Array.isArray(payload.references) || payload.references.length === 0)) {
     payload = buildFloatingTabHeaderLauncherPayload();
-  }
-  if (pathInfo.familyKey === "chat-workspace-shell" && (!Array.isArray(payload.references) || payload.references.length === 0)) {
-    payload = buildChatWorkspaceShellLauncherPayload();
   }
   renderFamilyLauncher(payload);
 }

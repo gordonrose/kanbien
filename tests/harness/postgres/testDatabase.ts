@@ -101,6 +101,7 @@ export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
     DROP TABLE IF EXISTS discovered_web_app_structure_nodes CASCADE;
     DROP TABLE IF EXISTS discovered_web_app_surfaces CASCADE;
     DROP TABLE IF EXISTS web_app_discovery_runs CASCADE;
+    DROP TABLE IF EXISTS web_app_hierarchy_audit_events CASCADE;
     DROP TABLE IF EXISTS web_app_pages CASCADE;
     DROP TABLE IF EXISTS web_app_modules CASCADE;
     DROP TABLE IF EXISTS web_app_root_families CASCADE;
