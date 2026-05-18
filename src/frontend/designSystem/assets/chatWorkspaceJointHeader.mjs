@@ -15,6 +15,33 @@ function iconButtonGlyph(icon) {
   return `<span class="icon-button-glyph" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="${escapeHtml(controlIcons[icon])}" /></svg></span>`;
 }
 
+function getLayerKind(layer) {
+  const value = layer?.layerKind ?? layer?.kind ?? "";
+  if (value === "parent" || value === "current" || value === "child") {
+    return value;
+  }
+  const label = String(layer?.label ?? "").toLowerCase();
+  if (label.includes("parent")) {
+    return "parent";
+  }
+  if (label.includes("child")) {
+    return "child";
+  }
+  return "current";
+}
+
+function getLayerEntityLabel(layer) {
+  return layer?.layerEntityLabel
+    ?? layer?.entities?.find((entity) => entity.key === layer?.defaultEntity)?.label
+    ?? layer?.entities?.[0]?.label
+    ?? layer?.label
+    ?? "Entity";
+}
+
+function getLayerSummary(layer) {
+  return layer?.layerSummary ?? getLayerEntityLabel(layer);
+}
+
 export function renderChatWorkspaceLayerSelector({
   layers = [],
   activeLayerKey,
@@ -47,7 +74,13 @@ export function renderChatWorkspaceLayerSelector({
             aria-selected="${layer.key === activeLayerKey ? "true" : "false"}"
             data-chat-workspace-layer-option="${escapeHtml(layer.key)}"
           >
-            <span>${escapeHtml(layer.label)}</span>
+            <span class="chat-workspace-layer-option-row">
+              <strong>${escapeHtml(getLayerKind(layer))}</strong>
+              <strong>${escapeHtml(getLayerEntityLabel(layer))}</strong>
+            </span>
+            <span class="chat-workspace-layer-option-summary">
+              ${escapeHtml(getLayerKind(layer) === "child" ? getLayerSummary(layer) : getLayerEntityLabel(layer))}
+            </span>
           </button>
         `).join("")}
       </div>

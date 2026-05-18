@@ -160,18 +160,42 @@ test.describe("design-system top-nav canonical states", () => {
     expect(overflowVisible && visibleLinkCount === 1).toBe(false);
   });
 
-  test("TRP-010 reroutes pressure into overflow or mobile collapse before crowding", async ({ page }) => {
+  test("TRP-010 avoids crowding under magnified long-label pressure", async ({ page }) => {
     await gotoGeneratedCanonicalState(page, "TRP-010");
 
     const topNav = page.locator("#top-nav-preview-frame .top-nav");
-    const overflow = page.locator("#top-nav-preview-frame #primary-nav-overflow");
 
     await expect(topNav).toBeVisible();
-    const topNavClass = await topNav.getAttribute("class");
-    const overflowVisible = await overflow.isVisible();
-    const forcedMobile = (topNavClass ?? "").includes("force-mobile-nav");
+    const geometry = await page.evaluate(() => {
+      const topNavNode = document.querySelector("#top-nav-preview-frame .top-nav");
+      const primaryNav = document.querySelector("#top-nav-preview-frame .primary-nav");
+      const primaryLinks = Array.from(document.querySelectorAll("#top-nav-preview-frame #primary-nav-links .nav-link:not(.hidden)"));
+      const overflow = document.querySelector("#top-nav-preview-frame #primary-nav-overflow");
+      const utilities = document.querySelector("#top-nav-preview-frame .nav-utilities");
+      const brand = document.querySelector("#top-nav-preview-frame .brand-lockup");
 
-    expect(overflowVisible || forcedMobile).toBe(true);
+      const rectsOverlap = (left: DOMRect, right: DOMRect) => left.left < right.right && left.right > right.left;
+      const collisionTargets = [utilities, brand]
+        .filter((node): node is Element => node instanceof Element)
+        .map((node) => node.getBoundingClientRect());
+      const visibleControls = [
+        ...primaryLinks,
+        ...(overflow instanceof HTMLElement && !overflow.classList.contains("hidden")
+          ? [overflow]
+          : []),
+      ];
+
+      return {
+        forcedMobile: topNavNode instanceof HTMLElement ? topNavNode.classList.contains("force-mobile-nav") : false,
+        primaryFits: primaryNav instanceof HTMLElement ? primaryNav.scrollWidth <= primaryNav.clientWidth : true,
+        hasControlCollision: visibleControls.some((control) => {
+          const controlRect = control.getBoundingClientRect();
+          return collisionTargets.some((targetRect) => rectsOverlap(controlRect, targetRect));
+        }),
+      };
+    });
+
+    expect(geometry.forcedMobile || (geometry.primaryFits && !geometry.hasControlCollision)).toBe(true);
   });
 
   test("TRP-007 generated route opens the overflow menu", async ({ page }) => {

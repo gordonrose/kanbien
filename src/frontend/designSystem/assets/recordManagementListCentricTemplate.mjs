@@ -12,6 +12,9 @@ const recordManagementLayers = Object.freeze([
   {
     key: "discovery",
     label: "Parent 1",
+    layerKind: "parent",
+    layerEntityLabel: "Intake Requests",
+    layerSummary: "Intake Requests",
     defaultEntity: "questions",
     defaultTool: "questions",
     entities: Object.freeze([
@@ -23,6 +26,9 @@ const recordManagementLayers = Object.freeze([
   {
     key: "design",
     label: "Parent 2",
+    layerKind: "parent",
+    layerEntityLabel: "Policy Checks",
+    layerSummary: "Policy Checks",
     defaultEntity: "architecture-questions",
     defaultTool: "architecture-questions",
     entities: Object.freeze([
@@ -33,6 +39,9 @@ const recordManagementLayers = Object.freeze([
   {
     key: "delivery",
     label: "Current",
+    layerKind: "current",
+    layerEntityLabel: "Managed Records",
+    layerSummary: "Managed Records",
     defaultEntity: "stories",
     defaultTool: "stories",
     entities: Object.freeze([
@@ -45,6 +54,9 @@ const recordManagementLayers = Object.freeze([
   {
     key: "child-1",
     label: "Child 1",
+    layerKind: "child",
+    layerEntityLabel: "Child Records",
+    layerSummary: "18 records",
     defaultEntity: "child-one-records",
     defaultTool: "child-one-records",
     entities: Object.freeze([
@@ -55,6 +67,9 @@ const recordManagementLayers = Object.freeze([
   {
     key: "child-2",
     label: "Child 2",
+    layerKind: "child",
+    layerEntityLabel: "Child Records",
+    layerSummary: "9 records",
     defaultEntity: "child-two-records",
     defaultTool: "child-two-records",
     entities: Object.freeze([
@@ -65,6 +80,9 @@ const recordManagementLayers = Object.freeze([
   {
     key: "child-3",
     label: "Child 3",
+    layerKind: "child",
+    layerEntityLabel: "Child Records",
+    layerSummary: "4 records",
     defaultEntity: "child-three-records",
     defaultTool: "child-three-records",
     entities: Object.freeze([
@@ -545,6 +563,7 @@ function installDisplaySettingsDrawer() {
   const directionButtons = Array.from(document.querySelectorAll("[data-record-management-direction-option]"));
   const magnificationButtons = Array.from(document.querySelectorAll("[data-record-management-magnification-option]"));
   const drawerViewButtons = Array.from(document.querySelectorAll("[data-record-management-drawer-view]"));
+  const editControlStyleButtons = Array.from(document.querySelectorAll("[data-record-management-edit-control-style]"));
   const statusCountButtons = Array.from(document.querySelectorAll("[data-record-management-status-count]"));
   const listCountButtons = Array.from(document.querySelectorAll("[data-record-management-list-count]"));
 
@@ -607,6 +626,16 @@ function installDisplaySettingsDrawer() {
       const selectedRow = mount?.querySelector("[data-chat-workspace-entity-workspace] .floating-tab-row.is-selected");
       if (selectedRow instanceof HTMLElement && !selectedRow.dataset.recordManagementPlaceholderRecord) {
         selectedRow.click();
+      }
+      applyCurrentRecordManagementTheme();
+    });
+  });
+
+  editControlStyleButtons.forEach((editControlStyleButton) => {
+    editControlStyleButton.addEventListener("click", () => {
+      setPressed(editControlStyleButtons, editControlStyleButton);
+      if (template instanceof HTMLElement) {
+        template.dataset.recordManagementEditControlStyle = editControlStyleButton.dataset.recordManagementEditControlStyle ?? "compact";
       }
       applyCurrentRecordManagementTheme();
     });
@@ -680,7 +709,7 @@ if (mount instanceof HTMLElement) {
       };
     },
     entityHostOptions,
-    entitySelectorLabel: "Status Type",
+    entitySelectorLabel: "View",
     headerTools: [
       { icon: "upload", label: "Upload" },
       { icon: "export", label: "Export" },

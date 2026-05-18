@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kanbien Design System - Record Management List Centric Template</title>
     <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/assets/list-page-shared.css" />
     <link rel="stylesheet" href="/design-system/assets/conversationPanel.css" />
     <link rel="stylesheet" href="/design-system/assets/chatWorkspacePattern.css" />
   </head>
@@ -142,6 +143,14 @@
         </div>
 
         <div class="accessibility-group">
+          <p class="accessibility-label">Edit fields</p>
+          <div class="chip-row chip-row-single-line" role="group" aria-label="Edit fields">
+            <button class="accessibility-chip active" type="button" data-record-management-edit-control-style="compact" aria-pressed="true">Record cards</button>
+            <button class="accessibility-chip" type="button" data-record-management-edit-control-style="approved" aria-pressed="false">Approved form</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
           <p class="accessibility-label">Statuses</p>
           <div class="chip-row chip-row-single-line" role="group" aria-label="Statuses">
             <button class="accessibility-chip" type="button" data-record-management-status-count="4" aria-pressed="false">4 status</button>
@@ -160,7 +169,7 @@
         </div>
       </aside>
 
-      <main class="design-system-page-main build-work-panel-demo-page chat-workspace-pattern-page" data-record-management-list-centric-template data-record-management-drawer-view-mode="end_user">
+      <main class="design-system-page-main build-work-panel-demo-page chat-workspace-pattern-page" data-record-management-list-centric-template data-record-management-drawer-view-mode="end_user" data-record-management-edit-control-style="compact">
         <section class="record-management-template-frame" aria-label="Record management list-centric preview" data-record-management-template-frame data-filter-expanded="true">
           <aside class="record-management-filter-panel" aria-label="Record filters" data-record-management-filter-panel>
             <div class="record-management-filter-header">

@@ -1,11 +1,35 @@
 import { expect, test } from "@playwright/test";
 
+test("record management shell keeps top navigation centered with search", async ({ page }) => {
+  await page.setViewportSize({ width: 1000, height: 600 });
+  await page.goto("/design-system/templates/record_management_list_centric");
+
+  await expect(page.locator(".top-nav .primary-nav-links")).toBeVisible();
+  await expect(page.locator(".sub-nav .search-shell")).toBeVisible();
+
+  const geometry = await page.evaluate(() => {
+    const primaryNav = document.querySelector(".top-nav .primary-nav-links")?.getBoundingClientRect();
+    const searchShell = document.querySelector(".sub-nav .search-shell")?.getBoundingClientRect();
+    if (!primaryNav || !searchShell) {
+      return null;
+    }
+
+    return {
+      primaryNavCenter: Math.round(primaryNav.left + primaryNav.width / 2),
+      searchShellCenter: Math.round(searchShell.left + searchShell.width / 2),
+    };
+  });
+
+  expect(geometry).not.toBeNull();
+  expect(Math.abs((geometry?.primaryNavCenter ?? 0) - (geometry?.searchShellCenter ?? 0))).toBeLessThanOrEqual(1);
+});
+
 test("record management list-centric template renders the chat-derived record workspace", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/design-system/templates/record_management_list_centric");
 
   await expect(page.locator(".sub-nav .search-input")).toBeVisible();
-  await expect(page.locator(".breadcrumb-current")).toHaveAttribute("data-tooltip", "Home > Templates > record_management_list_centric");
+  await expect(page.locator(".breadcrumb-current")).toHaveAttribute("title", "Home > Templates > record_management_list_centric");
   await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-shell]")).toBeVisible();
   await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-shell]")).toHaveAttribute("data-chat-workspace-expanded", "true");
   await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-entity-workspace]")).toBeVisible();
@@ -23,7 +47,12 @@ test("record management list-centric template renders the chat-derived record wo
   await expect(page.locator("#record-management-display-settings-button")).toBeVisible();
   await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-joint-header] [data-chat-workspace-layer-trigger]")).toBeHidden();
   await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-secondary-list] [data-chat-workspace-layer-trigger]")).toContainText("Current");
-  await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-secondary-list] [data-chat-workspace-entity-selector-trigger] small")).toHaveText("Status Type");
+  await page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-secondary-list] [data-chat-workspace-layer-trigger]").click();
+  await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-secondary-list] [data-chat-workspace-layer-option='delivery']")).toContainText("current");
+  await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-secondary-list] [data-chat-workspace-layer-option='delivery']")).toContainText("Managed Records");
+  await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-secondary-list] [data-chat-workspace-layer-option='child-1']")).toContainText("18 records");
+  await page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-secondary-list] [data-chat-workspace-layer-trigger]").click();
+  await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-secondary-list] [data-chat-workspace-entity-selector-trigger] small")).toHaveText("View");
   await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-secondary-list] [data-chat-workspace-entity-selector-trigger] strong")).toHaveText("Managed Records");
   await expect(page.locator("[data-record-management-list-centric-mount] .floating-tab-card").filter({ hasText: "Draft" })).toBeVisible();
   await expect(page.locator('[data-record-management-list-centric-mount] .floating-tab-card[data-tab-label="Ready for Review"]')).toHaveAttribute(
@@ -33,6 +62,8 @@ test("record management list-centric template renders the chat-derived record wo
 
   const geometry = await page.evaluate(() => {
     const subNav = document.querySelector(".sub-nav")?.getBoundingClientRect();
+    const searchShell = document.querySelector(".sub-nav .search-shell")?.getBoundingClientRect();
+    const primaryNavLinks = document.querySelector(".top-nav .primary-nav-links")?.getBoundingClientRect();
     const contextNav = document.querySelector(".context-nav")?.getBoundingClientRect();
     const filterPanel = document.querySelector("[data-record-management-filter-panel]")?.getBoundingClientRect();
     const filterHeader = document.querySelector("[data-record-management-filter-panel] .record-management-filter-header")?.getBoundingClientRect();
@@ -51,12 +82,13 @@ test("record management list-centric template renders the chat-derived record wo
     const firstRow = document.querySelector("[data-record-management-list-centric-mount] .floating-tab-row")?.getBoundingClientRect();
     const recordWorkspace = document.querySelector("[data-record-management-list-centric-mount] [data-chat-workspace-entity-workspace]")?.getBoundingClientRect();
 
-    return subNav && contextNav && filterPanel && filterHeader && chatToolbar && secondaryHeader && secondaryLayerTrigger && entityTrigger && shell && tabs && firstTab && lastTab && listPanel && firstRow && recordWorkspace
+    return subNav && searchShell && primaryNavLinks && contextNav && filterPanel && filterHeader && chatToolbar && secondaryHeader && secondaryLayerTrigger && entityTrigger && shell && tabs && firstTab && lastTab && listPanel && firstRow && recordWorkspace
       ? {
           chatToolbarLeft: Math.round(chatToolbar.left),
           chatToolbarRight: Math.round(chatToolbar.right),
           chatToolbarTop: Math.round(chatToolbar.top),
           contextRight: Math.round(contextNav.right),
+          primaryNavCenter: Math.round(primaryNavLinks.left + primaryNavLinks.width / 2),
           filterHeaderHeight: Math.round(filterHeader.height),
           filterLeft: Math.round(filterPanel.left),
           filterRight: Math.round(filterPanel.right),
@@ -66,6 +98,7 @@ test("record management list-centric template renders the chat-derived record wo
           lastTabRight: Math.round(lastTab.right),
           recordWorkspaceLeft: Math.round(recordWorkspace.left),
           recordWorkspaceRight: Math.round(recordWorkspace.right),
+          searchShellCenter: Math.round(searchShell.left + searchShell.width / 2),
           shellBottom: Math.round(shell.bottom),
           shellLeft: Math.round(shell.left),
           shellRight: Math.round(shell.right),
@@ -84,6 +117,7 @@ test("record management list-centric template renders the chat-derived record wo
   });
 
   expect(geometry).not.toBeNull();
+  expect(Math.abs((geometry?.primaryNavCenter ?? 0) - (geometry?.searchShellCenter ?? 0))).toBeLessThanOrEqual(1);
   expect(Math.abs((geometry?.shellTop ?? 0) - (geometry?.subNavBottom ?? 0))).toBeLessThanOrEqual(1);
   expect(Math.abs((geometry?.filterLeft ?? 0) - (geometry?.contextRight ?? 0))).toBeLessThanOrEqual(1);
   expect(Math.abs((geometry?.shellLeft ?? 0) - (geometry?.contextRight ?? 0))).toBeLessThanOrEqual(1);
@@ -120,6 +154,11 @@ test("record management template exposes display drawer controls", async ({ page
   await expect(page.locator("[data-record-management-list-centric-template]")).toHaveAttribute("data-record-management-drawer-view-mode", "root");
   await page.locator("[data-record-management-drawer-view='end_user']").click();
   await expect(page.locator("[data-record-management-list-centric-template]")).toHaveAttribute("data-record-management-drawer-view-mode", "end_user");
+
+  await page.locator("[data-record-management-edit-control-style='approved']").click();
+  await expect(page.locator("[data-record-management-list-centric-template]")).toHaveAttribute("data-record-management-edit-control-style", "approved");
+  await page.locator("[data-record-management-edit-control-style='compact']").click();
+  await expect(page.locator("[data-record-management-list-centric-template]")).toHaveAttribute("data-record-management-edit-control-style", "compact");
 
   await page.locator("[data-record-management-status-count='16']").click();
   await expect(page.locator("[data-record-management-list-centric-mount] .floating-tab-header .floating-tab-card:not(.floating-tab-card-empty)")).toHaveCount(16);
@@ -182,25 +221,93 @@ test("record management list drawer shows end-user and root entity attribute vie
   await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-list-drawer]")).toBeVisible();
   await expect(page.locator("[data-record-management-user-attribute-view]")).toBeVisible();
   await expect(page.locator("[data-record-management-region-trigger='details']")).toHaveAttribute("aria-selected", "true");
-  await expect(page.locator("[data-record-management-region-panel='details']")).toContainText("Organization details");
+  await expect(page.locator("[data-record-management-region-panel='details']")).not.toContainText("Organization details");
   await expect(page.locator("[data-record-management-user-attribute-card='name']")).toContainText("Acme Operations");
-
-  await page.locator("[data-record-management-region-trigger='legal']").click();
-  await expect(page.locator("[data-record-management-user-attribute-card='legalProfile']")).toContainText("Acme Operations Ltd");
-
-  await page.locator("[data-record-management-region-trigger='locations']").click();
-  await expect(page.locator("[data-record-management-user-attribute-card='headquarters']")).toContainText("North Region HQ");
-
-  await page.locator("[data-record-management-region-trigger='branding']").click();
-  await expect(page.locator("[data-record-management-user-attribute-card='primaryLogo']")).toContainText("Primary logo ready");
-
-  await page.locator("[data-record-management-region-trigger='relationships']").click();
-  await expect(page.locator("[data-record-management-user-attribute-card='businessUnits']")).toContainText("North Region");
-  await expect(page.locator("[data-record-management-user-attribute-card='members']")).toContainText("Jordan Reyes");
-
-  await page.locator("[data-record-management-region-trigger='references']").click();
   await expect(page.locator("[data-record-management-user-attribute-card='industry']")).toContainText("Technology");
   await expect(page.locator("[data-record-management-user-attribute-card='tier']")).toContainText("Strategic");
+  await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Organization details");
+
+  const initialDrawerHeader = await page.evaluate(() => {
+    const header = document.querySelector("[data-chat-workspace-list-drawer] .chat-workspace-list-drawer-header");
+    const close = document.querySelector("[data-chat-workspace-list-drawer-close]");
+    if (!header || !close) {
+      return null;
+    }
+    const headerRect = header.getBoundingClientRect();
+    const closeRect = close.getBoundingClientRect();
+    const styles = window.getComputedStyle(header);
+    return {
+      borderBottomStyle: styles.borderBottomStyle,
+      closeRight: Math.round(closeRect.right),
+      headerRight: Math.round(headerRect.right),
+    };
+  });
+
+  expect(initialDrawerHeader).not.toBeNull();
+  expect(initialDrawerHeader?.borderBottomStyle).toBe("solid");
+  expect(Math.abs((initialDrawerHeader?.closeRight ?? 0) - (initialDrawerHeader?.headerRight ?? 0))).toBeLessThanOrEqual(1);
+
+  await expect(page.locator("[data-record-management-drawer-edit]")).toHaveText("Edit");
+  await page.locator("#record-management-display-settings-button").click();
+  await page.locator("[data-record-management-edit-control-style='approved']").click();
+  await page.locator("#record-management-display-settings-close").click();
+  await expect(page.locator("[data-record-management-list-centric-template]")).toHaveAttribute("data-record-management-edit-control-style", "approved");
+  await page.locator("[data-record-management-drawer-edit]").click();
+  await expect(page.locator("[data-chat-workspace-list-drawer]")).toHaveAttribute("data-record-management-edit-mode", "true");
+  await expect(page.locator("[data-record-management-drawer-edit]")).toHaveText("Done");
+  await expect(page.locator("[data-record-management-editable-field] input[name='record-management-name']")).toBeVisible();
+  await expect(page.locator("[data-record-management-editable-field] input[name='record-management-name']")).toBeFocused();
+  await expect(page.locator("[data-record-management-editable-field] input[name='record-management-name']")).toHaveClass(/drawer-form-input/);
+  await expect(page.locator("[data-record-management-editable-field] select[name='record-management-industry']")).toBeVisible();
+  await expect(page.locator("[data-record-management-editable-field] select[name='record-management-tier']")).toBeVisible();
+  await expect(page.locator("[data-record-management-user-attribute-card='name'] [data-record-management-readonly-value]")).toBeHidden();
+  await page.locator("[data-record-management-drawer-edit]").click();
+  await expect(page.locator("[data-chat-workspace-list-drawer]")).toHaveAttribute("data-record-management-edit-mode", "false");
+
+  await page.locator("[data-record-management-region-trigger='legal']").click();
+  await expect(page.locator("[data-record-management-region-panel='legal']")).toContainText("Registration number");
+  await expect(page.locator("[data-record-management-region-panel='legal']")).toContainText("VAT number");
+  await expect(page.locator("[data-record-management-address-card='registeredAddress']")).toContainText("Registered address");
+  await expect(page.locator("[data-record-management-address-card='registeredAddress']")).toContainText("18 Legal Row");
+  await expect(page.locator("[data-record-management-address-card='registeredAddress']")).toContainText("Dublin 2");
+  await expect(page.locator("[data-record-management-address-card='registeredAddress']")).toContainText("Ireland");
+
+  await page.locator("[data-record-management-region-trigger='relationships']").click();
+  await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Business units");
+  await expect(page.locator("[data-record-management-drawer-region-description]")).toHaveText("Only direct child business units from the next layer down are shown here.");
+  await expect(page.locator("[data-record-management-nested-trigger='business-units']")).toContainText("3 direct units");
+  await expect(page.locator("[data-record-management-nested-panel='business-units']")).toContainText("North Region");
+
+  await page.locator("[data-record-management-region-trigger='members']").click();
+  await expect(page.locator("[data-record-management-nested-trigger='tenant-admins']")).toContainText("2 members");
+  await expect(page.locator("[data-record-management-nested-panel='tenant-admins']")).toContainText("Jordan Reyes");
+  await page.locator("[data-record-management-nested-trigger='business-unit-owners']").click();
+  await expect(page.locator("[data-record-management-nested-panel='business-unit-owners']")).toContainText("Kim Anders");
+  await page.locator("[data-record-management-nested-trigger='regular-members']").click();
+  await expect(page.locator("[data-record-management-nested-panel='regular-members']")).toContainText("Priya Shah");
+
+  await page.locator("[data-record-management-region-trigger='locations']").click();
+  await expect(page.locator("[data-record-management-nested-trigger='locations-eu']")).toContainText("4 locations");
+  await expect(page.locator("[data-record-management-nested-panel='locations-eu']")).toContainText("North Region HQ");
+  await page.locator("[data-record-management-nested-trigger='locations-apac']").click();
+  await expect(page.locator("[data-record-management-nested-panel='locations-apac']")).toContainText("Singapore hub");
+
+  await page.locator("[data-record-management-region-trigger='branding']").click();
+  await expect(page.locator("[data-record-management-region-panel='branding']")).toContainText("Primary colour");
+  await expect(page.locator("[data-record-management-region-panel='branding']")).toContainText("#0f766e");
+  await expect(page.locator("[data-record-management-region-panel='branding'] [data-record-management-nested-trigger='logos']")).toHaveCount(0);
+  await expect(page.locator("[data-record-management-region-panel='branding'] [data-record-management-nested-trigger]")).toHaveCount(3);
+  await expect(page.locator("[data-record-management-nested-trigger='logo-primary']")).toContainText("Primary mark");
+  await expect(page.locator("[data-record-management-nested-panel='logo-primary'] [data-form-image-card]")).toBeVisible();
+  await expect(page.locator("[data-record-management-nested-panel='logo-primary'] [data-form-image-card-edit]")).toHaveAccessibleName("Edit logo asset for Primary mark");
+  await expect(page.locator("[data-record-management-nested-panel='logo-primary'] [data-record-management-logo-edit-surface]")).toBeHidden();
+  await page.locator("[data-record-management-nested-trigger='logo-square']").click();
+  await expect(page.locator("[data-record-management-nested-panel='logo-square']")).toContainText("Square icon");
+  await page.locator("[data-record-management-drawer-edit]").click();
+  await expect(page.locator("[data-record-management-nested-panel='logo-square'] [data-record-management-logo-edit-surface]")).toBeVisible();
+  await expect(page.locator("[data-record-management-nested-panel='logo-square'] [data-form-upload-dropzone]")).toBeVisible();
+  await page.locator("[data-record-management-drawer-edit]").click();
+
   await expect(page.locator("[data-record-management-attribute-view]")).toBeHidden();
 
   await page.locator("#record-management-display-settings-button").click();

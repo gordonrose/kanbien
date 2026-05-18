@@ -21,8 +21,14 @@ const organizationEntityDefinitionPreview = Object.freeze({
     {
       groupKey: "relationships",
       label: "Structure",
-      description: "Org tree, business units, and members connected to this organization.",
+      description: "The next organization layer below the current record.",
       displayOrder: 20,
+    },
+    {
+      groupKey: "members",
+      label: "Members",
+      description: "Membership lists grouped by authority or participation tier.",
+      displayOrder: 25,
     },
     {
       groupKey: "legal",
@@ -41,12 +47,6 @@ const organizationEntityDefinitionPreview = Object.freeze({
       label: "Branding",
       description: "Primary logo and public brand presentation references.",
       displayOrder: 50,
-    },
-    {
-      groupKey: "references",
-      label: "Reference data",
-      description: "Approved catalogue values such as type, industry, and tier.",
-      displayOrder: 60,
     },
   ]),
   attributes: Object.freeze([
@@ -177,7 +177,7 @@ const organizationEntityDefinitionPreview = Object.freeze({
         navigationPosture: "navigable",
       },
       placements: [
-        { surfaceKey: "listDrawer", regionKey: "membershipPanel", groupKey: "relationships", displayOrder: 20, elementKey: "relationshipList", interactionMode: "read_only", visibilityMode: "default_visible" },
+        { surfaceKey: "listDrawer", regionKey: "membershipPanel", groupKey: "members", displayOrder: 20, elementKey: "relationshipList", interactionMode: "read_only", visibilityMode: "default_visible" },
       ],
       sampleValue: "12 active members",
     },
@@ -349,6 +349,123 @@ const organizationEntityDefinitionPreview = Object.freeze({
   ]),
 });
 
+const organizationNestedLists = Object.freeze({
+  businessUnits: Object.freeze({
+    label: "Business units",
+    description: "Next layer down only from the current organization.",
+    summary: "3 direct units",
+    groups: Object.freeze([
+      {
+        label: "Current children",
+        items: Object.freeze([
+          { title: "North Region", meta: "Owner: Jordan Reyes", badge: "Active" },
+          { title: "Implementation", meta: "Owner: Kim Anders", badge: "Active" },
+          { title: "Support Operations", meta: "Owner needed", badge: "Review" },
+        ]),
+      },
+    ]),
+  }),
+  tenantAdmins: Object.freeze({
+    label: "Tenant admins",
+    description: "Members with tenant administration responsibility for this organization context.",
+    summary: "2 members",
+    groups: Object.freeze([
+      {
+        label: "Tenant admins",
+        items: Object.freeze([
+          { title: "Jordan Reyes", meta: "Primary tenant admin", badge: "Owner" },
+          { title: "Mara Okafor", meta: "Backup tenant admin", badge: "Admin" },
+        ]),
+      },
+    ]),
+  }),
+  businessUnitOwners: Object.freeze({
+    label: "Business unit owners",
+    description: "Members accountable for a business unit under this organization.",
+    summary: "3 owners",
+    groups: Object.freeze([
+      {
+        label: "Business unit owners",
+        items: Object.freeze([
+          { title: "Kim Anders", meta: "Implementation", badge: "Owner" },
+          { title: "Rina Patel", meta: "Support Operations", badge: "Owner" },
+          { title: "Owen Walsh", meta: "North Region", badge: "Owner" },
+        ]),
+      },
+    ]),
+  }),
+  regularMembers: Object.freeze({
+    label: "Regular members",
+    description: "Standard participating members without owner or tenant-admin tier.",
+    summary: "7 members",
+    groups: Object.freeze([
+      {
+        label: "Regular members",
+        items: Object.freeze([
+          { title: "Priya Shah", meta: "Implementation", badge: "Member" },
+          { title: "Liam Chen", meta: "North Region", badge: "Member" },
+          { title: "Noor Hassan", meta: "Support Operations", badge: "Member" },
+          { title: "Elena Ruiz", meta: "Implementation", badge: "Viewer" },
+        ]),
+      },
+    ]),
+  }),
+  locationsEu: Object.freeze({
+    label: "EU",
+    description: "Configurable location grouping for European sites.",
+    summary: "4 locations",
+    groups: Object.freeze([
+      {
+        label: "EU locations",
+        items: Object.freeze([
+          { title: "Dublin registered office", meta: "Registered office", badge: "Active" },
+          { title: "North Region HQ", meta: "Head office", badge: "Active" },
+          { title: "Berlin field site", meta: "Sales office", badge: "Active" },
+        ]),
+      },
+    ]),
+  }),
+  locationsMena: Object.freeze({
+    label: "MENA",
+    description: "Configurable location grouping for Middle East and North Africa sites.",
+    summary: "2 locations",
+    groups: Object.freeze([
+      {
+        label: "MENA locations",
+        items: Object.freeze([
+          { title: "Dubai operations", meta: "Regional office", badge: "Active" },
+          { title: "Riyadh partner desk", meta: "Partner location", badge: "Review" },
+        ]),
+      },
+    ]),
+  }),
+  locationsApac: Object.freeze({
+    label: "APAC",
+    description: "Configurable location grouping for Asia-Pacific sites.",
+    summary: "3 locations",
+    groups: Object.freeze([
+      {
+        label: "APAC locations",
+        items: Object.freeze([
+          { title: "Singapore hub", meta: "Operations hub", badge: "Active" },
+          { title: "Sydney support", meta: "Support office", badge: "Active" },
+          { title: "Tokyo liaison", meta: "Representative office", badge: "Planned" },
+        ]),
+      },
+    ]),
+  }),
+  logos: Object.freeze({
+    label: "Logos",
+    description: "Logo relationships attached to this organization branding context.",
+    summary: "3 logos",
+    items: Object.freeze([
+      { key: "logo-primary", title: "Primary mark", meta: "PNG, ready for public delivery", badge: "Primary", preview: "primary", summary: "Public delivery", alt: "Acme Operations primary logo" },
+      { key: "logo-square", title: "Square icon", meta: "WebP, internal preview", badge: "Ready", preview: "square", summary: "App icon", alt: "Acme Operations square icon" },
+      { key: "logo-mono", title: "Monochrome mark", meta: "JPEG, pending review", badge: "Review", preview: "mono", summary: "Review needed", alt: "Acme Operations monochrome logo" },
+    ]),
+  }),
+});
+
 function getAttributePlacement(attribute, surfaceKey) {
   return (attribute.placements ?? []).find((placement) => placement.surfaceKey === surfaceKey);
 }
@@ -375,6 +492,46 @@ function renderAttributeChips(attribute, placement = null) {
     .filter(Boolean)
     .map((chip) => `<span>${escapeHtml(chip)}</span>`)
     .join("");
+}
+
+function isRecordManagementDrawerEditableAttribute(attribute) {
+  return !attribute.systemManaged && attribute.mutability === "updateable";
+}
+
+function renderRecordManagementEditableControl(attribute) {
+  const inputName = `record-management-${attribute.attributeKey}`;
+  if (attribute.attributeKey === "industry") {
+    return `
+      <label class="record-management-editable-field drawer-form-field" data-record-management-editable-field>
+        <span class="drawer-form-label">${escapeHtml(attribute.label)}</span>
+        <select class="drawer-form-input" name="${escapeHtml(inputName)}">
+          <option selected>Technology</option>
+          <option>Financial services</option>
+          <option>Healthcare</option>
+          <option>Education</option>
+        </select>
+      </label>
+    `;
+  }
+  if (attribute.attributeKey === "tier") {
+    return `
+      <label class="record-management-editable-field drawer-form-field" data-record-management-editable-field>
+        <span class="drawer-form-label">${escapeHtml(attribute.label)}</span>
+        <select class="drawer-form-input" name="${escapeHtml(inputName)}">
+          <option>Standard</option>
+          <option selected>Strategic</option>
+          <option>Enterprise</option>
+          <option>Watchlist</option>
+        </select>
+      </label>
+    `;
+  }
+  return `
+    <label class="record-management-editable-field drawer-form-field" data-record-management-editable-field>
+      <span class="drawer-form-label">${escapeHtml(attribute.label)}</span>
+      <input class="drawer-form-input" type="text" name="${escapeHtml(inputName)}" value="${escapeHtml(attribute.sampleValue)}" />
+    </label>
+  `;
 }
 
 function renderAttributeCard(attribute, placement = null, { compact = false } = {}) {
@@ -437,6 +594,8 @@ function renderRecordManagementRegionShell({ label, regions }) {
                 aria-selected="${isActive ? "true" : "false"}"
                 aria-controls="record-management-region-${escapeHtml(region.key)}"
                 data-record-management-region-trigger="${escapeHtml(region.key)}"
+                data-record-management-region-header-label="${escapeHtml(region.headerLabel ?? region.label)}"
+                data-record-management-region-header-description="${escapeHtml(region.headerDescription ?? "")}"
               >
                 <span>${escapeHtml(region.label)}</span>
                 <strong>${escapeHtml(region.count)} ${region.count === 1 ? "item" : "items"}</strong>
@@ -468,6 +627,23 @@ function renderRecordManagementRegionShell({ label, regions }) {
 }
 
 function installRecordManagementRegionIndex(drawer) {
+  drawer.addEventListener("click", (event) => {
+    const trigger = event.target instanceof Element
+      ? event.target.closest("[data-record-management-drawer-edit]")
+      : null;
+    if (!(trigger instanceof HTMLElement)) {
+      return;
+    }
+    const isEditing = drawer.dataset.recordManagementEditMode === "true";
+    const nextEditing = !isEditing;
+    drawer.dataset.recordManagementEditMode = String(nextEditing);
+    trigger.setAttribute("aria-pressed", String(nextEditing));
+    trigger.textContent = nextEditing ? "Done" : "Edit";
+    if (nextEditing) {
+      drawer.querySelector("[data-record-management-editable-field] input, [data-record-management-editable-field] select, [data-form-image-card-edit]")?.focus();
+    }
+  });
+
   const shells = Array.from(drawer.querySelectorAll("[data-record-management-region-shell]"));
   shells.forEach((shell) => {
     shell.addEventListener("click", (event) => {
@@ -492,6 +668,42 @@ function installRecordManagementRegionIndex(drawer) {
         }
         panel.hidden = panel.dataset.recordManagementRegionPanel !== key;
       });
+      const drawer = shell.closest("[data-chat-workspace-list-drawer]");
+      const title = drawer?.querySelector("[data-record-management-drawer-region-title]");
+      const description = drawer?.querySelector("[data-record-management-drawer-region-description]");
+      if (title instanceof HTMLElement) {
+        title.textContent = trigger.dataset.recordManagementRegionHeaderLabel ?? "";
+      }
+      if (description instanceof HTMLElement) {
+        description.textContent = trigger.dataset.recordManagementRegionHeaderDescription ?? "";
+      }
+    });
+  });
+
+  const nestedLists = Array.from(drawer.querySelectorAll("[data-record-management-nested-list]"));
+  nestedLists.forEach((nestedList) => {
+    nestedList.addEventListener("click", (event) => {
+      const trigger = event.target instanceof Element
+        ? event.target.closest("[data-record-management-nested-trigger]")
+        : null;
+      if (!(trigger instanceof HTMLElement)) {
+        return;
+      }
+      const key = trigger.dataset.recordManagementNestedTrigger;
+      if (!key) {
+        return;
+      }
+      nestedList.querySelectorAll("[data-record-management-nested-trigger]").forEach((candidate) => {
+        const isActive = candidate instanceof HTMLElement && candidate.dataset.recordManagementNestedTrigger === key;
+        candidate.classList.toggle("is-active", isActive);
+        candidate.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+      nestedList.querySelectorAll("[data-record-management-nested-panel]").forEach((panel) => {
+        if (!(panel instanceof HTMLElement)) {
+          return;
+        }
+        panel.hidden = panel.dataset.recordManagementNestedPanel !== key;
+      });
     });
   });
 }
@@ -508,6 +720,8 @@ function renderRecordManagementRootAttributeView(selected) {
       return {
         key: group.groupKey,
         label: group.label,
+        headerLabel: group.label,
+        headerDescription: group.description,
         count: grouped.length,
         content: `
         <section class="record-management-attribute-group" aria-label="${escapeHtml(group.label)} attributes">
@@ -533,6 +747,8 @@ function renderRecordManagementRootAttributeView(selected) {
     {
       key: "elsewhere",
       label: "Elsewhere",
+      headerLabel: "Attributes outside the drawer",
+      headerDescription: "Definition attributes that are not placed in this drawer surface.",
       count: otherAttributes.length,
       content: `
         <section class="record-management-attribute-group record-management-attribute-group-muted" aria-label="Attributes used elsewhere">
@@ -628,70 +844,415 @@ function renderEndUserAttributeCard(attribute, placement) {
     `,
   };
   const relatedRows = relatedRowsByAttribute[attribute.attributeKey] ?? "";
+  const isEditable = isRecordManagementDrawerEditableAttribute(attribute);
   return `
-    <article class="record-management-user-attribute-card" data-record-management-user-attribute-card="${escapeHtml(attribute.attributeKey)}">
-      <div>
+    <article class="record-management-user-attribute-card" data-record-management-user-attribute-card="${escapeHtml(attribute.attributeKey)}" ${isEditable ? 'data-record-management-editable-card="true"' : ""}>
+      <div data-record-management-readonly-value>
         <span>${escapeHtml(attribute.label)}</span>
         <strong>${escapeHtml(attribute.sampleValue)}</strong>
         <p>${escapeHtml(attribute.description)}</p>
       </div>
+      ${isEditable ? renderRecordManagementEditableControl(attribute) : ""}
       ${placement.elementKey === "relationshipList" ? relatedRows : ""}
     </article>
   `;
 }
 
+function renderNestedListPicker({ label, description, items }) {
+  const activeKey = items[0]?.key ?? "";
+  return `
+    <section class="record-management-nested-list" aria-label="${escapeHtml(label)}" data-record-management-nested-list>
+      <div class="record-management-nested-list-header">
+        <div>
+          <h5>${escapeHtml(label)}</h5>
+          <p>${escapeHtml(description)}</p>
+        </div>
+      </div>
+      <div class="record-management-nested-list-layout">
+        <div class="record-management-nested-list-cards">
+          ${items.map((item) => {
+            const isActive = item.key === activeKey;
+            return `
+              <button
+                class="record-management-nested-list-card${isActive ? " is-active" : ""}"
+                type="button"
+                aria-pressed="${isActive ? "true" : "false"}"
+                data-record-management-nested-trigger="${escapeHtml(item.key)}"
+              >
+                <span>
+                  <strong>${escapeHtml(item.label)}</strong>
+                  <small>${escapeHtml(item.description)}</small>
+                </span>
+                <em>${escapeHtml(item.summary)}</em>
+              </button>
+            `;
+          }).join("")}
+        </div>
+        <div class="record-management-nested-list-drawer">
+          ${items.map((item) => {
+            const isActive = item.key === activeKey;
+            return `
+              <section data-record-management-nested-panel="${escapeHtml(item.key)}" ${isActive ? "" : "hidden"}>
+                <div class="record-management-nested-list-drawer-header">
+                  <span>${escapeHtml(item.label)}</span>
+                  <strong>${escapeHtml(item.summary)}</strong>
+                  <p>${escapeHtml(item.description)}</p>
+                </div>
+                <div class="record-management-nested-list-rows">
+                  ${item.groups.map((group) => `
+                    <div class="record-management-nested-list-group">
+                      <h6>${escapeHtml(group.label)}</h6>
+                      ${group.items.map((row) => `
+                        <article>
+                          ${row.preview ? `<div class="record-management-logo-preview" data-logo-preview="${escapeHtml(row.preview)}" aria-label="${escapeHtml(row.title)} preview"><span>AC</span></div>` : ""}
+                          <span>
+                            <strong>${escapeHtml(row.title)}</strong>
+                            <small>${escapeHtml(row.meta)}</small>
+                          </span>
+                          <em>${escapeHtml(row.badge)}</em>
+                        </article>
+                      `).join("")}
+                    </div>
+                  `).join("")}
+                </div>
+              </section>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderNestedListPanel(item) {
+  return `
+    <div class="record-management-nested-list-drawer record-management-nested-list-drawer-direct" data-record-management-nested-panel="${escapeHtml(item.key)}">
+      <div class="record-management-nested-list-drawer-header">
+        <span>${escapeHtml(item.label)}</span>
+        <strong>${escapeHtml(item.summary)}</strong>
+        <p>${escapeHtml(item.description)}</p>
+      </div>
+      <div class="record-management-nested-list-rows">
+        ${item.groups.map((group) => `
+          <div class="record-management-nested-list-group">
+            <h6>${escapeHtml(group.label)}</h6>
+            ${group.items.map((row) => `
+              <article>
+                ${row.preview ? `<div class="record-management-logo-preview" data-logo-preview="${escapeHtml(row.preview)}" aria-label="${escapeHtml(row.title)} preview"><span>AC</span></div>` : ""}
+                <span>
+                  <strong>${escapeHtml(row.title)}</strong>
+                  <small>${escapeHtml(row.meta)}</small>
+                </span>
+                <em>${escapeHtml(row.badge)}</em>
+              </article>
+            `).join("")}
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderLogoPreviewGraphic(preview, label) {
+  return `<span class="record-management-logo-preview" data-logo-preview="${escapeHtml(preview)}" aria-label="${escapeHtml(label)} preview"><span>AC</span></span>`;
+}
+
+function renderLogoUploadField(asset) {
+  const inputId = `record-management-${asset.key}-upload`;
+  return `
+    <div class="record-management-logo-edit-surface" data-record-management-logo-edit-surface>
+      <span class="form-field-label" id="${escapeHtml(inputId)}-label">Replace logo asset</span>
+      <div
+        class="form-upload-field"
+        data-form-upload-field
+        data-form-upload-state="idle"
+      >
+        <input
+          id="${escapeHtml(inputId)}"
+          class="form-upload-input"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          aria-labelledby="${escapeHtml(inputId)}-label"
+          aria-describedby="${escapeHtml(inputId)}-help ${escapeHtml(inputId)}-status"
+          data-form-upload-input
+        />
+        <label class="form-upload-dropzone" for="${escapeHtml(inputId)}" data-form-upload-dropzone>
+          <span class="form-upload-preview" aria-hidden="true">
+            <span class="form-upload-preview-art form-upload-preview-art-image"><span></span></span>
+          </span>
+          <span class="form-upload-copy">
+            <strong data-form-upload-title>Drop a replacement logo here</strong>
+            <span data-form-upload-summary>or choose PNG, JPEG, or WebP from this device</span>
+          </span>
+          <span class="form-upload-action">Browse</span>
+        </label>
+        <div class="form-upload-status" id="${escapeHtml(inputId)}-status" aria-live="polite">
+          <span class="form-upload-status-dot" aria-hidden="true"></span>
+          <span data-form-upload-status-copy>No replacement selected</span>
+        </div>
+        <div class="form-upload-progress" aria-hidden="true">
+          <span data-form-upload-progress-bar></span>
+        </div>
+      </div>
+      <span class="form-field-help" id="${escapeHtml(inputId)}-help">Preview only; no file bytes are read or persisted.</span>
+    </div>
+  `;
+}
+
+function renderLogoAssetPicker({ label, description, assets }) {
+  const activeKey = assets[0]?.key ?? "";
+  return `
+    <section class="record-management-nested-list record-management-logo-asset-list" aria-label="${escapeHtml(label)}" data-record-management-nested-list data-record-management-logo-asset-list>
+      <div class="record-management-nested-list-header">
+        <div>
+          <h5>${escapeHtml(label)}</h5>
+          <p>${escapeHtml(description)}</p>
+        </div>
+      </div>
+      <div class="record-management-nested-list-layout">
+        <div class="record-management-nested-list-cards">
+          ${assets.map((asset) => {
+            const isActive = asset.key === activeKey;
+            return `
+              <button
+                class="record-management-nested-list-card${isActive ? " is-active" : ""}"
+                type="button"
+                aria-pressed="${isActive ? "true" : "false"}"
+                data-record-management-nested-trigger="${escapeHtml(asset.key)}"
+              >
+                <span>
+                  <strong>${escapeHtml(asset.title)}</strong>
+                  <small>${escapeHtml(asset.meta)}</small>
+                </span>
+                <em>${escapeHtml(asset.badge)}</em>
+              </button>
+            `;
+          }).join("")}
+        </div>
+        <div class="record-management-nested-list-drawer">
+          ${assets.map((asset) => {
+            const isActive = asset.key === activeKey;
+            return `
+              <section data-record-management-nested-panel="${escapeHtml(asset.key)}" ${isActive ? "" : "hidden"}>
+                <article class="record-management-logo-asset-detail" data-record-management-logo-asset-detail="${escapeHtml(asset.key)}">
+                  <div class="record-management-nested-list-drawer-header">
+                    <span>${escapeHtml(asset.badge)}</span>
+                    <strong>${escapeHtml(asset.title)}</strong>
+                    <p>${escapeHtml(asset.meta)}</p>
+                  </div>
+                  <article class="form-image-card" aria-labelledby="${escapeHtml(asset.key)}-title" data-form-image-card data-form-image-card-variant="person-full">
+                    <div class="form-image-card-media" data-form-image-card-media>
+                      <span class="form-image-card-placeholder" aria-hidden="true">
+                        ${renderLogoPreviewGraphic(asset.preview, asset.title)}
+                      </span>
+                      <button class="form-image-card-edit" type="button" aria-label="Edit logo asset for ${escapeHtml(asset.title)}" data-form-image-card-edit>
+                        <svg viewBox="0 0 24 24" focusable="false"><path d="m4 16.5-.5 4 4-.5L18.8 8.7 15.3 5.2Zm12-12 1.2-1.2a1.7 1.7 0 0 1 2.4 0l1.1 1.1a1.7 1.7 0 0 1 0 2.4L19.5 8" /></svg>
+                      </button>
+                    </div>
+                    <div class="form-image-card-copy">
+                      <strong id="${escapeHtml(asset.key)}-title">${escapeHtml(asset.title)}</strong>
+                      <span>${escapeHtml(asset.summary)}</span>
+                      <small>${escapeHtml(asset.alt)}</small>
+                    </div>
+                  </article>
+                  ${renderLogoUploadField(asset)}
+                </article>
+              </section>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function renderScalarDetailCard({ label, value, description }) {
+  return `
+    <article class="record-management-user-attribute-card">
+      <div>
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(value)}</strong>
+        <p>${escapeHtml(description)}</p>
+      </div>
+    </article>
+  `;
+}
+
+function renderRegisteredAddressCard() {
+  return `
+    <article class="record-management-address-card" data-record-management-address-card="registeredAddress">
+      <span>Registered address</span>
+      <address>
+        <strong>18 Legal Row</strong>
+        <strong>Dublin 2</strong>
+        <strong>Ireland</strong>
+      </address>
+      <p>Address used for legal correspondence.</p>
+    </article>
+  `;
+}
+
+function renderDetailsRegion(overviewAttributes) {
+  const nameAttribute = overviewAttributes.find(({ attribute }) => attribute.attributeKey === "name")?.attribute;
+  const industryAttribute = overviewAttributes.find(({ attribute }) => attribute.attributeKey === "industry")?.attribute;
+  const tierAttribute = overviewAttributes.find(({ attribute }) => attribute.attributeKey === "tier")?.attribute;
+  return `
+    <section class="record-management-user-attribute-group" aria-label="Primary details">
+      <div class="record-management-user-attribute-group-header">
+        <h5>Primary details</h5>
+        <p>Root Organization facts and reference data that identify the record.</p>
+      </div>
+      <div class="record-management-user-attribute-list">
+        ${nameAttribute ? renderEndUserAttributeCard(nameAttribute, getAttributePlacement(nameAttribute, "listDrawer")) : ""}
+        ${industryAttribute ? renderEndUserAttributeCard(industryAttribute, getAttributePlacement(industryAttribute, "listDrawer")) : ""}
+        ${tierAttribute ? renderEndUserAttributeCard(tierAttribute, getAttributePlacement(tierAttribute, "listDrawer")) : ""}
+      </div>
+    </section>
+  `;
+}
+
+function renderStructureRegion() {
+  return renderNestedListPicker({
+    label: "Business units",
+    description: "Only direct child business units from the next layer down are shown here.",
+    items: [
+      { key: "business-units", ...organizationNestedLists.businessUnits },
+    ],
+  });
+}
+
+function renderMembersRegion() {
+  return renderNestedListPicker({
+    label: "Members",
+    description: "Membership lists are grouped by the tier that governs how users scan and action them.",
+    items: [
+      { key: "tenant-admins", ...organizationNestedLists.tenantAdmins },
+      { key: "business-unit-owners", ...organizationNestedLists.businessUnitOwners },
+      { key: "regular-members", ...organizationNestedLists.regularMembers },
+    ],
+  });
+}
+
+function renderLegalRegion() {
+  return `
+    <section class="record-management-user-attribute-group" aria-label="Legal details">
+      <div class="record-management-user-attribute-group-header">
+        <h5>Legal details</h5>
+        <p>Official legal profile fields that users need without opening a separate record.</p>
+      </div>
+      <div class="record-management-field-grid">
+        ${renderScalarDetailCard({
+          label: "Legal name",
+          value: "Acme Operations Ltd",
+          description: "Current active legal profile.",
+        })}
+        ${renderScalarDetailCard({
+          label: "Registration number",
+          value: "IE-77842",
+          description: "Official registration identifier.",
+        })}
+        ${renderScalarDetailCard({
+          label: "VAT number",
+          value: "IE998877A",
+          description: "Tax/VAT value retained on the legal profile.",
+        })}
+      </div>
+      ${renderRegisteredAddressCard()}
+    </section>
+  `;
+}
+
+function renderLocationsRegion() {
+  return renderNestedListPicker({
+    label: "Locations",
+    description: "Location grouping is configurable; this preview uses EU, MENA, and APAC.",
+    items: [
+      { key: "locations-eu", ...organizationNestedLists.locationsEu },
+      { key: "locations-mena", ...organizationNestedLists.locationsMena },
+      { key: "locations-apac", ...organizationNestedLists.locationsApac },
+    ],
+  });
+}
+
+function renderBrandingRegion() {
+  return `
+    <section class="record-management-user-attribute-group" aria-label="Branding">
+      <div class="record-management-user-attribute-group-header">
+        <h5>Branding</h5>
+        <p>Branding shows the current primary colour alongside logo relationships.</p>
+      </div>
+      <div class="record-management-branding-summary">
+        <span aria-hidden="true"></span>
+        <div>
+          <strong>Primary colour</strong>
+          <p>#0f766e</p>
+        </div>
+      </div>
+      ${renderLogoAssetPicker({
+        label: organizationNestedLists.logos.label,
+        description: organizationNestedLists.logos.description,
+        assets: organizationNestedLists.logos.items,
+      })}
+    </section>
+  `;
+}
+
 function renderRecordManagementEndUserAttributeView() {
   const { definition, drawerAttributes } = getDrawerAttributeGroups();
-  const overviewAttributes = drawerAttributes.filter(({ placement }) => placement.groupKey === "identity");
-  const groupRegions = [...definition.presentationGroups]
-    .sort((left, right) => left.displayOrder - right.displayOrder)
-    .map((group) => {
-      const grouped = drawerAttributes.filter(({ placement }) => placement.groupKey === group.groupKey);
-      if (!grouped.length || group.groupKey === "identity") {
-        return null;
-      }
-      return {
-        key: group.groupKey,
-        label: group.label,
-        count: grouped.length,
-        content: `
-        <section class="record-management-user-attribute-group" aria-label="${escapeHtml(group.label)}">
-          <div class="record-management-user-attribute-group-header">
-            <h5>${escapeHtml(group.label)}</h5>
-            <p>${escapeHtml(group.description)}</p>
-          </div>
-          <div class="record-management-user-attribute-list">
-            ${grouped.map(({ attribute, placement }) => renderEndUserAttributeCard(attribute, placement)).join("")}
-          </div>
-        </section>
-      `,
-      };
-    })
-    .filter(Boolean);
+  const overviewAttributes = drawerAttributes.filter(({ placement }) => (
+    placement.groupKey === "identity"
+    || placement.groupKey === "references"
+  ));
 
   const regions = [
     {
       key: "details",
       label: "Details",
-      count: overviewAttributes.length + 1,
-      content: `
-        <div class="record-management-user-attribute-hero">
-          <span>${escapeHtml(definition.entityKey)}</span>
-          <h5>${escapeHtml(definition.label)} details</h5>
-          <p>${escapeHtml(definition.description)}</p>
-        </div>
-        <section class="record-management-user-attribute-group" aria-label="Primary details">
-          <div class="record-management-user-attribute-group-header">
-            <h5>Primary details</h5>
-            <p>Root Organization facts that make the record recognizable before related regions are opened.</p>
-          </div>
-          <div class="record-management-user-attribute-list">
-            ${overviewAttributes.map(({ attribute, placement }) => renderEndUserAttributeCard(attribute, placement)).join("")}
-          </div>
-        </section>
-      `,
+      headerLabel: "Organization details",
+      headerDescription: "Root Organization facts and reference data that identify the record.",
+      count: 3,
+      content: renderDetailsRegion(overviewAttributes),
     },
-    ...groupRegions,
+    {
+      key: "relationships",
+      label: "Structure",
+      headerLabel: "Business units",
+      headerDescription: "Only direct child business units from the next layer down are shown here.",
+      count: 1,
+      content: renderStructureRegion(),
+    },
+    {
+      key: "members",
+      label: "Members",
+      headerLabel: "Members",
+      headerDescription: "Membership lists grouped by tenant admins, business unit owners, and regular members.",
+      count: 3,
+      content: renderMembersRegion(),
+    },
+    {
+      key: "legal",
+      label: "Legal details",
+      headerLabel: "Legal details",
+      headerDescription: "Official legal profile fields that users need without opening a separate record.",
+      count: 4,
+      content: renderLegalRegion(),
+    },
+    {
+      key: "locations",
+      label: "Locations",
+      headerLabel: "Locations",
+      headerDescription: "Location grouping is configurable; this preview uses EU, MENA, and APAC.",
+      count: 3,
+      content: renderLocationsRegion(),
+    },
+    {
+      key: "branding",
+      label: "Branding",
+      headerLabel: "Branding",
+      headerDescription: "Branding shows the current primary colour alongside logo relationships.",
+      count: 2,
+      content: renderBrandingRegion(),
+    },
   ];
 
   return `
@@ -797,6 +1358,7 @@ export function renderChatWorkspaceListDrawer({ entityWorkspace, selected }) {
 
   entityWorkspace.dataset.chatWorkspaceDrawerOpen = selected ? "true" : "false";
   drawer.hidden = !selected;
+  drawer.dataset.recordManagementEditMode = "false";
   if (!selected) {
     drawer.replaceChildren();
     return;
@@ -840,11 +1402,18 @@ export function renderChatWorkspaceListDrawer({ entityWorkspace, selected }) {
 
   drawer.innerHTML = `
     <div class="chat-workspace-list-drawer-header">
-      <button class="icon-button" type="button" aria-label="Close item detail" data-chat-workspace-list-drawer-close>
-        <span class="icon-button-glyph" aria-hidden="true">
-          <svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg>
-        </span>
-      </button>
+      <div class="chat-workspace-list-drawer-header-copy">
+        <h4 data-record-management-drawer-region-title>Organization details</h4>
+        <p data-record-management-drawer-region-description>Root Organization facts and reference data that identify the record.</p>
+      </div>
+      <div class="chat-workspace-list-drawer-header-actions">
+        <button class="record-management-drawer-edit-button" type="button" aria-pressed="false" data-record-management-drawer-edit>Edit</button>
+        <button class="icon-button" type="button" aria-label="Close item detail" data-chat-workspace-list-drawer-close>
+          <span class="icon-button-glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </span>
+        </button>
+      </div>
     </div>
     <div class="chat-workspace-list-drawer-body">
       ${renderRecordManagementAttributeView(selected, entityWorkspace)}

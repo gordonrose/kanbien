@@ -38,7 +38,7 @@
 
 [data-record-management-list-centric-template] {
   --record-management-page-header-height: 4.859375rem;
-  --record-management-filter-collapsed-width: 12.5rem;
+  --record-management-filter-collapsed-width: 16rem;
   block-size: calc(100dvh - var(--context-nav-top, 8rem));
   min-block-size: calc(100dvh - var(--context-nav-top, 8rem));
   padding: 0;
@@ -139,11 +139,10 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.8rem;
   inline-size: 100%;
   min-inline-size: 0;
-  min-block-size: 3.45rem;
-  padding: 0.5rem 0.7rem;
+  padding: 0.65rem 0.75rem;
   border: 1px solid var(--bwp-line);
   border-radius: var(--chat-workspace-radius);
   background: var(--bwp-raised-surface);
@@ -370,7 +369,7 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 }
 
 [data-record-management-list-centric-template] > .record-management-template-frame[data-filter-expanded="false"] .record-management-filter-trigger {
-  block-size: auto;
+  min-inline-size: min(16rem, 100%);
 }
 
 [data-record-management-list-centric-template] > .record-management-template-frame[data-filter-expanded="false"] .record-management-filter-selection-drawer {
@@ -998,7 +997,7 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   inset-inline-start: 0;
   z-index: 20;
   display: none;
-  min-inline-size: min(16rem, 70vw);
+  min-inline-size: min(20rem, 78vw);
   padding: 0.4rem;
   border: 1px solid var(--bwp-line);
   border-radius: var(--chat-workspace-radius);
@@ -1013,8 +1012,8 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 
 .chat-workspace-layer-option {
   display: grid;
-  min-block-size: 2.75rem;
-  align-items: center;
+  gap: 0.35rem;
+  min-block-size: 4.8rem;
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--bwp-line);
   border-radius: var(--chat-workspace-radius);
@@ -1022,6 +1021,45 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   color: var(--bwp-ink);
   font-weight: 800;
   text-align: start;
+}
+
+.chat-workspace-layer-option-row,
+.chat-workspace-layer-option-summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  min-inline-size: 0;
+  gap: 0.75rem;
+}
+
+.chat-workspace-layer-option-row strong,
+.chat-workspace-layer-option-summary {
+  overflow: hidden;
+  color: var(--bwp-ink);
+  font-size: 0.88rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chat-workspace-layer-option-row strong {
+  flex: 1 1 auto;
+  color: var(--bwp-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.chat-workspace-layer-option-row strong:last-child {
+  text-align: end;
+}
+
+.chat-workspace-layer-option-summary {
+  display: block;
+  margin-block-start: 0.15rem;
+  color: var(--bwp-ink);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: none;
 }
 
 .chat-workspace-layer-option.is-active {
@@ -1454,6 +1492,46 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   align-items: start;
   justify-content: space-between;
   gap: 1rem;
+  min-inline-size: 0;
+  padding-block-end: 0.85rem;
+  border-block-end: 1px solid var(--bwp-line);
+}
+
+.chat-workspace-list-drawer-header-copy {
+  display: grid;
+  gap: 0.18rem;
+  min-inline-size: 0;
+}
+
+.chat-workspace-list-drawer-header-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: start;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+}
+
+.chat-workspace-list-drawer-header .icon-button {
+  flex: 0 0 auto;
+}
+
+.record-management-drawer-edit-button {
+  min-block-size: 2.35rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--bwp-line);
+  border-radius: var(--chat-workspace-radius);
+  background: var(--bwp-raised-surface);
+  color: var(--bwp-ink);
+  font-weight: 800;
+}
+
+.record-management-drawer-edit-button:hover,
+.record-management-drawer-edit-button:focus-visible,
+.record-management-drawer-edit-button[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--bwp-accent) 55%, var(--bwp-line));
+  background: color-mix(in srgb, var(--bwp-active-surface) 58%, var(--bwp-raised-surface));
+  outline: 0;
 }
 
 .chat-workspace-entity-option {
@@ -1497,15 +1575,22 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 
 .chat-workspace-list-drawer-header p,
 .chat-workspace-list-drawer-meta dt {
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.chat-workspace-list-drawer-meta dt {
   font-size: 0.78rem;
   font-weight: 800;
   text-transform: uppercase;
 }
 
 .chat-workspace-list-drawer-header h4 {
-  margin-block-start: 0.3rem;
+  min-inline-size: 0;
   font-size: 1.05rem;
   letter-spacing: 0;
+  line-height: 1.25;
 }
 
 .chat-workspace-list-drawer-meta {
@@ -1833,6 +1918,12 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   gap: 0.6rem;
 }
 
+.record-management-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
 .record-management-user-attribute-card {
   display: grid;
   gap: 0.65rem;
@@ -1854,6 +1945,98 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   font-size: 1rem;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.record-management-editable-field {
+  display: none;
+  gap: 0.35rem;
+  min-inline-size: 0;
+}
+
+[data-record-management-list-centric-template][data-record-management-edit-control-style="compact"] .record-management-editable-field span {
+  color: var(--bwp-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+[data-record-management-list-centric-template][data-record-management-edit-control-style="compact"] .record-management-editable-field input,
+[data-record-management-list-centric-template][data-record-management-edit-control-style="compact"] .record-management-editable-field select {
+  inline-size: 100%;
+  min-inline-size: 0;
+  min-block-size: 2.6rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--bwp-line);
+  border-radius: 0;
+  background: var(--bwp-surface);
+  color: var(--bwp-ink);
+  font: inherit;
+  font-weight: 700;
+}
+
+[data-record-management-list-centric-template][data-record-management-edit-control-style="compact"] .record-management-editable-field input:focus,
+[data-record-management-list-centric-template][data-record-management-edit-control-style="compact"] .record-management-editable-field select:focus {
+  border-color: color-mix(in srgb, var(--bwp-accent) 58%, var(--bwp-line));
+  outline: 2px solid color-mix(in srgb, var(--bwp-accent) 24%, transparent);
+  outline-offset: 1px;
+}
+
+[data-record-management-list-centric-template][data-record-management-edit-control-style="approved"] {
+  --ink: var(--bwp-ink);
+  --line: var(--bwp-line);
+  --line-strong: color-mix(in srgb, var(--bwp-accent) 55%, var(--bwp-line));
+  --surface-1: var(--bwp-surface);
+  --accent: var(--bwp-accent);
+  --radius-sm: var(--chat-workspace-radius);
+}
+
+[data-record-management-list-centric-template][data-record-management-edit-control-style="approved"] .chat-workspace-list-drawer[data-record-management-edit-mode="true"] [data-record-management-editable-card="true"] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.chat-workspace-list-drawer[data-record-management-edit-mode="true"] [data-record-management-editable-card="true"] [data-record-management-readonly-value] {
+  display: none;
+}
+
+.chat-workspace-list-drawer[data-record-management-edit-mode="true"] [data-record-management-editable-field] {
+  display: grid;
+}
+
+.record-management-address-card {
+  display: grid;
+  gap: 0.45rem;
+  min-inline-size: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--bwp-line);
+  background: var(--bwp-raised-surface);
+}
+
+.record-management-address-card span {
+  color: var(--bwp-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.record-management-address-card address {
+  display: grid;
+  gap: 0.16rem;
+  color: var(--bwp-ink);
+  font-style: normal;
+}
+
+.record-management-address-card address strong {
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.record-management-address-card p {
+  margin: 0;
+  color: var(--bwp-muted);
+  font-size: 0.84rem;
+  font-weight: 650;
 }
 
 .record-management-user-related-list {
@@ -1883,6 +2066,279 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   text-transform: none;
 }
 
+.record-management-nested-list {
+  display: grid;
+  gap: 0.7rem;
+  min-inline-size: 0;
+}
+
+.record-management-nested-list-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.record-management-nested-list-header div {
+  display: grid;
+  gap: 0.15rem;
+  min-inline-size: 0;
+}
+
+.record-management-nested-list-header h5,
+.record-management-nested-list-group h6 {
+  margin: 0;
+  color: var(--bwp-ink);
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
+.record-management-nested-list-header p {
+  margin: 0;
+  color: var(--bwp-muted);
+  font-size: 0.82rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.record-management-nested-list-layout {
+  display: grid;
+  grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
+  gap: 0.7rem;
+  min-inline-size: 0;
+}
+
+.record-management-nested-list-cards,
+.record-management-nested-list-rows,
+.record-management-nested-list-group {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  min-inline-size: 0;
+}
+
+.record-management-nested-list-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: center;
+  min-inline-size: 0;
+  padding: 0.7rem;
+  border: 1px solid var(--bwp-line);
+  border-radius: 0;
+  background: var(--bwp-raised-surface);
+  color: var(--bwp-ink);
+  cursor: pointer;
+  text-align: start;
+}
+
+.record-management-nested-list-card span {
+  display: grid;
+  min-inline-size: 0;
+  gap: 0.14rem;
+}
+
+.record-management-nested-list-card strong,
+.record-management-nested-list-card small,
+.record-management-nested-list-card em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-management-nested-list-card strong {
+  color: var(--bwp-ink);
+  font-size: 0.9rem;
+}
+
+.record-management-nested-list-card small {
+  color: var(--bwp-muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.record-management-nested-list-card em {
+  color: var(--bwp-muted);
+  font-size: 0.74rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.record-management-nested-list-card:hover,
+.record-management-nested-list-card:focus-visible,
+.record-management-nested-list-card.is-active {
+  border-color: color-mix(in srgb, var(--bwp-accent) 52%, var(--bwp-line));
+  background: color-mix(in srgb, var(--bwp-active-surface) 46%, var(--bwp-raised-surface));
+  outline: 0;
+}
+
+.record-management-nested-list-drawer {
+  min-inline-size: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--bwp-line);
+  background: color-mix(in srgb, var(--bwp-panel-surface) 72%, var(--bwp-surface));
+}
+
+.record-management-nested-list-drawer [hidden] {
+  display: none;
+}
+
+.record-management-nested-list-drawer-header {
+  display: grid;
+  gap: 0.12rem;
+  min-inline-size: 0;
+  margin-block-end: 0.65rem;
+}
+
+.record-management-nested-list-drawer-header span {
+  color: var(--bwp-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.record-management-nested-list-drawer-header strong {
+  color: var(--bwp-ink);
+  font-size: 1rem;
+}
+
+.record-management-nested-list-drawer-header p,
+.record-management-nested-list-group article small {
+  color: var(--bwp-muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.record-management-nested-list-group article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-inline-size: 0;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--bwp-line);
+  background: var(--bwp-raised-surface);
+}
+
+.record-management-logo-preview {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  inline-size: 3rem;
+  block-size: 2.25rem;
+  border: 1px solid color-mix(in srgb, var(--bwp-accent) 42%, var(--bwp-line));
+  background: #0f766e;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.form-image-card-placeholder .record-management-logo-preview {
+  inline-size: 100%;
+  block-size: 100%;
+  border: 0;
+  font-size: 1rem;
+}
+
+.record-management-logo-preview[data-logo-preview="square"] {
+  inline-size: 2.25rem;
+  border-radius: 0.35rem;
+}
+
+.form-image-card-placeholder .record-management-logo-preview[data-logo-preview="square"] {
+  inline-size: 100%;
+}
+
+.record-management-logo-preview[data-logo-preview="square"] span {
+  font-size: 0;
+}
+
+.record-management-logo-preview[data-logo-preview="square"] span::first-letter {
+  font-size: 0.95rem;
+}
+
+.record-management-logo-preview[data-logo-preview="mono"] {
+  background: var(--bwp-raised-surface);
+  color: var(--bwp-ink);
+}
+
+.record-management-logo-asset-detail {
+  display: grid;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.record-management-logo-edit-surface {
+  display: none;
+  gap: 0.45rem;
+  min-inline-size: 0;
+}
+
+.chat-workspace-list-drawer[data-record-management-edit-mode="true"] .record-management-logo-edit-surface {
+  display: grid;
+}
+
+.record-management-logo-edit-surface .form-upload-dropzone {
+  min-block-size: 5.4rem;
+}
+
+.record-management-nested-list-group article > span {
+  display: grid;
+  min-inline-size: 0;
+  gap: 0.12rem;
+}
+
+.record-management-nested-list-group article strong,
+.record-management-nested-list-group article small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-management-nested-list-group article em {
+  flex: 0 0 auto;
+  color: var(--bwp-accent);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.record-management-branding-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-inline-size: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--bwp-line);
+  background: var(--bwp-raised-surface);
+}
+
+.record-management-branding-summary > span {
+  flex: 0 0 auto;
+  inline-size: 2.3rem;
+  block-size: 2.3rem;
+  border: 1px solid color-mix(in srgb, var(--bwp-accent) 62%, var(--bwp-line));
+  background: #0f766e;
+}
+
+.record-management-branding-summary div {
+  display: grid;
+  min-inline-size: 0;
+  gap: 0.1rem;
+}
+
+.record-management-branding-summary strong {
+  color: var(--bwp-ink);
+  font-size: 0.95rem;
+}
+
+.record-management-branding-summary p {
+  color: var(--bwp-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
 @media (max-width: 52rem) {
   .record-management-region-shell {
     grid-template-columns: minmax(0, 1fr);
@@ -1892,6 +2348,11 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
     grid-auto-flow: column;
     grid-auto-columns: minmax(8.5rem, 1fr);
     overflow-x: auto;
+  }
+
+  .record-management-field-grid,
+  .record-management-nested-list-layout {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
