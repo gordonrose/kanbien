@@ -59,6 +59,16 @@ test("record management list-centric template renders the chat-derived record wo
     "data-tab-attention",
     "true",
   );
+  await page.locator("[data-record-management-list-centric-mount] .floating-tab-row").first().click();
+  await expect
+    .poll(async () => page.locator("[data-record-management-list-centric-mount] .floating-tab-list-panel").evaluate((panel) => {
+      const columns = getComputedStyle(panel).gridTemplateColumns
+        .split(" ")
+        .map((value) => Number.parseFloat(value))
+        .filter((value) => Number.isFinite(value));
+      return columns.length >= 2 ? columns[1] / columns[0] : 0;
+    }))
+    .toBeGreaterThan(2.8);
 
   const geometry = await page.evaluate(() => {
     const subNav = document.querySelector(".sub-nav")?.getBoundingClientRect();
@@ -189,6 +199,40 @@ test("record management filter rail opens adjacent selection drawers", async ({ 
   await expect(page.locator("[data-record-management-filter-count='status']")).toHaveText("1");
   await expect(page.locator("[data-record-management-filter-total]")).toHaveText("1 selected");
   await expect(page.locator("[data-record-management-filter-drawer] .form-drawer-select-selected-chip")).toHaveCount(1);
+
+  await page.locator("[data-record-management-filter-card='date']").click();
+  await expect(page.locator("[data-record-management-filter-drawer-title]")).toHaveText("Date");
+  await expect(page.locator("[data-record-management-date-single-field]")).toBeVisible();
+  await expect(page.locator("[data-record-management-date-single-button]")).toContainText("Choose date");
+  await expect(page.locator("[data-record-management-date-range-field]")).toBeVisible();
+  await expect(page.locator("[data-record-management-date-range-button]")).toContainText("Choose date range");
+
+  await page.locator("[data-record-management-date-single-field] .form-field-label").click();
+  await expect(page.locator("[data-record-management-date-single-panel]")).toBeVisible();
+  await expect
+    .poll(async () => page.locator("[data-record-management-filter-drawer]").evaluate((drawer) => getComputedStyle(drawer).overflowY))
+    .toBe("visible");
+  await expect
+    .poll(async () => {
+      const drawer = await page.locator("[data-record-management-filter-drawer]").boundingBox();
+      const panel = await page.locator("[data-record-management-date-single-panel]").boundingBox();
+      return Boolean(drawer && panel && panel.x >= drawer.x + drawer.width - 1);
+    })
+    .toBe(true);
+  await page.locator("[data-record-management-date-single-day][data-date='2026-05-08']").click();
+  await expect(page.locator("[data-record-management-date-single-button]")).toContainText("May 8, 2026");
+  await expect(page.locator("[data-record-management-filter-count='date']")).toHaveText("1");
+  await expect(page.locator("[data-record-management-filter-total]")).toHaveText("2 selected");
+
+  await page.locator("[data-record-management-date-range-button]").click();
+  await expect(page.locator("[data-record-management-date-range-panel]")).toBeVisible();
+  await page.locator("[data-record-management-date-range-day][data-date='2026-05-12']").click();
+  await expect(page.locator("[data-record-management-date-range-panel]")).toBeVisible();
+  await page.locator("[data-record-management-date-range-day][data-date='2026-05-16']").click();
+  await expect(page.locator("[data-record-management-date-range-button]")).toContainText("May 12, 2026 - May 16, 2026");
+  await expect(page.locator("[data-record-management-filter-count='date']")).toHaveText("2");
+  await expect(page.locator("[data-record-management-filter-total]")).toHaveText("3 selected");
+  await expect(page.locator("[data-record-management-filter-drawer] .form-drawer-select-selected-chip").filter({ hasText: "Custom range" })).toBeVisible();
 
   await page.locator("[data-record-management-filter-toggle]").click();
   await expect(page.locator("[data-record-management-template-frame]")).toHaveAttribute("data-filter-expanded", "false");

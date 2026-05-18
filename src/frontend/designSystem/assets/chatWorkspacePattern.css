@@ -271,6 +271,7 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 .record-management-filter-selection-drawer.form-drawer-select-panel {
   align-content: start;
   grid-template-rows: auto auto auto auto;
+  overflow: visible;
 }
 
 .record-management-filter-selection-drawer .search-shell,
@@ -281,6 +282,53 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 
 .record-management-filter-selection-drawer .search-input {
   block-size: 2.75rem;
+}
+
+.record-management-filter-date-control,
+.record-management-filter-date-range {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.record-management-filter-date-control .form-date-picker,
+.record-management-filter-date-range .form-date-picker {
+  position: static;
+}
+
+.record-management-filter-date-control .form-date-menu,
+.record-management-filter-date-range .form-date-picker[data-picker-mode="range"] .form-date-menu {
+  inset-block-start: 0;
+  inset-inline-start: 100%;
+  z-index: 40;
+  block-size: 100%;
+  width: min(20rem, calc(100vw - var(--context-nav-width, 4.25rem) - 37rem));
+  min-width: 17rem;
+  overflow: auto;
+  border-radius: 0;
+  box-shadow: 1rem 0 2rem rgba(22, 33, 47, 0.12);
+}
+
+.record-management-filter-date-control .form-date-months,
+.record-management-filter-date-range .form-date-months {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.record-management-filter-date-control .form-date-menu-header,
+.record-management-filter-date-range .form-date-menu-header {
+  display: grid;
+}
+
+.record-management-filter-date-control .form-date-menu-controls,
+.record-management-filter-date-control .form-date-menu-actions,
+.record-management-filter-date-range .form-date-menu-controls,
+.record-management-filter-date-range .form-date-menu-actions {
+  width: 100%;
+}
+
+.record-management-filter-date-control .form-date-nav-button,
+.record-management-filter-date-range .form-date-nav-button {
+  flex: 1 1 0;
 }
 
 .record-management-filter-selection-drawer[hidden] {
@@ -1434,6 +1482,10 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   grid-template-rows: minmax(0, 1fr);
   align-items: stretch;
+}
+
+[data-record-management-list-centric-template] .chat-workspace-entity-workspace[data-chat-workspace-drawer-open="true"] .floating-tab-list-panel {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 3fr);
 }
 
 .chat-workspace-entity-workspace .floating-tab-row[data-chat-workspace-list-row] {

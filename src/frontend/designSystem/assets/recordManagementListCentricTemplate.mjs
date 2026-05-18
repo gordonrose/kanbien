@@ -178,6 +178,16 @@ const filterSelections = {
   org: new Set(),
   status: new Set(),
 };
+const filterDateRange = {
+  start: "",
+  end: "",
+  viewStart: "2026-05-01",
+  selectionStage: "start",
+};
+const filterDateSingle = {
+  value: "",
+  viewStart: "2026-05-01",
+};
 let templateController = null;
 let templateState = null;
 
@@ -380,22 +390,267 @@ function installBreadcrumbTooltips() {
 }
 
 function getFilterSelectionCount(key) {
-  return filterSelections[key]?.size ?? 0;
+  const optionCount = filterSelections[key]?.size ?? 0;
+  if (key !== "date") {
+    return optionCount;
+  }
+  return optionCount
+    + (filterDateSingle.value ? 1 : 0)
+    + (filterDateRange.start && filterDateRange.end ? 1 : 0);
+}
+
+function addMonths(date, delta) {
+  return new Date(date.getFullYear(), date.getMonth() + delta, 1);
+}
+
+function formatRecordManagementIsoDate(date) {
+  return new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" }).format(date);
+}
+
+function formatRecordManagementDateLabel(value) {
+  if (!value) {
+    return "";
+  }
+  const date = new Date(`${value}T12:00:00`);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(date);
+}
+
+function getRecordManagementDateRangeLabel() {
+  if (!filterDateRange.start || !filterDateRange.end) {
+    return "Choose date range";
+  }
+  return `${formatRecordManagementDateLabel(filterDateRange.start)} - ${formatRecordManagementDateLabel(filterDateRange.end)}`;
+}
+
+function getRecordManagementSingleDateLabel() {
+  return filterDateSingle.value ? formatRecordManagementDateLabel(filterDateSingle.value) : "Choose date";
 }
 
 function syncFilterCounts() {
   let total = 0;
   for (const [key, selections] of Object.entries(filterSelections)) {
-    total += selections.size;
+    const selectionCount = getFilterSelectionCount(key);
+    total += selectionCount;
     const count = document.querySelector(`[data-record-management-filter-count="${CSS.escape(key)}"]`);
     if (count instanceof HTMLElement) {
-      count.textContent = String(selections.size);
+      count.textContent = String(selectionCount);
     }
   }
 
   const totalNode = document.querySelector("[data-record-management-filter-total]");
   if (totalNode instanceof HTMLElement) {
     totalNode.textContent = `${total} selected`;
+  }
+}
+
+function renderRecordManagementDateRangeControl() {
+  const hasRange = Boolean(filterDateRange.start && filterDateRange.end);
+  const currentLabel = getRecordManagementDateRangeLabel();
+  const summary = hasRange
+    ? `Selected range: ${formatRecordManagementDateLabel(filterDateRange.start)} through ${formatRecordManagementDateLabel(filterDateRange.end)}.`
+    : filterDateRange.start
+      ? `Start selected: ${formatRecordManagementDateLabel(filterDateRange.start)}. Choose an end date next.`
+      : "Select a start date, then an end date.";
+
+  return `
+    <div class="record-management-filter-date-range form-field" data-record-management-date-range-field>
+      <span class="form-field-label" id="record-management-date-range-label">Custom date range</span>
+      <div class="form-date-picker" data-form-date-picker data-picker-mode="range" data-month-count="1" data-record-management-date-range-picker>
+        <input type="hidden" name="recordManagementFilterDateStart" value="${escapeHtml(filterDateRange.start)}" data-form-date-start-value />
+        <input type="hidden" name="recordManagementFilterDateEnd" value="${escapeHtml(filterDateRange.end)}" data-form-date-end-value />
+        <button
+          class="form-date-trigger"
+          type="button"
+          id="record-management-date-range-trigger"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          aria-labelledby="record-management-date-range-label record-management-date-range-trigger"
+          data-form-date-button
+          data-record-management-date-range-button
+        >
+          <span data-form-date-current-label>${escapeHtml(currentLabel)}</span>
+          <span class="form-date-trigger-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />
+            </svg>
+          </span>
+        </button>
+        <div
+          class="form-date-menu hidden"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="record-management-date-range-label"
+          data-form-date-panel
+          data-record-management-date-range-panel
+        >
+          <div class="form-date-menu-header">
+            <div>
+              <p class="top-nav-preview-eyebrow">Date Range</p>
+              <h4 class="form-date-menu-title">Choose start and end dates</h4>
+            </div>
+            <div class="form-date-menu-controls">
+              <div class="form-date-menu-actions">
+                <button class="form-date-nav-button" type="button" data-record-management-date-range-nav="-1">Previous</button>
+                <button class="form-date-nav-button" type="button" data-record-management-date-range-nav="1">Next</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-date-range-summary" data-record-management-date-range-summary>${escapeHtml(summary)}</div>
+          <div class="form-date-months" data-record-management-date-range-months></div>
+          <div class="form-date-menu-footer">
+            <button class="form-date-done-button" type="button" ${hasRange ? "" : "disabled"} data-record-management-date-range-done>Done</button>
+          </div>
+        </div>
+      </div>
+      <span class="form-field-help">Use a custom range when the preset review windows are too broad.</span>
+    </div>
+  `;
+}
+
+function renderRecordManagementSingleDateControl() {
+  return `
+    <div class="record-management-filter-date-control form-field" data-record-management-date-single-field>
+      <span class="form-field-label" id="record-management-date-single-label">Specific date</span>
+      <div class="form-date-picker" data-form-date-picker data-picker-mode="single" data-month-count="1" data-record-management-date-single-picker>
+        <input type="hidden" name="recordManagementFilterDateSingle" value="${escapeHtml(filterDateSingle.value)}" data-form-date-start-value />
+        <button
+          class="form-date-trigger"
+          type="button"
+          id="record-management-date-single-trigger"
+          aria-haspopup="dialog"
+          aria-expanded="false"
+          aria-labelledby="record-management-date-single-label record-management-date-single-trigger"
+          data-form-date-button
+          data-record-management-date-single-button
+        >
+          <span data-form-date-current-label>${escapeHtml(getRecordManagementSingleDateLabel())}</span>
+          <span class="form-date-trigger-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M7 3.5v3M17 3.5v3M4.5 8.5h15M6 6.5h12a1.5 1.5 0 0 1 1.5 1.5v9.5A2.5 2.5 0 0 1 17 20H7a2.5 2.5 0 0 1-2.5-2.5V8A1.5 1.5 0 0 1 6 6.5Z" />
+            </svg>
+          </span>
+        </button>
+        <div
+          class="form-date-menu hidden"
+          role="dialog"
+          aria-modal="false"
+          aria-labelledby="record-management-date-single-label"
+          data-form-date-panel
+          data-record-management-date-single-panel
+        >
+          <div class="form-date-menu-header">
+            <div>
+              <p class="top-nav-preview-eyebrow">Date</p>
+              <h4 class="form-date-menu-title">Choose date</h4>
+            </div>
+            <div class="form-date-menu-controls">
+              <div class="form-date-menu-actions">
+                <button class="form-date-nav-button" type="button" data-record-management-date-single-nav="-1">Previous</button>
+                <button class="form-date-nav-button" type="button" data-record-management-date-single-nav="1">Next</button>
+              </div>
+            </div>
+          </div>
+          <div class="form-date-months" data-record-management-date-single-months></div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderRecordManagementDateCalendar(root, {
+  monthsSelector,
+  viewStart,
+  start,
+  end = "",
+  dayAttribute,
+} = {}) {
+  if (!(root instanceof HTMLElement)) {
+    return;
+  }
+
+  const monthsContainer = root.querySelector(monthsSelector);
+  if (!(monthsContainer instanceof HTMLElement)) {
+    return;
+  }
+
+  const weekdayFormatter = new Intl.DateTimeFormat("en-US", { weekday: "narrow" });
+  const monthTitleFormatter = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" });
+  const viewDate = new Date(`${viewStart || start || "2026-05-01"}T12:00:00`);
+  const safeViewDate = Number.isNaN(viewDate.getTime()) ? new Date("2026-05-01T12:00:00") : viewDate;
+  const monthDate = new Date(safeViewDate.getFullYear(), safeViewDate.getMonth(), 1);
+  const firstDay = new Date(monthDate.getFullYear(), monthDate.getMonth(), 1);
+  const offset = (firstDay.getDay() + 6) % 7;
+  const daysInMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0).getDate();
+  const weekdays = Array.from({ length: 7 }, (_, dayIndex) => {
+    const day = new Date(2026, 2, 2 + dayIndex);
+    return `<span class="form-date-weekday" aria-hidden="true">${weekdayFormatter.format(day)}</span>`;
+  }).join("");
+  const days = [];
+
+  for (let emptyIndex = 0; emptyIndex < offset; emptyIndex += 1) {
+    days.push('<span class="form-date-day form-date-day-empty" aria-hidden="true"></span>');
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const date = new Date(monthDate.getFullYear(), monthDate.getMonth(), day);
+    const isoDate = formatRecordManagementIsoDate(date);
+    const isStart = isoDate === start;
+    const isEnd = isoDate === end;
+    const isSelected = isStart || isEnd;
+    const isInRange = start && end && isoDate > start && isoDate < end;
+    const classes = [
+      "form-date-day",
+      isSelected ? "form-date-day-selected" : "",
+      isInRange ? "form-date-day-in-range" : "",
+    ].filter(Boolean).join(" ");
+    days.push(`<button class="${classes}" type="button" data-form-date-day ${dayAttribute} data-date="${isoDate}" aria-pressed="${String(isSelected)}">${day}</button>`);
+  }
+
+  monthsContainer.innerHTML = `
+    <section class="form-date-month" aria-label="${monthTitleFormatter.format(monthDate)}">
+      <h5 class="form-date-month-title">${monthTitleFormatter.format(monthDate)}</h5>
+      <div class="form-date-weekdays">${weekdays}</div>
+      <div class="form-date-grid">${days.join("")}</div>
+    </section>
+  `;
+}
+
+function renderRecordManagementDateRangeCalendar(root) {
+  renderRecordManagementDateCalendar(root, {
+    monthsSelector: "[data-record-management-date-range-months]",
+    viewStart: filterDateRange.viewStart,
+    start: filterDateRange.start,
+    end: filterDateRange.end,
+    dayAttribute: "data-record-management-date-range-day",
+  });
+}
+
+function renderRecordManagementSingleDateCalendar(root) {
+  renderRecordManagementDateCalendar(root, {
+    monthsSelector: "[data-record-management-date-single-months]",
+    viewStart: filterDateSingle.viewStart,
+    start: filterDateSingle.value,
+    dayAttribute: "data-record-management-date-single-day",
+  });
+}
+
+function setRecordManagementDatePanelOpen(picker, buttonSelector, panelSelector, open, renderCalendar) {
+  if (!(picker instanceof HTMLElement)) {
+    return;
+  }
+  const button = picker.querySelector(buttonSelector);
+  const panel = picker.querySelector(panelSelector);
+  if (!(button instanceof HTMLButtonElement) || !(panel instanceof HTMLElement)) {
+    return;
+  }
+
+  button.setAttribute("aria-expanded", String(open));
+  panel.classList.toggle("hidden", !open);
+  if (open) {
+    renderCalendar(picker);
   }
 }
 
@@ -407,19 +662,46 @@ function renderFilterSelectionDrawer(key) {
   }
 
   const selectedOptions = config.options.filter(([value]) => filterSelections[key]?.has(value));
-  const selectedCount = selectedOptions.length;
-  const selectedMarkup = selectedOptions.length
+  const singleDateSelected = key === "date" && filterDateSingle.value;
+  const dateRangeSelected = key === "date" && filterDateRange.start && filterDateRange.end;
+  const selectedCount = getFilterSelectionCount(key);
+  const selectedOptionMarkup = selectedOptions.map(([value, label, description]) => `
+    <button class="form-drawer-select-selected-chip" type="button" data-record-management-filter-remove="${escapeHtml(key)}" data-value="${escapeHtml(value)}">
+      <span class="form-drawer-select-selected-chip-copy">
+        <strong>${escapeHtml(label)}</strong>
+        <span>${escapeHtml(description)}</span>
+      </span>
+      <span class="form-drawer-select-selected-chip-remove">Remove</span>
+    </button>
+  `).join("");
+  const selectedRangeMarkup = dateRangeSelected
+    ? `
+      <button class="form-drawer-select-selected-chip" type="button" data-record-management-filter-remove-range="date">
+        <span class="form-drawer-select-selected-chip-copy">
+          <strong>Custom range</strong>
+          <span>${escapeHtml(getRecordManagementDateRangeLabel())}</span>
+        </span>
+        <span class="form-drawer-select-selected-chip-remove">Remove</span>
+      </button>
+    `
+    : "";
+  const selectedSingleDateMarkup = singleDateSelected
+    ? `
+      <button class="form-drawer-select-selected-chip" type="button" data-record-management-filter-remove-single-date="date">
+        <span class="form-drawer-select-selected-chip-copy">
+          <strong>Specific date</strong>
+          <span>${escapeHtml(getRecordManagementSingleDateLabel())}</span>
+        </span>
+        <span class="form-drawer-select-selected-chip-remove">Remove</span>
+      </button>
+    `
+    : "";
+  const selectedMarkup = selectedCount
     ? `
       <div class="form-drawer-select-selected-list" data-form-drawer-select-selected-list>
-        ${selectedOptions.map(([value, label, description]) => `
-          <button class="form-drawer-select-selected-chip" type="button" data-record-management-filter-remove="${escapeHtml(key)}" data-value="${escapeHtml(value)}">
-            <span class="form-drawer-select-selected-chip-copy">
-              <strong>${escapeHtml(label)}</strong>
-              <span>${escapeHtml(description)}</span>
-            </span>
-            <span class="form-drawer-select-selected-chip-remove">Remove</span>
-          </button>
-        `).join("")}
+        ${selectedOptionMarkup}
+        ${selectedSingleDateMarkup}
+        ${selectedRangeMarkup}
       </div>
     `
     : `<p class="form-drawer-select-selected-empty" data-form-drawer-select-selected-empty>No ${escapeHtml(config.title.toLowerCase())} filters selected yet.</p>`;
@@ -436,11 +718,14 @@ function renderFilterSelectionDrawer(key) {
         </span>
       </button>
     </div>
-    <form class="search-shell form-drawer-select-search-shell" role="search">
-      <label class="search-shell-field">
-        <input class="search-input" type="search" placeholder="Search ${escapeHtml(config.title.toLowerCase())}" autocomplete="off" data-record-management-filter-search />
-      </label>
-    </form>
+    ${key === "date" ? renderRecordManagementSingleDateControl() : `
+      <form class="search-shell form-drawer-select-search-shell" role="search">
+        <label class="search-shell-field">
+          <input class="search-input" type="search" placeholder="Search ${escapeHtml(config.title.toLowerCase())}" autocomplete="off" data-record-management-filter-search />
+        </label>
+      </form>
+    `}
+    ${key === "date" ? renderRecordManagementDateRangeControl() : ""}
     <section class="form-drawer-select-selected-panel">
       <div class="form-drawer-select-selected-header">
         <h5 class="form-drawer-select-selected-title">Selected</h5>
@@ -478,6 +763,10 @@ function renderFilterSelectionDrawer(key) {
 
   drawer.hidden = false;
   drawer.setAttribute("aria-hidden", "false");
+  if (key === "date") {
+    renderRecordManagementSingleDateCalendar(drawer.querySelector("[data-record-management-date-single-picker]"));
+    renderRecordManagementDateRangeCalendar(drawer.querySelector("[data-record-management-date-range-picker]"));
+  }
   document.querySelectorAll("[data-record-management-filter-card]").forEach((card) => {
     const active = card instanceof HTMLElement && card.dataset.recordManagementFilterCard === key;
     card.setAttribute("aria-expanded", active ? "true" : "false");
@@ -542,6 +831,141 @@ function installFilterPanel() {
       closeFilterSelectionDrawer();
       return;
     }
+
+    if (target?.closest("[data-record-management-filter-remove-range]")) {
+      filterDateRange.start = "";
+      filterDateRange.end = "";
+      filterDateRange.selectionStage = "start";
+      syncFilterCounts();
+      renderFilterSelectionDrawer("date");
+      return;
+    }
+
+    if (target?.closest("[data-record-management-filter-remove-single-date]")) {
+      filterDateSingle.value = "";
+      syncFilterCounts();
+      renderFilterSelectionDrawer("date");
+      return;
+    }
+
+    const singleDateField = target?.closest("[data-record-management-date-single-field]");
+    if (singleDateField instanceof HTMLElement && !target?.closest("[data-record-management-date-single-picker]")) {
+      const picker = singleDateField.querySelector("[data-record-management-date-single-picker]");
+      setRecordManagementDatePanelOpen(
+        picker,
+        "[data-record-management-date-single-button]",
+        "[data-record-management-date-single-panel]",
+        true,
+        renderRecordManagementSingleDateCalendar,
+      );
+      return;
+    }
+
+    const dateRangeField = target?.closest("[data-record-management-date-range-field]");
+    if (dateRangeField instanceof HTMLElement && !target?.closest("[data-record-management-date-range-picker]")) {
+      const picker = dateRangeField.querySelector("[data-record-management-date-range-picker]");
+      setRecordManagementDatePanelOpen(
+        picker,
+        "[data-record-management-date-range-button]",
+        "[data-record-management-date-range-panel]",
+        true,
+        renderRecordManagementDateRangeCalendar,
+      );
+      return;
+    }
+
+    const singleDatePicker = target?.closest("[data-record-management-date-single-picker]");
+    if (singleDatePicker instanceof HTMLElement) {
+      const button = target?.closest("[data-record-management-date-single-button]");
+      if (button instanceof HTMLButtonElement) {
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        setRecordManagementDatePanelOpen(
+          singleDatePicker,
+          "[data-record-management-date-single-button]",
+          "[data-record-management-date-single-panel]",
+          !expanded,
+          renderRecordManagementSingleDateCalendar,
+        );
+        return;
+      }
+
+      const navButton = target?.closest("[data-record-management-date-single-nav]");
+      if (navButton instanceof HTMLButtonElement) {
+        const currentView = new Date(`${filterDateSingle.viewStart || "2026-05-01"}T12:00:00`);
+        const delta = Number(navButton.dataset.recordManagementDateSingleNav ?? "0");
+        filterDateSingle.viewStart = formatRecordManagementIsoDate(addMonths(currentView, delta));
+        renderRecordManagementSingleDateCalendar(singleDatePicker);
+        return;
+      }
+
+      const dayButton = target?.closest("[data-record-management-date-single-day]");
+      if (dayButton instanceof HTMLButtonElement) {
+        filterDateSingle.value = dayButton.dataset.date ?? "";
+        filterDateSingle.viewStart = filterDateSingle.value || filterDateSingle.viewStart;
+        syncFilterCounts();
+        renderFilterSelectionDrawer("date");
+        return;
+      }
+    }
+
+    const dateRangePicker = target?.closest("[data-record-management-date-range-picker]");
+    if (dateRangePicker instanceof HTMLElement) {
+      const button = target?.closest("[data-record-management-date-range-button]");
+      if (button instanceof HTMLButtonElement) {
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        setRecordManagementDatePanelOpen(
+          dateRangePicker,
+          "[data-record-management-date-range-button]",
+          "[data-record-management-date-range-panel]",
+          !expanded,
+          renderRecordManagementDateRangeCalendar,
+        );
+        return;
+      }
+
+      const navButton = target?.closest("[data-record-management-date-range-nav]");
+      if (navButton instanceof HTMLButtonElement) {
+        const currentView = new Date(`${filterDateRange.viewStart || "2026-05-01"}T12:00:00`);
+        const delta = Number(navButton.dataset.recordManagementDateRangeNav ?? "0");
+        filterDateRange.viewStart = formatRecordManagementIsoDate(addMonths(currentView, delta));
+        renderRecordManagementDateRangeCalendar(dateRangePicker);
+        return;
+      }
+
+      const dayButton = target?.closest("[data-record-management-date-range-day]");
+      if (dayButton instanceof HTMLButtonElement) {
+        const selectedDate = dayButton.dataset.date ?? "";
+        if (filterDateRange.selectionStage === "start" || !filterDateRange.start) {
+          filterDateRange.start = selectedDate;
+          filterDateRange.end = "";
+          filterDateRange.selectionStage = "end";
+        } else if (selectedDate < filterDateRange.start) {
+          filterDateRange.end = filterDateRange.start;
+          filterDateRange.start = selectedDate;
+          filterDateRange.selectionStage = "start";
+        } else {
+          filterDateRange.end = selectedDate;
+          filterDateRange.selectionStage = "start";
+        }
+        renderFilterSelectionDrawer("date");
+        const updatedPicker = document.querySelector("[data-record-management-date-range-picker]");
+        const updatedPanel = updatedPicker?.querySelector("[data-record-management-date-range-panel]");
+        const updatedButton = updatedPicker?.querySelector("[data-record-management-date-range-button]");
+        if (updatedPicker instanceof HTMLElement && updatedPanel instanceof HTMLElement && updatedButton instanceof HTMLButtonElement) {
+          updatedButton.setAttribute("aria-expanded", "true");
+          updatedPanel.classList.remove("hidden");
+          renderRecordManagementDateRangeCalendar(updatedPicker);
+        }
+        syncFilterCounts();
+        return;
+      }
+
+      if (target?.closest("[data-record-management-date-range-done]")) {
+        renderFilterSelectionDrawer("date");
+        return;
+      }
+    }
+
     const option = target?.closest("[data-record-management-filter-option], [data-record-management-filter-remove]");
     if (!(option instanceof HTMLElement)) {
       return;
