@@ -541,11 +541,78 @@ const entityManagementWorkflowSkeletonLists = Object.freeze({
   }),
 });
 
+const entityManagementCatalogSkeletonLists = Object.freeze({
+  statusCatalog: Object.freeze({
+    label: "Status catalog",
+    description: "Reusable status values for lifecycle and workflow-facing enum attributes.",
+    summary: "Entity-specific",
+    scope: "entity",
+    options: Object.freeze([
+      { label: "Draft", value: "draft" },
+      { label: "Active", value: "active" },
+      { label: "Archived", value: "archived" },
+    ]),
+  }),
+  priorityCatalog: Object.freeze({
+    label: "Priority catalog",
+    description: "Shared priority values that can be reused across operational records.",
+    summary: "Global",
+    scope: "global",
+    options: Object.freeze([
+      { label: "Low", value: "low" },
+      { label: "Normal", value: "normal" },
+      { label: "High", value: "high" },
+    ]),
+  }),
+  timezoneCatalog: Object.freeze({
+    label: "Timezone catalog",
+    description: "Global IANA timezone values used by scheduling, location, and user preference attributes.",
+    summary: "Global",
+    scope: "global",
+    options: Object.freeze([
+      { label: "UTC", value: "UTC" },
+      { label: "Europe/Dublin", value: "Europe/Dublin" },
+      { label: "America/New_York", value: "America/New_York" },
+      { label: "Asia/Singapore", value: "Asia/Singapore" },
+    ]),
+  }),
+  countryCodeCatalog: Object.freeze({
+    label: "Country code catalog",
+    description: "Global ISO 3166-1 alpha-2 country codes used by address and regional configuration attributes.",
+    summary: "Global",
+    scope: "global",
+    options: Object.freeze([
+      { label: "Ireland", value: "IE" },
+      { label: "United Kingdom", value: "GB" },
+      { label: "United States", value: "US" },
+      { label: "Singapore", value: "SG" },
+    ]),
+  }),
+});
+
 const entityManagementViewWorkflowOptions = Object.freeze([
   { value: "intakeWorkflow", label: "Intake", description: "First-step workflow for collecting required information before a record exists.", attribute: "Draft workflow" },
   { value: "reviewWorkflow", label: "Review", description: "Human review workflow for checking evidence and approving record changes.", attribute: "Draft workflow" },
   { value: "lifecycleWorkflow", label: "Lifecycle", description: "Archive, restore, and cleanup workflow for record lifecycle decisions.", attribute: "Draft workflow" },
 ]);
+
+const entityManagementViewWorkflowStatuses = Object.freeze({
+  intakeWorkflow: Object.freeze([
+    { value: "draft", label: "Draft", visible: true },
+    { value: "inRefinement", label: "In refinement", visible: true },
+    { value: "queued", label: "Queued", visible: true },
+  ]),
+  reviewWorkflow: Object.freeze([
+    { value: "submitted", label: "Submitted", visible: true },
+    { value: "needsChanges", label: "Needs changes", visible: true },
+    { value: "approved", label: "Approved", visible: true },
+  ]),
+  lifecycleWorkflow: Object.freeze([
+    { value: "active", label: "Active", visible: true },
+    { value: "archived", label: "Archived", visible: false },
+    { value: "restored", label: "Restored", visible: true },
+  ]),
+});
 
 const entityManagementViewModuleOptions = Object.freeze([
   { value: "organizationCore", label: "Organization Core", description: "Root/admin entity management module", attribute: "root-admin" },
@@ -598,6 +665,187 @@ const entityManagementRelationshipEntityOptions = Object.freeze([
   { value: "team", label: "Team", description: "Collaborative group under an organization", attribute: "Available entity" },
   { value: "deal", label: "Deal", description: "Commercial opportunity record", attribute: "Available entity" },
   { value: "task", label: "Task", description: "Assignable unit of work", attribute: "Available entity" },
+]);
+
+const entityManagementAttributeSkeletonLists = Object.freeze({
+  email: Object.freeze({
+    attributeKey: "email",
+    label: "Email",
+    labelKey: "entity.rootUser.attribute.email.label",
+    labelFallback: "Email",
+    description: "Primary email address used to identify and contact the user.",
+    descriptionKey: "entity.rootUser.attribute.email.description",
+    descriptionFallback: "Primary email address used to identify and contact the user.",
+    category: "identity",
+    attributeType: "email",
+    valueCardinality: "single",
+    required: true,
+    systemManaged: false,
+    mutability: "updateable",
+    privacyClassification: "notSensitive",
+    securityClassification: "internal",
+    validationRules: [
+      {
+        ruleKey: "maxLength",
+        argumentType: "integer",
+        argumentValue: 120,
+        messageKey: "validation.maxLength",
+        messageFallback: "Must be 120 characters or fewer.",
+      },
+    ],
+    summary: "Email",
+  }),
+  description: Object.freeze({
+    label: "Description",
+    description: "Short plain-language summary of what the record represents.",
+    summary: "Long text",
+  }),
+  status: Object.freeze({
+    label: "Status",
+    description: "Lifecycle state or operational posture for the record.",
+    summary: "Workflow",
+  }),
+  owner: Object.freeze({
+    label: "Owner",
+    description: "User, team, or role accountable for the record.",
+    summary: "Relationship",
+  }),
+  createdAt: Object.freeze({
+    label: "Created at",
+    description: "System-managed timestamp captured when the record is created.",
+    summary: "System",
+  }),
+  updatedAt: Object.freeze({
+    label: "Updated at",
+    description: "System-managed timestamp captured when the record changes.",
+    summary: "System",
+  }),
+});
+
+const entityManagementAttributeTypeOptions = Object.freeze([
+  "string",
+  "text",
+  "boolean",
+  "integer",
+  "decimal",
+  "uuid",
+  "email",
+  "url",
+  "date",
+  "datetime",
+  "dateRange",
+  "dateTimeRange",
+  "limitedEnum",
+  "expandedEnum",
+  "coordinates",
+  "json",
+  "money",
+  "phoneNumber",
+  "countryCode",
+  "timezone",
+  "relationshipReference",
+  "imageReference",
+  "videoReference",
+  "audioReference",
+  "documentReference",
+  "spreadsheetReference",
+]);
+
+const entityManagementAttributeMutabilityOptions = Object.freeze([
+  "immutable",
+  "createOnly",
+  "updateable",
+  "systemUpdateable",
+  "lifecycleManaged",
+  "relationshipManaged",
+  "derived",
+  "calculated",
+]);
+
+const entityManagementPrivacyClassificationOptions = Object.freeze([
+  "none",
+  "notSensitive",
+  "sensitive",
+]);
+
+const entityManagementSensitivePrivacyCategoryOptions = Object.freeze([
+  { value: "racialOrEthnicOrigin", label: "racial or ethnic origin" },
+  { value: "politicalOpinions", label: "political opinions" },
+  { value: "religiousOrPhilosophicalBeliefs", label: "religious or philosophical beliefs" },
+  { value: "tradeUnionMembership", label: "trade union membership" },
+  { value: "healthData", label: "health data, health insurance information, patient IDs" },
+  { value: "sexLifeOrSexualOrientation", label: "sex life or sexual orientation" },
+  { value: "criminalConvictions", label: "criminal convictions" },
+  { value: "governmentIdentifiers", label: "Social Security numbers, passport numbers, driver's license numbers" },
+  { value: "financialData", label: "credit card numbers, bank routing numbers, tax records" },
+  { value: "medicalOrBiometricData", label: "fingerprints, genetic data, medical or biometric identifiers" },
+]);
+
+const entityManagementSecurityClassificationOptions = Object.freeze([
+  { value: "none", label: "none", description: "No special security visibility restriction beyond normal entity access." },
+  { value: "internal", label: "internal", description: "Visible only to internal users." },
+  { value: "restricted", label: "restricted", description: "Visible only to internal users with explicit authorization." },
+  { value: "classified", label: "classified", description: "Visible only to internal users with explicit authorization and required clearance." },
+]);
+
+const entityManagementItemLimitOptions = Object.freeze([
+  { value: "notApplicable", label: "Not applicable" },
+  ...Array.from({ length: 10 }, (_, index) => {
+    const value = String(index + 1);
+    return { value, label: value };
+  }),
+]);
+
+const entityManagementValidationRuleOptions = Object.freeze([
+  { value: "trim", label: "trim", attribute: "validation.trim", description: "Remove extra spaces at the beginning or end." },
+  { value: "lowercase", label: "lowercase", attribute: "validation.lowercase", description: "Use lowercase text." },
+  { value: "uppercase", label: "uppercase", attribute: "validation.uppercase", description: "Use uppercase text." },
+  { value: "minLength", label: "minLength", attribute: "validation.minLength", description: "Must be at least {minLength} characters." },
+  { value: "maxLength", label: "maxLength", attribute: "validation.maxLength", description: "Must be {maxLength} characters or fewer." },
+  { value: "pattern", label: "pattern", attribute: "validation.pattern", description: "Enter text in the required format." },
+  { value: "allowedCharacters", label: "allowedCharacters", attribute: "validation.allowedCharacters", description: "Use only the allowed characters." },
+  { value: "uuidFormat", label: "uuidFormat", attribute: "validation.uuidFormat", description: "Enter a valid identifier." },
+  { value: "emailFormat", label: "emailFormat", attribute: "validation.emailFormat", description: "Enter a valid email address." },
+  { value: "urlFormat", label: "urlFormat", attribute: "validation.urlFormat", description: "Enter a valid URL." },
+  { value: "phoneNumberFormat", label: "phoneNumberFormat", attribute: "validation.phoneNumberFormat", description: "Enter a valid phone number." },
+  { value: "countryCodeFormat", label: "countryCodeFormat", attribute: "validation.countryCodeFormat", description: "Enter a valid country code." },
+  { value: "allowedCountryCode", label: "allowedCountryCode", attribute: "validation.allowedCountryCode", description: "Choose an allowed country." },
+  { value: "timezoneFormat", label: "timezoneFormat", attribute: "validation.timezoneFormat", description: "Enter a valid time zone." },
+  { value: "allowedTimezone", label: "allowedTimezone", attribute: "validation.allowedTimezone", description: "Choose an allowed time zone." },
+  { value: "integerFormat", label: "integerFormat", attribute: "validation.integerFormat", description: "Enter a whole number." },
+  { value: "decimalFormat", label: "decimalFormat", attribute: "validation.decimalFormat", description: "Enter a valid number." },
+  { value: "moneyFormat", label: "moneyFormat", attribute: "validation.moneyFormat", description: "Enter a valid monetary amount." },
+  { value: "minValue", label: "minValue", attribute: "validation.minValue", description: "Must be greater than or equal to {minValue}." },
+  { value: "maxValue", label: "maxValue", attribute: "validation.maxValue", description: "Must be less than or equal to {maxValue}." },
+  { value: "decimalPlaces", label: "decimalPlaces", attribute: "validation.decimalPlaces", description: "Use no more than {decimalPlaces} decimal places." },
+  { value: "positiveOnly", label: "positiveOnly", attribute: "validation.positiveOnly", description: "Must be greater than zero." },
+  { value: "nonNegative", label: "nonNegative", attribute: "validation.nonNegative", description: "Must be zero or greater." },
+  { value: "currencyRequired", label: "currencyRequired", attribute: "validation.currencyRequired", description: "Choose a currency." },
+  { value: "booleanFormat", label: "booleanFormat", attribute: "validation.booleanFormat", description: "Choose yes or no." },
+  { value: "dateFormat", label: "dateFormat", attribute: "validation.dateFormat", description: "Enter a valid date." },
+  { value: "dateTimeFormat", label: "dateTimeFormat", attribute: "validation.dateTimeFormat", description: "Enter a valid date and time." },
+  { value: "dateRangeFormat", label: "dateRangeFormat", attribute: "validation.dateRangeFormat", description: "Enter a valid date range." },
+  { value: "dateTimeRangeFormat", label: "dateTimeRangeFormat", attribute: "validation.dateTimeRangeFormat", description: "Enter a valid date and time range." },
+  { value: "minDate", label: "minDate", attribute: "validation.minDate", description: "Date must be on or after {minDate}." },
+  { value: "maxDate", label: "maxDate", attribute: "validation.maxDate", description: "Date must be on or before {maxDate}." },
+  { value: "minDateTime", label: "minDateTime", attribute: "validation.minDateTime", description: "Date and time must be on or after {minDateTime}." },
+  { value: "maxDateTime", label: "maxDateTime", attribute: "validation.maxDateTime", description: "Date and time must be on or before {maxDateTime}." },
+  { value: "notInPast", label: "notInPast", attribute: "validation.notInPast", description: "Must not be in the past." },
+  { value: "notInFuture", label: "notInFuture", attribute: "validation.notInFuture", description: "Must not be in the future." },
+  { value: "startBeforeEnd", label: "startBeforeEnd", attribute: "validation.startBeforeEnd", description: "Start must be before end." },
+  { value: "maxDuration", label: "maxDuration", attribute: "validation.maxDuration", description: "Duration must be {maxDuration} or shorter." },
+  { value: "allowedOptions", label: "allowedOptions", attribute: "validation.allowedOptions", description: "Choose one of the allowed options." },
+  { value: "optionCatalogRequired", label: "optionCatalogRequired", attribute: "validation.optionCatalogRequired", description: "Choose an option from the approved catalog." },
+  { value: "minItems", label: "minItems", attribute: "validation.minItems", description: "Choose at least {minItems} item(s)." },
+  { value: "maxItems", label: "maxItems", attribute: "validation.maxItems", description: "Choose no more than {maxItems} item(s)." },
+  { value: "uniqueItems", label: "uniqueItems", attribute: "validation.uniqueItems", description: "Each selected item must be unique." },
+  { value: "targetExists", label: "targetExists", attribute: "validation.targetExists", description: "Choose a valid related record." },
+  { value: "relationshipBoundary", label: "relationshipBoundary", attribute: "validation.relationshipBoundary", description: "Choose a related record within the allowed boundary." },
+  { value: "allowedTargetStatus", label: "allowedTargetStatus", attribute: "validation.allowedTargetStatus", description: "Choose a related record with an allowed status." },
+  { value: "allowedMimeTypes", label: "allowedMimeTypes", attribute: "validation.allowedMimeTypes", description: "Choose an allowed file type." },
+  { value: "maxFileSize", label: "maxFileSize", attribute: "validation.maxFileSize", description: "File must be {maxFileSize} or smaller." },
+  { value: "maxFileCount", label: "maxFileCount", attribute: "validation.maxFileCount", description: "Choose no more than {maxFileCount} file(s)." },
+  { value: "jsonShape", label: "jsonShape", attribute: "validation.jsonShape", description: "Enter structured data in the required shape." },
 ]);
 
 function getAttributePlacement(attribute, surfaceKey) {
@@ -723,6 +971,18 @@ function renderEntityManagementEditIcon() {
   `;
 }
 
+function renderEntityManagementRobotIcon() {
+  return `
+    <svg viewBox="0 0 24 24" focusable="false">
+      <path d="M12 5V3" />
+      <path d="M8 9h8a4 4 0 0 1 4 4v4a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-4a4 4 0 0 1 4-4Z" />
+      <path d="M9 14h.01" />
+      <path d="M15 14h.01" />
+      <path d="M9.5 17h5" />
+    </svg>
+  `;
+}
+
 function renderPrimaryIconButton({ ariaLabel, className, icon, pressed = false, title, toggleAttribute }) {
   return `
     <button
@@ -789,6 +1049,20 @@ function renderEntityManagementEvidenceButton(label) {
       data-record-management-evidence-button
     >
       <span aria-hidden="true">${renderGovernanceEvidenceIcon()}</span>
+    </button>
+  `;
+}
+
+function renderEntityManagementAiButton(label) {
+  return `
+    <button
+      class="entity-management-ai-button"
+      type="button"
+      aria-label="Open AI options for ${escapeHtml(label)}"
+      title="AI options"
+      data-record-management-ai-button
+    >
+      <span aria-hidden="true">${renderEntityManagementRobotIcon()}</span>
     </button>
   `;
 }
@@ -913,15 +1187,59 @@ function installRecordManagementRegionIndex(drawer) {
       evidenceModeToggle.setAttribute("aria-pressed", String(nextMode));
       if (nextMode) {
         const editToggle = drawer.querySelector("[data-record-management-drawer-edit]");
+        const aiToggle = drawer.querySelector("[data-record-management-ai-mode-toggle]");
         drawer.dataset.recordManagementEditMode = "false";
+        drawer.dataset.recordManagementAiMode = "false";
+        closeRecordManagementAiDrawer(drawer);
         if (editToggle instanceof HTMLElement) {
           editToggle.setAttribute("aria-pressed", "false");
+        }
+        if (aiToggle instanceof HTMLElement) {
+          aiToggle.setAttribute("aria-pressed", "false");
         }
       } else {
         closeRecordManagementEvidenceDrawer(drawer);
       }
       if (nextMode) {
         drawer.querySelector("[data-record-management-evidence-button]")?.focus();
+      }
+      return;
+    }
+
+    const aiModeToggle = event.target instanceof Element
+      ? event.target.closest("[data-record-management-ai-mode-toggle]")
+      : null;
+    if (aiModeToggle instanceof HTMLElement) {
+      const nextMode = drawer.dataset.recordManagementAiMode !== "true";
+      const evidenceToggle = drawer.querySelector("[data-record-management-evidence-mode-toggle]");
+      drawer.dataset.recordManagementAiMode = String(nextMode);
+      drawer.dataset.recordManagementEditMode = "false";
+      aiModeToggle.setAttribute("aria-pressed", String(nextMode));
+      if (nextMode) {
+        drawer.dataset.recordManagementEvidenceMode = "false";
+        closeRecordManagementEvidenceDrawer(drawer);
+        if (evidenceToggle instanceof HTMLElement) {
+          evidenceToggle.setAttribute("aria-pressed", "false");
+        }
+        drawer.querySelector("[data-record-management-ai-button]")?.focus();
+      } else {
+        closeRecordManagementAiDrawer(drawer);
+      }
+      return;
+    }
+
+    const aiButton = event.target instanceof Element
+      ? event.target.closest("[data-record-management-ai-button]")
+      : null;
+    if (aiButton instanceof HTMLElement) {
+      const guidanceTarget = aiButton.closest("[data-entity-management-evidence-target]");
+      const entityWorkspace = drawer.closest("[data-chat-workspace-entity-workspace]");
+      if (guidanceTarget instanceof HTMLElement && entityWorkspace instanceof HTMLElement) {
+        renderRecordManagementAiGuidanceDrawer({
+          drawer,
+          entityWorkspace,
+          guidance: getEntityManagementAuthoringGuidanceFromTarget(guidanceTarget),
+        });
       }
       return;
     }
@@ -950,12 +1268,20 @@ function installRecordManagementRegionIndex(drawer) {
       return;
     }
 
+    const aiReturn = event.target instanceof Element
+      ? event.target.closest("[data-record-management-ai-return]")
+      : null;
+    if (aiReturn instanceof HTMLElement) {
+      closeRecordManagementAiDrawer(drawer);
+      return;
+    }
+
     const sectionToggle = event.target instanceof Element
       ? event.target.closest("[data-entity-management-section-toggle]")
       : null;
     if (sectionToggle instanceof HTMLElement) {
       const section = sectionToggle.closest("[data-entity-management-view-section]");
-      const sectionDefinition = sectionToggle.closest("[data-entity-management-view-definition], [data-entity-management-workflow-definition]");
+      const sectionDefinition = sectionToggle.closest("[data-entity-management-view-definition], [data-entity-management-workflow-definition], [data-entity-management-attribute-definition], [data-entity-management-catalog-definition]");
       const body = sectionToggle.getAttribute("aria-controls")
         ? drawer.querySelector(`#${CSS.escape(sectionToggle.getAttribute("aria-controls") ?? "")}`)
         : section?.querySelector("[data-entity-management-section-body]");
@@ -1030,6 +1356,109 @@ function installRecordManagementRegionIndex(drawer) {
       return;
     }
 
+    const validationRuleAdd = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-validation-rule-add]")
+      : null;
+    if (validationRuleAdd instanceof HTMLElement) {
+      const rule = validationRuleAdd.closest("[data-entity-management-validation-rule]");
+      const sectionBody = validationRuleAdd.closest("[data-entity-management-section-body]");
+      const attributeDefinition = validationRuleAdd.closest("[data-entity-management-attribute-definition]");
+      if (sectionBody instanceof HTMLElement && attributeDefinition instanceof HTMLElement) {
+        const attributeName = attributeDefinition.dataset.entityManagementAttributeDefinition ?? "attribute";
+        const nextRule = {
+          ruleKey: "",
+          argumentType: "",
+          argumentValue: "",
+          messageKey: "",
+          messageFallback: "",
+        };
+        const nextIndex = sectionBody.querySelectorAll("[data-entity-management-validation-rule]").length;
+        const markup = renderEntityManagementValidationRule({ attributeName, index: nextIndex, rule: nextRule });
+        if (rule instanceof HTMLElement) {
+          rule.insertAdjacentHTML("afterend", markup);
+        } else {
+          sectionBody.insertAdjacentHTML("beforeend", markup);
+        }
+        const insertedRule = rule instanceof HTMLElement ? rule.nextElementSibling : sectionBody.lastElementChild;
+        initializeFormDrawerSelects({ scope: insertedRule instanceof HTMLElement ? insertedRule : sectionBody });
+        syncEntityManagementValidationRules(sectionBody);
+        const ruleKeyButton = insertedRule instanceof HTMLElement
+          ? insertedRule.querySelector("[data-entity-management-validation-rule-key] [data-form-drawer-select-button]")
+          : null;
+        if (ruleKeyButton instanceof HTMLButtonElement) {
+          ruleKeyButton.focus();
+        }
+      }
+      return;
+    }
+
+    const validationRuleCopy = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-validation-rule-copy]")
+      : null;
+    if (validationRuleCopy instanceof HTMLElement) {
+      const rule = validationRuleCopy.closest("[data-entity-management-validation-rule]");
+      const sectionBody = validationRuleCopy.closest("[data-entity-management-section-body]");
+      const attributeDefinition = validationRuleCopy.closest("[data-entity-management-attribute-definition]");
+      if (rule instanceof HTMLElement && sectionBody instanceof HTMLElement && attributeDefinition instanceof HTMLElement) {
+        const attributeName = attributeDefinition.dataset.entityManagementAttributeDefinition ?? "attribute";
+        const nextIndex = sectionBody.querySelectorAll("[data-entity-management-validation-rule]").length;
+        const markup = renderEntityManagementValidationRule({
+          attributeName,
+          index: nextIndex,
+          rule: readEntityManagementValidationRule(rule),
+        });
+        rule.insertAdjacentHTML("afterend", markup);
+        const insertedRule = rule.nextElementSibling;
+        initializeFormDrawerSelects({ scope: insertedRule instanceof HTMLElement ? insertedRule : sectionBody });
+        syncEntityManagementValidationRules(sectionBody);
+      }
+      return;
+    }
+
+    const validationRuleRemove = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-validation-rule-remove]")
+      : null;
+    if (validationRuleRemove instanceof HTMLElement) {
+      const rule = validationRuleRemove.closest("[data-entity-management-validation-rule]");
+      const sectionBody = validationRuleRemove.closest("[data-entity-management-section-body]");
+      if (rule instanceof HTMLElement && sectionBody instanceof HTMLElement) {
+        rule.remove();
+        syncEntityManagementValidationRules(sectionBody);
+      }
+      return;
+    }
+
+    const validationRuleKeyOption = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-validation-rule-key] [data-form-drawer-select-option], [data-entity-management-validation-rule-key] [data-form-drawer-select-remove]")
+      : null;
+    if (validationRuleKeyOption instanceof HTMLElement) {
+      const rule = validationRuleKeyOption.closest("[data-entity-management-validation-rule]");
+      window.requestAnimationFrame(() => syncEntityManagementValidationRuleFromRuleKey(rule));
+      return;
+    }
+
+    const viewWorkflowOption = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-view-drawer-select$='Workflow'] [data-form-drawer-select-option], [data-entity-management-view-drawer-select$='Workflow'] [data-form-drawer-select-remove]")
+      : null;
+    if (viewWorkflowOption instanceof HTMLElement) {
+      const field = viewWorkflowOption.closest("[data-entity-management-view-drawer-select$='Workflow']");
+      if (field instanceof HTMLElement) {
+        window.requestAnimationFrame(() => syncEntityManagementViewWorkflowStatusVisibility(field));
+      }
+      return;
+    }
+
+    const viewStatusToggle = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-view-workflow-status-toggle]")
+      : null;
+    if (viewStatusToggle instanceof HTMLElement) {
+      const isVisible = viewStatusToggle.getAttribute("aria-pressed") !== "false";
+      viewStatusToggle.setAttribute("aria-pressed", String(!isVisible));
+      viewStatusToggle.classList.toggle("is-hidden", isVisible);
+      syncEntityManagementViewWorkflowStatusInput(viewStatusToggle.closest("[data-entity-management-view-workflow-statuses]"));
+      return;
+    }
+
     const workflowStatusMove = event.target instanceof Element
       ? event.target.closest("[data-entity-management-workflow-status-move]")
       : null;
@@ -1068,6 +1497,79 @@ function installRecordManagementRegionIndex(drawer) {
       return;
     }
 
+    const catalogOptionMove = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-catalog-option-move]")
+      : null;
+    if (catalogOptionMove instanceof HTMLElement) {
+      const row = catalogOptionMove.closest("[data-entity-management-catalog-option-row]");
+      const builder = catalogOptionMove.closest("[data-entity-management-catalog-builder]");
+      const direction = catalogOptionMove.dataset.entityManagementCatalogOptionMove;
+      if (row instanceof HTMLElement && builder instanceof HTMLElement) {
+        if (direction === "up") {
+          const previous = row.previousElementSibling;
+          if (previous instanceof HTMLElement && previous.matches("[data-entity-management-catalog-option-row]")) {
+            previous.before(row);
+          }
+        }
+        if (direction === "down") {
+          const next = row.nextElementSibling;
+          if (next instanceof HTMLElement && next.matches("[data-entity-management-catalog-option-row]")) {
+            next.after(row);
+          }
+        }
+        syncEntityManagementCatalogBuilder(builder);
+      }
+      return;
+    }
+
+    const catalogOptionRemove = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-catalog-option-remove]")
+      : null;
+    if (catalogOptionRemove instanceof HTMLElement) {
+      const row = catalogOptionRemove.closest("[data-entity-management-catalog-option-row]");
+      const builder = catalogOptionRemove.closest("[data-entity-management-catalog-builder]");
+      if (row instanceof HTMLElement && builder instanceof HTMLElement) {
+        row.remove();
+        syncEntityManagementCatalogBuilder(builder);
+      }
+      return;
+    }
+
+    const catalogOptionAdd = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-catalog-option-add]")
+      : null;
+    if (catalogOptionAdd instanceof HTMLElement) {
+      const builder = catalogOptionAdd.closest("[data-entity-management-catalog-builder]");
+      const currentRow = catalogOptionAdd.closest("[data-entity-management-catalog-option-row]");
+      const list = builder?.querySelector("[data-entity-management-catalog-option-list]");
+      if (builder instanceof HTMLElement && list instanceof HTMLElement) {
+        const catalogKey = builder.dataset.entityManagementCatalogBuilder ?? "catalog";
+        const nextNumber = list.querySelectorAll("[data-entity-management-catalog-option-row]").length + 1;
+        const markup = renderEntityManagementCatalogOptionRow({
+          catalogKey,
+          index: nextNumber - 1,
+          option: { label: `Option ${nextNumber}`, value: `option_${nextNumber}` },
+        });
+        let insertedRow = null;
+        if (currentRow instanceof HTMLElement) {
+          currentRow.insertAdjacentHTML("afterend", markup);
+          insertedRow = currentRow.nextElementSibling;
+        } else {
+          list.insertAdjacentHTML("beforeend", markup);
+          insertedRow = list.lastElementChild;
+        }
+        syncEntityManagementCatalogBuilder(builder);
+        const input = insertedRow instanceof HTMLElement
+          ? insertedRow.querySelector("[data-entity-management-catalog-option-label]")
+          : null;
+        if (input instanceof HTMLInputElement) {
+          input.focus();
+          input.select();
+        }
+      }
+      return;
+    }
+
     const trigger = event.target instanceof Element
       ? event.target.closest("[data-record-management-drawer-edit]")
       : null;
@@ -1079,10 +1581,16 @@ function installRecordManagementRegionIndex(drawer) {
     drawer.dataset.recordManagementEditMode = String(nextEditing);
     if (nextEditing) {
       const evidenceToggle = drawer.querySelector("[data-record-management-evidence-mode-toggle]");
+      const aiToggle = drawer.querySelector("[data-record-management-ai-mode-toggle]");
       drawer.dataset.recordManagementEvidenceMode = "false";
+      drawer.dataset.recordManagementAiMode = "false";
+      closeRecordManagementAiDrawer(drawer);
       closeRecordManagementEvidenceDrawer(drawer);
       if (evidenceToggle instanceof HTMLElement) {
         evidenceToggle.setAttribute("aria-pressed", "false");
+      }
+      if (aiToggle instanceof HTMLElement) {
+        aiToggle.setAttribute("aria-pressed", "false");
       }
     }
     trigger.setAttribute("aria-pressed", String(nextEditing));
@@ -1177,6 +1685,10 @@ function installRecordManagementRegionIndex(drawer) {
         addEntityManagementWorkflowRecord({ nestedList });
         return;
       }
+      if (addButton instanceof HTMLElement && nestedList.closest("[data-record-management-region-panel='catalogs']")) {
+        addEntityManagementCatalogRecord({ nestedList });
+        return;
+      }
 
       const trigger = event.target instanceof Element
         ? event.target.closest("[data-record-management-nested-trigger]")
@@ -1217,6 +1729,30 @@ function installRecordManagementRegionIndex(drawer) {
       return;
     }
 
+    const catalogCopyButton = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-catalog-copy]")
+      : null;
+    if (catalogCopyButton instanceof HTMLElement) {
+      const panel = catalogCopyButton.closest("[data-record-management-nested-panel]");
+      const nestedList = catalogCopyButton.closest("[data-record-management-nested-list]");
+      if (panel instanceof HTMLElement && nestedList instanceof HTMLElement) {
+        addEntityManagementCatalogRecord({ nestedList, sourcePanel: panel });
+      }
+      return;
+    }
+
+    const catalogDeleteButton = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-catalog-delete]")
+      : null;
+    if (catalogDeleteButton instanceof HTMLElement) {
+      const panel = catalogDeleteButton.closest("[data-record-management-nested-panel]");
+      const nestedList = catalogDeleteButton.closest("[data-record-management-nested-list]");
+      if (panel instanceof HTMLElement && nestedList instanceof HTMLElement) {
+        removeEntityManagementWorkflowRecord({ nestedList, panel });
+      }
+      return;
+    }
+
     const parentWorkflowOption = event.target instanceof Element
       ? event.target.closest("[data-entity-management-workflow-parent-select] [data-form-drawer-select-option]")
       : null;
@@ -1225,6 +1761,14 @@ function installRecordManagementRegionIndex(drawer) {
       if (builder instanceof HTMLElement) {
         window.requestAnimationFrame(() => syncEntityManagementWorkflowSubworkflowControls(builder));
       }
+      return;
+    }
+
+    const owningFeatureOption = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-owning-feature-key] [data-form-drawer-select-option], [data-entity-management-owning-feature-key] [data-form-drawer-select-remove]")
+      : null;
+    if (owningFeatureOption instanceof HTMLElement) {
+      window.requestAnimationFrame(() => syncEntityManagementOwningFeatureDerivedFields(drawer));
     }
   });
 
@@ -1233,10 +1777,33 @@ function installRecordManagementRegionIndex(drawer) {
     if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) {
       return;
     }
+    if (target.closest("[data-entity-management-validation-rule]")) {
+      const sectionBody = target.closest("[data-entity-management-section-body]");
+      if (sectionBody instanceof HTMLElement) {
+        syncEntityManagementValidationRules(sectionBody);
+      }
+      return;
+    }
     if (target.matches("[data-entity-management-workflow-status-name]")) {
       const builder = target.closest("[data-entity-management-workflow-builder]");
       if (builder instanceof HTMLElement) {
         syncEntityManagementWorkflowLinkOptions(builder);
+      }
+      return;
+    }
+    if (target.name.endsWith("CatalogName") || target.name.endsWith("CatalogDescription")) {
+      syncEntityManagementCatalogCardCopy(target);
+      return;
+    }
+    if (target.matches("[data-entity-management-catalog-option-label]")) {
+      const row = target.closest("[data-entity-management-catalog-option-row]");
+      const valueInput = row?.querySelector("[data-entity-management-catalog-option-value]");
+      if (valueInput instanceof HTMLInputElement) {
+        valueInput.value = target.value
+          .trim()
+          .toLowerCase()
+          .replaceAll(/[^a-z0-9]+/g, "_")
+          .replaceAll(/^_+|_+$/g, "");
       }
       return;
     }
@@ -1261,13 +1828,222 @@ function installRecordManagementRegionIndex(drawer) {
     const target = event.target instanceof Element
       ? event.target.closest("[data-entity-management-feature-status]")
       : null;
-    if (!(target instanceof HTMLInputElement)) {
+    if (target instanceof HTMLInputElement) {
+      syncEntityManagementOwningFeatureDerivedFields(drawer);
       return;
     }
-    const owningFeatureKey = drawer.querySelector("[data-entity-management-owning-feature-key]");
-    if (owningFeatureKey instanceof HTMLElement) {
-      owningFeatureKey.hidden = target.value !== "existing";
+
+    const privacyClassification = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-privacy-classification]")
+      : null;
+    if (privacyClassification instanceof HTMLSelectElement) {
+      syncEntityManagementSensitivePrivacyCategoryField(privacyClassification);
+      return;
     }
+
+    const securityClassification = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-security-classification]")
+      : null;
+    if (securityClassification instanceof HTMLSelectElement) {
+      syncEntityManagementSecurityLevelField(securityClassification);
+      return;
+    }
+
+    const valueCardinality = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-value-cardinality]")
+      : null;
+    if (valueCardinality instanceof HTMLSelectElement) {
+      syncEntityManagementItemLimitFields(valueCardinality);
+    }
+  });
+}
+
+function syncEntityManagementOwningFeatureDerivedFields(drawer) {
+  const selectedFeatureStatus = drawer.querySelector("[data-entity-management-feature-status]:checked");
+  const owningFeatureKey = drawer.querySelector("[data-entity-management-owning-feature-key]");
+  const owningFeatureInput = owningFeatureKey?.querySelector("[data-form-drawer-select-value]");
+  const derivedFields = drawer.querySelector("[data-entity-management-owning-feature-derived-fields]");
+  const hasExistingFeatureStatus = selectedFeatureStatus instanceof HTMLInputElement && selectedFeatureStatus.value === "existing";
+  const hasOwningFeature = owningFeatureInput instanceof HTMLInputElement && owningFeatureInput.value.trim() !== "";
+  if (owningFeatureKey instanceof HTMLElement) {
+    owningFeatureKey.hidden = !hasExistingFeatureStatus;
+  }
+  if (derivedFields instanceof HTMLElement) {
+    derivedFields.hidden = !(hasExistingFeatureStatus && hasOwningFeature);
+  }
+}
+
+function syncEntityManagementSensitivePrivacyCategoryField(privacyClassification) {
+  const attributeDefinition = privacyClassification.closest("[data-entity-management-attribute-definition]");
+  const sensitiveCategoryField = attributeDefinition?.querySelector("[data-entity-management-sensitive-privacy-category-field]");
+  const sensitiveCategorySelect = sensitiveCategoryField?.querySelector("select");
+  const isSensitive = privacyClassification.value === "sensitive";
+  if (sensitiveCategoryField instanceof HTMLElement) {
+    sensitiveCategoryField.hidden = !isSensitive;
+  }
+  if (sensitiveCategorySelect instanceof HTMLSelectElement) {
+    if (isSensitive) {
+      sensitiveCategorySelect.setAttribute("required", "");
+    } else {
+      sensitiveCategorySelect.removeAttribute("required");
+    }
+  }
+}
+
+function syncEntityManagementSecurityLevelField(securityClassification) {
+  const attributeDefinition = securityClassification.closest("[data-entity-management-attribute-definition]");
+  const securityLevelField = attributeDefinition?.querySelector("[data-entity-management-security-level-field]");
+  const securityLevelSelect = securityLevelField?.querySelector("select");
+  const isClassified = securityClassification.value === "classified";
+  if (securityLevelField instanceof HTMLElement) {
+    securityLevelField.hidden = !isClassified;
+  }
+  if (securityLevelSelect instanceof HTMLSelectElement) {
+    if (isClassified) {
+      securityLevelSelect.setAttribute("required", "");
+    } else {
+      securityLevelSelect.removeAttribute("required");
+    }
+  }
+}
+
+function syncEntityManagementItemLimitFields(valueCardinality) {
+  const attributeDefinition = valueCardinality.closest("[data-entity-management-attribute-definition]");
+  const itemLimitFields = attributeDefinition?.querySelectorAll("[data-entity-management-item-limit-field]");
+  const isMultiple = valueCardinality.value === "multiple";
+  itemLimitFields?.forEach((field) => {
+    if (!(field instanceof HTMLElement)) {
+      return;
+    }
+    field.hidden = !isMultiple;
+    if (!isMultiple) {
+      const select = field.querySelector("select");
+      if (select instanceof HTMLSelectElement) {
+        select.value = "notApplicable";
+      }
+    }
+  });
+}
+
+function hasEntityManagementValidationArgumentPlaceholder(message) {
+  return /\{[^{}]+\}/.test(String(message ?? ""));
+}
+
+function getEntityManagementValidationRuleOption(ruleKey) {
+  return entityManagementValidationRuleOptions.find((option) => option.value === ruleKey);
+}
+
+function readEntityManagementValidationRule(rule) {
+  const getValue = (suffix) => {
+    const input = rule.querySelector(`input[name$="${suffix}"], textarea[name$="${suffix}"]`);
+    return input instanceof HTMLInputElement || input instanceof HTMLTextAreaElement ? input.value : "";
+  };
+  return {
+    ruleKey: getValue("RuleKey"),
+    argumentType: getValue("ArgumentType"),
+    argumentValue: getValue("ArgumentValue"),
+    messageKey: getValue("MessageKey"),
+    messageFallback: getValue("MessageFallback"),
+  };
+}
+
+function syncEntityManagementValidationRuleFromRuleKey(rule) {
+  if (!(rule instanceof HTMLElement)) {
+    return;
+  }
+  const sectionBody = rule.closest("[data-entity-management-section-body]");
+  const ruleKeyInput = rule.querySelector('[data-entity-management-validation-rule-key] input[name$="RuleKey"]');
+  const messageKeyInput = rule.querySelector('input[name$="MessageKey"]');
+  const messageFallbackInput = rule.querySelector('textarea[name$="MessageFallback"]');
+  const selectedOption = ruleKeyInput instanceof HTMLInputElement
+    ? getEntityManagementValidationRuleOption(ruleKeyInput.value.trim())
+    : null;
+
+  if (messageKeyInput instanceof HTMLInputElement) {
+    messageKeyInput.value = selectedOption?.attribute ?? "";
+  }
+  if (messageFallbackInput instanceof HTMLTextAreaElement) {
+    messageFallbackInput.value = selectedOption?.description ?? "";
+  }
+  const hasArgument = hasEntityManagementValidationArgumentPlaceholder(selectedOption?.description);
+  if (!hasArgument) {
+    const argumentTypeInput = rule.querySelector('input[name$="ArgumentType"]');
+    const argumentValueInput = rule.querySelector('input[name$="ArgumentValue"]');
+    if (argumentTypeInput instanceof HTMLInputElement) {
+      argumentTypeInput.value = "";
+    }
+    if (argumentValueInput instanceof HTMLInputElement) {
+      argumentValueInput.value = "";
+    }
+  }
+  if (sectionBody instanceof HTMLElement) {
+    syncEntityManagementValidationRules(sectionBody);
+  }
+}
+
+function syncEntityManagementValidationRules(sectionBody) {
+  const attributeDefinition = sectionBody.closest("[data-entity-management-attribute-definition]");
+  const attributeName = attributeDefinition instanceof HTMLElement
+    ? attributeDefinition.dataset.entityManagementAttributeDefinition ?? "attribute"
+    : "attribute";
+  const rules = Array.from(sectionBody.querySelectorAll("[data-entity-management-validation-rule]"))
+    .filter((rule) => rule instanceof HTMLElement);
+  rules.forEach((rule, index) => {
+    if (!(rule instanceof HTMLElement)) {
+      return;
+    }
+    const ruleNumber = index + 1;
+    const ruleKeyInput = rule.querySelector('input[name$="RuleKey"]');
+    const summary = rule.querySelector("[data-entity-management-validation-rule-summary]");
+    const title = rule.querySelector("[data-entity-management-validation-rule-title]");
+    const ruleKeySelect = rule.querySelector("[data-entity-management-validation-rule-key] [data-form-drawer-select]");
+    const ruleKey = ruleKeyInput instanceof HTMLInputElement ? ruleKeyInput.value.trim() : "";
+    const messageFallbackInput = rule.querySelector('textarea[name$="MessageFallback"]');
+    const selectedOption = getEntityManagementValidationRuleOption(ruleKey);
+    const hasArgument = hasEntityManagementValidationArgumentPlaceholder(
+      selectedOption?.description ?? (messageFallbackInput instanceof HTMLTextAreaElement ? messageFallbackInput.value : ""),
+    );
+    rule.dataset.entityManagementValidationRule = ruleKey || `rule-${ruleNumber}`;
+    if (title instanceof HTMLElement) {
+      title.textContent = `Validation rule ${ruleNumber}`;
+    }
+    if (summary instanceof HTMLElement) {
+      summary.textContent = ruleKey || "New rule";
+    }
+    [
+      ["RuleKey", "Rule key"],
+      ["ArgumentType", "Argument type"],
+      ["ArgumentValue", "Argument value"],
+      ["MessageKey", "Message key"],
+      ["MessageFallback", "Message fallback"],
+    ].forEach(([suffix, label]) => {
+      const control = rule.querySelector(`input[name$="${suffix}"], textarea[name$="${suffix}"]`);
+      if (control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement) {
+        control.name = `${attributeName}AttributeValidation${ruleNumber}${suffix}`;
+        control.id = `entity-management-${control.name}`;
+        if (suffix === "RuleKey" && ruleKeySelect instanceof HTMLElement) {
+          const selectedOption = getEntityManagementValidationRuleOption(control.value.trim());
+          ruleKeySelect.id = `entity-management-${attributeName}-validation-${ruleNumber}-rule-key-select`;
+          refreshFormDrawerSelect(ruleKeySelect);
+          if (summary instanceof HTMLElement) {
+            summary.textContent = selectedOption?.label ?? (control.value.trim() || "New rule");
+          }
+          return;
+        }
+        if (suffix === "ArgumentType" || suffix === "ArgumentValue") {
+          const field = control.closest("[data-entity-management-validation-argument-field]");
+          if (field instanceof HTMLElement) {
+            field.hidden = !hasArgument;
+          }
+        }
+        const field = control.closest(".form-field");
+        const labelElement = field?.querySelector(".form-field-label");
+        if (labelElement instanceof HTMLLabelElement) {
+          labelElement.htmlFor = control.id;
+          labelElement.textContent = label;
+        }
+      }
+    });
   });
 }
 
@@ -1467,6 +2243,19 @@ function getNextEntityManagementWorkflowRecordKeys(nestedList) {
   };
 }
 
+function getNextEntityManagementCatalogRecordKeys(nestedList) {
+  let index = nestedList.querySelectorAll("[data-record-management-nested-trigger]").length + 1;
+  let nestedKey = `catalog-${index}`;
+  while (nestedList.querySelector(`[data-record-management-nested-trigger="${CSS.escape(nestedKey)}"]`)) {
+    index += 1;
+    nestedKey = `catalog-${index}`;
+  }
+  return {
+    formKey: `catalog${index}`,
+    nestedKey,
+  };
+}
+
 function readEntityManagementWorkflowConfig(panel) {
   const builder = panel.querySelector("[data-entity-management-workflow-builder]");
   if (!(builder instanceof HTMLElement)) {
@@ -1500,12 +2289,40 @@ function readEntityManagementWorkflowConfig(panel) {
   };
 }
 
+function readEntityManagementCatalogConfig(panel) {
+  const getValue = (suffix) => {
+    const control = panel.querySelector(`input[name$="${suffix}"], textarea[name$="${suffix}"]`);
+    return control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement ? control.value : "";
+  };
+  const selectedScope = panel.querySelector("input[name$='CatalogScope']:checked");
+  return {
+    catalogDescription: getValue("CatalogDescription"),
+    catalogName: getValue("CatalogName"),
+    options: Array.from(panel.querySelectorAll("[data-entity-management-catalog-option-row]"))
+      .filter((row) => row instanceof HTMLElement)
+      .map((row, index) => {
+        const labelInput = row.querySelector("[data-entity-management-catalog-option-label]");
+        const valueInput = row.querySelector("[data-entity-management-catalog-option-value]");
+        const label = labelInput instanceof HTMLInputElement && labelInput.value.trim()
+          ? labelInput.value.trim()
+          : `Option ${index + 1}`;
+        return {
+          label,
+          value: valueInput instanceof HTMLInputElement && valueInput.value.trim()
+            ? valueInput.value.trim()
+            : label.toLowerCase().replaceAll(/[^a-z0-9]+/g, "_").replaceAll(/^_+|_+$/g, ""),
+        };
+      }),
+    scope: selectedScope instanceof HTMLInputElement ? selectedScope.value : "entity",
+  };
+}
+
 function readEntityManagementWorkflowStatusConfig(panel) {
   return readEntityManagementWorkflowConfig(panel).statuses;
 }
 
-function renderEntityManagementWorkflowNestedCard({ description = "", isActive = false, key, label = "", summary = "Draft workflow" }) {
-  const displayLabel = label.trim() || "Untitled workflow";
+function renderEntityManagementNestedRecordCard({ description = "", isActive = false, key, label = "", summary = "" }) {
+  const displayLabel = label.trim() || "Untitled";
   return `
     <button
       class="record-management-nested-list-card${isActive ? " is-active" : ""}"
@@ -1520,6 +2337,26 @@ function renderEntityManagementWorkflowNestedCard({ description = "", isActive =
       <em>${escapeHtml(summary)}</em>
     </button>
   `;
+}
+
+function renderEntityManagementWorkflowNestedCard({ description = "", isActive = false, key, label = "", summary = "Draft workflow" }) {
+  return renderEntityManagementNestedRecordCard({
+    description,
+    isActive,
+    key,
+    label: label.trim() || "Untitled workflow",
+    summary,
+  });
+}
+
+function renderEntityManagementCatalogNestedCard({ description = "", isActive = false, key, label = "", summary = "Entity-specific" }) {
+  return renderEntityManagementNestedRecordCard({
+    description,
+    isActive,
+    key,
+    label: label.trim() || "Untitled catalog",
+    summary,
+  });
 }
 
 function addEntityManagementWorkflowRecord({ nestedList, sourcePanel = null }) {
@@ -1566,6 +2403,40 @@ function addEntityManagementWorkflowRecord({ nestedList, sourcePanel = null }) {
   activateNestedListItem(nestedList, nestedKey);
 }
 
+function addEntityManagementCatalogRecord({ nestedList, sourcePanel = null }) {
+  const cards = nestedList.querySelector(".record-management-nested-list-cards");
+  const drawer = nestedList.querySelector(".record-management-nested-list-drawer");
+  const addCard = nestedList.querySelector("[data-record-management-nested-add]");
+  if (!(cards instanceof HTMLElement) || !(drawer instanceof HTMLElement)) {
+    return;
+  }
+
+  const { formKey, nestedKey } = getNextEntityManagementCatalogRecordKeys(nestedList);
+  const catalogConfig = sourcePanel instanceof HTMLElement
+    ? readEntityManagementCatalogConfig(sourcePanel)
+    : { catalogDescription: "", catalogName: "", scope: "entity" };
+  const cardMarkup = renderEntityManagementCatalogNestedCard({ key: nestedKey });
+  const panelMarkup = `
+    <section data-record-management-nested-panel="${escapeHtml(nestedKey)}" hidden>
+      ${renderEntityManagementCatalogDefinitionPanel({
+        catalogDescription: sourcePanel instanceof HTMLElement ? catalogConfig.catalogDescription : "",
+        catalogName: sourcePanel instanceof HTMLElement ? catalogConfig.catalogName : "",
+        key: formKey,
+        options: sourcePanel instanceof HTMLElement ? catalogConfig.options : [{ label: "Option 1", value: "option_1" }],
+        scope: catalogConfig.scope,
+      })}
+    </section>
+  `;
+
+  if (addCard instanceof HTMLElement) {
+    addCard.insertAdjacentHTML("beforebegin", cardMarkup);
+  } else {
+    cards.insertAdjacentHTML("beforeend", cardMarkup);
+  }
+  drawer.insertAdjacentHTML("beforeend", panelMarkup);
+  activateNestedListItem(nestedList, nestedKey);
+}
+
 function removeEntityManagementWorkflowRecord({ nestedList, panel }) {
   const nestedKey = panel.dataset.recordManagementNestedPanel;
   if (!nestedKey) {
@@ -1582,6 +2453,64 @@ function removeEntityManagementWorkflowRecord({ nestedList, panel }) {
   if (nextTrigger instanceof HTMLElement) {
     activateNestedListItem(nestedList, nextTrigger.dataset.recordManagementNestedTrigger ?? "");
   }
+}
+
+function syncEntityManagementCatalogCardCopy(field) {
+  const panel = field.closest("[data-record-management-nested-panel]");
+  const nestedList = field.closest("[data-record-management-nested-list]");
+  const nestedKey = panel instanceof HTMLElement ? panel.dataset.recordManagementNestedPanel : "";
+  if (!(nestedList instanceof HTMLElement) || !nestedKey) {
+    return;
+  }
+  const trigger = nestedList.querySelector(`[data-record-management-nested-trigger="${CSS.escape(nestedKey)}"]`);
+  const catalogName = panel.querySelector("input[name$='CatalogName']");
+  const catalogDescription = panel.querySelector("textarea[name$='CatalogDescription']");
+  const label = catalogName instanceof HTMLInputElement && catalogName.value.trim()
+    ? catalogName.value.trim()
+    : "Untitled catalog";
+  const description = catalogDescription instanceof HTMLTextAreaElement ? catalogDescription.value.trim() : "";
+  const titleNode = trigger?.querySelector("strong");
+  const descriptionNode = trigger?.querySelector("small");
+  if (titleNode instanceof HTMLElement) {
+    titleNode.textContent = label;
+  }
+  if (descriptionNode instanceof HTMLElement) {
+    descriptionNode.textContent = description;
+    descriptionNode.title = description;
+  }
+}
+
+function syncEntityManagementCatalogBuilder(builder) {
+  const catalogKey = builder.dataset.entityManagementCatalogBuilder ?? "catalog";
+  const rows = Array.from(builder.querySelectorAll("[data-entity-management-catalog-option-row]"))
+    .filter((row) => row instanceof HTMLElement);
+  rows.forEach((row, index) => {
+    if (!(row instanceof HTMLElement)) {
+      return;
+    }
+    const optionNumber = index + 1;
+    row.dataset.catalogOptionIndex = String(index);
+    const labelInput = row.querySelector("[data-entity-management-catalog-option-label]");
+    const valueInput = row.querySelector("[data-entity-management-catalog-option-value]");
+    if (labelInput instanceof HTMLInputElement) {
+      labelInput.name = `${catalogKey}Option${optionNumber}Label`;
+      labelInput.id = `entity-management-${catalogKey}-option-${index}-label`;
+    }
+    if (valueInput instanceof HTMLInputElement) {
+      valueInput.name = `${catalogKey}Option${optionNumber}Value`;
+      valueInput.id = `entity-management-${catalogKey}-option-${index}-value`;
+    }
+    const labelField = row.querySelector("[data-entity-management-catalog-option-label-field]");
+    const valueField = row.querySelector("[data-entity-management-catalog-option-value-field]");
+    const labelElement = labelField?.querySelector(".form-field-label");
+    const valueElement = valueField?.querySelector(".form-field-label");
+    if (labelElement instanceof HTMLLabelElement) {
+      labelElement.htmlFor = `entity-management-${catalogKey}-option-${index}-label`;
+    }
+    if (valueElement instanceof HTMLLabelElement) {
+      valueElement.htmlFor = `entity-management-${catalogKey}-option-${index}-value`;
+    }
+  });
 }
 
 function syncEntityManagementWorkflowCardCopy(field) {
@@ -2132,6 +3061,8 @@ function renderDetailsRegion(overviewAttributes) {
 function renderEntityManagementTextField({
   description = "",
   editable = true,
+  fieldAttributes = "",
+  hidden = false,
   label,
   multiline = false,
   name,
@@ -2139,12 +3070,13 @@ function renderEntityManagementTextField({
 }) {
   const inputId = `entity-management-${name}`;
   const control = multiline
-    ? `<textarea id="${escapeHtml(inputId)}" class="form-field-input form-field-textarea" name="${escapeHtml(name)}" rows="4" ${editable ? "" : "readonly"}>${escapeHtml(value)}</textarea>`
+    ? `<textarea id="${escapeHtml(inputId)}" class="form-field-input form-field-textarea" name="${escapeHtml(name)}" rows="1" ${editable ? "" : "readonly"}>${escapeHtml(value)}</textarea>`
     : `<input id="${escapeHtml(inputId)}" class="form-field-input" type="text" name="${escapeHtml(name)}" value="${escapeHtml(value)}" ${editable ? "" : "readonly"} />`;
   return `
-    <div class="form-field entity-management-field${multiline ? " form-field-span-2" : ""}" ${renderEvidenceTargetAttributes({ name: label, value })}>
+    <div class="form-field entity-management-field${multiline ? " form-field-span-2" : ""}" ${fieldAttributes} ${hidden ? "hidden" : ""} ${renderEvidenceTargetAttributes({ name: label, value })}>
       <label class="form-field-label" for="${escapeHtml(inputId)}">${escapeHtml(label)}</label>
       ${renderEntityManagementEvidenceButton(label)}
+      ${renderEntityManagementAiButton(label)}
       ${control}
       ${description ? `<span class="form-field-help">${escapeHtml(description)}</span>` : ""}
     </div>
@@ -2158,6 +3090,7 @@ function renderEntityManagementRadioGroup({ description = "", disabled = false, 
     <fieldset class="form-choice-group entity-management-choice-group" aria-labelledby="${escapeHtml(legendId)}" ${renderEvidenceTargetAttributes({ name: label, value: selectedOption?.label ?? value })}>
       <legend id="${escapeHtml(legendId)}" class="form-choice-legend">${escapeHtml(label)}</legend>
       ${renderEntityManagementEvidenceButton(label)}
+      ${renderEntityManagementAiButton(label)}
       ${description ? `<p class="form-field-help">${escapeHtml(description)}</p>` : ""}
       <div class="form-choice-stack">
         ${options.map((option) => `
@@ -2181,15 +3114,26 @@ function renderEntityManagementRadioGroup({ description = "", disabled = false, 
   `;
 }
 
-function renderEntityManagementSelectField({ description = "", disabled = false, label, name, options, value }) {
+function renderEntityManagementSelectField({
+  description = "",
+  disabled = false,
+  fieldAttributes = "",
+  hidden = false,
+  label,
+  name,
+  options,
+  selectAttributes = "",
+  value,
+}) {
   const inputId = `entity-management-${name}`;
   const selectedOption = options.find((option) => (typeof option === "string" ? option : option.value) === value);
   const selectedLabel = typeof selectedOption === "string" ? selectedOption : selectedOption?.label ?? value;
   return `
-    <div class="form-field entity-management-field" ${renderEvidenceTargetAttributes({ name: label, value: selectedLabel })}>
+    <div class="form-field entity-management-field" ${fieldAttributes} ${hidden ? "hidden" : ""} ${renderEvidenceTargetAttributes({ name: label, value: selectedLabel })}>
       <label class="form-field-label" for="${escapeHtml(inputId)}">${escapeHtml(label)}</label>
       ${renderEntityManagementEvidenceButton(label)}
-      <select id="${escapeHtml(inputId)}" class="form-field-input" name="${escapeHtml(name)}" ${disabled ? "disabled" : ""}>
+      ${renderEntityManagementAiButton(label)}
+      <select id="${escapeHtml(inputId)}" class="form-field-input" name="${escapeHtml(name)}" ${selectAttributes} ${disabled ? "disabled" : ""}>
         ${options.map((option) => {
           const optionValue = typeof option === "string" ? option : option.value;
           const optionLabel = typeof option === "string" ? option : option.label;
@@ -2200,6 +3144,170 @@ function renderEntityManagementSelectField({ description = "", disabled = false,
       </select>
       ${description ? `<span class="form-field-help">${escapeHtml(description)}</span>` : ""}
     </div>
+  `;
+}
+
+function renderEntityManagementPrivacyClassificationField({ name, value }) {
+  const markup = renderEntityManagementSelectField({
+    label: "Privacy classification",
+    name,
+    options: entityManagementPrivacyClassificationOptions,
+    value,
+  });
+  return markup.replace("<select ", "<select data-entity-management-privacy-classification ");
+}
+
+function renderEntityManagementSecurityClassificationField({ description = "", name, value }) {
+  const markup = renderEntityManagementSelectField({
+    description,
+    label: "Security classification",
+    name,
+    options: entityManagementSecurityClassificationOptions,
+    value,
+  });
+  return markup.replace("<select ", "<select data-entity-management-security-classification ");
+}
+
+function renderEntityManagementSensitivePrivacyCategoryField({ hidden = true, name, value = "governmentIdentifiers" }) {
+  return `
+    <div class="form-field entity-management-field" data-entity-management-sensitive-privacy-category-field ${hidden ? "hidden" : ""} ${renderEvidenceTargetAttributes({ name: "Sensitive privacy category", value })}>
+      <label class="form-field-label" for="entity-management-${escapeHtml(name)}">Sensitive privacy category</label>
+      ${renderEntityManagementEvidenceButton("Sensitive privacy category")}
+      ${renderEntityManagementAiButton("Sensitive privacy category")}
+      <select id="entity-management-${escapeHtml(name)}" class="form-field-input" name="${escapeHtml(name)}" ${hidden ? "" : "required"}>
+        ${entityManagementSensitivePrivacyCategoryOptions.map((option) => `
+          <option value="${escapeHtml(option.value)}" ${option.value === value ? "selected" : ""}>${escapeHtml(option.label)}</option>
+        `).join("")}
+      </select>
+      <span class="form-field-help">Required when privacy classification is sensitive.</span>
+    </div>
+  `;
+}
+
+function renderEntityManagementSecurityLevelField({ hidden = true, name, value = "level1" }) {
+  return `
+    <div class="form-field entity-management-field" data-entity-management-security-level-field ${hidden ? "hidden" : ""} ${renderEvidenceTargetAttributes({ name: "Security level", value })}>
+      <label class="form-field-label" for="entity-management-${escapeHtml(name)}">Security level</label>
+      ${renderEntityManagementEvidenceButton("Security level")}
+      ${renderEntityManagementAiButton("Security level")}
+      <select id="entity-management-${escapeHtml(name)}" class="form-field-input" name="${escapeHtml(name)}" ${hidden ? "" : "required"}>
+        ${Array.from({ length: 10 }, (_, index) => {
+          const level = `level${index + 1}`;
+          return `<option value="${escapeHtml(level)}" ${level === value ? "selected" : ""}>Level ${index + 1}</option>`;
+        }).join("")}
+      </select>
+      <span class="form-field-help">Required when security classification is classified.</span>
+    </div>
+  `;
+}
+
+function renderEntityManagementValidationRule({ attributeName, index, rule }) {
+  const ruleName = `${attributeName}AttributeValidation${index + 1}`;
+  const selectedRuleOption = getEntityManagementValidationRuleOption(rule.ruleKey);
+  const hasArgument = hasEntityManagementValidationArgumentPlaceholder(selectedRuleOption?.description ?? rule.messageFallback);
+  return `
+    <article class="entity-management-validation-rule form-field-span-2" data-entity-management-validation-rule="${escapeHtml(rule.ruleKey)}">
+      <div class="entity-management-validation-rule-header">
+        <div class="record-management-user-attribute-group-header">
+          <h5 data-entity-management-validation-rule-title>Validation rule ${index + 1}</h5>
+          <p data-entity-management-validation-rule-summary>${escapeHtml(selectedRuleOption?.label ?? (rule.ruleKey || "New rule"))}</p>
+        </div>
+        <div class="entity-management-validation-rule-actions" aria-label="Validation rule actions">
+          <button class="entity-management-validation-rule-action" type="button" aria-label="Copy validation rule" title="Copy validation rule" data-entity-management-validation-rule-copy>
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path d="M8 8h10v12H8z" />
+              <path d="M5 16H4V4h12v1" />
+            </svg>
+          </button>
+          <button class="entity-management-validation-rule-action entity-management-validation-rule-action-danger" type="button" aria-label="Remove validation rule" title="Remove validation rule" data-entity-management-validation-rule-remove>
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path d="M3 6h18" />
+              <path d="M8 6V4h8v2" />
+              <path d="M6 9l1 11h10l1-11" />
+              <path d="M10 12v5" />
+              <path d="M14 12v5" />
+            </svg>
+          </button>
+          <button class="entity-management-validation-rule-action entity-management-validation-rule-action-add" type="button" aria-label="Add validation rule" title="Add validation rule" data-entity-management-validation-rule-add>
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="entity-management-form-grid">
+        ${renderEntityManagementValidationRuleKeySelect({
+          index,
+          rule,
+          ruleName,
+        })}
+        ${renderEntityManagementTextField({
+          label: "Argument type",
+          name: `${ruleName}ArgumentType`,
+          value: rule.argumentType,
+          hidden: !hasArgument,
+          fieldAttributes: "data-entity-management-validation-argument-field",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Argument value",
+          name: `${ruleName}ArgumentValue`,
+          value: String(rule.argumentValue),
+          hidden: !hasArgument,
+          fieldAttributes: "data-entity-management-validation-argument-field",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Message key",
+          name: `${ruleName}MessageKey`,
+          value: rule.messageKey,
+        })}
+        ${renderEntityManagementTextField({
+          label: "Message fallback",
+          multiline: true,
+          name: `${ruleName}MessageFallback`,
+          value: rule.messageFallback,
+        })}
+      </div>
+    </article>
+  `;
+}
+
+function renderEntityManagementValidationRuleKeySelect({ index, rule, ruleName }) {
+  const fieldKey = `${ruleName}-rule-key`;
+  const selectedOption = getEntityManagementValidationRuleOption(rule.ruleKey);
+  const triggerLabel = selectedOption?.label ?? "Choose rule";
+  const selectMarkup = renderFormDrawerSelect({
+    rootId: `entity-management-${fieldKey}-select`,
+    inputId: `entity-management-${fieldKey}-value`,
+    inputName: `${ruleName}RuleKey`,
+    value: rule.ruleKey,
+    triggerId: `entity-management-${fieldKey}-trigger`,
+    labelId: `entity-management-${fieldKey}-label`,
+    panelTitleId: `entity-management-${fieldKey}-title`,
+    searchInputId: `entity-management-${fieldKey}-search`,
+    optionListId: `entity-management-${fieldKey}-options`,
+    emptySummary: "Choose rule",
+    triggerLabel,
+    triggerMeta: selectedOption ? "1 selected" : "0 selected",
+    drawerEyebrow: "Validation rule",
+    dialogTitle: "Choose validation rule",
+    closeLabel: "Close validation rule selector",
+    searchPlaceholder: "Search validation rules",
+    selectedTitle: "Selected Rule",
+    selectedEmpty: "No validation rule selected yet.",
+    availableTitle: "Validation Rules",
+    emptyMessage: "No validation rules match this search.",
+    maxSelections: 1,
+  }).replace(
+    'data-form-drawer-select-option-list\n          ></div>',
+    `data-form-drawer-select-option-list\n          >${renderFormDrawerSelectOptions(entityManagementValidationRuleOptions)}</div>`,
+  );
+  return `
+    <section class="form-field entity-management-drawer-select-field" data-entity-management-validation-rule-key ${renderEvidenceTargetAttributes({ name: "Rule key", value: selectedOption?.label ?? rule.ruleKey ?? "" })}>
+      <span class="form-field-label" id="entity-management-${escapeHtml(fieldKey)}-label">Rule key</span>
+      ${renderEntityManagementEvidenceButton("Rule key")}
+      ${renderEntityManagementAiButton("Rule key")}
+      ${selectMarkup}
+    </section>
   `;
 }
 
@@ -2228,15 +3336,15 @@ function renderEntityManagementFeatureDrawerSelect() {
     rootId: "entity-management-owning-feature-key-select",
     inputId: "entity-management-owning-feature-key-value",
     inputName: "owningFeatureKey",
-    value: "organizationCore",
+    value: "",
     triggerId: "entity-management-owning-feature-key-trigger",
     labelId: "entity-management-owning-feature-key-label",
     panelTitleId: "entity-management-owning-feature-key-title",
     searchInputId: "entity-management-owning-feature-key-search",
     optionListId: "entity-management-owning-feature-key-options",
     emptySummary: "Choose feature key",
-    triggerLabel: "organizationCore",
-    triggerMeta: "1 selected",
+    triggerLabel: "Choose feature key",
+    triggerMeta: "0 selected",
     drawerEyebrow: "Feature key",
     dialogTitle: "Choose owning feature key",
     closeLabel: "Close owning feature key selector",
@@ -2251,9 +3359,10 @@ function renderEntityManagementFeatureDrawerSelect() {
     `data-form-drawer-select-option-list\n          >${renderFormDrawerSelectOptions(options)}</div>`,
   );
   return `
-    <section class="form-field form-field-span-2 entity-management-drawer-select-field" data-entity-management-owning-feature-key ${renderEvidenceTargetAttributes({ name: "Owning feature key", value: "organizationCore" })}>
+    <section class="form-field form-field-span-2 entity-management-drawer-select-field" data-entity-management-owning-feature-key ${renderEvidenceTargetAttributes({ name: "Owning feature key", value: "Not selected" })}>
       <span class="form-field-label" id="entity-management-owning-feature-key-label">Owning feature key</span>
       ${renderEntityManagementEvidenceButton("Owning feature key")}
+      ${renderEntityManagementAiButton("Owning feature key")}
       ${selectMarkup}
       <span class="form-field-help">Drawer select preview; this will bind to runtime feature keys later.</span>
     </section>
@@ -2316,11 +3425,107 @@ function renderEntityManagementDrawerSelectField({
     <section class="form-field ${escapeHtml(layoutClass)} entity-management-drawer-select-field" data-entity-management-view-drawer-select="${escapeHtml(inputName)}" ${renderEvidenceTargetAttributes({ name: label, value: triggerLabel })}>
       <span class="form-field-label" id="entity-management-${escapeHtml(fieldKey)}-label">${escapeHtml(label)}</span>
       ${renderEntityManagementEvidenceButton(label)}
+      ${renderEntityManagementAiButton(label)}
       ${selectMarkup}
       ${description ? `<span class="form-field-help">${escapeHtml(description)}</span>` : ""}
       ${createAction}
     </section>
   `;
+}
+
+function getEntityManagementViewWorkflowStatuses(workflowKey = "intakeWorkflow") {
+  return entityManagementViewWorkflowStatuses[workflowKey] ?? entityManagementViewWorkflowStatuses.intakeWorkflow;
+}
+
+function renderEntityManagementEyeIcon({ hidden = false } = {}) {
+  return `
+    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+      <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+      <circle cx="12" cy="12" r="2.5" />
+      ${hidden ? '<path d="m4.5 4.5 15 15" />' : ""}
+    </svg>
+  `;
+}
+
+function renderEntityManagementViewWorkflowStatusVisibility({ inputName, statuses }) {
+  const visibleValues = statuses.filter((status) => status.visible !== false).map((status) => status.value);
+  return `
+    <section class="entity-management-view-workflow-statuses" data-entity-management-view-workflow-statuses>
+      <input type="hidden" name="${escapeHtml(inputName)}" value="${escapeHtml(visibleValues.join(","))}" data-entity-management-view-workflow-status-value />
+      <div class="entity-management-view-workflow-statuses-header">
+        <strong>Status visibility</strong>
+        <span>Choose which statuses appear in this view.</span>
+      </div>
+      <div class="entity-management-view-workflow-status-list">
+        ${statuses.map((status) => {
+          const isVisible = status.visible !== false;
+          return `
+            <button
+              class="entity-management-view-workflow-status-toggle${isVisible ? "" : " is-hidden"}"
+              type="button"
+              aria-pressed="${escapeHtml(String(isVisible))}"
+              aria-label="${escapeHtml(`${isVisible ? "Hide" : "Show"} ${status.label}`)}"
+              data-status-value="${escapeHtml(status.value)}"
+              data-entity-management-view-workflow-status-toggle
+            >
+              ${renderEntityManagementEyeIcon({ hidden: !isVisible })}
+              <span>${escapeHtml(status.label)}</span>
+              <em>${isVisible ? "Visible" : "Hidden"}</em>
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function syncEntityManagementViewWorkflowStatusInput(statusList) {
+  if (!(statusList instanceof HTMLElement)) {
+    return;
+  }
+  const input = statusList.querySelector("[data-entity-management-view-workflow-status-value]");
+  const visibleValues = Array.from(statusList.querySelectorAll("[data-entity-management-view-workflow-status-toggle]"))
+    .filter((toggle) => toggle instanceof HTMLElement && toggle.getAttribute("aria-pressed") !== "false")
+    .map((toggle) => toggle instanceof HTMLElement ? toggle.dataset.statusValue ?? "" : "")
+    .filter(Boolean);
+  if (input instanceof HTMLInputElement) {
+    input.value = visibleValues.join(",");
+  }
+  statusList.querySelectorAll("[data-entity-management-view-workflow-status-toggle]").forEach((toggle) => {
+    if (!(toggle instanceof HTMLElement)) {
+      return;
+    }
+    const isVisible = toggle.getAttribute("aria-pressed") !== "false";
+    toggle.classList.toggle("is-hidden", !isVisible);
+    const label = toggle.querySelector("span")?.textContent?.trim() ?? "status";
+    const meta = toggle.querySelector("em");
+    toggle.setAttribute("aria-label", `${isVisible ? "Hide" : "Show"} ${label}`);
+    if (meta instanceof HTMLElement) {
+      meta.textContent = isVisible ? "Visible" : "Hidden";
+    }
+    const currentIcon = toggle.querySelector("svg");
+    if (currentIcon instanceof SVGElement) {
+      currentIcon.outerHTML = renderEntityManagementEyeIcon({ hidden: !isVisible });
+    }
+  });
+}
+
+function syncEntityManagementViewWorkflowStatusVisibility(workflowField) {
+  if (!(workflowField instanceof HTMLElement)) {
+    return;
+  }
+  const input = workflowField.querySelector("[data-form-drawer-select-value]");
+  const sectionBody = workflowField.closest("[data-entity-management-section-body]");
+  const currentStatusList = sectionBody?.querySelector("[data-entity-management-view-workflow-statuses]");
+  if (!(input instanceof HTMLInputElement) || !(currentStatusList instanceof HTMLElement)) {
+    return;
+  }
+  const workflowInputName = input.name;
+  const statusInputName = workflowInputName.replace(/Workflow$/, "WorkflowVisibleStatuses");
+  currentStatusList.outerHTML = renderEntityManagementViewWorkflowStatusVisibility({
+    inputName: statusInputName,
+    statuses: getEntityManagementViewWorkflowStatuses(input.value),
+  });
 }
 
 function renderEntityManagementViewSection({ children, description, id, title }) {
@@ -2553,6 +3758,10 @@ function renderEntityManagementViewDefinitionPanel({ key, routeName, routePrevie
             availableTitle: "Available Workflows",
             description: "Single workflow selected for this entity view.",
             maxSelections: 1,
+          })}
+          ${renderEntityManagementViewWorkflowStatusVisibility({
+            inputName: `${key}WorkflowVisibleStatuses`,
+            statuses: getEntityManagementViewWorkflowStatuses("intakeWorkflow"),
           })}
         `,
       })}
@@ -2828,6 +4037,40 @@ function renderEntityManagementWorkflowActions({ workflowKey }) {
   `;
 }
 
+function renderEntityManagementCatalogActions({ catalogKey }) {
+  return `
+    <div class="entity-management-workflow-actions" aria-label="Catalog actions">
+      <button
+        class="entity-management-workflow-action-button"
+        type="button"
+        aria-label="Copy catalog"
+        title="Copy catalog"
+        data-entity-management-catalog-copy="${escapeHtml(catalogKey)}"
+      >
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="M8 8h10v12H8z" />
+          <path d="M5 16H4V4h12v1" />
+        </svg>
+      </button>
+      <button
+        class="entity-management-workflow-action-button entity-management-workflow-action-button-danger"
+        type="button"
+        aria-label="Delete catalog"
+        title="Delete catalog"
+        data-entity-management-catalog-delete="${escapeHtml(catalogKey)}"
+      >
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="M3 6h18" />
+          <path d="M8 6V4h8v2" />
+          <path d="M6 9l1 11h10l1-11" />
+          <path d="M10 12v5" />
+          <path d="M14 12v5" />
+        </svg>
+      </button>
+    </div>
+  `;
+}
+
 function renderEntityManagementWorkflowDefinitionPanel({ isSubworkflow = false, key, parentWorkflow = "", statuses = [{ linksTo: "all", name: "Home" }], workflowDescription, workflowName }) {
   return `
     <div class="entity-management-view-definition" data-entity-management-workflow-definition="${escapeHtml(key)}">
@@ -2855,6 +4098,124 @@ function renderEntityManagementWorkflowDefinitionPanel({ isSubworkflow = false, 
   `;
 }
 
+function renderEntityManagementCatalogOptionRow({ catalogKey, index, option }) {
+  const label = option.label ?? `Option ${index + 1}`;
+  const value = option.value ?? label.toLowerCase().replaceAll(/[^a-z0-9]+/g, "_").replaceAll(/^_+|_+$/g, "");
+  return `
+    <article class="entity-management-workflow-status-row entity-management-catalog-option-row" data-entity-management-catalog-option-row data-catalog-option-index="${escapeHtml(String(index))}">
+      <div class="form-field entity-management-field entity-management-workflow-status-name" data-entity-management-catalog-option-label-field ${renderEvidenceTargetAttributes({ name: "Option label", value: label })}>
+        <label class="form-field-label" for="entity-management-${escapeHtml(catalogKey)}-option-${escapeHtml(String(index))}-label">Option label</label>
+        ${renderEntityManagementEvidenceButton("Option label")}
+        ${renderEntityManagementAiButton("Option label")}
+        <input id="entity-management-${escapeHtml(catalogKey)}-option-${escapeHtml(String(index))}-label" class="form-field-input" type="text" name="${escapeHtml(`${catalogKey}Option${index + 1}Label`)}" value="${escapeHtml(label)}" data-entity-management-catalog-option-label />
+      </div>
+      <div class="entity-management-workflow-status-location" aria-label="Option location">
+        <button class="entity-management-workflow-status-move" type="button" aria-label="Move option up" data-entity-management-catalog-option-move="up">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="m6 15 6-6 6 6" />
+          </svg>
+        </button>
+        <button class="entity-management-workflow-status-move" type="button" aria-label="Move option down" data-entity-management-catalog-option-move="down">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+      </div>
+      <div class="form-field entity-management-field entity-management-workflow-links-field" data-entity-management-catalog-option-value-field ${renderEvidenceTargetAttributes({ name: "Option value", value })}>
+        <label class="form-field-label" for="entity-management-${escapeHtml(catalogKey)}-option-${escapeHtml(String(index))}-value">Option value</label>
+        ${renderEntityManagementEvidenceButton("Option value")}
+        ${renderEntityManagementAiButton("Option value")}
+        <input id="entity-management-${escapeHtml(catalogKey)}-option-${escapeHtml(String(index))}-value" class="form-field-input" type="text" name="${escapeHtml(`${catalogKey}Option${index + 1}Value`)}" value="${escapeHtml(value)}" data-entity-management-catalog-option-value />
+      </div>
+      <div class="entity-management-workflow-status-row-actions">
+        <button class="entity-management-workflow-status-remove" type="button" aria-label="Remove catalog option" data-entity-management-catalog-option-remove>
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="M3 6h18" />
+            <path d="M8 6V4h8v2" />
+            <path d="M6 9l1 11h10l1-11" />
+            <path d="M10 12v5" />
+            <path d="M14 12v5" />
+          </svg>
+        </button>
+        <button class="entity-management-workflow-status-add" type="button" aria-label="Add catalog option" data-entity-management-catalog-option-add>
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+function renderEntityManagementCatalogBuilder({ catalogKey, options = [{ label: "Option 1", value: "option_1" }] }) {
+  const effectiveOptions = options.length ? options : [{ label: "Option 1", value: "option_1" }];
+  return renderEntityManagementViewSection({
+    id: `${catalogKey}-options`,
+    title: "Catalog options",
+    description: "Possible enum values made available by this catalog.",
+    children: `
+      <div class="entity-management-workflow-builder entity-management-catalog-builder" data-entity-management-catalog-builder="${escapeHtml(catalogKey)}">
+        <div class="entity-management-workflow-status-list" data-entity-management-catalog-option-list>
+          ${effectiveOptions.map((option, index) => renderEntityManagementCatalogOptionRow({ catalogKey, index, option })).join("")}
+        </div>
+      </div>
+    `,
+  });
+}
+
+function renderEntityManagementCatalogDefinitionPanel({ catalogDescription, catalogName, key, options = [{ label: "Option 1", value: "option_1" }], scope = "entity" }) {
+  return `
+    <div class="entity-management-view-definition" data-entity-management-catalog-definition="${escapeHtml(key)}">
+      ${renderEntityManagementCatalogActions({ catalogKey: key })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-catalog-details`,
+        title: "Catalog details",
+        description: "Name and purpose for this enum value catalog.",
+        children: `
+          ${renderEntityManagementTextField({
+            label: "Catalog name",
+            name: `${key}CatalogName`,
+            value: catalogName,
+          })}
+          ${renderEntityManagementTextField({
+            label: "Description",
+            multiline: true,
+            name: `${key}CatalogDescription`,
+            value: catalogDescription,
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-catalog-scope`,
+        title: "Catalog scope",
+        description: "Whether edits stay on this entity or apply platform-wide.",
+        children: `
+          ${renderEntityManagementRadioGroup({
+            label: "Catalog scope",
+            name: `${key}CatalogScope`,
+            options: [
+              { value: "entity", label: "Entity specific", description: "Values are owned by this entity definition." },
+              { value: "global", label: "Global", description: "Values are shared across entity attributes that consume this catalog." },
+            ],
+            value: scope,
+          })}
+          <article class="form-field form-field-span-2 entity-management-field" data-entity-management-catalog-impact ${renderEvidenceTargetAttributes({ name: "Catalog impact", value: scope === "global" ? "Global changes apply platform-wide" : "Changes apply to this entity" })}>
+            <span class="form-field-label">Catalog impact</span>
+            ${renderEntityManagementEvidenceButton("Catalog impact")}
+            ${renderEntityManagementAiButton("Catalog impact")}
+            <p class="form-field-help">
+              ${scope === "global"
+                ? "Global catalog edits apply to every entity attribute that consumes this catalog across the platform."
+                : "Entity-specific catalog edits apply only to attributes on this entity definition."}
+            </p>
+          </article>
+        `,
+      })}
+      ${renderEntityManagementCatalogBuilder({ catalogKey: key, options })}
+    </div>
+  `;
+}
+
 function renderEntityManagementPrimaryDetailsPanel() {
   return `
     <section class="entity-management-subpanel" aria-label="Primary Details">
@@ -2876,16 +4237,46 @@ function renderEntityManagementPrimaryDetailsPanel() {
           value: "organization",
         })}
         ${renderEntityManagementTextField({
-          label: "Plain-language description",
-          multiline: true,
-          name: "plainLanguageDescription",
-          value: "A company, department, partner, or other business structure managed by the platform.",
+          label: "Singular label key",
+          name: "singularLabelKey",
+          value: "entity.organization.label.singular",
         })}
         ${renderEntityManagementTextField({
-          label: "Purpose / why this entity exists",
+          label: "Singular label fallback",
+          name: "singularLabelFallback",
+          value: "Organization",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Plural label key",
+          name: "pluralLabelKey",
+          value: "entity.organization.label.plural",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Plural label fallback",
+          name: "pluralLabelFallback",
+          value: "Organizations",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Description key",
+          name: "descriptionKey",
+          value: "entity.organization.description",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Description fallback",
           multiline: true,
-          name: "entityPurpose",
-          value: "Keeps durable organization identity, ownership, structure, and reference data available for operations and reporting.",
+          name: "descriptionFallback",
+          value: "An organization represents a company, department, partner, or other business structure that the platform manages, displays, and connects to related records.",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Purpose key",
+          name: "purposeKey",
+          value: "entity.organization.purpose",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Purpose fallback",
+          multiline: true,
+          name: "purposeFallback",
+          value: "Organizations give the platform a stable business structure for ownership, reporting, relationships, permissions, and operational workflows.",
         })}
       </div>
     </section>
@@ -2911,29 +4302,31 @@ function renderEntityManagementOwningFeaturePanel() {
           value: "existing",
         })}
         ${renderEntityManagementFeatureDrawerSelect()}
-        ${renderEntityManagementSelectField({
-          description: "Will be autocompleted from feature selection once runtime-backed.",
-          label: "Owning feature posture",
-          name: "owningFeaturePosture",
-          options: [
-            { value: "implemented", label: "Implemented" },
-            { value: "planned", label: "Planned" },
-            { value: "not_yet_assigned", label: "Not yet assigned" },
-          ],
-          value: "implemented",
-        })}
-        ${renderEntityManagementSelectField({
-          description: "Will be autocompleted from feature selection once runtime-backed.",
-          label: "Owning layer",
-          name: "owningLayer",
-          options: [
-            { value: "feature", label: "Feature" },
-            { value: "platform", label: "Platform" },
-            { value: "system", label: "System" },
-            { value: "shared", label: "Shared" },
-          ],
-          value: "feature",
-        })}
+        <div class="entity-management-owning-feature-derived-fields" data-entity-management-owning-feature-derived-fields hidden>
+          ${renderEntityManagementSelectField({
+            description: "Will be autocompleted from feature selection once runtime-backed.",
+            label: "Owning feature posture",
+            name: "owningFeaturePosture",
+            options: [
+              { value: "implemented", label: "Implemented" },
+              { value: "planned", label: "Planned" },
+              { value: "not_yet_assigned", label: "Not yet assigned" },
+            ],
+            value: "implemented",
+          })}
+          ${renderEntityManagementSelectField({
+            description: "Will be autocompleted from feature selection once runtime-backed.",
+            label: "Owning layer",
+            name: "owningLayer",
+            options: [
+              { value: "feature", label: "Feature" },
+              { value: "platform", label: "Platform" },
+              { value: "system", label: "System" },
+              { value: "shared", label: "Shared" },
+            ],
+            value: "feature",
+          })}
+        </div>
       </div>
     </section>
   `;
@@ -3009,7 +4402,7 @@ function renderEntityManagementIdentityRegion() {
     {
       key: "primary-details",
       label: "Primary Details",
-      summary: "4 fields",
+      summary: "10 fields",
       description: "Entity name, stable key, description, and purpose.",
       content: renderEntityManagementPrimaryDetailsPanel(),
     },
@@ -3230,6 +4623,271 @@ function renderEntityManagementRelationshipsRegion() {
   });
 }
 
+function renderEntityManagementAttributePanel({ attribute }) {
+  const name = attribute.formKey;
+  const isSensitive = attribute.privacyClassification === "sensitive";
+  const isClassified = attribute.securityClassification === "classified";
+  const isMultiple = attribute.valueCardinality === "multiple";
+  return `
+    <div class="entity-management-view-definition" data-entity-management-attribute-definition="${escapeHtml(name)}">
+      ${renderEntityManagementViewSection({
+        id: `${name}-attribute-details`,
+        title: "Attribute details",
+        description: "Definition metadata, data type, and classification for this attribute.",
+        children: `
+          ${renderEntityManagementTextField({
+            label: "Attribute key",
+            name: `${name}AttributeKey`,
+            value: attribute.attributeKey ?? name,
+          })}
+          ${renderEntityManagementTextField({
+            label: "Label key",
+            name: `${name}AttributeLabelKey`,
+            value: attribute.labelKey ?? `entity.organization.attribute.${name}.label`,
+          })}
+          ${renderEntityManagementTextField({
+            label: "Label fallback",
+            name: `${name}AttributeLabelFallback`,
+            value: attribute.labelFallback ?? attribute.label,
+          })}
+          ${renderEntityManagementTextField({
+            label: "Description key",
+            name: `${name}AttributeDescriptionKey`,
+            value: attribute.descriptionKey ?? `entity.organization.attribute.${name}.description`,
+          })}
+          ${renderEntityManagementTextField({
+            label: "Description fallback",
+            multiline: true,
+            name: `${name}AttributeDescriptionFallback`,
+            value: attribute.descriptionFallback ?? attribute.description,
+          })}
+          ${renderEntityManagementTextField({
+            label: "Category",
+            name: `${name}AttributeCategory`,
+            value: attribute.category ?? "identity",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Attribute type",
+            name: `${name}AttributeType`,
+            options: entityManagementAttributeTypeOptions,
+            value: attribute.attributeType ?? "string",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Value cardinality",
+            name: `${name}AttributeValueCardinality`,
+            options: ["single", "multiple"],
+            value: attribute.valueCardinality ?? "single",
+            fieldAttributes: "data-entity-management-value-cardinality-field",
+            selectAttributes: "data-entity-management-value-cardinality",
+          })}
+          ${renderEntityManagementSelectField({
+            description: "Minimum selected items when the attribute allows multiple values.",
+            hidden: !isMultiple,
+            label: "Min items",
+            name: `${name}AttributeMinItems`,
+            options: entityManagementItemLimitOptions,
+            value: attribute.minItems ?? "notApplicable",
+            fieldAttributes: "data-entity-management-item-limit-field",
+          })}
+          ${renderEntityManagementSelectField({
+            description: "Maximum selected items when the attribute allows multiple values.",
+            hidden: !isMultiple,
+            label: "Max items",
+            name: `${name}AttributeMaxItems`,
+            options: entityManagementItemLimitOptions,
+            value: attribute.maxItems ?? "notApplicable",
+            fieldAttributes: "data-entity-management-item-limit-field",
+          })}
+          ${renderEntityManagementRadioGroup({
+            label: "Required",
+            name: `${name}AttributeRequired`,
+            options: [
+              { value: "true", label: "Required" },
+              { value: "false", label: "Optional" },
+            ],
+            value: attribute.required ? "true" : "false",
+          })}
+          ${renderEntityManagementRadioGroup({
+            label: "System managed",
+            name: `${name}AttributeSystemManaged`,
+            options: [
+              { value: "true", label: "System-managed" },
+              { value: "false", label: "User supplied" },
+            ],
+            value: attribute.systemManaged ? "true" : "false",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Mutability",
+            name: `${name}AttributeMutability`,
+            options: entityManagementAttributeMutabilityOptions,
+            value: attribute.mutability ?? "updateable",
+          })}
+          ${renderEntityManagementPrivacyClassificationField({
+            name: `${name}AttributePrivacyClassification`,
+            value: attribute.privacyClassification ?? "none",
+          })}
+          ${renderEntityManagementSensitivePrivacyCategoryField({
+            hidden: !isSensitive,
+            name: `${name}AttributeSensitivePrivacyCategory`,
+            value: attribute.sensitivePrivacyCategory ?? "governmentIdentifiers",
+          })}
+          ${renderEntityManagementSecurityClassificationField({
+            description: entityManagementSecurityClassificationOptions.find((option) => option.value === (attribute.securityClassification ?? "none"))?.description ?? "",
+            name: `${name}AttributeSecurityClassification`,
+            value: attribute.securityClassification ?? "none",
+          })}
+          ${renderEntityManagementSecurityLevelField({
+            hidden: !isClassified,
+            name: `${name}AttributeSecurityLevel`,
+            value: attribute.securityLevel ?? "level1",
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${name}-attribute-storage`,
+        title: "Ownership and storage",
+        description: "System posture, requirement behavior, and storage naming.",
+        children: `
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Owning entity",
+            name: `${name}AttributeOwningEntity`,
+            value: "Organization",
+          })}
+          ${renderEntityManagementRadioGroup({
+            disabled: true,
+            label: "Supply posture",
+            name: `${name}AttributeSupplyPosture`,
+            options: [
+              { value: "system-managed", label: "System-managed", description: "The system creates or maintains this attribute." },
+              { value: "user-supplied", label: "User-supplied", description: "A user supplies this attribute value." },
+            ],
+            value: attribute.systemManaged ? "system-managed" : "user-supplied",
+          })}
+          ${renderEntityManagementRadioGroup({
+            label: "Requirement posture",
+            name: `${name}AttributeRequirementPosture`,
+            options: [
+              { value: "required", label: "Required" },
+              { value: "optional", label: "Optional" },
+              { value: "nullable", label: "Nullable" },
+              { value: "derived", label: "Derived" },
+            ],
+            value: attribute.required ? "required" : "optional",
+          })}
+          ${renderEntityManagementTextField({
+            label: "DB record location",
+            name: `${name}AttributeDbLocation`,
+            value: "organizations",
+          })}
+          ${renderEntityManagementTextField({
+            label: "DB record name",
+            name: `${name}AttributeDbName`,
+            value: name,
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${name}-attribute-validation`,
+        title: "Validation",
+        description: "Validation rules and messages that apply to this attribute.",
+        children: `
+          ${(attribute.validationRules?.length ? attribute.validationRules : [{
+            ruleKey: "required",
+            argumentType: "boolean",
+            argumentValue: Boolean(attribute.required),
+            messageKey: "validation.required",
+            messageFallback: "This field is required.",
+          }]).map((rule, index) => renderEntityManagementValidationRule({
+            attributeName: name,
+            index,
+            rule,
+          })).join("")}
+        `,
+      })}
+    </div>
+  `;
+}
+
+function renderEntityManagementAttributesRegion() {
+  const attributes = [
+    { key: "attribute-email", formKey: "email", ...entityManagementAttributeSkeletonLists.email },
+    { key: "attribute-description", formKey: "description", ...entityManagementAttributeSkeletonLists.description },
+    { key: "attribute-status", formKey: "status", ...entityManagementAttributeSkeletonLists.status },
+    { key: "attribute-owner", formKey: "owner", ...entityManagementAttributeSkeletonLists.owner },
+    { key: "attribute-created-at", formKey: "createdAt", ...entityManagementAttributeSkeletonLists.createdAt },
+    { key: "attribute-updated-at", formKey: "updatedAt", ...entityManagementAttributeSkeletonLists.updatedAt },
+  ];
+  return renderNestedListPicker({
+    label: "Attributes",
+    description: "Common attributes available for this entity definition.",
+    items: attributes.map((attribute) => ({
+      key: attribute.key,
+      label: attribute.label,
+      summary: attribute.summary,
+      description: attribute.description,
+      content: renderEntityManagementAttributePanel({ attribute }),
+    })),
+  });
+}
+
+function renderEntityManagementCatalogsRegion() {
+  return renderNestedListPicker({
+    addAction: {
+      label: "Add Catalog",
+      ariaLabel: "Add another value catalog",
+    },
+    label: "Catalogs",
+    description: "Enum value catalogs this entity can use for constrained attribute values.",
+    items: [
+      {
+        key: "catalog-status",
+        ...entityManagementCatalogSkeletonLists.statusCatalog,
+        content: renderEntityManagementCatalogDefinitionPanel({
+          catalogDescription: entityManagementCatalogSkeletonLists.statusCatalog.description,
+          catalogName: entityManagementCatalogSkeletonLists.statusCatalog.label,
+          key: "statusCatalog",
+          options: entityManagementCatalogSkeletonLists.statusCatalog.options,
+          scope: entityManagementCatalogSkeletonLists.statusCatalog.scope,
+        }),
+      },
+      {
+        key: "catalog-priority",
+        ...entityManagementCatalogSkeletonLists.priorityCatalog,
+        content: renderEntityManagementCatalogDefinitionPanel({
+          catalogDescription: entityManagementCatalogSkeletonLists.priorityCatalog.description,
+          catalogName: entityManagementCatalogSkeletonLists.priorityCatalog.label,
+          key: "priorityCatalog",
+          options: entityManagementCatalogSkeletonLists.priorityCatalog.options,
+          scope: entityManagementCatalogSkeletonLists.priorityCatalog.scope,
+        }),
+      },
+      {
+        key: "catalog-timezone",
+        ...entityManagementCatalogSkeletonLists.timezoneCatalog,
+        content: renderEntityManagementCatalogDefinitionPanel({
+          catalogDescription: entityManagementCatalogSkeletonLists.timezoneCatalog.description,
+          catalogName: entityManagementCatalogSkeletonLists.timezoneCatalog.label,
+          key: "timezoneCatalog",
+          options: entityManagementCatalogSkeletonLists.timezoneCatalog.options,
+          scope: entityManagementCatalogSkeletonLists.timezoneCatalog.scope,
+        }),
+      },
+      {
+        key: "catalog-country-code",
+        ...entityManagementCatalogSkeletonLists.countryCodeCatalog,
+        content: renderEntityManagementCatalogDefinitionPanel({
+          catalogDescription: entityManagementCatalogSkeletonLists.countryCodeCatalog.description,
+          catalogName: entityManagementCatalogSkeletonLists.countryCodeCatalog.label,
+          key: "countryCodeCatalog",
+          options: entityManagementCatalogSkeletonLists.countryCodeCatalog.options,
+          scope: entityManagementCatalogSkeletonLists.countryCodeCatalog.scope,
+        }),
+      },
+    ],
+  });
+}
+
 function renderMembersRegion() {
   return renderNestedListPicker({
     label: "Members",
@@ -3406,36 +5064,20 @@ function renderEntityManagementPageAttributeView() {
       content: renderEntityManagementRelationshipsRegion(),
     },
     {
-      key: "members",
-      label: "Members",
-      headerLabel: "Members",
-      headerDescription: "Membership lists grouped by tenant admins, business unit owners, and regular members.",
-      count: 3,
-      content: renderMembersRegion(),
+      key: "attributes",
+      label: "Attributes",
+      headerLabel: "Attributes",
+      headerDescription: "Common attributes available for this entity definition.",
+      count: 6,
+      content: renderEntityManagementAttributesRegion(),
     },
     {
-      key: "legal",
-      label: "Legal details",
-      headerLabel: "Legal details",
-      headerDescription: "Official legal profile fields that users need without opening a separate record.",
+      key: "catalogs",
+      label: "Catalogs",
+      headerLabel: "Catalogs",
+      headerDescription: "Enum value catalogs this entity can use for constrained attribute values.",
       count: 4,
-      content: renderLegalRegion(),
-    },
-    {
-      key: "locations",
-      label: "Locations",
-      headerLabel: "Locations",
-      headerDescription: "Location grouping is configurable; this preview uses EU, MENA, and APAC.",
-      count: 3,
-      content: renderLocationsRegion(),
-    },
-    {
-      key: "branding",
-      label: "Branding",
-      headerLabel: "Branding",
-      headerDescription: "Branding shows the current primary colour alongside logo relationships.",
-      count: 2,
-      content: renderBrandingRegion(),
+      content: renderEntityManagementCatalogsRegion(),
     },
   ];
 
@@ -3482,24 +5124,290 @@ function getEntityManagementEvidenceFromTarget(target) {
   };
 }
 
+function getEntityManagementFieldKeyFromTarget(target) {
+  const control = target.querySelector("input[name], textarea[name], select[name]");
+  const fieldName = control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement || control instanceof HTMLSelectElement
+    ? control.name
+    : (target.dataset.evidenceElementName ?? "field").toLowerCase().replaceAll(" ", ".");
+  const identityFieldKeys = new Set([
+    "entityName",
+    "stableEntityKey",
+    "singularLabelKey",
+    "singularLabelFallback",
+    "pluralLabelKey",
+    "pluralLabelFallback",
+    "descriptionKey",
+    "descriptionFallback",
+    "purposeKey",
+    "purposeFallback",
+  ]);
+  return identityFieldKeys.has(fieldName) ? `entityIdentity.${fieldName}` : fieldName;
+}
+
+function getEntityManagementAuthoringGuidanceFromTarget(target) {
+  const fieldKey = getEntityManagementFieldKeyFromTarget(target);
+  const elementName = target.dataset.evidenceElementName ?? "Element";
+  const elementValue = target.dataset.evidenceElementValue ?? "";
+  const defaultGuidance = {
+    fieldKey,
+    valueType: "text",
+    authoringGuidance: {
+      newEntity: {
+        primaryMode: "recommendAndConfirm",
+        fallbackModes: ["askHuman"],
+      },
+      repoMigration: {
+        primaryMode: "deriveFromSourceTruth",
+        fallbackModes: ["technicalReviewRequired"],
+      },
+    },
+    writingGuidance: {
+      audience: "platform maintainer and product stakeholder",
+      tone: "plain-language, context-rich, human-facing",
+      requiredContent: [
+        "the durable meaning of this field",
+        "how it helps humans maintain the entity definition",
+      ],
+      avoid: [
+        "implementation jargon",
+        "generic placeholder wording",
+      ],
+      goodExample: elementValue || "A clear, specific value that explains the entity definition field.",
+      badExample: "A managed field.",
+    },
+    questionGuidance: {
+      questionStyle: "one plain-language question at a time",
+      avoid: [
+        "platform jargon",
+        "asking for technical mechanism choices when business intent is enough",
+      ],
+      recommendationPosture: "offer a recommended value when the LLM has enough context",
+      exampleQuestion: `What should ${elementName.toLowerCase()} say for the people maintaining this entity definition?`,
+    },
+    validationGuidance: {
+      required: true,
+      defaultValue: "none",
+    },
+  };
+  if (fieldKey !== "entityIdentity.descriptionFallback") {
+    return { elementName, elementValue, ...defaultGuidance };
+  }
+  return {
+    elementName,
+    elementValue,
+    fieldKey: "entityIdentity.descriptionFallback",
+    valueType: "text",
+    authoringGuidance: {
+      newEntity: {
+        primaryMode: "recommendAndConfirm",
+        fallbackModes: ["askHuman"],
+      },
+      repoMigration: {
+        primaryMode: "deriveFromSourceTruth",
+        fallbackModes: ["technicalReviewRequired"],
+      },
+    },
+    writingGuidance: {
+      audience: "platform maintainer and product stakeholder",
+      tone: "plain-language, context-rich, human-facing",
+      requiredContent: [
+        "what the entity represents",
+        "where it fits in the business or product context",
+      ],
+      avoid: [
+        "generic record wording",
+        "implementation jargon",
+        "empty phrases like 'managed record'",
+      ],
+      goodExample: "An organization represents a company, department, partner, or other business structure that the platform manages, displays, and connects to related records.",
+      badExample: "A managed organization record.",
+    },
+    questionGuidance: {
+      questionStyle: "one plain-language question at a time",
+      avoid: [
+        "platform jargon",
+        "asking for technical mechanism choices when business intent is enough",
+      ],
+      recommendationPosture: "offer a recommended value when the LLM has enough context",
+      exampleQuestion: "What kind of real-world thing should this entity represent for the people using the platform?",
+    },
+    validationGuidance: {
+      required: true,
+      defaultValue: "none",
+    },
+  };
+}
+
 function closeRecordManagementEvidenceDrawer(drawer) {
   drawer.dataset.recordManagementEvidenceView = "false";
   drawer.querySelector("[data-record-management-evidence-drawer]")?.remove();
+}
+
+function closeRecordManagementAiDrawer(drawer) {
+  drawer.dataset.recordManagementAiView = "false";
+  drawer.querySelector("[data-record-management-ai-drawer]")?.remove();
+}
+
+function renderGuidanceList(items) {
+  return Array.isArray(items) && items.length
+    ? `<ul>${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+    : "<p>None specified.</p>";
+}
+
+function renderRecordManagementAiGuidanceDrawer({ drawer, entityWorkspace, guidance }) {
+  entityWorkspace.dataset.chatWorkspaceDrawerOpen = "true";
+  drawer.hidden = false;
+  drawer.dataset.recordManagementEditMode = "false";
+  drawer.dataset.recordManagementEvidenceMode = "false";
+  drawer.dataset.recordManagementEvidenceView = "false";
+  drawer.dataset.recordManagementAiMode = "true";
+  drawer.dataset.recordManagementAiView = "true";
+  closeRecordManagementEvidenceDrawer(drawer);
+  const evidenceToggle = drawer.querySelector("[data-record-management-evidence-mode-toggle]");
+  const aiToggle = drawer.querySelector("[data-record-management-ai-mode-toggle]");
+  if (evidenceToggle instanceof HTMLElement) {
+    evidenceToggle.setAttribute("aria-pressed", "false");
+  }
+  if (aiToggle instanceof HTMLElement) {
+    aiToggle.setAttribute("aria-pressed", "true");
+  }
+  const body = drawer.querySelector(".chat-workspace-list-drawer-body");
+  if (!(body instanceof HTMLElement)) {
+    return;
+  }
+  body.querySelector("[data-record-management-ai-drawer]")?.remove();
+  body.insertAdjacentHTML("beforeend", `
+    <aside class="record-management-evidence-drawer record-management-ai-guidance-drawer" aria-label="AI authoring guidance" data-record-management-ai-drawer>
+      <div class="chat-workspace-list-drawer-header">
+        <div class="chat-workspace-list-drawer-header-copy">
+          <p>EntityDefinitionAuthoringGuidanceCatalog</p>
+          <h4>${escapeHtml(guidance.elementName)}</h4>
+          <div class="record-management-drawer-header-meta">
+            <span>Field key</span>
+            <span class="record-management-status-badge">${escapeHtml(guidance.fieldKey)}</span>
+          </div>
+        </div>
+        <button class="icon-button" type="button" aria-label="Close AI authoring guidance" data-record-management-ai-return>
+          <span class="icon-button-glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </span>
+        </button>
+      </div>
+      <section class="record-management-evidence-list" aria-label="EntityDefinitionAuthoringGuidanceCatalog">
+        <article class="record-management-evidence-card">
+          <dl>
+            <div>
+              <dt>Value type</dt>
+              <dd>${escapeHtml(guidance.valueType)}</dd>
+            </div>
+            <div>
+              <dt>Current value</dt>
+              <dd>${escapeHtml(guidance.elementValue || "Not set")}</dd>
+            </div>
+          </dl>
+        </article>
+        <article class="record-management-evidence-card">
+          <h5>Authoring guidance</h5>
+          <dl>
+            <div>
+              <dt>New entity</dt>
+              <dd>${escapeHtml(guidance.authoringGuidance.newEntity.primaryMode)}; fallback: ${escapeHtml(guidance.authoringGuidance.newEntity.fallbackModes.join(", "))}</dd>
+            </div>
+            <div>
+              <dt>Repo migration</dt>
+              <dd>${escapeHtml(guidance.authoringGuidance.repoMigration.primaryMode)}; fallback: ${escapeHtml(guidance.authoringGuidance.repoMigration.fallbackModes.join(", "))}</dd>
+            </div>
+          </dl>
+        </article>
+        <article class="record-management-evidence-card">
+          <h5>Writing guidance</h5>
+          <dl>
+            <div>
+              <dt>Audience</dt>
+              <dd>${escapeHtml(guidance.writingGuidance.audience)}</dd>
+            </div>
+            <div>
+              <dt>Tone</dt>
+              <dd>${escapeHtml(guidance.writingGuidance.tone)}</dd>
+            </div>
+            <div>
+              <dt>Required content</dt>
+              <dd>${renderGuidanceList(guidance.writingGuidance.requiredContent)}</dd>
+            </div>
+            <div>
+              <dt>Avoid</dt>
+              <dd>${renderGuidanceList(guidance.writingGuidance.avoid)}</dd>
+            </div>
+            <div>
+              <dt>Good example</dt>
+              <dd>${escapeHtml(guidance.writingGuidance.goodExample)}</dd>
+            </div>
+            <div>
+              <dt>Bad example</dt>
+              <dd>${escapeHtml(guidance.writingGuidance.badExample)}</dd>
+            </div>
+          </dl>
+        </article>
+        <article class="record-management-evidence-card">
+          <h5>Question guidance</h5>
+          <dl>
+            <div>
+              <dt>Question style</dt>
+              <dd>${escapeHtml(guidance.questionGuidance.questionStyle)}</dd>
+            </div>
+            <div>
+              <dt>Avoid</dt>
+              <dd>${renderGuidanceList(guidance.questionGuidance.avoid)}</dd>
+            </div>
+            <div>
+              <dt>Recommendation posture</dt>
+              <dd>${escapeHtml(guidance.questionGuidance.recommendationPosture)}</dd>
+            </div>
+            <div>
+              <dt>Example question</dt>
+              <dd>${escapeHtml(guidance.questionGuidance.exampleQuestion)}</dd>
+            </div>
+          </dl>
+        </article>
+        <article class="record-management-evidence-card">
+          <h5>Validation guidance</h5>
+          <dl>
+            <div>
+              <dt>Required</dt>
+              <dd>${guidance.validationGuidance.required ? "true" : "false"}</dd>
+            </div>
+            <div>
+              <dt>Default value</dt>
+              <dd>${escapeHtml(guidance.validationGuidance.defaultValue)}</dd>
+            </div>
+          </dl>
+        </article>
+      </section>
+    </aside>
+  `);
+  drawer.querySelector("[data-record-management-ai-return]")?.focus();
 }
 
 function renderRecordManagementEvidenceDrawer({ drawer, entityWorkspace, evidence }) {
   entityWorkspace.dataset.chatWorkspaceDrawerOpen = "true";
   drawer.hidden = false;
   drawer.dataset.recordManagementEditMode = "false";
+  drawer.dataset.recordManagementAiMode = "false";
+  drawer.dataset.recordManagementAiView = "false";
   drawer.dataset.recordManagementEvidenceMode = "true";
   drawer.dataset.recordManagementEvidenceView = "true";
+  closeRecordManagementAiDrawer(drawer);
   const editToggle = drawer.querySelector("[data-record-management-drawer-edit]");
   const evidenceToggle = drawer.querySelector("[data-record-management-evidence-mode-toggle]");
+  const aiToggle = drawer.querySelector("[data-record-management-ai-mode-toggle]");
   if (editToggle instanceof HTMLElement) {
     editToggle.setAttribute("aria-pressed", "false");
   }
   if (evidenceToggle instanceof HTMLElement) {
     evidenceToggle.setAttribute("aria-pressed", "true");
+  }
+  if (aiToggle instanceof HTMLElement) {
+    aiToggle.setAttribute("aria-pressed", "false");
   }
   const body = drawer.querySelector(".chat-workspace-list-drawer-body");
   if (!(body instanceof HTMLElement)) {
@@ -3699,7 +5607,13 @@ export function renderChatWorkspaceListDrawer({ entityWorkspace, selected }) {
         </div>
       </div>
       <div class="chat-workspace-list-drawer-header-actions">
-        ${renderPrimaryIconButton({
+        ${isEntityManagementPageTemplate(entityWorkspace) ? renderPrimaryIconButton({
+          ariaLabel: "Toggle AI mode",
+          className: "record-management-drawer-ai-button",
+          icon: renderEntityManagementRobotIcon(),
+          title: "AI",
+          toggleAttribute: "data-record-management-ai-mode-toggle",
+        }) : renderPrimaryIconButton({
           ariaLabel: "Toggle edit mode",
           className: "record-management-drawer-edit-button",
           icon: renderEntityManagementEditIcon(),
@@ -3730,4 +5644,5 @@ export function renderChatWorkspaceListDrawer({ entityWorkspace, selected }) {
   `;
   installRecordManagementRegionIndex(drawer);
   initializeFormDrawerSelects({ scope: drawer });
+  syncEntityManagementOwningFeatureDerivedFields(drawer);
 }

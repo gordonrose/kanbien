@@ -1664,6 +1664,11 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   color: var(--bwp-accent);
 }
 
+.record-management-drawer-ai-button {
+  border: 1px solid color-mix(in srgb, var(--bwp-accent) 36%, var(--bwp-line));
+  color: var(--bwp-ink);
+}
+
 .record-management-drawer-primary-icon-button:hover,
 .record-management-drawer-primary-icon-button:focus-visible,
 .record-management-drawer-primary-icon-button[aria-pressed="true"] {
@@ -1814,7 +1819,8 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   line-height: 1.5;
 }
 
-.chat-workspace-list-drawer[data-record-management-evidence-view="true"] .chat-workspace-list-drawer-body {
+.chat-workspace-list-drawer[data-record-management-evidence-view="true"] .chat-workspace-list-drawer-body,
+.chat-workspace-list-drawer[data-record-management-ai-view="true"] .chat-workspace-list-drawer-body {
   grid-template-columns: minmax(0, 1fr) minmax(22rem, 1fr);
   align-items: start;
 }
@@ -2084,9 +2090,14 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   overflow: hidden;
 }
 
+[data-record-management-entity-page-template] .record-management-region-panels,
+[data-record-management-entity-page-template] .record-management-region-panel:not([hidden]) {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+}
+
 [data-record-management-entity-page-template] .record-management-region-shell,
-[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-layout,
-[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-layout {
+[data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-layout {
   align-items: stretch;
 }
 
@@ -2095,8 +2106,7 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 }
 
 [data-record-management-entity-page-template] .record-management-region-index,
-[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-cards,
-[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-cards {
+[data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-cards {
   align-self: stretch;
   block-size: 100%;
 }
@@ -2106,29 +2116,44 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   block-size: auto;
 }
 
-[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list,
-[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list {
+[data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list {
   grid-template-rows: auto minmax(0, 1fr);
   min-block-size: 0;
   block-size: 100%;
   overflow: hidden;
 }
 
-[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-layout,
-[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-layout {
+[data-record-management-entity-page-template] .record-management-region-panel > .record-management-user-attribute-group {
+  align-content: start;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+[data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-layout {
   min-block-size: 0;
   block-size: 100%;
   overflow: hidden;
 }
 
-[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-cards,
-[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-drawer,
-[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-cards,
-[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-drawer {
+[data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-cards,
+[data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-drawer {
   min-block-size: 0;
   max-block-size: 100%;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+[data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-drawer {
+  display: grid;
+  align-content: start;
+  grid-auto-rows: max-content;
+}
+
+[data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-drawer > [data-record-management-nested-panel]:not([hidden]) {
+  align-self: start;
+}
+
+[data-record-management-entity-page-template] .entity-management-sublist-drawer {
+  min-block-size: 0;
 }
 
 [data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-cards {
@@ -2361,6 +2386,103 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   display: none;
 }
 
+.entity-management-view-workflow-statuses {
+  display: grid;
+  gap: 0.7rem;
+  grid-column: 1 / -1;
+  min-inline-size: 0;
+  padding: 0.9rem;
+  border: 1px solid var(--bwp-line);
+  border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--bwp-raised-surface) 74%, transparent);
+}
+
+.entity-management-view-workflow-statuses-header {
+  display: grid;
+  gap: 0.15rem;
+  min-inline-size: 0;
+}
+
+.entity-management-view-workflow-statuses-header strong {
+  color: var(--bwp-ink);
+  font-size: 0.95rem;
+}
+
+.entity-management-view-workflow-statuses-header span {
+  color: var(--bwp-muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.entity-management-view-workflow-status-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.55rem;
+  min-inline-size: 0;
+}
+
+.entity-management-view-workflow-status-toggle {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  min-inline-size: 0;
+  min-block-size: 3.15rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--bwp-accent) 42%, var(--bwp-line));
+  border-radius: 0.35rem;
+  background: color-mix(in srgb, var(--bwp-active-surface) 38%, var(--bwp-raised-surface));
+  color: var(--bwp-ink);
+  cursor: pointer;
+  text-align: start;
+}
+
+.entity-management-view-workflow-status-toggle svg {
+  inline-size: 1.05rem;
+  block-size: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--bwp-accent);
+}
+
+.entity-management-view-workflow-status-toggle span,
+.entity-management-view-workflow-status-toggle em {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entity-management-view-workflow-status-toggle span {
+  font-weight: 800;
+}
+
+.entity-management-view-workflow-status-toggle em {
+  color: var(--bwp-muted);
+  font-size: 0.78rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.entity-management-view-workflow-status-toggle.is-hidden {
+  border-style: dashed;
+  background: var(--bwp-raised-surface);
+  color: color-mix(in srgb, var(--bwp-muted) 82%, var(--bwp-ink));
+}
+
+.entity-management-view-workflow-status-toggle.is-hidden svg {
+  color: var(--bwp-muted);
+}
+
+.entity-management-view-workflow-status-toggle:hover,
+.entity-management-view-workflow-status-toggle:focus-visible {
+  border-color: color-mix(in srgb, var(--bwp-accent) 68%, var(--bwp-line));
+  outline: 2px solid color-mix(in srgb, var(--bwp-accent) 18%, transparent);
+  outline-offset: 2px;
+}
+
 .entity-management-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2373,10 +2495,80 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   grid-column: 1 / -1;
 }
 
+.entity-management-validation-rule {
+  display: grid;
+  gap: 0.75rem;
+  min-inline-size: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--bwp-line);
+  border-radius: var(--chat-workspace-radius);
+  background: var(--bwp-raised-surface);
+}
+
+.entity-management-validation-rule-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.entity-management-validation-rule-actions {
+  display: inline-grid;
+  grid-auto-flow: column;
+  gap: 0.35rem;
+}
+
+.entity-management-validation-rule-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.35rem;
+  block-size: 2.35rem;
+  border: 1px solid color-mix(in srgb, var(--bwp-accent) 48%, var(--bwp-line));
+  border-radius: 0.35rem;
+  background: var(--bwp-surface);
+  color: var(--bwp-accent);
+}
+
+.entity-management-validation-rule-action-add {
+  border-style: dashed;
+}
+
+.entity-management-validation-rule-action-danger {
+  color: var(--bwp-danger, #9f1239);
+  border-color: color-mix(in srgb, var(--bwp-danger, #9f1239) 42%, var(--bwp-line));
+}
+
+.entity-management-validation-rule-action svg {
+  inline-size: 1rem;
+  block-size: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.entity-management-validation-rule-action:hover,
+.entity-management-validation-rule-action:focus-visible {
+  background: color-mix(in srgb, var(--bwp-active-surface) 68%, var(--bwp-surface));
+  outline: 2px solid color-mix(in srgb, var(--bwp-accent) 22%, transparent);
+  outline-offset: 2px;
+}
+
 .entity-management-access-drawer-row {
   display: grid;
   grid-column: 1 / -1;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.entity-management-owning-feature-derived-fields {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.75rem;
   min-inline-size: 0;
 }
@@ -2551,13 +2743,19 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   color: var(--bwp-muted);
 }
 
+.entity-management-field .form-field-textarea {
+  min-block-size: 3.1rem;
+  resize: vertical;
+}
+
 .entity-management-field,
 .entity-management-choice-group,
 .entity-management-drawer-select-field {
   position: relative;
 }
 
-.entity-management-evidence-button {
+.entity-management-evidence-button,
+.entity-management-ai-button {
   position: absolute;
   inset-block-start: 0.72rem;
   inset-inline-end: 0.72rem;
@@ -2573,18 +2771,31 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   color: var(--bwp-accent);
 }
 
+.entity-management-ai-button {
+  border-style: dashed;
+  color: var(--bwp-ink);
+}
+
 .chat-workspace-list-drawer[data-record-management-evidence-mode="true"] .entity-management-evidence-button {
   display: inline-flex;
 }
 
+.chat-workspace-list-drawer[data-record-management-ai-mode="true"] .entity-management-ai-button {
+  display: inline-flex;
+}
+
 .entity-management-evidence-button:hover,
-.entity-management-evidence-button:focus-visible {
+.entity-management-evidence-button:focus-visible,
+.entity-management-ai-button:hover,
+.entity-management-ai-button:focus-visible,
+.entity-management-ai-button[data-record-management-ai-button-active="true"] {
   background: color-mix(in srgb, var(--bwp-active-surface) 68%, var(--bwp-raised-surface));
   outline: 2px solid color-mix(in srgb, var(--bwp-accent) 22%, transparent);
   outline-offset: 2px;
 }
 
-.entity-management-evidence-button svg {
+.entity-management-evidence-button svg,
+.entity-management-ai-button svg {
   inline-size: 1.05rem;
   block-size: 1.05rem;
   fill: none;
@@ -2594,7 +2805,8 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   stroke-width: 2.15;
 }
 
-.chat-workspace-list-drawer[data-record-management-evidence-mode="true"] [data-entity-management-evidence-target] {
+.chat-workspace-list-drawer[data-record-management-evidence-mode="true"] [data-entity-management-evidence-target],
+.chat-workspace-list-drawer[data-record-management-ai-mode="true"] [data-entity-management-evidence-target] {
   padding-inline-end: 3.45rem;
 }
 
@@ -2609,7 +2821,11 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   align-content: start;
   gap: 1rem;
   min-inline-size: 0;
-  min-block-size: 34rem;
+  min-block-size: 0;
+  block-size: 100%;
+  max-block-size: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 1rem;
   border: 1px solid var(--bwp-line);
   border-radius: var(--chat-workspace-radius);
@@ -2617,12 +2833,16 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 }
 
 .chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-region-shell,
-.chat-workspace-list-drawer[data-record-management-evidence-view="true"] .entity-management-sublist .record-management-nested-list-layout {
+.chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-region-shell,
+.chat-workspace-list-drawer[data-record-management-evidence-view="true"] .entity-management-sublist .record-management-nested-list-layout,
+.chat-workspace-list-drawer[data-record-management-ai-view="true"] .entity-management-sublist .record-management-nested-list-layout {
   grid-template-columns: minmax(0, 1fr);
 }
 
 .chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-region-index,
-.chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-nested-list-cards {
+.chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-region-index,
+.chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-nested-list-cards,
+.chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-nested-list-cards {
   display: none;
 }
 
@@ -2645,9 +2865,21 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   gap: 0.65rem;
 }
 
+.record-management-evidence-card h5 {
+  margin: 0 0 0.65rem;
+  color: var(--bwp-ink);
+  font-size: 0.95rem;
+  line-height: 1.25;
+}
+
 .record-management-evidence-card div {
   display: grid;
   gap: 0.2rem;
+}
+
+.record-management-evidence-card ul {
+  margin: 0;
+  padding-inline-start: 1.1rem;
 }
 
 .record-management-evidence-card dt {
@@ -3180,13 +3412,15 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   [data-record-management-entity-page-template] .entity-management-form-grid,
   [data-record-management-entity-page-template] .entity-management-choice-group .form-choice-stack,
   [data-record-management-entity-page-template] .entity-management-access-drawer-row,
+  [data-record-management-entity-page-template] .entity-management-owning-feature-derived-fields,
   [data-record-management-entity-page-template] .entity-management-workflow-builder-settings,
   [data-record-management-entity-page-template] .entity-management-workflow-status-row:has(.entity-management-workflow-parent-status-field:not([hidden])),
   [data-record-management-entity-page-template] .entity-management-workflow-status-row {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  [data-record-management-entity-page-template] .chat-workspace-list-drawer[data-record-management-evidence-view="true"] .chat-workspace-list-drawer-body {
+  [data-record-management-entity-page-template] .chat-workspace-list-drawer[data-record-management-evidence-view="true"] .chat-workspace-list-drawer-body,
+  [data-record-management-entity-page-template] .chat-workspace-list-drawer[data-record-management-ai-view="true"] .chat-workspace-list-drawer-body {
     grid-template-columns: minmax(0, 1fr);
     position: relative;
   }
@@ -3202,11 +3436,13 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
     border-radius: 0;
   }
 
-  [data-record-management-entity-page-template] .record-management-evidence-drawer [data-record-management-evidence-return] {
+  [data-record-management-entity-page-template] .record-management-evidence-drawer [data-record-management-evidence-return],
+  [data-record-management-entity-page-template] .record-management-evidence-drawer [data-record-management-ai-return] {
     display: none;
   }
 
-  [data-record-management-entity-page-template] .chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-user-attribute-view {
+  [data-record-management-entity-page-template] .chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-user-attribute-view,
+  [data-record-management-entity-page-template] .chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-user-attribute-view {
     filter: blur(0.08rem);
     pointer-events: none;
   }
