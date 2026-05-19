@@ -541,6 +541,12 @@ const entityManagementWorkflowSkeletonLists = Object.freeze({
   }),
 });
 
+const entityManagementViewWorkflowOptions = Object.freeze([
+  { value: "intakeWorkflow", label: "Intake", description: "First-step workflow for collecting required information before a record exists.", attribute: "Draft workflow" },
+  { value: "reviewWorkflow", label: "Review", description: "Human review workflow for checking evidence and approving record changes.", attribute: "Draft workflow" },
+  { value: "lifecycleWorkflow", label: "Lifecycle", description: "Archive, restore, and cleanup workflow for record lifecycle decisions.", attribute: "Draft workflow" },
+]);
+
 const entityManagementViewModuleOptions = Object.freeze([
   { value: "organizationCore", label: "Organization Core", description: "Root/admin entity management module", attribute: "root-admin" },
   { value: "tenantDirectory", label: "Tenant Directory", description: "Tenant-scoped directory module", attribute: "tenant" },
@@ -583,6 +589,15 @@ const entityManagementViewObjectCapacityOptions = Object.freeze([
   { value: "owner", label: "Owner", description: "Assigned as the owner for that object", attribute: "Object capacity" },
   { value: "reader", label: "Reader", description: "Assigned read access for that object", attribute: "Object capacity" },
   { value: "editor", label: "Editor", description: "Assigned edit access for that object", attribute: "Object capacity" },
+]);
+
+const entityManagementRelationshipEntityOptions = Object.freeze([
+  { value: "organization", label: "Organization", description: "Company, department, partner, or business structure", attribute: "Current entity" },
+  { value: "tenant", label: "Tenant", description: "Customer or workspace boundary", attribute: "Available entity" },
+  { value: "user", label: "User", description: "Human actor record", attribute: "Available entity" },
+  { value: "team", label: "Team", description: "Collaborative group under an organization", attribute: "Available entity" },
+  { value: "deal", label: "Deal", description: "Commercial opportunity record", attribute: "Available entity" },
+  { value: "task", label: "Task", description: "Assignable unit of work", attribute: "Available entity" },
 ]);
 
 function getAttributePlacement(attribute, surfaceKey) {
@@ -2517,6 +2532,30 @@ function renderEntityManagementViewDefinitionPanel({ key, routeName, routePrevie
           </div>
         `,
       })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-workflow`,
+        title: "Workflow",
+        description: "Which workflow powers this view.",
+        children: `
+          ${renderEntityManagementDrawerSelectField({
+            viewKey: key,
+            label: "Workflow",
+            inputName: `${key}Workflow`,
+            value: "intakeWorkflow",
+            options: entityManagementViewWorkflowOptions,
+            emptySummary: "Choose workflow",
+            drawerEyebrow: "Workflow",
+            dialogTitle: "Choose workflow",
+            closeLabel: "Close workflow selector",
+            searchPlaceholder: "Search workflows",
+            selectedTitle: "Selected Workflow",
+            selectedEmpty: "No workflow selected yet.",
+            availableTitle: "Available Workflows",
+            description: "Single workflow selected for this entity view.",
+            maxSelections: 1,
+          })}
+        `,
+      })}
     </div>
   `;
 }
@@ -3127,6 +3166,70 @@ function renderEntityManagementWorkflowsRegion() {
   });
 }
 
+function renderEntityManagementRelationshipPanel({ description, inputName, label, value, viewKey }) {
+  return `
+    <section class="entity-management-subpanel" aria-label="${escapeHtml(label)}">
+      <div class="record-management-user-attribute-group-header">
+        <h5>${escapeHtml(label)}</h5>
+        <p>${escapeHtml(description)}</p>
+      </div>
+      <div class="entity-management-form-grid">
+        ${renderEntityManagementDrawerSelectField({
+          viewKey,
+          label: "Entities",
+          inputName,
+          value,
+          options: entityManagementRelationshipEntityOptions,
+          emptySummary: "Choose entities",
+          drawerEyebrow: label,
+          dialogTitle: `Choose ${label.toLowerCase()} entities`,
+          closeLabel: `Close ${label.toLowerCase()} entity selector`,
+          searchPlaceholder: "Search entities",
+          selectedTitle: `Selected ${label}`,
+          selectedEmpty: "No entities selected yet.",
+          availableTitle: "Available Entities",
+          description,
+        })}
+      </div>
+    </section>
+  `;
+}
+
+function renderEntityManagementRelationshipsRegion() {
+  return renderNestedListPicker({
+    label: "Relationships",
+    description: "Parent and child entity relationships available to this entity.",
+    items: [
+      {
+        key: "relationship-parents",
+        label: "Parents",
+        summary: "2 selected",
+        description: "Entities this entity can belong to.",
+        content: renderEntityManagementRelationshipPanel({
+          description: "Select parent entities available for this entity.",
+          inputName: "entityRelationshipParents",
+          label: "Parents",
+          value: "tenant,team",
+          viewKey: "relationshipParents",
+        }),
+      },
+      {
+        key: "relationship-children",
+        label: "Children",
+        summary: "2 selected",
+        description: "Entities this entity can contain or own.",
+        content: renderEntityManagementRelationshipPanel({
+          description: "Select child entities available for this entity.",
+          inputName: "entityRelationshipChildren",
+          label: "Children",
+          value: "user,deal",
+          viewKey: "relationshipChildren",
+        }),
+      },
+    ],
+  });
+}
+
 function renderMembersRegion() {
   return renderNestedListPicker({
     label: "Members",
@@ -3293,6 +3396,14 @@ function renderEntityManagementPageAttributeView() {
       headerDescription: "Who can access this entity in the system, where they'll find it and how it will behave.",
       count: 3,
       content: renderEntityManagementViewsRegion(),
+    },
+    {
+      key: "relationships",
+      label: "Relationships",
+      headerLabel: "Relationships",
+      headerDescription: "Parent and child entity relationships available to this entity.",
+      count: 2,
+      content: renderEntityManagementRelationshipsRegion(),
     },
     {
       key: "members",

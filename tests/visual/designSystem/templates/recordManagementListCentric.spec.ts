@@ -370,12 +370,12 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(page.locator("[data-record-management-region-trigger='identity']")).toContainText("Identity");
   await expect(page.locator("[data-record-management-region-trigger='workflows']")).toContainText("Workflows");
   await expect(page.locator("[data-record-management-region-trigger='views']")).toContainText("Views");
+  await expect(page.locator("[data-record-management-region-trigger='relationships']")).toContainText("Relationships");
   await expect(page.locator("[data-record-management-region-trigger='details']")).toHaveCount(0);
-  await expect(page.locator("[data-record-management-region-trigger='relationships']")).toHaveCount(0);
   const entityRegionOrder = await page.locator("[data-record-management-region-trigger]").evaluateAll((triggers) => (
     triggers.map((trigger) => trigger.getAttribute("data-record-management-region-trigger"))
   ));
-  expect(entityRegionOrder).toEqual(["identity", "workflows", "views", "members", "legal", "locations", "branding"]);
+  expect(entityRegionOrder).toEqual(["identity", "workflows", "views", "relationships", "members", "legal", "locations", "branding"]);
   await expect(page.locator("[data-record-management-nested-trigger='primary-details']")).toContainText("Primary Details");
   await expect(page.locator("[data-record-management-nested-trigger='owning-feature']")).toContainText("Owning Feature");
   await expect(page.locator("[data-record-management-nested-trigger='source-authority-posture']")).toContainText("Source Authority Posture");
@@ -551,15 +551,14 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(viewDetailsBody).toBeHidden();
   await expect.poll(async () => page.locator("[data-record-management-nested-panel='list-views'] [aria-label='View details']").evaluate((section) => {
     const detailDrawer = section.closest(".record-management-nested-list-drawer");
-    const cards = section.closest(".record-management-nested-list-layout")?.querySelector(".record-management-nested-list-cards");
     const drawerRect = detailDrawer?.getBoundingClientRect();
-    const cardsRect = cards?.getBoundingClientRect();
+    const openBodies = detailDrawer?.querySelectorAll("[data-entity-management-section-body]:not([hidden])").length ?? -1;
     return {
-      collapsedDrawerShorterThanRail: drawerRect && cardsRect ? drawerRect.height < cardsRect.height : false,
+      collapsedDrawerHasNoOpenBodies: openBodies === 0,
       drawerHeight: drawerRect ? Math.round(drawerRect.height) : 0,
     };
   })).toMatchObject({
-    collapsedDrawerShorterThanRail: true,
+    collapsedDrawerHasNoOpenBodies: true,
   });
   await viewDetailsToggle.click();
   await expect(viewDetailsToggle).toHaveAttribute("aria-expanded", "true");
@@ -586,13 +585,29 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   });
   const locationToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Location'] [data-entity-management-section-toggle]");
   const locationBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Location'] [data-entity-management-section-body]");
+  const workflowToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Workflow'] [data-entity-management-section-toggle]");
+  const workflowBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Workflow'] [data-entity-management-section-body]");
   const accessToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Access'] [data-entity-management-section-toggle]");
   const accessBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Access'] [data-entity-management-section-body]");
+  await expect(workflowToggle).toHaveAttribute("aria-expanded", "false");
   await expect(locationToggle).toHaveAttribute("aria-expanded", "false");
   await expect(accessToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(workflowBody).toBeHidden();
   await expect(locationBody).toBeHidden();
   await expect(accessBody).toBeHidden();
+  await workflowToggle.click();
+  await expect(workflowToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(workflowBody).toBeVisible();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsWorkflow'] [data-form-drawer-select-summary]")).toHaveText("Intake");
+  await expect(page.locator("input[name='listViewsWorkflow']")).toHaveValue("intakeWorkflow");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsWorkflow'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsWorkflow'] [data-form-drawer-select-option]")).toContainText(["Intake", "Review", "Lifecycle"]);
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsWorkflow'] [data-form-drawer-select-option][data-value='reviewWorkflow']").click();
+  await expect(page.locator("input[name='listViewsWorkflow']")).toHaveValue("reviewWorkflow");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsWorkflow'] [data-form-drawer-select-close]").click();
   await locationToggle.click();
+  await expect(workflowToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(workflowBody).toBeHidden();
   await expect(locationToggle).toHaveAttribute("aria-expanded", "true");
   await expect(locationBody).toBeVisible();
   await expect(accessToggle).toHaveAttribute("aria-expanded", "false");
@@ -715,6 +730,26 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await page.locator("[data-record-management-nested-trigger='workflow-views']").click();
   await expect(page.locator("input[name='workflowViewsRouteName']")).toHaveValue("organizationWorkflow");
   await expect(page.locator("input[name='workflowViewsRoutePreview']")).toHaveValue("/root-admin/organizations/:organizationId/workflows");
+  await page.locator("[data-record-management-region-trigger='relationships']").click();
+  await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Relationships");
+  await expect(page.locator("[data-record-management-region-panel='relationships']")).toBeVisible();
+  await expect(page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-parents']")).toContainText("Parents");
+  await expect(page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-children']")).toContainText("Children");
+  await expect(page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-summary]")).toHaveText("Tenant, Team");
+  await expect(page.locator("input[name='entityRelationshipParents']")).toHaveValue("tenant,team");
+  await page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-option]")).toHaveCount(6);
+  await page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-option][data-value='organization']").click();
+  await expect(page.locator("input[name='entityRelationshipParents']")).toHaveValue("tenant,team,organization");
+  await page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-close]").click();
+  await page.locator("[data-record-management-nested-trigger='relationship-children']").click();
+  await expect(page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-summary]")).toHaveText("User, Deal");
+  await expect(page.locator("input[name='entityRelationshipChildren']")).toHaveValue("user,deal");
+  await page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-option]")).toHaveCount(6);
+  await page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-option][data-value='task']").click();
+  await expect(page.locator("input[name='entityRelationshipChildren']")).toHaveValue("user,deal,task");
+  await page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-close]").click();
   await page.locator("[data-record-management-region-trigger='identity']").click();
   await expect(page.locator("input[name='entityName']")).toHaveValue("Organization");
   await expect(page.locator("input[name='stableEntityKey']")).toHaveValue("organization");
@@ -899,7 +934,7 @@ test("record management entity page uses mobile menu and swipeable sublist navig
   await primarySelect.locator("[data-form-select-button]").click();
   await expect(primarySelect.locator("[data-form-select-listbox]")).toBeVisible();
   await expect(primarySelect.locator("[data-form-select-option][data-value='views']")).toContainText("Views");
-  await expect(primarySelect.locator("[data-form-select-option][data-value='relationships']")).toHaveCount(0);
+  await expect(primarySelect.locator("[data-form-select-option][data-value='relationships']")).toContainText("Relationships");
   await primarySelect.locator("[data-form-select-option][data-value='views']").click();
   await expect(primarySelect.locator("[data-form-select-value]")).toHaveValue("views");
   await expect(primarySelect.locator("[data-form-select-current-label]")).toHaveText("Views");
