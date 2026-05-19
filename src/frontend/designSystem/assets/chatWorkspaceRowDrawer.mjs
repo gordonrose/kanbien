@@ -590,6 +590,141 @@ const entityManagementCatalogSkeletonLists = Object.freeze({
   }),
 });
 
+const entityManagementPlacementSkeletonLists = Object.freeze({
+  primaryDetails: Object.freeze({
+    label: "Primary details",
+    description: "Default record drawer region for the most important identifying fields.",
+    summary: "3 attributes",
+    secondaryNavEnabled: true,
+    secondaryNavEntity: "team",
+    attributes: Object.freeze(["teamName", "teamDescription", "teamStatus"]),
+    sections: Object.freeze([
+      Object.freeze({ label: "Summary", attributes: Object.freeze(["teamName", "teamDescription", "teamStatus"]) }),
+      Object.freeze({ label: "Ownership", attributes: Object.freeze(["teamLead", "updatedAt"]) }),
+    ]),
+  }),
+  operations: Object.freeze({
+    label: "Operations",
+    description: "Operational drawer region for workflow and ownership context.",
+    summary: "2 attributes",
+    secondaryNavEnabled: true,
+    secondaryNavEntity: "task",
+    attributes: Object.freeze(["taskStatus", "assignee"]),
+    sections: Object.freeze([
+      Object.freeze({ label: "Work queue", attributes: Object.freeze(["taskTitle", "taskStatus", "assignee"]) }),
+      Object.freeze({ label: "Timing", attributes: Object.freeze(["dueDate", "priority"]) }),
+    ]),
+  }),
+  system: Object.freeze({
+    label: "System",
+    description: "System drawer region for audit and lifecycle timestamps.",
+    summary: "2 attributes",
+    secondaryNavEnabled: false,
+    secondaryNavEntity: "",
+    attributes: Object.freeze(["createdAt", "updatedAt"]),
+    sections: Object.freeze([
+      Object.freeze({ label: "Audit", attributes: Object.freeze(["createdAt", "updatedAt"]) }),
+    ]),
+  }),
+});
+
+const entityManagementRecordActionErrorTypes = Object.freeze([
+  "notAuthorized",
+  "notFound",
+  "conflict",
+  "wrongLifecycleState",
+  "relationshipBoundaryViolation",
+  "dependencyExists",
+  "validationFailed",
+  "rateLimited",
+  "asyncAcceptedButFailed",
+  "cleanupFailed",
+  "externalDependencyFailed",
+  "unsupportedAction",
+]);
+
+const entityManagementRecordActionCapabilities = Object.freeze([
+  { key: "list", label: "List", description: "List record rows available to the actor.", executionMode: "sync", compatibilityRisk: "low" },
+  { key: "read", label: "Read", description: "Read one record and its visible detail projection.", executionMode: "sync", compatibilityRisk: "low" },
+  { key: "create", label: "Create", description: "Create a new entity record.", executionMode: "sync", compatibilityRisk: "medium" },
+  { key: "update", label: "Update", description: "Update mutable fields on an entity record.", executionMode: "sync", compatibilityRisk: "medium" },
+  { key: "archive", label: "Archive", description: "Move an active record into archived posture.", executionMode: "sync", compatibilityRisk: "medium" },
+  { key: "restore", label: "Restore", description: "Return an archived record to active posture.", executionMode: "sync", compatibilityRisk: "medium" },
+  { key: "delete", label: "Delete", description: "Delete a record through the approved deletion path.", executionMode: "sync", compatibilityRisk: "high" },
+  { key: "export", label: "Export", description: "Export records for approved operational use.", executionMode: "async", compatibilityRisk: "medium" },
+  { key: "bulkImport", label: "Bulk import", description: "Create or update many records from an import source.", executionMode: "async", compatibilityRisk: "high" },
+  { key: "bulkUpdate", label: "Bulk update", description: "Apply one update operation across many records.", executionMode: "async", compatibilityRisk: "high" },
+  { key: "linkParent", label: "Link parent", description: "Attach this record to an approved parent entity.", executionMode: "sync", compatibilityRisk: "medium" },
+  { key: "unlinkParent", label: "Unlink parent", description: "Remove a parent relationship from this record.", executionMode: "sync", compatibilityRisk: "medium" },
+  { key: "linkChild", label: "Link child", description: "Attach an approved child entity record.", executionMode: "sync", compatibilityRisk: "medium" },
+  { key: "unlinkChild", label: "Unlink child", description: "Remove a child relationship from this record.", executionMode: "sync", compatibilityRisk: "medium" },
+  { key: "operationalStatusTransition", label: "Operational status transition", description: "Move a record between approved operational statuses.", executionMode: "sync", compatibilityRisk: "medium" },
+]);
+
+const entityManagementRecordActionRoutes = Object.freeze({
+  list: "GET /v1/organizations",
+  read: "GET /v1/organizations/:organizationId",
+  create: "POST /v1/organizations",
+  update: "PATCH /v1/organizations/:organizationId",
+  archive: "POST /v1/organizations/:organizationId/archive",
+  restore: "POST /v1/organizations/:organizationId/restore",
+  delete: "DELETE /v1/organizations/:organizationId",
+  export: "POST /v1/organizations/export",
+  bulkImport: "POST /v1/organizations/bulk-import",
+  bulkUpdate: "PATCH /v1/organizations/bulk-update",
+  linkParent: "POST /v1/organizations/:organizationId/parents",
+  unlinkParent: "DELETE /v1/organizations/:organizationId/parents/:parentId",
+  linkChild: "POST /v1/organizations/:organizationId/children",
+  unlinkChild: "DELETE /v1/organizations/:organizationId/children/:childId",
+  operationalStatusTransition: "POST /v1/organizations/:organizationId/operational-status-transition",
+});
+
+function createEntityManagementCrudCapabilities({ domainKey, label, routeBase }) {
+  const routeParam = `${domainKey}Id`;
+  const normalizedLabel = label.toLowerCase();
+  return [
+    { key: `create${domainKey}`, label: `Create ${label}`, description: `Create a ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "medium", apiRoute: `POST ${routeBase}` },
+    { key: `read${domainKey}`, label: `Read ${label}`, description: `Read a ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "low", apiRoute: `GET ${routeBase}/:${routeParam}` },
+    { key: `update${domainKey}`, label: `Update ${label}`, description: `Update a ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "medium", apiRoute: `PATCH ${routeBase}/:${routeParam}` },
+    { key: `archive${domainKey}`, label: `Archive ${label}`, description: `Archive a ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "medium", apiRoute: `POST ${routeBase}/:${routeParam}/archive` },
+    { key: `restore${domainKey}`, label: `Restore ${label}`, description: `Restore an archived ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "medium", apiRoute: `POST ${routeBase}/:${routeParam}/restore` },
+    { key: `delete${domainKey}`, label: `Delete ${label}`, description: `Delete a ${normalizedLabel} definition record through the approved deletion path.`, executionMode: "sync", compatibilityRisk: "high", apiRoute: `DELETE ${routeBase}/:${routeParam}` },
+  ];
+}
+
+const entityManagementStructureActionCapabilities = Object.freeze([
+  ...createEntityManagementCrudCapabilities({ domainKey: "Entity", label: "entity", routeBase: "/v1/entity-definitions" }),
+  { key: "readSourceAuthority", label: "Read source authority", description: "Read source authority posture for an entity definition.", executionMode: "sync", compatibilityRisk: "low", apiRoute: "GET /v1/entity-definitions/:entityId/source-authority" },
+  { key: "updateSourceAuthority", label: "Update source authority", description: "Update current or target source authority posture for an entity definition.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "PATCH /v1/entity-definitions/:entityId/source-authority" },
+  { key: "promoteSourceAuthority", label: "Promote source authority", description: "Promote source authority after approved migration or runtime reconciliation.", executionMode: "sync", compatibilityRisk: "high", apiRoute: "POST /v1/entity-definitions/:entityId/source-authority/promote" },
+  { key: "reviewSourceAuthority", label: "Review source authority", description: "Record a review decision for source authority posture.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/source-authority/reviews" },
+  ...createEntityManagementCrudCapabilities({ domainKey: "Attribute", label: "attribute", routeBase: "/v1/entity-definitions/:entityId/attributes" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "Workflow", label: "workflow", routeBase: "/v1/entity-definitions/:entityId/workflows" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "View", label: "view", routeBase: "/v1/entity-definitions/:entityId/views" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "Placement", label: "placement", routeBase: "/v1/entity-definitions/:entityId/placements" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "PlacementSection", label: "placement section", routeBase: "/v1/entity-definitions/:entityId/placements/:placementId/sections" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "Relationship", label: "relationship", routeBase: "/v1/entity-definitions/:entityId/relationships" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "Catalog", label: "catalog", routeBase: "/v1/entity-definitions/:entityId/catalogs" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "AuthoringGuidance", label: "authoring guidance", routeBase: "/v1/entity-definitions/:entityId/fields/:fieldId/authoring-guidance" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "WritingGuidance", label: "writing guidance", routeBase: "/v1/entity-definitions/:entityId/fields/:fieldId/writing-guidance" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "QuestionGuidance", label: "question guidance", routeBase: "/v1/entity-definitions/:entityId/fields/:fieldId/question-guidance" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "EvidenceRecord", label: "evidence record", routeBase: "/v1/entity-definitions/:entityId/fields/:fieldId/evidence-records" }),
+  ...createEntityManagementCrudCapabilities({ domainKey: "PermissionRole", label: "permission role", routeBase: "/v1/entity-definitions/:entityId/permissions/roles" }),
+  { key: "reorderPlacementSection", label: "Reorder placement section", description: "Move a placement section within its placement region.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/placements/:placementId/sections/reorder" },
+  { key: "selectPlacementSectionAttribute", label: "Select placement section attribute", description: "Add one attribute to a placement section display set.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/placements/:placementId/sections/:sectionId/attributes" },
+  { key: "deselectPlacementSectionAttribute", label: "Deselect placement section attribute", description: "Remove one attribute from a placement section display set.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "DELETE /v1/entity-definitions/:entityId/placements/:placementId/sections/:sectionId/attributes/:attributeKey" },
+  { key: "reorderPlacementSectionAttribute", label: "Reorder placement section attribute", description: "Move an attribute within a placement section display order.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/placements/:placementId/sections/:sectionId/attributes/reorder" },
+  { key: "selectViewListDisplayAttribute", label: "Select view list display attribute", description: "Add one attribute to a view's list-display set.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/list/attributes" },
+  { key: "deselectViewListDisplayAttribute", label: "Deselect view list display attribute", description: "Remove one attribute from a view's list-display set.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "DELETE /v1/entity-definitions/:entityId/views/:viewId/display/list/attributes/:attributeKey" },
+  { key: "reorderViewListDisplayAttribute", label: "Reorder view list display attribute", description: "Move an attribute within a view's list-display priority order.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/list/attributes/reorder" },
+  { key: "showViewDrawerDisplayPlacement", label: "Show view drawer display placement", description: "Make a placement visible in a view's drawer display.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/drawer/placements/:placementId/show" },
+  { key: "hideViewDrawerDisplayPlacement", label: "Hide view drawer display placement", description: "Hide a placement from a view's drawer display.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/drawer/placements/:placementId/hide" },
+  { key: "addPermissionCapability", label: "Add permission capability", description: "Add one capability to a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities" },
+  { key: "removePermissionCapability", label: "Remove permission capability", description: "Remove one capability from a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "DELETE /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities/:capabilityKey" },
+  { key: "selectAllPermissionCapabilities", label: "Select all permission capabilities", description: "Grant every capability in a family to a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities/select-all" },
+  { key: "deselectAllPermissionCapabilities", label: "Deselect all permission capabilities", description: "Remove every capability in a family from a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities/deselect-all" },
+]);
+
 const entityManagementViewWorkflowOptions = Object.freeze([
   { value: "intakeWorkflow", label: "Intake", description: "First-step workflow for collecting required information before a record exists.", attribute: "Draft workflow" },
   { value: "reviewWorkflow", label: "Review", description: "Human review workflow for checking evidence and approving record changes.", attribute: "Draft workflow" },
@@ -638,6 +773,26 @@ const entityManagementViewRoleOptions = Object.freeze([
   { value: "organizationViewer", label: "Organization Viewer", description: "Read-only organization participant", attribute: "Existing role" },
 ]);
 
+const entityManagementPermissionRoleOptions = Object.freeze([
+  { value: "llm", label: "LLM", description: "Default machine-assisted authoring actor", attribute: "System role" },
+  ...entityManagementViewRoleOptions,
+]);
+
+const entityManagementPermissionCapabilityFamilies = Object.freeze([
+  {
+    key: "record",
+    label: "Record capabilities",
+    description: "Runtime record actions this role may use.",
+    capabilities: entityManagementRecordActionCapabilities.map(({ key, label }) => ({ key, label })),
+  },
+  {
+    key: "entityStructure",
+    label: "Entity structure capabilities",
+    description: "Definition and field-management actions this role may use.",
+    capabilities: entityManagementStructureActionCapabilities.map(({ key, label }) => ({ key, label })),
+  },
+]);
+
 const entityManagementViewRelationshipOptions = Object.freeze([
   { value: "tenant", label: "Tenant", description: "Hardcoded current tenant context", attribute: "Hardcoded entity" },
   { value: "organization", label: "Organization", description: "User and entity share the same organization ID", attribute: "Shared parent relationship" },
@@ -666,6 +821,56 @@ const entityManagementRelationshipEntityOptions = Object.freeze([
   { value: "deal", label: "Deal", description: "Commercial opportunity record", attribute: "Available entity" },
   { value: "task", label: "Task", description: "Assignable unit of work", attribute: "Available entity" },
 ]);
+
+const entityManagementChildEntityOptions = Object.freeze([
+  { value: "user", label: "User", description: "Human actor records attached to this entity", attribute: "Child entity" },
+  { value: "team", label: "Team", description: "Collaborative group records attached to this entity", attribute: "Child entity" },
+  { value: "deal", label: "Deal", description: "Commercial opportunity records attached to this entity", attribute: "Child entity" },
+  { value: "task", label: "Task", description: "Assignable work records attached to this entity", attribute: "Child entity" },
+]);
+
+const entityManagementPlacementAttributeOptionsByEntity = Object.freeze({
+  organization: Object.freeze([
+    { key: "email", label: "Email", description: "Primary contact email for the organization." },
+    { key: "description", label: "Description", description: "Human-facing summary for the organization." },
+    { key: "status", label: "Status", description: "Lifecycle or operational posture for the organization." },
+    { key: "owner", label: "Owner", description: "Internal owner responsible for this organization." },
+    { key: "createdAt", label: "Created at", description: "When this organization record was created." },
+    { key: "updatedAt", label: "Updated at", description: "When this organization record was last updated." },
+  ]),
+  user: Object.freeze([
+    { key: "userName", label: "User name", description: "Human-facing display name for the user." },
+    { key: "email", label: "Email", description: "Primary email address for the user." },
+    { key: "role", label: "Role", description: "Primary role assigned to the user." },
+    { key: "status", label: "Status", description: "Lifecycle or operational posture for the user." },
+    { key: "createdAt", label: "Created at", description: "When this user record was created." },
+    { key: "updatedAt", label: "Updated at", description: "When this user record was last updated." },
+  ]),
+  team: Object.freeze([
+    { key: "teamName", label: "Team name", description: "Human-facing display name for the team." },
+    { key: "teamDescription", label: "Team description", description: "Human-facing summary for the team." },
+    { key: "teamStatus", label: "Team status", description: "Lifecycle or operational posture for the team." },
+    { key: "teamLead", label: "Team lead", description: "User responsible for coordinating the team." },
+    { key: "createdAt", label: "Created at", description: "When this team record was created." },
+    { key: "updatedAt", label: "Updated at", description: "When this team record was last updated." },
+  ]),
+  deal: Object.freeze([
+    { key: "dealName", label: "Deal name", description: "Human-facing display name for the deal." },
+    { key: "dealValue", label: "Deal value", description: "Expected value for the deal." },
+    { key: "dealStage", label: "Deal stage", description: "Current pipeline stage for the deal." },
+    { key: "dealOwner", label: "Deal owner", description: "User responsible for the deal." },
+    { key: "closeDate", label: "Close date", description: "Expected or actual close date." },
+    { key: "updatedAt", label: "Updated at", description: "When this deal record was last updated." },
+  ]),
+  task: Object.freeze([
+    { key: "taskTitle", label: "Task title", description: "Human-facing display name for the task." },
+    { key: "taskStatus", label: "Task status", description: "Current status for the task." },
+    { key: "assignee", label: "Assignee", description: "User assigned to the task." },
+    { key: "dueDate", label: "Due date", description: "Date the task is expected to be completed." },
+    { key: "priority", label: "Priority", description: "Relative urgency for the task." },
+    { key: "updatedAt", label: "Updated at", description: "When this task record was last updated." },
+  ]),
+});
 
 const entityManagementAttributeSkeletonLists = Object.freeze({
   email: Object.freeze({
@@ -1281,7 +1486,7 @@ function installRecordManagementRegionIndex(drawer) {
       : null;
     if (sectionToggle instanceof HTMLElement) {
       const section = sectionToggle.closest("[data-entity-management-view-section]");
-      const sectionDefinition = sectionToggle.closest("[data-entity-management-view-definition], [data-entity-management-workflow-definition], [data-entity-management-attribute-definition], [data-entity-management-catalog-definition]");
+      const sectionDefinition = sectionToggle.closest("[data-entity-management-view-definition], [data-entity-management-workflow-definition], [data-entity-management-attribute-definition], [data-entity-management-catalog-definition], [data-entity-management-placement-definition], [data-entity-management-action-model-definition], [data-entity-management-permission-definition]");
       const body = sectionToggle.getAttribute("aria-controls")
         ? drawer.querySelector(`#${CSS.escape(sectionToggle.getAttribute("aria-controls") ?? "")}`)
         : section?.querySelector("[data-entity-management-section-body]");
@@ -1437,6 +1642,61 @@ function installRecordManagementRegionIndex(drawer) {
       return;
     }
 
+    const permissionFamilyToggle = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-permission-family-toggle]")
+      : null;
+    if (permissionFamilyToggle instanceof HTMLInputElement) {
+      const family = permissionFamilyToggle.closest("[data-entity-management-permission-family]");
+      if (family instanceof HTMLElement) {
+        syncEntityManagementPermissionFamily(family);
+      }
+      return;
+    }
+
+    const permissionCapabilityBulk = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-permission-bulk]")
+      : null;
+    if (permissionCapabilityBulk instanceof HTMLElement) {
+      const family = permissionCapabilityBulk.closest("[data-entity-management-permission-family]");
+      const action = permissionCapabilityBulk.dataset.entityManagementPermissionBulk;
+      const shouldSelect = action === "select";
+      if (family instanceof HTMLElement) {
+        const familyToggle = family.querySelector("[data-entity-management-permission-family-toggle]");
+        if (familyToggle instanceof HTMLInputElement && !familyToggle.checked) {
+          familyToggle.checked = true;
+        }
+        family.querySelectorAll("[data-entity-management-permission-capability-toggle]").forEach((toggle) => {
+          if (toggle instanceof HTMLElement) {
+            toggle.setAttribute("aria-pressed", String(shouldSelect));
+          }
+        });
+        syncEntityManagementPermissionFamily(family);
+      }
+      return;
+    }
+
+    const permissionCapabilityToggle = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-permission-capability-toggle]")
+      : null;
+    if (permissionCapabilityToggle instanceof HTMLElement) {
+      const isAvailable = permissionCapabilityToggle.getAttribute("aria-pressed") !== "false";
+      permissionCapabilityToggle.setAttribute("aria-pressed", String(!isAvailable));
+      syncEntityManagementPermissionFamily(permissionCapabilityToggle.closest("[data-entity-management-permission-family]"));
+      return;
+    }
+
+    const permissionRoleOption = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-view-drawer-select$='PermissionRole'] [data-form-drawer-select-option], [data-entity-management-view-drawer-select$='PermissionRole'] [data-form-drawer-select-remove]")
+      : null;
+    if (permissionRoleOption instanceof HTMLElement) {
+      const field = permissionRoleOption.closest("[data-entity-management-view-drawer-select$='PermissionRole']");
+      const input = field?.querySelector("[data-form-drawer-select-value]");
+      if (input instanceof HTMLInputElement) {
+        window.requestAnimationFrame(() => syncEntityManagementPermissionCardCopy(input));
+      }
+      return;
+    }
+
     const viewWorkflowOption = event.target instanceof Element
       ? event.target.closest("[data-entity-management-view-drawer-select$='Workflow'] [data-form-drawer-select-option], [data-entity-management-view-drawer-select$='Workflow'] [data-form-drawer-select-remove]")
       : null;
@@ -1444,6 +1704,28 @@ function installRecordManagementRegionIndex(drawer) {
       const field = viewWorkflowOption.closest("[data-entity-management-view-drawer-select$='Workflow']");
       if (field instanceof HTMLElement) {
         window.requestAnimationFrame(() => syncEntityManagementViewWorkflowStatusVisibility(field));
+      }
+      return;
+    }
+
+    const placementSecondaryNavEntityOption = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-placement-secondary-nav-source] [data-form-drawer-select-option], [data-entity-management-placement-secondary-nav-source] [data-form-drawer-select-remove]")
+      : null;
+    if (placementSecondaryNavEntityOption instanceof HTMLElement) {
+      const placementDefinition = placementSecondaryNavEntityOption.closest("[data-entity-management-placement-definition]");
+      if (placementDefinition instanceof HTMLElement) {
+        window.requestAnimationFrame(() => syncEntityManagementPlacementAttributeSource(placementDefinition));
+      }
+      return;
+    }
+
+    const viewPageTemplateOption = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-view-drawer-select$='PageTemplate'] [data-form-drawer-select-option], [data-entity-management-view-drawer-select$='PageTemplate'] [data-form-drawer-select-remove]")
+      : null;
+    if (viewPageTemplateOption instanceof HTMLElement) {
+      const viewDefinition = viewPageTemplateOption.closest("[data-entity-management-view-definition]");
+      if (viewDefinition instanceof HTMLElement) {
+        window.requestAnimationFrame(() => syncEntityManagementViewDisplayTemplateSettings(viewDefinition));
       }
       return;
     }
@@ -1456,6 +1738,104 @@ function installRecordManagementRegionIndex(drawer) {
       viewStatusToggle.setAttribute("aria-pressed", String(!isVisible));
       viewStatusToggle.classList.toggle("is-hidden", isVisible);
       syncEntityManagementViewWorkflowStatusInput(viewStatusToggle.closest("[data-entity-management-view-workflow-statuses]"));
+      return;
+    }
+
+    const viewActionToggle = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-view-action-toggle]")
+      : null;
+    if (viewActionToggle instanceof HTMLElement) {
+      const isSelected = viewActionToggle.getAttribute("aria-pressed") === "true";
+      viewActionToggle.setAttribute("aria-pressed", String(!isSelected));
+      syncEntityManagementViewActionSelector(viewActionToggle.closest("[data-entity-management-view-action-selector]"));
+      return;
+    }
+
+    const viewAttributeToggle = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-view-attribute-toggle]")
+      : null;
+    if (viewAttributeToggle instanceof HTMLElement) {
+      const isSelected = viewAttributeToggle.getAttribute("aria-pressed") === "true";
+      viewAttributeToggle.setAttribute("aria-pressed", String(!isSelected));
+      syncEntityManagementViewAttributeSelector(viewAttributeToggle.closest("[data-entity-management-view-attribute-selector]"));
+      return;
+    }
+
+    const viewPlacementToggle = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-view-placement-toggle]")
+      : null;
+    if (viewPlacementToggle instanceof HTMLElement) {
+      const isVisible = viewPlacementToggle.getAttribute("aria-pressed") === "true";
+      viewPlacementToggle.setAttribute("aria-pressed", String(!isVisible));
+      syncEntityManagementViewPlacementSelector(viewPlacementToggle.closest("[data-entity-management-view-placement-selector]"));
+      return;
+    }
+
+    const placementSectionMove = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-placement-section-move]")
+      : null;
+    if (placementSectionMove instanceof HTMLElement) {
+      const row = placementSectionMove.closest("[data-entity-management-placement-attribute-section]");
+      const builder = placementSectionMove.closest("[data-entity-management-placement-attribute-builder]");
+      const direction = placementSectionMove.dataset.entityManagementPlacementSectionMove;
+      if (row instanceof HTMLElement && builder instanceof HTMLElement) {
+        if (direction === "up") {
+          const previous = row.previousElementSibling;
+          if (previous instanceof HTMLElement && previous.matches("[data-entity-management-placement-attribute-section]")) {
+            previous.before(row);
+          }
+        }
+        if (direction === "down") {
+          const next = row.nextElementSibling;
+          if (next instanceof HTMLElement && next.matches("[data-entity-management-placement-attribute-section]")) {
+            next.after(row);
+          }
+        }
+        syncEntityManagementPlacementAttributeSections(builder);
+      }
+      return;
+    }
+
+    const placementSectionRemove = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-placement-section-remove]")
+      : null;
+    if (placementSectionRemove instanceof HTMLElement) {
+      const row = placementSectionRemove.closest("[data-entity-management-placement-attribute-section]");
+      const builder = placementSectionRemove.closest("[data-entity-management-placement-attribute-builder]");
+      if (row instanceof HTMLElement && builder instanceof HTMLElement && builder.querySelectorAll("[data-entity-management-placement-attribute-section]").length > 1) {
+        row.remove();
+        syncEntityManagementPlacementAttributeSections(builder);
+      }
+      return;
+    }
+
+    const placementSectionAdd = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-placement-section-add]")
+      : null;
+    if (placementSectionAdd instanceof HTMLElement) {
+      const row = placementSectionAdd.closest("[data-entity-management-placement-attribute-section]");
+      const builder = placementSectionAdd.closest("[data-entity-management-placement-attribute-builder]");
+      if (builder instanceof HTMLElement) {
+        const placementDefinition = builder.closest("[data-entity-management-placement-definition]");
+        const entityKey = getEntityManagementPlacementAttributeSource(placementDefinition);
+        const nextIndex = builder.querySelectorAll("[data-entity-management-placement-attribute-section]").length;
+        const placementKey = builder.dataset.entityManagementPlacementAttributeBuilder ?? "placement";
+        const markup = renderEntityManagementPlacementAttributeSectionRow({
+          entityKey,
+          index: nextIndex,
+          placementKey,
+          section: {
+            label: `Section ${nextIndex + 1}`,
+            attributes: getEntityManagementPlacementAttributeDefaults(entityKey),
+          },
+        });
+        if (row instanceof HTMLElement) {
+          row.insertAdjacentHTML("afterend", markup);
+        } else {
+          builder.insertAdjacentHTML("beforeend", markup);
+        }
+        syncEntityManagementPlacementAttributeSections(builder);
+      }
       return;
     }
 
@@ -1689,6 +2069,10 @@ function installRecordManagementRegionIndex(drawer) {
         addEntityManagementCatalogRecord({ nestedList });
         return;
       }
+      if (addButton instanceof HTMLElement && nestedList.closest("[data-record-management-region-panel='permissions']")) {
+        addEntityManagementPermissionRecord({ nestedList });
+        return;
+      }
 
       const trigger = event.target instanceof Element
         ? event.target.closest("[data-record-management-nested-trigger]")
@@ -1753,6 +2137,30 @@ function installRecordManagementRegionIndex(drawer) {
       return;
     }
 
+    const permissionCopyButton = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-permission-copy]")
+      : null;
+    if (permissionCopyButton instanceof HTMLElement) {
+      const panel = permissionCopyButton.closest("[data-record-management-nested-panel]");
+      const nestedList = permissionCopyButton.closest("[data-record-management-nested-list]");
+      if (panel instanceof HTMLElement && nestedList instanceof HTMLElement) {
+        addEntityManagementPermissionRecord({ nestedList, sourcePanel: panel });
+      }
+      return;
+    }
+
+    const permissionDeleteButton = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-permission-delete]")
+      : null;
+    if (permissionDeleteButton instanceof HTMLElement) {
+      const panel = permissionDeleteButton.closest("[data-record-management-nested-panel]");
+      const nestedList = permissionDeleteButton.closest("[data-record-management-nested-list]");
+      if (panel instanceof HTMLElement && nestedList instanceof HTMLElement) {
+        removeEntityManagementWorkflowRecord({ nestedList, panel });
+      }
+      return;
+    }
+
     const parentWorkflowOption = event.target instanceof Element
       ? event.target.closest("[data-entity-management-workflow-parent-select] [data-form-drawer-select-option]")
       : null;
@@ -1795,6 +2203,10 @@ function installRecordManagementRegionIndex(drawer) {
       syncEntityManagementCatalogCardCopy(target);
       return;
     }
+    if (target.name.endsWith("PermissionRole")) {
+      syncEntityManagementPermissionCardCopy(target);
+      return;
+    }
     if (target.matches("[data-entity-management-catalog-option-label]")) {
       const row = target.closest("[data-entity-management-catalog-option-row]");
       const valueInput = row?.querySelector("[data-entity-management-catalog-option-value]");
@@ -1822,6 +2234,19 @@ function installRecordManagementRegionIndex(drawer) {
       if (builder instanceof HTMLElement) {
         syncEntityManagementWorkflowSubworkflowControls(builder);
       }
+      return;
+    }
+
+    const placementSecondaryNavToggle = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-placement-secondary-nav-toggle]")
+      : null;
+    if (placementSecondaryNavToggle instanceof HTMLInputElement) {
+      const section = placementSecondaryNavToggle.closest("[data-entity-management-view-section]");
+      const source = section?.querySelector("[data-entity-management-placement-secondary-nav-source]");
+      if (source instanceof HTMLElement) {
+        source.hidden = !placementSecondaryNavToggle.checked;
+      }
+      syncEntityManagementPlacementAttributeSource(placementSecondaryNavToggle.closest("[data-entity-management-placement-definition]"));
       return;
     }
 
@@ -2317,6 +2742,13 @@ function readEntityManagementCatalogConfig(panel) {
   };
 }
 
+function readEntityManagementPermissionConfig(panel) {
+  const roleInput = panel.querySelector("input[name$='PermissionRole']");
+  return {
+    roleValue: roleInput instanceof HTMLInputElement && roleInput.value ? roleInput.value : "llm",
+  };
+}
+
 function readEntityManagementWorkflowStatusConfig(panel) {
   return readEntityManagementWorkflowConfig(panel).statuses;
 }
@@ -2356,6 +2788,17 @@ function renderEntityManagementCatalogNestedCard({ description = "", isActive = 
     key,
     label: label.trim() || "Untitled catalog",
     summary,
+  });
+}
+
+function renderEntityManagementPermissionNestedCard({ isActive = false, key, roleValue = "llm" }) {
+  const role = entityManagementPermissionRoleOptions.find((option) => option.value === roleValue) ?? entityManagementPermissionRoleOptions[0];
+  return renderEntityManagementNestedRecordCard({
+    description: role.description,
+    isActive,
+    key,
+    label: role.label,
+    summary: "Role permissions",
   });
 }
 
@@ -2437,6 +2880,49 @@ function addEntityManagementCatalogRecord({ nestedList, sourcePanel = null }) {
   activateNestedListItem(nestedList, nestedKey);
 }
 
+function getNextEntityManagementPermissionRecordKeys(nestedList) {
+  const nextIndex = nestedList.querySelectorAll("[data-record-management-nested-trigger^='permission-role-']").length + 1;
+  return {
+    formKey: `permissionRole${nextIndex}`,
+    nestedKey: `permission-role-${nextIndex}`,
+  };
+}
+
+function addEntityManagementPermissionRecord({ nestedList, sourcePanel = null }) {
+  const cards = nestedList.querySelector(".record-management-nested-list-cards");
+  const drawer = nestedList.querySelector(".record-management-nested-list-drawer");
+  const addCard = nestedList.querySelector("[data-record-management-nested-add]");
+  if (!(cards instanceof HTMLElement) || !(drawer instanceof HTMLElement)) {
+    return;
+  }
+
+  const { formKey, nestedKey } = getNextEntityManagementPermissionRecordKeys(nestedList);
+  const permissionConfig = sourcePanel instanceof HTMLElement
+    ? readEntityManagementPermissionConfig(sourcePanel)
+    : { roleValue: "" };
+  const cardMarkup = renderEntityManagementPermissionNestedCard({ key: nestedKey, roleValue: permissionConfig.roleValue || "llm" });
+  const panelMarkup = `
+    <section data-record-management-nested-panel="${escapeHtml(nestedKey)}" hidden>
+      ${renderEntityManagementPermissionRolePanel({
+        key: formKey,
+        roleValue: sourcePanel instanceof HTMLElement ? permissionConfig.roleValue : "",
+      })}
+    </section>
+  `;
+
+  if (addCard instanceof HTMLElement) {
+    addCard.insertAdjacentHTML("beforebegin", cardMarkup);
+  } else {
+    cards.insertAdjacentHTML("beforeend", cardMarkup);
+  }
+  drawer.insertAdjacentHTML("beforeend", panelMarkup);
+  const panel = drawer.querySelector(`[data-record-management-nested-panel="${CSS.escape(nestedKey)}"]`);
+  if (panel instanceof HTMLElement) {
+    initializeFormDrawerSelects({ scope: panel });
+  }
+  activateNestedListItem(nestedList, nestedKey);
+}
+
 function removeEntityManagementWorkflowRecord({ nestedList, panel }) {
   const nestedKey = panel.dataset.recordManagementNestedPanel;
   if (!nestedKey) {
@@ -2478,6 +2964,57 @@ function syncEntityManagementCatalogCardCopy(field) {
     descriptionNode.textContent = description;
     descriptionNode.title = description;
   }
+}
+
+function syncEntityManagementPermissionCardCopy(field) {
+  const panel = field.closest("[data-record-management-nested-panel]");
+  const nestedList = field.closest("[data-record-management-nested-list]");
+  const nestedKey = panel instanceof HTMLElement ? panel.dataset.recordManagementNestedPanel : "";
+  if (!(nestedList instanceof HTMLElement) || !nestedKey) {
+    return;
+  }
+  const trigger = nestedList.querySelector(`[data-record-management-nested-trigger="${CSS.escape(nestedKey)}"]`);
+  const roleValue = field instanceof HTMLInputElement ? field.value : "";
+  const role = entityManagementPermissionRoleOptions.find((option) => option.value === roleValue);
+  const titleNode = trigger?.querySelector("strong");
+  const descriptionNode = trigger?.querySelector("small");
+  if (titleNode instanceof HTMLElement) {
+    titleNode.textContent = role?.label ?? "Choose role";
+  }
+  if (descriptionNode instanceof HTMLElement) {
+    const description = role?.description ?? "Role permissions need a selected role.";
+    descriptionNode.textContent = description;
+    descriptionNode.title = description;
+  }
+}
+
+function syncEntityManagementPermissionFamily(family) {
+  if (!(family instanceof HTMLElement)) {
+    return;
+  }
+  const familyToggle = family.querySelector("[data-entity-management-permission-family-toggle]");
+  const isEnabled = familyToggle instanceof HTMLInputElement && familyToggle.checked;
+  const list = family.querySelector("[data-entity-management-permission-capability-list]");
+  if (list instanceof HTMLElement) {
+    list.hidden = !isEnabled;
+  }
+  family.querySelectorAll("[data-entity-management-permission-capability-toggle]").forEach((toggle) => {
+    if (!(toggle instanceof HTMLElement)) {
+      return;
+    }
+    const isAvailable = isEnabled && toggle.getAttribute("aria-pressed") !== "false";
+    toggle.classList.toggle("is-hidden", !isAvailable);
+    const label = toggle.querySelector("span")?.textContent?.trim() ?? "capability";
+    const meta = toggle.querySelector("em");
+    toggle.setAttribute("aria-label", `${isAvailable ? "Disable" : "Enable"} ${label}`);
+    if (meta instanceof HTMLElement) {
+      meta.textContent = isAvailable ? "Available" : "Unavailable";
+    }
+    const currentIcon = toggle.querySelector("svg");
+    if (currentIcon instanceof SVGElement) {
+      currentIcon.outerHTML = renderEntityManagementPermissionCapabilityIcon({ available: isAvailable });
+    }
+  });
 }
 
 function syncEntityManagementCatalogBuilder(builder) {
@@ -3066,11 +3603,12 @@ function renderEntityManagementTextField({
   label,
   multiline = false,
   name,
+  rows = 1,
   value,
 }) {
   const inputId = `entity-management-${name}`;
   const control = multiline
-    ? `<textarea id="${escapeHtml(inputId)}" class="form-field-input form-field-textarea" name="${escapeHtml(name)}" rows="1" ${editable ? "" : "readonly"}>${escapeHtml(value)}</textarea>`
+    ? `<textarea id="${escapeHtml(inputId)}" class="form-field-input form-field-textarea" name="${escapeHtml(name)}" rows="${escapeHtml(String(Math.min(Math.max(rows, 1), 50)))}" ${editable ? "" : "readonly"}>${escapeHtml(value)}</textarea>`
     : `<input id="${escapeHtml(inputId)}" class="form-field-input" type="text" name="${escapeHtml(name)}" value="${escapeHtml(value)}" ${editable ? "" : "readonly"} />`;
   return `
     <div class="form-field entity-management-field${multiline ? " form-field-span-2" : ""}" ${fieldAttributes} ${hidden ? "hidden" : ""} ${renderEvidenceTargetAttributes({ name: label, value })}>
@@ -3528,6 +4066,366 @@ function syncEntityManagementViewWorkflowStatusVisibility(workflowField) {
   });
 }
 
+function getEntityManagementViewActionOptions() {
+  return entityManagementRecordActionCapabilities.map((capability) => ({
+    key: capability.key,
+    label: capability.label,
+  }));
+}
+
+function renderEntityManagementViewActionSelector({ inputName, selectedValues = [] }) {
+  const selectedSet = new Set(selectedValues);
+  return `
+    <section class="entity-management-view-action-selector form-field-span-2" data-entity-management-view-action-selector>
+      <input type="hidden" name="${escapeHtml(inputName)}" value="${escapeHtml(selectedValues.join(","))}" data-entity-management-view-action-value />
+      <div class="entity-management-view-workflow-status-list entity-management-permission-capability-list">
+        ${getEntityManagementViewActionOptions().map((capability) => {
+          const order = selectedValues.indexOf(capability.key) + 1;
+          const isSelected = selectedSet.has(capability.key);
+          return `
+            <button
+              class="entity-management-view-workflow-status-toggle entity-management-permission-capability-toggle${isSelected ? "" : " is-hidden"}"
+              type="button"
+              aria-pressed="${escapeHtml(String(isSelected))}"
+              aria-label="${escapeHtml(`${isSelected ? "Remove" : "Add"} ${capability.label}`)}"
+              data-capability-key="${escapeHtml(capability.key)}"
+              data-entity-management-view-action-toggle
+            >
+              ${renderEntityManagementPermissionCapabilityIcon({ available: isSelected })}
+              <span>${escapeHtml(capability.label)}</span>
+              <em>${isSelected ? `Priority ${order}` : "Not selected"}</em>
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function syncEntityManagementViewActionSelector(selector) {
+  if (!(selector instanceof HTMLElement)) {
+    return;
+  }
+  const input = selector.querySelector("[data-entity-management-view-action-value]");
+  const currentValues = input instanceof HTMLInputElement
+    ? input.value.split(",").map((value) => value.trim()).filter(Boolean)
+    : [];
+  const selectedValues = currentValues.filter((value) => {
+    const toggle = selector.querySelector(`[data-entity-management-view-action-toggle][data-capability-key="${CSS.escape(value)}"]`);
+    return toggle instanceof HTMLElement && toggle.getAttribute("aria-pressed") === "true";
+  });
+  selector.querySelectorAll("[data-entity-management-view-action-toggle]").forEach((toggle) => {
+    if (!(toggle instanceof HTMLElement)) {
+      return;
+    }
+    const value = toggle.dataset.capabilityKey ?? "";
+    if (toggle.getAttribute("aria-pressed") === "true" && value && !selectedValues.includes(value)) {
+      selectedValues.push(value);
+    }
+  });
+  if (input instanceof HTMLInputElement) {
+    input.value = selectedValues.join(",");
+  }
+  selector.querySelectorAll("[data-entity-management-view-action-toggle]").forEach((toggle) => {
+    if (!(toggle instanceof HTMLElement)) {
+      return;
+    }
+    const value = toggle.dataset.capabilityKey ?? "";
+    const order = selectedValues.indexOf(value) + 1;
+    const isSelected = order > 0;
+    toggle.setAttribute("aria-pressed", String(isSelected));
+    toggle.classList.toggle("is-hidden", !isSelected);
+    const label = toggle.querySelector("span")?.textContent?.trim() ?? "action";
+    const meta = toggle.querySelector("em");
+    toggle.setAttribute("aria-label", `${isSelected ? "Remove" : "Add"} ${label}`);
+    if (meta instanceof HTMLElement) {
+      meta.textContent = isSelected ? `Priority ${order}` : "Not selected";
+    }
+    const currentIcon = toggle.querySelector("svg");
+    if (currentIcon instanceof SVGElement) {
+      currentIcon.outerHTML = renderEntityManagementPermissionCapabilityIcon({ available: isSelected });
+    }
+  });
+}
+
+function getEntityManagementViewAttributeOptions(entityKey = "organization") {
+  const placementOptions = entityManagementPlacementAttributeOptionsByEntity[entityKey];
+  if (placementOptions) {
+    return [...placementOptions];
+  }
+  return Object.entries(entityManagementAttributeSkeletonLists).map(([key, attribute]) => ({
+    key,
+    label: attribute.label,
+    description: attribute.description,
+  }));
+}
+
+function getEntityManagementPlacementAttributeDefaults(entityKey = "organization") {
+  return getEntityManagementViewAttributeOptions(entityKey).slice(0, 3).map((attribute) => attribute.key);
+}
+
+function getEntityManagementPlacementAttributeSource(placementDefinition) {
+  if (!(placementDefinition instanceof HTMLElement)) {
+    return "organization";
+  }
+  const enabledToggle = placementDefinition.querySelector("[data-entity-management-placement-secondary-nav-toggle]");
+  if (enabledToggle instanceof HTMLInputElement && enabledToggle.checked) {
+    const secondaryEntityInput = placementDefinition.querySelector("[data-entity-management-placement-secondary-nav-source] [data-form-drawer-select-value]");
+    if (secondaryEntityInput instanceof HTMLInputElement && secondaryEntityInput.value) {
+      return secondaryEntityInput.value;
+    }
+  }
+  return "organization";
+}
+
+function renderEntityManagementViewAttributeSelector({
+  entityKey = "organization",
+  inputName,
+  note = "Included attributes can display in this view. Editable versus read-only behavior is resolved by role permissions and object capacity.",
+  selectedValues = [],
+}) {
+  const options = getEntityManagementViewAttributeOptions(entityKey);
+  const optionKeys = new Set(options.map((attribute) => attribute.key));
+  const effectiveSelectedValues = selectedValues.filter((value) => optionKeys.has(value));
+  const selectedSet = new Set(effectiveSelectedValues);
+  return `
+    <section class="entity-management-view-attribute-selector form-field-span-2" data-entity-management-view-attribute-selector data-entity-management-attribute-source="${escapeHtml(entityKey)}">
+      <input type="hidden" name="${escapeHtml(inputName)}" value="${escapeHtml(effectiveSelectedValues.join(","))}" data-entity-management-view-attribute-value />
+      <p class="form-field-help entity-management-view-attribute-note">${escapeHtml(note)}</p>
+      <div class="entity-management-view-workflow-status-list entity-management-permission-capability-list">
+        ${options.map((attribute) => {
+          const order = effectiveSelectedValues.indexOf(attribute.key) + 1;
+          const isSelected = selectedSet.has(attribute.key);
+          return `
+            <button
+              class="entity-management-view-workflow-status-toggle entity-management-permission-capability-toggle${isSelected ? "" : " is-hidden"}"
+              type="button"
+              aria-pressed="${escapeHtml(String(isSelected))}"
+              aria-label="${escapeHtml(`${isSelected ? "Hide" : "Show"} ${attribute.label}`)}"
+              data-attribute-key="${escapeHtml(attribute.key)}"
+              data-entity-management-view-attribute-toggle
+            >
+              ${renderEntityManagementPermissionCapabilityIcon({ available: isSelected })}
+              <span>${escapeHtml(attribute.label)}</span>
+              <em>${isSelected ? `Priority ${order}` : "Not on"}</em>
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function syncEntityManagementViewAttributeSelector(selector) {
+  if (!(selector instanceof HTMLElement)) {
+    return;
+  }
+  const input = selector.querySelector("[data-entity-management-view-attribute-value]");
+  const currentValues = input instanceof HTMLInputElement
+    ? input.value.split(",").map((value) => value.trim()).filter(Boolean)
+    : [];
+  const selectedValues = currentValues.filter((value) => {
+    const toggle = selector.querySelector(`[data-entity-management-view-attribute-toggle][data-attribute-key="${CSS.escape(value)}"]`);
+    return toggle instanceof HTMLElement && toggle.getAttribute("aria-pressed") === "true";
+  });
+  selector.querySelectorAll("[data-entity-management-view-attribute-toggle]").forEach((toggle) => {
+    if (!(toggle instanceof HTMLElement)) {
+      return;
+    }
+    const value = toggle.dataset.attributeKey ?? "";
+    if (toggle.getAttribute("aria-pressed") === "true" && value && !selectedValues.includes(value)) {
+      selectedValues.push(value);
+    }
+  });
+  if (input instanceof HTMLInputElement) {
+    input.value = selectedValues.join(",");
+  }
+  selector.querySelectorAll("[data-entity-management-view-attribute-toggle]").forEach((toggle) => {
+    if (!(toggle instanceof HTMLElement)) {
+      return;
+    }
+    const isSelected = toggle.getAttribute("aria-pressed") === "true";
+    const value = toggle.dataset.attributeKey ?? "";
+    const order = selectedValues.indexOf(value) + 1;
+    toggle.classList.toggle("is-hidden", !isSelected);
+    const label = toggle.querySelector("span")?.textContent?.trim() ?? "attribute";
+    const meta = toggle.querySelector("em");
+    toggle.setAttribute("aria-label", `${isSelected ? "Hide" : "Show"} ${label}`);
+    if (meta instanceof HTMLElement) {
+      meta.textContent = isSelected && order > 0 ? `Priority ${order}` : "Not on";
+    }
+    const currentIcon = toggle.querySelector("svg");
+    if (currentIcon instanceof SVGElement) {
+      currentIcon.outerHTML = renderEntityManagementPermissionCapabilityIcon({ available: isSelected });
+    }
+  });
+}
+
+function getEntityManagementViewPlacementOptions() {
+  return Object.entries(entityManagementPlacementSkeletonLists).map(([key, placement]) => ({
+    key,
+    label: placement.label,
+    description: placement.description,
+  }));
+}
+
+function renderEntityManagementViewPlacementSelector({ inputName, selectedValues = [] }) {
+  const selectedSet = new Set(selectedValues);
+  return `
+    <section class="entity-management-view-placement-selector form-field-span-2" data-entity-management-view-placement-selector>
+      <input type="hidden" name="${escapeHtml(inputName)}" value="${escapeHtml(selectedValues.join(","))}" data-entity-management-view-placement-value />
+      <p class="form-field-help entity-management-view-attribute-note">Visible placements control which drawer regions this view renders. Placement sections own the ordered attributes inside each region.</p>
+      <div class="entity-management-view-workflow-status-list entity-management-permission-capability-list">
+        ${getEntityManagementViewPlacementOptions().map((placement) => {
+          const isSelected = selectedSet.has(placement.key);
+          return `
+            <button
+              class="entity-management-view-workflow-status-toggle entity-management-permission-capability-toggle${isSelected ? "" : " is-hidden"}"
+              type="button"
+              aria-pressed="${escapeHtml(String(isSelected))}"
+              aria-label="${escapeHtml(`${isSelected ? "Hide" : "Show"} ${placement.label}`)}"
+              data-placement-key="${escapeHtml(placement.key)}"
+              data-entity-management-view-placement-toggle
+            >
+              ${renderEntityManagementPermissionCapabilityIcon({ available: isSelected })}
+              <span>${escapeHtml(placement.label)}</span>
+              <em>${isSelected ? "Visible" : "Hidden"}</em>
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function syncEntityManagementViewPlacementSelector(selector) {
+  if (!(selector instanceof HTMLElement)) {
+    return;
+  }
+  const input = selector.querySelector("[data-entity-management-view-placement-value]");
+  const selectedValues = [];
+  selector.querySelectorAll("[data-entity-management-view-placement-toggle]").forEach((toggle) => {
+    if (!(toggle instanceof HTMLElement)) {
+      return;
+    }
+    const value = toggle.dataset.placementKey ?? "";
+    const isSelected = toggle.getAttribute("aria-pressed") === "true";
+    if (value && isSelected) {
+      selectedValues.push(value);
+    }
+  });
+  if (input instanceof HTMLInputElement) {
+    input.value = selectedValues.join(",");
+  }
+  selector.querySelectorAll("[data-entity-management-view-placement-toggle]").forEach((toggle) => {
+    if (!(toggle instanceof HTMLElement)) {
+      return;
+    }
+    const isSelected = toggle.getAttribute("aria-pressed") === "true";
+    toggle.classList.toggle("is-hidden", !isSelected);
+    const label = toggle.querySelector("span")?.textContent?.trim() ?? "placement";
+    const meta = toggle.querySelector("em");
+    toggle.setAttribute("aria-label", `${isSelected ? "Hide" : "Show"} ${label}`);
+    if (meta instanceof HTMLElement) {
+      meta.textContent = isSelected ? "Visible" : "Hidden";
+    }
+    const currentIcon = toggle.querySelector("svg");
+    if (currentIcon instanceof SVGElement) {
+      currentIcon.outerHTML = renderEntityManagementPermissionCapabilityIcon({ available: isSelected });
+    }
+  });
+}
+
+function syncEntityManagementViewDisplayTemplateSettings(viewDefinition) {
+  if (!(viewDefinition instanceof HTMLElement)) {
+    return;
+  }
+  const pageTemplateInput = viewDefinition.querySelector("[data-entity-management-view-drawer-select$='PageTemplate'] [data-form-drawer-select-value]");
+  const listDisplay = viewDefinition.querySelector("[data-entity-management-view-list-display-settings]");
+  if (listDisplay instanceof HTMLElement && pageTemplateInput instanceof HTMLInputElement) {
+    listDisplay.hidden = pageTemplateInput.value !== "record_management_list_centric";
+  }
+}
+
+function syncEntityManagementPlacementAttributeSource(placementDefinition) {
+  if (!(placementDefinition instanceof HTMLElement)) {
+    return;
+  }
+  const sectionBody = placementDefinition.querySelector("[aria-label='Attributes'] [data-entity-management-section-body]");
+  const builder = sectionBody?.querySelector("[data-entity-management-placement-attribute-builder]");
+  if (!(sectionBody instanceof HTMLElement) || !(builder instanceof HTMLElement)) {
+    return;
+  }
+  const entityKey = getEntityManagementPlacementAttributeSource(placementDefinition);
+  const currentSource = builder.dataset.entityManagementAttributeSource ?? "";
+  if (entityKey === currentSource) {
+    return;
+  }
+  const note = entityKey === "organization"
+    ? "Included attributes can display in this drawer region. Secondary nav is off, so attributes come from the parent entity."
+    : "Included attributes can display in this drawer region. Secondary nav is on, so attributes come from the selected child entity.";
+  builder.dataset.entityManagementAttributeSource = entityKey;
+  const placementKey = builder.dataset.entityManagementPlacementAttributeBuilder ?? "placement";
+  builder.querySelectorAll("[data-entity-management-placement-attribute-section]").forEach((row, index) => {
+    if (!(row instanceof HTMLElement)) {
+      return;
+    }
+    const nameInput = row.querySelector("[data-entity-management-placement-section-name]");
+    const label = nameInput instanceof HTMLInputElement ? nameInput.value : `Section ${index + 1}`;
+    row.outerHTML = renderEntityManagementPlacementAttributeSectionRow({
+      entityKey,
+      index,
+      note,
+      placementKey,
+      section: {
+        label,
+        attributes: getEntityManagementPlacementAttributeDefaults(entityKey),
+      },
+    });
+  });
+  syncEntityManagementPlacementAttributeSections(builder);
+}
+
+function syncEntityManagementPlacementAttributeSections(builder) {
+  if (!(builder instanceof HTMLElement)) {
+    return;
+  }
+  const placementKey = builder.dataset.entityManagementPlacementAttributeBuilder ?? "placement";
+  const rows = Array.from(builder.querySelectorAll("[data-entity-management-placement-attribute-section]"))
+    .filter((row) => row instanceof HTMLElement);
+  rows.forEach((row, index) => {
+    if (!(row instanceof HTMLElement)) {
+      return;
+    }
+    row.dataset.placementSectionIndex = String(index);
+    const nameInput = row.querySelector("[data-entity-management-placement-section-name]");
+    if (nameInput instanceof HTMLInputElement) {
+      nameInput.name = `${placementKey}PlacementSection${index + 1}Name`;
+      nameInput.id = `entity-management-${placementKey}-placement-section-${index + 1}-name`;
+      const label = row.querySelector("label[for]");
+      if (label instanceof HTMLLabelElement) {
+        label.htmlFor = nameInput.id;
+      }
+    }
+    const valueInput = row.querySelector("[data-entity-management-view-attribute-value]");
+    if (valueInput instanceof HTMLInputElement) {
+      valueInput.name = `${placementKey}PlacementSection${index + 1}Attributes`;
+    }
+    const moveUp = row.querySelector("[data-entity-management-placement-section-move='up']");
+    const moveDown = row.querySelector("[data-entity-management-placement-section-move='down']");
+    const remove = row.querySelector("[data-entity-management-placement-section-remove]");
+    if (moveUp instanceof HTMLButtonElement) {
+      moveUp.disabled = index === 0;
+    }
+    if (moveDown instanceof HTMLButtonElement) {
+      moveDown.disabled = index === rows.length - 1;
+    }
+    if (remove instanceof HTMLButtonElement) {
+      remove.disabled = rows.length <= 1;
+    }
+  });
+}
+
 function renderEntityManagementViewSection({ children, description, id, title }) {
   const bodyId = `entity-management-${id}-body`;
   return `
@@ -3623,23 +4521,6 @@ function renderEntityManagementViewDefinitionPanel({ key, routeName, routePrevie
             selectedEmpty: "No parent page selected yet.",
             availableTitle: "Pages Under Module",
             description: "Page choices come from the selected module.",
-            maxSelections: 1,
-          })}
-          ${renderEntityManagementDrawerSelectField({
-            viewKey: key,
-            label: "Page template",
-            inputName: `${key}PageTemplate`,
-            value: "record_management_list_centric",
-            options: entityManagementViewPageTemplateOptions,
-            emptySummary: "Choose page template",
-            drawerEyebrow: "Page template",
-            dialogTitle: "Choose page template",
-            closeLabel: "Close page template selector",
-            searchPlaceholder: "Search page templates",
-            selectedTitle: "Selected Page Template",
-            selectedEmpty: "No page template selected yet.",
-            availableTitle: "Available Page Templates",
-            description: "Template used for this entity view route.",
             maxSelections: 1,
           })}
           ${renderEntityManagementTextField({
@@ -3763,6 +4644,68 @@ function renderEntityManagementViewDefinitionPanel({ key, routeName, routePrevie
             inputName: `${key}WorkflowVisibleStatuses`,
             statuses: getEntityManagementViewWorkflowStatuses("intakeWorkflow"),
           })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-primary-actions`,
+        title: "Primary actions",
+        description: "Record capabilities shown as primary actions for this view, ordered by selection priority.",
+        children: renderEntityManagementViewActionSelector({
+          inputName: `${key}PrimaryActions`,
+          selectedValues: ["read", "update"],
+        }),
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-secondary-actions`,
+        title: "Secondary actions",
+        description: "Record capabilities shown as secondary actions for this view, ordered by selection priority.",
+        children: renderEntityManagementViewActionSelector({
+          inputName: `${key}SecondaryActions`,
+          selectedValues: ["archive", "export"],
+        }),
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-display`,
+        title: "Display",
+        description: "Template-specific display settings for this view.",
+        children: `
+          ${renderEntityManagementDrawerSelectField({
+            viewKey: key,
+            label: "Page template",
+            inputName: `${key}PageTemplate`,
+            value: "record_management_list_centric",
+            options: entityManagementViewPageTemplateOptions,
+            emptySummary: "Choose page template",
+            drawerEyebrow: "Page template",
+            dialogTitle: "Choose page template",
+            closeLabel: "Close page template selector",
+            searchPlaceholder: "Search page templates",
+            selectedTitle: "Selected Page Template",
+            selectedEmpty: "No page template selected yet.",
+            availableTitle: "Available Page Templates",
+            description: "Template used for this entity view route.",
+            maxSelections: 1,
+          })}
+          <section class="entity-management-display-setting-group form-field-span-2" aria-label="List display" data-entity-management-view-list-display-settings>
+            <div class="record-management-user-attribute-group-header">
+              <h5>List display</h5>
+              <p>Attributes displayed in the list area, ordered by priority.</p>
+            </div>
+            ${renderEntityManagementViewAttributeSelector({
+              inputName: `${key}ListDisplayAttributes`,
+              selectedValues: ["email", "description", "status"],
+            })}
+          </section>
+          <section class="entity-management-display-setting-group form-field-span-2" aria-label="Drawer display" data-entity-management-view-drawer-display-settings>
+            <div class="record-management-user-attribute-group-header">
+              <h5>Drawer display</h5>
+              <p>Placement regions shown in the drawer for this view.</p>
+            </div>
+            ${renderEntityManagementViewPlacementSelector({
+              inputName: `${key}DrawerDisplayPlacements`,
+              selectedValues: ["primaryDetails", "operations"],
+            })}
+          </section>
         `,
       })}
     </div>
@@ -4059,6 +5002,28 @@ function renderEntityManagementCatalogActions({ catalogKey }) {
         title="Delete catalog"
         data-entity-management-catalog-delete="${escapeHtml(catalogKey)}"
       >
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="M3 6h18" />
+          <path d="M8 6V4h8v2" />
+          <path d="M6 9l1 11h10l1-11" />
+          <path d="M10 12v5" />
+          <path d="M14 12v5" />
+        </svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderEntityManagementPermissionActions({ permissionKey }) {
+  return `
+    <div class="entity-management-workflow-actions" aria-label="Permission role actions">
+      <button class="entity-management-workflow-action-button" type="button" aria-label="Copy permission role" title="Copy permission role" data-entity-management-permission-copy="${escapeHtml(permissionKey)}">
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="M8 8h10v12H8z" />
+          <path d="M5 16H4V4h12v1" />
+        </svg>
+      </button>
+      <button class="entity-management-workflow-action-button entity-management-workflow-action-button-danger" type="button" aria-label="Delete permission role" title="Delete permission role" data-entity-management-permission-delete="${escapeHtml(permissionKey)}">
         <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
           <path d="M3 6h18" />
           <path d="M8 6V4h8v2" />
@@ -4888,6 +5853,667 @@ function renderEntityManagementCatalogsRegion() {
   });
 }
 
+function renderEntityManagementPlacementSecondaryNav({ enabled, key, selectedEntity }) {
+  const toggleId = `entity-management-${key}-secondary-nav-toggle`;
+  return `
+    <div class="entity-management-form-grid">
+      <label class="entity-management-subworkflow-toggle form-field-span-2" for="${escapeHtml(toggleId)}">
+        <span>
+          <strong>Secondary nav</strong>
+          <small>Show record-level secondary navigation inside this drawer region.</small>
+        </span>
+        <input id="${escapeHtml(toggleId)}" type="checkbox" name="${escapeHtml(`${key}SecondaryNavEnabled`)}" value="true" data-entity-management-placement-secondary-nav-toggle ${enabled ? "checked" : ""} />
+      </label>
+      <div class="form-field-span-2" data-entity-management-placement-secondary-nav-source ${enabled ? "" : "hidden"}>
+        ${renderEntityManagementDrawerSelectField({
+          availableTitle: "Available Child Entities",
+          closeLabel: "Close child entity selector",
+          description: "Records from this child entity populate the secondary nav for the placement.",
+          dialogTitle: "Choose secondary nav child entity",
+          drawerEyebrow: "Secondary nav",
+          emptySummary: "Choose child entity",
+          inputName: `${key}SecondaryNavEntity`,
+          label: "Child entity records",
+          maxSelections: 1,
+          options: entityManagementChildEntityOptions,
+          searchPlaceholder: "Search child entities",
+          selectedEmpty: "No child entity selected.",
+          selectedTitle: "Selected Child Entity",
+          value: selectedEntity,
+          viewKey: key,
+        })}
+      </div>
+    </div>
+  `;
+}
+
+function renderEntityManagementPlacementAttributeSectionRow({
+  entityKey,
+  index,
+  note,
+  placementKey,
+  section,
+}) {
+  const label = section.label ?? `Section ${index + 1}`;
+  const sectionNote = note ?? (entityKey === "organization"
+    ? "Included attributes can display in this drawer section. Secondary nav is off, so attributes come from the parent entity."
+    : "Included attributes can display in this drawer section. Secondary nav is on, so attributes come from the selected child entity.");
+  return `
+    <article class="entity-management-placement-attribute-section" data-entity-management-placement-attribute-section data-placement-section-index="${escapeHtml(String(index))}">
+      <div class="form-field entity-management-field entity-management-placement-section-name" ${renderEvidenceTargetAttributes({ name: "Section name", value: label })}>
+        <label class="form-field-label" for="entity-management-${escapeHtml(placementKey)}-placement-section-${escapeHtml(String(index + 1))}-name">Section name</label>
+        ${renderEntityManagementEvidenceButton("Section name")}
+        ${renderEntityManagementAiButton("Section name")}
+        <input id="entity-management-${escapeHtml(placementKey)}-placement-section-${escapeHtml(String(index + 1))}-name" class="form-field-input" type="text" name="${escapeHtml(`${placementKey}PlacementSection${index + 1}Name`)}" value="${escapeHtml(label)}" data-entity-management-placement-section-name />
+      </div>
+      <div class="entity-management-workflow-status-location" aria-label="Section location">
+        <button class="entity-management-workflow-status-move" type="button" aria-label="Move section up" data-entity-management-placement-section-move="up" ${index === 0 ? "disabled" : ""}>
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="m6 15 6-6 6 6" />
+          </svg>
+        </button>
+        <button class="entity-management-workflow-status-move" type="button" aria-label="Move section down" data-entity-management-placement-section-move="down">
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+      </div>
+      <div class="entity-management-placement-section-attributes">
+        ${renderEntityManagementViewAttributeSelector({
+          entityKey,
+          inputName: `${placementKey}PlacementSection${index + 1}Attributes`,
+          note: sectionNote,
+          selectedValues: [...(section.attributes ?? getEntityManagementPlacementAttributeDefaults(entityKey))],
+        })}
+      </div>
+      <div class="entity-management-workflow-status-row-actions">
+        <button class="entity-management-workflow-status-remove" type="button" aria-label="Remove placement section" data-entity-management-placement-section-remove>
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="M3 6h18" />
+            <path d="M8 6V4h8v2" />
+            <path d="M6 9l1 11h10l1-11" />
+            <path d="M10 12v5" />
+            <path d="M14 12v5" />
+          </svg>
+        </button>
+        <button class="entity-management-workflow-status-add" type="button" aria-label="Add placement section" data-entity-management-placement-section-add>
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+function renderEntityManagementPlacementAttributeBuilder({ entityKey, key, sections }) {
+  const effectiveSections = sections?.length
+    ? sections
+    : [{ label: "Section 1", attributes: getEntityManagementPlacementAttributeDefaults(entityKey) }];
+  return `
+    <div class="entity-management-placement-attribute-builder" data-entity-management-placement-attribute-builder="${escapeHtml(key)}" data-entity-management-attribute-source="${escapeHtml(entityKey)}">
+      ${effectiveSections.map((section, index) => renderEntityManagementPlacementAttributeSectionRow({
+        entityKey,
+        index,
+        placementKey: key,
+        section,
+      })).join("")}
+    </div>
+  `;
+}
+
+function renderEntityManagementPlacementPanel({
+  description,
+  key,
+  label,
+  secondaryNavEnabled,
+  secondaryNavEntity,
+  sections,
+  selectedAttributes,
+}) {
+  const attributeSourceEntity = secondaryNavEnabled && secondaryNavEntity ? secondaryNavEntity : "organization";
+  return `
+    <div class="entity-management-view-definition" data-entity-management-placement-definition="${escapeHtml(key)}">
+      ${renderEntityManagementViewSection({
+        id: `${key}-placement-details`,
+        title: "Placement details",
+        description: "Drawer primary region represented by this placement record.",
+        children: `
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Placement name",
+            name: `${key}PlacementName`,
+            value: label,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Description",
+            multiline: true,
+            name: `${key}PlacementDescription`,
+            value: description,
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-placement-secondary-nav`,
+        title: "Secondary nav",
+        description: "Record source used to populate secondary navigation inside this drawer region.",
+        children: renderEntityManagementPlacementSecondaryNav({
+          enabled: secondaryNavEnabled,
+          key,
+          selectedEntity: secondaryNavEntity,
+        }),
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-placement-attributes`,
+        title: "Attributes",
+        description: "Drawer sections and the attributes displayed inside each section, ordered by screen placement priority.",
+        children: renderEntityManagementPlacementAttributeBuilder({
+          entityKey: attributeSourceEntity,
+          key,
+          sections: sections ?? [{ label: "Section 1", attributes: selectedAttributes }],
+        }),
+      })}
+    </div>
+  `;
+}
+
+function renderEntityManagementPlacementsRegion() {
+  return renderNestedListPicker({
+    label: "Display",
+    description: "Drawer primary regions and the ordered sections displayed in each region.",
+    items: Object.entries(entityManagementPlacementSkeletonLists).map(([key, placement]) => ({
+      key: `placement-${key.replaceAll(/([A-Z])/g, "-$1").toLowerCase()}`,
+      label: placement.label,
+      summary: placement.summary,
+      description: placement.description,
+      content: renderEntityManagementPlacementPanel({
+        description: placement.description,
+        key,
+        label: placement.label,
+        secondaryNavEnabled: placement.secondaryNavEnabled,
+        secondaryNavEntity: placement.secondaryNavEntity,
+        sections: placement.sections,
+        selectedAttributes: [...placement.attributes],
+      }),
+    })),
+  });
+}
+
+function getEntityManagementActionModel(capability, {
+  actionFamily = "record",
+  defaultApiRoute = `POST /v1/organizations/:organizationId/${capability.key}`,
+  ownerKey = "organization",
+  owningLayer = "runtime",
+  keyPrefix = `entity.organization.action.${capability.key}`,
+  subjectLabel = "organization record",
+} = {}) {
+  const actionKey = capability.key;
+  const requestBodyKey = `${keyPrefix}.requestBody`;
+  const responseBodyKey = `${keyPrefix}.responseBody`;
+  return {
+    actionKey,
+    actionFamily,
+    actionKeyPrefix: keyPrefix,
+    owningLayer,
+    ownerKey,
+    apiRoute: capability.apiRoute ?? defaultApiRoute,
+    labelKey: `${keyPrefix}.label`,
+    labelFallback: capability.label,
+    descriptionKey: `${keyPrefix}.description`,
+    descriptionFallback: capability.description,
+    requestBody: {
+      bodyKey: requestBodyKey,
+      bodyFallback: `${capability.label} request body for the ${subjectLabel} action.`,
+      schemaTemplate: {
+        actorContext: "{{actorContext}}",
+        ownerKey,
+        targetId: "{{targetId}}",
+        requestId: "{{requestId}}",
+      },
+    },
+    responseBody: {
+      bodyKey: responseBodyKey,
+      bodyFallback: `${capability.label} response body for the ${subjectLabel} action.`,
+      schemaTemplate: {
+        actionKey,
+        ownerKey,
+        targetId: "{{targetId}}",
+        outcome: "accepted|succeeded|failed",
+      },
+    },
+    executionMode: capability.executionMode,
+    compatibilityRisk: capability.compatibilityRisk,
+    auditRequired: true,
+    actionErrorModel: {
+      defaultErrorKey: `${keyPrefix}.failed`,
+      defaultErrorFallback: `The ${capability.label.toLowerCase()} action could not be completed.`,
+      errors: [
+        {
+          errorKey: "conflict",
+          messageKey: `${keyPrefix}.conflict`,
+          messageFallback: `The ${subjectLabel} changed before ${capability.label.toLowerCase()} could complete.`,
+          retryable: true,
+          auditRequired: true,
+        },
+      ],
+    },
+  };
+}
+
+function getEntityManagementRecordActionModel(capability) {
+  return getEntityManagementActionModel(capability, {
+    actionFamily: "record",
+    defaultApiRoute: entityManagementRecordActionRoutes[capability.key] ?? `POST /v1/organizations/:organizationId/${capability.key}`,
+    ownerKey: "organization",
+    owningLayer: "runtime",
+    keyPrefix: `entity.organization.action.${capability.key}`,
+    subjectLabel: "organization record",
+  });
+}
+
+function getEntityManagementStructureActionModel(capability) {
+  return getEntityManagementActionModel(capability, {
+    actionFamily: "entityStructure",
+    defaultApiRoute: capability.apiRoute ?? `POST /v1/entity-definitions/:entityId/${capability.key}`,
+    ownerKey: "entityDefinition",
+    owningLayer: "platform",
+    keyPrefix: `entityDefinition.action.${capability.key}`,
+    subjectLabel: "entity definition",
+  });
+}
+
+function renderEntityManagementActionBodySection({ actionModel, body, fieldSuffix, id, title, description }) {
+  const schemaTemplate = JSON.stringify(body.schemaTemplate, null, 2);
+  const isRequestBody = fieldSuffix === "RequestBody";
+  const actionKey = actionModel.actionKey;
+  return renderEntityManagementViewSection({
+    id,
+    title,
+    description,
+    children: `
+      ${isRequestBody ? renderEntityManagementTextField({
+        editable: false,
+        label: "API route",
+        name: `${actionKey}ApiRoute`,
+        value: actionModel.apiRoute,
+      }) : ""}
+      ${renderEntityManagementTextField({
+        editable: false,
+        label: "Body key",
+        name: `${actionKey}${fieldSuffix}Key`,
+        value: body.bodyKey,
+      })}
+      ${renderEntityManagementTextField({
+        editable: false,
+        label: "Body fallback",
+        multiline: true,
+        name: `${actionKey}${fieldSuffix}Fallback`,
+        value: body.bodyFallback,
+      })}
+      ${renderEntityManagementTextField({
+        editable: false,
+        label: "Schema template",
+        multiline: true,
+        name: `${actionKey}${fieldSuffix}SchemaTemplate`,
+        rows: schemaTemplate.split("\n").length,
+        value: schemaTemplate,
+      })}
+    `,
+  });
+}
+
+function renderEntityManagementActionModelErrorCard({ actionModel, errorKey }) {
+  const actionKey = actionModel.actionKey;
+  const messageKey = `${actionModel.actionKeyPrefix}.${errorKey}`;
+  const auditType = `${actionModel.actionKeyPrefix}.${errorKey}.audit`;
+  const fallback = `The ${actionKey} action could not complete because ${errorKey}.`;
+  return `
+    <details class="entity-management-action-error-card" data-entity-management-action-error="${escapeHtml(errorKey)}">
+      <summary>
+        <span>
+          <strong>${escapeHtml(errorKey)}</strong>
+          <em>${escapeHtml(messageKey)}</em>
+        </span>
+      </summary>
+      <div class="entity-management-action-error-card-body">
+        ${renderEntityManagementTextField({
+          editable: false,
+          label: "Message key",
+          name: `${actionKey}${errorKey}MessageKey`,
+          value: messageKey,
+        })}
+        ${renderEntityManagementTextField({
+          editable: false,
+          label: "Message fallback",
+          multiline: true,
+          name: `${actionKey}${errorKey}MessageFallback`,
+          value: fallback,
+        })}
+        ${renderEntityManagementTextField({
+          editable: false,
+          label: "Audit type",
+          name: `${actionKey}${errorKey}AuditType`,
+          value: auditType,
+        })}
+        ${renderEntityManagementTextField({
+          editable: false,
+          label: "Log template",
+          multiline: true,
+          name: `${actionKey}${errorKey}LogTemplate`,
+          value: `actor={{actorId}} action=${actionKey} owner=${actionModel.ownerKey} target={{targetId}} outcome=error error=${errorKey} request={{requestId}}`,
+        })}
+      </div>
+    </details>
+  `;
+}
+
+function renderEntityManagementActionModelSuccessAuditTypes({ actionModel }) {
+  const { actionKey } = actionModel;
+  const auditTypes = [
+    {
+      label: "Action requested",
+      value: `${actionModel.actionKeyPrefix}.requested`,
+      template: `actor={{actorId}} action=${actionKey} owner=${actionModel.ownerKey} target={{targetId}} outcome=requested request={{requestId}}`,
+    },
+    {
+      label: "Action succeeded",
+      value: `${actionModel.actionKeyPrefix}.succeeded`,
+      template: `actor={{actorId}} action=${actionKey} owner=${actionModel.ownerKey} target={{targetId}} outcome=success request={{requestId}}`,
+    },
+  ];
+  return `
+    <div class="entity-management-action-audit-list form-field-span-2">
+      ${auditTypes.map((auditType) => `
+        <article class="entity-management-action-audit-card" ${renderEvidenceTargetAttributes({ name: auditType.label, value: auditType.value })}>
+          <span>${escapeHtml(auditType.label)}</span>
+          ${renderEntityManagementEvidenceButton(auditType.label)}
+          ${renderEntityManagementAiButton(auditType.label)}
+          <strong>${escapeHtml(auditType.value)}</strong>
+          <code>${escapeHtml(auditType.template)}</code>
+        </article>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderEntityManagementActionModelPanel({ capability, modelFactory = getEntityManagementRecordActionModel }) {
+  const actionModel = modelFactory(capability);
+  return `
+    <div class="entity-management-view-definition entity-management-action-model-definition" data-entity-management-action-model-definition="${escapeHtml(capability.key)}">
+      ${renderEntityManagementViewSection({
+        id: `${capability.key}-action-model`,
+        title: "Action model",
+        description: "Runtime capability metadata populated when entity runtime capabilities are created.",
+        children: `
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Action key",
+            name: `${capability.key}ActionKey`,
+            value: actionModel.actionKey,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Action family",
+            name: `${capability.key}ActionFamily`,
+            value: actionModel.actionFamily,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Owning layer",
+            name: `${capability.key}OwningLayer`,
+            value: actionModel.owningLayer,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Owner key",
+            name: `${capability.key}OwnerKey`,
+            value: actionModel.ownerKey,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Label key",
+            name: `${capability.key}LabelKey`,
+            value: actionModel.labelKey,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Label fallback",
+            name: `${capability.key}LabelFallback`,
+            value: actionModel.labelFallback,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Description key",
+            name: `${capability.key}DescriptionKey`,
+            value: actionModel.descriptionKey,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Description fallback",
+            multiline: true,
+            name: `${capability.key}DescriptionFallback`,
+            value: actionModel.descriptionFallback,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Execution mode",
+            name: `${capability.key}ExecutionMode`,
+            value: actionModel.executionMode,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Compatibility risk",
+            name: `${capability.key}CompatibilityRisk`,
+            value: actionModel.compatibilityRisk,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Audit required",
+            name: `${capability.key}AuditRequired`,
+            value: String(actionModel.auditRequired),
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Default error key",
+            name: `${capability.key}DefaultErrorKey`,
+            value: actionModel.actionErrorModel.defaultErrorKey,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Default error fallback",
+            multiline: true,
+            name: `${capability.key}DefaultErrorFallback`,
+            value: actionModel.actionErrorModel.defaultErrorFallback,
+          })}
+          ${renderEntityManagementTextField({
+            editable: false,
+            label: "Seed error model",
+            multiline: true,
+            name: `${capability.key}SeedErrorModel`,
+            value: JSON.stringify(actionModel.actionErrorModel.errors[0], null, 2),
+          })}
+        `,
+      })}
+      ${renderEntityManagementActionBodySection({
+        actionModel,
+        body: actionModel.requestBody,
+        fieldSuffix: "RequestBody",
+        id: `${capability.key}-request-body`,
+        title: "Request body",
+        description: "Generated request payload contract for this record capability.",
+      })}
+      ${renderEntityManagementActionBodySection({
+        actionModel,
+        body: actionModel.responseBody,
+        fieldSuffix: "ResponseBody",
+        id: `${capability.key}-response-body`,
+        title: "Response body",
+        description: "Generated response payload contract for this record capability.",
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${capability.key}-success-audit-types`,
+        title: "Success audit types",
+        description: "Logs generated when this capability is requested and succeeds.",
+        children: renderEntityManagementActionModelSuccessAuditTypes({ actionModel }),
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${capability.key}-error-audit-types`,
+        title: "Error audit types and messaging",
+        description: "Error keys, user-facing messages, and log templates for this capability.",
+        children: `
+          <div class="entity-management-action-error-list form-field-span-2">
+            ${entityManagementRecordActionErrorTypes.map((errorKey) => renderEntityManagementActionModelErrorCard({
+              actionModel,
+              errorKey,
+            })).join("")}
+          </div>
+        `,
+      })}
+    </div>
+  `;
+}
+
+function renderEntityManagementActionModelsRecordRegion() {
+  return renderNestedListPicker({
+    label: "Action Models - Record",
+    description: "Default runtime record capabilities generated for this entity.",
+    items: entityManagementRecordActionCapabilities.map((capability) => ({
+      key: `record-action-${capability.key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`,
+      label: capability.label,
+      summary: capability.executionMode,
+      description: capability.description,
+      content: renderEntityManagementActionModelPanel({ capability }),
+    })),
+  });
+}
+
+function renderEntityManagementActionModelsEntityStructureRegion() {
+  return renderNestedListPicker({
+    label: "Action Models - Entity Structure",
+    description: "Read-only structure capabilities for entity definitions and their managed domains.",
+    items: entityManagementStructureActionCapabilities.map((capability) => ({
+      key: `structure-action-${capability.key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`,
+      label: capability.label,
+      summary: capability.executionMode,
+      description: capability.description,
+      content: renderEntityManagementActionModelPanel({
+        capability,
+        modelFactory: getEntityManagementStructureActionModel,
+      }),
+    })),
+  });
+}
+
+function renderEntityManagementPermissionFamily({ family, permissionKey, enabled = false }) {
+  const switchId = `entity-management-${permissionKey}-${family.key}-available`;
+  return renderEntityManagementViewSection({
+    id: `${permissionKey}-${family.key}-permissions`,
+    title: family.label,
+    description: family.description,
+    children: `
+      <section class="entity-management-permission-family form-field-span-2" data-entity-management-permission-family="${escapeHtml(family.key)}">
+        <label class="entity-management-permission-family-switch" for="${escapeHtml(switchId)}">
+          <input id="${escapeHtml(switchId)}" type="checkbox" name="${escapeHtml(`${permissionKey}${family.key}Available`)}" ${enabled ? "checked" : ""} data-entity-management-permission-family-toggle />
+          <span>
+            <strong>Make available</strong>
+            <em>Expose this capability family to the selected role.</em>
+          </span>
+        </label>
+        <div class="entity-management-permission-bulk-actions" aria-label="${escapeHtml(`${family.label} bulk actions`)}">
+          <button class="entity-management-permission-bulk-button" type="button" data-entity-management-permission-bulk="select">Select all</button>
+          <button class="entity-management-permission-bulk-button" type="button" data-entity-management-permission-bulk="deselect">Deselect all</button>
+        </div>
+        <div class="entity-management-view-workflow-status-list entity-management-permission-capability-list" data-entity-management-permission-capability-list ${enabled ? "" : "hidden"}>
+          ${family.capabilities.map((capability, index) => {
+            const isAvailable = enabled && index < 3;
+            return `
+              <button
+                class="entity-management-view-workflow-status-toggle entity-management-permission-capability-toggle${isAvailable ? "" : " is-hidden"}"
+                type="button"
+                aria-pressed="${escapeHtml(String(isAvailable))}"
+                aria-label="${escapeHtml(`${isAvailable ? "Disable" : "Enable"} ${capability.label}`)}"
+                data-capability-key="${escapeHtml(capability.key)}"
+                data-entity-management-permission-capability-toggle
+              >
+                ${renderEntityManagementPermissionCapabilityIcon({ available: isAvailable })}
+                <span>${escapeHtml(capability.label)}</span>
+                <em>${isAvailable ? "Available" : "Unavailable"}</em>
+              </button>
+            `;
+          }).join("")}
+        </div>
+      </section>
+    `,
+  });
+}
+
+function renderEntityManagementPermissionCapabilityIcon({ available = false } = {}) {
+  return `
+    <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+      ${available
+        ? '<path d="m5 12 4 4 10-10" />'
+        : '<path d="m7 7 10 10" /><path d="m17 7-10 10" />'}
+    </svg>
+  `;
+}
+
+function renderEntityManagementPermissionRolePanel({ key, roleValue = "llm" }) {
+  const selectedRole = roleValue || "llm";
+  return `
+    <div class="entity-management-view-definition entity-management-permission-definition" data-entity-management-permission-definition="${escapeHtml(key)}">
+      ${renderEntityManagementPermissionActions({ permissionKey: key })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-role`,
+        title: "Role",
+        description: "Role receiving capability access for this entity.",
+        children: renderEntityManagementDrawerSelectField({
+          viewKey: key,
+          label: "Role",
+          inputName: `${key}PermissionRole`,
+          value: selectedRole,
+          options: entityManagementPermissionRoleOptions,
+          emptySummary: "Choose role",
+          drawerEyebrow: "Role",
+          dialogTitle: "Choose role",
+          closeLabel: "Close role selector",
+          searchPlaceholder: "Search roles",
+          selectedTitle: "Selected Role",
+          selectedEmpty: "No role selected yet.",
+          availableTitle: "Available Roles",
+          description: "Single role selected for this permission entry.",
+          maxSelections: 1,
+        }),
+      })}
+      ${entityManagementPermissionCapabilityFamilies.map((family, index) => renderEntityManagementPermissionFamily({
+        enabled: index === 0,
+        family,
+        permissionKey: key,
+      })).join("")}
+    </div>
+  `;
+}
+
+function renderEntityManagementPermissionsRegion() {
+  return renderNestedListPicker({
+    addAction: {
+      label: "Add Role",
+      ariaLabel: "Add another permission role",
+    },
+    label: "Permissions",
+    description: "Role access to entity record and structure capability families.",
+    items: [
+      {
+        key: "permission-role-llm",
+        label: "LLM",
+        summary: "Role permissions",
+        description: "Default machine-assisted authoring actor",
+        content: renderEntityManagementPermissionRolePanel({ key: "llmPermission", roleValue: "llm" }),
+      },
+    ],
+  });
+}
+
 function renderMembersRegion() {
   return renderNestedListPicker({
     label: "Members",
@@ -5078,6 +6704,38 @@ function renderEntityManagementPageAttributeView() {
       headerDescription: "Enum value catalogs this entity can use for constrained attribute values.",
       count: 4,
       content: renderEntityManagementCatalogsRegion(),
+    },
+    {
+      key: "placements",
+      label: "Display",
+      headerLabel: "Display",
+      headerDescription: "Drawer primary regions and the ordered sections displayed in each region.",
+      count: Object.keys(entityManagementPlacementSkeletonLists).length,
+      content: renderEntityManagementPlacementsRegion(),
+    },
+    {
+      key: "permissions",
+      label: "Permissions",
+      headerLabel: "Permissions",
+      headerDescription: "Role access to entity record and structure capability families.",
+      count: 1,
+      content: renderEntityManagementPermissionsRegion(),
+    },
+    {
+      key: "action-models-record",
+      label: "Action Models - Record",
+      headerLabel: "Action Models - Record",
+      headerDescription: "Default runtime record capabilities generated for this entity.",
+      count: entityManagementRecordActionCapabilities.length,
+      content: renderEntityManagementActionModelsRecordRegion(),
+    },
+    {
+      key: "action-models-entity-structure",
+      label: "Action Models - Entity Structure",
+      headerLabel: "Action Models - Entity Structure",
+      headerDescription: "Read-only structure capabilities for entity definitions and their managed domains.",
+      count: entityManagementStructureActionCapabilities.length,
+      content: renderEntityManagementActionModelsEntityStructureRegion(),
     },
   ];
 
