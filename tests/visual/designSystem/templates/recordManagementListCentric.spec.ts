@@ -368,10 +368,354 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(page.locator("[data-record-management-list-centric-mount] [data-chat-workspace-list-drawer-close]")).toBeHidden();
   await expect(page.locator("[data-record-management-list-centric-mount] .record-management-active-group-summary")).toBeHidden();
   await expect(page.locator("[data-record-management-region-trigger='identity']")).toContainText("Identity");
+  await expect(page.locator("[data-record-management-region-trigger='workflows']")).toContainText("Workflows");
+  await expect(page.locator("[data-record-management-region-trigger='views']")).toContainText("Views");
   await expect(page.locator("[data-record-management-region-trigger='details']")).toHaveCount(0);
+  await expect(page.locator("[data-record-management-region-trigger='relationships']")).toHaveCount(0);
+  const entityRegionOrder = await page.locator("[data-record-management-region-trigger]").evaluateAll((triggers) => (
+    triggers.map((trigger) => trigger.getAttribute("data-record-management-region-trigger"))
+  ));
+  expect(entityRegionOrder).toEqual(["identity", "workflows", "views", "members", "legal", "locations", "branding"]);
   await expect(page.locator("[data-record-management-nested-trigger='primary-details']")).toContainText("Primary Details");
   await expect(page.locator("[data-record-management-nested-trigger='owning-feature']")).toContainText("Owning Feature");
   await expect(page.locator("[data-record-management-nested-trigger='source-authority-posture']")).toContainText("Source Authority Posture");
+  await page.locator("[data-record-management-region-trigger='workflows']").click();
+  await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Workflows");
+  await expect(page.locator("[data-record-management-region-panel='workflows']")).toBeVisible();
+  const workflowsLayout = page.locator("[data-record-management-region-panel='workflows'] .record-management-nested-list-layout");
+  await expect(workflowsLayout).toBeVisible();
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger='intake-workflow']")).toContainText("Intake");
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger='review-workflow']")).toContainText("Review");
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger='lifecycle-workflow']")).toContainText("Lifecycle");
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-add]")).toHaveAccessibleName("Add another entity workflow");
+  await expect(page.locator("[data-entity-management-workflow-definition='intakeWorkflow'] [data-entity-management-workflow-copy='intakeWorkflow']")).toHaveAccessibleName("Copy workflow");
+  await expect(page.locator("[data-entity-management-workflow-definition='intakeWorkflow'] [data-entity-management-workflow-delete='intakeWorkflow']")).toHaveAccessibleName("Delete workflow");
+  await expect(page.locator("[data-entity-management-workflow-definition='intakeWorkflow'] [data-entity-management-workflow-copy='intakeWorkflow'] svg path")).toHaveCount(2);
+  await expect(page.locator("[data-entity-management-workflow-definition='intakeWorkflow'] [data-entity-management-workflow-delete='intakeWorkflow'] svg path")).toHaveCount(5);
+  await page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-add]").click();
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger]")).toHaveCount(4);
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger='workflow-4']")).toContainText("Untitled workflow");
+  await expect(page.locator("[data-entity-management-workflow-definition='workflow4'] input[name='workflow4WorkflowName']")).toHaveValue("");
+  await expect(page.locator("[data-entity-management-workflow-definition='workflow4'] textarea[name='workflow4WorkflowDescription']")).toHaveValue("");
+  await page.locator("[data-entity-management-workflow-definition='workflow4'] [aria-label='Workflow builder'] [data-entity-management-section-toggle]").click();
+  await expect(page.locator("[data-entity-management-workflow-builder='workflow4'] [data-entity-management-workflow-status-row]")).toHaveCount(1);
+  await expect(page.locator("[data-entity-management-workflow-builder='workflow4'] input[name='workflow4Status0Name']")).toHaveValue("Home");
+  await page.locator("[data-entity-management-workflow-definition='workflow4'] [data-entity-management-workflow-delete='workflow4']").click();
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger='workflow-4']")).toHaveCount(0);
+  await expect(page.locator("[data-entity-management-workflow-definition='workflow4']")).toHaveCount(0);
+  await page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger='intake-workflow']").click();
+  await page.locator("[data-entity-management-workflow-definition='intakeWorkflow'] [data-entity-management-workflow-copy='intakeWorkflow']").click();
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger='workflow-4']")).toContainText("Untitled workflow");
+  await expect(page.locator("[data-entity-management-workflow-definition='workflow4'] input[name='workflow4WorkflowName']")).toHaveValue("");
+  await expect(page.locator("[data-entity-management-workflow-definition='workflow4'] textarea[name='workflow4WorkflowDescription']")).toHaveValue("");
+  await page.locator("[data-entity-management-workflow-definition='workflow4'] [aria-label='Workflow builder'] [data-entity-management-section-toggle]").click();
+  await expect(page.locator("[data-entity-management-workflow-builder='workflow4'] [data-entity-management-workflow-status-row]")).toHaveCount(1);
+  await expect(page.locator("[data-entity-management-workflow-builder='workflow4'] input[name='workflow4Status0Name']")).toHaveValue("Home");
+  await page.locator("[data-entity-management-workflow-definition='workflow4'] [aria-label='Workflow details'] [data-entity-management-section-toggle]").click();
+  await page.locator("[data-entity-management-workflow-definition='workflow4'] input[name='workflow4WorkflowName']").fill("Copied workflow");
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger='workflow-4'] strong")).toHaveText("Copied workflow");
+  await page.locator("[data-entity-management-workflow-definition='workflow4'] [data-entity-management-workflow-delete='workflow4']").click();
+  await expect(page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger]")).toHaveCount(3);
+  await page.locator("[data-record-management-region-panel='workflows'] [data-record-management-nested-trigger='intake-workflow']").click();
+  const workflowDetailsToggle = page.locator("[data-entity-management-workflow-definition='intakeWorkflow'] [aria-label='Workflow details'] [data-entity-management-section-toggle]");
+  const workflowDetailsBody = page.locator("[data-entity-management-workflow-definition='intakeWorkflow'] [aria-label='Workflow details'] [data-entity-management-section-body]");
+  await expect(workflowDetailsToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(workflowDetailsBody).toBeHidden();
+  await workflowDetailsToggle.click();
+  await expect(workflowDetailsToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(workflowDetailsBody).toBeVisible();
+  await expect(page.locator("input[name='intakeWorkflowWorkflowName']")).toHaveValue("Intake");
+  await expect(page.locator("textarea[name='intakeWorkflowWorkflowDescription']")).toHaveValue("First-step workflow for collecting required information before a record exists.");
+  const workflowBuilderToggle = page.locator("[data-entity-management-workflow-definition='intakeWorkflow'] [aria-label='Workflow builder'] [data-entity-management-section-toggle]");
+  const workflowBuilderBody = page.locator("[data-entity-management-workflow-definition='intakeWorkflow'] [aria-label='Workflow builder'] [data-entity-management-section-body]");
+  await expect(workflowBuilderToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(workflowBuilderBody).toBeHidden();
+  await workflowBuilderToggle.click();
+  await expect(workflowDetailsToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(workflowBuilderToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(workflowBuilderBody).toBeVisible();
+  const intakeWorkflowBuilder = page.locator("[data-entity-management-workflow-builder='intakeWorkflow']");
+  await expect(intakeWorkflowBuilder).toBeVisible();
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowIsSubworkflow']")).not.toBeChecked();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-select='intakeWorkflowParentWorkflow']")).toBeHidden();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]")).toHaveCount(1);
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0Name']")).toHaveValue("Home");
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-status='intakeWorkflowStatus0ParentStatus']")).toBeHidden();
+  await intakeWorkflowBuilder.locator("input[name='intakeWorkflowIsSubworkflow']").check();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-select='intakeWorkflowParentWorkflow']")).toBeVisible();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-select='intakeWorkflowParentWorkflow'] [data-form-drawer-select-summary]")).toHaveText("Review");
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-status='intakeWorkflowStatus0ParentStatus']")).toBeVisible();
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0ParentStatus']")).toHaveValue("status-0");
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-select='intakeWorkflowParentWorkflow'] [data-form-drawer-select-button]").click();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-select='intakeWorkflowParentWorkflow'] [data-form-drawer-select-option]")).toContainText(["Review", "Lifecycle"]);
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-select='intakeWorkflowParentWorkflow'] [data-form-drawer-select-close]").click();
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-status='intakeWorkflowStatus0ParentStatus'] [data-form-drawer-select-button]").click();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-status='intakeWorkflowStatus0ParentStatus'] [data-form-drawer-select-option]")).toContainText(["Home"]);
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-status='intakeWorkflowStatus0ParentStatus'] [data-form-drawer-select-close]").click();
+  await expect(intakeWorkflowBuilder.locator("[data-status-location='create'] .entity-management-workflow-location-badge")).toHaveText("Base");
+  await expect(intakeWorkflowBuilder.locator("[data-status-location='create'] .entity-management-workflow-location-badge")).toHaveAttribute("aria-disabled", "true");
+  await expect(intakeWorkflowBuilder.locator("[data-status-location='create'] [data-entity-management-workflow-status-remove]")).toHaveCount(0);
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0LinksTo']")).toHaveValue("all");
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-links='intakeWorkflowStatus0LinksTo'] [data-form-drawer-select-summary]")).toHaveText("All");
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-links='intakeWorkflowStatus0LinksTo'] [data-form-drawer-select-button]").click();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-links='intakeWorkflowStatus0LinksTo'] [data-form-drawer-select-option]")).toHaveCount(2);
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-links='intakeWorkflowStatus0LinksTo'] [data-form-drawer-select-option]")).toContainText(["All", "Home"]);
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-links='intakeWorkflowStatus0LinksTo'] [data-form-drawer-select-close]").click();
+  await intakeWorkflowBuilder.locator("[data-status-location='create'] [data-entity-management-workflow-status-add]").click();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]")).toHaveCount(2);
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1Name']")).toHaveValue("Status 2");
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1LinksTo']")).toHaveValue("all");
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1ParentStatus']")).toHaveValue("status-0");
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-status='intakeWorkflowStatus1ParentStatus']")).toBeVisible();
+  await intakeWorkflowBuilder.locator("input[name='intakeWorkflowIsSubworkflow']").uncheck();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-select='intakeWorkflowParentWorkflow']")).toBeHidden();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-status='intakeWorkflowStatus1ParentStatus']")).toBeHidden();
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-links='intakeWorkflowStatus1LinksTo'] [data-form-drawer-select-button]").click();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-links='intakeWorkflowStatus1LinksTo'] [data-form-drawer-select-option]")).toContainText(["All", "Home", "Status 2"]);
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-links='intakeWorkflowStatus1LinksTo'] [data-form-drawer-select-close]").click();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]").nth(1).locator("[data-entity-management-workflow-status-remove]")).toHaveAccessibleName("Remove workflow status");
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]").nth(1).locator("[data-entity-management-workflow-status-move='up']")).toBeDisabled();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]").nth(1).locator("[data-entity-management-workflow-status-move='down']")).toBeDisabled();
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]").nth(1).locator("[data-entity-management-workflow-status-add]").click();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]")).toHaveCount(3);
+  await intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus2Name']").fill("Status 3");
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]").nth(2).locator("[data-entity-management-workflow-status-move='up']").click();
+  await expect.poll(async () => intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row] [data-entity-management-workflow-status-name]").evaluateAll((inputs) => (
+    inputs.map((input) => input instanceof HTMLInputElement ? input.value : "")
+  ))).toEqual(["Home", "Status 3", "Status 2"]);
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]").nth(1).locator("[data-entity-management-workflow-status-remove]").click();
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]")).toHaveCount(2);
+  await expect.poll(async () => intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row] [data-entity-management-workflow-status-name]").evaluateAll((inputs) => (
+    inputs.map((input) => input instanceof HTMLInputElement ? input.value : "")
+  ))).toEqual(["Home", "Status 2"]);
+  for (let statusCount = 0; statusCount < 4; statusCount += 1) {
+    await intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]").last().locator("[data-entity-management-workflow-status-add]").click();
+  }
+  await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]")).toHaveCount(6);
+  await expect.poll(async () => intakeWorkflowBuilder.evaluate((node) => {
+    const drawer = node.closest(".record-management-nested-list-drawer");
+    const addButton = node.querySelector("[data-entity-management-workflow-status-row]:last-child [data-entity-management-workflow-status-add]");
+    const addRect = addButton?.getBoundingClientRect();
+    const drawerRect = drawer?.getBoundingClientRect();
+    return {
+      addButtonVisible: addRect && drawerRect ? addRect.bottom <= drawerRect.bottom && addRect.top >= drawerRect.top : false,
+      drawerOverflowY: drawer ? getComputedStyle(drawer).overflowY : "",
+      drawerScrollable: drawer ? drawer.scrollHeight > drawer.clientHeight : false,
+    };
+  })).toMatchObject({
+    addButtonVisible: true,
+    drawerOverflowY: "auto",
+    drawerScrollable: true,
+  });
+  await page.locator("[data-record-management-region-trigger='views']").click();
+  await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Views");
+  await expect(page.locator("[data-record-management-drawer-region-description]")).toHaveText("Who can access this entity in the system, where they'll find it and how it will behave.");
+  await expect(page.locator("[data-record-management-region-panel='views']")).toBeVisible();
+  await expect(page.locator("[data-record-management-region-panel='views'] .record-management-nested-list-header")).toContainText("Who can access this entity in the system, where they'll find it and how it will behave.");
+  const viewsLayout = page.locator("[data-record-management-region-panel='views'] .record-management-nested-list-layout");
+  await expect(viewsLayout).toBeVisible();
+  await expect(page.locator("[data-record-management-nested-trigger='list-views']")).toContainText("List views");
+  await expect(page.locator("[data-record-management-nested-trigger='detail-views']")).toContainText("Detail views");
+  await expect(page.locator("[data-record-management-nested-trigger='workflow-views']")).toContainText("Workflow views");
+  await expect(page.locator("[data-record-management-region-panel='views'] [data-record-management-nested-add]")).toContainText("Add View");
+  await expect(page.locator("[data-record-management-region-panel='views'] [data-record-management-nested-add] .record-management-nested-list-add-icon")).toBeVisible();
+  await expect.poll(async () => page.locator("[data-record-management-region-panel='views'] [data-record-management-nested-add]").evaluate((card) => {
+    const icon = card.querySelector(".record-management-nested-list-add-icon");
+    const label = card.querySelector("strong");
+    const siblingCard = card.parentElement?.querySelector("[data-record-management-nested-trigger='list-views']");
+    if (!(card instanceof HTMLElement) || !(icon instanceof HTMLElement) || !(label instanceof HTMLElement)) {
+      return null;
+    }
+    const cardRect = card.getBoundingClientRect();
+    const iconRect = icon.getBoundingClientRect();
+    const labelRect = label.getBoundingClientRect();
+    const siblingRect = siblingCard?.getBoundingClientRect();
+    return {
+      heightDelta: siblingRect ? Math.abs(Math.round(cardRect.height) - Math.round(siblingRect.height)) : null,
+      iconCentered: Math.abs((iconRect.left + iconRect.width / 2) - (cardRect.left + cardRect.width / 2)) <= 1,
+      iconSize: Math.round(iconRect.width),
+      labelBelowIcon: labelRect.top > iconRect.bottom,
+    };
+  })).toMatchObject({
+    heightDelta: 0,
+    iconCentered: true,
+    iconSize: 20,
+    labelBelowIcon: true,
+  });
+  await expect(page.locator("[data-record-management-nested-panel='list-views']")).toContainText("Location");
+  await expect(page.locator("[data-record-management-nested-panel='list-views']")).toContainText("Access");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] .record-management-nested-list-drawer-header")).toHaveCount(0);
+  const viewDetailsToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='View details'] [data-entity-management-section-toggle]");
+  const viewDetailsBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='View details'] [data-entity-management-section-body]");
+  await expect(viewDetailsToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(viewDetailsBody).toBeHidden();
+  await expect.poll(async () => page.locator("[data-record-management-nested-panel='list-views'] [aria-label='View details']").evaluate((section) => {
+    const detailDrawer = section.closest(".record-management-nested-list-drawer");
+    const cards = section.closest(".record-management-nested-list-layout")?.querySelector(".record-management-nested-list-cards");
+    const drawerRect = detailDrawer?.getBoundingClientRect();
+    const cardsRect = cards?.getBoundingClientRect();
+    return {
+      collapsedDrawerShorterThanRail: drawerRect && cardsRect ? drawerRect.height < cardsRect.height : false,
+      drawerHeight: drawerRect ? Math.round(drawerRect.height) : 0,
+    };
+  })).toMatchObject({
+    collapsedDrawerShorterThanRail: true,
+  });
+  await viewDetailsToggle.click();
+  await expect(viewDetailsToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(viewDetailsBody).toBeVisible();
+  await expect(page.locator("input[name='listViewsViewName']")).toHaveValue("List views");
+  await expect(page.locator("textarea[name='listViewsViewDescription']")).toHaveValue("Table, card, and search result presentations that help users scan entity records.");
+  await expect(page.locator("[data-record-management-nested-trigger='list-views'] strong")).toHaveText(await page.locator("input[name='listViewsViewName']").inputValue());
+  await expect(page.locator("[data-record-management-nested-trigger='list-views'] small")).toHaveAttribute("title", await page.locator("textarea[name='listViewsViewDescription']").inputValue());
+  await expect(page.locator("[data-record-management-nested-trigger='list-views'] small")).toHaveText(await page.locator("textarea[name='listViewsViewDescription']").inputValue());
+  await expect(page.locator("[data-record-management-nested-panel='list-views']")).not.toContainText("3 draft views");
+  await expect.poll(async () => page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Access']").evaluate((section) => {
+    const header = section.querySelector(".record-management-user-attribute-group-header h5");
+    const style = getComputedStyle(section);
+    const headerStyle = header ? getComputedStyle(header) : null;
+    return {
+      borderTopStyle: style.borderTopStyle,
+      borderTopWidth: style.borderTopWidth,
+      headerSize: headerStyle?.fontSize ?? "",
+    };
+  })).toMatchObject({
+    borderTopStyle: "solid",
+    borderTopWidth: "1px",
+    headerSize: "16px",
+  });
+  const locationToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Location'] [data-entity-management-section-toggle]");
+  const locationBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Location'] [data-entity-management-section-body]");
+  const accessToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Access'] [data-entity-management-section-toggle]");
+  const accessBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Access'] [data-entity-management-section-body]");
+  await expect(locationToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(accessToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(locationBody).toBeHidden();
+  await expect(accessBody).toBeHidden();
+  await locationToggle.click();
+  await expect(locationToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(locationBody).toBeVisible();
+  await expect(accessToggle).toHaveAttribute("aria-expanded", "false");
+  await accessToggle.click();
+  await expect(accessToggle).toHaveAttribute("aria-expanded", "true");
+  await expect(accessBody).toBeVisible();
+  await expect(locationToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(locationBody).toBeHidden();
+  await expect.poll(async () => page.locator("[data-record-management-region-panel='views'] .record-management-nested-list").evaluate((list) => {
+    const cards = list.querySelector(".record-management-nested-list-cards");
+    const detail = list.querySelector(".record-management-nested-list-drawer");
+    const layout = list.querySelector(".record-management-nested-list-layout");
+    const cardsStyle = cards ? getComputedStyle(cards) : null;
+    const detailStyle = detail ? getComputedStyle(detail) : null;
+    const layoutStyle = layout ? getComputedStyle(layout) : null;
+    const drawerBody = document.querySelector(".chat-workspace-list-drawer-body");
+    const primaryIndex = document.querySelector("[data-record-management-region-shell] .record-management-region-index");
+    const regionShell = document.querySelector("[data-record-management-region-shell]");
+    const cardsRect = cards?.getBoundingClientRect();
+    const detailRect = detail?.getBoundingClientRect();
+    const layoutRect = layout?.getBoundingClientRect();
+    const drawerBodyRect = drawerBody?.getBoundingClientRect();
+    const primaryIndexRect = primaryIndex?.getBoundingClientRect();
+    const regionShellRect = regionShell?.getBoundingClientRect();
+    return {
+      cardsOverflowY: cardsStyle?.overflowY ?? "",
+      cardsRailFillsLayout: cardsRect && layoutRect ? Math.abs(Math.round(cardsRect.height) - Math.round(layoutRect.height)) <= 1 : false,
+      detailOverflowY: detailStyle?.overflowY ?? "",
+      layoutOverflowY: layoutStyle?.overflowY ?? "",
+      regionShellFillsDrawerBody: regionShellRect && drawerBodyRect ? Math.abs(Math.round(regionShellRect.height) - Math.round(drawerBodyRect.height)) <= 1 : false,
+      primaryRailFillsShell: primaryIndexRect && regionShellRect ? Math.abs(Math.round(primaryIndexRect.height) - Math.round(regionShellRect.height)) <= 1 : false,
+    };
+  })).toMatchObject({
+    cardsOverflowY: "auto",
+    cardsRailFillsLayout: true,
+    detailOverflowY: "auto",
+    layoutOverflowY: "hidden",
+    regionShellFillsDrawerBody: true,
+    primaryRailFillsShell: true,
+  });
+  await expect(page.locator("select[name='listViewsApp']")).toHaveValue("root");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsModule'] [data-form-drawer-select-summary]")).toHaveText("Organization Core");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsParentPage'] .form-field-label")).toHaveText("Parent page");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsParentPage'] [data-form-drawer-select-summary]")).toHaveText("Root organizations");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsPageTemplate'] .form-field-label")).toHaveText("Page template");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsPageTemplate'] [data-form-drawer-select-summary]")).toHaveText("record_management_list_centric");
+  await expect(page.locator("input[name='listViewsPageTemplate']")).toHaveValue("record_management_list_centric");
+  await expect(page.locator("input[name='listViewsRouteName']")).toHaveValue("organization");
+  await expect(page.locator("input[name='listViewsRouteName']")).toHaveAttribute("readonly", "");
+  await expect(page.locator("input[name='listViewsRoutePreview']")).toHaveValue("/root-admin/organizations/:organizationId");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-summary]")).toHaveText("Root Admin, Tenant Admin");
+  await expect.poll(async () => page.locator("[data-record-management-nested-panel='list-views'] .entity-management-access-drawer-row").evaluate((row) => {
+    const fields = Array.from(row.querySelectorAll("[data-entity-management-view-drawer-select]"));
+    const rects = fields.map((field) => field.getBoundingClientRect());
+    return {
+      fieldCount: fields.length,
+      sameRow: rects.every((rect) => Math.abs(Math.round(rect.top) - Math.round(rects[0]?.top ?? 0)) <= 1),
+    };
+  })).toMatchObject({
+    fieldCount: 3,
+    sameRow: true,
+  });
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-form-drawer-select-summary]")).toHaveText("Tenant");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] .form-field-label")).toHaveText("Boundary");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] .form-field-help")).toHaveText("This view only applies to records for this entity that have this shared relationship.");
+  await expect(page.locator("input[name='listViewsRelationship']")).toHaveValue("tenant");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObject'] [data-form-drawer-select-summary]")).toHaveText("Not applicable");
+  await expect(page.locator("input[name='listViewsObject']")).toHaveValue("notApplicable");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObjectCapacity'] [data-form-drawer-select-summary]")).toHaveText("Not applicable");
+  await expect(page.locator("input[name='listViewsObjectCapacity']")).toHaveValue("notApplicable");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-record-management-evidence-button]")).toHaveAttribute("aria-label", "Open evidence for Roles");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-record-management-evidence-button]")).toHaveAttribute("aria-label", "Open evidence for Boundary");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship']")).toHaveAttribute("data-evidence-element-name", "Boundary");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship']")).toHaveAttribute("data-evidence-element-value", "Tenant");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObject'] [data-record-management-evidence-button]")).toHaveAttribute("aria-label", "Open evidence for Object");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObjectCapacity'] [data-record-management-evidence-button]")).toHaveAttribute("aria-label", "Open evidence for Object capacity");
+  await locationToggle.click();
+  await expect(locationBody).toBeVisible();
+  await expect(accessBody).toBeHidden();
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsPageTemplate'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsPageTemplate'] [data-form-drawer-select-option]")).toHaveCount(2);
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsPageTemplate'] [data-form-drawer-select-option][data-value='record_management_page']")).toContainText("record_management_page");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsPageTemplate'] [data-form-drawer-select-option][data-value='record_management_page']").click();
+  await expect(page.locator("input[name='listViewsPageTemplate']")).toHaveValue("record_management_page");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsPageTemplate'] [data-form-drawer-select-close]").click();
+  await accessToggle.click();
+  await expect(accessBody).toBeVisible();
+  await expect(locationBody).toBeHidden();
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObject'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObject'] [data-form-drawer-select-option]")).toHaveCount(4);
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObject'] [data-form-drawer-select-option][data-value='deal']").click();
+  await expect(page.locator("input[name='listViewsObject']")).toHaveValue("deal");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObject'] [data-form-drawer-select-option][data-value='task']").click();
+  await expect(page.locator("input[name='listViewsObject']")).toHaveValue("task");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObject'] [data-form-drawer-select-close]").click();
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObjectCapacity'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObjectCapacity'] [data-form-drawer-select-option]")).toHaveCount(4);
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObjectCapacity'] [data-form-drawer-select-option][data-value='owner']").click();
+  await expect(page.locator("input[name='listViewsObjectCapacity']")).toHaveValue("owner");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObjectCapacity'] [data-form-drawer-select-option][data-value='reader']").click();
+  await expect(page.locator("input[name='listViewsObjectCapacity']")).toHaveValue("reader");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsObjectCapacity'] [data-form-drawer-select-close]").click();
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-form-drawer-select-option]")).toHaveCount(3);
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-form-drawer-select-option][data-value='tenant']")).toContainText("Hardcoded entity");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-form-drawer-select-option][data-value='organization']").click();
+  await expect(page.locator("input[name='listViewsRelationship']")).toHaveValue("tenant,organization");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-form-drawer-select-selected-count]")).toHaveText("2 selected");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-form-drawer-select-close]").click();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-create-role]")).toContainText("Create new role");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-panel]")).toBeVisible();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option]")).toHaveCount(4);
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option][data-value='organizationOwner']").click();
+  await expect(page.locator("input[name='listViewsRoles']")).toHaveValue("rootAdmin,tenantAdmin,organizationOwner");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-close]").click();
+  await page.locator("[data-record-management-nested-trigger='detail-views']").click();
+  await expect(page.locator("input[name='detailViewsRouteName']")).toHaveValue("organizationDetail");
+  await expect(page.locator("input[name='detailViewsRoutePreview']")).toHaveValue("/root-admin/organizations/:organizationId/details");
+  await page.locator("[data-record-management-nested-trigger='workflow-views']").click();
+  await expect(page.locator("input[name='workflowViewsRouteName']")).toHaveValue("organizationWorkflow");
+  await expect(page.locator("input[name='workflowViewsRoutePreview']")).toHaveValue("/root-admin/organizations/:organizationId/workflows");
+  await page.locator("[data-record-management-region-trigger='identity']").click();
   await expect(page.locator("input[name='entityName']")).toHaveValue("Organization");
   await expect(page.locator("input[name='stableEntityKey']")).toHaveValue("organization");
   await expect(page.locator("input[name='stableEntityKey']")).toHaveAttribute("readonly", "");
@@ -554,6 +898,18 @@ test("record management entity page uses mobile menu and swipeable sublist navig
 
   await primarySelect.locator("[data-form-select-button]").click();
   await expect(primarySelect.locator("[data-form-select-listbox]")).toBeVisible();
+  await expect(primarySelect.locator("[data-form-select-option][data-value='views']")).toContainText("Views");
+  await expect(primarySelect.locator("[data-form-select-option][data-value='relationships']")).toHaveCount(0);
+  await primarySelect.locator("[data-form-select-option][data-value='views']").click();
+  await expect(primarySelect.locator("[data-form-select-value]")).toHaveValue("views");
+  await expect(primarySelect.locator("[data-form-select-current-label]")).toHaveText("Views");
+  await expect(page.locator("[data-record-management-region-panel='views']")).toBeVisible();
+  await expect(page.locator("[data-record-management-region-panel='views'] .record-management-nested-list-layout")).toBeVisible();
+  await expect(page.locator("[data-record-management-nested-trigger='list-views']")).toContainText("List views");
+  await expect(page.locator("[data-record-management-region-panel='views'] [data-record-management-nested-add]")).toHaveAccessibleName("Add another entity view");
+
+  await primarySelect.locator("[data-form-select-button]").click();
+  await expect(primarySelect.locator("[data-form-select-listbox]")).toBeVisible();
   await primarySelect.locator("[data-form-select-option][data-value='members']").click();
   await expect(primarySelect.locator("[data-form-select-value]")).toHaveValue("members");
   await expect(primarySelect.locator("[data-form-select-current-label]")).toHaveText("Members");
@@ -611,7 +967,7 @@ test("record management entity page uses mobile menu and swipeable sublist navig
   expect(scrollOwnership.frameOverflowY).toBe("hidden");
   expect(scrollOwnership.shellOverflowY).toBe("hidden");
   expect(scrollOwnership.panelOverflowY).toBe("hidden");
-  expect(scrollOwnership.drawerOverflowY).toBe("auto");
+  expect(scrollOwnership.drawerOverflowY).toBe("hidden");
 
   await page.locator("[data-record-management-evidence-mode-toggle]").click();
   await page.locator("[data-evidence-element-name='Entity name'] [data-record-management-evidence-button]").click();

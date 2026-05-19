@@ -213,7 +213,7 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   align-items: center;
   gap: 0.75rem;
   min-inline-size: 0;
-  min-block-size: 4.25rem;
+  min-block-size: 4.625rem;
   padding: 0.75rem;
   border: 1px solid var(--bwp-line);
   border-radius: 0;
@@ -674,8 +674,11 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .chat-workspace-list-drawer {
   grid-column: 1;
   grid-row: 1;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-content: stretch;
   border: 0;
   border-radius: 0;
+  overflow: hidden;
 }
 
 [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .record-management-active-group-summary {
@@ -2062,8 +2065,74 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   min-inline-size: 0;
 }
 
+.record-management-region-index {
+  min-block-size: 0;
+  overflow-y: auto;
+}
+
 .record-management-region-panel[hidden] {
   display: none;
+}
+
+[data-record-management-entity-page-template] .chat-workspace-list-drawer-body,
+[data-record-management-entity-page-template] .record-management-user-attribute-view,
+[data-record-management-entity-page-template] .record-management-region-shell,
+[data-record-management-entity-page-template] .record-management-region-panels,
+[data-record-management-entity-page-template] .record-management-region-panel {
+  min-block-size: 0;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+[data-record-management-entity-page-template] .record-management-region-shell,
+[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-layout,
+[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-layout {
+  align-items: stretch;
+}
+
+[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-layout:has(.record-management-nested-list-drawer[data-entity-management-expanded-section="false"]) {
+  align-items: start;
+}
+
+[data-record-management-entity-page-template] .record-management-region-index,
+[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-cards,
+[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-cards {
+  align-self: stretch;
+  block-size: 100%;
+}
+
+[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-layout:has(.record-management-nested-list-drawer[data-entity-management-expanded-section="false"]) .record-management-nested-list-cards {
+  align-self: start;
+  block-size: auto;
+}
+
+[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list,
+[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list {
+  grid-template-rows: auto minmax(0, 1fr);
+  min-block-size: 0;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-layout,
+[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-layout {
+  min-block-size: 0;
+  block-size: 100%;
+  overflow: hidden;
+}
+
+[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-cards,
+[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-drawer,
+[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-cards,
+[data-record-management-entity-page-template] [data-record-management-region-panel="workflows"] .record-management-nested-list-drawer {
+  min-block-size: 0;
+  max-block-size: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-cards {
+  padding-inline-end: 0.2rem;
 }
 
 .record-management-user-attribute-hero,
@@ -2165,6 +2234,133 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   min-inline-size: 0;
 }
 
+.entity-management-view-definition {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.entity-management-workflow-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  min-inline-size: 0;
+}
+
+.entity-management-workflow-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 2.35rem;
+  box-sizing: border-box;
+  inline-size: 2.35rem;
+  block-size: 2.35rem;
+  min-inline-size: 2.35rem;
+  min-block-size: 2.35rem;
+  padding: 0;
+  border: 1px solid var(--bwp-line);
+  border-radius: 0.35rem;
+  background: var(--bwp-raised-surface);
+  color: var(--bwp-ink);
+}
+
+.entity-management-workflow-action-button svg {
+  inline-size: 1.05rem;
+  block-size: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.entity-management-workflow-action-button:hover,
+.entity-management-workflow-action-button:focus-visible {
+  border-color: color-mix(in srgb, var(--bwp-accent) 55%, var(--bwp-line));
+  background: color-mix(in srgb, var(--bwp-active-surface) 58%, var(--bwp-raised-surface));
+  color: var(--bwp-accent);
+  outline: 2px solid color-mix(in srgb, var(--bwp-accent) 22%, transparent);
+  outline-offset: 2px;
+}
+
+.entity-management-workflow-action-button-danger {
+  color: var(--bwp-danger, #9f1239);
+  border-color: color-mix(in srgb, var(--bwp-danger, #9f1239) 34%, var(--bwp-line));
+}
+
+.entity-management-workflow-action-button-danger:hover,
+.entity-management-workflow-action-button-danger:focus-visible {
+  border-color: color-mix(in srgb, var(--bwp-danger, #9f1239) 58%, var(--bwp-line));
+  background: color-mix(in srgb, var(--bwp-danger, #9f1239) 8%, var(--bwp-raised-surface));
+  color: var(--bwp-danger, #9f1239);
+}
+
+.entity-management-view-definition > .entity-management-subpanel:not(:first-child) {
+  padding-block-start: 1.05rem;
+  border-block-start: 1px solid color-mix(in srgb, var(--bwp-line) 82%, var(--bwp-accent));
+}
+
+.entity-management-view-definition > .entity-management-workflow-actions + .entity-management-subpanel {
+  padding-block-start: 0;
+  border-block-start: 0;
+}
+
+.entity-management-view-definition > .entity-management-subpanel .record-management-user-attribute-group-header {
+  gap: 0.18rem;
+}
+
+.entity-management-view-definition > .entity-management-subpanel .record-management-user-attribute-group-header h5 {
+  font-size: 1rem;
+  letter-spacing: 0;
+}
+
+.entity-management-view-definition > .entity-management-subpanel .record-management-user-attribute-group-header p {
+  font-size: 0.84rem;
+}
+
+.entity-management-view-section-toggle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  inline-size: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: start;
+}
+
+.entity-management-view-section-toggle span {
+  display: grid;
+  gap: 0.18rem;
+  min-inline-size: 0;
+}
+
+.entity-management-view-section-toggle svg {
+  inline-size: 1rem;
+  block-size: 1rem;
+  align-self: center;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--bwp-muted);
+  transition: transform 140ms ease;
+}
+
+.entity-management-view-section-toggle[aria-expanded="false"] svg {
+  transform: rotate(-90deg);
+}
+
+.entity-management-view-section-toggle:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--bwp-accent) 62%, transparent);
+  outline-offset: 0.25rem;
+}
+
+.entity-management-view-section [data-entity-management-section-body][hidden] {
+  display: none;
+}
+
 .entity-management-form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2175,6 +2371,179 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 .entity-management-form-grid .form-choice-group,
 .entity-management-form-grid .form-field-span-2 {
   grid-column: 1 / -1;
+}
+
+.entity-management-access-drawer-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.entity-management-workflow-builder {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 0.75rem;
+  min-inline-size: 0;
+}
+
+.entity-management-workflow-builder-settings {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.58fr) minmax(16rem, 1fr);
+  gap: 0.75rem;
+  align-items: stretch;
+  min-inline-size: 0;
+}
+
+.entity-management-subworkflow-toggle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-inline-size: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--bwp-line);
+  border-radius: 0.35rem;
+  background: var(--bwp-raised-surface);
+}
+
+.entity-management-subworkflow-toggle span {
+  display: grid;
+  gap: 0.15rem;
+  min-inline-size: 0;
+}
+
+.entity-management-subworkflow-toggle strong {
+  font-size: 0.92rem;
+}
+
+.entity-management-subworkflow-toggle small {
+  color: var(--bwp-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.entity-management-subworkflow-toggle input {
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+  accent-color: var(--bwp-accent);
+}
+
+.entity-management-workflow-parent-field {
+  min-inline-size: 0;
+}
+
+.entity-management-workflow-status-list {
+  display: grid;
+  gap: 0.6rem;
+  min-inline-size: 0;
+}
+
+.entity-management-workflow-status-row {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1fr) auto minmax(13rem, 0.72fr) auto;
+  gap: 0.6rem;
+  align-items: stretch;
+  min-inline-size: 0;
+  padding: 0.65rem;
+  border: 1px solid var(--bwp-line);
+  border-radius: 0.35rem;
+  background: var(--bwp-raised-surface);
+}
+
+.entity-management-workflow-status-row:has(.entity-management-workflow-parent-status-field:not([hidden])) {
+  grid-template-columns: minmax(11rem, 1fr) auto minmax(12rem, 0.64fr) minmax(12rem, 0.64fr) auto;
+}
+
+.entity-management-workflow-status-name,
+.entity-management-workflow-links-field,
+.entity-management-workflow-parent-status-field {
+  min-inline-size: 0;
+}
+
+.entity-management-workflow-status-location {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: end;
+  gap: 0.35rem;
+}
+
+.entity-management-workflow-location-badge,
+.entity-management-workflow-status-move,
+.entity-management-workflow-status-add,
+.entity-management-workflow-status-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 2.45rem;
+  border: 1px solid color-mix(in srgb, var(--bwp-accent) 58%, var(--bwp-line));
+  border-radius: 0.35rem;
+  background: var(--bwp-surface);
+  color: var(--bwp-accent);
+  font-weight: 800;
+}
+
+.entity-management-workflow-location-badge {
+  align-self: end;
+  padding-inline: 0.7rem;
+  border-color: var(--bwp-line);
+  background: color-mix(in srgb, var(--bwp-soft) 72%, var(--bwp-surface));
+  color: var(--bwp-muted);
+  font-size: 0.78rem;
+}
+
+.entity-management-workflow-status-move,
+.entity-management-workflow-status-add,
+.entity-management-workflow-status-remove {
+  inline-size: 2.45rem;
+}
+
+.entity-management-workflow-status-move svg,
+.entity-management-workflow-status-add svg,
+.entity-management-workflow-status-remove svg {
+  inline-size: 1rem;
+  block-size: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.entity-management-workflow-status-move:hover:not(:disabled),
+.entity-management-workflow-status-move:focus-visible,
+.entity-management-workflow-status-add:hover,
+.entity-management-workflow-status-add:focus-visible,
+.entity-management-workflow-status-remove:hover,
+.entity-management-workflow-status-remove:focus-visible {
+  background: color-mix(in srgb, var(--bwp-active-surface) 68%, var(--bwp-surface));
+  outline: 2px solid color-mix(in srgb, var(--bwp-accent) 22%, transparent);
+  outline-offset: 2px;
+}
+
+.entity-management-workflow-status-move:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.entity-management-workflow-status-add {
+  border-style: dashed;
+}
+
+.entity-management-workflow-status-remove {
+  color: var(--bwp-danger, #9f1239);
+  border-color: color-mix(in srgb, var(--bwp-danger, #9f1239) 42%, var(--bwp-line));
+}
+
+.entity-management-workflow-status-row-actions {
+  display: grid;
+  align-self: end;
+  gap: 0.35rem;
+}
+
+.entity-management-drawer-select-field-inline {
+  min-inline-size: 0;
 }
 
 .entity-management-field .form-field-input[readonly] {
@@ -2535,6 +2904,44 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   outline: 0;
 }
 
+.record-management-nested-list-add-card {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-content: center;
+  gap: 0.18rem;
+  block-size: 4.125rem;
+  min-block-size: 0;
+  border-style: dashed;
+  color: var(--bwp-muted);
+  padding-block: 0.45rem;
+  text-align: center;
+}
+
+.record-management-nested-list-add-card strong {
+  font-size: 0.82rem;
+  color: var(--bwp-muted);
+}
+
+.record-management-nested-list-add-icon {
+  display: grid;
+  place-items: center;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border: 1px solid color-mix(in srgb, var(--bwp-accent) 46%, var(--bwp-line));
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bwp-active-surface) 42%, var(--bwp-raised-surface));
+  color: var(--bwp-accent);
+}
+
+.record-management-nested-list-add-icon svg {
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
 .record-management-nested-list-drawer {
   min-inline-size: 0;
   padding: 0.75rem;
@@ -2771,7 +3178,11 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   }
 
   [data-record-management-entity-page-template] .entity-management-form-grid,
-  [data-record-management-entity-page-template] .entity-management-choice-group .form-choice-stack {
+  [data-record-management-entity-page-template] .entity-management-choice-group .form-choice-stack,
+  [data-record-management-entity-page-template] .entity-management-access-drawer-row,
+  [data-record-management-entity-page-template] .entity-management-workflow-builder-settings,
+  [data-record-management-entity-page-template] .entity-management-workflow-status-row:has(.entity-management-workflow-parent-status-field:not([hidden])),
+  [data-record-management-entity-page-template] .entity-management-workflow-status-row {
     grid-template-columns: minmax(0, 1fr);
   }
 

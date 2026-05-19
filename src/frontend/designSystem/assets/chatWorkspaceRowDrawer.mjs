@@ -1,5 +1,6 @@
 import {
   initializeFormDrawerSelects,
+  refreshFormDrawerSelect,
   renderFormDrawerSelect,
   renderFormDrawerSelectOptions,
 } from "./formControls.mjs";
@@ -474,6 +475,116 @@ const organizationNestedLists = Object.freeze({
   }),
 });
 
+const entityManagementViewSkeletonLists = Object.freeze({
+  listViews: Object.freeze({
+    label: "List views",
+    description: "Table, card, and search result presentations that help users scan entity records.",
+    summary: "3 draft views",
+    groups: Object.freeze([
+      {
+        label: "View skeletons",
+        items: Object.freeze([
+          { title: "Default list", meta: "Primary browsing view", badge: "Draft" },
+          { title: "Compact picker", meta: "Selection and relationship linking", badge: "Draft" },
+          { title: "Search results", meta: "Search-first record discovery", badge: "Draft" },
+        ]),
+      },
+    ]),
+  }),
+  detailViews: Object.freeze({
+    label: "Detail views",
+    description: "Reading and editing views that open from a selected entity record.",
+    summary: "2 draft views",
+    groups: Object.freeze([
+      {
+        label: "View skeletons",
+        items: Object.freeze([
+          { title: "Detail drawer", meta: "List-centric reading surface", badge: "Draft" },
+          { title: "Full detail page", meta: "Deep-linkable record view", badge: "Future" },
+        ]),
+      },
+    ]),
+  }),
+  workflowViews: Object.freeze({
+    label: "Workflow views",
+    description: "Create, update, review, and lifecycle views that change entity records.",
+    summary: "4 draft views",
+    groups: Object.freeze([
+      {
+        label: "View skeletons",
+        items: Object.freeze([
+          { title: "Create form", meta: "New entity record intake", badge: "Draft" },
+          { title: "Edit form", meta: "Mutable field updates", badge: "Draft" },
+          { title: "Review queue", meta: "Human approval and evidence checks", badge: "Draft" },
+          { title: "Lifecycle actions", meta: "Archive, restore, and cleanup decisions", badge: "Future" },
+        ]),
+      },
+    ]),
+  }),
+});
+
+const entityManagementWorkflowSkeletonLists = Object.freeze({
+  intake: Object.freeze({
+    label: "Intake",
+    description: "First-step workflow for collecting required information before a record exists.",
+    summary: "Draft workflow",
+  }),
+  review: Object.freeze({
+    label: "Review",
+    description: "Human review workflow for checking evidence and approving record changes.",
+    summary: "Draft workflow",
+  }),
+  lifecycle: Object.freeze({
+    label: "Lifecycle",
+    description: "Archive, restore, and cleanup workflow for record lifecycle decisions.",
+    summary: "Draft workflow",
+  }),
+});
+
+const entityManagementViewModuleOptions = Object.freeze([
+  { value: "organizationCore", label: "Organization Core", description: "Root/admin entity management module", attribute: "root-admin" },
+  { value: "tenantDirectory", label: "Tenant Directory", description: "Tenant-scoped directory module", attribute: "tenant" },
+  { value: "designSystemTemplates", label: "Design System Templates", description: "Design-system proving-ground module", attribute: "design-system" },
+]);
+
+const entityManagementViewParentPageOptions = Object.freeze([
+  { value: "rootOrganizations", label: "Root organizations", description: "Organization record-management list page", attribute: "/root-admin/organizations" },
+  { value: "tenantOrganizations", label: "Tenant organizations", description: "Tenant-scoped organization list page", attribute: "/tenant/organizations" },
+  { value: "entityTemplates", label: "Entity templates", description: "Design-system entity template page", attribute: "/design-system/templates/entity_management_page" },
+]);
+
+const entityManagementViewPageTemplateOptions = Object.freeze([
+  { value: "record_management_page", label: "record_management_page", description: "Full-page record management template", attribute: "Page template" },
+  { value: "record_management_list_centric", label: "record_management_list_centric", description: "List-centric record management template", attribute: "Page template" },
+]);
+
+const entityManagementViewRoleOptions = Object.freeze([
+  { value: "rootAdmin", label: "Root Admin", description: "Platform operator with root access", attribute: "Existing role" },
+  { value: "tenantAdmin", label: "Tenant Admin", description: "Tenant operator inside the current tenant", attribute: "Existing role" },
+  { value: "organizationOwner", label: "Organization Owner", description: "Owner for the matching organization", attribute: "Existing role" },
+  { value: "organizationViewer", label: "Organization Viewer", description: "Read-only organization participant", attribute: "Existing role" },
+]);
+
+const entityManagementViewRelationshipOptions = Object.freeze([
+  { value: "tenant", label: "Tenant", description: "Hardcoded current tenant context", attribute: "Hardcoded entity" },
+  { value: "organization", label: "Organization", description: "User and entity share the same organization ID", attribute: "Shared parent relationship" },
+  { value: "team", label: "Team", description: "User and entity share the same team ID", attribute: "Shared parent relationship" },
+]);
+
+const entityManagementViewObjectOptions = Object.freeze([
+  { value: "notApplicable", label: "Not applicable", description: "No specific object record assignment is required", attribute: "Optional" },
+  { value: "deal", label: "Deal", description: "User must be assigned to a specific deal record", attribute: "Entity record" },
+  { value: "organization", label: "Organization", description: "User must be assigned to a specific organization record", attribute: "Entity record" },
+  { value: "task", label: "Task", description: "User must be assigned to a specific task record", attribute: "Entity record" },
+]);
+
+const entityManagementViewObjectCapacityOptions = Object.freeze([
+  { value: "notApplicable", label: "Not applicable", description: "No object-specific capacity is required", attribute: "Optional" },
+  { value: "owner", label: "Owner", description: "Assigned as the owner for that object", attribute: "Object capacity" },
+  { value: "reader", label: "Reader", description: "Assigned read access for that object", attribute: "Object capacity" },
+  { value: "editor", label: "Editor", description: "Assigned edit access for that object", attribute: "Object capacity" },
+]);
+
 function getAttributePlacement(attribute, surfaceKey) {
   return (attribute.placements ?? []).find((placement) => placement.surfaceKey === surfaceKey);
 }
@@ -824,6 +935,124 @@ function installRecordManagementRegionIndex(drawer) {
       return;
     }
 
+    const sectionToggle = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-section-toggle]")
+      : null;
+    if (sectionToggle instanceof HTMLElement) {
+      const section = sectionToggle.closest("[data-entity-management-view-section]");
+      const sectionDefinition = sectionToggle.closest("[data-entity-management-view-definition], [data-entity-management-workflow-definition]");
+      const body = sectionToggle.getAttribute("aria-controls")
+        ? drawer.querySelector(`#${CSS.escape(sectionToggle.getAttribute("aria-controls") ?? "")}`)
+        : section?.querySelector("[data-entity-management-section-body]");
+      const isExpanded = sectionToggle.getAttribute("aria-expanded") !== "false";
+      if (!isExpanded && sectionDefinition instanceof HTMLElement) {
+        sectionDefinition.querySelectorAll("[data-entity-management-section-toggle]").forEach((toggle) => {
+          if (toggle instanceof HTMLElement) {
+            toggle.setAttribute("aria-expanded", "false");
+          }
+        });
+        sectionDefinition.querySelectorAll("[data-entity-management-section-body]").forEach((sectionBody) => {
+          if (sectionBody instanceof HTMLElement) {
+            sectionBody.hidden = true;
+          }
+        });
+      }
+      sectionToggle.setAttribute("aria-expanded", String(!isExpanded));
+      if (body instanceof HTMLElement) {
+        body.hidden = isExpanded;
+        if (!isExpanded) {
+          body.querySelectorAll("[data-entity-management-workflow-builder]").forEach((builder) => {
+            if (builder instanceof HTMLElement) {
+              syncEntityManagementWorkflowSubworkflowControls(builder);
+            }
+          });
+        }
+      }
+      const nestedDrawer = sectionToggle.closest(".record-management-nested-list-drawer");
+      if (nestedDrawer instanceof HTMLElement) {
+        nestedDrawer.dataset.entityManagementExpandedSection = String(!isExpanded);
+      }
+      return;
+    }
+
+    const workflowStatusAdd = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-workflow-status-add]")
+      : null;
+    if (workflowStatusAdd instanceof HTMLElement) {
+      const builder = workflowStatusAdd.closest("[data-entity-management-workflow-builder]");
+      const currentRow = workflowStatusAdd.closest("[data-entity-management-workflow-status-row]");
+      const list = builder?.querySelector("[data-entity-management-workflow-status-list]");
+      if (builder instanceof HTMLElement && list instanceof HTMLElement) {
+        const workflowKey = builder.dataset.entityManagementWorkflowBuilder ?? "workflow";
+        const nextNumber = list.querySelectorAll("[data-entity-management-workflow-status-row]").length + 1;
+        const statusNames = getEntityManagementWorkflowStatusNames(builder);
+        const nextMarkup = renderEntityManagementWorkflowStatusRow({
+          index: nextNumber - 1,
+          isCreate: false,
+          name: `Status ${nextNumber}`,
+          parentStatus: getEntityManagementWorkflowInheritedParentStatus({ builder, currentRow }),
+          statuses: [...statusNames, `Status ${nextNumber}`],
+          workflowKey,
+        });
+        let insertedRow = null;
+        if (currentRow instanceof HTMLElement) {
+          currentRow.insertAdjacentHTML("afterend", nextMarkup);
+          insertedRow = currentRow.nextElementSibling;
+        } else {
+          list.insertAdjacentHTML("beforeend", nextMarkup);
+          insertedRow = list.lastElementChild;
+        }
+        initializeFormDrawerSelects({ scope: insertedRow instanceof HTMLElement ? insertedRow : list });
+        syncEntityManagementWorkflowStatusBuilder(builder);
+        const input = insertedRow instanceof HTMLElement
+          ? insertedRow.querySelector("[data-entity-management-workflow-status-name]")
+          : list.querySelector("[data-entity-management-workflow-status-row]:last-child input");
+        if (input instanceof HTMLInputElement) {
+          input.focus();
+          input.select();
+        }
+      }
+      return;
+    }
+
+    const workflowStatusMove = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-workflow-status-move]")
+      : null;
+    if (workflowStatusMove instanceof HTMLElement) {
+      const row = workflowStatusMove.closest("[data-entity-management-workflow-status-row]");
+      const builder = workflowStatusMove.closest("[data-entity-management-workflow-builder]");
+      const direction = workflowStatusMove.dataset.entityManagementWorkflowStatusMove;
+      if (row instanceof HTMLElement && builder instanceof HTMLElement && row.dataset.statusLocation !== "create") {
+        if (direction === "up") {
+          const previous = row.previousElementSibling;
+          if (previous instanceof HTMLElement && previous.matches("[data-entity-management-workflow-status-row]") && previous.dataset.statusLocation !== "create") {
+            previous.before(row);
+          }
+        }
+        if (direction === "down") {
+          const next = row.nextElementSibling;
+          if (next instanceof HTMLElement && next.matches("[data-entity-management-workflow-status-row]")) {
+            next.after(row);
+          }
+        }
+        syncEntityManagementWorkflowStatusBuilder(builder);
+      }
+      return;
+    }
+
+    const workflowStatusRemove = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-workflow-status-remove]")
+      : null;
+    if (workflowStatusRemove instanceof HTMLElement) {
+      const row = workflowStatusRemove.closest("[data-entity-management-workflow-status-row]");
+      const builder = workflowStatusRemove.closest("[data-entity-management-workflow-builder]");
+      if (row instanceof HTMLElement && builder instanceof HTMLElement && row.dataset.statusLocation !== "create") {
+        row.remove();
+        syncEntityManagementWorkflowStatusBuilder(builder);
+      }
+      return;
+    }
+
     const trigger = event.target instanceof Element
       ? event.target.closest("[data-record-management-drawer-edit]")
       : null;
@@ -926,6 +1155,14 @@ function installRecordManagementRegionIndex(drawer) {
   const nestedLists = Array.from(drawer.querySelectorAll("[data-record-management-nested-list]"));
   nestedLists.forEach((nestedList) => {
     nestedList.addEventListener("click", (event) => {
+      const addButton = event.target instanceof Element
+        ? event.target.closest("[data-record-management-nested-add]")
+        : null;
+      if (addButton instanceof HTMLElement && nestedList.closest("[data-record-management-region-panel='workflows']")) {
+        addEntityManagementWorkflowRecord({ nestedList });
+        return;
+      }
+
       const trigger = event.target instanceof Element
         ? event.target.closest("[data-record-management-nested-trigger]")
         : null;
@@ -936,21 +1173,76 @@ function installRecordManagementRegionIndex(drawer) {
       if (!key) {
         return;
       }
-      nestedList.querySelectorAll("[data-record-management-nested-trigger]").forEach((candidate) => {
-        const isActive = candidate instanceof HTMLElement && candidate.dataset.recordManagementNestedTrigger === key;
-        candidate.classList.toggle("is-active", isActive);
-        candidate.setAttribute("aria-pressed", isActive ? "true" : "false");
-      });
-      nestedList.querySelectorAll("[data-record-management-nested-panel]").forEach((panel) => {
-        if (!(panel instanceof HTMLElement)) {
-          return;
-        }
-        panel.hidden = panel.dataset.recordManagementNestedPanel !== key;
-      });
+      activateNestedListItem(nestedList, key);
     });
   });
 
+  drawer.addEventListener("click", (event) => {
+    const copyButton = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-workflow-copy]")
+      : null;
+    if (copyButton instanceof HTMLElement) {
+      const panel = copyButton.closest("[data-record-management-nested-panel]");
+      const nestedList = copyButton.closest("[data-record-management-nested-list]");
+      if (panel instanceof HTMLElement && nestedList instanceof HTMLElement) {
+        addEntityManagementWorkflowRecord({ nestedList, sourcePanel: panel });
+      }
+      return;
+    }
+
+    const deleteButton = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-workflow-delete]")
+      : null;
+    if (deleteButton instanceof HTMLElement) {
+      const panel = deleteButton.closest("[data-record-management-nested-panel]");
+      const nestedList = deleteButton.closest("[data-record-management-nested-list]");
+      if (panel instanceof HTMLElement && nestedList instanceof HTMLElement) {
+        removeEntityManagementWorkflowRecord({ nestedList, panel });
+      }
+      return;
+    }
+
+    const parentWorkflowOption = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-workflow-parent-select] [data-form-drawer-select-option]")
+      : null;
+    if (parentWorkflowOption instanceof HTMLElement) {
+      const builder = parentWorkflowOption.closest("[data-entity-management-workflow-builder]");
+      if (builder instanceof HTMLElement) {
+        window.requestAnimationFrame(() => syncEntityManagementWorkflowSubworkflowControls(builder));
+      }
+    }
+  });
+
+  drawer.addEventListener("input", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement)) {
+      return;
+    }
+    if (target.matches("[data-entity-management-workflow-status-name]")) {
+      const builder = target.closest("[data-entity-management-workflow-builder]");
+      if (builder instanceof HTMLElement) {
+        syncEntityManagementWorkflowLinkOptions(builder);
+      }
+      return;
+    }
+    if (!target.name.endsWith("WorkflowName") && !target.name.endsWith("WorkflowDescription")) {
+      return;
+    }
+    syncEntityManagementWorkflowCardCopy(target);
+  });
+
   drawer.addEventListener("change", (event) => {
+    const subworkflowToggle = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-subworkflow-toggle]")
+      : null;
+    if (subworkflowToggle instanceof HTMLInputElement) {
+      const builder = subworkflowToggle.closest("[data-entity-management-workflow-builder]");
+      if (builder instanceof HTMLElement) {
+        syncEntityManagementWorkflowSubworkflowControls(builder);
+      }
+      return;
+    }
+
     const target = event.target instanceof Element
       ? event.target.closest("[data-entity-management-feature-status]")
       : null;
@@ -960,6 +1252,442 @@ function installRecordManagementRegionIndex(drawer) {
     const owningFeatureKey = drawer.querySelector("[data-entity-management-owning-feature-key]");
     if (owningFeatureKey instanceof HTMLElement) {
       owningFeatureKey.hidden = target.value !== "existing";
+    }
+  });
+}
+
+function syncEntityManagementWorkflowStatusBuilder(builder) {
+  const workflowKey = builder.dataset.entityManagementWorkflowBuilder ?? "workflow";
+  const rows = Array.from(builder.querySelectorAll("[data-entity-management-workflow-status-row]"))
+    .filter((row) => row instanceof HTMLElement);
+  const movableRows = rows.filter((row) => row instanceof HTMLElement && row.dataset.statusLocation !== "create");
+  rows.forEach((row, index) => {
+    if (!(row instanceof HTMLElement)) {
+      return;
+    }
+    row.dataset.statusIndex = String(index);
+    const nameInput = row.querySelector("[data-entity-management-workflow-status-name]");
+    if (nameInput instanceof HTMLInputElement) {
+      nameInput.name = `${workflowKey}Status${index}Name`;
+      nameInput.id = `entity-management-${workflowKey}-status-${index}-name`;
+    }
+    const nameLabel = row.querySelector("[data-entity-management-workflow-status-name-label]");
+    if (nameLabel instanceof HTMLLabelElement) {
+      nameLabel.htmlFor = `entity-management-${workflowKey}-status-${index}-name`;
+    }
+    const linksInput = row.querySelector("[data-form-drawer-select-value]");
+    if (linksInput instanceof HTMLInputElement) {
+      linksInput.name = `${workflowKey}Status${index}LinksTo`;
+    }
+  });
+  syncEntityManagementWorkflowLinkOptions(builder);
+  syncEntityManagementWorkflowSubworkflowControls(builder);
+  movableRows.forEach((row, movableIndex) => {
+    const upButton = row.querySelector("[data-entity-management-workflow-status-move='up']");
+    const downButton = row.querySelector("[data-entity-management-workflow-status-move='down']");
+    if (upButton instanceof HTMLButtonElement) {
+      upButton.disabled = movableIndex === 0;
+    }
+    if (downButton instanceof HTMLButtonElement) {
+      downButton.disabled = movableIndex === movableRows.length - 1;
+    }
+  });
+}
+
+function getEntityManagementWorkflowInheritedParentStatus({ builder, currentRow }) {
+  const toggle = builder.querySelector("[data-entity-management-subworkflow-toggle]");
+  if (!(toggle instanceof HTMLInputElement) || !toggle.checked) {
+    return "status-0";
+  }
+  const sourceRow = currentRow instanceof HTMLElement
+    ? currentRow
+    : builder.querySelector("[data-entity-management-workflow-status-row]:last-child");
+  const sourceInput = sourceRow?.querySelector("[data-entity-management-workflow-parent-status] [data-form-drawer-select-value]");
+  return sourceInput instanceof HTMLInputElement && sourceInput.value
+    ? sourceInput.value
+    : "status-0";
+}
+
+function getEntityManagementWorkflowParentOptions(builder) {
+  const nestedList = builder.closest("[data-record-management-nested-list]");
+  const currentPanel = builder.closest("[data-record-management-nested-panel]");
+  const currentKey = currentPanel instanceof HTMLElement ? currentPanel.dataset.recordManagementNestedPanel : "";
+  if (!(nestedList instanceof HTMLElement)) {
+    return [];
+  }
+  return Array.from(nestedList.querySelectorAll("[data-record-management-nested-trigger]"))
+    .filter((trigger) => trigger instanceof HTMLElement && trigger.dataset.recordManagementNestedTrigger !== currentKey)
+    .map((trigger) => ({
+      value: trigger.dataset.recordManagementNestedTrigger ?? "",
+      label: trigger.querySelector("strong")?.textContent?.trim() || "Untitled workflow",
+      description: trigger.querySelector("small")?.textContent?.trim() || "Workflow definition",
+      attribute: trigger.querySelector("em")?.textContent?.trim() || "Workflow",
+    }))
+    .filter((option) => option.value);
+}
+
+function getEntityManagementWorkflowParentStatusOptions(builder) {
+  const nestedList = builder.closest("[data-record-management-nested-list]");
+  const parentInput = builder.querySelector("[data-entity-management-workflow-parent-select] [data-form-drawer-select-value]");
+  const parentKey = parentInput instanceof HTMLInputElement ? parentInput.value : "";
+  const parentPanel = nestedList instanceof HTMLElement && parentKey
+    ? nestedList.querySelector(`[data-record-management-nested-panel="${CSS.escape(parentKey)}"]`)
+    : null;
+  const parentStatuses = parentPanel instanceof HTMLElement
+    ? readEntityManagementWorkflowStatusConfig(parentPanel)
+    : [{ name: "Home" }];
+  return parentStatuses.map((status, index) => ({
+    value: `status-${index}`,
+    label: status.name || (index === 0 ? "Home" : `Status ${index + 1}`),
+    description: index === 0 ? "Base status in parent workflow" : "Parent workflow status",
+    attribute: index === 0 ? "Base" : "Parent status",
+  }));
+}
+
+function syncEntityManagementWorkflowSubworkflowControls(builder) {
+  const workflowKey = builder.dataset.entityManagementWorkflowBuilder ?? "workflow";
+  const toggle = builder.querySelector("[data-entity-management-subworkflow-toggle]");
+  const isSubworkflow = toggle instanceof HTMLInputElement && toggle.checked;
+  const parentField = builder.querySelector("[data-entity-management-workflow-parent-select]");
+  const parentRoot = parentField?.querySelector("[data-form-drawer-select]");
+  const parentInput = parentRoot?.querySelector("[data-form-drawer-select-value]");
+  const parentOptions = getEntityManagementWorkflowParentOptions(builder);
+  const parentOptionValues = new Set(parentOptions.map((option) => option.value));
+
+  if (parentField instanceof HTMLElement) {
+    parentField.hidden = !isSubworkflow;
+  }
+  if (parentInput instanceof HTMLInputElement) {
+    parentInput.value = parentOptionValues.has(parentInput.value)
+      ? parentInput.value
+      : parentOptions[0]?.value ?? "";
+  }
+  if (parentRoot instanceof HTMLElement) {
+    const optionList = parentRoot.querySelector("[data-form-drawer-select-option-list]");
+    if (optionList instanceof HTMLElement) {
+      optionList.innerHTML = renderFormDrawerSelectOptions(parentOptions);
+    }
+    refreshFormDrawerSelect(parentRoot);
+  }
+
+  const parentStatusOptions = getEntityManagementWorkflowParentStatusOptions(builder);
+  const parentStatusValues = new Set(parentStatusOptions.map((option) => option.value));
+  builder.querySelectorAll("[data-entity-management-workflow-parent-status]").forEach((field, index) => {
+    if (!(field instanceof HTMLElement)) {
+      return;
+    }
+    field.hidden = !isSubworkflow;
+    const fieldKey = `${workflowKey}-status-${index}-parent-status`;
+    const inputName = `${workflowKey}Status${index}ParentStatus`;
+    field.dataset.entityManagementWorkflowParentStatus = inputName;
+    const label = field.querySelector(".form-field-label");
+    const root = field.querySelector("[data-form-drawer-select]");
+    const hiddenInput = root?.querySelector("[data-form-drawer-select-value]");
+    const trigger = root?.querySelector("[data-form-drawer-select-button]");
+    const panel = root?.querySelector("[data-form-drawer-select-panel]");
+    const title = panel?.querySelector("h4");
+    const search = root?.querySelector("[data-form-drawer-select-search]");
+    const optionList = root?.querySelector("[data-form-drawer-select-option-list]");
+
+    if (label instanceof HTMLElement) {
+      label.id = `entity-management-${fieldKey}-label`;
+    }
+    if (root instanceof HTMLElement) {
+      root.id = `entity-management-${fieldKey}-select`;
+    }
+    if (hiddenInput instanceof HTMLInputElement) {
+      hiddenInput.id = `entity-management-${fieldKey}-value`;
+      hiddenInput.name = inputName;
+      hiddenInput.value = parentStatusValues.has(hiddenInput.value)
+        ? hiddenInput.value
+        : parentStatusOptions[0]?.value ?? "";
+    }
+    if (trigger instanceof HTMLButtonElement) {
+      trigger.id = `entity-management-${fieldKey}-trigger`;
+      trigger.setAttribute("aria-labelledby", `entity-management-${fieldKey}-label entity-management-${fieldKey}-trigger`);
+    }
+    if (panel instanceof HTMLElement) {
+      panel.setAttribute("aria-labelledby", `entity-management-${fieldKey}-title`);
+    }
+    if (title instanceof HTMLElement) {
+      title.id = `entity-management-${fieldKey}-title`;
+    }
+    if (search instanceof HTMLInputElement) {
+      search.id = `entity-management-${fieldKey}-search`;
+    }
+    if (optionList instanceof HTMLElement) {
+      optionList.id = `entity-management-${fieldKey}-options`;
+      optionList.innerHTML = renderFormDrawerSelectOptions(parentStatusOptions);
+    }
+    if (root instanceof HTMLElement) {
+      refreshFormDrawerSelect(root);
+    }
+  });
+}
+
+function activateNestedListItem(nestedList, key) {
+  nestedList.querySelectorAll("[data-record-management-nested-trigger]").forEach((candidate) => {
+    const isActive = candidate instanceof HTMLElement && candidate.dataset.recordManagementNestedTrigger === key;
+    candidate.classList.toggle("is-active", isActive);
+    candidate.setAttribute("aria-pressed", isActive ? "true" : "false");
+  });
+  nestedList.querySelectorAll("[data-record-management-nested-panel]").forEach((panel) => {
+    if (!(panel instanceof HTMLElement)) {
+      return;
+    }
+    panel.hidden = panel.dataset.recordManagementNestedPanel !== key;
+  });
+}
+
+function getNextEntityManagementWorkflowRecordKeys(nestedList) {
+  let index = nestedList.querySelectorAll("[data-record-management-nested-trigger]").length + 1;
+  let nestedKey = `workflow-${index}`;
+  while (nestedList.querySelector(`[data-record-management-nested-trigger="${CSS.escape(nestedKey)}"]`)) {
+    index += 1;
+    nestedKey = `workflow-${index}`;
+  }
+  return {
+    formKey: `workflow${index}`,
+    nestedKey,
+  };
+}
+
+function readEntityManagementWorkflowConfig(panel) {
+  const builder = panel.querySelector("[data-entity-management-workflow-builder]");
+  if (!(builder instanceof HTMLElement)) {
+    return {
+      isSubworkflow: false,
+      parentWorkflow: "",
+      statuses: [{ linksTo: "all", name: "Home", parentStatus: "status-0" }],
+    };
+  }
+  const toggle = builder.querySelector("[data-entity-management-subworkflow-toggle]");
+  const parentInput = builder.querySelector("[data-entity-management-workflow-parent-select] [data-form-drawer-select-value]");
+  return {
+    isSubworkflow: toggle instanceof HTMLInputElement && toggle.checked,
+    parentWorkflow: parentInput instanceof HTMLInputElement ? parentInput.value : "",
+    statuses: Array.from(builder.querySelectorAll("[data-entity-management-workflow-status-row]"))
+    .filter((row) => row instanceof HTMLElement)
+    .map((row, index) => {
+      const nameInput = row.querySelector("[data-entity-management-workflow-status-name]");
+      const linksInput = row.querySelector("[data-entity-management-workflow-links] [data-form-drawer-select-value]");
+      const parentStatusInput = row.querySelector("[data-entity-management-workflow-parent-status] [data-form-drawer-select-value]");
+      return {
+        linksTo: linksInput instanceof HTMLInputElement && linksInput.value ? linksInput.value : "all",
+        name: nameInput instanceof HTMLInputElement && nameInput.value.trim()
+          ? nameInput.value.trim()
+          : index === 0
+            ? "Home"
+            : `Status ${index + 1}`,
+        parentStatus: parentStatusInput instanceof HTMLInputElement && parentStatusInput.value ? parentStatusInput.value : "status-0",
+      };
+    }),
+  };
+}
+
+function readEntityManagementWorkflowStatusConfig(panel) {
+  return readEntityManagementWorkflowConfig(panel).statuses;
+}
+
+function renderEntityManagementWorkflowNestedCard({ description = "", isActive = false, key, label = "", summary = "Draft workflow" }) {
+  const displayLabel = label.trim() || "Untitled workflow";
+  return `
+    <button
+      class="record-management-nested-list-card${isActive ? " is-active" : ""}"
+      type="button"
+      aria-pressed="${isActive ? "true" : "false"}"
+      data-record-management-nested-trigger="${escapeHtml(key)}"
+    >
+      <span>
+        <strong>${escapeHtml(displayLabel)}</strong>
+        <small title="${escapeHtml(description)}">${escapeHtml(description)}</small>
+      </span>
+      <em>${escapeHtml(summary)}</em>
+    </button>
+  `;
+}
+
+function addEntityManagementWorkflowRecord({ nestedList, sourcePanel = null }) {
+  const cards = nestedList.querySelector(".record-management-nested-list-cards");
+  const drawer = nestedList.querySelector(".record-management-nested-list-drawer");
+  const addCard = nestedList.querySelector("[data-record-management-nested-add]");
+  if (!(cards instanceof HTMLElement) || !(drawer instanceof HTMLElement)) {
+    return;
+  }
+
+  const { formKey, nestedKey } = getNextEntityManagementWorkflowRecordKeys(nestedList);
+  const workflowConfig = sourcePanel instanceof HTMLElement
+    ? readEntityManagementWorkflowConfig(sourcePanel)
+    : { isSubworkflow: false, parentWorkflow: "", statuses: [{ linksTo: "all", name: "Home", parentStatus: "status-0" }] };
+  const cardMarkup = renderEntityManagementWorkflowNestedCard({ key: nestedKey });
+  const panelMarkup = `
+    <section data-record-management-nested-panel="${escapeHtml(nestedKey)}" hidden>
+      ${renderEntityManagementWorkflowDefinitionPanel({
+        key: formKey,
+        isSubworkflow: workflowConfig.isSubworkflow,
+        parentWorkflow: workflowConfig.parentWorkflow,
+        workflowDescription: "",
+        workflowName: "",
+        statuses: workflowConfig.statuses,
+      })}
+    </section>
+  `;
+
+  if (addCard instanceof HTMLElement) {
+    addCard.insertAdjacentHTML("beforebegin", cardMarkup);
+  } else {
+    cards.insertAdjacentHTML("beforeend", cardMarkup);
+  }
+  drawer.insertAdjacentHTML("beforeend", panelMarkup);
+  const panel = drawer.querySelector(`[data-record-management-nested-panel="${CSS.escape(nestedKey)}"]`);
+  if (panel instanceof HTMLElement) {
+    initializeFormDrawerSelects({ scope: panel });
+    panel.querySelectorAll("[data-entity-management-workflow-builder]").forEach((builder) => {
+      if (builder instanceof HTMLElement) {
+        syncEntityManagementWorkflowStatusBuilder(builder);
+      }
+    });
+  }
+  activateNestedListItem(nestedList, nestedKey);
+}
+
+function removeEntityManagementWorkflowRecord({ nestedList, panel }) {
+  const nestedKey = panel.dataset.recordManagementNestedPanel;
+  if (!nestedKey) {
+    return;
+  }
+  const trigger = nestedList.querySelector(`[data-record-management-nested-trigger="${CSS.escape(nestedKey)}"]`);
+  const nextTrigger = trigger?.nextElementSibling?.matches("[data-record-management-nested-trigger]")
+    ? trigger.nextElementSibling
+    : trigger?.previousElementSibling?.matches("[data-record-management-nested-trigger]")
+      ? trigger.previousElementSibling
+      : nestedList.querySelector("[data-record-management-nested-trigger]");
+  trigger?.remove();
+  panel.remove();
+  if (nextTrigger instanceof HTMLElement) {
+    activateNestedListItem(nestedList, nextTrigger.dataset.recordManagementNestedTrigger ?? "");
+  }
+}
+
+function syncEntityManagementWorkflowCardCopy(field) {
+  const panel = field.closest("[data-record-management-nested-panel]");
+  const nestedList = field.closest("[data-record-management-nested-list]");
+  const nestedKey = panel instanceof HTMLElement ? panel.dataset.recordManagementNestedPanel : "";
+  if (!(nestedList instanceof HTMLElement) || !nestedKey) {
+    return;
+  }
+  const trigger = nestedList.querySelector(`[data-record-management-nested-trigger="${CSS.escape(nestedKey)}"]`);
+  const workflowName = panel.querySelector("input[name$='WorkflowName']");
+  const workflowDescription = panel.querySelector("textarea[name$='WorkflowDescription']");
+  const label = workflowName instanceof HTMLInputElement && workflowName.value.trim()
+    ? workflowName.value.trim()
+    : "Untitled workflow";
+  const description = workflowDescription instanceof HTMLTextAreaElement ? workflowDescription.value.trim() : "";
+  const titleNode = trigger?.querySelector("strong");
+  const descriptionNode = trigger?.querySelector("small");
+  if (titleNode instanceof HTMLElement) {
+    titleNode.textContent = label;
+  }
+  if (descriptionNode instanceof HTMLElement) {
+    descriptionNode.textContent = description;
+    descriptionNode.title = description;
+  }
+  nestedList.querySelectorAll("[data-entity-management-workflow-builder]").forEach((builder) => {
+    if (builder instanceof HTMLElement) {
+      syncEntityManagementWorkflowSubworkflowControls(builder);
+    }
+  });
+}
+
+function getEntityManagementWorkflowStatusNames(builder) {
+  return Array.from(builder.querySelectorAll("[data-entity-management-workflow-status-row]"))
+    .filter((row) => row instanceof HTMLElement)
+    .map((row, index) => {
+      const input = row.querySelector("[data-entity-management-workflow-status-name]");
+      return input instanceof HTMLInputElement && input.value.trim()
+        ? input.value.trim()
+        : index === 0
+          ? "Home"
+          : `Status ${index + 1}`;
+    });
+}
+
+function getEntityManagementWorkflowLinkOptions(statusNames = []) {
+  return [
+    { value: "all", label: "All", description: "Every status in this workflow", attribute: "Default" },
+    ...statusNames.map((statusName, index) => ({
+      value: `status-${index}`,
+      label: statusName || (index === 0 ? "Home" : `Status ${index + 1}`),
+      description: index === 0 ? "Base workflow status" : "Workflow status",
+      attribute: index === 0 ? "Base" : "Status",
+    })),
+  ];
+}
+
+function syncEntityManagementWorkflowLinkOptions(builder) {
+  const workflowKey = builder.dataset.entityManagementWorkflowBuilder ?? "workflow";
+  const statusNames = getEntityManagementWorkflowStatusNames(builder);
+  const options = getEntityManagementWorkflowLinkOptions(statusNames);
+  const optionValues = new Set(options.map((option) => option.value));
+  const rows = Array.from(builder.querySelectorAll("[data-entity-management-workflow-status-row]"))
+    .filter((row) => row instanceof HTMLElement);
+
+  rows.forEach((row, index) => {
+    if (!(row instanceof HTMLElement)) {
+      return;
+    }
+    const fieldKey = `${workflowKey}-status-${index}-links`;
+    const inputName = `${workflowKey}Status${index}LinksTo`;
+    const linksField = row.querySelector("[data-entity-management-workflow-links]");
+    if (linksField instanceof HTMLElement) {
+      linksField.dataset.entityManagementWorkflowLinks = inputName;
+    }
+    const label = linksField?.querySelector(".form-field-label");
+    if (label instanceof HTMLElement) {
+      label.id = `entity-management-${fieldKey}-label`;
+    }
+
+    const root = row.querySelector("[data-form-drawer-select]");
+    const hiddenInput = root?.querySelector("[data-form-drawer-select-value]");
+    const trigger = root?.querySelector("[data-form-drawer-select-button]");
+    const panel = root?.querySelector("[data-form-drawer-select-panel]");
+    const title = panel?.querySelector("h4");
+    const search = root?.querySelector("[data-form-drawer-select-search]");
+    const optionList = root?.querySelector("[data-form-drawer-select-option-list]");
+
+    if (root instanceof HTMLElement) {
+      root.id = `entity-management-${fieldKey}-select`;
+    }
+    if (hiddenInput instanceof HTMLInputElement) {
+      hiddenInput.id = `entity-management-${fieldKey}-value`;
+      hiddenInput.name = inputName;
+      const selectedValues = hiddenInput.value
+        .split(",")
+        .map((value) => value.trim())
+        .filter(Boolean);
+      hiddenInput.value = selectedValues.includes("all")
+        ? "all"
+        : selectedValues.filter((value) => optionValues.has(value)).join(",") || "all";
+    }
+    if (trigger instanceof HTMLButtonElement) {
+      trigger.id = `entity-management-${fieldKey}-trigger`;
+      trigger.setAttribute("aria-labelledby", `entity-management-${fieldKey}-label entity-management-${fieldKey}-trigger`);
+    }
+    if (panel instanceof HTMLElement) {
+      panel.setAttribute("aria-labelledby", `entity-management-${fieldKey}-title`);
+    }
+    if (title instanceof HTMLElement) {
+      title.id = `entity-management-${fieldKey}-title`;
+    }
+    if (search instanceof HTMLInputElement) {
+      search.id = `entity-management-${fieldKey}-search`;
+    }
+    if (optionList instanceof HTMLElement) {
+      optionList.id = `entity-management-${fieldKey}-options`;
+      optionList.innerHTML = renderFormDrawerSelectOptions(options);
+    }
+    if (root instanceof HTMLElement) {
+      refreshFormDrawerSelect(root);
     }
   });
 }
@@ -1114,7 +1842,7 @@ function renderEndUserAttributeCard(attribute, placement) {
   `;
 }
 
-function renderNestedListPicker({ label, description, items }) {
+function renderNestedListPicker({ addAction = null, label, description, items }) {
   const activeKey = items[0]?.key ?? "";
   return `
     <section class="record-management-nested-list" aria-label="${escapeHtml(label)}" data-record-management-nested-list>
@@ -1137,40 +1865,59 @@ function renderNestedListPicker({ label, description, items }) {
               >
                 <span>
                   <strong>${escapeHtml(item.label)}</strong>
-                  <small>${escapeHtml(item.description)}</small>
+                  <small title="${escapeHtml(item.description)}">${escapeHtml(item.description)}</small>
                 </span>
                 <em>${escapeHtml(item.summary)}</em>
               </button>
             `;
           }).join("")}
+          ${addAction ? `
+            <button
+              class="record-management-nested-list-card record-management-nested-list-add-card"
+              type="button"
+              aria-label="${escapeHtml(addAction.ariaLabel ?? addAction.label)}"
+              data-record-management-nested-add
+            >
+              <span class="record-management-nested-list-add-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </span>
+              <strong>${escapeHtml(addAction.label)}</strong>
+            </button>
+          ` : ""}
         </div>
-        <div class="record-management-nested-list-drawer">
+        <div class="record-management-nested-list-drawer" data-entity-management-expanded-section="false">
           ${items.map((item) => {
             const isActive = item.key === activeKey;
             return `
               <section data-record-management-nested-panel="${escapeHtml(item.key)}" ${isActive ? "" : "hidden"}>
-                <div class="record-management-nested-list-drawer-header">
-                  <span>${escapeHtml(item.label)}</span>
-                  <strong>${escapeHtml(item.summary)}</strong>
-                  <p>${escapeHtml(item.description)}</p>
-                </div>
-                <div class="record-management-nested-list-rows">
-                  ${item.groups.map((group) => `
-                    <div class="record-management-nested-list-group">
-                      <h6>${escapeHtml(group.label)}</h6>
-                      ${group.items.map((row) => `
-                        <article>
-                          ${row.preview ? `<div class="record-management-logo-preview" data-logo-preview="${escapeHtml(row.preview)}" aria-label="${escapeHtml(row.title)} preview"><span>AC</span></div>` : ""}
-                          <span>
-                            <strong>${escapeHtml(row.title)}</strong>
-                            <small>${escapeHtml(row.meta)}</small>
-                          </span>
-                          <em>${escapeHtml(row.badge)}</em>
-                        </article>
-                      `).join("")}
-                    </div>
-                  `).join("")}
-                </div>
+                ${item.content ? "" : `
+                  <div class="record-management-nested-list-drawer-header">
+                    <span>${escapeHtml(item.label)}</span>
+                    <strong>${escapeHtml(item.summary)}</strong>
+                    <p>${escapeHtml(item.description)}</p>
+                  </div>
+                `}
+                ${item.content ? item.content : `
+                  <div class="record-management-nested-list-rows">
+                    ${item.groups.map((group) => `
+                      <div class="record-management-nested-list-group">
+                        <h6>${escapeHtml(group.label)}</h6>
+                        ${group.items.map((row) => `
+                          <article>
+                            ${row.preview ? `<div class="record-management-logo-preview" data-logo-preview="${escapeHtml(row.preview)}" aria-label="${escapeHtml(row.title)} preview"><span>AC</span></div>` : ""}
+                            <span>
+                              <strong>${escapeHtml(row.title)}</strong>
+                              <small>${escapeHtml(row.meta)}</small>
+                            </span>
+                            <em>${escapeHtml(row.badge)}</em>
+                          </article>
+                        `).join("")}
+                      </div>
+                    `).join("")}
+                  </div>
+                `}
               </section>
             `;
           }).join("")}
@@ -1498,6 +2245,577 @@ function renderEntityManagementFeatureDrawerSelect() {
   `;
 }
 
+function renderEntityManagementDrawerSelectField({
+  availableTitle = "Available",
+  closeLabel,
+  createAction = "",
+  description = "",
+  dialogTitle,
+  drawerEyebrow,
+  emptyMessage = "No items match this search.",
+  emptySummary,
+  inputName,
+  label,
+  layout = "full",
+  maxSelections = null,
+  options,
+  searchPlaceholder,
+  selectedEmpty,
+  selectedTitle = "Selected",
+  value,
+  viewKey,
+}) {
+  const fieldKey = `${viewKey}-${inputName}`;
+  const selectedValues = value.split(",").map((item) => item.trim()).filter(Boolean);
+  const selectedLabels = selectedValues
+    .map((selectedValue) => options.find((option) => option.value === selectedValue)?.label ?? selectedValue);
+  const triggerLabel = selectedLabels.length ? selectedLabels.join(", ") : emptySummary;
+  const selectMarkup = renderFormDrawerSelect({
+    rootId: `entity-management-${fieldKey}-select`,
+    inputId: `entity-management-${fieldKey}-value`,
+    inputName,
+    value,
+    triggerId: `entity-management-${fieldKey}-trigger`,
+    labelId: `entity-management-${fieldKey}-label`,
+    panelTitleId: `entity-management-${fieldKey}-title`,
+    searchInputId: `entity-management-${fieldKey}-search`,
+    optionListId: `entity-management-${fieldKey}-options`,
+    emptySummary,
+    triggerLabel,
+    triggerMeta: `${selectedValues.length} selected`,
+    drawerEyebrow,
+    dialogTitle,
+    closeLabel,
+    searchPlaceholder,
+    selectedTitle,
+    selectedEmpty,
+    availableTitle,
+    emptyMessage,
+    maxSelections,
+  }).replace(
+    'data-form-drawer-select-option-list\n          ></div>',
+    `data-form-drawer-select-option-list\n          >${renderFormDrawerSelectOptions(options)}</div>`,
+  );
+  const layoutClass = layout === "inline" ? "entity-management-drawer-select-field-inline" : "form-field-span-2";
+  return `
+    <section class="form-field ${escapeHtml(layoutClass)} entity-management-drawer-select-field" data-entity-management-view-drawer-select="${escapeHtml(inputName)}" ${renderEvidenceTargetAttributes({ name: label, value: triggerLabel })}>
+      <span class="form-field-label" id="entity-management-${escapeHtml(fieldKey)}-label">${escapeHtml(label)}</span>
+      ${renderEntityManagementEvidenceButton(label)}
+      ${selectMarkup}
+      ${description ? `<span class="form-field-help">${escapeHtml(description)}</span>` : ""}
+      ${createAction}
+    </section>
+  `;
+}
+
+function renderEntityManagementViewSection({ children, description, id, title }) {
+  const bodyId = `entity-management-${id}-body`;
+  return `
+    <section class="entity-management-subpanel entity-management-view-section" aria-label="${escapeHtml(title)}" data-entity-management-view-section>
+      <button
+        class="record-management-user-attribute-group-header entity-management-view-section-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="${escapeHtml(bodyId)}"
+        data-entity-management-section-toggle
+      >
+        <span>
+          <h5>${escapeHtml(title)}</h5>
+          <p>${escapeHtml(description)}</p>
+        </span>
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+      <div id="${escapeHtml(bodyId)}" class="entity-management-form-grid" data-entity-management-section-body hidden>
+        ${children}
+      </div>
+    </section>
+  `;
+}
+
+function renderEntityManagementViewDefinitionPanel({ key, routeName, routePreview, viewDescription, viewName }) {
+  return `
+    <div class="entity-management-view-definition" data-entity-management-view-definition="${escapeHtml(key)}">
+      ${renderEntityManagementViewSection({
+        id: `${key}-details`,
+        title: "View details",
+        description: "Name and description for this view definition.",
+        children: `
+          ${renderEntityManagementTextField({
+            label: "View name",
+            name: `${key}ViewName`,
+            value: viewName,
+          })}
+          ${renderEntityManagementTextField({
+            label: "Description",
+            multiline: true,
+            name: `${key}ViewDescription`,
+            value: viewDescription,
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-location`,
+        title: "Location",
+        description: "Where this view lives and how its route is presented.",
+        children: `
+          ${renderEntityManagementSelectField({
+            label: "App",
+            name: `${key}App`,
+            options: [
+              { value: "root", label: "Root" },
+              { value: "tenant", label: "Tenant" },
+              { value: "admin", label: "Admin" },
+              { value: "design-system", label: "Design system" },
+            ],
+            value: "root",
+          })}
+          ${renderEntityManagementDrawerSelectField({
+            viewKey: key,
+            label: "Module",
+            inputName: `${key}Module`,
+            value: "organizationCore",
+            options: entityManagementViewModuleOptions,
+            emptySummary: "Choose module",
+            drawerEyebrow: "Module",
+            dialogTitle: "Choose module",
+            closeLabel: "Close module selector",
+            searchPlaceholder: "Search modules",
+            selectedTitle: "Selected Module",
+            selectedEmpty: "No module selected yet.",
+            availableTitle: "Available Modules",
+            description: "Available modules are filtered by the selected app.",
+            maxSelections: 1,
+          })}
+          ${renderEntityManagementDrawerSelectField({
+            viewKey: key,
+            label: "Parent page",
+            inputName: `${key}ParentPage`,
+            value: "rootOrganizations",
+            options: entityManagementViewParentPageOptions,
+            emptySummary: "Choose parent page",
+            drawerEyebrow: "Parent page",
+            dialogTitle: "Choose parent page",
+            closeLabel: "Close parent page selector",
+            searchPlaceholder: "Search pages",
+            selectedTitle: "Selected Parent",
+            selectedEmpty: "No parent page selected yet.",
+            availableTitle: "Pages Under Module",
+            description: "Page choices come from the selected module.",
+            maxSelections: 1,
+          })}
+          ${renderEntityManagementDrawerSelectField({
+            viewKey: key,
+            label: "Page template",
+            inputName: `${key}PageTemplate`,
+            value: "record_management_list_centric",
+            options: entityManagementViewPageTemplateOptions,
+            emptySummary: "Choose page template",
+            drawerEyebrow: "Page template",
+            dialogTitle: "Choose page template",
+            closeLabel: "Close page template selector",
+            searchPlaceholder: "Search page templates",
+            selectedTitle: "Selected Page Template",
+            selectedEmpty: "No page template selected yet.",
+            availableTitle: "Available Page Templates",
+            description: "Template used for this entity view route.",
+            maxSelections: 1,
+          })}
+          ${renderEntityManagementTextField({
+            description: "Prepopulated from the entity reference.",
+            editable: false,
+            label: "Route Name",
+            name: `${key}RouteName`,
+            value: routeName,
+          })}
+          ${renderEntityManagementTextField({
+            description: "Preview URL for this entity's record-management page.",
+            editable: false,
+            label: "Route preview",
+            name: `${key}RoutePreview`,
+            value: routePreview,
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-access`,
+        title: "Access",
+        description: "Who can reach this view and which shared relationship gates the record.",
+        children: `
+          ${renderEntityManagementDrawerSelectField({
+            viewKey: key,
+            label: "Roles",
+            inputName: `${key}Roles`,
+            value: "rootAdmin,tenantAdmin",
+            options: entityManagementViewRoleOptions,
+            emptySummary: "Choose roles",
+            drawerEyebrow: "Roles",
+            dialogTitle: "Choose roles",
+            closeLabel: "Close role selector",
+            searchPlaceholder: "Search roles",
+            selectedTitle: "Selected Roles",
+            selectedEmpty: "No roles selected yet.",
+            availableTitle: "Available Roles",
+            description: "Multiple roles may be selected; new-role creation will promote a role into the catalog.",
+            createAction: `<button class="list-page-state-button entity-management-create-role-button" type="button" data-entity-management-create-role>Create new role</button>`,
+          })}
+          <div class="entity-management-access-drawer-row">
+            ${renderEntityManagementDrawerSelectField({
+              viewKey: key,
+              description: "This view only applies to records for this entity that have this shared relationship.",
+              label: "Boundary",
+              layout: "inline",
+              inputName: `${key}Relationship`,
+              value: "tenant",
+              options: entityManagementViewRelationshipOptions,
+              emptySummary: "Choose relationship",
+              drawerEyebrow: "Boundary",
+              dialogTitle: "Choose boundary",
+              closeLabel: "Close boundary selector",
+              searchPlaceholder: "Search relationships",
+              selectedTitle: "Selected Boundary",
+              selectedEmpty: "No boundary selected yet.",
+              availableTitle: "Available Boundaries",
+            })}
+            ${renderEntityManagementDrawerSelectField({
+              viewKey: key,
+              description: "Optional specific entity record assignment.",
+              label: "Object",
+              layout: "inline",
+              inputName: `${key}Object`,
+              value: "notApplicable",
+              options: entityManagementViewObjectOptions,
+              emptySummary: "Choose object",
+              drawerEyebrow: "Object",
+              dialogTitle: "Choose object",
+              closeLabel: "Close object selector",
+              searchPlaceholder: "Search objects",
+              selectedTitle: "Selected Object",
+              selectedEmpty: "No object selected yet.",
+              availableTitle: "Available Objects",
+              maxSelections: 1,
+            })}
+            ${renderEntityManagementDrawerSelectField({
+              viewKey: key,
+              description: "Optional role for the selected object.",
+              label: "Object capacity",
+              layout: "inline",
+              inputName: `${key}ObjectCapacity`,
+              value: "notApplicable",
+              options: entityManagementViewObjectCapacityOptions,
+              emptySummary: "Choose object capacity",
+              drawerEyebrow: "Object capacity",
+              dialogTitle: "Choose object capacity",
+              closeLabel: "Close object capacity selector",
+              searchPlaceholder: "Search object capacities",
+              selectedTitle: "Selected Object Capacity",
+              selectedEmpty: "No object capacity selected yet.",
+              availableTitle: "Available Object Capacities",
+              maxSelections: 1,
+            })}
+          </div>
+        `,
+      })}
+    </div>
+  `;
+}
+
+function getEntityManagementWorkflowLinkSummary({ selectedValues = ["all"], statuses = ["Home"] } = {}) {
+  const options = getEntityManagementWorkflowLinkOptions(statuses);
+  const selectedRecords = options.filter((option) => selectedValues.includes(option.value));
+  if (!selectedRecords.length) {
+    return "Choose links";
+  }
+  if (selectedRecords.length <= 2) {
+    return selectedRecords.map((option) => option.label).join(", ");
+  }
+  return `${selectedRecords.slice(0, 2).map((option) => option.label).join(", ")} +${selectedRecords.length - 2} more`;
+}
+
+function renderEntityManagementWorkflowDrawerSelect({
+  availableTitle,
+  closeLabel,
+  dialogTitle,
+  drawerEyebrow,
+  emptyMessage,
+  emptySummary,
+  fieldKey,
+  inputName,
+  options,
+  searchPlaceholder,
+  selectedEmpty,
+  selectedTitle,
+  value = "",
+}) {
+  const selectedValue = value || options[0]?.value || "";
+  const selectedOption = options.find((option) => option.value === selectedValue);
+  const triggerLabel = selectedOption?.label ?? emptySummary;
+  return renderFormDrawerSelect({
+    rootId: `entity-management-${fieldKey}-select`,
+    inputId: `entity-management-${fieldKey}-value`,
+    inputName,
+    value: selectedValue,
+    triggerId: `entity-management-${fieldKey}-trigger`,
+    labelId: `entity-management-${fieldKey}-label`,
+    panelTitleId: `entity-management-${fieldKey}-title`,
+    searchInputId: `entity-management-${fieldKey}-search`,
+    optionListId: `entity-management-${fieldKey}-options`,
+    emptySummary,
+    triggerLabel,
+    triggerMeta: selectedValue ? "1 selected" : "0 selected",
+    drawerEyebrow,
+    dialogTitle,
+    closeLabel,
+    searchPlaceholder,
+    selectedTitle,
+    selectedEmpty,
+    availableTitle,
+    emptyMessage,
+    maxSelections: 1,
+  }).replace(
+    'data-form-drawer-select-option-list\n          ></div>',
+    `data-form-drawer-select-option-list\n          >${renderFormDrawerSelectOptions(options)}</div>`,
+  );
+}
+
+function renderEntityManagementWorkflowParentSelect({ parentWorkflow = "", workflowKey }) {
+  const fieldKey = `${workflowKey}-parent-workflow`;
+  return `
+    <section class="form-field entity-management-drawer-select-field entity-management-workflow-parent-field" data-entity-management-workflow-parent-select="${escapeHtml(`${workflowKey}ParentWorkflow`)}" ${renderEvidenceTargetAttributes({ name: "Parent workflow", value: "Choose parent workflow" })} hidden>
+      <span class="form-field-label" id="entity-management-${escapeHtml(fieldKey)}-label">Parent workflow</span>
+      ${renderEntityManagementEvidenceButton("Parent workflow")}
+      ${renderEntityManagementWorkflowDrawerSelect({
+        availableTitle: "Available Workflows",
+        closeLabel: "Close parent workflow selector",
+        dialogTitle: "Choose parent workflow",
+        drawerEyebrow: "Parent workflow",
+        emptyMessage: "No workflows match this search.",
+        emptySummary: "Choose parent workflow",
+        fieldKey,
+        inputName: `${workflowKey}ParentWorkflow`,
+        options: [],
+        searchPlaceholder: "Search workflows",
+        selectedEmpty: "No parent workflow selected yet.",
+        selectedTitle: "Selected Parent Workflow",
+        value: parentWorkflow,
+      })}
+    </section>
+  `;
+}
+
+function renderEntityManagementWorkflowParentStatusSelect({ index, parentStatus = "status-0", workflowKey }) {
+  const fieldKey = `${workflowKey}-status-${index}-parent-status`;
+  return `
+    <section class="form-field entity-management-drawer-select-field entity-management-workflow-parent-status-field" data-entity-management-workflow-parent-status="${escapeHtml(`${workflowKey}Status${index}ParentStatus`)}" ${renderEvidenceTargetAttributes({ name: "Parent status", value: "Home" })} hidden>
+      <span class="form-field-label" id="entity-management-${escapeHtml(fieldKey)}-label">Parent status</span>
+      ${renderEntityManagementEvidenceButton("Parent status")}
+      ${renderEntityManagementWorkflowDrawerSelect({
+        availableTitle: "Available Parent Statuses",
+        closeLabel: "Close parent status selector",
+        dialogTitle: "Map parent status",
+        drawerEyebrow: "Parent status",
+        emptyMessage: "No parent statuses match this search.",
+        emptySummary: "Choose parent status",
+        fieldKey,
+        inputName: `${workflowKey}Status${index}ParentStatus`,
+        options: [{ value: "status-0", label: "Home", description: "Base status in parent workflow", attribute: "Base" }],
+        searchPlaceholder: "Search parent statuses",
+        selectedEmpty: "No parent status selected yet.",
+        selectedTitle: "Selected Parent Status",
+        value: parentStatus,
+      })}
+    </section>
+  `;
+}
+
+function renderEntityManagementWorkflowLinksDrawerSelect({ index, linksTo = "all", statuses = ["Home"], workflowKey }) {
+  const fieldKey = `${workflowKey}-status-${index}-links`;
+  const selectedValues = linksTo
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  const effectiveSelectedValues = selectedValues.length ? selectedValues : ["all"];
+  const triggerLabel = getEntityManagementWorkflowLinkSummary({ selectedValues: effectiveSelectedValues, statuses });
+  const options = getEntityManagementWorkflowLinkOptions(statuses);
+  return renderFormDrawerSelect({
+    rootId: `entity-management-${fieldKey}-select`,
+    inputId: `entity-management-${fieldKey}-value`,
+    inputName: `${workflowKey}Status${index}LinksTo`,
+    value: effectiveSelectedValues.join(","),
+    triggerId: `entity-management-${fieldKey}-trigger`,
+    labelId: `entity-management-${fieldKey}-label`,
+    panelTitleId: `entity-management-${fieldKey}-title`,
+    searchInputId: `entity-management-${fieldKey}-search`,
+    optionListId: `entity-management-${fieldKey}-options`,
+    emptySummary: "Choose links",
+    triggerLabel,
+    triggerMeta: `${effectiveSelectedValues.length} selected`,
+    drawerEyebrow: "Links to",
+    dialogTitle: "Choose linked statuses",
+    closeLabel: "Close linked status selector",
+    searchPlaceholder: "Search statuses",
+    selectedTitle: "Selected Links",
+    selectedEmpty: "No linked statuses selected yet.",
+    availableTitle: "Available Status Links",
+    emptyMessage: "No status links match this search.",
+  }).replace(
+    'data-form-drawer-select-option-list\n          ></div>',
+    `data-form-drawer-select-option-list\n          >${renderFormDrawerSelectOptions(options)}</div>`,
+  );
+}
+
+function renderEntityManagementWorkflowStatusRow({ index, isCreate = false, linksTo = "all", name, parentStatus = "status-0", statuses = ["Home"], workflowKey }) {
+  const inputId = `entity-management-${workflowKey}-status-${index}-name`;
+  return `
+    <article class="entity-management-workflow-status-row" data-entity-management-workflow-status-row data-status-index="${escapeHtml(String(index))}" data-status-location="${isCreate ? "create" : "sequence"}">
+      <div class="form-field entity-management-field entity-management-workflow-status-name" ${renderEvidenceTargetAttributes({ name: "Status name", value: name })}>
+        <label class="form-field-label" for="${escapeHtml(inputId)}" data-entity-management-workflow-status-name-label>Status name</label>
+        ${renderEntityManagementEvidenceButton("Status name")}
+        <input id="${escapeHtml(inputId)}" class="form-field-input" type="text" name="${escapeHtml(`${workflowKey}Status${index}Name`)}" value="${escapeHtml(name)}" data-entity-management-workflow-status-name />
+      </div>
+      <div class="entity-management-workflow-status-location" aria-label="Status location">
+        ${isCreate ? `
+          <span class="entity-management-workflow-location-badge" aria-disabled="true">Base</span>
+        ` : `
+          <button class="entity-management-workflow-status-move" type="button" aria-label="Move status up" data-entity-management-workflow-status-move="up">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path d="m6 15 6-6 6 6" />
+            </svg>
+          </button>
+          <button class="entity-management-workflow-status-move" type="button" aria-label="Move status down" data-entity-management-workflow-status-move="down">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </button>
+        `}
+      </div>
+      <section class="form-field entity-management-drawer-select-field entity-management-workflow-links-field" data-entity-management-workflow-links="${escapeHtml(`${workflowKey}Status${index}LinksTo`)}" ${renderEvidenceTargetAttributes({ name: "Links to", value: "All" })}>
+        <span class="form-field-label" id="entity-management-${escapeHtml(workflowKey)}-status-${escapeHtml(String(index))}-links-label">Links to</span>
+        ${renderEntityManagementEvidenceButton("Links to")}
+        ${renderEntityManagementWorkflowLinksDrawerSelect({ index, linksTo, statuses, workflowKey })}
+      </section>
+      ${renderEntityManagementWorkflowParentStatusSelect({ index, parentStatus, workflowKey })}
+      <div class="entity-management-workflow-status-row-actions">
+        ${isCreate ? "" : `
+          <button class="entity-management-workflow-status-remove" type="button" aria-label="Remove workflow status" data-entity-management-workflow-status-remove>
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+              <path d="M3 6h18" />
+              <path d="M8 6V4h8v2" />
+              <path d="M6 9l1 11h10l1-11" />
+              <path d="M10 12v5" />
+              <path d="M14 12v5" />
+            </svg>
+          </button>
+        `}
+        <button class="entity-management-workflow-status-add" type="button" aria-label="Add workflow status" data-entity-management-workflow-status-add>
+          <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
+      </div>
+    </article>
+  `;
+}
+
+function renderEntityManagementWorkflowBuilder({ isSubworkflow = false, parentWorkflow = "", statuses = [{ linksTo: "all", name: "Home" }], workflowKey }) {
+  const effectiveStatuses = statuses.length ? statuses : [{ linksTo: "all", name: "Home" }];
+  const statusNames = effectiveStatuses.map((status, index) => status.name || (index === 0 ? "Home" : `Status ${index + 1}`));
+  return `
+    ${renderEntityManagementViewSection({
+      id: `${workflowKey}-builder`,
+      title: "Workflow builder",
+      description: "Status sequence for this workflow. The first status is fixed to the create location.",
+      children: `
+        <div class="entity-management-workflow-builder" data-entity-management-workflow-builder="${escapeHtml(workflowKey)}">
+          <div class="entity-management-workflow-builder-settings">
+            <label class="entity-management-subworkflow-toggle">
+              <span>
+                <strong>Sub-workflow</strong>
+                <small>Map this workflow to statuses from a parent workflow.</small>
+              </span>
+              <input type="checkbox" name="${escapeHtml(`${workflowKey}IsSubworkflow`)}" value="true" data-entity-management-subworkflow-toggle ${isSubworkflow ? "checked" : ""} />
+            </label>
+            ${renderEntityManagementWorkflowParentSelect({ parentWorkflow, workflowKey })}
+          </div>
+          <div class="entity-management-workflow-status-list" data-entity-management-workflow-status-list>
+            ${effectiveStatuses.map((status, index) => renderEntityManagementWorkflowStatusRow({
+              index,
+              isCreate: index === 0,
+              linksTo: status.linksTo ?? "all",
+              name: status.name || (index === 0 ? "Home" : `Status ${index + 1}`),
+              parentStatus: status.parentStatus ?? "status-0",
+              statuses: statusNames,
+              workflowKey,
+            })).join("")}
+          </div>
+        </div>
+      `,
+    })}
+  `;
+}
+
+function renderEntityManagementWorkflowActions({ workflowKey }) {
+  return `
+    <div class="entity-management-workflow-actions" aria-label="Workflow actions">
+      <button
+        class="entity-management-workflow-action-button"
+        type="button"
+        aria-label="Copy workflow"
+        title="Copy workflow"
+        data-entity-management-workflow-copy="${escapeHtml(workflowKey)}"
+      >
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="M8 8h10v12H8z" />
+          <path d="M5 16H4V4h12v1" />
+        </svg>
+      </button>
+      <button
+        class="entity-management-workflow-action-button entity-management-workflow-action-button-danger"
+        type="button"
+        aria-label="Delete workflow"
+        title="Delete workflow"
+        data-entity-management-workflow-delete="${escapeHtml(workflowKey)}"
+      >
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <path d="M3 6h18" />
+          <path d="M8 6V4h8v2" />
+          <path d="M6 9l1 11h10l1-11" />
+          <path d="M10 12v5" />
+          <path d="M14 12v5" />
+        </svg>
+      </button>
+    </div>
+  `;
+}
+
+function renderEntityManagementWorkflowDefinitionPanel({ isSubworkflow = false, key, parentWorkflow = "", statuses = [{ linksTo: "all", name: "Home" }], workflowDescription, workflowName }) {
+  return `
+    <div class="entity-management-view-definition" data-entity-management-workflow-definition="${escapeHtml(key)}">
+      ${renderEntityManagementWorkflowActions({ workflowKey: key })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-details`,
+        title: "Workflow details",
+        description: "Name and description for this workflow definition.",
+        children: `
+          ${renderEntityManagementTextField({
+            label: "Workflow name",
+            name: `${key}WorkflowName`,
+            value: workflowName,
+          })}
+          ${renderEntityManagementTextField({
+            label: "Description",
+            multiline: true,
+            name: `${key}WorkflowDescription`,
+            value: workflowDescription,
+          })}
+        `,
+      })}
+      ${renderEntityManagementWorkflowBuilder({ isSubworkflow, parentWorkflow, statuses, workflowKey: key })}
+    </div>
+  `;
+}
+
 function renderEntityManagementPrimaryDetailsPanel() {
   return `
     <section class="entity-management-subpanel" aria-label="Primary Details">
@@ -1723,6 +3041,92 @@ function renderStructureRegion() {
   });
 }
 
+function renderEntityManagementViewsRegion() {
+  return renderNestedListPicker({
+    addAction: {
+      label: "Add View",
+      ariaLabel: "Add another entity view",
+    },
+    label: "Views",
+    description: "Who can access this entity in the system, where they'll find it and how it will behave.",
+    items: [
+      {
+        key: "list-views",
+        ...entityManagementViewSkeletonLists.listViews,
+        content: renderEntityManagementViewDefinitionPanel({
+          key: "listViews",
+          routeName: "organization",
+          routePreview: "/root-admin/organizations/:organizationId",
+          viewDescription: entityManagementViewSkeletonLists.listViews.description,
+          viewName: "List views",
+        }),
+      },
+      {
+        key: "detail-views",
+        ...entityManagementViewSkeletonLists.detailViews,
+        content: renderEntityManagementViewDefinitionPanel({
+          key: "detailViews",
+          routeName: "organizationDetail",
+          routePreview: "/root-admin/organizations/:organizationId/details",
+          viewDescription: entityManagementViewSkeletonLists.detailViews.description,
+          viewName: "Detail views",
+        }),
+      },
+      {
+        key: "workflow-views",
+        ...entityManagementViewSkeletonLists.workflowViews,
+        content: renderEntityManagementViewDefinitionPanel({
+          key: "workflowViews",
+          routeName: "organizationWorkflow",
+          routePreview: "/root-admin/organizations/:organizationId/workflows",
+          viewDescription: entityManagementViewSkeletonLists.workflowViews.description,
+          viewName: "Workflow views",
+        }),
+      },
+    ],
+  });
+}
+
+function renderEntityManagementWorkflowsRegion() {
+  return renderNestedListPicker({
+    addAction: {
+      label: "Add Workflow",
+      ariaLabel: "Add another entity workflow",
+    },
+    label: "Workflows",
+    description: "Workflow definitions for how this entity is created, reviewed, and moved through lifecycle steps.",
+    items: [
+      {
+        key: "intake-workflow",
+        ...entityManagementWorkflowSkeletonLists.intake,
+        content: renderEntityManagementWorkflowDefinitionPanel({
+          key: "intakeWorkflow",
+          workflowDescription: entityManagementWorkflowSkeletonLists.intake.description,
+          workflowName: entityManagementWorkflowSkeletonLists.intake.label,
+        }),
+      },
+      {
+        key: "review-workflow",
+        ...entityManagementWorkflowSkeletonLists.review,
+        content: renderEntityManagementWorkflowDefinitionPanel({
+          key: "reviewWorkflow",
+          workflowDescription: entityManagementWorkflowSkeletonLists.review.description,
+          workflowName: entityManagementWorkflowSkeletonLists.review.label,
+        }),
+      },
+      {
+        key: "lifecycle-workflow",
+        ...entityManagementWorkflowSkeletonLists.lifecycle,
+        content: renderEntityManagementWorkflowDefinitionPanel({
+          key: "lifecycleWorkflow",
+          workflowDescription: entityManagementWorkflowSkeletonLists.lifecycle.description,
+          workflowName: entityManagementWorkflowSkeletonLists.lifecycle.label,
+        }),
+      },
+    ],
+  });
+}
+
 function renderMembersRegion() {
   return renderNestedListPicker({
     label: "Members",
@@ -1875,12 +3279,20 @@ function renderEntityManagementPageAttributeView() {
       content: renderEntityManagementIdentityRegion(),
     },
     {
-      key: "relationships",
-      label: "Structure",
-      headerLabel: "Business units",
-      headerDescription: "Only direct child business units from the next layer down are shown here.",
-      count: 1,
-      content: renderStructureRegion(),
+      key: "workflows",
+      label: "Workflows",
+      headerLabel: "Workflows",
+      headerDescription: "Workflow definitions for how this entity is created, reviewed, and moved through lifecycle steps.",
+      count: 3,
+      content: renderEntityManagementWorkflowsRegion(),
+    },
+    {
+      key: "views",
+      label: "Views",
+      headerLabel: "Views",
+      headerDescription: "Who can access this entity in the system, where they'll find it and how it will behave.",
+      count: 3,
+      content: renderEntityManagementViewsRegion(),
     },
     {
       key: "members",
