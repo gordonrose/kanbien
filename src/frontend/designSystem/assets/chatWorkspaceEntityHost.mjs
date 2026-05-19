@@ -60,6 +60,10 @@ function getStatusRows({ entity, rowCount, status, index }) {
 }
 
 export function getChatWorkspaceStatusItems(entity, { statusCount = 8, rowCount = null } = {}) {
+  const customItems = entity?.statusItems;
+  if (Array.isArray(customItems)) {
+    return customItems;
+  }
   const labels = getStatusLabels(entity, statusCount);
   return labels.map((status, index) => ({
     key: `${entity.key}-${status.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${index}`,
@@ -116,6 +120,7 @@ export function renderChatWorkspaceEntityHost({
   onTabChange,
   statusCount = 8,
   rowCount = null,
+  rowsByLabelOverride = null,
 } = {}) {
   if (!(root instanceof HTMLElement) || !layer || !activeEntity) {
     return;
@@ -123,7 +128,7 @@ export function renderChatWorkspaceEntityHost({
 
   const entityOptions = { rowCount, statusCount };
   const categories = toChatWorkspaceEntityStatusCategories(layer.entities, entityOptions);
-  const rowsByLabel = toChatWorkspaceEntityStatusRows(layer.entities, entityOptions);
+  const rowsByLabel = rowsByLabelOverride ?? toChatWorkspaceEntityStatusRows(layer.entities, entityOptions);
   const categoryMetadata = toChatWorkspaceEntityCategoryMetadata(layer.entities);
   root.innerHTML = renderFloatingTabHeader({
     instanceId: "chat-workspace-entity",

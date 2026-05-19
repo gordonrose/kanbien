@@ -1,0 +1,562 @@
+{
+  "fixtureStatus": "planning_demo_fixture",
+  "fixturePurpose": "Dummy organization entity and records for the record_management_list_centric design-system template proof of concept.",
+  "implementationStatus": "design_system_demo_consumed",
+  "runtimeCodeChanges": "served through the design-system router and consumed by the record_management_list_centric template adapter",
+  "notes": [
+    "This fixture is not a real Organization migration.",
+    "This fixture is not source truth for routes, persistence, permissions, generated UI, docs, or tests.",
+    "Values are intentionally small and dummy so the template contract can be discussed with concrete data."
+  ],
+  "entityDefinitionSlice": {
+    "schemaVersion": "governed_entity_definition_v1_demo_slice",
+    "definitionStatus": "draft",
+    "entityIdentity": {
+      "entityKey": "organization",
+      "singularLabelKey": "entity.organization.label.singular",
+      "singularLabelFallback": "Organization",
+      "pluralLabelKey": "entity.organization.label.plural",
+      "pluralLabelFallback": "Organizations",
+      "descriptionKey": "entity.organization.description",
+      "descriptionFallback": "A managed business organization used for ownership, review, and operational tracking in the demo template.",
+      "purposeKey": "entity.organization.purpose",
+      "purposeFallback": "Organizations give the template a realistic record type for list, status, filter, and drawer behavior.",
+      "owningFeatureKey": "organization_core",
+      "owningFeaturePosture": "planned",
+      "owningLayer": "feature",
+      "entityFamilyKey": "organization",
+      "managementScope": "tenant",
+      "definitionVersion": 1
+    },
+    "presentationGroups": [
+      {
+        "groupKey": "identity",
+        "labelKey": "entity.organization.group.identity.label",
+        "labelFallback": "Identity",
+        "descriptionKey": "entity.organization.group.identity.description",
+        "descriptionFallback": "Core fields that identify the organization.",
+        "displayOrder": 10
+      },
+      {
+        "groupKey": "ownership",
+        "labelKey": "entity.organization.group.ownership.label",
+        "labelFallback": "Ownership",
+        "descriptionKey": "entity.organization.group.ownership.description",
+        "descriptionFallback": "Fields that explain who owns or manages the organization.",
+        "displayOrder": 20
+      },
+      {
+        "groupKey": "review",
+        "labelKey": "entity.organization.group.review.label",
+        "labelFallback": "Review",
+        "descriptionKey": "entity.organization.group.review.description",
+        "descriptionFallback": "Fields used for review timing and operating posture.",
+        "displayOrder": 30
+      }
+    ],
+    "operationalStatusSet": {
+      "statusSetKey": "organization_review_status",
+      "labelKey": "entity.organization.statusSet.review.label",
+      "labelFallback": "Review status",
+      "defaultForTemplate": true,
+      "eligibleViewKeys": ["manage"],
+      "statuses": [
+        {
+          "statusKey": "ready",
+          "labelKey": "entity.organization.status.ready.label",
+          "labelFallback": "Ready",
+          "displayOrder": 10,
+          "tabEligible": true,
+          "badgeTone": "success",
+          "defaultForCreate": false
+        },
+        {
+          "statusKey": "needs_review",
+          "labelKey": "entity.organization.status.needs_review.label",
+          "labelFallback": "Needs review",
+          "displayOrder": 20,
+          "tabEligible": true,
+          "badgeTone": "warning",
+          "defaultForCreate": true
+        },
+        {
+          "statusKey": "blocked",
+          "labelKey": "entity.organization.status.blocked.label",
+          "labelFallback": "Blocked",
+          "displayOrder": 30,
+          "tabEligible": true,
+          "badgeTone": "danger",
+          "defaultForCreate": false
+        }
+      ]
+    },
+    "attributes": [
+      {
+        "attributeKey": "organization_id",
+        "labelKey": "entity.organization.attribute.organization_id.label",
+        "labelFallback": "Organization ID",
+        "attributeType": "uuid",
+        "valueCardinality": "single",
+        "required": true,
+        "systemManaged": true,
+        "mutability": "immutable",
+        "search": {
+          "searchable": true,
+          "operators": ["exact"],
+          "storageModel": "scalar",
+          "indexPosture": "required"
+        },
+        "placements": []
+      },
+      {
+        "attributeKey": "name",
+        "labelKey": "entity.organization.attribute.name.label",
+        "labelFallback": "Name",
+        "attributeType": "string",
+        "valueCardinality": "single",
+        "required": true,
+        "systemManaged": false,
+        "mutability": "updateable",
+        "search": {
+          "searchable": true,
+          "operators": ["text", "prefix", "sort"],
+          "storageModel": "normalized_scalar",
+          "indexPosture": "required"
+        },
+        "placements": [
+          {
+            "surfaceKey": "entity_management_page",
+            "surfaceVariantKey": "record_management_list_centric",
+            "regionKey": "record_list",
+            "subRegionKey": "record_list_card",
+            "groupKey": "none",
+            "elementKey": "primary_text",
+            "displayOrder": 10,
+            "interactionMode": "read_only",
+            "visibilityMode": "default_visible"
+          },
+          {
+            "surfaceKey": "entity_management_page",
+            "surfaceVariantKey": "record_management_list_centric",
+            "regionKey": "drawer",
+            "subRegionKey": "record_header",
+            "groupKey": "none",
+            "elementKey": "title_text",
+            "displayOrder": 10,
+            "interactionMode": "read_only",
+            "visibilityMode": "default_visible"
+          },
+          {
+            "surfaceKey": "entity_management_page",
+            "surfaceVariantKey": "record_management_list_centric",
+            "regionKey": "drawer",
+            "subRegionKey": "drawer_attribute_field_form",
+            "groupKey": "identity",
+            "elementKey": "text_input",
+            "displayOrder": 10,
+            "interactionMode": "editable",
+            "visibilityMode": "default_visible"
+          }
+        ]
+      },
+      {
+        "attributeKey": "owning_group",
+        "labelKey": "entity.organization.attribute.owning_group.label",
+        "labelFallback": "Owning group",
+        "attributeType": "limited_enum",
+        "valueCardinality": "single",
+        "required": true,
+        "systemManaged": false,
+        "mutability": "updateable",
+        "optionsMode": "inline",
+        "options": [
+          {
+            "optionKey": "operations",
+            "labelKey": "entity.organization.owning_group.operations.label",
+            "labelFallback": "Operations",
+            "displayOrder": 10
+          },
+          {
+            "optionKey": "product",
+            "labelKey": "entity.organization.owning_group.product.label",
+            "labelFallback": "Product",
+            "displayOrder": 20
+          },
+          {
+            "optionKey": "support",
+            "labelKey": "entity.organization.owning_group.support.label",
+            "labelFallback": "Support",
+            "displayOrder": 30
+          },
+          {
+            "optionKey": "finance",
+            "labelKey": "entity.organization.owning_group.finance.label",
+            "labelFallback": "Finance",
+            "displayOrder": 40
+          }
+        ],
+        "search": {
+          "searchable": true,
+          "operators": ["exact", "facet"],
+          "storageModel": "scalar",
+          "indexPosture": "required"
+        },
+        "placements": [
+          {
+            "surfaceKey": "entity_management_page",
+            "surfaceVariantKey": "record_management_list_centric",
+            "regionKey": "record_list",
+            "subRegionKey": "record_list_card",
+            "groupKey": "none",
+            "elementKey": "secondary_badge",
+            "displayOrder": 20,
+            "interactionMode": "read_only",
+            "visibilityMode": "default_visible"
+          },
+          {
+            "surfaceKey": "entity_management_page",
+            "surfaceVariantKey": "record_management_list_centric",
+            "regionKey": "drawer",
+            "subRegionKey": "drawer_attribute_field_form",
+            "groupKey": "ownership",
+            "elementKey": "select",
+            "displayOrder": 10,
+            "interactionMode": "editable",
+            "visibilityMode": "default_visible"
+          }
+        ]
+      },
+      {
+        "attributeKey": "review_status",
+        "labelKey": "entity.organization.attribute.review_status.label",
+        "labelFallback": "Review status",
+        "attributeType": "operational_status",
+        "valueCardinality": "single",
+        "required": true,
+        "systemManaged": false,
+        "mutability": "lifecycle_managed",
+        "search": {
+          "searchable": true,
+          "operators": ["exact", "facet"],
+          "storageModel": "scalar",
+          "indexPosture": "required"
+        },
+        "placements": [
+          {
+            "surfaceKey": "entity_management_page",
+            "surfaceVariantKey": "record_management_list_centric",
+            "regionKey": "record_list",
+            "subRegionKey": "record_list_card",
+            "groupKey": "none",
+            "elementKey": "status_badge",
+            "displayOrder": 30,
+            "interactionMode": "read_only",
+            "visibilityMode": "default_visible"
+          },
+          {
+            "surfaceKey": "entity_management_page",
+            "surfaceVariantKey": "record_management_list_centric",
+            "regionKey": "drawer",
+            "subRegionKey": "drawer_attribute_field_form",
+            "groupKey": "review",
+            "elementKey": "status_badge",
+            "displayOrder": 10,
+            "interactionMode": "read_only",
+            "visibilityMode": "default_visible"
+          }
+        ]
+      },
+      {
+        "attributeKey": "next_review_date",
+        "labelKey": "entity.organization.attribute.next_review_date.label",
+        "labelFallback": "Next review date",
+        "attributeType": "date",
+        "valueCardinality": "single",
+        "required": false,
+        "systemManaged": false,
+        "mutability": "updateable",
+        "search": {
+          "searchable": true,
+          "operators": ["date_range", "sort"],
+          "storageModel": "scalar",
+          "indexPosture": "required"
+        },
+        "placements": [
+          {
+            "surfaceKey": "entity_management_page",
+            "surfaceVariantKey": "record_management_list_centric",
+            "regionKey": "drawer",
+            "subRegionKey": "drawer_attribute_field_form",
+            "groupKey": "review",
+            "elementKey": "date_picker",
+            "displayOrder": 20,
+            "interactionMode": "editable",
+            "visibilityMode": "default_visible"
+          }
+        ]
+      },
+      {
+        "attributeKey": "employee_count",
+        "labelKey": "entity.organization.attribute.employee_count.label",
+        "labelFallback": "Employee count",
+        "attributeType": "integer",
+        "valueCardinality": "single",
+        "required": false,
+        "systemManaged": false,
+        "mutability": "updateable",
+        "search": {
+          "searchable": true,
+          "operators": ["range", "sort"],
+          "storageModel": "scalar",
+          "indexPosture": "required"
+        },
+        "placements": [
+          {
+            "surfaceKey": "entity_management_page",
+            "surfaceVariantKey": "record_management_list_centric",
+            "regionKey": "drawer",
+            "subRegionKey": "drawer_attribute_field_form",
+            "groupKey": "identity",
+            "elementKey": "number_input",
+            "displayOrder": 20,
+            "interactionMode": "editable",
+            "visibilityMode": "default_visible"
+          }
+        ]
+      }
+    ],
+    "searchModel": {
+      "pageShellSearch": {
+        "enabled": true,
+        "placeholderKey": "entity.organization.search.placeholder",
+        "placeholderFallback": "Search organizations",
+        "attributeKeys": ["name"]
+      },
+      "generatedFilters": [
+        {
+          "filterKey": "owning_group",
+          "attributeKey": "owning_group",
+          "labelKey": "entity.organization.filter.owning_group.label",
+          "labelFallback": "Org",
+          "descriptionKey": "entity.organization.filter.owning_group.description",
+          "descriptionFallback": "Owning group",
+          "filterBehavior": "collection_select",
+          "targetAffordance": "filter_bar_drawer_select",
+          "displayOrder": 10,
+          "defaultVisible": true
+        },
+        {
+          "filterKey": "next_review_date",
+          "attributeKey": "next_review_date",
+          "labelKey": "entity.organization.filter.next_review_date.label",
+          "labelFallback": "Date",
+          "descriptionKey": "entity.organization.filter.next_review_date.description",
+          "descriptionFallback": "Review window",
+          "filterBehavior": "date_range",
+          "targetAffordance": "filter_bar_date_range",
+          "displayOrder": 20,
+          "defaultVisible": true
+        }
+      ],
+      "routedFilters": [
+        {
+          "filterKey": "name",
+          "attributeKey": "name",
+          "filterBehavior": "text_search",
+          "targetAffordance": "page_shell_search"
+        },
+        {
+          "filterKey": "review_status",
+          "attributeKey": "review_status",
+          "filterBehavior": "operational_status",
+          "targetAffordance": "status_bar"
+        }
+      ],
+      "blockedFilters": [
+        {
+          "filterKey": "employee_count",
+          "attributeKey": "employee_count",
+          "filterBehavior": "value_range",
+          "blockedReason": "range_filter_experience_not_signed_off"
+        }
+      ],
+      "defaultSort": {
+        "attributeKey": "name",
+        "direction": "asc"
+      }
+    },
+    "surfaceModel": {
+      "managementPattern": "record_management_list_centric",
+      "enabledSurfaces": ["entity_management_page"],
+      "defaultSurfaceKey": "entity_management_page",
+      "defaultViewKey": "manage",
+      "displayIdentity": {
+        "recordTitleAttributeKey": "name",
+        "recordSubtitleAttributeKey": "owning_group",
+        "recordIdentifierAttributeKey": "organization_id"
+      },
+      "views": [
+        {
+          "viewKey": "manage",
+          "labelKey": "entity.organization.view.manage.label",
+          "labelFallback": "Manage",
+          "descriptionKey": "entity.organization.view.manage.description",
+          "descriptionFallback": "Default organization management view for the demo template.",
+          "displayOrder": 10,
+          "defaultForTemplate": true,
+          "eligibleActorContexts": ["default_demo_actor"],
+          "operationalStatusSetKey": "organization_review_status"
+        }
+      ],
+      "designSystemContractKeys": ["record_management_list_centric"]
+    },
+    "relationships": [
+      {
+        "relationshipKey": "chat",
+        "labelKey": "entity.organization.relationship.chat.label",
+        "labelFallback": "Chat",
+        "relationshipCategory": "parent_relation",
+        "targetEntityKey": "chat",
+        "targetPluralLabelFallback": "Chats",
+        "navigationPosture": "navigable",
+        "layerSelectorEligible": true,
+        "displayOrder": 10
+      },
+      {
+        "relationshipKey": "tenant",
+        "labelKey": "entity.organization.relationship.tenant.label",
+        "labelFallback": "Tenant",
+        "relationshipCategory": "parent_relation",
+        "targetEntityKey": "tenant",
+        "targetPluralLabelFallback": "Tenants",
+        "navigationPosture": "navigable",
+        "layerSelectorEligible": true,
+        "displayOrder": 20
+      },
+      {
+        "relationshipKey": "owner",
+        "labelKey": "entity.organization.relationship.owner.label",
+        "labelFallback": "Owner",
+        "relationshipCategory": "parent_relation",
+        "targetEntityKey": "owner",
+        "targetPluralLabelFallback": "Owners",
+        "navigationPosture": "navigable",
+        "layerSelectorEligible": true,
+        "displayOrder": 30
+      },
+      {
+        "relationshipKey": "deals",
+        "labelKey": "entity.organization.relationship.deals.label",
+        "labelFallback": "Deals",
+        "relationshipCategory": "child_relation",
+        "targetEntityKey": "deal",
+        "targetPluralLabelFallback": "Deals",
+        "navigationPosture": "navigable",
+        "layerSelectorEligible": true,
+        "displayOrder": 40
+      },
+      {
+        "relationshipKey": "locations",
+        "labelKey": "entity.organization.relationship.locations.label",
+        "labelFallback": "Locations",
+        "relationshipCategory": "child_relation",
+        "targetEntityKey": "location",
+        "targetPluralLabelFallback": "Locations",
+        "navigationPosture": "navigable",
+        "layerSelectorEligible": true,
+        "displayOrder": 50
+      },
+      {
+        "relationshipKey": "business_units",
+        "labelKey": "entity.organization.relationship.business_units.label",
+        "labelFallback": "Business units",
+        "relationshipCategory": "child_relation",
+        "targetEntityKey": "business_unit",
+        "targetPluralLabelFallback": "Business units",
+        "navigationPosture": "navigable",
+        "layerSelectorEligible": true,
+        "displayOrder": 60
+      },
+      {
+        "relationshipKey": "users",
+        "labelKey": "entity.organization.relationship.users.label",
+        "labelFallback": "Users",
+        "relationshipCategory": "child_relation",
+        "targetEntityKey": "user",
+        "targetPluralLabelFallback": "Users",
+        "navigationPosture": "navigable",
+        "layerSelectorEligible": true,
+        "displayOrder": 70
+      }
+    ],
+    "actionModel": {
+      "actions": []
+    }
+  },
+  "records": [
+    {
+      "organization_id": "00000000-0000-4000-8000-000000000001",
+      "name": "Northstar Operations",
+      "owning_group": "operations",
+      "review_status": "ready",
+      "next_review_date": "2026-06-03",
+      "employee_count": 84
+    },
+    {
+      "organization_id": "00000000-0000-4000-8000-000000000002",
+      "name": "Brightlane Product",
+      "owning_group": "product",
+      "review_status": "needs_review",
+      "next_review_date": "2026-05-28",
+      "employee_count": 42
+    },
+    {
+      "organization_id": "00000000-0000-4000-8000-000000000003",
+      "name": "Harbor Support",
+      "owning_group": "support",
+      "review_status": "blocked",
+      "next_review_date": "2026-06-14",
+      "employee_count": 27
+    },
+    {
+      "organization_id": "00000000-0000-4000-8000-000000000004",
+      "name": "LedgerWorks Finance",
+      "owning_group": "finance",
+      "review_status": "ready",
+      "next_review_date": "2026-07-01",
+      "employee_count": 18
+    },
+    {
+      "organization_id": "00000000-0000-4000-8000-000000000005",
+      "name": "FieldOps Group",
+      "owning_group": "operations",
+      "review_status": "needs_review",
+      "next_review_date": "2026-06-21",
+      "employee_count": 61
+    },
+    {
+      "organization_id": "00000000-0000-4000-8000-000000000006",
+      "name": "Atlas Product Lab",
+      "owning_group": "product",
+      "review_status": "ready",
+      "next_review_date": "2026-05-22",
+      "employee_count": 35
+    }
+  ],
+  "derivedDemoCounts": {
+    "totalRecords": 6,
+    "statusCounts": {
+      "ready": 3,
+      "needs_review": 2,
+      "blocked": 1
+    },
+    "filterOptionCounts": {
+      "owning_group": {
+        "operations": 2,
+        "product": 2,
+        "support": 1,
+        "finance": 1
+      }
+    }
+  }
+}

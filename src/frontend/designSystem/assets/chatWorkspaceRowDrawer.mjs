@@ -1,3 +1,11 @@
+import {
+  initializeFormDrawerSelects,
+  renderFormDrawerSelect,
+  renderFormDrawerSelectOptions,
+} from "./formControls.mjs";
+
+const recordManagementDrawerSelections = new WeakMap();
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -566,6 +574,116 @@ function getRecordManagementDrawerMode(entityWorkspace) {
     : "end_user";
 }
 
+function isEntityManagementPageTemplate(entityWorkspace) {
+  return entityWorkspace.closest("[data-record-management-entity-page-template]") instanceof HTMLElement;
+}
+
+function renderGovernanceEvidenceIcon() {
+  return `
+    <svg viewBox="0 0 24 24" focusable="false">
+      <path d="M12 3 19 6v5c0 4.4-2.8 7.6-7 10-4.2-2.4-7-5.6-7-10V6l7-3Z" />
+      <path d="M9 12.2 11 14l4-5" />
+    </svg>
+  `;
+}
+
+function renderEntityManagementEditIcon() {
+  return `
+    <svg viewBox="0 0 24 24" focusable="false">
+      <path d="M5 18.5 6 14l9.8-9.8a2 2 0 0 1 2.8 0l1.2 1.2a2 2 0 0 1 0 2.8L10 18l-5 1Z" />
+      <path d="m14.5 5.5 4 4" />
+      <path d="M4 21h16" />
+    </svg>
+  `;
+}
+
+function renderPrimaryIconButton({ ariaLabel, className, icon, pressed = false, title, toggleAttribute }) {
+  return `
+    <button
+      class="record-management-drawer-primary-icon-button ${escapeHtml(className)}"
+      type="button"
+      aria-label="${escapeHtml(ariaLabel)}"
+      aria-pressed="${pressed ? "true" : "false"}"
+      title="${escapeHtml(title)}"
+      ${toggleAttribute}
+    >
+      <span aria-hidden="true">${icon}</span>
+    </button>
+  `;
+}
+
+function renderEntityManagementRegionDropdown({ activeKey, label, regions }) {
+  const activeRegion = regions.find((region) => region.key === activeKey) ?? regions[0];
+  return `
+    <div class="form-select entity-management-region-dropdown" data-record-management-region-dropdown data-form-select>
+      <input type="hidden" name="recordManagementRegion" value="${escapeHtml(activeRegion?.key ?? "")}" data-form-select-value />
+      <button
+        class="form-select-trigger"
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded="false"
+        aria-label="${escapeHtml(label)}"
+        data-form-select-button
+      >
+        <span data-form-select-current-label>${escapeHtml(activeRegion?.label ?? "Choose section")}</span>
+        <span class="form-select-trigger-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </span>
+      </button>
+      <div class="form-select-menu hidden" role="listbox" tabindex="-1" data-form-select-listbox>
+        ${regions.map((region) => {
+          const isActive = region.key === activeRegion?.key;
+          return `
+            <button
+              class="form-select-option${isActive ? " active" : ""}"
+              type="button"
+              role="option"
+              aria-selected="${isActive ? "true" : "false"}"
+              data-form-select-option
+              data-value="${escapeHtml(region.key)}"
+            >
+              ${escapeHtml(region.label)}
+            </button>
+          `;
+        }).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderEntityManagementEvidenceButton(label) {
+  return `
+    <button
+      class="entity-management-evidence-button"
+      type="button"
+      aria-label="Open evidence for ${escapeHtml(label)}"
+      title="Open evidence"
+      data-record-management-evidence-button
+    >
+      <span aria-hidden="true">${renderGovernanceEvidenceIcon()}</span>
+    </button>
+  `;
+}
+
+function renderEvidenceTargetAttributes({
+  name,
+  note = "Existing data dictionary uses Organization as the canonical entity name.",
+  posture = "derived_from_source_truth",
+  source = "docs/data-dictionary/organization.md",
+  value = "",
+}) {
+  return [
+    `data-entity-management-evidence-target`,
+    `data-evidence-element-name="${escapeHtml(name)}"`,
+    `data-evidence-element-value="${escapeHtml(value)}"`,
+    `data-evidence-posture="${escapeHtml(posture)}"`,
+    `data-evidence-source="${escapeHtml(source)}"`,
+    `data-evidence-note="${escapeHtml(note)}"`,
+  ].join(" ");
+}
+
 function getDrawerAttributeGroups() {
   const definition = organizationEntityDefinitionPreview;
   const drawerAttributes = definition.attributes
@@ -582,6 +700,10 @@ function renderRecordManagementRegionShell({ label, regions }) {
   const activeKey = visibleRegions[0]?.key ?? "details";
   return `
     <div class="record-management-region-shell" data-record-management-region-shell>
+      <label class="record-management-region-mobile-header">
+        <span>${escapeHtml(label)}</span>
+        ${renderEntityManagementRegionDropdown({ activeKey, label, regions: visibleRegions })}
+      </label>
       <div class="record-management-region-index" role="tablist" aria-label="${escapeHtml(label)} regions">
         ${visibleRegions
           .map((region) => {
@@ -627,7 +749,81 @@ function renderRecordManagementRegionShell({ label, regions }) {
 }
 
 function installRecordManagementRegionIndex(drawer) {
+  function activateRegion(shell, key) {
+    shell.querySelectorAll("[data-record-management-region-trigger]").forEach((candidate) => {
+      const isActive = candidate instanceof HTMLElement && candidate.dataset.recordManagementRegionTrigger === key;
+      candidate.classList.toggle("is-active", isActive);
+      candidate.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+    shell.querySelectorAll("[data-record-management-region-panel]").forEach((panel) => {
+      if (!(panel instanceof HTMLElement)) {
+        return;
+      }
+      panel.hidden = panel.dataset.recordManagementRegionPanel !== key;
+    });
+    const select = shell.querySelector("[data-record-management-region-select]");
+    if (select instanceof HTMLSelectElement) {
+      select.value = key;
+    }
+    const drawer = shell.closest("[data-chat-workspace-list-drawer]");
+    const trigger = shell.querySelector(`[data-record-management-region-trigger="${CSS.escape(key)}"]`);
+    const title = drawer?.querySelector("[data-record-management-drawer-region-title]");
+    const description = drawer?.querySelector("[data-record-management-drawer-region-description]");
+    if (title instanceof HTMLElement && trigger instanceof HTMLElement) {
+      title.textContent = trigger.dataset.recordManagementRegionHeaderLabel ?? "";
+    }
+    if (description instanceof HTMLElement && trigger instanceof HTMLElement) {
+      description.textContent = trigger.dataset.recordManagementRegionHeaderDescription ?? "";
+    }
+  }
+
   drawer.addEventListener("click", (event) => {
+    const evidenceModeToggle = event.target instanceof Element
+      ? event.target.closest("[data-record-management-evidence-mode-toggle]")
+      : null;
+    if (evidenceModeToggle instanceof HTMLElement) {
+      const nextMode = drawer.dataset.recordManagementEvidenceMode !== "true";
+      drawer.dataset.recordManagementEvidenceMode = String(nextMode);
+      evidenceModeToggle.setAttribute("aria-pressed", String(nextMode));
+      if (nextMode) {
+        const editToggle = drawer.querySelector("[data-record-management-drawer-edit]");
+        drawer.dataset.recordManagementEditMode = "false";
+        if (editToggle instanceof HTMLElement) {
+          editToggle.setAttribute("aria-pressed", "false");
+        }
+      } else {
+        closeRecordManagementEvidenceDrawer(drawer);
+      }
+      if (nextMode) {
+        drawer.querySelector("[data-record-management-evidence-button]")?.focus();
+      }
+      return;
+    }
+
+    const evidenceButton = event.target instanceof Element
+      ? event.target.closest("[data-record-management-evidence-button]")
+      : null;
+    if (evidenceButton instanceof HTMLElement) {
+      const evidenceTarget = evidenceButton.closest("[data-entity-management-evidence-target]");
+      const entityWorkspace = drawer.closest("[data-chat-workspace-entity-workspace]");
+      if (evidenceTarget instanceof HTMLElement && entityWorkspace instanceof HTMLElement) {
+        renderRecordManagementEvidenceDrawer({
+          drawer,
+          entityWorkspace,
+          evidence: getEntityManagementEvidenceFromTarget(evidenceTarget),
+        });
+      }
+      return;
+    }
+
+    const evidenceReturn = event.target instanceof Element
+      ? event.target.closest("[data-record-management-evidence-return]")
+      : null;
+    if (evidenceReturn instanceof HTMLElement) {
+      closeRecordManagementEvidenceDrawer(drawer);
+      return;
+    }
+
     const trigger = event.target instanceof Element
       ? event.target.closest("[data-record-management-drawer-edit]")
       : null;
@@ -637,8 +833,15 @@ function installRecordManagementRegionIndex(drawer) {
     const isEditing = drawer.dataset.recordManagementEditMode === "true";
     const nextEditing = !isEditing;
     drawer.dataset.recordManagementEditMode = String(nextEditing);
+    if (nextEditing) {
+      const evidenceToggle = drawer.querySelector("[data-record-management-evidence-mode-toggle]");
+      drawer.dataset.recordManagementEvidenceMode = "false";
+      closeRecordManagementEvidenceDrawer(drawer);
+      if (evidenceToggle instanceof HTMLElement) {
+        evidenceToggle.setAttribute("aria-pressed", "false");
+      }
+    }
     trigger.setAttribute("aria-pressed", String(nextEditing));
-    trigger.textContent = nextEditing ? "Done" : "Edit";
     if (nextEditing) {
       drawer.querySelector("[data-record-management-editable-field] input, [data-record-management-editable-field] select, [data-form-image-card-edit]")?.focus();
     }
@@ -657,25 +860,65 @@ function installRecordManagementRegionIndex(drawer) {
       if (!key) {
         return;
       }
-      shell.querySelectorAll("[data-record-management-region-trigger]").forEach((candidate) => {
-        const isActive = candidate instanceof HTMLElement && candidate.dataset.recordManagementRegionTrigger === key;
-        candidate.classList.toggle("is-active", isActive);
-        candidate.setAttribute("aria-selected", isActive ? "true" : "false");
-      });
-      shell.querySelectorAll("[data-record-management-region-panel]").forEach((panel) => {
-        if (!(panel instanceof HTMLElement)) {
-          return;
-        }
-        panel.hidden = panel.dataset.recordManagementRegionPanel !== key;
-      });
-      const drawer = shell.closest("[data-chat-workspace-list-drawer]");
-      const title = drawer?.querySelector("[data-record-management-drawer-region-title]");
-      const description = drawer?.querySelector("[data-record-management-drawer-region-description]");
-      if (title instanceof HTMLElement) {
-        title.textContent = trigger.dataset.recordManagementRegionHeaderLabel ?? "";
+      activateRegion(shell, key);
+    });
+    shell.addEventListener("change", (event) => {
+      const select = event.target instanceof Element
+        ? event.target.closest("[data-record-management-region-select]")
+        : null;
+      if (!(select instanceof HTMLSelectElement) || !select.value) {
+        return;
       }
-      if (description instanceof HTMLElement) {
-        description.textContent = trigger.dataset.recordManagementRegionHeaderDescription ?? "";
+      activateRegion(shell, select.value);
+    });
+    shell.addEventListener("click", (event) => {
+      const trigger = event.target instanceof Element
+        ? event.target.closest(".record-management-region-mobile-header [data-form-select-button]")
+        : null;
+      if (trigger instanceof HTMLButtonElement) {
+        const root = trigger.closest("[data-form-select]");
+        const listbox = root?.querySelector("[data-form-select-listbox]");
+        if (listbox instanceof HTMLElement) {
+          const isOpen = trigger.getAttribute("aria-expanded") === "true";
+          trigger.setAttribute("aria-expanded", String(!isOpen));
+          listbox.classList.toggle("hidden", isOpen);
+          if (!isOpen) {
+            root.querySelector("[data-form-select-option][aria-selected='true']")?.focus();
+          }
+        }
+        return;
+      }
+
+      const option = event.target instanceof Element
+        ? event.target.closest(".record-management-region-mobile-header [data-form-select-option]")
+        : null;
+      if (!(option instanceof HTMLButtonElement)) {
+        return;
+      }
+      const root = option.closest("[data-form-select]");
+      const hiddenInput = root?.querySelector("[data-form-select-value]");
+      const currentLabel = root?.querySelector("[data-form-select-current-label]");
+      const triggerButton = root?.querySelector("[data-form-select-button]");
+      const listbox = root?.querySelector("[data-form-select-listbox]");
+      const key = option.dataset.value ?? "";
+      if (hiddenInput instanceof HTMLInputElement) {
+        hiddenInput.value = key;
+      }
+      if (currentLabel instanceof HTMLElement) {
+        currentLabel.textContent = option.textContent?.trim() ?? "";
+      }
+      root?.querySelectorAll("[data-form-select-option]").forEach((candidate) => {
+        const isSelected = candidate === option;
+        candidate.classList.toggle("active", isSelected);
+        candidate.setAttribute("aria-selected", String(isSelected));
+      });
+      if (triggerButton instanceof HTMLButtonElement && listbox instanceof HTMLElement) {
+        triggerButton.setAttribute("aria-expanded", "false");
+        listbox.classList.add("hidden");
+        triggerButton.focus();
+      }
+      if (key) {
+        activateRegion(shell, key);
       }
     });
   });
@@ -705,6 +948,19 @@ function installRecordManagementRegionIndex(drawer) {
         panel.hidden = panel.dataset.recordManagementNestedPanel !== key;
       });
     });
+  });
+
+  drawer.addEventListener("change", (event) => {
+    const target = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-feature-status]")
+      : null;
+    if (!(target instanceof HTMLInputElement)) {
+      return;
+    }
+    const owningFeatureKey = drawer.querySelector("[data-entity-management-owning-feature-key]");
+    if (owningFeatureKey instanceof HTMLElement) {
+      owningFeatureKey.hidden = target.value !== "existing";
+    }
   });
 }
 
@@ -1111,6 +1367,352 @@ function renderDetailsRegion(overviewAttributes) {
   `;
 }
 
+function renderEntityManagementTextField({
+  description = "",
+  editable = true,
+  label,
+  multiline = false,
+  name,
+  value,
+}) {
+  const inputId = `entity-management-${name}`;
+  const control = multiline
+    ? `<textarea id="${escapeHtml(inputId)}" class="form-field-input form-field-textarea" name="${escapeHtml(name)}" rows="4" ${editable ? "" : "readonly"}>${escapeHtml(value)}</textarea>`
+    : `<input id="${escapeHtml(inputId)}" class="form-field-input" type="text" name="${escapeHtml(name)}" value="${escapeHtml(value)}" ${editable ? "" : "readonly"} />`;
+  return `
+    <div class="form-field entity-management-field${multiline ? " form-field-span-2" : ""}" ${renderEvidenceTargetAttributes({ name: label, value })}>
+      <label class="form-field-label" for="${escapeHtml(inputId)}">${escapeHtml(label)}</label>
+      ${renderEntityManagementEvidenceButton(label)}
+      ${control}
+      ${description ? `<span class="form-field-help">${escapeHtml(description)}</span>` : ""}
+    </div>
+  `;
+}
+
+function renderEntityManagementRadioGroup({ description = "", disabled = false, label, name, options, value }) {
+  const legendId = `entity-management-${name}-legend`;
+  const selectedOption = options.find((option) => option.value === value);
+  return `
+    <fieldset class="form-choice-group entity-management-choice-group" aria-labelledby="${escapeHtml(legendId)}" ${renderEvidenceTargetAttributes({ name: label, value: selectedOption?.label ?? value })}>
+      <legend id="${escapeHtml(legendId)}" class="form-choice-legend">${escapeHtml(label)}</legend>
+      ${renderEntityManagementEvidenceButton(label)}
+      ${description ? `<p class="form-field-help">${escapeHtml(description)}</p>` : ""}
+      <div class="form-choice-stack">
+        ${options.map((option) => `
+          <label class="form-choice-row">
+            <input
+              type="radio"
+              name="${escapeHtml(name)}"
+              value="${escapeHtml(option.value)}"
+              ${option.value === value ? "checked" : ""}
+              ${disabled ? "disabled" : ""}
+              ${name === "featureStatus" ? "data-entity-management-feature-status" : ""}
+            />
+            <span>
+              <strong>${escapeHtml(option.label)}</strong>
+              ${option.description ? `<span>${escapeHtml(option.description)}</span>` : ""}
+            </span>
+          </label>
+        `).join("")}
+      </div>
+    </fieldset>
+  `;
+}
+
+function renderEntityManagementSelectField({ description = "", disabled = false, label, name, options, value }) {
+  const inputId = `entity-management-${name}`;
+  const selectedOption = options.find((option) => (typeof option === "string" ? option : option.value) === value);
+  const selectedLabel = typeof selectedOption === "string" ? selectedOption : selectedOption?.label ?? value;
+  return `
+    <div class="form-field entity-management-field" ${renderEvidenceTargetAttributes({ name: label, value: selectedLabel })}>
+      <label class="form-field-label" for="${escapeHtml(inputId)}">${escapeHtml(label)}</label>
+      ${renderEntityManagementEvidenceButton(label)}
+      <select id="${escapeHtml(inputId)}" class="form-field-input" name="${escapeHtml(name)}" ${disabled ? "disabled" : ""}>
+        ${options.map((option) => {
+          const optionValue = typeof option === "string" ? option : option.value;
+          const optionLabel = typeof option === "string" ? option : option.label;
+          return `
+          <option value="${escapeHtml(optionValue)}" ${optionValue === value ? "selected" : ""}>${escapeHtml(optionLabel)}</option>
+        `;
+        }).join("")}
+      </select>
+      ${description ? `<span class="form-field-help">${escapeHtml(description)}</span>` : ""}
+    </div>
+  `;
+}
+
+function renderEntityManagementFeatureDrawerSelect() {
+  const options = [
+    {
+      value: "organizationCore",
+      label: "organizationCore",
+      description: "Organization Core",
+      attribute: "Existing feature key",
+    },
+    {
+      value: "entityBuilder",
+      label: "entityBuilder",
+      description: "Entity Builder",
+      attribute: "Existing feature key",
+    },
+    {
+      value: "webAppHierarchyBuilder",
+      label: "webAppHierarchyBuilder",
+      description: "Web App Hierarchy Builder",
+      attribute: "Existing feature key",
+    },
+  ];
+  const selectMarkup = renderFormDrawerSelect({
+    rootId: "entity-management-owning-feature-key-select",
+    inputId: "entity-management-owning-feature-key-value",
+    inputName: "owningFeatureKey",
+    value: "organizationCore",
+    triggerId: "entity-management-owning-feature-key-trigger",
+    labelId: "entity-management-owning-feature-key-label",
+    panelTitleId: "entity-management-owning-feature-key-title",
+    searchInputId: "entity-management-owning-feature-key-search",
+    optionListId: "entity-management-owning-feature-key-options",
+    emptySummary: "Choose feature key",
+    triggerLabel: "organizationCore",
+    triggerMeta: "1 selected",
+    drawerEyebrow: "Feature key",
+    dialogTitle: "Choose owning feature key",
+    closeLabel: "Close owning feature key selector",
+    searchPlaceholder: "Search feature keys",
+    selectedTitle: "Selected Feature Key",
+    selectedEmpty: "No owning feature key selected yet.",
+    availableTitle: "Existing Feature Keys",
+    emptyMessage: "No feature keys match this search.",
+    maxSelections: 1,
+  }).replace(
+    'data-form-drawer-select-option-list\n          ></div>',
+    `data-form-drawer-select-option-list\n          >${renderFormDrawerSelectOptions(options)}</div>`,
+  );
+  return `
+    <section class="form-field form-field-span-2 entity-management-drawer-select-field" data-entity-management-owning-feature-key ${renderEvidenceTargetAttributes({ name: "Owning feature key", value: "organizationCore" })}>
+      <span class="form-field-label" id="entity-management-owning-feature-key-label">Owning feature key</span>
+      ${renderEntityManagementEvidenceButton("Owning feature key")}
+      ${selectMarkup}
+      <span class="form-field-help">Drawer select preview; this will bind to runtime feature keys later.</span>
+    </section>
+  `;
+}
+
+function renderEntityManagementPrimaryDetailsPanel() {
+  return `
+    <section class="entity-management-subpanel" aria-label="Primary Details">
+      <div class="record-management-user-attribute-group-header">
+        <h5>Primary Details</h5>
+        <p>Human-facing identity fields for the entity definition.</p>
+      </div>
+      <div class="entity-management-form-grid">
+        ${renderEntityManagementTextField({
+          label: "Entity name",
+          name: "entityName",
+          value: "Organization",
+        })}
+        ${renderEntityManagementTextField({
+          description: "Stable key is locked once the entity definition exists.",
+          editable: false,
+          label: "Stable entity key",
+          name: "stableEntityKey",
+          value: "organization",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Plain-language description",
+          multiline: true,
+          name: "plainLanguageDescription",
+          value: "A company, department, partner, or other business structure managed by the platform.",
+        })}
+        ${renderEntityManagementTextField({
+          label: "Purpose / why this entity exists",
+          multiline: true,
+          name: "entityPurpose",
+          value: "Keeps durable organization identity, ownership, structure, and reference data available for operations and reporting.",
+        })}
+      </div>
+    </section>
+  `;
+}
+
+function renderEntityManagementOwningFeaturePanel() {
+  return `
+    <section class="entity-management-subpanel" aria-label="Owning Feature">
+      <div class="record-management-user-attribute-group-header">
+        <h5>Owning Feature</h5>
+        <p>Which feature will own this entity once it exists?</p>
+      </div>
+      <div class="entity-management-form-grid">
+        ${renderEntityManagementRadioGroup({
+          label: "Feature status",
+          name: "featureStatus",
+          options: [
+            { value: "existing", label: "Existing" },
+            { value: "planned", label: "Planned" },
+            { value: "not_yet_assigned", label: "Not yet assigned" },
+          ],
+          value: "existing",
+        })}
+        ${renderEntityManagementFeatureDrawerSelect()}
+        ${renderEntityManagementSelectField({
+          description: "Will be autocompleted from feature selection once runtime-backed.",
+          label: "Owning feature posture",
+          name: "owningFeaturePosture",
+          options: [
+            { value: "implemented", label: "Implemented" },
+            { value: "planned", label: "Planned" },
+            { value: "not_yet_assigned", label: "Not yet assigned" },
+          ],
+          value: "implemented",
+        })}
+        ${renderEntityManagementSelectField({
+          description: "Will be autocompleted from feature selection once runtime-backed.",
+          label: "Owning layer",
+          name: "owningLayer",
+          options: [
+            { value: "feature", label: "Feature" },
+            { value: "platform", label: "Platform" },
+            { value: "system", label: "System" },
+            { value: "shared", label: "Shared" },
+          ],
+          value: "feature",
+        })}
+      </div>
+    </section>
+  `;
+}
+
+function renderEntityManagementSourceAuthorityPanel() {
+  return `
+    <section class="entity-management-subpanel" aria-label="Source Authority Posture">
+      <div class="record-management-user-attribute-group-header">
+        <h5>Source Authority Posture</h5>
+        <p>Autocompleted posture values supplied by entity builder capabilities.</p>
+      </div>
+      <div class="entity-management-form-grid">
+        ${renderEntityManagementRadioGroup({
+          disabled: true,
+          label: "Current authority",
+          name: "currentAuthority",
+          options: [
+            { value: "repo_artifacts", label: "Repo artifacts", description: "Truth currently lives in docs/code/planning artifacts" },
+            { value: "runtime_source", label: "Runtime source", description: "Truth currently lives in runtime code/schema/API behavior" },
+            { value: "planning_artifact", label: "Planning artifact", description: "Truth is still planning-only" },
+            { value: "persistent_entity_definition", label: "Persistent entity definition", description: "Persistent entity definition is already truth" },
+            { value: "mixed_transitional", label: "Mixed transitional", description: "Multiple sources intentionally coexist during migration" },
+          ],
+          value: "repo_artifacts",
+        })}
+        ${renderEntityManagementRadioGroup({
+          disabled: true,
+          label: "Target authority",
+          name: "targetAuthority",
+          options: [
+            { value: "persistent_entity_definition", label: "Persistent entity definition", description: "Intended normal target" },
+            { value: "external_system_of_record", label: "External system of record", description: "Approved exception where another system owns truth" },
+          ],
+          value: "persistent_entity_definition",
+        })}
+        ${renderEntityManagementRadioGroup({
+          disabled: true,
+          label: "Markdown posture",
+          name: "markdownPosture",
+          options: [
+            { value: "source", label: "Source", description: "Markdown is current source of truth" },
+            { value: "source_independent_planning", label: "Source independent planning", description: "Markdown is planning/reference material" },
+            { value: "mirrored_transitional", label: "Mirrored transitional", description: "Markdown mirrors persistent/runtime truth during transition" },
+            { value: "generated_output", label: "Generated output", description: "Markdown should be generated from persistent truth" },
+            { value: "not_applicable", label: "Not applicable" },
+          ],
+          value: "source_independent_planning",
+        })}
+        ${renderEntityManagementSelectField({
+          disabled: true,
+          description: "Autocompleted by entity builder capabilities.",
+          label: "Migration status",
+          name: "migrationStatus",
+          options: [
+            { value: "not_started", label: "Not started" },
+            { value: "inventory_in_progress", label: "Inventory in progress" },
+            { value: "mapped_to_definition", label: "Mapped to definition" },
+            { value: "persistent_record_created", label: "Persistent record created" },
+            { value: "mirrored_transitional", label: "Mirrored transitional" },
+            { value: "persistent_primary", label: "Persistent primary" },
+            { value: "blocked", label: "Blocked" },
+          ],
+          value: "not_started",
+        })}
+      </div>
+    </section>
+  `;
+}
+
+function renderEntityManagementIdentityRegion() {
+  const items = [
+    {
+      key: "primary-details",
+      label: "Primary Details",
+      summary: "4 fields",
+      description: "Entity name, stable key, description, and purpose.",
+      content: renderEntityManagementPrimaryDetailsPanel(),
+    },
+    {
+      key: "owning-feature",
+      label: "Owning Feature",
+      summary: "4 fields",
+      description: "Which feature will own this entity once it exists?",
+      content: renderEntityManagementOwningFeaturePanel(),
+    },
+    {
+      key: "source-authority-posture",
+      label: "Source Authority Posture",
+      summary: "4 fields",
+      description: "Current and target authority plus Markdown and migration posture.",
+      content: renderEntityManagementSourceAuthorityPanel(),
+    },
+  ];
+  const activeKey = items[0].key;
+  return `
+    <section class="record-management-user-attribute-group entity-management-identity-region" aria-label="Identity">
+      <div class="record-management-user-attribute-group-header">
+        <h5>Identity</h5>
+        <p>Definition identity fields, feature ownership, and source authority posture.</p>
+      </div>
+      <div class="record-management-nested-list entity-management-sublist" data-record-management-nested-list>
+        <div class="record-management-nested-list-layout">
+          <div class="record-management-nested-list-cards" role="tablist" aria-label="Identity sublist">
+            ${items.map((item) => {
+              const isActive = item.key === activeKey;
+              return `
+                <button
+                  class="record-management-nested-list-card${isActive ? " is-active" : ""}"
+                  type="button"
+                  role="tab"
+                  aria-pressed="${isActive ? "true" : "false"}"
+                  data-record-management-nested-trigger="${escapeHtml(item.key)}"
+                >
+                  <span>
+                    <strong>${escapeHtml(item.label)}</strong>
+                    <small>${escapeHtml(item.description)}</small>
+                  </span>
+                  <em>${escapeHtml(item.summary)}</em>
+                </button>
+              `;
+            }).join("")}
+          </div>
+          <div class="record-management-nested-list-drawer entity-management-sublist-drawer">
+            ${items.map((item) => `
+              <section data-record-management-nested-panel="${escapeHtml(item.key)}" ${item.key === activeKey ? "" : "hidden"}>
+                ${item.content}
+              </section>
+            `).join("")}
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 function renderStructureRegion() {
   return renderNestedListPicker({
     label: "Business units",
@@ -1262,10 +1864,169 @@ function renderRecordManagementEndUserAttributeView() {
   `;
 }
 
+function renderEntityManagementPageAttributeView() {
+  const regions = [
+    {
+      key: "identity",
+      label: "Identity",
+      headerLabel: "Identity",
+      headerDescription: "Definition identity fields, feature ownership, and source authority posture.",
+      count: 3,
+      content: renderEntityManagementIdentityRegion(),
+    },
+    {
+      key: "relationships",
+      label: "Structure",
+      headerLabel: "Business units",
+      headerDescription: "Only direct child business units from the next layer down are shown here.",
+      count: 1,
+      content: renderStructureRegion(),
+    },
+    {
+      key: "members",
+      label: "Members",
+      headerLabel: "Members",
+      headerDescription: "Membership lists grouped by tenant admins, business unit owners, and regular members.",
+      count: 3,
+      content: renderMembersRegion(),
+    },
+    {
+      key: "legal",
+      label: "Legal details",
+      headerLabel: "Legal details",
+      headerDescription: "Official legal profile fields that users need without opening a separate record.",
+      count: 4,
+      content: renderLegalRegion(),
+    },
+    {
+      key: "locations",
+      label: "Locations",
+      headerLabel: "Locations",
+      headerDescription: "Location grouping is configurable; this preview uses EU, MENA, and APAC.",
+      count: 3,
+      content: renderLocationsRegion(),
+    },
+    {
+      key: "branding",
+      label: "Branding",
+      headerLabel: "Branding",
+      headerDescription: "Branding shows the current primary colour alongside logo relationships.",
+      count: 2,
+      content: renderBrandingRegion(),
+    },
+  ];
+
+  return `
+    <section class="record-management-user-attribute-view" aria-label="Entity management page details" data-record-management-user-attribute-view>
+      ${renderRecordManagementRegionShell({ label: "Entity management page", regions })}
+    </section>
+  `;
+}
+
 function renderRecordManagementAttributeView(selected, entityWorkspace) {
+  if (isEntityManagementPageTemplate(entityWorkspace)) {
+    return renderEntityManagementPageAttributeView(selected);
+  }
   return getRecordManagementDrawerMode(entityWorkspace) === "root"
     ? renderRecordManagementRootAttributeView(selected)
     : renderRecordManagementEndUserAttributeView(selected);
+}
+
+function getEntityManagementEvidenceFromTarget(target) {
+  return {
+    elementName: target.dataset.evidenceElementName ?? "Element",
+    elementValue: target.dataset.evidenceElementValue ?? "",
+    points: [
+      {
+        generatedBy: "human",
+        posture: target.dataset.evidencePosture ?? "derived_from_source_truth",
+        source: target.dataset.evidenceSource ?? "docs/data-dictionary/organization.md",
+        note: target.dataset.evidenceNote ?? "Existing data dictionary uses Organization as the canonical entity name.",
+      },
+      {
+        generatedBy: "system",
+        posture: "builder_autocomplete_candidate",
+        source: "entityBuilder.capabilities.identityEvidencePreview",
+        note: "Runtime entity builder capabilities will autocomplete this evidence set once connected.",
+      },
+      {
+        generatedBy: "LLM",
+        posture: "draft_interpretation",
+        source: "entityBuilder.assistedDraft.evidenceSuggestion",
+        note: "Assisted drafting may suggest evidence notes for human review before promotion.",
+      },
+    ],
+  };
+}
+
+function closeRecordManagementEvidenceDrawer(drawer) {
+  drawer.dataset.recordManagementEvidenceView = "false";
+  drawer.querySelector("[data-record-management-evidence-drawer]")?.remove();
+}
+
+function renderRecordManagementEvidenceDrawer({ drawer, entityWorkspace, evidence }) {
+  entityWorkspace.dataset.chatWorkspaceDrawerOpen = "true";
+  drawer.hidden = false;
+  drawer.dataset.recordManagementEditMode = "false";
+  drawer.dataset.recordManagementEvidenceMode = "true";
+  drawer.dataset.recordManagementEvidenceView = "true";
+  const editToggle = drawer.querySelector("[data-record-management-drawer-edit]");
+  const evidenceToggle = drawer.querySelector("[data-record-management-evidence-mode-toggle]");
+  if (editToggle instanceof HTMLElement) {
+    editToggle.setAttribute("aria-pressed", "false");
+  }
+  if (evidenceToggle instanceof HTMLElement) {
+    evidenceToggle.setAttribute("aria-pressed", "true");
+  }
+  const body = drawer.querySelector(".chat-workspace-list-drawer-body");
+  if (!(body instanceof HTMLElement)) {
+    return;
+  }
+  body.querySelector("[data-record-management-evidence-drawer]")?.remove();
+  body.insertAdjacentHTML("beforeend", `
+    <aside class="record-management-evidence-drawer" aria-label="Evidence detail" data-record-management-evidence-drawer>
+      <div class="chat-workspace-list-drawer-header">
+        <div class="chat-workspace-list-drawer-header-copy">
+          <p>Evidence</p>
+          <h4>${escapeHtml(evidence.elementName)}</h4>
+          <div class="record-management-drawer-header-meta">
+            <span>Element value</span>
+            <span class="record-management-status-badge">${escapeHtml(evidence.elementValue || "Not set")}</span>
+          </div>
+        </div>
+        <button class="icon-button" type="button" aria-label="Close evidence detail" data-record-management-evidence-return>
+          <span class="icon-button-glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg>
+          </span>
+        </button>
+      </div>
+      <section class="record-management-evidence-list" aria-label="Evidence points">
+        ${evidence.points.map((point) => `
+          <article class="record-management-evidence-card">
+            <dl>
+              <div>
+                <dt>Generated by</dt>
+                <dd>${escapeHtml(point.generatedBy)}</dd>
+              </div>
+              <div>
+                <dt>Posture</dt>
+                <dd>${escapeHtml(point.posture)}</dd>
+              </div>
+              <div>
+                <dt>Source</dt>
+                <dd>${escapeHtml(point.source)}</dd>
+              </div>
+              <div>
+                <dt>Note</dt>
+                <dd>${escapeHtml(point.note)}</dd>
+              </div>
+            </dl>
+          </article>
+        `).join("")}
+      </section>
+    </aside>
+  `);
+  drawer.querySelector("[data-record-management-evidence-return]")?.focus();
 }
 
 export function getChatWorkspaceDrawerRowFromElement(row, { layer, entity } = {}) {
@@ -1359,10 +2120,14 @@ export function renderChatWorkspaceListDrawer({ entityWorkspace, selected }) {
   entityWorkspace.dataset.chatWorkspaceDrawerOpen = selected ? "true" : "false";
   drawer.hidden = !selected;
   drawer.dataset.recordManagementEditMode = "false";
+  drawer.dataset.recordManagementEvidenceMode = "false";
+  drawer.dataset.recordManagementEvidenceView = "false";
   if (!selected) {
+    recordManagementDrawerSelections.delete(entityWorkspace);
     drawer.replaceChildren();
     return;
   }
+  recordManagementDrawerSelections.set(entityWorkspace, selected);
 
   if (selected.createRecord) {
     drawer.innerHTML = `
@@ -1403,11 +2168,28 @@ export function renderChatWorkspaceListDrawer({ entityWorkspace, selected }) {
   drawer.innerHTML = `
     <div class="chat-workspace-list-drawer-header">
       <div class="chat-workspace-list-drawer-header-copy">
-        <h4 data-record-management-drawer-region-title>Organization details</h4>
-        <p data-record-management-drawer-region-description>Root Organization facts and reference data that identify the record.</p>
+        <p>${escapeHtml(selected.entity)}</p>
+        <h4>${escapeHtml(selected.title)}</h4>
+        <div class="record-management-drawer-header-meta">
+          <span>${escapeHtml(selected.status)}</span>
+          <span class="record-management-status-badge">${escapeHtml(selected.note)}</span>
+        </div>
       </div>
       <div class="chat-workspace-list-drawer-header-actions">
-        <button class="record-management-drawer-edit-button" type="button" aria-pressed="false" data-record-management-drawer-edit>Edit</button>
+        ${renderPrimaryIconButton({
+          ariaLabel: "Toggle edit mode",
+          className: "record-management-drawer-edit-button",
+          icon: renderEntityManagementEditIcon(),
+          title: "Edit",
+          toggleAttribute: "data-record-management-drawer-edit",
+        })}
+        ${isEntityManagementPageTemplate(entityWorkspace) ? renderPrimaryIconButton({
+          ariaLabel: "Toggle evidence mode",
+          className: "record-management-drawer-evidence-button",
+          icon: renderGovernanceEvidenceIcon(),
+          title: "Evidence",
+          toggleAttribute: "data-record-management-evidence-mode-toggle",
+        }) : ""}
         <button class="icon-button" type="button" aria-label="Close item detail" data-chat-workspace-list-drawer-close>
           <span class="icon-button-glyph" aria-hidden="true">
             <svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg>
@@ -1416,8 +2198,13 @@ export function renderChatWorkspaceListDrawer({ entityWorkspace, selected }) {
       </div>
     </div>
     <div class="chat-workspace-list-drawer-body">
+      <div class="record-management-active-group-summary">
+        <h5 data-record-management-drawer-region-title>${isEntityManagementPageTemplate(entityWorkspace) ? "Identity" : "Organization details"}</h5>
+        <p data-record-management-drawer-region-description>${isEntityManagementPageTemplate(entityWorkspace) ? "Definition identity fields, feature ownership, and source authority posture." : "Root Organization facts and reference data that identify the record."}</p>
+      </div>
       ${renderRecordManagementAttributeView(selected, entityWorkspace)}
     </div>
   `;
   installRecordManagementRegionIndex(drawer);
+  initializeFormDrawerSelects({ scope: drawer });
 }

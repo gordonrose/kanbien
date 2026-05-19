@@ -187,6 +187,8 @@ export function createChatWorkspaceMockConsumerController(mount, {
   layerSelectorPlacement = "joint-header",
   newConversationLabel = "Start new chat",
   onClose,
+  showEntitySelector = true,
+  showPrimaryCapabilityArea = true,
   state = createChatWorkspaceMockConsumerState({ config }),
   title = "Build work panel",
 } = {}) {
@@ -231,6 +233,10 @@ export function createChatWorkspaceMockConsumerController(mount, {
   }
 
   function renderWorkspaceEntitySelector(entityWorkspace) {
+    if (!showEntitySelector) {
+      closeChatWorkspaceEntitySelector({ workspaceState: state.workspace });
+      return;
+    }
     const secondaryHeader = mount.querySelector("[data-chat-workspace-secondary-header]");
     const selectorMount = state.workspace.expanded && secondaryHeader instanceof HTMLElement
       ? secondaryHeader.querySelector("[data-chat-workspace-secondary-list]")
@@ -386,6 +392,8 @@ export function createChatWorkspaceMockConsumerController(mount, {
         : "",
       newConversationLabel,
       recordCount: getChatWorkspaceEntityItemCount(state.active.entity, entityHostOptions),
+      showEntitySelector,
+      showPrimaryCapabilityArea,
       workspaceExpanded: state.workspace.expanded,
     });
     const entityWorkspace = mount.querySelector("[data-chat-workspace-entity-workspace]");

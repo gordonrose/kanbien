@@ -402,8 +402,12 @@ export function renderFormDrawerSelect({
   selectedEmpty = "No items selected yet.",
   availableTitle = "Available",
   emptyMessage = "No items match this search.",
+  maxSelections = null,
 } = {}) {
   const ariaLabelledBy = [labelId, triggerId].filter(Boolean).join(" ");
+  const maxSelectionsAttribute = Number.isInteger(maxSelections) && maxSelections > 0
+    ? `data-form-drawer-select-max-selections="${maxSelections}"`
+    : "";
 
   return `
     <div
@@ -411,6 +415,7 @@ export function renderFormDrawerSelect({
       class="form-drawer-select"
       data-form-drawer-select
       data-form-drawer-select-empty-summary="${escapeHtml(emptySummary)}"
+      ${maxSelectionsAttribute}
     >
       <input
         ${inputId ? `id="${escapeHtml(inputId)}"` : ""}
@@ -1456,12 +1461,20 @@ export function initializeFormDrawerSelects({ scope = document } = {}) {
 
       const optionButton = target.closest("[data-form-drawer-select-option]");
       if (optionButton instanceof HTMLButtonElement) {
+        const maxSelections = Number.parseInt(root.dataset.formDrawerSelectMaxSelections ?? "", 10);
+        const isSingleSelect = maxSelections === 1;
         const currentValues = hiddenInput.value
           .split(",")
           .map((value) => value.trim())
           .filter(Boolean);
         const optionValue = optionButton.dataset.value ?? "";
         const existingIndex = currentValues.indexOf(optionValue);
+
+        if (isSingleSelect) {
+          hiddenInput.value = existingIndex >= 0 ? "" : optionValue;
+          refreshFormDrawerSelect(root);
+          return;
+        }
 
         if (existingIndex >= 0) {
           currentValues.splice(existingIndex, 1);

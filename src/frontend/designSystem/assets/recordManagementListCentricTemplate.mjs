@@ -8,7 +8,7 @@ import {
   getConversationPanelCanonicalRef,
 } from "./conversationPanel.mjs";
 
-const recordManagementLayers = Object.freeze([
+let recordManagementLayers = Object.freeze([
   {
     key: "discovery",
     label: "Parent 1",
@@ -135,7 +135,7 @@ const recordManagementMessages = Object.freeze([
   },
 ]);
 
-const recordManagementFilterOptions = Object.freeze({
+let recordManagementFilterOptions = {
   status: {
     eyebrow: "Attribute filter",
     title: "Status",
@@ -166,14 +166,15 @@ const recordManagementFilterOptions = Object.freeze({
       ["overdue", "Overdue", "Past expected review date"],
     ]),
   },
-});
+};
+let recordManagementDemoFixture = null;
 
 const mount = document.querySelector("[data-record-management-list-centric-mount]");
 const entityHostOptions = {
   rowCount: 5,
   statusCount: 10,
 };
-const filterSelections = {
+let filterSelections = {
   date: new Set(),
   org: new Set(),
   status: new Set(),
@@ -191,6 +192,10 @@ const filterDateSingle = {
 let templateController = null;
 let templateState = null;
 
+function resetFilterSelectionsForOptions(options) {
+  filterSelections = Object.fromEntries(Object.keys(options).map((key) => [key, new Set()]));
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -198,6 +203,159 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll("\"", "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function labelFor(value, fallback = "") {
+  return String(value?.labelFallback ?? value?.titleFallback ?? value?.targetPluralLabelFallback ?? fallback ?? "");
+}
+
+function getFixtureDefinition() {
+  return recordManagementDemoFixture?.entityDefinitionSlice ?? null;
+}
+
+function getFixtureAttribute(attributeKey) {
+  return getFixtureDefinition()?.attributes?.find((attribute) => attribute.attributeKey === attributeKey) ?? null;
+}
+
+function formatFilterOptionLabel(attribute, value) {
+  const option = attribute?.options?.find((candidate) => candidate.optionKey === value);
+  return option?.labelFallback ?? String(value ?? "");
+}
+
+function buildFixtureLayer(relationship, layerKind) {
+  const targetLabel = relationship.targetPluralLabelFallback ?? relationship.labelFallback ?? relationship.relationshipKey;
+  return {
+    key: relationship.relationshipKey,
+    label: layerKind === "parent" ? "Parent" : "Child",
+    layerKind,
+    layerEntityLabel: targetLabel,
+    layerSummary: layerKind === "child" ? "6 records" : targetLabel,
+    defaultEntity: relationship.targetEntityKey,
+    defaultTool: relationship.targetEntityKey,
+    entities: Object.freeze([
+      { key: relationship.targetEntityKey, label: targetLabel },
+    ]),
+  };
+}
+
+function buildRecordManagementLayersFromFixture(fixture) {
+  const definition = fixture?.entityDefinitionSlice;
+  if (!definition) {
+    return recordManagementLayers;
+  }
+
+  const relationships = [...(definition.relationships ?? [])]
+    .filter((relationship) => relationship.navigationPosture === "navigable" && relationship.layerSelectorEligible)
+    .sort((left, right) => (left.displayOrder ?? 0) - (right.displayOrder ?? 0));
+  const parentLayers = relationships
+    .filter((relationship) => relationship.relationshipCategory === "parent_relation")
+    .map((relationship) => buildFixtureLayer(relationship, "parent"));
+  const childLayers = relationships
+    .filter((relationship) => relationship.relationshipCategory === "child_relation")
+    .map((relationship) => buildFixtureLayer(relationship, "child"));
+  const entityLabel = definition.entityIdentity?.pluralLabelFallback ?? "Organizations";
+
+  return Object.freeze([
+    ...parentLayers,
+    {
+      key: "organization-current",
+      label: "Current",
+      layerKind: "current",
+      layerEntityLabel: entityLabel,
+      layerSummary: entityLabel,
+      defaultEntity: "organization",
+      defaultTool: "organization",
+      entities: Object.freeze([
+        { key: "organization", label: entityLabel, statusItems: buildStatusItemsFromFixture(fixture) },
+      ]),
+    },
+    ...childLayers,
+  ]);
+}
+
+function buildStatusItemsFromFixture(fixture) {
+  const definition = fixture?.entityDefinitionSlice;
+  const records = fixture?.records ?? [];
+  const statuses = [...(definition?.operationalStatusSet?.statuses ?? [])]
+    .filter((status) => status.tabEligible)
+    .sort((left, right) => (left.displayOrder ?? 0) - (right.displayOrder ?? 0));
+  return statuses.map((status) => {
+    const statusRecords = records.filter((record) => record.review_status === status.statusKey);
+    return {
+      key: `organization-${status.statusKey}`,
+      label: status.labelFallback,
+      meta: "Status",
+      count: statusRecords.length,
+      attention: status.badgeTone === "warning" || status.badgeTone === "danger",
+      rows: statusRecords.map((record) => [
+        record.name,
+        formatFilterOptionLabel(getFixtureAttribute("owning_group"), record.owning_group),
+        status.labelFallback,
+      ]),
+    };
+  });
+}
+
+function buildRowsByLabelFromFixture(fixture) {
+  return {
+    organization: Object.fromEntries(
+      buildStatusItemsFromFixture(fixture).map((status) => [status.label, status.rows]),
+    ),
+  };
+}
+
+function buildFilterOptionsFromFixture(fixture) {
+  const generatedFilters = [...(fixture?.entityDefinitionSlice?.searchModel?.generatedFilters ?? [])]
+    .filter((filter) => filter.defaultVisible !== false)
+    .sort((left, right) => (left.displayOrder ?? 0) - (right.displayOrder ?? 0));
+  const nextOptions = {};
+  for (const filter of generatedFilters) {
+    if (filter.filterBehavior === "value_range") {
+      continue;
+    }
+    if (filter.filterBehavior === "date_range") {
+      nextOptions[filter.filterKey] = {
+        eyebrow: "Attribute filter",
+        title: filter.labelFallback,
+        behavior: "date_range",
+        description: filter.descriptionFallback,
+        options: Object.freeze([
+          ["today", "Today", "Due or updated today"],
+          ["this-week", "This week", "Current week window"],
+          ["next-week", "Next week", "Upcoming handoff window"],
+          ["overdue", "Overdue", "Past expected review date"],
+        ]),
+      };
+      continue;
+    }
+    if (filter.filterBehavior !== "collection_select") {
+      continue;
+    }
+    const attribute = getFixtureAttribute(filter.attributeKey);
+    nextOptions[filter.filterKey] = {
+      eyebrow: "Attribute filter",
+      title: filter.labelFallback,
+      behavior: "collection_select",
+      description: filter.descriptionFallback,
+      options: Object.freeze((attribute?.options ?? []).map((option) => [
+        option.optionKey,
+        option.labelFallback,
+        `${option.labelFallback} organizations`,
+      ])),
+    };
+  }
+  return nextOptions;
+}
+
+async function loadRecordManagementDemoFixture() {
+  const response = await fetch("/design-system/templates/record_management_list_centric/organization-demo-fixture.json", {
+    credentials: "same-origin",
+    headers: { Accept: "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to load record-management fixture: ${response.status}`);
+  }
+  return response.json();
 }
 
 function syncDraftCount(entityWorkspace) {
@@ -374,10 +532,11 @@ function applyRecordManagementStatusCountProperty() {
 }
 
 function installBreadcrumbTooltips() {
+  const currentLabel = document.querySelector(".breadcrumb-current")?.textContent?.trim() ?? "record_management_list_centric";
   const crumbs = [
     [".breadcrumb-list li:nth-child(1) .breadcrumb-button", "Home"],
     [".breadcrumb-list li:nth-child(3) .breadcrumb-button", "Home > Templates"],
-    [".breadcrumb-current", "Home > Templates > record_management_list_centric"],
+    [".breadcrumb-current", `Home > Templates > ${currentLabel}`],
   ];
   crumbs.forEach(([selector, label]) => {
     const crumb = document.querySelector(selector);
@@ -389,9 +548,26 @@ function installBreadcrumbTooltips() {
   });
 }
 
+function isRecordManagementEntityPageTemplate() {
+  return document.querySelector("[data-record-management-entity-page-template]") instanceof HTMLElement;
+}
+
+function openRecordManagementEntityPageSkeleton() {
+  if (!isRecordManagementEntityPageTemplate()) {
+    return;
+  }
+
+  window.requestAnimationFrame(() => {
+    const firstRow = mount?.querySelector("[data-chat-workspace-entity-workspace] .floating-tab-row");
+    if (firstRow instanceof HTMLElement) {
+      firstRow.click();
+    }
+  });
+}
+
 function getFilterSelectionCount(key) {
   const optionCount = filterSelections[key]?.size ?? 0;
-  if (key !== "date") {
+  if (recordManagementFilterOptions[key]?.behavior !== "date_range") {
     return optionCount;
   }
   return optionCount
@@ -444,6 +620,23 @@ function syncFilterCounts() {
   if (totalNode instanceof HTMLElement) {
     totalNode.textContent = `${total} selected`;
   }
+}
+
+function renderFilterCardsFromOptions() {
+  const list = document.querySelector("[data-record-management-filter-card-list]");
+  if (!(list instanceof HTMLElement)) {
+    return;
+  }
+  const entries = Object.entries(recordManagementFilterOptions);
+  list.innerHTML = entries.map(([key, config]) => `
+    <button class="record-management-filter-card" type="button" aria-expanded="false" data-record-management-filter-card="${escapeHtml(key)}">
+      <span>
+        <strong>${escapeHtml(config.title)}</strong>
+        <small>${escapeHtml(config.description ?? "Filter")}</small>
+      </span>
+      <em data-record-management-filter-count="${escapeHtml(key)}">0</em>
+    </button>
+  `).join("");
 }
 
 function renderRecordManagementDateRangeControl() {
@@ -662,8 +855,9 @@ function renderFilterSelectionDrawer(key) {
   }
 
   const selectedOptions = config.options.filter(([value]) => filterSelections[key]?.has(value));
-  const singleDateSelected = key === "date" && filterDateSingle.value;
-  const dateRangeSelected = key === "date" && filterDateRange.start && filterDateRange.end;
+  const isDateRangeFilter = config.behavior === "date_range";
+  const singleDateSelected = isDateRangeFilter && filterDateSingle.value;
+  const dateRangeSelected = isDateRangeFilter && filterDateRange.start && filterDateRange.end;
   const selectedCount = getFilterSelectionCount(key);
   const selectedOptionMarkup = selectedOptions.map(([value, label, description]) => `
     <button class="form-drawer-select-selected-chip" type="button" data-record-management-filter-remove="${escapeHtml(key)}" data-value="${escapeHtml(value)}">
@@ -718,14 +912,14 @@ function renderFilterSelectionDrawer(key) {
         </span>
       </button>
     </div>
-    ${key === "date" ? renderRecordManagementSingleDateControl() : `
+    ${isDateRangeFilter ? renderRecordManagementSingleDateControl() : `
       <form class="search-shell form-drawer-select-search-shell" role="search">
         <label class="search-shell-field">
           <input class="search-input" type="search" placeholder="Search ${escapeHtml(config.title.toLowerCase())}" autocomplete="off" data-record-management-filter-search />
         </label>
       </form>
     `}
-    ${key === "date" ? renderRecordManagementDateRangeControl() : ""}
+    ${isDateRangeFilter ? renderRecordManagementDateRangeControl() : ""}
     <section class="form-drawer-select-selected-panel">
       <div class="form-drawer-select-selected-header">
         <h5 class="form-drawer-select-selected-title">Selected</h5>
@@ -763,7 +957,7 @@ function renderFilterSelectionDrawer(key) {
 
   drawer.hidden = false;
   drawer.setAttribute("aria-hidden", "false");
-  if (key === "date") {
+  if (isDateRangeFilter) {
     renderRecordManagementSingleDateCalendar(drawer.querySelector("[data-record-management-date-single-picker]"));
     renderRecordManagementDateRangeCalendar(drawer.querySelector("[data-record-management-date-range-picker]"));
   }
@@ -798,6 +992,10 @@ function closeFilterSelectionDrawer() {
   });
 }
 
+function getActiveDateFilterKey() {
+  return Object.entries(recordManagementFilterOptions).find(([, config]) => config.behavior === "date_range")?.[0] ?? "date";
+}
+
 function installFilterPanel() {
   const frame = document.querySelector("[data-record-management-template-frame]");
   const toggle = document.querySelector("[data-record-management-filter-toggle]");
@@ -805,12 +1003,26 @@ function installFilterPanel() {
     return;
   }
 
+  const collapseFilters = () => {
+    frame.dataset.filterExpanded = "false";
+    toggle.setAttribute("aria-label", "Expand filters");
+    toggle.dataset.tooltip = "Expand filters";
+    closeFilterSelectionDrawer();
+  };
+
+  if (window.matchMedia("(max-width: 52rem)").matches) {
+    collapseFilters();
+  }
+
   toggle.addEventListener("click", () => {
     const expanded = frame.dataset.filterExpanded !== "false";
-    frame.dataset.filterExpanded = expanded ? "false" : "true";
-    toggle.setAttribute("aria-label", expanded ? "Expand filters" : "Collapse filters");
-    toggle.dataset.tooltip = expanded ? "Expand filters" : "Collapse filters";
-    closeFilterSelectionDrawer();
+    if (expanded) {
+      collapseFilters();
+      return;
+    }
+    frame.dataset.filterExpanded = "true";
+    toggle.setAttribute("aria-label", "Collapse filters");
+    toggle.dataset.tooltip = "Collapse filters";
   });
 
   document.querySelectorAll("[data-record-management-filter-card]").forEach((card) => {
@@ -833,18 +1045,20 @@ function installFilterPanel() {
     }
 
     if (target?.closest("[data-record-management-filter-remove-range]")) {
+      const dateFilterKey = getActiveDateFilterKey();
       filterDateRange.start = "";
       filterDateRange.end = "";
       filterDateRange.selectionStage = "start";
       syncFilterCounts();
-      renderFilterSelectionDrawer("date");
+      renderFilterSelectionDrawer(dateFilterKey);
       return;
     }
 
     if (target?.closest("[data-record-management-filter-remove-single-date]")) {
+      const dateFilterKey = getActiveDateFilterKey();
       filterDateSingle.value = "";
       syncFilterCounts();
-      renderFilterSelectionDrawer("date");
+      renderFilterSelectionDrawer(dateFilterKey);
       return;
     }
 
@@ -903,7 +1117,7 @@ function installFilterPanel() {
         filterDateSingle.value = dayButton.dataset.date ?? "";
         filterDateSingle.viewStart = filterDateSingle.value || filterDateSingle.viewStart;
         syncFilterCounts();
-        renderFilterSelectionDrawer("date");
+        renderFilterSelectionDrawer(getActiveDateFilterKey());
         return;
       }
     }
@@ -947,7 +1161,7 @@ function installFilterPanel() {
           filterDateRange.end = selectedDate;
           filterDateRange.selectionStage = "start";
         }
-        renderFilterSelectionDrawer("date");
+        renderFilterSelectionDrawer(getActiveDateFilterKey());
         const updatedPicker = document.querySelector("[data-record-management-date-range-picker]");
         const updatedPanel = updatedPicker?.querySelector("[data-record-management-date-range-panel]");
         const updatedButton = updatedPicker?.querySelector("[data-record-management-date-range-button]");
@@ -961,7 +1175,7 @@ function installFilterPanel() {
       }
 
       if (target?.closest("[data-record-management-date-range-done]")) {
-        renderFilterSelectionDrawer("date");
+        renderFilterSelectionDrawer(getActiveDateFilterKey());
         return;
       }
     }
@@ -1085,19 +1299,36 @@ function installDisplaySettingsDrawer() {
   });
 }
 
-if (mount instanceof HTMLElement) {
+async function initializeRecordManagementTemplate() {
+  if (!(mount instanceof HTMLElement)) {
+    return;
+  }
+  try {
+    recordManagementDemoFixture = await loadRecordManagementDemoFixture();
+    recordManagementLayers = buildRecordManagementLayersFromFixture(recordManagementDemoFixture);
+    recordManagementFilterOptions = buildFilterOptionsFromFixture(recordManagementDemoFixture);
+    resetFilterSelectionsForOptions(recordManagementFilterOptions);
+    entityHostOptions.rowsByLabelOverride = buildRowsByLabelFromFixture(recordManagementDemoFixture);
+    entityHostOptions.rowCount = null;
+    entityHostOptions.statusCount = buildStatusItemsFromFixture(recordManagementDemoFixture).length;
+  } catch (error) {
+    console.warn(error);
+    resetFilterSelectionsForOptions(recordManagementFilterOptions);
+  }
+
   installBreadcrumbTooltips();
   applyRecordManagementStatusCountProperty();
+  renderFilterCardsFromOptions();
   installFilterPanel();
   installDisplaySettingsDrawer();
 
   const state = createChatWorkspaceMockConsumerState({
     config: {
-      defaultLayer: "delivery",
+      defaultLayer: recordManagementLayers.find((layer) => layer.layerKind === "current")?.key ?? "delivery",
       expansion: chatWorkspaceExpansionModes.enabled,
       features: {
         conversationIndex: true,
-        entitySelector: true,
+        entitySelector: false,
         rowDrawer: true,
         statusTabs: true,
       },
@@ -1133,15 +1364,16 @@ if (mount instanceof HTMLElement) {
       };
     },
     entityHostOptions,
-    entitySelectorLabel: "View",
-    headerTools: [
-      { icon: "upload", label: "Upload" },
-      { icon: "export", label: "Export" },
-      { icon: "sort", label: "Sort" },
-    ],
+    entitySelectorLabel: "",
+    headerTools: [],
     layerSelectorPlacement: "secondary-list",
-    newConversationLabel: "Create new",
+    newConversationLabel: "",
+    showEntitySelector: false,
+    showPrimaryCapabilityArea: false,
     state,
     title: "Record management",
   });
+  openRecordManagementEntityPageSkeleton();
 }
+
+void initializeRecordManagementTemplate();

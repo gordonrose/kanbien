@@ -103,8 +103,14 @@ export function renderChatWorkspaceSecondaryHeader({
   listPrefix = "",
   newConversationLabel = "Start new chat",
   recordCount = 0,
+  showEntitySelector = true,
+  showPrimaryCapabilityArea = true,
 } = {}) {
   const showChatSection = !historyOpen;
+  const primaryActionsMarkup = [
+    ...headerTools.map((tool) => renderChatWorkspaceHeaderToolButton(tool)),
+    newConversationLabel ? renderChatWorkspaceNewConversationButton({ label: newConversationLabel }) : "",
+  ].filter(Boolean).join("");
   return `
     ${historyOpen ? `
       <section class="chat-workspace-secondary-section chat-workspace-secondary-index" data-chat-workspace-secondary-index>
@@ -114,7 +120,7 @@ export function renderChatWorkspaceSecondaryHeader({
     ${workspaceExpanded ? `
       <section class="chat-workspace-secondary-section chat-workspace-secondary-list" data-chat-workspace-secondary-list>
         ${listPrefix}
-        ${renderChatWorkspaceEntitySelectorTrigger({ entityLabel, expanded: entitySelectorExpanded, label: entitySelectorLabel })}
+        ${showEntitySelector ? renderChatWorkspaceEntitySelectorTrigger({ entityLabel, expanded: entitySelectorExpanded, label: entitySelectorLabel }) : ""}
         <span class="floating-tab-panel-count">${escapeHtml(recordCount)} records</span>
       </section>
     ` : ""}
@@ -123,9 +129,10 @@ export function renderChatWorkspaceSecondaryHeader({
         ${renderChatWorkspaceChatSelector({ label: chatLabel, expanded: historyOpen })}
       </section>
     ` : ""}
-    <section class="chat-workspace-secondary-section chat-workspace-secondary-new-chat" data-chat-workspace-secondary-new-chat>
-      ${headerTools.map((tool) => renderChatWorkspaceHeaderToolButton(tool)).join("")}
-      ${renderChatWorkspaceNewConversationButton({ label: newConversationLabel })}
-    </section>
+    ${showPrimaryCapabilityArea && primaryActionsMarkup ? `
+      <section class="chat-workspace-secondary-section chat-workspace-secondary-new-chat" data-chat-workspace-secondary-new-chat>
+        ${primaryActionsMarkup}
+      </section>
+    ` : ""}
   `;
 }

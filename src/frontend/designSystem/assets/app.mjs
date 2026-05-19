@@ -833,6 +833,10 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/templates", label: "Home" },
     { href: "/design-system/templates/list-page", label: "List Page" },
   ]],
+  ["/design-system/templates/entity_management_page", [
+    { href: "/design-system/templates", label: "Home" },
+    { href: "/design-system/templates/entity_management_page", label: "entity_management_page" },
+  ]],
   ["/design-system/templates/table-page", [
     { href: "/design-system/templates", label: "Home" },
     { href: "/design-system/templates/table-page", label: "Table Page" },

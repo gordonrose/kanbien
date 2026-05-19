@@ -1696,8 +1696,9 @@ Placed attributes should eventually reference:
 - approved surface
 - optional approved surface variant
 - approved region/component contract for that surface
+- optional approved sub-region inside that region
 - optional presentation group
-- order within the surface/region/group
+- order within the surface/region/sub-region/group
 - approved design-system element
 - interaction mode or visibility intent
 
@@ -1707,6 +1708,7 @@ Example:
 {
   "surfaceKey": "listDrawer",
   "regionKey": "drawerSection",
+  "subRegionKey": "drawerAttributeFieldForm",
   "groupKey": "accountDetails",
   "displayOrder": 20,
   "elementKey": "readonlyText",
@@ -1715,13 +1717,19 @@ Example:
 }
 ```
 
-Validation should reject incompatible surface, region, and element
+Validation should reject incompatible surface, region, sub-region, and element
 combinations. For example, a floating tab header row should not be valid inside
 a list drawer.
 
-`surfaceKey`, `surfaceVariantKey`, `regionKey`, and `elementKey` are stable
-keys chosen from approved design-system contracts. Entity definitions must not
-invent entity-local slot, region, variant, or element names.
+`surfaceKey`, `surfaceVariantKey`, `regionKey`, `subRegionKey`, and
+`elementKey` are stable keys chosen from approved design-system contracts.
+Entity definitions must not invent entity-local slot, region, sub-region,
+variant, or element names.
+
+Region and sub-region are page-template layout concepts. `groupKey` is entity
+presentation metadata. For example, the record-management drawer may have a
+`drawer_attribute_field_form` sub-region, while the active entity group inside
+that sub-region may be `branding`, `legal_details`, or `members`.
 
 If a new layout is needed, the design-system contract should be extended or
 versioned first. Then entity definitions can opt into the approved key or
@@ -1751,6 +1759,7 @@ Example future overlay:
       "attributeKey": "customerTier",
       "surfaceKey": "listRow",
       "regionKey": "badgeSlot",
+      "subRegionKey": "none",
       "displayOrder": 10,
       "visibilityMode": "defaultVisible"
     }
@@ -1761,7 +1770,8 @@ Example future overlay:
 Overlay guardrails:
 
 - overlays cannot invent new attributes
-- overlays cannot invent arbitrary surface, region, variant, or element keys
+- overlays cannot invent arbitrary surface, region, sub-region, variant, or
+  element keys
 - overlays cannot weaken security, privacy, or system-managed rules
 - overlays cannot expose hidden, restricted, or classified fields without
   authz and clearance support
@@ -1811,6 +1821,7 @@ Working placeholder shape:
       "parentPageKeys": [],
       "supportOnly": false
     },
+    "collectionViews": [],
     "enabledSurfaces": [],
     "defaultSurfaceKey": "none",
     "overlayEligible": false,
@@ -1860,6 +1871,49 @@ Working fields:
 Routing values must align with approved frontend topology. Entity definitions
 must not introduce new durable destinations through ad hoc page code.
 
+### Collection Views
+
+`surfaceModel.collectionViews` defines approved ways to see an entity
+collection.
+
+A collection view is not just a visual tab. It records the business and
+governance rule for a view: who it is meant for, which operational statuses and
+sub-statuses belong to it, whether it is the default for any role/context, and
+which approved template regions may render it.
+
+Working collection view shape:
+
+```json
+{
+  "viewKey": "active_management",
+  "labelKey": "entity.organization.view.activeManagement.label",
+  "labelFallback": "Active management",
+  "descriptionKey": "entity.organization.view.activeManagement.description",
+  "descriptionFallback": "Shows organizations that are actively managed.",
+  "roleEligibility": ["root_admin"],
+  "includedStatusKeys": ["active"],
+  "includedSubStatusKeys": [],
+  "statusDisplayPosture": "show_status_bar",
+  "defaultForRoles": ["root_admin"],
+  "templateRegionEligibility": ["view_selector", "status_bar"],
+  "displayOrder": 10,
+  "evidenceKeys": []
+}
+```
+
+Collection view rules:
+
+- view keys are stable snake_case keys
+- status keys must come from `operationalStatusSet`
+- sub-status keys must come from nested operational statuses
+- role eligibility describes intended/eligible view access, but it does not
+  replace runtime authorization
+- views may overlap only when the overlap is explicit and reviewable
+- if the selected template exposes a `view_selector`, it should use
+  `collectionViews` rather than inventing page-local tabs
+- if a view narrows statuses or sub-statuses, the generated status-bar behavior
+  should be derived from the active view
+
 ## Placement Interaction And Visibility
 
 Placement interaction and visibility are separate.
@@ -1888,9 +1942,9 @@ not visible unless a later approved authz/capability rule reveals it.
 met, such as a status, mode, or related state. The condition shape is not locked
 yet.
 
-Whether a surface/region/element supports a mode such as `hiddenByDefault`
-should be validated through the design-system component contract, not
-hard-coded in entity-specific UI logic.
+Whether a surface/region/sub-region/element supports a mode such as
+`hiddenByDefault` should be validated through the design-system component
+contract, not hard-coded in entity-specific UI logic.
 
 ## Relationship Metadata
 
@@ -2238,12 +2292,12 @@ Open reconciliation rules before lock-in:
 | Attribute source | Current `attributeKind` is `persisted` or `computed`. | Decision locked: do not keep `attributeKind` as canonical. Replace it with the richer attribute fields defined in this model and map old values during migration. |
 | Enum type | Current builder has one `enum` type. | Decision locked: existing `enum` migrates to `limited_enum` by default; use `expanded_enum` only when evidence shows large/growing/searchable/grouped/descriptive picker needs. |
 | Options mode | Current builder uses `none`, `inline`, and `catalog_reference`. | Decision locked: map existing values directly. Use `relationship_source` only for new/richer definitions or clear relationship-backed option evidence. |
-| Attribute order | Current builder stores one global `displayOrder`. | Decision locked: migrate global `displayOrder` into default surface placement order; new ordering lives on placements scoped by surface, region, and group. |
+| Attribute order | Current builder stores one global `displayOrder`. | Decision locked: migrate global `displayOrder` into default surface placement order; new ordering lives on placements scoped by surface, region, sub-region, and group. |
 | Validation messages | Current rules store an optional literal `errorMessage`. | Decision locked: migrate literal messages into fallback copy; canonical messages use localization keys plus fallback messages. |
 | Export format | Current export is `exportFormatVersion = 1`. | Decision locked: the full canonical model should use a new explicit export/read shape, expected as export format v2 or equivalent. Do not silently change v1. |
 | Status catalog | Current definition versions use `draft`, `active`, `superseded`, and `archived`. | Decision locked: definition-version status is separate from managed-record system lifecycle. |
 | Relationship model | ADR-0021 explicitly deferred relationship modeling. | Which relationship records should extend `entityBuilder`, and which belong to consuming features? |
-| Form/surface model | Current builder stores form-facing default pattern only. | How do approved form patterns evolve into full surface/region/element placement contracts? |
+| Form/surface model | Current builder stores form-facing default pattern only. | How do approved form patterns evolve into full surface/region/sub-region/element placement contracts? |
 
 ## Replacing Current `attributeKind`
 
@@ -2492,7 +2546,8 @@ not be treated as arbitrary strings:
 | `surfaceKey` | selected design-system/page-template contract |
 | `surfaceVariantKey` | variants allowed for the selected surface |
 | `regionKey` | regions allowed for the selected surface/variant |
-| `elementKey` | elements allowed for the selected surface/variant/region and compatible with the attribute |
+| `subRegionKey` | sub-regions allowed for the selected surface/variant/region, or `none` |
+| `elementKey` | elements allowed for the selected surface/variant/region/sub-region and compatible with the attribute |
 
 This means each page template owns its own enum-like contract for placement
 values and allowed combinations.

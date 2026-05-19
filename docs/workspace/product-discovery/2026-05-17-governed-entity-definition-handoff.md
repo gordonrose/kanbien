@@ -19,6 +19,12 @@ Primary artifacts:
 - `docs/workspace/product-discovery/2026-05-17-governed-entity-definition-attribute-reference.md`
 - `docs/workspace/product-discovery/2026-05-17-governed-entity-definition-example.md`
 - `docs/workspace/product-discovery/2026-05-17-governed-entity-definition-schema-formalization.md`
+- `docs/workspace/product-discovery/2026-05-18-governed-entity-definition-creation-and-maintenance.md`
+- `docs/workspace/product-discovery/2026-05-18-governed-entity-definition-starter-default-catalog.md`
+- `docs/workspace/product-discovery/2026-05-18-governed-entity-definition-page-materialization.md`
+- `docs/workspace/product-discovery/2026-05-18-governed-entity-definition-access-and-promotion.md`
+- `docs/workspace/capability-matrices/2026-05-18-governed-entity-creation-capability-matrix-first-draft.csv`
+- `docs/workspace/capability-matrices/2026-05-18-governed-entity-creation-capability-matrix-first-draft-notes.md`
 
 ## Locked Direction
 
@@ -82,6 +88,7 @@ The schema formalization draft now includes:
 - formal top-level shape
 - dependency catalogs
 - LLM authoring guidance catalog
+- collection-view creation and maintenance planning
 - capability family catalog
 - capability definition catalog
 - implementation seam catalog
@@ -137,12 +144,12 @@ Not yet done:
 - data migration from current `entityBuilder`
 - pilot entity migration
 - design-system entity-management templates
-- creation and maintenance workflow
+- creation and maintenance implementation
 - consumption/migration workflow
 
 ## Next Workstream
 
-Next recommended workstream:
+Next recommended workstream completed as a planning draft:
 
 `definition_creation_and_maintenance_logic`
 
@@ -168,3 +175,12 @@ Start with the creation sources and lifecycle:
 
 Then define the deterministic pipeline from source input to validated canonical
 entity definition.
+
+Planning draft:
+
+- `docs/workspace/product-discovery/2026-05-18-governed-entity-definition-creation-and-maintenance.md`
+
+Recommended next planning step:
+
+- convert the creation and maintenance draft into an implementation-facing PRD
+  or capability matrix for entity-definition creation

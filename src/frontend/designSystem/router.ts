@@ -299,6 +299,17 @@ export function createDesignSystemRouter(): Router {
     }),
   );
 
+  router.get("/templates/record_management_list_centric/organization-demo-fixture.json", (_request, response) => {
+    response.sendFile(join(
+      process.cwd(),
+      "docs",
+      "workspace",
+      "design-system",
+      "templates",
+      "record-management-list-centric-organization-demo-fixture.json",
+    ));
+  });
+
   router.get(/.*/, (request, response, next) => {
     void (async () => {
       const resolvedPage = resolveHtmlPage(frontendRoot, request.path);

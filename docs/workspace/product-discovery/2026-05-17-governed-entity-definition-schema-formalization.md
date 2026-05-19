@@ -232,6 +232,7 @@ owned by authz/capability architecture.
 | `authoring` | Creates or changes descriptive/business/schema truth outside lifecycle transitions. |
 | `lifecycle` | Changes currentness, visibility, archive, restore, delete, purge, or supersession posture. |
 | `relationship_control` | Creates, moves, reorders, replaces, detaches, or validates entity relationships. |
+| `collection_view` | Creates, reads, updates, archives, deletes, or validates governed collection views that define role eligibility and status/sub-status membership. |
 | `governance_approval` | Approves, rejects, locks, unlocks, reviews, or requests changes. |
 | `evidence_audit` | Records, reads, reconciles, or attaches proof/evidence. |
 | `generation_sync` | Generates, previews, publishes, refreshes, reconciles, or marks artifacts stale. |
@@ -360,6 +361,21 @@ Capability generation posture:
 
 Core managed-record capability definitions:
 
+The capability definitions in this section are the baseline catalog for future
+entity-related planning. Later work on collection views, definition lifecycle,
+page materialization, staged visibility, and signoff complements this baseline;
+it must not replace or narrow the broader managed-record, relationship,
+definition, definition-structure, and generation capability set.
+
+Managed-record and relationship entries are reusable generated feature
+capability templates. They describe what the entity-definition system can use to
+draft, validate, preview, or generate feature-specific seams for an owning
+feature. They are not automatically runtime behavior owned by the
+entity-definition system. Definition lifecycle, definition-structure,
+collection-view, surface, validation, export, materialization, and signoff
+entries are closer to entity-builder/platform capabilities because they edit or
+govern the entity shape itself.
+
 | Capability definition key | Family | Operation | Deterministic implementation expectation |
 | --- | --- | --- | --- |
 | `managed_record_list` | `read_discovery` | `list` | Seam: usually `feature_seam`; platform may provide shared pagination/search helpers. Paginated list, default sort, lifecycle visibility, boundary filtering, search/filter hooks, list response shape, list tests. |
@@ -385,6 +401,18 @@ Relationship capability definitions:
 | `relationship_move` | `relationship_control` | `move` | Seam: usually `feature_seam`. Validate parent/target, no cycle, max depth, same-boundary rules, child impact. |
 | `relationship_reassign` | `relationship_control` | `reassign` | Seam: usually `feature_seam`. Validate replacement target and dependency behavior before detaching old target. |
 | `relationship_validate` | `relationship_control` | `validate` | Seam: feature or shared relationship validation seam. Read-only validation of relationship consistency and boundary posture. |
+
+Collection view capability definitions:
+
+| Capability definition key | Family | Operation | Deterministic implementation expectation |
+| --- | --- | --- | --- |
+| `collection_view_list` | `collection_view` | `list_views` | Seam: usually `feature_seam` or `definition_registry_seam` while generated. List approved views for an entity collection with role eligibility, default view, status/sub-status membership, and template-region eligibility. |
+| `collection_view_read` | `collection_view` | `read_view` | Seam: usually `feature_seam` or `definition_registry_seam` while generated. Read one governed collection view and its status/sub-status membership without changing record data. |
+| `collection_view_create` | `collection_view` | `create_view` | Seam: usually `definition_registry_seam` during definition authoring, then owning feature when runtime-managed views are approved. Create a role-scoped view from approved statuses/sub-statuses and template regions. |
+| `collection_view_update` | `collection_view` | `update_view` | Seam: usually `definition_registry_seam` during definition authoring, then owning feature when runtime-managed views are approved. Change labels, role eligibility, ordering, default posture, status/sub-status membership, or region eligibility with compatibility checks. |
+| `collection_view_archive` | `collection_view` | `archive_view` | Seam: usually `definition_registry_seam`. Remove a view from normal generated surfaces while retaining historical definition truth and migration evidence. |
+| `collection_view_delete` | `collection_view` | `delete_view` | Seam: blocked by default unless compatibility and migration rules prove no existing route, saved state, audit, export, or generated surface depends on the view. |
+| `collection_view_validate` | `collection_view` | `validate_view` | Seam: `definition_registry_seam` plus design-system/topology validation. Verify role references, status keys, sub-status keys, default-view uniqueness, status overlap rules, and approved template-region mappings. |
 
 Definition capability definitions:
 
@@ -789,9 +817,10 @@ Each placement:
 | `surfaceKey` | template-scoped enum | none | must be declared by the selected design-system/page-template contract |
 | `surfaceVariantKey` | template-scoped enum | `none` | must be declared by the selected contract for the chosen surface, or `none` when the contract allows no variant |
 | `regionKey` | template-scoped enum | none | must be declared by the selected contract for the chosen surface/variant |
-| `elementKey` | template-scoped enum | none | must be declared by the selected contract for the chosen surface/variant/region and compatible with the attribute |
+| `subRegionKey` | template-scoped enum | `none` | must be declared by the selected contract for the chosen surface/variant/region, or `none` when no sub-region applies |
+| `elementKey` | template-scoped enum | none | must be declared by the selected contract for the chosen surface/variant/region/sub-region and compatible with the attribute |
 | `groupKey` | entity-scoped enum/string | `none` | must exist in `presentationGroups` or be `none` |
-| `displayOrder` | integer | none | scoped to surface/region/group |
+| `displayOrder` | integer | none | scoped to surface/region/sub-region/group |
 | `interactionMode` | enum | none | `read_only`, `editable`, `action_only` |
 | `visibilityMode` | enum | none | `default_visible`, `hidden_by_default`, `conditional` |
 
@@ -803,7 +832,8 @@ Validation must reject:
 - `surfaceKey` not allowed by the selected template contract
 - `surfaceVariantKey` not allowed for the selected surface
 - `regionKey` not allowed for the selected surface/variant
-- `elementKey` not allowed for the selected surface/variant/region
+- `subRegionKey` not allowed for the selected surface/variant/region
+- `elementKey` not allowed for the selected surface/variant/region/sub-region
 - `elementKey` incompatible with the attribute type, cardinality, mutability,
   interaction mode, or visibility mode
 - placements that reference a group not declared in `presentationGroups`
@@ -1004,6 +1034,7 @@ Required fields:
 | --- | --- | --- |
 | `managementPattern` | enum | `not_yet_assigned` |
 | `routingTopology` | object | explicit not-applicable or route declaration |
+| `collectionViews` | array | `[]` |
 | `enabledSurfaces` | array | `[]` |
 | `defaultSurfaceKey` | string | `none` |
 | `overlayEligible` | boolean | none |
@@ -1035,6 +1066,38 @@ Known app/module/page keys remain governed by frontend topology. The entity
 definition may reference approved keys; it must not invent durable routes or
 page destinations outside topology governance.
 
+Collection view schema:
+
+| Field | Type | Default | Validation |
+| --- | --- | --- | --- |
+| `viewKey` | string | none | unique snake_case key within `surfaceModel.collectionViews` |
+| `labelKey` | string | none | stable localization key |
+| `labelFallback` | string | none | human-readable fallback label |
+| `descriptionKey` | string | `none` | stable localization key or `none` |
+| `descriptionFallback` | string | `none` | human-readable fallback description or `none` |
+| `roleEligibility` | array | `[]` | approved role/group keys or capability-derived role references |
+| `includedStatusKeys` | array | `[]` | status keys from `operationalStatusSet.statuses` |
+| `includedSubStatusKeys` | array | `[]` | child status keys from `operationalStatusSet`; empty when not applicable |
+| `statusDisplayPosture` | enum | `inherit_from_template` | how the view uses status-bar/status-filter behavior |
+| `defaultForRoles` | array | `[]` | role/group keys for which this is the default view |
+| `templateRegionEligibility` | array | `[]` | approved regions such as `view_selector` or `status_bar` |
+| `displayOrder` | integer | none | deterministic view ordering |
+| `evidenceKeys` | array | `[]` | evidence supporting role/status decisions |
+
+Collection view validation:
+
+- every `includedStatusKeys` value must exist in `operationalStatusSet`
+- every `includedSubStatusKeys` value must belong to an included or explicitly
+  allowed parent status
+- role eligibility must reference approved role/capability vocabulary and must
+  not become the authorization source of truth
+- one default view per role/context is allowed unless an explicit conflict rule
+  exists
+- status and sub-status overlap across views must be explicit rather than
+  accidental
+- collection views may drive `view_selector` and `status_bar`, but the selected
+  design-system contract decides how those regions render
+
 Template contract schema:
 
 | Field | Type | Meaning |
@@ -1044,13 +1107,65 @@ Template contract schema:
 | `allowedSurfaceKeys` | array | Surface enum values available to placements. |
 | `allowedVariantKeysBySurface` | object | Variant enum values by surface. |
 | `allowedRegionKeysBySurfaceVariant` | object | Region enum values by surface/variant. |
-| `allowedElementKeysByRegion` | object | Element enum values by surface/variant/region. |
+| `allowedSubRegionKeysByRegion` | object | Sub-region enum values by surface/variant/region. |
+| `allowedElementKeysByPlacementArea` | object | Element enum values by surface/variant/region/sub-region. |
 | `elementCompatibilityRules` | object | Attribute type/cardinality/mutability/interaction compatibility. |
 | `forbiddenCombinations` | array | Explicit invalid combinations. |
 | `requiredPlacementRules` | array | Required placements or sections when the template is selected. |
 | `contractEvidenceKeys` | array | Evidence proving the contract is approved/signed off. |
 
 Template-scoped placement enums must be generated from this contract.
+
+## Record Management List-Centric V1 Region Taxonomy
+
+When the `record_management_list_centric` template is selected, the entity
+definition should only reference region, sub-region, and element keys approved
+by that template contract. The current design-system draft suggests this v1
+taxonomy:
+
+| Region key | Purpose | Entity-definition inputs |
+| --- | --- | --- |
+| `filter_bar` | Opens the supported filter controls for the current entity collection. | `searchModel`, filterable attributes, facet attributes, relationship-backed option sources. |
+| `layer_selector` | Shows the current entity layer and navigable parent/child entity layers. | `relationships`, entity topology, current route context. |
+| `view_selector` | Switches between approved views of the same entity collection. | `surfaceModel.collectionViews`, role eligibility, default view, status/sub-status membership, saved-view posture if later approved. |
+| `primary_capability_area` | Hosts collection-level actions such as create, sort, export, and bulk upload. | `actionModel` collection actions, capability mapping, async/sync posture, error catalog. |
+| `status_bar` | Displays operational status tabs, counts, and status-filter behavior. | `operationalStatusSet`, tab eligibility, counts, attention badges, allowed status filters. |
+| `record_list` | Lists records the current actor is eligible to see. | list/read capabilities, authorization results, search/sort/filter state, list-row placements. |
+| `drawer` | Shows and edits the selected record in deterministic groups. | read/update capabilities, `presentationGroups`, attribute placements, relationship placements, record actions. |
+
+Suggested sub-regions:
+
+| Region key | Sub-region key | Purpose | Entity-definition inputs |
+| --- | --- | --- | --- |
+| `primary_capability_area` | `secondary_capability_area` | Reserved action strip for additional collection or selected-record capabilities. | `actionModel` actions approved for the page header or side rail. |
+| `record_list` | `record_list_card` | The repeatable record row/card shape. | identifier, display-name, status defaults, plus optional list-row placements. |
+| `drawer` | `record_header` | Selected-record title, group description, and primary record actions. | selected record identity, active group, selected-record actions. |
+| `drawer` | `drawer_group_list` | Navigation list of presentation groups in the drawer. | `presentationGroups`, group order, group item counts, group labels/descriptions. |
+| `drawer` | `drawer_subgroup_list` | Optional nested list inside the active group, commonly for relationship collections or grouped repeated values. | relationship placements, grouped repeated attributes, child/domain relationship metadata. |
+| `drawer` | `drawer_attribute_field_form` | Attribute value display and edit area for the selected group/sub-group. | attribute placements, approved element keys, validation rules, mutability, visibility mode. |
+
+Contract rules:
+
+- Status tabs are sourced from `operationalStatusSet`; they are not arbitrary
+  page tabs.
+- View-selector entries are sourced from `surfaceModel.collectionViews`; they
+  are not arbitrary page tabs. The active view constrains eligible statuses,
+  sub-statuses, counts, and generated status filters.
+- Filter controls are sourced from `searchModel` and approved filterable
+  attributes or relationship-backed option sources.
+- Parent and child navigation is sourced from declared top-level
+  `relationships`; sibling navigation remains derived or deferred unless a
+  concrete contract is approved.
+- Collection-level capabilities belong in `primary_capability_area` or its
+  approved sub-regions; selected-record capabilities belong in the drawer
+  contract.
+- Relationship attributes should default to a presentation group so the drawer
+  can render them predictably.
+- Attribute labels and values are rendered in group order using approved
+  element keys. Editing uses the same placement area unless a later template
+  contract explicitly separates read and edit surfaces.
+- The template contract, not the entity definition, decides which elements are
+  valid in each region/sub-region.
 
 ## Action Model Schema
 
@@ -1408,7 +1523,7 @@ Formal implementation should include validators for:
 - privacy/security classification consistency
 - validation rule compatibility and messages
 - options source consistency
-- placement surface/region/element compatibility
+- placement surface/region/sub-region/element compatibility
 - group references and ordering
 - nested operational status cycles
 - relationship lookup recipe consistency
