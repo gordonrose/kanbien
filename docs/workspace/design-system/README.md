@@ -126,6 +126,13 @@ Current authored examples now include:
 - `behavior-locks/list-detail-split-layout-behavior-lock.md`
 - `behavior-locks/sub-nav-row-behavior-lock.md`
 - `behavior-locks/context-nav-behavior-lock.md`
+- `behavior-locks/entity-management-page-behavior-lock-index.md`
+- `behavior-locks/entity-management-page-outer-page-behavior-lock.md`
+- `behavior-locks/entity-management-page-navigation-behavior-lock.md`
+- `behavior-locks/entity-management-page-detail-panel-behavior-lock.md`
+- `behavior-locks/entity-management-page-collection-item-behavior-lock.md`
+- `behavior-locks/entity-management-page-evidence-ai-behavior-lock.md`
+- `behavior-locks/entity-management-page-performance-behavior-lock.md`
 - `patterns/navigation-shell-pattern.md`
 - `patterns/list-record-card-pattern.md`
 - `patterns/list-detail-panel-pattern.md`
