@@ -30,6 +30,18 @@ Companion reference:
 - `docs/workspace/product-discovery/2026-05-17-governed-entity-definition-example.md`
 - `docs/workspace/product-discovery/2026-05-17-governed-entity-definition-schema-formalization.md`
 - `docs/workspace/product-discovery/2026-05-17-governed-entity-definition-handoff.md`
+- `docs/workspace/product-discovery/2026-05-20-governed-entity-management-three-level-reconciliation.md`
+
+2026-05-20 reconciliation note:
+
+- The entity-management surface now uses a three-level planning model:
+  Entity Page, Record List Page, and Record Page.
+- Older language that treats entity-management templates as entirely future or
+  unknown should be read through that reconciliation note.
+- `record_management_list_centric` is the current Record List Page template
+  candidate.
+- `entity_management_page` remains the Entity Page UX/UI baseline and is also
+  the reusable UX/UI pattern for Record Page detail surfaces.
 
 ## Current Direction From Discovery
 

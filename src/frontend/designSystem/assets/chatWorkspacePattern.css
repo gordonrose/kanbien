@@ -2111,6 +2111,24 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   block-size: 100%;
 }
 
+[data-record-management-entity-page-template] .record-management-region-trigger {
+  align-content: center;
+  min-block-size: 4.25rem;
+}
+
+[data-record-management-entity-page-template] .record-management-region-trigger span {
+  display: block;
+  overflow: visible;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+[data-record-management-entity-page-template] .record-management-region-trigger strong {
+  display: block;
+}
+
 [data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-layout:has(.record-management-nested-list-drawer[data-entity-management-expanded-section="false"]) .record-management-nested-list-cards {
   align-self: start;
   block-size: auto;
@@ -2244,7 +2262,7 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 }
 
 .entity-management-sublist .record-management-nested-list-layout {
-  grid-template-columns: minmax(12rem, 15rem) minmax(0, 1fr);
+  grid-template-columns: minmax(12rem, var(--record-management-secondary-nav-width, 15rem)) 0.5rem minmax(0, 1fr);
 }
 
 .entity-management-sublist-drawer {
@@ -2261,7 +2279,10 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 
 .entity-management-view-definition {
   display: grid;
+  align-content: start;
+  grid-auto-rows: max-content;
   gap: 1.15rem;
+  min-block-size: 0;
 }
 
 .entity-management-workflow-actions {
@@ -2915,6 +2936,39 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   gap: 0.35rem;
 }
 
+.entity-management-workflow-status-details {
+  grid-column: 1 / -1;
+  min-inline-size: 0;
+  border-top: 1px solid var(--bwp-line);
+  padding-block-start: 0.55rem;
+}
+
+.entity-management-workflow-status-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  cursor: pointer;
+  color: var(--bwp-ink);
+  font-weight: 800;
+  list-style-position: outside;
+}
+
+.entity-management-workflow-status-details summary span {
+  display: grid;
+  gap: 0.1rem;
+  min-inline-size: 0;
+}
+
+.entity-management-workflow-status-details summary small {
+  color: var(--bwp-muted);
+  font-size: 0.78rem;
+}
+
+.entity-management-workflow-status-details-grid {
+  margin-block-start: 0.6rem;
+}
+
 .entity-management-drawer-select-field-inline {
   min-inline-size: 0;
 }
@@ -3023,7 +3077,9 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 .chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-region-index,
 .chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-region-index,
 .chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-nested-list-cards,
-.chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-nested-list-cards {
+.chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-nested-list-cards,
+.chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-nested-list-resizer,
+.chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-nested-list-resizer {
   display: none;
 }
 
@@ -3248,8 +3304,9 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 
 .record-management-nested-list-layout {
   display: grid;
-  grid-template-columns: minmax(11rem, 14rem) minmax(0, 1fr);
-  gap: 0.7rem;
+  grid-template-columns: minmax(11rem, var(--record-management-secondary-nav-width, 14rem)) 0.5rem minmax(0, 1fr);
+  column-gap: 0.45rem;
+  row-gap: 0.7rem;
   min-inline-size: 0;
 }
 
@@ -3260,6 +3317,42 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   align-content: start;
   gap: 0.5rem;
   min-inline-size: 0;
+}
+
+.record-management-nested-list-resizer {
+  position: relative;
+  align-self: stretch;
+  min-block-size: 3rem;
+  min-inline-size: 0.5rem;
+  border: 0;
+  border-inline-start: 1px solid var(--bwp-line);
+  border-inline-end: 1px solid transparent;
+  cursor: col-resize;
+  touch-action: none;
+}
+
+.record-management-nested-list-resizer::before {
+  content: "";
+  position: absolute;
+  inset-block: 0.75rem;
+  inset-inline-start: 50%;
+  inline-size: 0.18rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bwp-accent) 42%, var(--bwp-line));
+  opacity: 0;
+  transform: translateX(-50%);
+  transition: opacity 120ms ease;
+}
+
+.record-management-nested-list-resizer:hover::before,
+.record-management-nested-list-resizer:focus-visible::before,
+[data-record-management-nested-resizing="true"] .record-management-nested-list-resizer::before {
+  opacity: 1;
+}
+
+.record-management-nested-list-resizer:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--bwp-accent) 62%, transparent);
+  outline-offset: 0.15rem;
 }
 
 .record-management-nested-list-card {
@@ -3569,6 +3662,10 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   .record-management-field-grid,
   .record-management-nested-list-layout {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .record-management-nested-list-resizer {
+    display: none;
   }
 
   [data-record-management-entity-page-template] .entity-management-sublist .record-management-nested-list-layout {

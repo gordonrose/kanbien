@@ -23,8 +23,18 @@ Primary artifacts:
 - `docs/workspace/product-discovery/2026-05-18-governed-entity-definition-starter-default-catalog.md`
 - `docs/workspace/product-discovery/2026-05-18-governed-entity-definition-page-materialization.md`
 - `docs/workspace/product-discovery/2026-05-18-governed-entity-definition-access-and-promotion.md`
+- `docs/workspace/product-discovery/2026-05-20-governed-entity-management-three-level-reconciliation.md`
 - `docs/workspace/capability-matrices/2026-05-18-governed-entity-creation-capability-matrix-first-draft.csv`
 - `docs/workspace/capability-matrices/2026-05-18-governed-entity-creation-capability-matrix-first-draft-notes.md`
+
+2026-05-20 update:
+
+- The entity-management planning model now separates Entity Page, Record List
+  Page, and Record Page.
+- The Record List Page lists viewable records for an approved user according to
+  entity-view instructions.
+- The Record Page reuses the Entity Page UX/UI pattern for one selected record,
+  with displayed content driven by the entity's view and display configuration.
 
 ## Locked Direction
 

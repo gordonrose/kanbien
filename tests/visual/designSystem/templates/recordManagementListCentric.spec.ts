@@ -9,19 +9,34 @@ test("record management shell keeps top navigation centered with search", async 
 
   const geometry = await page.evaluate(() => {
     const primaryNav = document.querySelector(".top-nav .primary-nav-links")?.getBoundingClientRect();
+    const subNav = document.querySelector(".sub-nav")?.getBoundingClientRect();
+    const breadcrumb = document.querySelector(".sub-nav .breadcrumb-nav")?.getBoundingClientRect();
     const searchShell = document.querySelector(".sub-nav .search-shell")?.getBoundingClientRect();
-    if (!primaryNav || !searchShell) {
+    const isCompactSubNav = document.querySelector(".sub-nav")?.classList.contains("sub-nav-compact-layout") ?? false;
+    if (!primaryNav || !subNav || !breadcrumb || !searchShell) {
       return null;
     }
 
     return {
       primaryNavCenter: Math.round(primaryNav.left + primaryNav.width / 2),
+      subNavCenter: Math.round(subNav.left + subNav.width / 2),
+      breadcrumbRight: Math.round(breadcrumb.right),
+      searchShellLeft: Math.round(searchShell.left),
+      searchShellRight: Math.round(searchShell.right),
+      subNavRight: Math.round(subNav.right),
       searchShellCenter: Math.round(searchShell.left + searchShell.width / 2),
+      isCompactSubNav,
     };
   });
 
   expect(geometry).not.toBeNull();
-  expect(Math.abs((geometry?.primaryNavCenter ?? 0) - (geometry?.searchShellCenter ?? 0))).toBeLessThanOrEqual(1);
+  expect(Math.abs((geometry?.primaryNavCenter ?? 0) - (geometry?.subNavCenter ?? 0))).toBeLessThanOrEqual(1);
+  if (geometry?.isCompactSubNav) {
+    expect(geometry.searchShellLeft).toBeGreaterThanOrEqual(geometry.breadcrumbRight);
+    expect(geometry.searchShellRight).toBeLessThanOrEqual(geometry.subNavRight);
+  } else {
+    expect(Math.abs((geometry?.primaryNavCenter ?? 0) - (geometry?.searchShellCenter ?? 0))).toBeLessThanOrEqual(1);
+  }
 });
 
 test("record management list-centric template renders the chat-derived record workspace", async ({ page }) => {
@@ -376,13 +391,29 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(page.locator("[data-record-management-region-trigger='catalogs']")).toContainText("Catalogs");
   await expect(page.locator("[data-record-management-region-trigger='placements']")).toContainText("Display");
   await expect(page.locator("[data-record-management-region-trigger='permissions']")).toContainText("Permissions");
+  await expect(page.locator("[data-record-management-region-trigger='generation-model']")).toContainText("Generation Model");
+  await expect(page.locator("[data-record-management-region-trigger='compliance-model']")).toContainText("Compliance Model");
+  await expect(page.locator("[data-record-management-region-trigger='migration-model']")).toContainText("Migration Model");
   await expect(page.locator("[data-record-management-region-trigger='action-models-record']")).toContainText("Action Models - Record");
   await expect(page.locator("[data-record-management-region-trigger='action-models-entity-structure']")).toContainText("Action Models - Entity Structure");
   await expect(page.locator("[data-record-management-region-trigger='details']")).toHaveCount(0);
   const entityRegionOrder = await page.locator("[data-record-management-region-trigger]").evaluateAll((triggers) => (
     triggers.map((trigger) => trigger.getAttribute("data-record-management-region-trigger"))
   ));
-  expect(entityRegionOrder).toEqual(["identity", "workflows", "views", "relationships", "attributes", "catalogs", "placements", "permissions", "action-models-record", "action-models-entity-structure"]);
+  expect(entityRegionOrder).toEqual(["identity", "workflows", "views", "relationships", "attributes", "catalogs", "placements", "permissions", "generation-model", "compliance-model", "migration-model", "action-models-record", "action-models-entity-structure"]);
+  await expect.poll(async () => page.locator("[data-record-management-entity-page-template] .record-management-region-index").evaluate((index) => {
+    const entityActionTitle = index.querySelector("[data-record-management-region-trigger='action-models-entity-structure'] span");
+    const titleStyle = entityActionTitle ? getComputedStyle(entityActionTitle) : null;
+    return {
+      actionEntityTitleWraps: titleStyle?.whiteSpace === "normal",
+      overflowY: getComputedStyle(index).overflowY,
+      scrollable: index.scrollHeight > index.clientHeight,
+    };
+  })).toMatchObject({
+    actionEntityTitleWraps: true,
+    overflowY: "auto",
+    scrollable: true,
+  });
   await expect(page.locator("[data-record-management-nested-trigger='primary-details']")).toContainText("Primary Details");
   await expect(page.locator("[data-record-management-nested-trigger='owning-feature']")).toContainText("Owning Feature");
   await expect(page.locator("[data-record-management-nested-trigger='source-authority-posture']")).toContainText("Source Authority Posture");
@@ -400,6 +431,20 @@ test("record management entity page skeleton reuses the detail drawer as the pag
     scrollMoved: true,
     scrollable: true,
   });
+  await page.locator("[data-record-management-region-trigger='action-models-entity-structure']").click();
+  const actionModelSublist = page.locator("[data-record-management-region-panel='action-models-entity-structure'] .record-management-nested-list").first();
+  const actionModelResizer = actionModelSublist.locator("[data-record-management-nested-resizer]");
+  await expect(actionModelResizer).toBeVisible();
+  const secondaryNavWidthBefore = await actionModelSublist.locator(".record-management-nested-list-cards").evaluate((cards) => cards.getBoundingClientRect().width);
+  const resizerBox = await actionModelResizer.boundingBox();
+  if (!resizerBox) {
+    throw new Error("Expected the entity action-model secondary nav resizer to have a browser box.");
+  }
+  await page.mouse.move(resizerBox.x + resizerBox.width / 2, resizerBox.y + resizerBox.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(resizerBox.x + resizerBox.width / 2 + 96, resizerBox.y + resizerBox.height / 2);
+  await page.mouse.up();
+  await expect.poll(async () => actionModelSublist.locator(".record-management-nested-list-cards").evaluate((cards) => cards.getBoundingClientRect().width)).toBeGreaterThan(secondaryNavWidthBefore + 60);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.locator("[data-record-management-region-trigger='workflows']").click();
   await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Workflows");
@@ -462,6 +507,17 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-select='intakeWorkflowParentWorkflow']")).toBeHidden();
   await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]")).toHaveCount(1);
   await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0Name']")).toHaveValue("Home");
+  const homeStatusDetails = intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]").first().locator("[data-entity-management-workflow-status-details]");
+  await expect(homeStatusDetails).not.toHaveAttribute("open", "");
+  await homeStatusDetails.locator("summary").click();
+  await expect(homeStatusDetails).toHaveAttribute("open", "");
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0LabelKey']")).toHaveValue("entity.organization.workflow.intakeWorkflow.status.home.label");
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0LabelFallback']")).toHaveValue("Home");
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0DescriptionKey']")).toHaveValue("entity.organization.workflow.intakeWorkflow.status.home.description");
+  await expect(intakeWorkflowBuilder.locator("textarea[name='intakeWorkflowStatus0DescriptionFallback']")).toHaveValue("");
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0TabEligible']")).toBeChecked();
+  await intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0TabEligible']").uncheck();
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus0TabEligible']")).not.toBeChecked();
   await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-status='intakeWorkflowStatus0ParentStatus']")).toBeHidden();
   await intakeWorkflowBuilder.locator("input[name='intakeWorkflowIsSubworkflow']").check();
   await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-select='intakeWorkflowParentWorkflow']")).toBeVisible();
@@ -486,6 +542,12 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await intakeWorkflowBuilder.locator("[data-status-location='create'] [data-entity-management-workflow-status-add]").click();
   await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]")).toHaveCount(2);
   await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1Name']")).toHaveValue("Status 2");
+  await intakeWorkflowBuilder.locator("[data-entity-management-workflow-status-row]").nth(1).locator("[data-entity-management-workflow-status-details] summary").click();
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1LabelKey']")).toHaveValue("entity.organization.workflow.intakeWorkflow.status.status2.label");
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1LabelFallback']")).toHaveValue("Status 2");
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1DescriptionKey']")).toHaveValue("entity.organization.workflow.intakeWorkflow.status.status2.description");
+  await expect(intakeWorkflowBuilder.locator("textarea[name='intakeWorkflowStatus1DescriptionFallback']")).toHaveValue("");
+  await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1TabEligible']")).toBeChecked();
   await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1LinksTo']")).toHaveValue("all");
   await expect(intakeWorkflowBuilder.locator("input[name='intakeWorkflowStatus1ParentStatus']")).toHaveValue("status-0");
   await expect(intakeWorkflowBuilder.locator("[data-entity-management-workflow-parent-status='intakeWorkflowStatus1ParentStatus']")).toBeVisible();
@@ -611,6 +673,10 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   const workflowBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Workflow'] [data-entity-management-section-body]");
   const accessToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Access'] [data-entity-management-section-toggle]");
   const accessBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Access'] [data-entity-management-section-body]");
+  const globalSearchToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Global search'] [data-entity-management-section-toggle]");
+  const globalSearchBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Global search'] [data-entity-management-section-body]");
+  const filterBarToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Filter bar'] [data-entity-management-section-toggle]");
+  const filterBarBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Filter bar'] [data-entity-management-section-body]");
   const primaryActionsToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Primary actions'] [data-entity-management-section-toggle]");
   const primaryActionsBody = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Primary actions'] [data-entity-management-section-body]");
   const secondaryActionsToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Secondary actions'] [data-entity-management-section-toggle]");
@@ -620,12 +686,16 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(workflowToggle).toHaveAttribute("aria-expanded", "false");
   await expect(locationToggle).toHaveAttribute("aria-expanded", "false");
   await expect(accessToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(globalSearchToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(filterBarToggle).toHaveAttribute("aria-expanded", "false");
   await expect(primaryActionsToggle).toHaveAttribute("aria-expanded", "false");
   await expect(secondaryActionsToggle).toHaveAttribute("aria-expanded", "false");
   await expect(viewDisplayToggle).toHaveAttribute("aria-expanded", "false");
   await expect(workflowBody).toBeHidden();
   await expect(locationBody).toBeHidden();
   await expect(accessBody).toBeHidden();
+  await expect(globalSearchBody).toBeHidden();
+  await expect(filterBarBody).toBeHidden();
   await expect(primaryActionsBody).toBeHidden();
   await expect(secondaryActionsBody).toBeHidden();
   await expect(viewDisplayBody).toBeHidden();
@@ -659,8 +729,24 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(accessBody).toBeVisible();
   await expect(locationToggle).toHaveAttribute("aria-expanded", "false");
   await expect(locationBody).toBeHidden();
-  await primaryActionsToggle.click();
+  await globalSearchToggle.click();
   await expect(accessBody).toBeHidden();
+  await expect(globalSearchBody).toBeVisible();
+  await expect(page.locator("input[name='listViewsGlobalSearchAttributes']")).toHaveValue("email");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Global search'] [data-entity-management-view-attribute-toggle]")).toHaveCount(1);
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Global search'] [data-entity-management-view-attribute-toggle][data-attribute-key='email']")).toContainText("Priority 1");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Global search'] [data-entity-management-view-attribute-toggle][data-attribute-key='description']")).toHaveCount(0);
+  await filterBarToggle.click();
+  await expect(globalSearchBody).toBeHidden();
+  await expect(filterBarBody).toBeVisible();
+  await expect(page.locator("input[name='listViewsFilterBarItems']")).toHaveValue("email,parent:tenant");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Filter bar'] [data-entity-management-view-attribute-toggle]")).toHaveCount(2);
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Filter bar'] [data-entity-management-view-attribute-toggle][data-attribute-key='email']")).toContainText("Priority 1");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Filter bar'] [data-entity-management-view-attribute-toggle][data-attribute-key='parent:tenant']")).toContainText("Priority 2");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Filter bar'] [data-entity-management-view-attribute-toggle][data-attribute-key='description']")).toHaveCount(0);
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Filter bar'] [data-entity-management-view-attribute-toggle][data-attribute-key='parent:businessUnits']")).toHaveCount(0);
+  await primaryActionsToggle.click();
+  await expect(filterBarBody).toBeHidden();
   await expect(primaryActionsBody).toBeVisible();
   await expect(page.locator("input[name='listViewsPrimaryActions']")).toHaveValue("read,update");
   await expect(page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Primary actions'] [data-entity-management-view-action-toggle]")).toHaveCount(15);
@@ -738,7 +824,8 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(page.locator("input[name='listViewsRouteName']")).toHaveValue("organization");
   await expect(page.locator("input[name='listViewsRouteName']")).toHaveAttribute("readonly", "");
   await expect(page.locator("input[name='listViewsRoutePreview']")).toHaveValue("/root-admin/organizations/:organizationId");
-  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-summary]")).toHaveText("Root Admin, Tenant Admin");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-summary]")).toHaveText("LLM");
+  await expect(page.locator("input[name='listViewsRoles']")).toHaveValue("llm");
   await expect.poll(async () => page.locator("[data-record-management-nested-panel='list-views'] .entity-management-access-drawer-row").evaluate((row) => {
     const fields = Array.from(row.querySelectorAll("[data-entity-management-view-drawer-select]"));
     const rects = fields.map((field) => field.getBoundingClientRect());
@@ -798,12 +885,12 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(page.locator("input[name='listViewsRelationship']")).toHaveValue("tenant,organization");
   await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-form-drawer-select-selected-count]")).toHaveText("2 selected");
   await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRelationship'] [data-form-drawer-select-close]").click();
-  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-create-role]")).toContainText("Create new role");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-create-role]")).toHaveCount(0);
   await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-button]").click();
   await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-panel]")).toBeVisible();
-  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option]")).toHaveCount(4);
-  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option][data-value='organizationOwner']").click();
-  await expect(page.locator("input[name='listViewsRoles']")).toHaveValue("rootAdmin,tenantAdmin,organizationOwner");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option]")).toHaveCount(1);
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option][data-value='llm']")).toContainText("LLM");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option][data-value='organizationOwner']")).toHaveCount(0);
   await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-close]").click();
   await page.locator("[data-record-management-nested-trigger='detail-views']").click();
   await expect(page.locator("input[name='detailViewsRouteName']")).toHaveValue("organizationDetail");
@@ -814,23 +901,41 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await page.locator("[data-record-management-region-trigger='relationships']").click();
   await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Relationships");
   await expect(page.locator("[data-record-management-region-panel='relationships']")).toBeVisible();
-  await expect(page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-parents']")).toContainText("Parents");
-  await expect(page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-children']")).toContainText("Children");
-  await expect(page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-summary]")).toHaveText("Tenant, Team");
-  await expect(page.locator("input[name='entityRelationshipParents']")).toHaveValue("tenant,team");
-  await page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-button]").click();
-  await expect(page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-option]")).toHaveCount(6);
-  await page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-option][data-value='organization']").click();
-  await expect(page.locator("input[name='entityRelationshipParents']")).toHaveValue("tenant,team,organization");
-  await page.locator("[data-record-management-nested-panel='relationship-parents'] [data-entity-management-view-drawer-select='entityRelationshipParents'] [data-form-drawer-select-close]").click();
-  await page.locator("[data-record-management-nested-trigger='relationship-children']").click();
-  await expect(page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-summary]")).toHaveText("User, Deal");
-  await expect(page.locator("input[name='entityRelationshipChildren']")).toHaveValue("user,deal");
-  await page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-button]").click();
-  await expect(page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-option]")).toHaveCount(6);
-  await page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-option][data-value='task']").click();
-  await expect(page.locator("input[name='entityRelationshipChildren']")).toHaveValue("user,deal,task");
-  await page.locator("[data-record-management-nested-panel='relationship-children'] [data-entity-management-view-drawer-select='entityRelationshipChildren'] [data-form-drawer-select-close]").click();
+  await expect(page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-tenant']")).toContainText("Tenant");
+  await expect(page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-tenant']")).toContainText("parentRelation");
+  await expect(page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-businessUnits']")).toContainText("Business units");
+  await expect(page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-businessUnits']")).toContainText("childRelation");
+  await expect(page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-primaryLogo']")).toContainText("Primary logo");
+  await page.locator("[data-record-management-region-panel='relationships'] [data-record-management-nested-trigger='relationship-businessUnits']").click();
+  await expect(page.locator("[data-record-management-nested-panel='relationship-businessUnits'] [aria-label='Relationship metadata'] [data-entity-management-section-toggle]")).toHaveAttribute("aria-expanded", "false");
+  await page.locator("[data-record-management-nested-panel='relationship-businessUnits'] [aria-label='Relationship metadata'] [data-entity-management-section-toggle]").click();
+  await expect(page.locator("input[name='businessUnitsRelationshipKey']")).toHaveValue("businessUnits");
+  await expect(page.locator("input[name='businessUnitsRelationshipTargetEntityKey']")).toHaveValue("businessUnit");
+  await expect(page.locator("input[name='businessUnitsRelationshipLabelKey']")).toHaveValue("entity.organization.relationship.businessUnits.label");
+  await expect(page.locator("input[name='businessUnitsRelationshipLabelFallback']")).toHaveValue("Business units");
+  await expect(page.locator("textarea[name='businessUnitsRelationshipDescriptionFallback']")).toHaveValue("Business units that belong to this organization.");
+  await expect(page.locator("select[name='businessUnitsRelationshipCategory']")).toHaveValue("childRelation");
+  await expect(page.locator("select[name='businessUnitsRelationshipCardinality']")).toHaveValue("oneToMany");
+  await expect(page.locator("input[name='businessUnitsRelationshipRole']")).toHaveValue("businessUnits");
+  await expect(page.locator("input[name='businessUnitsRelationshipInverseRole']")).toHaveValue("organization");
+  await expect(page.locator("[data-record-management-nested-panel='relationship-businessUnits'] [data-record-management-evidence-button]").first()).toHaveAttribute("aria-label", "Open evidence for Relationship key");
+  await page.locator("[data-record-management-nested-panel='relationship-businessUnits'] [aria-label='Relationship lookup recipe'] [data-entity-management-section-toggle]").click();
+  await expect(page.locator("select[name='businessUnitsRelationshipResolution']")).toHaveValue("inverseLookup");
+  await expect(page.locator("input[name='businessUnitsRelationshipSourceAttributeKey']")).toHaveValue("none");
+  await expect(page.locator("input[name='businessUnitsRelationshipInverseAttributeKey']")).toHaveValue("organizationId");
+  await expect(page.locator("input[name='businessUnitsRelationshipJoinEntityKey']")).toHaveValue("none");
+  await page.locator("[data-record-management-nested-panel='relationship-businessUnits'] [aria-label='Relationship boundaries'] [data-entity-management-section-toggle]").click();
+  await expect(page.locator("select[name='businessUnitsRelationshipTenantBoundary']")).toHaveValue("sameTenant");
+  await expect(page.locator("select[name='businessUnitsRelationshipOrganizationBoundary']")).toHaveValue("sameOrganization");
+  await expect(page.locator("select[name='businessUnitsRelationshipBusinessUnitBoundary']")).toHaveValue("notApplicable");
+  await page.locator("[data-record-management-nested-panel='relationship-businessUnits'] [aria-label='Relationship lifecycle impact'] [data-entity-management-section-toggle]").click();
+  await expect(page.locator("select[name='businessUnitsRelationshipOnArchive']")).toHaveValue("cascadeArchive");
+  await expect(page.locator("select[name='businessUnitsRelationshipOnDelete']")).toHaveValue("restrict");
+  await expect(page.locator("select[name='businessUnitsRelationshipOnSupersede']")).toHaveValue("preserveHistorical");
+  await page.locator("[data-record-management-nested-trigger='relationship-primaryLogo']").click();
+  await page.locator("[data-record-management-nested-panel='relationship-primaryLogo'] [aria-label='Relationship lookup recipe'] [data-entity-management-section-toggle]").click();
+  await expect(page.locator("select[name='primaryLogoRelationshipResolution']")).toHaveValue("storedReference");
+  await expect(page.locator("input[name='primaryLogoRelationshipSourceAttributeKey']")).toHaveValue("primaryLogoAssetId");
   await page.locator("[data-record-management-region-trigger='attributes']").click();
   await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Attributes");
   await expect(page.locator("[data-record-management-region-panel='attributes']")).toBeVisible();
@@ -844,12 +949,16 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   const attributeDetailsBody = page.locator("[data-record-management-nested-panel='attribute-email'] [aria-label='Attribute details'] [data-entity-management-section-body]");
   const attributeStorageToggle = page.locator("[data-record-management-nested-panel='attribute-email'] [aria-label='Ownership and storage'] [data-entity-management-section-toggle]");
   const attributeStorageBody = page.locator("[data-record-management-nested-panel='attribute-email'] [aria-label='Ownership and storage'] [data-entity-management-section-body]");
+  const attributeSearchToggle = page.locator("[data-record-management-nested-panel='attribute-email'] [aria-label='Search'] [data-entity-management-section-toggle]");
+  const attributeSearchBody = page.locator("[data-record-management-nested-panel='attribute-email'] [aria-label='Search'] [data-entity-management-section-body]");
   const attributeValidationToggle = page.locator("[data-record-management-nested-panel='attribute-email'] [aria-label='Validation'] [data-entity-management-section-toggle]");
   const attributeValidationBody = page.locator("[data-record-management-nested-panel='attribute-email'] [aria-label='Validation'] [data-entity-management-section-body]");
   await expect(attributeDetailsToggle).toHaveAttribute("aria-expanded", "false");
   await expect(attributeDetailsBody).toBeHidden();
   await expect(attributeStorageToggle).toHaveAttribute("aria-expanded", "false");
   await expect(attributeStorageBody).toBeHidden();
+  await expect(attributeSearchToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(attributeSearchBody).toBeHidden();
   await expect(attributeValidationToggle).toHaveAttribute("aria-expanded", "false");
   await expect(attributeValidationBody).toBeHidden();
   await attributeDetailsToggle.click();
@@ -903,8 +1012,30 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await page.locator("[data-record-management-nested-panel='attribute-email'] select[name='emailAttributeSecurityClassification']").selectOption("internal");
   await expect(page.locator("[data-record-management-nested-panel='attribute-email'] [data-entity-management-security-level-field]")).toBeHidden();
   await expect(page.locator("[data-record-management-nested-panel='attribute-email'] select[name='emailAttributeSecurityLevel']")).not.toHaveAttribute("required", "");
-  await attributeValidationToggle.click();
+  await attributeSearchToggle.click();
   await expect(attributeDetailsBody).toBeHidden();
+  await expect(attributeSearchBody).toBeVisible();
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] input[name='emailAttributeSearchable']")).toBeChecked();
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] input[name='emailAttributeSearchOperators']")).toHaveValue("exact,prefix,contains,sort");
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] [data-entity-management-view-drawer-select='emailAttributeSearchOperators'] [data-form-drawer-select-summary]")).toHaveText("Exact, Prefix +2 more");
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] select[name='emailAttributeSearchStorageModel']")).toHaveValue("normalizedScalar");
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] select[name='emailAttributeSearchStorageModel'] option")).toHaveCount(7);
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] select[name='emailAttributeSearchIndexPosture']")).toHaveValue("required");
+  await page.locator("[data-record-management-nested-panel='attribute-email'] [data-entity-management-view-drawer-select='emailAttributeSearchOperators'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] [data-entity-management-view-drawer-select='emailAttributeSearchOperators'] [data-form-drawer-select-option]")).toHaveCount(7);
+  await page.locator("[data-record-management-nested-panel='attribute-email'] [data-entity-management-view-drawer-select='emailAttributeSearchOperators'] [data-form-drawer-select-option][data-value='fullText']").click();
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] input[name='emailAttributeSearchOperators']")).toHaveValue("exact,prefix,contains,sort,fullText");
+  await page.locator("[data-record-management-nested-panel='attribute-email'] [data-entity-management-view-drawer-select='emailAttributeSearchOperators'] [data-form-drawer-select-close]").click();
+  await page.locator("[data-record-management-nested-panel='attribute-email'] input[name='emailAttributeSearchable']").uncheck();
+  const searchConfigFields = page.locator("[data-record-management-nested-panel='attribute-email'] [data-entity-management-attribute-search-config-field]");
+  await expect(searchConfigFields).toHaveCount(3);
+  await expect(searchConfigFields.nth(0)).toBeHidden();
+  await expect(searchConfigFields.nth(1)).toBeHidden();
+  await expect(searchConfigFields.nth(2)).toBeHidden();
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] select[name='emailAttributeSearchStorageModel']")).toHaveValue("notSearchable");
+  await expect(page.locator("[data-record-management-nested-panel='attribute-email'] select[name='emailAttributeSearchIndexPosture']")).toHaveValue("notApplicable");
+  await attributeValidationToggle.click();
+  await expect(attributeSearchBody).toBeHidden();
   await expect(attributeValidationBody).toBeVisible();
   await expect(page.locator("[data-record-management-nested-panel='attribute-email'] [data-entity-management-validation-rule='maxLength']")).toBeVisible();
   const firstRule = page.locator("[data-record-management-nested-panel='attribute-email'] [data-entity-management-validation-rule='maxLength']").first();
@@ -1158,12 +1289,14 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-list]")).toBeHidden();
   await page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-family-toggle]").check();
   await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-list]")).toBeVisible();
-  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle]")).toHaveCount(95);
-  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='createPermissionRole']")).toContainText("Create permission role");
-  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='addPermissionCapability']")).toContainText("Add permission capability");
-  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='createPlacement']")).toContainText("Create placement");
-  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='selectViewListDisplayAttribute']")).toContainText("Select view list display attribute");
-  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='showViewDrawerDisplayPlacement']")).toContainText("Show view drawer display placement");
+  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle]")).toHaveCount(109);
+  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='capture_role_need']")).toContainText("Capture role need");
+  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='add_permission_capability']")).toContainText("Add permission capability");
+  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='create_placement']")).toContainText("Create placement");
+  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='edit_view_display_model']")).toContainText("Edit view display model");
+  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='show_view_drawer_placement']")).toContainText("Show view drawer placement");
+  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='create_record_create_capability']")).toContainText("Create record create capability");
+  await expect(page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-family='entityStructure'] [data-entity-management-permission-capability-toggle][data-capability-key='create_record_bulk_import_capability']")).toContainText("Create record bulk import capability");
   await page.locator("[data-record-management-nested-panel='permission-role-llm'] [data-entity-management-permission-copy]").click();
   await expect(page.locator("[data-record-management-region-panel='permissions'] [data-record-management-nested-trigger='permission-role-2']")).toContainText("LLM");
   await page.locator("[data-record-management-nested-panel='permission-role-2'] [aria-label='Role'] [data-entity-management-section-toggle]").click();
@@ -1171,10 +1304,156 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await page.locator("[data-record-management-nested-panel='permission-role-2'] [data-entity-management-view-drawer-select='permissionRole2PermissionRole'] [data-form-drawer-select-option][data-value='rootAdmin']").click();
   await expect(page.locator("[data-record-management-region-panel='permissions'] [data-record-management-nested-trigger='permission-role-2'] strong")).toHaveText("Root Admin");
   await page.locator("[data-record-management-nested-panel='permission-role-2'] [data-entity-management-view-drawer-select='permissionRole2PermissionRole'] [data-form-drawer-select-close]").click();
+  await page.locator("[data-record-management-region-trigger='views']").click();
+  await page.locator("[data-record-management-nested-trigger='list-views']").click();
+  const permissionLimitedAccessToggle = page.locator("[data-record-management-nested-panel='list-views'] [aria-label='Access'] [data-entity-management-section-toggle]");
+  if (await permissionLimitedAccessToggle.getAttribute("aria-expanded") === "false") {
+    await permissionLimitedAccessToggle.click();
+  }
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option]")).toHaveCount(2);
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option][data-value='llm']")).toContainText("LLM");
+  await expect(page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option][data-value='rootAdmin']")).toContainText("Root Admin");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-option][data-value='rootAdmin']").click();
+  await expect(page.locator("input[name='listViewsRoles']")).toHaveValue("llm,rootAdmin");
+  await page.locator("[data-record-management-nested-panel='list-views'] [data-entity-management-view-drawer-select='listViewsRoles'] [data-form-drawer-select-close]").click();
+  await page.locator("[data-record-management-region-trigger='permissions']").click();
   await page.locator("[data-record-management-region-panel='permissions'] [data-record-management-nested-add]").click();
   await expect(page.locator("[data-record-management-region-panel='permissions'] [data-record-management-nested-trigger='permission-role-3']")).toContainText("LLM");
   await page.locator("[data-record-management-nested-panel='permission-role-3'] [data-entity-management-permission-delete]").click();
   await expect(page.locator("[data-record-management-region-panel='permissions'] [data-record-management-nested-trigger='permission-role-3']")).toHaveCount(0);
+  await page.locator("[data-record-management-region-trigger='generation-model']").click();
+  await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Generation Model");
+  await expect(page.locator("[data-record-management-region-panel='generation-model']")).toBeVisible();
+  const generationModeToggle = page.locator("[data-record-management-region-panel='generation-model'] [aria-label='Generation mode'] [data-entity-management-section-toggle]");
+  const generationAllowedToggle = page.locator("[data-record-management-region-panel='generation-model'] [aria-label='Allowed outputs'] [data-entity-management-section-toggle]");
+  const generationBlockedToggle = page.locator("[data-record-management-region-panel='generation-model'] [aria-label='Blocked outputs'] [data-entity-management-section-toggle]");
+  const generationEvidenceToggle = page.locator("[data-record-management-region-panel='generation-model'] [aria-label='Evidence'] [data-entity-management-section-toggle]");
+  const generationModeBody = page.locator("[data-record-management-region-panel='generation-model'] [aria-label='Generation mode'] [data-entity-management-section-body]");
+  const generationAllowedBody = page.locator("[data-record-management-region-panel='generation-model'] [aria-label='Allowed outputs'] [data-entity-management-section-body]");
+  const generationBlockedBody = page.locator("[data-record-management-region-panel='generation-model'] [aria-label='Blocked outputs'] [data-entity-management-section-body]");
+  const generationEvidenceBody = page.locator("[data-record-management-region-panel='generation-model'] [aria-label='Evidence'] [data-entity-management-section-body]");
+  await expect(generationModeToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(generationAllowedToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(generationBlockedToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(generationEvidenceToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(generationModeBody).toBeHidden();
+  await expect.poll(async () => page.locator("[data-record-management-region-panel='generation-model'] [data-entity-management-view-section]").first().evaluate((section) => {
+    const rect = section.getBoundingClientRect();
+    return Math.round(rect.height);
+  })).toBeLessThan(90);
+  await generationModeToggle.click();
+  await expect(generationModeBody).toBeVisible();
+  await expect(page.locator("select[name='entityGenerationMode']")).toHaveValue("previewThenApply");
+  await expect(page.locator("select[name='entityGenerationMode'] option")).toHaveCount(5);
+  await expect(page.locator("input[name='entityGenerationDriftDetectionRequired']")).toBeChecked();
+  await generationAllowedToggle.click();
+  await expect(generationModeBody).toBeHidden();
+  await expect(generationAllowedBody).toBeVisible();
+  await expect(page.locator("input[name='entityGenerationAllowedOutputCategories']")).toHaveValue("docs,uiDefaults,designSystemPreview,validationConfig,searchConfig,capabilityMappingDraft,apiContractDraft,testDraft");
+  await expect(page.locator("[data-record-management-region-panel='generation-model'] [data-entity-management-view-drawer-select='entityGenerationAllowedOutputCategories'] [data-form-drawer-select-summary]")).toHaveText("Docs, UI defaults +6 more");
+  await generationBlockedToggle.click();
+  await expect(generationAllowedBody).toBeHidden();
+  await expect(generationBlockedBody).toBeVisible();
+  await expect(page.locator("input[name='entityGenerationBlockedOutputCategories']")).toHaveValue("runtimeSource,databaseMigration,authorizationLogic,permissionGrant");
+  await expect(page.locator("[data-record-management-region-panel='generation-model'] [data-entity-management-view-drawer-select='entityGenerationBlockedOutputCategories'] [data-form-drawer-select-summary]")).toHaveText("Runtime source, Database migration +2 more");
+  await generationEvidenceToggle.click();
+  await expect(generationBlockedBody).toBeHidden();
+  await expect(generationEvidenceBody).toBeVisible();
+  await expect(page.locator("textarea[name='entityGenerationEvidenceKeys']")).toHaveValue("[]");
+  await page.locator("[data-record-management-region-trigger='compliance-model']").click();
+  await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Compliance Model");
+  await expect(page.locator("[data-record-management-region-panel='compliance-model']")).toBeVisible();
+  const compliancePrivacyToggle = page.locator("[data-record-management-region-panel='compliance-model'] [aria-label='Privacy and security'] [data-entity-management-section-toggle]");
+  const complianceLifecycleToggle = page.locator("[data-record-management-region-panel='compliance-model'] [aria-label='Lifecycle and export'] [data-entity-management-section-toggle]");
+  const complianceEncryptionToggle = page.locator("[data-record-management-region-panel='compliance-model'] [aria-label='Encryption posture'] [data-entity-management-section-toggle]");
+  const complianceEvidenceToggle = page.locator("[data-record-management-region-panel='compliance-model'] [aria-label='Evidence'] [data-entity-management-section-toggle]");
+  const compliancePrivacyBody = page.locator("[data-record-management-region-panel='compliance-model'] [aria-label='Privacy and security'] [data-entity-management-section-body]");
+  const complianceLifecycleBody = page.locator("[data-record-management-region-panel='compliance-model'] [aria-label='Lifecycle and export'] [data-entity-management-section-body]");
+  const complianceEncryptionBody = page.locator("[data-record-management-region-panel='compliance-model'] [aria-label='Encryption posture'] [data-entity-management-section-body]");
+  const complianceEvidenceBody = page.locator("[data-record-management-region-panel='compliance-model'] [aria-label='Evidence'] [data-entity-management-section-body]");
+  await expect(compliancePrivacyToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(complianceLifecycleToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(complianceEncryptionToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(complianceEvidenceToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(compliancePrivacyBody).toBeHidden();
+  await expect.poll(async () => page.locator("[data-record-management-region-panel='compliance-model'] [data-entity-management-view-section]").first().evaluate((section) => {
+    const rect = section.getBoundingClientRect();
+    return Math.round(rect.height);
+  })).toBeLessThan(90);
+  await compliancePrivacyToggle.click();
+  await expect(compliancePrivacyBody).toBeVisible();
+  await expect(page.locator("select[name='entityCompliancePrivacyImpact']")).toHaveValue("containsSensitivePII");
+  await expect(page.locator("input[name='entityComplianceSensitivePrivacyCategoriesPresent']")).toHaveValue("governmentIdentifiers");
+  await expect(page.locator("[data-record-management-region-panel='compliance-model'] [data-entity-management-view-drawer-select='entityComplianceSensitivePrivacyCategoriesPresent'] [data-form-drawer-select-summary]")).toHaveText("Social Security numbers, passport numbers, driver's license numbers");
+  await expect(page.locator("select[name='entityComplianceSecurityImpact']")).toHaveValue("restricted");
+  await expect(page.locator("input[name='entityComplianceAuditRequired']")).toBeChecked();
+  await complianceLifecycleToggle.click();
+  await expect(compliancePrivacyBody).toBeHidden();
+  await expect(complianceLifecycleBody).toBeVisible();
+  await expect(page.locator("input[name='entityComplianceRetentionPolicyKey']")).toHaveValue("standardTenantRecordRetention");
+  await expect(page.locator("select[name='entityComplianceDeletePosture']")).toHaveValue("softDeleteWithPendingDeletion");
+  await expect(page.locator("input[name='entityComplianceLegalHoldSupported']")).toBeChecked();
+  await expect(page.locator("select[name='entityComplianceExportPosture']")).toHaveValue("privacyReviewedExport");
+  await expect(page.locator("select[name='entityComplianceCleanupPosture']")).toHaveValue("featureOwnedCleanup");
+  await complianceEncryptionToggle.click();
+  await expect(complianceLifecycleBody).toBeHidden();
+  await expect(complianceEncryptionBody).toBeVisible();
+  await expect(page.locator("select[name='entityComplianceEncryptionAtRest']")).toHaveValue("required");
+  await expect(page.locator("select[name='entityComplianceEncryptionInTransit']")).toHaveValue("required");
+  await expect(page.locator("select[name='entityComplianceEncryptionFieldLevel']")).toHaveValue("notRequired");
+  await expect(page.locator("input[name='entityComplianceKeyManagementPolicyKey']")).toHaveValue("platformStandardKms");
+  await expect(page.locator("textarea[name='entityComplianceEncryptionAttributeOverrides']")).toHaveValue("[]");
+  await complianceEvidenceToggle.click();
+  await expect(complianceEncryptionBody).toBeHidden();
+  await expect(complianceEvidenceBody).toBeVisible();
+  await expect(page.locator("textarea[name='entityComplianceEvidenceKeys']")).toHaveValue("[]");
+  await page.locator("[data-record-management-region-trigger='migration-model']").click();
+  await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Migration Model");
+  await expect(page.locator("[data-record-management-region-panel='migration-model']")).toBeVisible();
+  const migrationStatusToggle = page.locator("[data-record-management-region-panel='migration-model'] [aria-label='Migration status'] [data-entity-management-section-toggle]");
+  const migrationTargetToggle = page.locator("[data-record-management-region-panel='migration-model'] [aria-label='Source and target'] [data-entity-management-section-toggle]");
+  const migrationCompatibilityToggle = page.locator("[data-record-management-region-panel='migration-model'] [aria-label='Compatibility checks'] [data-entity-management-section-toggle]");
+  const migrationBlockersToggle = page.locator("[data-record-management-region-panel='migration-model'] [aria-label='Blockers and evidence'] [data-entity-management-section-toggle]");
+  const migrationStatusBody = page.locator("[data-record-management-region-panel='migration-model'] [aria-label='Migration status'] [data-entity-management-section-body]");
+  const migrationTargetBody = page.locator("[data-record-management-region-panel='migration-model'] [aria-label='Source and target'] [data-entity-management-section-body]");
+  const migrationCompatibilityBody = page.locator("[data-record-management-region-panel='migration-model'] [aria-label='Compatibility checks'] [data-entity-management-section-body]");
+  const migrationBlockersBody = page.locator("[data-record-management-region-panel='migration-model'] [aria-label='Blockers and evidence'] [data-entity-management-section-body]");
+  await expect(migrationStatusToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(migrationTargetToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(migrationCompatibilityToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(migrationBlockersToggle).toHaveAttribute("aria-expanded", "false");
+  await expect(migrationStatusBody).toBeHidden();
+  await expect.poll(async () => page.locator("[data-record-management-region-panel='migration-model'] [data-entity-management-view-section]").first().evaluate((section) => {
+    const rect = section.getBoundingClientRect();
+    return Math.round(rect.height);
+  })).toBeLessThan(90);
+  await migrationStatusToggle.click();
+  await expect(migrationStatusBody).toBeVisible();
+  await expect(page.locator("select[name='entityMigrationStatus']")).toHaveValue("notStarted");
+  await expect(page.locator("select[name='entityMigrationStatus'] option")).toHaveCount(7);
+  await expect(page.locator("select[name='entityMigrationCurrentSourcePosture']")).toHaveValue("repoArtifactsPrimary");
+  await expect(page.locator("select[name='entityMigrationTargetSourcePosture']")).toHaveValue("persistentEntityDefinitionPrimary");
+  await migrationTargetToggle.click();
+  await expect(migrationStatusBody).toBeHidden();
+  await expect(migrationTargetBody).toBeVisible();
+  await expect(page.locator("textarea[name='entityMigrationCurrentArtifactKeys']")).toHaveValue("[]");
+  await expect(page.locator("input[name='entityMigrationTargetPersistentRecordKey']")).toHaveValue("organization");
+  await migrationCompatibilityToggle.click();
+  await expect(migrationTargetBody).toBeHidden();
+  await expect(migrationCompatibilityBody).toBeVisible();
+  await expect(page.locator("input[name='entityMigrationCompatibilityChecksRequired']")).toHaveValue("apiContractParity,persistenceSchemaParity,dataDictionaryParity,permissionMappingParity");
+  await expect(page.locator("[data-record-management-region-panel='migration-model'] [data-entity-management-view-drawer-select='entityMigrationCompatibilityChecksRequired'] [data-form-drawer-select-summary]")).toHaveText("API contract parity, Persistence schema parity +2 more");
+  await page.locator("[data-record-management-region-panel='migration-model'] [data-entity-management-view-drawer-select='entityMigrationCompatibilityChecksRequired'] [data-form-drawer-select-button]").click();
+  await expect(page.locator("[data-record-management-region-panel='migration-model'] [data-entity-management-view-drawer-select='entityMigrationCompatibilityChecksRequired'] [data-form-drawer-select-option]")).toHaveCount(7);
+  await page.locator("[data-record-management-region-panel='migration-model'] [data-entity-management-view-drawer-select='entityMigrationCompatibilityChecksRequired'] [data-form-drawer-select-option][data-value='runtimeBehaviorParity']").click();
+  await expect(page.locator("input[name='entityMigrationCompatibilityChecksRequired']")).toHaveValue("apiContractParity,persistenceSchemaParity,dataDictionaryParity,permissionMappingParity,runtimeBehaviorParity");
+  await page.locator("[data-record-management-region-panel='migration-model'] [data-entity-management-view-drawer-select='entityMigrationCompatibilityChecksRequired'] [data-form-drawer-select-close]").click();
+  await migrationBlockersToggle.click();
+  await expect(migrationCompatibilityBody).toBeHidden();
+  await expect(migrationBlockersBody).toBeVisible();
+  await expect(page.locator("textarea[name='entityMigrationBlockingIssues']")).toHaveValue("[]");
+  await expect(page.locator("textarea[name='entityMigrationEvidenceKeys']")).toHaveValue("[]");
   await page.locator("[data-record-management-region-trigger='action-models-record']").click();
   await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Action Models - Record");
   await expect(page.locator("[data-record-management-region-panel='action-models-record']")).toBeVisible();
@@ -1246,56 +1525,65 @@ test("record management entity page skeleton reuses the detail drawer as the pag
   await page.locator("[data-record-management-region-trigger='action-models-entity-structure']").click();
   await expect(page.locator("[data-record-management-drawer-region-title]")).toHaveText("Action Models - Entity Structure");
   await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure']")).toBeVisible();
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger]")).toHaveCount(95);
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger]")).toHaveCount(109);
   await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-entity']")).toContainText("Create entity");
   await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-update-source-authority']")).toContainText("Update source authority");
   await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-attribute']")).toContainText("Create attribute");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-workflow']")).toContainText("Create workflow");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-view']")).toContainText("Create view");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-relationship']")).toContainText("Create relationship");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-edit-creation-flow']")).toContainText("Edit creation flow");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-collection-view']")).toContainText("Create collection view");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-relationship-definition']")).toContainText("Create relationship definition");
   await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-catalog']")).toContainText("Create catalog");
   await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-placement']")).toContainText("Create placement");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-reorder-placement-section']")).toContainText("Reorder placement section");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-select-placement-section-attribute']")).toContainText("Select placement section attribute");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-select-view-list-display-attribute']")).toContainText("Select view list display attribute");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-reorder-view-list-display-attribute']")).toContainText("Reorder view list display attribute");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-show-view-drawer-display-placement']")).toContainText("Show view drawer display placement");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-authoring-guidance']")).toContainText("Create authoring guidance");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-writing-guidance']")).toContainText("Create writing guidance");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-question-guidance']")).toContainText("Create question guidance");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-evidence-record']")).toContainText("Create evidence record");
-  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-permission-role']")).toContainText("Create permission role");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-reorder-placement']")).toContainText("Reorder placement");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-select-placement-attribute']")).toContainText("Select placement attribute");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-edit-view-display-model']")).toContainText("Edit view display model");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-show-view-drawer-placement']")).toContainText("Show view drawer placement");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-edit-authoring-guidance']")).toContainText("Edit authoring guidance");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-edit-writing-guidance']")).toContainText("Edit writing guidance");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-edit-question-guidance']")).toContainText("Edit question guidance");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-attach-entity-evidence']")).toContainText("Attach entity evidence");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-capture-role-need']")).toContainText("Capture role need");
   await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-add-permission-capability']")).toContainText("Add permission capability");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-edit-generation-model']")).toContainText("Edit generation model");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-edit-privacy-posture']")).toContainText("Edit privacy posture");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-edit-migration-model']")).toContainText("Edit migration model");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-edit-action-model']")).toContainText("Edit action model");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-record-list-capability']")).toContainText("Create record list capability");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-record-read-capability']")).toContainText("Create record read capability");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-record-create-capability']")).toContainText("Create record create capability");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-record-update-capability']")).toContainText("Create record update capability");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-record-bulk-import-capability']")).toContainText("Create record bulk import capability");
+  await expect(page.locator("[data-record-management-region-panel='action-models-entity-structure'] [data-record-management-nested-trigger='structure-action-create-record-status-transition-capability']")).toContainText("Create record status transition capability");
   const structureActionModelToggle = page.locator("[data-record-management-nested-panel='structure-action-create-entity'] [aria-label='Action model'] [data-entity-management-section-toggle]");
   const structureRequestBodyToggle = page.locator("[data-record-management-nested-panel='structure-action-create-entity'] [aria-label='Request body'] [data-entity-management-section-toggle]");
   const structureSuccessAuditToggle = page.locator("[data-record-management-nested-panel='structure-action-create-entity'] [aria-label='Success audit types'] [data-entity-management-section-toggle]");
   const structureErrorAuditToggle = page.locator("[data-record-management-nested-panel='structure-action-create-entity'] [aria-label='Error audit types and messaging'] [data-entity-management-section-toggle]");
   await structureActionModelToggle.click();
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='createEntityActionKey']")).toHaveValue("createEntity");
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='createEntityActionFamily']")).toHaveValue("entityStructure");
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='createEntityOwningLayer']")).toHaveValue("platform");
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='createEntityOwnerKey']")).toHaveValue("entityDefinition");
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='createEntityLabelKey']")).toHaveValue("entityDefinition.action.createEntity.label");
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='createEntityDescriptionKey']")).toHaveValue("entityDefinition.action.createEntity.description");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='create_entityActionKey']")).toHaveValue("create_entity");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='create_entityActionFamily']")).toHaveValue("definition_lifecycle");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='create_entityOwningLayer']")).toHaveValue("platform");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='create_entityOwnerKey']")).toHaveValue("entity_definition");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='create_entityLabelKey']")).toHaveValue("entityDefinition.action.create_entity.label");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='create_entityDescriptionKey']")).toHaveValue("entityDefinition.action.create_entity.description");
   await structureRequestBodyToggle.click();
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='createEntityApiRoute']")).toHaveValue("POST /v1/entity-definitions");
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='createEntityRequestBodyKey']")).toHaveValue("entityDefinition.action.createEntity.requestBody");
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] textarea[name='createEntityRequestBodySchemaTemplate']")).toContainText('"ownerKey"');
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='create_entityApiRoute']")).toHaveValue("POST /v1/entity-definitions");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] input[name='create_entityRequestBodyKey']")).toHaveValue("entityDefinition.action.create_entity.requestBody");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] textarea[name='create_entityRequestBodySchemaTemplate']")).toContainText('"ownerKey"');
   await structureSuccessAuditToggle.click();
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] .entity-management-action-audit-card").first()).toContainText("entityDefinition.action.createEntity.requested");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] .entity-management-action-audit-card").first()).toContainText("entityDefinition.action.create_entity.requested");
   await structureErrorAuditToggle.click();
   await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] [data-entity-management-action-error]")).toHaveCount(12);
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] [data-entity-management-action-error='conflict']")).toContainText("entityDefinition.action.createEntity.conflict");
-  await page.locator("[data-record-management-nested-trigger='structure-action-create-authoring-guidance']").click();
-  await page.locator("[data-record-management-nested-panel='structure-action-create-authoring-guidance'] [aria-label='Request body'] [data-entity-management-section-toggle]").click();
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-authoring-guidance'] input[name='createAuthoringGuidanceApiRoute']")).toHaveValue("POST /v1/entity-definitions/:entityId/fields/:fieldId/authoring-guidance");
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-authoring-guidance'] input[name='createAuthoringGuidanceRequestBodyKey']")).toHaveValue("entityDefinition.action.createAuthoringGuidance.requestBody");
-  await page.locator("[data-record-management-nested-trigger='structure-action-create-evidence-record']").click();
-  await page.locator("[data-record-management-nested-panel='structure-action-create-evidence-record'] [aria-label='Request body'] [data-entity-management-section-toggle]").click();
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-evidence-record'] input[name='createEvidenceRecordApiRoute']")).toHaveValue("POST /v1/entity-definitions/:entityId/fields/:fieldId/evidence-records");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-create-entity'] [data-entity-management-action-error='conflict']")).toContainText("entityDefinition.action.create_entity.conflict");
+  await page.locator("[data-record-management-nested-trigger='structure-action-edit-authoring-guidance']").click();
+  await page.locator("[data-record-management-nested-panel='structure-action-edit-authoring-guidance'] [aria-label='Request body'] [data-entity-management-section-toggle]").click();
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-edit-authoring-guidance'] input[name='edit_authoring_guidanceApiRoute']")).toHaveValue("PATCH /v1/entity-definitions/:entityId/fields/:fieldId/llm-guidance/authoring");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-edit-authoring-guidance'] input[name='edit_authoring_guidanceRequestBodyKey']")).toHaveValue("entityDefinition.action.edit_authoring_guidance.requestBody");
+  await page.locator("[data-record-management-nested-trigger='structure-action-attach-entity-evidence']").click();
+  await page.locator("[data-record-management-nested-panel='structure-action-attach-entity-evidence'] [aria-label='Request body'] [data-entity-management-section-toggle]").click();
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-attach-entity-evidence'] input[name='attach_entity_evidenceApiRoute']")).toHaveValue("POST /v1/entity-definitions/:entityId/evidence");
   await page.locator("[data-record-management-nested-trigger='structure-action-add-permission-capability']").click();
   await page.locator("[data-record-management-nested-panel='structure-action-add-permission-capability'] [aria-label='Request body'] [data-entity-management-section-toggle]").click();
-  await expect(page.locator("[data-record-management-nested-panel='structure-action-add-permission-capability'] input[name='addPermissionCapabilityApiRoute']")).toHaveValue("POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities");
+  await expect(page.locator("[data-record-management-nested-panel='structure-action-add-permission-capability'] input[name='add_permission_capabilityApiRoute']")).toHaveValue("POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities");
   await page.locator("[data-record-management-region-trigger='identity']").click();
   await expect(page.locator("input[name='entityName']")).toHaveValue("Organization");
   await expect(page.locator("input[name='stableEntityKey']")).toHaveValue("organization");
@@ -1582,6 +1870,9 @@ test("record management entity page uses mobile menu and swipeable sublist navig
   await expect(primarySelect.locator("[data-form-select-option][data-value='catalogs']")).toContainText("Catalogs");
   await expect(primarySelect.locator("[data-form-select-option][data-value='placements']")).toContainText("Display");
   await expect(primarySelect.locator("[data-form-select-option][data-value='permissions']")).toContainText("Permissions");
+  await expect(primarySelect.locator("[data-form-select-option][data-value='generation-model']")).toContainText("Generation Model");
+  await expect(primarySelect.locator("[data-form-select-option][data-value='compliance-model']")).toContainText("Compliance Model");
+  await expect(primarySelect.locator("[data-form-select-option][data-value='migration-model']")).toContainText("Migration Model");
   await expect(primarySelect.locator("[data-form-select-option][data-value='action-models-record']")).toContainText("Action Models - Record");
   await expect(primarySelect.locator("[data-form-select-option][data-value='action-models-entity-structure']")).toContainText("Action Models - Entity Structure");
   await expect(primarySelect.locator("[data-form-select-option][data-value='members']")).toHaveCount(0);
@@ -1620,6 +1911,27 @@ test("record management entity page uses mobile menu and swipeable sublist navig
   await expect(primarySelect.locator("[data-form-select-current-label]")).toHaveText("Permissions");
   await expect(page.locator("[data-record-management-region-panel='permissions']")).toBeVisible();
   await expect(page.locator("[data-record-management-region-panel='permissions'] [data-record-management-nested-trigger='permission-role-llm']")).toContainText("LLM");
+
+  await primarySelect.locator("[data-form-select-button]").click();
+  await expect(primarySelect.locator("[data-form-select-listbox]")).toBeVisible();
+  await primarySelect.locator("[data-form-select-option][data-value='generation-model']").click();
+  await expect(primarySelect.locator("[data-form-select-value]")).toHaveValue("generation-model");
+  await expect(primarySelect.locator("[data-form-select-current-label]")).toHaveText("Generation Model");
+  await expect(page.locator("[data-record-management-region-panel='generation-model']")).toBeVisible();
+
+  await primarySelect.locator("[data-form-select-button]").click();
+  await expect(primarySelect.locator("[data-form-select-listbox]")).toBeVisible();
+  await primarySelect.locator("[data-form-select-option][data-value='compliance-model']").click();
+  await expect(primarySelect.locator("[data-form-select-value]")).toHaveValue("compliance-model");
+  await expect(primarySelect.locator("[data-form-select-current-label]")).toHaveText("Compliance Model");
+  await expect(page.locator("[data-record-management-region-panel='compliance-model']")).toBeVisible();
+
+  await primarySelect.locator("[data-form-select-button]").click();
+  await expect(primarySelect.locator("[data-form-select-listbox]")).toBeVisible();
+  await primarySelect.locator("[data-form-select-option][data-value='migration-model']").click();
+  await expect(primarySelect.locator("[data-form-select-value]")).toHaveValue("migration-model");
+  await expect(primarySelect.locator("[data-form-select-current-label]")).toHaveText("Migration Model");
+  await expect(page.locator("[data-record-management-region-panel='migration-model']")).toBeVisible();
 
   await primarySelect.locator("[data-form-select-button]").click();
   await expect(primarySelect.locator("[data-form-select-listbox]")).toBeVisible();

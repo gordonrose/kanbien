@@ -1,0 +1,376 @@
+{
+  "summaryKey": "governed_entity_management_entity_page_evidence_registry_summary",
+  "generatedAt": "2026-05-20",
+  "sourceRegistryPath": "docs/workspace/product-discovery/2026-05-20-governed-entity-management-organization-demo-evidence-registry.json",
+  "registryStatus": "draft_transitional_first_pass_with_review_routing",
+  "totalRows": 9126,
+  "visibleRows": 11,
+  "hiddenRows": 9115,
+  "byRegion": {
+    "page_shell": 3,
+    "identity": 30,
+    "workflows": 45,
+    "views": 84,
+    "relationships": 69,
+    "attributes": 234,
+    "catalogs": 44,
+    "placements": 25,
+    "permissions": 4,
+    "generation-model": 7,
+    "compliance-model": 16,
+    "migration-model": 9,
+    "action-models-record": 1035,
+    "action-models-entity-structure": 7521
+  },
+  "visibleByRegion": {
+    "page_shell": 1,
+    "identity": 10
+  },
+  "hiddenByRegion": {
+    "page_shell": 2,
+    "identity": 20,
+    "workflows": 45,
+    "views": 84,
+    "relationships": 69,
+    "attributes": 234,
+    "catalogs": 44,
+    "placements": 25,
+    "permissions": 4,
+    "generation-model": 7,
+    "compliance-model": 16,
+    "migration-model": 9,
+    "action-models-record": 1035,
+    "action-models-entity-structure": 7521
+  },
+  "byReviewLane": {
+    "page_shell": 3,
+    "source_authority": 30,
+    "workflow": 45,
+    "view_display": 109,
+    "relationship": 69,
+    "attribute_definition": 234,
+    "catalog": 44,
+    "permissions": 4,
+    "generation": 7,
+    "compliance": 16,
+    "migration": 9,
+    "action_model": 8556
+  },
+  "byControlType": {
+    "search": 55,
+    "textarea": 3884,
+    "hidden": 81,
+    "text": 4883,
+    "radio": 83,
+    "select": 120,
+    "checkbox": 20
+  },
+  "byEvidencePosture": {
+    "system_generated_placeholder": 8763,
+    "reference_backed_placeholder": 363
+  },
+  "byPromotionReadiness": {
+    "placeholder_only": 8763,
+    "reference_backed_placeholder": 363
+  },
+  "topDecisionGroups": [
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_list.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_read.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_create.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_update.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_archive.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_restore.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_delete.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_export.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_bulk_import.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_bulk_update.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_link_parent.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_unlink_parent.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_link_child.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_unlink_child.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_record.record_action_operational_status_transition.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_create_entity.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_read_entity.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_update_entity_identity.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_archive_entity.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_restore_entity.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_delete_entity.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_read_source_authority.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_update_source_authority.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_promote_source_authority_to_primary_truth.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_review_source_authority.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_read_workflow_model.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_creation_flow.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_review_flow.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_definition_lifecycle_flow.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_record_lifecycle_flow.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_validate_workflow_model.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_create_collection_view.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_collection_view.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_set_default_collection_view.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_view_role_eligibility.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_view_status_membership.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_view_display_model.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_validate_collection_view.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_create_relationship_definition.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_relationship_definition.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_remove_relationship_definition.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_validate_relationship_definition.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_create_attribute.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_attribute_metadata.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_attribute_validation.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_attribute_search_posture.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_attribute_privacy_security.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_remove_attribute.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_create_catalog.text",
+      "count": 38
+    },
+    {
+      "decisionGroupKey": "action_model.action_models_entity_structure.structure_action_edit_catalog.text",
+      "count": 38
+    }
+  ],
+  "reviewGuidance": [
+    "Use this summary as the working queue; keep the registry as the complete decision-slot inventory.",
+    "Prioritize source_authority, attribute_definition, relationship, workflow, view_display, permissions, compliance, migration, then high-volume action_model groups.",
+    "Rows with evidencePosture reference_backed_placeholder have linked source/reference/chat evidence but still need human approval before becoming persistent entity-builder truth."
+  ],
+  "decisionTimingEvidenceSources": [
+    {
+      "evidenceKey": "entity_management_views_region_commit_1eb0f46",
+      "sourceType": "sourceCode",
+      "sourceLocationType": "git_commit",
+      "commitSha": "1eb0f4615311d89ddc15495806df8724697af10a",
+      "branchName": "task/entity-management-views-region",
+      "committedAt": "2026-05-19T14:01:23+01:00",
+      "commitSubject": "Build entity workflow and view template skeletons",
+      "repoPaths": [
+        "src/frontend/designSystem/assets/chatWorkspaceRowDrawer.mjs",
+        "src/frontend/designSystem/assets/chatWorkspacePattern.css",
+        "src/frontend/designSystem/assets/app.mjs",
+        "tests/visual/designSystem/templates/recordManagementListCentric.spec.ts"
+      ],
+      "proofStatement": "Introduced the entity-management workflow and view skeleton constants, view option catalogs, and related drawer interactions used by the current entity_management_page Views and Workflows regions."
+    },
+    {
+      "evidenceKey": "add_views_codex_chat_record_2026_05_19",
+      "sourceType": "conversationRecord",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/workspace/chat-records/2026-05-19-entity-management-add-views-section.md",
+      "proofStatement": "Records the Add Views conversation scope and explains the design-system direction decisions that paired with commit 1eb0f46 to support workflow and view-display registry rows.",
+      "scope": "Add Views section conversation scope, view/workflow direction decisions, approval posture, registry support, and unresolved follow-ups."
+    },
+    {
+      "evidenceKey": "governed_entity_definition_attribute_reference_2026_05_17",
+      "sourceType": "referenceArtifact",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/workspace/product-discovery/2026-05-17-governed-entity-definition-attribute-reference.md",
+      "proofStatement": "May 17 attribute reference defines field-complete entity-definition structure expectations that support treating workflow and view-display rows as reference-backed placeholders until persistent truth is approved."
+    },
+    {
+      "evidenceKey": "attributes_region_codex_chat_record_2026_05_19",
+      "sourceType": "conversationRecord",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/workspace/chat-records/2026-05-19-entity-management-attributes-region.md",
+      "proofStatement": "Records the Attributes region conversation scope, design-system direction decisions, approval posture, registry support, and unresolved follow-ups for the initial entity-management page skeleton.",
+      "scope": "Attributes region conversation scope, design-system direction approval, reference-backed placeholder posture, and persistent-truth approval boundary."
+    },
+    {
+      "evidenceKey": "entity_management_attributes_region_commit_35c89e2",
+      "sourceType": "sourceCode",
+      "sourceLocationType": "git_commit",
+      "commitSha": "35c89e25ead22c5fe3fe620e44a8449e7b0bf5f9",
+      "branchName": "task/entity-management-attributes-region",
+      "committedAt": "2026-05-19T19:29:24+01:00",
+      "commitSubject": "Extend entity management design-system template",
+      "repoPaths": [
+        "src/frontend/designSystem/assets/chatWorkspaceRowDrawer.mjs",
+        "src/frontend/designSystem/assets/chatWorkspacePattern.css",
+        "tests/visual/designSystem/templates/recordManagementListCentric.spec.ts"
+      ],
+      "proofStatement": "Introduced the richer Attributes region source data, attribute-definition panels, validation controls, search posture, privacy/security posture, catalogs, and rendered attribute-definition controls used by the current organization demo registry."
+    },
+    {
+      "evidenceKey": "entity_management_page_skeleton_commit_4bf8fd9",
+      "sourceType": "sourceCode",
+      "sourceLocationType": "git_commit",
+      "commitSha": "4bf8fd91c22936fd532d377b8edd2284b49c6c1b",
+      "branchName": "docs/governed-entity-definition-v1",
+      "committedAt": "2026-05-19T10:23:29+01:00",
+      "commitSubject": "Add entity management design-system page",
+      "repoPaths": [
+        "src/frontend/designSystem/templates/entity_management_page/index.html",
+        "src/frontend/designSystem/assets/chatWorkspaceRowDrawer.mjs",
+        "docs/workspace/product-discovery/2026-05-17-governed-entity-definition-attribute-reference.md"
+      ],
+      "proofStatement": "Created the initial entity_management_page design-system page and planning context later extended by the Attributes region work."
+    }
+  ],
+  "decisionTimingCoverage": {
+    "viewsAndWorkflowsRowsTagged": 129,
+    "attributeDefinitionRowsTagged": 234,
+    "taggedRowsByLane": {
+      "workflow_and_view_display": 129,
+      "attribute_definition": 234
+    },
+    "posture": "chat_and_commit_timed",
+    "nextEvidenceNeeded": "Human review is still needed before promoting reference-backed placeholder rows into persistent entity-builder truth.",
+    "chatRecordPaths": [
+      "docs/workspace/chat-records/2026-05-19-entity-management-add-views-section.md",
+      "docs/workspace/chat-records/2026-05-19-entity-management-attributes-region.md"
+    ],
+    "attributeChatRecordPath": "docs/workspace/chat-records/2026-05-19-entity-management-attributes-region.md",
+    "viewsAndWorkflowsChatRecordPath": "docs/workspace/chat-records/2026-05-19-entity-management-add-views-section.md",
+    "referenceArtifactPath": "docs/workspace/product-discovery/2026-05-17-governed-entity-definition-attribute-reference.md",
+    "evidencePosture": "reference_backed_placeholder",
+    "approvalPosture": "not_human_approved_for_persistent_truth",
+    "attributesRowsTagged": 234,
+    "attributesCommitKey": "entity_management_attributes_region_commit_35c89e2",
+    "attributesPrecursorCommitKey": "entity_management_page_skeleton_commit_4bf8fd9"
+  }
+}

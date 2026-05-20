@@ -6,6 +6,11 @@ import {
 } from "./formControls.mjs";
 
 const recordManagementDrawerSelections = new WeakMap();
+const recordManagementNestedListResize = Object.freeze({
+  max: 416,
+  min: 176,
+  step: 16,
+});
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -679,50 +684,116 @@ const entityManagementRecordActionRoutes = Object.freeze({
   operationalStatusTransition: "POST /v1/organizations/:organizationId/operational-status-transition",
 });
 
-function createEntityManagementCrudCapabilities({ domainKey, label, routeBase }) {
-  const routeParam = `${domainKey}Id`;
-  const normalizedLabel = label.toLowerCase();
-  return [
-    { key: `create${domainKey}`, label: `Create ${label}`, description: `Create a ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "medium", apiRoute: `POST ${routeBase}` },
-    { key: `read${domainKey}`, label: `Read ${label}`, description: `Read a ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "low", apiRoute: `GET ${routeBase}/:${routeParam}` },
-    { key: `update${domainKey}`, label: `Update ${label}`, description: `Update a ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "medium", apiRoute: `PATCH ${routeBase}/:${routeParam}` },
-    { key: `archive${domainKey}`, label: `Archive ${label}`, description: `Archive a ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "medium", apiRoute: `POST ${routeBase}/:${routeParam}/archive` },
-    { key: `restore${domainKey}`, label: `Restore ${label}`, description: `Restore an archived ${normalizedLabel} definition record.`, executionMode: "sync", compatibilityRisk: "medium", apiRoute: `POST ${routeBase}/:${routeParam}/restore` },
-    { key: `delete${domainKey}`, label: `Delete ${label}`, description: `Delete a ${normalizedLabel} definition record through the approved deletion path.`, executionMode: "sync", compatibilityRisk: "high", apiRoute: `DELETE ${routeBase}/:${routeParam}` },
-  ];
-}
-
 const entityManagementStructureActionCapabilities = Object.freeze([
-  ...createEntityManagementCrudCapabilities({ domainKey: "Entity", label: "entity", routeBase: "/v1/entity-definitions" }),
-  { key: "readSourceAuthority", label: "Read source authority", description: "Read source authority posture for an entity definition.", executionMode: "sync", compatibilityRisk: "low", apiRoute: "GET /v1/entity-definitions/:entityId/source-authority" },
-  { key: "updateSourceAuthority", label: "Update source authority", description: "Update current or target source authority posture for an entity definition.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "PATCH /v1/entity-definitions/:entityId/source-authority" },
-  { key: "promoteSourceAuthority", label: "Promote source authority", description: "Promote source authority after approved migration or runtime reconciliation.", executionMode: "sync", compatibilityRisk: "high", apiRoute: "POST /v1/entity-definitions/:entityId/source-authority/promote" },
-  { key: "reviewSourceAuthority", label: "Review source authority", description: "Record a review decision for source authority posture.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/source-authority/reviews" },
-  ...createEntityManagementCrudCapabilities({ domainKey: "Attribute", label: "attribute", routeBase: "/v1/entity-definitions/:entityId/attributes" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "Workflow", label: "workflow", routeBase: "/v1/entity-definitions/:entityId/workflows" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "View", label: "view", routeBase: "/v1/entity-definitions/:entityId/views" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "Placement", label: "placement", routeBase: "/v1/entity-definitions/:entityId/placements" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "PlacementSection", label: "placement section", routeBase: "/v1/entity-definitions/:entityId/placements/:placementId/sections" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "Relationship", label: "relationship", routeBase: "/v1/entity-definitions/:entityId/relationships" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "Catalog", label: "catalog", routeBase: "/v1/entity-definitions/:entityId/catalogs" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "AuthoringGuidance", label: "authoring guidance", routeBase: "/v1/entity-definitions/:entityId/fields/:fieldId/authoring-guidance" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "WritingGuidance", label: "writing guidance", routeBase: "/v1/entity-definitions/:entityId/fields/:fieldId/writing-guidance" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "QuestionGuidance", label: "question guidance", routeBase: "/v1/entity-definitions/:entityId/fields/:fieldId/question-guidance" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "EvidenceRecord", label: "evidence record", routeBase: "/v1/entity-definitions/:entityId/fields/:fieldId/evidence-records" }),
-  ...createEntityManagementCrudCapabilities({ domainKey: "PermissionRole", label: "permission role", routeBase: "/v1/entity-definitions/:entityId/permissions/roles" }),
-  { key: "reorderPlacementSection", label: "Reorder placement section", description: "Move a placement section within its placement region.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/placements/:placementId/sections/reorder" },
-  { key: "selectPlacementSectionAttribute", label: "Select placement section attribute", description: "Add one attribute to a placement section display set.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/placements/:placementId/sections/:sectionId/attributes" },
-  { key: "deselectPlacementSectionAttribute", label: "Deselect placement section attribute", description: "Remove one attribute from a placement section display set.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "DELETE /v1/entity-definitions/:entityId/placements/:placementId/sections/:sectionId/attributes/:attributeKey" },
-  { key: "reorderPlacementSectionAttribute", label: "Reorder placement section attribute", description: "Move an attribute within a placement section display order.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/placements/:placementId/sections/:sectionId/attributes/reorder" },
-  { key: "selectViewListDisplayAttribute", label: "Select view list display attribute", description: "Add one attribute to a view's list-display set.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/list/attributes" },
-  { key: "deselectViewListDisplayAttribute", label: "Deselect view list display attribute", description: "Remove one attribute from a view's list-display set.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "DELETE /v1/entity-definitions/:entityId/views/:viewId/display/list/attributes/:attributeKey" },
-  { key: "reorderViewListDisplayAttribute", label: "Reorder view list display attribute", description: "Move an attribute within a view's list-display priority order.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/list/attributes/reorder" },
-  { key: "showViewDrawerDisplayPlacement", label: "Show view drawer display placement", description: "Make a placement visible in a view's drawer display.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/drawer/placements/:placementId/show" },
-  { key: "hideViewDrawerDisplayPlacement", label: "Hide view drawer display placement", description: "Hide a placement from a view's drawer display.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/drawer/placements/:placementId/hide" },
-  { key: "addPermissionCapability", label: "Add permission capability", description: "Add one capability to a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities" },
-  { key: "removePermissionCapability", label: "Remove permission capability", description: "Remove one capability from a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "DELETE /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities/:capabilityKey" },
-  { key: "selectAllPermissionCapabilities", label: "Select all permission capabilities", description: "Grant every capability in a family to a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities/select-all" },
-  { key: "deselectAllPermissionCapabilities", label: "Deselect all permission capabilities", description: "Remove every capability in a family from a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities/deselect-all" },
+  { key: "create_entity", label: "Create entity", description: "Create a new draft entity definition lineage.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "definition_lifecycle", apiRoute: "POST /v1/entity-definitions" },
+  { key: "read_entity", label: "Read entity", description: "Read an entity definition and its visible structure sections.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "definition_lifecycle", apiRoute: "GET /v1/entity-definitions/:entityId" },
+  { key: "update_entity_identity", label: "Update entity identity", description: "Update labels, ownership, family, scope, and identity metadata.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "entity_identity", apiRoute: "PATCH /v1/entity-definitions/:entityId/identity" },
+  { key: "archive_entity", label: "Archive entity", description: "Archive a retained entity definition lineage when allowed.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "definition_lifecycle", apiRoute: "POST /v1/entity-definitions/:entityId/archive" },
+  { key: "restore_entity", label: "Restore entity", description: "Restore an archived entity definition lineage when explicitly allowed.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "definition_lifecycle", apiRoute: "POST /v1/entity-definitions/:entityId/restore" },
+  { key: "delete_entity", label: "Delete entity", description: "Delete a draft or unused entity definition through the approved deletion path.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "definition_lifecycle", apiRoute: "DELETE /v1/entity-definitions/:entityId" },
+  { key: "read_source_authority", label: "Read source authority", description: "Read source authority posture for an entity definition.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "source_authority", apiRoute: "GET /v1/entity-definitions/:entityId/source-authority" },
+  { key: "update_source_authority", label: "Update source authority", description: "Update current or target source authority posture for an entity definition.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "source_authority", apiRoute: "PATCH /v1/entity-definitions/:entityId/source-authority" },
+  { key: "promote_source_authority_to_primary_truth", label: "Promote source authority to primary truth", description: "Promote source authority after approved migration and compatibility evidence.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "source_authority", apiRoute: "POST /v1/entity-definitions/:entityId/source-authority/promote" },
+  { key: "review_source_authority", label: "Review source authority", description: "Record a review decision for source authority posture.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "source_authority", apiRoute: "POST /v1/entity-definitions/:entityId/source-authority/reviews" },
+  { key: "read_workflow_model", label: "Read workflow model", description: "Read definition workflow and lifecycle configuration.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "definition_workflow_model", apiRoute: "GET /v1/entity-definitions/:entityId/workflow-model" },
+  { key: "edit_creation_flow", label: "Edit creation flow", description: "Edit how draft entities or managed records are created.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "definition_workflow_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/workflow-model/creation-flow" },
+  { key: "edit_review_flow", label: "Edit review flow", description: "Edit review-request, approval, and request-changes behavior.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "definition_workflow_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/workflow-model/review-flow" },
+  { key: "edit_definition_lifecycle_flow", label: "Edit definition lifecycle flow", description: "Edit definition lifecycle transitions and review gates.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "definition_workflow_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/workflow-model/definition-lifecycle" },
+  { key: "edit_record_lifecycle_flow", label: "Edit record lifecycle flow", description: "Edit managed-record archive, restore, delete, and cleanup posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "definition_workflow_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/workflow-model/record-lifecycle" },
+  { key: "validate_workflow_model", label: "Validate workflow model", description: "Validate lifecycle, status, workflow, and cleanup consistency.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "definition_workflow_model", apiRoute: "POST /v1/entity-definitions/:entityId/workflow-model/validate" },
+  { key: "create_collection_view", label: "Create collection view", description: "Add a governed collection view for a managed entity.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "collection_view", apiRoute: "POST /v1/entity-definitions/:entityId/views" },
+  { key: "edit_collection_view", label: "Edit collection view", description: "Edit collection-view labels, descriptions, ordering, and base metadata.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "collection_view", apiRoute: "PATCH /v1/entity-definitions/:entityId/views/:viewId" },
+  { key: "set_default_collection_view", label: "Set default collection view", description: "Change the default view with compatibility checks.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "collection_view", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/set-default" },
+  { key: "edit_view_role_eligibility", label: "Edit view role eligibility", description: "Change which actors or contexts may use a collection view.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "collection_view", apiRoute: "PATCH /v1/entity-definitions/:entityId/views/:viewId/role-eligibility" },
+  { key: "edit_view_status_membership", label: "Edit view status membership", description: "Change which statuses and sub-statuses belong to a view.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "collection_view", apiRoute: "PATCH /v1/entity-definitions/:entityId/views/:viewId/status-membership" },
+  { key: "edit_view_display_model", label: "Edit view display model", description: "Change list and drawer display posture for a collection view.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "view_display_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/views/:viewId/display-model" },
+  { key: "validate_collection_view", label: "Validate collection view", description: "Validate role, status, default, display, and template-region consistency.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "collection_view", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/validate" },
+  { key: "create_relationship_definition", label: "Create relationship definition", description: "Add a relationship definition with boundary and lifecycle posture.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "relationship_definition", apiRoute: "POST /v1/entity-definitions/:entityId/relationships" },
+  { key: "edit_relationship_definition", label: "Edit relationship definition", description: "Edit relationship metadata, boundary, navigation, and lifecycle impact.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "relationship_definition", apiRoute: "PATCH /v1/entity-definitions/:entityId/relationships/:relationshipId" },
+  { key: "remove_relationship_definition", label: "Remove relationship definition", description: "Remove a relationship definition only when compatibility checks pass.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "relationship_definition", apiRoute: "DELETE /v1/entity-definitions/:entityId/relationships/:relationshipId" },
+  { key: "validate_relationship_definition", label: "Validate relationship definition", description: "Validate boundary, cardinality, lifecycle, and target entity rules.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "relationship_definition", apiRoute: "POST /v1/entity-definitions/:entityId/relationships/:relationshipId/validate" },
+  { key: "create_attribute", label: "Create attribute", description: "Add a field-complete attribute to a draft entity definition.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "attribute_definition", apiRoute: "POST /v1/entity-definitions/:entityId/attributes" },
+  { key: "edit_attribute_metadata", label: "Edit attribute metadata", description: "Edit labels, type, cardinality, mutability, and requiredness.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "attribute_definition", apiRoute: "PATCH /v1/entity-definitions/:entityId/attributes/:attributeKey/metadata" },
+  { key: "edit_attribute_validation", label: "Edit attribute validation", description: "Add, edit, or remove validation rules for an attribute.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "attribute_definition", apiRoute: "PATCH /v1/entity-definitions/:entityId/attributes/:attributeKey/validation" },
+  { key: "edit_attribute_search_posture", label: "Edit attribute search posture", description: "Change search operators, storage model, and index posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "attribute_definition", apiRoute: "PATCH /v1/entity-definitions/:entityId/attributes/:attributeKey/search" },
+  { key: "edit_attribute_privacy_security", label: "Edit attribute privacy and security", description: "Change privacy and security classifications for an attribute.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "attribute_definition", apiRoute: "PATCH /v1/entity-definitions/:entityId/attributes/:attributeKey/privacy-security" },
+  { key: "remove_attribute", label: "Remove attribute", description: "Remove an attribute only when compatibility and migration checks pass.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "attribute_definition", apiRoute: "DELETE /v1/entity-definitions/:entityId/attributes/:attributeKey" },
+  { key: "create_catalog", label: "Create catalog", description: "Add a reusable value catalog for constrained values.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "catalog_definition", apiRoute: "POST /v1/entity-definitions/:entityId/catalogs" },
+  { key: "edit_catalog", label: "Edit catalog", description: "Edit catalog metadata and source posture.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "catalog_definition", apiRoute: "PATCH /v1/entity-definitions/:entityId/catalogs/:catalogId" },
+  { key: "add_catalog_value", label: "Add catalog value", description: "Add an allowed value to a value catalog.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "catalog_value", apiRoute: "POST /v1/entity-definitions/:entityId/catalogs/:catalogId/values" },
+  { key: "edit_catalog_value", label: "Edit catalog value", description: "Edit a catalog value label, display order, badge tone, or description.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "catalog_value", apiRoute: "PATCH /v1/entity-definitions/:entityId/catalogs/:catalogId/values/:valueKey" },
+  { key: "remove_catalog_value", label: "Remove catalog value", description: "Remove a catalog value only when compatibility rules allow.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "catalog_value", apiRoute: "DELETE /v1/entity-definitions/:entityId/catalogs/:catalogId/values/:valueKey" },
+  { key: "reorder_catalog_value", label: "Reorder catalog value", description: "Change the order of values within a catalog.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "catalog_value", apiRoute: "POST /v1/entity-definitions/:entityId/catalogs/:catalogId/values/reorder" },
+  { key: "edit_attribute_option_source", label: "Edit attribute option source", description: "Attach an attribute to inline, catalog, or relationship-backed options.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "catalog_definition", apiRoute: "PATCH /v1/entity-definitions/:entityId/attributes/:attributeKey/option-source" },
+  { key: "create_placement", label: "Create placement", description: "Add an attribute or relationship placement to an approved surface.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "display_model", apiRoute: "POST /v1/entity-definitions/:entityId/placements" },
+  { key: "edit_placement", label: "Edit placement", description: "Change placement metadata, visibility, or interaction posture.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "display_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/placements/:placementId" },
+  { key: "remove_placement", label: "Remove placement", description: "Remove a placement without deleting the underlying attribute or relationship.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "display_model", apiRoute: "DELETE /v1/entity-definitions/:entityId/placements/:placementId" },
+  { key: "reorder_placement", label: "Reorder placement", description: "Move a placement within an approved region, sub-region, and group.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "display_model", apiRoute: "POST /v1/entity-definitions/:entityId/placements/reorder" },
+  { key: "select_placement_attribute", label: "Select placement attribute", description: "Add one attribute to a display section.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "placement_attribute", apiRoute: "POST /v1/entity-definitions/:entityId/placements/:placementId/sections/:sectionId/attributes" },
+  { key: "deselect_placement_attribute", label: "Deselect placement attribute", description: "Remove one attribute from a display section.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "placement_attribute", apiRoute: "DELETE /v1/entity-definitions/:entityId/placements/:placementId/sections/:sectionId/attributes/:attributeKey" },
+  { key: "reorder_placement_attribute", label: "Reorder placement attribute", description: "Reorder attributes within a display section.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "placement_attribute", apiRoute: "POST /v1/entity-definitions/:entityId/placements/:placementId/sections/:sectionId/attributes/reorder" },
+  { key: "show_view_drawer_placement", label: "Show view drawer placement", description: "Make a placement visible in a view drawer.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "view_display_model", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/drawer/placements/:placementId/show" },
+  { key: "hide_view_drawer_placement", label: "Hide view drawer placement", description: "Hide a placement from a view drawer.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "view_display_model", apiRoute: "POST /v1/entity-definitions/:entityId/views/:viewId/display/drawer/placements/:placementId/hide" },
+  { key: "validate_display_model", label: "Validate display model", description: "Validate template region, sub-region, element, and placement compatibility.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "display_model", apiRoute: "POST /v1/entity-definitions/:entityId/display-model/validate" },
+  { key: "read_generation_model", label: "Read generation model", description: "Read what this entity definition is allowed to generate or drive.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "generation_model", apiRoute: "GET /v1/entity-definitions/:entityId/generation-model" },
+  { key: "edit_generation_model", label: "Edit generation model", description: "Edit allowed outputs, blocked outputs, and drift-detection posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "generation_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/generation-model" },
+  { key: "preview_generated_page", label: "Preview generated page", description: "Preview generated entity-management page defaults without applying app changes.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "generation_model", apiRoute: "POST /v1/entity-definitions/:entityId/generation/page-preview" },
+  { key: "generate_api_contract_draft", label: "Generate API contract draft", description: "Generate a draft API contract from action and capability metadata.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "generation_model", apiRoute: "POST /v1/entity-definitions/:entityId/generation/api-contract-draft" },
+  { key: "generate_capability_mapping_draft", label: "Generate capability mapping draft", description: "Generate draft capability and permission mappings from the action model.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "generation_model", apiRoute: "POST /v1/entity-definitions/:entityId/generation/capability-mapping-draft" },
+  { key: "generate_test_draft", label: "Generate test draft", description: "Generate draft test coverage from schema, actions, and compatibility posture.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "generation_model", apiRoute: "POST /v1/entity-definitions/:entityId/generation/test-draft" },
+  { key: "generate_docs_draft", label: "Generate docs draft", description: "Generate source-independent documentation drafts from canonical definition truth.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "generation_model", apiRoute: "POST /v1/entity-definitions/:entityId/generation/docs-draft" },
+  { key: "read_compliance_model", label: "Read compliance model", description: "Read entity-level privacy, security, audit, retention, export, and cleanup posture.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "compliance_model", apiRoute: "GET /v1/entity-definitions/:entityId/compliance-model" },
+  { key: "edit_privacy_posture", label: "Edit privacy posture", description: "Edit privacy impact and sensitive privacy category summary.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "compliance_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/compliance-model/privacy" },
+  { key: "edit_security_posture", label: "Edit security posture", description: "Edit entity-level security impact and encryption posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "compliance_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/compliance-model/security" },
+  { key: "edit_audit_posture", label: "Edit audit posture", description: "Edit whether entity-level operations require durable audit events.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "compliance_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/compliance-model/audit" },
+  { key: "edit_retention_cleanup_posture", label: "Edit retention and cleanup posture", description: "Edit retention policy, legal hold, cleanup ownership, and delete posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "compliance_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/compliance-model/retention-cleanup" },
+  { key: "edit_export_posture", label: "Edit export posture", description: "Edit whether and how entity data can be exported.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "compliance_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/compliance-model/export" },
+  { key: "validate_compliance_model", label: "Validate compliance model", description: "Validate compliance posture against attributes, assets, retention, and evidence.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "compliance_model", apiRoute: "POST /v1/entity-definitions/:entityId/compliance-model/validate" },
+  { key: "read_migration_model", label: "Read migration model", description: "Read migration adoption posture from repo/source artifacts into persistent truth.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "migration_model", apiRoute: "GET /v1/entity-definitions/:entityId/migration-model" },
+  { key: "edit_migration_model", label: "Edit migration model", description: "Edit migration status, source posture, target record, and evidence keys.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "migration_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/migration-model" },
+  { key: "record_migration_blocker", label: "Record migration blocker", description: "Record a blocker that prevents migration or source-authority promotion.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "migration_model", apiRoute: "POST /v1/entity-definitions/:entityId/migration-model/blockers" },
+  { key: "resolve_migration_blocker", label: "Resolve migration blocker", description: "Mark a migration blocker as resolved with evidence.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "migration_model", apiRoute: "POST /v1/entity-definitions/:entityId/migration-model/blockers/:blockerId/resolve" },
+  { key: "record_compatibility_check", label: "Record compatibility check", description: "Record API, persistence, docs, permission, or runtime parity evidence.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "migration_model", apiRoute: "POST /v1/entity-definitions/:entityId/migration-model/compatibility-checks" },
+  { key: "validate_migration_readiness", label: "Validate migration readiness", description: "Validate whether migration and source-authority promotion can proceed.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "migration_model", apiRoute: "POST /v1/entity-definitions/:entityId/migration-model/validate-readiness" },
+  { key: "read_action_model", label: "Read action model", description: "Read entity action metadata and capability mappings.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "action_model", apiRoute: "GET /v1/entity-definitions/:entityId/action-model" },
+  { key: "edit_action_model", label: "Edit action model", description: "Edit action metadata, surface placement, and capability mappings.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "action_model", apiRoute: "PATCH /v1/entity-definitions/:entityId/action-model" },
+  { key: "validate_action_model", label: "Validate action model", description: "Validate action, route, capability, authz, audit, and evidence coverage.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "action_model", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/validate" },
+  { key: "generate_action_model_from_sections", label: "Generate action model from sections", description: "Draft action model entries from entity sections without granting runtime authority.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "action_model", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/generate-from-sections" },
+  { key: "create_record_list_capability", label: "Create record list capability", description: "Create the runtime list capability from entity view, filter, sort, pagination, authz, and audit posture.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/list" },
+  { key: "create_record_read_capability", label: "Create record read capability", description: "Create the runtime read capability from drawer projection, field visibility, authz, evidence, and audit posture.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/read" },
+  { key: "create_record_create_capability", label: "Create record create capability", description: "Create the runtime create capability from required fields, source authority, workflow, validation, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/create" },
+  { key: "create_record_update_capability", label: "Create record update capability", description: "Create the runtime update capability from mutable fields, validation, source authority, authz, evidence, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/update" },
+  { key: "create_record_archive_capability", label: "Create record archive capability", description: "Create the runtime archive capability from record lifecycle, retention, cleanup, authz, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/archive" },
+  { key: "create_record_restore_capability", label: "Create record restore capability", description: "Create the runtime restore capability from lifecycle reactivation, validation, authz, evidence, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/restore" },
+  { key: "create_record_delete_capability", label: "Create record delete capability", description: "Create the runtime delete capability from deletion eligibility, retention, legal hold, cleanup, authz, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/delete" },
+  { key: "create_record_export_capability", label: "Create record export capability", description: "Create the runtime export capability from export posture, privacy, field eligibility, async job, authz, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/export" },
+  { key: "create_record_bulk_import_capability", label: "Create record bulk import capability", description: "Create the runtime bulk-import capability from import mapping, validation, idempotency, async job, evidence, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/bulk-import" },
+  { key: "create_record_bulk_update_capability", label: "Create record bulk update capability", description: "Create the runtime bulk-update capability from mutable-field rules, selection filters, async job, authz, evidence, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/bulk-update" },
+  { key: "create_record_link_parent_capability", label: "Create record link parent capability", description: "Create the runtime parent-link capability from relationship definitions, boundary rules, authz, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/link-parent" },
+  { key: "create_record_unlink_parent_capability", label: "Create record unlink parent capability", description: "Create the runtime parent-unlink capability from relationship lifecycle, boundary rules, authz, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/unlink-parent" },
+  { key: "create_record_link_child_capability", label: "Create record link child capability", description: "Create the runtime child-link capability from relationship definitions, boundary rules, authz, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/link-child" },
+  { key: "create_record_unlink_child_capability", label: "Create record unlink child capability", description: "Create the runtime child-unlink capability from relationship lifecycle, boundary rules, authz, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/unlink-child" },
+  { key: "create_record_status_transition_capability", label: "Create record status transition capability", description: "Create the runtime status-transition capability from workflow statuses, allowed transitions, authz, evidence, and audit posture.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "record_capability_generation", apiRoute: "POST /v1/entity-definitions/:entityId/action-model/record-capabilities/status-transition" },
+  { key: "attach_entity_evidence", label: "Attach entity evidence", description: "Attach evidence to an entity-definition section or model.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "evidence_audit", apiRoute: "POST /v1/entity-definitions/:entityId/evidence" },
+  { key: "edit_entity_evidence", label: "Edit entity evidence", description: "Edit evidence metadata for an entity-definition section or model.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "evidence_audit", apiRoute: "PATCH /v1/entity-definitions/:entityId/evidence/:evidenceId" },
+  { key: "remove_entity_evidence", label: "Remove entity evidence", description: "Remove an evidence link when retention and review rules allow.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "evidence_audit", apiRoute: "DELETE /v1/entity-definitions/:entityId/evidence/:evidenceId" },
+  { key: "reconcile_evidence", label: "Reconcile evidence", description: "Compare evidence links against current source truth and report drift.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "evidence_audit", apiRoute: "POST /v1/entity-definitions/:entityId/evidence/reconcile" },
+  { key: "attach_field_evidence", label: "Attach field evidence", description: "Attach evidence to a specific entity-definition field.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "evidence_audit", apiRoute: "POST /v1/entity-definitions/:entityId/fields/:fieldId/evidence" },
+  { key: "read_llm_guidance", label: "Read LLM guidance", description: "Read reusable LLM guidance for a schema field or section.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "llm_guidance", apiRoute: "GET /v1/entity-definitions/:entityId/fields/:fieldId/llm-guidance" },
+  { key: "edit_authoring_guidance", label: "Edit authoring guidance", description: "Edit how an LLM obtains, infers, or defaults a value.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "llm_guidance", apiRoute: "PATCH /v1/entity-definitions/:entityId/fields/:fieldId/llm-guidance/authoring" },
+  { key: "edit_writing_guidance", label: "Edit writing guidance", description: "Edit writing style, examples, tone, and copy rules.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "llm_guidance", apiRoute: "PATCH /v1/entity-definitions/:entityId/fields/:fieldId/llm-guidance/writing" },
+  { key: "edit_question_guidance", label: "Edit question guidance", description: "Edit how an LLM asks a human for a value.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "llm_guidance", apiRoute: "PATCH /v1/entity-definitions/:entityId/fields/:fieldId/llm-guidance/question" },
+  { key: "validate_llm_guidance", label: "Validate LLM guidance", description: "Check guidance does not ask for system-owned or source-derived values.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "llm_guidance", apiRoute: "POST /v1/entity-definitions/:entityId/fields/:fieldId/llm-guidance/validate" },
+  { key: "capture_role_need", label: "Capture role need", description: "Record a role need before proposing authz mapping changes.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "role_need", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/role-needs" },
+  { key: "edit_role_need", label: "Edit role need", description: "Edit a captured role need and its business evidence.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "role_need", apiRoute: "PATCH /v1/entity-definitions/:entityId/permissions/role-needs/:roleNeedId" },
+  { key: "create_authz_mapping", label: "Create authz mapping", description: "Create a draft authz mapping for review.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "authz_mapping", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/authz-mappings" },
+  { key: "edit_authz_mapping", label: "Edit authz mapping", description: "Edit a draft authz mapping without granting runtime permission.", executionMode: "sync", compatibilityRisk: "high", actionFamily: "authz_mapping", apiRoute: "PATCH /v1/entity-definitions/:entityId/permissions/authz-mappings/:mappingId" },
+  { key: "validate_authz_mapping", label: "Validate authz mapping", description: "Validate role, capability, boundary, and artifact requirements.", executionMode: "sync", compatibilityRisk: "low", actionFamily: "authz_mapping", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/authz-mappings/:mappingId/validate" },
+  { key: "add_permission_capability", label: "Add permission capability", description: "Add one capability to a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "permission_capability", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities" },
+  { key: "remove_permission_capability", label: "Remove permission capability", description: "Remove one capability from a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "permission_capability", apiRoute: "DELETE /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities/:capabilityKey" },
+  { key: "select_permission_capability_family", label: "Select permission capability family", description: "Grant every selected capability in a family to a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "permission_capability", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities/select-family" },
+  { key: "deselect_permission_capability_family", label: "Deselect permission capability family", description: "Remove every selected capability in a family from a role permission entry.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "permission_capability", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/roles/:rolePermissionId/capabilities/deselect-family" },
+  { key: "generate_permission_mapping_draft", label: "Generate permission mapping draft", description: "Generate maintained permission-mapping artifact drafts from approved role needs.", executionMode: "sync", compatibilityRisk: "medium", actionFamily: "authz_mapping", apiRoute: "POST /v1/entity-definitions/:entityId/permissions/mapping-draft" },
 ]);
 
 const entityManagementViewWorkflowOptions = Object.freeze([
@@ -778,6 +849,10 @@ const entityManagementPermissionRoleOptions = Object.freeze([
   ...entityManagementViewRoleOptions,
 ]);
 
+const entityManagementInitialViewAccessRoleOptions = Object.freeze([
+  entityManagementPermissionRoleOptions[0],
+]);
+
 const entityManagementPermissionCapabilityFamilies = Object.freeze([
   {
     key: "record",
@@ -821,6 +896,161 @@ const entityManagementRelationshipEntityOptions = Object.freeze([
   { value: "deal", label: "Deal", description: "Commercial opportunity record", attribute: "Available entity" },
   { value: "task", label: "Task", description: "Assignable unit of work", attribute: "Available entity" },
 ]);
+
+const entityManagementRelationshipCategoryOptions = Object.freeze([
+  "parentRelation",
+  "childRelation",
+  "domainRelation",
+]);
+
+const entityManagementRelationshipCardinalityOptions = Object.freeze([
+  "oneToOne",
+  "oneToMany",
+  "manyToOne",
+  "manyToMany",
+]);
+
+const entityManagementRelationshipResolutionOptions = Object.freeze([
+  "storedReference",
+  "inverseLookup",
+  "joinEntity",
+  "computed",
+  "externalLookup",
+]);
+
+const entityManagementRelationshipNavigationPostureOptions = Object.freeze([
+  "notNavigable",
+  "displayOnly",
+  "navigable",
+  "governanceOnly",
+  "supportOnly",
+]);
+
+const entityManagementRelationshipOwnershipPostureOptions = Object.freeze([
+  "owns",
+  "references",
+  "sharedReference",
+  "dependent",
+]);
+
+const entityManagementRelationshipBoundaryOptions = Object.freeze([
+  "notApplicable",
+  "sameTenant",
+  "sameOrganization",
+  "sameBusinessUnit",
+  "sameOrganizationTree",
+  "sameBusinessUnitTree",
+  "crossTenantDenied",
+  "crossOrganizationDenied",
+  "crossBusinessUnitDenied",
+  "crossTenantAllowedWithApproval",
+  "crossOrganizationAllowedWithApproval",
+  "crossBusinessUnitAllowedWithApproval",
+  "crossTenantAllowed",
+  "crossOrganizationAllowed",
+  "crossBusinessUnitAllowed",
+]);
+
+const entityManagementRelationshipLifecycleImpactOptions = Object.freeze([
+  "none",
+  "restrict",
+  "cascadeArchive",
+  "cascadeDelete",
+  "detach",
+  "reassignRequired",
+  "preserveHistorical",
+  "cleanupRequired",
+]);
+
+const entityManagementRelationshipSkeletonLists = Object.freeze({
+  tenant: Object.freeze({
+    relationshipKey: "tenant",
+    labelKey: "entity.organization.relationship.tenant.label",
+    labelFallback: "Tenant",
+    descriptionKey: "entity.organization.relationship.tenant.description",
+    descriptionFallback: "Tenant that owns this organization.",
+    relationshipCategory: "parentRelation",
+    targetEntityKey: "tenant",
+    relationshipRole: "tenant",
+    inverseRelationshipRole: "organizations",
+    cardinality: "manyToOne",
+    resolution: "storedReference",
+    sourceAttributeKey: "tenantId",
+    inverseAttributeKey: "none",
+    joinEntityKey: "none",
+    ownershipPosture: "dependent",
+    navigationPosture: "governanceOnly",
+    relationshipBoundary: Object.freeze({
+      tenantBoundary: "sameTenant",
+      organizationBoundary: "notApplicable",
+      businessUnitBoundary: "notApplicable",
+    }),
+    relationshipLifecycleImpact: Object.freeze({
+      onArchive: "none",
+      onDelete: "restrict",
+      onRestore: "none",
+      onSupersede: "preserveHistorical",
+    }),
+  }),
+  businessUnits: Object.freeze({
+    relationshipKey: "businessUnits",
+    labelKey: "entity.organization.relationship.businessUnits.label",
+    labelFallback: "Business units",
+    descriptionKey: "entity.organization.relationship.businessUnits.description",
+    descriptionFallback: "Business units that belong to this organization.",
+    relationshipCategory: "childRelation",
+    targetEntityKey: "businessUnit",
+    relationshipRole: "businessUnits",
+    inverseRelationshipRole: "organization",
+    cardinality: "oneToMany",
+    resolution: "inverseLookup",
+    sourceAttributeKey: "none",
+    inverseAttributeKey: "organizationId",
+    joinEntityKey: "none",
+    ownershipPosture: "owns",
+    navigationPosture: "navigable",
+    relationshipBoundary: Object.freeze({
+      tenantBoundary: "sameTenant",
+      organizationBoundary: "sameOrganization",
+      businessUnitBoundary: "notApplicable",
+    }),
+    relationshipLifecycleImpact: Object.freeze({
+      onArchive: "cascadeArchive",
+      onDelete: "restrict",
+      onRestore: "none",
+      onSupersede: "preserveHistorical",
+    }),
+  }),
+  primaryLogo: Object.freeze({
+    relationshipKey: "primaryLogo",
+    labelKey: "entity.organization.relationship.primaryLogo.label",
+    labelFallback: "Primary logo",
+    descriptionKey: "entity.organization.relationship.primaryLogo.description",
+    descriptionFallback: "Primary logo asset displayed for this organization.",
+    relationshipCategory: "domainRelation",
+    targetEntityKey: "asset",
+    relationshipRole: "primaryLogo",
+    inverseRelationshipRole: "none",
+    cardinality: "oneToOne",
+    resolution: "storedReference",
+    sourceAttributeKey: "primaryLogoAssetId",
+    inverseAttributeKey: "none",
+    joinEntityKey: "none",
+    ownershipPosture: "references",
+    navigationPosture: "displayOnly",
+    relationshipBoundary: Object.freeze({
+      tenantBoundary: "sameTenant",
+      organizationBoundary: "sameOrganization",
+      businessUnitBoundary: "notApplicable",
+    }),
+    relationshipLifecycleImpact: Object.freeze({
+      onArchive: "none",
+      onDelete: "detach",
+      onRestore: "none",
+      onSupersede: "preserveHistorical",
+    }),
+  }),
+});
 
 const entityManagementChildEntityOptions = Object.freeze([
   { value: "user", label: "User", description: "Human actor records attached to this entity", attribute: "Child entity" },
@@ -889,6 +1119,12 @@ const entityManagementAttributeSkeletonLists = Object.freeze({
     mutability: "updateable",
     privacyClassification: "notSensitive",
     securityClassification: "internal",
+    search: Object.freeze({
+      searchable: true,
+      operators: Object.freeze(["exact", "prefix", "contains", "sort"]),
+      storageModel: "normalizedScalar",
+      indexPosture: "required",
+    }),
     validationRules: [
       {
         ruleKey: "maxLength",
@@ -999,6 +1235,117 @@ const entityManagementItemLimitOptions = Object.freeze([
     const value = String(index + 1);
     return { value, label: value };
   }),
+]);
+
+const entityManagementSearchOperatorOptions = Object.freeze([
+  { value: "exact", label: "Exact", description: "Exact value matching.", attribute: "Filter" },
+  { value: "prefix", label: "Prefix", description: "Starts-with matching.", attribute: "Filter" },
+  { value: "contains", label: "Contains", description: "Contains matching.", attribute: "Filter" },
+  { value: "fullText", label: "Full text", description: "Full-text search over approved text.", attribute: "Search" },
+  { value: "range", label: "Range", description: "Range filtering for ordered values.", attribute: "Filter" },
+  { value: "facet", label: "Facet", description: "Facet/count grouping.", attribute: "Facet" },
+  { value: "sort", label: "Sort", description: "Sort by this attribute.", attribute: "Sort" },
+]);
+
+const entityManagementSearchStorageModelOptions = Object.freeze([
+  { value: "scalar", label: "scalar", description: "A single ordinary stored value is searched directly." },
+  { value: "normalizedScalar", label: "normalizedScalar", description: "A normalized stored value supports search/filtering." },
+  { value: "junctionTable", label: "junctionTable", description: "Multi-value values are stored in a separate relation/table." },
+  { value: "generatedColumn", label: "generatedColumn", description: "A database or persistence-generated value supports search." },
+  { value: "jsonApproved", label: "jsonApproved", description: "Searchable values live in JSON/JSONB with explicit approval for operators and scale." },
+  { value: "externalIndex", label: "externalIndex", description: "Search is handled outside the main database." },
+  { value: "notSearchable", label: "notSearchable", description: "The attribute is not searchable, filterable, facetable, or sortable." },
+]);
+
+const entityManagementSearchIndexPostureOptions = Object.freeze([
+  "notApplicable",
+  "required",
+  "recommended",
+  "existing",
+  "deferred",
+]);
+
+const entityManagementMigrationStatusOptions = Object.freeze([
+  "notStarted",
+  "inventoryInProgress",
+  "mappedToDefinition",
+  "persistentRecordCreated",
+  "mirroredTransitional",
+  "persistentPrimary",
+  "blocked",
+]);
+
+const entityManagementMigrationSourcePostureOptions = Object.freeze([
+  "repoArtifactsPrimary",
+  "persistentEntityDefinitionPrimary",
+]);
+
+const entityManagementMigrationCompatibilityCheckOptions = Object.freeze([
+  { value: "apiContractParity", label: "API contract parity", description: "Route and payload contracts match the persistent entity definition.", attribute: "Compatibility check" },
+  { value: "persistenceSchemaParity", label: "Persistence schema parity", description: "Tables, columns, constraints, and indexes match the definition.", attribute: "Compatibility check" },
+  { value: "dataDictionaryParity", label: "Data dictionary parity", description: "Human-readable data dictionary agrees with the definition.", attribute: "Compatibility check" },
+  { value: "permissionMappingParity", label: "Permission mapping parity", description: "Permissions and grants agree with the definition.", attribute: "Compatibility check" },
+  { value: "featureManifestParity", label: "Feature manifest parity", description: "Feature manifest seams and dependencies agree with the definition.", attribute: "Compatibility check" },
+  { value: "generatedDocParity", label: "Generated doc parity", description: "Generated architecture and catalog docs agree with the definition.", attribute: "Compatibility check" },
+  { value: "runtimeBehaviorParity", label: "Runtime behavior parity", description: "Observed runtime behavior matches the migrated definition.", attribute: "Compatibility check" },
+]);
+
+const entityManagementGenerationModeOptions = Object.freeze([
+  "none",
+  "previewOnly",
+  "previewThenApply",
+  "automatic",
+  "manualOperational",
+]);
+
+const entityManagementGenerationOutputCategoryOptions = Object.freeze([
+  { value: "docs", label: "Docs", description: "Source-independent documentation output.", attribute: "Allowed by default" },
+  { value: "uiDefaults", label: "UI defaults", description: "Default UI configuration values.", attribute: "Allowed by default" },
+  { value: "designSystemPreview", label: "Design-system preview", description: "Design-system-only preview surfaces.", attribute: "Allowed by default" },
+  { value: "validationConfig", label: "Validation config", description: "Validation rule configuration drafts.", attribute: "Allowed by default" },
+  { value: "searchConfig", label: "Search config", description: "Search operator and index posture drafts.", attribute: "Allowed by default" },
+  { value: "capabilityMappingDraft", label: "Capability mapping draft", description: "Draft capability mapping artifacts.", attribute: "Allowed by default" },
+  { value: "apiContractDraft", label: "API contract draft", description: "Draft API contract artifacts.", attribute: "Allowed by default" },
+  { value: "testDraft", label: "Test draft", description: "Draft test-case or executable test scaffolds.", attribute: "Allowed by default" },
+  { value: "runtimeSource", label: "Runtime source", description: "Runtime source-code generation.", attribute: "Blocked by default" },
+  { value: "databaseMigration", label: "Database migration", description: "Database migration generation.", attribute: "Blocked by default" },
+  { value: "authorizationLogic", label: "Authorization logic", description: "Authorization implementation generation.", attribute: "Blocked by default" },
+  { value: "permissionGrant", label: "Permission grant", description: "Permission grant generation or mutation.", attribute: "Blocked by default" },
+]);
+
+const entityManagementCompliancePrivacyImpactOptions = Object.freeze([
+  "none",
+  "containsPII",
+  "containsSensitivePII",
+  "mixed",
+]);
+
+const entityManagementComplianceDeletePostureOptions = Object.freeze([
+  "notDeletable",
+  "softDelete",
+  "softDeleteWithPendingDeletion",
+  "hardDeleteEligible",
+  "purgeOnlyWithApproval",
+]);
+
+const entityManagementComplianceExportPostureOptions = Object.freeze([
+  "notExportable",
+  "includedInStandardExport",
+  "restrictedExport",
+  "privacyReviewedExport",
+]);
+
+const entityManagementComplianceCleanupPostureOptions = Object.freeze([
+  "notApplicable",
+  "featureOwnedCleanup",
+  "platformSchedulerCleanup",
+  "manualOperationalCleanup",
+  "externalResourceCleanup",
+]);
+
+const entityManagementComplianceEncryptionRequirementOptions = Object.freeze([
+  "notRequired",
+  "required",
 ]);
 
 const entityManagementValidationRuleOptions = Object.freeze([
@@ -1351,6 +1698,87 @@ function renderRecordManagementRegionShell({ label, regions }) {
       </div>
     </div>
   `;
+}
+
+function clampRecordManagementNestedListWidth(width) {
+  return Math.min(
+    recordManagementNestedListResize.max,
+    Math.max(recordManagementNestedListResize.min, width),
+  );
+}
+
+function setRecordManagementNestedListWidth(nestedList, width) {
+  nestedList.style.setProperty("--record-management-secondary-nav-width", `${clampRecordManagementNestedListWidth(width)}px`);
+}
+
+function getRecordManagementNestedListWidth(nestedList) {
+  const cards = nestedList.querySelector(".record-management-nested-list-cards");
+  if (cards instanceof HTMLElement) {
+    return cards.getBoundingClientRect().width;
+  }
+  return 224;
+}
+
+function initializeNestedListResizer(nestedList) {
+  const resizer = nestedList.querySelector("[data-record-management-nested-resizer]");
+  if (!(nestedList instanceof HTMLElement) || !(resizer instanceof HTMLElement)) {
+    return;
+  }
+
+  const resizeBy = (delta) => {
+    const nextWidth = getRecordManagementNestedListWidth(nestedList) + delta;
+    setRecordManagementNestedListWidth(nestedList, nextWidth);
+  };
+
+  resizer.addEventListener("keydown", (event) => {
+    if (!(event instanceof KeyboardEvent)) {
+      return;
+    }
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      resizeBy(-recordManagementNestedListResize.step);
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      resizeBy(recordManagementNestedListResize.step);
+    }
+    if (event.key === "Home") {
+      event.preventDefault();
+      setRecordManagementNestedListWidth(nestedList, recordManagementNestedListResize.min);
+    }
+    if (event.key === "End") {
+      event.preventDefault();
+      setRecordManagementNestedListWidth(nestedList, recordManagementNestedListResize.max);
+    }
+  });
+
+  resizer.addEventListener("pointerdown", (event) => {
+    if (!(event instanceof PointerEvent) || event.button !== 0) {
+      return;
+    }
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = getRecordManagementNestedListWidth(nestedList);
+    nestedList.dataset.recordManagementNestedResizing = "true";
+    resizer.setPointerCapture(event.pointerId);
+
+    const handlePointerMove = (moveEvent) => {
+      setRecordManagementNestedListWidth(nestedList, startWidth + moveEvent.clientX - startX);
+    };
+    const handlePointerEnd = (endEvent) => {
+      nestedList.dataset.recordManagementNestedResizing = "false";
+      if (resizer.hasPointerCapture(endEvent.pointerId)) {
+        resizer.releasePointerCapture(endEvent.pointerId);
+      }
+      resizer.removeEventListener("pointermove", handlePointerMove);
+      resizer.removeEventListener("pointerup", handlePointerEnd);
+      resizer.removeEventListener("pointercancel", handlePointerEnd);
+    };
+
+    resizer.addEventListener("pointermove", handlePointerMove);
+    resizer.addEventListener("pointerup", handlePointerEnd);
+    resizer.addEventListener("pointercancel", handlePointerEnd);
+  });
 }
 
 function installRecordManagementRegionIndex(drawer) {
@@ -2057,6 +2485,7 @@ function installRecordManagementRegionIndex(drawer) {
 
   const nestedLists = Array.from(drawer.querySelectorAll("[data-record-management-nested-list]"));
   nestedLists.forEach((nestedList) => {
+    initializeNestedListResizer(nestedList);
     nestedList.addEventListener("click", (event) => {
       const addButton = event.target instanceof Element
         ? event.target.closest("[data-record-management-nested-add]")
@@ -2071,6 +2500,7 @@ function installRecordManagementRegionIndex(drawer) {
       }
       if (addButton instanceof HTMLElement && nestedList.closest("[data-record-management-region-panel='permissions']")) {
         addEntityManagementPermissionRecord({ nestedList });
+        syncEntityManagementViewRoleOptions(drawer);
         return;
       }
 
@@ -2145,6 +2575,7 @@ function installRecordManagementRegionIndex(drawer) {
       const nestedList = permissionCopyButton.closest("[data-record-management-nested-list]");
       if (panel instanceof HTMLElement && nestedList instanceof HTMLElement) {
         addEntityManagementPermissionRecord({ nestedList, sourcePanel: panel });
+        syncEntityManagementViewRoleOptions(drawer);
       }
       return;
     }
@@ -2157,6 +2588,7 @@ function installRecordManagementRegionIndex(drawer) {
       const nestedList = permissionDeleteButton.closest("[data-record-management-nested-list]");
       if (panel instanceof HTMLElement && nestedList instanceof HTMLElement) {
         removeEntityManagementWorkflowRecord({ nestedList, panel });
+        syncEntityManagementViewRoleOptions(drawer);
       }
       return;
     }
@@ -2279,6 +2711,14 @@ function installRecordManagementRegionIndex(drawer) {
       : null;
     if (valueCardinality instanceof HTMLSelectElement) {
       syncEntityManagementItemLimitFields(valueCardinality);
+      return;
+    }
+
+    const attributeSearchable = event.target instanceof Element
+      ? event.target.closest("[data-entity-management-attribute-searchable]")
+      : null;
+    if (attributeSearchable instanceof HTMLInputElement) {
+      syncEntityManagementAttributeSearchFields(attributeSearchable);
     }
   });
 }
@@ -2348,6 +2788,27 @@ function syncEntityManagementItemLimitFields(valueCardinality) {
       }
     }
   });
+}
+
+function syncEntityManagementAttributeSearchFields(searchableToggle) {
+  const attributeDefinition = searchableToggle.closest("[data-entity-management-attribute-definition]");
+  if (!(attributeDefinition instanceof HTMLElement)) {
+    return;
+  }
+  const isSearchable = searchableToggle.checked;
+  attributeDefinition.querySelectorAll("[data-entity-management-attribute-search-config-field]").forEach((field) => {
+    if (field instanceof HTMLElement) {
+      field.hidden = !isSearchable;
+    }
+  });
+  const storageModel = attributeDefinition.querySelector("[data-entity-management-attribute-search-storage-model]");
+  const indexPosture = attributeDefinition.querySelector("[data-entity-management-attribute-search-index-posture]");
+  if (storageModel instanceof HTMLSelectElement && !isSearchable) {
+    storageModel.value = "notSearchable";
+  }
+  if (indexPosture instanceof HTMLSelectElement && !isSearchable) {
+    indexPosture.value = "notApplicable";
+  }
 }
 
 function hasEntityManagementValidationArgumentPlaceholder(message) {
@@ -2495,6 +2956,25 @@ function syncEntityManagementWorkflowStatusBuilder(builder) {
     if (linksInput instanceof HTMLInputElement) {
       linksInput.name = `${workflowKey}Status${index}LinksTo`;
     }
+    row.querySelectorAll("[data-entity-management-workflow-status-detail-field]").forEach((field) => {
+      if (!(field instanceof HTMLElement)) {
+        return;
+      }
+      const suffix = field.dataset.entityManagementWorkflowStatusDetailField ?? "";
+      if (!suffix) {
+        return;
+      }
+      const control = field.querySelector("input, textarea");
+      const label = field.querySelector(".form-field-label");
+      const controlId = `entity-management-${workflowKey}-status-${index}-${suffix.toLowerCase()}`;
+      if (control instanceof HTMLInputElement || control instanceof HTMLTextAreaElement) {
+        control.name = `${workflowKey}Status${index}${suffix}`;
+        control.id = controlId;
+      }
+      if (label instanceof HTMLLabelElement) {
+        label.htmlFor = controlId;
+      }
+    });
   });
   syncEntityManagementWorkflowLinkOptions(builder);
   syncEntityManagementWorkflowSubworkflowControls(builder);
@@ -2701,7 +3181,16 @@ function readEntityManagementWorkflowConfig(panel) {
       const nameInput = row.querySelector("[data-entity-management-workflow-status-name]");
       const linksInput = row.querySelector("[data-entity-management-workflow-links] [data-form-drawer-select-value]");
       const parentStatusInput = row.querySelector("[data-entity-management-workflow-parent-status] [data-form-drawer-select-value]");
+      const labelKeyInput = row.querySelector("[data-entity-management-workflow-status-label-key]");
+      const labelFallbackInput = row.querySelector("[data-entity-management-workflow-status-label-fallback]");
+      const descriptionKeyInput = row.querySelector("[data-entity-management-workflow-status-description-key]");
+      const descriptionFallbackInput = row.querySelector("[data-entity-management-workflow-status-description-fallback]");
+      const tabEligibleInput = row.querySelector("[data-entity-management-workflow-status-tab-eligible]");
       return {
+        descriptionFallback: descriptionFallbackInput instanceof HTMLTextAreaElement ? descriptionFallbackInput.value : "",
+        descriptionKey: descriptionKeyInput instanceof HTMLInputElement ? descriptionKeyInput.value : "",
+        labelFallback: labelFallbackInput instanceof HTMLInputElement ? labelFallbackInput.value : "",
+        labelKey: labelKeyInput instanceof HTMLInputElement ? labelKeyInput.value : "",
         linksTo: linksInput instanceof HTMLInputElement && linksInput.value ? linksInput.value : "all",
         name: nameInput instanceof HTMLInputElement && nameInput.value.trim()
           ? nameInput.value.trim()
@@ -2709,6 +3198,7 @@ function readEntityManagementWorkflowConfig(panel) {
             ? "Home"
             : `Status ${index + 1}`,
         parentStatus: parentStatusInput instanceof HTMLInputElement && parentStatusInput.value ? parentStatusInput.value : "status-0",
+        tabEligible: tabEligibleInput instanceof HTMLInputElement ? tabEligibleInput.checked : true,
       };
     }),
   };
@@ -2986,6 +3476,47 @@ function syncEntityManagementPermissionCardCopy(field) {
     descriptionNode.textContent = description;
     descriptionNode.title = description;
   }
+  const drawer = field.closest(".chat-workspace-list-drawer");
+  if (drawer instanceof HTMLElement) {
+    syncEntityManagementViewRoleOptions(drawer);
+  }
+}
+
+function getEntityManagementPermissionRoleOptionsFromDrawer(drawer) {
+  const values = Array.from(drawer.querySelectorAll("[data-record-management-region-panel='permissions'] input[name$='PermissionRole']"))
+    .filter((input) => input instanceof HTMLInputElement)
+    .map((input) => input.value.trim())
+    .filter(Boolean);
+  const uniqueValues = values.length ? [...new Set(values)] : ["llm"];
+  return uniqueValues
+    .map((value) => entityManagementPermissionRoleOptions.find((option) => option.value === value))
+    .filter((option) => option);
+}
+
+function syncEntityManagementViewRoleOptions(drawer) {
+  const options = getEntityManagementPermissionRoleOptionsFromDrawer(drawer);
+  const optionValues = new Set(options.map((option) => option.value));
+  drawer.querySelectorAll("[data-entity-management-view-drawer-select$='Roles']").forEach((field) => {
+    if (!(field instanceof HTMLElement)) {
+      return;
+    }
+    const root = field.querySelector("[data-form-drawer-select]");
+    const input = root?.querySelector("[data-form-drawer-select-value]");
+    const optionList = root?.querySelector("[data-form-drawer-select-option-list]");
+    if (input instanceof HTMLInputElement) {
+      const selectedValues = input.value
+        .split(",")
+        .map((value) => value.trim())
+        .filter((value) => optionValues.has(value));
+      input.value = selectedValues.length ? selectedValues.join(",") : options[0]?.value ?? "";
+    }
+    if (optionList instanceof HTMLElement) {
+      optionList.innerHTML = renderFormDrawerSelectOptions(options);
+    }
+    if (root instanceof HTMLElement) {
+      refreshFormDrawerSelect(root);
+    }
+  });
 }
 
 function syncEntityManagementPermissionFamily(family) {
@@ -3368,6 +3899,14 @@ function renderNestedListPicker({ addAction = null, label, description, items })
             </button>
           ` : ""}
         </div>
+        <div
+          class="record-management-nested-list-resizer"
+          role="separator"
+          aria-label="Resize secondary navigation"
+          aria-orientation="vertical"
+          tabindex="0"
+          data-record-management-nested-resizer
+        ></div>
         <div class="record-management-nested-list-drawer" data-entity-management-expanded-section="false">
           ${items.map((item) => {
             const isActive = item.key === activeKey;
@@ -3513,6 +4052,14 @@ function renderLogoAssetPicker({ label, description, assets }) {
             `;
           }).join("")}
         </div>
+        <div
+          class="record-management-nested-list-resizer"
+          role="separator"
+          aria-label="Resize secondary navigation"
+          aria-orientation="vertical"
+          tabindex="0"
+          data-record-management-nested-resizer
+        ></div>
         <div class="record-management-nested-list-drawer">
           ${assets.map((asset) => {
             const isActive = asset.key === activeKey;
@@ -3737,6 +4284,39 @@ function renderEntityManagementSecurityLevelField({ hidden = true, name, value =
       <span class="form-field-help">Required when security classification is classified.</span>
     </div>
   `;
+}
+
+function renderEntityManagementSearchableToggle({ name, searchable }) {
+  return `
+    <label class="entity-management-subworkflow-toggle form-field-span-2" ${renderEvidenceTargetAttributes({ name: "Searchable", value: searchable ? "true" : "false" })}>
+      <span>
+        <strong>Searchable</strong>
+        <small>Declares whether this attribute can be searched, filtered, faceted, or sorted.</small>
+      </span>
+      ${renderEntityManagementEvidenceButton("Searchable")}
+      ${renderEntityManagementAiButton("Searchable")}
+      <input type="checkbox" name="${escapeHtml(name)}" value="true" data-entity-management-attribute-searchable ${searchable ? "checked" : ""} />
+    </label>
+  `;
+}
+
+function renderEntityManagementSearchOperatorsField({ attributeName, operators = [] }) {
+  return renderEntityManagementDrawerSelectField({
+    viewKey: attributeName,
+    label: "Operators",
+    inputName: `${attributeName}AttributeSearchOperators`,
+    value: operators.join(","),
+    options: entityManagementSearchOperatorOptions,
+    emptySummary: "Choose operators",
+    drawerEyebrow: "Search operators",
+    dialogTitle: "Choose search operators",
+    closeLabel: "Close search operator selector",
+    searchPlaceholder: "Search operators",
+    selectedTitle: "Selected Operators",
+    selectedEmpty: "No operators selected yet.",
+    availableTitle: "Available Operators",
+    description: "Supported search, filter, facet, and sort operations for this attribute.",
+  });
 }
 
 function renderEntityManagementValidationRule({ attributeName, index, rule }) {
@@ -4164,6 +4744,31 @@ function getEntityManagementPlacementAttributeDefaults(entityKey = "organization
   return getEntityManagementViewAttributeOptions(entityKey).slice(0, 3).map((attribute) => attribute.key);
 }
 
+function getEntityManagementSearchableAttributeOptions() {
+  return Object.entries(entityManagementAttributeSkeletonLists)
+    .filter(([, attribute]) => attribute.search?.searchable)
+    .map(([key, attribute]) => ({
+      key,
+      label: attribute.label,
+      description: attribute.description,
+    }));
+}
+
+function getEntityManagementViewFilterOptions() {
+  const searchableAttributes = getEntityManagementSearchableAttributeOptions().map((attribute) => ({
+    ...attribute,
+    description: `${attribute.description} Searchable attribute.`,
+  }));
+  const parentRelationships = Object.entries(entityManagementRelationshipSkeletonLists)
+    .filter(([, relationship]) => relationship.relationshipCategory === "parentRelation")
+    .map(([key, relationship]) => ({
+      key: `parent:${key}`,
+      label: relationship.labelFallback,
+      description: `${relationship.descriptionFallback} Parent relationship.`,
+    }));
+  return [...searchableAttributes, ...parentRelationships];
+}
+
 function getEntityManagementPlacementAttributeSource(placementDefinition) {
   if (!(placementDefinition instanceof HTMLElement)) {
     return "organization";
@@ -4182,9 +4787,10 @@ function renderEntityManagementViewAttributeSelector({
   entityKey = "organization",
   inputName,
   note = "Included attributes can display in this view. Editable versus read-only behavior is resolved by role permissions and object capacity.",
+  optionsOverride = null,
   selectedValues = [],
 }) {
-  const options = getEntityManagementViewAttributeOptions(entityKey);
+  const options = optionsOverride ?? getEntityManagementViewAttributeOptions(entityKey);
   const optionKeys = new Set(options.map((attribute) => attribute.key));
   const effectiveSelectedValues = selectedValues.filter((value) => optionKeys.has(value));
   const selectedSet = new Set(effectiveSelectedValues);
@@ -4548,8 +5154,8 @@ function renderEntityManagementViewDefinitionPanel({ key, routeName, routePrevie
             viewKey: key,
             label: "Roles",
             inputName: `${key}Roles`,
-            value: "rootAdmin,tenantAdmin",
-            options: entityManagementViewRoleOptions,
+            value: "llm",
+            options: entityManagementInitialViewAccessRoleOptions,
             emptySummary: "Choose roles",
             drawerEyebrow: "Roles",
             dialogTitle: "Choose roles",
@@ -4557,9 +5163,8 @@ function renderEntityManagementViewDefinitionPanel({ key, routeName, routePrevie
             searchPlaceholder: "Search roles",
             selectedTitle: "Selected Roles",
             selectedEmpty: "No roles selected yet.",
-            availableTitle: "Available Roles",
-            description: "Multiple roles may be selected; new-role creation will promote a role into the catalog.",
-            createAction: `<button class="list-page-state-button entity-management-create-role-button" type="button" data-entity-management-create-role>Create new role</button>`,
+            availableTitle: "Permission Roles",
+            description: "Only roles added under Permissions can be selected for view access.",
           })}
           <div class="entity-management-access-drawer-row">
             ${renderEntityManagementDrawerSelectField({
@@ -4645,6 +5250,28 @@ function renderEntityManagementViewDefinitionPanel({ key, routeName, routePrevie
             statuses: getEntityManagementViewWorkflowStatuses("intakeWorkflow"),
           })}
         `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-global-search`,
+        title: "Global search",
+        description: "Searchable attributes from this entity that apply to global search for this view.",
+        children: renderEntityManagementViewAttributeSelector({
+          inputName: `${key}GlobalSearchAttributes`,
+          note: "Only attributes declared searchable in Attribute details can be selected for global search. Selection order becomes search priority.",
+          optionsOverride: getEntityManagementSearchableAttributeOptions(),
+          selectedValues: ["email"],
+        }),
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${key}-filter-bar`,
+        title: "Filter bar",
+        description: "Searchable attributes and parent relationships that appear as filters for this view.",
+        children: renderEntityManagementViewAttributeSelector({
+          inputName: `${key}FilterBarItems`,
+          note: "Only searchable attributes and parent relationships can be selected for the filter bar. Selection order becomes filter order.",
+          optionsOverride: getEntityManagementViewFilterOptions(),
+          selectedValues: ["email", "parent:tenant"],
+        }),
       })}
       ${renderEntityManagementViewSection({
         id: `${key}-primary-actions`,
@@ -4856,7 +5483,90 @@ function renderEntityManagementWorkflowLinksDrawerSelect({ index, linksTo = "all
   );
 }
 
-function renderEntityManagementWorkflowStatusRow({ index, isCreate = false, linksTo = "all", name, parentStatus = "status-0", statuses = ["Home"], workflowKey }) {
+function getEntityManagementWorkflowStatusDefaultKey({ index, name, suffix, workflowKey }) {
+  const statusKey = String(name || (index === 0 ? "Home" : `Status ${index + 1}`))
+    .trim()
+    .replace(/[^a-zA-Z0-9]+(.)/g, (_, character) => character.toUpperCase())
+    .replace(/^[A-Z]/, (character) => character.toLowerCase())
+    .replace(/[^a-zA-Z0-9]/g, "") || `status${index + 1}`;
+  return `entity.organization.workflow.${workflowKey}.status.${statusKey}.${suffix}`;
+}
+
+function renderEntityManagementWorkflowStatusDetails({
+  descriptionFallback = "",
+  descriptionKey = "",
+  index,
+  labelFallback = "",
+  labelKey = "",
+  name,
+  tabEligible = true,
+  workflowKey,
+}) {
+  const effectiveLabelKey = labelKey || getEntityManagementWorkflowStatusDefaultKey({ index, name, suffix: "label", workflowKey });
+  const effectiveLabelFallback = labelFallback || name || (index === 0 ? "Home" : `Status ${index + 1}`);
+  const effectiveDescriptionKey = descriptionKey || getEntityManagementWorkflowStatusDefaultKey({ index, name, suffix: "description", workflowKey });
+  return `
+    <details class="entity-management-workflow-status-details" data-entity-management-workflow-status-details>
+      <summary>
+        <span>
+          <strong>Status metadata</strong>
+          <small>Localization, description, and tab eligibility.</small>
+        </span>
+      </summary>
+      <div class="entity-management-form-grid entity-management-workflow-status-details-grid">
+        ${renderEntityManagementTextField({
+          fieldAttributes: 'data-entity-management-workflow-status-detail-field="LabelKey"',
+          label: "Label key",
+          name: `${workflowKey}Status${index}LabelKey`,
+          value: effectiveLabelKey,
+        }).replace("<input ", '<input data-entity-management-workflow-status-label-key ')}
+        ${renderEntityManagementTextField({
+          fieldAttributes: 'data-entity-management-workflow-status-detail-field="LabelFallback"',
+          label: "Label fallback",
+          name: `${workflowKey}Status${index}LabelFallback`,
+          value: effectiveLabelFallback,
+        }).replace("<input ", '<input data-entity-management-workflow-status-label-fallback ')}
+        ${renderEntityManagementTextField({
+          fieldAttributes: 'data-entity-management-workflow-status-detail-field="DescriptionKey"',
+          label: "Description key",
+          name: `${workflowKey}Status${index}DescriptionKey`,
+          value: effectiveDescriptionKey,
+        }).replace("<input ", '<input data-entity-management-workflow-status-description-key ')}
+        ${renderEntityManagementTextField({
+          fieldAttributes: 'data-entity-management-workflow-status-detail-field="DescriptionFallback"',
+          label: "Description fallback",
+          multiline: true,
+          name: `${workflowKey}Status${index}DescriptionFallback`,
+          value: descriptionFallback,
+        }).replace("<textarea ", '<textarea data-entity-management-workflow-status-description-fallback ')}
+        <label class="entity-management-subworkflow-toggle form-field-span-2" ${renderEvidenceTargetAttributes({ name: "Tab eligible", value: tabEligible ? "true" : "false" })}>
+          <span>
+            <strong>Tab eligible</strong>
+            <small>This status can be exposed as a workflow tab when a surface supports status tabs.</small>
+          </span>
+          ${renderEntityManagementEvidenceButton("Tab eligible")}
+          ${renderEntityManagementAiButton("Tab eligible")}
+          <input type="checkbox" name="${escapeHtml(`${workflowKey}Status${index}TabEligible`)}" value="true" data-entity-management-workflow-status-tab-eligible ${tabEligible ? "checked" : ""} />
+        </label>
+      </div>
+    </details>
+  `;
+}
+
+function renderEntityManagementWorkflowStatusRow({
+  descriptionFallback = "",
+  descriptionKey = "",
+  index,
+  isCreate = false,
+  labelFallback = "",
+  labelKey = "",
+  linksTo = "all",
+  name,
+  parentStatus = "status-0",
+  statuses = ["Home"],
+  tabEligible = true,
+  workflowKey,
+}) {
   const inputId = `entity-management-${workflowKey}-status-${index}-name`;
   return `
     <article class="entity-management-workflow-status-row" data-entity-management-workflow-status-row data-status-index="${escapeHtml(String(index))}" data-status-location="${isCreate ? "create" : "sequence"}">
@@ -4905,6 +5615,16 @@ function renderEntityManagementWorkflowStatusRow({ index, isCreate = false, link
           </svg>
         </button>
       </div>
+      ${renderEntityManagementWorkflowStatusDetails({
+        descriptionFallback,
+        descriptionKey,
+        index,
+        labelFallback,
+        labelKey,
+        name,
+        tabEligible,
+        workflowKey,
+      })}
     </article>
   `;
 }
@@ -4933,10 +5653,15 @@ function renderEntityManagementWorkflowBuilder({ isSubworkflow = false, parentWo
             ${effectiveStatuses.map((status, index) => renderEntityManagementWorkflowStatusRow({
               index,
               isCreate: index === 0,
+              descriptionFallback: status.descriptionFallback ?? "",
+              descriptionKey: status.descriptionKey ?? "",
+              labelFallback: status.labelFallback ?? "",
+              labelKey: status.labelKey ?? "",
               linksTo: status.linksTo ?? "all",
               name: status.name || (index === 0 ? "Home" : `Status ${index + 1}`),
               parentStatus: status.parentStatus ?? "status-0",
               statuses: statusNames,
+              tabEligible: status.tabEligible ?? true,
               workflowKey,
             })).join("")}
           </div>
@@ -5415,6 +6140,14 @@ function renderEntityManagementIdentityRegion() {
               `;
             }).join("")}
           </div>
+          <div
+            class="record-management-nested-list-resizer"
+            role="separator"
+            aria-label="Resize secondary navigation"
+            aria-orientation="vertical"
+            tabindex="0"
+            data-record-management-nested-resizer
+          ></div>
           <div class="record-management-nested-list-drawer entity-management-sublist-drawer">
             ${items.map((item) => `
               <section data-record-management-nested-panel="${escapeHtml(item.key)}" ${item.key === activeKey ? "" : "hidden"}>
@@ -5524,67 +6257,84 @@ function renderEntityManagementWorkflowsRegion() {
   });
 }
 
-function renderEntityManagementRelationshipPanel({ description, inputName, label, value, viewKey }) {
+function renderEntityManagementRelationshipDefinitionPanel({ key, relationship }) {
+  const name = `${key}Relationship`;
   return `
-    <section class="entity-management-subpanel" aria-label="${escapeHtml(label)}">
-      <div class="record-management-user-attribute-group-header">
-        <h5>${escapeHtml(label)}</h5>
-        <p>${escapeHtml(description)}</p>
-      </div>
-      <div class="entity-management-form-grid">
-        ${renderEntityManagementDrawerSelectField({
-          viewKey,
-          label: "Entities",
-          inputName,
-          value,
-          options: entityManagementRelationshipEntityOptions,
-          emptySummary: "Choose entities",
-          drawerEyebrow: label,
-          dialogTitle: `Choose ${label.toLowerCase()} entities`,
-          closeLabel: `Close ${label.toLowerCase()} entity selector`,
-          searchPlaceholder: "Search entities",
-          selectedTitle: `Selected ${label}`,
-          selectedEmpty: "No entities selected yet.",
-          availableTitle: "Available Entities",
-          description,
-        })}
-      </div>
-    </section>
+    <div class="entity-management-view-definition" data-entity-management-relationship-definition="${escapeHtml(key)}">
+      ${renderEntityManagementViewSection({
+        id: `${name}-metadata`,
+        title: "Relationship metadata",
+        description: "How this entity connects to another entity and what the app can do with the connection.",
+        children: `
+          ${renderEntityManagementTextField({ label: "Relationship key", name: `${name}Key`, value: relationship.relationshipKey })}
+          ${renderEntityManagementTextField({ label: "Target entity key", name: `${name}TargetEntityKey`, value: relationship.targetEntityKey })}
+          ${renderEntityManagementTextField({ label: "Label key", name: `${name}LabelKey`, value: relationship.labelKey })}
+          ${renderEntityManagementTextField({ label: "Label fallback", name: `${name}LabelFallback`, value: relationship.labelFallback })}
+          ${renderEntityManagementTextField({ label: "Description key", name: `${name}DescriptionKey`, value: relationship.descriptionKey })}
+          ${renderEntityManagementTextField({ label: "Description fallback", multiline: true, name: `${name}DescriptionFallback`, value: relationship.descriptionFallback })}
+          ${renderEntityManagementSelectField({ label: "Relationship category", name: `${name}Category`, options: entityManagementRelationshipCategoryOptions, value: relationship.relationshipCategory })}
+          ${renderEntityManagementSelectField({ label: "Cardinality", name: `${name}Cardinality`, options: entityManagementRelationshipCardinalityOptions, value: relationship.cardinality })}
+          ${renderEntityManagementTextField({ label: "Relationship role", name: `${name}Role`, value: relationship.relationshipRole })}
+          ${renderEntityManagementTextField({ label: "Inverse relationship role", name: `${name}InverseRole`, value: relationship.inverseRelationshipRole })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${name}-lookup`,
+        title: "Relationship lookup recipe",
+        description: "Where the stored reference, inverse lookup, join entity, or external lookup path lives.",
+        children: `
+          ${renderEntityManagementSelectField({ label: "Resolution", name: `${name}Resolution`, options: entityManagementRelationshipResolutionOptions, value: relationship.resolution })}
+          ${renderEntityManagementTextField({ description: "Required for storedReference; use none when unused.", label: "Source attribute key", name: `${name}SourceAttributeKey`, value: relationship.sourceAttributeKey })}
+          ${renderEntityManagementTextField({ description: "Required for inverseLookup; use none when unused.", label: "Inverse attribute key", name: `${name}InverseAttributeKey`, value: relationship.inverseAttributeKey })}
+          ${renderEntityManagementTextField({ description: "Required for joinEntity; use none when unused.", label: "Join entity key", name: `${name}JoinEntityKey`, value: relationship.joinEntityKey })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${name}-navigation-ownership`,
+        title: "Navigation and ownership",
+        description: "Whether users can navigate the connection and how strongly this entity owns the target.",
+        children: `
+          ${renderEntityManagementSelectField({ label: "Navigation posture", name: `${name}NavigationPosture`, options: entityManagementRelationshipNavigationPostureOptions, value: relationship.navigationPosture })}
+          ${renderEntityManagementSelectField({ label: "Ownership posture", name: `${name}OwnershipPosture`, options: entityManagementRelationshipOwnershipPostureOptions, value: relationship.ownershipPosture })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${name}-boundaries`,
+        title: "Relationship boundaries",
+        description: "Structural boundary constraints that must hold before permissions are checked.",
+        children: `
+          ${renderEntityManagementSelectField({ label: "Tenant boundary", name: `${name}TenantBoundary`, options: entityManagementRelationshipBoundaryOptions, value: relationship.relationshipBoundary.tenantBoundary })}
+          ${renderEntityManagementSelectField({ label: "Organization boundary", name: `${name}OrganizationBoundary`, options: entityManagementRelationshipBoundaryOptions, value: relationship.relationshipBoundary.organizationBoundary })}
+          ${renderEntityManagementSelectField({ label: "Business unit boundary", name: `${name}BusinessUnitBoundary`, options: entityManagementRelationshipBoundaryOptions, value: relationship.relationshipBoundary.businessUnitBoundary })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${name}-lifecycle`,
+        title: "Relationship lifecycle impact",
+        description: "What happens to related records or links when the source entity changes lifecycle state.",
+        children: `
+          ${renderEntityManagementSelectField({ label: "On archive", name: `${name}OnArchive`, options: entityManagementRelationshipLifecycleImpactOptions, value: relationship.relationshipLifecycleImpact.onArchive })}
+          ${renderEntityManagementSelectField({ label: "On delete", name: `${name}OnDelete`, options: entityManagementRelationshipLifecycleImpactOptions, value: relationship.relationshipLifecycleImpact.onDelete })}
+          ${renderEntityManagementSelectField({ label: "On restore", name: `${name}OnRestore`, options: entityManagementRelationshipLifecycleImpactOptions, value: relationship.relationshipLifecycleImpact.onRestore })}
+          ${renderEntityManagementSelectField({ label: "On supersede", name: `${name}OnSupersede`, options: entityManagementRelationshipLifecycleImpactOptions, value: relationship.relationshipLifecycleImpact.onSupersede })}
+        `,
+      })}
+    </div>
   `;
 }
 
 function renderEntityManagementRelationshipsRegion() {
+  const relationshipEntries = Object.entries(entityManagementRelationshipSkeletonLists);
   return renderNestedListPicker({
     label: "Relationships",
-    description: "Parent and child entity relationships available to this entity.",
-    items: [
-      {
-        key: "relationship-parents",
-        label: "Parents",
-        summary: "2 selected",
-        description: "Entities this entity can belong to.",
-        content: renderEntityManagementRelationshipPanel({
-          description: "Select parent entities available for this entity.",
-          inputName: "entityRelationshipParents",
-          label: "Parents",
-          value: "tenant,team",
-          viewKey: "relationshipParents",
-        }),
-      },
-      {
-        key: "relationship-children",
-        label: "Children",
-        summary: "2 selected",
-        description: "Entities this entity can contain or own.",
-        content: renderEntityManagementRelationshipPanel({
-          description: "Select child entities available for this entity.",
-          inputName: "entityRelationshipChildren",
-          label: "Children",
-          value: "user,deal",
-          viewKey: "relationshipChildren",
-        }),
-      },
-    ],
+    description: "Field-complete relationship definitions for how this entity connects to other entities.",
+    items: relationshipEntries.map(([key, relationship]) => ({
+      key: `relationship-${key}`,
+      label: relationship.labelFallback,
+      summary: relationship.relationshipCategory,
+      description: relationship.descriptionFallback,
+      content: renderEntityManagementRelationshipDefinitionPanel({ key, relationship }),
+    })),
   });
 }
 
@@ -5749,6 +6499,39 @@ function renderEntityManagementAttributePanel({ attribute }) {
             label: "DB record name",
             name: `${name}AttributeDbName`,
             value: name,
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: `${name}-attribute-search`,
+        title: "Search",
+        description: "Search, filter, facet, and sort support declared by this attribute.",
+        children: `
+          ${renderEntityManagementSearchableToggle({
+            name: `${name}AttributeSearchable`,
+            searchable: attribute.search?.searchable ?? false,
+          })}
+          ${renderEntityManagementSearchOperatorsField({
+            attributeName: name,
+            operators: attribute.search?.operators ?? [],
+          }).replace("entity-management-drawer-select-field\"", `entity-management-drawer-select-field" data-entity-management-attribute-search-config-field ${attribute.search?.searchable ? "" : "hidden"}`)}
+          ${renderEntityManagementSelectField({
+            description: "How searchable values are stored or resolved for this attribute.",
+            fieldAttributes: `data-entity-management-attribute-search-config-field ${attribute.search?.searchable ? "" : "hidden"}`,
+            label: "Storage model",
+            name: `${name}AttributeSearchStorageModel`,
+            options: entityManagementSearchStorageModelOptions,
+            selectAttributes: "data-entity-management-attribute-search-storage-model",
+            value: attribute.search?.storageModel ?? "notSearchable",
+          })}
+          ${renderEntityManagementSelectField({
+            description: "Whether the supporting index is required, already present, or not applicable.",
+            fieldAttributes: `data-entity-management-attribute-search-config-field ${attribute.search?.searchable ? "" : "hidden"}`,
+            label: "Index posture",
+            name: `${name}AttributeSearchIndexPosture`,
+            options: entityManagementSearchIndexPostureOptions,
+            selectAttributes: "data-entity-management-attribute-search-index-posture",
+            value: attribute.search?.indexPosture ?? "notApplicable",
           })}
         `,
       })}
@@ -6101,6 +6884,13 @@ function getEntityManagementActionModel(capability, {
   };
 }
 
+function getActionModelDomKey(actionKey) {
+  return String(actionKey ?? "")
+    .replaceAll("_", "-")
+    .replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)
+    .replace(/^-+/, "");
+}
+
 function getEntityManagementRecordActionModel(capability) {
   return getEntityManagementActionModel(capability, {
     actionFamily: "record",
@@ -6114,9 +6904,9 @@ function getEntityManagementRecordActionModel(capability) {
 
 function getEntityManagementStructureActionModel(capability) {
   return getEntityManagementActionModel(capability, {
-    actionFamily: "entityStructure",
+    actionFamily: capability.actionFamily ?? "definition_structure",
     defaultApiRoute: capability.apiRoute ?? `POST /v1/entity-definitions/:entityId/${capability.key}`,
-    ownerKey: "entityDefinition",
+    ownerKey: "entity_definition",
     owningLayer: "platform",
     keyPrefix: `entityDefinition.action.${capability.key}`,
     subjectLabel: "entity definition",
@@ -6239,12 +7029,16 @@ function renderEntityManagementActionModelSuccessAuditTypes({ actionModel }) {
 
 function renderEntityManagementActionModelPanel({ capability, modelFactory = getEntityManagementRecordActionModel }) {
   const actionModel = modelFactory(capability);
+  const isStructureAction = modelFactory === getEntityManagementStructureActionModel;
+  const subject = isStructureAction ? "entity-definition structure action" : "record capability";
   return `
     <div class="entity-management-view-definition entity-management-action-model-definition" data-entity-management-action-model-definition="${escapeHtml(capability.key)}">
       ${renderEntityManagementViewSection({
         id: `${capability.key}-action-model`,
         title: "Action model",
-        description: "Runtime capability metadata populated when entity runtime capabilities are created.",
+        description: isStructureAction
+          ? "Definition-structure action metadata used by governed entity-builder hooks."
+          : "Runtime capability metadata populated when entity runtime capabilities are created.",
         children: `
           ${renderEntityManagementTextField({
             editable: false,
@@ -6341,7 +7135,7 @@ function renderEntityManagementActionModelPanel({ capability, modelFactory = get
         fieldSuffix: "RequestBody",
         id: `${capability.key}-request-body`,
         title: "Request body",
-        description: "Generated request payload contract for this record capability.",
+        description: `Generated request payload contract for this ${subject}.`,
       })}
       ${renderEntityManagementActionBodySection({
         actionModel,
@@ -6349,7 +7143,7 @@ function renderEntityManagementActionModelPanel({ capability, modelFactory = get
         fieldSuffix: "ResponseBody",
         id: `${capability.key}-response-body`,
         title: "Response body",
-        description: "Generated response payload contract for this record capability.",
+        description: `Generated response payload contract for this ${subject}.`,
       })}
       ${renderEntityManagementViewSection({
         id: `${capability.key}-success-audit-types`,
@@ -6379,7 +7173,7 @@ function renderEntityManagementActionModelsRecordRegion() {
     label: "Action Models - Record",
     description: "Default runtime record capabilities generated for this entity.",
     items: entityManagementRecordActionCapabilities.map((capability) => ({
-      key: `record-action-${capability.key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`,
+      key: `record-action-${getActionModelDomKey(capability.key)}`,
       label: capability.label,
       summary: capability.executionMode,
       description: capability.description,
@@ -6393,7 +7187,7 @@ function renderEntityManagementActionModelsEntityStructureRegion() {
     label: "Action Models - Entity Structure",
     description: "Read-only structure capabilities for entity definitions and their managed domains.",
     items: entityManagementStructureActionCapabilities.map((capability) => ({
-      key: `structure-action-${capability.key.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`,
+      key: `structure-action-${getActionModelDomKey(capability.key)}`,
       label: capability.label,
       summary: capability.executionMode,
       description: capability.description,
@@ -6512,6 +7306,328 @@ function renderEntityManagementPermissionsRegion() {
       },
     ],
   });
+}
+
+function renderEntityManagementMigrationModelRegion() {
+  return `
+    <div class="entity-management-view-definition" data-entity-management-view-definition="migrationModel" data-entity-management-migration-model-definition="organization">
+      ${renderEntityManagementViewSection({
+        id: "migration-model-status",
+        title: "Migration status",
+        description: "Current adoption posture from repo/source artifacts into persistent entity-definition truth.",
+        children: `
+          ${renderEntityManagementSelectField({
+            label: "Migration status",
+            name: "entityMigrationStatus",
+            options: entityManagementMigrationStatusOptions,
+            value: "notStarted",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Current source posture",
+            name: "entityMigrationCurrentSourcePosture",
+            options: entityManagementMigrationSourcePostureOptions,
+            value: "repoArtifactsPrimary",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Target source posture",
+            name: "entityMigrationTargetSourcePosture",
+            options: entityManagementMigrationSourcePostureOptions,
+            value: "persistentEntityDefinitionPrimary",
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: "migration-model-target",
+        title: "Source and target",
+        description: "Repo artifact inventory and the persistent record this migration should promote.",
+        children: `
+          ${renderEntityManagementTextField({
+            description: "Explicit source artifact keys identified during migration inventory. Empty until inventory starts.",
+            label: "Current artifact keys",
+            multiline: true,
+            name: "entityMigrationCurrentArtifactKeys",
+            value: "[]",
+          })}
+          ${renderEntityManagementTextField({
+            label: "Target persistent record key",
+            name: "entityMigrationTargetPersistentRecordKey",
+            value: "organization",
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: "migration-model-compatibility",
+        title: "Compatibility checks",
+        description: "Checks required before persistent entity definition can become primary truth.",
+        children: renderEntityManagementDrawerSelectField({
+          availableTitle: "Available Checks",
+          closeLabel: "Close compatibility check selector",
+          dialogTitle: "Choose compatibility checks",
+          drawerEyebrow: "Migration compatibility",
+          emptySummary: "Choose checks",
+          inputName: "entityMigrationCompatibilityChecksRequired",
+          label: "Compatibility checks required",
+          options: entityManagementMigrationCompatibilityCheckOptions,
+          searchPlaceholder: "Search checks",
+          selectedEmpty: "No compatibility checks selected yet.",
+          selectedTitle: "Selected Checks",
+          value: "apiContractParity,persistenceSchemaParity,dataDictionaryParity,permissionMappingParity",
+          viewKey: "migrationModel",
+        }),
+      })}
+      ${renderEntityManagementViewSection({
+        id: "migration-model-blockers",
+        title: "Blockers and evidence",
+        description: "Migration-only blockers and evidence keys. Future definition changes should use source authority, lifecycle/versioning, action models, and evidence.",
+        children: `
+          ${renderEntityManagementTextField({
+            description: "Explicit blocker keys or notes. Empty when no migration blockers are known.",
+            label: "Blocking issues",
+            multiline: true,
+            name: "entityMigrationBlockingIssues",
+            value: "[]",
+          })}
+          ${renderEntityManagementTextField({
+            description: "Evidence keys proving migration parity or promotion readiness.",
+            label: "Migration evidence keys",
+            multiline: true,
+            name: "entityMigrationEvidenceKeys",
+            value: "[]",
+          })}
+        `,
+      })}
+    </div>
+  `;
+}
+
+function renderEntityManagementGenerationModelRegion() {
+  return `
+    <div class="entity-management-view-definition" data-entity-management-view-definition="generationModel" data-entity-management-generation-model-definition="organization">
+      ${renderEntityManagementViewSection({
+        id: "generation-model-mode",
+        title: "Generation mode",
+        description: "What this entity definition is allowed to generate or drive.",
+        children: `
+          ${renderEntityManagementSelectField({
+            label: "Generation mode",
+            name: "entityGenerationMode",
+            options: entityManagementGenerationModeOptions,
+            value: "previewThenApply",
+          })}
+          <label class="entity-management-subworkflow-toggle form-field-span-2" ${renderEvidenceTargetAttributes({ name: "Drift detection required", value: "true" })}>
+            <span>
+              <strong>Drift detection required</strong>
+              <small>Generated output must be checked against source truth before it is applied or trusted.</small>
+            </span>
+            ${renderEntityManagementEvidenceButton("Drift detection required")}
+            ${renderEntityManagementAiButton("Drift detection required")}
+            <input type="checkbox" name="entityGenerationDriftDetectionRequired" value="true" checked />
+          </label>
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: "generation-model-allowed",
+        title: "Allowed outputs",
+        description: "Cautious V1 outputs this entity may generate or plan.",
+        children: renderEntityManagementDrawerSelectField({
+          availableTitle: "Available Output Categories",
+          closeLabel: "Close allowed output selector",
+          dialogTitle: "Choose allowed outputs",
+          drawerEyebrow: "Generation outputs",
+          emptySummary: "Choose outputs",
+          inputName: "entityGenerationAllowedOutputCategories",
+          label: "Allowed output categories",
+          options: entityManagementGenerationOutputCategoryOptions,
+          searchPlaceholder: "Search outputs",
+          selectedEmpty: "No allowed outputs selected yet.",
+          selectedTitle: "Selected Outputs",
+          value: "docs,uiDefaults,designSystemPreview,validationConfig,searchConfig,capabilityMappingDraft,apiContractDraft,testDraft",
+          viewKey: "generationModel",
+        }),
+      })}
+      ${renderEntityManagementViewSection({
+        id: "generation-model-blocked",
+        title: "Blocked outputs",
+        description: "High-risk outputs blocked by default until explicitly approved with heavier compatibility checks.",
+        children: renderEntityManagementDrawerSelectField({
+          availableTitle: "Available Output Categories",
+          closeLabel: "Close blocked output selector",
+          dialogTitle: "Choose blocked outputs",
+          drawerEyebrow: "Generation guardrails",
+          emptySummary: "Choose blocked outputs",
+          inputName: "entityGenerationBlockedOutputCategories",
+          label: "Blocked output categories",
+          options: entityManagementGenerationOutputCategoryOptions,
+          searchPlaceholder: "Search outputs",
+          selectedEmpty: "No blocked outputs selected yet.",
+          selectedTitle: "Blocked Outputs",
+          value: "runtimeSource,databaseMigration,authorizationLogic,permissionGrant",
+          viewKey: "generationModel",
+        }),
+      })}
+      ${renderEntityManagementViewSection({
+        id: "generation-model-evidence",
+        title: "Evidence",
+        description: "Evidence keys proving why generation permissions and blocked categories are acceptable.",
+        children: renderEntityManagementTextField({
+          description: "Evidence keys for generation guardrails. Empty until governance evidence is attached.",
+          label: "Evidence keys",
+          multiline: true,
+          name: "entityGenerationEvidenceKeys",
+          value: "[]",
+        }),
+      })}
+    </div>
+  `;
+}
+
+function renderEntityManagementComplianceAuditToggle({ checked = true, label, name, note }) {
+  return `
+    <label class="entity-management-subworkflow-toggle form-field-span-2" ${renderEvidenceTargetAttributes({ name: label, value: checked ? "true" : "false" })}>
+      <span>
+        <strong>${escapeHtml(label)}</strong>
+        <small>${escapeHtml(note)}</small>
+      </span>
+      ${renderEntityManagementEvidenceButton(label)}
+      ${renderEntityManagementAiButton(label)}
+      <input type="checkbox" name="${escapeHtml(name)}" value="true" ${checked ? "checked" : ""} />
+    </label>
+  `;
+}
+
+function renderEntityManagementComplianceModelRegion() {
+  return `
+    <div class="entity-management-view-definition" data-entity-management-view-definition="complianceModel" data-entity-management-compliance-model-definition="organization">
+      ${renderEntityManagementViewSection({
+        id: "compliance-model-privacy-security",
+        title: "Privacy and security",
+        description: "Entity-level compliance summary for auditors, generators, reports, and reviewers.",
+        children: `
+          ${renderEntityManagementSelectField({
+            label: "Privacy impact",
+            name: "entityCompliancePrivacyImpact",
+            options: entityManagementCompliancePrivacyImpactOptions,
+            value: "containsSensitivePII",
+          })}
+          ${renderEntityManagementDrawerSelectField({
+            availableTitle: "Available Categories",
+            closeLabel: "Close sensitive privacy category selector",
+            dialogTitle: "Choose sensitive privacy categories",
+            drawerEyebrow: "Sensitive privacy",
+            emptySummary: "Choose categories",
+            inputName: "entityComplianceSensitivePrivacyCategoriesPresent",
+            label: "Sensitive privacy categories present",
+            options: entityManagementSensitivePrivacyCategoryOptions.map((option) => ({
+              value: option.value,
+              label: option.label,
+              description: "Sensitive category present on one or more attributes.",
+              attribute: "Entity summary",
+            })),
+            searchPlaceholder: "Search categories",
+            selectedEmpty: "No sensitive privacy categories selected yet.",
+            selectedTitle: "Selected Categories",
+            value: "governmentIdentifiers",
+            viewKey: "complianceModel",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Security impact",
+            name: "entityComplianceSecurityImpact",
+            options: entityManagementSecurityClassificationOptions,
+            value: "restricted",
+          })}
+          ${renderEntityManagementComplianceAuditToggle({
+            label: "Audit required",
+            name: "entityComplianceAuditRequired",
+            note: "Entity-level operations require durable audit events.",
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: "compliance-model-lifecycle",
+        title: "Lifecycle and export",
+        description: "Default retention, deletion, legal hold, export, and cleanup posture.",
+        children: `
+          ${renderEntityManagementTextField({
+            label: "Retention policy key",
+            name: "entityComplianceRetentionPolicyKey",
+            value: "standardTenantRecordRetention",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Delete posture",
+            name: "entityComplianceDeletePosture",
+            options: entityManagementComplianceDeletePostureOptions,
+            value: "softDeleteWithPendingDeletion",
+          })}
+          ${renderEntityManagementComplianceAuditToggle({
+            label: "Legal hold supported",
+            name: "entityComplianceLegalHoldSupported",
+            note: "Records can be held from deletion or cleanup when required.",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Export posture",
+            name: "entityComplianceExportPosture",
+            options: entityManagementComplianceExportPostureOptions,
+            value: "privacyReviewedExport",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Cleanup posture",
+            name: "entityComplianceCleanupPosture",
+            options: entityManagementComplianceCleanupPostureOptions,
+            value: "featureOwnedCleanup",
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: "compliance-model-encryption",
+        title: "Encryption posture",
+        description: "Entity-level encryption defaults and key-management policy for auditability.",
+        children: `
+          ${renderEntityManagementSelectField({
+            label: "At rest",
+            name: "entityComplianceEncryptionAtRest",
+            options: entityManagementComplianceEncryptionRequirementOptions,
+            value: "required",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "In transit",
+            name: "entityComplianceEncryptionInTransit",
+            options: entityManagementComplianceEncryptionRequirementOptions,
+            value: "required",
+          })}
+          ${renderEntityManagementSelectField({
+            label: "Field level",
+            name: "entityComplianceEncryptionFieldLevel",
+            options: entityManagementComplianceEncryptionRequirementOptions,
+            value: "notRequired",
+          })}
+          ${renderEntityManagementTextField({
+            label: "Key management policy key",
+            name: "entityComplianceKeyManagementPolicyKey",
+            value: "platformStandardKms",
+          })}
+          ${renderEntityManagementTextField({
+            description: "Attribute-specific encryption overrides for especially sensitive fields.",
+            label: "Attribute overrides",
+            multiline: true,
+            name: "entityComplianceEncryptionAttributeOverrides",
+            value: "[]",
+          })}
+        `,
+      })}
+      ${renderEntityManagementViewSection({
+        id: "compliance-model-evidence",
+        title: "Evidence",
+        description: "Evidence keys proving the entity-level compliance posture.",
+        children: renderEntityManagementTextField({
+          description: "Evidence keys for entity-level compliance posture.",
+          label: "Evidence keys",
+          multiline: true,
+          name: "entityComplianceEvidenceKeys",
+          value: "[]",
+        }),
+      })}
+    </div>
+  `;
 }
 
 function renderMembersRegion() {
@@ -6685,8 +7801,8 @@ function renderEntityManagementPageAttributeView() {
       key: "relationships",
       label: "Relationships",
       headerLabel: "Relationships",
-      headerDescription: "Parent and child entity relationships available to this entity.",
-      count: 2,
+      headerDescription: "Field-complete relationship definitions for how this entity connects to other entities.",
+      count: 3,
       content: renderEntityManagementRelationshipsRegion(),
     },
     {
@@ -6720,6 +7836,30 @@ function renderEntityManagementPageAttributeView() {
       headerDescription: "Role access to entity record and structure capability families.",
       count: 1,
       content: renderEntityManagementPermissionsRegion(),
+    },
+    {
+      key: "generation-model",
+      label: "Generation Model",
+      headerLabel: "Generation Model",
+      headerDescription: "What this entity definition is allowed to generate or drive.",
+      count: 4,
+      content: renderEntityManagementGenerationModelRegion(),
+    },
+    {
+      key: "compliance-model",
+      label: "Compliance Model",
+      headerLabel: "Compliance Model",
+      headerDescription: "Entity-level compliance posture for audit, generation, reporting, and review.",
+      count: 4,
+      content: renderEntityManagementComplianceModelRegion(),
+    },
+    {
+      key: "migration-model",
+      label: "Migration Model",
+      headerLabel: "Migration Model",
+      headerDescription: "Adoption tracking from current repo/source artifacts into persistent entity-definition truth.",
+      count: 4,
+      content: renderEntityManagementMigrationModelRegion(),
     },
     {
       key: "action-models-record",
@@ -7302,5 +8442,6 @@ export function renderChatWorkspaceListDrawer({ entityWorkspace, selected }) {
   `;
   installRecordManagementRegionIndex(drawer);
   initializeFormDrawerSelects({ scope: drawer });
+  syncEntityManagementViewRoleOptions(drawer);
   syncEntityManagementOwningFeatureDerivedFields(drawer);
 }
