@@ -102,6 +102,15 @@ Interactive families should also prove the runtime states that create real
 layout and layering pressure, such as filled search fields, native browser
 controls, truncation, open menus, and compact or preserved-lane states.
 
+Pattern and page-template renderers must not eagerly build hidden heavy UI.
+Initial render should create only the visible/default state plus lightweight
+navigation or shell structure. Hidden regions, inactive tabs, drawer bodies,
+nested detail panels, large repeated controls, and expensive fixture-backed
+content must be materialized on first use or through an explicit prefetch
+strategy. A template is not ready for sign-off if initial load depends on
+rendering complete hidden workspaces, even when those regions are `hidden` in
+the DOM.
+
 If a UI issue survives the first fix and the same visual defect is reported
 again, escalate to browser-level inspection rather than continuing with
 source-only guesses.

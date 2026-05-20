@@ -43,6 +43,12 @@ production-readiness as separate checkpoints.
 - Layering or anchoring checks:
 - Attachment / shell-framing checks:
 - Alignment or shared-gutter checks:
+- Initial render performance check:
+  first useful view timing plus confirmation that inactive heavy regions,
+  nested panels, drawer bodies, and repeated controls are not eagerly rendered
+  into hidden DOM
+- Initial DOM/control count:
+- Large module or fixture-load note:
 - Screenshot or rendered evidence reference:
 
 ## Accessibility Verification

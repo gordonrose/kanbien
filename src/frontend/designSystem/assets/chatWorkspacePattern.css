@@ -2101,10 +2101,6 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
   align-items: stretch;
 }
 
-[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-layout:has(.record-management-nested-list-drawer[data-entity-management-expanded-section="false"]) {
-  align-items: start;
-}
-
 [data-record-management-entity-page-template] .record-management-region-index,
 [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-cards {
   align-self: stretch;
@@ -2127,11 +2123,6 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 
 [data-record-management-entity-page-template] .record-management-region-trigger strong {
   display: block;
-}
-
-[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-layout:has(.record-management-nested-list-drawer[data-entity-management-expanded-section="false"]) .record-management-nested-list-cards {
-  align-self: start;
-  block-size: auto;
 }
 
 [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list {
@@ -2168,14 +2159,6 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 
 [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-drawer > [data-record-management-nested-panel]:not([hidden]) {
   align-self: start;
-}
-
-[data-record-management-entity-page-template] .entity-management-sublist-drawer {
-  min-block-size: 0;
-}
-
-[data-record-management-entity-page-template] [data-record-management-region-panel="views"] .record-management-nested-list-cards {
-  padding-inline-end: 0.2rem;
 }
 
 .record-management-user-attribute-hero,
@@ -2255,20 +2238,6 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 
 .entity-management-identity-region {
   gap: 0.9rem;
-}
-
-.entity-management-sublist {
-  min-inline-size: 0;
-}
-
-.entity-management-sublist .record-management-nested-list-layout {
-  grid-template-columns: minmax(12rem, var(--record-management-secondary-nav-width, 15rem)) 0.5rem minmax(0, 1fr);
-}
-
-.entity-management-sublist-drawer {
-  display: grid;
-  align-content: start;
-  min-block-size: 34rem;
 }
 
 .entity-management-subpanel {
@@ -3069,8 +3038,8 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
 
 .chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-region-shell,
 .chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-region-shell,
-.chat-workspace-list-drawer[data-record-management-evidence-view="true"] .entity-management-sublist .record-management-nested-list-layout,
-.chat-workspace-list-drawer[data-record-management-ai-view="true"] .entity-management-sublist .record-management-nested-list-layout {
+.chat-workspace-list-drawer[data-record-management-evidence-view="true"] .record-management-nested-list-layout,
+.chat-workspace-list-drawer[data-record-management-ai-view="true"] .record-management-nested-list-layout {
   grid-template-columns: minmax(0, 1fr);
 }
 
@@ -3668,11 +3637,7 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
     display: none;
   }
 
-  [data-record-management-entity-page-template] .entity-management-sublist .record-management-nested-list-layout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  [data-record-management-entity-page-template] .entity-management-sublist .record-management-nested-list-cards {
+  [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-cards {
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: minmax(14rem, 82%);
@@ -3683,8 +3648,37 @@ html[data-theme="desert"] [data-record-management-list-centric-template] {
     scroll-snap-type: inline mandatory;
   }
 
-  [data-record-management-entity-page-template] .entity-management-sublist .record-management-nested-list-card {
+  [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-card {
     scroll-snap-align: start;
+  }
+
+  [data-record-management-entity-page-template],
+  [data-record-management-entity-page-template] > .record-management-template-frame,
+  [data-record-management-entity-page-template] [data-record-management-list-centric-mount],
+  [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .chat-workspace-pattern-page,
+  [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .chat-workspace-shell,
+  [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .chat-workspace-main,
+  [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .chat-workspace-entity-workspace,
+  [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .chat-workspace-entity-workspace[data-chat-workspace-drawer-open="true"],
+  [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .chat-workspace-entity-workspace[data-chat-workspace-drawer-open="true"] .floating-tab-list-panel,
+  [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .chat-workspace-list-drawer,
+  [data-record-management-entity-page-template] .chat-workspace-list-drawer-body,
+  [data-record-management-entity-page-template] .record-management-user-attribute-view,
+  [data-record-management-entity-page-template] .record-management-region-shell,
+  [data-record-management-entity-page-template] .record-management-region-panels,
+  [data-record-management-entity-page-template] .record-management-region-panel,
+  [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list,
+  [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-layout,
+  [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-drawer {
+    block-size: auto;
+    max-block-size: none;
+    overflow: visible;
+  }
+
+  [data-record-management-entity-page-template] [data-record-management-list-centric-mount] .chat-workspace-list-drawer,
+  [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list,
+  [data-record-management-entity-page-template] .record-management-region-panel .record-management-nested-list-layout {
+    grid-template-rows: auto;
   }
 
   [data-record-management-entity-page-template] .entity-management-form-grid,

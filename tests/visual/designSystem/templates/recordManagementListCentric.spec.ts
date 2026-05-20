@@ -1851,6 +1851,19 @@ test("record management entity page skeleton reuses the detail drawer as the pag
 test("record management entity page uses mobile menu and swipeable sublist navigation", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/design-system/templates/entity_management_page");
+  await page.waitForSelector("[data-record-management-region-panel='identity']");
+
+  const initialRenderFootprint = await page.evaluate(() => ({
+    controlCount: document.querySelectorAll("input, textarea, select, button").length,
+    nodeCount: document.querySelectorAll("*").length,
+    renderedNestedPanels: document.querySelectorAll("[data-record-management-nested-panel][data-entity-management-lazy-rendered='true']").length,
+    renderedRegions: document.querySelectorAll("[data-record-management-region-panel][data-entity-management-lazy-rendered='true']").length,
+  }));
+
+  expect(initialRenderFootprint.renderedRegions).toBe(1);
+  expect(initialRenderFootprint.renderedNestedPanels).toBe(1);
+  expect(initialRenderFootprint.nodeCount).toBeLessThan(5000);
+  expect(initialRenderFootprint.controlCount).toBeLessThan(1000);
 
   const mobileHeader = page.locator("[data-record-management-region-shell] .record-management-region-mobile-header");
   const primaryIndex = page.locator("[data-record-management-region-shell] .record-management-region-index");
@@ -1957,7 +1970,7 @@ test("record management entity page uses mobile menu and swipeable sublist navig
   await expect(page.locator("[data-record-management-region-panel='identity']")).toBeVisible();
   await expect(page.locator("[data-record-management-nested-trigger='primary-details']")).toBeVisible();
 
-  const sublistGeometry = await page.locator(".entity-management-sublist .record-management-nested-list-cards").evaluate((cards) => {
+  const sublistGeometry = await page.locator("[data-record-management-region-panel='identity'] .record-management-nested-list-cards").evaluate((cards) => {
     const cardRects = Array.from(cards.querySelectorAll(".record-management-nested-list-card"))
       .map((card) => card.getBoundingClientRect());
     const style = getComputedStyle(cards);
@@ -1975,31 +1988,68 @@ test("record management entity page uses mobile menu and swipeable sublist navig
   expect(sublistGeometry.scrollWidth).toBeGreaterThan(sublistGeometry.clientWidth);
   expect(sublistGeometry.firstCardWidth).toBeGreaterThan(Math.round(sublistGeometry.clientWidth * 0.6));
 
+  await primarySelect.locator("[data-form-select-button]").click();
+  await expect(primarySelect.locator("[data-form-select-listbox]")).toBeVisible();
+  await primarySelect.locator("[data-form-select-option][data-value='workflows']").click();
+  await expect(primarySelect.locator("[data-form-select-value]")).toHaveValue("workflows");
+  const workflowSublistGeometry = await page.locator("[data-record-management-region-panel='workflows'] .record-management-nested-list-cards").evaluate((cards) => {
+    const cardRects = Array.from(cards.querySelectorAll(".record-management-nested-list-card"))
+      .map((card) => card.getBoundingClientRect());
+    const style = getComputedStyle(cards);
+    return {
+      autoFlow: style.gridAutoFlow,
+      cardCount: cardRects.length,
+      firstCardWidth: Math.round(cardRects[0]?.width ?? 0),
+      clientWidth: Math.round(cards.clientWidth),
+      scrollWidth: Math.round(cards.scrollWidth),
+    };
+  });
+
+  expect(workflowSublistGeometry.autoFlow).toBe("column");
+  expect(workflowSublistGeometry.cardCount).toBe(4);
+  expect(workflowSublistGeometry.scrollWidth).toBeGreaterThan(workflowSublistGeometry.clientWidth);
+  expect(workflowSublistGeometry.firstCardWidth).toBeGreaterThan(Math.round(workflowSublistGeometry.clientWidth * 0.6));
+
+  await primarySelect.locator("[data-form-select-button]").click();
+  await expect(primarySelect.locator("[data-form-select-listbox]")).toBeVisible();
+  await primarySelect.locator("[data-form-select-option][data-value='identity']").click();
+  await expect(primarySelect.locator("[data-form-select-value]")).toHaveValue("identity");
+
   const scrollOwnership = await page.evaluate(() => {
     const template = document.querySelector("[data-record-management-entity-page-template]");
     const frame = document.querySelector("[data-record-management-entity-page-template] > .record-management-template-frame");
     const shell = document.querySelector("[data-record-management-list-centric-mount] .chat-workspace-shell");
     const panel = document.querySelector("[data-record-management-list-centric-mount] .floating-tab-list-panel");
     const drawer = document.querySelector("[data-record-management-list-centric-mount] [data-chat-workspace-list-drawer]");
+    const nestedDrawer = document.querySelector("[data-record-management-region-panel='identity'] .record-management-nested-list-drawer");
     const templateStyle = template ? getComputedStyle(template) : null;
     const frameStyle = frame ? getComputedStyle(frame) : null;
     const shellStyle = shell ? getComputedStyle(shell) : null;
     const panelStyle = panel ? getComputedStyle(panel) : null;
     const drawerStyle = drawer ? getComputedStyle(drawer) : null;
+    const nestedDrawerStyle = nestedDrawer ? getComputedStyle(nestedDrawer) : null;
     return {
       drawerOverflowY: drawerStyle?.overflowY ?? "",
       frameOverflowY: frameStyle?.overflowY ?? "",
+      nestedDrawerHeight: Math.round(nestedDrawer?.getBoundingClientRect().height ?? 0),
+      nestedDrawerOverflowY: nestedDrawerStyle?.overflowY ?? "",
+      nestedDrawerScrollHeight: nestedDrawer?.scrollHeight ?? 0,
+      pageScrollHeight: document.documentElement.scrollHeight,
       panelOverflowY: panelStyle?.overflowY ?? "",
       shellOverflowY: shellStyle?.overflowY ?? "",
       templateOverflowY: templateStyle?.overflowY ?? "",
+      viewportHeight: document.documentElement.clientHeight,
     };
   });
 
-  expect(scrollOwnership.templateOverflowY).toBe("hidden");
-  expect(scrollOwnership.frameOverflowY).toBe("hidden");
-  expect(scrollOwnership.shellOverflowY).toBe("hidden");
-  expect(scrollOwnership.panelOverflowY).toBe("hidden");
-  expect(scrollOwnership.drawerOverflowY).toBe("hidden");
+  expect(scrollOwnership.templateOverflowY).toBe("visible");
+  expect(scrollOwnership.frameOverflowY).toBe("visible");
+  expect(scrollOwnership.shellOverflowY).toBe("visible");
+  expect(scrollOwnership.panelOverflowY).toBe("visible");
+  expect(scrollOwnership.drawerOverflowY).toBe("visible");
+  expect(scrollOwnership.nestedDrawerOverflowY).toBe("visible");
+  expect(scrollOwnership.pageScrollHeight).toBeGreaterThan(scrollOwnership.viewportHeight);
+  expect(scrollOwnership.nestedDrawerHeight).toBeGreaterThanOrEqual(scrollOwnership.nestedDrawerScrollHeight - 2);
 
   await page.locator("[data-record-management-evidence-mode-toggle]").click();
   await page.locator("[data-evidence-element-name='Entity name'] [data-record-management-evidence-button]").click();

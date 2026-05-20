@@ -52,8 +52,16 @@ tokens and patterns rather than inventing variants in code first.
 ## Performance And Rendering
 
 - Rendering expectations:
+- Initial render contract:
+  render only visible/default content plus lightweight structure; hidden heavy
+  regions, inactive detail panels, large repeated controls, and expensive
+  fixture-backed content must be materialized on first use or behind an
+  explicit prefetch strategy
 - Motion constraints:
 - Large-content or overflow considerations:
+- Render-ready signal:
+- Browser evidence for heavy surfaces:
+  initial-load timing, DOM/control counts, and large-module cost when relevant
 
 ## Adoption And Migration
 
@@ -75,4 +83,3 @@ tokens and patterns rather than inventing variants in code first.
 - Design-system route update required:
 - Frontend docs update required:
 - Architecture-map update required:
-

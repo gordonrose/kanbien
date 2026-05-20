@@ -84,6 +84,21 @@ implicit.
   full-width or intentionally contained when relevant
 - Alignment expectations with adjacent chrome when relevant:
 
+## Performance And Rendering
+
+- Initial render contract:
+  render only the visible/default state plus lightweight navigation or shell
+  structure
+- Hidden or inactive regions:
+  materialize on first use, or document the explicit prefetch strategy
+- Large lists, nested detail panels, drawer bodies, and fixture-backed content:
+  must not be eagerly rendered only to be hidden
+- Render-ready signal:
+  define the selector or state that proves the first useful view is present
+- Browser evidence:
+  record initial-load timing, DOM/control counts, and any known large-module
+  cost when the pattern or page template can host heavy content
+
 ## Composition Rules
 
 - Common parent contexts:
