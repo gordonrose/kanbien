@@ -25,9 +25,12 @@ export type SourceRef = {
   sourceKey: string;
   sourceType: string;
   sourceLocationType: "repo_path" | "git_commit" | "chat" | "runtime_observation" | "manual_note" | string;
+  llmChatId?: string;
+  llmTurnId?: string;
   repoPath?: string;
   commitSha?: string;
   proofStatement: string;
+  supplementalRefs?: SourceRef[];
 };
 
 export type DecisionAppliesTo = {

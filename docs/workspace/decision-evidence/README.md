@@ -21,6 +21,15 @@ capabilities.
   superseded, clarified, or narrowed decisions.
 - `evidence-packet-registry.json`: current executable truth bundles for a
   field, capability, entity, page, or artifact.
+- Source refs should point at the primary source of truth. For LLM
+  conversations, prefer the actual rollout transcript, stable `llmChatId`,
+  cloud transcript ID, or future persisted conversation record.
+- Workspace chat records are supplemental summaries. They can help humans scan
+  what happened, but they must not replace the primary transcript or persistent
+  conversation source when one is available.
+- `sourceKey` must not pretend to be a chat identifier. Use a real resolver
+  value when possible, such as a rollout path, commit SHA, persisted source ID,
+  or stable LLM chat ID.
 
 ## Commands
 
@@ -41,6 +50,29 @@ Attach an existing decision to an existing evidence packet:
 ```bash
 npm run decision-evidence -- attach-decision --packet-key packet.example --decision-key decision.example
 ```
+
+Record a decision quickly from command flags and optionally attach it to a
+packet:
+
+```bash
+npm run decision-evidence -- quick-decision \
+  --decision-key decision.example \
+  --type harness_policy \
+  --statement "Decision records start as repo artifacts before persistence exists." \
+  --entity decision \
+  --capability create_decision \
+  --source-key /home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl \
+  --source-location-type repo_path \
+  --repo-path /home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl \
+  --llm-chat-id 019e4518-9f33-73c3-bbdb-719ea4404bff \
+  --proof "Gordon asked for active decision tracking through the harness." \
+  --packet-key packet.capability.create_decision.repo_artifact_bootstrap
+```
+
+When a stable LLM chat or turn identifier is available, pass it with
+`--llm-chat-id` or `--llm-turn-id`. If the running environment does not expose
+one, omit the field rather than inventing an identifier. If only a workspace
+chat record exists, mark it as supplemental or clearly label it as a summary.
 
 Validate that every packet-linked decision exists:
 

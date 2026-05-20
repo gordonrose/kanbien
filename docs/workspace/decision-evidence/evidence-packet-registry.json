@@ -1,6 +1,6 @@
 {
   "artifactKey": "evidence_packet_registry",
-  "generatedAt": "2026-05-20T15:31:10.772Z",
+  "generatedAt": "2026-05-20T16:07:35.613Z",
   "storagePosture": "repo_artifact_until_capabilities_exist",
   "migrationTarget": "evidence_packet_entity_capabilities",
   "evidencePackets": [
@@ -9,7 +9,11 @@
       "sourceDecisionKeys": [
         "decision.harness.evidence_packet_current_truth_bundle",
         "decision.harness.migrate_artifact_writer_to_capabilities",
-        "decision.harness.repo_artifact_decision_capture_bootstrap"
+        "decision.harness.quick_decision_command_for_live_capture",
+        "decision.harness.repo_artifact_decision_capture_bootstrap",
+        "decision.harness.source_refs_accept_codex_chat_ids",
+        "decision.harness.source_refs_use_llm_chat_ids",
+        "decision.harness.workspace_chat_records_are_supplemental"
       ],
       "affectedRegistryRows": [],
       "affectedArtifacts": [
@@ -25,7 +29,7 @@
         "reviewedAt": null
       },
       "migrationPosture": "repo_artifact_until_decision_and_evidence_packet_capabilities_exist",
-      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdAt": "2026-05-20T15:31:10.772Z",
       "createdByActorKey": "codex_5_5",
       "evidencePacketKey": "packet.capability.create_decision.repo_artifact_bootstrap",
       "target": {
@@ -36,7 +40,7 @@
       "currentTruth": {
         "statement": "Create decision records a durable decision point with actor accountability, source references, review posture, approval posture, and optional relations to other decisions.",
         "version": 1,
-        "updatedAt": "2026-05-20T00:00:00.000Z",
+        "updatedAt": "2026-05-20T15:31:10.772Z",
         "updatedByActorKey": "codex_5_5"
       },
       "execution": {
@@ -79,7 +83,7 @@
         "reviewedAt": null
       },
       "migrationPosture": "repo_artifact_until_decision_and_evidence_packet_capabilities_exist",
-      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdAt": "2026-05-20T15:31:10.772Z",
       "createdByActorKey": "codex_5_5",
       "evidencePacketKey": "packet.capability.read_decision.repo_artifact_bootstrap",
       "target": {
@@ -90,7 +94,7 @@
       "currentTruth": {
         "statement": "Read decision returns the durable decision point, source references, relations, actor accountability, and approval posture needed to explain the decision history.",
         "version": 1,
-        "updatedAt": "2026-05-20T00:00:00.000Z",
+        "updatedAt": "2026-05-20T15:31:10.772Z",
         "updatedByActorKey": "codex_5_5"
       },
       "execution": {

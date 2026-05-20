@@ -28,9 +28,10 @@ const decision: DecisionRecord = {
   },
   sourceRefs: [
     {
-      sourceKey: "chat_2026_05_20_decision_entity",
+      sourceKey: "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
       sourceType: "conversation",
-      sourceLocationType: "chat",
+      sourceLocationType: "repo_path",
+      repoPath: "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
       proofStatement: "Gordon proposed using Decision as an entity that evidence packets can reference.",
     },
   ],

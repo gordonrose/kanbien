@@ -9,7 +9,7 @@ import {
   type EvidencePacketRecord,
 } from "./lib/decisionEvidenceRegistry";
 
-type Command = "record-decision" | "record-packet" | "attach-decision" | "validate";
+type Command = "record-decision" | "record-packet" | "attach-decision" | "quick-decision" | "validate";
 
 function parseSingleArg(argv: string[], flag: string): string | null {
   for (let index = 0; index < argv.length; index += 1) {
@@ -30,12 +30,13 @@ function parseCommand(argv: string[]): Command {
     command === "record-decision" ||
     command === "record-packet" ||
     command === "attach-decision" ||
+    command === "quick-decision" ||
     command === "validate"
   ) {
     return command;
   }
   throw new Error(
-    "Usage: npm run decision-evidence -- <record-decision|record-packet|attach-decision|validate> [--input path] [--root-dir path]",
+    "Usage: npm run decision-evidence -- <record-decision|record-packet|attach-decision|quick-decision|validate> [--input path] [--root-dir path]",
   );
 }
 
@@ -49,6 +50,60 @@ function readInput<T>(argv: string[]): T {
 
 function pathsFromArgs(argv: string[]) {
   return decisionEvidencePaths(parseSingleArg(argv, "--root-dir") ?? undefined);
+}
+
+function requiredArg(argv: string[], flag: string): string {
+  const value = parseSingleArg(argv, flag);
+  if (!value) {
+    throw new Error(`Provide ${flag} <value>.`);
+  }
+  return value;
+}
+
+function buildQuickDecision(argv: string[]): DecisionRecord {
+  const now = new Date().toISOString();
+  const entityKey = parseSingleArg(argv, "--entity") ?? undefined;
+  const capabilityKey = parseSingleArg(argv, "--capability") ?? undefined;
+  const fieldKey = parseSingleArg(argv, "--field") ?? undefined;
+  const artifactPath = parseSingleArg(argv, "--artifact") ?? undefined;
+  const repoPath = parseSingleArg(argv, "--repo-path") ?? undefined;
+  const commitSha = parseSingleArg(argv, "--commit-sha") ?? undefined;
+  const llmChatId = parseSingleArg(argv, "--llm-chat-id") ?? undefined;
+  const llmTurnId = parseSingleArg(argv, "--llm-turn-id") ?? undefined;
+  const reviewedByActorKey = parseSingleArg(argv, "--reviewed-by") ?? "not_approved";
+  const reviewedAt = reviewedByActorKey === "not_approved" ? null : now;
+
+  return {
+    decisionKey: requiredArg(argv, "--decision-key"),
+    decisionType: requiredArg(argv, "--type"),
+    statement: requiredArg(argv, "--statement"),
+    status: (parseSingleArg(argv, "--status") ?? "needs_review") as DecisionRecord["status"],
+    appliesTo: {
+      ...(entityKey ? { entityKey } : {}),
+      ...(capabilityKey ? { capabilityKey } : {}),
+      ...(fieldKey ? { fieldKey } : {}),
+      ...(artifactPath ? { artifactPath } : {}),
+    },
+    sourceRefs: [
+      {
+        sourceKey: requiredArg(argv, "--source-key"),
+        sourceType: parseSingleArg(argv, "--source-type") ?? "conversation",
+        sourceLocationType: parseSingleArg(argv, "--source-location-type") ?? "chat",
+        ...(llmChatId ? { llmChatId } : {}),
+        ...(llmTurnId ? { llmTurnId } : {}),
+        ...(repoPath ? { repoPath } : {}),
+        ...(commitSha ? { commitSha } : {}),
+        proofStatement: requiredArg(argv, "--proof"),
+      },
+    ],
+    relations: [],
+    createdAt: now,
+    createdByActorKey: parseSingleArg(argv, "--created-by") ?? "codex_5_5",
+    reviewedAt,
+    reviewedByActorKey,
+    approvedByActorKey: parseSingleArg(argv, "--approved-by") ?? "not_approved",
+    notes: parseSingleArg(argv, "--notes") ?? undefined,
+  };
 }
 
 function main() {
@@ -107,6 +162,51 @@ function main() {
           decisionKey,
           evidencePacketCount: registry.evidencePackets.length,
           path: paths.evidencePacketRegistryPath,
+        },
+        null,
+        2,
+      ),
+    );
+    return;
+  }
+
+  if (command === "quick-decision") {
+    const decision = buildQuickDecision(argv);
+    const decisionRegistry = upsertDecision(decision, { paths });
+    const evidencePacketKey = parseSingleArg(argv, "--packet-key");
+    if (evidencePacketKey) {
+      const packetRegistry = attachDecisionToPacket(
+        {
+          evidencePacketKey,
+          decisionKey: decision.decisionKey,
+        },
+        { paths },
+      );
+      console.log(
+        JSON.stringify(
+          {
+            status: "quick_decision_recorded_and_attached",
+            decisionKey: decision.decisionKey,
+            evidencePacketKey,
+            decisionCount: decisionRegistry.decisions.length,
+            evidencePacketCount: packetRegistry.evidencePackets.length,
+            decisionRegistryPath: paths.decisionRegistryPath,
+            evidencePacketRegistryPath: paths.evidencePacketRegistryPath,
+          },
+          null,
+          2,
+        ),
+      );
+      return;
+    }
+
+    console.log(
+      JSON.stringify(
+        {
+          status: "quick_decision_recorded",
+          decisionKey: decision.decisionKey,
+          decisionCount: decisionRegistry.decisions.length,
+          path: paths.decisionRegistryPath,
         },
         null,
         2,

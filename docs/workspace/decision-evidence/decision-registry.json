@@ -1,6 +1,6 @@
 {
   "artifactKey": "decision_registry",
-  "generatedAt": "2026-05-20T15:31:10.770Z",
+  "generatedAt": "2026-05-20T16:07:35.604Z",
   "storagePosture": "repo_artifact_until_capabilities_exist",
   "migrationTarget": "decision_entity_capabilities",
   "decisions": [
@@ -8,14 +8,25 @@
       "status": "needs_review",
       "sourceRefs": [
         {
-          "sourceKey": "chat_2026_05_20_decision_evidence_harness_request",
-          "sourceType": "conversation",
-          "sourceLocationType": "chat",
-          "proofStatement": "Gordon asked to start actively tracking decisions and creating evidence packets through a harness, with repo artifacts as transitional storage until persistent capabilities exist."
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "proofStatement": "Gordon asked to start actively tracking decisions and creating evidence packets through a harness, with repo artifacts as transitional storage until persistent capabilities exist.",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation."
+            }
+          ]
         }
       ],
       "relations": [],
-      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdAt": "2026-05-20T15:31:10.770Z",
       "createdByActorKey": "codex_5_5",
       "reviewedAt": null,
       "reviewedByActorKey": "not_approved",
@@ -32,14 +43,25 @@
       "status": "needs_review",
       "sourceRefs": [
         {
-          "sourceKey": "chat_2026_05_20_decision_evidence_harness_request",
-          "sourceType": "conversation",
-          "sourceLocationType": "chat",
-          "proofStatement": "Gordon asked to start actively tracking decisions and creating evidence packets through a harness, with repo artifacts as transitional storage until persistent capabilities exist."
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "proofStatement": "Gordon asked to start actively tracking decisions and creating evidence packets through a harness, with repo artifacts as transitional storage until persistent capabilities exist.",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation."
+            }
+          ]
         }
       ],
       "relations": [],
-      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdAt": "2026-05-20T15:31:10.770Z",
       "createdByActorKey": "codex_5_5",
       "reviewedAt": null,
       "reviewedByActorKey": "not_approved",
@@ -54,17 +76,63 @@
       }
     },
     {
+      "decisionKey": "decision.harness.quick_decision_command_for_live_capture",
+      "decisionType": "harness_usability",
+      "statement": "The decision evidence harness should provide a quick-decision command so live build decisions can be recorded without hand-authoring full JSON.",
       "status": "needs_review",
+      "appliesTo": {
+        "entityKey": "decision",
+        "capabilityKey": "create_decision"
+      },
       "sourceRefs": [
         {
-          "sourceKey": "chat_2026_05_20_decision_evidence_harness_request",
-          "sourceType": "conversation",
-          "sourceLocationType": "chat",
-          "proofStatement": "Gordon asked to start actively tracking decisions and creating evidence packets through a harness, with repo artifacts as transitional storage until persistent capabilities exist."
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "proofStatement": "Gordon confirmed the need for predictable scripts that record decisions and add them to evidence packets, then agreed to add a convenience command for live work.",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation."
+            }
+          ]
         }
       ],
       "relations": [],
-      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdAt": "2026-05-20T15:53:28.795Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": null,
+      "reviewedByActorKey": "not_approved",
+      "approvedByActorKey": "not_approved"
+    },
+    {
+      "status": "needs_review",
+      "sourceRefs": [
+        {
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "proofStatement": "Gordon asked to start actively tracking decisions and creating evidence packets through a harness, with repo artifacts as transitional storage until persistent capabilities exist.",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation."
+            }
+          ]
+        }
+      ],
+      "relations": [],
+      "createdAt": "2026-05-20T15:31:10.770Z",
       "createdByActorKey": "codex_5_5",
       "reviewedAt": null,
       "reviewedByActorKey": "not_approved",
@@ -77,6 +145,111 @@
         "capabilityKey": "create_decision",
         "artifactPath": "docs/workspace/decision-evidence/decision-registry.json"
       }
+    },
+    {
+      "decisionKey": "decision.harness.source_refs_accept_codex_chat_ids",
+      "decisionType": "source_traceability",
+      "statement": "Decision source references should record Codex chat and turn identifiers when the active harness session exposes stable identifiers.",
+      "status": "needs_review",
+      "appliesTo": {
+        "entityKey": "decision",
+        "capabilityKey": "create_decision"
+      },
+      "sourceRefs": [
+        {
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "proofStatement": "Gordon pointed out that decisions should record the Codex chat id, and that placeholder midnight timestamps were misleading.",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation."
+            }
+          ]
+        }
+      ],
+      "relations": [],
+      "createdAt": "2026-05-20T15:55:56.793Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": null,
+      "reviewedByActorKey": "not_approved",
+      "approvedByActorKey": "not_approved"
+    },
+    {
+      "decisionKey": "decision.harness.source_refs_use_llm_chat_ids",
+      "decisionType": "source_traceability",
+      "statement": "Decision source references should use provider-neutral llmChatId and llmTurnId fields for stable conversation lookup when those identifiers are available.",
+      "status": "needs_review",
+      "appliesTo": {
+        "entityKey": "decision",
+        "capabilityKey": "create_decision"
+      },
+      "sourceRefs": [
+        {
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "proofStatement": "Gordon clarified that the goal is to find the exact conversation on the local machine, in cloud history, or later in persistence, so the field should not be Codex-specific.",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation."
+            }
+          ]
+        }
+      ],
+      "relations": [],
+      "createdAt": "2026-05-20T16:00:32.974Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": null,
+      "reviewedByActorKey": "not_approved",
+      "approvedByActorKey": "not_approved"
+    },
+    {
+      "decisionKey": "decision.harness.workspace_chat_records_are_supplemental",
+      "decisionType": "source_traceability",
+      "statement": "Workspace chat records are supplemental summaries; decision source refs should use the actual rollout transcript, stable LLM chat ID, cloud transcript ID, or future persistent conversation record as the primary source when available.",
+      "status": "needs_review",
+      "appliesTo": {
+        "entityKey": "decision",
+        "capabilityKey": "create_decision"
+      },
+      "sourceRefs": [
+        {
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "proofStatement": "Gordon clarified that workspace chat records are useful but should be supplemental, not the primary source of truth for exact conversation lookup.",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation."
+            }
+          ]
+        }
+      ],
+      "relations": [],
+      "createdAt": "2026-05-20T16:07:35.603Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": null,
+      "reviewedByActorKey": "not_approved",
+      "approvedByActorKey": "not_approved"
     }
   ]
 }
