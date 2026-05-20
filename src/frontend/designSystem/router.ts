@@ -14,6 +14,30 @@ export const generatedCanonicalRenderRouteRegistry = {
     htmlPath: ["components", "choice-group.html"],
     surfaceSignature: 'id="choice-group-preview-shell"',
   },
+  "entity-management-page-outer-page": {
+    htmlPath: ["components", "entity-management-page-child.html"],
+    surfaceSignature: 'id="entity-management-page-preview-shell"',
+  },
+  "entity-management-page-navigation": {
+    htmlPath: ["components", "entity-management-page-child.html"],
+    surfaceSignature: 'id="entity-management-page-preview-shell"',
+  },
+  "entity-management-page-detail-panel": {
+    htmlPath: ["components", "entity-management-page-child.html"],
+    surfaceSignature: 'id="entity-management-page-preview-shell"',
+  },
+  "entity-management-page-collection-item": {
+    htmlPath: ["components", "entity-management-page-child.html"],
+    surfaceSignature: 'id="entity-management-page-preview-shell"',
+  },
+  "entity-management-page-evidence-ai": {
+    htmlPath: ["components", "entity-management-page-child.html"],
+    surfaceSignature: 'id="entity-management-page-preview-shell"',
+  },
+  "entity-management-page-performance": {
+    htmlPath: ["components", "entity-management-page-child.html"],
+    surfaceSignature: 'id="entity-management-page-preview-shell"',
+  },
   "date-picker": {
     htmlPath: ["components", "date-picker.html"],
     surfaceSignature: 'id="date-picker-preview-shell"',

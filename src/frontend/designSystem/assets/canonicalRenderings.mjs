@@ -1,4 +1,5 @@
 import { floatingTabHeaderCanonicalStates } from "./floatingTabHeaderCanonical.mjs";
+import { entityManagementCanonicalFamilies } from "./entityManagementPageCanonical.mjs";
 
 async function fetchJson(url) {
   const response = await fetch(url, {
@@ -34,6 +35,11 @@ function buildFloatingTabHeaderLauncherPayload() {
     })),
   };
 }
+
+const fallbackCanonicalFamilyPayloads = new Map([
+  ...entityManagementCanonicalFamilies.map((payload) => [payload.family.familyKey, payload]),
+  ["floating-tab-header", buildFloatingTabHeaderLauncherPayload()],
+]);
 
 function escapeHtml(value) {
   return String(value)
@@ -85,6 +91,14 @@ function renderFamilyIndex(items) {
       `,
     )
     .join("");
+}
+
+function mergeFallbackFamilies(items) {
+  const existingKeys = new Set(items.map((family) => family.familyKey));
+  const fallbackFamilies = Array.from(fallbackCanonicalFamilyPayloads.values())
+    .map((payload) => payload.family)
+    .filter((family) => !existingKeys.has(family.familyKey));
+  return [...items, ...fallbackFamilies];
 }
 
 function renderFamilyLauncher(payload) {
@@ -144,7 +158,7 @@ async function main() {
 
   if (!pathInfo.familyKey) {
     const payload = await fetchJson("/v1/design-system-canonicals/public/families");
-    renderFamilyIndex(payload.items ?? []);
+    renderFamilyIndex(mergeFallbackFamilies(payload.items ?? []));
     return;
   }
 
@@ -154,13 +168,13 @@ async function main() {
       `/v1/design-system-canonicals/public/families/${encodeURIComponent(pathInfo.familyKey)}/launcher`,
     );
   } catch (error) {
-    if (pathInfo.familyKey !== "floating-tab-header") {
+    if (!fallbackCanonicalFamilyPayloads.has(pathInfo.familyKey)) {
       throw error;
     }
-    payload = buildFloatingTabHeaderLauncherPayload();
+    payload = fallbackCanonicalFamilyPayloads.get(pathInfo.familyKey);
   }
-  if (pathInfo.familyKey === "floating-tab-header" && (!Array.isArray(payload.references) || payload.references.length === 0)) {
-    payload = buildFloatingTabHeaderLauncherPayload();
+  if (fallbackCanonicalFamilyPayloads.has(pathInfo.familyKey) && (!Array.isArray(payload.references) || payload.references.length === 0)) {
+    payload = fallbackCanonicalFamilyPayloads.get(pathInfo.familyKey);
   }
   renderFamilyLauncher(payload);
 }

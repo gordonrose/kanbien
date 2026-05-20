@@ -55,6 +55,14 @@ Use prefix `EMPI-*`.
 | `EMPI-028` | Keyboard item lifecycle | Keyboard-only add/copy/delete | Proves WCAG keyboard support. | needs evidence |
 | `EMPI-029` | Screen-reader status after add/delete | Add/delete repeated items | Proves dynamic changes announce or otherwise remain perceivable. | needs evidence |
 | `EMPI-030` | Duplicate id/name sweep | After repeated add/copy cycles | Proves generated ids/names remain unique. | needs evidence |
+| `EMPI-031` | Mobile carousel item lifecycle | Mobile Workflows/Catalogs/Permissions add, copy, delete | Proves mutation behavior works inside the approved carousel posture. | needs evidence |
+| `EMPI-032` | Long item labels and descriptions | Long workflow/catalog/role labels plus unbroken keys | Proves card/panel sync, truncation, and tooltip behavior remain governed. | needs fixture |
+| `EMPI-033` | RTL collection lifecycle | RTL desktop and mobile add/copy/delete | Proves action placement, adjacent activation, and carousel movement mirror correctly. | needs evidence |
+| `EMPI-034` | Dark-theme collection lifecycle | Dark theme add/copy/delete across item families | Proves add cards, action icons, destructive affordances, and active state keep AA contrast. | needs evidence |
+| `EMPI-035` | 200% zoom collection lifecycle | Zoomed desktop/mobile add/copy/delete | Proves action rows and cards do not overlap or become unreachable. | needs evidence |
+| `EMPI-036` | WCAG text-spacing collection cards | Text spacing override across repeated cards | Proves card labels, descriptions, and action rows remain legible. | needs evidence |
+| `EMPI-037` | WCAG target-size item controls | Mobile/touch review of add, copy, delete, move, and option controls | Proves item controls meet WCAG 2.2 AA target-size expectations or documented spacing exceptions. | needs evidence |
+| `EMPI-038` | High-count destructive recovery | 20+ item fixture, delete active and last item | Proves adjacent activation and add-card reachability remain reliable at scale. | needs fixture |
 
 ## High-Risk Batch
 
@@ -69,4 +77,18 @@ Review first:
 - `EMPI-022`
 - `EMPI-027`
 - `EMPI-030`
+- `EMPI-031`
+- `EMPI-032`
+- `EMPI-034`
+- `EMPI-037`
 
+## Required Pressure States
+
+- add/copy/delete across all add-capable item families
+- mobile carousel lifecycle
+- long labels and descriptions with tooltip/truncation where applicable
+- high item counts
+- RTL desktop and mobile
+- dark theme
+- 200% zoom and WCAG text spacing
+- keyboard focus, status perception, and WCAG 2.2 AA target-size review

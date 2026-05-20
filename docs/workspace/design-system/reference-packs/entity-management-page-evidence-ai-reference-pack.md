@@ -56,6 +56,12 @@ Use prefix `EMPE-*`.
 | `EMPE-028` | RTL evidence split | RTL desktop, evidence open | Proves split placement and content alignment. | needs evidence |
 | `EMPE-029` | RTL mobile evidence overlay | RTL mobile, evidence open | Proves overlay and close affordance alignment. | needs evidence |
 | `EMPE-030` | Zoomed evidence/AI | 200% zoom, evidence and AI | Proves panel reflow and focus not obscured. | needs evidence |
+| `EMPE-031` | Long target labels with tooltip | Evidence/AI target controls on long field labels | Proves target icons do not obscure labels and truncated labels expose shared tooltip. | needs fixture |
+| `EMPE-032` | High evidence-card count | Evidence drawer with many provenance cards | Proves drawer scroll, card rhythm, and close affordance remain stable. | needs fixture |
+| `EMPE-033` | WCAG text-spacing evidence/AI | Text spacing override with evidence and AI drawers open | Proves cards, headings, and target controls do not overlap. | needs evidence |
+| `EMPE-034` | WCAG target-size evidence/AI | Mobile/touch review of mode toggles, target buttons, and close controls | Proves controls meet WCAG 2.2 AA target-size expectations or documented spacing exceptions. | needs evidence |
+| `EMPE-035` | Keyboard cycle through drawer content | Keyboard-only traversal through evidence/AI drawer cards and close | Proves focus stays inside the active overlay/panel and returns predictably. | needs evidence |
+| `EMPE-036` | Dark RTL mobile AI overlay | Dark theme, RTL mobile, AI open | Proves combined mode pressure keeps overlay readable and aligned. | needs evidence |
 
 ## High-Risk Batch
 
@@ -70,4 +76,19 @@ Review first:
 - `EMPE-022`
 - `EMPE-025`
 - `EMPE-030`
+- `EMPE-031`
+- `EMPE-032`
+- `EMPE-034`
+- `EMPE-036`
 
+## Required Pressure States
+
+- evidence and AI mutual exclusion
+- desktop split geometry without detail squashing
+- mobile overlays
+- long target labels and long evidence values with tooltip/truncation where applicable
+- high evidence-card counts
+- RTL desktop and mobile
+- dark theme
+- 200% zoom and WCAG text spacing
+- keyboard focus recovery and WCAG 2.2 AA target-size review

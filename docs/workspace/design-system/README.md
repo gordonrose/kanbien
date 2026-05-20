@@ -176,6 +176,13 @@ Current authored examples now include:
 - `reference-packs/entity-management-page-collection-item-reference-pack.md`
 - `reference-packs/entity-management-page-evidence-ai-reference-pack.md`
 - `reference-packs/entity-management-page-performance-reference-pack.md`
+- review-candidate child canonical launchers:
+  `/design-system/canonical-renderings/entity-management-page-outer-page`,
+  `/design-system/canonical-renderings/entity-management-page-navigation`,
+  `/design-system/canonical-renderings/entity-management-page-detail-panel`,
+  `/design-system/canonical-renderings/entity-management-page-collection-item`,
+  `/design-system/canonical-renderings/entity-management-page-evidence-ai`,
+  `/design-system/canonical-renderings/entity-management-page-performance`
 - `canonicals/time-picker/index.html`
 - `token-reviews/list-record-card-token-candidacy-review.md`
 - `token-reviews/context-nav-token-candidacy-review.md`

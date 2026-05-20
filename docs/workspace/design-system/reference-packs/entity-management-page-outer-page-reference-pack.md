@@ -42,6 +42,14 @@ Use prefix `EMPO-*`.
 | `EMPO-014` | Outer framing app-consumer parity | First app consumer route once available | Proves app consumes signed-off outer framing rather than copying inner CSS only. | blocked-for-adoption |
 | `EMPO-015` | Route reload/restoration baseline | Reload after default route open | Proves initial selected region and lazy footprint remain stable after reload. | needs evidence |
 | `EMPO-016` | Browser back/forward posture | Navigate away/back to template | Proves route-level state does not leave drawers or overlays in broken posture. | needs evidence |
+| `EMPO-017` | Long organization and status labels | Desktop and mobile, long entity/team/status text | Proves header labels truncate or wrap in governed places with tooltip where truncation is used. | needs fixture |
+| `EMPO-018` | RTL outer shell | RTL desktop and mobile shell | Proves header, action controls, breadcrumbs/search shell, and bottom navigation mirror without document-level side effects. | needs evidence |
+| `EMPO-019` | 200% zoom outer shell | Desktop and mobile at 200% browser zoom or equivalent local scale | Proves page chrome remains readable and page-level scroll is still available. | needs evidence |
+| `EMPO-020` | WCAG text-spacing outer shell | Text spacing override on page header and shell chrome | Proves labels do not overlap, truncate unexpectedly, or hide controls under spacing pressure. | needs evidence |
+| `EMPO-021` | WCAG focus-visible shell sweep | Keyboard traversal through shell actions, mobile picker, and bottom nav | Proves visible focus is not clipped by sticky/fixed shell regions. | needs evidence |
+| `EMPO-022` | WCAG target-size shell sweep | Touch/mobile review of shell actions and bottom nav | Proves primary shell targets satisfy WCAG 2.2 AA target-size expectations or have documented spacing exceptions. | needs evidence |
+| `EMPO-023` | Dark-theme mobile shell | Mobile dark theme with long content | Proves dark theme does not change scroll ownership or reduce control contrast. | needs evidence |
+| `EMPO-024` | High-content shell pressure | Fixture with long page body plus many regions/items | Proves the outer page keeps one usable scroll story when inner content grows. | needs fixture |
 
 ## High-Risk Batch
 
@@ -54,6 +62,10 @@ Review first:
 - `EMPO-009`
 - `EMPO-010`
 - `EMPO-014`
+- `EMPO-017`
+- `EMPO-018`
+- `EMPO-019`
+- `EMPO-021`
 
 ## Required Pressure States
 
@@ -61,5 +73,10 @@ Review first:
 - mobile long content
 - desktop constrained height
 - alternate themes
+- dark theme
+- RTL
+- 200% zoom and text spacing
+- long labels with tooltip/truncation where applicable
+- keyboard focus visibility
+- WCAG 2.2 AA target-size review
 - first app consumer parity
-

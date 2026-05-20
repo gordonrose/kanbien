@@ -103,9 +103,10 @@ Current route model:
 - a router that resolves request paths directly to matching HTML files
 - discovery logic that walks the HTML tree and reports implemented routes as
   discovered frontend truth
-- generated canonical route entries for approved component or pattern families
-  that need stable canonical launcher/detail URLs in addition to their review
-  route, such as `kanban-column`
+- generated canonical route entries for approved or review-candidate governed
+  component, pattern, or page-template child families that need stable
+  canonical launcher/detail URLs in addition to their review route, such as
+  `kanban-column` and the `entity-management-page-*` child matrices
 
 ### `rootAdminShell`
 
@@ -372,7 +373,7 @@ Typical update triggers:
 - introducing a new durable frontend discovery or topology-management seam
 - changing the boundary between frontend runtime and backend feature seams
 - adding generated canonical route registry entries for governed design-system
-  component or pattern families
+  component, pattern, or page-template child families
 
 When the change is an enduring architectural decision rather than only a
 current-state refresh, also create or update an ADR in `docs/architecture/adr/`.

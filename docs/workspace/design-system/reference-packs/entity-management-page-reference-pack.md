@@ -59,15 +59,15 @@ Do not treat this pack as app-adoption approval until:
 
 | Child matrix | Artifact | State count | Review focus |
 | --- | --- | ---: | --- |
-| Outer page | `entity-management-page-outer-page-reference-pack.md` | 16 | Shell ownership, page framing, desktop/mobile scroll ownership, app-consumable boundary. |
-| Navigation | `entity-management-page-navigation-reference-pack.md` | 30 | Region index, mobile region picker, nested cards, carousel, active states, resizer. |
-| Detail panel | `entity-management-page-detail-panel-reference-pack.md` | 44 | Generated form panels, collapsible sections, derived fields, workflow builder, attributes, permissions, action models. |
-| Collection item | `entity-management-page-collection-item-reference-pack.md` | 30 | Add/copy/delete, card sync, panel sync, workflow/catalog/permission item lifecycles. |
-| Evidence/AI | `entity-management-page-evidence-ai-reference-pack.md` | 30 | Evidence and AI modes, target affordances, desktop split, mobile overlays, focus and mutual exclusion. |
-| Performance | `entity-management-page-performance-reference-pack.md` | 24 | Lazy rendering, render-ready signal, DOM/control budgets, visited-region growth, module/fixture boundaries. |
+| Outer page | `entity-management-page-outer-page-reference-pack.md` | 24 | Shell ownership, page framing, desktop/mobile scroll ownership, app-consumable boundary. |
+| Navigation | `entity-management-page-navigation-reference-pack.md` | 36 | Region index, mobile region picker, nested cards, carousel, active states, resizer. |
+| Detail panel | `entity-management-page-detail-panel-reference-pack.md` | 50 | Generated form panels, collapsible sections, derived fields, workflow builder, attributes, permissions, action models. |
+| Collection item | `entity-management-page-collection-item-reference-pack.md` | 38 | Add/copy/delete, card sync, panel sync, workflow/catalog/permission item lifecycles. |
+| Evidence/AI | `entity-management-page-evidence-ai-reference-pack.md` | 36 | Evidence and AI modes, target affordances, desktop split, mobile overlays, focus and mutual exclusion. |
+| Performance | `entity-management-page-performance-reference-pack.md` | 32 | Lazy rendering, render-ready signal, DOM/control budgets, visited-region growth, module/fixture boundaries. |
 
 Total current child states:
-`174`
+`216`
 
 This is still a review-candidate inventory. It should grow when dedicated
 canonical fixtures introduce broader app-data, high-count, localization, and
@@ -160,5 +160,6 @@ A future app consumer matches this pack only when it:
 - `chatWorkspaceRowDrawer.mjs` still imports the entity-management module
   eagerly for the current demo path.
 - The app-consumable data adapter/API is not yet defined.
-- Dedicated canonical render surfaces do not yet exist for the reference
-  states above.
+- Dedicated child canonical render surfaces now exist as review-candidate
+  fallback routes; persistence-backed seeding, full fixture expansion, and
+  hosted-surface pixel parity are still pending before sign-off.

@@ -70,6 +70,12 @@ Use prefix `EMPD-*`.
 | `EMPD-042` | 200% zoom detail panel | Zoomed desktop/mobile | Proves generated forms reflow and remain operable. | needs evidence |
 | `EMPD-043` | Text-spacing detail panel | WCAG text spacing override | Proves field tile rhythm survives spacing changes. | needs evidence |
 | `EMPD-044` | RTL detail panel | RTL desktop/mobile | Proves form alignment and grouped controls mirror appropriately. | needs evidence |
+| `EMPD-045` | Dark-theme detail panel | Dark theme across field cards, accordions, and builders | Proves detail surfaces, disabled fields, and generated controls keep AA contrast. | needs evidence |
+| `EMPD-046` | Tooltip/truncated field labels | Long field labels in cards, accordions, status rows, and action models | Proves any truncated field label exposes the shared tooltip and preserves accessible names. | needs fixture |
+| `EMPD-047` | WCAG focus-visible detail sweep | Keyboard traversal through all input types, toggles, accordions, and builder controls | Proves focus is visible, ordered, and not clipped inside scroll regions. | needs evidence |
+| `EMPD-048` | WCAG target-size detail sweep | Mobile/touch review of toggles, accordions, icon controls, and builder rows | Proves controls meet WCAG 2.2 AA target-size expectations or have documented spacing exceptions. | needs evidence |
+| `EMPD-049` | Mobile long-form page scroll | Mobile detail panel with long content and open builder section | Proves page-level scroll remains the mobile scroll owner while controls remain reachable. | needs evidence |
+| `EMPD-050` | High generated field count | Fixture with many generated fields in one detail panel | Proves form layout remains bounded and lazy nested panels avoid hidden heavy DOM. | needs fixture |
 
 ## High-Risk Batch
 
@@ -86,4 +92,18 @@ Review first:
 - `EMPD-037`
 - `EMPD-041`
 - `EMPD-042`
+- `EMPD-045`
+- `EMPD-046`
+- `EMPD-047`
+- `EMPD-049`
 
+## Required Pressure States
+
+- long labels, long values, and unbroken strings with tooltip/truncation where applicable
+- high generated field and builder-row counts
+- RTL desktop and mobile
+- dark theme
+- 200% zoom and WCAG text spacing
+- keyboard focus order and visible focus
+- WCAG 2.2 AA target-size review
+- mobile page-level scroll with long details

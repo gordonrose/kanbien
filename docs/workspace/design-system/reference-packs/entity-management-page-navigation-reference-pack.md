@@ -56,6 +56,12 @@ Use prefix `EMPN-*`.
 | `EMPN-028` | RTL mobile carousel | RTL mobile | Proves carousel direction and snap behavior in RTL. | needs evidence |
 | `EMPN-029` | Zoomed desktop navigation | 200% zoom or equivalent | Proves region/nested navigation remains usable. | needs evidence |
 | `EMPN-030` | Text-spacing navigation | WCAG text-spacing override | Proves labels do not overlap or clip. | needs evidence |
+| `EMPN-031` | Dark-theme navigation sweep | Desktop and mobile dark theme | Proves active state, carousel affordance, resizer, and add-card nav treatment keep AA contrast. | needs evidence |
+| `EMPN-032` | Tooltip/truncation navigation sweep | Long region and nested card labels with hovered/focused truncated item | Proves truncation uses the shared tooltip affordance and does not hide semantic names. | needs fixture |
+| `EMPN-033` | WCAG focus order navigation sweep | Keyboard traversal through region picker, nested carousel, add cards, and resizer | Proves logical focus order and unclipped focus rings across desktop/mobile. | needs evidence |
+| `EMPN-034` | WCAG target-size navigation sweep | Mobile touch review of picker, carousel cards, add card, and resizer alternatives | Proves interactive targets meet WCAG 2.2 AA sizing/spacing expectations. | needs evidence |
+| `EMPN-035` | Mobile carousel all sections | Mobile, each region with nested items | Proves the approved carousel posture applies across the board, not only Identity and Workflows. | partially covered |
+| `EMPN-036` | Long localized RTL carousel | RTL mobile with translated long labels | Proves carousel snap, truncation, tooltip, and active indicator survive localization pressure. | needs fixture |
 
 ## High-Risk Batch
 
@@ -71,4 +77,18 @@ Review first:
 - `EMPN-025`
 - `EMPN-026`
 - `EMPN-028`
+- `EMPN-031`
+- `EMPN-032`
+- `EMPN-033`
+- `EMPN-035`
 
+## Required Pressure States
+
+- mobile carousel across every nested section
+- long labels with tooltip/truncation where applicable
+- many region and nested items
+- RTL desktop and mobile
+- dark theme
+- 200% zoom and WCAG text spacing
+- keyboard focus and resizer alternatives
+- WCAG 2.2 AA target-size review

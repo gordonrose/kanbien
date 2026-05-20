@@ -50,6 +50,14 @@ Use prefix `EMPP-*`.
 | `EMPP-022` | Render-ready signal | First useful selector/state | Proves readiness means visible content, not hidden workspace completion. | partially covered |
 | `EMPP-023` | Memory/DOM after full visit | Visit all regions once | Proves eventual full page remains within acceptable DOM/memory bounds. | needs evidence |
 | `EMPP-024` | Handler count regression | Repeated add/delete/switch cycles | Proves no duplicate event handler side effects. | needs evidence |
+| `EMPP-025` | Long-label lazy footprint | Initial route with long labels fixture | Proves tooltip/truncation data does not eagerly render hidden regions. | needs fixture |
+| `EMPP-026` | Dark-theme lazy footprint | Initial route in dark theme | Proves theme initialization does not force hidden panel rendering. | needs evidence |
+| `EMPP-027` | RTL lazy footprint | Initial route in RTL | Proves direction scoping does not eagerly initialize hidden regions or mutate the whole document. | needs evidence |
+| `EMPP-028` | 200% zoom lazy footprint | Initial route at 200% zoom | Proves magnification does not trigger eager hidden layout measurement. | needs evidence |
+| `EMPP-029` | WCAG text-spacing lazy footprint | Text spacing override on initial route | Proves spacing stress does not trigger hidden DOM inflation. | needs evidence |
+| `EMPP-030` | Mobile carousel lazy footprint | Mobile, all nested carousels unvisited except active | Proves approved carousel posture still keeps hidden panels lazy. | needs evidence |
+| `EMPP-031` | High evidence-card lazy budget | Evidence fixture with many cards, panel closed then opened | Proves heavy evidence content renders only when the panel is opened. | needs fixture |
+| `EMPP-032` | WCAG focus sweep handler budget | Keyboard traversal after repeated region/item changes | Proves focus handlers remain single-bound under accessibility sweeps. | needs evidence |
 
 ## High-Risk Batch
 
@@ -63,6 +71,21 @@ Review first:
 - `EMPP-017`
 - `EMPP-020`
 - `EMPP-021`
+- `EMPP-025`
+- `EMPP-028`
+- `EMPP-030`
+- `EMPP-032`
+
+## Required Pressure States
+
+- initial DOM/control budget
+- first useful render timing
+- hidden-region and hidden-panel lazy rendering
+- high item/region/evidence-card fixture budgets
+- long labels with tooltip/truncation data
+- RTL, dark theme, 200% zoom, and WCAG text spacing without eager hidden DOM
+- mobile carousel lazy footprint
+- handler-count regression through keyboard and item lifecycle sweeps
 
 ## Current Measurement Snapshot
 
@@ -87,4 +110,3 @@ Earlier eager-render state:
   about `29,600`
 - rendered HTML:
   about `19.4MB`
-

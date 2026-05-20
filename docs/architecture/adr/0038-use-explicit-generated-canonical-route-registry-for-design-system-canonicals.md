@@ -34,6 +34,13 @@ design-system route posture behind those generated canonical entries.
 Use an explicit generated canonical route registry for design-system canonical
 families that need stable launcher/detail URLs.
 
+The registry may also hold review-candidate child families when a larger
+governed template is being split into separately inspectable canonical
+matrices. In that posture, each child family still needs its own launcher and
+render route, but the route may share a render page with sibling child
+families when that page imports the same parent render/controller seam instead
+of copying the parent anatomy.
+
 For each governed canonical family added to that registry:
 
 - the registry entry must name the HTML source path that renders the canonical
@@ -44,6 +51,8 @@ For each governed canonical family added to that registry:
   signed-off for design-system use, or approved for real-app adoption
 - real-app adoption remains blocked unless a first-consumer adoption contract
   and product integration plan explicitly approve it
+- review-candidate child families must keep launcher links pointed at their
+  dedicated child render route, not at the parent template exploration route
 
 The registry is a frontend architecture-sensitive seam. Adding, removing, or
 renaming entries requires:
