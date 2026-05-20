@@ -66,12 +66,12 @@
     "checkbox": 20
   },
   "byEvidencePosture": {
-    "system_generated_placeholder": 8763,
-    "reference_backed_placeholder": 363
+    "system_generated_placeholder": 8639,
+    "reference_backed_placeholder": 487
   },
   "byPromotionReadiness": {
-    "placeholder_only": 8763,
-    "reference_backed_placeholder": 363
+    "placeholder_only": 8639,
+    "reference_backed_placeholder": 487
   },
   "topDecisionGroups": [
     {
@@ -277,9 +277,32 @@
   ],
   "reviewGuidance": [
     "Use this summary as the working queue; keep the registry as the complete decision-slot inventory.",
-    "Prioritize source_authority, attribute_definition, relationship, workflow, view_display, permissions, compliance, migration, then high-volume action_model groups.",
-    "Rows with evidencePosture reference_backed_placeholder have linked source/reference/chat evidence but still need human approval before becoming persistent entity-builder truth."
+    "Prioritize source_authority, attribute_definition, relationship, workflow, view_display, permissions, compliance, and migration before deep action_model upgrade work.",
+    "Defer action_model evidence upgrades until capability-level planning so the evidence registry can be updated as each capability is reconciled.",
+    "Rows with evidencePosture reference_backed_placeholder have linked source/reference/chat evidence but still need human approval before becoming persistent entity-builder truth.",
+    "Non-action display/modeling rows for source_authority, relationship, view_display, and placements are now triaged; reference-backed rows still require human approval before persistent promotion."
   ],
+  "actionModelEvidenceDeferral": {
+    "status": "deferred_to_capability_planning",
+    "totalActionModelRows": 8556,
+    "recordActionRows": 1035,
+    "entityStructureActionRows": 7521,
+    "recordActionAccountability": {
+      "planningDirectionSource": "gordon_requested",
+      "posture": "human_requested_planning_direction_not_final_approval",
+      "approvedByActorKey": "not_approved",
+      "note": "Gordon clarified that record actions were asked for by him. This records planning direction only; final persistent entity-builder approval remains pending."
+    },
+    "entityStructureActionAccountability": {
+      "planningDirectionSource": "codex_inferred_from_entity_model",
+      "posture": "codex_inferred_placeholder",
+      "createdByActorKey": "codex_5_5",
+      "approvedByActorKey": "not_approved",
+      "note": "Entity-structure actions were decided by Codex based on the fields and entity-model structure visible in the entity-management design-system page."
+    },
+    "nextAction": "Update matching action-model rows during capability-level planning with concrete source evidence, rationale, review status, and approval posture.",
+    "deferralReason": "Action models are capability-shaped; upgrading them before capability planning would risk over-stabilizing placeholder decisions."
+  },
   "decisionTimingEvidenceSources": [
     {
       "evidenceKey": "entity_management_views_region_commit_1eb0f46",
@@ -349,6 +372,56 @@
         "docs/workspace/product-discovery/2026-05-17-governed-entity-definition-attribute-reference.md"
       ],
       "proofStatement": "Created the initial entity_management_page design-system page and planning context later extended by the Attributes region work."
+    },
+    {
+      "evidenceKey": "non_action_display_modeling_lane_triage_2026_05_20",
+      "sourceType": "triageArtifact",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/workspace/product-discovery/2026-05-20-governed-entity-management-non-action-display-modeling-triage.md",
+      "proofStatement": "Classifies source_authority, relationship, view_display, and placement rows after action-model evidence upgrades were deferred to capability planning.",
+      "scope": "Non-action display/modeling lane triage; action_model rows intentionally excluded."
+    },
+    {
+      "evidenceKey": "governed_entity_definition_model_2026_05_17",
+      "sourceType": "referenceArtifact",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/workspace/product-discovery/2026-05-17-governed-entity-definition-model.md",
+      "proofStatement": "Defines source authority, relationships, placements, presentation groups, display posture, and field-complete entity-definition modeling expectations."
+    },
+    {
+      "evidenceKey": "record_management_list_centric_template_reference",
+      "sourceType": "designSystemReference",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/workspace/design-system/templates/record-management-list-centric-template.md",
+      "proofStatement": "Defines record-management list-centric regions, drawer placement expectations, relationship navigation posture, and selected-record display behavior."
+    },
+    {
+      "evidenceKey": "record_management_list_centric_organization_demo_fixture",
+      "sourceType": "designSystemFixture",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/workspace/design-system/templates/record-management-list-centric-organization-demo-fixture.json",
+      "proofStatement": "Provides organization demo fixture rows for placements, display order, drawer regions, and organization relationships including tenant and business units."
+    },
+    {
+      "evidenceKey": "organization_data_dictionary",
+      "sourceType": "dataDictionary",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/data-dictionary/organization.md",
+      "proofStatement": "Provides organization domain source context for relationship and entity-management modeling placeholders."
+    },
+    {
+      "evidenceKey": "organization_business_unit_data_dictionary",
+      "sourceType": "dataDictionary",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/data-dictionary/organization-business-unit.md",
+      "proofStatement": "Provides business-unit relationship context for organization child relationship placeholders."
+    },
+    {
+      "evidenceKey": "organization_logo_relationship_data_dictionary",
+      "sourceType": "dataDictionary",
+      "sourceLocationType": "repo_path",
+      "repoPath": "docs/data-dictionary/organization-logo-relationship.md",
+      "proofStatement": "Provides primary-logo relationship context for organization relationship placeholders."
     }
   ],
   "decisionTimingCoverage": {
@@ -372,5 +445,44 @@
     "attributesRowsTagged": 234,
     "attributesCommitKey": "entity_management_attributes_region_commit_35c89e2",
     "attributesPrecursorCommitKey": "entity_management_page_skeleton_commit_4bf8fd9"
+  },
+  "nonActionDisplayModelingLaneTriage": {
+    "status": "triaged_reference_backed_placeholders",
+    "triageArtifact": "docs/workspace/product-discovery/2026-05-20-governed-entity-management-non-action-display-modeling-triage.md",
+    "actionModelRowsTouched": 0,
+    "approvedByActorKeyPosture": "not_approved_for_all_affected_rows",
+    "rowsPromotedThisPass": 124,
+    "rowsTouchedThisPass": 208,
+    "laneResults": {
+      "source_authority": {
+        "rowCount": 30,
+        "result": "reference_backed_placeholder",
+        "humanReviewBeforePromotion": true
+      },
+      "relationships": {
+        "reviewLane": "relationship",
+        "rowCount": 69,
+        "result": "reference_backed_placeholder",
+        "humanReviewBeforePromotion": true
+      },
+      "placements": {
+        "reviewLane": "view_display",
+        "decisionGroupPrefix": "view_display.placements.",
+        "rowCount": 25,
+        "result": "reference_backed_placeholder",
+        "humanReviewBeforePromotion": true
+      },
+      "view_display": {
+        "rowCount": 109,
+        "result": "reference_backed_placeholder",
+        "humanReviewBeforePromotion": true
+      }
+    },
+    "rowsRemainingSystemGeneratedInScope": 0,
+    "notes": [
+      "Placements are represented as view_display rows whose decisionGroupKey starts with view_display.placements.; there is no separate placements reviewLane in the registry.",
+      "This pass attaches source/reference/design-system evidence only. It does not approve rows as persistent entity-builder truth.",
+      "Action-model evidence upgrade remains deferred to capability-level planning."
+    ]
   }
 }

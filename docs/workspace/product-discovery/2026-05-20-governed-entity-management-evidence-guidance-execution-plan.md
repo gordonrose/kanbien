@@ -51,11 +51,26 @@ In practice:
 | 2. Demo attribute truth classification | complete-first-pass | Current six demo attributes classified by source confidence. |
 | 3. Automation rules and review gates | complete | This plan. |
 | 4. Evidence registry draft | complete-first-pass | Transitional JSON registry created from the current `entity_management_page` rendered DOM control inventory. |
-| 5. Attribute-by-attribute lock pass | pending | Field rows with evidence, LLM guidance, display, search, and capability posture. |
-| 6. Capability baseline draft | pending | First real action/capability definitions for read, list, display identity, evidence read, LLM guidance read, and scoped update. |
-| 7. Demo fixture authority cleanup | pending | Decision whether demo remains Organization-with-demo-fields or becomes fictional. |
-| 8. Design-system template architecture audit | pending | Reuse/seam audit before app adoption. |
-| 9. Older discovery doc pointer sweep | pending | Light references from older docs to the three-level model and execution plan. |
+| 5. Action-model evidence deferral | deferred-to-capability-planning | Action-model evidence upgrade deferred until capability-level planning; record actions are Gordon-requested planning direction and entity actions are Codex-inferred placeholders. |
+| 6. Non-action display/modeling triage | complete-first-pass | Source authority, relationship, view display, and placement rows triaged as reference-backed placeholders with persistent approval still pending. |
+| 7. Attribute-by-attribute lock pass | pending | Field rows with evidence, LLM guidance, display, search, and capability posture. |
+| 8. Capability baseline draft | pending | First real action/capability definitions for read, list, display identity, evidence read, LLM guidance read, and scoped update. |
+| 9. Demo fixture authority cleanup | pending | Decision whether demo remains Organization-with-demo-fields or becomes fictional. |
+| 10. Design-system template architecture audit | pending | Reuse/seam audit before app adoption. |
+| 11. Older discovery doc pointer sweep | pending | Light references from older docs to the three-level model and execution plan. |
+
+Action-model evidence deferral:
+
+- Record action rows were requested by Gordon as planning direction, but are not
+  final persistent entity-builder approval.
+- Entity action rows were inferred by Codex from the fields and entity-model
+  structure visible in the entity-management page.
+- Both action-model lanes remain transitional placeholders until the
+  corresponding capabilities are worked through; capability planning should
+  update the matching registry rows with source evidence, rationale, review
+  status, and approval posture.
+- `approvedByActorKey` remains `not_approved` unless Gordon explicitly approves
+  persistent entity-builder truth for the specific capability or action row.
 
 ## Automation Posture
 
