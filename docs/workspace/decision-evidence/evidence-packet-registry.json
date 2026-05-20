@@ -1,0 +1,111 @@
+{
+  "artifactKey": "evidence_packet_registry",
+  "generatedAt": "2026-05-20T15:31:10.772Z",
+  "storagePosture": "repo_artifact_until_capabilities_exist",
+  "migrationTarget": "evidence_packet_entity_capabilities",
+  "evidencePackets": [
+    {
+      "status": "active_planning",
+      "sourceDecisionKeys": [
+        "decision.harness.evidence_packet_current_truth_bundle",
+        "decision.harness.migrate_artifact_writer_to_capabilities",
+        "decision.harness.repo_artifact_decision_capture_bootstrap"
+      ],
+      "affectedRegistryRows": [],
+      "affectedArtifacts": [
+        "docs/workspace/decision-evidence/decision-registry.json",
+        "docs/workspace/decision-evidence/evidence-packet-registry.json",
+        "src/scripts/decisionEvidence.ts",
+        "src/scripts/lib/decisionEvidenceRegistry.ts"
+      ],
+      "approval": {
+        "reviewStatus": "needs_review",
+        "reviewedByActorKey": "not_approved",
+        "approvedByActorKey": "not_approved",
+        "reviewedAt": null
+      },
+      "migrationPosture": "repo_artifact_until_decision_and_evidence_packet_capabilities_exist",
+      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdByActorKey": "codex_5_5",
+      "evidencePacketKey": "packet.capability.create_decision.repo_artifact_bootstrap",
+      "target": {
+        "targetType": "capability",
+        "entityKey": "decision",
+        "capabilityKey": "create_decision"
+      },
+      "currentTruth": {
+        "statement": "Create decision records a durable decision point with actor accountability, source references, review posture, approval posture, and optional relations to other decisions.",
+        "version": 1,
+        "updatedAt": "2026-05-20T00:00:00.000Z",
+        "updatedByActorKey": "codex_5_5"
+      },
+      "execution": {
+        "intent": "Capture a decision now as a repo artifact and keep it migration-ready for the future Decision entity capability.",
+        "requiredInputs": [
+          "approvedByActorKey",
+          "createdByActorKey",
+          "decisionKey",
+          "decisionType",
+          "sourceRefs",
+          "statement"
+        ],
+        "expectedOutputs": [
+          "decision-registry.json contains the decision keyed by decisionKey"
+        ],
+        "verificationNotes": [
+          "decision-evidence validate reports no packet links to missing decisions",
+          "unit tests cover decision upsert and packet link validation"
+        ]
+      }
+    },
+    {
+      "status": "active_planning",
+      "sourceDecisionKeys": [
+        "decision.harness.evidence_packet_current_truth_bundle",
+        "decision.harness.migrate_artifact_writer_to_capabilities",
+        "decision.harness.repo_artifact_decision_capture_bootstrap"
+      ],
+      "affectedRegistryRows": [],
+      "affectedArtifacts": [
+        "docs/workspace/decision-evidence/decision-registry.json",
+        "docs/workspace/decision-evidence/evidence-packet-registry.json",
+        "src/scripts/decisionEvidence.ts",
+        "src/scripts/lib/decisionEvidenceRegistry.ts"
+      ],
+      "approval": {
+        "reviewStatus": "needs_review",
+        "reviewedByActorKey": "not_approved",
+        "approvedByActorKey": "not_approved",
+        "reviewedAt": null
+      },
+      "migrationPosture": "repo_artifact_until_decision_and_evidence_packet_capabilities_exist",
+      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdByActorKey": "codex_5_5",
+      "evidencePacketKey": "packet.capability.read_decision.repo_artifact_bootstrap",
+      "target": {
+        "targetType": "capability",
+        "entityKey": "decision",
+        "capabilityKey": "read_decision"
+      },
+      "currentTruth": {
+        "statement": "Read decision returns the durable decision point, source references, relations, actor accountability, and approval posture needed to explain the decision history.",
+        "version": 1,
+        "updatedAt": "2026-05-20T00:00:00.000Z",
+        "updatedByActorKey": "codex_5_5"
+      },
+      "execution": {
+        "intent": "Read a decision from transitional repo artifacts in the same shape that future persistence-backed capabilities should expose.",
+        "requiredInputs": [
+          "decisionKey"
+        ],
+        "expectedOutputs": [
+          "decision record with sourceRefs, relations, review status, and approval posture"
+        ],
+        "verificationNotes": [
+          "decision-evidence validate reports no packet links to missing decisions",
+          "future read capability should preserve this shape or document a migration"
+        ]
+      }
+    }
+  ]
+}

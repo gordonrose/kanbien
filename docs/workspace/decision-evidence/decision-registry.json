@@ -1,0 +1,82 @@
+{
+  "artifactKey": "decision_registry",
+  "generatedAt": "2026-05-20T15:31:10.770Z",
+  "storagePosture": "repo_artifact_until_capabilities_exist",
+  "migrationTarget": "decision_entity_capabilities",
+  "decisions": [
+    {
+      "status": "needs_review",
+      "sourceRefs": [
+        {
+          "sourceKey": "chat_2026_05_20_decision_evidence_harness_request",
+          "sourceType": "conversation",
+          "sourceLocationType": "chat",
+          "proofStatement": "Gordon asked to start actively tracking decisions and creating evidence packets through a harness, with repo artifacts as transitional storage until persistent capabilities exist."
+        }
+      ],
+      "relations": [],
+      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": null,
+      "reviewedByActorKey": "not_approved",
+      "approvedByActorKey": "not_approved",
+      "decisionKey": "decision.harness.evidence_packet_current_truth_bundle",
+      "decisionType": "evidence_packet_model",
+      "statement": "An evidence packet carries the current executable truth for a field or capability while linking the source decisions that explain the audit trail.",
+      "appliesTo": {
+        "entityKey": "evidence_packet",
+        "artifactPath": "docs/workspace/decision-evidence/evidence-packet-registry.json"
+      }
+    },
+    {
+      "status": "needs_review",
+      "sourceRefs": [
+        {
+          "sourceKey": "chat_2026_05_20_decision_evidence_harness_request",
+          "sourceType": "conversation",
+          "sourceLocationType": "chat",
+          "proofStatement": "Gordon asked to start actively tracking decisions and creating evidence packets through a harness, with repo artifacts as transitional storage until persistent capabilities exist."
+        }
+      ],
+      "relations": [],
+      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": null,
+      "reviewedByActorKey": "not_approved",
+      "approvedByActorKey": "not_approved",
+      "decisionKey": "decision.harness.migrate_artifact_writer_to_capabilities",
+      "decisionType": "migration_posture",
+      "statement": "When Decision and Evidence Packet capabilities exist, the harness should consume those capabilities instead of writing repo artifacts directly.",
+      "appliesTo": {
+        "entityKey": "decision",
+        "capabilityKey": "create_decision",
+        "artifactPath": "src/scripts/decisionEvidence.ts"
+      }
+    },
+    {
+      "status": "needs_review",
+      "sourceRefs": [
+        {
+          "sourceKey": "chat_2026_05_20_decision_evidence_harness_request",
+          "sourceType": "conversation",
+          "sourceLocationType": "chat",
+          "proofStatement": "Gordon asked to start actively tracking decisions and creating evidence packets through a harness, with repo artifacts as transitional storage until persistent capabilities exist."
+        }
+      ],
+      "relations": [],
+      "createdAt": "2026-05-20T00:00:00.000Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": null,
+      "reviewedByActorKey": "not_approved",
+      "approvedByActorKey": "not_approved",
+      "decisionKey": "decision.harness.repo_artifact_decision_capture_bootstrap",
+      "decisionType": "harness_storage_posture",
+      "statement": "Decision and evidence packet capture starts as structured repo artifacts until persistent Decision and Evidence Packet capabilities exist.",
+      "appliesTo": {
+        "entityKey": "decision",
+        "capabilityKey": "create_decision",
+        "artifactPath": "docs/workspace/decision-evidence/decision-registry.json"
+      }
+    }
+  ]
+}
