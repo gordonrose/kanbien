@@ -161,12 +161,15 @@ Current authored examples now include:
 - `verification/breadcrumb-verification-checklist.md`
 - `verification/search-shell-verification-checklist.md`
 - `verification/context-nav-verification-checklist.md`
+- `verification/entity-management-page-verification-checklist.md`
+- `verification/entity-management-page-wcag-2-2-aa-checklist.md`
 - `reference-packs/list-page-reference-pack.md`
 - `reference-packs/form-template-reference-pack.md`
 - `reference-packs/time-picker-reference-pack.md`
 - `reference-packs/list-record-card-reference-pack.md`
 - `reference-packs/list-detail-panel-reference-pack.md`
 - `reference-packs/list-detail-split-layout-reference-pack.md`
+- `reference-packs/entity-management-page-reference-pack.md`
 - `canonicals/time-picker/index.html`
 - `token-reviews/list-record-card-token-candidacy-review.md`
 - `token-reviews/context-nav-token-candidacy-review.md`
