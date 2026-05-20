@@ -170,6 +170,12 @@ Current authored examples now include:
 - `reference-packs/list-detail-panel-reference-pack.md`
 - `reference-packs/list-detail-split-layout-reference-pack.md`
 - `reference-packs/entity-management-page-reference-pack.md`
+- `reference-packs/entity-management-page-outer-page-reference-pack.md`
+- `reference-packs/entity-management-page-navigation-reference-pack.md`
+- `reference-packs/entity-management-page-detail-panel-reference-pack.md`
+- `reference-packs/entity-management-page-collection-item-reference-pack.md`
+- `reference-packs/entity-management-page-evidence-ai-reference-pack.md`
+- `reference-packs/entity-management-page-performance-reference-pack.md`
 - `canonicals/time-picker/index.html`
 - `token-reviews/list-record-card-token-candidacy-review.md`
 - `token-reviews/context-nav-token-candidacy-review.md`

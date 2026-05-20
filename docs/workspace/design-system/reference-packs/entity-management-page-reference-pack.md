@@ -6,8 +6,11 @@ Define the reference states that must be reviewed before the
 `entity_management_page` design-system template can become an active,
 app-consumable seam.
 
-This pack turns the six review-candidate behavior-lock slices into concrete
-browser states. It is not a sign-off claim yet.
+This pack is the roll-up index. The concrete browser states live in child
+reference packs so reviewers can inspect one canonical batch at a time instead
+of walking hundreds of states in one sitting.
+
+It is not a sign-off claim yet.
 
 ## Scope
 
@@ -29,6 +32,13 @@ browser states. It is not a sign-off claim yet.
 - Related verification:
   - `docs/workspace/design-system/verification/entity-management-page-verification-checklist.md`
   - `docs/workspace/design-system/verification/entity-management-page-wcag-2-2-aa-checklist.md`
+- Child reference packs:
+  - `docs/workspace/design-system/reference-packs/entity-management-page-outer-page-reference-pack.md`
+  - `docs/workspace/design-system/reference-packs/entity-management-page-navigation-reference-pack.md`
+  - `docs/workspace/design-system/reference-packs/entity-management-page-detail-panel-reference-pack.md`
+  - `docs/workspace/design-system/reference-packs/entity-management-page-collection-item-reference-pack.md`
+  - `docs/workspace/design-system/reference-packs/entity-management-page-evidence-ai-reference-pack.md`
+  - `docs/workspace/design-system/reference-packs/entity-management-page-performance-reference-pack.md`
 - Current executable coverage:
   `tests/visual/designSystem/templates/recordManagementListCentric.spec.ts`
 
@@ -45,9 +55,31 @@ Do not treat this pack as app-adoption approval until:
 - demo fixture data is separated from reusable seam code
 - an adoption contract states the app-consumable API
 
-## Reference State IDs
+## Child Reference Matrices
+
+| Child matrix | Artifact | State count | Review focus |
+| --- | --- | ---: | --- |
+| Outer page | `entity-management-page-outer-page-reference-pack.md` | 16 | Shell ownership, page framing, desktop/mobile scroll ownership, app-consumable boundary. |
+| Navigation | `entity-management-page-navigation-reference-pack.md` | 30 | Region index, mobile region picker, nested cards, carousel, active states, resizer. |
+| Detail panel | `entity-management-page-detail-panel-reference-pack.md` | 44 | Generated form panels, collapsible sections, derived fields, workflow builder, attributes, permissions, action models. |
+| Collection item | `entity-management-page-collection-item-reference-pack.md` | 30 | Add/copy/delete, card sync, panel sync, workflow/catalog/permission item lifecycles. |
+| Evidence/AI | `entity-management-page-evidence-ai-reference-pack.md` | 30 | Evidence and AI modes, target affordances, desktop split, mobile overlays, focus and mutual exclusion. |
+| Performance | `entity-management-page-performance-reference-pack.md` | 24 | Lazy rendering, render-ready signal, DOM/control budgets, visited-region growth, module/fixture boundaries. |
+
+Total current child states:
+`174`
+
+This is still a review-candidate inventory. It should grow when dedicated
+canonical fixtures introduce broader app-data, high-count, localization, and
+error/denied/loading states.
+
+## Roll-Up State IDs
 
 Use the prefix `EMPR-*` for entity-management-page reference states.
+
+The roll-up states below are not the full matrix. They are the cross-slice
+summary states for planning and triage. Reviewers should use the child packs
+for canonical inspection.
 
 | Ref ID | State | Route / setup | Why it exists | Evidence status | Behavior slices |
 | --- | --- | --- | --- | --- | --- |
@@ -130,4 +162,3 @@ A future app consumer matches this pack only when it:
 - The app-consumable data adapter/API is not yet defined.
 - Dedicated canonical render surfaces do not yet exist for the reference
   states above.
-
