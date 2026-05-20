@@ -1,9 +1,140 @@
 {
   "artifactKey": "decision_registry",
-  "generatedAt": "2026-05-20T16:07:35.604Z",
+  "generatedAt": "2026-05-20T16:37:47.656Z",
   "storagePosture": "repo_artifact_until_capabilities_exist",
   "migrationTarget": "decision_entity_capabilities",
   "decisions": [
+    {
+      "decisionKey": "decision.capability.create_decision.first_executable_packet_scope",
+      "decisionType": "capability_packet_scope",
+      "statement": "The first create_decision packet should describe the decision record fields, source refs, relation handling, approval posture, validation expectations, and tests needed to execute the capability later.",
+      "status": "needs_review",
+      "appliesTo": {
+        "entityKey": "decision",
+        "capabilityKey": "create_decision",
+        "evidencePacketKey": "packet.capability.create_decision.repo_artifact_bootstrap"
+      },
+      "sourceRefs": [
+        {
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "proofStatement": "Gordon approved building the Decision entity proof point after discussing that evidence packets should carry the information needed to execute capabilities; the specific create_decision packet structure is Codex-authored and needs review.",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation; not the primary source of exact conversation truth."
+            }
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "relationType": "implements",
+          "targetDecisionKey": "decision.entity_page.decision_entity_root_admin_proof_point",
+          "reason": "This scope decision turns the approved proof point into the first create capability packet."
+        }
+      ],
+      "createdAt": "2026-05-20T16:19:24.000Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": null,
+      "reviewedByActorKey": "not_approved",
+      "approvedByActorKey": "not_approved"
+    },
+    {
+      "decisionKey": "decision.capability.read_decision.first_executable_packet_scope",
+      "decisionType": "capability_packet_scope",
+      "statement": "The first read_decision packet should describe how a decision is resolved by key with its source refs, relations, actor accountability, review status, and approval posture intact.",
+      "status": "needs_review",
+      "appliesTo": {
+        "entityKey": "decision",
+        "capabilityKey": "read_decision",
+        "evidencePacketKey": "packet.capability.read_decision.repo_artifact_bootstrap"
+      },
+      "sourceRefs": [
+        {
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "proofStatement": "Gordon approved building the Decision entity proof point after discussing that evidence packets should carry the information needed to execute capabilities; the specific read_decision packet structure is Codex-authored and needs review.",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation; not the primary source of exact conversation truth."
+            }
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "relationType": "implements",
+          "targetDecisionKey": "decision.entity_page.decision_entity_root_admin_proof_point",
+          "reason": "This scope decision turns the approved proof point into the first read capability packet."
+        }
+      ],
+      "createdAt": "2026-05-20T16:19:24.000Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": null,
+      "reviewedByActorKey": "not_approved",
+      "approvedByActorKey": "not_approved"
+    },
+    {
+      "decisionKey": "decision.entity_page.decision_entity_root_admin_proof_point",
+      "decisionType": "entity_page_proof_point",
+      "statement": "Use the Decision entity as the first proof point for the root-admin entity_page implementation and its evidence-packet workflow.",
+      "status": "approved",
+      "appliesTo": {
+        "entityKey": "decision",
+        "artifactPath": "docs/workspace/decision-evidence/evidence-packet-registry.json"
+      },
+      "sourceRefs": [
+        {
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "proofStatement": "Gordon explicitly asked whether the Decision entity should be used as a proof point for the entity_page implementation under root-admin, then approved proceeding with that path.",
+          "supplementalRefs": [
+            {
+              "sourceKey": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "sourceType": "conversationSummary",
+              "sourceLocationType": "repo_path",
+              "repoPath": "docs/workspace/chat-records/2026-05-20-decision-evidence-harness-request.md",
+              "proofStatement": "Human-readable supplemental summary of the decision evidence harness conversation; not the primary source of exact conversation truth."
+            }
+          ]
+        }
+      ],
+      "relations": [
+        {
+          "relationType": "implements",
+          "targetDecisionKey": "decision.harness.evidence_packet_current_truth_bundle",
+          "reason": "The proof-point entity exercises the packet-as-current-truth model with concrete create/read capability packets."
+        },
+        {
+          "relationType": "supports",
+          "targetDecisionKey": "decision.harness.migrate_artifact_writer_to_capabilities",
+          "reason": "Using Decision as the proof point creates migration input for the future persistent Decision capability."
+        }
+      ],
+      "createdAt": "2026-05-20T16:19:24.000Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": "2026-05-20T16:19:24.000Z",
+      "reviewedByActorKey": "gordon.rose",
+      "approvedByActorKey": "gordon.rose",
+      "notes": "This record captures Gordon's explicit direction. Detailed packet field choices remain separate Codex-authored planning rows unless Gordon later approves them."
+    },
     {
       "status": "needs_review",
       "sourceRefs": [
@@ -38,6 +169,33 @@
         "entityKey": "evidence_packet",
         "artifactPath": "docs/workspace/decision-evidence/evidence-packet-registry.json"
       }
+    },
+    {
+      "decisionKey": "decision.harness.material_chats_must_record_decision_evidence",
+      "decisionType": "harness_policy",
+      "statement": "Every material Codex chat in this repo must record material decisions in the decision evidence harness and validate packet links at closeout.",
+      "status": "approved",
+      "appliesTo": {
+        "entityKey": "decision",
+        "capabilityKey": "create_decision",
+        "artifactPath": "docs/workspace/decision-evidence/README.md"
+      },
+      "sourceRefs": [
+        {
+          "sourceKey": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "sourceType": "llmConversationTranscript",
+          "sourceLocationType": "repo_path",
+          "llmChatId": "019e4518-9f33-73c3-bbdb-719ea4404bff",
+          "repoPath": "/home/gordon/.codex/sessions/2026/05/20/rollout-2026-05-20T12-15-02-019e4518-9f33-73c3-bbdb-719ea4404bff.jsonl",
+          "proofStatement": "Gordon clarified that the harness is supposed to make decision recording apply to every new Codex chat in the repo, not rely on manual reminders per chat."
+        }
+      ],
+      "relations": [],
+      "createdAt": "2026-05-20T16:37:47.655Z",
+      "createdByActorKey": "codex_5_5",
+      "reviewedAt": "2026-05-20T16:37:47.655Z",
+      "reviewedByActorKey": "gordon.rose",
+      "approvedByActorKey": "gordon.rose"
     },
     {
       "status": "needs_review",

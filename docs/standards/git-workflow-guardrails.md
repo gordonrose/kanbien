@@ -99,6 +99,33 @@ pre-commit guard. Skills and agent workflows that modify the repo should assume
 this check has already happened or should run it before the first material
 edit.
 
+## Decision Evidence Closeout Gate
+
+Material Codex chats must treat decision capture as a closeout requirement.
+
+Before a material chat is presented as ready for promotion or handoff:
+
+- record material choices, approvals, deferrals, model-shape decisions,
+  capability behavior, field classifications, design-system signoffs,
+  provenance rules, migration postures, and implementation constraints in the
+  decision evidence harness
+- use real source refs only: rollout transcript path, stable `llmChatId`,
+  cloud transcript ID, future persisted conversation record, repo artifact
+  path, or commit SHA
+- do not invent chat-like source keys
+- use workspace chat records only as supplemental summaries when a primary
+  transcript or persistent conversation source exists
+- run:
+
+```bash
+npm run decision-evidence -- validate
+```
+
+The closeout summary must state either:
+
+- which decisions were recorded and which remain `needs_review`, or
+- that no material decisions were made in the chat.
+
 ## Bootstrap Requirement
 
 For material work with any realistic overlap risk, create a bootstrap artifact

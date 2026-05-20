@@ -1,13 +1,28 @@
 {
   "artifactKey": "evidence_packet_registry",
-  "generatedAt": "2026-05-20T16:07:35.613Z",
+  "generatedAt": "2026-05-20T16:37:47.668Z",
   "storagePosture": "repo_artifact_until_capabilities_exist",
   "migrationTarget": "evidence_packet_entity_capabilities",
   "evidencePackets": [
     {
-      "status": "active_planning",
+      "evidencePacketKey": "packet.capability.create_decision.repo_artifact_bootstrap",
+      "status": "ready_for_review",
+      "target": {
+        "targetType": "capability",
+        "entityKey": "decision",
+        "capabilityKey": "create_decision"
+      },
+      "currentTruth": {
+        "statement": "Create decision records one durable decision point with stable keying, actor accountability, source references, relations, review posture, approval posture, and enough structure to migrate from repo artifacts into a persistent Decision entity capability.",
+        "version": 2,
+        "updatedAt": "2026-05-20T16:19:24.000Z",
+        "updatedByActorKey": "codex_5_5"
+      },
       "sourceDecisionKeys": [
+        "decision.capability.create_decision.first_executable_packet_scope",
+        "decision.entity_page.decision_entity_root_admin_proof_point",
         "decision.harness.evidence_packet_current_truth_bundle",
+        "decision.harness.material_chats_must_record_decision_evidence",
         "decision.harness.migrate_artifact_writer_to_capabilities",
         "decision.harness.quick_decision_command_for_live_capture",
         "decision.harness.repo_artifact_decision_capture_bootstrap",
@@ -15,66 +30,157 @@
         "decision.harness.source_refs_use_llm_chat_ids",
         "decision.harness.workspace_chat_records_are_supplemental"
       ],
-      "affectedRegistryRows": [],
-      "affectedArtifacts": [
-        "docs/workspace/decision-evidence/decision-registry.json",
-        "docs/workspace/decision-evidence/evidence-packet-registry.json",
-        "src/scripts/decisionEvidence.ts",
-        "src/scripts/lib/decisionEvidenceRegistry.ts"
-      ],
-      "approval": {
-        "reviewStatus": "needs_review",
-        "reviewedByActorKey": "not_approved",
-        "approvedByActorKey": "not_approved",
-        "reviewedAt": null
-      },
-      "migrationPosture": "repo_artifact_until_decision_and_evidence_packet_capabilities_exist",
-      "createdAt": "2026-05-20T15:31:10.772Z",
-      "createdByActorKey": "codex_5_5",
-      "evidencePacketKey": "packet.capability.create_decision.repo_artifact_bootstrap",
-      "target": {
-        "targetType": "capability",
-        "entityKey": "decision",
-        "capabilityKey": "create_decision"
-      },
-      "currentTruth": {
-        "statement": "Create decision records a durable decision point with actor accountability, source references, review posture, approval posture, and optional relations to other decisions.",
-        "version": 1,
-        "updatedAt": "2026-05-20T15:31:10.772Z",
-        "updatedByActorKey": "codex_5_5"
-      },
       "execution": {
-        "intent": "Capture a decision now as a repo artifact and keep it migration-ready for the future Decision entity capability.",
+        "intent": "Capture a decision now as a structured repo artifact and preserve the same behavioral contract for a future persistence-backed create_decision capability.",
         "requiredInputs": [
-          "approvedByActorKey",
-          "createdByActorKey",
+          "appliesTo",
           "decisionKey",
           "decisionType",
+          "relations",
           "sourceRefs",
-          "statement"
+          "statement",
+          "status"
         ],
         "expectedOutputs": [
-          "decision-registry.json contains the decision keyed by decisionKey"
+          "decision-registry.json contains one record keyed by decisionKey",
+          "existing decisionKey records are replaced rather than duplicated during repo-artifact bootstrap",
+          "generated accountability fields include createdAt, createdByActorKey, reviewedAt, reviewedByActorKey, and approvedByActorKey",
+          "sourceRefs preserve primary transcript or durable source lookup plus supplemental summaries when present",
+          "the created decision can be linked from evidence-packet sourceDecisionKeys"
         ],
         "verificationNotes": [
-          "decision-evidence validate reports no packet links to missing decisions",
-          "unit tests cover decision upsert and packet link validation"
+          "future persistence-backed tests should prove create_decision rejects missing required fields, rejects invented source identifiers, and preserves approval posture",
+          "npm run decision-evidence -- validate reports no packet links to missing decisions",
+          "unit tests cover decision upsert and packet link validation",
+          "unit tests cover quick-decision creation and packet attachment"
         ]
-      }
-    },
-    {
-      "status": "active_planning",
-      "sourceDecisionKeys": [
-        "decision.harness.evidence_packet_current_truth_bundle",
-        "decision.harness.migrate_artifact_writer_to_capabilities",
-        "decision.harness.repo_artifact_decision_capture_bootstrap"
+      },
+      "capabilityContract": {
+        "lifecyclePosture": "repo_artifact_first_persistent_entity_later",
+        "actorScope": "root",
+        "requiredFields": [
+          {
+            "fieldKey": "decisionKey",
+            "purpose": "Stable unique lookup key for the decision record.",
+            "systemManaged": false,
+            "validation": "non_empty_string; unique within decision registry or persistent Decision table"
+          },
+          {
+            "fieldKey": "decisionType",
+            "purpose": "Classifies the kind of decision for filtering and governance.",
+            "systemManaged": false,
+            "validation": "non_empty_string from an approved or migration-compatible vocabulary"
+          },
+          {
+            "fieldKey": "statement",
+            "purpose": "Human-readable decision truth being recorded.",
+            "systemManaged": false,
+            "validation": "non_empty_string"
+          },
+          {
+            "fieldKey": "status",
+            "purpose": "Review lifecycle state for the decision record.",
+            "systemManaged": false,
+            "validation": "one_of draft, needs_review, reviewed, approved, superseded, deferred"
+          },
+          {
+            "fieldKey": "appliesTo",
+            "purpose": "Structured target for the decision, such as entity, capability, field, artifact, or evidence packet.",
+            "systemManaged": false,
+            "validation": "object with at least one target key"
+          },
+          {
+            "fieldKey": "sourceRefs",
+            "purpose": "Primary provenance references and optional supplemental references.",
+            "systemManaged": false,
+            "validation": "non_empty_array; each sourceRef requires sourceKey, sourceType, sourceLocationType, proofStatement"
+          },
+          {
+            "fieldKey": "relations",
+            "purpose": "Links older, supporting, clarifying, narrowing, superseding, or implementing decisions.",
+            "systemManaged": false,
+            "validation": "array of relation records; target decision keys may be unresolved only when explicitly allowed for migration"
+          },
+          {
+            "fieldKey": "createdAt",
+            "purpose": "Timestamp the record was created.",
+            "systemManaged": true,
+            "validation": "ISO-8601 UTC timestamp"
+          },
+          {
+            "fieldKey": "createdByActorKey",
+            "purpose": "Actor that created the decision record.",
+            "systemManaged": true,
+            "validation": "known actor key or migration-safe string"
+          },
+          {
+            "fieldKey": "reviewedAt",
+            "purpose": "Timestamp of review when reviewed by a human or accountable reviewer.",
+            "systemManaged": true,
+            "validation": "ISO-8601 UTC timestamp or null"
+          },
+          {
+            "fieldKey": "reviewedByActorKey",
+            "purpose": "Reviewer actor or not_approved marker.",
+            "systemManaged": true,
+            "validation": "gordon.rose only when Gordon explicitly reviewed or chose; otherwise not_approved for unreviewed rows"
+          },
+          {
+            "fieldKey": "approvedByActorKey",
+            "purpose": "Approver actor or not_approved marker.",
+            "systemManaged": true,
+            "validation": "gordon.rose only when Gordon explicitly approved or chose; otherwise not_approved"
+          }
+        ],
+        "allowedStatuses": [
+          "draft",
+          "needs_review",
+          "reviewed",
+          "approved",
+          "superseded",
+          "deferred"
+        ],
+        "relationTypes": [
+          "supports",
+          "clarifies",
+          "narrows",
+          "expands",
+          "supersedes",
+          "partially_supersedes",
+          "conflicts_with",
+          "implements"
+        ],
+        "sourceRefRules": [
+          "Use a real primary source resolver when available, such as rollout path, commit SHA, persistent source ID, cloud transcript ID, or stable llmChatId.",
+          "Do not invent chat-like source keys.",
+          "Workspace chat records are supplemental summaries unless no primary transcript or persistent conversation source exists.",
+          "When no verified llmTurnId exists, omit llmTurnId rather than guessing."
+        ],
+        "approvalPosture": [
+          "Use gordon.rose only for rows Gordon explicitly chose, reviewed, or approved.",
+          "Use codex_5_5 for Codex-authored, inferred, source-backed, or needs-review rows.",
+          "Use approvedByActorKey not_approved for rows that are not human-approved."
+        ],
+        "expectedTests": [
+          "create_decision upserts by decisionKey during repo-artifact bootstrap",
+          "create_decision preserves sourceRefs and supplementalRefs",
+          "create_decision supports evidence packet attachment",
+          "validation reports missing packet decision links",
+          "future persistence create rejects client-supplied system-managed fields unless the migration adapter is explicitly allowed to preserve imported history"
+        ]
+      },
+      "affectedRegistryRows": [
+        "decision.capability.create_decision.first_executable_packet_scope",
+        "decision.entity_page.decision_entity_root_admin_proof_point"
       ],
-      "affectedRegistryRows": [],
       "affectedArtifacts": [
+        "docs/workspace/decision-evidence/README.md",
         "docs/workspace/decision-evidence/decision-registry.json",
         "docs/workspace/decision-evidence/evidence-packet-registry.json",
         "src/scripts/decisionEvidence.ts",
-        "src/scripts/lib/decisionEvidenceRegistry.ts"
+        "src/scripts/lib/decisionEvidenceRegistry.ts",
+        "tests/unit/decisionEvidence/cli.test.ts",
+        "tests/unit/decisionEvidence/registry.test.ts"
       ],
       "approval": {
         "reviewStatus": "needs_review",
@@ -82,34 +188,112 @@
         "approvedByActorKey": "not_approved",
         "reviewedAt": null
       },
-      "migrationPosture": "repo_artifact_until_decision_and_evidence_packet_capabilities_exist",
+      "migrationPosture": "repo_artifact_until_decision_and_evidence_packet_capabilities_exist; preserve createdAt and source provenance during migration, then move normal create semantics to system-managed timestamps",
       "createdAt": "2026-05-20T15:31:10.772Z",
-      "createdByActorKey": "codex_5_5",
+      "createdByActorKey": "codex_5_5"
+    },
+    {
       "evidencePacketKey": "packet.capability.read_decision.repo_artifact_bootstrap",
+      "status": "ready_for_review",
       "target": {
         "targetType": "capability",
         "entityKey": "decision",
         "capabilityKey": "read_decision"
       },
       "currentTruth": {
-        "statement": "Read decision returns the durable decision point, source references, relations, actor accountability, and approval posture needed to explain the decision history.",
-        "version": 1,
-        "updatedAt": "2026-05-20T15:31:10.772Z",
+        "statement": "Read decision resolves one durable decision point by decisionKey and returns the statement, structured target, source references, relations, actor accountability, review status, and approval posture needed to explain the decision history.",
+        "version": 2,
+        "updatedAt": "2026-05-20T16:19:24.000Z",
         "updatedByActorKey": "codex_5_5"
       },
+      "sourceDecisionKeys": [
+        "decision.capability.read_decision.first_executable_packet_scope",
+        "decision.entity_page.decision_entity_root_admin_proof_point",
+        "decision.harness.evidence_packet_current_truth_bundle",
+        "decision.harness.migrate_artifact_writer_to_capabilities",
+        "decision.harness.repo_artifact_decision_capture_bootstrap",
+        "decision.harness.source_refs_use_llm_chat_ids",
+        "decision.harness.workspace_chat_records_are_supplemental"
+      ],
       "execution": {
-        "intent": "Read a decision from transitional repo artifacts in the same shape that future persistence-backed capabilities should expose.",
+        "intent": "Read a decision from transitional repo artifacts in the same accountable shape that future persistence-backed capabilities should expose.",
         "requiredInputs": [
           "decisionKey"
         ],
         "expectedOutputs": [
-          "decision record with sourceRefs, relations, review status, and approval posture"
+          "actor accountability fields including createdByActorKey, reviewedByActorKey, and approvedByActorKey",
+          "decision record keyed by decisionKey",
+          "relations linking source, supporting, clarifying, superseding, or implementing decisions",
+          "review lifecycle fields including status, reviewedAt, and approval posture",
+          "sourceRefs with primary provenance and supplemental summaries preserved"
         ],
         "verificationNotes": [
-          "decision-evidence validate reports no packet links to missing decisions",
-          "future read capability should preserve this shape or document a migration"
+          "future persistence-backed read tests should prove missing decisionKey returns the documented not-found result",
+          "future root-admin entity_page tests should prove source refs and approval posture remain visible to authorized operators",
+          "npm run decision-evidence -- validate reports no packet links to missing decisions",
+          "unit tests cover decision upsert and packet link validation"
         ]
-      }
+      },
+      "capabilityContract": {
+        "lifecyclePosture": "repo_artifact_first_persistent_entity_later",
+        "actorScope": "root",
+        "lookupFields": [
+          {
+            "fieldKey": "decisionKey",
+            "purpose": "Stable exact key for resolving one decision.",
+            "validation": "required non_empty_string"
+          }
+        ],
+        "returnedFields": [
+          "decisionKey",
+          "decisionType",
+          "statement",
+          "status",
+          "appliesTo",
+          "sourceRefs",
+          "relations",
+          "createdAt",
+          "createdByActorKey",
+          "reviewedAt",
+          "reviewedByActorKey",
+          "approvedByActorKey",
+          "notes"
+        ],
+        "notFoundPosture": "Return an explicit not-found result for unknown decisionKey; do not fabricate placeholder decisions.",
+        "sourceRefRules": [
+          "Return real primary source refs exactly as stored.",
+          "Return supplementalRefs as supplemental context, not as source replacement.",
+          "Do not resolve or invent llmTurnId when only llmChatId is recorded."
+        ],
+        "expectedTests": [
+          "read_decision returns the full record for a known decisionKey",
+          "read_decision preserves relations and sourceRefs",
+          "read_decision returns not-found for unknown decisionKey",
+          "future root-admin entity_page read path shows review and approval posture without implying Codex-authored rows are human-approved"
+        ]
+      },
+      "affectedRegistryRows": [
+        "decision.capability.read_decision.first_executable_packet_scope",
+        "decision.entity_page.decision_entity_root_admin_proof_point"
+      ],
+      "affectedArtifacts": [
+        "docs/workspace/decision-evidence/README.md",
+        "docs/workspace/decision-evidence/decision-registry.json",
+        "docs/workspace/decision-evidence/evidence-packet-registry.json",
+        "src/scripts/decisionEvidence.ts",
+        "src/scripts/lib/decisionEvidenceRegistry.ts",
+        "tests/unit/decisionEvidence/cli.test.ts",
+        "tests/unit/decisionEvidence/registry.test.ts"
+      ],
+      "approval": {
+        "reviewStatus": "needs_review",
+        "reviewedByActorKey": "not_approved",
+        "approvedByActorKey": "not_approved",
+        "reviewedAt": null
+      },
+      "migrationPosture": "repo_artifact_until_decision_and_evidence_packet_capabilities_exist; future read capability should preserve this shape or document a compatibility migration",
+      "createdAt": "2026-05-20T15:31:10.772Z",
+      "createdByActorKey": "codex_5_5"
     }
   ]
 }

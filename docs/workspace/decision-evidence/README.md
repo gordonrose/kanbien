@@ -14,6 +14,8 @@ capabilities.
 - Once those capabilities exist, the harness should call the runtime
   capabilities instead of writing JSON directly.
 - Existing records should remain migration input rather than being discarded.
+- Every material Codex chat in this repo is expected to record material
+  decisions during the chat or at closeout, then run harness validation.
 
 ## Files
 
@@ -79,6 +81,28 @@ Validate that every packet-linked decision exists:
 ```bash
 npm run decision-evidence -- validate
 ```
+
+## Chat Closeout Rule
+
+For material Codex chats, decision evidence is part of closeout.
+
+Record decisions for material product, design-system, entity, capability,
+field, approval, deferral, provenance, migration, implementation, test, or
+artifact choices that later work may need to explain or execute.
+
+At closeout, the chat should report:
+
+- decisions recorded
+- decisions still marked `needs_review`
+- the result of `npm run decision-evidence -- validate`
+
+If no material decisions were made, say that explicitly.
+
+This rule applies to new chats that load the current repo instructions. It
+does not automatically reach backward into older chats that never loaded this
+rule, and it does not let one chat see another live chat's private context.
+Cross-chat reconciliation still needs either the other chat to record its own
+decisions or a verified transcript/source path to be supplied.
 
 ## Accountability Defaults
 

@@ -858,6 +858,51 @@ Defaults:
   `CHERRY_PICK_REQUIRED`, or `DIRTY_BLOCK`, do not continue with merge or
   promotion work until that state is resolved
 
+## Decision Evidence Gate
+
+For every material Codex chat in this repo, decision capture is part of the
+work, not a separate optional follow-up.
+
+Material decision means any choice, approval, deferral, model shape, field
+classification, capability behavior, design-system signoff, root-admin
+adoption posture, provenance rule, migration posture, or implementation
+constraint that later work may need to explain, execute, audit, or reverse.
+
+During the chat:
+
+- record decisions as they are made when they affect durable product,
+  design-system, entity, capability, evidence, API, persistence, routing,
+  security, testing, or artifact truth
+- use `npm run decision-evidence -- quick-decision` for simple live capture
+  when an evidence packet already exists
+- use `npm run decision-evidence -- record-decision --input <json>` for richer
+  rows
+- attach relevant decisions to evidence packets with
+  `npm run decision-evidence -- attach-decision`
+
+At material closeout:
+
+- run `npm run decision-evidence -- validate`
+- summarize decisions recorded in the chat
+- summarize decisions still marked `needs_review`
+- state explicitly if no material decisions were made
+
+Source refs must be real resolver values. For LLM conversations, use the
+actual rollout transcript path, stable `llmChatId`, cloud transcript ID, or
+future persisted conversation record when available. Do not invent
+chat-looking source keys. Workspace chat records may be supplemental summaries,
+but they are not the primary source when the real transcript or persistent
+conversation source is available.
+
+Accountability defaults:
+
+- use `gordon.rose` only for choices, reviews, approvals, or signoffs Gordon
+  explicitly made
+- use `codex_5_5` for Codex-authored, inferred, source-backed, or
+  needs-review rows
+- use `approvedByActorKey: "not_approved"` unless explicit human approval
+  exists
+
 ### Chat Bootstrap Gate
 
 For any material multi-file chat, branch-per-task is no longer sufficient on
