@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Kanbien Design System - Entity Management Page Canonical</title>
     <link rel="stylesheet" href="/design-system/assets/styles.css" />
+    <link rel="stylesheet" href="/design-system/assets/list-page-shared.css" />
+    <link rel="stylesheet" href="/design-system/assets/conversationPanel.css" />
+    <link rel="stylesheet" href="/design-system/assets/chatWorkspacePattern.css" />
   </head>
   <body data-entity-management-page-canonical-surface="child-render" data-render-status="settling">
     <div class="design-system-shell">
@@ -54,16 +57,34 @@
         </form>
       </section>
 
-      <nav class="context-nav" aria-label="Entity-management-page family navigation">
+      <nav class="context-nav" aria-label="Entity management page template navigation">
         <div class="context-nav-main">
-          <a class="context-nav-item active" href="/design-system/canonical-renderings" data-tooltip="Canonicals" aria-current="page">
+          <a class="context-nav-item active" href="/design-system/templates/entity_management_page" data-tooltip="Entity Page" aria-current="page">
             <span class="context-nav-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false"><path d="M3 5h8v14H3zm10 0h8v14h-8zm1.5 2v10h5V7z" /></svg>
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 4h14v4H5zm0 6h14v4H5zm0 6h9v4H5zm12 1h2v3h-2z" /></svg>
             </span>
-            <span class="context-nav-label">Canonicals</span>
+            <span class="context-nav-label">Entity</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/templates/record_management_list_centric" data-tooltip="List Template">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h7v14H4zm9 0h7v6h-7zm0 8h7v6h-7z" /></svg>
+            </span>
+            <span class="context-nav-label">Source</span>
           </a>
         </div>
-        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+        <div class="context-nav-bottom-group">
+          <button
+            class="context-nav-item context-nav-item-button context-nav-item-bottom"
+            type="button"
+            data-tooltip="Display Settings"
+            aria-label="Display settings"
+          >
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4.75 5.25h14.5a1.5 1.5 0 0 1 1.5 1.5v8.5a1.5 1.5 0 0 1-1.5 1.5H13.5l.9 2h2.35a.75.75 0 0 1 0 1.5H7.25a.75.75 0 0 1 0-1.5H9.6l.9-2H4.75a1.5 1.5 0 0 1-1.5-1.5v-8.5a1.5 1.5 0 0 1 1.5-1.5zm0 1.5v8.5h14.5v-8.5zm7.25 2a2.5 2.5 0 1 1-2.5 2.5 2.5 2.5 0 0 1 2.5-2.5z" /></svg>
+            </span>
+            <span class="context-nav-label">Display</span>
+          </button>
+        </div>
       </nav>
 
       <main class="design-system-page-main canonical-render-page">
@@ -117,14 +138,19 @@
             </div>
 
             <div class="canonical-render-surface-scroll">
-              <div id="entity-management-page-preview-frame" class="canonical-render-frame" style="--entity-management-canonical-width: 1180px;">
+              <div id="entity-management-page-preview-frame" class="canonical-render-frame">
                 <div
                   id="entity-management-page-preview-shell"
-                  class="record-management-template-frame"
+                  class="build-work-panel-demo-page chat-workspace-pattern-page"
+                  data-record-management-list-centric-template
+                  data-record-management-entity-page-template
+                  data-record-management-drawer-view-mode="end_user"
+                  data-record-management-edit-control-style="compact"
                   data-render-status="settling"
-                  style="inline-size: min(var(--entity-management-canonical-width), 100%); margin-inline: auto;"
                 >
-                  <div id="entity-management-page-preview-mount" data-record-management-list-centric-mount></div>
+                  <section class="record-management-template-frame" aria-label="Entity management page canonical specimen" data-record-management-template-frame>
+                    <div id="entity-management-page-preview-mount" data-record-management-list-centric-mount></div>
+                  </section>
                 </div>
               </div>
             </div>

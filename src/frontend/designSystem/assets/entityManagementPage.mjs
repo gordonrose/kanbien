@@ -7234,6 +7234,153 @@ function renderEntityManagementPageAttributeView() {
   `;
 }
 
+function normalizeEntityPageTemplateRegions(regions = []) {
+  return regions.map((region) => ({
+    key: region.key,
+    label: region.label,
+    headerLabel: region.headerLabel ?? region.label,
+    headerDescription: region.headerDescription ?? region.description ?? "",
+    count: Number.isFinite(region.count) ? region.count : (region.items?.length ?? 0),
+    renderContent: () => renderNestedListPicker({
+      addAction: region.addAction ?? null,
+      className: region.className ?? "",
+      description: region.description ?? "",
+      items: (region.items ?? []).map((item) => ({
+        key: item.key,
+        label: item.label,
+        summary: item.summary ?? "",
+        description: item.description ?? "",
+        content: item.content ?? item.contentHtml ?? "",
+      })),
+      label: region.label,
+      scopeKey: region.key,
+    }),
+  }));
+}
+
+function renderEntityPageTemplateAttributeView({
+  label = "Entity page template",
+  regions = [],
+} = {}) {
+  return `
+    <section class="record-management-user-attribute-view" aria-label="${escapeHtml(label)} details" data-record-management-user-attribute-view data-entity-page-template-view>
+      ${renderRecordManagementRegionShell({
+        label,
+        regions: normalizeEntityPageTemplateRegions(regions),
+      })}
+    </section>
+  `;
+}
+
+function renderEntityPageTemplateDrawerChrome({
+  activeRegionDescription = "",
+  activeRegionTitle = "",
+  attributeViewHtml = "",
+  entityLabel = "Entities",
+  includeCloseAction = false,
+  note = "Ready",
+  status = "Definition",
+  title = "Entity record",
+} = {}) {
+  return `
+    <div class="chat-workspace-list-drawer-header">
+      <div class="chat-workspace-list-drawer-header-copy">
+        <p>${escapeHtml(entityLabel)}</p>
+        <h4>${escapeHtml(title)}</h4>
+        <div class="record-management-drawer-header-meta">
+          <span>${escapeHtml(status)}</span>
+          <span class="record-management-status-badge">${escapeHtml(note)}</span>
+        </div>
+      </div>
+      <div class="chat-workspace-list-drawer-header-actions">
+        ${renderPrimaryIconButton({
+          ariaLabel: "Toggle AI mode",
+          className: "record-management-drawer-ai-button",
+          icon: renderEntityManagementRobotIcon(),
+          title: "AI",
+          toggleAttribute: "data-record-management-ai-mode-toggle",
+        })}
+        ${renderPrimaryIconButton({
+          ariaLabel: "Toggle evidence mode",
+          className: "record-management-drawer-evidence-button",
+          icon: renderGovernanceEvidenceIcon(),
+          title: "Evidence",
+          toggleAttribute: "data-record-management-evidence-mode-toggle",
+        })}
+        ${includeCloseAction ? `
+          <button class="icon-button" type="button" aria-label="Close item detail" data-chat-workspace-list-drawer-close>
+            <span class="icon-button-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg>
+            </span>
+          </button>
+        ` : ""}
+      </div>
+    </div>
+    <div class="chat-workspace-list-drawer-body">
+      <div class="record-management-active-group-summary">
+        <h5 data-record-management-drawer-region-title>${escapeHtml(activeRegionTitle)}</h5>
+        <p data-record-management-drawer-region-description>${escapeHtml(activeRegionDescription)}</p>
+      </div>
+      ${attributeViewHtml}
+    </div>
+  `;
+}
+
+function renderEntityPageTemplateDrawerContent({
+  entityLabel = "Entities",
+  includeCloseAction = false,
+  label = "Entity page template",
+  note = "Ready",
+  regions = [],
+  status = "Definition",
+  title = "Entity record",
+} = {}) {
+  const firstRegion = regions[0] ?? {};
+  return renderEntityPageTemplateDrawerChrome({
+    activeRegionDescription: firstRegion.headerDescription ?? firstRegion.description ?? "",
+    activeRegionTitle: firstRegion.headerLabel ?? firstRegion.label ?? "",
+    attributeViewHtml: renderEntityPageTemplateAttributeView({ label, regions }),
+    entityLabel,
+    includeCloseAction,
+    note,
+    status,
+    title,
+  });
+}
+
+function renderEntityManagementPageDrawerContent({
+  entityLabel = "Organizations",
+  includeCloseAction = false,
+  note = "Ready",
+  status = "Operations",
+  title = "Northstar Operations",
+} = {}) {
+  return renderEntityPageTemplateDrawerChrome({
+    activeRegionDescription: "Definition identity fields, feature ownership, and source authority posture.",
+    activeRegionTitle: "Identity",
+    attributeViewHtml: renderEntityManagementPageAttributeView(),
+    entityLabel,
+    includeCloseAction,
+    note,
+    status,
+    title,
+  });
+}
+
+function hydrateEntityManagementPageDrawer(drawer) {
+  if (!(drawer instanceof HTMLElement)) {
+    return;
+  }
+  initializeEntityManagementPageBehavior(drawer);
+  initializeFormDrawerSelects({ scope: drawer });
+  syncEntityManagementViewRoleOptions(drawer);
+  syncEntityManagementOwningFeatureDerivedFields(drawer);
+}
+
+function hydrateEntityPageTemplateDrawer(drawer) {
+  hydrateEntityManagementPageDrawer(drawer);
+}
+
 function getEntityManagementEvidenceFromTarget(target) {
   return {
     elementName: target.dataset.evidenceElementName ?? "Element",
@@ -7602,8 +7749,14 @@ export {
   closeRecordManagementEvidenceDrawer,
   getEntityManagementAuthoringGuidanceFromTarget,
   getEntityManagementEvidenceFromTarget,
+  hydrateEntityPageTemplateDrawer,
+  hydrateEntityManagementPageDrawer,
   initializeEntityManagementPageBehavior,
   isEntityManagementPageTemplate,
+  renderEntityPageTemplateAttributeView,
+  renderEntityPageTemplateDrawerChrome,
+  renderEntityPageTemplateDrawerContent,
+  renderEntityManagementPageDrawerContent,
   renderEntityManagementPageAttributeView,
   renderEntityManagementRobotIcon,
   renderGovernanceEvidenceIcon,

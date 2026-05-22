@@ -98,8 +98,8 @@ test("record management list-centric template renders the chat-derived record wo
     const tabCards = Array.from(document.querySelectorAll("[data-record-management-list-centric-mount] .floating-tab-header .floating-tab-card"))
       .map((card) => card.getBoundingClientRect())
       .filter((rect) => rect.width > 0 && rect.height > 0);
-    const firstTab = tabCards.at(0);
-    const lastTab = tabCards.at(-1);
+    const firstTab = tabCards[0];
+    const lastTab = tabCards[tabCards.length - 1];
     const listPanel = document.querySelector("[data-record-management-list-centric-mount] .floating-tab-list-panel")?.getBoundingClientRect();
     const firstRow = document.querySelector("[data-record-management-list-centric-mount] .floating-tab-row")?.getBoundingClientRect();
     const recordWorkspace = document.querySelector("[data-record-management-list-centric-mount] [data-chat-workspace-entity-workspace]")?.getBoundingClientRect();

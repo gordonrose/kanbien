@@ -15,7 +15,8 @@
 - Related WCAG checklist:
   `docs/workspace/design-system/verification/entity-management-page-wcag-2-2-aa-checklist.md`
 - Current executable coverage:
-  `tests/visual/designSystem/templates/recordManagementListCentric.spec.ts`
+  - `tests/visual/designSystem/templates/recordManagementListCentric.spec.ts`
+  - `tests/visual/designSystem/canonicals/data-display/entityManagementPageCanonical.spec.ts`
 
 ## Visual Contract
 
@@ -32,7 +33,9 @@
   regions/nested panels were made lazy, Identity was moved onto the shared
   nested-list picker, mobile carousel behavior was applied across sections,
   mobile vertical scroll was moved to the whole page, and review-candidate
-  behavior-lock slices were created.
+  behavior-lock slices were created. The entity-management page drawer now has
+  shared design-system render and hydrate entrypoints consumed by both the
+  template host and child canonical renderer.
 
 ## Source Verification
 
@@ -41,15 +44,19 @@
   - `src/frontend/designSystem/assets/chatWorkspaceRowDrawer.mjs`
   - `src/frontend/designSystem/assets/chatWorkspacePattern.css`
   - `src/frontend/designSystem/assets/recordManagementListCentricTemplate.mjs`
+  - `src/frontend/designSystem/assets/entityManagementPageCanonical.mjs`
   - `tests/visual/designSystem/templates/recordManagementListCentric.spec.ts`
+  - `tests/visual/designSystem/canonicals/data-display/entityManagementPageCanonical.spec.ts`
 - Implementation updated:
   yes
 - Known source-level risks:
   - demo fixture data is still mixed into the render/behavior module
-  - the entity-management module is still eagerly imported by the current
-    drawer path
+  - the full entity-management module is still eagerly imported by the current
+    drawer path, though drawer render/hydrate ownership is no longer duplicated
   - many generated detail-panel behaviors have source support but only partial
     rendered verification
+  - canonical child refs still need one-by-one screenshot review before human
+    sign-off
 
 ## Rendered Verification
 
@@ -200,15 +207,18 @@
 - Implementation status:
   changed
 - Rendered status:
-  partially verified
+  partially verified; shell viewport, shared drawer render/hydrate, and
+  representative child-region routing are now executable checks
 - Human sign-off status:
   pending
 - Promotion decision:
-  remain needs-review until reference states and WCAG checklist are completed
+  remain needs-review until reference states, child canonical screenshot
+  review, and WCAG checklist are completed
 - Open follow-ups:
-  - create deterministic canonical/reference render routes for `EMPR-*` states
-  - split demo data from reusable seam
-  - define app adoption API
+  - complete deterministic child canonical screenshot review by matrix
+  - split demo data and fixture catalog from reusable behavior/render module
+  - broaden the app adoption API beyond the current drawer render/hydrate
+    entrypoints only after the child matrices are signed off
   - add high-count and long-label fixtures
   - add keyboard-only and WCAG 2.2 AA browser checks
 
@@ -225,5 +235,5 @@
 - Architecture-map update required:
   not yet
 - Real-app adoption now allowed:
-  no
-
+  no; a first shared render/hydrate boundary exists, but app adoption remains
+  blocked until behavior/reference/canonical/WCAG evidence is signed off

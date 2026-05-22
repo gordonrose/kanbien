@@ -1,0 +1,5648 @@
+{
+  "generatedAt": "2026-05-21T10:02:45.037Z",
+  "total": 216,
+  "failed": 0,
+  "consoleErrorCount": 216,
+  "byFamily": {
+    "entity-management-page-outer-page": 24,
+    "entity-management-page-navigation": 36,
+    "entity-management-page-detail-panel": 50,
+    "entity-management-page-collection-item": 38,
+    "entity-management-page-evidence-ai": 36,
+    "entity-management-page-performance": 32
+  },
+  "consoleErrors": [
+    {
+      "message": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+      "count": 216
+    },
+    {
+      "message": "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+      "count": 6
+    }
+  ],
+  "results": [
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-001",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-001",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-002",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-002",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-003",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-003",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-004",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-004",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 520
+      },
+      "shell": {
+        "width": 1372,
+        "height": 520
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-005",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-005",
+      "status": "ready",
+      "frame": {
+        "width": 1732,
+        "height": 760
+      },
+      "shell": {
+        "width": 1732,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-006",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-006",
+      "status": "ready",
+      "frame": {
+        "width": 1024,
+        "height": 760
+      },
+      "shell": {
+        "width": 1024,
+        "height": 760
+      },
+      "viewportClass": "narrow-desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-007",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-007",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-008",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-008",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-009",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-009",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 640
+      },
+      "shell": {
+        "width": 390,
+        "height": 640
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-010",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-010",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-011",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-011",
+      "status": "ready",
+      "frame": {
+        "width": 760,
+        "height": 430
+      },
+      "shell": {
+        "width": 760,
+        "height": 430
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-012",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-012",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-013",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-013",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-014",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-014",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-015",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-015",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-016",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-016",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-017",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-017",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-018",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-018",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-019",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-019",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 2058,
+        "height": 1140
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-020",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-020",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-021",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-021",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-022",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-022",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-023",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-023",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-outer-page",
+      "ref": "EMPO-024",
+      "href": "/design-system/canonical-renderings/entity-management-page-outer-page/EMPO-024",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-001",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-001",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-002",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-002",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-003",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-003",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-004",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-004",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-005",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-005",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 520
+      },
+      "shell": {
+        "width": 1372,
+        "height": 520
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-006",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-006",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-007",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-007",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-008",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-008",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-009",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-009",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Relationships",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-010",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-010",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Attributes",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-011",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-011",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-012",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-012",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-013",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-013",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Record",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-014",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-014",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Entity Structure",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-015",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-015",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Entity Structure",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-016",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-016",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Entity Structure",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-017",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-017",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-018",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-018",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-019",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-019",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-020",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-020",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-021",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-021",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-022",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-022",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-023",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-023",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-024",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-024",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-025",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-025",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-026",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-026",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-027",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-027",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-028",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-028",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-029",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-029",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 2058,
+        "height": 1140
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-030",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-030",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-031",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-031",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-032",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-032",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-033",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-033",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-034",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-034",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-035",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-035",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-navigation",
+      "ref": "EMPN-036",
+      "href": "/design-system/canonical-renderings/entity-management-page-navigation/EMPN-036",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-001",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-001",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-002",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-002",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-003",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-003",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-004",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-004",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-005",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-005",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-006",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-006",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-007",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-007",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-008",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-008",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-009",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-009",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-010",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-010",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-011",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-011",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-012",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-012",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-013",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-013",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-014",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-014",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-015",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-015",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-016",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-016",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-017",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-017",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-018",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-018",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-019",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-019",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-020",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-020",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-021",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-021",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Relationships",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-022",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-022",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Attributes",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-023",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-023",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Attributes",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-024",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-024",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Attributes",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-025",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-025",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Attributes",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-026",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-026",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Attributes",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-027",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-027",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-028",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-028",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-029",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-029",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Display",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-030",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-030",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Display",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-031",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-031",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-032",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-032",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-033",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-033",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-034",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-034",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Generation Model",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-035",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-035",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Compliance Model",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-036",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-036",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Migration Model",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-037",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-037",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Record",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-038",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-038",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Record",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-039",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-039",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Entity Structure",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-040",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-040",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-041",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-041",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-042",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-042",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 2058,
+        "height": 1140
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-043",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-043",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-044",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-044",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-045",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-045",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-046",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-046",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Attributes",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-047",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-047",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-048",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-048",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-049",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-049",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-detail-panel",
+      "ref": "EMPD-050",
+      "href": "/design-system/canonical-renderings/entity-management-page-detail-panel/EMPD-050",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Attributes",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-001",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-001",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-002",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-002",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-003",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-003",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-004",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-004",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-005",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-005",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-006",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-006",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-007",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-007",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-008",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-008",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-009",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-009",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-010",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-010",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-011",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-011",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-012",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-012",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 429 (Too Many Requests)",
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-013",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-013",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-014",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-014",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-015",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-015",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-016",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-016",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-017",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-017",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Catalogs",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-018",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-018",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-019",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-019",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-020",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-020",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-021",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-021",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-022",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-022",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-023",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-023",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-024",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-024",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Permissions",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-025",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-025",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-026",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-026",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-027",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-027",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-028",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-028",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-029",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-029",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-030",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-030",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-031",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-031",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-032",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-032",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Entity Structure",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-033",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-033",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-034",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-034",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-035",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-035",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 2058,
+        "height": 1140
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-036",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-036",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-037",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-037",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-collection-item",
+      "ref": "EMPI-038",
+      "href": "/design-system/canonical-renderings/entity-management-page-collection-item/EMPI-038",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-001",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-001",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-002",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-002",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-003",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-003",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-004",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-004",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-005",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-005",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-006",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-006",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-007",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-007",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-008",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-008",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Record",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-009",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-009",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-010",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-010",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-011",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-011",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": true,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-012",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-012",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": true,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-013",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-013",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-014",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-014",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-015",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-015",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-016",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-016",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-017",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-017",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-018",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-018",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-019",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-019",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": true,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-020",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-020",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-021",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-021",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-022",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-022",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-023",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-023",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-024",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-024",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": true,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-025",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-025",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-026",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-026",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-027",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-027",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-028",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-028",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-029",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-029",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-030",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-030",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 2058,
+        "height": 1140
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-031",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-031",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Record",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-032",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-032",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Record",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": true,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-033",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-033",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-034",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-034",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": true,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-035",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-035",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-evidence-ai",
+      "ref": "EMPE-036",
+      "href": "/design-system/canonical-renderings/entity-management-page-evidence-ai/EMPE-036",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": true,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-001",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-001",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-002",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-002",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-003",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-003",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-004",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-004",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-005",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-005",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-006",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-006",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-007",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-007",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-008",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-008",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-009",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-009",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-010",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-010",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Views",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-011",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-011",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-012",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-012",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Record",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-013",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-013",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Record",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-014",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-014",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Attributes",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-015",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-015",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Entity Structure",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-016",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-016",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 2058,
+        "height": 1140
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-017",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-017",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": true,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-018",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-018",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-019",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-019",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-020",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-020",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-021",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-021",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-022",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-022",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-023",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-023",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-024",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-024",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-025",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-025",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-026",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-026",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-027",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-027",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-028",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-028",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 2058,
+        "height": 1140
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-029",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-029",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-030",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-030",
+      "status": "ready",
+      "frame": {
+        "width": 390,
+        "height": 844
+      },
+      "shell": {
+        "width": 390,
+        "height": 844
+      },
+      "viewportClass": "mobile",
+      "regionTitle": "Workflows",
+      "mobileHeaderDisplay": "grid",
+      "regionIndexDisplay": "none",
+      "nestedCardsFlow": "column",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-031",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-031",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Action Models - Record",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    },
+    {
+      "family": "entity-management-page-performance",
+      "ref": "EMPP-032",
+      "href": "/design-system/canonical-renderings/entity-management-page-performance/EMPP-032",
+      "status": "ready",
+      "frame": {
+        "width": 1372,
+        "height": 760
+      },
+      "shell": {
+        "width": 1372,
+        "height": 760
+      },
+      "viewportClass": "desktop",
+      "regionTitle": "Identity",
+      "mobileHeaderDisplay": "none",
+      "regionIndexDisplay": "grid",
+      "nestedCardsFlow": "row",
+      "evidenceOpen": false,
+      "aiOpen": false,
+      "shellCanScroll": false,
+      "closeActionCount": 0,
+      "consoleErrors": [
+        "Failed to load resource: the server responded with a status of 404 (Not Found)"
+      ]
+    }
+  ]
+}

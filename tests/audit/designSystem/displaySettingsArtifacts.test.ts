@@ -18,7 +18,7 @@ function findTagStart(source: string, attributeIndex: number) {
 
 function findOpenTagEnd(source: string, tagStart: number) {
   const match = source.slice(tagStart).match(/>/);
-  return match ? tagStart + match.index : -1;
+  return match ? tagStart + (match.index ?? 0) : -1;
 }
 
 function findAncestorTagStart(source: string, tagName: string, beforeIndex: number) {

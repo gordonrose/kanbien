@@ -1,13 +1,10 @@
 import { initializeFormDrawerSelects } from "./formControls.mjs";
 import {
-  initializeEntityManagementPageBehavior,
+  hydrateEntityManagementPageDrawer,
   isEntityManagementPageTemplate as isImportedEntityManagementPageTemplate,
   renderEntityManagementPageAttributeView as renderImportedEntityManagementPageAttributeView,
-  renderEntityManagementRobotIcon as renderImportedEntityManagementRobotIcon,
-  renderGovernanceEvidenceIcon as renderImportedGovernanceEvidenceIcon,
+  renderEntityManagementPageDrawerContent as renderImportedEntityManagementPageDrawerContent,
   renderPrimaryIconButton as renderImportedPrimaryIconButton,
-  syncEntityManagementOwningFeatureDerivedFields as syncImportedEntityManagementOwningFeatureDerivedFields,
-  syncEntityManagementViewRoleOptions as syncImportedEntityManagementViewRoleOptions,
 } from "./entityManagementPage.mjs";
 
 const recordManagementDrawerSelections = new WeakMap();
@@ -1679,60 +1676,49 @@ export function renderChatWorkspaceListDrawer({ entityWorkspace, selected }) {
     return;
   }
 
-  drawer.innerHTML = `
-    <div class="chat-workspace-list-drawer-header">
-      <div class="chat-workspace-list-drawer-header-copy">
-        <p>${escapeHtml(selected.entity)}</p>
-        <h4>${escapeHtml(selected.title)}</h4>
-        <div class="record-management-drawer-header-meta">
-          <span>${escapeHtml(selected.status)}</span>
-          <span class="record-management-status-badge">${escapeHtml(selected.note)}</span>
+  if (isEntityManagementPage) {
+    drawer.innerHTML = renderImportedEntityManagementPageDrawerContent({
+      entityLabel: selected.entity,
+      note: selected.note,
+      status: selected.status,
+      title: selected.title,
+    });
+    hydrateEntityManagementPageDrawer(drawer);
+  } else {
+    drawer.innerHTML = `
+      <div class="chat-workspace-list-drawer-header">
+        <div class="chat-workspace-list-drawer-header-copy">
+          <p>${escapeHtml(selected.entity)}</p>
+          <h4>${escapeHtml(selected.title)}</h4>
+          <div class="record-management-drawer-header-meta">
+            <span>${escapeHtml(selected.status)}</span>
+            <span class="record-management-status-badge">${escapeHtml(selected.note)}</span>
+          </div>
+        </div>
+        <div class="chat-workspace-list-drawer-header-actions">
+          ${renderImportedPrimaryIconButton({
+            ariaLabel: "Toggle edit mode",
+            className: "record-management-drawer-edit-button",
+            icon: renderEntityManagementEditIcon(),
+            title: "Edit",
+            toggleAttribute: "data-record-management-drawer-edit",
+          })}
+          <button class="icon-button" type="button" aria-label="Close item detail" data-chat-workspace-list-drawer-close>
+            <span class="icon-button-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg>
+            </span>
+          </button>
         </div>
       </div>
-      <div class="chat-workspace-list-drawer-header-actions">
-        ${isEntityManagementPage ? renderImportedPrimaryIconButton({
-          ariaLabel: "Toggle AI mode",
-          className: "record-management-drawer-ai-button",
-          icon: renderImportedEntityManagementRobotIcon(),
-          title: "AI",
-          toggleAttribute: "data-record-management-ai-mode-toggle",
-        }) : renderImportedPrimaryIconButton({
-          ariaLabel: "Toggle edit mode",
-          className: "record-management-drawer-edit-button",
-          icon: renderEntityManagementEditIcon(),
-          title: "Edit",
-          toggleAttribute: "data-record-management-drawer-edit",
-        })}
-        ${isEntityManagementPage ? renderImportedPrimaryIconButton({
-          ariaLabel: "Toggle evidence mode",
-          className: "record-management-drawer-evidence-button",
-          icon: renderImportedGovernanceEvidenceIcon(),
-          title: "Evidence",
-          toggleAttribute: "data-record-management-evidence-mode-toggle",
-        }) : ""}
-        <button class="icon-button" type="button" aria-label="Close item detail" data-chat-workspace-list-drawer-close>
-          <span class="icon-button-glyph" aria-hidden="true">
-            <svg viewBox="0 0 24 24" focusable="false"><path d="m6 6 12 12M18 6 6 18" /></svg>
-          </span>
-        </button>
+      <div class="chat-workspace-list-drawer-body">
+        <div class="record-management-active-group-summary">
+          <h5 data-record-management-drawer-region-title>Organization details</h5>
+          <p data-record-management-drawer-region-description>Root Organization facts and reference data that identify the record.</p>
+        </div>
+        ${renderRecordManagementAttributeView(selected, entityWorkspace)}
       </div>
-    </div>
-    <div class="chat-workspace-list-drawer-body">
-      <div class="record-management-active-group-summary">
-        <h5 data-record-management-drawer-region-title>${isEntityManagementPage ? "Identity" : "Organization details"}</h5>
-        <p data-record-management-drawer-region-description>${isEntityManagementPage ? "Definition identity fields, feature ownership, and source authority posture." : "Root Organization facts and reference data that identify the record."}</p>
-      </div>
-      ${renderRecordManagementAttributeView(selected, entityWorkspace)}
-    </div>
-  `;
-  if (isEntityManagementPage) {
-    initializeEntityManagementPageBehavior(drawer);
-  } else {
+    `;
     installRecordManagementRegionIndex(drawer);
-  }
-  initializeFormDrawerSelects({ scope: drawer });
-  if (isEntityManagementPage) {
-    syncImportedEntityManagementViewRoleOptions(drawer);
-    syncImportedEntityManagementOwningFeatureDerivedFields(drawer);
+    initializeFormDrawerSelects({ scope: drawer });
   }
 }

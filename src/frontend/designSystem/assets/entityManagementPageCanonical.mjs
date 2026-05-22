@@ -1,9 +1,6 @@
 import {
-  initializeEntityManagementPageBehavior,
-  renderEntityManagementPageAttributeView,
-  renderEntityManagementRobotIcon,
-  renderGovernanceEvidenceIcon,
-  renderPrimaryIconButton,
+  hydrateEntityManagementPageDrawer,
+  renderEntityManagementPageDrawerContent,
   syncEntityManagementOwningFeatureDerivedFields,
   syncEntityManagementViewRoleOptions,
 } from "./entityManagementPage.mjs";
@@ -327,24 +324,313 @@ function normalizeZoom(label) {
   return /200%|zoom|magnif/i.test(label) ? 100 : 0;
 }
 
+function normalizeTextSpacing(label) {
+  return /text-spacing/i.test(label) ? "wcag" : "";
+}
+
+function isMobileLabel(label) {
+  return /\bmobile\b/i.test(label) && !/not-mobile/i.test(label);
+}
+
 function normalizeWidth(label) {
-  if (/mobile/i.test(label)) {
+  if (isMobileLabel(label)) {
     return /landscape/i.test(label) ? 760 : 390;
   }
-  if (/narrow|half|constrained/i.test(label)) {
-    return 820;
+  if (/narrow|half/i.test(label)) {
+    return 1024;
   }
   if (/wide/i.test(label)) {
-    return 1440;
+    return 1732;
   }
-  return 1180;
+  return 1372;
+}
+
+function normalizeHeight(label) {
+  if (isMobileLabel(label)) {
+    if (/landscape/i.test(label)) {
+      return 430;
+    }
+    if (/short/i.test(label)) {
+      return 640;
+    }
+    return 844;
+  }
+  if (/constrained/i.test(label)) {
+    return 520;
+  }
+  return 760;
+}
+
+function viewportClassFor(label, width) {
+  if (isMobileLabel(label) || width <= 480) {
+    return "mobile";
+  }
+  if (/narrow|half/i.test(label) || width <= 1100) {
+    return "narrow-desktop";
+  }
+  return "desktop";
+}
+
+const detailPanelCanonicalStates = Object.freeze({
+  "EMPD-001": { regionKey: "identity", nestedKey: "primary-details" },
+  "EMPD-002": { regionKey: "identity", nestedKey: "owning-feature" },
+  "EMPD-003": { regionKey: "identity", nestedKey: "source-authority-posture" },
+  "EMPD-004": { regionKey: "identity", nestedKey: "primary-details", interactions: ["longIdentityFields"] },
+  "EMPD-005": { regionKey: "identity", nestedKey: "owning-feature", interactions: ["selectOwningFeature"] },
+  "EMPD-006": { regionKey: "views", nestedKey: "list-views" },
+  "EMPD-007": { regionKey: "views", nestedKey: "list-views", detailSection: "View details" },
+  "EMPD-008": { regionKey: "views", nestedKey: "list-views", detailSection: "Location" },
+  "EMPD-009": { regionKey: "views", nestedKey: "list-views", detailSection: "Access" },
+  "EMPD-010": { regionKey: "views", nestedKey: "list-views", detailSection: "Workflow" },
+  "EMPD-011": { regionKey: "views", nestedKey: "list-views", detailSection: "Primary actions" },
+  "EMPD-012": { regionKey: "views", nestedKey: "list-views", detailSection: "Global search" },
+  "EMPD-013": { regionKey: "views", nestedKey: "list-views", detailSection: "Display" },
+  "EMPD-014": { regionKey: "workflows", nestedKey: "intake-workflow", detailSection: "Workflow details" },
+  "EMPD-015": { regionKey: "workflows", nestedKey: "intake-workflow", detailSection: "Workflow builder" },
+  "EMPD-016": { regionKey: "workflows", nestedKey: "intake-workflow", detailSection: "Workflow builder", interactions: ["addWorkflowStatus"] },
+  "EMPD-017": { regionKey: "workflows", nestedKey: "intake-workflow", detailSection: "Workflow builder", interactions: ["moveWorkflowStatus"] },
+  "EMPD-018": { regionKey: "workflows", nestedKey: "intake-workflow", detailSection: "Workflow builder", interactions: ["removeWorkflowStatus"] },
+  "EMPD-019": { regionKey: "workflows", nestedKey: "intake-workflow", detailSection: "Workflow builder", interactions: ["enableSubworkflow"] },
+  "EMPD-020": { regionKey: "workflows", nestedKey: "intake-workflow", detailSection: "Workflow builder", interactions: ["openWorkflowLinks"] },
+  "EMPD-021": { regionKey: "relationships", nestedKey: "relationship-tenant", detailSection: "Relationship metadata" },
+  "EMPD-022": { regionKey: "attributes", nestedKey: "attribute-email", detailSection: "Attribute details" },
+  "EMPD-023": { regionKey: "attributes", nestedKey: "attribute-description", detailSection: "Attribute details", interactions: ["markDescriptionSensitive"] },
+  "EMPD-024": { regionKey: "attributes", nestedKey: "attribute-email", detailSection: "Validation", interactions: ["addValidationRule"] },
+  "EMPD-025": { regionKey: "attributes", nestedKey: "attribute-description", detailSection: "Search", interactions: ["disableDescriptionSearchable"] },
+  "EMPD-026": { regionKey: "attributes", nestedKey: "attribute-email", detailSection: "Search", interactions: ["enableEmailSearchable"] },
+  "EMPD-027": { regionKey: "catalogs", nestedKey: "catalog-status", detailSection: "Catalog details" },
+  "EMPD-028": { regionKey: "catalogs", nestedKey: "catalog-status", detailSection: "Catalog options", interactions: ["addCatalogOption"] },
+  "EMPD-029": { regionKey: "placements", nestedKey: "placement-primary-details", detailSection: "Placement details" },
+  "EMPD-030": { regionKey: "placements", nestedKey: "placement-primary-details", detailSection: "Attributes", interactions: ["addPlacementSection"] },
+  "EMPD-031": { regionKey: "permissions", nestedKey: "permission-role-llm", detailSection: "Role" },
+  "EMPD-032": { regionKey: "permissions", nestedKey: "permission-role-llm", detailSection: "Record capabilities", interactions: ["enablePermissionFamily"] },
+  "EMPD-033": { regionKey: "permissions", nestedKey: "permission-role-llm", detailSection: "Record capabilities", interactions: ["disablePermissionFamily"] },
+  "EMPD-034": { regionKey: "generation-model", detailSection: "Generation mode" },
+  "EMPD-035": { regionKey: "compliance-model", detailSection: "Privacy and security" },
+  "EMPD-036": { regionKey: "migration-model", detailSection: "Migration status" },
+  "EMPD-037": { regionKey: "action-models-record", nestedKey: "record-action-list", detailSection: "Action model" },
+  "EMPD-038": { regionKey: "action-models-record", nestedKey: "record-action-list", detailSection: "Error audit types and messaging", interactions: ["openConflictErrorCard"] },
+  "EMPD-039": { regionKey: "action-models-entity-structure", nestedKey: "structure-action-create-entity", detailSection: "Action model" },
+  "EMPD-040": { regionKey: "identity", nestedKey: "source-authority-posture" },
+  "EMPD-041": { regionKey: "identity", nestedKey: "primary-details", interactions: ["longIdentityFields"] },
+  "EMPD-042": { regionKey: "identity", nestedKey: "primary-details" },
+  "EMPD-043": { regionKey: "identity", nestedKey: "primary-details", textSpacing: "wcag" },
+  "EMPD-044": { regionKey: "identity", nestedKey: "primary-details" },
+  "EMPD-045": { regionKey: "identity", nestedKey: "primary-details" },
+  "EMPD-046": { regionKey: "identity", nestedKey: "primary-details", interactions: ["exposeNestedTriggerTooltips"] },
+  "EMPD-047": { regionKey: "identity", nestedKey: "primary-details" },
+  "EMPD-048": { regionKey: "identity", nestedKey: "primary-details" },
+  "EMPD-049": { regionKey: "identity", nestedKey: "primary-details" },
+  "EMPD-050": { regionKey: "attributes", nestedKey: "attribute-email", interactions: ["addGeneratedAttributeTriggers"] },
+});
+
+const navigationCanonicalStates = Object.freeze({
+  "EMPN-001": { regionKey: "identity" },
+  "EMPN-002": { regionKey: "identity" },
+  "EMPN-003": { regionKey: "identity" },
+  "EMPN-004": { regionKey: "identity" },
+  "EMPN-005": { regionKey: "identity" },
+  "EMPN-006": { regionKey: "identity" },
+  "EMPN-007": { regionKey: "workflows" },
+  "EMPN-008": { regionKey: "views" },
+  "EMPN-009": { regionKey: "relationships" },
+  "EMPN-010": { regionKey: "attributes" },
+  "EMPN-011": { regionKey: "catalogs" },
+  "EMPN-012": { regionKey: "permissions" },
+  "EMPN-013": { regionKey: "action-models-record" },
+  "EMPN-014": { regionKey: "action-models-entity-structure" },
+  "EMPN-015": { regionKey: "action-models-entity-structure" },
+  "EMPN-016": { regionKey: "action-models-entity-structure" },
+  "EMPN-017": { regionKey: "identity" },
+  "EMPN-018": { regionKey: "identity" },
+  "EMPN-019": { regionKey: "identity" },
+  "EMPN-020": { regionKey: "identity" },
+  "EMPN-021": { regionKey: "workflows" },
+  "EMPN-022": { regionKey: "views" },
+  "EMPN-023": { regionKey: "catalogs" },
+  "EMPN-024": { regionKey: "permissions" },
+  "EMPN-025": { regionKey: "identity" },
+  "EMPN-026": { regionKey: "identity" },
+  "EMPN-027": { regionKey: "identity" },
+  "EMPN-028": { regionKey: "identity" },
+  "EMPN-029": { regionKey: "identity" },
+  "EMPN-030": { regionKey: "identity" },
+  "EMPN-031": { regionKey: "identity" },
+  "EMPN-032": { regionKey: "identity" },
+  "EMPN-033": { regionKey: "identity" },
+  "EMPN-034": { regionKey: "identity" },
+  "EMPN-035": { regionKey: "identity" },
+  "EMPN-036": { regionKey: "identity" },
+});
+
+const collectionItemCanonicalStates = Object.freeze({
+  "EMPI-001": { regionKey: "workflows" },
+  "EMPI-002": { regionKey: "workflows" },
+  "EMPI-003": { regionKey: "workflows" },
+  "EMPI-004": { regionKey: "workflows" },
+  "EMPI-005": { regionKey: "workflows" },
+  "EMPI-006": { regionKey: "workflows" },
+  "EMPI-007": { regionKey: "workflows" },
+  "EMPI-008": { regionKey: "workflows" },
+  "EMPI-009": { regionKey: "workflows" },
+  "EMPI-010": { regionKey: "catalogs" },
+  "EMPI-011": { regionKey: "catalogs" },
+  "EMPI-012": { regionKey: "catalogs" },
+  "EMPI-013": { regionKey: "catalogs" },
+  "EMPI-014": { regionKey: "catalogs" },
+  "EMPI-015": { regionKey: "catalogs" },
+  "EMPI-016": { regionKey: "catalogs" },
+  "EMPI-017": { regionKey: "catalogs" },
+  "EMPI-018": { regionKey: "permissions" },
+  "EMPI-019": { regionKey: "permissions" },
+  "EMPI-020": { regionKey: "permissions" },
+  "EMPI-021": { regionKey: "permissions" },
+  "EMPI-022": { regionKey: "permissions" },
+  "EMPI-023": { regionKey: "permissions" },
+  "EMPI-024": { regionKey: "permissions" },
+  "EMPI-025": { regionKey: "workflows" },
+  "EMPI-026": { regionKey: "workflows" },
+  "EMPI-027": { regionKey: "workflows" },
+  "EMPI-028": { regionKey: "workflows" },
+  "EMPI-029": { regionKey: "workflows" },
+  "EMPI-030": { regionKey: "identity" },
+  "EMPI-031": { regionKey: "workflows" },
+  "EMPI-032": { regionKey: "action-models-entity-structure" },
+  "EMPI-033": { regionKey: "workflows" },
+  "EMPI-034": { regionKey: "workflows" },
+  "EMPI-035": { regionKey: "workflows" },
+  "EMPI-036": { regionKey: "workflows" },
+  "EMPI-037": { regionKey: "workflows" },
+  "EMPI-038": { regionKey: "workflows" },
+});
+
+const evidenceAiCanonicalStates = Object.freeze({
+  "EMPE-001": { regionKey: "identity" },
+  "EMPE-002": { regionKey: "identity" },
+  "EMPE-003": { regionKey: "identity" },
+  "EMPE-004": { regionKey: "identity" },
+  "EMPE-005": { regionKey: "identity" },
+  "EMPE-006": { regionKey: "workflows" },
+  "EMPE-007": { regionKey: "views" },
+  "EMPE-008": { regionKey: "action-models-record" },
+  "EMPE-009": { regionKey: "identity" },
+  "EMPE-010": { regionKey: "identity" },
+  "EMPE-011": { regionKey: "identity" },
+  "EMPE-012": { regionKey: "identity" },
+  "EMPE-013": { regionKey: "identity" },
+  "EMPE-014": { regionKey: "identity" },
+  "EMPE-015": { regionKey: "identity" },
+  "EMPE-016": { regionKey: "identity" },
+  "EMPE-017": { regionKey: "identity" },
+  "EMPE-018": { regionKey: "identity" },
+  "EMPE-019": { regionKey: "identity" },
+  "EMPE-020": { regionKey: "identity" },
+  "EMPE-021": { regionKey: "identity" },
+  "EMPE-022": { regionKey: "identity" },
+  "EMPE-023": { regionKey: "identity" },
+  "EMPE-024": { regionKey: "identity" },
+  "EMPE-025": { regionKey: "identity" },
+  "EMPE-026": { regionKey: "identity" },
+  "EMPE-027": { regionKey: "identity" },
+  "EMPE-028": { regionKey: "identity" },
+  "EMPE-029": { regionKey: "identity" },
+  "EMPE-030": { regionKey: "identity" },
+  "EMPE-031": { regionKey: "action-models-record" },
+  "EMPE-032": { regionKey: "action-models-record" },
+  "EMPE-033": { regionKey: "identity" },
+  "EMPE-034": { regionKey: "identity" },
+  "EMPE-035": { regionKey: "identity" },
+  "EMPE-036": { regionKey: "identity" },
+});
+
+const performanceCanonicalStates = Object.freeze({
+  "EMPP-001": { regionKey: "identity" },
+  "EMPP-002": { regionKey: "identity" },
+  "EMPP-003": { regionKey: "identity" },
+  "EMPP-004": { regionKey: "identity" },
+  "EMPP-005": { regionKey: "identity" },
+  "EMPP-006": { regionKey: "identity" },
+  "EMPP-007": { regionKey: "identity" },
+  "EMPP-008": { regionKey: "workflows" },
+  "EMPP-009": { regionKey: "workflows" },
+  "EMPP-010": { regionKey: "views" },
+  "EMPP-011": { regionKey: "identity" },
+  "EMPP-012": { regionKey: "action-models-record" },
+  "EMPP-013": { regionKey: "action-models-record" },
+  "EMPP-014": { regionKey: "attributes" },
+  "EMPP-015": { regionKey: "action-models-entity-structure" },
+  "EMPP-016": { regionKey: "identity" },
+  "EMPP-017": { regionKey: "identity" },
+  "EMPP-018": { regionKey: "workflows" },
+  "EMPP-019": { regionKey: "identity" },
+  "EMPP-020": { regionKey: "identity" },
+  "EMPP-021": { regionKey: "identity" },
+  "EMPP-022": { regionKey: "identity" },
+  "EMPP-023": { regionKey: "identity" },
+  "EMPP-024": { regionKey: "identity" },
+  "EMPP-025": { regionKey: "identity" },
+  "EMPP-026": { regionKey: "identity" },
+  "EMPP-027": { regionKey: "identity" },
+  "EMPP-028": { regionKey: "identity" },
+  "EMPP-029": { regionKey: "identity" },
+  "EMPP-030": { regionKey: "workflows" },
+  "EMPP-031": { regionKey: "action-models-record" },
+  "EMPP-032": { regionKey: "identity" },
+});
+
+function detailPanelCanonicalState(referenceId) {
+  return detailPanelCanonicalStates[referenceId] ?? null;
+}
+
+function navigationCanonicalState(referenceId) {
+  return navigationCanonicalStates[referenceId] ?? null;
+}
+
+function collectionItemCanonicalState(referenceId) {
+  return collectionItemCanonicalStates[referenceId] ?? null;
+}
+
+function evidenceAiCanonicalState(referenceId) {
+  return evidenceAiCanonicalStates[referenceId] ?? null;
+}
+
+function performanceCanonicalState(referenceId) {
+  return performanceCanonicalStates[referenceId] ?? null;
 }
 
 function regionForReference(referenceId, label) {
+  const detailPanelState = detailPanelCanonicalState(referenceId);
+  if (detailPanelState?.regionKey) {
+    return detailPanelState.regionKey;
+  }
+
+  const navigationState = navigationCanonicalState(referenceId);
+  if (navigationState?.regionKey) {
+    return navigationState.regionKey;
+  }
+
+  const collectionItemState = collectionItemCanonicalState(referenceId);
+  if (collectionItemState?.regionKey) {
+    return collectionItemState.regionKey;
+  }
+
+  const evidenceAiState = evidenceAiCanonicalState(referenceId);
+  if (evidenceAiState?.regionKey) {
+    return evidenceAiState.regionKey;
+  }
+
+  const performanceState = performanceCanonicalState(referenceId);
+  if (performanceState?.regionKey) {
+    return performanceState.regionKey;
+  }
+
   if (/workflows|workflow/i.test(label)) {
     return "workflows";
   }
-  if (/views|view access|view details|location|placement/i.test(label)) {
+  if (/display|placement/i.test(label)) {
+    return "placements";
+  }
+  if (/views|view access|view details|location/i.test(label)) {
     return "views";
   }
   if (/relationship/i.test(label)) {
@@ -355,9 +641,6 @@ function regionForReference(referenceId, label) {
   }
   if (/catalog|option/i.test(label)) {
     return "catalogs";
-  }
-  if (/display|placement/i.test(label)) {
-    return "placements";
   }
   if (/permission|role|capability/i.test(label)) {
     return "permissions";
@@ -371,10 +654,220 @@ function regionForReference(referenceId, label) {
   if (/migration/i.test(label)) {
     return "migration-model";
   }
-  if (/action/i.test(label) || referenceId === "EMPN-013" || referenceId === "EMPN-014") {
+  if (/action/i.test(label)) {
     return "action-models-record";
   }
   return "identity";
+}
+
+function nestedItemForReference(referenceId, label) {
+  const detailPanelState = detailPanelCanonicalState(referenceId);
+  if (detailPanelState?.nestedKey) {
+    return detailPanelState.nestedKey;
+  }
+
+  if (/owning feature/i.test(label)) {
+    return "owning-feature";
+  }
+  if (/source authority/i.test(label)) {
+    return "source-authority-posture";
+  }
+  if (/primary details|long text/i.test(label)) {
+    return "primary-details";
+  }
+  return "";
+}
+
+function detailSectionForReference(referenceId) {
+  return detailPanelCanonicalState(referenceId)?.detailSection ?? "";
+}
+
+function exposeNestedTriggerTooltips(drawer) {
+  drawer.querySelectorAll("[data-record-management-nested-trigger]").forEach((trigger) => {
+    if (!(trigger instanceof HTMLElement)) {
+      return;
+    }
+    const label = trigger.querySelector("strong")?.textContent?.trim() ?? trigger.textContent?.trim() ?? "";
+    if (label) {
+      trigger.setAttribute("title", label);
+    }
+  });
+}
+
+function setFieldValue(drawer, name, value) {
+  const field = drawer.querySelector(`[name="${CSS.escape(name)}"]`);
+  if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+    field.value = value;
+  }
+}
+
+const detailPanelInteractionHandlers = Object.freeze({
+  longIdentityFields(drawer) {
+    setFieldValue(
+      drawer,
+      "entityName",
+      "Organization with an intentionally long governance name used to prove text wrapping and detail-field resilience",
+    );
+    setFieldValue(
+      drawer,
+      "descriptionFallback",
+      "This intentionally long organization description is used by the canonical rendering to prove that large human-authored labels and descriptions remain legible, wrapped, and contained inside the shared entity-management detail panel.",
+    );
+    setFieldValue(
+      drawer,
+      "purposeFallback",
+      "This purpose text is deliberately longer than the baseline so the detail panel proves multi-line fields and generated card rhythm without borrowing the baseline visual state.",
+    );
+  },
+  selectOwningFeature(drawer) {
+    const owningFeature = drawer.querySelector("[data-entity-management-owning-feature-key]");
+    const input = owningFeature?.querySelector("[data-form-drawer-select-value]");
+    const triggerLabel = owningFeature?.querySelector("[data-form-drawer-select-summary]");
+    const triggerMeta = owningFeature?.querySelector("[data-form-drawer-select-meta]");
+    if (input instanceof HTMLInputElement) {
+      input.value = "organizationCore";
+    }
+    if (triggerLabel instanceof HTMLElement) {
+      triggerLabel.textContent = "organizationCore";
+    }
+    if (triggerMeta instanceof HTMLElement) {
+      triggerMeta.textContent = "1 selected";
+    }
+    syncEntityManagementOwningFeatureDerivedFields(drawer);
+  },
+  exposeNestedTriggerTooltips(drawer) {
+    exposeNestedTriggerTooltips(drawer);
+  },
+  addWorkflowStatus(drawer) {
+    const builder = drawer.querySelector("[data-entity-management-workflow-builder='intakeWorkflow']");
+    builder.querySelector("[data-entity-management-workflow-status-add]")?.click();
+  },
+  moveWorkflowStatus(drawer) {
+    const builder = drawer.querySelector("[data-entity-management-workflow-builder='intakeWorkflow']");
+    builder.querySelector("[data-entity-management-workflow-status-add]")?.click();
+    builder.querySelector("[data-entity-management-workflow-status-add]")?.click();
+    builder.querySelector("[data-entity-management-workflow-status-row]:last-child [data-entity-management-workflow-status-move='up']")?.click();
+  },
+  removeWorkflowStatus(drawer) {
+    const builder = drawer.querySelector("[data-entity-management-workflow-builder='intakeWorkflow']");
+    builder.querySelector("[data-entity-management-workflow-status-add]")?.click();
+    builder.querySelector("[data-entity-management-workflow-status-add]")?.click();
+    builder.querySelector("[data-entity-management-workflow-status-row]:last-child [data-entity-management-workflow-status-remove]")?.click();
+  },
+  enableSubworkflow(drawer) {
+    const builder = drawer.querySelector("[data-entity-management-workflow-builder='intakeWorkflow']");
+    const toggle = builder.querySelector("[data-entity-management-subworkflow-toggle]");
+    if (toggle instanceof HTMLInputElement && !toggle.checked) {
+      toggle.click();
+    }
+  },
+  openWorkflowLinks(drawer) {
+    const builder = drawer.querySelector("[data-entity-management-workflow-builder='intakeWorkflow']");
+    const linksButton = builder.querySelector("[data-entity-management-workflow-links] [data-form-drawer-select-button]");
+    if (linksButton instanceof HTMLButtonElement) {
+      linksButton.click();
+    }
+  },
+  markDescriptionSensitive(drawer) {
+    const privacy = drawer.querySelector("[data-entity-management-attribute-definition='description'] [data-entity-management-privacy-classification]");
+    const sensitiveCategory = drawer.querySelector("[data-entity-management-attribute-definition='description'] [data-entity-management-sensitive-privacy-category-field]");
+    if (privacy instanceof HTMLSelectElement) {
+      privacy.value = "sensitive";
+      privacy.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    if (sensitiveCategory instanceof HTMLElement) {
+      sensitiveCategory.hidden = false;
+      sensitiveCategory.querySelector("select")?.setAttribute("required", "");
+    }
+  },
+  addValidationRule(drawer) {
+    drawer.querySelector("[data-entity-management-attribute-definition='email'] [data-entity-management-validation-rule-add]")?.click();
+  },
+  disableDescriptionSearchable(drawer) {
+    const searchable = drawer.querySelector("[data-entity-management-attribute-definition='description'] [data-entity-management-attribute-searchable]");
+    if (searchable instanceof HTMLInputElement && searchable.checked) {
+      searchable.click();
+    }
+  },
+  enableEmailSearchable(drawer) {
+    const searchable = drawer.querySelector("[data-entity-management-attribute-definition='email'] [data-entity-management-attribute-searchable]");
+    if (searchable instanceof HTMLInputElement && !searchable.checked) {
+      searchable.click();
+    }
+  },
+  addCatalogOption(drawer) {
+    drawer.querySelector("[data-entity-management-catalog-option-add]")?.click();
+  },
+  addPlacementSection(drawer) {
+    drawer.querySelector("[data-entity-management-placement-section-add]")?.click();
+  },
+  enablePermissionFamily(drawer) {
+    const familyToggle = drawer.querySelector("[data-entity-management-permission-family] [data-entity-management-permission-family-toggle]");
+    if (familyToggle instanceof HTMLInputElement && !familyToggle.checked) {
+      familyToggle.click();
+    }
+  },
+  disablePermissionFamily(drawer) {
+    const familyToggle = drawer.querySelector("[data-entity-management-permission-family] [data-entity-management-permission-family-toggle]");
+    if (familyToggle instanceof HTMLInputElement && familyToggle.checked) {
+      familyToggle.click();
+    }
+  },
+  openConflictErrorCard(drawer) {
+    const errorCard = drawer.querySelector("[data-entity-management-action-error='conflict']");
+    if (errorCard instanceof HTMLDetailsElement) {
+      errorCard.open = true;
+    }
+  },
+  addGeneratedAttributeTriggers(drawer) {
+    const cards = drawer.querySelector("[data-record-management-region-panel='attributes'] .record-management-nested-list-cards");
+    const template = cards?.querySelector("[data-record-management-nested-trigger='attribute-email']");
+    if (!(cards instanceof HTMLElement) || !(template instanceof HTMLElement)) {
+      return;
+    }
+    for (let index = 1; index <= 4; index += 1) {
+      const clone = template.cloneNode(true);
+      if (!(clone instanceof HTMLElement)) {
+        continue;
+      }
+      const key = `attribute-generated-${index}`;
+      clone.dataset.recordManagementNestedTrigger = key;
+      clone.classList.remove("is-active");
+      clone.setAttribute("aria-pressed", "false");
+      const title = clone.querySelector("strong");
+      const summary = clone.querySelector("span");
+      const description = clone.querySelector("small");
+      if (title instanceof HTMLElement) {
+        title.textContent = `Generated field ${index}`;
+      }
+      if (summary instanceof HTMLElement) {
+        summary.textContent = "Generated";
+      }
+      if (description instanceof HTMLElement) {
+        description.textContent = "High-count generated field pressure item.";
+      }
+      cards.append(clone);
+    }
+  },
+});
+
+function applyDetailPanelState(drawer, state) {
+  for (const interaction of state?.interactions ?? []) {
+    detailPanelInteractionHandlers[interaction]?.(drawer);
+  }
+}
+
+function openDetailSection(drawer, sectionTitle) {
+  if (!sectionTitle) {
+    return;
+  }
+  const sections = Array.from(drawer.querySelectorAll("[data-entity-management-view-section]"));
+  const matchingSections = sections.filter((candidate) => candidate.getAttribute("aria-label") === sectionTitle);
+  const section = matchingSections.find((candidate) => !candidate.closest("[hidden]")) ?? matchingSections[0];
+  const toggle = section?.querySelector("[data-entity-management-section-toggle]");
+  if (toggle instanceof HTMLButtonElement && toggle.getAttribute("aria-expanded") !== "true") {
+    toggle.click();
+  }
 }
 
 function renderRouteFor(reference, familyKey) {
@@ -416,12 +909,24 @@ function setRegion(drawer, regionKey) {
   }
 }
 
+function setNestedItem(drawer, nestedKey) {
+  if (!nestedKey) {
+    return;
+  }
+  const trigger = drawer.querySelector(`[data-record-management-nested-trigger="${CSS.escape(nestedKey)}"]`);
+  if (trigger instanceof HTMLButtonElement) {
+    trigger.click();
+  }
+}
+
 function openMode(drawer, label) {
-  if (!/evidence|ai/i.test(label)) {
+  const wantsEvidence = /\bevidence\b/i.test(label);
+  const wantsAi = /\bAI\b/.test(label) && !/\bEvidence to AI\b/i.test(label);
+  if (!wantsEvidence && !wantsAi) {
     return;
   }
 
-  const isAi = /AI/i.test(label) && !/Evidence to AI/i.test(label);
+  const isAi = wantsAi;
   const toggle = drawer.querySelector(isAi ? "[data-record-management-ai-mode-toggle]" : "[data-record-management-evidence-mode-toggle]");
   if (toggle instanceof HTMLButtonElement) {
     toggle.click();
@@ -449,26 +954,61 @@ async function renderSpecimen({ familyKey, reference }) {
   const theme = normalizeTheme(label);
   const dir = normalizeDir(label);
   const zoom = normalizeZoom(label);
+  const textSpacing = normalizeTextSpacing(label);
   const width = normalizeWidth(label);
+  const height = normalizeHeight(label);
   const regionKey = regionForReference(reference.referenceId, label);
+  const nestedKey = nestedItemForReference(reference.referenceId, label);
+  const detailPanelState = detailPanelCanonicalState(reference.referenceId);
+  const detailSection = detailSectionForReference(reference.referenceId);
   const scale = zoom === 100 ? "1.5" : "1";
 
   document.documentElement.removeAttribute("dir");
   document.documentElement.style.removeProperty("--ui-scale");
-  delete document.documentElement.dataset.theme;
+  if (theme === "normal") {
+    delete document.documentElement.dataset.theme;
+  } else {
+    document.documentElement.dataset.theme = theme;
+  }
+  delete document.body.dataset.entityManagementCanonicalMagnification;
 
   frame.style.setProperty("--entity-management-canonical-width", `${width}px`);
+  frame.style.setProperty("--entity-management-canonical-height", `${height}px`);
+  frame.style.width = `${width}px`;
+  frame.style.minWidth = `${width}px`;
+  frame.style.height = `${height}px`;
+  frame.style.minHeight = `${height}px`;
+  frame.dataset.viewportClass = viewportClassFor(label, width);
   frame.dataset.themeScope = theme;
+  if (theme === "normal") {
+    delete shell.dataset.themeScope;
+  } else {
+    shell.dataset.themeScope = theme;
+  }
   shell.setAttribute("dir", dir);
+  shell.style.inlineSize = `${width}px`;
+  shell.style.minInlineSize = `${width}px`;
+  shell.style.blockSize = `${height}px`;
+  shell.style.minBlockSize = `${height}px`;
   shell.style.setProperty("--ui-scale", scale);
-  shell.dataset.viewportClass = width <= 480 ? "mobile" : width <= 900 ? "half-page" : "desktop";
+  if (zoom === 0) {
+    delete shell.dataset.magnification;
+  } else {
+    shell.dataset.magnification = String(zoom);
+    document.body.dataset.entityManagementCanonicalMagnification = String(zoom);
+  }
+  if (textSpacing) {
+    shell.dataset.textSpacing = textSpacing;
+  } else {
+    delete shell.dataset.textSpacing;
+  }
+  shell.dataset.viewportClass = viewportClassFor(label, width);
   shell.dataset.renderStatus = "settling";
 
   mount.innerHTML = `
     <div
       class="chat-workspace-entity-workspace floating-tab-entity-workspace"
       data-chat-workspace-entity-workspace
-      data-record-management-entity-page-template
     >
       <aside
         class="chat-workspace-list-drawer"
@@ -479,51 +1019,24 @@ async function renderSpecimen({ familyKey, reference }) {
         data-record-management-ai-mode="false"
         data-record-management-evidence-view="false"
       >
-        <div class="chat-workspace-list-drawer-header">
-          <div class="chat-workspace-list-drawer-header-copy">
-            <p>Organizations</p>
-            <h4>Northstar Operations</h4>
-            <div class="record-management-drawer-header-meta">
-              <span>Operations</span>
-              <span class="record-management-status-badge">Ready</span>
-            </div>
-          </div>
-          <div class="chat-workspace-list-drawer-header-actions">
-            ${renderPrimaryIconButton({
-              ariaLabel: "Toggle AI mode",
-              className: "record-management-drawer-ai-button",
-              icon: renderEntityManagementRobotIcon(),
-              title: "AI",
-              toggleAttribute: "data-record-management-ai-mode-toggle",
-            })}
-            ${renderPrimaryIconButton({
-              ariaLabel: "Toggle evidence mode",
-              className: "record-management-drawer-evidence-button",
-              icon: renderGovernanceEvidenceIcon(),
-              title: "Evidence",
-              toggleAttribute: "data-record-management-evidence-mode-toggle",
-            })}
-          </div>
-        </div>
-        <div class="chat-workspace-list-drawer-body">
-          <div class="record-management-active-group-summary">
-            <h5 data-record-management-drawer-region-title>Identity</h5>
-            <p data-record-management-drawer-region-description>Definition identity fields, feature ownership, and source authority posture.</p>
-          </div>
-          ${renderEntityManagementPageAttributeView()}
-        </div>
+        ${renderEntityManagementPageDrawerContent()}
       </aside>
     </div>
   `;
 
   const drawer = mount.querySelector("[data-chat-workspace-list-drawer]");
   if (drawer instanceof HTMLElement) {
-    initializeEntityManagementPageBehavior(drawer);
+    hydrateEntityManagementPageDrawer(drawer);
     setRegion(drawer, regionKey);
+    setNestedItem(drawer, nestedKey);
+    openDetailSection(drawer, detailSection);
+    applyDetailPanelState(drawer, detailPanelState);
+    openDetailSection(drawer, detailSection);
     syncEntityManagementViewRoleOptions(drawer);
     syncEntityManagementOwningFeatureDerivedFields(drawer);
     await waitForAnimationFrame();
     openMode(drawer, label);
+    await waitForAnimationFrame();
   }
 
   setText(
@@ -581,14 +1094,26 @@ async function main() {
   const dir = normalizeDir(label);
   const zoom = normalizeZoom(label);
   const width = normalizeWidth(label);
+  const height = normalizeHeight(label);
+  const viewportClass = viewportClassFor(label, width);
 
   setText("entity-management-page-canonical-title", payload.family.displayLabel);
   setText("entity-management-page-canonical-profile", payload.family.displayLabel);
   setText("entity-management-page-canonical-breadcrumb", payload.family.displayLabel);
   setText("entity-management-page-canonical-match-list", `${reference.referenceId} - ${reference.displayLabel}`);
-  setText("entity-management-page-canonical-circumstances", `${width}px review width · ${dir.toUpperCase()} · ${zoom}% magnification · ${theme} theme`);
+  setText(
+    "entity-management-page-canonical-circumstances",
+    `${width}px review width · ${height}px review height · ${dir.toUpperCase()} · ${zoom}% magnification · ${theme} theme`,
+  );
   setText("entity-management-page-meta-state", reference.displayLabel);
-  setText("entity-management-page-meta-viewport", width <= 480 ? "Mobile page-template specimen" : width <= 900 ? "Constrained page-template specimen" : "Desktop page-template specimen");
+  setText(
+    "entity-management-page-meta-viewport",
+    viewportClass === "mobile"
+      ? "Mobile page-template specimen"
+      : viewportClass === "narrow-desktop"
+        ? "Narrow desktop page-template specimen"
+        : "Desktop page-template specimen",
+  );
   setText("entity-management-page-meta-notes", "Review-candidate child canonical surface. It consumes the shared entity-management page behavior module; persistence-backed seeding and pixel-parity review are still pending.");
   updateStepper(pathInfo.familyKey, payload.references, activeIndex);
   await renderSpecimen({ familyKey: pathInfo.familyKey, reference });
