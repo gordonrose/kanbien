@@ -406,6 +406,8 @@ current-page state:
 - `top-nav`
 - `sub-nav`
 - `context-nav`
+- shared Display Settings drawer, unless an explicit route-level exception is
+  documented before implementation
 
 If page-level shell chrome and inner preview/canonical surfaces both render the
 same family classes, scope the runtime selectors and geometry observers so the

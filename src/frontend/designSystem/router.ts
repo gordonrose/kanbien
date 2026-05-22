@@ -293,6 +293,30 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string | nu
     return join(frontendRoot, "components", "async-activity-drawer.html");
   }
 
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "background" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "background", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "colours" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "colours", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "paragraph" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "paragraph", "index.html");
+  }
+
   if (pathSegments[0] === "canonical-renderings") {
     if (pathSegments.length === 1) {
       return join(frontendRoot, "canonical-renderings", "index.html");

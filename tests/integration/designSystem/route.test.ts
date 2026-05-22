@@ -8,6 +8,18 @@ function expectShellTrio(html: string) {
   expect(html).toContain("class=\"context-nav");
 }
 
+function expectCssJsSourceDrawer(html: string) {
+  expect(html).toContain('id="source-drawer-button"');
+  expect(html).toContain('aria-label="Open CSS and JavaScript source"');
+  expect(html).toContain('aria-controls="source-drawer"');
+  expect(html).toContain('id="source-drawer"');
+  expect(html).toContain("CSS/JS Truth");
+  expect(html).toContain('data-source-output="css"');
+  expect(html).toContain('data-source-output="js"');
+  expect(html).toContain('data-source-output="prompt"');
+  expect(html).toContain('data-source-copy="css"');
+}
+
 function expectSingleItemContextNav(html: string, label: string) {
   const contextNavMatch = html.match(/<nav class="context-nav"[\s\S]*?<\/nav>/);
   expect(contextNavMatch).not.toBeNull();
@@ -148,6 +160,243 @@ describe("design system route", () => {
     expect(response.text).toContain("/design-system/canonicals/context-nav-drawer");
     expect(response.text).toContain("/design-system/canonical-renderings/page-shell-banner");
     expect(response.text).toContain("/design-system/canonical-renderings/time-picker");
+  });
+
+  it("serves the token-layer starter index page", async () => {
+    const response = await request(createApp()).get("/design-system/tokens").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Token Layer");
+    expect(response.text).toContain("Token Families To Build Out");
+    expect(response.text).toContain("paragraph");
+    expect(response.text).toContain("/design-system/tokens/paragraph");
+    expect(response.text).not.toContain("font-main-extra-large");
+    expect(response.text).toContain("entity-drawers");
+    expect(response.text).toContain("list-page-structure");
+    expect(response.text).toContain("list-page-record-structure");
+    expect(response.text).toContain("entity-page-structure");
+    expect(response.text).toContain("/design-system/tokens/background");
+    expect(response.text).toContain("/design-system/tokens/colours");
+    expect(response.text).toContain("/design-system/tokens/list-page-structure");
+    expect(response.text).toContain("/design-system/tokens/entity-page-structure");
+    expect(response.text).toContain("colours");
+    expect(response.text).toContain(">Canonical Renderings<");
+    expect(response.text).toContain(">Canonicals<");
+  });
+
+  it("requires the CSS/JS source drawer on governed token detail pages", async () => {
+    const routes = [
+      "/design-system/tokens/background",
+      "/design-system/tokens/colours",
+      "/design-system/tokens/paragraph",
+      "/design-system/tokens/list-page-structure",
+      "/design-system/tokens/entity-page-structure",
+    ];
+
+    for (const route of routes) {
+      const response = await request(createApp()).get(route).set("host", "admin.example.test");
+
+      expect(response.status).toBe(200);
+      expectCssJsSourceDrawer(response.text);
+    }
+  });
+
+  it("serves the paragraph typography token page with relative sizing sections", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/paragraph").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/paragraph").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Paragraph Token");
+    expect(response.text).toContain('aria-label="Paragraph token navigation"');
+    expect(response.text).toContain('id="accessibility-button"');
+    expect(response.text).toContain('aria-controls="accessibility-drawer"');
+    expect(response.text).toContain('id="accessibility-drawer"');
+    expectCssJsSourceDrawer(response.text);
+    expect(response.text).toContain("Display Settings");
+    expect(response.text).toContain('data-theme-option="dark"');
+    expect(response.text).toContain('data-theme-option="desert"');
+    expect(response.text).toContain('data-magnification-option="100"');
+    expect(response.text).toContain('data-direction-option="rtl"');
+    expect(response.text).toContain("Main Extra Large");
+    expect(response.text).toContain("Main Minor");
+    expect(response.text).toContain("<code>1rem</code>");
+    expect(response.text).toContain("<code>1.25rem</code>");
+    expect(response.text).toContain("<code>1.5rem</code>");
+    expect(response.text).toContain("<code>0.75rem</code>");
+    expect(response.text).toContain("<code>1.2</code>");
+    expect(response.text).toContain("<code>600</code>");
+    expect(response.text).toContain("<code>800</code>");
+    expect(response.text).toContain("<code>uppercase</code>");
+    expect(response.text).toContain("computed as 1.2em");
+    expect(response.text).toContain("var(--paragraph-main-ink)");
+    expect(response.text).toContain("var(--paragraph-label-ink)");
+    expect(response.text).toContain("var(--colour-text-20)");
+    expect(response.text).toContain("var(--colour-primary-100)");
+    expect(response.text).toContain("var(--colour-dark-100)");
+    expect(response.text).toContain("var(--colour-desert-100)");
+    expect(response.text).toContain('aria-label="Main theme previews"');
+    expect(response.text).toContain('aria-label="Main Large theme previews"');
+    expect(response.text).toContain('aria-label="Main Extra Large theme previews"');
+    expect(response.text).toContain('aria-label="Main Minor theme previews"');
+    expect(response.text).toContain('aria-label="Label theme previews"');
+    expect(response.text).toContain('data-theme-scope="dark"');
+    expect(response.text).toContain('data-theme-scope="desert"');
+    expect(response.text).toContain("paragraph.mainExtraLarge");
+    expect(response.text).toContain(">Canonical Renderings<");
+    expect(response.text).toContain(">Canonicals<");
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Paragraph Token");
+  });
+
+  it("serves the list page structure token starter with display-controlled layout", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/list-page-structure").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("List Page Structure");
+    expect(response.text).toContain('aria-label="Twenty-four header columns"');
+    expect(response.text).toContain('aria-label="Navigation space sub header"');
+    expect(response.text).toContain('data-list-page-structure-canvas');
+    expect(response.text).toContain('data-list-page-structure-layout-option="full"');
+    expect(response.text).toContain('data-list-page-structure-layout-option="split"');
+    expect(response.text).toContain('data-list-page-structure-resize-handle');
+    expect(response.text).toContain('data-list-page-structure-header-toggle="first"');
+    expect(response.text).toContain('data-list-page-structure-header-toggle="second"');
+    expect(response.text).toContain('data-list-page-structure-secondary-columns-option="12"');
+    expect(response.text).toContain('data-list-page-structure-secondary-columns-option="24"');
+    expect(response.text).toContain('data-list-page-structure-mobile-layer-option="top"');
+    expect(response.text).toContain('data-list-page-structure-mobile-layer-option="bottom"');
+    expect(response.text).toContain('data-list-page-structure-secondary-columns="12"');
+    expect(response.text).toContain('id="accessibility-drawer"');
+    expectCssJsSourceDrawer(response.text);
+    expect(response.text).toContain(">Canonical Renderings<");
+    expect(response.text).toContain(">Canonicals<");
+  });
+
+  it("serves the shared ListPageStructure controller seam", async () => {
+    const response = await request(createApp()).get("/design-system/assets/listPageStructure.mjs").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.type).toMatch(/javascript/);
+    expect(response.text).toContain("createListPageStructureController");
+    expect(response.text).toContain("listPageStructureDefaults");
+    expect(response.text).toContain("data-list-page-structure-canvas");
+    expect(response.text).toContain("listPageStructureMobileLayer");
+  });
+
+  it("serves the entity page structure token starter with shared header and background foundation", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/entity-page-structure").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Entity Page Structure");
+    expect(response.text).toContain('data-token-layer-surface="entity-page-structure"');
+    expect(response.text).toContain('aria-label="Twenty-four header columns"');
+    expect(response.text).toContain('class="token-foundation-header token-entity-page-structure-header"');
+    expect(response.text).toContain('data-structure-header="entity"');
+    expect(response.text).toContain('data-structure-header-toggle="entity"');
+    expect(response.text).toContain('data-entity-page-structure-mobile-layer-option="top"');
+    expect(response.text).toContain('data-entity-page-structure-mobile-layer-option="bottom"');
+    expect(response.text).toContain('data-entity-page-structure-canvas');
+    expect(response.text).toContain('data-entity-page-structure-resize-handle');
+    expect(response.text).toContain('aria-label="Navigation index columns"');
+    expect(response.text).toContain('aria-label="Record panel columns"');
+    expect(response.text).toContain('aria-label="Record panel header columns"');
+    expect(response.text).toContain('aria-label="Record panel body columns"');
+    expect(response.text).toContain('aria-label="Panel index columns"');
+    expect(response.text).toContain('aria-label="Panel content columns"');
+    expect(response.text).toContain('data-entity-page-structure-panel-resize-handle');
+    expect(response.text).not.toContain('data-list-page-structure-subheader');
+    expect(response.text).not.toContain("Secondary Header Columns");
+    expectCssJsSourceDrawer(response.text);
+  });
+
+  it("serves the shared foundation structure controller seam", async () => {
+    const response = await request(createApp()).get("/design-system/assets/foundationStructure.mjs").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.type).toMatch(/javascript/);
+    expect(response.text).toContain("createStructureHeaderController");
+    expect(response.text).toContain("createEntityPageStructureController");
+    expect(response.text).toContain("data-structure-header-toggle");
+    expect(response.text).toContain("structureVisible");
+    expect(response.text).toContain("entityPageStructureIndexSize");
+    expect(response.text).toContain("entityPageStructurePanelIndexSize");
+    expect(response.text).toContain("entityPageStructureMobileLayer");
+  });
+
+  it("serves the shared page background foundation seam", async () => {
+    const response = await request(createApp()).get("/design-system/assets/pageBackground.mjs").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.type).toMatch(/javascript/);
+    expect(response.text).toContain("createPageBackgroundController");
+    expect(response.text).toContain("pageBackgroundGradientDefaults");
+    expect(response.text).toContain("--token-background-foundation");
+  });
+
+  it("serves the background token starter page with the display drawer context-nav action", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/background").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/background").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain('aria-label="Background token navigation"');
+    expect(response.text).toContain('id="accessibility-button"');
+    expect(response.text).toContain('aria-controls="accessibility-drawer"');
+    expect(response.text).toContain('id="accessibility-drawer"');
+    expectCssJsSourceDrawer(response.text);
+    expect(response.text).toContain("Display Settings");
+    expect(response.text).toContain("Dark Colour Baseline");
+    expect(response.text).toContain("Desert Colour Baseline");
+    expect(response.text).toContain("Gradient Extent");
+    expect(response.text).toContain('data-token-background-control="glowExtent"');
+    expect(response.text).toContain('data-token-background-control="cornerExtent"');
+    expect(response.text).toContain('data-token-background-control="washExtent"');
+    expect(response.text).toContain('data-token-background-control="normalStrength"');
+    expect(response.text).toContain('data-token-background-control="darkStrength"');
+    expect(response.text).toContain('data-token-background-control="desertStrength"');
+    expect(response.text).toContain('data-token-colour-baseline="dark"');
+    expect(response.text).toContain('data-token-colour-baseline="desert"');
+    expect(response.text).toContain("/design-system/assets/tokenBackground.mjs");
+    expect(response.text).not.toContain("Foundation Token");
+    expect(response.text).not.toContain("Application canvas");
+    expect(response.text).toContain(">Canonical Renderings<");
+    expect(response.text).toContain(">Canonicals<");
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain('aria-label="Background token navigation"');
+  });
+
+  it("serves the colours token page with generated colour scale sections and display drawer controls", async () => {
+    const response = await request(createApp()).get("/design-system/tokens/colours").set("host", "admin.example.test");
+    const singularAlias = await request(createApp()).get("/design-system/token/colours").set("host", "admin.example.test");
+
+    expect(response.status).toBe(200);
+    expect(response.text).toContain("Colours Token");
+    expect(response.text).toContain('aria-label="Colours token navigation"');
+    expect(response.text).toContain('id="accessibility-button"');
+    expect(response.text).toContain('aria-controls="accessibility-drawer"');
+    expect(response.text).toContain('id="accessibility-drawer"');
+    expectCssJsSourceDrawer(response.text);
+    expect(response.text).toContain('id="token-colour-primary-scale"');
+    expect(response.text).toContain('id="token-colour-dark-scale"');
+    expect(response.text).toContain('id="token-colour-text-scale"');
+    expect(response.text).toContain('id="token-colour-error-scale"');
+    expect(response.text).toContain('id="token-colour-warning-scale"');
+    expect(response.text).toContain('id="token-colour-success-scale"');
+    expect(response.text).toContain('id="token-colour-desert-scale"');
+    expect(response.text).toContain("primary-tinted neutral ramp");
+    expect(response.text).toContain("Text colours move from near-black to light grey");
+    expect(response.text).toContain("Error colours use a red-tinted ramp");
+    expect(response.text).toContain("Warning colours use an orange-tinted ramp");
+    expect(response.text).toContain("Success colours use a green-tinted ramp");
+    expect(response.text).toContain("Dark Colour Baseline");
+    expect(response.text).toContain("Desert Colour Baseline");
+    expect(response.text).toContain('data-token-colour-baseline="dark"');
+    expect(response.text).toContain('data-token-colour-baseline="desert"');
+    expect(response.text).toContain("/design-system/assets/tokenColours.mjs");
+
+    expect(singularAlias.status).toBe(200);
+    expect(singularAlias.text).toContain("Colours Token");
   });
 
   it("serves the page-shell-banner canonical launcher page with dedicated render links", async () => {

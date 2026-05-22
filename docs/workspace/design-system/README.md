@@ -69,6 +69,9 @@ architecture, not as page-local convenience.
 - `/design-system/patterns` is the catalog for governed pattern families
 - `/design-system/templates` is the catalog for governed page templates and
   reusable page-shape contracts
+- `/design-system/tokens` is the starter index for semantic token-family
+  review before individual token decisions are promoted into behavior locks,
+  reference packs, or implementation seams
 - `/design-system/canonicals/<family>` should be framed under the public parent
   category that owns that family today
 - if a family is currently treated as a pattern in the public IA, its canonical

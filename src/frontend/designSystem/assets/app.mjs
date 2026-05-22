@@ -8,6 +8,9 @@ import {
   initializeFormUploadFields as initializeSharedFormUploadFields,
   syncFormUploadFieldsForShell,
 } from "./formControls.mjs";
+import { createEntityPageStructureController, createStructureHeaderController } from "./foundationStructure.mjs";
+import { createListPageStructureController } from "./listPageStructure.mjs";
+import { createPageBackgroundController } from "./pageBackground.mjs";
 
 function setTextContent(node, text) {
   if (node instanceof HTMLElement) {
@@ -607,6 +610,50 @@ const designSystemBreadcrumbChains = new Map([
   ]],
   ["/design-system/templates", [
     { href: "/design-system/templates", label: "Home" },
+  ]],
+  ["/design-system/tokens", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+  ]],
+  ["/design-system/tokens/background", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/background", label: "Background" },
+  ]],
+  ["/design-system/tokens/colours", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/colours", label: "Colours" },
+  ]],
+  ["/design-system/tokens/paragraph", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/paragraph", label: "Paragraph" },
+  ]],
+  ["/design-system/tokens/list-page-structure", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/list-page-structure", label: "List Page Structure" },
+  ]],
+  ["/design-system/tokens/entity-page-structure", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/entity-page-structure", label: "Entity Page Structure" },
+  ]],
+  ["/design-system/token/background", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/background", label: "Background" },
+  ]],
+  ["/design-system/token/colours", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/colours", label: "Colours" },
+  ]],
+  ["/design-system/token/paragraph", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/paragraph", label: "Paragraph" },
   ]],
   ["/design-system/canonicals", [
     { href: "/design-system", label: "Home" },
@@ -1665,6 +1712,12 @@ const themeButtons = Array.from(document.querySelectorAll("[data-theme-option]")
 const directionButtons = Array.from(document.querySelectorAll("[data-direction-option]"));
 const accentButtons = Array.from(document.querySelectorAll("[data-accent]"));
 const magnificationButtons = Array.from(document.querySelectorAll("[data-magnification-option]"));
+const pageBackgroundController = document.body.dataset.tokenLayerSurface === "background"
+  ? null
+  : createPageBackgroundController(document);
+const structureHeaderController = createStructureHeaderController(document);
+const entityPageStructureController = createEntityPageStructureController(document);
+const listPageStructureController = createListPageStructureController(document);
 const brochurePreview = document.querySelector("[data-brochure-preview]");
 const brochurePatternPage = document.querySelector(".brochure-pattern-page");
 const brochureDensityButtons = Array.from(document.querySelectorAll("[data-brochure-density]"));
@@ -7589,6 +7642,10 @@ applyTheme(initialTheme);
 applyDirection(initialDirection);
 applyAccent(initialAccent);
 applyMagnification(initialMagnification);
+pageBackgroundController?.mount();
+structureHeaderController?.mount();
+entityPageStructureController?.mount();
+listPageStructureController?.mount();
 renderFilterOptions(activeFilterCategory);
 syncLanguageTriggers();
 renderLanguageOptions();
