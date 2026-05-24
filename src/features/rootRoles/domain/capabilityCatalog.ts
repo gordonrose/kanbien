@@ -587,6 +587,30 @@ export const ROOT_AUTHZ_CAPABILITY_CATALOG: RootAuthzCapabilityCatalogEntry[] = 
     protectedForRootUserAdmin: true,
   },
   {
+    capabilityKey: "entity.create",
+    description: "Create a root-managed Entity instruction record.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "entity.read",
+    description: "Read and list root-managed Entity instruction records.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "entity.update",
+    description: "Update root-managed Entity instruction metadata and lifecycle status.",
+    mandatoryForRootUserAdmin: true,
+    protectedForRootUserAdmin: true,
+  },
+  {
+    capabilityKey: "entity.delete",
+    description: "Archive a root-managed Entity instruction record.",
+    mandatoryForRootUserAdmin: false,
+    protectedForRootUserAdmin: true,
+  },
+  {
     capabilityKey: "tenant-admin.delete",
     description: "Soft-delete a tenant-admin actor record.",
     mandatoryForRootUserAdmin: false,

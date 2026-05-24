@@ -32,6 +32,7 @@ import {
   createWebAppPageSettingsFeature,
 } from "../../features/webAppPageSettings";
 import { createEntityBuilderFeature } from "../../features/entityBuilder";
+import { createEntityFeature } from "../../features/entity";
 import { createWebAppSurfaceDiscoveryFeature } from "../../features/webAppSurfaceDiscovery";
 import { createDesignSystemCanonicalsFeature } from "../../features/designSystemCanonicals";
 import { createCapabilityContractCatalogFeature } from "../../features/capabilityContractCatalog";
@@ -364,6 +365,16 @@ v1Router.use(
   requireRootSession,
   authenticatedGeneralRateLimit,
   createEntityBuilderFeature(
+    dbPool,
+    rootRolesFeature.capabilityChecker,
+    platformSecurityRepository,
+  ),
+);
+v1Router.use(
+  "/entity",
+  requireRootSession,
+  authenticatedGeneralRateLimit,
+  createEntityFeature(
     dbPool,
     rootRolesFeature.capabilityChecker,
     platformSecurityRepository,

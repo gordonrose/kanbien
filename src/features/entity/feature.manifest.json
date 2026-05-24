@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "featureName": "entity",
+  "publicSeams": [
+    {
+      "seamId": "feature-factory",
+      "symbol": "createEntityFeature",
+      "path": "index.ts",
+      "kind": "feature-factory",
+      "stability": "experimental",
+      "description": "Platform integration entry point for root-only Entity CRUD routes."
+    },
+    {
+      "seamId": "entity-response-types",
+      "symbol": "Entity | EntityListResult | EntityStatus",
+      "path": "index.ts",
+      "kind": "contract-types",
+      "stability": "experimental",
+      "description": "Response type surface for root-managed Entity API consumers."
+    }
+  ],
+  "dependsOn": [],
+  "breakingChangeRisks": [
+    "Changing Entity status semantics can break future deterministic platform-definition layers that attach route, relationship, attribute, compliance, reporting, and capability instructions to Entity records.",
+    "Changing name uniqueness or normalized-name behavior can break future stable lookup and generation assumptions."
+  ]
+}
