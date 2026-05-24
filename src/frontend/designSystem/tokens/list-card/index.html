@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - List Card Token</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-token-layer-surface="list-card">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/tokens">Tokens</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">LC</span>
+            <span class="profile-meta"><strong>List Card</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/tokens">Token Layer</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">List Card</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search list card token notes" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+        <button
+          id="source-drawer-button"
+          class="source-drawer-button"
+          type="button"
+          aria-label="Open CSS and JavaScript source"
+          aria-expanded="false"
+          aria-controls="source-drawer"
+          data-tooltip="CSS/JS"
+        >
+          <span class="source-drawer-button-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="m8.5 8.5-4 3.5 4 3.5M15.5 8.5l4 3.5-4 3.5M13.5 6.5l-3 11" />
+            </svg>
+          </span>
+        </button>
+      </section>
+
+      <nav class="context-nav" aria-label="List card token navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/tokens" data-tooltip="Token Layer">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 5h6v6H5zm8 0h6v6h-6zM5 13h6v6H5zm8 0h6v6h-6z" /></svg>
+            </span>
+            <span class="context-nav-label">Tokens</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/tokens/index-card" data-tooltip="Index Card">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v12H5zm3 4h8M8 13h5" /></svg>
+            </span>
+            <span class="context-nav-label">Index</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/tokens/list-card" data-tooltip="List Card" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 7h14v10H5zm3 3h6M8 13h4M16 12h1" /></svg>
+            </span>
+            <span class="context-nav-label">List</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <aside id="source-drawer" class="side-panel source-drawer hidden" aria-labelledby="source-drawer-title" aria-hidden="true">
+        <div class="side-panel-header source-drawer-header">
+          <div>
+            <p class="drawer-eyebrow">Source</p>
+            <h2 id="source-drawer-title">CSS/JS Truth</h2>
+          </div>
+          <button id="source-drawer-close" class="drawer-close-button" type="button" aria-label="Close CSS and JavaScript source">&times;</button>
+        </div>
+        <div class="source-drawer-stack">
+          <section class="source-drawer-section" aria-labelledby="source-css-title">
+            <div class="source-drawer-section-header">
+              <h3 id="source-css-title">CSS Token Output</h3>
+              <button class="source-copy-button" type="button" data-source-copy="css">Copy</button>
+            </div>
+            <pre class="source-code-block"><code data-source-output="css"></code></pre>
+          </section>
+          <section class="source-drawer-section" aria-labelledby="source-js-title">
+            <div class="source-drawer-section-header">
+              <h3 id="source-js-title">JS Behaviour</h3>
+              <button class="source-copy-button" type="button" data-source-copy="js">Copy</button>
+            </div>
+            <pre class="source-code-block"><code data-source-output="js"></code></pre>
+          </section>
+          <section class="source-drawer-section" aria-labelledby="source-prompt-title">
+            <div class="source-drawer-section-header">
+              <h3 id="source-prompt-title">Codex Handoff</h3>
+              <button class="source-copy-button" type="button" data-source-copy="prompt">Copy</button>
+            </div>
+            <pre class="source-code-block"><code data-source-output="prompt"></code></pre>
+          </section>
+          <p class="source-copy-status" role="status" aria-live="polite" data-source-copy-status></p>
+        </div>
+      </aside>
+
+      <main class="design-system-page-main canonical-launcher-page">
+        <div class="canonical-launcher-layout">
+          <section class="canonical-launcher-intro">
+            <h1>List Card Token</h1>
+            <p class="canonical-launcher-copy">
+              A full-row record preview card for list-centric screens: title and subtitle stay stacked,
+              while status sits at the inline end inside the approved container primitive surface.
+            </p>
+          </section>
+
+          <section class="canonical-launcher-panel token-list-card-panel" aria-labelledby="list-card-token-title">
+            <div class="canonical-launcher-panel-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Control Token</p>
+                <h2 id="list-card-token-title">List Card Structure</h2>
+              </div>
+              <p class="canonical-launcher-note">
+                Neutral rows inherit the container primitive colour model; warning and error use semantic state primitives only.
+              </p>
+            </div>
+
+            <div class="token-list-card-preview-grid" aria-label="List card token previews">
+              <article class="token-list-card-theme-preview" data-token-list-card-theme="normal">
+                <p class="token-list-card-theme-label">Normal</p>
+                <div class="token-list-card-list">
+                  <div
+                    data-token-list-card-mount
+                    data-token-list-card-title="Northstar Operations"
+                    data-token-list-card-subtitle="Operations"
+                    data-token-list-card-status="Ready"
+                    data-token-list-card-state="selected"
+                    data-token-list-card-aria-label="Selected Northstar Operations list card"
+                  ></div>
+                  <div
+                    data-token-list-card-mount
+                    data-token-list-card-title="LedgerWorks Finance"
+                    data-token-list-card-subtitle="Finance"
+                    data-token-list-card-status="Ready"
+                    data-token-list-card-aria-label="LedgerWorks Finance list card"
+                  ></div>
+                </div>
+              </article>
+
+              <article class="token-list-card-theme-preview" data-token-list-card-theme="dark" data-theme-scope="dark">
+                <p class="token-list-card-theme-label">Dark</p>
+                <div class="token-list-card-list">
+                  <div
+                    data-token-list-card-mount
+                    data-token-list-card-title="Northstar Operations"
+                    data-token-list-card-subtitle="Operations"
+                    data-token-list-card-status="Ready"
+                    data-token-list-card-state="selected"
+                    data-token-list-card-aria-label="Selected Northstar Operations dark list card"
+                  ></div>
+                  <div
+                    data-token-list-card-mount
+                    data-token-list-card-title="Atlas Product Lab"
+                    data-token-list-card-subtitle="Product"
+                    data-token-list-card-status="Ready"
+                    data-token-list-card-aria-label="Atlas Product Lab dark list card"
+                  ></div>
+                </div>
+              </article>
+
+              <article class="token-list-card-theme-preview" data-token-list-card-theme="desert" data-theme-scope="desert">
+                <p class="token-list-card-theme-label">Desert</p>
+                <div class="token-list-card-list">
+                  <div
+                    data-token-list-card-mount
+                    data-token-list-card-title="Northstar Operations"
+                    data-token-list-card-subtitle="Operations"
+                    data-token-list-card-status="Ready"
+                    data-token-list-card-state="selected"
+                    data-token-list-card-aria-label="Selected Northstar Operations desert list card"
+                  ></div>
+                  <div
+                    data-token-list-card-mount
+                    data-token-list-card-title="LedgerWorks Finance"
+                    data-token-list-card-subtitle="Finance"
+                    data-token-list-card-status="Ready"
+                    data-token-list-card-aria-label="LedgerWorks Finance desert list card"
+                  ></div>
+                </div>
+              </article>
+            </div>
+
+            <div class="token-list-card-row-list" aria-label="List card token state rows">
+              <section class="token-list-card-row" aria-labelledby="list-card-states-title">
+                <div class="token-list-card-row-header">
+                  <h3 id="list-card-states-title">Interaction and status states</h3>
+                </div>
+                <div class="token-list-card-state-grid" aria-label="List card state examples">
+                  <article class="token-list-card-state-sample">
+                    <p class="token-list-card-theme-label">Hover</p>
+                    <div
+                      data-token-list-card-mount
+                      data-token-list-card-title="Northstar Operations"
+                      data-token-list-card-subtitle="Operations"
+                      data-token-list-card-status="Ready"
+                      data-token-list-card-state="hover"
+                      data-token-list-card-aria-label="Hover Northstar Operations list card"
+                    ></div>
+                  </article>
+                  <article class="token-list-card-state-sample">
+                    <p class="token-list-card-theme-label">Selected</p>
+                    <div
+                      data-token-list-card-mount
+                      data-token-list-card-title="Northstar Operations"
+                      data-token-list-card-subtitle="Operations"
+                      data-token-list-card-status="Ready"
+                      data-token-list-card-state="selected"
+                      data-token-list-card-aria-label="Selected Northstar Operations list card"
+                    ></div>
+                  </article>
+                  <article class="token-list-card-state-sample">
+                    <p class="token-list-card-theme-label">Disabled</p>
+                    <div
+                      data-token-list-card-mount
+                      data-token-list-card-title="Northstar Operations"
+                      data-token-list-card-subtitle="Operations"
+                      data-token-list-card-status="Paused"
+                      data-token-list-card-state="disabled"
+                      data-token-list-card-aria-label="Disabled Northstar Operations list card"
+                    ></div>
+                  </article>
+                  <article class="token-list-card-state-sample">
+                    <p class="token-list-card-theme-label">Warning</p>
+                    <div
+                      data-token-list-card-mount
+                      data-token-list-card-title="LedgerWorks Finance"
+                      data-token-list-card-subtitle="Finance"
+                      data-token-list-card-status="Review"
+                      data-token-list-card-state="warning"
+                      data-token-list-card-aria-label="Warning LedgerWorks Finance list card"
+                    ></div>
+                  </article>
+                  <article class="token-list-card-state-sample">
+                    <p class="token-list-card-theme-label">Error</p>
+                    <div
+                      data-token-list-card-mount
+                      data-token-list-card-title="Atlas Product Lab"
+                      data-token-list-card-subtitle="Product"
+                      data-token-list-card-status="Error"
+                      data-token-list-card-state="error"
+                      data-token-list-card-aria-label="Error Atlas Product Lab list card"
+                    ></div>
+                  </article>
+                </div>
+              </section>
+
+              <section class="token-list-card-row" aria-labelledby="list-card-overflow-title">
+                <div class="token-list-card-row-header">
+                  <h3 id="list-card-overflow-title">Overflowing text with tooltip support</h3>
+                </div>
+                <div class="token-list-card-row-surface token-list-card-row-surface-constrained">
+                  <div
+                    data-token-list-card-mount
+                    data-token-list-card-class="token-list-card-control-constrained"
+                    data-token-list-card-title="Northstar Operations and Regional Support"
+                    data-token-list-card-subtitle="Operations and delivery support portfolio"
+                    data-token-list-card-status="Ready to launch"
+                    data-token-list-card-title-tooltip="Northstar Operations and Regional Support"
+                    data-token-list-card-subtitle-tooltip="Operations and delivery support portfolio"
+                    data-token-list-card-status-tooltip="Ready to launch"
+                    data-token-list-card-aria-label="Northstar Operations and Regional Support list card"
+                  ></div>
+                </div>
+              </section>
+
+              <section class="token-list-card-row" aria-labelledby="list-card-rtl-title">
+                <div class="token-list-card-row-header">
+                  <h3 id="list-card-rtl-title">Right-to-left structure</h3>
+                </div>
+                <div class="token-list-card-row-surface" dir="rtl">
+                  <div
+                    data-token-list-card-mount
+                    data-token-list-card-title="Northstar Operations"
+                    data-token-list-card-subtitle="Operations"
+                    data-token-list-card-status="Ready"
+                    data-token-list-card-rtl="true"
+                    data-token-list-card-aria-label="Right-to-left Northstar Operations list card"
+                  ></div>
+                </div>
+              </section>
+
+              <section class="token-list-card-row" aria-labelledby="list-card-mobile-title">
+                <div class="token-list-card-row-header">
+                  <h3 id="list-card-mobile-title">Mobile frame</h3>
+                </div>
+                <div class="token-list-card-mobile-frame">
+                  <div
+                    data-token-list-card-mount
+                    data-token-list-card-title="Atlas Product Lab"
+                    data-token-list-card-subtitle="Product"
+                    data-token-list-card-status="Ready"
+                    data-token-list-card-mobile="true"
+                    data-token-list-card-aria-label="Mobile Atlas Product Lab list card"
+                  ></div>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

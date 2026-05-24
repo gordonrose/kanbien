@@ -4,13 +4,16 @@ import type { WebAppHierarchyIntegrationSeam } from "../../webAppHierarchyBuilde
 
 const defaultDesignSystemTopNavItems = [
   { href: "/design-system", label: "Overview", order: 0 },
-  { href: "/design-system/canonical-renderings", label: "Canonical Renderings", order: 1 },
-  { href: "/design-system/canonicals", label: "Canonicals", order: 2 },
+  { href: "/design-system/tokens", label: "Tokens", order: 1 },
+  { href: "/design-system/canonical-renderings", label: "Canonical Renderings", order: 2 },
+  { href: "/design-system/canonicals", label: "Canonicals", order: 3 },
 ] as const;
 
 const defaultItemByHref: Map<string, (typeof defaultDesignSystemTopNavItems)[number]> = new Map(
   defaultDesignSystemTopNavItems.map((item) => [item.href, item]),
 );
+
+const requiredDefaultTopNavItems = defaultDesignSystemTopNavItems.filter((item) => item.href === "/design-system/tokens");
 
 export async function getPublicDesignSystemTopNav(
   repository: WebAppPageSettingsRepository,
@@ -21,7 +24,7 @@ export async function getPublicDesignSystemTopNav(
   const settings = await repository.listSettingsByPageIds(pages.map((page) => page.webAppPageId));
   const settingsByPageId = new Map(settings.map((setting) => [setting.webAppPageId, setting]));
 
-  const items = pages
+  const configuredItems = pages
     .flatMap((page, fallbackOrder) => {
       const href = page.resolvedFullRoutePath;
       if (!href) {
@@ -42,7 +45,21 @@ export async function getPublicDesignSystemTopNav(
         order: setting?.topNavOrder ?? defaultItem?.order ?? Number.POSITIVE_INFINITY,
         fallbackOrder,
       }];
-    })
+    });
+
+  const items = [
+    ...configuredItems,
+    ...(configuredItems.length > 0
+      ? requiredDefaultTopNavItems
+        .filter((defaultItem) => !configuredItems.some((item) => item.href === defaultItem.href))
+        .map((defaultItem) => ({
+          href: defaultItem.href,
+          label: defaultItem.label,
+          order: defaultItem.order,
+          fallbackOrder: Number.POSITIVE_INFINITY,
+        }))
+      : []),
+  ]
     .sort((left, right) => {
       if (left.href === "/design-system" && right.href !== "/design-system") {
         return -1;
@@ -52,6 +69,11 @@ export async function getPublicDesignSystemTopNav(
       }
       if (left.order !== right.order) {
         return left.order - right.order;
+      }
+      const leftDefaultOrder = defaultItemByHref.get(left.href)?.order ?? Number.POSITIVE_INFINITY;
+      const rightDefaultOrder = defaultItemByHref.get(right.href)?.order ?? Number.POSITIVE_INFINITY;
+      if (leftDefaultOrder !== rightDefaultOrder) {
+        return leftDefaultOrder - rightDefaultOrder;
       }
       if (left.fallbackOrder !== right.fallbackOrder) {
         return left.fallbackOrder - right.fallbackOrder;

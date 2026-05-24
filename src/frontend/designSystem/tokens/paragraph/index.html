@@ -16,6 +16,7 @@
         <nav class="primary-nav" aria-label="Primary">
           <div class="primary-nav-links">
             <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/tokens">Tokens</a>
             <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
             <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
           </div>
@@ -81,6 +82,12 @@
             </span>
             <span class="context-nav-label">Background</span>
           </a>
+          <a class="context-nav-item" href="/design-system/tokens/container" data-tooltip="Container">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v12H5zm2 2v8h10V8z" /></svg>
+            </span>
+            <span class="context-nav-label">Container</span>
+          </a>
           <a class="context-nav-item" href="/design-system/tokens/colours" data-tooltip="Colours">
             <span class="context-nav-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" focusable="false"><path d="M6 5h5v5H6zm7 0h5v5h-5zM6 12h5v5H6zm7 0h5v5h-5z" /></svg>
@@ -92,6 +99,12 @@
               <svg viewBox="0 0 24 24" focusable="false"><path d="M5 5h14v2H5zm0 4h11v2H5zm0 4h14v2H5zm0 4h9v2H5z" /></svg>
             </span>
             <span class="context-nav-label">Paragraph</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/tokens/header" data-tooltip="Header">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 5h14v3H5zm0 5h12v2.5H5zm0 4.5h10V17H5zm0 4h8V21H5z" /></svg>
+            </span>
+            <span class="context-nav-label">Header</span>
           </a>
         </div>
         <div class="context-nav-bottom-group">
@@ -239,168 +252,13 @@
               <p class="canonical-launcher-note">Base contract: Avenir Next / Segoe UI, relative sizing, and unitless line-height.</p>
             </div>
 
-            <div class="token-paragraph-section-list">
-              <section class="token-paragraph-section" aria-labelledby="token-paragraph-main-title">
-                <div class="token-paragraph-section-header">
-                  <h3 id="token-paragraph-main-title">Main</h3>
-                </div>
-                <div class="token-paragraph-spec-grid">
-                  <div class="token-paragraph-theme-preview-grid" aria-label="Main theme previews">
-                    <article class="token-paragraph-theme-preview">
-                      <span>Normal</span>
-                      <p class="token-paragraph-preview token-paragraph-main">Main paragraph sample</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="dark">
-                      <span>Dark</span>
-                      <p class="token-paragraph-preview token-paragraph-main">Main paragraph sample</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="desert">
-                      <span>Desert</span>
-                      <p class="token-paragraph-preview token-paragraph-main">Main paragraph sample</p>
-                    </article>
-                  </div>
-                  <dl class="token-paragraph-definition">
-                    <div><dt>Token</dt><dd><code>paragraph.main</code></dd></div>
-                    <div><dt>Font Size</dt><dd><code>1rem</code> <span>16px at the default root</span></dd></div>
-                    <div><dt>Line Height</dt><dd><code>1.2</code> <span>computed as 1.2em</span></dd></div>
-                    <div><dt>Weight</dt><dd><code>600</code></dd></div>
-                    <div><dt>Ink</dt><dd><code>var(--paragraph-main-ink)</code> <span>normal: var(--colour-text-20)</span></dd></div>
-                    <div><dt>Dark Ink</dt><dd><code>var(--paragraph-main-ink-dark)</code> <span>var(--colour-dark-100)</span></dd></div>
-                    <div><dt>Desert Ink</dt><dd><code>var(--paragraph-main-ink-desert)</code> <span>var(--colour-desert-100)</span></dd></div>
-                  </dl>
-                </div>
-              </section>
-
-              <section class="token-paragraph-section" aria-labelledby="token-paragraph-main-large-title">
-                <div class="token-paragraph-section-header">
-                  <h3 id="token-paragraph-main-large-title">Main Large</h3>
-                </div>
-                <div class="token-paragraph-spec-grid">
-                  <div class="token-paragraph-theme-preview-grid" aria-label="Main Large theme previews">
-                    <article class="token-paragraph-theme-preview">
-                      <span>Normal</span>
-                      <p class="token-paragraph-preview token-paragraph-main-large">Main large paragraph sample</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="dark">
-                      <span>Dark</span>
-                      <p class="token-paragraph-preview token-paragraph-main-large">Main large paragraph sample</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="desert">
-                      <span>Desert</span>
-                      <p class="token-paragraph-preview token-paragraph-main-large">Main large paragraph sample</p>
-                    </article>
-                  </div>
-                  <dl class="token-paragraph-definition">
-                    <div><dt>Token</dt><dd><code>paragraph.mainLarge</code></dd></div>
-                    <div><dt>Font Size</dt><dd><code>1.25rem</code> <span>20px at the default root</span></dd></div>
-                    <div><dt>Line Height</dt><dd><code>1.2</code> <span>computed as 1.2em</span></dd></div>
-                    <div><dt>Weight</dt><dd><code>600</code></dd></div>
-                    <div><dt>Ink</dt><dd><code>var(--paragraph-main-large-ink)</code> <span>normal: var(--colour-text-20)</span></dd></div>
-                    <div><dt>Dark Ink</dt><dd><code>var(--paragraph-main-large-ink-dark)</code> <span>var(--colour-dark-100)</span></dd></div>
-                    <div><dt>Desert Ink</dt><dd><code>var(--paragraph-main-large-ink-desert)</code> <span>var(--colour-desert-100)</span></dd></div>
-                  </dl>
-                </div>
-              </section>
-
-              <section class="token-paragraph-section" aria-labelledby="token-paragraph-main-extra-large-title">
-                <div class="token-paragraph-section-header">
-                  <h3 id="token-paragraph-main-extra-large-title">Main Extra Large</h3>
-                </div>
-                <div class="token-paragraph-spec-grid">
-                  <div class="token-paragraph-theme-preview-grid" aria-label="Main Extra Large theme previews">
-                    <article class="token-paragraph-theme-preview">
-                      <span>Normal</span>
-                      <p class="token-paragraph-preview token-paragraph-main-extra-large">Main extra large paragraph sample</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="dark">
-                      <span>Dark</span>
-                      <p class="token-paragraph-preview token-paragraph-main-extra-large">Main extra large paragraph sample</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="desert">
-                      <span>Desert</span>
-                      <p class="token-paragraph-preview token-paragraph-main-extra-large">Main extra large paragraph sample</p>
-                    </article>
-                  </div>
-                  <dl class="token-paragraph-definition">
-                    <div><dt>Token</dt><dd><code>paragraph.mainExtraLarge</code></dd></div>
-                    <div><dt>Font Size</dt><dd><code>1.5rem</code> <span>24px at the default root</span></dd></div>
-                    <div><dt>Line Height</dt><dd><code>1.2</code> <span>computed as 1.2em</span></dd></div>
-                    <div><dt>Weight</dt><dd><code>600</code></dd></div>
-                    <div><dt>Ink</dt><dd><code>var(--paragraph-main-extra-large-ink)</code> <span>normal: var(--colour-text-20)</span></dd></div>
-                    <div><dt>Dark Ink</dt><dd><code>var(--paragraph-main-extra-large-ink-dark)</code> <span>var(--colour-dark-100)</span></dd></div>
-                    <div><dt>Desert Ink</dt><dd><code>var(--paragraph-main-extra-large-ink-desert)</code> <span>var(--colour-desert-100)</span></dd></div>
-                  </dl>
-                </div>
-              </section>
-
-              <section class="token-paragraph-section" aria-labelledby="token-paragraph-main-minor-title">
-                <div class="token-paragraph-section-header">
-                  <h3 id="token-paragraph-main-minor-title">Main Minor</h3>
-                </div>
-                <div class="token-paragraph-spec-grid">
-                  <div class="token-paragraph-theme-preview-grid" aria-label="Main Minor theme previews">
-                    <article class="token-paragraph-theme-preview">
-                      <span>Normal</span>
-                      <p class="token-paragraph-preview token-paragraph-main-minor">Main minor paragraph sample</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="dark">
-                      <span>Dark</span>
-                      <p class="token-paragraph-preview token-paragraph-main-minor">Main minor paragraph sample</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="desert">
-                      <span>Desert</span>
-                      <p class="token-paragraph-preview token-paragraph-main-minor">Main minor paragraph sample</p>
-                    </article>
-                  </div>
-                  <dl class="token-paragraph-definition">
-                    <div><dt>Token</dt><dd><code>paragraph.mainMinor</code></dd></div>
-                    <div><dt>Font Size</dt><dd><code>0.875rem</code> <span>14px at the default root</span></dd></div>
-                    <div><dt>Line Height</dt><dd><code>1.2</code> <span>computed as 1.2em</span></dd></div>
-                    <div><dt>Weight</dt><dd><code>600</code></dd></div>
-                    <div><dt>Ink</dt><dd><code>var(--paragraph-main-minor-ink)</code> <span>normal: var(--colour-text-20)</span></dd></div>
-                    <div><dt>Dark Ink</dt><dd><code>var(--paragraph-main-minor-ink-dark)</code> <span>var(--colour-dark-100)</span></dd></div>
-                    <div><dt>Desert Ink</dt><dd><code>var(--paragraph-main-minor-ink-desert)</code> <span>var(--colour-desert-100)</span></dd></div>
-                  </dl>
-                </div>
-              </section>
-
-              <section class="token-paragraph-section" aria-labelledby="token-paragraph-label-title">
-                <div class="token-paragraph-section-header">
-                  <h3 id="token-paragraph-label-title">Label</h3>
-                </div>
-                <div class="token-paragraph-spec-grid">
-                  <div class="token-paragraph-theme-preview-grid" aria-label="Label theme previews">
-                    <article class="token-paragraph-theme-preview">
-                      <span>Normal</span>
-                      <p class="token-paragraph-preview token-paragraph-label">Layer</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="dark">
-                      <span>Dark</span>
-                      <p class="token-paragraph-preview token-paragraph-label">Layer</p>
-                    </article>
-                    <article class="token-paragraph-theme-preview" data-theme-scope="desert">
-                      <span>Desert</span>
-                      <p class="token-paragraph-preview token-paragraph-label">Layer</p>
-                    </article>
-                  </div>
-                  <dl class="token-paragraph-definition">
-                    <div><dt>Token</dt><dd><code>paragraph.label</code></dd></div>
-                    <div><dt>Font Size</dt><dd><code>0.75rem</code> <span>12px at the default root</span></dd></div>
-                    <div><dt>Line Height</dt><dd><code>1</code> <span>compact label line box</span></dd></div>
-                    <div><dt>Weight</dt><dd><code>800</code></dd></div>
-                    <div><dt>Letter Case</dt><dd><code>uppercase</code></dd></div>
-                    <div><dt>Ink</dt><dd><code>var(--paragraph-label-ink)</code> <span>normal: var(--colour-primary-100)</span></dd></div>
-                    <div><dt>Dark Ink</dt><dd><code>var(--paragraph-label-ink-dark)</code> <span>var(--colour-dark-100)</span></dd></div>
-                    <div><dt>Desert Ink</dt><dd><code>var(--paragraph-label-ink-desert)</code> <span>var(--colour-desert-100)</span></dd></div>
-                  </dl>
-                </div>
-              </section>
-            </div>
+            <div class="token-paragraph-section-list" data-token-paragraph-seam-mount></div>
           </section>
         </div>
       </main>
     </div>
     <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/tokenParagraph.mjs"></script>
     <script type="module" src="/design-system/assets/sourceDrawer.mjs"></script>
   </body>
 </html>

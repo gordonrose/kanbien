@@ -267,6 +267,112 @@ function normalizeServedTopNav(html: string, requestPath: string): string {
   return nextHtml;
 }
 
+const baselineDisplaySettingsButton = String.raw`
+          <button
+            id="accessibility-button"
+            class="context-nav-item context-nav-item-button"
+            type="button"
+            data-tooltip="Display Settings"
+            aria-expanded="false"
+            aria-controls="accessibility-drawer"
+          >
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v14H4zm2 2v10h9V7zm11 0h1v10h-1z" /></svg>
+            </span>
+            <span class="context-nav-label">Display</span>
+          </button>`;
+
+const baselineDisplaySettingsDrawer = String.raw`
+      <aside id="accessibility-drawer" class="side-panel accessibility-drawer hidden" aria-labelledby="accessibility-title" aria-hidden="true">
+        <div class="side-panel-header accessibility-drawer-header">
+          <div>
+            <p class="drawer-eyebrow" data-display-settings-copy="eyebrow">Display</p>
+            <h2 id="accessibility-title" data-display-settings-copy="title">Display Settings</h2>
+          </div>
+          <button id="accessibility-close" class="drawer-close-button" type="button" aria-label="Close display settings" data-display-settings-aria-label="close">&times;</button>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="theme-group">Theme</p>
+          <div class="chip-row" role="group" aria-label="Theme">
+            <button class="accessibility-chip active" type="button" data-theme-option="normal" data-display-settings-copy="theme-normal">Normal</button>
+            <button class="accessibility-chip" type="button" data-theme-option="dark" data-display-settings-copy="theme-dark">Dark</button>
+            <button class="accessibility-chip" type="button" data-theme-option="desert" data-display-settings-copy="theme-desert">Desert</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="magnification-group">Magnification</p>
+          <div class="chip-row chip-row-single-line" role="group" aria-label="Magnification">
+            <button class="accessibility-chip" type="button" data-magnification-option="-100">-100%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="-50">-50%</button>
+            <button class="accessibility-chip active" type="button" data-magnification-option="0">0%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="50">+50%</button>
+            <button class="accessibility-chip" type="button" data-magnification-option="100">+100%</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="accent-group">Primary Colour</p>
+          <div class="color-grid" role="group" aria-label="Primary colour">
+            <button class="color-swatch active" type="button" data-accent="#635bff" aria-label="Indigo"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#635bff" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#2563eb" aria-label="Blue"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#2563eb" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#0891b2" aria-label="Cyan"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0891b2" /></svg></button>
+            <button class="color-swatch" type="button" data-accent="#0f766e" aria-label="Teal"><svg class="color-swatch-fill-svg" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="#0f766e" /></svg></button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
+          <p class="accessibility-label" data-display-settings-copy="direction-group">Direction</p>
+          <div class="chip-row" role="group" aria-label="Direction">
+            <button class="accessibility-chip active" type="button" data-direction-option="ltr" data-display-settings-copy="direction-ltr">Left to right</button>
+            <button class="accessibility-chip" type="button" data-direction-option="rtl" data-display-settings-copy="direction-rtl">Right to left</button>
+          </div>
+        </div>
+      </aside>`;
+
+function normalizeServedDisplaySettings(html: string): string {
+  if (!html.includes('class="design-system-shell"')) {
+    return html;
+  }
+
+  let nextHtml = html;
+
+  if (!nextHtml.includes('id="accessibility-button"')) {
+    const bottomGroupMatch = nextHtml.match(/<div([^>]*class="[^"]*\bcontext-nav-bottom-group\b[^"]*"[^>]*)>([\s\S]*?)<\/div>/);
+    if (bottomGroupMatch?.index !== undefined) {
+      const start = bottomGroupMatch.index;
+      const existingTag = bottomGroupMatch[0];
+      const openingTag = `<div${bottomGroupMatch[1].replace(/\saria-hidden="true"/, "")}>`;
+      const replacement = `${openingTag}${bottomGroupMatch[2]}${baselineDisplaySettingsButton}
+        </div>`;
+      nextHtml = `${nextHtml.slice(0, start)}${replacement}${nextHtml.slice(start + existingTag.length)}`;
+    } else {
+      const contextNavStart = nextHtml.indexOf('<nav class="context-nav"');
+      const contextNavEnd = contextNavStart === -1 ? -1 : nextHtml.indexOf("</nav>", contextNavStart);
+      if (contextNavEnd !== -1) {
+        nextHtml = `${nextHtml.slice(0, contextNavEnd)}
+        <div class="context-nav-bottom-group">${baselineDisplaySettingsButton}
+        </div>
+      ${nextHtml.slice(contextNavEnd)}`;
+      }
+    }
+  }
+
+  if (!nextHtml.includes('id="accessibility-drawer"')) {
+    const contextNavStart = nextHtml.indexOf('<nav class="context-nav"');
+    const contextNavEnd = contextNavStart === -1 ? -1 : nextHtml.indexOf("</nav>", contextNavStart);
+    if (contextNavEnd !== -1) {
+      const insertAt = contextNavEnd + "</nav>".length;
+      nextHtml = `${nextHtml.slice(0, insertAt)}
+
+${baselineDisplaySettingsDrawer}${nextHtml.slice(insertAt)}`;
+    }
+  }
+
+  return nextHtml;
+}
+
 function resolveHtmlPage(frontendRoot: string, requestPath: string): string | null {
   if (requestPath === "/" || requestPath === "") {
     return join(frontendRoot, "index.html");
@@ -274,6 +380,38 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string | nu
 
   const normalizedPath = requestPath.replace(/^\/+|\/+$/g, "");
   const pathSegments = normalizedPath === "" ? [] : normalizedPath.split("/");
+
+  if (
+    pathSegments[0] === "tokens" &&
+    pathSegments[1] === "count-card" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "filter-card", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "tokens" &&
+    (pathSegments[1] === "index-card" || pathSegments[1] === "secondary-list-card") &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "index-card", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "tokens" &&
+    pathSegments[1] === "button-card" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "button-card", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "tokens" &&
+    (pathSegments[1] === "dropdowns" || pathSegments[1] === "simple-dropdown" || pathSegments[1] === "simple-select") &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "dropdowns", "index.html");
+  }
 
   const htmlCandidate = join(frontendRoot, ...pathSegments) + ".html";
   if (existsSync(htmlCandidate)) {
@@ -303,6 +441,94 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string | nu
 
   if (
     pathSegments[0] === "token" &&
+    pathSegments[1] === "container" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "container", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "container-section" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "container-section", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "page-header" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "page-header", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "filter-panel-structure" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "filter-panel-structure", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "search-panel" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "search-panel", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    (pathSegments[1] === "filter-card" || pathSegments[1] === "count-card") &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "filter-card", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    (pathSegments[1] === "index-card" || pathSegments[1] === "secondary-list-card") &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "index-card", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "button-card" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "button-card", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    (pathSegments[1] === "dropdowns" || pathSegments[1] === "simple-dropdown" || pathSegments[1] === "simple-select") &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "dropdowns", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "list-card" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "list-card", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "icon-button" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "icon-button", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
     pathSegments[1] === "colours" &&
     pathSegments.length === 2
   ) {
@@ -315,6 +541,22 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string | nu
     pathSegments.length === 2
   ) {
     return join(frontendRoot, "tokens", "paragraph", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "header" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "header", "index.html");
+  }
+
+  if (
+    pathSegments[0] === "token" &&
+    pathSegments[1] === "tooltip" &&
+    pathSegments.length === 2
+  ) {
+    return join(frontendRoot, "tokens", "tooltip", "index.html");
   }
 
   if (pathSegments[0] === "canonical-renderings") {
@@ -330,6 +572,14 @@ function resolveHtmlPage(frontendRoot: string, requestPath: string): string | nu
       return resolveGeneratedCanonicalRenderHtmlPage(frontendRoot, pathSegments[1]);
     }
 
+    return null;
+  }
+
+  if (
+    pathSegments[0] === "tokens" &&
+    (pathSegments[1] === "primary-list-card" || pathSegments[1] === "primary-index-card") &&
+    pathSegments.length === 2
+  ) {
     return null;
   }
 
@@ -372,7 +622,9 @@ export function createDesignSystemRouter(): Router {
       }
 
       response.type("html").send(
-        normalizeServedTopNav(await readFile(resolvedPage, "utf8"), request.path),
+        normalizeServedDisplaySettings(
+          normalizeServedTopNav(await readFile(resolvedPage, "utf8"), request.path),
+        ),
       );
     })().catch(next);
   });

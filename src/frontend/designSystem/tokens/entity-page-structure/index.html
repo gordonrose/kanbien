@@ -16,6 +16,7 @@
         <nav class="primary-nav" aria-label="Primary">
           <div class="primary-nav-links">
             <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/tokens">Tokens</a>
             <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
             <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
           </div>
@@ -138,6 +139,14 @@
         </div>
 
         <div class="accessibility-group">
+          <p class="accessibility-label">Content Length</p>
+          <div class="chip-row" role="group" aria-label="Structure content length">
+            <button class="accessibility-chip active" type="button" data-structure-content-option="normal" aria-pressed="true">Normal</button>
+            <button class="accessibility-chip" type="button" data-structure-content-option="extended" aria-pressed="false">Extended</button>
+          </div>
+        </div>
+
+        <div class="accessibility-group">
           <p class="accessibility-label" data-display-settings-copy="theme-group">Theme</p>
           <div class="chip-row" role="group" aria-label="Theme">
             <button class="accessibility-chip active" type="button" data-theme-option="normal" data-display-settings-copy="theme-normal">Normal</button>
@@ -238,51 +247,7 @@
             </div>
           </div>
 
-          <div
-            class="token-entity-page-structure-canvas"
-            data-entity-page-structure-canvas
-          >
-            <aside class="token-entity-page-structure-index" aria-label="Navigation index columns">
-              <span></span><span></span>
-            </aside>
-            <button
-              class="token-entity-page-structure-resize-handle"
-              type="button"
-              aria-label="Resize entity page index and panel regions"
-              aria-orientation="vertical"
-              aria-valuemin="2"
-              aria-valuemax="4"
-              aria-valuenow="2"
-              data-entity-page-structure-resize-handle
-            ></button>
-            <section class="token-entity-page-structure-panel" aria-label="Record panel columns">
-              <div class="token-entity-page-structure-panel-header" aria-label="Record panel header columns">
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-                <span></span><span></span><span></span><span></span><span></span>
-              </div>
-              <div class="token-entity-page-structure-panel-body" aria-label="Record panel body columns">
-                <aside class="token-entity-page-structure-panel-index" aria-label="Panel index columns">
-                  <span></span><span></span>
-                </aside>
-                <button
-                  class="token-entity-page-structure-panel-resize-handle"
-                  type="button"
-                  aria-label="Resize panel index and content regions"
-                  aria-orientation="vertical"
-                  aria-valuemin="2"
-                  aria-valuemax="4"
-                  aria-valuenow="2"
-                  data-entity-page-structure-panel-resize-handle
-                ></button>
-                <section class="token-entity-page-structure-panel-content" aria-label="Panel content columns">
-                  <span></span><span></span><span></span><span></span>
-                  <span></span><span></span><span></span><span></span>
-                </section>
-              </div>
-            </section>
-          </div>
+          <div data-entity-record-body-mount></div>
         </section>
       </main>
     </div>

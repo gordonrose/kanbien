@@ -8,7 +8,18 @@ import {
   initializeFormUploadFields as initializeSharedFormUploadFields,
   syncFormUploadFieldsForShell,
 } from "./formControls.mjs";
-import { createEntityPageStructureController, createStructureHeaderController } from "./foundationStructure.mjs";
+import {
+  createEntityPageStructureController,
+  createNestedEntityRecordController,
+  createStructureContentController,
+  createStructureHeaderController,
+} from "./foundationStructure.mjs";
+import { createFilterPanelStructureController, hydratePanelStructures } from "./filterPanelStructure.mjs";
+import { hydrateCountCards } from "./filterCard.mjs";
+import { hydrateListCards } from "./listCard.mjs";
+import { hydrateIndexCards } from "./indexCard.mjs";
+import { hydrateButtonCards } from "./buttonCard.mjs";
+import { hydrateEntityRecordStructures } from "./entityRecordStructure.mjs";
 import { createListPageStructureController } from "./listPageStructure.mjs";
 import { createPageBackgroundController } from "./pageBackground.mjs";
 
@@ -586,6 +597,7 @@ function normalizePathname(pathname) {
 
 const designSystemPrimaryNavItems = [
   { href: "/design-system", label: "Overview" },
+  { href: "/design-system/tokens", label: "Tokens" },
   { href: "/design-system/canonical-renderings", label: "Canonical Renderings" },
   { href: "/design-system/canonicals", label: "Canonicals" },
 ];
@@ -620,6 +632,21 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/tokens", label: "Token Layer" },
     { href: "/design-system/tokens/background", label: "Background" },
   ]],
+  ["/design-system/tokens/container", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/container", label: "Container" },
+  ]],
+  ["/design-system/tokens/container-section", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/container-section", label: "Container Section" },
+  ]],
+  ["/design-system/tokens/icon-button", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/icon-button", label: "Icon Button" },
+  ]],
   ["/design-system/tokens/colours", [
     { href: "/design-system", label: "Home" },
     { href: "/design-system/tokens", label: "Token Layer" },
@@ -630,20 +657,145 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system/tokens", label: "Token Layer" },
     { href: "/design-system/tokens/paragraph", label: "Paragraph" },
   ]],
+  ["/design-system/tokens/header", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/header", label: "Header" },
+  ]],
+  ["/design-system/tokens/tooltip", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/tooltip", label: "Tooltip" },
+  ]],
   ["/design-system/tokens/list-page-structure", [
     { href: "/design-system", label: "Home" },
     { href: "/design-system/tokens", label: "Token Layer" },
     { href: "/design-system/tokens/list-page-structure", label: "List Page Structure" },
+  ]],
+  ["/design-system/tokens/filter-panel-structure", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/filter-panel-structure", label: "Filter Panel Structure" },
+  ]],
+  ["/design-system/tokens/search-panel", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/search-panel", label: "Search Panel" },
+  ]],
+  ["/design-system/tokens/filter-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/filter-card", label: "Count Card" },
+  ]],
+  ["/design-system/tokens/count-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/count-card", label: "Count Card" },
+  ]],
+  ["/design-system/tokens/index-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/index-card", label: "Index Card" },
+  ]],
+  ["/design-system/tokens/button-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/button-card", label: "Button Card" },
+  ]],
+  ["/design-system/tokens/secondary-list-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/secondary-list-card", label: "Index Card" },
+  ]],
+  ["/design-system/tokens/list-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/list-card", label: "List Card" },
+  ]],
+  ["/design-system/tokens/list-page-record-structure", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/list-page-record-structure", label: "List Page Record Structure" },
   ]],
   ["/design-system/tokens/entity-page-structure", [
     { href: "/design-system", label: "Home" },
     { href: "/design-system/tokens", label: "Token Layer" },
     { href: "/design-system/tokens/entity-page-structure", label: "Entity Page Structure" },
   ]],
+  ["/design-system/tokens/nested-entity-record", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/nested-entity-record", label: "Nested Entity Record" },
+  ]],
+  ["/design-system/tokens/page-header", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/tokens/page-header", label: "Page Header" },
+  ]],
   ["/design-system/token/background", [
     { href: "/design-system", label: "Home" },
     { href: "/design-system/tokens", label: "Token Layer" },
     { href: "/design-system/token/background", label: "Background" },
+  ]],
+  ["/design-system/token/container", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/container", label: "Container" },
+  ]],
+  ["/design-system/token/page-header", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/page-header", label: "Page Header" },
+  ]],
+  ["/design-system/token/filter-panel-structure", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/filter-panel-structure", label: "Filter Panel Structure" },
+  ]],
+  ["/design-system/token/search-panel", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/search-panel", label: "Search Panel" },
+  ]],
+  ["/design-system/token/filter-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/filter-card", label: "Count Card" },
+  ]],
+  ["/design-system/token/count-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/count-card", label: "Count Card" },
+  ]],
+  ["/design-system/token/index-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/index-card", label: "Index Card" },
+  ]],
+  ["/design-system/token/button-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/button-card", label: "Button Card" },
+  ]],
+  ["/design-system/token/secondary-list-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/secondary-list-card", label: "Index Card" },
+  ]],
+  ["/design-system/token/list-card", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/list-card", label: "List Card" },
+  ]],
+  ["/design-system/token/container-section", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/container-section", label: "Container Section" },
+  ]],
+  ["/design-system/token/icon-button", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/icon-button", label: "Icon Button" },
   ]],
   ["/design-system/token/colours", [
     { href: "/design-system", label: "Home" },
@@ -654,6 +806,16 @@ const designSystemBreadcrumbChains = new Map([
     { href: "/design-system", label: "Home" },
     { href: "/design-system/tokens", label: "Token Layer" },
     { href: "/design-system/token/paragraph", label: "Paragraph" },
+  ]],
+  ["/design-system/token/header", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/header", label: "Header" },
+  ]],
+  ["/design-system/token/tooltip", [
+    { href: "/design-system", label: "Home" },
+    { href: "/design-system/tokens", label: "Token Layer" },
+    { href: "/design-system/token/tooltip", label: "Tooltip" },
   ]],
   ["/design-system/canonicals", [
     { href: "/design-system", label: "Home" },
@@ -1715,9 +1877,18 @@ const magnificationButtons = Array.from(document.querySelectorAll("[data-magnifi
 const pageBackgroundController = document.body.dataset.tokenLayerSurface === "background"
   ? null
   : createPageBackgroundController(document);
+hydrateEntityRecordStructures(document);
+hydratePanelStructures(document);
+hydrateCountCards(document);
+hydrateListCards(document);
+hydrateIndexCards(document);
+hydrateButtonCards(document);
+const structureContentController = createStructureContentController(document);
 const structureHeaderController = createStructureHeaderController(document);
 const entityPageStructureController = createEntityPageStructureController(document);
+const nestedEntityRecordController = createNestedEntityRecordController(document);
 const listPageStructureController = createListPageStructureController(document);
+const filterPanelStructureController = createFilterPanelStructureController(document);
 const brochurePreview = document.querySelector("[data-brochure-preview]");
 const brochurePatternPage = document.querySelector(".brochure-pattern-page");
 const brochureDensityButtons = Array.from(document.querySelectorAll("[data-brochure-density]"));
@@ -1868,7 +2039,7 @@ function getSharedTooltipElement() {
 
   tooltip = document.createElement("div");
   tooltip.id = "shared-floating-tooltip";
-  tooltip.className = "shared-floating-tooltip hidden";
+  tooltip.className = "shared-floating-tooltip hidden token-paragraph-preview token-paragraph-main-minor";
   tooltip.setAttribute("role", "tooltip");
   tooltip.setAttribute("aria-hidden", "true");
   document.body.append(tooltip);
@@ -2646,7 +2817,7 @@ function getTooltipTargetFromNode(node) {
   }
 
   return node.closest(
-    ".tooltip-anchor[data-tooltip], .context-nav-item[data-tooltip], .form-icon-grid-option[data-tooltip], .breadcrumb-button, .breadcrumb-current",
+    ".tooltip-anchor[data-tooltip], .context-nav-item[data-tooltip], .form-icon-grid-option[data-tooltip], .token-filter-card-control[data-tooltip], .token-filter-card-copy [data-tooltip], .token-index-card-control[data-tooltip], .token-index-card-copy [data-tooltip], .token-button-card-control[data-tooltip], .token-button-card-copy [data-tooltip], .token-list-card-control[data-tooltip], .token-list-card-copy [data-tooltip], .token-list-card-status[data-tooltip], .breadcrumb-button, .breadcrumb-current",
   );
 }
 
@@ -7643,9 +7814,12 @@ applyDirection(initialDirection);
 applyAccent(initialAccent);
 applyMagnification(initialMagnification);
 pageBackgroundController?.mount();
+structureContentController?.mount();
 structureHeaderController?.mount();
 entityPageStructureController?.mount();
+nestedEntityRecordController?.mount();
 listPageStructureController?.mount();
+filterPanelStructureController?.mount();
 renderFilterOptions(activeFilterCategory);
 syncLanguageTriggers();
 renderLanguageOptions();

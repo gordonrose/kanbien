@@ -191,15 +191,15 @@ export function renderRootAdminLoginTemplate() {
           <p class="component-catalog-meta" data-login-copy>Password verification happens first. SSH proof is required before a browser session is created.</p>
         </div>
 
-        <form id="login-form" class="login-template-form" aria-label="Root admin login form">
+        <form id="login-form" class="login-template-form" aria-label="Root admin login form" autocomplete="off">
           <div class="login-template-panel" data-login-panel="password">
             <label class="form-field">
               <span class="form-field-label">Email</span>
-              <input id="email" class="form-field-input" name="email" type="email" autocomplete="username" required />
+              <input id="email" class="form-field-input" name="rootAdminEmail" type="email" autocomplete="off" autocapitalize="none" spellcheck="false" required />
             </label>
             <label class="form-field">
               <span class="form-field-label">Password</span>
-              <input id="password" class="form-field-input" name="password" type="password" autocomplete="current-password" required />
+              <input id="password" class="form-field-input" name="rootAdminBootstrapPassword" type="password" autocomplete="new-password" autocapitalize="none" spellcheck="false" required />
             </label>
             <button id="password-submit" class="login-template-primary" type="submit" data-login-primary-action>Verify Password</button>
           </div>

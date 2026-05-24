@@ -1000,7 +1000,7 @@ export function createPageShellTooltipController() {
 
     tooltip = document.createElement("div");
     tooltip.id = "shared-floating-tooltip";
-    tooltip.className = "shared-floating-tooltip hidden";
+    tooltip.className = "shared-floating-tooltip hidden token-paragraph-preview token-paragraph-main-minor";
     tooltip.setAttribute("role", "tooltip");
     tooltip.setAttribute("aria-hidden", "true");
     document.body.append(tooltip);

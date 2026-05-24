@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Button Card Token</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-token-layer-surface="button-card">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/tokens">Tokens</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">BC</span>
+            <span class="profile-meta"><strong>Button Card</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/tokens">Token Layer</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Button Card</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search button card token notes" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+        <button
+          id="source-drawer-button"
+          class="source-drawer-button"
+          type="button"
+          aria-label="Open CSS and JavaScript source"
+          aria-expanded="false"
+          aria-controls="source-drawer"
+          data-tooltip="CSS/JS"
+        >
+          <span class="source-drawer-button-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="m8.5 8.5-4 3.5 4 3.5M15.5 8.5l4 3.5-4 3.5M13.5 6.5l-3 11" />
+            </svg>
+          </span>
+        </button>
+      </section>
+
+      <nav class="context-nav" aria-label="Button card token navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/tokens" data-tooltip="Token Layer">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 5h6v6H5zm8 0h6v6h-6zM5 13h6v6H5zm8 0h6v6h-6z" /></svg>
+            </span>
+            <span class="context-nav-label">Tokens</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/tokens/filter-card" data-tooltip="Filter Card">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 7h14v10H5zm10 2h2v6h-2M8 10h4M8 13h3" /></svg>
+            </span>
+            <span class="context-nav-label">Filter</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/tokens/button-card" data-tooltip="Button Card" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v12H5zm7 3v6M9 12h6" /></svg>
+            </span>
+            <span class="context-nav-label">Button</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/tokens/index-card" data-tooltip="Index Card">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 6h14v12H5zm3 4h8M8 13h5" /></svg>
+            </span>
+            <span class="context-nav-label">Index</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/tokens/filter-panel-structure" data-tooltip="Filter Panel Structure">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M4 5h16v14H4zm2 2v10h3V7zm5 0v10h7V7z" /></svg>
+            </span>
+            <span class="context-nav-label">Panel</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <aside id="source-drawer" class="side-panel source-drawer hidden" aria-labelledby="source-drawer-title" aria-hidden="true">
+        <div class="side-panel-header source-drawer-header">
+          <div>
+            <p class="drawer-eyebrow">Source</p>
+            <h2 id="source-drawer-title">CSS/JS Truth</h2>
+          </div>
+          <button id="source-drawer-close" class="drawer-close-button" type="button" aria-label="Close CSS and JavaScript source">&times;</button>
+        </div>
+        <div class="source-drawer-stack">
+          <section class="source-drawer-section" aria-labelledby="source-css-title">
+            <div class="source-drawer-section-header">
+              <h3 id="source-css-title">CSS Token Output</h3>
+              <button class="source-copy-button" type="button" data-source-copy="css">Copy</button>
+            </div>
+            <pre class="source-code-block"><code data-source-output="css"></code></pre>
+          </section>
+          <section class="source-drawer-section" aria-labelledby="source-js-title">
+            <div class="source-drawer-section-header">
+              <h3 id="source-js-title">JS Behaviour</h3>
+              <button class="source-copy-button" type="button" data-source-copy="js">Copy</button>
+            </div>
+            <pre class="source-code-block"><code data-source-output="js"></code></pre>
+          </section>
+          <section class="source-drawer-section" aria-labelledby="source-prompt-title">
+            <div class="source-drawer-section-header">
+              <h3 id="source-prompt-title">Codex Handoff</h3>
+              <button class="source-copy-button" type="button" data-source-copy="prompt">Copy</button>
+            </div>
+            <pre class="source-code-block"><code data-source-output="prompt"></code></pre>
+          </section>
+          <p class="source-copy-status" role="status" aria-live="polite" data-source-copy-status></p>
+        </div>
+      </aside>
+
+      <main class="design-system-page-main canonical-launcher-page">
+        <div class="canonical-launcher-layout">
+          <section class="canonical-launcher-intro">
+            <h1>Button Card Token</h1>
+            <p class="canonical-launcher-copy">
+              A compact button card for card groups and launcher choices: a centered icon sits in a circle,
+              with one centered label underneath inside the same square-edged bordered surface as IndexCard.
+            </p>
+          </section>
+
+          <section class="canonical-launcher-panel token-button-card-panel" aria-labelledby="button-card-token-title">
+            <div class="canonical-launcher-panel-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Control Token</p>
+                <h2 id="button-card-token-title">Button Card Structure</h2>
+              </div>
+              <p class="canonical-launcher-note">
+                The card preserves the IndexCard surface contract while replacing stacked copy with an icon circle and label.
+              </p>
+            </div>
+
+            <div class="token-button-card-preview-grid" aria-label="Button card token previews">
+              <article class="token-button-card-theme-preview">
+                <p class="token-button-card-theme-label">Normal</p>
+                <div
+                  data-token-button-card-mount
+                  data-token-button-card-label="Details"
+                  data-token-button-card-icon="details"
+                  data-token-button-card-aria-label="Details button card"
+                ></div>
+              </article>
+
+              <article class="token-button-card-theme-preview" data-theme-scope="dark">
+                <p class="token-button-card-theme-label">Dark</p>
+                <div
+                  data-token-button-card-mount
+                  data-token-button-card-label="Files"
+                  data-token-button-card-icon="files"
+                  data-token-button-card-aria-label="Files button card"
+                ></div>
+              </article>
+
+              <article class="token-button-card-theme-preview" data-theme-scope="desert">
+                <p class="token-button-card-theme-label">Desert</p>
+                <div
+                  data-token-button-card-mount
+                  data-token-button-card-label="Notes"
+                  data-token-button-card-icon="notes"
+                  data-token-button-card-aria-label="Notes button card"
+                ></div>
+              </article>
+            </div>
+
+            <div class="token-button-card-row-list" aria-label="Button card token state rows">
+              <section class="token-button-card-row" aria-labelledby="button-card-states-title">
+                <div class="token-button-card-row-header">
+                  <h3 id="button-card-states-title">Interaction and status states</h3>
+                </div>
+                <div class="token-button-card-state-grid" aria-label="Button card state examples">
+                  <article class="token-button-card-state-sample">
+                    <p class="token-button-card-theme-label">Hover</p>
+                    <div
+                      data-token-button-card-mount
+                      data-token-button-card-label="Details"
+                      data-token-button-card-icon="details"
+                      data-token-button-card-state="hover"
+                      data-token-button-card-aria-label="Hover details button card"
+                    ></div>
+                  </article>
+                  <article class="token-button-card-state-sample">
+                    <p class="token-button-card-theme-label">Active</p>
+                    <div
+                      data-token-button-card-mount
+                      data-token-button-card-label="Details"
+                      data-token-button-card-icon="details"
+                      data-token-button-card-state="active"
+                      data-token-button-card-aria-label="Active details button card"
+                    ></div>
+                  </article>
+                  <article class="token-button-card-state-sample">
+                    <p class="token-button-card-theme-label">Selected</p>
+                    <div
+                      data-token-button-card-mount
+                      data-token-button-card-label="Files"
+                      data-token-button-card-icon="files"
+                      data-token-button-card-state="selected"
+                      data-token-button-card-aria-label="Selected files button card"
+                    ></div>
+                  </article>
+                  <article class="token-button-card-state-sample">
+                    <p class="token-button-card-theme-label">Disabled</p>
+                    <div
+                      data-token-button-card-mount
+                      data-token-button-card-label="Notes"
+                      data-token-button-card-icon="notes"
+                      data-token-button-card-state="disabled"
+                      data-token-button-card-aria-label="Disabled notes button card"
+                    ></div>
+                  </article>
+                  <article class="token-button-card-state-sample">
+                    <p class="token-button-card-theme-label">Warning</p>
+                    <div
+                      data-token-button-card-mount
+                      data-token-button-card-label="Missing"
+                      data-token-button-card-icon="missing"
+                      data-token-button-card-state="warning"
+                      data-token-button-card-aria-label="Warning missing button card"
+                    ></div>
+                  </article>
+                  <article class="token-button-card-state-sample">
+                    <p class="token-button-card-theme-label">Error</p>
+                    <div
+                      data-token-button-card-mount
+                      data-token-button-card-label="Failed"
+                      data-token-button-card-icon="failed"
+                      data-token-button-card-state="error"
+                      data-token-button-card-aria-label="Error failed button card"
+                    ></div>
+                  </article>
+                </div>
+              </section>
+
+              <section class="token-button-card-row" aria-labelledby="button-card-overflow-title">
+                <div class="token-button-card-row-header">
+                  <h3 id="button-card-overflow-title">Overflowing text with tooltip support</h3>
+                </div>
+                <div class="token-button-card-row-surface token-button-card-row-surface-constrained">
+                  <div
+                    data-token-button-card-mount
+                    data-token-button-card-label="Historical details and supporting records"
+                    data-token-button-card-icon="details"
+                    data-token-button-card-aria-label="Historical details and supporting records button card"
+                    data-token-button-card-class="token-button-card-control-constrained"
+                    data-tooltip="Historical details and supporting records"
+                    data-token-button-card-label-tooltip="Historical details and supporting records"
+                  ></div>
+                </div>
+              </section>
+
+              <section class="token-button-card-row" aria-labelledby="button-card-rtl-title">
+                <div class="token-button-card-row-header">
+                  <h3 id="button-card-rtl-title">RTL</h3>
+                </div>
+                <div class="token-button-card-row-surface" dir="rtl">
+                  <div
+                    data-token-button-card-mount
+                    data-token-button-card-label="Details"
+                    data-token-button-card-icon="details"
+                    data-token-button-card-aria-label="RTL details button card"
+                    data-token-button-card-rtl="true"
+                  ></div>
+                </div>
+              </section>
+
+              <section class="token-button-card-row" aria-labelledby="button-card-zoom-title">
+                <div class="token-button-card-row-header">
+                  <h3 id="button-card-zoom-title">Different zoom levels</h3>
+                </div>
+                <div class="token-button-card-zoom-grid">
+                  <article class="token-button-card-zoom-sample" data-token-button-card-zoom="-50">
+                    <p class="token-button-card-theme-label">-50%</p>
+                    <div
+                      data-token-button-card-mount
+                      data-token-button-card-label="Details"
+                      data-token-button-card-icon="details"
+                      data-token-button-card-aria-label="Compact zoom details button card"
+                    ></div>
+                  </article>
+                  <article class="token-button-card-zoom-sample" data-token-button-card-zoom="0">
+                    <p class="token-button-card-theme-label">0%</p>
+                    <div
+                      data-token-button-card-mount
+                      data-token-button-card-label="Details"
+                      data-token-button-card-icon="details"
+                      data-token-button-card-aria-label="Default zoom details button card"
+                    ></div>
+                  </article>
+                  <article class="token-button-card-zoom-sample" data-token-button-card-zoom="100">
+                    <p class="token-button-card-theme-label">+100%</p>
+                    <div
+                      data-token-button-card-mount
+                      data-token-button-card-label="Details"
+                      data-token-button-card-icon="details"
+                      data-token-button-card-aria-label="Large zoom details button card"
+                    ></div>
+                  </article>
+                </div>
+              </section>
+
+              <section class="token-button-card-row" aria-labelledby="button-card-mobile-title">
+                <div class="token-button-card-row-header">
+                  <h3 id="button-card-mobile-title">Mobile version</h3>
+                </div>
+                <div class="token-button-card-row-surface token-button-card-mobile-frame">
+                  <div
+                    data-token-button-card-mount
+                    data-token-button-card-label="Details"
+                    data-token-button-card-icon="details"
+                    data-token-button-card-aria-label="Mobile details button card"
+                    data-token-button-card-mobile="true"
+                  ></div>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+    <script type="module" src="/design-system/assets/sourceDrawer.mjs"></script>
+  </body>
+</html>

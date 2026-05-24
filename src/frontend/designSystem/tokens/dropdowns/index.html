@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kanbien Design System - Dropdowns Token</title>
+    <link rel="stylesheet" href="/design-system/assets/styles.css" />
+  </head>
+  <body data-token-layer-surface="dropdowns">
+    <div class="design-system-shell">
+      <header class="top-nav">
+        <a class="brand-lockup" href="/design-system" aria-label="Kanbien design system home">
+          <span class="brand-mark" aria-hidden="true">K</span>
+          <span class="brand-copy"><strong>Kanbien Design System</strong></span>
+        </a>
+        <nav class="primary-nav" aria-label="Primary">
+          <div class="primary-nav-links">
+            <a class="nav-link active" href="/design-system" aria-current="page">Overview</a>
+            <a class="nav-link" href="/design-system/tokens">Tokens</a>
+            <a class="nav-link" href="/design-system/canonical-renderings">Canonical Renderings</a>
+            <a class="nav-link" href="/design-system/canonicals">Canonicals</a>
+          </div>
+        </nav>
+        <button class="mobile-nav-button" type="button" aria-expanded="false" aria-label="Open navigation menu">
+          <span class="burger-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+        <div class="nav-utilities">
+          <button class="profile-button" type="button" aria-expanded="false">
+            <span class="profile-avatar" aria-hidden="true">DD</span>
+            <span class="profile-meta"><strong>Dropdowns</strong></span>
+          </button>
+        </div>
+      </header>
+
+      <section class="sub-nav" aria-label="Page search and breadcrumb">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a class="breadcrumb-button" href="/design-system">Home</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><a class="breadcrumb-button" href="/design-system/tokens">Token Layer</a></li>
+            <li><span class="breadcrumb-separator" aria-hidden="true">/</span></li>
+            <li><span class="breadcrumb-button breadcrumb-current" aria-current="page">Dropdowns</span></li>
+          </ol>
+        </nav>
+        <form class="search-shell" role="search">
+          <label class="search-shell-field">
+            <input class="search-input" type="search" name="q" placeholder="Search dropdown token notes" />
+            <span class="search-submit-hint" aria-hidden="true">
+              <span class="search-submit-hint-copy">Press</span>
+              <span class="search-submit-hint-key">Enter</span>
+            </span>
+          </label>
+        </form>
+        <button
+          id="source-drawer-button"
+          class="source-drawer-button"
+          type="button"
+          aria-label="Open CSS and JavaScript source"
+          aria-expanded="false"
+          aria-controls="source-drawer"
+          data-tooltip="CSS/JS"
+        >
+          <span class="source-drawer-button-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="m8.5 8.5-4 3.5 4 3.5M15.5 8.5l4 3.5-4 3.5M13.5 6.5l-3 11" />
+            </svg>
+          </span>
+        </button>
+      </section>
+
+      <nav class="context-nav" aria-label="Dropdown token navigation">
+        <div class="context-nav-main">
+          <a class="context-nav-item" href="/design-system/tokens" data-tooltip="Token Layer">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 5h6v6H5zm8 0h6v6h-6zM5 13h6v6H5zm8 0h6v6h-6z" /></svg>
+            </span>
+            <span class="context-nav-label">Tokens</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/tokens/icon-button" data-tooltip="Icon Button">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M12 5.5a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zm0 4v5m-2.5-2.5h5" /></svg>
+            </span>
+            <span class="context-nav-label">Button</span>
+          </a>
+          <a class="context-nav-item active" href="/design-system/tokens/dropdowns" data-tooltip="Dropdowns" aria-current="page">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 7h14v4H5zm2 6h10l-5 5z" /></svg>
+            </span>
+            <span class="context-nav-label">Dropdown</span>
+          </a>
+          <a class="context-nav-item" href="/design-system/tokens/tooltip" data-tooltip="Tooltip">
+            <span class="context-nav-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" focusable="false"><path d="M5 5h14v10H9l-4 4z" /></svg>
+            </span>
+            <span class="context-nav-label">Tooltip</span>
+          </a>
+        </div>
+        <div class="context-nav-bottom-group" aria-hidden="true"></div>
+      </nav>
+
+      <aside id="source-drawer" class="side-panel source-drawer hidden" aria-labelledby="source-drawer-title" aria-hidden="true">
+        <div class="side-panel-header source-drawer-header">
+          <div>
+            <p class="drawer-eyebrow">Source</p>
+            <h2 id="source-drawer-title">CSS/JS Truth</h2>
+          </div>
+          <button id="source-drawer-close" class="drawer-close-button" type="button" aria-label="Close CSS and JavaScript source">&times;</button>
+        </div>
+        <div class="source-drawer-stack">
+          <section class="source-drawer-section" aria-labelledby="source-css-title">
+            <div class="source-drawer-section-header">
+              <h3 id="source-css-title">CSS Token Output</h3>
+              <button class="source-copy-button" type="button" data-source-copy="css">Copy</button>
+            </div>
+            <pre class="source-code-block"><code data-source-output="css"></code></pre>
+          </section>
+          <section class="source-drawer-section" aria-labelledby="source-js-title">
+            <div class="source-drawer-section-header">
+              <h3 id="source-js-title">JS Behaviour</h3>
+              <button class="source-copy-button" type="button" data-source-copy="js">Copy</button>
+            </div>
+            <pre class="source-code-block"><code data-source-output="js"></code></pre>
+          </section>
+          <section class="source-drawer-section" aria-labelledby="source-prompt-title">
+            <div class="source-drawer-section-header">
+              <h3 id="source-prompt-title">Codex Handoff</h3>
+              <button class="source-copy-button" type="button" data-source-copy="prompt">Copy</button>
+            </div>
+            <pre class="source-code-block"><code data-source-output="prompt"></code></pre>
+          </section>
+          <p class="source-copy-status" role="status" aria-live="polite" data-source-copy-status></p>
+        </div>
+      </aside>
+
+      <main class="design-system-page-main canonical-launcher-page">
+        <div class="canonical-launcher-layout">
+          <section class="canonical-launcher-intro">
+            <h1>Dropdowns Token</h1>
+            <p class="canonical-launcher-copy">
+              A lightweight single-select dropdown token for compact form and toolbar choices that should open as an
+              anchored listbox, not a drawer or modal.
+            </p>
+          </section>
+
+          <section class="canonical-launcher-panel token-simple-dropdown-panel" aria-labelledby="dropdown-token-title">
+            <div class="canonical-launcher-panel-header">
+              <div>
+                <p class="top-nav-preview-eyebrow">Control Token</p>
+                <h2 id="dropdown-token-title">Simple Dropdown Structure</h2>
+              </div>
+              <p class="canonical-launcher-note">
+                The trigger, selected label, hidden value, and option stack reuse the signed-off Simple Select seam.
+              </p>
+            </div>
+
+            <div class="token-simple-dropdown-preview-grid" aria-label="Dropdown token previews">
+              <article class="token-simple-dropdown-theme-preview">
+                <p class="token-simple-dropdown-theme-label">Normal</p>
+                <div class="form-field token-simple-dropdown-field">
+                  <div class="form-select token-simple-dropdown-control" data-form-select data-token-simple-dropdown>
+                    <input type="hidden" name="normalStatus" value="current" data-form-select-value />
+                    <button class="form-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="dropdown-token-normal-label dropdown-token-normal-current" id="dropdown-token-normal-trigger" data-form-select-button>
+                      <span class="token-simple-dropdown-trigger-copy">
+                        <span class="token-simple-dropdown-trigger-label" id="dropdown-token-normal-label">Layer</span>
+                        <span class="token-simple-dropdown-trigger-value" id="dropdown-token-normal-current" data-form-select-current-label>Current</span>
+                      </span>
+                      <span class="form-select-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 9 6 6 6-6" /></svg></span>
+                    </button>
+                    <div class="form-select-menu hidden" role="listbox" tabindex="-1" aria-labelledby="dropdown-token-normal-label" data-form-select-listbox>
+                      <button class="form-select-option active" type="button" role="option" aria-selected="true" data-form-select-option data-value="current">Current</button>
+                      <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="archived">Archived</button>
+                      <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="draft">Draft</button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="token-simple-dropdown-theme-preview" data-theme-scope="dark">
+                <p class="token-simple-dropdown-theme-label">Dark</p>
+                <div class="form-field token-simple-dropdown-field">
+                  <div class="form-select token-simple-dropdown-control" data-form-select data-token-simple-dropdown>
+                    <input type="hidden" name="darkAudience" value="enterprise" data-form-select-value />
+                    <button class="form-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="dropdown-token-dark-label dropdown-token-dark-current" id="dropdown-token-dark-trigger" data-form-select-button>
+                      <span class="token-simple-dropdown-trigger-copy">
+                        <span class="token-simple-dropdown-trigger-label" id="dropdown-token-dark-label">Audience</span>
+                        <span class="token-simple-dropdown-trigger-value" id="dropdown-token-dark-current" data-form-select-current-label>Enterprise tenants</span>
+                      </span>
+                      <span class="form-select-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 9 6 6 6-6" /></svg></span>
+                    </button>
+                    <div class="form-select-menu hidden" role="listbox" tabindex="-1" aria-labelledby="dropdown-token-dark-label" data-form-select-listbox>
+                      <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="all">All active tenants</button>
+                      <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="trial">Trial tenants</button>
+                      <button class="form-select-option active" type="button" role="option" aria-selected="true" data-form-select-option data-value="enterprise">Enterprise tenants</button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="token-simple-dropdown-theme-preview" data-theme-scope="desert">
+                <p class="token-simple-dropdown-theme-label">Desert</p>
+                <div class="form-field token-simple-dropdown-field">
+                  <div class="form-select token-simple-dropdown-control" data-form-select data-token-simple-dropdown>
+                    <input type="hidden" name="desertOwner" value="ops" data-form-select-value />
+                    <button class="form-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="dropdown-token-desert-label dropdown-token-desert-current" id="dropdown-token-desert-trigger" data-form-select-button>
+                      <span class="token-simple-dropdown-trigger-copy">
+                        <span class="token-simple-dropdown-trigger-label" id="dropdown-token-desert-label">Owner</span>
+                        <span class="token-simple-dropdown-trigger-value" id="dropdown-token-desert-current" data-form-select-current-label>Operations</span>
+                      </span>
+                      <span class="form-select-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 9 6 6 6-6" /></svg></span>
+                    </button>
+                    <div class="form-select-menu hidden" role="listbox" tabindex="-1" aria-labelledby="dropdown-token-desert-label" data-form-select-listbox>
+                      <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="support">Support</button>
+                      <button class="form-select-option active" type="button" role="option" aria-selected="true" data-form-select-option data-value="ops">Operations</button>
+                      <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="finance">Finance</button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div class="token-simple-dropdown-row-list" aria-label="Dropdown token state rows">
+              <section class="token-simple-dropdown-row" aria-labelledby="dropdown-token-states-title">
+                <div class="token-simple-dropdown-row-header">
+                  <h3 id="dropdown-token-states-title">Open, disabled, overflow, and direction states</h3>
+                </div>
+                <div class="token-simple-dropdown-state-grid" aria-label="Dropdown state examples">
+                  <article class="token-simple-dropdown-state-sample">
+                    <p class="token-simple-dropdown-theme-label">Open</p>
+                    <div class="form-field token-simple-dropdown-field">
+                      <div class="form-select token-simple-dropdown-control" data-form-select data-token-simple-dropdown data-token-simple-dropdown-open>
+                        <input type="hidden" name="openPlan" value="growth" data-form-select-value />
+                        <button class="form-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="dropdown-token-open-label dropdown-token-open-current" id="dropdown-token-open-trigger" data-form-select-button>
+                          <span class="token-simple-dropdown-trigger-copy">
+                            <span class="token-simple-dropdown-trigger-label" id="dropdown-token-open-label">Plan</span>
+                            <span class="token-simple-dropdown-trigger-value" id="dropdown-token-open-current" data-form-select-current-label>Growth</span>
+                          </span>
+                          <span class="form-select-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 9 6 6 6-6" /></svg></span>
+                        </button>
+                        <div class="form-select-menu" role="listbox" tabindex="-1" aria-labelledby="dropdown-token-open-label" data-form-select-listbox>
+                          <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="starter">Starter</button>
+                          <button class="form-select-option active" type="button" role="option" aria-selected="true" data-form-select-option data-value="growth">Growth</button>
+                          <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="scale">Scale</button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="token-simple-dropdown-state-sample">
+                    <p class="token-simple-dropdown-theme-label">Disabled</p>
+                    <div class="form-field token-simple-dropdown-field">
+                      <div class="form-select token-simple-dropdown-control token-simple-dropdown-disabled" data-token-simple-dropdown>
+                        <input type="hidden" name="disabledRegion" value="eu" data-form-select-value />
+                        <button class="form-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="dropdown-token-disabled-label dropdown-token-disabled-current" id="dropdown-token-disabled-trigger" data-form-select-button disabled aria-disabled="true">
+                          <span class="token-simple-dropdown-trigger-copy">
+                            <span class="token-simple-dropdown-trigger-label" id="dropdown-token-disabled-label">Region</span>
+                            <span class="token-simple-dropdown-trigger-value" id="dropdown-token-disabled-current" data-form-select-current-label>Europe</span>
+                          </span>
+                          <span class="form-select-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 9 6 6 6-6" /></svg></span>
+                        </button>
+                        <div class="form-select-menu hidden" role="listbox" tabindex="-1" aria-labelledby="dropdown-token-disabled-label" data-form-select-listbox>
+                          <button class="form-select-option active" type="button" role="option" aria-selected="true" data-form-select-option data-value="eu">Europe</button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="token-simple-dropdown-state-sample">
+                    <p class="token-simple-dropdown-theme-label">Long label</p>
+                    <div class="form-field token-simple-dropdown-field">
+                      <div class="form-select token-simple-dropdown-control" data-form-select data-token-simple-dropdown>
+                        <input type="hidden" name="longRecordView" value="historical" data-form-select-value />
+                        <button class="form-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="dropdown-token-long-label dropdown-token-long-current" id="dropdown-token-long-trigger" data-form-select-button>
+                          <span class="token-simple-dropdown-trigger-copy">
+                            <span class="token-simple-dropdown-trigger-label" id="dropdown-token-long-label">Record view</span>
+                            <span class="token-simple-dropdown-trigger-value" id="dropdown-token-long-current" data-form-select-current-label>Historical details and supporting records</span>
+                          </span>
+                          <span class="form-select-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 9 6 6 6-6" /></svg></span>
+                        </button>
+                        <div class="form-select-menu hidden" role="listbox" tabindex="-1" aria-labelledby="dropdown-token-long-label" data-form-select-listbox>
+                          <button class="form-select-option active" type="button" role="option" aria-selected="true" data-form-select-option data-value="historical">Historical details and supporting records</button>
+                          <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="active">Active records only</button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="token-simple-dropdown-state-sample" dir="rtl" data-token-simple-dropdown-rtl>
+                    <p class="token-simple-dropdown-theme-label">RTL</p>
+                    <div class="form-field token-simple-dropdown-field">
+                      <div class="form-select token-simple-dropdown-control" data-form-select data-token-simple-dropdown>
+                        <input type="hidden" name="rtlSection" value="settings" data-form-select-value />
+                        <button class="form-select-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="dropdown-token-rtl-label dropdown-token-rtl-current" id="dropdown-token-rtl-trigger" data-form-select-button>
+                          <span class="token-simple-dropdown-trigger-copy">
+                            <span class="token-simple-dropdown-trigger-label" id="dropdown-token-rtl-label">Section</span>
+                            <span class="token-simple-dropdown-trigger-value" id="dropdown-token-rtl-current" data-form-select-current-label>Settings</span>
+                          </span>
+                          <span class="form-select-trigger-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="m6 9 6 6 6-6" /></svg></span>
+                        </button>
+                        <div class="form-select-menu hidden" role="listbox" tabindex="-1" aria-labelledby="dropdown-token-rtl-label" data-form-select-listbox>
+                          <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="overview">Overview</button>
+                          <button class="form-select-option active" type="button" role="option" aria-selected="true" data-form-select-option data-value="settings">Settings</button>
+                          <button class="form-select-option" type="button" role="option" aria-selected="false" data-form-select-option data-value="audit">Audit</button>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+              </section>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/design-system/assets/app.mjs"></script>
+  </body>
+</html>

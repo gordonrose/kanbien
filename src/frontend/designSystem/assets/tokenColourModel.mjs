@@ -19,7 +19,13 @@ export const tokenColourTextRamp = [
 
 export const tokenColourStatusScales = [
   { key: "error", tokenPrefix: "colour-error", surface: "#fff7f6", defaultBaseline: "#dc2626" },
-  { key: "warning", tokenPrefix: "colour-warning", surface: "#fff8ed", defaultBaseline: "#ea580c" },
+  {
+    key: "warning",
+    tokenPrefix: "colour-warning",
+    surface: "#fff7e6",
+    defaultBaseline: "#8f5a12",
+    startStepAtSurface: true,
+  },
   { key: "success", tokenPrefix: "colour-success", surface: "#f2fbf5", defaultBaseline: "#2f855a" },
 ];
 

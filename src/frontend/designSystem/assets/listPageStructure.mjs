@@ -231,8 +231,10 @@ export function createListPageStructureController(root = document) {
       }
     });
 
-    applyLayout(listPageStructureDefaults.layout);
-    applySecondaryColumns(listPageStructureDefaults.secondaryColumns);
+    applyLayout(canvas.dataset.listPageStructureLayout ?? listPageStructureDefaults.layout);
+    applySecondaryColumns(subheader instanceof HTMLElement
+      ? subheader.dataset.listPageStructureSecondaryColumns ?? listPageStructureDefaults.secondaryColumns
+      : listPageStructureDefaults.secondaryColumns);
     applyHeaderVisibility("first", listPageStructureDefaults.firstHeader);
     applyHeaderVisibility("second", listPageStructureDefaults.secondHeader);
     applyMobileLayer(listPageStructureDefaults.mobileLayer);

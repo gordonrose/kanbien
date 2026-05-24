@@ -18,7 +18,7 @@ function buildPrimaryStyle(hex, step) {
 }
 
 function renderSwatch(scale, baseHex, step) {
-  const opacity = step / 100;
+  const opacity = scale.startStepAtSurface ? (step - 10) / 90 : step / 100;
   const tokenName = `--${scale.tokenPrefix}-${step}`;
   const value = scale.surface ? mixHex(scale.surface, baseHex, opacity) : buildPrimaryStyle(baseHex, step);
   return `
