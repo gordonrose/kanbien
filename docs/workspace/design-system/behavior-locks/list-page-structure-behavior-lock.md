@@ -11,7 +11,11 @@ It must not compute page background tokens locally.
 
 ## Desktop Contract
 
-- The first header region is a 24-column structural grid.
+- The first header region is a shared 24-column structural grid.
+- The first header collapses from its own rendered width, not the viewport: as
+  the header narrows it removes one header column at a time while reducing the
+  grid track count so the remaining visible columns continue to fill the full
+  inline width.
 - The second header region is a navigation/subheader grid controlled by display
   settings at 6, 12, 18, or 24 columns.
 - When the second header is greater than 12 columns, the outer edge rails remain
@@ -26,7 +30,8 @@ It must not compute page background tokens locally.
 ## Mobile Contract
 
 - There is no separate mobile landscape layout.
-- The first header exposes one visible column only.
+- At the narrow mobile fallback, the first header exposes one visible column
+  only.
 - The second header remains visible and horizontally scrollable, showing one
   column at roughly 80% width so adjacent columns remain hinted.
 - In `full` mode, the lower area exposes one primary column only.

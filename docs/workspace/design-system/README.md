@@ -125,6 +125,7 @@ Current authored examples now include:
 - `behavior-locks/form-template-behavior-lock.md`
 - `behavior-locks/time-picker-behavior-lock.md`
 - `behavior-locks/list-record-card-behavior-lock.md`
+- `behavior-locks/list-card-behavior-lock.md`
 - `behavior-locks/list-detail-panel-behavior-lock.md`
 - `behavior-locks/list-detail-split-layout-behavior-lock.md`
 - `behavior-locks/sub-nav-row-behavior-lock.md`
@@ -145,6 +146,7 @@ Current authored examples now include:
 - `patterns/search-shell-pattern.md`
 - `patterns/context-nav-pattern.md`
 - `components/list-record-card-component.md`
+- `components/list-card-component.md`
 - `components/list-detail-panel-component.md`
 - `components/list-detail-split-layout-component.md`
 - `components/top-nav-shell-component.md`
@@ -156,6 +158,7 @@ Current authored examples now include:
 - `templates/record-management-list-centric-template.md`
 - `verification/top-nav-verification-checklist.md`
 - `verification/list-record-card-verification-checklist.md`
+- `verification/list-card-verification-checklist.md`
 - `verification/form-template-verification-checklist.md`
 - `verification/time-picker-verification-checklist.md`
 - `verification/list-detail-panel-verification-checklist.md`
@@ -170,6 +173,7 @@ Current authored examples now include:
 - `reference-packs/form-template-reference-pack.md`
 - `reference-packs/time-picker-reference-pack.md`
 - `reference-packs/list-record-card-reference-pack.md`
+- `reference-packs/list-card-reference-pack.md`
 - `reference-packs/list-detail-panel-reference-pack.md`
 - `reference-packs/list-detail-split-layout-reference-pack.md`
 - `reference-packs/entity-management-page-reference-pack.md`
@@ -189,6 +193,15 @@ Current authored examples now include:
 - `canonicals/time-picker/index.html`
 - `token-reviews/list-record-card-token-candidacy-review.md`
 - `token-reviews/context-nav-token-candidacy-review.md`
+- `behavior-locks/token-foundation-seams-behavior-lock.md`
+- `patterns/token-foundation-seams-pattern.md`
+- `components/token-foundation-seams-component.md`
+- `verification/token-foundation-seams-verification-checklist.md`
+- `verification/token-foundation-seams-canonical-rendering-exception.md`
+- `reference-packs/token-foundation-seams-reference-pack.md`
+- `token-reviews/token-foundation-seams-token-candidacy-review.md`
+- `adoption/token-foundation-seams-adoption-contract.md`
+- `adoption/list-card-adoption-contract.md`
 - `adoption/root-admin-shell-context-nav-adoption-contract.md`
 
 ## Related Source Of Truth

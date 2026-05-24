@@ -122,7 +122,7 @@ not be converted into a token catalog just because it now has good coverage.
 ### Sizing And Geometry
 
 - Local value or current CSS decision:
-  brand mark `3rem`, breakpoint-like media query `61.25rem`, preview widths,
+  brand mark `3rem`, breakpoint-like media query `44rem`, preview widths,
   grid column structure, overflow-fit measurements, and `2 items + More`
   threshold logic
 - Semantic meaning:
