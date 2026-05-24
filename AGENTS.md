@@ -17,6 +17,25 @@ documentation sync, QA evidence, and maintained-artifact sweeps, use:
 - `docs/standards/change-artifact-requirements.md`
 - `docs/standards/git-workflow-guardrails.md`
 
+## No Fake Determinism
+
+Do not create fake determinism.
+
+Structured artifacts, tables, status values, layer splits, and required fields
+must earn their existence by changing allowed behavior, improving evaluation,
+or preventing a real drift or failure mode.
+
+Do not add structure that only appears rigorous.
+
+Prefer the smallest structure that creates an enforceable boundary.
+
+Before adding a table, enum, matrix, checklist, or new artifact field, verify:
+
+- what real failure it prevents
+- whether different values change allowed behavior
+- whether a future maintainer can evaluate it sentence by sentence
+- whether it could be replaced by one clearer sentence
+
 ## Default Change Posture
 
 Assume backwards compatibility is required by default.
@@ -653,6 +672,48 @@ Allowed exception posture:
 
 Do not infer a pre-signoff exception from urgency, apparent simplicity, or the
 existence of partial design-system work.
+
+### Design-System Token Source Of Truth
+
+For governed frontend surfaces, signed-off token routes under
+`/design-system/tokens` are the only approved source of truth for the primitive
+visual and structural decisions they define.
+
+This applies to token families such as:
+
+- background and environmental page layers
+- colours and semantic state colours
+- typography tokens such as paragraph and header scales
+- container and container-section surfaces
+- icon-button and tooltip primitives
+- structural token seams such as entity page, nested entity record, list page,
+  and filter panel structures
+
+Every governed page, component, pattern, template, or app surface that needs a
+decision already defined by a signed-off token must be built from that token
+source of truth.
+
+Do not redefine, approximate, fork, or locally recreate a signed-off token
+decision in page CSS, component CSS, inline styles, duplicated markup, copied
+controller logic, fixture-only classes, or one-off app helpers.
+
+If a needed primitive visual or structural decision is not yet defined under
+`/design-system/tokens`, stop and raise the design-system gap before building
+the downstream page or component. Do not invent the missing token locally in
+the consumer.
+
+If a downstream surface needs to vary from a signed-off token, treat that as a
+new design-system decision:
+
+1. return to the `/design-system/tokens` loop
+2. create or update the relevant token route and governance artifacts
+3. verify the rendered token behavior
+4. only then consume the updated token in downstream pages or components
+
+Token-route HTML is review truth, not a license to copy route-local markup into
+apps. Downstream consumers must use the shared token, render seam, controller
+seam, CSS variable, or documented adapter named by the design-system artifact
+chain.
 
 ### App-Page CSS Prohibition
 

@@ -409,6 +409,14 @@ current-page state:
 - shared Display Settings drawer, unless an explicit route-level exception is
   documented before implementation
 
+The route harness enforces that every served `/design-system` HTML page has
+working breadcrumbs and the shared Display Settings drawer contract. New pages
+must include a governed breadcrumb trail with an `aria-current="page"` current
+item and an `#accessibility-button` / `#accessibility-drawer` pair wired to the
+shared display settings controls. The design-system router may add the baseline
+Display Settings controls for legacy pages, but it must not be used as a reason
+to omit honest shell markup from new source pages.
+
 If page-level shell chrome and inner preview/canonical surfaces both render the
 same family classes, scope the runtime selectors and geometry observers so the
 outer shell stays truthful without hijacking the inner renderer. If page-level
