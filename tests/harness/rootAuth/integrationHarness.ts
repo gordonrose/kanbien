@@ -12,6 +12,8 @@ import {
 } from "../../../src/features/rootRoles/transport/router";
 import { createRootUsersRouter } from "../../../src/features/rootUsers/transport/router";
 import { createRootUsersService } from "../../../src/features/rootUsers/domain/service";
+import { createEntityRouter } from "../../../src/features/entity/transport/router";
+import { createEntityService } from "../../../src/features/entity/domain/service";
 import { createRequireRootSession } from "../../../src/lib/auth/middleware";
 import { createRateLimitMiddleware } from "../../../src/lib/security/rateLimit";
 import { env } from "../../../src/config/env";
@@ -26,6 +28,11 @@ import type {
 } from "../../../src/features/rootAuth/persistence/types";
 import type { RootUsersRepository } from "../../../src/features/rootUsers/persistence/repository";
 import type { RootUserAuthState, RootUserData } from "../../../src/features/rootUsers/domain/types";
+import type {
+  EntityData,
+  EntityListInput,
+} from "../../../src/features/entity/domain/types";
+import type { EntityRepository } from "../../../src/features/entity/persistence/repository";
 import type { AssetsService } from "../../../src/features/assets";
 import type { RootRolesRepository } from "../../../src/features/rootRoles/persistence/repository";
 import type {
@@ -51,6 +58,7 @@ interface StoredPrincipal {
 }
 
 interface StoredRootUser extends RootUserData {}
+interface StoredEntity extends EntityData {}
 
 export interface RootRoleAuditEventRecord {
   actorRootUserId: string;
@@ -109,6 +117,10 @@ export interface RootAuthIntegrationHarnessOptions {
 
 function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
+}
+
+function normalizeEntityName(name: string): string {
+  return name.trim().toLowerCase();
 }
 
 function normalizeOptionalName(value: string | null | undefined): string | null | undefined {
@@ -217,6 +229,55 @@ function paginateAndSortRootUsers(
   };
 }
 
+function compareEntities(a: StoredEntity, b: StoredEntity, orderBy: string, direction: "asc" | "desc"): number {
+  const factor = direction === "asc" ? 1 : -1;
+  const valueFor = (record: StoredEntity) => {
+    switch (orderBy) {
+      case "name":
+        return record.name;
+      case "status":
+        return record.status;
+      case "createdAt":
+        return record.createdAt.getTime();
+      case "archivedAt":
+        return record.archivedAt?.getTime() ?? Number.NEGATIVE_INFINITY;
+      case "updatedAt":
+      default:
+        return record.updatedAt.getTime();
+    }
+  };
+  const left = valueFor(a);
+  const right = valueFor(b);
+  if (left < right) {
+    return -1 * factor;
+  }
+  if (left > right) {
+    return 1 * factor;
+  }
+  return a.entityId.localeCompare(b.entityId) * factor;
+}
+
+function applyEntityFilters(items: StoredEntity[], filters: import("../../../src/features/entity/domain/types").EntityListFilters): StoredEntity[] {
+  return items.filter((item) => {
+    if (!filters.includeArchived && item.archivedAt) {
+      return false;
+    }
+    if (filters.namePrefix && !item.normalizedName.startsWith(filters.namePrefix.toLowerCase())) {
+      return false;
+    }
+    if (filters.status && item.status !== filters.status) {
+      return false;
+    }
+    if (!matchesRange(item.createdAt, filters.createdAtFrom, filters.createdAtTo)) {
+      return false;
+    }
+    if (!matchesRange(item.updatedAt, filters.updatedAtFrom, filters.updatedAtTo)) {
+      return false;
+    }
+    return true;
+  });
+}
+
 function createRootUserRecord(overrides: Partial<StoredRootUser> = {}): StoredRootUser {
   const now = new Date("2026-03-26T00:00:00.000Z");
   return {
@@ -233,6 +294,94 @@ function createRootUserRecord(overrides: Partial<StoredRootUser> = {}): StoredRo
     updatedAt: now,
     deletedAt: null,
     ...overrides,
+  };
+}
+
+function createInMemoryEntityRepository(entities: Map<string, StoredEntity>): EntityRepository {
+  function createEntityRecord(overrides: Partial<StoredEntity> = {}): StoredEntity {
+    const now = new Date("2026-05-24T00:00:00.000Z");
+    const name = overrides.name ?? "Organization";
+    const status = overrides.status ?? "draft";
+    return {
+      entityId: overrides.entityId ?? "22222222-2222-4222-8222-222222222222",
+      name,
+      normalizedName: overrides.normalizedName ?? normalizeEntityName(name),
+      description: overrides.description ?? "Organization instruction seed.",
+      status,
+      createdAt: overrides.createdAt ?? now,
+      updatedAt: overrides.updatedAt ?? now,
+      archivedAt: overrides.archivedAt ?? (status === "archived" ? now : null),
+    };
+  }
+
+  return {
+    async create(input) {
+      const record = createEntityRecord({
+        entityId: input.entityId,
+        name: input.name,
+        normalizedName: normalizeEntityName(input.name),
+        description: input.description,
+        status: input.status,
+      });
+      entities.set(record.entityId, record);
+      return record;
+    },
+    async findVisibleById(entityId) {
+      const record = entities.get(entityId);
+      return record && !record.archivedAt ? record : null;
+    },
+    async findAnyById(entityId) {
+      return entities.get(entityId) ?? null;
+    },
+    async findCurrentByName(name) {
+      const normalizedName = normalizeEntityName(name);
+      return [...entities.values()].find((record) => record.normalizedName === normalizedName && !record.archivedAt) ?? null;
+    },
+    async list(input: EntityListInput) {
+      const searchable = [...entities.values()].filter((record) =>
+        input.filters.includeArchived || !record.archivedAt,
+      );
+      const matching = applyEntityFilters([...entities.values()], input.filters);
+      const sorted = [...matching].sort((a, b) => compareEntities(a, b, input.orderBy, input.orderDirection));
+      const start = (input.page - 1) * input.pageSize;
+      return {
+        items: sorted.slice(start, start + input.pageSize),
+        totalSearchableRecords: searchable.length,
+        totalMatchingRecords: matching.length,
+      };
+    },
+    async update(input) {
+      const current = entities.get(input.entityId);
+      if (!current || current.archivedAt) {
+        throw new Error("Missing current entity");
+      }
+      const status = input.status ?? current.status;
+      const next: StoredEntity = {
+        ...current,
+        name: input.name ?? current.name,
+        normalizedName: input.name ? normalizeEntityName(input.name) : current.normalizedName,
+        description: input.description ?? current.description,
+        status,
+        updatedAt: new Date("2026-05-24T00:01:00.000Z"),
+        archivedAt: status === "archived" ? new Date("2026-05-24T00:01:00.000Z") : null,
+      };
+      entities.set(next.entityId, next);
+      return next;
+    },
+    async archive(entityId) {
+      const current = entities.get(entityId);
+      if (!current || current.archivedAt) {
+        throw new Error("Missing current entity");
+      }
+      const next: StoredEntity = {
+        ...current,
+        status: "archived",
+        archivedAt: new Date("2026-05-24T00:02:00.000Z"),
+        updatedAt: new Date("2026-05-24T00:02:00.000Z"),
+      };
+      entities.set(entityId, next);
+      return next;
+    },
   };
 }
 
@@ -1053,6 +1202,7 @@ export function createRootAuthIntegrationHarness(
   options: RootAuthIntegrationHarnessOptions = {},
 ): RootAuthIntegrationHarness {
   const rootUsers = new Map<string, StoredRootUser>();
+  const entities = new Map<string, StoredEntity>();
   const principals = new Map<string, StoredPrincipal>();
   const challenges = new Map<string, AuthLoginChallengeRecord>();
   const sessions = new Map<string, AuthSessionRecord>();
@@ -1178,6 +1328,16 @@ export function createRootAuthIntegrationHarness(
     ),
     createRootUsersRouter(
       createRootUsersService(rootUsersRepository, options.assetsService),
+      capabilityChecker,
+      platformSecurityRepository,
+    ),
+  );
+  app.use(
+    "/v1/entity",
+    requireRootSession,
+    authenticatedGeneralRateLimit,
+    createEntityRouter(
+      createEntityService(createInMemoryEntityRepository(entities)),
       capabilityChecker,
       platformSecurityRepository,
     ),

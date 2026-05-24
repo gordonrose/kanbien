@@ -105,6 +105,7 @@ export async function resetPostgresTestDatabase(pool: Pool): Promise<void> {
     DROP TABLE IF EXISTS web_app_pages CASCADE;
     DROP TABLE IF EXISTS web_app_modules CASCADE;
     DROP TABLE IF EXISTS web_app_root_families CASCADE;
+    DROP TABLE IF EXISTS entities CASCADE;
     DROP TABLE IF EXISTS entity_definition_attribute_source_link CASCADE;
     DROP TABLE IF EXISTS entity_definition_attribute_option CASCADE;
     DROP TABLE IF EXISTS entity_definition_attribute_validation_rule CASCADE;
